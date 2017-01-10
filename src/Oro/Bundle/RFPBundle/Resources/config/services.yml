@@ -183,16 +183,16 @@ services:
             - '@oro_security.security_facade'
             - '@oro_entity.doctrine_helper'
 
-    oro_rfp.event_listener.account_view:
-        class: 'Oro\Bundle\RFPBundle\EventListener\AccountViewListener'
+    oro_rfp.event_listener.customer_view:
+        class: 'Oro\Bundle\RFPBundle\EventListener\CustomerViewListener'
         public: true
         arguments:
             - '@translator'
             - '@oro_entity.doctrine_helper'
             - '@request_stack'
         tags:
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-view, method: onAccountView }
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-user-view, method: onAccountUserView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-view, method: onCustomerView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-user-view, method: onCustomerUserView }
             - { name: oro_featuretogle.feature, feature: 'rfp' }
 
     oro_rfp.layout.decider.rfp_action_decider:

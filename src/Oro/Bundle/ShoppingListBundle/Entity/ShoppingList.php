@@ -4,8 +4,8 @@ namespace Oro\Bundle\ShoppingListBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
-use Oro\Bundle\CustomerBundle\Entity\Ownership\FrontendAccountUserAwareTrait;
+use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\Ownership\FrontendCustomerUserAwareTrait;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
@@ -27,7 +27,7 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository")
  * @ORM\AssociationOverrides({
- *      @ORM\AssociationOverride(name="accountUser",
+ *      @ORM\AssociationOverride(name="customerUser",
  *          joinColumns=@ORM\JoinColumn(name="customer_user_id", referencedColumnName="id", onDelete="CASCADE")
  *      )
  * })
@@ -51,7 +51,7 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *              "owner_field_name"="owner",
  *              "owner_column_name"="user_owner_id",
  *              "frontend_owner_type"="FRONTEND_USER",
- *              "frontend_owner_field_name"="accountUser",
+ *              "frontend_owner_field_name"="customerUser",
  *              "frontend_owner_column_name"="customer_user_id",
  *              "organization_field_name"="organization",
  *              "organization_column_name"="organization_id"
@@ -71,13 +71,13 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 class ShoppingList extends ExtendShoppingList implements
     OrganizationAwareInterface,
     LineItemsNotPricedAwareInterface,
-    AccountOwnerAwareInterface,
+    CustomerOwnerAwareInterface,
     WebsiteAwareInterface,
     CheckoutSourceEntityInterface,
     \JsonSerializable
 {
     use DatesAwareTrait;
-    use FrontendAccountUserAwareTrait;
+    use FrontendCustomerUserAwareTrait;
     use UserAwareTrait;
 
     /**

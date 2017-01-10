@@ -3,10 +3,10 @@ oro_tax_product_tax_code:
     type:         annotation
     prefix:       /tax/product
 
-oro_tax_account_tax_code:
-    resource:     "@OroTaxBundle/Controller/AccountTaxCodeController.php"
+oro_tax_customer_tax_code:
+    resource:     "@OroTaxBundle/Controller/CustomerTaxCodeController.php"
     type:         annotation
-    prefix:       /tax/account
+    prefix:       /tax/customer
 
 oro_tax:
     resource:     "@OroTaxBundle/Controller/TaxController.php"

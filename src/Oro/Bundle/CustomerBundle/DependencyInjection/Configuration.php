@@ -20,8 +20,8 @@ class Configuration implements ConfigurationInterface
         SettingsBuilder::append(
             $rootNode,
             [
-                'default_account_owner' => ['type' => 'string', 'value' => 1],
-                'anonymous_account_group' => ['type' => 'integer', 'value' => null],
+                'default_customer_owner' => ['type' => 'string', 'value' => 1],
+                'anonymous_customer_group' => ['type' => 'integer', 'value' => null],
                 'registration_allowed' => ['type' => 'boolean', 'value' => true],
                 'confirmation_required' => ['type' => 'boolean', 'value' => true],
                 'send_password_in_welcome_email' => ['type' => 'boolean', 'value' => false],

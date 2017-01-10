@@ -7,8 +7,8 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerCategoryVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupCategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Symfony\Component\Yaml\Yaml;
@@ -55,9 +55,9 @@ class LoadCategoryVisibilityResolvedData extends AbstractFixture implements Depe
 
         $this->createCategoryVisibility($category, $categoryData['all']);
 
-        $this->createAccountGroupCategoryVisibilities($category, $categoryData['groups']);
+        $this->createCustomerGroupCategoryVisibilities($category, $categoryData['groups']);
 
-        $this->createAccountCategoryVisibilities($category, $categoryData['accounts']);
+        $this->createCustomerCategoryVisibilities($category, $categoryData['customers']);
     }
 
     /**
@@ -80,37 +80,37 @@ class LoadCategoryVisibilityResolvedData extends AbstractFixture implements Depe
 
     /**
      * @param Category $category
-     * @param array $accountGroupVisibilityData
+     * @param array $customerGroupVisibilityData
      */
-    protected function createAccountGroupCategoryVisibilities(Category $category, array $accountGroupVisibilityData)
+    protected function createCustomerGroupCategoryVisibilities(Category $category, array $customerGroupVisibilityData)
     {
-        foreach ($accountGroupVisibilityData as $accountGroupReference => $data) {
-            /** @var CustomerGroup $accountGroup */
-            $accountGroup = $this->getReference($accountGroupReference);
-            $accountGroupCategoryVisibility = (new AccountGroupCategoryVisibilityResolved($category, $accountGroup))
+        foreach ($customerGroupVisibilityData as $customerGroupReference => $data) {
+            /** @var CustomerGroup $customerGroup */
+            $customerGroup = $this->getReference($customerGroupReference);
+            $customerGroupCategoryVisibility = (new CustomerGroupCategoryVisibilityResolved($category, $customerGroup))
                 ->setVisibility($data['visibility']);
 
-//            $this->setReference($data['reference'], $accountGroupCategoryVisibility);
+//            $this->setReference($data['reference'], $customerGroupCategoryVisibility);
 
-            $this->em->persist($accountGroupCategoryVisibility);
+            $this->em->persist($customerGroupCategoryVisibility);
         }
     }
 
     /**
      * @param Category $category
-     * @param array $accountVisibilityData
+     * @param array $customerVisibilityData
      */
-    protected function createAccountCategoryVisibilities(Category $category, array $accountVisibilityData)
+    protected function createCustomerCategoryVisibilities(Category $category, array $customerVisibilityData)
     {
-        foreach ($accountVisibilityData as $accountReference => $data) {
-            /** @var Customer $account */
-            $account = $this->getReference($accountReference);
-            $accountCategoryVisibility = (new AccountCategoryVisibilityResolved($category, $account))
+        foreach ($customerVisibilityData as $customerReference => $data) {
+            /** @var Customer $customer */
+            $customer = $this->getReference($customerReference);
+            $customerCategoryVisibility = (new CustomerCategoryVisibilityResolved($category, $customer))
                 ->setVisibility($data['visibility']);
 
-//            $this->setReference($data['reference'], $accountCategoryVisibility);
+//            $this->setReference($data['reference'], $customerCategoryVisibility);
 
-            $this->em->persist($accountCategoryVisibility);
+            $this->em->persist($customerCategoryVisibility);
         }
     }
 

@@ -19,8 +19,8 @@ class QuoteDemandTest extends AbstractTest
     {
         $properties = [
             ['id', '123'],
-            ['account', new Customer()],
-            ['accountUser', new CustomerUser()],
+            ['customer', new Customer()],
+            ['customerUser', new CustomerUser()],
             ['quote', new Quote()],
             ['total', 100.1],
             ['subtotal', 100.1],

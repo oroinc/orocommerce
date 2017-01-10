@@ -19,27 +19,27 @@ class OrderAddressSecurityProvider
     protected $orderAddressProvider;
 
     /** @var string */
-    protected $accountAddressClass;
+    protected $customerAddressClass;
 
     /** @var string */
-    protected $accountUserAddressClass;
+    protected $customerUserAddressClass;
 
     /**
      * @param SecurityFacade $securityFacade
      * @param OrderAddressProvider $orderAddressProvider
-     * @param string $accountAddressClass
-     * @param string $accountUserAddressClass
+     * @param string $customerAddressClass
+     * @param string $customerUserAddressClass
      */
     public function __construct(
         SecurityFacade $securityFacade,
         OrderAddressProvider $orderAddressProvider,
-        $accountAddressClass,
-        $accountUserAddressClass
+        $customerAddressClass,
+        $customerUserAddressClass
     ) {
         $this->securityFacade = $securityFacade;
         $this->orderAddressProvider = $orderAddressProvider;
-        $this->accountAddressClass = $accountAddressClass;
-        $this->accountUserAddressClass = $accountUserAddressClass;
+        $this->customerAddressClass = $customerAddressClass;
+        $this->customerUserAddressClass = $customerUserAddressClass;
     }
 
     /**
@@ -50,62 +50,62 @@ class OrderAddressSecurityProvider
      */
     public function isAddressGranted(Order $order, $type)
     {
-        return $this->isAccountAddressGranted($type, $order->getAccount()) ||
-            $this->isAccountUserAddressGranted($type, $order->getAccountUser());
+        return $this->isCustomerAddressGranted($type, $order->getCustomer()) ||
+            $this->isCustomerUserAddressGranted($type, $order->getCustomerUser());
     }
 
     /**
      * @param string $type
-     * @param Customer $account
+     * @param Customer $customer
      *
      * @return bool
      */
-    public function isAccountAddressGranted($type, Customer $account = null)
+    public function isCustomerAddressGranted($type, Customer $customer = null)
     {
         if ($this->isManualEditGranted($type)) {
             return true;
         }
 
         $hasPermissions = $this->securityFacade->isGranted(
-            $this->getClassPermission('VIEW', $this->accountAddressClass)
+            $this->getClassPermission('VIEW', $this->customerAddressClass)
         );
 
         if (!$hasPermissions) {
             return false;
         }
 
-        if (!$account) {
+        if (!$customer) {
             return false;
         }
 
-        return (bool)$this->orderAddressProvider->getAccountAddresses($account, $type);
+        return (bool)$this->orderAddressProvider->getCustomerAddresses($customer, $type);
     }
 
     /**
      * @param string $type
-     * @param CustomerUser $accountUser
+     * @param CustomerUser $customerUser
      *
      * @return bool
      */
-    public function isAccountUserAddressGranted($type, CustomerUser $accountUser = null)
+    public function isCustomerUserAddressGranted($type, CustomerUser $customerUser = null)
     {
         if ($this->isManualEditGranted($type)) {
             return true;
         }
 
         $hasPermissions = $this->securityFacade
-                ->isGranted($this->getClassPermission('VIEW', $this->accountUserAddressClass))
+                ->isGranted($this->getClassPermission('VIEW', $this->customerUserAddressClass))
             && $this->securityFacade->isGranted($this->getTypedPermission($type));
 
         if (!$hasPermissions) {
             return false;
         }
 
-        if (!$accountUser) {
+        if (!$customerUser) {
             return false;
         }
 
-        return (bool)$this->orderAddressProvider->getAccountUserAddresses($accountUser, $type);
+        return (bool)$this->orderAddressProvider->getCustomerUserAddresses($customerUser, $type);
     }
 
     /**

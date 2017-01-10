@@ -66,10 +66,10 @@ class ProductShoppingListsDataProvider
         }
         $currentShoppingListId = $currentShoppingList->getId();
 
-        /** @var CustomerUser $accountUser */
-        $accountUser = $this->securityFacade->getLoggedUser();
+        /** @var CustomerUser $customerUser */
+        $customerUser = $this->securityFacade->getLoggedUser();
         $lineItems = $this->lineItemRepository
-            ->getProductItemsWithShoppingListNames($products, $accountUser);
+            ->getProductItemsWithShoppingListNames($products, $customerUser);
         if (!count($lineItems)) {
             return [];
         }

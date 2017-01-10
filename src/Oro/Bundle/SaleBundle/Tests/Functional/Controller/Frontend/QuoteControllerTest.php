@@ -80,7 +80,7 @@ class QuoteControllerTest extends WebTestCase
     public function indexProvider()
     {
         return [
-            'account1 user1 (only account user quotes)' => [
+            'customer1 user1 (only customer user quotes)' => [
                 'input' => [
                     'login' => LoadUserData::ACCOUNT1_USER1,
                     'password' => LoadUserData::ACCOUNT1_USER1,
@@ -103,7 +103,7 @@ class QuoteControllerTest extends WebTestCase
                     ],
                 ],
             ],
-            'account1 user2 (all account qouotes)' => [
+            'customer1 user2 (all customer qouotes)' => [
                 'input' => [
                     'login' => LoadUserData::ACCOUNT1_USER2,
                     'password' => LoadUserData::ACCOUNT1_USER2,
@@ -141,7 +141,7 @@ class QuoteControllerTest extends WebTestCase
                     ],
                 ],
             ],
-            'account1 user3 (all account quotes and assignedTo)' => [
+            'customer1 user3 (all customer quotes and assignedTo)' => [
                 'input' => [
                     'login' => LoadUserData::ACCOUNT1_USER3,
                     'password' => LoadUserData::ACCOUNT1_USER3,
@@ -172,7 +172,7 @@ class QuoteControllerTest extends WebTestCase
                         'qid',
                         'createdAt',
                         'validUntil',
-                        'accountUserName',
+                        'customerUserName',
                         'poNumber',
                         'shipUntil',
                         'view_link',
@@ -180,7 +180,7 @@ class QuoteControllerTest extends WebTestCase
                     ],
                 ],
             ],
-            'account2 user1 (only account user quotes)' => [
+            'customer2 user1 (only customer user quotes)' => [
                 'input' => [
                     'login' => LoadUserData::ACCOUNT2_USER1,
                     'password' => LoadUserData::ACCOUNT2_USER1,
@@ -203,7 +203,7 @@ class QuoteControllerTest extends WebTestCase
                     ],
                 ],
             ],
-            'parent account user1 (all quotes)' => [
+            'parent customer user1 (all quotes)' => [
                 'input' => [
                     'login' => LoadUserData::PARENT_ACCOUNT_USER1,
                     'password' => LoadUserData::PARENT_ACCOUNT_USER1,
@@ -250,7 +250,7 @@ class QuoteControllerTest extends WebTestCase
                         'shipUntil',
                         'view_link',
                         'action_configuration',
-                        'accountUserName'
+                        'customerUserName'
                     ],
                 ],
             ]
@@ -278,7 +278,7 @@ class QuoteControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $controls = $crawler->filter('.account-oq__order-info__control, .page-title');
+        $controls = $crawler->filter('.customer-oq__order-info__control, .page-title');
 
         $this->assertSameSize($expectedData['columns'], $controls);
 
@@ -317,7 +317,7 @@ class QuoteControllerTest extends WebTestCase
     public function viewProvider()
     {
         return [
-            'account1 user1 (CustomerUser:VIEW_BASIC)' => [
+            'customer1 user1 (CustomerUser:VIEW_BASIC)' => [
                 'input' => [
                     'qid' => LoadQuoteData::QUOTE3,
                     'login' => LoadUserData::ACCOUNT1_USER1,
@@ -353,7 +353,7 @@ class QuoteControllerTest extends WebTestCase
                     ],
                 ],
             ],
-            'account1 user3 (CustomerUser:VIEW_LOCAL)' => [
+            'customer1 user3 (CustomerUser:VIEW_LOCAL)' => [
                 'input' => [
                     'qid' => LoadQuoteData::QUOTE3,
                     'login' => LoadUserData::ACCOUNT1_USER3,
@@ -389,7 +389,7 @@ class QuoteControllerTest extends WebTestCase
                     ],
                 ],
             ],
-            'account1 user3 (CustomerUser:VIEW_LOCAL, Quote date)' => [
+            'customer1 user3 (CustomerUser:VIEW_LOCAL, Quote date)' => [
                 'input' => [
                     'qid' => LoadQuoteData::QUOTE5,
                     'login' => LoadUserData::ACCOUNT1_USER3,
@@ -417,7 +417,7 @@ class QuoteControllerTest extends WebTestCase
                     ],
                 ],
             ],
-            'account1 user3 (CustomerUser:VIEW_LOCAL, Quote expired)' => [
+            'customer1 user3 (CustomerUser:VIEW_LOCAL, Quote expired)' => [
                 'input' => [
                     'qid' => LoadQuoteData::QUOTE8,
                     'login' => LoadUserData::ACCOUNT1_USER3,
@@ -445,7 +445,7 @@ class QuoteControllerTest extends WebTestCase
                     ],
                 ],
             ],
-            'account1 user3 (CustomerUser:VIEW_LOCAL, null Quote date)' => [
+            'customer1 user3 (CustomerUser:VIEW_LOCAL, null Quote date)' => [
                 'input' => [
                     'qid' => LoadQuoteData::QUOTE9,
                     'login' => LoadUserData::ACCOUNT1_USER3,
@@ -477,7 +477,7 @@ class QuoteControllerTest extends WebTestCase
                     ],
                 ],
             ],
-            'account1 user3 (CustomerUser:DEEP)' => [
+            'customer1 user3 (CustomerUser:DEEP)' => [
                 'input' => [
                     'qid' => LoadQuoteData::QUOTE9,
                     'login' => LoadUserData::PARENT_ACCOUNT_USER1,
@@ -551,13 +551,13 @@ class QuoteControllerTest extends WebTestCase
                 'user' => '',
                 'status' => 401
             ],
-            'VIEW (user from another account)' => [
+            'VIEW (user from another customer)' => [
                 'route' => 'oro_sale_quote_frontend_view',
                 'quote' => LoadQuoteData::QUOTE2,
                 'user' => LoadUserData::ACCOUNT2_USER1,
                 'status' => 403
             ],
-            'VIEW (user from parent account : LOCAL)' => [
+            'VIEW (user from parent customer : LOCAL)' => [
                 'route' => 'oro_sale_quote_frontend_view',
                 'quote' => LoadQuoteData::QUOTE2,
                 'user' => LoadUserData::PARENT_ACCOUNT_USER2,

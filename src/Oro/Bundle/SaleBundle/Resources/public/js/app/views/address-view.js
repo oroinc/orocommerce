@@ -27,7 +27,7 @@ define(function(require) {
         },
 
         events: {
-            'click [name="oro_sale_quote[shippingAddress][accountAddress]"]': 'addressFormChange',
+            'click [name="oro_sale_quote[shippingAddress][customerAddress]"]': 'addressFormChange',
         },
 
         /**
@@ -110,7 +110,7 @@ define(function(require) {
                 self.fieldsByName[name] = $field;
             });
 
-            this.accountAddressChange();
+            this.customerAddressChange();
         },
 
         /**
@@ -138,14 +138,14 @@ define(function(require) {
 
             var self = this;
             this.$address.change(function(e) {
-                self.accountAddressChange(e);
+                self.customerAddressChange(e);
             });
         },
 
         /**
-         * Implement account address change logic
+         * Implement customer address change logic
          */
-        accountAddressChange: function() {
+        customerAddressChange: function() {
             if (this.$address.val() !== this.options.enterManuallyValue) {
                 this.$fields.each(function() {
                     var $field = $(this);
@@ -194,7 +194,7 @@ define(function(require) {
         },
 
         /**
-         * Set account address choices from order related data
+         * Set customer address choices from order related data
          *
          * @param {Object} response
          */

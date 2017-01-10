@@ -74,7 +74,7 @@ class CategoryResolvedCacheBuilder extends AbstractResolvedCacheBuilder implemen
                 'scope' => $scope,
             ];
         } elseif ($selectedVisibility === CategoryVisibility::CONFIG) {
-            // fallback to config is default for account group and should be removed if exists
+            // fallback to config is default for customer group and should be removed if exists
             if ($hasCategoryVisibilityResolved) {
                 $delete = true;
             }

@@ -57,19 +57,19 @@ class OrderControllerTest extends WebTestCase
 
     /**
      * @param Form $form
-     * @param Customer $orderAccount
+     * @param Customer $orderCustomer
      * @param $lineItems
      * @param $discountItems
      * @return array
      */
-    public function getSubmittedData($form, $orderAccount, $lineItems, $discountItems)
+    public function getSubmittedData($form, $orderCustomer, $lineItems, $discountItems)
     {
         $submittedData = [
             'input_action' => 'save_and_stay',
             'oro_order_type' => [
                 '_token' => $form['oro_order_type[_token]']->getValue(),
                 'owner' => $this->getCurrentUser()->getId(),
-                'account' => $orderAccount->getId(),
+                'customer' => $orderCustomer->getId(),
                 'poNumber' => self::ORDER_PO_NUMBER,
                 'lineItems' => $lineItems,
                 'discounts' => $discountItems,
@@ -81,19 +81,19 @@ class OrderControllerTest extends WebTestCase
 
     /**
      * @param Form $form
-     * @param Customer $orderAccount
+     * @param Customer $orderCustomer
      * @param array $lineItems
      * @param array $discountItems
      * @return array
      */
-    public function getUpdatedData($form, $orderAccount, $lineItems, $discountItems)
+    public function getUpdatedData($form, $orderCustomer, $lineItems, $discountItems)
     {
         $submittedData = [
             'input_action' => 'save_and_stay',
             'oro_order_type' => [
                 '_token' => $form['oro_order_type[_token]']->getValue(),
                 'owner' => $this->getCurrentUser()->getId(),
-                'account' => $orderAccount->getId(),
+                'customer' => $orderCustomer->getId(),
                 'poNumber' => self::ORDER_PO_NUMBER_UPDATED,
                 'lineItems' => $lineItems,
                 'discounts' => $discountItems,
@@ -111,8 +111,8 @@ class OrderControllerTest extends WebTestCase
         $this->loadFixtures(
             [
                 'Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders',
-                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
-                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountAddresses',
+                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData',
+                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses',
                 'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
             ]
         );
@@ -161,8 +161,8 @@ class OrderControllerTest extends WebTestCase
         /** @var Form $form */
         $form = $crawler->selectButton('Save')->form();
 
-        /** @var Customer $orderAccount */
-        $orderAccount = $this->getReference('account.level_1');
+        /** @var Customer $orderCustomer */
+        $orderCustomer = $this->getReference('customer.level_1');
         
         /** @var Product $product */
         $product = $this->getReference('product.1');
@@ -182,7 +182,7 @@ class OrderControllerTest extends WebTestCase
             ],
         ];
         $discountItems = $this->getDiscountItems();
-        $submittedData = $this->getSubmittedData($form, $orderAccount, $lineItems, $discountItems);
+        $submittedData = $this->getSubmittedData($form, $orderCustomer, $lineItems, $discountItems);
 
         $this->client->followRedirects(true);
 
@@ -251,8 +251,8 @@ class OrderControllerTest extends WebTestCase
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
-        /** @var Customer $orderAccount */
-        $orderAccount = $this->getReference('account.level_1');
+        /** @var Customer $orderCustomer */
+        $orderCustomer = $this->getReference('customer.level_1');
 
         $date = (new \DateTime('now'))->format('Y-m-d');
         $lineItems = $this->getLineItemsToUpdate($date);
@@ -274,7 +274,7 @@ class OrderControllerTest extends WebTestCase
             ]
         ];
 
-        $submittedData = $this->getUpdatedData($form, $orderAccount, $lineItems, $discountItems);
+        $submittedData = $this->getUpdatedData($form, $orderCustomer, $lineItems, $discountItems);
 
         $this->client->followRedirects(true);
 
@@ -344,13 +344,13 @@ class OrderControllerTest extends WebTestCase
         $result  = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        /** @var AbstractAddress $orderAccount */
-        $orderAccountAddress = $this->getReference('account.level_1.address_1');
+        /** @var AbstractAddress $orderCustomer */
+        $orderCustomerAddress = $this->getReference('customer.level_1.address_1');
 
         // Save order
         $form = $crawler->selectButton('Save and Close')->form(
             [
-                'oro_order_type['. $addressType .'][accountAddress]' => 'a_'. $orderAccountAddress->getId(),
+                'oro_order_type['. $addressType .'][customerAddress]' => 'a_'. $orderCustomerAddress->getId(),
             ]
         );
 
@@ -366,9 +366,9 @@ class OrderControllerTest extends WebTestCase
         $html = $crawler->html();
 
         $this->assertContains(self::ORDER_PO_NUMBER_UPDATED, $html);
-        $this->assertContains($orderAccountAddress->getPostalCode(), $html);
-        $this->assertContains($orderAccountAddress->getStreet(), $html);
-        $this->assertContains(strtoupper($orderAccountAddress->getCity()), $html);
+        $this->assertContains($orderCustomerAddress->getPostalCode(), $html);
+        $this->assertContains($orderCustomerAddress->getStreet(), $html);
+        $this->assertContains(strtoupper($orderCustomerAddress->getCity()), $html);
 
         // Check address on edit
         $crawler = $this->client->request('GET', $this->getUrl('oro_order_update', ['id' => $id]));
@@ -379,15 +379,15 @@ class OrderControllerTest extends WebTestCase
         // Check form values
         $formValues = $form->getValues();
         $this->assertContains(
-            $orderAccountAddress->getPostalCode(),
+            $orderCustomerAddress->getPostalCode(),
             $formValues['oro_order_type['. $addressType .'][postalCode]']
         );
         $this->assertContains(
-            $orderAccountAddress->getStreet(),
+            $orderCustomerAddress->getStreet(),
             $formValues['oro_order_type['. $addressType .'][street]']
         );
         $this->assertContains(
-            $orderAccountAddress->getCity(),
+            $orderCustomerAddress->getCity(),
             $formValues['oro_order_type['. $addressType .'][city]']
         );
 
@@ -500,7 +500,7 @@ class OrderControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('Save')->form();
 
-        $orderAccount = $this->getReference('account.level_1');
+        $orderCustomer = $this->getReference('customer.level_1');
         $lineItems = [
             [
                 'product' => '',
@@ -516,7 +516,7 @@ class OrderControllerTest extends WebTestCase
         ];
         $discountItems = $this->getDiscountItems();
 
-        $submittedData = $this->getSubmittedData($form, $orderAccount, $lineItems, $discountItems);
+        $submittedData = $this->getSubmittedData($form, $orderCustomer, $lineItems, $discountItems);
 
         $this->client->followRedirects(true);
         $this->client->request($form->getMethod(), $form->getUri(), $submittedData);

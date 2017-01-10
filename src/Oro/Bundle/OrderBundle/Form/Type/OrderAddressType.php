@@ -4,7 +4,7 @@ namespace Oro\Bundle\OrderBundle\Form\Type;
 
 use Symfony\Component\Form\FormBuilderInterface;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
@@ -15,23 +15,23 @@ class OrderAddressType extends AbstractOrderAddressType
     /**
      * @param FormBuilderInterface $builder
      * @param string $type - address type
-     * @param AccountOwnerAwareInterface $entity
+     * @param CustomerOwnerAwareInterface $entity
      * @param bool $isManualEditGranted
      * @param bool $isEditEnabled
      *
      * @return bool
      */
-    protected function initAccountAddressField(
+    protected function initCustomerAddressField(
         FormBuilderInterface $builder,
         $type,
-        AccountOwnerAwareInterface $entity,
+        CustomerOwnerAwareInterface $entity,
         $isManualEditGranted,
         $isEditEnabled
     ) {
         if ($isEditEnabled) {
             $addresses = $this->orderAddressManager->getGroupedAddresses($entity, $type);
 
-            $accountAddressOptions = [
+            $customerAddressOptions = [
                 'label' => false,
                 'required' => false,
                 'mapped' => false,
@@ -44,14 +44,14 @@ class OrderAddressType extends AbstractOrderAddressType
             ];
 
             if ($isManualEditGranted) {
-                $accountAddressOptions['choices'] = array_merge(
-                    $accountAddressOptions['choices'],
+                $customerAddressOptions['choices'] = array_merge(
+                    $customerAddressOptions['choices'],
                     ['oro.order.form.address.manual']
                 );
-                $accountAddressOptions['configs']['placeholder'] = 'oro.order.form.address.choose_or_create';
+                $customerAddressOptions['configs']['placeholder'] = 'oro.order.form.address.choose_or_create';
             }
 
-            $builder->add('accountAddress', 'genemu_jqueryselect2_choice', $accountAddressOptions);
+            $builder->add('customerAddress', 'genemu_jqueryselect2_choice', $customerAddressOptions);
         }
     }
 

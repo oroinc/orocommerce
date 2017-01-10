@@ -54,8 +54,8 @@ class CombinedPriceListGarbageCollector
     {
         $configCombinedPriceList = $this->configManager->get(Configuration::getConfigKeyToPriceList());
         $manager = $this->registry->getManager();
-        $manager->getRepository('OroPricingBundle:CombinedPriceListToAccount')->deleteInvalidRelations();
-        $manager->getRepository('OroPricingBundle:CombinedPriceListToAccountGroup')->deleteInvalidRelations();
+        $manager->getRepository('OroPricingBundle:CombinedPriceListToCustomer')->deleteInvalidRelations();
+        $manager->getRepository('OroPricingBundle:CombinedPriceListToCustomerGroup')->deleteInvalidRelations();
         $manager->getRepository('OroPricingBundle:CombinedPriceListToWebsite')->deleteInvalidRelations();
         $exceptPriceLists = [];
         if ($configCombinedPriceList) {

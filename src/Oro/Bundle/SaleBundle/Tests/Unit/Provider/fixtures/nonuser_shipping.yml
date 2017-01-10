@@ -2,179 +2,179 @@ nonuser_shipping_not_granted:
     userClass: Oro\Bundle\UserBundle\Entity\User
     addressType: shipping
     isGranted:
-        - ['VIEW;entity:AccountQuoteClass', null, false]
-        - ['VIEW;entity:AccountUserQuoteClass', null, false]
+        - ['VIEW;entity:CustomerQuoteClass', null, false]
+        - ['VIEW;entity:CustomerUserQuoteClass', null, false]
         - [oro_quote_address_shipping_allow_manual_backend, null, false]
-        - [oro_quote_address_shipping_account_user_use_any_backend, null, false]
-    hasAccountAddresses: ~
-    hasAccountUserAddresses: ~
+        - [oro_quote_address_shipping_customer_user_use_any_backend, null, false]
+    hasCustomerAddresses: ~
+    hasCustomerUserAddresses: ~
     hasEntity: ~
     isAddressGranted: ~
-    isAccountAddressGranted: ~
-    isAccountUserAddressGranted: ~
-nonuser_shipping_view_account_user_granted:
+    isCustomerAddressGranted: ~
+    isCustomerUserAddressGranted: ~
+nonuser_shipping_view_customer_user_granted:
     userClass: Oro\Bundle\UserBundle\Entity\User
     addressType: shipping
     isGranted:
-        - ['VIEW;entity:AccountQuoteClass', null, false]
-        - ['VIEW;entity:AccountUserQuoteClass', null, true]
-        - [oro_quote_address_shipping_account_user_use_any_backend, null, false]
-    hasAccountAddresses: ~
-    hasAccountUserAddresses: ~
+        - ['VIEW;entity:CustomerQuoteClass', null, false]
+        - ['VIEW;entity:CustomerUserQuoteClass', null, true]
+        - [oro_quote_address_shipping_customer_user_use_any_backend, null, false]
+    hasCustomerAddresses: ~
+    hasCustomerUserAddresses: ~
     hasEntity: ~
     isAddressGranted: ~
-    isAccountAddressGranted: ~
-    isAccountUserAddressGranted: ~
-nonuser_shipping_use_account_user_granted:
+    isCustomerAddressGranted: ~
+    isCustomerUserAddressGranted: ~
+nonuser_shipping_use_customer_user_granted:
     userClass: Oro\Bundle\UserBundle\Entity\User
     addressType: shipping
     isGranted:
-        - ['VIEW;entity:AccountQuoteClass', null, false]
-        - ['VIEW;entity:AccountUserQuoteClass', null, false]
-        - [oro_quote_address_shipping_account_user_use_any_backend, null, true]
-    hasAccountAddresses: ~
-    hasAccountUserAddresses: ~
+        - ['VIEW;entity:CustomerQuoteClass', null, false]
+        - ['VIEW;entity:CustomerUserQuoteClass', null, false]
+        - [oro_quote_address_shipping_customer_user_use_any_backend, null, true]
+    hasCustomerAddresses: ~
+    hasCustomerUserAddresses: ~
     hasEntity: ~
     isAddressGranted: ~
-    isAccountAddressGranted: ~
-    isAccountUserAddressGranted: ~
-nonuser_shipping_use_account_user_granted:
+    isCustomerAddressGranted: ~
+    isCustomerUserAddressGranted: ~
+nonuser_shipping_use_customer_user_granted:
     userClass: Oro\Bundle\UserBundle\Entity\User
     addressType: shipping
     isGranted:
-        - ['VIEW;entity:AccountQuoteClass', null, false]
-        - ['VIEW;entity:AccountUserQuoteClass', null, false]
-        - [oro_quote_address_shipping_account_user_use_any_backend, null, true]
-    hasAccountAddresses: ~
-    hasAccountUserAddresses: ~
+        - ['VIEW;entity:CustomerQuoteClass', null, false]
+        - ['VIEW;entity:CustomerUserQuoteClass', null, false]
+        - [oro_quote_address_shipping_customer_user_use_any_backend, null, true]
+    hasCustomerAddresses: ~
+    hasCustomerUserAddresses: ~
     hasEntity: ~
     isAddressGranted: ~
-    isAccountAddressGranted: ~
-    isAccountUserAddressGranted: ~
-nonuser_shipping_account_user_address_granted:
+    isCustomerAddressGranted: ~
+    isCustomerUserAddressGranted: ~
+nonuser_shipping_customer_user_address_granted:
     userClass: Oro\Bundle\UserBundle\Entity\User
     addressType: shipping
     isGranted:
-        - ['VIEW;entity:AccountQuoteClass', null, false]
-        - ['VIEW;entity:AccountUserQuoteClass', null, true]
-        - [oro_quote_address_shipping_account_user_use_any_backend, null, true]
-    hasAccountAddresses: ~
-    hasAccountUserAddresses: ~
+        - ['VIEW;entity:CustomerQuoteClass', null, false]
+        - ['VIEW;entity:CustomerUserQuoteClass', null, true]
+        - [oro_quote_address_shipping_customer_user_use_any_backend, null, true]
+    hasCustomerAddresses: ~
+    hasCustomerUserAddresses: ~
     hasEntity: ~
     isAddressGranted: ~
-    isAccountAddressGranted: ~
-    isAccountUserAddressGranted: ~
-nonuser_shipping_account_user_address_granted_with_entity:
+    isCustomerAddressGranted: ~
+    isCustomerUserAddressGranted: ~
+nonuser_shipping_customer_user_address_granted_with_entity:
     userClass: Oro\Bundle\UserBundle\Entity\User
     addressType: shipping
     isGranted:
-        - ['VIEW;entity:AccountQuoteClass', null, false]
-        - ['VIEW;entity:AccountUserQuoteClass', null, true]
-        - [oro_quote_address_shipping_account_user_use_any_backend, null, true]
-    hasAccountAddresses: ~
-    hasAccountUserAddresses: ~
+        - ['VIEW;entity:CustomerQuoteClass', null, false]
+        - ['VIEW;entity:CustomerUserQuoteClass', null, true]
+        - [oro_quote_address_shipping_customer_user_use_any_backend, null, true]
+    hasCustomerAddresses: ~
+    hasCustomerUserAddresses: ~
     hasEntity: true
     isAddressGranted: ~
-    isAccountAddressGranted: ~
-    isAccountUserAddressGranted: ~
-nonuser_shipping_account_user_address_granted_with_entity_and_address:
+    isCustomerAddressGranted: ~
+    isCustomerUserAddressGranted: ~
+nonuser_shipping_customer_user_address_granted_with_entity_and_address:
     userClass: Oro\Bundle\UserBundle\Entity\User
     addressType: shipping
     isGranted:
-        - ['VIEW;entity:AccountQuoteClass', null, false]
-        - ['VIEW;entity:AccountUserQuoteClass', null, true]
-        - [oro_quote_address_shipping_account_user_use_any_backend, null, true]
-    hasAccountAddresses: ~
-    hasAccountUserAddresses: true
-    hasEntity: true
-    isAddressGranted: true
-    isAccountAddressGranted: ~
-    isAccountUserAddressGranted: true
-nonuser_shipping_account_user_address_granted_with_entity_and_address:
-    userClass: Oro\Bundle\UserBundle\Entity\User
-    addressType: shipping
-    isGranted:
-        - ['VIEW;entity:AccountQuoteClass', null, false]
-        - ['VIEW;entity:AccountUserQuoteClass', null, true]
-        - [oro_quote_address_shipping_account_user_use_any_backend, null, true]
-    hasAccountAddresses: ~
-    hasAccountUserAddresses: true
+        - ['VIEW;entity:CustomerQuoteClass', null, false]
+        - ['VIEW;entity:CustomerUserQuoteClass', null, true]
+        - [oro_quote_address_shipping_customer_user_use_any_backend, null, true]
+    hasCustomerAddresses: ~
+    hasCustomerUserAddresses: true
     hasEntity: true
     isAddressGranted: true
-    isAccountAddressGranted: ~
-    isAccountUserAddressGranted: true
-nonuser_shipping_account_user_address_granted_with_manual:
+    isCustomerAddressGranted: ~
+    isCustomerUserAddressGranted: true
+nonuser_shipping_customer_user_address_granted_with_entity_and_address:
     userClass: Oro\Bundle\UserBundle\Entity\User
     addressType: shipping
     isGranted:
-        - ['VIEW;entity:AccountQuoteClass', null, false]
-        - ['VIEW;entity:AccountUserQuoteClass', null, true]
+        - ['VIEW;entity:CustomerQuoteClass', null, false]
+        - ['VIEW;entity:CustomerUserQuoteClass', null, true]
+        - [oro_quote_address_shipping_customer_user_use_any_backend, null, true]
+    hasCustomerAddresses: ~
+    hasCustomerUserAddresses: true
+    hasEntity: true
+    isAddressGranted: true
+    isCustomerAddressGranted: ~
+    isCustomerUserAddressGranted: true
+nonuser_shipping_customer_user_address_granted_with_manual:
+    userClass: Oro\Bundle\UserBundle\Entity\User
+    addressType: shipping
+    isGranted:
+        - ['VIEW;entity:CustomerQuoteClass', null, false]
+        - ['VIEW;entity:CustomerUserQuoteClass', null, true]
         - [oro_quote_address_shipping_allow_manual_backend, null, true]
-        - [oro_quote_address_shipping_account_user_use_any_backend, null, true]
-    hasAccountAddresses: ~
-    hasAccountUserAddresses: true
+        - [oro_quote_address_shipping_customer_user_use_any_backend, null, true]
+    hasCustomerAddresses: ~
+    hasCustomerUserAddresses: true
     hasEntity: ~
     isAddressGranted: true
-    isAccountAddressGranted: true
-    isAccountUserAddressGranted: true
-nonuser_shipping_account_not_granted:
+    isCustomerAddressGranted: true
+    isCustomerUserAddressGranted: true
+nonuser_shipping_customer_not_granted:
     userClass: Oro\Bundle\UserBundle\Entity\User
     addressType: shipping
     isGranted:
-        - ['VIEW;entity:AccountQuoteClass', null, true]
-        - ['VIEW;entity:AccountUserQuoteClass', null, false]
-    hasAccountAddresses: ~
-    hasAccountUserAddresses: ~
+        - ['VIEW;entity:CustomerQuoteClass', null, true]
+        - ['VIEW;entity:CustomerUserQuoteClass', null, false]
+    hasCustomerAddresses: ~
+    hasCustomerUserAddresses: ~
     hasEntity: ~
     isAddressGranted: ~
-    isAccountAddressGranted: ~
-    isAccountUserAddressGranted: ~
-nonuser_shipping_account_without_entity:
+    isCustomerAddressGranted: ~
+    isCustomerUserAddressGranted: ~
+nonuser_shipping_customer_without_entity:
     userClass: Oro\Bundle\UserBundle\Entity\User
     addressType: shipping
     isGranted:
-        - ['VIEW;entity:AccountQuoteClass', null, true]
-        - ['VIEW;entity:AccountUserQuoteClass', null, false]
-    hasAccountAddresses: ~
-    hasAccountUserAddresses: ~
+        - ['VIEW;entity:CustomerQuoteClass', null, true]
+        - ['VIEW;entity:CustomerUserQuoteClass', null, false]
+    hasCustomerAddresses: ~
+    hasCustomerUserAddresses: ~
     hasEntity: ~
     isAddressGranted: ~
-    isAccountAddressGranted: ~
-    isAccountUserAddressGranted: ~
-nonuser_shipping_account_with_entity:
+    isCustomerAddressGranted: ~
+    isCustomerUserAddressGranted: ~
+nonuser_shipping_customer_with_entity:
     userClass: Oro\Bundle\UserBundle\Entity\User
     addressType: shipping
     isGranted:
-        - ['VIEW;entity:AccountQuoteClass', null, true]
-        - ['VIEW;entity:AccountUserQuoteClass', null, false]
-    hasAccountAddresses: ~
-    hasAccountUserAddresses: ~
+        - ['VIEW;entity:CustomerQuoteClass', null, true]
+        - ['VIEW;entity:CustomerUserQuoteClass', null, false]
+    hasCustomerAddresses: ~
+    hasCustomerUserAddresses: ~
     hasEntity: true
     isAddressGranted: ~
-    isAccountAddressGranted: ~
-    isAccountUserAddressGranted: ~
-nonuser_shipping_account_with_entity_and_addresses:
+    isCustomerAddressGranted: ~
+    isCustomerUserAddressGranted: ~
+nonuser_shipping_customer_with_entity_and_addresses:
     userClass: Oro\Bundle\UserBundle\Entity\User
     addressType: shipping
     isGranted:
-        - ['VIEW;entity:AccountQuoteClass', null, true]
-        - ['VIEW;entity:AccountUserQuoteClass', null, false]
-    hasAccountAddresses: true
-    hasAccountUserAddresses: ~
+        - ['VIEW;entity:CustomerQuoteClass', null, true]
+        - ['VIEW;entity:CustomerUserQuoteClass', null, false]
+    hasCustomerAddresses: true
+    hasCustomerUserAddresses: ~
     hasEntity: true
     isAddressGranted: true
-    isAccountAddressGranted: true
-    isAccountUserAddressGranted: ~
-nonuser_shipping_account_with_manual:
+    isCustomerAddressGranted: true
+    isCustomerUserAddressGranted: ~
+nonuser_shipping_customer_with_manual:
     userClass: Oro\Bundle\UserBundle\Entity\User
     addressType: shipping
     isGranted:
-        - ['VIEW;entity:AccountQuoteClass', null, true]
-        - ['VIEW;entity:AccountUserQuoteClass', null, false]
+        - ['VIEW;entity:CustomerQuoteClass', null, true]
+        - ['VIEW;entity:CustomerUserQuoteClass', null, false]
         - [oro_quote_address_shipping_allow_manual_backend, null, true]
-    hasAccountAddresses: ~
-    hasAccountUserAddresses: ~
+    hasCustomerAddresses: ~
+    hasCustomerUserAddresses: ~
     hasEntity: ~
     isAddressGranted: true
-    isAccountAddressGranted: true
-    isAccountUserAddressGranted: true
+    isCustomerAddressGranted: true
+    isCustomerUserAddressGranted: true

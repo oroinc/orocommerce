@@ -6,7 +6,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
@@ -66,19 +66,19 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
     {
         $this->manager = $manager;
         $this->clearPreconditions();
-        /** @var CustomerUser $defaultAccountUser */
-        $defaultAccountUser = $manager->getRepository('OroCustomerBundle:CustomerUser')
-            ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
+        /** @var CustomerUser $defaultCustomerUser */
+        $defaultCustomerUser = $manager->getRepository('OroCustomerBundle:CustomerUser')
+            ->findOneBy(['username' => LoadCustomerUserData::AUTH_USER]);
         $website = $this->getReference(LoadWebsiteData::WEBSITE1);
         foreach ($this->getData() as $name => $checkoutData) {
-            /* @var $accountUser CustomerUser */
-            $accountUser = isset($checkoutData['accountUser']) ?
-                $this->getReference($checkoutData['accountUser']) :
-                $defaultAccountUser;
+            /* @var $customerUser CustomerUser */
+            $customerUser = isset($checkoutData['customerUser']) ?
+                $this->getReference($checkoutData['customerUser']) :
+                $defaultCustomerUser;
 
             $checkout = $this->createCheckout();
-            $checkout->setAccountUser($accountUser);
-            $checkout->setOrganization($accountUser->getOrganization());
+            $checkout->setCustomerUser($customerUser);
+            $checkout->setOrganization($customerUser->getOrganization());
             $checkout->setWebsite($website);
             $source = new CheckoutSource();
             /** @var CheckoutSourceEntityInterface $sourceEntity */

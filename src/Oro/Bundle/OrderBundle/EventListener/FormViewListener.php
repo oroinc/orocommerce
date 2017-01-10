@@ -46,14 +46,14 @@ class FormViewListener
     /**
      * @param BeforeListRenderEvent $event
      */
-    public function onAccountUserView(BeforeListRenderEvent $event)
+    public function onCustomerUserView(BeforeListRenderEvent $event)
     {
-        /** @var CustomerUser $accountUser */
-        $accountUser = $this->getEntityFromRequestId('OroCustomerBundle:CustomerUser');
-        if ($accountUser) {
+        /** @var CustomerUser $customerUser */
+        $customerUser = $this->getEntityFromRequestId('OroCustomerBundle:CustomerUser');
+        if ($customerUser) {
             $template = $event->getEnvironment()->render(
-                'OroOrderBundle:AccountUser:orders_view.html.twig',
-                ['entity' => $accountUser]
+                'OroOrderBundle:CustomerUser:orders_view.html.twig',
+                ['entity' => $customerUser]
             );
             $this->addSalesOrdersBlock($event->getScrollData(), $template);
         }
@@ -62,14 +62,14 @@ class FormViewListener
     /**
      * @param BeforeListRenderEvent $event
      */
-    public function onAccountView(BeforeListRenderEvent $event)
+    public function onCustomerView(BeforeListRenderEvent $event)
     {
-        /** @var Customer $account */
-        $account = $this->getEntityFromRequestId('OroCustomerBundle:Customer');
-        if ($account) {
+        /** @var Customer $customer */
+        $customer = $this->getEntityFromRequestId('OroCustomerBundle:Customer');
+        if ($customer) {
             $template = $event->getEnvironment()->render(
-                'OroOrderBundle:Account:orders_view.html.twig',
-                ['entity' => $account]
+                'OroOrderBundle:Customer:orders_view.html.twig',
+                ['entity' => $customer]
             );
             $this->addSalesOrdersBlock($event->getScrollData(), $template);
         }

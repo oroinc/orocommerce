@@ -36,8 +36,8 @@ class QuoteAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
         $this->provider = new QuoteAddressSecurityProvider(
             $this->securityFacade,
             $this->quoteAddressProvider,
-            'AccountQuoteClass',
-            'AccountUserQuoteClass'
+            'CustomerQuoteClass',
+            'CustomerUserQuoteClass'
         );
     }
 
@@ -78,53 +78,53 @@ class QuoteAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
      * @param string $userClass
      * @param string $addressType
      * @param array|null $isGranted
-     * @param bool $hasAccountAddresses
-     * @param bool $hasAccountUserAddresses
+     * @param bool $hasCustomerAddresses
+     * @param bool $hasCustomerUserAddresses
      * @param bool $hasEntity
      * @param bool $isAddressGranted
-     * @param bool $isAccountAddressGranted
-     * @param bool $isAccountUserAddressGranted
+     * @param bool $isCustomerAddressGranted
+     * @param bool $isCustomerUserAddressGranted
      */
     public function testIsAddressGranted(
         $userClass,
         $addressType,
         $isGranted,
-        $hasAccountAddresses,
-        $hasAccountUserAddresses,
+        $hasCustomerAddresses,
+        $hasCustomerUserAddresses,
         $hasEntity,
         $isAddressGranted,
-        $isAccountAddressGranted,
-        $isAccountUserAddressGranted
+        $isCustomerAddressGranted,
+        $isCustomerUserAddressGranted
     ) {
-        $this->quoteAddressProvider->expects($this->any())->method('getAccountAddresses')
-            ->willReturn($hasAccountAddresses);
-        $this->quoteAddressProvider->expects($this->any())->method('getAccountUserAddresses')
-            ->willReturn($hasAccountUserAddresses);
+        $this->quoteAddressProvider->expects($this->any())->method('getCustomerAddresses')
+            ->willReturn($hasCustomerAddresses);
+        $this->quoteAddressProvider->expects($this->any())->method('getCustomerUserAddresses')
+            ->willReturn($hasCustomerUserAddresses);
 
         $this->securityFacade->expects($this->any())->method('getLoggedUser')->willReturn(new $userClass);
         $this->securityFacade->expects($this->any())->method('isGranted')->with($this->isType('string'))
             ->will($this->returnValueMap((array)$isGranted));
 
         $quote = null;
-        $account = null;
-        $accountUser = null;
+        $customer = null;
+        $customerUser = null;
         if ($hasEntity) {
-            $account = new Customer();
-            $accountUser = new CustomerUser();
+            $customer = new Customer();
+            $customerUser = new CustomerUser();
         }
-        $quote = (new Quote())->setAccount($account)->setAccountUser($accountUser);
+        $quote = (new Quote())->setCustomer($customer)->setCustomerUser($customerUser);
 
         $this->assertEquals(
             $isAddressGranted,
             $this->provider->isAddressGranted($quote, $addressType)
         );
         $this->assertEquals(
-            $isAccountAddressGranted,
-            $this->provider->isAccountAddressGranted($addressType, $account)
+            $isCustomerAddressGranted,
+            $this->provider->isCustomerAddressGranted($addressType, $customer)
         );
         $this->assertEquals(
-            $isAccountUserAddressGranted,
-            $this->provider->isAccountUserAddressGranted($addressType, $accountUser)
+            $isCustomerUserAddressGranted,
+            $this->provider->isCustomerUserAddressGranted($addressType, $customerUser)
         );
     }
 

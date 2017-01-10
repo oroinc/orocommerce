@@ -73,11 +73,11 @@ class NotificationHelperTest extends \PHPUnit_Framework_TestCase
             ->method('createEmailModel')
             ->willReturn(new Email());
 
-        $accountUser = new CustomerUser();
-        $accountUser->setEmail('test@example.com');
+        $customerUser = new CustomerUser();
+        $customerUser->setEmail('test@example.com');
 
         /** @var Quote $quote */
-        $quote = $this->getEntity(self::QUOTE_CLASS_NAME, ['id' => 42, 'accountUser' => $accountUser]);
+        $quote = $this->getEntity(self::QUOTE_CLASS_NAME, ['id' => 42, 'customerUser' => $customerUser]);
 
         $this->assertRepositoryCalled(self::EMAIL_TEMPLATE_CLASS_NAME);
         $this->assertEquals(

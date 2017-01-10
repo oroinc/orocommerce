@@ -26,22 +26,22 @@ class LoadPaymentTermData extends AbstractFixture implements DependentFixtureInt
     protected $data = [
         [
             'label' => self::TERM_LABEL_NET_10,
-            'accounts' => ['account.level_1'],
-            'groups' => ['account_group.group1']
+            'customers' => ['customer.level_1'],
+            'groups' => ['customer_group.group1']
         ],
         [
             'label' => self::TERM_LABEL_NET_20,
-            'accounts' => ['account.level_1.2'],
+            'customers' => ['customer.level_1.2'],
             'groups' => [],
         ],
         [
             'label' => self::TERM_LABEL_NET_30,
-            'accounts' => ['account.level_1.1'],
-            'groups' => ['account_group.group2'],
+            'customers' => ['customer.level_1.1'],
+            'groups' => ['customer_group.group2'],
         ],
         [
             'label' => self::TERM_LABEL_NET_40,
-            'accounts' => [],
+            'customers' => [],
             'groups' => [],
         ],
     ];
@@ -52,7 +52,7 @@ class LoadPaymentTermData extends AbstractFixture implements DependentFixtureInt
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts',
+            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers',
             'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups'
         ];
     }
@@ -72,8 +72,8 @@ class LoadPaymentTermData extends AbstractFixture implements DependentFixtureInt
                 $accessor->setPaymentTerm($this->getReference($groupName), $paymentTerm);
             }
 
-            foreach ($paymentTermData['accounts'] as $accountName) {
-                $accessor->setPaymentTerm($this->getReference($accountName), $paymentTerm);
+            foreach ($paymentTermData['customers'] as $customerName) {
+                $accessor->setPaymentTerm($this->getReference($customerName), $paymentTerm);
             }
             $manager->persist($paymentTerm);
             $this->addReference(static::PAYMENT_TERM_REFERENCE_PREFIX . $paymentTermData['label'], $paymentTerm);

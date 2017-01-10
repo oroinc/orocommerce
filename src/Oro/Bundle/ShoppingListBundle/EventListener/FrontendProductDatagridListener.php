@@ -77,8 +77,8 @@ class FrontendProductDatagridListener
      */
     public function onResultAfter(SearchResultAfter $event)
     {
-        $accountUser = $this->getLoggedAccountUser();
-        if (!$accountUser) {
+        $customerUser = $this->getLoggedCustomerUser();
+        if (!$customerUser) {
             return;
         }
 
@@ -89,7 +89,7 @@ class FrontendProductDatagridListener
             return;
         }
 
-        $groupedUnits = $this->getGroupedLineItems($records, $accountUser, $shoppingList);
+        $groupedUnits = $this->getGroupedLineItems($records, $customerUser, $shoppingList);
         foreach ($records as $record) {
             $productId = $record->getValue('id');
             if (array_key_exists($productId, $groupedUnits)) {
@@ -106,13 +106,13 @@ class FrontendProductDatagridListener
         /** @var ShoppingListRepository $repository */
         $repository = $this->registry->getRepository('OroShoppingListBundle:ShoppingList');
 
-        return $repository->findAvailableForAccountUser($this->aclHelper);
+        return $repository->findAvailableForCustomerUser($this->aclHelper);
     }
 
     /**
      * @return CustomerUser|null
      */
-    protected function getLoggedAccountUser()
+    protected function getLoggedCustomerUser()
     {
         $token = $this->tokenStorage->getToken(TokenInterface::class);
         if (!$token || !($token->getUser() instanceof CustomerUser)) {
@@ -124,13 +124,13 @@ class FrontendProductDatagridListener
 
     /**
      * @param ResultRecord[] $records
-     * @param CustomerUser    $accountUser
+     * @param CustomerUser    $customerUser
      * @param ShoppingList   $currentShoppingList
      * @return array
      */
     protected function getGroupedLineItems(
         array $records,
-        CustomerUser $accountUser,
+        CustomerUser $customerUser,
         ShoppingList $currentShoppingList
     ) {
         /** @var LineItemRepository $lineItemRepository */
@@ -143,7 +143,7 @@ class FrontendProductDatagridListener
                 },
                 $records
             ),
-            $accountUser
+            $customerUser
         );
 
         $groupedUnits       = [];

@@ -57,7 +57,7 @@ class ShoppingListTotalRepositoryTest extends WebTestCase
         $this->assertFalse($invalidTotal->isValid());
     }
 
-    public function testInvalidateByAccountUsers()
+    public function testInvalidateByCustomerUsers()
     {
         $manager = $this->registry->getManagerForClass('OroShoppingListBundle:ShoppingListTotal');
         /** @var ShoppingListTotalRepository $repository */
@@ -68,8 +68,8 @@ class ShoppingListTotalRepositoryTest extends WebTestCase
         $shoppingListTotal->setValid(true);
         $manager->flush();
 
-        $repository->invalidateByAccounts(
-            [$shoppingListTotal->getShoppingList()->getAccount()->getId()],
+        $repository->invalidateByCustomers(
+            [$shoppingListTotal->getShoppingList()->getCustomer()->getId()],
             $shoppingListTotal->getShoppingList()->getWebsite()
         );
 

@@ -92,8 +92,8 @@ class OrderTaxListenerTest extends WebTestCase
                 $this->doctrine->getRepository('OroOrganizationBundle:Organization')->findOneBy([])
             );
         }
-        /** @var CustomerUser $accountUser */
-        $accountUser = $this->doctrine->getRepository('OroCustomerBundle:CustomerUser')->findOneBy([]);
+        /** @var CustomerUser $customerUser */
+        $customerUser = $this->doctrine->getRepository('OroCustomerBundle:CustomerUser')->findOneBy([]);
 
         $order = new Order();
         $order
@@ -104,8 +104,8 @@ class OrderTaxListenerTest extends WebTestCase
             ->setCurrency('EUR')
             ->setPoNumber('PO_NUM')
             ->setSubtotal('1500')
-            ->setAccount($accountUser->getAccount())
-            ->setAccountUser($accountUser);
+            ->setCustomer($customerUser->getCustomer())
+            ->setCustomerUser($customerUser);
 
         $this->orderEm->persist($order);
 

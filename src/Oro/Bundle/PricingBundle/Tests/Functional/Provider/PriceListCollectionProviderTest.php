@@ -118,35 +118,35 @@ class PriceListCollectionProviderTest extends WebTestCase
     }
 
     /**
-     * @dataProvider testGetPriceListsByAccountGroupDataProvider
+     * @dataProvider testGetPriceListsByCustomerGroupDataProvider
      *
-     * @param string $accountGroupReference
+     * @param string $customerGroupReference
      * @param string $websiteReference
      * @param array $expectedPriceLists
      */
-    public function testGetPriceListsByAccountGroup(
-        $accountGroupReference,
+    public function testGetPriceListsByCustomerGroup(
+        $customerGroupReference,
         $websiteReference,
         array $expectedPriceLists
     ) {
         $expectedPriceLists = $this->resolveExpectedPriceLists($expectedPriceLists);
 
-        /** @var CustomerGroup $accountGroup */
-        $accountGroup = $this->getReference($accountGroupReference);
+        /** @var CustomerGroup $customerGroup */
+        $customerGroup = $this->getReference($customerGroupReference);
         /** @var Website $website */
         $website = $this->getReference($websiteReference);
-        $result = $this->provider->getPriceListsByAccountGroup($accountGroup, $website);
+        $result = $this->provider->getPriceListsByCustomerGroup($customerGroup, $website);
         $this->assertEquals($expectedPriceLists, $this->resolveResult($result));
     }
 
     /**
      * @return array
      */
-    public function testGetPriceListsByAccountGroupDataProvider()
+    public function testGetPriceListsByCustomerGroupDataProvider()
     {
         return [
             'all fallbacks' => [
-                'accountGroupReference' => 'account_group.group1',
+                'customerGroupReference' => 'customer_group.group1',
                 'websiteReference' => 'US',
                 'expectedPriceListNames' => [
                     /** From group */
@@ -178,7 +178,7 @@ class PriceListCollectionProviderTest extends WebTestCase
                 ],
             ],
             'no group settings only website with blocked fallback' => [
-                'accountGroupReference' => 'account_group.group1',
+                'customerGroupReference' => 'customer_group.group1',
                 'websiteReference' => 'Canada',
                 'expectedPriceListNames' => [
                     /** From group */
@@ -192,7 +192,7 @@ class PriceListCollectionProviderTest extends WebTestCase
                 ],
             ],
             'group with blocked fallback' => [
-                'accountGroupReference' => 'account_group.group2',
+                'customerGroupReference' => 'customer_group.group2',
                 'websiteReference' => 'US',
                 'expectedPriceListNames' => [
                     /** From group */
@@ -204,12 +204,12 @@ class PriceListCollectionProviderTest extends WebTestCase
                 ],
             ],
             'group with blocked fallback no group price lists' => [
-                'accountGroupReference' => 'account_group.group2',
+                'customerGroupReference' => 'customer_group.group2',
                 'websiteReference' => 'Canada',
                 'expectedPriceListNames' => [],
             ],
             'group without settings' => [
-                'accountGroupReference' => 'account_group.group3',
+                'customerGroupReference' => 'customer_group.group3',
                 'websiteReference' => 'US',
                 'expectedPriceListNames' => [
                     /** From Website */
@@ -234,35 +234,35 @@ class PriceListCollectionProviderTest extends WebTestCase
     }
 
     /**
-     * @dataProvider testGetPriceListsByAccountDataProvider
+     * @dataProvider testGetPriceListsByCustomerDataProvider
      *
-     * @param string $accountReference
+     * @param string $customerReference
      * @param string $websiteReference
      * @param array $expectedPriceLists
      */
-    public function testGetPriceListsByAccount(
-        $accountReference,
+    public function testGetPriceListsByCustomer(
+        $customerReference,
         $websiteReference,
         array $expectedPriceLists
     ) {
         $expectedPriceLists = $this->resolveExpectedPriceLists($expectedPriceLists);
 
-        /** @var Customer $account */
-        $account = $this->getReference($accountReference);
+        /** @var Customer $customer */
+        $customer = $this->getReference($customerReference);
         /** @var Website $website */
         $website = $this->getReference($websiteReference);
-        $result = $this->provider->getPriceListsByAccount($account, $website);
+        $result = $this->provider->getPriceListsByCustomer($customer, $website);
         $this->assertEquals($expectedPriceLists, $this->resolveResult($result));
     }
 
     /**
      * @return array
      */
-    public function testGetPriceListsByAccountDataProvider()
+    public function testGetPriceListsByCustomerDataProvider()
     {
         return [
-            'account.orphan Canada' => [
-                'accountReference' => 'account.orphan',
+            'customer.orphan Canada' => [
+                'customerReference' => 'customer.orphan',
                 'websiteReference' => 'Canada',
                 'expectedPriceListNames' => [
                     /** From Website */
@@ -273,8 +273,8 @@ class PriceListCollectionProviderTest extends WebTestCase
                     /** End From Website */
                 ],
             ],
-            'account.level_1.2 US' => [
-                'accountReference' => 'account.level_1.2',
+            'customer.level_1.2 US' => [
+                'customerReference' => 'customer.level_1.2',
                 'websiteReference' => 'US',
                 'expectedPriceListNames' => [
                     [
@@ -283,8 +283,8 @@ class PriceListCollectionProviderTest extends WebTestCase
                     ],
                 ],
             ],
-            'account.level_1.2 Canada' => [
-                'accountReference' => 'account.level_1.2',
+            'customer.level_1.2 Canada' => [
+                'customerReference' => 'customer.level_1.2',
                 'websiteReference' => 'Canada',
                 'expectedPriceListNames' => [
                 ],
@@ -293,46 +293,46 @@ class PriceListCollectionProviderTest extends WebTestCase
     }
 
     /**
-     * @dataProvider getPriceListsByAccountForAccountWithoutGroupDataProvider
+     * @dataProvider getPriceListsByCustomerForCustomerWithoutGroupDataProvider
      *
      * @param string $website
      * @param array $expectedPriceLists
      */
-    public function testGetPriceListsByAccountForAccountWithoutGroup($website, array $expectedPriceLists)
+    public function testGetPriceListsByCustomerForCustomerWithoutGroup($website, array $expectedPriceLists)
     {
-        /** @var Customer $account */
-        $account = $this->getReference('account.level_1_1');
-        $this->assertNull($account->getGroup());
+        /** @var Customer $customer */
+        $customer = $this->getReference('customer.level_1_1');
+        $this->assertNull($customer->getGroup());
 
         /** @var Website $website */
         $website = $this->getReference($website);
 
         $expectedPriceLists = $this->resolveExpectedPriceLists($expectedPriceLists);
-        $result = $this->provider->getPriceListsByAccount($account, $website);
+        $result = $this->provider->getPriceListsByCustomer($customer, $website);
         $this->assertEquals($expectedPriceLists, $this->resolveResult($result));
     }
 
     /**
      * @return array
      */
-    public function getPriceListsByAccountForAccountWithoutGroupDataProvider()
+    public function getPriceListsByCustomerForCustomerWithoutGroupDataProvider()
     {
         return [
-            'current account only' => [
+            'current customer only' => [
                 'websiteReference' => 'Canada',
                 'expectedPriceLists' => [
-                    /** From account */
+                    /** From customer */
                     [
                         'priceList' => 'price_list_1',
                         'mergeAllowed' => true,
                     ],
-                    /** End From account */
+                    /** End From customer */
                 ]
             ],
-            'account group fallback' => [
+            'customer group fallback' => [
                 'websiteReference' => 'US',
                 'expectedPriceLists' => [
-                    /** From account */
+                    /** From customer */
                     [
                         'priceList' => 'price_list_2',
                         'mergeAllowed' => false,
@@ -341,7 +341,7 @@ class PriceListCollectionProviderTest extends WebTestCase
                         'priceList' => 'price_list_1',
                         'mergeAllowed' => true,
                     ],
-                    /** End From account */
+                    /** End From customer */
                     /** From group */
                     /** End From Group */
                     /** From Website */

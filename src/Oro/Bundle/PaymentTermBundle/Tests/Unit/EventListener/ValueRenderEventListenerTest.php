@@ -48,7 +48,7 @@ class ValueRenderEventListenerTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testBeforeValueRenderNotAccount()
+    public function testBeforeValueRenderNotCustomer()
     {
         $event = new ValueRenderEvent(
             new \stdClass(),
@@ -74,7 +74,7 @@ class ValueRenderEventListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertSame('value', $event->getFieldViewValue());
     }
 
-    public function testBeforeValueRenderFieldAccountHasDefaultPaymentTerm()
+    public function testBeforeValueRenderFieldCustomerHasDefaultPaymentTerm()
     {
         $event = new ValueRenderEvent(
             new Customer(),
@@ -90,7 +90,7 @@ class ValueRenderEventListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertSame(['title' => 'pt', 'link' => 'oro_payment_term_view-1'], $event->getFieldViewValue());
     }
 
-    public function testBeforeValueRenderFieldAccountHasNotDefaultPaymentTermAndWithoutGroup()
+    public function testBeforeValueRenderFieldCustomerHasNotDefaultPaymentTermAndWithoutGroup()
     {
         $event = new ValueRenderEvent(
             new Customer(),
@@ -105,7 +105,7 @@ class ValueRenderEventListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($event->getFieldViewValue());
     }
 
-    public function testBeforeValueRenderFieldAccountHasNotDefaultPaymentTermAndEmptyWithGroupAssociations()
+    public function testBeforeValueRenderFieldCustomerHasNotDefaultPaymentTermAndEmptyWithGroupAssociations()
     {
         $entity = (new Customer())->setGroup(new CustomerGroup());
         $event = new ValueRenderEvent(
@@ -123,7 +123,7 @@ class ValueRenderEventListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($event->getFieldViewValue());
     }
 
-    public function testBeforeValueRenderFieldAccountHasNotDefaultPaymentTermAndWithGroupAssociationsWithoutGroupPT()
+    public function testBeforeValueRenderFieldCustomerHasNotDefaultPaymentTermAndWithGroupAssociationsWithoutGroupPT()
     {
         $entity = (new Customer())->setGroup(new CustomerGroup());
         $event = new ValueRenderEvent(
@@ -141,7 +141,7 @@ class ValueRenderEventListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($event->getFieldViewValue());
     }
 
-    public function testBeforeValueRenderFieldAccountHasNotDefaultPaymentTermAndWithGroupAssociations()
+    public function testBeforeValueRenderFieldCustomerHasNotDefaultPaymentTermAndWithGroupAssociations()
     {
         $entity = (new Customer())->setGroup(new CustomerGroup());
         $event = new ValueRenderEvent(
@@ -160,7 +160,7 @@ class ValueRenderEventListenerTest extends \PHPUnit_Framework_TestCase
         $this->valueRenderEventListener->beforeValueRender($event);
         $this->assertEquals(
             [
-                'title' => '[trans]oro.paymentterm.account.account_group_defined[/trans]',
+                'title' => '[trans]oro.paymentterm.customer.customer_group_defined[/trans]',
                 'link' => 'oro_payment_term_view-4',
             ],
             $event->getFieldViewValue()

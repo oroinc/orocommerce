@@ -34,7 +34,7 @@ class FrontendCustomerUserRoleFormProvider extends AbstractFormProvider
     }
 
     /**
-     * Get form accessor with account user role form
+     * Get form accessor with customer user role form
      *
      * @param CustomerUserRole $customerUserRole
      *

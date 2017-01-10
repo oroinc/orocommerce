@@ -49,7 +49,7 @@ class AjaxLineItemController extends Controller
         $lineItem = (new LineItem())
             ->setProduct($product)
             ->setShoppingList($shoppingList)
-            ->setAccountUser($shoppingList->getAccountUser())
+            ->setCustomerUser($shoppingList->getCustomerUser())
             ->setOrganization($shoppingList->getOrganization());
 
         if ($parentProduct && $parentProduct->isConfigurable()) {

@@ -26,17 +26,17 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
     const ROLE3 = 'rfp-role3';
     const ROLE4 = 'rfp-role4';
 
-    const PARENT_ACCOUNT = 'rfp-parent-account';
-    const ACCOUNT1 = 'rfp-account1';
-    const ACCOUNT2 = 'rfp-account2';
+    const PARENT_ACCOUNT = 'rfp-parent-customer';
+    const ACCOUNT1 = 'rfp-customer1';
+    const ACCOUNT2 = 'rfp-customer2';
 
-    const ACCOUNT1_USER1    = 'rfp-account1-user1@example.com';
-    const ACCOUNT1_USER2    = 'rfp-account1-user2@example.com';
-    const ACCOUNT1_USER3    = 'rfp-account1-user3@example.com';
-    const ACCOUNT2_USER1    = 'rfp-account2-user1@example.com';
-    const ACCOUNT2_USER2    = 'rfp-account2-user2@example.com';
-    const PARENT_ACCOUNT_USER1    = 'rfp-parent-account-user1@example.com';
-    const PARENT_ACCOUNT_USER2    = 'rfp-parent-account-user2@example.com';
+    const ACCOUNT1_USER1    = 'rfp-customer1-user1@example.com';
+    const ACCOUNT1_USER2    = 'rfp-customer1-user2@example.com';
+    const ACCOUNT1_USER3    = 'rfp-customer1-user3@example.com';
+    const ACCOUNT2_USER1    = 'rfp-customer2-user1@example.com';
+    const ACCOUNT2_USER2    = 'rfp-customer2-user2@example.com';
+    const PARENT_ACCOUNT_USER1    = 'rfp-parent-customer-user1@example.com';
+    const PARENT_ACCOUNT_USER2    = 'rfp-parent-customer-user2@example.com';
 
     /**
      * @var array
@@ -48,7 +48,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
                 'acls'  => ['VIEW_BASIC', 'CREATE_BASIC', 'EDIT_BASIC'],
             ],
             [
-                'class' => 'oro_customer.entity.account_user.class',
+                'class' => 'oro_customer.entity.customer_user.class',
                 'acls'  => [],
             ],
         ],
@@ -58,7 +58,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
                 'acls'  => ['VIEW_LOCAL'],
             ],
             [
-                'class' => 'oro_customer.entity.account_user.class',
+                'class' => 'oro_customer.entity.customer_user.class',
                 'acls'  => ['VIEW_LOCAL'],
             ],
         ],
@@ -68,7 +68,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
                 'acls'  => ['VIEW_BASIC'],
             ],
             [
-                'class' => 'oro_customer.entity.account_user.class',
+                'class' => 'oro_customer.entity.customer_user.class',
                 'acls'  => ['VIEW_LOCAL'],
             ],
         ],
@@ -78,7 +78,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
                 'acls'  => ['VIEW_DEEP', 'CREATE_DEEP', 'EDIT_DEEP'],
             ],
             [
-                'class' => 'oro_customer.entity.account_user.class',
+                'class' => 'oro_customer.entity.customer_user.class',
                 'acls'  => ['VIEW_DEEP'],
             ],
         ]
@@ -87,7 +87,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
     /**
      * @var array
      */
-    protected $accounts = [
+    protected $customers = [
         [
             'name' => self::PARENT_ACCOUNT,
         ],
@@ -104,13 +104,13 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
     /**
      * @var array
      */
-    protected $accountUsers = [
+    protected $customerUsers = [
         [
             'email'     => self::ACCOUNT1_USER1,
             'firstname' => 'User1FN',
             'lastname'  => 'User1LN',
             'password'  => self::ACCOUNT1_USER1,
-            'account'   => self::ACCOUNT1,
+            'customer'   => self::ACCOUNT1,
             'role'      => self::ROLE1,
         ],
         [
@@ -118,7 +118,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
             'firstname' => 'User2FN',
             'lastname'  => 'User2LN',
             'password'  => self::ACCOUNT1_USER2,
-            'account'   => self::ACCOUNT1,
+            'customer'   => self::ACCOUNT1,
             'role'      => self::ROLE2,
         ],
         [
@@ -126,7 +126,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
             'firstname' => 'User3FN',
             'lastname'  => 'User3LN',
             'password'  => self::ACCOUNT1_USER3,
-            'account'   => self::ACCOUNT1,
+            'customer'   => self::ACCOUNT1,
             'role'      => self::ROLE3,
         ],
         [
@@ -134,7 +134,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
             'firstname' => 'User21FN',
             'lastname'  => 'User21LN',
             'password'  => self::ACCOUNT2_USER1,
-            'account'   => self::ACCOUNT2,
+            'customer'   => self::ACCOUNT2,
             'role'      => self::ROLE1,
         ],
         [
@@ -142,7 +142,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
             'firstname' => 'User22FN',
             'lastname'  => 'User22LN',
             'password'  => self::ACCOUNT2_USER2,
-            'account'   => self::ACCOUNT2,
+            'customer'   => self::ACCOUNT2,
             'role'      => self::ROLE4,
         ],
         [
@@ -150,7 +150,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
             'firstname' => 'PAUser1FN',
             'lastname'  => 'PAUser1LN',
             'password'  => self::PARENT_ACCOUNT_USER1,
-            'account'   => self::PARENT_ACCOUNT,
+            'customer'   => self::PARENT_ACCOUNT,
             'role'      => self::ROLE4,
         ],
         [
@@ -158,7 +158,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
             'firstname' => 'PAUser2FN',
             'lastname'  => 'PAUser2LN',
             'password'  => self::PARENT_ACCOUNT_USER2,
-            'account'   => self::PARENT_ACCOUNT,
+            'customer'   => self::PARENT_ACCOUNT,
             'role'      => self::ROLE2,
         ],
     ];
@@ -190,30 +190,30 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
     {
         $this->loadUsers($manager);
         $this->loadRoles($manager);
-        $this->loadAccounts($manager);
-        $this->loadAccountUsers($manager);
+        $this->loadCustomers($manager);
+        $this->loadCustomerUsers($manager);
     }
 
     /**
      * @param ObjectManager $manager
      */
-    protected function loadAccounts(ObjectManager $manager)
+    protected function loadCustomers(ObjectManager $manager)
     {
         $defaultUser    = $this->getUser($manager);
         $organization   = $defaultUser->getOrganization();
 
-        foreach ($this->accounts as $item) {
-            $account = new Customer();
-            $account
+        foreach ($this->customers as $item) {
+            $customer = new Customer();
+            $customer
                 ->setName($item['name'])
                 ->setOrganization($organization)
                 ->setOwner($defaultUser);
             if (isset($item['parent'])) {
-                $account->setParent($this->getReference($item['parent']));
+                $customer->setParent($this->getReference($item['parent']));
             }
-            $manager->persist($account);
+            $manager->persist($customer);
 
-            $this->addReference($item['name'], $account);
+            $this->addReference($item['name'], $customer);
         }
 
         $manager->flush();
@@ -283,21 +283,21 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
     /**
      * @param ObjectManager $manager
      */
-    protected function loadAccountUsers(ObjectManager $manager)
+    protected function loadCustomerUsers(ObjectManager $manager)
     {
         /* @var $userManager CustomerUserManager */
-        $userManager = $this->container->get('oro_account_user.manager');
+        $userManager = $this->container->get('oro_customer_user.manager');
 
         $defaultUser    = $this->getUser($manager);
         $organization   = $defaultUser->getOrganization();
 
-        foreach ($this->accountUsers as $item) {
-            /* @var $accountUser CustomerUser */
-            $accountUser = $userManager->createUser();
+        foreach ($this->customerUsers as $item) {
+            /* @var $customerUser CustomerUser */
+            $customerUser = $userManager->createUser();
 
-            $accountUser
+            $customerUser
                 ->setEmail($item['email'])
-                ->setAccount($this->getReference($item['account']))
+                ->setCustomer($this->getReference($item['customer']))
                 ->setOwner($defaultUser)
                 ->setFirstName($item['firstname'])
                 ->setLastName($item['lastname'])
@@ -310,9 +310,9 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
                 ->setEnabled(true)
             ;
 
-            $userManager->updateUser($accountUser);
+            $userManager->updateUser($customerUser);
 
-            $this->setReference($item['email'], $accountUser);
+            $this->setReference($item['email'], $customerUser);
         }
     }
 
