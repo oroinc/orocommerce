@@ -2,15 +2,18 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
-
-use Oro\Bundle\ProductBundle\Form\Type\ProductCustomVariantFieldsChoiceType;
+use Oro\Bundle\FormBundle\Form\Type\CollectionType as OroCollectionType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductVariantFieldType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductCustomVariantFieldsCollectionType;
 use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 
-class ProductCustomVariantFieldsChoiceTypeTest extends FormIntegrationTestCase
+use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Form\Test\FormIntegrationTestCase;
+
+class ProductCustomVariantFieldsCollectionTypeTest extends FormIntegrationTestCase
 {
     /**
-     * @var ProductCustomVariantFieldsChoiceType
+     * @var ProductCustomVariantFieldsCollectionType
      */
     protected $formType;
 
@@ -58,7 +61,60 @@ class ProductCustomVariantFieldsChoiceTypeTest extends FormIntegrationTestCase
             'label' => 'Some Text Label',
             'is_serialized' => false,
         ],
+    ];
 
+    /**
+     * @var array
+     */
+    protected $submitCustomVariantFields = [
+        'size' => [
+            'size' => [
+                'priority' => 0,
+                'is_selected' => true,
+            ],
+        ],
+        'color' => [
+            'color' => [
+                'priority' => 1,
+                'is_selected' => true,
+            ],
+        ],
+        'boolValue' => [
+            'boolValue' => [
+                'priority' => 2,
+                'is_selected' => true,
+            ],
+        ],
+        'boolSerializedValue' => [
+            'boolSerializedValue' => [
+                'priority' => 3,
+                'is_selected' => true,
+            ],
+        ],
+        'textValue' => [
+            'textValue' => [
+                'priority' => 4,
+                'is_selected' => true,
+            ],
+        ],
+    ];
+
+    /**
+     * @var array
+     */
+    protected $emptyFieldsValues = [
+        'size' => [
+            'priority' => 9999,
+            'is_selected' => false,
+        ],
+        'color' => [
+            'priority' => 9999,
+            'is_selected' => false,
+        ],
+        'boolValue' => [
+            'priority' => 9999,
+            'is_selected' => false,
+        ]
     ];
 
     /**
@@ -72,10 +128,26 @@ class ProductCustomVariantFieldsChoiceTypeTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->formType = new ProductCustomVariantFieldsChoiceType(
+        $this->formType = new ProductCustomVariantFieldsCollectionType(
             $this->customFieldProvider,
             $this->productClass
         );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    protected function getExtensions()
+    {
+        return [
+            new PreloadedExtension(
+                [
+                    OroCollectionType::NAME => new OroCollectionType(),
+                    ProductVariantFieldType::NAME => new ProductVariantFieldType(),
+                ],
+                []
+            )
+        ];
     }
 
     /**
@@ -92,7 +164,7 @@ class ProductCustomVariantFieldsChoiceTypeTest extends FormIntegrationTestCase
 
         $form = $this->factory->create($this->formType);
 
-        $this->assertNull($form->getData());
+        $this->assertEquals($this->emptyFieldsValues, $form->getData());
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
         $this->assertEquals($expectedData, $form->getData());
@@ -109,47 +181,41 @@ class ProductCustomVariantFieldsChoiceTypeTest extends FormIntegrationTestCase
                 'expectedData' => []
             ],
             'size (enum)' => [
-                'submittedData' => [
-                    $this->exampleCustomVariantFields['size']['name']
-                ],
+                'submittedData' => $this->submitCustomVariantFields['size'],
                 'expectedData' => [
                     $this->exampleCustomVariantFields['size']['name']
                 ]
             ],
             'size&color (enum)' => [
-                'submittedData' => [
-                    $this->exampleCustomVariantFields['size']['name'],
-                    $this->exampleCustomVariantFields['color']['name']
-                ],
+                'submittedData' => array_merge(
+                    $this->submitCustomVariantFields['size'],
+                    $this->submitCustomVariantFields['color']
+                ),
                 'expectedData' => [
                     $this->exampleCustomVariantFields['size']['name'],
                     $this->exampleCustomVariantFields['color']['name']
                 ]
             ],
             'boolValue (bool)' => [
-                'submittedData' => [
-                    $this->exampleCustomVariantFields['boolValue']['name'],
-                ],
+                'submittedData' => $this->submitCustomVariantFields['boolValue'],
                 'expectedData' => [
                     $this->exampleCustomVariantFields['boolValue']['name'],
                 ]
             ],
             'text value is not allowed' => [
-                'submittedData' => [
-                    $this->exampleCustomVariantFields['textValue']['name'],
-                ],
-                'expectedData' => null
+                'submittedData' => $this->submitCustomVariantFields['textValue'],
+                'expectedData' => []
             ],
         ];
     }
 
     public function testGetParent()
     {
-        $this->assertEquals('choice', $this->formType->getParent());
+        $this->assertEquals('oro_collection', $this->formType->getParent());
     }
 
     public function testGetName()
     {
-        $this->assertEquals(ProductCustomVariantFieldsChoiceType::NAME, $this->formType->getName());
+        $this->assertEquals(ProductCustomVariantFieldsCollectionType::NAME, $this->formType->getName());
     }
 }

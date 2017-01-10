@@ -2,11 +2,12 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
-use Symfony\Component\Form\ChoiceList\Factory\ChoiceListFactoryInterface;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\EntityExtendBundle\Form\Type\EnumSelectType;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -24,15 +25,17 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
     /** @var FrontendVariantFiledType */
     protected $type;
 
-    /** @var CustomFieldProvider|\PHPUnit_Framework_MockObject_MockObject $customFieldProvider */
+    /** @var CustomFieldProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $customFieldProvider;
+
+    /** @var ProductVariantAvailabilityProvider|\PHPUnit_Framework_MockObject_MockObject */
+    protected $productVariantAvailabilityProvider;
 
     /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->markTestIncomplete('Will be fixed in BB-6736');
         parent::setUp();
 
         /** @var CustomFieldProvider|\PHPUnit_Framework_MockObject_MockObject $customFieldProvider */
@@ -40,7 +43,23 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->type = new FrontendVariantFiledType($this->customFieldProvider, self::PRODUCT_CLASS);
+        $this->productVariantAvailabilityProvider = $this->getMockBuilder(ProductVariantAvailabilityProvider::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->type = new FrontendVariantFiledType(
+            $this->customFieldProvider,
+            $this->productVariantAvailabilityProvider,
+            self::PRODUCT_CLASS
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function tearDown()
+    {
+        unset($this->productVariantAvailabilityProvider, $this->customFieldProvider, $this->type);
     }
 
     public function testGetName()
@@ -64,8 +83,10 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
             'product' => $product,
         ];
 
-        $form = $this->factory->create($this->type, null, $options);
+        $form = $this->factory->create($this->type, [], $options);
 
+        $this->assertCount(1, $form->getConfig()->getEventDispatcher()->getListeners(FormEvents::PRE_SET_DATA));
+        $this->assertCount(2, $form->getConfig()->getEventDispatcher()->getListeners(FormEvents::PRE_SUBMIT));
         $this->assertFalse($form->has(self::FIELD_COLOR));
         $this->assertFalse($form->has(self::FIELD_NEW));
     }
@@ -95,16 +116,24 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
                 ]
             ]);
 
-        $form = $this->factory->create($this->type, null, $options);
+        $this->productVariantAvailabilityProvider->expects($this->once())
+            ->method('getVariantFieldsWithAvailability')
+            ->with($product, [])
+            ->willReturn([
+                self::FIELD_COLOR => [
+                    'red' => false,
+                    'green' => true
+                ],
+                self::FIELD_NEW => [true, false]
+            ]);
+
+        $form = $this->factory->create($this->type, [], $options);
 
         $this->assertTrue($form->has(self::FIELD_COLOR));
         $this->assertTrue($form->has(self::FIELD_NEW));
 
-        $colorField = $form->get(self::FIELD_COLOR);
-        $newField = $form->get(self::FIELD_NEW);
-
-        $colorConfig = $colorField->getConfig();
-        $newConfig = $newField->getConfig();
+        $colorConfig = $form->get(self::FIELD_COLOR)->getConfig();
+        $newConfig = $form->get(self::FIELD_NEW)->getConfig();
 
         $this->assertTrue($colorConfig->getOption('required'));
         $this->assertFalse($colorConfig->getOption('placeholder'));
@@ -114,6 +143,7 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
             $colorConfig->getOption('enum_code')
         );
         $this->assertEquals('TestColorLabel', $colorConfig->getOption('label'));
+        $this->assertEquals(['red'], $colorConfig->getOption('disabled_values'));
 
         $this->assertEquals('choice', $newConfig->getType()->getName());
         $this->assertEquals([0, 1], $newConfig->getOption('choices'));
@@ -161,8 +191,24 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
                     'label' => 'TestColorLabel'
                 ]
             ]);
+        $this->productVariantAvailabilityProvider->expects($this->once())
+            ->method('getVariantFieldsWithAvailability')
+            ->with($product, [])
+            ->willReturn(['stringField' => []]);
 
-        $this->factory->create($this->type, null, $options);
+        $this->factory->create($this->type, [], $options);
+    }
+
+    // @codingStandardsIgnoreStart
+    /**
+     * @expectedException \Symfony\Component\OptionsResolver\Exception\InvalidOptionsException
+     * @expectedExceptionMessage The option "product" with value stdClass is expected to be of type "Oro\Bundle\ProductBundle\Entity\Product", but is of type "stdClass".
+     */
+    // @codingStandardsIgnoreEnd
+    public function testBuildWhenRequiredFieldProductHasOtherObject()
+    {
+        $options['product'] = new \stdClass();
+        $this->factory->create($this->type, [], $options);
     }
 
     /**
