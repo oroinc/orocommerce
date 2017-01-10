@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Builder;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccount;
 use Oro\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToAccount;
 use Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
@@ -39,7 +40,8 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
             $this->combinedPriceListProvider,
             $this->garbageCollector,
             $this->cplScheduleResolver,
-            $this->priceResolver
+            $this->priceResolver,
+            $this->triggerHandler
         );
         $this->builder->setPriceListToEntityClassName($this->priceListToEntityClass);
         $this->builder->setCombinedPriceListClassName($this->combinedPriceListClass);
@@ -54,7 +56,7 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
     public function testBuild($priceListByAccount)
     {
         $website = new Website();
-        $account = new Account();
+        $account = new Customer();
         $this->priceListToEntityRepository
             ->expects($this->any())
             ->method('findOneBy')
@@ -111,8 +113,8 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
     {
         $callExpects = 1;
         $website = new Website();
-        $accountGroup = new AccountGroup();
-        $account = new Account();
+        $accountGroup = new CustomerGroup();
+        $account = new Customer();
         $this->priceListToEntityRepository
             ->expects($this->any())
             ->method('findOneBy')
@@ -171,9 +173,9 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
 
     /**
      * @param Website $website
-     * @param Account $account
+     * @param Customer $account
      */
-    protected function assertRebuild(Website $website, Account $account)
+    protected function assertRebuild(Website $website, Customer $account)
     {
         $priceListCollection = [$this->getPriceListSequenceMember()];
         $combinedPriceList = new CombinedPriceList();
@@ -189,8 +191,13 @@ class AccountCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
             ->with($priceListCollection)
             ->will($this->returnValue($combinedPriceList));
 
+        $relation = new CombinedPriceListToAccount();
+        $relation->setPriceList($combinedPriceList);
+        $relation->setWebsite($website);
+        $relation->setAccount($account);
         $this->combinedPriceListRepository->expects($this->exactly($callExpects))
             ->method('updateCombinedPriceListConnection')
-            ->with($combinedPriceList, $combinedPriceList, $website, $account);
+            ->with($combinedPriceList, $combinedPriceList, $website, $account)
+            ->willReturn($relation);
     }
 }

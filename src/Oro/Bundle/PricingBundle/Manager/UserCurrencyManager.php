@@ -2,16 +2,14 @@
 
 namespace Oro\Bundle\PricingBundle\Manager;
 
-use Symfony\Component\HttpFoundation\Session\Session;
-use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserSettings;
-use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Symfony\Component\HttpFoundation\Session\Session;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class UserCurrencyManager
 {
@@ -23,9 +21,9 @@ class UserCurrencyManager
     protected $session;
 
     /**
-     * @var ConfigManager
+     * @var CurrencyProviderInterface
      */
-    protected $configManager;
+    protected $currencyProvider;
 
     /**
      * @var WebsiteManager
@@ -45,20 +43,20 @@ class UserCurrencyManager
     /**
      * @param Session $session
      * @param TokenStorageInterface $tokenStorage
-     * @param ConfigManager $configManager
+     * @param CurrencyProviderInterface $currencyProvider
      * @param WebsiteManager $websiteManager
      * @param BaseUserManager $userManager
      */
     public function __construct(
         Session $session,
         TokenStorageInterface $tokenStorage,
-        ConfigManager $configManager,
+        CurrencyProviderInterface $currencyProvider,
         WebsiteManager $websiteManager,
         BaseUserManager $userManager
     ) {
         $this->session = $session;
         $this->tokenStorage = $tokenStorage;
-        $this->configManager = $configManager;
+        $this->currencyProvider = $currencyProvider;
         $this->websiteManager = $websiteManager;
         $this->userManager = $userManager;
     }
@@ -74,7 +72,7 @@ class UserCurrencyManager
 
         if ($website) {
             $user = $this->getLoggedUser();
-            if ($user instanceof AccountUser) {
+            if ($user instanceof CustomerUser) {
                 $userSettings = $user->getWebsiteSettings($website);
                 if ($userSettings) {
                     $currency = $userSettings->getCurrency();
@@ -107,10 +105,10 @@ class UserCurrencyManager
         }
 
         $user = $this->getLoggedUser();
-        if ($user instanceof AccountUser) {
+        if ($user instanceof CustomerUser) {
             $userWebsiteSettings = $user->getWebsiteSettings($website);
             if (!$userWebsiteSettings) {
-                $userWebsiteSettings = new AccountUserSettings($website);
+                $userWebsiteSettings = new CustomerUserSettings($website);
                 $user->setWebsiteSettings($userWebsiteSettings);
             }
             $userWebsiteSettings->setCurrency($currency);
@@ -127,11 +125,7 @@ class UserCurrencyManager
      */
     public function getAvailableCurrencies()
     {
-
-        return (array)$this->configManager->get(
-            Configuration::getConfigKeyByName(Configuration::ENABLED_CURRENCIES),
-            []
-        );
+        return $this->currencyProvider->getCurrencyList();
     }
 
     /**
@@ -139,11 +133,11 @@ class UserCurrencyManager
      */
     public function getDefaultCurrency()
     {
-        return $this->configManager->get(Configuration::getConfigKeyByName(Configuration::DEFAULT_CURRENCY));
+        return $this->currencyProvider->getDefaultCurrency();
     }
 
     /**
-     * @return null|AccountUser
+     * @return null|CustomerUser
      */
     protected function getLoggedUser()
     {

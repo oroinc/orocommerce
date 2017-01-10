@@ -4,12 +4,12 @@ namespace Oro\Bundle\CustomerBundle\Mailer;
 
 use Oro\Bundle\UserBundle\Mailer\BaseProcessor;
 use Oro\Bundle\UserBundle\Entity\UserInterface;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class AccountUserProcessor extends BaseProcessor
 {
     /**
-     * @param UserInterface|AccountUser $user
+     * @param UserInterface|CustomerUser $user
      * @return string
      */
     protected function getSenderEmail(UserInterface $user)
@@ -23,7 +23,7 @@ class AccountUserProcessor extends BaseProcessor
     }
 
     /**
-     * @param UserInterface|AccountUser $user
+     * @param UserInterface|CustomerUser $user
      * @return string
      */
     protected function getSenderName(UserInterface $user)

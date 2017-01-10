@@ -9,7 +9,7 @@ operations:
             - quotes-grid
         order: 40
         button_options:
-            icon: icon-time
+            icon: fa-clock-o
         frontend_options:
             confirmation:
                 message: oro.sale.quote.actions.quote_expire_confirm
@@ -38,7 +38,7 @@ operations:
         acl_resource: oro_email_email_create
 
         button_options:
-            icon: icon-envelope
+            icon: fa-envelope
             group: oro.sale.quote.notify_customer.label
 
         frontend_options:
@@ -81,41 +81,6 @@ operations:
                 parameters_mapping:
                     data: $.data
                     email: $.email
-
-    oro_sale_frontend_quote_change:
-        label: oro.frontend.sale.btn.accept_quote_create_order
-        applications: [commerce]
-        routes:
-            - oro_sale_quote_frontend_view
-        order: 20
-        acl_resource: [CREATE, entity:commerce@Oro\Bundle\OrderBundle\Entity\Order]
-        button_options:
-            icon: icon-edit
-            class:  quota-accept-btn
-        actions:
-            - '@find_entity':
-                class: Oro\Bundle\SaleBundle\Entity\QuoteDemand
-                attribute: $.quoteDemand
-                where:
-                    quote: $.data
-            - '@tree':
-                conditions:
-                    '@empty': $.quoteDemand
-                actions:
-                    - '@create_entity':
-                        parameters:
-                            attribute: $.quoteDemand
-                            class: Oro\Bundle\SaleBundle\Entity\QuoteDemand
-                            data:
-                                quote: $.data
-                    - '@call_service_method':
-                        service: oro_sale.manager.quote_demand_manager
-                        method: recalculateSubtotals
-                        method_parameters: [$.quoteDemand]
-                    - '@flush_entity': $.quoteDemand
-            - '@redirect':
-                 route: 'oro_sale_quote_frontend_choice'
-                 route_parameters: {id: $.quoteDemand.id}
 
 action_groups:
     oro_sale_expire_quote:
@@ -188,12 +153,16 @@ action_groups:
                 route_parameters: { 'id': $.data.id }
             - '@assign_value':
                 conditions:
-                   '@empty': $.data.quote.shippingEstimate
+                   '@empty': $.data.quote.shippingCost
                 parameters: [$.disallow_shipping_method_edit, false]
             - '@assign_value':
                 conditions:
-                   '@not_empty': $.data.quote.shippingEstimate
+                   '@not_empty': $.data.quote.shippingCost
                 parameters: [$.disallow_shipping_method_edit, true]
+            - '@call_service_method':
+                service: oro_sale.quote_demand.subtotals_calculator_main
+                method: calculateSubtotals
+                method_parameters: [$.data]
             - '@tree':
                 conditions:
                     '@not_empty': $.data.quote.shippingAddress
@@ -231,16 +200,26 @@ action_groups:
                         parameters: [$.disallow_shipping_address_edit, false]
             - '@assign_value':
                 parameters: [$.shippingEstimate, $.data.quote.shippingEstimate]
-            - '@start_checkout':
-                source_name: 'quoteDemand'
-                source_entity: $.data
-                force: true
-                data:
-                    shippingAddress: $.orderAddress
-                    shippingCost: $.shippingEstimate
-                settings:
-                    allow_manual_source_remove: false
-                    auto_remove_source: true
-                    edit_order_link: $.editLink
-                    disallow_shipping_address_edit: $.disallow_shipping_address_edit
-                    disallow_shipping_method_edit: $.disallow_shipping_method_edit
+            - '@assign_value':
+                parameters: [$.shippingMethod, $.data.quote.shippingMethod]
+            - '@assign_value':
+                parameters: [$.shippingMethodType, $.data.quote.shippingMethodType]
+            - '@run_action_group':
+                action_group: start_checkout
+                parameters_mapping:
+                    sourceCriteria:
+                        quoteDemand: $.data
+                    force: true
+                    data:
+                        shippingAddress: $.orderAddress
+                        shippingCost: $.shippingEstimate
+                        shippingMethod: $.shippingMethod
+                        shippingMethodType: $.shippingMethodType
+                    settings:
+                        allow_manual_source_remove: false
+                        auto_remove_source: true
+                        edit_order_link: $.editLink
+                        disallow_shipping_address_edit: $.disallow_shipping_address_edit
+                        disallow_shipping_method_edit: $.disallow_shipping_method_edit
+                results:
+                    redirectUrl: $.redirectUrl

@@ -3,22 +3,23 @@ layout:
         - '@setBlockTheme':
             themes: 'layout.html.twig'
 
+        - '@setFormTheme':
+            themes: 'form.html.twig'
+
         - '@addTree':
             items:
-                __rfp_page:
-                    blockType: container
-                    options:
-                        class_prefix: 'edit-frq'
-                __rfp_form_container:
-                    blockType: container
                 __rfp_form_start:
                     blockType: form_start
                     options:
                         form: '=data["oro_rfp_request_form"].getRequestFormView(data["entity"])'
+                __rfp_form_edit_container:
+                    blockType: container
                 __rfp_form_fields:
                     blockType: form_fields
                     options:
                         form: '=data["oro_rfp_request_form"].getRequestFormView(data["entity"])'
+                __rfp_form_lineitems_container:
+                    blockType: container
                 __rfp_form_lineitems:
                     blockType: form_fields
                     options:
@@ -34,24 +35,29 @@ layout:
                     options:
                         path: '=data["backToUrl"]'
                         text: oro.frontend.rfp.request.create_form.back.label
-                        icon: cf-left-open-mini
-                __rfp_form_actions_create:
                 __rfp_form_actions_create:
                     blockType: button
                     options:
                         action: submit
-                        text: oro.frontend.rfp.request.create_form.submit.label
+                        text: oro.frontend.rfp.request.create_form.send.label
                         style: auto
-                        attr:
-                            class: btn_xlg
             tree:
                 __root:
-                    __rfp_page:
-                        __rfp_form_container:
-                            __rfp_form_start: ~
-                            __rfp_form_fields: ~
-                            __rfp_form_lineitems: ~
-                            __rfp_form_actions:
-                                __rfp_form_actions_create: ~
-                                __rfp_form_actions_back: ~
-                            __rfp_form_end: ~
+                    __rfp_form_start: ~
+                    __rfp_form_edit_container:
+                        __rfp_form_fields: ~
+                    __rfp_form_lineitems_container:
+                        __rfp_form_lineitems: ~
+                    __rfp_form_actions:
+                        __rfp_form_actions_create: ~
+                        __rfp_form_actions_back: ~
+                    __rfp_form_end: ~
+        - '@appendOption':
+            id: rfp_form_lineitems_container
+            optionName: vars.tierPrices
+            optionValue: '=data["oro_rfp_product_prices"].getPrices(data["entity"])'
+
+        - '@add':
+            id: __rfp_form_lineitems_view_js
+            parentId: head
+            blockType: block

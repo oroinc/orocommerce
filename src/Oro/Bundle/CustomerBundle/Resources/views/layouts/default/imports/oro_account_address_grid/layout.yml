@@ -35,12 +35,6 @@ layout:
 
         - '@setOption':
             id: __addresses_datagrid
-            optionName: grid_parameters
-            optionValue:
-                frontend_owner_id: '=data["entity"].getAccount().getId()'
-
-        - '@setOption':
-            id: __addresses_datagrid
             optionName: grid_render_parameters
             optionValue:
                 themeOptions:
@@ -60,7 +54,7 @@ layout:
                 visible: '=data["acl"].isGranted("oro_account_frontend_account_address_create") && data["acl"].isGranted("oro_account_frontend_account_address_view")'
                 route_name: oro_customer_frontend_account_address_create
                 route_parameters:
-                    entityId: '=data["entity"].getId()'
+                    entityId: '=data["entity"].getAccount().getId()'
                 text: 'oro.customer.frontend.account_user_address_book.create.label'
 
         - '@setOption':

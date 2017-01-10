@@ -6,7 +6,7 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserInterface;
 use Oro\Bundle\CustomerBundle\Acl\Resolver\RoleTranslationPrefixResolver;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class RoleTranslationPrefixResolverTest extends \PHPUnit_Framework_TestCase
 {
@@ -43,10 +43,8 @@ class RoleTranslationPrefixResolverTest extends \PHPUnit_Framework_TestCase
             ->willReturn($loggedUser);
 
         if (!$expectedPrefix) {
-            $this->setExpectedException(
-                '\RuntimeException',
-                'This method must be called only for logged User or AccountUser'
-            );
+            $this->expectException('\RuntimeException');
+            $this->expectExceptionMessage('This method must be called only for logged User or CustomerUser');
         }
 
         $this->assertEquals($expectedPrefix, $this->resolver->getPrefix());
@@ -59,7 +57,7 @@ class RoleTranslationPrefixResolverTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [new User, RoleTranslationPrefixResolver::BACKEND_PREFIX],
-            [new AccountUser(), RoleTranslationPrefixResolver::FRONTEND_PREFIX],
+            [new CustomerUser(), RoleTranslationPrefixResolver::FRONTEND_PREFIX],
             ['anon.'],
             [null]
         ];

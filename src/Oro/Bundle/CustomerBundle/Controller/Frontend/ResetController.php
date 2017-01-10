@@ -9,8 +9,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserManager;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserManager;
 use Oro\Bundle\CustomerBundle\Form\Handler\AccountUserPasswordRequestHandler;
 use Oro\Bundle\CustomerBundle\Form\Handler\AccountUserPasswordResetHandler;
 
@@ -81,12 +81,12 @@ class ResetController extends Controller
     {
         $token = $this->getRequest()->get('token');
         $username = $this->getRequest()->get('username');
-        /** @var AccountUser $user */
+        /** @var CustomerUser $user */
         $user = $this->getUserManager()->findUserByUsernameOrEmail($username);
         if (!$token || null === $user || $user->getConfirmationToken() !== $token) {
             throw $this->createNotFoundException(
                 $this->get('translator')->trans(
-                    'oro.customer.controller.accountuser.token_not_found.message',
+                    'oro.customer.controller.customeruser.token_not_found.message',
                     ['%token%' => $token]
                 )
             );
@@ -97,7 +97,7 @@ class ResetController extends Controller
         if (!$user->isPasswordRequestNonExpired($ttl)) {
             $session->getFlashBag()->add(
                 'warn',
-                'oro.customer.accountuser.profile.password.reset.ttl_expired.message'
+                'oro.customer.customeruser.profile.password.reset.ttl_expired.message'
             );
 
             return $this->redirect($this->generateUrl('oro_customer_frontend_account_user_reset_request'));
@@ -115,7 +115,7 @@ class ResetController extends Controller
 
             $session->getFlashBag()->add(
                 'success',
-                'oro.customer.accountuser.profile.password_reset.message'
+                'oro.customer.customeruser.profile.password_reset.message'
             );
 
             return $this->redirect($this->generateUrl('oro_customer_account_user_security_login'));
@@ -132,11 +132,11 @@ class ResetController extends Controller
      * Get the truncated email displayed when requesting the resetting.
      * The default implementation only keeps the part following @ in the address.
      *
-     * @param AccountUser $user
+     * @param CustomerUser $user
      *
      * @return string
      */
-    protected function getObfuscatedEmail(AccountUser $user)
+    protected function getObfuscatedEmail(CustomerUser $user)
     {
         $email = $user->getEmail();
 
@@ -148,7 +148,7 @@ class ResetController extends Controller
     }
 
     /**
-     * @return AccountUserManager
+     * @return CustomerUserManager
      */
     protected function getUserManager()
     {

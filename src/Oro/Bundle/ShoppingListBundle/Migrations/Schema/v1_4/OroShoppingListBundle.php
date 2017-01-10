@@ -4,8 +4,6 @@ namespace Oro\Bundle\ShoppingListBundle\Migrations\Schema\v1_4;
 
 use Doctrine\DBAL\Schema\Schema;
 
-use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
-use Oro\Bundle\EntityConfigBundle\Migration\UpdateEntityConfigFieldValueQuery;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
@@ -23,27 +21,6 @@ class OroShoppingListBundle implements Migration
         /** Foreign keys generation **/
         $this->addOroShoppingListForeignKeys($schema);
         $this->addOroShoppingListLineItemForeignKeys($schema);
-
-        if (class_exists('Oro\Bundle\CheckoutBundle\Entity\CheckoutSource')) {
-            $queries->addPostQuery(
-                new UpdateEntityConfigFieldValueQuery(
-                    'Oro\Bundle\CheckoutBundle\Entity\CheckoutSource',
-                    'shoppingList',
-                    'datagrid',
-                    'show_filter',
-                    false
-                )
-            );
-            $queries->addPostQuery(
-                new UpdateEntityConfigFieldValueQuery(
-                    'Oro\Bundle\CheckoutBundle\Entity\CheckoutSource',
-                    'shoppingList',
-                    'datagrid',
-                    'is_visible',
-                    DatagridScope::IS_VISIBLE_FALSE
-                )
-            );
-        }
     }
 
     /**

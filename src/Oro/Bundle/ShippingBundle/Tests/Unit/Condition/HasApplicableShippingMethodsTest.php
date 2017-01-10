@@ -26,7 +26,7 @@ class HasApplicableShippingMethodsTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->shippingMethodRegistry = $this->getMock('Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry');
+        $this->shippingMethodRegistry = $this->createMock('Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry');
 
         $this->shippingPriceProvider = $this
             ->getMockBuilder('Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider')
@@ -76,11 +76,11 @@ class HasApplicableShippingMethodsTest extends \PHPUnit_Framework_TestCase
      */
     public function testEvaluate($methods, $expected)
     {
-        $method = $this->getMock('Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface');
+        $method = $this->createMock('Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface');
         $this->shippingMethodRegistry->expects($this->any())->method('getShippingMethod')->willReturn($method);
 
         $this->shippingPriceProvider->expects($this->once())
-            ->method('getApplicableMethodsWithTypesData')
+            ->method('getApplicableMethodsViews')
             ->willReturn($methods);
 
         $this->condition->initialize(['shippingContext' => new ShippingContext([])]);

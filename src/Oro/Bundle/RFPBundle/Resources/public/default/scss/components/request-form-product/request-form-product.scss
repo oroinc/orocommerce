@@ -1,0 +1,93 @@
+.request-form-product {
+    position: relative;
+
+    &__item {
+        white-space: nowrap;
+
+        &--actions {
+            text-align: center;
+
+            font-size: $base-font-size--large;
+
+            color: get-color('additional', 'middle');
+        }
+    }
+}
+
+@include breakpoint('desktop') {
+    .request-form-product {
+        &__inner {
+            display: flex;
+            flex-wrap: wrap;
+
+            > [data-role=content] {
+                width: 100%;
+            }
+        }
+
+        &__count {
+            display: none;
+        }
+
+        &__item {
+            padding: 12px 0;
+
+            border-top: 1px solid get-color('additional', 'light');
+
+            &--link {
+                width: 545px;
+            }
+
+            &--quantity,
+            &--amount {
+                width: 160px;
+            }
+
+            &--target {
+                width: 190px;
+            }
+
+            &--comment {
+                width: 100%;
+                white-space: normal;
+                border: none;
+            }
+
+            &--actions {
+                position: absolute;
+                top: 0;
+                right: 0;
+
+                width: 60px;
+            }
+        }
+    }
+};
+
+@include breakpoint('tablet') {
+    .request-form-product {
+        position: relative;
+
+        &__count {
+            position: absolute;
+            left: 0;
+            display: inline;
+
+            color: get-color('additional', 'middle');
+        }
+
+        &__item {
+            padding: 5px 0 5px 20px;
+
+                &--link {
+                    padding-right: 60px;
+                }
+
+                &--actions {
+                    position: absolute;
+                    top: 5px;
+                    right: 0;
+            }
+        }
+    }
+};

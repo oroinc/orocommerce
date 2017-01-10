@@ -18,7 +18,7 @@ layout:
                     options:
                         visible: '=false'
                 __product_title:
-                    blockType: block
+                    blockType: container
                 __product_primary_content_container:
                     blockType: container
                 __product_number:
@@ -28,13 +28,13 @@ layout:
                 __product_sku_container:
                     blockType: container
                 __product_sku:
-                    blockType: block
+                    blockType: container
                 __product_mfg:
                     blockType: block
                     options:
                         visible: '=false'
                 __product_short_description:
-                    blockType: block
+                    blockType: container
                 __product_details:
                     blockType: block
                 __product_secondary_content_container:

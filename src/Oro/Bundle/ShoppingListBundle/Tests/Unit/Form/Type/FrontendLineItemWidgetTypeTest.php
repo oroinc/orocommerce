@@ -4,7 +4,20 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Form\Type;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-
+use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
+use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
+use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
+use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemWidgetType;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
@@ -14,19 +27,9 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
-use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
-use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
-use Oro\Bundle\ShoppingListBundle\Form\Type\FrontendLineItemWidgetType;
-
 class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
 {
+
     use QuantityTypeTrait;
 
     const DATA_CLASS = 'Oro\Bundle\ShoppingListBundle\Entity\LineItem';
@@ -38,6 +41,16 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
 
     /** @var FrontendLineItemWidgetType */
     protected $type;
+
+    /**
+     * @var AclHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $aclHelper;
+
+    /**
+     * @var ShoppingListManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $shoppingListManager;
 
     /**
      * @var array
@@ -54,12 +67,19 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->aclHelper = $this->getMockBuilder(AclHelper::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->shoppingListManager = $this->getMockBuilder(ShoppingListManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->type = new FrontendLineItemWidgetType(
             $this->getRegistry(),
-            $this->getTokenStorage(),
-            $this->translator
+            $this->translator,
+            $this->aclHelper,
+            $this->shoppingListManager
         );
 
         $this->type->setShoppingListClass(self::SHOPPING_LIST_CLASS);
@@ -116,16 +136,12 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
     public function testSubmit($defaultData, $submittedData, $expectedData, ShoppingList $expectedShoppingList)
     {
         $form = $this->factory->create($this->type, $defaultData, []);
-
+        $qb = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
         $repo = $this->getMockBuilder('Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository')
             ->disableOriginalConstructor()
             ->getMock();
-        $repo->expects($this->once())
-            ->method('createFindForAccountUserQueryBuilder')
-            ->will($this->returnValue(null));
-
-        $closure = $form->get('shoppingList')->getConfig()->getOptions()['query_builder'];
-        $this->assertNull($closure($repo));
+        $repo->method('createQueryBuilder')
+            ->will($this->returnValue($qb));
 
         $this->addRoundingServiceExpect();
 
@@ -168,17 +184,18 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
 
     public function testFinishView()
     {
+        $shoppingList = $this->getShoppingList(1, 'Found Current Shopping List');
+        $this->shoppingListManager->method('getCurrent')->willReturn($shoppingList);
         /** @var FormView|\PHPUnit_Framework_MockObject_MockObject $view */
         $view = $this->getMockBuilder('Symfony\Component\Form\FormView')
             ->disableOriginalConstructor()
             ->getMock();
 
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject| $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $this->type->finishView($view, $form, []);
 
-        $shoppingList = $this->getShoppingList(1, 'Found Current Shopping List');
         $this->assertEquals($shoppingList, $view->children['shoppingList']->vars['currentShoppingList']);
     }
 
@@ -203,10 +220,10 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
     protected function getTokenStorage()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|TokenInterface $accountUser */
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|AccountUser $accountUser */
-        $accountUser = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\AccountUser')
+        /** @var \PHPUnit_Framework_MockObject_MockObject|CustomerUser $accountUser */
+        $accountUser = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\CustomerUser')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -216,7 +233,7 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
 
         /** @var TokenStorageInterface|\PHPUnit_Framework_MockObject_MockObject $tokenStorage */
         $tokenStorage = $this
-            ->getMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage');
+            ->createMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage');
 
         $tokenStorage
             ->expects($this->any())
@@ -283,6 +300,16 @@ class FrontendLineItemWidgetTypeTest extends AbstractFormIntegrationTestCase
      */
     protected function getParentForm()
     {
-        return new FrontendLineItemType();
+        /**
+         * @var ProductUnitFieldsSettingsInterface|\PHPUnit_Framework_MockObject_MockObject $productUnitFieldsSettings
+         */
+        $productUnitFieldsSettings = $this->getMockBuilder(ProductUnitFieldsSettingsInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $productUnitFieldsSettings->expects($this->any())
+            ->method('isProductUnitSelectionVisible')
+            ->willReturn(true);
+        return new FrontendLineItemType($productUnitFieldsSettings);
     }
 }

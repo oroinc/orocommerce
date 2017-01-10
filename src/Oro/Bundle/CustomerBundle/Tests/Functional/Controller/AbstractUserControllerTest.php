@@ -6,7 +6,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\CustomerBundle\Entity\Repository\AccountUserRoleRepository;
+use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserRoleRepository;
 
 abstract class AbstractUserControllerTest extends WebTestCase
 {
@@ -51,7 +51,7 @@ abstract class AbstractUserControllerTest extends WebTestCase
      */
     protected function assertMessage($email, \Swift_Message $message)
     {
-        /** @var \Oro\Bundle\CustomerBundle\Entity\AccountUser $user */
+        /** @var \Oro\Bundle\CustomerBundle\Entity\CustomerUser $user */
         $user = $this->getUserRepository()->findOneBy(['email' => $email]);
 
         $this->assertNotNull($user);
@@ -81,15 +81,15 @@ abstract class AbstractUserControllerTest extends WebTestCase
      */
     protected function getUserRepository()
     {
-        return $this->getObjectManager()->getRepository('OroCustomerBundle:AccountUser');
+        return $this->getObjectManager()->getRepository('OroCustomerBundle:CustomerUser');
     }
 
     /**
-     * @return AccountUserRoleRepository
+     * @return CustomerUserRoleRepository
      */
     protected function getUserRoleRepository()
     {
-        return $this->getObjectManager()->getRepository('OroCustomerBundle:AccountUserRole');
+        return $this->getObjectManager()->getRepository('OroCustomerBundle:CustomerUserRole');
     }
 
     /**
@@ -97,6 +97,6 @@ abstract class AbstractUserControllerTest extends WebTestCase
      */
     protected function getAccountRepository()
     {
-        return $this->getObjectManager()->getRepository('OroCustomerBundle:Account');
+        return $this->getObjectManager()->getRepository('OroCustomerBundle:Customer');
     }
 }

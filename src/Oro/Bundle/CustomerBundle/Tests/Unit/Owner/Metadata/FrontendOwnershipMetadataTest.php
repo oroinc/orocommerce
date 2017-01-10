@@ -18,7 +18,8 @@ class FrontendOwnershipMetadataTest extends \PHPUnit_Framework_TestCase
     {
         if ($exceptionDefinition) {
             list ($exception, $message) = $exceptionDefinition;
-            $this->setExpectedException($exception, $message);
+            $this->expectException($exception);
+            $this->expectExceptionMessage($message);
         }
 
         list ($frontendOwnerType, $frontendOwnerFieldName, $frontendOwnerColumnName) = $ownerType;
@@ -169,6 +170,7 @@ class FrontendOwnershipMetadataTest extends \PHPUnit_Framework_TestCase
                     0 => AccessLevel::NONE_LEVEL_NAME,
                     1 => AccessLevel::getAccessLevelName(1),
                     2 => AccessLevel::getAccessLevelName(2),
+                    3 => AccessLevel::getAccessLevelName(3),
                 ],
             ],
             'local level owned' => [
@@ -176,6 +178,7 @@ class FrontendOwnershipMetadataTest extends \PHPUnit_Framework_TestCase
                 'levels' => [
                     0 => AccessLevel::NONE_LEVEL_NAME,
                     2 => AccessLevel::getAccessLevelName(2),
+                    3 => AccessLevel::getAccessLevelName(3),
                 ],
             ],
         ];

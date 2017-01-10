@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\Placeholder;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Placeholder\PlaceholderFilter;
 
 class PlaceholderFilterTest extends \PHPUnit_Framework_TestCase
@@ -54,7 +54,7 @@ class PlaceholderFilterTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [new \stdClass(), false],
-            [new AccountUser(), true]
+            [new CustomerUser(), true]
         ];
     }
 
@@ -80,7 +80,7 @@ class PlaceholderFilterTest extends \PHPUnit_Framework_TestCase
     {
         return [
             ['none', true],
-            [new AccountUser(), false]
+            [new CustomerUser(), false]
         ];
     }
 
@@ -107,7 +107,7 @@ class PlaceholderFilterTest extends \PHPUnit_Framework_TestCase
         return [
             'anonymous' => ['none', true],
             'not valid user' => [new \stdClass(), false],
-            'valid user' => [new AccountUser(), true]
+            'valid user' => [new CustomerUser(), true]
         ];
     }
 }

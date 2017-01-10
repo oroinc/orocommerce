@@ -1,0 +1,10 @@
+// @theme: default
+
+$product-prices-background: get-color('additional', 'base') !default;
+$product-prices-border-radius: 5px !default;
+
+$product-prices-border: 1px solid get-color('additional', 'light');
+
+$product-prices-head-font-size: 12px !default;
+$product-prices-head-font-weight: normal !default;
+$product-prices-head-border-bottom: 1px solid get-color('additional', 'light');

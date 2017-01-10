@@ -9,7 +9,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadFrontendProductVisibilityData;
+use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadFrontendProductVisibilityData;
 
 /**
  * @dbIsolation
@@ -78,7 +78,7 @@ class RFPFrontendActionsTest extends WebTestCase
 
         $this->assertEquals($expectedQuickAddLineItems, $this->getActualLineItems($crawler, 1));
 
-        $form = $crawler->selectButton('Submit Request For Quote')->form();
+        $form = $crawler->selectButton('Submit Request')->form();
         $form['oro_rfp_frontend_request[firstName]'] = 'Firstname';
         $form['oro_rfp_frontend_request[lastName]'] = 'Lastname';
         $form['oro_rfp_frontend_request[email]'] = 'email@example.com';

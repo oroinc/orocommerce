@@ -8,8 +8,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Form\Handler\AccountGroupHandler;
 
 class AccountGroupHandlerTest extends \PHPUnit_Framework_TestCase
@@ -40,7 +40,7 @@ class AccountGroupHandlerTest extends \PHPUnit_Framework_TestCase
     protected $dispatcher;
 
     /**
-     * @var AccountGroup
+     * @var CustomerGroup
      */
     protected $entity;
 
@@ -58,15 +58,15 @@ class AccountGroupHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->entity  = new AccountGroup();
+        $this->entity  = new CustomerGroup();
         $this->handler = new AccountGroupHandler($this->form, $this->request, $this->manager, $this->dispatcher);
     }
 
     public function testProcessValidData()
     {
-        $appendedAccount = new Account();
+        $appendedAccount = new Customer();
 
-        $removedAccount = new Account();
+        $removedAccount = new Customer();
         $removedAccount->setGroup($this->entity);
 
         $this->form->expects($this->once())

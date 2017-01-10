@@ -11,7 +11,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Psr\Log\LoggerAwareTrait;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Event\TransactionCompleteEvent;
@@ -65,7 +65,7 @@ class PaymentTransactionProvider
     }
 
     /**
-     * @return AccountUser|null
+     * @return CustomerUser|null
      */
     protected function getLoggedAccountUser()
     {
@@ -76,7 +76,7 @@ class PaymentTransactionProvider
 
         $user = $token->getUser();
 
-        if ($user instanceof AccountUser) {
+        if ($user instanceof CustomerUser) {
             return $user;
         }
 

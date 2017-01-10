@@ -114,11 +114,16 @@ class TransitionProvider
         return $this->continueTransitions[$cacheKey];
     }
 
+    public function clearCache()
+    {
+        $this->continueTransitions = $this->backTransitions = [];
+    }
+
     /**
      * @param Transition $transition
      * @param WorkflowItem $workflowItem
      *
-     * @return TransitionData[]|null
+     * @return TransitionData|null
      */
     private function getTransitionData(Transition $transition, WorkflowItem $workflowItem)
     {

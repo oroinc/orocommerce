@@ -6,8 +6,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\SaleBundle\Model\ExtendQuoteAddress;
 
 /**
@@ -16,7 +16,7 @@ use Oro\Bundle\SaleBundle\Model\ExtendQuoteAddress;
  * @Config(
  *       defaultValues={
  *          "entity"={
- *              "icon"="icon-map-marker"
+ *              "icon"="fa-map-marker"
  *          },
  *          "note"={
  *              "immutable"=true
@@ -34,18 +34,18 @@ use Oro\Bundle\SaleBundle\Model\ExtendQuoteAddress;
 class QuoteAddress extends ExtendQuoteAddress
 {
     /**
-     * @var AccountAddress
+     * @var CustomerAddress
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountAddress")
-     * @ORM\JoinColumn(name="account_address_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerAddress")
+     * @ORM\JoinColumn(name="customer_address_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $accountAddress;
 
     /**
-     * @var AccountUserAddress
+     * @var CustomerUserAddress
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountUserAddress")
-     * @ORM\JoinColumn(name="account_user_address_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress")
+     * @ORM\JoinColumn(name="customer_user_address_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $accountUserAddress;
 
@@ -66,11 +66,11 @@ class QuoteAddress extends ExtendQuoteAddress
     /**
      * Set accountAddress
      *
-     * @param AccountAddress|null $accountAddress
+     * @param CustomerAddress|null $accountAddress
      *
      * @return QuoteAddress
      */
-    public function setAccountAddress(AccountAddress $accountAddress = null)
+    public function setAccountAddress(CustomerAddress $accountAddress = null)
     {
         $this->accountAddress = $accountAddress;
 
@@ -80,7 +80,7 @@ class QuoteAddress extends ExtendQuoteAddress
     /**
      * Get accountUserAddress
      *
-     * @return AccountAddress|null
+     * @return CustomerAddress|null
      */
     public function getAccountAddress()
     {
@@ -90,11 +90,11 @@ class QuoteAddress extends ExtendQuoteAddress
     /**
      * Set accountUserAddress
      *
-     * @param AccountUserAddress|null $accountUserAddress
+     * @param CustomerUserAddress|null $accountUserAddress
      *
      * @return QuoteAddress
      */
-    public function setAccountUserAddress(AccountUserAddress $accountUserAddress = null)
+    public function setAccountUserAddress(CustomerUserAddress $accountUserAddress = null)
     {
         $this->accountUserAddress = $accountUserAddress;
 
@@ -104,7 +104,7 @@ class QuoteAddress extends ExtendQuoteAddress
     /**
      * Get accountUserAddress
      *
-     * @return AccountUserAddress|null
+     * @return CustomerUserAddress|null
      */
     public function getAccountUserAddress()
     {

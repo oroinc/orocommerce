@@ -250,12 +250,13 @@ VISIBILITY;
         $qb->select([
             'apv.id',
             'IDENTITY(apv.product)',
+            'IDENTITY(apv.scope)',
             'acvr.visibility',
             (string)AccountProductVisibilityResolved::SOURCE_CATEGORY,
-            'IDENTITY(apv.scope)',
+            'IDENTITY(acvr.category)',
         ])
             ->innerJoin('apv.scope', 'scope')
-            ->innerJoin('OroCustomerBundle:Account', 'ac', 'WITH', 'scope.account = ac.account')
+            ->innerJoin('OroCustomerBundle:Customer', 'ac', 'WITH', 'scope.account = ac')
 
             ->innerJoin(
                 'OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved',
@@ -267,7 +268,7 @@ VISIBILITY;
                 'OroScopeBundle:Scope',
                 'acs',
                 'WITH',
-                'acvr.scope = acs.scope AND acs.account = scope.account'
+                'acvr.scope = acs AND acs.account = scope.account'
             )
             ->andWhere('apv.product = :product')
             ->andWhere('apv.visibility = :visibility')
@@ -300,12 +301,13 @@ VISIBILITY;
         $qb->select([
             'apv.id',
             'IDENTITY(apv.product)',
+            'IDENTITY(apv.scope)',
             'agcvr.visibility',
             (string)AccountProductVisibilityResolved::SOURCE_CATEGORY,
-            'IDENTITY(apv.scope)',
+            'IDENTITY(agcvr.category)',
         ])
             ->innerJoin('apv.scope', 'scope')
-            ->innerJoin('OroCustomerBundle:Account', 'ac', 'WITH', 'scope.account = ac.account')
+            ->innerJoin('OroCustomerBundle:Customer', 'ac', 'WITH', 'scope.account = ac')
 
             ->innerJoin(
                 'OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
@@ -317,7 +319,7 @@ VISIBILITY;
                 'OroScopeBundle:Scope',
                 'gcs',
                 'WITH',
-                'agcvr.scope = gcs.scope AND gcs.accountgroup = scope.accountgroup'
+                'agcvr.scope = gcs AND gcs.accountGroup = scope.accountGroup'
             )
             ->andWhere('apv.product = :product')
             ->andWhere('apv.visibility = :visibility')
@@ -353,12 +355,13 @@ VISIBILITY;
         $qb->select([
             'apv.id',
             'IDENTITY(apv.product)',
-            'COALESCE(' . 'cvr.visibility' . $qb->expr()->literal($configValue) .
-            ')',
             'IDENTITY(apv.scope)',
+            'COALESCE(cvr.visibility, ' . $qb->expr()->literal($configValue) . ')',
+            (string)AccountProductVisibilityResolved::SOURCE_CATEGORY,
+            'IDENTITY(cvr.category)',
         ])
             ->innerJoin('apv.scope', 'scope')
-            ->innerJoin('OroCustomerBundle:Account', 'ac', 'WITH', 'scope.account = ac.account')
+            ->innerJoin('OroCustomerBundle:Customer', 'ac', 'WITH', 'scope.account = ac')
 
             ->innerJoin(
                 'OroVisibilityBundle:VisibilityResolved\CategoryVisibilityResolved',
@@ -399,7 +402,7 @@ VISIBILITY;
         $subQueryBuilder->where(
             $subQueryBuilder->expr()->andX(
                 $subQueryBuilder->expr()->eq('apvr.product', ':product'),
-                $subQueryBuilder->expr()->eq('relation.priceList', $parentAlias . '.scope')
+                $subQueryBuilder->expr()->eq('apvr.scope', $parentAlias . '.scope')
             )
         );
 

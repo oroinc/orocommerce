@@ -1,8 +1,8 @@
 {% block _quote_view_controls_list_widget %}
     <ul class="oro-order__controls-list">
-        <li><a href="#"><i class="cf-reply"></i>Share</a></li>
-        <li><a href="#"><i class="cf-print"></i>Print</a></li>
-        <li><a href="#"><i class="cf-insert_drive_file"></i>Save PDF</a></li>
+        <li><a href="#"><i class="fa-reply"></i>Share</a></li>
+        <li><a href="#"><i class="fa-print"></i>Print</a></li>
+        <li><a href="#"><i class="fa-file"></i>Save PDF</a></li>
     </ul>
 {% endblock %}
 
@@ -52,10 +52,10 @@
                                 <td class="account-oq__order-info__title">{{ 'oro.frontend.sale.quote.ship_until.label'|trans }}</td>
                                 <td>{{ quote.shipUntil|oro_format_date|default('N/A'|trans) }}</td>
                             </tr>
-                            {% if quote.shippingEstimate is not empty %}
+                            {% if quote.shippingCost is not empty %}
                             <tr class="account-oq__order-info__control">
                                 <td class="account-oq__order-info__title">{{ 'oro.frontend.sale.quote.ship_estimate.label'|trans }}</td>
-                                <td>{{ quote.shippingEstimate|oro_format_price }}</td>
+                                <td>{{ quote.shippingCost|oro_format_price }}</td>
                             </tr>
                             {% endif %}
                             {% if paymentTerm is defined and paymentTerm is not empty %}
@@ -118,7 +118,11 @@
                                     </td>
                                 {% endif %}
                                 <td>
-                                    {{ productOffer.quantity|oro_format_short_product_unit_value(productOffer.productUnit) }}
+                                    {% if oro_is_unit_code_visible(productOffer.productUnit.code) %}
+                                        {{ productOffer.quantity|oro_format_short_product_unit_value(productOffer.productUnit) }}
+                                    {% else %}
+                                        {{ productOffer.quantity }}
+                                    {% endif %}
                                     {% if productOffer.allowIncrements %}
                                         {{ 'oro.frontend.sale.quoteproductoffer.allow_increments.label'|trans }}
                                     {% endif %}
@@ -168,7 +172,7 @@
 
                 <div class="order-checkout-widget order-checkout-widget_block text-right">
                     <div class="order-builder-clear-btn">
-                        <a href="{{ path('oro_sale_quote_frontend_index') }}"><i class="cf-left-open-mini"></i><span>{{ 'oro.frontend.sale.quote.sections.back.label'|trans }}</span></a>
+                        <a href="{{ path('oro_sale_quote_frontend_index') }}"><i class="fa-angle-left"></i><span>{{ 'oro.frontend.sale.quote.sections.back.label'|trans }}</span></a>
                     </div>
                 </div>
             </div>
@@ -217,7 +221,13 @@
                                         </tr>
                                         {% for productOffer in quoteProduct.quoteProductOffers %}
                                             <tr>
-                                                <td class="text-left">{{ productOffer.quantity|oro_format_product_unit_code(productOffer.productUnit) }}</td>
+                                                <td class="text-left">
+                                                    {% if oro_is_unit_code_visible(productOffer.productUnit) %}
+                                                        {{ productOffer.quantity|oro_format_product_unit_code(productOffer.productUnit) }}
+                                                    {% else %}
+                                                        {{ productOffer.quantity }}
+                                                    {% endif %}
+                                                </td>
                                                 <td class="text-left">{{ productOffer.price|oro_format_price }}</td>
                                             </tr>
                                         {% endfor %}
@@ -263,7 +273,7 @@
                     {% endfor %}
                     </tbody>
                 </table>
-                <a href="{{ path('oro_sale_quote_frontend_index') }}"><i class="cf-left-open-mini"></i><span>{{ 'oro.frontend.sale.quote.sections.back.label'|trans }}</span></a>
+                <a href="{{ path('oro_sale_quote_frontend_index') }}"><i class="fa-angle-left"></i><span>{{ 'oro.frontend.sale.quote.sections.back.label'|trans }}</span></a>
             </div>
         </div>
     </div>
@@ -280,22 +290,22 @@
 {% block _quote_view_accept_container_widget %}
     {% set attr = attr|merge({class: attr.class|default('') ~ " order-checkout-widget order-checkout-widget_block text-right mb4-md"}) %}
     <div{{ block('block_attributes') }}>
-        {{ block_widget(block) }}
+        <div class="order-checkout-widget__col">
+            {{ block_widget(block) }}
+        </div>
     </div>
 {% endblock %}
 
 {% block _quote_view_accept_button_widget %}
+    {% set attr = attr|merge({class: attr.class|default('') ~ " order-checkout-widget__quote"}) %}
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
 
 {% block address_widget %}
-    {% if address %}
-        {{ address|oro_format_address|escape|nl2br }}
-    {% else %}
-        {{ 'oro.ui.empty'|trans }}
-    {% endif %}
+    {% from 'OroAddressBundle::macros.html.twig' import renderAddress %}
+    {{ renderAddress(address) }}
 {% endblock %}
 
 {% block quote_body_column_element_widget %}

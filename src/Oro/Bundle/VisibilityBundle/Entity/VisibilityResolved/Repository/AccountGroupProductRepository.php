@@ -144,9 +144,7 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
     /**
      * @param InsertFromSelectQueryExecutor $insertExecutor
      * @param Product $product
-     * @param Category $category
-     * @internal param Product $product
-     * @internal param null|Category $category
+     * @param Category|null $category
      */
     public function insertByProduct(
         InsertFromSelectQueryExecutor $insertExecutor,
@@ -203,7 +201,7 @@ class AccountGroupProductRepository extends AbstractVisibilityRepository
                 'OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved',
                 'agcvr',
                 'WITH',
-                'agcvr.accountGroup = productVisibility.accountGroup AND agcvr.category = :category'
+                'agcvr.category = :category'
             )
             ->leftJoin('agcvr.scope', 'agcvr_scope')
             ->andWhere('agcvr.visibility IS NULL OR agcvr_scope.accountGroup = scope.accountGroup')

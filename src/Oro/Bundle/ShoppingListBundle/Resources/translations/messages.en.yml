@@ -24,6 +24,7 @@ oro:
             create_order: 'Create Order'
         flash:
             success: 'Shopping list "%shoppinglist%" was created successfully'
+            update_success: 'Shopping list "%shoppinglist%" was updated successfully'
 
         create_new_form:
             input_label: Shopping List Name
@@ -80,6 +81,7 @@ oro:
                 enter: Enter a QTY
                 placeholder: 'QTY #'
             product.label: Product
+            parent_product.label: Parent Product
             shopping_list.label: Shopping List
             unit.label: Unit
             organization.label: Organization
@@ -120,6 +122,7 @@ oro:
                 last_updated.label: 'Last Updated'
                 show_more.label: 'Show More'
             view:
+                owner.label: Customer
                 view_options.label: View Options for this Shopping List
                 add_note.label: Add a Note to This Shopping List
                 add_note.placeholder: Enter your note

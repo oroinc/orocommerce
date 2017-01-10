@@ -6,7 +6,7 @@ use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 abstract class AbstractAccountUserAwareExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -23,12 +23,12 @@ abstract class AbstractAccountUserAwareExtensionTest extends \PHPUnit_Framework_
     protected function setUp()
     {
         $this->tokenStorage = $this
-            ->getMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
+            ->createMock('Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface');
     }
 
     public function assertOptionsNotChangedForNonAccountUser()
     {
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $token->expects($this->once())
             ->method('getUser');
         $this->tokenStorage->expects($this->once())
@@ -50,9 +50,9 @@ abstract class AbstractAccountUserAwareExtensionTest extends \PHPUnit_Framework_
     protected function assertAccountUserTokenCall($user = null)
     {
         if (!$user) {
-            $user = new AccountUser();
+            $user = new CustomerUser();
         }
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $token->expects($this->once())
             ->method('getUser')
             ->will($this->returnValue($user));

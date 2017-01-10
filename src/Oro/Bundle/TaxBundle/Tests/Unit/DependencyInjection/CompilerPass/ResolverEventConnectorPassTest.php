@@ -53,7 +53,8 @@ class ResolverEventConnectorPassTest extends \PHPUnit_Framework_TestCase
     {
         if ($exception) {
             list ($exception, $message) = $exception;
-            $this->setExpectedException($exception, $message);
+            $this->expectException($exception);
+            $this->expectExceptionMessage($message);
         }
 
         $this->containerBuilder

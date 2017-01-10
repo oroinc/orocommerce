@@ -51,10 +51,10 @@ class CategoryVisibleListener
         AccountUserRelationsProvider $accountUserRelationsProvider,
         TokenStorageInterface $tokenStorage
     ) {
-        $this->categoryVisibilityResolver   = $categoryVisibilityResolver;
-        $this->categoryRepository           = $categoryRepository;
+        $this->categoryVisibilityResolver = $categoryVisibilityResolver;
+        $this->categoryRepository = $categoryRepository;
         $this->accountUserRelationsProvider = $accountUserRelationsProvider;
-        $this->tokenStorage                 = $tokenStorage;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -98,8 +98,8 @@ class CategoryVisibleListener
      */
     private function isCategoryVisible(Category $category)
     {
-        $user         = $this->getUser();
-        $account      = $this->accountUserRelationsProvider->getAccount($user);
+        $user = $this->getUser();
+        $account = $this->accountUserRelationsProvider->getAccount($user);
         $accountGroup = $this->accountUserRelationsProvider->getAccountGroup($user);
 
         if ($account) {

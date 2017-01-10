@@ -2,7 +2,7 @@ oro_entity:
     entity_aliases:
         # This is temporary solution to remove alias duplication
         # @todo: renaming of entities will be finished in BB-2679
-        Oro\Bundle\CustomerBundle\Entity\Account:
+        Oro\Bundle\CustomerBundle\Entity\Customer:
             alias:        customer
             plural_alias: customers
         Oro\Bundle\CustomerBundle\Entity\Audit:

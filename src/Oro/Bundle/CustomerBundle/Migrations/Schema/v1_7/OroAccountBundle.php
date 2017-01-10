@@ -32,7 +32,6 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
 
         $this->renameActivityTables($schema, $queries);
         $this->updateAttachments($schema, $queries);
-        $this->updateNotes($schema, $queries);
 
         $this->renameEntityTables($schema, $queries);
         $this->renameIndexes($schema, $queries);
@@ -323,99 +322,6 @@ class OroAccountBundle implements Migration, RenameExtensionAwareInterface
             'Oro\Bundle\AccountBundle\Entity\AccountUser',
             'account_user_1cc98a31',
             'account_user_7e92c4f1',
-            RelationType::MANY_TO_ONE
-        ));
-    }
-
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
-    private function updateNotes(Schema $schema, QueryBag $queries)
-    {
-        $extension = $this->renameExtension;
-        $notes = $schema->getTable('oro_note');
-
-        $notes->removeForeignKey('FK_BA066CE1E7106C4F');
-        $extension->renameColumn($schema, $queries, $notes, 'account_user_1cc98a31_id', 'account_user_7e92c4f1_id');
-        $extension->addForeignKeyConstraint(
-            $schema,
-            $queries,
-            'oro_note',
-            'orob2b_account_user',
-            ['account_user_7e92c4f1_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL']
-        );
-        $queries->addQuery(new UpdateExtendRelationQuery(
-            'Oro\Bundle\NoteBundle\Entity\Note',
-            'Oro\Bundle\AccountBundle\Entity\AccountUser',
-            'account_user_1cc98a31',
-            'account_user_7e92c4f1',
-            RelationType::MANY_TO_ONE
-        ));
-
-        $notes->removeForeignKey('FK_BA066CE16E157C94');
-        $extension->renameColumn(
-            $schema,
-            $queries,
-            $notes,
-            'account_user_role_5d57148e_id',
-            'account_user_role_abeddea9_id'
-        );
-        $extension->addForeignKeyConstraint(
-            $schema,
-            $queries,
-            'oro_note',
-            'orob2b_account_user_role',
-            ['account_user_role_abeddea9_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL']
-        );
-        $queries->addQuery(new UpdateExtendRelationQuery(
-            'Oro\Bundle\NoteBundle\Entity\Note',
-            'Oro\Bundle\AccountBundle\Entity\AccountUserRole',
-            'account_user_role_5d57148e',
-            'account_user_role_abeddea9',
-            RelationType::MANY_TO_ONE
-        ));
-
-        $notes->removeForeignKey('fk_oro_note_account_557018f_id');
-        $extension->renameColumn($schema, $queries, $notes, 'account_557018f_id', 'account_8d93c122_id');
-        $extension->addForeignKeyConstraint(
-            $schema,
-            $queries,
-            'oro_note',
-            'orob2b_account',
-            ['account_8d93c122_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL'],
-            'fk_oro_note_account_8d93c122_id'
-        );
-        $queries->addQuery(new UpdateExtendRelationQuery(
-            'Oro\Bundle\NoteBundle\Entity\Note',
-            'Oro\Bundle\AccountBundle\Entity\Account',
-            'account_557018f',
-            'account_8d93c122',
-            RelationType::MANY_TO_ONE
-        ));
-
-        $notes->removeForeignKey('FK_BA066CE1E6FAD316');
-        $extension->renameColumn($schema, $queries, $notes, 'account_group_338fe797_id', 'account_group_a8897e69_id');
-        $extension->addForeignKeyConstraint(
-            $schema,
-            $queries,
-            'oro_note',
-            'orob2b_account_group',
-            ['account_group_a8897e69_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL']
-        );
-        $queries->addQuery(new UpdateExtendRelationQuery(
-            'Oro\Bundle\NoteBundle\Entity\Note',
-            'Oro\Bundle\AccountBundle\Entity\AccountGroup',
-            'account_group_338fe797',
-            'account_group_a8897e69',
             RelationType::MANY_TO_ONE
         ));
     }

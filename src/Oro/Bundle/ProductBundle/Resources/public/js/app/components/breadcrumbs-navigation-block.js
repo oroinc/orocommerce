@@ -17,7 +17,7 @@ define(function(require) {
          * {@inheritDoc}
          */
         initialize: function(options) {
-            this.$element = options['_sourceElement'];
+            this.$element = options._sourceElement;
 
             mediator.on('datagrid_filters:update', $.proxy(this, 'updateFiltersInfo'));
             mediator.on('datagrid_filters:update', $.proxy(this, 'updateSortingInfo'));
@@ -47,27 +47,27 @@ define(function(require) {
             var currentFilters = [];
             var filterState;
 
-            for (var filterName in datagrid['collection']['state']['filters']) {
-                if (!datagrid['collection']['state']['filters'].hasOwnProperty(filterName)) {
+            for (var filterName in datagrid.collection.state.filters) {
+                if (!datagrid.collection.state.filters.hasOwnProperty(filterName)) {
                     continue;
                 }
 
-                filterState = datagrid['collection']['state']['filters'][filterName];
+                filterState = datagrid.collection.state.filters[filterName];
 
-                datagrid['metadata']['filters'].forEach(function (filterDefinition) {
-                    if (filterDefinition['name'] == filterName) {
+                datagrid.metadata.filters.forEach(function (filterDefinition) {
+                    if (filterDefinition.name === filterName && filterDefinition.visible) {
                         var choiceTypeName;
 
-                        filterDefinition['choices'].forEach(function (choiceDefinition) {
-                            if (choiceDefinition['value'] == filterState['type']) {
-                                choiceTypeName = choiceDefinition['label'];
+                        filterDefinition.choices.forEach(function (choiceDefinition) {
+                            if (choiceDefinition.value == filterState.type) {
+                                choiceTypeName = choiceDefinition.label;
                             }
                         });
 
                         currentFilters.push({
-                            name: filterDefinition['name'],
-                            label: filterDefinition['label'],
-                            value: filterState['value'],
+                            name: filterDefinition.name,
+                            label: filterDefinition.label,
+                            value: filterState.value,
                             type: choiceTypeName
                         });
                     }
@@ -81,7 +81,7 @@ define(function(require) {
             }
 
             var buildFilterString = function(filter) {
-                return filter['label'] + ' ' + filter['type'] + ' ' + filter['value'];
+                return filter.label + ' ' + filter.type + ' ' + filter.value;
             };
 
             var filtersStrings = [];
@@ -92,7 +92,7 @@ define(function(require) {
 
             var filtersString = '[' + filtersStrings.join(', ') + ']';
 
-            $('.filters-info', this.$element).html(filtersString);
+            $('.filters-info', this.$element).text(filtersString);
         },
 
         /**
@@ -104,7 +104,7 @@ define(function(require) {
         updateSortingInfo: function(datagrid) {
             var info = __('oro.product.grid.navigation_bar.sorting.label');
 
-            var sorter = datagrid['collection']['state']['sorters'];
+            var sorter = datagrid.collection.state.sorters;
             var sorterLabel = '';
             var sorterDirection = '';
 
@@ -130,12 +130,12 @@ define(function(require) {
          */
         updatePaginationInfo: function(datagrid) {
             var info = __('oro.product.grid.navigation_bar.pagination.label');
-            var state = datagrid['collection']['state'];
+            var state = datagrid.collection.state;
 
-            var start = (state['currentPage'] - 1) * state['pageSize'] + 1;
-            var end = state['totalRecords'] < state['pageSize'] ? state['totalRecords'] : (state['currentPage']) * state['pageSize'];
+            var start = (state.currentPage - 1) * state.pageSize + 1;
+            var end = state.totalRecords < state.pageSize ? state.totalRecords : (state.currentPage) * state.pageSize;
 
-            info = info.replace('%start%', start).replace('%end%', end).replace('%total%', state['totalRecords']);
+            info = info.replace('%start%', start).replace('%end%', end).replace('%total%', state.totalRecords);
 
             $('.pagination-info', this.$element).html(info);
         }

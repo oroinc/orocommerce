@@ -9,7 +9,7 @@ class ExpressionPreprocessorTest extends \PHPUnit_Framework_TestCase
 {
     public function testProcessMaxIterationsExceeded()
     {
-        $preprocessor = $this->getMock(ExpressionPreprocessorInterface::class);
+        $preprocessor = $this->createMock(ExpressionPreprocessorInterface::class);
         $preprocessor->expects($this->any())
             ->method('process')
             ->willReturnCallback(
@@ -18,7 +18,8 @@ class ExpressionPreprocessorTest extends \PHPUnit_Framework_TestCase
                 }
             );
 
-        $this->setExpectedException(\RuntimeException::class, 'Max iterations count 100 exceed');
+        $this->expectException(\RuntimeException::class);
+        $this->expectExceptionMessage('Max iterations count 100 exceed');
 
         $expressionPreprocessor = new ExpressionPreprocessor();
         $expressionPreprocessor->registerPreprocessor($preprocessor);
@@ -27,7 +28,7 @@ class ExpressionPreprocessorTest extends \PHPUnit_Framework_TestCase
 
     public function testProcess()
     {
-        $preprocessor = $this->getMock(ExpressionPreprocessorInterface::class);
+        $preprocessor = $this->createMock(ExpressionPreprocessorInterface::class);
         $preprocessor->expects($this->exactly(2))
             ->method('process')
             ->willReturn('processed');

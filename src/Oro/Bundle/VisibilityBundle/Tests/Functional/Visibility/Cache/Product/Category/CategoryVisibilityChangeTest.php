@@ -4,8 +4,8 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache\Product\
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\VisibilityTrait;
@@ -78,12 +78,12 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                 $visibilityEntity->setScope($scope);
                 break;
             case 'account':
-                /** @var Account $account */
+                /** @var Customer $account */
                 $account = $this->getReference($visibility[$visibility['type']]);
                 $visibilityEntity = $this->getCategoryVisibilityForAccount($registry, $category, $account);
                 break;
             case 'accountGroup':
-                /** @var AccountGroup $accountGroup */
+                /** @var CustomerGroup $accountGroup */
                 $accountGroup = $this->getReference($visibility[$visibility['type']]);
                 $visibilityEntity = $this->getCategoryVisibilityForAccountGroup($registry, $category, $accountGroup);
                 break;

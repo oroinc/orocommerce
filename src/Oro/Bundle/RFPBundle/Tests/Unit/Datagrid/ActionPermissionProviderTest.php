@@ -40,7 +40,7 @@ class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->record = $this->getMock('Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface');
+        $this->record = $this->createMock('Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface');
 
         $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()

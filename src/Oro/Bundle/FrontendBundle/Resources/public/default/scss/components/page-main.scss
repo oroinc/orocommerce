@@ -1,6 +1,6 @@
 .page-main {
     &__content {
-        max-width: $site-width;
+        max-width: $page-main-max-width;
         margin: 0 auto 70px;
         padding-top: 35px;
 
@@ -10,18 +10,6 @@
     &.offset-none {
         .page-main__content {
             padding-top: 0;
-        }
-    }
-}
-
-@include breakpoint('tablet-small') {
-    .page-main {
-        &__content {
-            flex-direction: column;
-
-            &.sticky-nav {
-                padding-top: 50px;
-            }
         }
     }
 }

@@ -12,7 +12,7 @@ use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use Oro\Bundle\PricingBundle\Entity\PriceListAccountFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\EventListener\AccountGroupFormViewListener;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
@@ -47,7 +47,7 @@ class AccountGroupFormViewListenerTest extends FormViewListenerTestCase
     public function testOnViewNoRequest()
     {
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         
         $listener = $this->getListener($requestStack);
         
@@ -56,7 +56,7 @@ class AccountGroupFormViewListenerTest extends FormViewListenerTestCase
   
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
   
-        $env = $this->getMock('\Twig_Environment');
+        $env = $this->createMock('\Twig_Environment');
         $event = $this->createEvent($env);
         $listener->onAccountGroupView($event);
     }
@@ -64,7 +64,7 @@ class AccountGroupFormViewListenerTest extends FormViewListenerTestCase
     public function testOnAccountGroupView()
     {
         $accountGroupId = 1;
-        $accountGroup = new AccountGroup();
+        $accountGroup = new CustomerGroup();
 
         $priceListToAccountGroup1 = new PriceListToAccountGroup();
         $priceListToAccountGroup1->setAccountGroup($accountGroup);
@@ -93,7 +93,7 @@ class AccountGroupFormViewListenerTest extends FormViewListenerTestCase
         );
         
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
-        $environment = $this->getMock('\Twig_Environment');
+        $environment = $this->createMock('\Twig_Environment');
         $environment->expects($this->once())
             ->method('render')
             ->with(
@@ -124,13 +124,13 @@ class AccountGroupFormViewListenerTest extends FormViewListenerTestCase
         $templateHtml = 'template_html';
         
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         
         /** @var AccountGroupFormViewListener $listener */
         $listener = $this->getListener($requestStack);
         
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $environment */
-        $environment = $this->getMock('\Twig_Environment');
+        $environment = $this->createMock('\Twig_Environment');
         
         $environment->expects($this->once())
             ->method('render')
@@ -201,13 +201,13 @@ class AccountGroupFormViewListenerTest extends FormViewListenerTestCase
     }
     
     /**
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $accountGroup
      * @param PriceListToAccountGroup[] $priceListsToAccountGroup
      * @param PriceListAccountGroupFallback $fallbackEntity
      * @param Website[] $websites
      */
     protected function setRepositoryExpectationsForAccountGroup(
-        AccountGroup $accountGroup,
+        CustomerGroup $accountGroup,
         $priceListsToAccountGroup,
         PriceListAccountGroupFallback $fallbackEntity,
         array $websites
@@ -250,7 +250,7 @@ class AccountGroupFormViewListenerTest extends FormViewListenerTestCase
     protected function getRequestStack($request)
     {
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
         return $requestStack;
     }

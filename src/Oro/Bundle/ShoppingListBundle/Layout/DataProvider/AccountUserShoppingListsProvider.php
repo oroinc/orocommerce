@@ -2,15 +2,10 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Layout\DataProvider;
 
-use Symfony\Component\HttpFoundation\RequestStack;
-
 use Doctrine\Common\Collections\Criteria;
-
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
+use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager;
 use Oro\Bundle\ShoppingListBundle\Manager\ShoppingListTotalManager;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class AccountUserShoppingListsProvider
 {
@@ -22,24 +17,9 @@ class AccountUserShoppingListsProvider
     protected $options = [];
 
     /**
-     * @var DoctrineHelper
-     */
-    protected $doctrineHelper;
-
-    /**
-     * @var SecurityFacade
-     */
-    protected $securityFacade;
-
-    /**
      * @var RequestStack
      */
     protected $requestStack;
-
-    /**
-     * @var string
-     */
-    protected $shoppingListClass;
 
     /**
      * @var ShoppingListTotalManager
@@ -47,29 +27,23 @@ class AccountUserShoppingListsProvider
     protected $totalManager;
 
     /**
-     * @param DoctrineHelper $doctrineHelper
-     * @param SecurityFacade $securityFacade
-     * @param RequestStack $requestStack
-     * @param ShoppingListTotalManager $totalManager
+     * @var ShoppingListManager
      */
-    public function __construct(
-        DoctrineHelper $doctrineHelper,
-        SecurityFacade $securityFacade,
-        RequestStack $requestStack,
-        ShoppingListTotalManager $totalManager
-    ) {
-        $this->doctrineHelper = $doctrineHelper;
-        $this->securityFacade = $securityFacade;
-        $this->requestStack = $requestStack;
-        $this->totalManager = $totalManager;
-    }
+    protected $shoppingListManager;
 
     /**
-     * @param string $shoppingListClass
+     * @param RequestStack $requestStack
+     * @param ShoppingListTotalManager $totalManager
+     * @param ShoppingListManager $shoppingListManager
      */
-    public function setShoppingListClass($shoppingListClass)
-    {
-        $this->shoppingListClass = $shoppingListClass;
+    public function __construct(
+        RequestStack $requestStack,
+        ShoppingListTotalManager $totalManager,
+        ShoppingListManager $shoppingListManager
+    ) {
+        $this->requestStack = $requestStack;
+        $this->totalManager = $totalManager;
+        $this->shoppingListManager = $shoppingListManager;
     }
 
     /**
@@ -78,17 +52,8 @@ class AccountUserShoppingListsProvider
     public function getShoppingLists()
     {
         if (!array_key_exists('shoppingLists', $this->options)) {
-            $accountUser = $this->securityFacade->getLoggedUser();
-            $shoppingLists = [];
-            if ($accountUser) {
-                /** @var ShoppingListRepository $shoppingListRepository */
-                $shoppingListRepository = $this->doctrineHelper->getEntityRepositoryForClass($this->shoppingListClass);
-
-                /** @var ShoppingList[] $shoppingLists */
-                $shoppingLists = $shoppingListRepository->findByUser($accountUser, $this->getSortOrder());
-                $this->totalManager->setSubtotals($shoppingLists, false);
-            }
-
+            $shoppingLists = $this->shoppingListManager->getShoppingListsWithCurrentFirst($this->getSortOrder());
+            $this->totalManager->setSubtotals($shoppingLists, false);
             $this->options['shoppingLists'] = $shoppingLists;
         }
 
@@ -100,7 +65,6 @@ class AccountUserShoppingListsProvider
      */
     protected function getSortOrder()
     {
-        $sortOrder = ['list.current' => Criteria::DESC];
         $request = $this->requestStack->getCurrentRequest();
         $sort = $request ? $request->get('shopping_list_sort') : self::DATA_SORT_BY_UPDATED;
 

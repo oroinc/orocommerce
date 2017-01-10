@@ -2,24 +2,16 @@
 
 namespace Oro\Bundle\PayPalBundle\DependencyInjection;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
-use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfiguration;
-use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\Currency;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\DependencyInjection\Configuration as PaymentConfiguration;
-
 class Configuration implements ConfigurationInterface
 {
-    const PAYPAL_PAYMENTS_PRO_ENABLED_KEY = 'paypal_payments_pro_enabled';
     const PAYPAL_PAYMENTS_PRO_LABEL_KEY = 'paypal_payments_pro_label';
     const PAYPAL_PAYMENTS_PRO_SHORT_LABEL_KEY = 'paypal_payments_pro_short_label';
-    const PAYPAL_PAYMENTS_PRO_SORT_ORDER_KEY = 'paypal_payments_pro_sort_order';
-    const PAYPAL_PAYMENTS_PRO_ALLOWED_COUNTRIES_KEY = 'paypal_payments_pro_allowed_countries';
-    const PAYPAL_PAYMENTS_PRO_SELECTED_COUNTRIES_KEY = 'paypal_payments_pro_selected_countries';
     const PAYPAL_PAYMENTS_PRO_ALLOWED_CC_TYPES_KEY = 'paypal_payments_pro_allowed_cc_types';
     const PAYPAL_PAYMENTS_PRO_PARTNER_KEY = 'paypal_payments_pro_partner';
     const PAYPAL_PAYMENTS_PRO_USER_KEY = 'paypal_payments_pro_user';
@@ -36,21 +28,14 @@ class Configuration implements ConfigurationInterface
     const PAYPAL_PAYMENTS_PRO_ZERO_AMOUNT_AUTHORIZATION_KEY = 'paypal_payments_pro_zero_amount_authorization';
     const PAYPAL_PAYMENTS_PRO_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY =
         'paypal_payments_pro_authorization_for_required_amount';
-    const PAYPAL_PAYMENTS_PRO_ALLOWED_CURRENCIES_KEY = 'paypal_payments_pro_allowed_currencies';
 
-    const PAYPAL_PAYMENTS_PRO_EXPRESS_CHECKOUT_ENABLED_KEY = 'paypal_payments_pro_express_checkout_enabled';
     const PAYPAL_PAYMENTS_PRO_EXPRESS_CHECKOUT_LABEL_KEY = 'paypal_payments_pro_express_checkout_label';
     const PAYPAL_PAYMENTS_PRO_EXPRESS_CHECKOUT_SHORT_LABEL_KEY = 'paypal_payments_pro_express_checkout_short_label';
-    const PAYPAL_PAYMENTS_PRO_EXPRESS_CHECKOUT_SORT_ORDER_KEY = 'paypal_payments_pro_express_checkout_sort_order';
     const PAYPAL_PAYMENTS_PRO_EXPRESS_CHECKOUT_PAYMENT_ACTION_KEY =
         'paypal_payments_pro_express_checkout_payment_action';
 
-    const PAYFLOW_GATEWAY_ENABLED_KEY = 'payflow_gateway_enabled';
     const PAYFLOW_GATEWAY_LABEL_KEY = 'payflow_gateway_label';
     const PAYFLOW_GATEWAY_SHORT_LABEL_KEY = 'payflow_gateway_short_label';
-    const PAYFLOW_GATEWAY_SORT_ORDER_KEY = 'payflow_gateway_sort_order';
-    const PAYFLOW_GATEWAY_ALLOWED_COUNTRIES_KEY = 'payflow_gateway_allowed_countries';
-    const PAYFLOW_GATEWAY_SELECTED_COUNTRIES_KEY = 'payflow_gateway_selected_countries';
     const PAYFLOW_GATEWAY_ALLOWED_CC_TYPES_KEY = 'payflow_gateway_allowed_cc_types';
     const PAYFLOW_GATEWAY_PARTNER_KEY = 'payflow_gateway_partner';
     const PAYFLOW_GATEWAY_USER_KEY = 'payflow_gateway_user';
@@ -66,12 +51,9 @@ class Configuration implements ConfigurationInterface
     const PAYFLOW_GATEWAY_REQUIRE_CVV_KEY = 'payflow_gateway_require_cvv';
     const PAYFLOW_GATEWAY_ZERO_AMOUNT_AUTHORIZATION_KEY = 'payflow_gateway_zero_amount_authorization';
     const PAYFLOW_GATEWAY_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY = 'payflow_gateway_authorization_for_required_amount';
-    const PAYFLOW_GATEWAY_ALLOWED_CURRENCIES_KEY = 'payflow_gateway_allowed_currencies';
 
-    const PAYFLOW_EXPRESS_CHECKOUT_ENABLED_KEY = 'payflow_express_checkout_enabled';
     const PAYFLOW_EXPRESS_CHECKOUT_LABEL_KEY = 'payflow_express_checkout_label';
     const PAYFLOW_EXPRESS_CHECKOUT_SHORT_LABEL_KEY = 'payflow_express_checkout_short_label';
-    const PAYFLOW_EXPRESS_CHECKOUT_SORT_ORDER_KEY = 'payflow_express_checkout_sort_order';
     const PAYFLOW_EXPRESS_CHECKOUT_PAYMENT_ACTION_KEY = 'payflow_express_checkout_payment_action';
 
     const CARD_VISA = 'visa';
@@ -92,16 +74,9 @@ class Configuration implements ConfigurationInterface
         $treeBuilder = new TreeBuilder();
         $rootNode = $treeBuilder->root(OroPayPalExtension::ALIAS);
 
-        $paymentCurrencies = array_intersect(CurrencyConfiguration::$defaultCurrencies, Currency::$currencies);
-
         SettingsBuilder::append(
             $rootNode,
             [
-                // PayPal Payments Pro
-                self::PAYPAL_PAYMENTS_PRO_ENABLED_KEY => [
-                    'type' => 'boolean',
-                    'value' => false
-                ],
                 self::PAYPAL_PAYMENTS_PRO_LABEL_KEY => [
                     'type' => 'text',
                     'value' => self::CREDIT_CARD_LABEL
@@ -109,18 +84,6 @@ class Configuration implements ConfigurationInterface
                 self::PAYPAL_PAYMENTS_PRO_SHORT_LABEL_KEY => [
                     'type' => 'text',
                     'value' => self::CREDIT_CARD_LABEL
-                ],
-                self::PAYPAL_PAYMENTS_PRO_SORT_ORDER_KEY => [
-                    'type' => 'string',
-                    'value' => '10'
-                ],
-                self::PAYPAL_PAYMENTS_PRO_ALLOWED_COUNTRIES_KEY => [
-                    'type' => 'text',
-                    'value' => PaymentConfiguration::ALLOWED_COUNTRIES_ALL
-                ],
-                self::PAYPAL_PAYMENTS_PRO_SELECTED_COUNTRIES_KEY => [
-                    'type' => 'array',
-                    'value' => []
                 ],
                 self::PAYPAL_PAYMENTS_PRO_ALLOWED_CC_TYPES_KEY => [
                     'type' => 'array',
@@ -182,15 +145,6 @@ class Configuration implements ConfigurationInterface
                     'type' => 'boolean',
                     'value' => false
                 ],
-                self::PAYPAL_PAYMENTS_PRO_ALLOWED_CURRENCIES_KEY => [
-                    'type' => 'array',
-                    'value' => $paymentCurrencies,
-                ],
-                // PayPal Payments Pro Express Checkout
-                self::PAYPAL_PAYMENTS_PRO_EXPRESS_CHECKOUT_ENABLED_KEY => [
-                    'type' => 'boolean',
-                    'value' => false
-                ],
                 self::PAYPAL_PAYMENTS_PRO_EXPRESS_CHECKOUT_LABEL_KEY => [
                     'type' => 'text',
                     'value' => self::PAY_WITH_PAYPAL
@@ -199,19 +153,11 @@ class Configuration implements ConfigurationInterface
                     'type' => 'text',
                     'value' => self::PAYPAL
                 ],
-                self::PAYPAL_PAYMENTS_PRO_EXPRESS_CHECKOUT_SORT_ORDER_KEY => [
-                    'type' => 'string',
-                    'value' => '30'
-                ],
                 self::PAYPAL_PAYMENTS_PRO_EXPRESS_CHECKOUT_PAYMENT_ACTION_KEY => [
                     'type' => 'text',
                     'value' => PaymentMethodInterface::AUTHORIZE
                 ],
                 // Payflow Gateway
-                self::PAYFLOW_GATEWAY_ENABLED_KEY => [
-                    'type' => 'boolean',
-                    'value' => false
-                ],
                 self::PAYFLOW_GATEWAY_LABEL_KEY => [
                     'type' => 'text',
                     'value' => self::CREDIT_CARD_LABEL
@@ -219,18 +165,6 @@ class Configuration implements ConfigurationInterface
                 self::PAYFLOW_GATEWAY_SHORT_LABEL_KEY => [
                     'type' => 'text',
                     'value' => self::CREDIT_CARD_LABEL
-                ],
-                self::PAYFLOW_GATEWAY_SORT_ORDER_KEY => [
-                    'type' => 'string',
-                    'value' => '20'
-                ],
-                self::PAYFLOW_GATEWAY_ALLOWED_COUNTRIES_KEY => [
-                    'type' => 'text',
-                    'value' => PaymentConfiguration::ALLOWED_COUNTRIES_ALL
-                ],
-                self::PAYFLOW_GATEWAY_SELECTED_COUNTRIES_KEY => [
-                    'type' => 'array',
-                    'value' => []
                 ],
                 self::PAYFLOW_GATEWAY_ALLOWED_CC_TYPES_KEY => [
                     'type' => 'array',
@@ -292,15 +226,6 @@ class Configuration implements ConfigurationInterface
                     'type' => 'boolean',
                     'value' => false
                 ],
-                self::PAYFLOW_GATEWAY_ALLOWED_CURRENCIES_KEY => [
-                    'type' => 'array',
-                    'value' => $paymentCurrencies,
-                ],
-                // Payflow Express Checkout
-                self::PAYFLOW_EXPRESS_CHECKOUT_ENABLED_KEY => [
-                    'type' => 'boolean',
-                    'value' => false
-                ],
                 self::PAYFLOW_EXPRESS_CHECKOUT_LABEL_KEY => [
                     'type' => 'text',
                     'value' => self::PAY_WITH_PAYPAL
@@ -308,10 +233,6 @@ class Configuration implements ConfigurationInterface
                 self::PAYFLOW_EXPRESS_CHECKOUT_SHORT_LABEL_KEY => [
                     'type' => 'text',
                     'value' => self::PAYPAL
-                ],
-                self::PAYFLOW_EXPRESS_CHECKOUT_SORT_ORDER_KEY => [
-                    'type' => 'string',
-                    'value' => '40'
                 ],
                 self::PAYFLOW_EXPRESS_CHECKOUT_PAYMENT_ACTION_KEY => [
                     'type' => 'text',

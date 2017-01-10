@@ -5,7 +5,7 @@ namespace Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 
 class LoadGroups extends AbstractFixture
 {
@@ -28,11 +28,11 @@ class LoadGroups extends AbstractFixture
     /**
      * @param ObjectManager $manager
      * @param string $name
-     * @return AccountGroup
+     * @return CustomerGroup
      */
     protected function createGroup(ObjectManager $manager, $name)
     {
-        $group = new AccountGroup();
+        $group = new CustomerGroup();
         $group->setName($name);
         $manager->persist($group);
         $this->addReference($name, $group);

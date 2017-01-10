@@ -17,7 +17,7 @@ use Oro\Component\TestUtils\ORM\OrmTestCase;
 use Oro\Bundle\SecurityBundle\Owner\OwnerTree;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Owner\FrontendOwnerTreeProvider;
 use Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
@@ -118,7 +118,7 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->container = $this->getMock('Symfony\Component\DependencyInjection\ContainerInterface');
+        $this->container = $this->createMock('Symfony\Component\DependencyInjection\ContainerInterface');
         $this->container->expects($this->any())
             ->method('get')
             ->willReturnMap(
@@ -152,33 +152,13 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
      * @param string                                   $sql
      * @param array                                    $result
      */
-    protected function setQueryExpectationAt(
-        \PHPUnit_Framework_MockObject_MockObject $conn,
-        $expectsAt,
-        $sql,
-        $result
-    ) {
-        $stmt = $this->createFetchStatementMock($result);
-        $conn
-            ->expects($this->at($expectsAt))
-            ->method('query')
-            ->with($sql)
-            ->will($this->returnValue($stmt));
-    }
-
-    /**
-     * @param \PHPUnit_Framework_MockObject_MockObject $conn
-     * @param int                                      $expectsAt
-     * @param string                                   $sql
-     * @param array                                    $result
-     */
     protected function setFetchAllQueryExpectationAt(
         \PHPUnit_Framework_MockObject_MockObject $conn,
         $expectsAt,
         $sql,
         $result
     ) {
-        $stmt = $this->getMock('Oro\Component\TestUtils\ORM\Mocks\StatementMock');
+        $stmt = $this->createMock('Oro\Component\TestUtils\ORM\Mocks\StatementMock');
         $stmt->expects($this->once())
             ->method('fetchAll')
             ->willReturn($result);
@@ -694,7 +674,7 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
     {
         $this->securityFacade->expects($this->exactly(2))
             ->method('getLoggedUser')
-            ->willReturnOnConsecutiveCalls(new AccountUser(), new User());
+            ->willReturnOnConsecutiveCalls(new CustomerUser(), new User());
 
         $this->assertTrue($this->treeProvider->supports());
         $this->assertFalse($this->treeProvider->supports());

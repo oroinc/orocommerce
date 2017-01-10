@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type;
 
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Form\FormTypeInterface;
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
@@ -12,7 +14,7 @@ use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountUserMultiSelectType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -30,10 +32,30 @@ use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemType;
  */
 abstract class AbstractTest extends FormIntegrationTestCase
 {
+    protected $dateTimeFields = [
+        'updatedAt',
+        'createdAt'
+    ];
+
     /**
      * @var FormTypeInterface
      */
     protected $formType;
+
+    /**
+     * @var PropertyAccessor
+     */
+    protected $propertyAccessor;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
+    }
 
     /**
      * @param bool $isValid
@@ -53,7 +75,37 @@ abstract class AbstractTest extends FormIntegrationTestCase
 
         $this->assertEquals($isValid, $form->isValid());
 
+        $formData = $form->getData();
+
+        $this->checkDateTimeFields($expectedData, $formData);
+
+        $this->fixDateTimeFieldValues($expectedData, $formData);
+
         $this->assertEquals($expectedData, $form->getData());
+    }
+
+    protected function checkDateTimeFields($expectedData, $formData)
+    {
+        foreach ($this->dateTimeFields as $fieldName) {
+            if (method_exists($expectedData, sprintf('get%s', ucfirst($fieldName)))) {
+                $expectedDateTimeFieldValue = $this->propertyAccessor->getValue($expectedData, $fieldName);
+                $actualDateTimeFieldValue = $this->propertyAccessor->getValue($formData, $fieldName);
+                $this->assertGreaterThanOrEqual($expectedDateTimeFieldValue, $actualDateTimeFieldValue);
+            }
+        }
+    }
+
+    protected function fixDateTimeFieldValues($expectedData, $formData)
+    {
+        $reflectionObj = new \ReflectionObject($expectedData);
+        foreach ($this->dateTimeFields as $fieldName) {
+            if (method_exists($expectedData, sprintf('get%s', ucfirst($fieldName)))) {
+                $actualDateTimeFieldValue = $this->propertyAccessor->getValue($formData, $fieldName);
+                $reflectionProperty = $reflectionObj->getProperty($fieldName);
+                $reflectionProperty->setAccessible(true);
+                $reflectionProperty->setValue($expectedData, $actualDateTimeFieldValue);
+            }
+        }
     }
 
     /**
@@ -77,7 +129,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
      */
     protected function preparePriceType()
     {
-        return PriceTypeGenerator::createPriceType();
+        return PriceTypeGenerator::createPriceType($this);
     }
 
     /**
@@ -202,7 +254,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
     protected function createRequestProduct($id, $product, $productSku)
     {
         /* @var $requestProduct \PHPUnit_Framework_MockObject_MockObject|RequestProduct */
-        $requestProduct = $this->getMock('Oro\Bundle\RFPBundle\Entity\RequestProduct');
+        $requestProduct = $this->createMock('Oro\Bundle\RFPBundle\Entity\RequestProduct');
         $requestProduct
             ->expects(static::any())
             ->method('getId')
@@ -280,11 +332,11 @@ abstract class AbstractTest extends FormIntegrationTestCase
 
     /**
      * @param int $id
-     * @return AccountUser
+     * @return CustomerUser
      */
     protected function getAccountUser($id)
     {
-        return $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', $id);
+        return $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', $id);
     }
 
     /**

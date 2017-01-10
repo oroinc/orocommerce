@@ -96,7 +96,7 @@ class RestrictedProductsDatagridEventListenerTest extends \PHPUnit_Framework_Tes
         $dataSource->expects($this->once())->method('getQueryBuilder')->willReturn($this->qb);
 
         /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $dataGrid */
-        $dataGrid = $this->getMock(DatagridInterface::class);
+        $dataGrid = $this->createMock(DatagridInterface::class);
         $dataGrid->expects($this->once())->method('getDatasource')->willReturn($dataSource);
 
         return new BuildAfter($dataGrid);

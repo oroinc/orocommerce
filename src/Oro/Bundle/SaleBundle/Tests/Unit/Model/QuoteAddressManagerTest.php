@@ -8,10 +8,10 @@ use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\OrderBundle\Tests\Unit\Manager\AbstractAddressManagerTest;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
@@ -35,7 +35,7 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
 
         $this->manager = new QuoteAddressManager(
             $this->provider,
@@ -65,12 +65,12 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
         AbstractAddress $expectedAccountUserAddress = null,
         QuoteAddress $quoteAddress = null
     ) {
-        $classMetadata = $this->getMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
+        $classMetadata = $this->createMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
         $classMetadata->expects($this->once())->method('getFieldNames')->willReturn(['street', 'city', 'label']);
         $classMetadata->expects($this->once())->method('getAssociationNames')
             ->willReturn(['country', 'region']);
 
-        $em = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $em = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
         $em->expects($this->once())->method('getClassMetadata')->willReturn($classMetadata);
 
         $this->registry->expects($this->any())->method('getManagerForClass')->with($this->isType('string'))
@@ -92,20 +92,20 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
 
         return [
             'empty account address' => [
-                $accountAddress = new AccountAddress(),
+                $accountAddress = new CustomerAddress(),
                 (new QuoteAddress())
                     ->setAccountAddress($accountAddress),
                 $accountAddress
             ],
             'empty account user address' => [
-                $accountUserAddress = new AccountUserAddress(),
+                $accountUserAddress = new CustomerUserAddress(),
                 (new QuoteAddress())
                     ->setAccountUserAddress($accountUserAddress),
                 null,
                 $accountUserAddress
             ],
             'from account address' => [
-                $accountAddress = (new AccountAddress())
+                $accountAddress = (new CustomerAddress())
                     ->setCountry($country)
                     ->setRegion($region)
                     ->setStreet('Street')
@@ -119,7 +119,7 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
                 $accountAddress
             ],
             'from account user address' => [
-                $accountUserAddress = (new AccountUserAddress())
+                $accountUserAddress = (new CustomerUserAddress())
                     ->setCountry($country)
                     ->setRegion($region)
                     ->setStreet('Street')
@@ -134,7 +134,7 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
                 $accountUserAddress
             ],
             'do not override value from existing with empty one' => [
-                $accountUserAddress = (new AccountUserAddress())
+                $accountUserAddress = (new CustomerUserAddress())
                     ->setCountry($country)
                     ->setRegion($region)
                     ->setStreet('Street')
@@ -171,8 +171,8 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
         $this->provider->expects($this->any())->method('getAccountAddresses')->willReturn($accountAddresses);
         $this->provider->expects($this->any())->method('getAccountUserAddresses')->willReturn($accountUserAddresses);
 
-        $this->manager->addEntity('au', 'Oro\Bundle\CustomerBundle\Entity\AccountUserAddress');
-        $this->manager->addEntity('a', 'Oro\Bundle\CustomerBundle\Entity\AccountAddress');
+        $this->manager->addEntity('au', 'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress');
+        $this->manager->addEntity('a', 'Oro\Bundle\CustomerBundle\Entity\CustomerAddress');
 
         $this->assertEquals($expected, $this->manager->getGroupedAddresses($quote, AddressType::TYPE_BILLING));
     }
@@ -185,73 +185,73 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
         return [
             'empty account user' => [new Quote()],
             'empty account' => [
-                (new Quote())->setAccountUser(new AccountUser()),
+                (new Quote())->setAccountUser(new CustomerUser()),
                 [],
                 [
-                    $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUserAddress', 1),
-                    $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUserAddress', 2),
+                    $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress', 1),
+                    $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress', 2),
                 ],
                 [
                     QuoteAddressManager::ACCOUNT_USER_LABEL => [
                         'au_1' => $this->getEntity(
-                            'Oro\Bundle\CustomerBundle\Entity\AccountUserAddress',
+                            'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress',
                             1
                         ),
                         'au_2' => $this->getEntity(
-                            'Oro\Bundle\CustomerBundle\Entity\AccountUserAddress',
+                            'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress',
                             2
                         ),
                     ],
                 ],
             ],
             'account' => [
-                (new Quote())->setAccountUser(new AccountUser())->setAccount(new Account()),
+                (new Quote())->setAccountUser(new CustomerUser())->setAccount(new Customer()),
                 [
-                    $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountAddress', 1),
-                    $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountAddress', 2),
+                    $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', 1),
+                    $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', 2),
                 ],
                 [],
                 [
                     QuoteAddressManager::ACCOUNT_LABEL => [
                         'a_1' => $this->getEntity(
-                            'Oro\Bundle\CustomerBundle\Entity\AccountAddress',
+                            'Oro\Bundle\CustomerBundle\Entity\CustomerAddress',
                             1
                         ),
                         'a_2' => $this->getEntity(
-                            'Oro\Bundle\CustomerBundle\Entity\AccountAddress',
+                            'Oro\Bundle\CustomerBundle\Entity\CustomerAddress',
                             2
                         ),
                     ],
                 ],
             ],
             'full' => [
-                (new Quote())->setAccountUser(new AccountUser())->setAccount(new Account()),
+                (new Quote())->setAccountUser(new CustomerUser())->setAccount(new Customer()),
                 [
-                    $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountAddress', 1),
-                    $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountAddress', 2),
+                    $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', 1),
+                    $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', 2),
                 ],
                 [
-                    $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUserAddress', 1),
-                    $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUserAddress', 2),
+                    $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress', 1),
+                    $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress', 2),
                 ],
                 [
                     QuoteAddressManager::ACCOUNT_LABEL => [
                         'a_1' => $this->getEntity(
-                            'Oro\Bundle\CustomerBundle\Entity\AccountAddress',
+                            'Oro\Bundle\CustomerBundle\Entity\CustomerAddress',
                             1
                         ),
                         'a_2' => $this->getEntity(
-                            'Oro\Bundle\CustomerBundle\Entity\AccountAddress',
+                            'Oro\Bundle\CustomerBundle\Entity\CustomerAddress',
                             2
                         ),
                     ],
                     QuoteAddressManager::ACCOUNT_USER_LABEL => [
                         'au_1' => $this->getEntity(
-                            'Oro\Bundle\CustomerBundle\Entity\AccountUserAddress',
+                            'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress',
                             1
                         ),
                         'au_2' => $this->getEntity(
-                            'Oro\Bundle\CustomerBundle\Entity\AccountUserAddress',
+                            'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress',
                             2
                         ),
                     ],

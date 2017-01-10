@@ -5,8 +5,8 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Entity\EntityListener;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 
 use Oro\Bundle\VisibilityBundle\Driver\AccountPartialUpdateDriverInterface;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\VisibilityBundle\Entity\EntityListener\AccountListener;
 use Oro\Bundle\VisibilityBundle\Model\MessageFactoryInterface;
 use Oro\Component\MessageQueue\Client\Message;
@@ -30,7 +30,7 @@ class AccountListenerTest extends \PHPUnit_Framework_TestCase
     protected $driver;
 
     /**
-     * @var Account
+     * @var Customer
      */
     protected $account;
 
@@ -48,7 +48,7 @@ class AccountListenerTest extends \PHPUnit_Framework_TestCase
         $this->driver = $this->getMockBuilder(AccountPartialUpdateDriverInterface::class)
             ->getMock();
 
-        $this->account = new Account();
+        $this->account = new Customer();
         $this->listener = new AccountListener($this->factory, $this->producer, $this->driver);
     }
 
@@ -76,7 +76,7 @@ class AccountListenerTest extends \PHPUnit_Framework_TestCase
         $this->driver->expects($this->never())
             ->method('createAccountWithoutAccountGroupVisibility');
 
-        $this->account->setGroup(new AccountGroup());
+        $this->account->setGroup(new CustomerGroup());
         $this->listener->postPersist($this->account);
     }
 

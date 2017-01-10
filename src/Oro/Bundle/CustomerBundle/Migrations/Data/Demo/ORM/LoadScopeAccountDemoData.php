@@ -7,7 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 class LoadScopeAccountDemoData extends AbstractFixture implements FixtureInterface, DependentFixtureInterface
@@ -29,8 +29,8 @@ class LoadScopeAccountDemoData extends AbstractFixture implements FixtureInterfa
      */
     public function load(ObjectManager $manager)
     {
-        /** @var Account $account */
-        $accounts = $manager->getRepository('OroCustomerBundle:Account')->findAll();
+        /** @var Customer $account */
+        $accounts = $manager->getRepository('OroCustomerBundle:Customer')->findAll();
         foreach ($accounts as $account) {
             $scope = new Scope();
             $scope->setAccount($account);

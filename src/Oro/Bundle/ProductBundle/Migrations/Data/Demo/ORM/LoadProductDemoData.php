@@ -10,6 +10,7 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
+use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -18,6 +19,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 
 class LoadProductDemoData extends AbstractFixture implements ContainerAwareInterface
 {
@@ -68,6 +70,7 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
         $outOfStockStatus = $this->getOutOfStockInventoryStatus($manager);
 
         $allImageTypes = $this->getImageTypes();
+        $defaultAttributeFamily = $this->getDefaultAttributeFamily($manager);
 
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
@@ -75,17 +78,21 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
             $name = new LocalizedFallbackValue();
             $name->setString($row['name']);
 
-            $text = '<p>' . $row['description'] . '</p>'
+            $text = '<p  class="product-view-desc">' . $row['description'] . '</p>'
                 . (
                     array_key_exists('information', $row) && !empty($row['information']) ?
-                    '<p style="text-decoration: underline; font-weight: bold;">Product Information &amp; Features:</p>'
-                    . '<ul><li>' . implode('</li><li>', explode("\n", $row['information'])) . '</li></ul>'
+                    '<p class="product-view-desc-title">Product Information &amp; Features:</p>
+                    <ul class="product-view-desc-list"><li class="product-view-desc-list__item">'
+                    .   implode('</li><li class="product-view-desc-list__item">', explode("\n", $row['information']))
+                    . '</li></ul>'
                     : ''
                 )
                 . (
-                    array_key_exists('specifications', $row) && !empty($row['specifications'])  ?
-                    '<p style="text-decoration: underline; font-weight: bold;">Technical Specs:</p>'
-                    . '<ul><li>' . implode('</li><li>', explode("\n", $row['specifications'])) . '</li></ul>'
+                    array_key_exists('specifications', $row) && !empty($row['specifications']) ?
+                    '<p class="product-view-desc-title">Technical Specs:</p>'
+                    . '<ul class="product-view-desc-list"><li class="product-view-desc-list__item">'
+                    .   implode('</li><li class="product-view-desc-list__item">', explode("\n", $row['specifications']))
+                    . '</li></ul>'
                     : ''
                 );
 
@@ -98,12 +105,14 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
             $product = new Product();
             $product->setOwner($businessUnit)
                 ->setOrganization($organization)
+                ->setAttributeFamily($defaultAttributeFamily)
                 ->setSku($row['sku'])
                 ->setInventoryStatus($outOfStockStatus)
                 ->setStatus(Product::STATUS_ENABLED)
                 ->addName($name)
                 ->addDescription($description)
-                ->addShortDescription($shortDescription);
+                ->addShortDescription($shortDescription)
+                ->setType($row['type']);
 
             $productUnit = $this->getProductUnit($manager, $row['unit']);
 
@@ -201,5 +210,16 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
         }
 
         return $this->productUnis[$code];
+    }
+
+    /**
+     * @param ObjectManager $manager
+     * @return AttributeFamily|null
+     */
+    private function getDefaultAttributeFamily(ObjectManager $manager)
+    {
+        $familyRepository = $manager->getRepository(AttributeFamily::class);
+
+        return $familyRepository->findOneBy(['code' => LoadProductDefaultAttributeFamilyData::DEFAULT_FAMILY_CODE]);
     }
 }

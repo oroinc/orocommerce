@@ -1,11 +1,14 @@
-{% extends 'OroFrontendBundle:layouts/default:form_theme.html.twig' %}
-
-{% block oro_account_typed_address_widget %}
+{% block oro_account_frontend_typed_address_widget %}
     {% spaceless %}
         <div class="grid">
             <div class="grid__row grid__row--offset-none">
                 <div class="grid__column grid__column--12 grid__column--offset-y">
                     {{ form_row(form.primary, {'label' : 'oro.customer.frontend.address.form.label.primary'|trans }) }}
+                </div>
+            </div>
+            <div class="grid__row grid__row--offset-none">
+                <div class="grid__column grid__column--12 grid__column--offset-y">
+                    {{ form_row(form.frontendOwner) }}
                 </div>
             </div>
             <div class="grid__row grid__row--offset-none">
@@ -59,11 +62,12 @@
                     {{ form_row(form.region) }}
                 </div>
                 <div class="grid__column grid__column--2 grid__column--offset-y">
-                    <div class="grid__row grid__row--offset-s">
+                    {{ form_row(form.postalCode, {'attr' : {'placeholder': 'oro.customer.frontend.address.form.placeholder.zip'|trans}}) }}
+                    {# <div class="grid__row grid__row--offset-none">
                         {{- form_label(form.postalCode) -}}
                     </div>
                     {{- form_widget(form.postalCode, {'attr' : {'placeholder': 'oro.customer.frontend.address.form.placeholder.zip'|trans}}) -}}
-                    {{- form_errors(form.postalCode) -}}
+                    {{- form_errors(form.postalCode) -}} #}
                 </div>
             </div>
         </div>
@@ -85,7 +89,7 @@
         </div>
 
         <div class="pixels">
-            
+
         </div>
 
     {% endspaceless %}
@@ -106,46 +110,10 @@
 {% endblock %}
 
 {%- block form_row -%}
-    <div class="grid__row grid__row--offset-s">
-        {{- form_label(form, null) -}}
-    </div>
+    {{- form_label(form, null) -}}
     {{- form_widget(form) -}}
     {{- form_errors(form) -}}
 {%- endblock -%}
-
-{% block checkbox_row %}
-    {{- form_widget(form) -}}
-{% endblock %}
-
-{%- block checkbox_widget -%}
-    {%- if label is empty -%}
-        {% set label = id|humanize %}
-    {%- endif -%}
-
-    <label class="custom-checkbox" for="{{ id }}">
-        <input class="custom-checkbox__input" type="checkbox" {{ block('widget_attributes') }}{% if value is defined %} value="{{ value }}"{% endif %}{% if checked %} checked="checked"{% endif %}>
-        <span class="custom-checkbox__icon"></span>
-        <span class="custom-checkbox__text">{{ label|block_text(translation_domain) }} </span>
-    </label>
-
-    {{- form_errors(form) -}}
-{%- endblock checkbox_widget -%}
-
-{%- block form_label -%}
-    {% set label_attr = label_attr|merge({class: ""}) %}
-
-    {{ parent() }}
-{%- endblock -%}
-
-{%- block form_widget -%}
-    {% set attr = attr|merge({class: ""}) %}
-    {{ parent() }}
-{%- endblock -%}
-
-{% block form_widget_simple %}
-    {% set attr = attr|merge({class: "input input--full input--size-m"}) %}
-    {{ parent() }}
-{% endblock %}
 
 {% block oro_frontend_region_widget %}
     {{ block('oro_region_widget') }}
@@ -154,29 +122,3 @@
 {% block oro_frontend_country_widget %}
     {{ form_widget(form, {'class_prefix': 'checkout'}) }}
 {% endblock %}
-
-{% block genemu_jqueryselect2_widget %}
-    {% set component_options = {
-        containerCssClass: 'oro-select2 oro-select2--size-m'
-    } %}
-
-    {{ form_widget(form, { 'attr': {
-        'class': 'select',
-        'data-input-widget-options': component_options|json_encode
-    } }) }}
-
-    {{ parent() }}
-{% endblock %}
-
-{# TODO: remove due BB-3540 #}
-{%- block form_errors -%}
-    {%- if errors|length > 0 -%}
-        <div class="notification--error">
-            <ul>
-                {%- for error in errors -%}
-                    <li><i class="cf-attention"></i><span class="notification__text">{{ error.message }}</span></li>
-                {%- endfor -%}
-            </ul>
-        </div>
-    {%- endif -%}
-{%- endblock form_errors -%}

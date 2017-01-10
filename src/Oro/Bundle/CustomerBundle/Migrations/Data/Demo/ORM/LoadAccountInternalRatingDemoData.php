@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM;
 
 use Oro\Bundle\EntityExtendBundle\Migration\Fixture\AbstractEnumFixture;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 
 class LoadAccountInternalRatingDemoData extends AbstractEnumFixture
 {
@@ -44,6 +44,6 @@ class LoadAccountInternalRatingDemoData extends AbstractEnumFixture
      */
     protected function getEnumCode()
     {
-        return Account::INTERNAL_RATING_CODE;
+        return Customer::INTERNAL_RATING_CODE;
     }
 }

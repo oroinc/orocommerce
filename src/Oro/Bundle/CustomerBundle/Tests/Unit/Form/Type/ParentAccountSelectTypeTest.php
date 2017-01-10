@@ -4,7 +4,7 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormView;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Form\Type\ParentAccountSelectType;
 
 class ParentAccountSelectTypeTest extends \PHPUnit_Framework_TestCase
@@ -31,7 +31,7 @@ class ParentAccountSelectTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testConfigureOptions()
     {
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with($this->isType('array'))
@@ -60,14 +60,14 @@ class ParentAccountSelectTypeTest extends \PHPUnit_Framework_TestCase
      */
     public function testBuildView($parentData, $expectedParentId)
     {
-        $parentForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $parentForm = $this->createMock('Symfony\Component\Form\FormInterface');
         $parentForm->expects($this->any())
             ->method('getData')
             ->willReturn($parentData);
 
         $formView = new FormView();
 
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->any())
             ->method('getParent')
             ->willReturn($parentForm);
@@ -85,7 +85,7 @@ class ParentAccountSelectTypeTest extends \PHPUnit_Framework_TestCase
     public function buildViewDataProvider()
     {
         $accountId = 42;
-        $account = new Account();
+        $account = new Customer();
 
         $reflection = new \ReflectionProperty(get_class($account), 'id');
         $reflection->setAccessible(true);

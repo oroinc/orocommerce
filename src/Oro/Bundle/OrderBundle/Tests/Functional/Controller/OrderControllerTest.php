@@ -1,7 +1,7 @@
 <?php
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\LocaleBundle\Formatter\NameFormatter;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -18,6 +18,7 @@ use Symfony\Component\DomCrawler\Form;
  * @dbIsolation
  * @group CommunityEdition
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class OrderControllerTest extends WebTestCase
 {
@@ -56,7 +57,7 @@ class OrderControllerTest extends WebTestCase
 
     /**
      * @param Form $form
-     * @param Account $orderAccount
+     * @param Customer $orderAccount
      * @param $lineItems
      * @param $discountItems
      * @return array
@@ -80,7 +81,7 @@ class OrderControllerTest extends WebTestCase
 
     /**
      * @param Form $form
-     * @param Account $orderAccount
+     * @param Customer $orderAccount
      * @param array $lineItems
      * @param array $discountItems
      * @return array
@@ -143,11 +144,9 @@ class OrderControllerTest extends WebTestCase
         }
 
         $order = $this->getReference(LoadOrders::MY_ORDER);
-        $shippingMethodLabel = $this->getContainer()->get('oro_order.formatter.shipping_method')
-            ->formatShippingMethodWithTypeLabel($order->getShippingMethod(), $order->getShippingMethodType());
-        $shippingMethodLabel = $this->getContainer()->get('translator')->trans($shippingMethodLabel);
-        $this->assertArrayHasKey('shippingMethod', $myOrderData);
-        $this->assertEquals($shippingMethodLabel, $myOrderData['shippingMethod']);
+
+        $this->assertArrayHasKey('poNumber', $myOrderData);
+        $this->assertEquals($order->getPoNumber(), $myOrderData['poNumber']);
     }
 
     /**
@@ -162,7 +161,7 @@ class OrderControllerTest extends WebTestCase
         /** @var Form $form */
         $form = $crawler->selectButton('Save')->form();
 
-        /** @var Account $orderAccount */
+        /** @var Customer $orderAccount */
         $orderAccount = $this->getReference('account.level_1');
         
         /** @var Product $product */
@@ -252,7 +251,7 @@ class OrderControllerTest extends WebTestCase
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
-        /** @var Account $orderAccount */
+        /** @var Customer $orderAccount */
         $orderAccount = $this->getReference('account.level_1');
 
         $date = (new \DateTime('now'))->format('Y-m-d');
@@ -290,7 +289,7 @@ class OrderControllerTest extends WebTestCase
         $actualLineItems = $this->getActualLineItems($crawler, count($lineItems));
 
         usort($actualLineItems, function ($a, $b) {
-            return $a['product'] - $b['product'];
+            return (int)$a['product'] - (int)$b['product'];
         });
 
         $expectedLineItems = $this->getExpectedLineItemsAfterUpdate($date);
@@ -493,6 +492,36 @@ class OrderControllerTest extends WebTestCase
 
         $html = $crawler->html();
         $this->assertContains(self::ORDER_PO_NUMBER_UPDATED, $html);
+    }
+
+    public function testSaveOrderWithEmptyProductErrorMessage()
+    {
+        $crawler = $this->client->request('GET', $this->getUrl('oro_order_create'));
+
+        $form = $crawler->selectButton('Save')->form();
+
+        $orderAccount = $this->getReference('account.level_1');
+        $lineItems = [
+            [
+                'product' => '',
+                'quantity' => 1,
+                'productUnit' => '',
+                'price' => [
+                    'value' => '',
+                    'currency' => 'USD'
+                ],
+                'priceType' => 10,
+                'shipBy' => ''
+            ],
+        ];
+        $discountItems = $this->getDiscountItems();
+
+        $submittedData = $this->getSubmittedData($form, $orderAccount, $lineItems, $discountItems);
+
+        $this->client->followRedirects(true);
+        $this->client->request($form->getMethod(), $form->getUri(), $submittedData);
+
+        $this->assertContains('Please choose Product', $this->client->getResponse()->getContent());
     }
 
     /**

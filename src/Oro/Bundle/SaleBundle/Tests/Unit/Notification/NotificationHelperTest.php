@@ -13,7 +13,7 @@ use Oro\Bundle\EmailBundle\Form\Model\Email;
 use Oro\Bundle\EmailBundle\Mailer\Processor;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Notification\NotificationHelper;
 
@@ -41,7 +41,7 @@ class NotificationHelperTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $this->request = new Request();
 
         $this->emailModelBuilder = $this->getMockBuilder('Oro\Bundle\EmailBundle\Builder\EmailModelBuilder')
@@ -73,7 +73,7 @@ class NotificationHelperTest extends \PHPUnit_Framework_TestCase
             ->method('createEmailModel')
             ->willReturn(new Email());
 
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
         $accountUser->setEmail('test@example.com');
 
         /** @var Quote $quote */
@@ -131,7 +131,7 @@ class NotificationHelperTest extends \PHPUnit_Framework_TestCase
     protected function assertManagerCalled($className)
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager $manager */
-        $manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $manager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
 
         $this->registry->expects($this->once())
             ->method('getManagerForClass')
@@ -147,7 +147,7 @@ class NotificationHelperTest extends \PHPUnit_Framework_TestCase
     protected function assertRepositoryCalled($className)
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|ObjectRepository $repository */
-        $repository = $this->getMock('Doctrine\Common\Persistence\ObjectRepository');
+        $repository = $this->createMock('Doctrine\Common\Persistence\ObjectRepository');
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|ObjectManager $manager */
         $manager = $this->assertManagerCalled($className);

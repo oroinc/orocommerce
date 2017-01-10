@@ -18,17 +18,19 @@ layout:
                 shopping_list_title:
                     blockType: shopping_list_awere_block
                     options:
-                        visible: '!data["entity"]'
+                        visible: '=data["entity"]!=null'
                         shoppingList: '=data["entity"]'
-                shopping_list_top_actions:
-                    blockType: action_line_buttons
+                shopping_list_owner:
+                    blockType: shopping_list_owner_select_block
                     options:
                         visible: '=data["entity"]!=null'
-                        actions: '=data["actions"].getAll(data["entity"])'
-                        entityId: '=data["action_buttons"].getEntityId(data["entity"])'
-                        entityClass: '=data["action_buttons"].getEntityClass(data["entity"])'
-                        dialogRoute: '=data["action_buttons"].getDialogRoute()'
-                        executionRoute: '=data["action_buttons"].getExecutionRoute()'
+                        form: '=data["oro_account_frontend_account_user_form"].getAccountUserSelectFormView(data["entity"].getAccountUser(), data["entity"])'
+                        shoppingList: '=data["entity"]'
+                shopping_list_top_actions:
+                    blockType: line_buttons
+                    options:
+                        visible: '=data["entity"]!=null'
+                        buttons: '=data["buttons"].getAll(data["entity"])'
                 shopping_list_options:
                     blockType: shopping_list_awere_block
                     options:
@@ -41,9 +43,12 @@ layout:
                     options:
                         visible: '=data["entity"]!=null && data["entity"].getLineItems()!=null'
                         shoppingList: '=data["entity"]'
+                        lineItemErrors: '=data["oro_line_item_errors"].getLineItemErrors(data["entity"].getLineItems())'
                         productsMatchedPrice: '=data["oro_shopping_list_products"].getMatchedPrice(data["entity"])'
                         productsAllPrices: '=data["oro_shopping_list_products"].getAllPrices(data["entity"])'
                         productsUnits: '=data["oro_shopping_list_products_units"].getProductsUnits(data["entity"])'
+                        productsUnitSelectionVisibilities: '=data["oro_shopping_list_product_unit_code_visibility"].getProductsUnitSelectionVisibilities(data["entity"])'
+                        lineItemsUnitVisibilities: '=data["oro_shopping_list_product_unit_code_visibility"].getLineItemsUnitVisibilities(data["entity"])'
                 shopping_list_line_items_empty:
                     blockType: block
                     options:
@@ -69,14 +74,10 @@ layout:
                         entityId: '=data["entity"]!=null ? data["entity"].getId() : null'
                         skipMaskView: true
                 shopping_list_combined_button:
-                    blockType: action_combined_buttons
+                    blockType: combined_buttons
                     options:
                         visible: '=data["entity"]!=null'
-                        actions: '=data["actions"].getAll(data["entity"])'
-                        entityId: '=data["action_buttons"].getEntityId(data["entity"])'
-                        entityClass: '=data["action_buttons"].getEntityClass(data["entity"])'
-                        dialogRoute: '=data["action_buttons"].getDialogRoute()'
-                        executionRoute: '=data["action_buttons"].getExecutionRoute()'
+                        buttons: '=data["buttons"].getAll(data["entity"])'
                 shopping_list_view_container_content:
                     blockType: container
             tree:
@@ -87,6 +88,7 @@ layout:
                             shopping_list_title: ~
                             shopping_list_top_actions: ~
                             shopping_list_line_items:
+                                shopping_list_owner: ~
                                 shopping_list_options: ~
                                 shopping_list_line_items_list: ~
                                 shopping_list_line_items_empty: ~

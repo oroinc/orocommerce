@@ -20,8 +20,8 @@ class MessageGeneratorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
-        $this->router = $this->getMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
+        $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->router = $this->createMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
         $this->generator = new MessageGenerator($this->translator, $this->router);
     }
 

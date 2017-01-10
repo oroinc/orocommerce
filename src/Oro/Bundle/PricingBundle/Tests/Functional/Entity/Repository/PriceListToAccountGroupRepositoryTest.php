@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -40,7 +40,7 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
     {
         $alias = 'account_group';
         $qb = $this->getContainer()->get('doctrine')
-            ->getRepository(AccountGroup::class)
+            ->getRepository(CustomerGroup::class)
             ->createQueryBuilder($alias);
 
         /** @var BasePriceList $priceList */
@@ -116,7 +116,7 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
      */
     public function testGetPriceLists($accountGroup, $website, array $expectedPriceLists)
     {
-        /** @var AccountGroup $accountGroup */
+        /** @var CustomerGroup $accountGroup */
         $accountGroup = $this->getReference($accountGroup);
         /** @var Website $website */
         $website = $this->getReference($website);
@@ -297,7 +297,7 @@ class PriceListToAccountGroupRepositoryTest extends WebTestCase
 
     public function testDelete()
     {
-        /** @var AccountGroup $accountGroup */
+        /** @var CustomerGroup $accountGroup */
         $accountGroup = $this->getReference('account_group.group1');
         /** @var Website $website */
         $website = $this->getReference('US');

@@ -35,6 +35,10 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
     const REQUEST7 = 'rfp.request.7';
     const REQUEST8 = 'rfp.request.8';
     const REQUEST9 = 'rfp.request.9';
+    const REQUEST10 = 'rfp.request.10';
+    const REQUEST11 = 'rfp.request.11';
+    const REQUEST12 = 'rfp.request.12';
+    const REQUEST13 = 'rfp.request.13';
 
     /**
      * @var array
@@ -145,6 +149,48 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'po_number' => self::PO_NUMBER,
             'ship_until' => true,
             'deleted' => '-1 day'
+        ],
+        self::REQUEST10 => [
+            'first_name' => 'PAUser1FN',
+            'last_name' => 'PAUser1LN',
+            'email' => LoadUserData::PARENT_ACCOUNT_USER1,
+            'phone' => '2-(999)507-1234',
+            'company' => 'Google',
+            'role' => 'CEO',
+            'note' => self::REQUEST10,
+            'account' => LoadUserData::PARENT_ACCOUNT,
+            'accountUser' => LoadUserData::PARENT_ACCOUNT_USER1
+        ],
+        self::REQUEST11 => [
+            'first_name' => 'PAUser2FN',
+            'last_name' => 'PAUser2LN',
+            'email' => LoadUserData::PARENT_ACCOUNT_USER2,
+            'phone' => '2-(999)507-1456',
+            'company' => 'Google',
+            'role' => 'CEO',
+            'note' => self::REQUEST11,
+            'account' => LoadUserData::PARENT_ACCOUNT,
+            'accountUser' => LoadUserData::PARENT_ACCOUNT_USER2
+        ],
+        self::REQUEST12 => [
+            'first_name' => 'PAWithoutUserFN',
+            'last_name' => 'PAWithoutUserLN',
+            'email' => 'test@example.com',
+            'phone' => '2-(999)111-1456',
+            'company' => 'Google',
+            'role' => 'CEO',
+            'note' => self::REQUEST12,
+            'account' => LoadUserData::PARENT_ACCOUNT
+        ],
+        self::REQUEST13 => [
+            'first_name' => 'AWithoutUserFN',
+            'last_name' => 'AWithoutUserLN',
+            'email' => 'test@example.com',
+            'phone' => '2-(999)111-4625',
+            'company' => 'Google',
+            'role' => 'CEO',
+            'note' => self::REQUEST13,
+            'account' => LoadUserData::ACCOUNT2
         ],
     ];
 
@@ -276,16 +322,6 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
      */
     protected function getCurrencies()
     {
-        $currencies = $this->container->get('oro_config.manager')->get('oro_currency.allowed_currencies');
-
-        if (!$currencies) {
-            $currencies = (array)$this->container->get('oro_locale.settings')->getCurrency();
-        }
-
-        if (!$currencies) {
-            throw new \LogicException('There are no currencies in system');
-        }
-
-        return $currencies;
+        return $this->container->get('oro_currency.config.currency')->getCurrencyList();
     }
 }

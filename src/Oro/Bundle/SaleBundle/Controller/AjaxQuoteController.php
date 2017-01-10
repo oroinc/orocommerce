@@ -5,6 +5,7 @@ namespace Oro\Bundle\SaleBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -14,10 +15,11 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Model\QuoteRequestHandler;
+use Oro\Bundle\SaleBundle\Event\QuoteEvent;
 
 class AjaxQuoteController extends Controller
 {
@@ -63,6 +65,34 @@ class AjaxQuoteController extends Controller
     }
 
     /**
+     * @Route("/entry-point/{id}", name="oro_quote_entry_point", defaults={"id" = 0})
+     * @AclAncestor("oro_order_update")
+     *
+     * @param Request    $request
+     * @param Quote|null $quote
+     *
+     * @return JsonResponse
+     */
+    public function entryPointAction(Request $request, Quote $quote = null)
+    {
+        if (!$quote) {
+            $quote = new Quote();
+            $quote->setWebsite($this->get('oro_website.manager')->getDefaultWebsite());
+        }
+
+        $form = $this->createForm($this->getQuoteFormTypeName(), $quote);
+
+        $submittedData = $request->get($form->getName());
+
+        $form->submit($submittedData);
+
+        $event = new QuoteEvent($form, $form->getData(), $submittedData);
+        $this->get('event_dispatcher')->dispatch(QuoteEvent::NAME, $event);
+
+        return new JsonResponse($event->getData());
+    }
+
+    /**
      * @param FormView $formView
      *
      * @return string
@@ -73,10 +103,10 @@ class AjaxQuoteController extends Controller
     }
 
     /**
-     * @param AccountUser $accountUser
-     * @return null|Account
+     * @param CustomerUser $accountUser
+     * @return null|Customer
      */
-    protected function getAccount(AccountUser $accountUser = null)
+    protected function getAccount(CustomerUser $accountUser = null)
     {
         $account = $this->getQuoteRequestHandler()->getAccount();
         if (!$account && $accountUser) {
@@ -90,15 +120,15 @@ class AjaxQuoteController extends Controller
     }
 
     /**
-     * @param AccountUser $accountUser
-     * @param Account $account
+     * @param CustomerUser $accountUser
+     * @param Customer $account
      *
      * @throws BadRequestHttpException
      */
-    protected function validateRelation(AccountUser $accountUser, Account $account)
+    protected function validateRelation(CustomerUser $accountUser, Customer $account)
     {
         if ($accountUser && $accountUser->getAccount() && $accountUser->getAccount()->getId() !== $account->getId()) {
-            throw new BadRequestHttpException('AccountUser must belong to Account');
+            throw new BadRequestHttpException('CustomerUser must belong to Account');
         }
     }
 

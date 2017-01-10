@@ -4,10 +4,12 @@ system_configuration:
             title: oro.shipping.system_configuration.groups.shipping.title
         shipping_origin:
             title: oro.shipping.system_configuration.groups.shipping_origin.label
+            icon: fa-home
         shipping_origin_settings:
             title: oro.shipping.system_configuration.groups.shipping_origin.title
         shipping_options:
             title: oro.shipping.system_configuration.groups.shipping_options.label
+            icon: fa-truck
         shipping_options_settings:
             title: oro.shipping.system_configuration.groups.shipping_options.title
     fields:

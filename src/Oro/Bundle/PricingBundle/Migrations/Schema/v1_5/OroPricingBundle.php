@@ -7,20 +7,23 @@ use Doctrine\DBAL\Schema\Comparator;
 use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
-use Oro\Bundle\EntityExtendBundle\Extend\RelationType;
-use Oro\Bundle\FrontendBundle\Migration\UpdateExtendRelationQuery;
 use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
+use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class OroPricingBundle implements Migration, DatabasePlatformAwareInterface, RenameExtensionAwareInterface
+class OroPricingBundle implements
+    Migration,
+    DatabasePlatformAwareInterface,
+    RenameExtensionAwareInterface,
+    OrderedMigrationInterface
 {
     use MigrationConstraintTrait;
 
@@ -241,28 +244,6 @@ class OroPricingBundle implements Migration, DatabasePlatformAwareInterface, Ren
     {
         $extension = $this->renameExtension;
 
-        // notes
-        $notes = $schema->getTable('oro_note');
-
-        $notes->removeForeignKey('FK_BA066CE14F8DA267');
-        $extension->renameColumn($schema, $queries, $notes, 'price_list_895c1635_id', 'price_list_9919ee5_id');
-        $extension->addForeignKeyConstraint(
-            $schema,
-            $queries,
-            'oro_note',
-            'orob2b_price_list',
-            ['price_list_9919ee5_id'],
-            ['id'],
-            ['onDelete' => 'SET NULL']
-        );
-        $queries->addQuery(new UpdateExtendRelationQuery(
-            'Oro\Bundle\NoteBundle\Entity\Note',
-            'Oro\Bundle\PricingBundle\Entity\PriceList',
-            'price_list_895c1635',
-            'price_list_9919ee5',
-            RelationType::MANY_TO_ONE
-        ));
-
         // entity tables
         $extension->renameTable($schema, $queries, 'orob2b_price_list', 'oro_price_list');
         $extension->renameTable($schema, $queries, 'orob2b_price_list_currency', 'oro_price_list_currency');
@@ -359,7 +340,7 @@ class OroPricingBundle implements Migration, DatabasePlatformAwareInterface, Ren
             $schema,
             $queries,
             'oro_cmb_plist_to_acc_gr',
-            'oro_account_group',
+            'oro_customer_group',
             ['account_group_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
@@ -377,7 +358,7 @@ class OroPricingBundle implements Migration, DatabasePlatformAwareInterface, Ren
             $schema,
             $queries,
             'oro_cmb_price_list_to_acc',
-            'oro_account',
+            'oro_customer',
             ['account_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
@@ -564,6 +545,17 @@ class OroPricingBundle implements Migration, DatabasePlatformAwareInterface, Ren
             ['product_id', 'price_list_id'],
             'oro_price_list_to_product_uidx'
         );
+    }
+
+    /**
+     * Should be executed before:
+     * @see \Oro\Bundle\PricingBundle\Migrations\Schema\v1_5\MigrateNotes
+     *
+     * {@inheritdoc}
+     */
+    public function getOrder()
+    {
+        return 0;
     }
 
     /**

@@ -22,7 +22,7 @@ define(function(require) {
             unitSelector: '.product-unit select',
             routeName: 'oro_product_unit_product_units',
             routingParams: {},
-            errorMessage: 'Sorry, unexpected error was occurred',
+            errorMessage: 'Sorry, an unexpected error has occurred.',
             loadingMaskEnabled: true,
             dropQuantityOnLoad: true,
             defaultValues: null

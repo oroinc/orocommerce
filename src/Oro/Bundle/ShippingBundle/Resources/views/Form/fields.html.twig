@@ -135,7 +135,7 @@
                     {% endif %}
                 </tbody>
             </table>
-            <a class="btn add-list-item" data-container=".product-shipping-options-collection tbody" href="javascript: void(0);"><i class="icon-plus"></i>{{ 'oro.shipping.product_shipping_options.add_label'|trans }}</a>
+            <a class="btn add-list-item" data-container=".product-shipping-options-collection tbody" href="javascript: void(0);"><i class="fa-plus"></i>{{ 'oro.shipping.product_shipping_options.add_label'|trans }}</a>
         </div>
     </div>
 {% endblock %}
@@ -153,7 +153,7 @@
         data-page-component-module="oroshipping/js/app/components/product-shipping-freight-classes-component">
         {{ form_widget(form) }}
         <td class="product-shipping-options-remove">
-            <button type="button" class="removeRow btn icons-holder remove-list-item" data-related="{{ name }}"><i class="icon-remove"></i></button>
+            <button type="button" class="removeRow btn icons-holder remove-list-item" data-related="{{ name }}"><i class="fa-close"></i></button>
         </td>
     </tr>
 {% endmacro %}
@@ -165,7 +165,7 @@
     <td>{{ form_widget(form.freightClass) }}</td>
 {% endblock %}
 
-{% block oro_shipping_rule_method_config_widget %}
+{% block oro_shipping_method_config_widget %}
     {% if form.method.vars.value %}
         <div class="control-group control-group-choice">
             <div class="control-label wrap">
@@ -187,7 +187,7 @@
     {{ form_rest(form) }}
 {% endblock %}
 
-{% block oro_shipping_rule_method_type_config_collection_widget %}
+{% block oro_shipping_method_type_config_collection_widget %}
     {% if is_grouped %}
         {{- block('collection_widget') -}}
     {% else %}
@@ -206,7 +206,7 @@
     {% endif %}
 {% endblock %}
 
-{% block oro_shipping_rule_method_type_config_widget %}
+{% block oro_shipping_method_type_config_widget %}
     {% if form.enabled is defined %}
         {{ form_row(form.enabled) }}
     {% endif %}
@@ -216,9 +216,9 @@
     {{ form_rest(form) }}
 {% endblock %}
 
-{% block oro_shipping_rule_destination_widget %}
+{% block oro_shipping_methods_configs_rule_destination_widget %}
     {{ form_row(form.country) }}
     {{ form_row(form.region) }}
-    {{ form_row(form.postalCode) }}
+    {{ form_row(form.postalCodes) }}
     {{ form_rest(form) }}
 {% endblock %}

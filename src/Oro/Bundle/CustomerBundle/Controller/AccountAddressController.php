@@ -11,9 +11,9 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\AddressBundle\Form\Handler\AddressHandler;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Form\Type\AccountTypedAddressType;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 
 class AccountAddressController extends Controller
 {
@@ -22,10 +22,10 @@ class AccountAddressController extends Controller
      * @Template("OroCustomerBundle:Address/widget:addressBook.html.twig")
      * @AclAncestor("oro_customer_account_view")
      *
-     * @param Account $account
+     * @param Customer $account
      * @return array
      */
-    public function addressBookAction(Account $account)
+    public function addressBookAction(Customer $account)
     {
         return [
             'entity' => $account,
@@ -44,12 +44,12 @@ class AccountAddressController extends Controller
      * @AclAncestor("oro_customer_account_create")
      * @ParamConverter("account", options={"id" = "entityId"})
      *
-     * @param Account $account
+     * @param Customer $account
      * @return array
      */
-    public function createAction(Account $account)
+    public function createAction(Customer $account)
     {
-        return $this->update($account, new AccountAddress());
+        return $this->update($account, new CustomerAddress());
     }
 
     /**
@@ -62,22 +62,22 @@ class AccountAddressController extends Controller
      * @AclAncestor("oro_customer_account_update")
      * @ParamConverter("account", options={"id" = "entityId"})
      *
-     * @param Account        $account
-     * @param AccountAddress $address
+     * @param Customer        $account
+     * @param CustomerAddress $address
      * @return array
      */
-    public function updateAction(Account $account, AccountAddress $address)
+    public function updateAction(Customer $account, CustomerAddress $address)
     {
         return $this->update($account, $address);
     }
 
     /**
-     * @param Account $account
-     * @param AccountAddress $address
+     * @param Customer $account
+     * @param CustomerAddress $address
      * @return array
      * @throws BadRequestHttpException
      */
-    protected function update(Account $account, AccountAddress $address)
+    protected function update(Customer $account, CustomerAddress $address)
     {
         $responseData = [
             'saved' => false,
@@ -119,7 +119,7 @@ class AccountAddressController extends Controller
     }
 
     /**
-     * @param Account $entity
+     * @param Customer $entity
      * @return array
      */
     protected function getAddressBookOptions($entity)

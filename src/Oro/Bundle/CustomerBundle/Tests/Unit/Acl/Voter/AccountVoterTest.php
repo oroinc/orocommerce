@@ -3,9 +3,9 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\Acl\Voter;
 
 use Oro\Bundle\CustomerBundle\Acl\Voter\AccountVoter;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Provider\AccountUserRelationsProvider;
 use Oro\Bundle\CustomerBundle\Security\AccountUserProvider;
 use Oro\Bundle\EntityBundle\Exception\NotManageableEntityException;
@@ -69,7 +69,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->trustResolver = $this->getMock(AuthenticationTrustResolverInterface::class);
+        $this->trustResolver = $this->createMock(AuthenticationTrustResolverInterface::class);
 
         $this->relationsProvider = $this->getMockBuilder(AccountUserRelationsProvider::class)
             ->disableOriginalConstructor()
@@ -79,18 +79,17 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             'oro_customer.security.account_user_provider' => $this->securityProvider,
             'oro_security.security_facade' => $this->securityFacade,
             'oro_customer.provider.account_user_relations_provider' => $this->relationsProvider,
-            'security.authentication.trust_resolver' => $this->trustResolver
         ];
 
         /* @var $container ContainerInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $container = $this->getMock('Symfony\Component\DependencyInjection\ContainerInterface');
+        $container = $this->createMock('Symfony\Component\DependencyInjection\ContainerInterface');
         $container->expects($this->any())
             ->method('get')
             ->willReturnCallback(function ($id) use ($services) {
                 return $services[$id];
             });
 
-        $this->voter = new AccountVoter($this->doctrineHelper);
+        $this->voter = new AccountVoter($this->doctrineHelper, $this->trustResolver);
         $this->voter->setContainer($container);
     }
 
@@ -122,7 +121,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
         $class = get_class($object);
 
         /* @var $token TokenInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $token->expects($this->any())
             ->method('getUser')
             ->willReturn($this->getAccountUser(1));
@@ -187,7 +186,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             ->willReturn($inputData['grantedEditLocal']);
 
         /* @var $token TokenInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $token->expects($this->any())
             ->method('getUser')
             ->willReturn($inputData['user']);
@@ -210,7 +209,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
     {
         return [
             'supported class'  => [
-                $this->getMock('Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface'),
+                $this->createMock('Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface'),
                 true,
             ],
             'not supported class'  => [
@@ -244,7 +243,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
     public function voteProvider()
     {
         return [
-            '!AccountUser' => [
+            '!CustomerUser' => [
                 'input' => [
                     'objectId'      => 2,
                     'object'        => null,
@@ -551,7 +550,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
     {
         return sprintf(
             'entity:%s@%s',
-            AccountUser::SECURITY_GROUP,
+            CustomerUser::SECURITY_GROUP,
             'Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface'
         );
     }
@@ -585,12 +584,12 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
     /**
      * @param int $id
      * @param int $accountId
-     * @return AccountUser
+     * @return CustomerUser
      */
     protected function getAccountUser($id, $accountId = null)
     {
-        /* @var $user AccountUser */
-        $user = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', $id);
+        /* @var $user CustomerUser */
+        $user = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', $id);
 
         if ($accountId) {
             $user->setAccount($this->getAccount($accountId));
@@ -601,11 +600,11 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param int $id
-     * @return Account
+     * @return Customer
      */
     protected function getAccount($id)
     {
-        return $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', $id);
+        return $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', $id);
     }
 
     /**
@@ -663,7 +662,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
      */
     public function testWithoutContainer()
     {
-        $voter = new AccountVoter($this->doctrineHelper);
+        $voter = new AccountVoter($this->doctrineHelper, $this->trustResolver);
         $accountUser = $this->getAccountUser(1);
         $object = $this->getObject(1);
 
@@ -680,7 +679,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
         $voter->setClassName(get_class($object));
 
         /* @var $token TokenInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $token->expects($this->any())->method('getUser')->willReturn($accountUser);
 
         $voter->vote($token, $object, [AccountVoter::ATTRIBUTE_VIEW]);
@@ -697,7 +696,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             ->method('isGranted');
 
         /* @var $token TokenInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $token->expects($this->any())
             ->method('getUser')
             ->willReturn('anon.');
@@ -709,7 +708,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
 
         $this->relationsProvider->expects($this->once())
             ->method('getAccountIncludingEmpty')
-            ->willReturn(new Account());
+            ->willReturn(new Customer());
 
         $this->assertEquals(
             AccountVoter::ACCESS_ABSTAIN,
@@ -744,7 +743,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
             ->willReturn($isGranted);
 
         /* @var $token TokenInterface|\PHPUnit_Framework_MockObject_MockObject */
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $token->expects($this->any())
             ->method('getUser')
             ->willReturn('anon.');
@@ -756,7 +755,7 @@ class AccountVoterTest extends \PHPUnit_Framework_TestCase
 
         $this->relationsProvider->expects($this->once())
             ->method('getAccountIncludingEmpty')
-            ->willReturn(new Account());
+            ->willReturn(new Customer());
 
         $this->assertEquals(
             $expectedResult,

@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as OroLoadAccountUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -68,7 +68,7 @@ class LineItemRepositoryTest extends WebTestCase
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
 
-        /** @var AccountUser $accountUser */
+        /** @var CustomerUser $accountUser */
         $accountUser = $this->getAccountUserRepository()->findOneBy(['username' => OroLoadAccountUserData::AUTH_USER]);
 
         /** @var ShoppingList $shoppingList */
@@ -96,7 +96,7 @@ class LineItemRepositoryTest extends WebTestCase
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
 
-        /** @var AccountUser $accountUser */
+        /** @var CustomerUser $accountUser */
         $accountUser = $this->getAccountUserRepository()->findOneBy(['username' => OroLoadAccountUserData::AUTH_USER]);
 
         /** @var ShoppingList $shoppingList */
@@ -167,7 +167,7 @@ class LineItemRepositoryTest extends WebTestCase
      */
     protected function getAccountUserRepository()
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroCustomerBundle:AccountUser');
+        return $this->getContainer()->get('doctrine')->getRepository('OroCustomerBundle:CustomerUser');
     }
 
     /**

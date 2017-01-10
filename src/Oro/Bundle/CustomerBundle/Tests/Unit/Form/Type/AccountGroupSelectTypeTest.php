@@ -29,7 +29,7 @@ class AccountGroupSelectTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testConfigureOptions()
     {
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with(
@@ -41,7 +41,7 @@ class AccountGroupSelectTypeTest extends \PHPUnit_Framework_TestCase
                         $this->assertEquals('oro_account_group', $options['autocomplete_alias']);
                         $this->assertEquals('oro_customer_account_group_create', $options['create_form_route']);
                         $this->assertEquals(
-                            ['placeholder' => 'oro.customer.accountgroup.form.choose'],
+                            ['placeholder' => 'oro.customer.customergroup.form.choose'],
                             $options['configs']
                         );
 

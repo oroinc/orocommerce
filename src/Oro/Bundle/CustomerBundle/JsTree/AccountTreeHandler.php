@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\CustomerBundle\JsTree;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Component\Tree\Handler\AbstractTreeHandler;
 
 class AccountTreeHandler extends AbstractTreeHandler
 {
     /**
-     * @param Account $root
+     * @param Customer $root
      * @param bool $includeRoot
      * @return array
      */
@@ -22,7 +22,7 @@ class AccountTreeHandler extends AbstractTreeHandler
     }
 
     /**
-     * @param Account $entity
+     * @param Customer $entity
      * @return array
      */
     protected function formatEntity($entity)
@@ -38,10 +38,10 @@ class AccountTreeHandler extends AbstractTreeHandler
     }
 
     /**
-     * @param Account $entity
+     * @param Customer $entity
      * @return array
      */
-    protected function buildTreeRecursive(Account $entity)
+    protected function buildTreeRecursive(Customer $entity)
     {
         $entities = [];
 

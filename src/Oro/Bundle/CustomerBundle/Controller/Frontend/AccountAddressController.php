@@ -14,8 +14,8 @@ use Symfony\Component\Routing\Annotation\Route;
 use Oro\Bundle\AddressBundle\Form\Handler\AddressHandler;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 
 class AccountAddressController extends Controller
 {
@@ -28,7 +28,7 @@ class AccountAddressController extends Controller
      * @Acl(
      *      id="oro_account_frontend_account_address_create",
      *      type="entity",
-     *      class="OroCustomerBundle:AccountAddress",
+     *      class="OroCustomerBundle:CustomerAddress",
      *      permission="CREATE",
      *      group_name="commerce"
      * )
@@ -36,13 +36,13 @@ class AccountAddressController extends Controller
      *
      * @ParamConverter("account", options={"id" = "entityId"})
      *
-     * @param Account $account
+     * @param Customer $account
      * @param Request $request
      * @return array
      */
-    public function createAction(Account $account, Request $request)
+    public function createAction(Customer $account, Request $request)
     {
-        return $this->update($account, new AccountAddress(), $request);
+        return $this->update($account, new CustomerAddress(), $request);
     }
 
     /**
@@ -54,7 +54,7 @@ class AccountAddressController extends Controller
      * @Acl(
      *      id="oro_account_frontend_account_address_update",
      *      type="entity",
-     *      class="OroCustomerBundle:AccountAddress",
+     *      class="OroCustomerBundle:CustomerAddress",
      *      permission="EDIT",
      *      group_name="commerce"
      * )
@@ -63,23 +63,23 @@ class AccountAddressController extends Controller
      * @ParamConverter("account", options={"id" = "entityId"})
      * @ParamConverter("accountAddress", options={"id" = "id"})
      *
-     * @param Account $account
-     * @param AccountAddress $accountAddress
+     * @param Customer $account
+     * @param CustomerAddress $accountAddress
      * @param Request $request
      * @return array
      */
-    public function updateAction(Account $account, AccountAddress $accountAddress, Request $request)
+    public function updateAction(Customer $account, CustomerAddress $accountAddress, Request $request)
     {
         return $this->update($account, $accountAddress, $request);
     }
 
     /**
-     * @param Account $account
-     * @param AccountAddress $accountAddress
+     * @param Customer $account
+     * @param CustomerAddress $accountAddress
      * @param Request $request
      * @return array
      */
-    private function update(Account $account, AccountAddress $accountAddress, Request $request)
+    private function update(Customer $account, CustomerAddress $accountAddress, Request $request)
     {
         $this->prepareEntities($account, $accountAddress, $request);
 
@@ -95,20 +95,20 @@ class AccountAddressController extends Controller
         $result = $this->get('oro_form.model.update_handler')->handleUpdate(
             $form->getData(),
             $form,
-            function (AccountAddress $accountAddress) use ($account) {
+            function (CustomerAddress $accountAddress) use ($account) {
                 return [
                     'route' => 'oro_customer_frontend_account_address_update',
                     'parameters' => ['id' => $accountAddress->getId(), 'entityId' => $account->getId()],
                 ];
             },
-            function (AccountAddress $accountAddress) {
+            function (CustomerAddress $accountAddress) {
                 return [
                     'route' => 'oro_customer_frontend_account_user_address_index'
                 ];
             },
-            $this->get('translator')->trans('oro.customer.controller.accountaddress.saved.message'),
+            $this->get('translator')->trans('oro.customer.controller.customeraddress.saved.message'),
             $handler,
-            function (AccountAddress $accountAddress, FormInterface $form, Request $request) {
+            function (CustomerAddress $accountAddress, FormInterface $form, Request $request) {
                 $url = $request->getUri();
                 if ($request->headers->get('referer')) {
                     $url = $request->headers->get('referer');
@@ -130,11 +130,11 @@ class AccountAddressController extends Controller
     }
 
     /**
-     * @param Account $account
-     * @param AccountAddress $accountAddress
+     * @param Customer $account
+     * @param CustomerAddress $accountAddress
      * @param Request $request
      */
-    private function prepareEntities(Account $account, AccountAddress $accountAddress, Request $request)
+    private function prepareEntities(Customer $account, CustomerAddress $accountAddress, Request $request)
     {
         if ($request->getMethod() === 'GET' && !$accountAddress->getId()) {
             $accountAddress->setFirstName($account->getOwner()->getFirstName());

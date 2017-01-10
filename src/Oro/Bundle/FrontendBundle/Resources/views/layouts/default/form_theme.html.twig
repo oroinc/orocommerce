@@ -1,4 +1,4 @@
-{% extends 'form_div_layout.html.twig' %}
+{% extends 'OroFormBundle:layouts/blank:form_theme.html.twig' %}
 
 {%- block form_label -%}
     {% set label_attr = layout_attr_defaults(label_attr, {
@@ -45,10 +45,11 @@
 
 {% block widget_attributes %}
     {% if errors|length > 0 %}
-        {% set attr = attr|merge({
-            class: attr.class|default('') ~ ' input_error'
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' error'
         }) %}
     {% endif %}
+
     {{ parent() }}
 {% endblock widget_attributes %}
 
@@ -58,7 +59,7 @@
             <ul class="notification__list">
                 {%- for error in errors -%}
                     <li class="notification__item">
-                        <i class="cf-attention"></i>
+                        <i class="fa-exclamation-triangle"></i>
                         <span class="notification__text">{{ error.message|trans }}</span>
                     </li>
                 {%- endfor -%}
@@ -67,47 +68,60 @@
     {%- endif -%}
 {%- endblock form_errors -%}
 
-{%- block choice_widget %}
+{%- block choice_widget_expanded -%}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' select select--size-m select--full'
+        '~class': ' input-widget-select'
+    }) %}
+    <div {{ block('widget_container_attributes') }}>
+        {%- for child in form %}
+            {{- form_widget(child) -}}
+        {% endfor -%}
+    </div>
+{%- endblock choice_widget_expanded -%}
+
+{%- block choice_widget_collapsed %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' select select--full'
     }) %}
 
     {{ parent() }}
 {% endblock %}
 
+{% block checkbox_row %}
+    {{- form_widget(form) -}}
+    {{- form_errors(form) -}}
+{% endblock %}
+
 {%- block checkbox_widget -%}
-    {% set class_prefix = form.vars.class_prefix|default(class_prefix|default('checkbox')) %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' custom-checkbox__input'
     }) %}
     {%- if label is empty -%}
         {% set label = id|humanize %}
     {%- endif -%}
-    <label for="{{ id }}"
-           data-checkbox
-           tabindex="0"
-           class="custom-checkbox {% if form.vars.checked %}checked{% endif %}"
-    >
+
+    <label for="{{ id }}" class="custom-checkbox">
         {{- parent() -}}
         <span class="custom-checkbox__icon"></span>
         <span class="custom-checkbox__text">{{ label|block_text(translation_domain) }}</span>
     </label>
-    {{- form_errors(form, {'class_prefix': class_prefix}) -}}
 {%- endblock checkbox_widget -%}
 
 {%- block radio_widget -%}
     {% set class_prefix = form.vars.class_prefix|default(class_prefix|default('radio')) %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' custom-radio__control'
+    }) %}
 
     {%- if label is empty -%}
         {% set label = id|humanize %}
     {%- endif -%}
     <label class="custom-radio {% if form.vars.checked %}checked{% endif %}" data-radio tabindex="0">
         {{- parent() -}}
-        <span class="{{ class_prefix }}__text">{{ label|block_text(translation_domain) }}</span>
+        <span class="custom-radio__text">{{ label|block_text(translation_domain) }}</span>
     </label>
     {{- form_errors(form, {'class_prefix': class_prefix}) -}}
 {%- endblock radio_widget -%}
-
 
 {%- block oro_date_widget -%}
         {% if attribute(attr, 'data-validation') is defined %}
@@ -123,8 +137,9 @@
         {% endif %}
 
         {% set options = {
+            component: 'oroui/js/app/components/view-component',
             view: 'oroui/js/app/views/datepicker/datepicker-view',
-            nativeMode: isMobileVersion(),
+            screenType: 'desktop',
             dateInputAttrs: {
                 placeholder: 'oro.form.choose_date'|trans,
                 id: 'date_selector_' ~ id,
@@ -137,12 +152,14 @@
                 changeMonth: false,
                 changeYear: false,
                 yearRange: years|default('-80:+1'),
-                showButtonPanel: true
+                showButtonPanel: true,
+                maxDate: (attribute(datePickerOptions, 'maxDate') is defined ? datePickerOptions['maxDate'] : ''),
+                minDate: (attribute(datePickerOptions, 'minDate') is defined ? datePickerOptions['minDate'] : '')
             }
         } %}
 
         {% set attr = attr|merge({
-            'data-page-component-module': 'oroui/js/app/components/view-component',
+            'data-page-component-module': 'oroui/js/app/components/viewport-component',
             'data-page-component-options': options|json_encode(constant('JSON_FORCE_OBJECT'))
         }) %}
 

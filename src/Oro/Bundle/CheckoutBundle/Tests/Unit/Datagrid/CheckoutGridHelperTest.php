@@ -40,7 +40,7 @@ class CheckoutGridHelperTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->em = $this->getMock(EntityManagerInterface::class);
+        $this->em = $this->createMock(EntityManagerInterface::class);
 
         $metadata = $this->getMockBuilder(ClassMetadata::class)
                          ->disableOriginalConstructor()

@@ -9,10 +9,10 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserDa
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
@@ -31,10 +31,10 @@ class CategoryControllerTest extends WebTestCase
     /** @var Category */
     protected $category;
 
-    /** @var  Account */
+    /** @var  Customer */
     protected $account;
 
-    /** @var AccountGroup */
+    /** @var CustomerGroup */
     protected $group;
 
     /** @var ScopeManager */
@@ -54,14 +54,14 @@ class CategoryControllerTest extends WebTestCase
         $this->scopeManager = $this->getContainer()->get('oro_scope.scope_manager');
 
         $this->category = $this->getReference(LoadCategoryData::THIRD_LEVEL1);
-        $this->account  = $this->getReference('account.level_1');
-        $this->group    = $this->getReference(LoadGroups::GROUP1);
+        $this->account = $this->getReference('account.level_1');
+        $this->group = $this->getReference(LoadGroups::GROUP1);
     }
 
     public function testEdit()
     {
-        $categoryVisibility        = CategoryVisibility::HIDDEN;
-        $visibilityForAccount      = AccountCategoryVisibility::VISIBLE;
+        $categoryVisibility = CategoryVisibility::HIDDEN;
+        $visibilityForAccount = AccountCategoryVisibility::VISIBLE;
         $visibilityForAccountGroup = AccountGroupCategoryVisibility::VISIBLE;
 
         $crawler = $this->submitForm(
@@ -237,23 +237,23 @@ class CategoryControllerTest extends WebTestCase
     protected function submitForm($categoryVisibility, $visibilityForAccount, $visibilityForAccountGroup)
     {
         $this->client->followRedirects();
-        $crawler  = $this->client->request(
+        $crawler = $this->client->request(
             'GET',
             $this->getUrl('oro_catalog_category_update', ['id' => $this->category->getId()])
         );
         $response = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($response, 200);
-        $form       = $crawler->selectButton('Save')->form();
+        $form = $crawler->selectButton('Save')->form();
         $parameters = $this->explodeArrayPaths($form->getValues());
-        $token      = $crawler->filterXPath('//input[@name="oro_catalog_category[_token]"]/@value')->text();
+        $token = $crawler->filterXPath('//input[@name="oro_catalog_category[_token]"]/@value')->text();
 
         $parameters['oro_catalog_category'] = array_merge(
             $parameters['oro_catalog_category'],
             [
-                '_token'     => $token,
+                '_token' => $token,
                 'visibility' => [
-                    'all'          => $categoryVisibility,
-                    'account'      => $visibilityForAccount,
+                    'all' => $categoryVisibility,
+                    'account' => $visibilityForAccount,
                     'accountGroup' => $visibilityForAccountGroup,
                 ],
             ]
@@ -277,13 +277,13 @@ class CategoryControllerTest extends WebTestCase
      */
     protected function explodeArrayPaths($values)
     {
-        $accessor   = PropertyAccess::createPropertyAccessor();
+        $accessor = PropertyAccess::createPropertyAccessor();
         $parameters = [];
         foreach ($values as $key => $val) {
             if (!$pos = strpos($key, '[')) {
                 continue;
             }
-            $key = '[' . substr($key, 0, $pos) . ']' . substr($key, $pos);
+            $key = '['.substr($key, 0, $pos).']'.substr($key, $pos);
             $accessor->setValue($parameters, $key, $val);
         }
 
@@ -292,7 +292,7 @@ class CategoryControllerTest extends WebTestCase
 
     /**
      * @param Crawler $crawler
-     * @param string  $changeSetId
+     * @param string $changeSetId
      * @return array
      */
     protected function getChangeSetData(Crawler $crawler, $changeSetId)
@@ -305,7 +305,7 @@ class CategoryControllerTest extends WebTestCase
     }
 
     /**
-     * @param array  $data
+     * @param array $data
      * @param string $id
      * @param string $visibility
      */

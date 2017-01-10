@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\SubtotalProcessor\Stub;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\AccountAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -28,7 +28,7 @@ class EntityNotPricedStub implements
     protected $currency;
 
     /**
-     * @var Account
+     * @var Customer
      */
     protected $account;
 
@@ -86,7 +86,7 @@ class EntityNotPricedStub implements
     }
 
     /**
-     * @return Account
+     * @return Customer
      */
     public function getAccount()
     {
@@ -94,11 +94,11 @@ class EntityNotPricedStub implements
     }
 
     /**
-     * @param Account $account
+     * @param Customer $account
      *
      * @return $this
      */
-    public function setAccount(Account $account)
+    public function setAccount(Customer $account)
     {
         $this->account = $account;
 

@@ -2,7 +2,7 @@ operations:
     oro_order_capture:
         label: oro.payment.capture
         button_options:
-            icon: icon-credit-card
+            icon: fa-credit-card
         applications: [default]
         routes:
             - oro_order_view
@@ -14,10 +14,18 @@ operations:
                 method: getActiveAuthorizePaymentTransaction
                 method_parameters: [$.data, $.data.total, $.data.currency]
                 attribute: $.authorizePaymentTransaction
+            - '@call_service_method':
+                service: oro_order.factory.payment_context
+                method: create
+                method_parameters: [$.data]
+                attribute: $.paymentContext
         preconditions:
             '@and':
                 - '@not_empty': [$.authorizePaymentTransaction]
-                - '@payment_method_enabled': $.authorizePaymentTransaction.paymentMethod
+                - '@payment_method_applicable':
+                    parameters:
+                        payment_method: $.authorizePaymentTransaction.paymentMethod
+                        context: $.paymentContext
         actions:
             - '@payment_capture':
                 attribute: $.result
@@ -43,6 +51,7 @@ operations:
     DELETE:
         exclude_datagrids:
             - order-line-items-grid
+            - frontend-orders-grid
 
     oro_order_update_order:
         extends: UPDATE
@@ -72,7 +81,7 @@ operations:
             - oro_order_view
         acl_resource: [UPDATE, entity:Oro\Bundle\OrderBundle\Entity\Order]
         button_options:
-            icon: icon-list-alt
+            icon: fa-list-alt
         frontend_options:
             template: OroOrderBundle:Action:shippingTrackingsChange.html.twig
             title: oro.order.shipping_tracking.entity_label

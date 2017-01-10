@@ -32,49 +32,6 @@ abstract class AbstractEngineTest extends WebTestCase
      */
     protected $engine;
 
-    /**
-     * @var array
-     */
-    protected $mappingConfig = [
-        TestEntity::class => [
-            'alias' => 'oro_test_item_WEBSITE_ID',
-            'fields' => [
-                [
-                    'name' => 'title_LOCALIZATION_ID',
-                    'type' => 'text'
-                ],
-                [
-                    'name' => 'stringValue',
-                    'type' => 'text',
-                ],
-                [
-                    'name' => 'integerValue',
-                    'type' => 'integer',
-                ],
-                [
-                    'name' => 'decimalValue',
-                    'type' => 'decimal',
-                ],
-                [
-                    'name' => 'floatValue',
-                    'type' => 'decimal'
-                ],
-                [
-                    'name' => 'datetimeValue',
-                    'type' => 'datetime'
-                ],
-                [
-                    'name' => 'blobValue',
-                    'type' => 'text'
-                ],
-                [
-                    'name' => 'phone',
-                    'type' => 'text'
-                ]
-            ],
-        ]
-    ];
-
     protected function setUp()
     {
         $this->getContainer()->get('request_stack')->push(Request::create(''));
@@ -208,35 +165,6 @@ abstract class AbstractEngineTest extends WebTestCase
 
         $this->assertCount(1, $items);
         $this->assertSame('item5@mail.com', $this->getSelectData($searchField, $items[0]));
-    }
-
-    /**
-     * @return WebsiteSearchMappingProvider|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function getMappingProvider()
-    {
-        $mappingProvider = $this->getMockBuilder(WebsiteSearchMappingProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $mappingProvider
-            ->expects($this->once())
-            ->method('isClassSupported')
-            ->willReturn(true);
-
-        $mappingProvider
-            ->expects($this->any())
-            ->method('getEntityAlias')
-            ->with(TestEntity::class)
-            ->willReturn($this->mappingConfig[TestEntity::class]['alias']);
-
-        $mappingProvider
-            ->expects($this->any())
-            ->method('getEntityConfig')
-            ->with(TestEntity::class)
-            ->willReturn($this->mappingConfig[TestEntity::class]);
-
-        return $mappingProvider;
     }
 
     /**

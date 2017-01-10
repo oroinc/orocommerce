@@ -203,6 +203,57 @@ class QuoteControllerTest extends WebTestCase
                     ],
                 ],
             ],
+            'parent account user1 (all quotes)' => [
+                'input' => [
+                    'login' => LoadUserData::PARENT_ACCOUNT_USER1,
+                    'password' => LoadUserData::PARENT_ACCOUNT_USER1,
+                ],
+                'expected' => [
+                    'data' => [
+                        [
+                            'qid' => LoadQuoteData::QUOTE10,
+                        ],
+                        [
+                            'qid' => LoadQuoteData::QUOTE11,
+                        ],
+                        [
+                            'qid' => LoadQuoteData::QUOTE2,
+                        ],
+                        [
+                            'qid' => LoadQuoteData::QUOTE3,
+                        ],
+                        [
+                            'qid' => LoadQuoteData::QUOTE4,
+                        ],
+                        [
+                            'qid' => LoadQuoteData::QUOTE5,
+                        ],
+                        [
+                            'qid' => LoadQuoteData::QUOTE6,
+                        ],
+                        [
+                            'qid' => LoadQuoteData::QUOTE7,
+                        ],
+                        [
+                            'qid' => LoadQuoteData::QUOTE8,
+                        ],
+                        [
+                            'qid' => LoadQuoteData::QUOTE9,
+                        ]
+                    ],
+                    'columns' => [
+                        'id',
+                        'qid',
+                        'createdAt',
+                        'validUntil',
+                        'poNumber',
+                        'shipUntil',
+                        'view_link',
+                        'action_configuration',
+                        'accountUserName'
+                    ],
+                ],
+            ]
         ];
     }
 
@@ -266,7 +317,7 @@ class QuoteControllerTest extends WebTestCase
     public function viewProvider()
     {
         return [
-            'account1 user1 (AccountUser:VIEW_BASIC)' => [
+            'account1 user1 (CustomerUser:VIEW_BASIC)' => [
                 'input' => [
                     'qid' => LoadQuoteData::QUOTE3,
                     'login' => LoadUserData::ACCOUNT1_USER1,
@@ -293,7 +344,7 @@ class QuoteControllerTest extends WebTestCase
                         ],
                         [
                             'label' => 'oro.frontend.sale.quote.ship_estimate.label',
-                            'property' => 'shipping_estimate',
+                            'property' => 'shipping_cost',
                         ],
                         [
                             'label' => 'oro.sale.quote.sections.shipping_address',
@@ -302,7 +353,7 @@ class QuoteControllerTest extends WebTestCase
                     ],
                 ],
             ],
-            'account1 user3 (AccountUser:VIEW_LOCAL)' => [
+            'account1 user3 (CustomerUser:VIEW_LOCAL)' => [
                 'input' => [
                     'qid' => LoadQuoteData::QUOTE3,
                     'login' => LoadUserData::ACCOUNT1_USER3,
@@ -329,7 +380,7 @@ class QuoteControllerTest extends WebTestCase
                         ],
                         [
                             'label' => 'oro.frontend.sale.quote.ship_estimate.label',
-                            'property' => 'shipping_estimate',
+                            'property' => 'shipping_cost',
                         ],
                         [
                             'label' => 'oro.sale.quote.sections.shipping_address',
@@ -338,7 +389,7 @@ class QuoteControllerTest extends WebTestCase
                     ],
                 ],
             ],
-            'account1 user3 (AccountUser:VIEW_LOCAL, Quote date)' => [
+            'account1 user3 (CustomerUser:VIEW_LOCAL, Quote date)' => [
                 'input' => [
                     'qid' => LoadQuoteData::QUOTE5,
                     'login' => LoadUserData::ACCOUNT1_USER3,
@@ -366,7 +417,7 @@ class QuoteControllerTest extends WebTestCase
                     ],
                 ],
             ],
-            'account1 user3 (AccountUser:VIEW_LOCAL, Quote expired)' => [
+            'account1 user3 (CustomerUser:VIEW_LOCAL, Quote expired)' => [
                 'input' => [
                     'qid' => LoadQuoteData::QUOTE8,
                     'login' => LoadUserData::ACCOUNT1_USER3,
@@ -394,7 +445,7 @@ class QuoteControllerTest extends WebTestCase
                     ],
                 ],
             ],
-            'account1 user3 (AccountUser:VIEW_LOCAL, null Quote date)' => [
+            'account1 user3 (CustomerUser:VIEW_LOCAL, null Quote date)' => [
                 'input' => [
                     'qid' => LoadQuoteData::QUOTE9,
                     'login' => LoadUserData::ACCOUNT1_USER3,
@@ -426,6 +477,123 @@ class QuoteControllerTest extends WebTestCase
                     ],
                 ],
             ],
+            'account1 user3 (CustomerUser:DEEP)' => [
+                'input' => [
+                    'qid' => LoadQuoteData::QUOTE9,
+                    'login' => LoadUserData::PARENT_ACCOUNT_USER1,
+                    'password' => LoadUserData::PARENT_ACCOUNT_USER1,
+                ],
+                'expected' => [
+                    'createOrderButton' => false,
+                    'columns' => [
+                        [
+                            'label' => 'oro.frontend.sale.quote.qid.label',
+                            'property' => 'qid',
+                        ],
+                        [
+                            'label' => 'oro.frontend.sale.quote.valid_until.label',
+                            'property' => 'valid_until',
+                        ],
+                        [
+                            'label' => 'oro.sale.quote.po_number.label',
+                            'property' => 'po_number',
+                        ],
+                        [
+                            'label' => 'oro.sale.quote.ship_until.label',
+                            'property' => 'ship_until',
+                        ],
+                        [
+                            'label' => 'oro.paymentterm.entity_label',
+                            'property' => 'payment_term_7c4f1e8e.label',
+                        ],
+                    ],
+                ],
+            ],
         ];
+    }
+
+    /**
+     * @dataProvider ACLProvider
+     *
+     * @param string $route
+     * @param string $quote
+     * @param string $user
+     * @param int $status
+     */
+    public function testViewAccessDenied($route, $quote, $user, $status)
+    {
+        $this->loginUser($user);
+
+        /* @var $quote Quote */
+        $quote = $this->getReference($quote);
+
+        $this->client->request(
+            'GET',
+            $this->getUrl(
+                $route,
+                ['id' => $quote->getId()]
+            )
+        );
+
+        $response = $this->client->getResponse();
+        static::assertHtmlResponseStatusCodeEquals($response, $status);
+    }
+
+    /**
+     * @return array
+     */
+    public function ACLProvider()
+    {
+        return [
+            'VIEW (nanonymous user)' => [
+                'route' => 'oro_sale_quote_frontend_view',
+                'quote' => LoadQuoteData::QUOTE2,
+                'user' => '',
+                'status' => 401
+            ],
+            'VIEW (user from another account)' => [
+                'route' => 'oro_sale_quote_frontend_view',
+                'quote' => LoadQuoteData::QUOTE2,
+                'user' => LoadUserData::ACCOUNT2_USER1,
+                'status' => 403
+            ],
+            'VIEW (user from parent account : LOCAL)' => [
+                'route' => 'oro_sale_quote_frontend_view',
+                'quote' => LoadQuoteData::QUOTE2,
+                'user' => LoadUserData::PARENT_ACCOUNT_USER2,
+                'status' => 403
+            ],
+        ];
+    }
+
+    public function testViewAccessGranted()
+    {
+        $this->loginUser(LoadUserData::PARENT_ACCOUNT_USER1);
+
+        /* @var $quote Quote */
+        $quote = $this->getReference(LoadQuoteData::QUOTE3);
+
+        $this->client->request(
+            'GET',
+            $this->getUrl(
+                'oro_sale_quote_frontend_view',
+                ['id' => $quote->getId()]
+            )
+        );
+
+        $response = $this->client->getResponse();
+        static::assertHtmlResponseStatusCodeEquals($response, 200);
+    }
+
+    public function testGridAccessDeniedForAnonymousUsers()
+    {
+        $this->initClient();
+        $this->client->getCookieJar()->clear();
+
+        $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_index'));
+        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 401);
+
+        $response = $this->client->requestGrid(['gridName' => 'frontend-quotes-grid'], [], true);
+        $this->assertSame($response->getStatusCode(), 302);
     }
 }

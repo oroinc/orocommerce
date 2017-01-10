@@ -11,7 +11,7 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
  * @ORM\Entity(
  *    repositoryClass="Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountGroupProductRepository"
  * )
- * @ORM\Table(name="oro_acc_grp_prod_vsb_resolv")
+ * @ORM\Table(name="oro_cus_grp_prod_vsb_resolv")
  */
 class AccountGroupProductVisibilityResolved extends BaseProductVisibilityResolved
 {

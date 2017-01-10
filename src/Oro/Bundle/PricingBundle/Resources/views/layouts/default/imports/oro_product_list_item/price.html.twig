@@ -11,7 +11,8 @@
         '~class': ' product-item__price-wrap product-item__price-wrap_{{ class_prefix }}'
     }) %}
     <div {{ block('block_attributes') }}>
-        <div data-name="prices-hint"
+        <div class="product-item__price-hint"
+             data-name="prices-hint"
              data-placement="bottom"
              data-close="false"
              data-trigger="hover"
@@ -39,23 +40,27 @@
 {% block __oro_product_list_item__product_price_value_widget %}
     <div {{ block('block_attributes') }}
             data-name="price">
-        {{ 'oro.pricing.frontend.pricelist.index.your_price'|trans }}
-        {% set firstPrice = productPrices|first %}
-        <div class="product-item__price_block">
-            <span class="fs16 blue" data-name="price-value">{{ firstPrice ? firstPrice.formatted_price }}</span>
-            / <span data-name="unit">{{ firstPrice ? firstPrice.formatted_unit }}</span>
-        </div>
+        {% if not is_configurable_product_type(product.type) %}
+            {{ 'oro.pricing.frontend.pricelist.index.your_price'|trans }}
+            {% set firstPrice = productPrices|first %}
+            <div class="product-item__price_block">
+                <span class="fs16 blue" data-name="price-value">{{ firstPrice ? firstPrice.formatted_price }}</span>
+                / <span data-name="unit">{{ firstPrice ? firstPrice.formatted_unit }}</span>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
 
 {% block __oro_product_list_item__product_price_not_found_widget %}
-    <div data-name="price-not-found">
-        {% if productPrices %}
-            {{ 'oro.pricing.frontend.product_prices.price_not_found'|trans }}
-        {% else %}
-            {{ 'oro.pricing.frontend.product_prices.empty_prices'|trans }}
-        {% endif %}
-    </div>
+    {% if not is_configurable_product_type(product.type) %}
+        <div data-name="price-not-found">
+            {% if productPrices %}
+                {{ 'oro.pricing.frontend.product_prices.price_not_found'|trans }}
+            {% else %}
+                {{ 'oro.pricing.frontend.product_prices.empty_prices'|trans }}
+            {% endif %}
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block __oro_product_list_item__product_price_hint_widget %}

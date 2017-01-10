@@ -4,14 +4,14 @@ namespace Oro\Bundle\SaleBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
+
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\OrderBundle\Handler\OrderTotalsHandler;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
@@ -24,41 +24,35 @@ class QuoteToOrderConverter
     /** @var OrderCurrencyHandler */
     protected $orderCurrencyHandler;
 
-    /** @var LineItemSubtotalProvider */
-    protected $lineItemSubtotalProvider;
-
     /** @var ManagerRegistry */
     protected $registry;
 
-    /** @var TotalProcessorProvider */
-    protected $totalProvider;
+    /** @var OrderTotalsHandler */
+    protected $orderTotalsHandler;
 
     /**
      * @param OrderCurrencyHandler $orderCurrencyHandler
-     * @param LineItemSubtotalProvider $lineItemSubtotalProvider
-     * @param TotalProcessorProvider $totalProvider,
-     * @param ManagerRegistry $registry
+     * @param OrderTotalsHandler   $orderTotalsHandler
+     * @param ManagerRegistry      $registry
      */
     public function __construct(
         OrderCurrencyHandler $orderCurrencyHandler,
-        LineItemSubtotalProvider $lineItemSubtotalProvider,
-        TotalProcessorProvider $totalProvider,
+        OrderTotalsHandler $orderTotalsHandler,
         ManagerRegistry $registry
     ) {
         $this->orderCurrencyHandler = $orderCurrencyHandler;
-        $this->lineItemSubtotalProvider = $lineItemSubtotalProvider;
-        $this->totalProvider = $totalProvider;
+        $this->orderTotalsHandler = $orderTotalsHandler;
         $this->registry = $registry;
     }
 
     /**
      * @param Quote $quote
-     * @param AccountUser|null $user
+     * @param CustomerUser|null $user
      * @param array|null $selectedOffers
      * @param bool $needFlush
      * @return Order
      */
-    public function convert(Quote $quote, AccountUser $user = null, array $selectedOffers = null, $needFlush = false)
+    public function convert(Quote $quote, CustomerUser $user = null, array $selectedOffers = null, $needFlush = false)
     {
         $order = $this->createOrder($quote, $user);
 
@@ -80,11 +74,11 @@ class QuoteToOrderConverter
             }
         }
 
-        $this->orderCurrencyHandler->setOrderCurrency($order);
-        if ($quote->getShippingEstimate() !== null) {
-            $this->fillShippingCost($quote->getShippingEstimate(), $order);
+        if ($order->getCurrency() === null) {
+            $this->orderCurrencyHandler->setOrderCurrency($order);
         }
-        $this->fillSubtotals($order);
+
+        $this->orderTotalsHandler->fillSubtotals($order);
 
         if ($needFlush) {
             $manager = $this->registry->getManagerForClass('OroOrderBundle:Order');
@@ -97,10 +91,10 @@ class QuoteToOrderConverter
 
     /**
      * @param Quote $quote
-     * @param AccountUser|null $user
+     * @param CustomerUser|null $user
      * @return Order
      */
-    protected function createOrder(Quote $quote, AccountUser $user = null)
+    protected function createOrder(Quote $quote, CustomerUser $user = null)
     {
         $accountUser = $user ?: $quote->getAccountUser();
         $account = $user ? $user->getAccount() : $quote->getAccount();
@@ -117,7 +111,10 @@ class QuoteToOrderConverter
             ->setShippingAddress($orderShippingAddress)
             ->setSourceEntityClass(ClassUtils::getClass($quote))
             ->setSourceEntityId($quote->getId())
-            ->setSourceEntityIdentifier($quote->getPoNumber());
+            ->setSourceEntityIdentifier($quote->getPoNumber())
+            ->setCurrency($quote->getCurrency())
+            ->setEstimatedShippingCostAmount($quote->getEstimatedShippingCostAmount())
+            ->setOverriddenShippingCostAmount($quote->getOverriddenShippingCostAmount());
 
         return $order;
     }
@@ -194,18 +191,6 @@ class QuoteToOrderConverter
             ->setFromExternalSource(true);
 
         return $orderLineItem;
-    }
-
-    /**
-     * @param Order $order
-     */
-    protected function fillSubtotals(Order $order)
-    {
-        $subtotal = $this->lineItemSubtotalProvider->getSubtotal($order);
-        $total = $this->totalProvider->getTotal($order);
-
-        $order->setSubtotal($subtotal->getAmount());
-        $order->setTotal($total->getAmount());
     }
 
     /**

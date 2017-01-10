@@ -3,17 +3,19 @@
 namespace Oro\Bundle\ShippingBundle\Context;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
+use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
 
-interface ShippingContextInterface
+interface ShippingContextInterface extends CustomerOwnerAwareInterface
 {
     /**
-     * @return ShippingLineItemInterface[]
+     * @return ShippingLineItemCollectionInterface
      */
     public function getLineItems();
 
     /**
-     * @return AddressInterface
+     * @return AddressInterface|null
      */
     public function getBillingAddress();
 

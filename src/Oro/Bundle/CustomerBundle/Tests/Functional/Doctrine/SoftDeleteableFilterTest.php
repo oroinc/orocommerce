@@ -110,14 +110,14 @@ class SoftDeleteableFilterTest extends WebTestCase
         $result = $this->getRepository()
             ->findAll();
 
-        $this->assertCount(8, $result);
+        $this->assertCount(12, $result);
 
         //FILTER DISABLED
         $this->disableFilter();
         $result = $this->getRepository()
-        ->findAll();
+            ->findAll();
 
-        $this->assertCount(9, $result);
+        $this->assertCount(13, $result);
 
         //CHECK QUERIES
         $this->checkQueries();
@@ -161,7 +161,7 @@ class SoftDeleteableFilterTest extends WebTestCase
         $this->enableFilter();
         $result = $this->em->createQueryBuilder()
             ->select('a')
-            ->from('OroCustomerBundle:Account', 'a')
+            ->from('OroCustomerBundle:Customer', 'a')
             ->join('OroRFPBundle:Request', 'r', 'WITH', 'a = r.account')
             ->where('r.firstName = :name')
             ->setParameter('name', 'John')
@@ -174,7 +174,7 @@ class SoftDeleteableFilterTest extends WebTestCase
         $this->disableFilter();
         $result = $this->em->createQueryBuilder()
             ->select('a')
-            ->from('OroCustomerBundle:Account', 'a')
+            ->from('OroCustomerBundle:Customer', 'a')
             ->join('OroRFPBundle:Request', 'r', 'WITH', 'a = r.account')
             ->where('r.firstName = :name')
             ->setParameter('name', 'John')

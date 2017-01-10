@@ -8,34 +8,16 @@ use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtension;
-use Oro\Bundle\NoteBundle\Migration\Extension\NoteExtensionAwareInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-class OroRFPBundleInstaller implements
-    Installation,
-    NoteExtensionAwareInterface,
-    ActivityExtensionAwareInterface
+class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInterface
 {
     /**
      * @var ActivityExtension
      */
     protected $activityExtension;
-
-    /**
-     * @var NoteExtension
-     */
-    protected $noteExtension;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setNoteExtension(NoteExtension $noteExtension)
-    {
-        $this->noteExtension = $noteExtension;
-    }
 
     /**
      * {@inheritdoc}
@@ -50,7 +32,7 @@ class OroRFPBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_7';
+        return 'v1_8';
     }
 
     /**
@@ -75,21 +57,20 @@ class OroRFPBundleInstaller implements
         $this->addOroRfpRequestProductForeignKeys($schema);
         $this->addOroRfpRequestProductItemForeignKeys($schema);
 
-        $this->addNoteAssociations($schema, $this->noteExtension);
-        $this->addActivityAssociations($schema, $this->activityExtension);
+        $this->addActivityAssociations($schema);
     }
 
     /**
-     * Create oro_rfp_assigned_acc_users table
+     * Create oro_rfp_assigned_cus_users table
      *
      * @param Schema $schema
      */
     protected function createOroRfpAssignedAccUsersTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_rfp_assigned_acc_users');
+        $table = $schema->createTable('oro_rfp_assigned_cus_users');
         $table->addColumn('quote_id', 'integer', []);
-        $table->addColumn('account_user_id', 'integer', []);
-        $table->setPrimaryKey(['quote_id', 'account_user_id']);
+        $table->addColumn('customer_user_id', 'integer', []);
+        $table->setPrimaryKey(['quote_id', 'customer_user_id']);
     }
 
     /**
@@ -116,8 +97,8 @@ class OroRFPBundleInstaller implements
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
-        $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
-        $table->addColumn('account_id', 'integer', ['notnull' => false]);
+        $table->addColumn('customer_user_id', 'integer', ['notnull' => false]);
+        $table->addColumn('customer_id', 'integer', ['notnull' => false]);
         $table->addColumn('status_id', 'integer', ['notnull' => false]);
         $table->addColumn('cancellation_reason', 'text', ['notnull' => false]);
         $table->addColumn('first_name', 'string', ['length' => 255]);
@@ -213,16 +194,16 @@ class OroRFPBundleInstaller implements
     }
 
     /**
-     * Add oro_rfp_assigned_acc_users foreign keys.
+     * Add oro_rfp_assigned_cus_users foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroRfpAssignedAccUsersForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('oro_rfp_assigned_acc_users');
+        $table = $schema->getTable('oro_rfp_assigned_cus_users');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account_user'),
-            ['account_user_id'],
+            $schema->getTable('oro_customer_user'),
+            ['customer_user_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
@@ -277,14 +258,14 @@ class OroRFPBundleInstaller implements
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account_user'),
-            ['account_user_id'],
+            $schema->getTable('oro_customer_user'),
+            ['customer_user_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account'),
-            ['account_id'],
+            $schema->getTable('oro_customer'),
+            ['customer_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
@@ -357,24 +338,13 @@ class OroRFPBundleInstaller implements
     }
 
     /**
-     * Enable notes for RFP entity
-     *
-     * @param Schema $schema
-     * @param NoteExtension $noteExtension
-     */
-    protected function addNoteAssociations(Schema $schema, NoteExtension $noteExtension)
-    {
-        $noteExtension->addNoteAssociation($schema, 'oro_rfp_request');
-    }
-
-    /**
      * Enables Email activity for RFP entity
      *
      * @param Schema $schema
-     * @param ActivityExtension $activityExtension
      */
-    protected function addActivityAssociations(Schema $schema, ActivityExtension $activityExtension)
+    protected function addActivityAssociations(Schema $schema)
     {
-        $activityExtension->addActivityAssociation($schema, 'oro_email', 'oro_rfp_request');
+        $this->activityExtension->addActivityAssociation($schema, 'oro_note', 'oro_rfp_request');
+        $this->activityExtension->addActivityAssociation($schema, 'oro_email', 'oro_rfp_request');
     }
 }

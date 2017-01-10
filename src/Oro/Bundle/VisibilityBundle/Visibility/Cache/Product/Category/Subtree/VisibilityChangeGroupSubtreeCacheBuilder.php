@@ -6,8 +6,8 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
@@ -19,7 +19,7 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
     /** @var Category */
     protected $category;
 
-    /** @var AccountGroup */
+    /** @var CustomerGroup */
     protected $accountGroup;
 
     /**
@@ -115,13 +115,13 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
 
     /**
      * @param Category $category
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $accountGroup
      * @return array
      */
-    protected function getAccountIdsWithFallbackToCurrentGroup(Category $category, AccountGroup $accountGroup)
+    protected function getAccountIdsWithFallbackToCurrentGroup(Category $category, CustomerGroup $accountGroup)
     {
-        /** @var Account[] $groupAccounts */
-        $groupAccounts = $accountGroup->getAccounts()->toArray();
+        /** @var Customer[] $groupAccounts */
+        $groupAccounts = $accountGroup->getCustomers()->toArray();
         if (empty($groupAccounts)) {
             return [];
         }
@@ -132,11 +132,11 @@ class VisibilityChangeGroupSubtreeCacheBuilder extends AbstractRelatedEntitiesAw
         }
         /** @var QueryBuilder $qb */
         $qb = $this->registry
-            ->getManagerForClass('OroCustomerBundle:Account')
+            ->getManagerForClass('OroCustomerBundle:Customer')
             ->createQueryBuilder();
 
         $qb->select('account.id')
-            ->from('OroCustomerBundle:Account', 'account')
+            ->from('OroCustomerBundle:Customer', 'account')
             ->leftJoin('OroScopeBundle:Scope', 'scope', 'WITH', 'account = scope.account')
             ->leftJoin(
                 'OroVisibilityBundle:Visibility\AccountCategoryVisibility',

@@ -26,7 +26,7 @@ class CategoryExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->container = $this->getMock('Symfony\Component\DependencyInjection\ContainerInterface');
+        $this->container = $this->createMock('Symfony\Component\DependencyInjection\ContainerInterface');
 
         $this->categoryTreeHandler = $this->getMockBuilder('Oro\Bundle\CatalogBundle\JsTree\CategoryTreeHandler')
             ->disableOriginalConstructor()

@@ -4,7 +4,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Form\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
@@ -39,8 +39,8 @@ class VisibilityFormPostSubmitDataHandlerTest extends \PHPUnit_Framework_TestCas
 
     protected function setUp()
     {
-        $this->registry = $this->getMock(ManagerRegistry::class);
-        $this->em = $this->getMock(EntityManagerInterface::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->em = $this->createMock(EntityManagerInterface::class);
         $this->registry->method('getManagerForClass')->willReturn($this->em);
 
         $this->fieldDataProvider = $this->getMockBuilder(VisibilityFormFieldDataProvider::class)
@@ -55,7 +55,7 @@ class VisibilityFormPostSubmitDataHandlerTest extends \PHPUnit_Framework_TestCas
 
     public function testSaveInvalidForm()
     {
-        $form = $this->getMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
         $targetEntity = $this->getEntity(Product::class, ['id' => 1]);
         $form->method('getData')->willReturn($targetEntity);
         $form->method('isValid')->willReturn(false);
@@ -68,24 +68,24 @@ class VisibilityFormPostSubmitDataHandlerTest extends \PHPUnit_Framework_TestCas
 
     public function testSaveForm()
     {
-        $form = $this->getMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
         $targetEntity = $this->getEntity(Product::class, ['id' => 1]);
         $form->method('getData')->willReturn($targetEntity);
         $form->method('isValid')->willReturn(true);
 
-        $allForm = $this->getMock(FormInterface::class);
+        $allForm = $this->createMock(FormInterface::class);
         $allForm->method('getData')->willReturn('hidden');
-        $accountForm = $this->getMock(FormInterface::class);
-        $account3 = $this->getEntity(Account::class, ['id' => 3]);
+        $accountForm = $this->createMock(FormInterface::class);
+        $account3 = $this->getEntity(Customer::class, ['id' => 3]);
         $accountForm->method('getData')->willReturn(
             [
                 1 => [
                     'data' => ['visibility' => 'category'],
-                    'entity' => $this->getEntity(Account::class, ['id' => 1]),
+                    'entity' => $this->getEntity(Customer::class, ['id' => 1]),
                 ],
                 2 => [
                     'data' => ['visibility' => 'account_group'],
-                    'entity' => $this->getEntity(Account::class, ['id' => 2]),
+                    'entity' => $this->getEntity(Customer::class, ['id' => 2]),
                 ],
                 3 => [
                     'data' => ['visibility' => 'visible'],
@@ -93,7 +93,7 @@ class VisibilityFormPostSubmitDataHandlerTest extends \PHPUnit_Framework_TestCas
                 ],
             ]
         );
-        $accountGroupForm = $this->getMock(FormInterface::class);
+        $accountGroupForm = $this->createMock(FormInterface::class);
         $accountGroupForm->method('getData')->willReturn([]);
 
         $form->method('get')->willReturnMap(

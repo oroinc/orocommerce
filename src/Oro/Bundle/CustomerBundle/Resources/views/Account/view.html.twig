@@ -43,7 +43,7 @@
 
     {% set dataBlocks = dataBlocks|merge([
         {
-            'title' : 'oro.customer.accountuser.entity_plural_label'|trans,
+            'title' : 'oro.customer.customeruser.entity_plural_label'|trans,
             'subblocks': [
                 {
                     'title' : '',
@@ -61,5 +61,14 @@
 {% endblock content_data %}
 
 {% block stats %}
-    {# Must be empty, because parent view uses this block to render dates, which are not implemented in this entity #}
+    {% set data = oro_ui_scroll_data_before('account-stats-view', {}) %}
+    {% if data.dataBlocks is defined %}
+        {% for scrollBlock in data.dataBlocks|oro_sort_by %}
+            {% for subblock in scrollBlock.subblocks %}
+                {% for dataBlock in subblock.data %}
+                    {{ dataBlock|raw }}
+                {% endfor %}
+            {% endfor %}
+        {% endfor %}
+    {% endif %}
 {% endblock stats %}

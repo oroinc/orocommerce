@@ -5,12 +5,11 @@ namespace Oro\Bundle\VisibilityBundle\Driver;
 use Doctrine\ORM\Query;
 
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\VisibilityBundle\Indexer\ProductVisibilityIndexer;
 use Oro\Bundle\VisibilityBundle\Visibility\Provider\ProductVisibilityProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\AccountIdPlaceholder;
@@ -54,7 +53,7 @@ abstract class AbstractAccountPartialUpdateDriver implements AccountPartialUpdat
     /**
      * {@inheritdoc}
      */
-    public function updateAccountVisibility(Account $account)
+    public function updateAccountVisibility(Customer $account)
     {
         $this->deleteAccountVisibility($account);
 
@@ -144,10 +143,10 @@ abstract class AbstractAccountPartialUpdateDriver implements AccountPartialUpdat
     }
 
     /**
-     * @param Account $account
+     * @param Customer $account
      * @return string
      */
-    protected function getAccountVisibilityFieldName(Account $account)
+    protected function getAccountVisibilityFieldName(Customer $account)
     {
         return $this->placeholderProvider->getPlaceholderFieldName(
             Product::class,
@@ -159,13 +158,13 @@ abstract class AbstractAccountPartialUpdateDriver implements AccountPartialUpdat
     }
 
     /**
-     * @param Account $account
+     * @param Customer $account
      * @param Website $website
      * @param int $batchSize
      * @return BufferedQueryResultIterator
      */
     protected function getAccountVisibilityIterator(
-        Account $account,
+        Customer $account,
         Website $website,
         $batchSize = self::PRODUCT_BATCH_SIZE
     ) {

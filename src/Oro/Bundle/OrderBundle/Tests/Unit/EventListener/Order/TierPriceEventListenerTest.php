@@ -5,7 +5,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener\Order;
 use Symfony\Component\Form\FormInterface;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
@@ -34,7 +34,7 @@ class TierPriceEventListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $this->form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $this->provider = $this->getMockBuilder('Oro\Bundle\PricingBundle\Provider\ProductPriceProvider')
             ->disableOriginalConstructor()
@@ -54,7 +54,7 @@ class TierPriceEventListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnOrderEvent()
     {
-        $account = new Account();
+        $account = new Customer();
         $website = new Website();
 
         /** @var Product $product */

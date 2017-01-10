@@ -2,23 +2,26 @@
 
 namespace Oro\Bundle\CustomerBundle\Entity\Ownership;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 
+/**
+ * @deprecated Use FrontendCustomerAwareTrait
+ */
 trait FrontendAccountAwareTrait
 {
     /**
-     * @var Account
+     * @var Customer
      *
      * @ORM\ManyToOne(
-     *      targetEntity="Oro\Bundle\CustomerBundle\Entity\Account",
+     *      targetEntity="Oro\Bundle\CustomerBundle\Entity\Customer",
      *      cascade={"persist"}
      * )
-     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ORM\JoinColumn(name="customer_id", referencedColumnName="id", onDelete="SET NULL")
      */
     protected $account;
 
     /**
-     * @return Account|null
+     * @return Customer|null
      */
     public function getAccount()
     {
@@ -26,10 +29,10 @@ trait FrontendAccountAwareTrait
     }
 
     /**
-     * @param Account|null $account
+     * @param Customer|null $account
      * @return $this
      */
-    public function setAccount(Account $account = null)
+    public function setAccount(Customer $account = null)
     {
         $this->account = $account;
 

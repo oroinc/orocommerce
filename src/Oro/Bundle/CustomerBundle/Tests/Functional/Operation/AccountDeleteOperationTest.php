@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\Operation;
 
 use Oro\Bundle\ActionBundle\Tests\Functional\ActionTestCase;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 
 /**
  * @dbIsolation
@@ -23,7 +23,7 @@ class AccountDeleteOperationTest extends ActionTestCase
 
     public function testDelete()
     {
-        /** @var Account $account */
+        /** @var Customer $account */
         $account = $this->getReference('account.orphan');
 
         $this->assertDeleteOperation(

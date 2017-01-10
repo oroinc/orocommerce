@@ -2,18 +2,20 @@
 
 namespace Oro\Bundle\ShoppingListBundle\EventListener;
 
-use Doctrine\Bundle\DoctrineBundle\Registry;
-
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
-use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
+use Oro\Bundle\DataGridBundle\Extension\Formatter\Property\PropertyInterface;
 use Oro\Bundle\SearchBundle\Datagrid\Event\SearchResultAfter;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Symfony\Bridge\Doctrine\RegistryInterface;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 /**
  * Add to frontend products grid information about how much qty of some unit were added to current shopping list
@@ -23,25 +25,33 @@ class FrontendProductDatagridListener
     const COLUMN_LINE_ITEMS = 'shopping_lists';
 
     /**
+     * @var AclHelper
+     */
+    protected $aclHelper;
+
+    /**
      * @var SecurityFacade
      */
-    protected $securityFacade;
+    protected $tokenStorage;
 
     /**
-     * @var Registry
+     * @var RegistryInterface
      */
-    protected $manager;
+    protected $registry;
 
     /**
-     * @param SecurityFacade $securityFacade
-     * @param Registry       $manager
+     * @param TokenStorage $tokenStorage
+     * @param AclHelper $aclHelper
+     * @param RegistryInterface $manager
      */
     public function __construct(
-        SecurityFacade $securityFacade,
-        Registry $manager
+        TokenStorage $tokenStorage,
+        AclHelper $aclHelper,
+        RegistryInterface $manager
     ) {
-        $this->securityFacade = $securityFacade;
-        $this->manager        = $manager;
+        $this->tokenStorage = $tokenStorage;
+        $this->aclHelper = $aclHelper;
+        $this->registry = $manager;
     }
 
     /**
@@ -73,8 +83,8 @@ class FrontendProductDatagridListener
         }
 
         /** @var ResultRecord[] $records */
-        $records      = $event->getRecords();
-        $shoppingList = $this->getCurrentShoppingList($accountUser);
+        $records = $event->getRecords();
+        $shoppingList = $this->getCurrentShoppingList();
         if (!$shoppingList || count($records) === 0) {
             return;
         }
@@ -89,43 +99,42 @@ class FrontendProductDatagridListener
     }
 
     /**
-     * @param AccountUser $accountUser
      * @return null|ShoppingList
      */
-    protected function getCurrentShoppingList(AccountUser $accountUser)
+    protected function getCurrentShoppingList()
     {
         /** @var ShoppingListRepository $repository */
-        $repository = $this->manager->getRepository('OroShoppingListBundle:ShoppingList');
+        $repository = $this->registry->getRepository('OroShoppingListBundle:ShoppingList');
 
-        return $repository->findAvailableForAccountUser($accountUser);
+        return $repository->findAvailableForAccountUser($this->aclHelper);
     }
 
     /**
-     * @return AccountUser|null
+     * @return CustomerUser|null
      */
     protected function getLoggedAccountUser()
     {
-        $user = $this->securityFacade->getLoggedUser();
-        if (!$user instanceof AccountUser) {
+        $token = $this->tokenStorage->getToken(TokenInterface::class);
+        if (!$token || !($token->getUser() instanceof CustomerUser)) {
             return null;
         }
 
-        return $user;
+        return $token->getUser();
     }
 
     /**
      * @param ResultRecord[] $records
-     * @param AccountUser    $accountUser
+     * @param CustomerUser    $accountUser
      * @param ShoppingList   $currentShoppingList
      * @return array
      */
     protected function getGroupedLineItems(
         array $records,
-        AccountUser $accountUser,
+        CustomerUser $accountUser,
         ShoppingList $currentShoppingList
     ) {
         /** @var LineItemRepository $lineItemRepository */
-        $lineItemRepository = $this->manager->getRepository('OroShoppingListBundle:LineItem');
+        $lineItemRepository = $this->registry->getRepository('OroShoppingListBundle:LineItem');
         /** @var LineItem[] $lineItems */
         $lineItems = $lineItemRepository->getProductItemsWithShoppingListNames(
             array_map(

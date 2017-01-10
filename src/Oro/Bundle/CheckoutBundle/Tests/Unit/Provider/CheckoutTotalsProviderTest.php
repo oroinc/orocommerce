@@ -4,7 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CheckoutBundle\Mapper\MapperInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
@@ -48,7 +48,7 @@ class CheckoutTotalsProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()->getMock();
         $this->totalsProvider = $this->getMockBuilder(TotalProcessorProvider::class)
             ->disableOriginalConstructor()->getMock();
-        $this->mapper = $this->getMock(MapperInterface::class);
+        $this->mapper = $this->createMock(MapperInterface::class);
 
         $this->provider = new CheckoutTotalsProvider(
             $this->checkoutLineItemsManager,
@@ -65,7 +65,7 @@ class CheckoutTotalsProviderTest extends \PHPUnit_Framework_TestCase
         $price = Price::create(10, 'USD');
         $address = new OrderAddress();
         $address->setLabel('order address');
-        $account = new Account();
+        $account = new Customer();
         $account->setName('order account');
 
         $checkout = new Checkout();

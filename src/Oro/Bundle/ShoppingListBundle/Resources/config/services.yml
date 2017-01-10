@@ -11,6 +11,13 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_shopping_list_line_item_validator }
 
+    oro_shopping_list.validator.line_item_collection:
+        class: 'Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItemCollectionValidator'
+        arguments:
+            - '@event_dispatcher'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_shopping_list_line_item_collection_validator }
+
     oro_shopping_list.line_item.manager.api:
         class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
         parent: oro_soap.manager.entity_manager.abstract
@@ -35,6 +42,15 @@ services:
             - '@oro_pricing.user_currency_manager'
             - "@oro_website.manager"
             - "@oro_shopping_list.manager.shopping_list_total"
+            - "@oro_security.acl_helper"
+            - '@oro_shopping_list.shopping_list_provider.cache'
+
+    oro_shopping_list.shopping_list.owner_manager:
+        class: 'Oro\Bundle\ShoppingListBundle\Manager\ShoppingListOwnerManager'
+        arguments:
+            - "@oro_security.acl_helper"
+            - "@doctrine"
+            - "@oro_entity_config.provider.ownership"
 
     oro_shopping_list.placeholder.filter:
         class: 'Oro\Bundle\ShoppingListBundle\Placeholder\PlaceholderFilter'
@@ -80,10 +96,10 @@ services:
         parent: oro_shopping_list.processor.abstract_quick_add
         calls:
             - [setShoppingListManager, ['@oro_shopping_list.shopping_list.manager']]
-            - [setOperationManager, ['@oro_action.operation_manager']]
+            - [setActionGroupRegistry, ['@oro_action.action_group_registry']]
             - [setTranslator, ['@translator']]
             - [setDateFormatter, ['@oro_locale.formatter.date_time']]
-            - [setOperationName, ['oro_shoppinglist_frontend_createorder']]
+            - [setActionGroupName, ['start_shoppinglist_checkout']]
         tags:
             - { name: oro_product.quick_add_processor }
 
@@ -109,15 +125,20 @@ services:
         tags:
             - { name: layout.data_provider, alias: oro_shopping_list_shopping_list_form }
 
+    oro_shopping_list.layout.data_provider.product_unit_code_visibility:
+        class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\ProductUnitCodeVisibilityProvider'
+        arguments:
+            - "@oro_product.visibility.product_unit_fields_settings"
+            - "@oro_product.visibility.unit"
+        tags:
+            - { name: layout.data_provider, alias: oro_shopping_list_product_unit_code_visibility }
+
     oro_shopping_list.layout.data_provider.account_user_shopping_lists:
         class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\AccountUserShoppingListsProvider'
         arguments:
-            - "@oro_entity.doctrine_helper"
-            - "@oro_security.security_facade"
-            - "@request_stack"
-            - "@oro_shopping_list.manager.shopping_list_total"
-        calls:
-            - [setShoppingListClass, ['%oro_shopping_list.entity.shopping_list.class%']]
+            - '@request_stack'
+            - '@oro_shopping_list.manager.shopping_list_total'
+            - '@oro_shopping_list.shopping_list.manager'
         tags:
             - { name: layout.data_provider, alias: oro_shopping_list_account_user_shopping_lists }
 
@@ -169,7 +190,8 @@ services:
     oro_shopping_list.event_listener.frontend_product_datagrid:
         class: 'Oro\Bundle\ShoppingListBundle\EventListener\FrontendProductDatagridListener'
         arguments:
-            - "@oro_security.security_facade"
+            - "@security.token_storage"
+            - "@oro_security.acl_helper"
             - "@doctrine"
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
@@ -242,3 +264,16 @@ services:
             - '@oro_rfp.form.type.extension.frontend_request_data_storage'
         tags:
             - { name: oro_action.condition, alias: 'rfp_allowed' }
+
+    oro_shopping_list.shopping_list_provider.cache:
+        public: false
+        parent: oro.cache.abstract
+        calls:
+            - [ setNamespace, [ 'shopping_list' ] ]
+
+    oro_shopping_list.validator_service.line_item:
+        class: 'Oro\Bundle\ShoppingListBundle\Validator\LineItemErrorsProvider'
+        arguments:
+            - '@validator'
+        tags:
+            - { name: layout.data_provider, alias: oro_line_item_errors }

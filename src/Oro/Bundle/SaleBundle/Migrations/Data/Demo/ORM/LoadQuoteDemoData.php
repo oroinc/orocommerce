@@ -14,8 +14,8 @@ use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
@@ -72,14 +72,14 @@ class LoadQuoteDemoData extends AbstractFixture implements
             ->findOneBy(['name' => 'Default']);
 
         for ($i = 0; $i < 20; $i++) {
-            /* @var $account Account */
+            /* @var $account Customer */
             $account = $accounts[mt_rand(0, count($accounts) - 1)];
 
             if (!$account) {
                 $accountUser = null;
             } else {
                 $accountUsers = array_merge([null], $account->getUsers()->getValues());
-                /* @var $accountUser AccountUser */
+                /* @var $accountUser CustomerUser */
                 $accountUser = $accountUsers[mt_rand(0, count($accountUsers) - 1)];
             }
 
@@ -114,11 +114,11 @@ class LoadQuoteDemoData extends AbstractFixture implements
 
     /**
      * @param ObjectManager $manager
-     * @return Collection|Account[]
+     * @return Collection|Customer[]
      */
     protected function getAccounts(ObjectManager $manager)
     {
-        return array_merge([null], $manager->getRepository('OroCustomerBundle:Account')->findBy([], null, 10));
+        return array_merge([null], $manager->getRepository('OroCustomerBundle:Customer')->findBy([], null, 10));
     }
 
     /**
@@ -126,18 +126,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
      */
     protected function getCurrencies()
     {
-        $currencies = $this->container->get('oro_config.manager')->get('oro_currency.allowed_currencies');
-
-        if (!$currencies) {
-            //TODO: BB-3824 Change the getting currency from system configuration
-            $currencies = (array)$this->container->get('oro_locale.settings')->getCurrency();
-        }
-
-        if (!$currencies) {
-            throw new \LogicException('There are no currencies in system');
-        }
-
-        return $currencies;
+        return $this->container->get('oro_currency.config.currency')->getCurrencyList();
     }
 
     /**

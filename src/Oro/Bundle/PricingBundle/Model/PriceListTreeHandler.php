@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Model;
 use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
@@ -57,11 +57,11 @@ class PriceListTreeHandler
     }
 
     /**
-     * @param Account|null $account
+     * @param Customer|null $account
      * @param Website|null $website
      * @return BasePriceList|null
      */
-    public function getPriceList(Account $account = null, Website $website = null)
+    public function getPriceList(Customer $account = null, Website $website = null)
     {
         if (!$website) {
             $website = $this->websiteManager->getCurrentWebsite();
@@ -88,11 +88,11 @@ class PriceListTreeHandler
     }
 
     /**
-     * @param Account $account
+     * @param Customer $account
      * @param Website $website
      * @return null|CombinedPriceList
      */
-    protected function getPriceListByAccount(Account $account, Website $website)
+    protected function getPriceListByAccount(Customer $account, Website $website)
     {
         if ($account->getId()) {
             $priceList = $this->getPriceListRepository()->getPriceListByAccount($account, $website);
@@ -105,11 +105,11 @@ class PriceListTreeHandler
     }
 
     /**
-     * @param Account|null $account
+     * @param Customer|null $account
      * @param Website|null $website
      * @return null|CombinedPriceList
      */
-    protected function getPriceListByAccountGroup(Account $account, Website $website)
+    protected function getPriceListByAccountGroup(Customer $account, Website $website)
     {
         $priceList = null;
         $accountGroup = $account->getGroup();
@@ -121,11 +121,11 @@ class PriceListTreeHandler
     }
 
     /**
-     * @param Account|null $account
+     * @param Customer|null $account
      * @param Website|null $website
      * @return string
      */
-    protected function getUniqueKey(Account $account = null, Website $website = null)
+    protected function getUniqueKey(Customer $account = null, Website $website = null)
     {
         $key = '';
         if ($account) {

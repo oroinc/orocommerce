@@ -3,16 +3,21 @@
 namespace Oro\Bundle\PricingBundle\Resolver;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
 use Oro\Bundle\PricingBundle\Entity\Repository\BasicCombinedRelationRepositoryTrait;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 
 class CombinedPriceListScheduleResolver
 {
+    /**
+     * @var CombinedPriceListTriggerHandler
+     */
+    protected $triggerHandler;
+
     /**
      * @var ManagerRegistry
      */
@@ -36,11 +41,16 @@ class CombinedPriceListScheduleResolver
     /**
      * @param ManagerRegistry $registry
      * @param ConfigManager $configManager
+     * @param CombinedPriceListTriggerHandler $triggerHandler
      */
-    public function __construct(ManagerRegistry $registry, ConfigManager $configManager)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        ConfigManager $configManager,
+        CombinedPriceListTriggerHandler $triggerHandler
+    ) {
         $this->registry = $registry;
         $this->configManager = $configManager;
+        $this->triggerHandler = $triggerHandler;
     }
 
     /**
@@ -53,6 +63,7 @@ class CombinedPriceListScheduleResolver
         }
         $this->getCombinedPriceListActivationRuleRepository()->deleteExpiredRules($time);
         $newRulesToApply = $this->getCombinedPriceListActivationRuleRepository()->getNewActualRules($time);
+
         if ($newRulesToApply) {
             foreach ($this->relationClasses as $className => $val) {
                 /** @var BasicCombinedRelationRepositoryTrait $repo */
@@ -61,7 +72,12 @@ class CombinedPriceListScheduleResolver
             }
             $this->getCombinedPriceListActivationRuleRepository()->updateRulesActivity($newRulesToApply, true);
         }
+        $this->triggerHandler->startCollect();
         $this->updateCombinedPriceListConnection();
+        foreach ($newRulesToApply as $rule) {
+            $this->triggerHandler->process($rule->getCombinedPriceList());
+        }
+        $this->triggerHandler->commit();
     }
 
     /**
@@ -105,9 +121,17 @@ class CombinedPriceListScheduleResolver
                 $currentFullCplId = (int)$this->configManager->get($currentCPLConfigKey);
                 if ($currentFullCplId !== $currentRule->getCombinedPriceList()->getId()) {
                     $this->configManager->set($currentCPLConfigKey, $currentRule->getCombinedPriceList()->getId());
+                    $this->triggerHandler->process($currentRule->getCombinedPriceList());
                 }
             } else {
-                $this->configManager->set($currentCPLConfigKey, (int)$fullCPLId);
+                $currentCPL = $this->registry->getManagerForClass(CombinedPriceList::class)
+                    ->find(CombinedPriceList::class, (int)$fullCPLId);
+                if ($currentCPL) {
+                    $this->configManager->set($currentCPLConfigKey, (int)$fullCPLId);
+                    $this->triggerHandler->process($currentCPL);
+                } else {
+                    $this->configManager->set($currentCPLConfigKey, null);
+                }
             }
         } else {
             $this->configManager->set($currentCPLConfigKey, $fullCPLId);

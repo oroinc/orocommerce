@@ -2,8 +2,9 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Entity;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
@@ -18,6 +19,8 @@ class QuoteDemandTest extends AbstractTest
     {
         $properties = [
             ['id', '123'],
+            ['account', new Customer()],
+            ['accountUser', new CustomerUser()],
             ['quote', new Quote()],
             ['total', 100.1],
             ['subtotal', 100.1],
@@ -30,7 +33,8 @@ class QuoteDemandTest extends AbstractTest
     public function testSetQuantity()
     {
         $quote = new Quote();
-        $quote->setShippingEstimate(Price::create(5, 'USD'));
+        $quote->setCurrency('USD');
+        $quote->setEstimatedShippingCostAmount(5);
         $quoteProduct = new QuoteProduct();
         $firstOffer = new QuoteProductOffer();
         $quoteProduct->addQuoteProductOffer($firstOffer);
@@ -47,7 +51,7 @@ class QuoteDemandTest extends AbstractTest
         $this->assertSame($demand->getLineItems(), $demand->getDemandProducts());
         $demand->removeDemandProduct($firstDemandProduct);
         $this->assertNotContains($firstDemandProduct, $demand->getDemandProducts());
-        $this->assertSame($quote->getShippingEstimate(), $demand->getShippingCost());
+        $this->assertEquals($quote->getShippingCost(), $demand->getShippingCost());
     }
 
     public function testSourceDocument()

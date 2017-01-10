@@ -49,7 +49,7 @@ class LoadPaymentTermToAccountDemoData extends AbstractFixture implements
         $accessor = $this->container->get('oro_payment_term.provider.payment_term_association');
 
         /** @var \Oro\Bundle\CustomerBundle\Entity\Repository\AccountRepository $accountRepository */
-        $accountRepository = $doctrine->getRepository('OroCustomerBundle:Account');
+        $accountRepository = $doctrine->getRepository('OroCustomerBundle:Customer');
 
         $paymentTermsAll  = $this->getLoadedPaymentTerms();
         $accountsIterator = $accountRepository->getBatchIterator();

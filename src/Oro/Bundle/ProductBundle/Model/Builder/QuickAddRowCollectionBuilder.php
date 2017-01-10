@@ -9,6 +9,7 @@ use Box\Spout\Reader\ReaderInterface;
 
 use Doctrine\ORM\EntityRepository;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -33,13 +34,23 @@ class QuickAddRowCollectionBuilder
     protected $productManager;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    protected $eventDispatcher;
+
+    /**
      * @param EntityRepository $productRepository
      * @param ProductManager $productManager
+     * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(EntityRepository $productRepository, ProductManager $productManager)
-    {
+    public function __construct(
+        EntityRepository $productRepository,
+        ProductManager $productManager,
+        EventDispatcherInterface $eventDispatcher
+    ) {
         $this->productRepository = $productRepository;
         $this->productManager = $productManager;
+        $this->eventDispatcher = $eventDispatcher;
     }
 
     /**
@@ -84,25 +95,15 @@ class QuickAddRowCollectionBuilder
      */
     public function buildFromFile(UploadedFile $file)
     {
-        $lineNumber = 0;
         $collection = new QuickAddRowCollection();
+        $collection->setEventDispatcher($this->eventDispatcher);
 
         $reader = $this->createReaderForFile($file);
         $reader->open($file->getRealPath());
+        $collectionBySkus = $this->buildCollectionBySkuFromFile($reader);
 
-        foreach ($reader->getSheetIterator() as $sheet) {
-            foreach ($sheet->getRowIterator() as $row) {
-                if (0 === $lineNumber || empty($row[0])) {
-                    $lineNumber++;
-                    continue;
-                }
-
-                $collection->add(new QuickAddRow(
-                    $lineNumber++,
-                    isset($row[0]) ? trim($row[0]) : null,
-                    isset($row[1]) ? (float) trim($row[1]) : null
-                ));
-            }
+        foreach ($collectionBySkus as $sku => $row) {
+            $collection->add(new QuickAddRow($row['lineNumber'], $sku, $row['quantity']));
         }
 
         $this->mapProductsAndValidate($collection);
@@ -117,20 +118,28 @@ class QuickAddRowCollectionBuilder
     public function buildFromCopyPasteText($text)
     {
         $collection = new QuickAddRowCollection();
+        $collection->setEventDispatcher($this->eventDispatcher);
         $lineNumber = 1;
+        $collectionBySkus = [];
 
         $text = trim($text);
         if ($text) {
             foreach (explode(PHP_EOL, $text) as $line) {
                 $data = preg_split('/(\t|\,|\ )+/', $line);
-                $collection->add(
-                    new QuickAddRow(
-                        $lineNumber++,
-                        trim($data[0]),
-                        isset($data[1]) ? (float) trim($data[1]) : null
-                    )
-                );
+                $sku = trim($data[0]);
+                $quantity = isset($data[1]) ? (float)trim($data[1]) : null;
+                if (isset($collectionBySkus[$sku])) {
+                    $collectionBySkus[$sku]['quantity'] += $quantity;
+                } else {
+                    $collectionBySkus[$sku] = [
+                        'quantity' => $quantity,
+                        'lineNumber' => $lineNumber++,
+                    ];
+                }
             }
+        }
+        foreach ($collectionBySkus as $sku => $row) {
+            $collection->add(new QuickAddRow($row['lineNumber'], $sku, $row['quantity']));
         }
 
         $this->mapProductsAndValidate($collection);
@@ -139,14 +148,54 @@ class QuickAddRowCollectionBuilder
     }
 
     /**
+     * @param ReaderInterface $reader
+     * @return array
+     */
+    public function buildCollectionBySkuFromFile($reader)
+    {
+        $collectionBySkus = [];
+        $lineNumber = 0;
+        foreach ($reader->getSheetIterator() as $sheet) {
+            foreach ($sheet->getRowIterator() as $row) {
+                if (0 === $lineNumber || empty($row[0])) {
+                    $lineNumber++;
+                    continue;
+                }
+                $lineNumber++;
+                $sku = isset($row[0]) ? trim($row[0]) : null;
+                $quantity = isset($row[1]) ? (float)trim($row[1]) : null;
+                if (isset($collectionBySkus[$sku])) {
+                    $collectionBySkus[$sku]['quantity'] += $quantity;
+                } else {
+                    $collectionBySkus[$sku] = [
+                        'quantity' => $quantity,
+                        'lineNumber' => $lineNumber,
+                    ];
+                }
+            }
+        }
+
+        return $collectionBySkus;
+    }
+
+    /**
      * @param string[] $skus
      * @return Product[]
      */
-    private function getVisibleProductsBySkus(array $skus)
+    private function getRestrictedProductsBySkus(array $skus)
     {
-        $qb = $this->productRepository->getProductWithNamesQueryBuilder($skus);
+        $qb = $this->productRepository->getProductWithNamesBySkuQueryBuilder($skus);
         $restricted = $this->productManager->restrictQueryBuilder($qb, []);
+
+        // Configurable products require additional option selection is not implemented yet
+        // Thus we need to hide configurable products from the product drop-downs
+        // @TODO remove after configurable products require additional option selection implementation
+        $restricted->andWhere($restricted->expr()->neq('product.type', ':configurable_type'))
+            ->setParameter('configurable_type', Product::TYPE_CONFIGURABLE);
+
         $query = $restricted->getQuery();
+
+        /** @var Product[] $products */
         $products = $query->execute();
         $productsBySku = [];
 
@@ -181,7 +230,7 @@ class QuickAddRowCollectionBuilder
      */
     private function mapProductsAndValidate(QuickAddRowCollection $collection)
     {
-        $products = $this->getVisibleProductsBySkus($collection->getSkus());
+        $products = $this->getRestrictedProductsBySkus($collection->getSkus());
         $collection->mapProducts($products)->validate();
     }
 }

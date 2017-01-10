@@ -1,3 +1,15 @@
+"Alternative Checkout: Order Approval": "Alternative Checkout: Order Approval"
+"Alternative Checkout: Billing Information": "Alternative Checkout: Billing Information"
+"Alternative Checkout: Payment": "Alternative Checkout: Payment"
+"Alternative Checkout: Shipping Information": "Alternative Checkout: Shipping Information"
+"Alternative Checkout: Shipping Method": "Alternative Checkout: Shipping Method"
+"Alternative Checkout: Order Review": "Alternative Checkout: Order Review"
+"Alternative Checkout: Request Approval": "Alternative Checkout: Request Approval"
+"Checkout: Billing Information": "Checkout: Billing Information"
+"Checkout: Payment": "Checkout: Payment"
+"Checkout: Shipping Information": "Checkout: Shipping Information"
+"Checkout: Shipping Method": "Checkout: Shipping Method"
+"Checkout: Order Review": "Checkout: Order Review"
 oro:
     workflow:
         b2b_flow_alternative_checkout:
@@ -48,7 +60,29 @@ oro:
                     label: 'Token to track checkout state'
                 internal_state_token:
                     label: 'Internal checkout state token'
+                save_billing_address:
+                    label: 'Save Billing Address'
+                save_shipping_address:
+                    label: 'Save Shipping Address'
+                ship_to_billing_address:
+                    label: 'Ship to this address'
+                po_number:
+                    label: 'PO Number'
+                ship_until:
+                    label: 'Do Not Ship Later Than'
+                customer_notes:
+                    label: 'Customer Notes'
+                payment_method:
+                    label: 'Payment Method'
+                shipping_method:
+                    label: 'Shipping method'
+                shipping_method_type:
+                    label: 'Shipping method type'
             transition:
+                start_from_shoppinglist:
+                    label: Create Order
+                start_from_quickorderform:
+                    label: 'Create Order'
                 continue_to_shipping_address:
                     label: Continue
                     attribute:

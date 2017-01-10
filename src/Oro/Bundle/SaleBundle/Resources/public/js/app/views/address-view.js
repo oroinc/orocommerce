@@ -73,12 +73,30 @@ define(function(require) {
          * Doing something after loading child components
          */
         handleLayoutInit: function() {
+            var self = this;
+
             this.ftid = this.$el.find('div[data-ftid]:first').data('ftid');
 
             this.setAddress(this.$el.find(this.options.selectors.address));
 
             this.$fields = this.$el.find(':input[data-ftid]').filter(':not(' + this.options.selectors.address + ')');
             this.fieldsByName = {};
+            this.$fields.each(function () {
+                var $field = $(this);
+                if ($field.val().length > 0) {
+                    self.useDefaultAddress = false;
+                }
+                var name = self.normalizeName($field.data('ftid').replace(self.ftid + '_', ''));
+                self.fieldsByName[name] = $field;
+            });
+
+            if (this.options.selectors.subtotalsFields.length > 0) {
+                _.each(this.options.selectors.subtotalsFields, function(field) {
+                    $(field).attr('data-entry-point-trigger', true);
+                });
+
+                mediator.trigger('entry-point:quote:init');
+            }
         },
 
         /**

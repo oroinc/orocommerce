@@ -5,9 +5,9 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener\Order;
 use Symfony\Component\Form\FormInterface;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\OrderBundle\EventListener\Order\OrderPaymentTermEventListener;
@@ -40,20 +40,20 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
-     * @expectedExceptionMessage AccountUser must belong to Account
+     * @expectedExceptionMessage CustomerUser must belong to Account
      */
     public function testThrowExceptionWhenAccountUserHasWrongAccount()
     {
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
-        /** @var Account $account1 */
-        $account1 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', ['id' => 1]);
+        /** @var Customer $account1 */
+        $account1 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => 1]);
 
-        /** @var Account $account2 */
-        $account2 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', ['id' => 2]);
+        /** @var Customer $account2 */
+        $account2 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => 2]);
 
-        $accountUser1 = new AccountUser();
+        $accountUser1 = new CustomerUser();
         $accountUser1->setAccount($account1);
 
         $order = new Order();
@@ -68,7 +68,7 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
     public function testSkipValidationWithoutAccountUser()
     {
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $order = new Order();
 
@@ -78,15 +78,15 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
-     * @expectedExceptionMessage AccountUser without Account is not allowed
+     * @expectedExceptionMessage CustomerUser without Account is not allowed
      */
     public function testAccountUserWithoutOrderAccount()
     {
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
-        $accountUser = new AccountUser();
-        $accountUser->setAccount(new Account());
+        $accountUser = new CustomerUser();
+        $accountUser->setAccount(new Customer());
 
         $order = new Order();
         $order
@@ -100,18 +100,18 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @expectedException \Symfony\Component\HttpKernel\Exception\BadRequestHttpException
-     * @expectedExceptionMessage AccountUser without Account is not allowed
+     * @expectedExceptionMessage CustomerUser without Account is not allowed
      */
     public function testAccountUserWithoutAccount()
     {
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
 
         $order = new Order();
         $order
-            ->setAccount(new Account())
+            ->setAccount(new Customer())
             ->setAccountUser($accountUser);
 
         $event = new OrderEvent($form, $order);
@@ -121,12 +121,12 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
     public function testAccountUserAccountValid()
     {
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
-        /** @var Account $account */
-        $account = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', ['id' => 1]);
+        /** @var Customer $account */
+        $account = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => 1]);
 
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
         $accountUser->setAccount($account);
 
         $order = new Order();
@@ -140,19 +140,19 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider onOrderEventProvider
-     * @param Account $account
+     * @param Customer $account
      * @param PaymentTerm $accountPaymentTerm
      * @param PaymentTerm $accountGroupPaymentTerm
      *
      * @SuppressWarnings(PHPMD.NPathComplexity)
      */
     public function testOnOrderEvent(
-        Account $account = null,
+        Customer $account = null,
         PaymentTerm $accountPaymentTerm = null,
         PaymentTerm $accountGroupPaymentTerm = null
     ) {
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $order = new Order();
         $order->setAccount($account);
@@ -196,10 +196,10 @@ class OrderPaymentTermEventListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function onOrderEventProvider()
     {
-        $accountWithGroup = new Account();
-        $accountWithGroup->setGroup(new AccountGroup());
+        $accountWithGroup = new Customer();
+        $accountWithGroup->setGroup(new CustomerGroup());
 
-        $accountWithoutGroup = new Account();
+        $accountWithoutGroup = new Customer();
 
         $paymentTermWithId = $this->getEntity(
             'Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm',

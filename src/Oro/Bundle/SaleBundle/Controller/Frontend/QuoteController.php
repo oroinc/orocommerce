@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Controller\Frontend;
 
+use Oro\Bundle\SaleBundle\Quote\Demand\Subtotals\Calculator\QuoteDemandSubtotalsCalculatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -10,12 +11,12 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteDemandType;
@@ -29,7 +30,7 @@ class QuoteController extends Controller
      *      id="oro_sale_quote_frontend_view",
      *      type="entity",
      *      class="OroSaleBundle:Quote",
-     *      permission="ACCOUNT_VIEW",
+     *      permission="VIEW",
      *      group_name="commerce"
      * )
      * @ParamConverter("quote", options={"repository_method" = "getQuote"})
@@ -90,13 +91,13 @@ class QuoteController extends Controller
      *      id="oro_sale_quote_frontend_choice",
      *      type="entity",
      *      class="OroSaleBundle:Quote",
-     *      permission="ACCOUNT_VIEW",
+     *      permission="VIEW",
      *      group_name="commerce"
      * )
      *
      * @param Request $request
      * @param QuoteDemand $quoteDemand
-     * @return array
+     * @return array|Response
      */
     public function choiceAction(Request $request, QuoteDemand $quoteDemand)
     {
@@ -113,6 +114,8 @@ class QuoteController extends Controller
                     ->findByName('oro_sale_frontend_quote_accept_and_submit_to_order');
                 if ($actionGroup) {
                     $actionData = $actionGroup->execute(new ActionData(['data' => $quoteDemand]));
+
+                    $this->getDoctrine()->getManagerForClass(QuoteDemand::class)->flush();
 
                     $redirectUrl = $actionData->getRedirectUrl();
                     if ($redirectUrl) {
@@ -131,7 +134,7 @@ class QuoteController extends Controller
                 'data' => $quoteDemand,
                 'form' => $form->createView(),
                 'quote' => $quoteDemand->getQuote(),
-                'totals' => (object)$this->getTotalProcessor()->getTotalWithSubtotalsAsArray($quoteDemand)
+                'totals' => (object)$this->getSubtotalsCalculator()->calculateSubtotals($quoteDemand)
             ]
         ];
     }
@@ -143,7 +146,7 @@ class QuoteController extends Controller
      *      id="oro_sale_quote_frontend_subtotals",
      *      type="entity",
      *      class="OroSaleBundle:Quote",
-     *      permission="ACCOUNT_VIEW",
+     *      permission="VIEW",
      *      group_name="commerce"
      * )
      *
@@ -154,22 +157,23 @@ class QuoteController extends Controller
     public function subtotalsAction(Request $request, QuoteDemand $quoteDemand)
     {
         $form = $this->createForm(QuoteDemandType::NAME, $quoteDemand);
+
         if ($request->isMethod(Request::METHOD_POST)) {
             $form->handleRequest($request);
         }
 
         return [
             'data' => [
-                'totals' => (object)$this->getTotalProcessor()->getTotalWithSubtotalsAsArray($quoteDemand)
+                'totals' => (object)$this->getSubtotalsCalculator()->calculateSubtotals($quoteDemand)
             ]
         ];
     }
 
     /**
-     * @return TotalProcessorProvider
+     * @return QuoteDemandSubtotalsCalculatorInterface
      */
-    protected function getTotalProcessor()
+    protected function getSubtotalsCalculator()
     {
-        return $this->get('oro_pricing.subtotal_processor.total_processor_provider');
+        return $this->get('oro_sale.quote_demand.subtotals_calculator_main');
     }
 }

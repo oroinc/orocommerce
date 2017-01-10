@@ -2,22 +2,21 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
 use Doctrine\Common\Collections\ArrayCollection;
-
+use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\Ownership\FrontendAccountUserAwareTrait;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
-use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
-use Oro\Bundle\CustomerBundle\Entity\Ownership\FrontendAccountUserAwareTrait;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\ShoppingListBundle\Model\ExtendShoppingList;
+use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
-use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 
 /**
  * @ORM\Table(
@@ -29,7 +28,7 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
  * @ORM\Entity(repositoryClass="Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository")
  * @ORM\AssociationOverrides({
  *      @ORM\AssociationOverride(name="accountUser",
- *          joinColumns=@ORM\JoinColumn(name="account_user_id", referencedColumnName="id", onDelete="CASCADE")
+ *          joinColumns=@ORM\JoinColumn(name="customer_user_id", referencedColumnName="id", onDelete="CASCADE")
  *      )
  * })
  * @Config(
@@ -37,7 +36,7 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
  *      routeView="oro_shopping_list_view",
  *      defaultValues={
  *          "entity"={
- *              "icon"="icon-shopping-cart",
+ *              "icon"="fa-shopping-cart",
  *              "totals_mapping"={
  *                  "type"="join_collection",
  *                  "join_field"="totals",
@@ -53,7 +52,7 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
  *              "owner_column_name"="user_owner_id",
  *              "frontend_owner_type"="FRONTEND_USER",
  *              "frontend_owner_field_name"="accountUser",
- *              "frontend_owner_column_name"="account_user_id",
+ *              "frontend_owner_column_name"="customer_user_id",
  *              "organization_field_name"="organization",
  *              "organization_column_name"="organization_id"
  *          },
@@ -147,8 +146,6 @@ class ShoppingList extends ExtendShoppingList implements
 
     /**
      * @var bool
-     *
-     * @ORM\Column(name="is_current", type="boolean", options={"default"=false})
      */
     protected $current = false;
 

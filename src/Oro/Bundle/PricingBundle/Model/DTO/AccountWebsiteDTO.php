@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\PricingBundle\Model\DTO;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class AccountWebsiteDTO
 {
     /**
-     * @var  Account
+     * @var  Customer
      */
     protected $account;
 
@@ -18,17 +18,17 @@ class AccountWebsiteDTO
     protected $website;
 
     /**
-     * @param Account $account
+     * @param Customer $account
      * @param Website $website
      */
-    public function __construct(Account $account, Website $website)
+    public function __construct(Customer $account, Website $website)
     {
         $this->account = $account;
         $this->website = $website;
     }
 
     /**
-     * @return Account
+     * @return Customer
      */
     public function getAccount()
     {

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
@@ -29,7 +29,7 @@ class AccountUserControllerTest extends WebTestCase
     {
         /** @var Request $request */
         $request = $this->getReference('rfp.request.2');
-        /** @var AccountUser $accountUser */
+        /** @var CustomerUser $accountUser */
         $accountUser = $request->getAccountUser();
         $crawler = $this->client->request(
             'GET',

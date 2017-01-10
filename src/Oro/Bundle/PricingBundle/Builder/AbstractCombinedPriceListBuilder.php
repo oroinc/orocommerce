@@ -5,18 +5,27 @@ namespace Oro\Bundle\PricingBundle\Builder;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityRepository;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
+use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Provider\CombinedPriceListProvider;
 use Oro\Bundle\PricingBundle\Provider\PriceListCollectionProvider;
 use Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
 use Oro\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ */
 abstract class AbstractCombinedPriceListBuilder
 {
+    /**
+     * @var CombinedPriceListTriggerHandler
+     */
+    protected $triggerHandler;
+
     /**
      * @var ManagerRegistry
      */
@@ -99,6 +108,7 @@ abstract class AbstractCombinedPriceListBuilder
      * @param CombinedPriceListGarbageCollector $garbageCollector
      * @param CombinedPriceListScheduleResolver $scheduleResolver
      * @param CombinedProductPriceResolver $priceResolver
+     * @param CombinedPriceListTriggerHandler $triggerHandler
      */
     public function __construct(
         ManagerRegistry $registry,
@@ -106,7 +116,8 @@ abstract class AbstractCombinedPriceListBuilder
         CombinedPriceListProvider $combinedPriceListProvider,
         CombinedPriceListGarbageCollector $garbageCollector,
         CombinedPriceListScheduleResolver $scheduleResolver,
-        CombinedProductPriceResolver $priceResolver
+        CombinedProductPriceResolver $priceResolver,
+        CombinedPriceListTriggerHandler $triggerHandler
     ) {
         $this->registry = $registry;
         $this->priceListCollectionProvider = $priceListCollectionProvider;
@@ -114,6 +125,7 @@ abstract class AbstractCombinedPriceListBuilder
         $this->garbageCollector = $garbageCollector;
         $this->scheduleResolver = $scheduleResolver;
         $this->priceResolver = $priceResolver;
+        $this->triggerHandler = $triggerHandler;
     }
 
     /**
@@ -235,7 +247,7 @@ abstract class AbstractCombinedPriceListBuilder
     /**
      * @param CombinedPriceList $cpl
      * @param Website $website
-     * @param Account|AccountGroup $targetEntity
+     * @param Customer|CustomerGroup $targetEntity
      * @param bool|false $force
      */
     protected function updateRelationsAndPrices(
@@ -248,10 +260,15 @@ abstract class AbstractCombinedPriceListBuilder
         if ($activeCpl === null) {
             $activeCpl = $cpl;
         }
-        $this->getCombinedPriceListRepository()
+        $relation = $this->getCombinedPriceListRepository()
             ->updateCombinedPriceListConnection($cpl, $activeCpl, $website, $targetEntity);
         if ($force || !$activeCpl->isPricesCalculated()) {
             $this->priceResolver->combinePrices($activeCpl);
+        }
+        $hasOtherRelations = $this->getCombinedPriceListRepository()->hasOtherRelations($relation);
+        //when CPL used the first time at this website
+        if ($force || !$hasOtherRelations) {
+            $this->triggerHandler->process($relation->getPriceList(), $relation->getWebsite());
         }
     }
 

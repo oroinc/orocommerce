@@ -4,20 +4,20 @@ define(function(require) {
     var ShoppingListCreateWidget;
     var routing = require('routing');
     var DialogWidget = require('oro/dialog-widget');
-    var __ = require('orotranslation/js/translator');
-    var mediator = require('oroui/js/mediator');
+    var _ = require('underscore');
+    var ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
 
     ShoppingListCreateWidget = DialogWidget.extend({
-        initialize: function(options) {
-            var self = this;
+        shoppingListCollection: null,
 
+        initialize: function(options) {
             var urlOptions = {};
             if (options.createOnly) {
                 urlOptions.createOnly = true;
             }
             this.options.url = options.url = routing.generate('oro_shopping_list_frontend_create', urlOptions);
 
-            this.options.title = __('oro.shoppinglist.widget.add_to_new_shopping_list');
+            this.options.title = _.__('oro.shoppinglist.widget.add_to_new_shopping_list');
             this.options.regionEnabled = false;
             this.options.incrementalPosition = false;
 
@@ -29,15 +29,37 @@ define(function(require) {
                 'dialogClass': 'shopping-list-dialog'
             };
 
-            this.on('formSave', function(id) {
-                var label = self.$el.find('.form-field-label').val();
-                mediator.trigger('shopping-list:created', {
-                    id: id,
-                    label: label
-                });
-            });
+            this.on('formSave', _.bind(this.onFormSave, this));
+
+            ShoppingListCollectionService.shoppingListCollection.done(_.bind(function(collection) {
+                this.shoppingListCollection = collection;
+            }, this));
 
             ShoppingListCreateWidget.__super__.initialize.apply(this, arguments);
+        },
+
+        dispose: function() {
+            if (this.disposed) {
+                return;
+            }
+            delete this.shoppingListCollection;
+            return ShoppingListCreateWidget.__super__.dispose.apply(this, arguments);
+        },
+
+        onFormSave: function(id) {
+            var label = this.$el.find('.form-field-label').val();
+            if (this.shoppingListCollection.length) {
+                this.shoppingListCollection.each(function(model) {
+                    model.set('is_current', model.get('id') === id, {silent: true});
+                });
+            }
+
+            this.shoppingListCollection.add({
+                id: id,
+                label: label,
+                is_current: true
+            });
+            this.shoppingListCollection.trigger('change');
         }
     });
 

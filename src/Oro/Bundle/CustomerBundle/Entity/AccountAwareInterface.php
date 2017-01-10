@@ -2,17 +2,20 @@
 
 namespace Oro\Bundle\CustomerBundle\Entity;
 
+/**
+ * @deprecated Use CustomerAwareInterface
+ */
 interface AccountAwareInterface
 {
     /**
-     * @return Account
+     * @return Customer
      */
     public function getAccount();
 
     /**
      *
-     * @param Account $account
+     * @param Customer $account
      * @return $this
      */
-    public function setAccount(Account $account);
+    public function setAccount(Customer $account);
 }

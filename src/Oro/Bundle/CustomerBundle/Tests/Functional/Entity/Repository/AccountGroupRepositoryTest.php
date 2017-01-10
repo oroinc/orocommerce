@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\Entity\Repository;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
-use Oro\Bundle\CustomerBundle\Entity\Repository\AccountGroupRepository;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerGroupRepository;
 use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadAnonymousAccountGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -14,7 +14,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 class AccountGroupRepositoryTest extends WebTestCase
 {
     /**
-     * @var AccountGroupRepository
+     * @var CustomerGroupRepository
      */
     protected $repository;
 
@@ -24,7 +24,7 @@ class AccountGroupRepositoryTest extends WebTestCase
         $this->client->useHashNavigation(true);
         $this->repository = $this->getContainer()
             ->get('doctrine')
-            ->getRepository('OroCustomerBundle:AccountGroup');
+            ->getRepository('OroCustomerBundle:CustomerGroup');
 
         $this->loadFixtures(
             [

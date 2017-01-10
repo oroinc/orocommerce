@@ -11,16 +11,13 @@ use Oro\Bundle\TestFrameworkBundle\Entity\TestDepartment;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestEmployee;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
-use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 use Oro\Bundle\WebsiteSearchBundle\Engine\ORM\OrmIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDatetime;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDecimal;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexInteger;
-use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexText;
-use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
+use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
-use Oro\Bundle\WebsiteSearchBundle\Resolver\EntityDependenciesResolver;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\AbstractSearchWebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadItemData;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadProductsToIndex;
@@ -67,28 +64,21 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         return $this->getRepository(Item::class)->findBy(['alias' => $options['alias']]);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getIndexer(
-        DoctrineHelper $doctrineHelper,
-        WebsiteSearchMappingProvider $mappingProvider,
-        EntityDependenciesResolver $entityDependenciesResolver,
-        IndexDataProvider $indexDataProvider,
-        PlaceholderInterface $placeholder
-    ) {
-        return new OrmIndexer(
-            $doctrineHelper,
-            $mappingProvider,
-            $entityDependenciesResolver,
-            $indexDataProvider,
-            $placeholder
-        );
-    }
-
     protected function setUp()
     {
         parent::setUp();
+
+        $this->mappingProviderMock = $this->getMockBuilder(WebsiteSearchMappingProvider::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->indexer = new OrmIndexer(
+            $this->doctrineHelper,
+            $this->mappingProviderMock,
+            $this->getContainer()->get('oro_website_search.engine.entity_dependencies_resolver'),
+            $this->getContainer()->get('oro_website_search.engine.index_data'),
+            $this->getContainer()->get('oro_website_search.placeholder_decorator')
+        );
 
         $this->indexer->setDriver($this->getContainer()->get('oro_website_search.engine.orm.driver'));
         $this->doctrine = $this->getContainer()->get('doctrine');
@@ -96,9 +86,9 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
 
     protected function tearDown()
     {
-        $this->clearIndexTextTable();
-
         parent::tearDown();
+
+        $this->clearIndexTextTable();
     }
 
     /**
@@ -128,7 +118,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
     private function makeCountQuery(EntityRepository $repository)
     {
         return $repository->createQueryBuilder('t')
-            ->select('count(t)')
+            ->select('COUNT(t)')
             ->getQuery()
             ->getSingleScalarResult();
     }

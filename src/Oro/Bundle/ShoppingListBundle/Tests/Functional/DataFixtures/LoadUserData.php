@@ -10,10 +10,10 @@ use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainMetadataProvider;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserManager;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserManager;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserManager;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
 class LoadUserData extends AbstractFixture implements FixtureInterface
@@ -139,7 +139,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
         $aclManager = $this->container->get('oro_security.acl.manager');
 
         foreach ($this->roles as $key => $roles) {
-            $role = new AccountUserRole(AccountUserRole::PREFIX_ROLE . $key);
+            $role = new CustomerUserRole(CustomerUserRole::PREFIX_ROLE . $key);
             $role->setLabel($key);
 
             foreach ($roles as $acls) {
@@ -162,14 +162,14 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
      */
     protected function loadAccountUsers(ObjectManager $manager)
     {
-        /* @var $userManager AccountUserManager */
+        /* @var $userManager CustomerUserManager */
         $userManager = $this->container->get('oro_account_user.manager');
 
         $defaultUser    = $this->getUser($manager);
         $organization   = $defaultUser->getOrganization();
 
         foreach ($this->accountUsers as $item) {
-            /* @var $accountUser AccountUser */
+            /* @var $accountUser CustomerUser */
             $accountUser = $userManager->createUser();
 
             $accountUser
@@ -236,7 +236,7 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
         $organization   = $defaultUser->getOrganization();
 
         foreach ($this->accounts as $item) {
-            $account = new Account();
+            $account = new Customer();
             $account
                 ->setName($item['name'])
                 ->setOrganization($organization)
@@ -251,12 +251,16 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
 
     /**
      * @param AclManager $aclManager
-     * @param AccountUserRole $role
+     * @param CustomerUserRole $role
      * @param string $className
      * @param array $allowedAcls
      */
-    protected function setRolePermissions(AclManager $aclManager, AccountUserRole $role, $className, array $allowedAcls)
-    {
+    protected function setRolePermissions(
+        AclManager $aclManager,
+        CustomerUserRole $role,
+        $className,
+        array $allowedAcls
+    ) {
         /* @var $chainMetadataProvider ChainMetadataProvider */
         $chainMetadataProvider = $this->container->get('oro_security.owner.metadata_provider.chain');
 

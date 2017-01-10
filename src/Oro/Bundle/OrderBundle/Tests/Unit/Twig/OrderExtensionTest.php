@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\src\Oro\Bundle\OrderBundle\Tests\Unit\Twig;
+namespace Oro\Bundle\OrderBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\OrderBundle\Formatter\ShippingTrackingFormatter;
 use Oro\Bundle\OrderBundle\Formatter\SourceDocumentFormatter;
@@ -19,11 +19,6 @@ class OrderExtensionTest extends \PHPUnit_Framework_TestCase
     protected $shippingTrackingFormatter;
 
     /**
-     * @var ShippingMethodFormatter|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $shippingMethodFormatter;
-
-    /**
      * @var OrderExtension
      */
     protected $extension;
@@ -38,14 +33,9 @@ class OrderExtensionTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder('Oro\Bundle\OrderBundle\Formatter\ShippingTrackingFormatter')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->shippingMethodFormatter = $this
-            ->getMockBuilder('Oro\Bundle\OrderBundle\Formatter\ShippingMethodFormatter')
-            ->disableOriginalConstructor()
-            ->getMock();
         $this->extension = new OrderExtension(
             $this->sourceDocumentFormatter,
-            $this->shippingTrackingFormatter,
-            $this->shippingMethodFormatter
+            $this->shippingTrackingFormatter
         );
     }
 
@@ -75,10 +65,6 @@ class OrderExtensionTest extends \PHPUnit_Framework_TestCase
             new \Twig_SimpleFunction(
                 'oro_order_format_shipping_tracking_link',
                 [$this->shippingTrackingFormatter, 'formatShippingTrackingLink']
-            ),
-            new \Twig_SimpleFunction(
-                'oro_order_shipping_method_with_type_label',
-                [$this->shippingMethodFormatter, 'formatShippingMethodWithTypeLabel']
             )
         ];
         static::assertEquals($expected, $this->extension->getFunctions());

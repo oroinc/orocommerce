@@ -1,2 +1,2 @@
-sku,status,primaryUnitPrecision:unit:code,primaryUnitPrecision:precision
-,,kg,3
+sku,attributeFamily.code,status,primaryUnitPrecision:unit:code,primaryUnitPrecision:precision
+,default_family,,kg,3

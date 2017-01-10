@@ -11,7 +11,7 @@ use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -120,7 +120,7 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
 
         $this->securityFacade->expects($this->at(1))->method('isGranted')
-            ->with('oro_shopping_list_line_item_frontend_add')
+            ->with('oro_shopping_list_frontend_update')
             ->willReturn($isGrantedAdd);
 
         if ($shoppingList && $isGrantedAdd) {
@@ -160,12 +160,12 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
         array $expectedLineItems = []
     ) {
         /** @var \PHPUnit_Framework_MockObject_MockObject|ShoppingList $shoppingList */
-        $shoppingList = $this->getMock('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList');
+        $shoppingList = $this->createMock('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList');
         $shoppingList->expects($this->any())
             ->method('getId')
             ->willReturn(1);
 
-        $accountUser = new AccountUser();
+        $accountUser = new CustomerUser();
         $organization = new Organization();
 
         $shoppingList->expects($this->any())
@@ -224,14 +224,14 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testPrepareLineItemWithProduct()
     {
-        /** @var AccountUser $user */
-        $user = $this->getMock(AccountUser::class);
+        /** @var CustomerUser $user */
+        $user = $this->createMock(CustomerUser::class);
 
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getMock(ShoppingList::class);
+        $shoppingList = $this->createMock(ShoppingList::class);
 
         /** @var Product $product */
-        $product = $this->getMock(Product::class);
+        $product = $this->createMock(Product::class);
 
         $this->shoppingListManager->expects($this->once())->method('getCurrent')->willReturn($shoppingList);
 
