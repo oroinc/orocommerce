@@ -168,15 +168,16 @@ To remove existing aproduct attribute group:
 2. Click **x** on the top right of the group area. If the group contains any system attributes, the confirmation dialog appears. Once confirmed, the group is deleted and the system attributes are automatically moved to deafult group.
 3. Once you are done with the product attribute organization, click **Save**.
 
-Assigning Product Family to product
------------------------------------
+Binding a Product to a Product Family
+-------------------------------------
+Every product may be bound to one product family. The default one contains generic product attributes (e.g. SKU, name, description, metadata, etc.) Custom product family contains the generic product attributes and any number of custom attributes organized in groups.
 
-On first step of product creating form you need to choose Product Family in select (all newly created families
-will appear here). After you click 'Continue' button all Attribute Groups will be available on the form.
-Each group occupies own tab with all attributes assigned to it. All manipulations with attributes is reflected on edit/
-create product pages and on view page as well. Depending on attribute type each attribute will have corresponding input 
-(datepicker, file, textarea, select) so you can set value to it and save product.
-It is possible to customize attribute groups displaying on frontend - [Customize products using layouts](./Resources/doc/customize-products.md). For quick examples, see the following sections:
+When creating a new product, after you select a custom product family and click **Continue**, the default and custom product attributes are shown as tabbed groups between the standard *General* product details and before the *Inventory* details. Depending on attribute type each attribute has corresponding input (date picker, file, text area, select).
+
+Customizing Product Attributes Layout on the OroCommerce Website
+----------------------------------------------------------------
+
+For information on how to customize the way attribute groups display on OroCommerce Web Store, see [Customize products using layouts](./Resources/doc/customize-products.md). For quick examples, please, check out the following sections:
 * [Product Family](./customize-pdp.md#product-family)
   - [Attribute Set (example 1)](./customize-pdp.md#attribute-set-example-1)
   - [Attribute Set (example 2)](./customize-pdp.md#attribute-set-example-2)
