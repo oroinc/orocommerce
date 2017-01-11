@@ -15,7 +15,7 @@ class CustomerTaxCodeControllerTest extends WebTestCase
     const ACCOUNT_TAX_CODE_UPDATED = 'uniqueUpdated';
     const ACCOUNT_TAX_CODE_DESCRIPTION = 'description';
     const ACCOUNT_TAX_CODE_DESCRIPTION_UPDATED = 'description updated';
-    const ACCOUNT_TAX_CODE_SAVE_MESSAGE = 'Customer Tax Code has been saved';
+    const ACCOUNT_TAX_CODE_SAVE_MESSAGE = 'Account Tax Code has been saved';
 
     protected function setUp()
     {
