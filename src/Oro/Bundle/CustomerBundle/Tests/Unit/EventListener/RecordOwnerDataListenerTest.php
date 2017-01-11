@@ -102,7 +102,7 @@ class RecordOwnerDataListenerTest extends \PHPUnit_Framework_TestCase
         $buConfig = new Config($entityConfigId);
         $buConfig->setValues(
             [
-                "frontend_owner_type" => "FRONTEND_ACCOUNT",
+                "frontend_owner_type" => "FRONTEND_CUSTOMER",
                 "frontend_owner_field_name" => "owner",
                 "frontend_owner_column_name" => "owner_id"
             ]
