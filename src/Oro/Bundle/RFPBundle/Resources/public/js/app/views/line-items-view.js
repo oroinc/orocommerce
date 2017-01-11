@@ -6,6 +6,7 @@ define(function(require) {
     var _ = require('underscore');
     var BaseView = require('oroui/js/app/views/base/view');
     var ProductsPricesComponent = require('oropricing/js/app/components/products-prices-component');
+    var mediator = require('oroui/js/mediator');
 
     /**
      * @export ororfp/js/app/views/line-items-view
@@ -34,19 +35,12 @@ define(function(require) {
                 tierPricesRoute: this.options.tierPricesRoute
             }));
 
-            this._deferredRender();
-            this.initLayout({
-                prices: this.options.tierPrices
-            }).done(_.bind(this.handleLayoutInit, this));
-        },
-
-        /**
-         * Doing something after loading child components
-         */
-        handleLayoutInit: function() {
             this.$el.find('.add-lineitem').mousedown(function(e) {
                 $(this).click();
             });
+
+            mediator.trigger('line-items:show:before');
+
             this.$el.find('.view-loading').remove();
             this.$el.find('.request-form__content').show();
             this._resolveDeferredRender();

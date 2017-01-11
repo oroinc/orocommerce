@@ -45,6 +45,14 @@ define(function(require) {
             this.templates = $.extend(true, {}, this.templates, options.templates || {});
 
             ProductPricesEditableView.__super__.initialize.apply(this, arguments);
+        },
+
+        /**
+         * @inheritDoc
+         */
+        deferredInitialize: function(options) {
+            ProductPricesEditableView.__super__.deferredInitialize.apply(this, arguments);
+
             this.initPriceOverridden();
             this.initHint();
         },

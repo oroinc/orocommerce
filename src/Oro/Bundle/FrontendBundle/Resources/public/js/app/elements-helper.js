@@ -23,6 +23,49 @@ define(function(require) {
 
         elementEventNamespace: '.elementEvent',
 
+        deferredInitializeCheck: function(options, checkOptions) {
+            var $deferredInitialize = this.$el.parent().closest('[data-layout="deferred-initialize"]');
+            if (checkOptions === undefined || !$deferredInitialize.length) {
+                return this.deferredInitialize(options);
+            }
+
+            var wait = false;
+            _.each(checkOptions, function(option) {
+                if (options[option] === undefined) {
+                    wait = true;
+                }
+            });
+
+            if (!wait) {
+                return this.deferredInitialize(options);
+            }
+
+            $deferredInitialize.on('deferredInitialize', _.bind(function(e, deferredOptions) {
+                e.preventDefault();
+                e.stopPropagation();
+                this.deferredInitialize(_.extend({}, options, deferredOptions));
+            }, this));
+        },
+
+        deferredInitialize: function(options) {
+        },
+
+        initializeSubviews: function(options) {
+            this._deferredRender();
+            var layout = this.$el.data('layout');
+            if (layout === 'deferred-initialize') {
+                this.$el.trigger('deferredInitialize', options);
+                this.handleLayoutInit();
+            } else {
+                this.initLayout(options)
+                    .done(_.bind(this.handleLayoutInit, this));
+            }
+        },
+
+        handleLayoutInit: function() {
+            this._resolveDeferredRender();
+        },
+
         initializeElements: function(options) {
             this.$html = $('html');
             this.elementsInitialized = true;
