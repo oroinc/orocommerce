@@ -9,7 +9,7 @@ define(function(require) {
     var $ = require('jquery');
     var _ = require('underscore');
 
-    FrontendLineItemView = BaseView.extend(_.extend({}, ElementsHelper, Messenger, {
+    FrontendLineItemView = BaseView.extend(_.extend({}, ElementsHelper, {
         elements: {
             lineItem: '[data-role="line-item"]',
             editView: '[data-role="line-item-edit"]',
@@ -38,7 +38,6 @@ define(function(require) {
             FrontendLineItemView.__super__.initialize.apply(this, arguments);
             this.initializeElements(options);
             this.template = _.template(this.getElement('template').text());
-
             this._deferredRender();
             this.initLayout().done(_.bind(this.handleLayoutInit, this));
         },
@@ -63,14 +62,14 @@ define(function(require) {
             }
         },
 
-        viewMode: function( action ) {
-            if (!this.validate() && action == 'update' ) {
-
-                Messenger.notificationMessage( 'warning', 'Product is invalid or do not selected', {
-                    container: this.getElement('editView').get(),
-                    delay: 3000
-                } );
-
+        viewMode: function(action) {
+            if (!this.validate()) {
+                if (action === 'update') {
+                    Messenger.notificationMessage('warning', 'Product is invalid or doesn’t selected', {
+                        container: this.getElement('editView').get(),
+                        delay: 3000
+                    });
+                }
                 return;
             }
             this.render();
@@ -95,7 +94,7 @@ define(function(require) {
 
         update: function(e) {
             e.preventDefault();
-            this.viewMode( 'update' );
+            this.viewMode('update');
         },
 
         getData: function() {
@@ -153,7 +152,7 @@ define(function(require) {
 
         revertChanges: function() {
 
-            if( !this.formState ) {
+            if (!this.formState) {
                 return;
             }
 
