@@ -313,10 +313,6 @@ datagrids:
                 type:  url
                 route: oro_rfp_frontend_request_view
                 params: [ id ]
-            update_link:
-                type:   url
-                route:  oro_rfp_frontend_request_update
-                params: [ id ]
         sorters:
             columns:
                 customerStatusName:
@@ -356,14 +352,6 @@ datagrids:
                 icon:           eye
                 rowAction:      true
                 acl_permission: VIEW
-                acl_class:      %oro_rfp.entity.request.class%
-            update:
-                type:           navigate
-                label:          oro.grid.action.update
-                link:           update_link
-                icon:           pencil-square-o
-                rowAction:      true
-                acl_permission: EDIT
                 acl_class:      %oro_rfp.entity.request.class%
 
     rfp-request-additional-notes-grid:

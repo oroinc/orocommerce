@@ -1,4 +1,4 @@
-actions:
+operations:
     oro_rfp_create_quote:
         label: oro.rfp.btn.create_quote
         applications: [default]
@@ -111,10 +111,17 @@ actions:
         applications: [commerce]
         routes:
             - oro_rfp_frontend_request_view
-        acl_resource: [ACCOUNT_EDIT, entity:commerce@Oro\Bundle\RFPBundle\Entity\Request]
+        datagrids:
+            - frontend-requests-grid
+        acl_resource: workflow_available_by_record_group
         order: 10
         button_options:
-            icon: fa-pencil
+            icon: pencil-square-o
+        preconditions:
+            '@not':
+                - '@workflow_available_by_record_group':
+                    entity_class: '%oro_rfp.entity.request.class%'
+                    group_name: 'b2b_rfq_frontoffice_flow'
         actions:
             - '@redirect':
                 parameters:
