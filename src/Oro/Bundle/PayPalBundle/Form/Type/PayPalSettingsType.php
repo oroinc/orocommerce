@@ -7,7 +7,6 @@ use Oro\Bundle\PayPalBundle\Entity\CreditCardPaymentAction;
 use Oro\Bundle\PayPalBundle\Entity\ExpressCheckoutPaymentAction;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Form\Provider\CreditCardTypeProvider;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -40,100 +39,100 @@ class PayPalSettingsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('creditCardLabels', LocalizedFallbackValueCollectionType::class, [
-                'label'    => 'oro.pay_pal.settings.credit_card_labels.label',
+            ->add('creditCardLabels', LocalizedFallbackValueCollectionType::NAME, [
+                'label'    => 'oro.paypal.settings.credit_card_labels.label',
                 'required' => true,
                 'options'  => ['constraints' => [new NotBlank()]],
             ])
-            ->add('creditCardShortLabels', LocalizedFallbackValueCollectionType::class, [
-                'label'    => 'oro.pay_pal.settings.credit_card_short_labels.label',
+            ->add('creditCardShortLabels', LocalizedFallbackValueCollectionType::NAME, [
+                'label'    => 'oro.paypal.settings.credit_card_short_labels.label',
                 'required' => true,
                 'options'  => ['constraints' => [new NotBlank()]],
             ])
-            ->add('expressCheckoutLabels', LocalizedFallbackValueCollectionType::class, [
-                'label'    => 'oro.pay_pal.settings.credit_card_labels.label',
+            ->add('expressCheckoutLabels', LocalizedFallbackValueCollectionType::NAME, [
+                'label'    => 'oro.paypal.settings.express_checkout_labels.label',
                 'required' => true,
                 'options'  => ['constraints' => [new NotBlank()]],
             ])
-            ->add('expressCheckoutShortLabels', LocalizedFallbackValueCollectionType::class, [
-                'label'    => 'oro.pay_pal.settings.express_checkout_short_labels.label',
+            ->add('expressCheckoutShortLabels', LocalizedFallbackValueCollectionType::NAME, [
+                'label'    => 'oro.paypal.settings.express_checkout_short_labels.label',
                 'required' => true,
                 'options'  => ['constraints' => [new NotBlank()]],
             ])
             ->add('expressCheckoutName', TextType::class, [
-                'label'    => 'oro.pay_pal.settings.express_checkout_name.label',
+                'label'    => 'oro.paypal.settings.express_checkout_name.label',
                 'required' => true,
             ])
-            ->add('creditCardPaymentAction', EntityType::class, [
+            ->add('creditCardPaymentAction', 'entity', [
                 'class' => CreditCardPaymentAction::class,
                 'choice_label' => 'label',
-                'label'    => 'oro.pay_pal.settings.credit_card_payment_action.label',
+                'label'    => 'oro.paypal.settings.credit_card_payment_action.label',
                 'required' => true,
             ])
-            ->add('expressCheckoutPaymentAction', EntityType::class, [
+            ->add('expressCheckoutPaymentAction', 'entity', [
                 'class' => ExpressCheckoutPaymentAction::class,
                 'choice_label' => 'label',
-                'label'    => 'oro.pay_pal.settings.express_checkout_payment_action.label',
+                'label'    => 'oro.paypal.settings.express_checkout_payment_action.label',
                 'required' => true,
             ])
             ->add('allowedCreditCardTypes', CollectionType::class, [
                 'entry_type'   => ChoiceType::class,
-                'label'    => 'oro.pay_pal.settings.allowed_credit_card_types.label',
+                'label'    => 'oro.paypal.settings.allowed_cc_types.label',
                 'required' => true,
                 'entry_options'  => [
                     'choices'  => CreditCardTypeProvider::get(),
                 ],
             ])
             ->add('partner', TextType::class, [
-                'label'    => 'oro.pay_pal.settings.partner.label',
+                'label'    => 'oro.paypal.settings.partner.label',
                 'required' => true,
             ])
             ->add('vendor', TextType::class, [
-                'label'    => 'oro.pay_pal.settings.vendor.label',
+                'label'    => 'oro.paypal.settings.vendor.label',
                 'required' => true,
             ])
             ->add('user', TextType::class, [
-                'label'    => 'oro.pay_pal.settings.user.label',
+                'label'    => 'oro.paypal.settings.user.label',
                 'required' => true,
             ])
             ->add('password', PasswordType::class, [
-                'label'    => 'oro.pay_pal.settings.password.label',
+                'label'    => 'oro.paypal.settings.password.label',
                 'required' => true,
             ])
             ->add('testMode', CheckboxType::class, [
-                'label'    => 'oro.pay_pal.settings.test_mode.label',
+                'label'    => 'oro.paypal.settings.test_mode.label',
                 'required' => true,
             ])
             ->add('debugMode', CheckboxType::class, [
-                'label'    => 'oro.pay_pal.settings.debug_mode.label',
+                'label'    => 'oro.paypal.settings.debug_mode.label',
                 'required' => false,
             ])
             ->add('requireCVVEntry', CheckboxType::class, [
-                'label'    => 'oro.pay_pal.settings.require_CVV_entry.label',
+                'label'    => 'oro.paypal.settings.require_cvv.label',
                 'required' => false,
             ])
             ->add('zeroAmountAuthorization', CheckboxType::class, [
-                'label'    => 'oro.pay_pal.settings.zero_amount_authorization.label',
+                'label'    => 'oro.paypal.settings.zero_amount_authorization.label',
                 'required' => false,
             ])
             ->add('authorizationForRequiredAmount', CheckboxType::class, [
-                'label'    => 'oro.pay_pal.settings.authorization_for_required_amount.label',
+                'label'    => 'oro.paypal.settings.authorization_for_required_amount.label',
                 'required' => false,
             ])
             ->add('useProxy', CheckboxType::class, [
-                'label'    => 'oro.pay_pal.settings.use_proxy.label',
+                'label'    => 'oro.paypal.settings.use_proxy.label',
                 'required' => false,
             ])
             ->add('proxyHost', TextType::class, [
-                'label'    => 'oro.pay_pal.settings.proxy_host.label',
+                'label'    => 'oro.paypal.settings.proxy_host.label',
                 'required' => true,
             ])
             ->add('proxyPort', TextType::class, [
-                'label'    => 'oro.pay_pal.settings.proxy_port.label',
+                'label'    => 'oro.paypal.settings.proxy_port.label',
                 'required' => true,
             ])
             ->add('enableSSLVerification', CheckboxType::class, [
-                'label'    => 'oro.pay_pal.settings.enable_SSL_verification.label',
+                'label'    => 'oro.paypal.settings.enable_ssl_verification.label',
                 'required' => false,
             ])
         ;

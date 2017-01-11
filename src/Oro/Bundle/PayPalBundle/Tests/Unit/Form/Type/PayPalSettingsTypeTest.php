@@ -2,15 +2,15 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Form\Type;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
-use Oro\Bundle\LocaleBundle\Form\Type\LocalizedPropertyType;
+use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
+use Oro\Bundle\PayPalBundle\Entity\CreditCardPaymentAction;
+use Oro\Bundle\PayPalBundle\Entity\ExpressCheckoutPaymentAction;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Form\Type\PayPalSettingsType;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
+use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Validation;
 
@@ -34,14 +34,17 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $registry = $this->createMock(ManagerRegistry::class);
+        $entityType = new EntityType([
+            'creditCardPaymentAction' => new CreditCardPaymentAction(),
+            'expressCheckoutPaymentAction' => new ExpressCheckoutPaymentAction(),
+        ]);
+        $localizedType = new LocalizedFallbackValueCollectionTypeStub();
 
         return [
             new PreloadedExtension(
                 [
-                    new LocalizedPropertyType(),
-                    new LocalizedFallbackValueCollectionType($registry),
-                    new EntityType($registry),
+                    $localizedType->getName() => $localizedType,
+                    $entityType->getName() => $entityType,
                 ],
                 []
             ),
@@ -57,14 +60,13 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
     public function testSubmit()
     {
         $submitData = [
-            'creditCardLabels' => ['values' => ['default' => 'creditCard']],
-            'creditCardShortLabels' => ['values' => ['default' => 'creditCardShort']],
-            'expressCheckoutLabels' => ['values' => ['default' => 'expressCheckout']],
-            'expressCheckoutShortLabels' => ['values' => ['default' => 'expressCheckoutShort']],
+            'creditCardLabels' => [['string' => 'creditCard']],
+            'creditCardShortLabels' => [['string' => 'creditCardShort']],
+            'expressCheckoutLabels' => [['string' => 'expressCheckout']],
+            'expressCheckoutShortLabels' => [['string' => 'expressCheckoutShort']],
             'expressCheckoutName' => 'checkoutName',
-            'creditCardPaymentAction' => 'Authorize',
-            'expressCheckoutPaymentAction' => 'Authorize',
-            'allowedCreditCardTypes' => ['Visa'],
+            'creditCardPaymentAction' => 'creditCardPaymentAction',
+            'expressCheckoutPaymentAction' => 'expressCheckoutPaymentAction',
             'partner' => 'partner',
             'vendor' => 'vendor',
             'user' => 'user',
