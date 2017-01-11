@@ -32,10 +32,12 @@
 
     <h3 {{ block('block_attributes') }}>
         <a href="{{ product.view_link }}"
-           data-page-component-module="oroui/js/app/components/jquery-widget-component"
-           data-page-component-options="{{ {
-               widgetModule: 'orofrontend/default/js/widgets/line-clamp-widget',
-           }|json_encode }}"
+           {% if 'gallery-view' in class_prefix %}
+               data-page-component-module="oroui/js/app/components/jquery-widget-component"
+               data-page-component-options="{{ {
+                   widgetModule: 'orofrontend/default/js/widgets/line-clamp-widget',
+               }|json_encode }}"
+           {% endif %}
            class="view-product"
         >
             {{ block('container_widget') }}
