@@ -262,8 +262,8 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
         if ($cplConfig['expectedFullCpl']) {
             $expectedFullCpl = $this->getReference($cplConfig['expectedFullCpl'])->getId();
         }
-        $this->assertSame($expectedActualCpl, $this->configManager->get($actualCPLConfigKey));
-        $this->assertSame($expectedFullCpl, $this->configManager->get($fullCPLConfigKey));
+        $this->assertEquals($expectedActualCpl, $this->configManager->get($actualCPLConfigKey));
+        $this->assertEquals($expectedFullCpl, $this->configManager->get($fullCPLConfigKey));
     }
 
     protected function saveDefaultConfigValue()
