@@ -31,7 +31,7 @@ class LoadDefaultAttributesData extends AbstractFixture implements
             'visible' => false
         ],
         'inventory_status' => [
-            'visible' => true
+            'visible' => false
         ]
     ];
 

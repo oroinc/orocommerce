@@ -30,15 +30,15 @@
     }) %}
 
     <tbody {{ block('block_attributes') }}>
-        {% set currenctUnit = '' %}
+        {% set currentUnit = '' %}
         {% for price in productPrices %}
-            {% if currenctUnit != price.formatted_unit %}
-                {% set currenctUnit = price.formatted_unit %}
+            {% if currentUnit != price.formatted_unit %}
+                {% set currentUnit = price.formatted_unit %}
                 <tr class="product-prices__tr">
                     <td colspan="2" class="product-prices__td">
                         {% if loop.index > 1 %}<br/>{% endif %}
                         {% if productUnitSelectionVisible is defined and productUnitSelectionVisible %}
-                            <strong>{{ currenctUnit|capitalize }}</strong>
+                            <strong>{{ currentUnit|capitalize }}</strong>
                         {% endif %}
                     </td>
                 </tr>

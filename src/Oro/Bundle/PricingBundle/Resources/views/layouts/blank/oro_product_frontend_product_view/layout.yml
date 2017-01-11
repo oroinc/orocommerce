@@ -22,4 +22,5 @@ layout:
                 attribute_family: '=context["attribute_family"]'
                 group: 'prices'
                 visible: '=data["product"].getUnitPrecisions()!=null'
-                productUnitSelectionVisible: '=data["oro_product_unit_fields_settings"].isProductUnitSelectionVisible(data["product"])'
+                vars:
+                    productUnitSelectionVisible: '=data["oro_product_unit_fields_settings"].isProductUnitSelectionVisible(data["product"])'
