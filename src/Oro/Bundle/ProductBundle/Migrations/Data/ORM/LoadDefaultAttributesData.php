@@ -24,9 +24,15 @@ class LoadDefaultAttributesData extends AbstractFixture implements
      * @var array
      */
     private $fields = [
-        'metaKeywords',
-        'metaDescriptions',
-        'inventory_status'
+        'metaKeywords' => [
+            'visible' => false
+        ],
+        'metaDescriptions' => [
+            'visible' => false
+        ],
+        'inventory_status' => [
+            'visible' => true
+        ]
     ];
 
     public function getDependencies()
@@ -64,6 +70,7 @@ class LoadDefaultAttributesData extends AbstractFixture implements
                 'filterable' => false,
                 'sortable' => false,
                 'enabled' => true,
+                'visible' => true
             ],
             'extend' => [
                 'is_extend' => false,
@@ -94,13 +101,13 @@ class LoadDefaultAttributesData extends AbstractFixture implements
         $configHelper = $this->container->get('oro_entity_config.config.config_helper');
         $entityManager = $configManager->getEntityManager();
 
-        foreach ($this->fields as $field) {
+        foreach ($this->fields as $field => $attributeOptions) {
             $fieldConfigModel = $configManager->getConfigFieldModel(Product::class, $field);
 
             $options = [
-                'attribute' => [
-                    'is_attribute' => true
-                ],
+                'attribute' => array_merge([
+                    'is_attribute' => true,
+                ], $attributeOptions),
                 'extend' => [
                     'owner' => ExtendScope::ORIGIN_SYSTEM
                 ]

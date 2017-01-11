@@ -23,12 +23,15 @@ use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\FrontendOwnerSelectTypeS
 
 class FrontendCustomerUserRoleTypeTest extends AbstractCustomerUserRoleTypeTest
 {
+    /** @var CustomerUser[] */
+    protected $customerUsers = [];
+
     /**
      * @return array
      */
     protected function getExtensions()
     {
-        $entityIdentifierType = new EntityIdentifierType([]);
+        $entityIdentifierType = new EntityIdentifierType($this->getCustomerUsers());
         $customerSelectType = new CustomerSelectTypeStub($this->getCustomers(), CustomerSelectType::NAME);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatableEntityType $registry */
@@ -143,25 +146,13 @@ class FrontendCustomerUserRoleTypeTest extends AbstractCustomerUserRoleTypeTest
 
     public function testSubmitUpdateCustomerUsers()
     {
-        /** @var Customer $customer */
-        $customer1 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', 1);
-        $customer2 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', 2);
+        list($customer1, $customer2) = array_values($this->getCustomers());
+        list($customerUser1, $customerUser2, $customerUser3) = array_values($this->getCustomerUsers());
 
         /** @var CustomerUserRole $role */
         $role = $this->getEntity(self::DATA_CLASS, 1);
         $role->setRole('label');
         $role->setCustomer($customer1);
-
-        /** @var CustomerUser $customerUser1 */
-        $customerUser1 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', 1);
-        $customerUser1->setCustomer($customer1);
-
-        /** @var CustomerUser $customerUser2 */
-        $customerUser2 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', 2);
-        $customerUser2->setCustomer($customer2);
-
-        /** @var CustomerUser $customerUser3 */
-        $customerUser3 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', 3);
 
         /** @var CustomerUserRole $predefinedRole */
         $predefinedRole = $this->getEntity(self::DATA_CLASS, 2);
@@ -178,6 +169,19 @@ class FrontendCustomerUserRoleTypeTest extends AbstractCustomerUserRoleTypeTest
 
         $this->assertTrue($form->has('appendUsers'));
         $this->assertEquals([$customerUser1], $form->get('appendUsers')->getData());
+
+        $form->get('appendUsers')->setData([$customerUser1, $customerUser2]);
+        $form->get('removeUsers')->setData([$customerUser1]);
+        $form->submit([
+            'label' => 'test label',
+            'customer' => new Customer(),
+            'appendUsers' => [1, 2],
+            'removeUsers' => [1],
+        ]);
+
+        $this->assertTrue($predefinedRole->getCustomerUsers()->contains($customerUser1));
+        $this->assertFalse($predefinedRole->getCustomerUsers()->contains($customerUser2));
+        $this->assertTrue($predefinedRole->getCustomerUsers()->contains($customerUser3));
     }
 
     /**
@@ -195,5 +199,34 @@ class FrontendCustomerUserRoleTypeTest extends AbstractCustomerUserRoleTypeTest
     {
         $this->formType = new FrontendCustomerUserRoleType();
         $this->formType->setDataClass(self::DATA_CLASS);
+    }
+
+    /**
+     * @return CustomerUser[]
+     */
+    protected function getCustomerUsers()
+    {
+        if (!$this->customerUsers) {
+            list($customer1, $customer2) = array_values($this->getCustomers());
+
+            /** @var CustomerUser $customerUser1 */
+            $customerUser1 = $this->getEntity(CustomerUser::class, 1);
+            $customerUser1->setCustomer($customer1);
+
+            /** @var CustomerUser $customerUser2 */
+            $customerUser2 = $this->getEntity(CustomerUser::class, 2);
+            $customerUser2->setCustomer($customer2);
+
+            /** @var CustomerUser $customerUser3 */
+            $customerUser3 = $this->getEntity(CustomerUser::class, 3);
+
+            $this->customerUsers = [
+                $customerUser1->getId() => $customerUser1,
+                $customerUser2->getId() => $customerUser2,
+                $customerUser3->getId() => $customerUser3,
+            ];
+        }
+
+        return $this->customerUsers;
     }
 }

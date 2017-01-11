@@ -41,11 +41,13 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
         // set customer user not default currency
         $manager = $this->getContainer()->get('oro_config.manager');
         $manager->set(CurrencyConfig::getConfigKeyByName(CurrencyConfig::KEY_DEFAULT_CURRENCY), 'EUR');
+
         $user = $this->getCurrentUser();
         $website = $this->getCurrentWebsite();
         $settings = new CustomerUserSettings($website);
         $settings->setCurrency('EUR');
         $user->setWebsiteSettings($settings);
+
         $em = $this->getContainer()->get('doctrine')->getManager();
         $em->persist($settings);
         $em->flush();

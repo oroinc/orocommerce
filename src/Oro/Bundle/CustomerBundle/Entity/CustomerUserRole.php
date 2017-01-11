@@ -36,7 +36,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *              "group_name"="commerce"
  *          },
  *          "ownership"={
- *              "frontend_owner_type"="FRONTEND_ACCOUNT",
+ *              "frontend_owner_type"="FRONTEND_CUSTOMER",
  *              "frontend_owner_field_name"="customer",
  *              "frontend_owner_column_name"="customer_id",
  *              "organization_field_name"="organization",
