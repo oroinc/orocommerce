@@ -160,7 +160,6 @@ oro:
             workflow:
                 remove_source.label: Delete the shopping list
             matrix_grid_order:
-                qty: 'QTY'
                 total_qty: 'Total QTY'
                 total: 'TOTAL'
             lineitem:

@@ -4,12 +4,9 @@ namespace Oro\Bundle\ShoppingListBundle\Manager;
 
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
-use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollection;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionRow;
@@ -27,23 +24,66 @@ class MatrixGridOrderManager
     private $variantAvailability;
 
     /**
-     * @var TotalProcessorProvider
+     * @var array|MatrixCollection[]
      */
-    private $totalProvider;
+    private $collectionCache = [];
 
     /**
      * @param PropertyAccessor $propertyAccessor
      * @param ProductVariantAvailabilityProvider $variantAvailability
-     * @param TotalProcessorProvider $totalProvider
      */
     public function __construct(
         PropertyAccessor $propertyAccessor,
-        ProductVariantAvailabilityProvider $variantAvailability,
-        TotalProcessorProvider $totalProvider
+        ProductVariantAvailabilityProvider $variantAvailability
     ) {
         $this->propertyAccessor = $propertyAccessor;
         $this->variantAvailability = $variantAvailability;
-        $this->totalProvider = $totalProvider;
+    }
+
+    /**
+     * @param Product $product
+     * @return MatrixCollection
+     */
+    public function getMatrixCollection(Product $product)
+    {
+        if (isset($this->collectionCache[$product->getId()])) {
+            return $this->collectionCache[$product->getId()];
+        }
+
+        $variantFields = $this->getVariantFields($product);
+        $availableVariants = $this->getAvailableVariants($product, $variantFields);
+
+        $collection = new MatrixCollection();
+        $collection->unit = $product->getPrimaryUnitPrecision()->getUnit();
+
+        foreach ($variantFields[0]['values'] as $firstValue) {
+            $row = new MatrixCollectionRow();
+            $row->label = $firstValue['label'];
+
+            if (count($variantFields) == 1) {
+                $column = new MatrixCollectionColumn();
+                if (isset($availableVariants[$firstValue['value']]['_product'])) {
+                    $column->product = $availableVariants[$firstValue['value']]['_product'];
+                }
+
+                $row->columns = [$column];
+            } else {
+                foreach ($variantFields[1]['values'] as $secondValue) {
+                    $column = new MatrixCollectionColumn();
+                    $column->label = $secondValue['label'];
+
+                    if (isset($availableVariants[$firstValue['value']][$secondValue['value']]['_product'])) {
+                        $column->product = $availableVariants[$firstValue['value']][$secondValue['value']]['_product'];
+                    }
+
+                    $row->columns[] = $column;
+                }
+            }
+
+            $collection->rows[] = $row;
+        }
+
+        return $this->collectionCache[$product->getId()] = $collection;
     }
 
     /**
@@ -52,11 +92,13 @@ class MatrixGridOrderManager
      * @param Product $product
      * @return array ex.: [['name' => 'color', 'values' => [['value' => 'red', 'label' => 'Red'], ...]], ...]
      */
-    public function getVariantFields(Product $product)
+    private function getVariantFields(Product $product)
     {
         $variantFields = [];
-        foreach (array_keys($this->variantAvailability->getVariantFieldsWithAvailability($product)) as $field) {
-            $values = $this->variantAvailability->getAllVariantsByVariantFieldName($field);
+
+        $fieldNames = array_keys($this->variantAvailability->getVariantFieldsWithAvailability($product));
+        foreach ($fieldNames as $fieldName) {
+            $values = $this->variantAvailability->getAllVariantsByVariantFieldName($fieldName);
 
             $formattedValues = [];
             foreach ($values as $value => $label) {
@@ -67,7 +109,7 @@ class MatrixGridOrderManager
             }
 
             $variantFields[] = [
-                'name' => $field,
+                'name' => $fieldName,
                 'values' => $formattedValues
             ];
         }
@@ -84,10 +126,14 @@ class MatrixGridOrderManager
      */
     private function getAvailableVariants(Product $product, array $variantFields)
     {
-        $variants = $this->variantAvailability->getSimpleProductsByVariantFields($product);
-
         $availableVariants = [];
+
+        $variants = $this->variantAvailability->getSimpleProductsByVariantFields($product);
         foreach ($variants as $variant) {
+            if (!$this->doSimpleProductSupportsUnitPrecision($variant, $product->getPrimaryUnitPrecision())) {
+                continue;
+            }
+
             $values = [];
             foreach ($variantFields as $field) {
                 $values[] = '['.$this->variantAvailability->getVariantFieldValue($variant, $field['name']).']';
@@ -102,87 +148,17 @@ class MatrixGridOrderManager
 
     /**
      * @param Product $product
-     * @param array $variantFields
-     * @return MatrixCollection
+     * @param ProductUnitPrecision $unit
+     * @return bool
      */
-    public function createMatrixCollection(Product $product, array $variantFields)
+    private function doSimpleProductSupportsUnitPrecision(Product $product, ProductUnitPrecision $unit)
     {
-        $availableVariants = $this->getAvailableVariants($product, $variantFields);
-
-        $collection = new MatrixCollection();
-        $collection->unit = $product->getPrimaryUnitPrecision()->getUnit();
-
-        foreach ($variantFields[0]['values'] as $firstValue) {
-            $row = new MatrixCollectionRow();
-
-            if (count($variantFields) == 1) {
-                $column = new MatrixCollectionColumn();
-                if (isset($availableVariants[$firstValue['value']]['_product'])) {
-                    $column->product = $availableVariants[$firstValue['value']]['_product'];
-                }
-
-                $row->columns = [$column];
-            } else {
-                foreach ($variantFields[1]['values'] as $secondValue) {
-                    $column = new MatrixCollectionColumn();
-                    if (isset($availableVariants[$firstValue['value']][$secondValue['value']]['_product'])) {
-                        $column->product = $availableVariants[$firstValue['value']][$secondValue['value']]['_product'];
-                    }
-
-                    $row->columns[] = $column;
-                }
+        $productUnits = $product->getUnitPrecisions()->map(
+            function (ProductUnitPrecision $unitPrecision) {
+                return $unitPrecision->getUnit();
             }
+        );
 
-            $collection->rows[] = $row;
-        }
-
-        return $collection;
-    }
-
-    /**
-     * Get total quantities for all columns and per column
-     *
-     * @param MatrixCollection $collection
-     * @return array ex.: ['total' => 5, 'columns' => [2, 6, ...]]
-     */
-    public function calculateTotalQuantities(MatrixCollection $collection)
-    {
-        $totalQuantities = 0;
-        $quantitiesByColumn = array_fill(0, count($collection->rows[0]->columns), 0);
-
-        foreach ($collection->rows as $row) {
-            foreach ($row->columns as $i => $column) {
-                $totalQuantities += $column->quantity;
-                $quantitiesByColumn[$i] += $column->quantity;
-            }
-        }
-
-        return ['total' => $totalQuantities, 'columns' => $quantitiesByColumn];
-    }
-
-    /**
-     * @param MatrixCollection $collection
-     * @return Price
-     */
-    public function calculateTotalPrice(MatrixCollection $collection)
-    {
-        $shoppingList = new ShoppingList();
-
-        foreach ($collection->rows as $row) {
-            foreach ($row->columns as $column) {
-                if ($column->product === null) {
-                    continue;
-                }
-
-                $lineItem = new LineItem();
-                $lineItem->setProduct($column->product);
-                $lineItem->setUnit($collection->unit);
-                $lineItem->setQuantity($column->quantity);
-
-                $shoppingList->addLineItem($lineItem);
-            }
-        }
-
-        return $this->totalProvider->getTotal($shoppingList)->getTotalPrice();
+        return $productUnits->contains($unit->getUnit());
     }
 }

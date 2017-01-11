@@ -1,0 +1,24 @@
+{% block _matrix_collection_widget %}
+<table>
+    {% if form.rows|length > 0 and form.rows[0].columns|length > 1 %}
+        <thead>
+            <tr>
+                <td></td>
+                {% for column in form.rows[0].columns %}
+                    <td>{{ column.vars.label }}</td>
+                {% endfor %}
+            </tr>
+        </thead>
+    {% endif %}
+    <tbody>
+        {% for row in form.rows %}
+            <tr>
+                <td>{{ row.vars.label }}</td>
+                {% for column in row.columns %}
+                    <td>{{ form_widget(column, {'attr': {'data-product-id': column.vars.productId}}) }}</td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

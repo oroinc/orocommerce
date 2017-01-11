@@ -101,3 +101,16 @@ services:
             - [setName, ['shopping_list_dropdown_create']]
         tags:
              - { name: layout.block_type, alias: shopping_list_dropdown_create }
+
+    oro_shopping_list.layout.block_type.matrix_order_form_summary:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            -
+                - setOptionsConfig
+                -
+                    -
+                        totalQuantity: {required: true}
+                        totalPrice: {required: true}
+            - [setName, ['matrix_order_form_summary']]
+        tags:
+            - { name: layout.block_type, alias: matrix_order_form_summary }

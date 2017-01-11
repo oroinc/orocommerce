@@ -1,0 +1,48 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'order.html.twig'
+        - '@setFormTheme':
+            themes: 'order_form.html.twig'
+        - '@addTree':
+            items:
+                form_start:
+                    blockType: form_start
+                    options:
+                        form: '=data["oro_shopping_list_matrix_order_form"].getMatrixOrderFormView(data["product"])'
+                form_fields:
+                    blockType: form_fields
+                    options:
+                        form: '=data["oro_shopping_list_matrix_order_form"].getMatrixOrderFormView(data["product"])'
+                form_end:
+                    blockType: form_end
+                    options:
+                        form: '=data["oro_shopping_list_matrix_order_form"].getMatrixOrderFormView(data["product"])'
+                form_summary:
+                    blockType: matrix_order_form_summary
+                    options:
+                        totalQuantity: '=data["oro_shopping_list_matrix_grid_order"].getTotalQuantity(data["product"])'
+                        totalPrice: '=data["oro_shopping_list_matrix_grid_order"].getTotalPriceFormatted(data["product"])'
+                form_actions:
+                    blockType: container
+                form_actions_create:
+                    blockType: button
+                    options:
+                        action: submit
+                        text: oro.shoppinglist.create_new_form.create.label
+                        style: auto
+                form_actions_create_and_add:
+                    blockType: button
+                    options:
+                        action: submit
+                        text: oro.shoppinglist.create_new_form.create_and_add.label
+                        style: auto
+            tree:
+                widget_content:
+                    form_start: ~
+                    form_fields: ~
+                    form_summary: ~
+                    form_actions:
+                        form_actions_create: ~
+                        form_actions_create_and_add: ~
+                    form_end: ~

@@ -2,6 +2,7 @@ parameters:
     oro_shopping_list.entity.shopping_list.class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList
     oro_shopping_list.entity.shopping_list_total.class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal
     oro_shopping_list.entity.line_item.class: Oro\Bundle\ShoppingListBundle\Entity\LineItem
+    oro_shopping_list.entity.matrix_collection.class: Oro\Bundle\ShoppingListBundle\Model\MatrixCollection
 
 services:
     oro_shopping_list.validator.line_item:
@@ -125,6 +126,16 @@ services:
         tags:
             - { name: layout.data_provider, alias: oro_shopping_list_shopping_list_form }
 
+    oro_shopping_list.layout.data_provider.matrix_order_form:
+            class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderFormProvider'
+            arguments:
+                - '@form.factory'
+                - '@router'
+            calls:
+                - [setMatrixOrderManager, ['@oro_shopping_list.provider.matrix_grid_order_manager']]
+            tags:
+                - { name: layout.data_provider, alias: oro_shopping_list_matrix_order_form }
+
     oro_shopping_list.layout.data_provider.account_user_shopping_lists:
         class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\AccountUserShoppingListsProvider'
         arguments:
@@ -147,7 +158,10 @@ services:
     oro_shopping_list.layout.data_provider.matrix_grid_order:
           class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderProvider'
           arguments:
+              - '@oro_shopping_list.provider.matrix_grid_order_manager'
               - '@oro_product.provider.product_variant_availability_provider'
+              - '@oro_pricing.subtotal_processor.total_processor_provider'
+              - '@oro_currency.formatter.number'
           tags:
               - { name: layout.data_provider, alias: oro_shopping_list_matrix_grid_order }
 
@@ -252,7 +266,6 @@ services:
         arguments:
             - '@property_accessor'
             - '@oro_product.provider.product_variant_availability_provider'
-            - '@oro_pricing.subtotal_processor.total_processor_provider'
 
     oro_shopping_list.condition.has_price_in_shopping_line_items:
         class: 'Oro\Bundle\ShoppingListBundle\Condition\HasPriceInShoppingLineItems'

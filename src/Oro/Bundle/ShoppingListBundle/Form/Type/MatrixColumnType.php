@@ -7,6 +7,8 @@ use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn;
@@ -29,10 +31,23 @@ class MatrixColumnType extends AbstractType
                 ],
             ];
             if ($column->product === null) {
-                $quantityConfig['attr']['disabled'] = 'disabled';
+                $quantityConfig['disabled'] = true;
             }
             $event->getForm()->add('quantity', NumberType::class, $quantityConfig);
         });
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        /** @var MatrixCollectionColumn $column */
+        $column = $form->getData();
+        if ($column instanceof MatrixCollectionColumn) {
+            $view->vars['label'] = $column->label;
+            $view->vars['productId'] = $column->product ? $column->product->getId() : null;
+        }
     }
 
     /**
