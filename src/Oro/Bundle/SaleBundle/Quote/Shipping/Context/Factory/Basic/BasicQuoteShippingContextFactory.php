@@ -5,6 +5,7 @@ namespace Oro\Bundle\SaleBundle\Quote\Shipping\Context\Factory\Basic;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Quote\Calculable\Factory\CalculableQuoteFactoryInterface;
 use Oro\Bundle\SaleBundle\Quote\Shipping\Context\Factory\QuoteShippingContextFactoryInterface;
 use Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\QuoteToShippingLineItemConverterInterface;
 use Oro\Bundle\ShippingBundle\Context\Builder\Factory\ShippingContextBuilderFactoryInterface;
@@ -27,18 +28,26 @@ class BasicQuoteShippingContextFactory implements QuoteShippingContextFactoryInt
     private $totalProcessorProvider;
 
     /**
+     * @var CalculableQuoteFactoryInterface
+     */
+    private $calculableQuoteFactory;
+
+    /**
      * @param ShippingContextBuilderFactoryInterface $shippingContextBuilderFactory
      * @param QuoteToShippingLineItemConverterInterface $quoteToShippingLineItemConverter
      * @param TotalProcessorProvider $totalProcessorProvider
+     * @param CalculableQuoteFactoryInterface $calculableQuoteFactory
      */
     public function __construct(
         ShippingContextBuilderFactoryInterface $shippingContextBuilderFactory,
         QuoteToShippingLineItemConverterInterface $quoteToShippingLineItemConverter,
-        TotalProcessorProvider $totalProcessorProvider
+        TotalProcessorProvider $totalProcessorProvider,
+        CalculableQuoteFactoryInterface $calculableQuoteFactory
     ) {
         $this->shippingContextBuilderFactory = $shippingContextBuilderFactory;
         $this->quoteToShippingLineItemConverter = $quoteToShippingLineItemConverter;
         $this->totalProcessorProvider = $totalProcessorProvider;
+        $this->calculableQuoteFactory = $calculableQuoteFactory;
     }
 
     /**
@@ -46,14 +55,13 @@ class BasicQuoteShippingContextFactory implements QuoteShippingContextFactoryInt
      */
     public function create(Quote $quote)
     {
+        $this->totalProcessorProvider->enableRecalculation();
+
         $convertedLineItems = $this->quoteToShippingLineItemConverter->convertLineItems($quote);
 
-        //$total = $this->totalProcessorProvider->getTotal($quote);
-        $subtotal = Price::create(
-            0,
-            ''
-        );
-        //@TODO: count by "shippingLineItemAwareInterface"
+        $calculableQuote = $this->calculableQuoteFactory->createCalculableQuote($convertedLineItems);
+        $total = $this->totalProcessorProvider->getTotal($calculableQuote);
+        $subtotal = Price::create($total->getAmount(), $total->getCurrency());
 
         $shippingContextBuilder = $this->shippingContextBuilderFactory->createShippingContextBuilder(
             $quote->getCurrency(),

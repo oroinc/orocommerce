@@ -104,10 +104,28 @@ class AjaxQuoteControllerTest extends WebTestCase
 
     public function testEntryPoint()
     {
-        $this->markTestSkipped('Unclear how to fix this situation');
         $this->client->request('GET', $this->getUrl('oro_quote_entry_point'));
         $response = $this->client->getResponse();
 
         static::assertInstanceOf(JsonResponse::class, $response);
+    }
+
+    public function testEntryPointAction()
+    {
+        $this->client->request(
+            'GET',
+            $this->getUrl('oro_quote_entry_point'),
+            [
+                QuoteType::NAME => [
+                    'calculateShipping' => true
+                ]
+            ]
+        );
+
+        $response = $this->client->getResponse();
+        $this->assertInstanceOf('Symfony\Component\HttpFoundation\JsonResponse', $response);
+
+        $result = $this->getJsonResponseContent($response, 200);
+        $this->assertArrayHasKey('possibleShippingMethods', $result);
     }
 }

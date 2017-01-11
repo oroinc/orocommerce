@@ -42,8 +42,8 @@ class OroSaleBundle implements Migration, RenameExtensionAwareInterface
     private function addAllowUnlistedAndLockedColumns(Schema $schema)
     {
         $table = $schema->getTable('oro_sale_quote');
-        $table->addColumn('shipping_method_locked', 'boolean');
-        $table->addColumn('allow_unlisted_shipping_method', 'boolean');
+        $table->addColumn('shipping_method_locked', 'boolean', ['default' => false]);
+        $table->addColumn('allow_unlisted_shipping_method', 'boolean', ['default' => false]);
     }
 
     /**
