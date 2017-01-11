@@ -11,6 +11,7 @@ use Oro\Bundle\LocaleBundle\Tests\Unit\Formatter\Stubs\AddressStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
+use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Entity\LengthUnit;
@@ -72,7 +73,7 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
         $this->registry = $this->getMockBuilder(ManagerRegistry::class)
             ->disableOriginalConstructor()->getMock();
 
-        $this->shippingService = $this->getMock(ShippingService::class);
+        $this->shippingService = $this->createMock(ShippingService::class);
 
         $this->transport = $this->getEntity(
             UPSTransport::class,
@@ -138,16 +139,17 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
             /** @var Product $product */
             $product = $this->getEntity(Product::class, ['id' => $i]);
 
-            /** @var ShippingLineItem $lineItem */
-            $lineItems[] = $this->getEntity(ShippingLineItem::class, [
-                'product' => $product,
-                'quantity' => 1,
-                'productUnit' => $this->getEntity(
+            $lineItems[] = new ShippingLineItem([
+                ShippingLineItem::FIELD_PRODUCT => $product,
+                ShippingLineItem::FIELD_QUANTITY => 1,
+                ShippingLineItem::FIELD_PRODUCT_UNIT => $this->getEntity(
                     ProductUnit::class,
                     ['code' => 'test1']
                 ),
-                'dimensions' => Dimensions::create(7, 7, 7, (new LengthUnit())->setCode('inch')),
-                'weight' => Weight::create($productWeight, $this->getEntity(
+                ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => 'test1',
+                ShippingLineItem::FIELD_ENTITY_IDENTIFIER => 1,
+                ShippingLineItem::FIELD_DIMENSIONS => Dimensions::create(7, 7, 7, (new LengthUnit())->setCode('inch')),
+                ShippingLineItem::FIELD_WEIGHT => Weight::create($productWeight, $this->getEntity(
                     WeightUnit::class,
                     ['code' => 'lbs']
                 ))
@@ -172,19 +174,15 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
             );
         }
 
-        /** @var ShippingContext $context */
-        $context = $this->getEntity(
-            ShippingContext::class,
-            [
-                'lineItems' => $lineItems,
-                'billingAddress' => new AddressStub(),
-                'shippingAddress' => new AddressStub(),
-                'shippingOrigin' => new AddressStub(),
-                'paymentMethod' => '',
-                'currency' => 'USD',
-                'subtotal' => new Price(),
-            ]
-        );
+        $context = new ShippingContext([
+            ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection($lineItems),
+            ShippingContext::FIELD_BILLING_ADDRESS => new AddressStub(),
+            ShippingContext::FIELD_SHIPPING_ORIGIN => new AddressStub(),
+            ShippingContext::FIELD_SHIPPING_ADDRESS => new AddressStub(),
+            ShippingContext::FIELD_PAYMENT_METHOD => '',
+            ShippingContext::FIELD_CURRENCY => 'USD',
+            ShippingContext::FIELD_SUBTOTAL => new Price()
+        ]);
 
         $repository = $this->getMockBuilder(ObjectRepository::class)->disableOriginalConstructor()->getMock();
         $repository->expects(self::any())->method('findBy')->willReturn($allProductsShippingOptions);
@@ -245,6 +243,13 @@ class PriceRequestFactoryTest extends \PHPUnit_Framework_TestCase
                 'expectedRequest' => null
             ],
         ];
+    }
+
+    public function testCreateWithNullShippingAddress()
+    {
+        $priceRequest = $this->priceRequestFactory->create($this->transport, new ShippingContext([]), '');
+
+        self::assertNull($priceRequest);
     }
 
     /**

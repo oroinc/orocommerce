@@ -18,17 +18,32 @@ layout:
                     options:
                         items:
                             -
-                                image: '/bundles/orocatalog/default/scss/components/hero-promo-item/hero-promo-item-1.png'
-                                prelabel: 'New items in stock'
-                                label: 'For Medical Professionals'
+                                image: '/bundles/orocatalog/default/scss/components/hero-promo-item/promo-slider-1.jpg'
+                                image_medium: '/bundles/orocatalog/default/scss/components/hero-promo-item/promo-slider-medium-1.jpg'
+                                image_small: '/bundles/orocatalog/default/scss/components/hero-promo-item/promo-slider-small-1.jpg'
+                                prelabel: 'Lorem ipsum'
+                                label: 'Praesent magna arcu, placerat id purus vel, facilisis posuere augue. Praesent nec consequat elit, sed elementum elit. Ut dictum nisi imperdiet justo tristique finibus.'
                                 link: /product/
-                                link_label: View items
+                                link_label: 'Call to action'
+                                class: 'hero-promo-item--description-right'
                             -
-                                image: '/bundles/orocatalog/default/scss/components/hero-promo-item/hero-promo-item-2.png'
+                                image: '/bundles/orocatalog/default/scss/components/hero-promo-item/promo-slider-2.jpg'
+                                image_medium: '/bundles/orocatalog/default/scss/components/hero-promo-item/promo-slider-medium-2.jpg'
+                                image_small: '/bundles/orocatalog/default/scss/components/hero-promo-item/promo-slider-small-2.jpg'
                                 link: /product/?categoryId=2&includeSubcategories=1
+                                prelabel: 'Lorem ipsum'
+                                label: 'Praesent magna arcu, placerat id purus vel, facilisis posuere augue. Praesent nec consequat elit, sed elementum elit. Ut dictum nisi imperdiet justo tristique finibus.'
+                                link_label: 'Call to action'
+                                class: 'hero-promo-item--description-left'
                             -
-                                image: '/bundles/orocatalog/default/scss/components/hero-promo-item/hero-promo-item-3.png'
+                                image: '/bundles/orocatalog/default/scss/components/hero-promo-item/promo-slider-3.jpg'
+                                image_medium: '/bundles/orocatalog/default/scss/components/hero-promo-item/promo-slider-medium-3.jpg'
+                                image_small: '/bundles/orocatalog/default/scss/components/hero-promo-item/promo-slider-small-3.jpg'
                                 link: /product/?categoryId=7&includeSubcategories=1
+                                prelabel: 'Lorem ipsum'
+                                label: 'Praesent magna arcu, placerat id purus vel, facilisis posuere augue. Praesent nec consequat elit, sed elementum elit. Ut dictum nisi imperdiet justo tristique finibus.'
+                                link_label: 'Call to action'
+                                class: 'hero-promo-item--description-center hero-promo-item--text-color-dark'
                         use_slider: true
                         slider_options: {slidesToShow: 1}
                 hero_promo_item:
@@ -38,7 +53,7 @@ layout:
                     siblingId: hero_promo_container
                     options:
                         item_key: 'category'
-                        items: '=data["featured_categories"].getAll()'
+                        items: '=data["featured_categories"].getAll([2,3,4,6,7,8,9,10])'
                         items_data:
                             categoryProductsCount: '=data["categories_products"].getCountByCategories(items)'
                 featured_category:

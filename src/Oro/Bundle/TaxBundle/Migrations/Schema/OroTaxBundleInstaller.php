@@ -17,7 +17,7 @@ class OroTaxBundleInstaller implements Installation
      */
     public function getMigrationVersion()
     {
-        return 'v1_2';
+        return 'v1_4';
     }
 
     /**
@@ -65,41 +65,41 @@ class OroTaxBundleInstaller implements Installation
     }
 
     /**
-     * Create oro_tax_acc_grp_tc_acc_grp table
+     * Create oro_tax_cus_grp_tc_cus_grp table
      *
      * @param Schema $schema
      */
     protected function createOroTaxAccGrpTcAccGrpTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_tax_acc_grp_tc_acc_grp');
-        $table->addColumn('account_group_tax_code_id', 'integer', []);
-        $table->addColumn('account_group_id', 'integer', []);
-        $table->setPrimaryKey(['account_group_tax_code_id', 'account_group_id']);
-        $table->addUniqueIndex(['account_group_id'], 'UNIQ_D3457B7869A3BF1');
+        $table = $schema->createTable('oro_tax_cus_grp_tc_cus_grp');
+        $table->addColumn('customer_group_tax_code_id', 'integer', []);
+        $table->addColumn('customer_group_id', 'integer', []);
+        $table->setPrimaryKey(['customer_group_tax_code_id', 'customer_group_id']);
+        $table->addUniqueIndex(['customer_group_id'], 'UNIQ_D3457B7869A3BF1');
     }
 
     /**
-     * Create oro_tax_acc_tax_code_acc table
+     * Create oro_tax_cus_tax_code_cus table
      *
      * @param Schema $schema
      */
     protected function createOroTaxAccTaxCodeAccTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_tax_acc_tax_code_acc');
-        $table->addColumn('account_tax_code_id', 'integer', []);
-        $table->addColumn('account_id', 'integer', []);
-        $table->setPrimaryKey(['account_tax_code_id', 'account_id']);
-        $table->addUniqueIndex(['account_id'], 'UNIQ_53167F2A9B6B5FBA');
+        $table = $schema->createTable('oro_tax_cus_tax_code_cus');
+        $table->addColumn('customer_tax_code_id', 'integer', []);
+        $table->addColumn('customer_id', 'integer', []);
+        $table->setPrimaryKey(['customer_tax_code_id', 'customer_id']);
+        $table->addUniqueIndex(['customer_id'], 'UNIQ_53167F2A9B6B5FBA');
     }
 
     /**
-     * Create oro_tax_account_tax_code table
+     * Create oro_tax_customer_tax_code table
      *
      * @param Schema $schema
      */
     protected function createOroTaxAccountTaxCodeTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_tax_account_tax_code');
+        $table = $schema->createTable('oro_tax_customer_tax_code');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('code', 'string', ['length' => 255]);
         $table->addColumn('description', 'text', ['notnull' => false]);
@@ -170,7 +170,7 @@ class OroTaxBundleInstaller implements Installation
         $table = $schema->createTable('oro_tax_rule');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('tax_jurisdiction_id', 'integer', ['notnull' => false]);
-        $table->addColumn('account_tax_code_id', 'integer', ['notnull' => false]);
+        $table->addColumn('customer_tax_code_id', 'integer', ['notnull' => false]);
         $table->addColumn('product_tax_code_id', 'integer', ['notnull' => false]);
         $table->addColumn('tax_id', 'integer', ['notnull' => false]);
         $table->addColumn('description', 'text', ['notnull' => false]);
@@ -206,7 +206,7 @@ class OroTaxBundleInstaller implements Installation
     {
         $table = $schema->createTable('oro_tax_value');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('result', 'object', ['comment' => '(DC2Type:object)']);
+        $table->addColumn('result', 'json_array');
         $table->addColumn('entity_class', 'string', ['length' => 255]);
         $table->addColumn('entity_id', 'integer', ['notnull' => false]);
         $table->addColumn('address', 'text', []);
@@ -217,44 +217,44 @@ class OroTaxBundleInstaller implements Installation
     }
 
     /**
-     * Add oro_tax_acc_grp_tc_acc_grp foreign keys.
+     * Add oro_tax_cus_grp_tc_cus_grp foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroTaxAccGrpTcAccGrpForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('oro_tax_acc_grp_tc_acc_grp');
+        $table = $schema->getTable('oro_tax_cus_grp_tc_cus_grp');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account_group'),
-            ['account_group_id'],
+            $schema->getTable('oro_customer_group'),
+            ['customer_group_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_tax_account_tax_code'),
-            ['account_group_tax_code_id'],
+            $schema->getTable('oro_tax_customer_tax_code'),
+            ['customer_group_tax_code_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 
     /**
-     * Add oro_tax_acc_tax_code_acc foreign keys.
+     * Add oro_tax_cus_tax_code_cus foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroTaxAccTaxCodeAccForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('oro_tax_acc_tax_code_acc');
+        $table = $schema->getTable('oro_tax_cus_tax_code_cus');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_tax_account_tax_code'),
-            ['account_tax_code_id'],
+            $schema->getTable('oro_tax_customer_tax_code'),
+            ['customer_tax_code_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account'),
-            ['account_id'],
+            $schema->getTable('oro_customer'),
+            ['customer_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
@@ -319,8 +319,8 @@ class OroTaxBundleInstaller implements Installation
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_tax_account_tax_code'),
-            ['account_tax_code_id'],
+            $schema->getTable('oro_tax_customer_tax_code'),
+            ['customer_tax_code_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );

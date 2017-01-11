@@ -21,7 +21,7 @@ operations:
     oro_shoppinglist_frontend_products_add_to_shoppinglist_base:
         label: oro.shoppinglist.product.add_to_shopping_list.label
         applications: [commerce]
-        acl_resource: [CREATE, entity:commerce@Oro\Bundle\ShoppingListBundle\Entity\LineItem]
+        acl_resource: oro_shopping_list_frontend_update
         order: 30
         button_options:
             template: OroShoppingListBundle:Action:buttons.html.twig
@@ -55,7 +55,7 @@ operations:
         extends: oro_shoppinglist_lineitem_base
         label: oro.shoppinglist.product.add_to_shopping_list.label
         applications: [commerce]
-        acl_resource: [CREATE, entity:commerce@Oro\Bundle\ShoppingListBundle\Entity\LineItem]
+        acl_resource: oro_shopping_list_frontend_update
         datagrids: [frontend-product-search-grid]
         datagrid_options:
             mass_action_provider: oro_shopping_list_add_products
@@ -133,7 +133,7 @@ operations:
                 class: Oro\Bundle\ShoppingListBundle\Entity\LineItem
                 attribute: $.lineItem
             - '@assign_value': [$.lineItem.shoppingList, $.data]
-            - '@assign_value': [$.lineItem.accountUser, $.data.accountUser]
+            - '@assign_value': [$.lineItem.customerUser, $.data.customerUser]
             - '@assign_value': [$.lineItem.organization, $.data.organization]
         actions:
             - '@run_action_group':
@@ -223,7 +223,7 @@ action_groups:
                 type: Oro\Bundle\ShoppingListBundle\Entity\LineItem
             form:
                 type: Symfony\Component\Form\FormInterface
-        acl_resource: [CREATE, entity:commerce@Oro\Bundle\ShoppingListBundle\Entity\LineItem]
+        acl_resource: oro_shopping_list_frontend_update
         actions:
             - '@call_service_method':
                 service: oro_shopping_list.handler.shopping_list_line_item

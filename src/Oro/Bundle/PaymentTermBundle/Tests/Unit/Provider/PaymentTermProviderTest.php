@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Event\ResolvePaymentTermEvent;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
@@ -42,8 +42,8 @@ class PaymentTermProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->eventDispatcher = $this->getMock(EventDispatcherInterface::class);
-        $this->tokenStorage = $this->getMock(TokenStorageInterface::class);
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
         $this->paymentTermAssociationProvider = $this->getMockBuilder(PaymentTermAssociationProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -55,43 +55,43 @@ class PaymentTermProviderTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testPaymentTermFromAccount()
+    public function testPaymentTermFromCustomer()
     {
-        $account = new Account();
+        $customer = new Customer();
         $paymentTerm = new PaymentTerm();
 
         $this->paymentTermAssociationProvider->expects($this->once())->method('getPaymentTerm')
             ->willReturn($paymentTerm);
 
-        $this->assertSame($paymentTerm, $this->provider->getPaymentTerm($account));
+        $this->assertSame($paymentTerm, $this->provider->getPaymentTerm($customer));
     }
 
-    public function testPaymentTermFromAccountWithoutGroup()
+    public function testPaymentTermFromCustomerWithoutGroup()
     {
-        $account = new Account();
+        $customer = new Customer();
 
         $this->paymentTermAssociationProvider->expects($this->once())->method('getPaymentTerm')
             ->willReturn(null);
 
-        $this->assertNull($this->provider->getPaymentTerm($account));
+        $this->assertNull($this->provider->getPaymentTerm($customer));
     }
 
-    public function testPaymentTermFromAccountGroup()
+    public function testPaymentTermFromCustomerGroup()
     {
-        $account = new Account();
-        $group = new AccountGroup();
-        $account->setGroup($group);
+        $customer = new Customer();
+        $group = new CustomerGroup();
+        $customer->setGroup($group);
         $paymentTerm = new PaymentTerm();
 
         $this->paymentTermAssociationProvider->expects($this->exactly(2))->method('getPaymentTerm')
             ->willReturnMap(
                 [
-                    [$account, null, null],
+                    [$customer, null, null],
                     [$group, null, $paymentTerm],
                 ]
             );
 
-        $this->assertSame($paymentTerm, $this->provider->getPaymentTerm($account));
+        $this->assertSame($paymentTerm, $this->provider->getPaymentTerm($customer));
     }
 
     public function testGetCurrentFormResolvePaymentTermEvent()
@@ -127,7 +127,7 @@ class PaymentTermProviderTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('dispatch')
             ->with($this->equalTo(ResolvePaymentTermEvent::NAME), $this->isInstanceOf(ResolvePaymentTermEvent::class));
-        $token = $this->getMock(TokenInterface::class);
+        $token = $this->createMock(TokenInterface::class);
         $token->expects($this->once())->method('getUser')->willReturn(null);
         $this->tokenStorage->expects($this->once())->method('getToken')->willReturn($token);
         $this->assertNull($this->provider->getCurrentPaymentTerm());
@@ -142,66 +142,66 @@ class PaymentTermProviderTest extends \PHPUnit_Framework_TestCase
         $paymentTerm = new PaymentTerm();
         $this->paymentTermAssociationProvider->expects($this->once())->method('getPaymentTerm')
             ->willReturn($paymentTerm);
-        $token = $this->getMock(TokenInterface::class);
-        $accountUser = new AccountUser();
-        $accountUser->setAccount(new Account());
-        $token->expects($this->once())->method('getUser')->willReturn($accountUser);
+        $token = $this->createMock(TokenInterface::class);
+        $customerUser = new CustomerUser();
+        $customerUser->setCustomer(new Customer());
+        $token->expects($this->once())->method('getUser')->willReturn($customerUser);
         $this->tokenStorage->expects($this->once())->method('getToken')->willReturn($token);
         $this->assertSame($paymentTerm, $this->provider->getCurrentPaymentTerm());
     }
 
-    public function testAccountPaymentTermFromOwner()
+    public function testCustomerPaymentTermFromOwner()
     {
-        $account = new Account();
+        $customer = new Customer();
         $paymentTerm = new PaymentTerm();
-        $owner = PaymentTermAwareStub::create($account);
+        $owner = PaymentTermAwareStub::create($customer);
 
         $this->paymentTermAssociationProvider->expects($this->once())->method('getPaymentTerm')
             ->willReturn($paymentTerm);
 
-        $this->assertSame($paymentTerm, $this->provider->getAccountPaymentTermByOwner($owner));
+        $this->assertSame($paymentTerm, $this->provider->getCustomerPaymentTermByOwner($owner));
     }
 
-    public function testAccountPaymentTermFromOwnerWithoutAccount()
+    public function testCustomerPaymentTermFromOwnerWithoutCustomer()
     {
         $owner = PaymentTermAwareStub::create();
 
         $this->paymentTermAssociationProvider->expects($this->never())->method('getPaymentTerm');
 
-        $this->assertNull($this->provider->getAccountPaymentTermByOwner($owner));
+        $this->assertNull($this->provider->getCustomerPaymentTermByOwner($owner));
     }
 
-    public function testAccountPaymentTermFromGroupOwnerWithoutAccount()
+    public function testCustomerPaymentTermFromGroupOwnerWithoutCustomer()
     {
         $owner = PaymentTermAwareStub::create();
 
         $this->paymentTermAssociationProvider->expects($this->never())->method('getPaymentTerm');
 
-        $this->assertNull($this->provider->getAccountGroupPaymentTermByOwner($owner));
+        $this->assertNull($this->provider->getCustomerGroupPaymentTermByOwner($owner));
     }
 
-    public function testAccountPaymentTermFromGroupOwnerWithoutAccountGroup()
+    public function testCustomerPaymentTermFromGroupOwnerWithoutCustomerGroup()
     {
-        $account = new Account();
-        $owner = PaymentTermAwareStub::create($account);
+        $customer = new Customer();
+        $owner = PaymentTermAwareStub::create($customer);
 
         $this->paymentTermAssociationProvider->expects($this->never())->method('getPaymentTerm');
 
-        $this->assertNull($this->provider->getAccountGroupPaymentTermByOwner($owner));
+        $this->assertNull($this->provider->getCustomerGroupPaymentTermByOwner($owner));
     }
 
-    public function testAccountPaymentTermFromGroupOwner()
+    public function testCustomerPaymentTermFromGroupOwner()
     {
         $paymentTerm = new PaymentTerm();
-        $account = new Account();
-        $group = new AccountGroup();
-        $account->setGroup($group);
-        $owner = PaymentTermAwareStub::create($account);
+        $customer = new Customer();
+        $group = new CustomerGroup();
+        $customer->setGroup($group);
+        $owner = PaymentTermAwareStub::create($customer);
 
         $this->paymentTermAssociationProvider->expects($this->once())->method('getPaymentTerm')
             ->willReturn($paymentTerm);
 
-        $this->assertSame($paymentTerm, $this->provider->getAccountGroupPaymentTermByOwner($owner));
+        $this->assertSame($paymentTerm, $this->provider->getCustomerGroupPaymentTermByOwner($owner));
     }
 
     /**

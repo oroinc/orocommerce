@@ -15,7 +15,7 @@ use Oro\Bundle\SecurityBundle\Owner\Metadata\MetadataProviderInterface;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\OwnershipMetadataInterface;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\EventListener\OrmDatasourceAclListener;
 
 class OrmDatasourceAclListenerTest extends \PHPUnit_Framework_TestCase
@@ -46,7 +46,8 @@ class OrmDatasourceAclListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->metadataProvider = $this->getMock('Oro\Bundle\SecurityBundle\Owner\Metadata\MetadataProviderInterface');
+        $this->metadataProvider = $this
+            ->createMock('Oro\Bundle\SecurityBundle\Owner\Metadata\MetadataProviderInterface');
 
         $this->listener = new OrmDatasourceAclListener($this->securityfacade, $this->metadataProvider);
 
@@ -70,7 +71,7 @@ class OrmDatasourceAclListenerTest extends \PHPUnit_Framework_TestCase
     {
         $this->securityfacade->expects($this->once())
             ->method('getLoggedUser')
-            ->willReturn(new AccountUser());
+            ->willReturn(new CustomerUser());
 
         /** @var FromClause $from */
         $from = $this->getMockBuilder('Doctrine\ORM\Query\AST\FromClause')->disableOriginalConstructor()->getMock();
@@ -177,7 +178,7 @@ class OrmDatasourceAclListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturnSelf();
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
-        $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $datagrid->expects($this->once())
             ->method('getConfig')
             ->willReturn($datagridConfiguration);
@@ -237,7 +238,7 @@ class OrmDatasourceAclListenerTest extends \PHPUnit_Framework_TestCase
     protected function createOwnershipMetadataMock($hasOwner)
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|OwnershipMetadataInterface $metadata */
-        $metadata = $this->getMock('Oro\Bundle\SecurityBundle\Owner\Metadata\OwnershipMetadataInterface');
+        $metadata = $this->createMock('Oro\Bundle\SecurityBundle\Owner\Metadata\OwnershipMetadataInterface');
         $metadata->expects($this->once())
             ->method('hasOwner')
             ->willReturn($hasOwner);

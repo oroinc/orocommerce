@@ -29,6 +29,10 @@
             }
         }
     }
+
+    &--from-left .main-menu-outer {
+        justify-content: flex-start;
+    }
 }
 
 @include breakpoint('tablet') {
@@ -78,7 +82,7 @@
             display: block;
 
             position: absolute;
-            z-index: z('base') + 8999;
+            z-index: z('dropdown') + 1;
             right: 0;
             left: 0;
 
@@ -105,10 +109,6 @@
 
         & .main-menu__sublist-container {
             width: auto;
-        }
-
-        & .main-menu__sublist {
-            display: block;
         }
     }
 }

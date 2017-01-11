@@ -82,41 +82,6 @@ operations:
                     data: $.data
                     email: $.email
 
-    oro_sale_frontend_quote_change:
-        label: oro.frontend.sale.btn.accept_quote_create_order
-        applications: [commerce]
-        routes:
-            - oro_sale_quote_frontend_view
-        order: 20
-        acl_resource: [CREATE, entity:commerce@Oro\Bundle\CheckoutBundle\Entity\Checkout]
-        button_options:
-            icon: fa-pencil-square-o
-            class:  quota-accept-btn
-        actions:
-            - '@find_entity':
-                class: Oro\Bundle\SaleBundle\Entity\QuoteDemand
-                attribute: $.quoteDemand
-                where:
-                    quote: $.data
-            - '@tree':
-                conditions:
-                    '@empty': $.quoteDemand
-                actions:
-                    - '@create_entity':
-                        parameters:
-                            attribute: $.quoteDemand
-                            class: Oro\Bundle\SaleBundle\Entity\QuoteDemand
-                            data:
-                                quote: $.data
-                    - '@call_service_method':
-                        service: oro_sale.manager.quote_demand_manager
-                        method: recalculateSubtotals
-                        method_parameters: [$.quoteDemand]
-                    - '@flush_entity': $.quoteDemand
-            - '@redirect':
-                 route: 'oro_sale_quote_frontend_choice'
-                 route_parameters: {id: $.quoteDemand.id}
-
 action_groups:
     oro_sale_expire_quote:
         parameters:
@@ -147,32 +112,32 @@ action_groups:
                 type: Oro\Bundle\RFPBundle\Entity\Request
         actions:
             - '@foreach':
-                array: $.data.accountUser.salesRepresentatives
+                array: $.data.customerUser.salesRepresentatives
                 value: $.saleRep
                 actions:
                     - '@send_email_template':
                         conditions:
-                            '@not_empty': $.data.accountUser.owner
+                            '@not_empty': $.data.customerUser.owner
                         parameters:
-                            from: $.data.accountUser.owner.email
+                            from: $.data.customerUser.owner.email
                             to: $.saleRep.email
                             template: 'request_no_quote_alert'
                             entity: $.data
             - '@call_method':
-                object: $.data.accountUser.salesRepresentatives
+                object: $.data.customerUser.salesRepresentatives
                 method: toArray
-                attribute: $.accountUserSalesReps
+                attribute: $.customerUserSalesReps
             - '@foreach':
-                array: $.data.account.salesRepresentatives
+                array: $.data.customer.salesRepresentatives
                 value: $.saleRep
                 actions:
                     - '@send_email_template':
                         conditions:
                             '@and':
-                                - '@not_empty': $.data.accountUser.owner
-                                - '@not_in': [$.saleRep, $.accountUserSalesReps]
+                                - '@not_empty': $.data.customerUser.owner
+                                - '@not_in': [$.saleRep, $.customerUserSalesReps]
                         parameters:
-                            from: $.data.accountUser.owner.email
+                            from: $.data.customerUser.owner.email
                             to: $.saleRep.email
                             template: 'request_no_quote_alert'
                             entity: $.data
@@ -188,12 +153,16 @@ action_groups:
                 route_parameters: { 'id': $.data.id }
             - '@assign_value':
                 conditions:
-                   '@empty': $.data.quote.shippingEstimate
+                   '@empty': $.data.quote.shippingCost
                 parameters: [$.disallow_shipping_method_edit, false]
             - '@assign_value':
                 conditions:
-                   '@not_empty': $.data.quote.shippingEstimate
+                   '@not_empty': $.data.quote.shippingCost
                 parameters: [$.disallow_shipping_method_edit, true]
+            - '@call_service_method':
+                service: oro_sale.quote_demand.subtotals_calculator_main
+                method: calculateSubtotals
+                method_parameters: [$.data]
             - '@tree':
                 conditions:
                     '@not_empty': $.data.quote.shippingAddress
@@ -202,8 +171,8 @@ action_groups:
                         attribute: $.orderAddress
                         class: Oro\Bundle\OrderBundle\Entity\OrderAddress
                         data:
-                            accountAddress: $.data.quote.accountAddress
-                            accountUserAddress: $.data.quote.accountUserAddress
+                            customerAddress: $.data.quote.customerAddress
+                            customerUserAddress: $.data.quote.customerUserAddress
                             label: $.data.quote.shippingAddress.label
                             organization: $.data.quote.shippingAddress.organization
                             street: $.data.quote.shippingAddress.street
@@ -231,7 +200,10 @@ action_groups:
                         parameters: [$.disallow_shipping_address_edit, false]
             - '@assign_value':
                 parameters: [$.shippingEstimate, $.data.quote.shippingEstimate]
-                
+            - '@assign_value':
+                parameters: [$.shippingMethod, $.data.quote.shippingMethod]
+            - '@assign_value':
+                parameters: [$.shippingMethodType, $.data.quote.shippingMethodType]
             - '@run_action_group':
                 action_group: start_checkout
                 parameters_mapping:
@@ -241,6 +213,8 @@ action_groups:
                     data:
                         shippingAddress: $.orderAddress
                         shippingCost: $.shippingEstimate
+                        shippingMethod: $.shippingMethod
+                        shippingMethodType: $.shippingMethodType
                     settings:
                         allow_manual_source_remove: false
                         auto_remove_source: true

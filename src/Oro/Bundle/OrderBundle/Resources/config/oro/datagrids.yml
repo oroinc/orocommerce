@@ -12,8 +12,8 @@ datagrids:
                     - order1.identifier
                     - order1.poNumber
                     - order1.currency
-                    - order1.subtotal
-                    - order1.total
+                    - order1.subtotalValue as subtotal
+                    - order1.totalValue as total
                     - order1.shipUntil
                     - order1.createdAt
                     - order1.updatedAt
@@ -63,10 +63,13 @@ datagrids:
                 template: 'OroOrderBundle:Order:Datagrid/shippingAddress.html.twig'
                 frontend_type: html
             total:
-                label:         oro.order.total.label
-                type:          twig
-                frontend_type: html
-                template:      OroOrderBundle:Order:Datagrid/total.html.twig
+                label:  oro.order.total.label
+                frontend_type: multi-currency
+                type:          callback
+                callable:      ['@oro_currency.converter.currency_to_string', 'convert']
+                multicurrency_config:
+                    base_currency_label: oro.order.total.base.label
+                    currency_field: currency
             paymentMethods:
                 label: oro.order.payment_method.label
                 type: twig
@@ -89,11 +92,14 @@ datagrids:
                 label:         oro.order.currency.label
                 renderable:    false
             subtotal:
-                label:         oro.order.subtotal.label
-                type:          twig
-                frontend_type: html
-                template:      OroOrderBundle:Order:Datagrid/subtotal.html.twig
-                renderable:    false
+                label:  oro.order.subtotal.label
+                frontend_type: multi-currency
+                type:          callback
+                callable:      ['@oro_currency.converter.currency_to_string', 'convert']
+                multicurrency_config:
+                    base_currency_label: oro.order.subtotal.base.label
+                    currency_field: currency
+                renderable: false
             shippingMethod:
                 label:         oro.order.shipping_method.label
                 type:          twig
@@ -130,9 +136,9 @@ datagrids:
                 currency:
                     data_name: order1.currency
                 subtotal:
-                    data_name: order1.subtotal
+                    data_name: subtotal
                 total:
-                    data_name: order1.total
+                    data_name: total
             default:
                 createdAt: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
         filters:
@@ -171,12 +177,12 @@ datagrids:
                         field_options:
                             choices: "@oro_pricing.provider.currency->getAvailableCurrencies"
                 subtotal:
-                    type:      number
-                    data_name: order1.subtotal
+                    type:      currency
+                    data_name: subtotal
                     enabled:   false
                 total:
-                    type:      number
-                    data_name: order1.total
+                    type:      currency
+                    data_name: total
         properties:
             id: ~
             view_link:
@@ -192,8 +198,8 @@ datagrids:
             query:
                 select:
                     - CONCAT(order_owner.firstName, ' ', order_owner.lastName) as owner
-                    - CONCAT(accountUser.firstName, ' ', accountUser.lastName) as accountUserName
-                    - account.name as accountName
+                    - CONCAT(customerUser.firstName, ' ', customerUser.lastName) as customerUserName
+                    - customer.name as customerName
                     - order1.sourceEntityClass
                     - order1.sourceEntityId
                     - order1.sourceEntityIdentifier
@@ -201,8 +207,8 @@ datagrids:
                 join:
                     left:
                         - { join: order1.owner, alias: order_owner }
-                        - { join: order1.accountUser, alias: accountUser }
-                        - { join: order1.account, alias: account }
+                        - { join: order1.customerUser, alias: customerUser }
+                        - { join: order1.customer, alias: customer }
         columns:
             identifier:
                 label:         oro.order.identifier.label
@@ -214,20 +220,26 @@ datagrids:
             currency:
                 label:         oro.order.currency.label
             subtotal:
-                label:         oro.order.subtotal.label
-                type:          twig
-                frontend_type: html
-                template:      OroOrderBundle:Order:Datagrid/subtotal.html.twig
-                renderable:    false
+                label:  oro.order.subtotal.label
+                frontend_type: multi-currency
+                type:          callback
+                callable:      ['@oro_currency.converter.currency_to_string', 'convert']
+                multicurrency_config:
+                    base_currency_label: oro.order.subtotal.base.label
+                    currency_field: currency
+                renderable: false
             total:
-                label:         oro.order.total.label
-                type:          twig
-                frontend_type: html
-                template:      OroOrderBundle:Order:Datagrid/total.html.twig
-            accountName:
-                label:         oro.order.account.label
-            accountUserName:
-                label:         oro.order.account_user.label
+                label:  oro.order.total.label
+                frontend_type: multi-currency
+                type:          callback
+                callable:      ['@oro_currency.converter.currency_to_string', 'convert']
+                multicurrency_config:
+                    base_currency_label: oro.order.total.base.label
+                    currency_field: currency
+            customerName:
+                label:         oro.order.customer.label
+            customerUserName:
+                label:         oro.order.customer_user.label
             owner:
                 label:         oro.order.owner.label
             paymentStatus:
@@ -279,13 +291,13 @@ datagrids:
                 currency:
                     data_name: order1.currency
                 subtotal:
-                    data_name: order1.subtotal
+                    data_name: subtotal
                 total:
-                    data_name: order1.total
-                accountName:
-                    data_name: accountName
-                accountUserName:
-                    data_name: accountUserName
+                    data_name: total
+                customerName:
+                    data_name: customerName
+                customerUserName:
+                    data_name: customerUserName
                 owner:
                     data_name: owner
                 poNumber:
@@ -318,18 +330,18 @@ datagrids:
                         field_options:
                             choices: "@oro_pricing.provider.currency->getAvailableCurrencies"
                 subtotal:
-                    type:      number
-                    data_name: order1.subtotal
+                    type:      currency
+                    data_name: subtotal
                     enabled:   false
                 total:
-                    type:      number
-                    data_name: order1.total
-                accountName:
+                    type:      currency
+                    data_name: total
+                customerName:
                     type:      string
-                    data_name: accountName
-                accountUserName:
+                    data_name: customerName
+                customerUserName:
                     type:      string
-                    data_name: accountUserName
+                    data_name: customerUserName
                 owner:
                     type:      string
                     data_name: owner
@@ -375,8 +387,9 @@ datagrids:
                 select:
                     - order1.id
                     - order1.identifier
-                    - order1.subtotal
-                    - order1.total
+                    - order1.subtotalValue as subtotal
+                    - order1.totalValue as total
+                    - order1.currency
                     - order1.poNumber
                     - order1.shipUntil
                     - COUNT(lineItems.id) as lineItemsCount
@@ -391,16 +404,22 @@ datagrids:
             identifier:
                 label:         oro.order.identifier.label
             subtotal:
-                label:         oro.order.subtotal.label
-                type:          twig
-                frontend_type: html
-                template:      OroOrderBundle:Order:Datagrid/subtotal.html.twig
-                renderable:    false
+                label:  oro.order.subtotal.label
+                frontend_type: multi-currency
+                type:          callback
+                callable:      ['@oro_currency.converter.currency_to_string', 'convert']
+                multicurrency_config:
+                    base_currency_label: oro.order.subtotal.base.label
+                    currency_field: currency
+                renderable: false
             total:
-                label:         oro.order.total.label
-                type:          twig
-                frontend_type: html
-                template:      OroOrderBundle:Order:Datagrid/total.html.twig
+                label:  oro.order.total.label
+                frontend_type: multi-currency
+                type:          callback
+                callable:      ['@oro_currency.converter.currency_to_string', 'convert']
+                multicurrency_config:
+                    base_currency_label: oro.order.total.base.label
+                    currency_field: currency
             lineItemsCount:
                 label:         oro.order.line_items_count.label
                 type: field
@@ -421,9 +440,9 @@ datagrids:
                 identifier:
                     data_name: order1.identifier
                 subtotal:
-                    data_name: order1.subtotal
+                    data_name: subtotal
                 total:
-                    data_name: order1.total
+                    data_name: total
                 lineItemsCount:
                     data_name: lineItemsCount
                 poNumber:
@@ -442,12 +461,12 @@ datagrids:
                     type:      string
                     data_name: order1.identifier
                 subtotal:
-                    type:      number
-                    data_name: order1.subtotal
+                    type:      currency
+                    data_name: subtotal
                     enabled:   false
                 total:
-                    type:      number
-                    data_name: order1.total
+                    type:      currency
+                    data_name: total
                 lineItemsCount:
                     type:      number
                     data_name: lineItemsCount
@@ -479,46 +498,46 @@ datagrids:
                 icon:          eye
                 rowAction:     true
 
-    account-user-orders-grid:
+    customer-user-orders-grid:
         extends: embed-orders-grid
         source:
             query:
                 join:
                     left:
-                        - { join: order1.accountUser, alias: accountUser }
+                        - { join: order1.customerUser, alias: customerUser }
                 where:
                     and:
-                        - order1.accountUser = :account_user_id
+                        - order1.customerUser = :customer_user_id
             bind_parameters:
-                - account_user_id
+                - customer_user_id
 
-    account-orders-grid:
+    customer-orders-grid:
         extends: embed-orders-grid
         source:
             query:
                 select:
-                    - CONCAT(accountUser.firstName, ' ', accountUser.lastName) as accountUserName
+                    - CONCAT(customerUser.firstName, ' ', customerUser.lastName) as customerUserName
                 join:
                     left:
-                        - { join: order1.account, alias: account }
-                        - { join: order1.accountUser, alias: accountUser }
+                        - { join: order1.customer, alias: customer }
+                        - { join: order1.customerUser, alias: customerUser }
                 where:
                     and:
-                        - order1.account = :account_id
+                        - order1.customer = :customer_id
             bind_parameters:
-                - account_id
+                - customer_id
         columns:
-            accountUserName:
-                label:         oro.order.account_user.label
+            customerUserName:
+                label:         oro.order.customer_user.label
         sorters:
             columns:
-                accountUserName:
-                    data_name: accountUserName
+                customerUserName:
+                    data_name: customerUserName
         filters:
             columns:
-                accountUserName:
+                customerUserName:
                     type:      string
-                    data_name: accountUserName
+                    data_name: customerUserName
 
     base-order-line-items-grid:
         extended_entity_name: %oro_order.entity.order_line_item.class%
@@ -585,6 +604,9 @@ datagrids:
                 template:      OroOrderBundle:Order:Datagrid/frontendProduct.html.twig
             quantity:
                 label: oro.order.orderlineitem.quantity.label
+                type:          twig
+                frontend_type: html
+                template:      OroOrderBundle:Order:Datagrid/frontendQuantity.html.twig
             price:
                 label:         oro.order.orderlineitem.price.label
                 type:          twig

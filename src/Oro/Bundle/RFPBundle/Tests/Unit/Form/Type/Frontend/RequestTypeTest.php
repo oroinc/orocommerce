@@ -14,7 +14,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-use Oro\Bundle\CustomerBundle\Form\Type\Frontend\AccountUserMultiSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\Frontend\CustomerUserMultiSelectType;
 
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\CurrencySelectionTypeStub;
 
@@ -107,7 +107,7 @@ class RequestTypeTest extends AbstractTest
     public function testConfigureOptions()
     {
         /* @var $resolver OptionsResolver|\PHPUnit_Framework_MockObject_MockObject */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
 
         $resolver->expects(static::once())
             ->method('setDefaults')
@@ -183,7 +183,7 @@ class RequestTypeTest extends AbstractTest
                             ],
                         ],
                     ],
-                    'assignedAccountUsers' => [10],
+                    'assignedCustomerUsers' => [10],
                 ],
                 'expectedData'  => $this
                     ->getRequest(
@@ -200,7 +200,7 @@ class RequestTypeTest extends AbstractTest
                     ->addRequestProduct($requestProduct)->setStatus(
                         (new RequestStatus())->setName(RequestStatus::OPEN)
                     )
-                    ->addAssignedAccountUser($this->getAccountUser(10)),
+                    ->addAssignedCustomerUser($this->getCustomerUser(10)),
                 'defaultData'  => $this
                     ->getRequest(
                         'FirstName',
@@ -294,7 +294,7 @@ class RequestTypeTest extends AbstractTest
         $currencySelectionType      = new CurrencySelectionTypeStub();
         $requestProductItemType     = $this->prepareRequestProductItemType();
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
-        $accountUserMultiSelectType = $this->prepareAccountUserMultiSelectType();
+        $customerUserMultiSelectType = $this->prepareCustomerUserMultiSelectType();
         $requestProductType         = new RequestProductType($productUnitLabelFormatter);
         $requestProductType->setDataClass('Oro\Bundle\RFPBundle\Entity\RequestProduct');
         $frontendRequestProductType = new FrontendRequestProductType();
@@ -315,7 +315,7 @@ class RequestTypeTest extends AbstractTest
                     $currencySelectionType->getName()       => $currencySelectionType,
                     $requestProductItemType->getName()      => $requestProductItemType,
                     $productUnitSelectionType->getName()    => $productUnitSelectionType,
-                    $accountUserMultiSelectType->getName()  => $accountUserMultiSelectType,
+                    $customerUserMultiSelectType->getName()  => $customerUserMultiSelectType,
                     $frontendRequestProductType->getName()  => $frontendRequestProductType,
                     QuantityTypeTrait::$name                => $this->getQuantityType(),
                 ],
@@ -328,14 +328,14 @@ class RequestTypeTest extends AbstractTest
     /**
      * @return EntityType
      */
-    protected function prepareAccountUserMultiSelectType()
+    protected function prepareCustomerUserMultiSelectType()
     {
         return new EntityType(
             [
-                10 => $this->getAccountUser(10),
-                11 => $this->getAccountUser(11),
+                10 => $this->getCustomerUser(10),
+                11 => $this->getCustomerUser(11),
             ],
-            AccountUserMultiSelectType::NAME,
+            CustomerUserMultiSelectType::NAME,
             [
                 'multiple' => true
             ]

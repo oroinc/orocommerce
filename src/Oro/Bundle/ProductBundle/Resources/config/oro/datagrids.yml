@@ -127,10 +127,10 @@ datagrids:
                 acl_resource:  oro_product_view
                 rowAction:     true
 
-    oro_product-product_variants:
+    product-product-variants-base:
         acl_resource: oro_product_view
         options:
-            entityHint:        parentProduct
+            entityHint: product varitans
             entity_pagination: true
         source:
             type:         orm
@@ -149,7 +149,7 @@ datagrids:
         properties:
             productName:
                 type: localized_value
-                data_name: names
+                data_name: product.names
         sorters:
             columns:
                 id:
@@ -184,8 +184,9 @@ datagrids:
                     data_name: inventoryStatusId
                     enum_code: prod_inventory_status
 
-    oro_product-product_variants-product_edit:
-        extends: oro_product-product_variants
+    product-product-variants-edit:
+        extends: product-product-variants-base
+        extended_entity_name: %oro_product.entity.product.class%
         options:
             rowSelection:
                 dataField: id
@@ -214,6 +215,11 @@ datagrids:
                 where:
                     and:
                         - product.id <> :parentProduct
+                        - product.type <> :productType
+            bind_parameters:
+                -
+                    name: productType
+                    default: configurable
         columns:
             isVariant:
                 label: oro.product.is_variant.label
@@ -241,20 +247,25 @@ datagrids:
             default:
                 sku: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_ASC
 
-    oro_product-product_variants-product_view:
-        extends: oro_product-product_variants
+    product-product-variants-view:
+        extends: product-product-variants-base
+        extended_entity_name: %oro_product.entity.product.class%
         source:
             query:
                 select:
                     - productVariantLink.visible as visible
                 from:
-                    - { table: %oro_product.entity.product_variant_link.class%, alias: productVariantLink }
+                    - { table: %oro_product.entity.product.class%, alias: product }
                 join:
                     inner:
-                        - { join: productVariantLink.product, alias: product }
+                        -
+                            join: %oro_product.entity.product_variant_link.class%
+                            alias: productVariantLink
+                            conditionType: WITH
+                            condition: productVariantLink.product = product.id AND productVariantLink.parentProduct = :parentProduct
                 where:
                     and:
-                        - productVariantLink.parentProduct = :parentProduct
+                        - product.id <> :parentProduct
         columns:
             id:
                 label:         oro.product.id.label
@@ -298,6 +309,7 @@ datagrids:
                     - text.sku as sku
                     - text.name_LOCALIZATION_ID as name
                     - text.short_description_LOCALIZATION_ID as shortDescription
+                    - text.type as type
                 from:
                     - oro_product_WEBSITE_ID
         columns:
@@ -321,6 +333,7 @@ datagrids:
                     data_name: name_LOCALIZATION_ID
         properties:
             id: ~
+            type: ~
             view_link:
                 type:  url
                 route: oro_product_frontend_product_view

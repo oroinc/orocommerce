@@ -2,32 +2,21 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\WorkflowState\Mapper;
 
-use Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory;
+use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInterface;
 use Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\ShippingMethodEnabledMapper;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\ShippingBundle\Context\ShippingContext;
-use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 
 class ShippingMethodEnabledMapperTest extends AbstractCheckoutDiffMapperTest
 {
     /**
-     * @var ShippingPriceProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var CheckoutShippingMethodsProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $shippingPriceProvider;
-
-    /**
-     * @var CheckoutShippingContextFactory|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $shippingContextFactory;
+    private $checkoutShippingMethodsProviderMock;
 
     protected function setUp()
     {
-        $this->shippingPriceProvider = $this->getMockBuilder(ShippingPriceProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->shippingContextFactory = $this->getMockBuilder(CheckoutShippingContextFactory::class)
-            ->disableOriginalConstructor()
+        $this->checkoutShippingMethodsProviderMock = $this
+            ->getMockBuilder(CheckoutShippingMethodsProviderInterface::class)
             ->getMock();
 
         parent::setUp();
@@ -37,7 +26,7 @@ class ShippingMethodEnabledMapperTest extends AbstractCheckoutDiffMapperTest
     {
         parent::tearDown();
 
-        unset($this->shippingPriceProvider, $this->shippingContextFactory);
+        unset($this->checkoutShippingMethodsProviderMock);
     }
 
     public function testGetName()
@@ -68,15 +57,10 @@ class ShippingMethodEnabledMapperTest extends AbstractCheckoutDiffMapperTest
     {
         $this->checkout->setShippingMethod($methodName)->setShippingMethodType($typeName);
 
-        $shippingContext = new ShippingContext();
-        $this->shippingContextFactory->expects(static::any())
-            ->method('create')
-            ->willReturn($shippingContext);
-        $this->shippingPriceProvider->expects(static::any())
+        $this->checkoutShippingMethodsProviderMock
+            ->expects($this->once())
             ->method('getPrice')
             ->willReturn($methodPrice);
-
-        $this->checkout->setShippingMethod($methodName)->setShippingMethodType($typeName);
 
         static::assertEquals($expected, $this->mapper->isStatesEqual($this->checkout, '', ''));
     }
@@ -108,6 +92,6 @@ class ShippingMethodEnabledMapperTest extends AbstractCheckoutDiffMapperTest
      */
     protected function getMapper()
     {
-        return new ShippingMethodEnabledMapper($this->shippingPriceProvider, $this->shippingContextFactory);
+        return new ShippingMethodEnabledMapper($this->checkoutShippingMethodsProviderMock);
     }
 }

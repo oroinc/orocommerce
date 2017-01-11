@@ -63,40 +63,40 @@ class RequestControllerNotificationTest extends WebTestCase
     {
         $saleRep1 = $this->getReference(LoadUserData::USER1);
         $saleRep2 = $this->getReference(LoadUserData::USER2);
-        $accountUser = $this->getReference(LoadUserData::ACCOUNT1_USER1);
-        $accountUser->addSalesRepresentative($saleRep1);
-        $accountUser->addSalesRepresentative($saleRep2);
+        $customerUser = $this->getReference(LoadUserData::ACCOUNT1_USER1);
+        $customerUser->addSalesRepresentative($saleRep1);
+        $customerUser->addSalesRepresentative($saleRep2);
         $this->em->flush();
         $this->createRequest();
 
         $this->assertEmailSent([$saleRep1, $saleRep2], 4);
     }
 
-    public function testCreateRequestEmailNotifySalesRepsOfAccount()
+    public function testCreateRequestEmailNotifySalesRepsOfCustomer()
     {
         $saleRep1 = $this->getReference(LoadUserData::USER1);
         $saleRep2 = $this->getReference(LoadUserData::USER2);
-        $account = $this->getReference(LoadUserData::ACCOUNT1);
-        $account->addSalesRepresentative($saleRep1);
-        $account->addSalesRepresentative($saleRep2);
+        $customer = $this->getReference(LoadUserData::ACCOUNT1);
+        $customer->addSalesRepresentative($saleRep1);
+        $customer->addSalesRepresentative($saleRep2);
         $this->em->flush();
         $this->createRequest();
         $this->assertEmailSent([$saleRep1, $saleRep2], 4);
     }
 
-    public function testCreateRequestShouldNotNotifyAccountSalesReps()
+    public function testCreateRequestShouldNotNotifyCustomerSalesReps()
     {
         $saleRep1 = $this->getReference(LoadUserData::USER1);
-        $account = $this->getReference(LoadUserData::ACCOUNT1);
-        $account->addSalesRepresentative($saleRep1);
+        $customer = $this->getReference(LoadUserData::ACCOUNT1);
+        $customer->addSalesRepresentative($saleRep1);
 
         $saleRep2 = $this->getReference(LoadUserData::USER2);
-        $accountUser = $this->getReference(LoadUserData::ACCOUNT1_USER1);
-        $accountUser->addSalesRepresentative($saleRep2);
+        $customerUser = $this->getReference(LoadUserData::ACCOUNT1_USER1);
+        $customerUser->addSalesRepresentative($saleRep2);
         $this->em->flush();
 
         $this->configManager->set(
-            'oro_rfp.notify_assigned_sales_reps_of_the_account',
+            'oro_rfp.notify_assigned_sales_reps_of_the_customer',
             'noSaleReps',
             $this->website
         );
@@ -106,11 +106,11 @@ class RequestControllerNotificationTest extends WebTestCase
         $this->assertEmailSent([$saleRep2], 3);
     }
 
-    public function testCreateRequestShouldNotifyAccountOwner()
+    public function testCreateRequestShouldNotifyCustomerOwner()
     {
         $owner = $this->getReference(LoadUserData::USER1);
-        $account = $this->getReference(LoadUserData::ACCOUNT1);
-        $account->setOwner($owner);
+        $customer = $this->getReference(LoadUserData::ACCOUNT1);
+        $customer->setOwner($owner);
         $this->em->flush();
 
         $this->createRequest();
@@ -119,17 +119,17 @@ class RequestControllerNotificationTest extends WebTestCase
         $this->assertEmailSent([$owner], 2);
     }
 
-    public function testCreateRequestShouldNotNotifyAccountOwner()
+    public function testCreateRequestShouldNotNotifyCustomerOwner()
     {
         $saleRepresentative = $this->getReference(LoadUserData::USER2);
-        $account = $this->getReference(LoadUserData::ACCOUNT1);
-        $account->addSalesRepresentative($saleRepresentative);
-        $accountUser = $this->getReference(LoadUserData::ACCOUNT1_USER1);
-        $accountUser->addSalesRepresentative($saleRepresentative);
+        $customer = $this->getReference(LoadUserData::ACCOUNT1);
+        $customer->addSalesRepresentative($saleRepresentative);
+        $customerUser = $this->getReference(LoadUserData::ACCOUNT1_USER1);
+        $customerUser->addSalesRepresentative($saleRepresentative);
         $this->em->flush();
 
         $this->configManager->set(
-            'oro_rfp.notify_owner_of_account',
+            'oro_rfp.notify_owner_of_customer',
             'noSaleReps',
             $this->website
         );
@@ -140,11 +140,11 @@ class RequestControllerNotificationTest extends WebTestCase
         $this->assertEmailSent([$saleRepresentative], 3);
     }
 
-    public function testCreateRequestShouldNotifyAccountUserOwner()
+    public function testCreateRequestShouldNotifyCustomerUserOwner()
     {
         $owner = $this->getReference(LoadUserData::USER1);
-        $accountUser = $this->getReference(LoadUserData::ACCOUNT1);
-        $accountUser->setOwner($owner);
+        $customerUser = $this->getReference(LoadUserData::ACCOUNT1);
+        $customerUser->setOwner($owner);
         $this->em->flush();
 
         $this->createRequest();
@@ -153,17 +153,17 @@ class RequestControllerNotificationTest extends WebTestCase
         $this->assertEmailSent([$owner], 2);
     }
 
-    public function testCreateRequestShouldNotNotifyAccountUserOwner()
+    public function testCreateRequestShouldNotNotifyCustomerUserOwner()
     {
         $owner = $this->getReference(LoadUserData::USER1);
         $saleRep = $this->getReference(LoadUserData::USER2);
-        $accountUser = $this->getReference(LoadUserData::ACCOUNT1_USER1);
-        $accountUser->setOwner($owner);
-        $accountUser->addSalesRepresentative($saleRep);
+        $customerUser = $this->getReference(LoadUserData::ACCOUNT1_USER1);
+        $customerUser->setOwner($owner);
+        $customerUser->addSalesRepresentative($saleRep);
         $this->em->flush();
 
         $this->configManager->set(
-            'oro_rfp.notify_owner_of_account_user_record',
+            'oro_rfp.notify_owner_of_customer_user_record',
             'noSaleReps',
             $this->website
         );
@@ -197,7 +197,7 @@ class RequestControllerNotificationTest extends WebTestCase
         $this->initClient([], $authParams);
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_create'));
-        $form = $crawler->selectButton('Submit Request For Quote')->form();
+        $form = $crawler->selectButton('Submit Request')->form();
 
         $crfToken = $this->getContainer()->get('security.csrf.token_manager')->getToken('oro_rfp_frontend_request');
 

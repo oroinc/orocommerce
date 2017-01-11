@@ -14,7 +14,7 @@ class ContentVariantProviderCompilerPassTest extends \PHPUnit_Framework_TestCase
             new ContentVariantProviderCompilerPass(),
             ContentVariantProviderCompilerPass::CONTENT_VARIANT_PROVIDER_REGISTRY,
             ContentVariantProviderCompilerPass::CONTENT_VARIANT_PROVIDER_TAG,
-            'addContentVariantProvider'
+            'addProvider'
         );
     }
 }

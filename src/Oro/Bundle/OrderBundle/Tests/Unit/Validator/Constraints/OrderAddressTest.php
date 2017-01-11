@@ -5,8 +5,8 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Validator\Constraints;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\OrderBundle\Validator\Constraints\OrderAddressValidator;
 use Oro\Bundle\OrderBundle\Validator\Constraints\OrderAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress as OrderAddressEntity;
@@ -36,9 +36,9 @@ class OrderAddressTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->constraint = new OrderAddress(['validationGroups' => ['Default', 'AbstractAddress', 'Frontend']]);
-        $this->validator = $this->getMock('Symfony\Component\Validator\Validator\ValidatorInterface');
+        $this->validator = $this->createMock('Symfony\Component\Validator\Validator\ValidatorInterface');
         /** @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
-        $this->context = $this->getMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
+        $this->context = $this->createMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
         $this->orderAddressValidator = new OrderAddressValidator($this->validator);
         $this->orderAddressValidator->initialize($this->context);
     }
@@ -56,7 +56,7 @@ class OrderAddressTest extends \PHPUnit_Framework_TestCase
     public function testValidateException()
     {
         $this->orderAddressValidator->initialize($this->context);
-        $this->orderAddressValidator->validate(null, $this->getMock('Symfony\Component\Validator\Constraint'));
+        $this->orderAddressValidator->validate(null, $this->createMock('Symfony\Component\Validator\Constraint'));
     }
 
     public function testValidate()
@@ -72,7 +72,8 @@ class OrderAddressTest extends \PHPUnit_Framework_TestCase
             ->method('validate')
             ->with($value, null, ['Default', 'AbstractAddress', 'Frontend'])
             ->willReturn([$constraintViolation]);
-        $violationBuilder = $this->getMock('Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface');
+        $violationBuilder = $this
+            ->createMock('Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface');
         $violationBuilder->expects($this->once())->method('atPath')->willReturnSelf();
         $this->context->expects($this->once())
             ->method('buildViolation')
@@ -81,15 +82,15 @@ class OrderAddressTest extends \PHPUnit_Framework_TestCase
         $this->orderAddressValidator->validate($value, $this->constraint);
     }
 
-    public function testValidateAccountAddress()
+    public function testValidateCustomerAddress()
     {
         $value = new OrderAddressEntity();
-        $value->setAccountAddress(new AccountAddress());
+        $value->setCustomerAddress(new CustomerAddress());
         $this->validator->expects($this->never())->method('validate');
 
         $this->orderAddressValidator->validate($value, $this->constraint);
-        $value->setAccountAddress(null);
-        $value->setAccountUserAddress(new AccountUserAddress());
+        $value->setCustomerAddress(null);
+        $value->setCustomerUserAddress(new CustomerUserAddress());
         $this->orderAddressValidator->validate($value, $this->constraint);
     }
 }

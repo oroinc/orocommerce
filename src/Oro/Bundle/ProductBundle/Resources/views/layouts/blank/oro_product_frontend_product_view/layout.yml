@@ -25,11 +25,17 @@ layout:
                     blockType: product_image
                     options:
                         product: '=data["product"]'
+                product_media_popup:
+                    blockType: product_image
+                    options:
+                        product: '=data["product"]'
                 product_view_main_container:
                     blockType: container
                 product_view_content_container:
                     blockType: container
                 product_view_specification_container:
+                    blockType: container
+                product_view_variant_field_container:
                     blockType: container
                 product_view_line_item_container:
                     blockType: container
@@ -54,6 +60,7 @@ layout:
                         product_view_primary_container:
                             product_view_title: ~
                         product_view_aside_container:
+                            product_media_popup: ~
                             product_media: ~
                         product_view_main_container:
                                 product_view_sku: ~
@@ -61,7 +68,11 @@ layout:
                                 product_view_content_container:
                                     product_view_specification_container:
                                         product_view_price_container: ~
+                                        product_view_variant_field_container: ~
                                     product_view_description_container:
                                         product_view_line_item_container: ~
                         product_view_additional_container: ~
-
+    imports:
+        -
+            id: oro_product_variant_form
+            root: product_view_variant_field_container

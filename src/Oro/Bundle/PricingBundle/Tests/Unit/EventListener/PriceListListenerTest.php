@@ -77,7 +77,7 @@ class PriceListListenerTest extends \PHPUnit_Framework_TestCase
     public function testPostSubmit()
     {
         /** @var FormInterface $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $event = new AfterFormProcessEvent($form, $this->priceList);
 
@@ -161,7 +161,7 @@ class PriceListListenerTest extends \PHPUnit_Framework_TestCase
     protected function createFormProcessEvent(PriceList $priceList)
     {
         /** @var FormInterface $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         return new FormProcessEvent($form, $priceList);
     }
@@ -173,7 +173,7 @@ class PriceListListenerTest extends \PHPUnit_Framework_TestCase
     protected function createAfterFormProcessEvent(PriceList $priceList)
     {
         /** @var FormInterface $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         return new AfterFormProcessEvent($form, $priceList);
     }

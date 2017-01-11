@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Formatter;
 
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 
-class UnitValueFormatter extends AbstractUnitFormatter
+class UnitValueFormatter extends AbstractUnitFormatter implements UnitValueFormatterInterface
 {
     /**
      * @param null|float|integer $value

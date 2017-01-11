@@ -8,7 +8,7 @@ use Symfony\Component\Form\Form;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
@@ -78,7 +78,7 @@ class ShoppingListLineItemHandler
             $unitPrecision = $product->getUnitPrecisions()->first();
 
             $lineItem = (new LineItem())
-                ->setAccountUser($shoppingList->getAccountUser())
+                ->setCustomerUser($shoppingList->getCustomerUser())
                 ->setOrganization($shoppingList->getOrganization())
                 ->setProduct($product)
                 ->setUnit($unitPrecision->getUnit());
@@ -95,18 +95,18 @@ class ShoppingListLineItemHandler
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $customerUser
      * @param Product $product
      * @return LineItem
      */
-    public function prepareLineItemWithProduct(AccountUser $accountUser, Product $product)
+    public function prepareLineItemWithProduct(CustomerUser $customerUser, Product $product)
     {
         $shoppingList = $this->shoppingListManager->getCurrent();
 
         $lineItem = new LineItem();
         $lineItem
             ->setProduct($product)
-            ->setAccountUser($accountUser);
+            ->setCustomerUser($customerUser);
 
         if (null !== $shoppingList) {
             $lineItem->setShoppingList($shoppingList);
@@ -145,7 +145,7 @@ class ShoppingListLineItemHandler
             return false;
         }
 
-        $isAllowed = $this->securityFacade->isGranted('oro_shopping_list_line_item_frontend_add');
+        $isAllowed = $this->securityFacade->isGranted('oro_shopping_list_frontend_update');
 
         if (!$shoppingList) {
             return $isAllowed;

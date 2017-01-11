@@ -59,13 +59,13 @@ navigation:
             international_shipping:
                 label: 'oro.commercemenu.frontend.navigation.items.international_shipping.label'
                 uri: '/international-shipping'
-            my_account:
-                label: 'oro.commercemenu.frontend.navigation.items.my_account.label'
+            my_customer:
+                label: 'oro.commercemenu.frontend.navigation.items.my_customer.label'
                 extras:
                     conditions: 'is_logged_in()'
             sign_out:
                 label: 'oro.commercemenu.frontend.navigation.items.sign_out.label'
-                route: 'oro_customer_account_user_security_logout'
+                route: 'oro_customer_customer_user_security_logout'
             view_cart:
                 label: 'oro.commercemenu.frontend.navigation.items.view_cart.label'
                 route: 'oro_shopping_list_frontend_view'
@@ -81,6 +81,7 @@ navigation:
         tree:
             commerce_top_nav:
                 type: commerce_top_nav
+                scope_type: menu_frontend_visibility
                 children:
                     telephone: ~
                     live_chat: ~
@@ -88,6 +89,7 @@ navigation:
 
             commerce_quick_access:
                 type: commerce_quick_access
+                scope_type: menu_frontend_visibility
                 children:
                     orders: ~
                     quotes: ~
@@ -95,12 +97,14 @@ navigation:
 
             commerce_main_menu:
                 type: commerce_main_menu
+                scope_type: menu_frontend_visibility
                 children:
                     contact_us: ~
                     about: ~
 
             commerce_footer_links:
                 type: commerce_footer_links
+                scope_type: menu_frontend_visibility
                 children:
                     information:
                         children:
@@ -117,7 +121,7 @@ navigation:
                             shipping_and_returns: ~
                             secure_shopping: ~
                             international_shipping: ~
-                    my_account:
+                    my_customer:
                         children:
                             sign_out: ~
                             view_cart: ~

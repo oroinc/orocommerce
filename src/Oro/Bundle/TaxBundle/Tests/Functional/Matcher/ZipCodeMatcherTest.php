@@ -10,7 +10,7 @@ use Oro\Bundle\TaxBundle\Entity\TaxRule;
 use Oro\Bundle\TaxBundle\Model\TaxCode;
 use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 use Oro\Bundle\TaxBundle\Model\TaxCodes;
-use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes;
+use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadCustomerTaxCodes;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
 use Oro\Bundle\TaxBundle\Tests\Functional\Matcher\DataFixtures\LoadTaxJurisdictions;
 use Oro\Bundle\TaxBundle\Tests\Functional\Matcher\DataFixtures\LoadTaxRules;
@@ -59,10 +59,10 @@ class ZipCodeMatcherTest extends WebTestCase
         }
 
         /** @var TaxCodeInterface $productTaxCode */
-        $productTaxCode = $this->getReference(LoadProductTaxCodes::REFERENCE_PREFIX . '.' . LoadProductTaxCodes::TAX_1);
+        $productTaxCode = $this->getReference(LoadProductTaxCodes::REFERENCE_PREFIX.'.'.LoadProductTaxCodes::TAX_1);
 
-        /** @var TaxCodeInterface $accountTaxCode */
-        $accountTaxCode = $this->getReference(LoadAccountTaxCodes::REFERENCE_PREFIX . '.' . LoadAccountTaxCodes::TAX_1);
+        /** @var TaxCodeInterface $customerTaxCode */
+        $customerTaxCode = $this->getReference(LoadCustomerTaxCodes::REFERENCE_PREFIX.'.'.LoadCustomerTaxCodes::TAX_1);
 
         $zipCodeMatcher = $this->getContainer()->get('oro_tax.matcher.zip_code_matcher');
         /** @var TaxRule[] $rules */
@@ -71,7 +71,7 @@ class ZipCodeMatcherTest extends WebTestCase
             TaxCodes::create(
                 [
                     TaxCode::create($productTaxCode->getCode(), TaxCodeInterface::TYPE_PRODUCT),
-                    TaxCode::create($accountTaxCode->getCode(), TaxCodeInterface::TYPE_ACCOUNT),
+                    TaxCode::create($customerTaxCode->getCode(), TaxCodeInterface::TYPE_ACCOUNT),
                 ]
             )
         );

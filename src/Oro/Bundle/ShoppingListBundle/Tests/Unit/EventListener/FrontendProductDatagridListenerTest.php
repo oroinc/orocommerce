@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
@@ -58,7 +58,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->registry = $this->getMock(RegistryInterface::class);
+        $this->registry = $this->createMock(RegistryInterface::class);
 
         $this->listener = new FrontendProductDatagridListener(
             $this->tokenStorage,
@@ -104,7 +104,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $token = $this->getMock(TokenInterface::class);
+        $token = $this->createMock(TokenInterface::class);
         $token->expects($this->once())
             ->method('getUser')
             ->willReturn($user);
@@ -129,13 +129,13 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnResultAfterNoShoppingList()
     {
-        $user = new AccountUser();
+        $user = new CustomerUser();
 
         /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
-        $datagrid = $this->getMock(DatagridInterface::class);
+        $datagrid = $this->createMock(DatagridInterface::class);
 
         $records = [
-            $this->getMock(DatagridInterface::class)
+            $this->createMock(DatagridInterface::class)
         ];
 
         $shoppingListRepository = $this
@@ -143,19 +143,19 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $shoppingListRepository->expects($this->once())
-            ->method('findAvailableForAccountUser')
+            ->method('findAvailableForCustomerUser')
             ->with($this->aclHelper)
             ->willReturn(null);
         $this->registry->expects($this->once())
             ->method('getRepository')
             ->with('OroShoppingListBundle:ShoppingList')
             ->willReturn($shoppingListRepository);
-        $query = $this->getMock(SearchQueryInterface::class);
+        $query = $this->createMock(SearchQueryInterface::class);
 
         /** @var SearchResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
         $event = new SearchResultAfter($datagrid, $query, $records);
 
-        $token = $this->getMock(TokenInterface::class);
+        $token = $this->createMock(TokenInterface::class);
         $token->method('getUser')
             ->willReturn($user);
         $this->tokenStorage->method('getToken')->willReturn($token);
@@ -165,10 +165,10 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnResultAfterNoRecords()
     {
-        $user = new AccountUser();
+        $user = new CustomerUser();
 
         /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
-        $datagrid = $this->getMock(DatagridInterface::class);
+        $datagrid = $this->createMock(DatagridInterface::class);
 
         $records = [];
 
@@ -177,19 +177,19 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $shoppingListRepository->expects($this->once())
-            ->method('findAvailableForAccountUser')
+            ->method('findAvailableForCustomerUser')
             ->with($this->aclHelper)
             ->willReturn(new ShoppingList());
         $this->registry->expects($this->once())
             ->method('getRepository')
             ->with('OroShoppingListBundle:ShoppingList')
             ->willReturn($shoppingListRepository);
-        $query = $this->getMock(SearchQueryInterface::class);
+        $query = $this->createMock(SearchQueryInterface::class);
 
         /** @var SearchResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
         $event = new SearchResultAfter($datagrid, $query, $records);
 
-        $token = $this->getMock(TokenInterface::class);
+        $token = $this->createMock(TokenInterface::class);
         $token->method('getUser')
             ->willReturn($user);
         $this->tokenStorage->method('getToken')->willReturn($token);
@@ -199,10 +199,10 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnResultAfter()
     {
-        $user = new AccountUser();
+        $user = new CustomerUser();
 
         /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
-        $datagrid = $this->getMock(DatagridInterface::class);
+        $datagrid = $this->createMock(DatagridInterface::class);
 
         $recordOne = new ResultRecord(['id' => 1]);
         $recordTwo = new ResultRecord(['id' => 2]);
@@ -221,7 +221,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $shoppingListRepository->expects($this->once())
-            ->method('findAvailableForAccountUser')
+            ->method('findAvailableForCustomerUser')
             ->with($this->aclHelper)
             ->willReturn($shoppingList1);
 
@@ -246,12 +246,12 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->with('OroShoppingListBundle:LineItem')
             ->will($this->returnValue($lineItemRepository));
 
-        $query = $this->getMock(SearchQueryInterface::class);
+        $query = $this->createMock(SearchQueryInterface::class);
 
         /** @var SearchResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
         $event = new SearchResultAfter($datagrid, $query, $records);
 
-        $token = $this->getMock(TokenInterface::class);
+        $token = $this->createMock(TokenInterface::class);
         $token->method('getUser')
             ->willReturn($user);
         $this->tokenStorage->method('getToken')->willReturn($token);

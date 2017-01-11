@@ -7,7 +7,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 use Oro\Bundle\ActionBundle\Tests\Unit\Provider\RouteProviderTest as BaseRouteProviderTest;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FrontendBundle\Provider\RouteProvider;
 use Oro\Bundle\UserBundle\Entity\User;
 
@@ -26,7 +26,7 @@ class RouteProviderTest extends BaseRouteProviderTest
     {
         parent::setUp();
 
-        $this->tokenStorage = $this->getMock(TokenStorageInterface::class);
+        $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
 
         $this->provider = new RouteProvider(
             $this->provider,
@@ -114,7 +114,7 @@ class RouteProviderTest extends BaseRouteProviderTest
                 ],
             ],
             'frontend user' => [
-                'token' => $this->createToken(new AccountUser(), $this->any()),
+                'token' => $this->createToken(new CustomerUser(), $this->any()),
                 'routes' => [
                     'widget' => 'oro_frontend_action_widget_buttons',
                     'dialog' => 'oro_frontend_action_widget_form',
@@ -154,7 +154,7 @@ class RouteProviderTest extends BaseRouteProviderTest
                 'expectedResult' => 'default',
             ],
             'frontend user' => [
-                'token' => $this->createToken(new AccountUser()),
+                'token' => $this->createToken(new CustomerUser()),
                 'expectedResult' => 'commerce',
             ],
             'not supported user' => [
@@ -174,7 +174,7 @@ class RouteProviderTest extends BaseRouteProviderTest
     public function isApplicationsValidDataProvider()
     {
         $user = new User();
-        $accountUser = new AccountUser();
+        $customerUser = new CustomerUser();
         $otherUser = 'anon.';
 
         return [
@@ -185,7 +185,7 @@ class RouteProviderTest extends BaseRouteProviderTest
             ],
             [
                 'applications' => ['default', 'commerce'],
-                'token' => $this->createToken($accountUser),
+                'token' => $this->createToken($customerUser),
                 'expectedResult' => true
             ],
             [
@@ -195,7 +195,7 @@ class RouteProviderTest extends BaseRouteProviderTest
             ],
             [
                 'applications' => ['default'],
-                'token' => $this->createToken($accountUser),
+                'token' => $this->createToken($customerUser),
                 'expectedResult' => false
             ],
             [
@@ -205,7 +205,7 @@ class RouteProviderTest extends BaseRouteProviderTest
             ],
             [
                 'applications' => ['commerce'],
-                'token' => $this->createToken($accountUser),
+                'token' => $this->createToken($customerUser),
                 'expectedResult' => true
             ],
             [
@@ -239,7 +239,7 @@ class RouteProviderTest extends BaseRouteProviderTest
     protected function createToken($user, \PHPUnit_Framework_MockObject_Matcher_Invocation $expects = null)
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|TokenInterface $token */
-        $token = $this->getMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $token->expects($expects ?: $this->once())
             ->method('getUser')
             ->willReturn($user);

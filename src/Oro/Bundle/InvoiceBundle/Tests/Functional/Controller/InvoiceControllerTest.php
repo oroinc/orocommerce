@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\InvoiceBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\InvoiceBundle\Entity\Invoice;
 use Oro\Bundle\LocaleBundle\Formatter\NameFormatter;
 use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
@@ -28,18 +28,18 @@ class InvoiceControllerTest extends WebTestCase
 
     /**
      * @param Form $form
-     * @param Account $account
+     * @param Customer $customer
      * @param string $today
      * @param array $lineItems
      * @param string $poNumber
      * @return array
      */
-    public function getSubmittedData($form, $account, $today, $lineItems, $poNumber)
+    public function getSubmittedData($form, $customer, $today, $lineItems, $poNumber)
     {
         return [
             '_token' => $form['oro_invoice_type[_token]']->getValue(),
             'owner' => $this->getCurrentUser()->getId(),
-            'account' => $account->getId(),
+            'customer' => $customer->getId(),
             'poNumber' => $poNumber,
             'invoiceDate' => $today,
             'paymentDueDate' => $today,
@@ -56,8 +56,8 @@ class InvoiceControllerTest extends WebTestCase
         $this->loadFixtures(
             [
                 'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
-                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
-                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountAddresses',
+                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData',
+                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses',
                 'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions',
             ]
         );
@@ -86,7 +86,7 @@ class InvoiceControllerTest extends WebTestCase
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save')->form();
-        $account = $this->getAccount();
+        $customer = $this->getCustomer();
 
         /** @var Product $product */
         $product = $this->getReference('product.1');
@@ -106,7 +106,7 @@ class InvoiceControllerTest extends WebTestCase
         ];
         $submittedData = [
             'input_action' => 'save_and_stay',
-            'oro_invoice_type' => $this->getSubmittedData($form, $account, $today, $lineItems, self::PO_NUMBER),
+            'oro_invoice_type' => $this->getSubmittedData($form, $customer, $today, $lineItems, self::PO_NUMBER),
         ];
 
         $this->client->followRedirects(true);
@@ -155,7 +155,7 @@ class InvoiceControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $account = $this->getAccount();
+        $customer = $this->getCustomer();
         /** @var Product $product */
         $product = $this->getReference('product.2');
 
@@ -190,7 +190,7 @@ class InvoiceControllerTest extends WebTestCase
             'input_action' => 'save_and_stay',
             'oro_invoice_type' => $this->getSubmittedData(
                 $form,
-                $account,
+                $customer,
                 $today,
                 $lineItems,
                 self::PO_NUMBER_UPDATED
@@ -321,12 +321,12 @@ class InvoiceControllerTest extends WebTestCase
     }
 
     /**
-     * @return Account
+     * @return Customer
      */
-    protected function getAccount()
+    protected function getCustomer()
     {
         $doctrine = $this->getContainer()->get('doctrine');
 
-        return $doctrine->getRepository('OroCustomerBundle:Account')->findOneBy([]);
+        return $doctrine->getRepository('OroCustomerBundle:Customer')->findOneBy([]);
     }
 }

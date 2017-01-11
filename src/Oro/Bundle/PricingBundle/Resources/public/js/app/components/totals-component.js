@@ -220,7 +220,7 @@ define(function(require) {
                     }
                 },
                 error: function(jqXHR) {
-                    messenger.showErrorMessage(_.__('Sorry, unexpected error was occurred'), jqXHR.responseJSON);
+                    messenger.showErrorMessage(_.__('Sorry, an unexpected error has occurred.'), jqXHR.responseJSON);
                 }
             });
         },
@@ -267,6 +267,13 @@ define(function(require) {
             }
 
             item.formattedAmount = NumberFormatter.formatCurrency(item.amount, item.currency);
+
+            if(item.data && item.data.baseAmount && item.data.baseCurrency) {
+                item.formattedBaseAmount = NumberFormatter.formatCurrency(
+                    item.data.baseAmount,
+                    item.data.baseCurrency
+                );
+            }
 
             var renderedItem = null;
 

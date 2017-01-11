@@ -29,7 +29,7 @@ class ProductVisibilityPostSubmitListenerTest extends \PHPUnit_Framework_TestCas
 
     protected function setUp()
     {
-        $this->registry = $this->getMock(ManagerRegistry::class);
+        $this->registry = $this->createMock(ManagerRegistry::class);
 
         $this->dataHandler = $this->getMockBuilder(VisibilityFormPostSubmitDataHandler::class)
             ->disableOriginalConstructor()
@@ -40,21 +40,21 @@ class ProductVisibilityPostSubmitListenerTest extends \PHPUnit_Framework_TestCas
 
     public function testOnPostSubmit()
     {
-        $form = $this->getMock(FormInterface::class);
+        $form = $this->createMock(FormInterface::class);
         $product = new Product();
         $form->method('getData')->willReturn($product);
 
-        $allForm = $this->getMock(FormInterface::class);
-        $accountForm = $this->getMock(FormInterface::class);
-        $accountGroupForm = $this->getMock(FormInterface::class);
+        $allForm = $this->createMock(FormInterface::class);
+        $customerForm = $this->createMock(FormInterface::class);
+        $customerGroupForm = $this->createMock(FormInterface::class);
 
         $form->method('all')->willReturn([
             $allForm,
-            $accountForm,
-            $accountGroupForm
+            $customerForm,
+            $customerGroupForm
         ]);
 
-        $em = $this->getMock(EntityManagerInterface::class);
+        $em = $this->createMock(EntityManagerInterface::class);
         $this->registry->method('getManagerForClass')->willReturn($em);
 
         // assert that all forms where saved trough data handler
@@ -62,8 +62,8 @@ class ProductVisibilityPostSubmitListenerTest extends \PHPUnit_Framework_TestCas
             ->method('saveForm')
             ->withConsecutive(
                 [$allForm, $product],
-                [$accountForm, $product],
-                [$accountGroupForm, $product]
+                [$customerForm, $product],
+                [$customerGroupForm, $product]
             );
 
         $event = new AfterFormProcessEvent($form, $product);

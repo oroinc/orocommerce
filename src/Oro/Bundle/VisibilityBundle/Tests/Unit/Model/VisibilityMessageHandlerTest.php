@@ -3,8 +3,8 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Model;
 
 use Doctrine\Common\Util\ClassUtils;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Model\VisibilityMessageFactory;
 use Oro\Bundle\VisibilityBundle\Model\VisibilityMessageHandler;
@@ -35,7 +35,7 @@ class VisibilityMessageHandlerTest extends \PHPUnit_Framework_TestCase
         $this->messageFactory = $this->getMockBuilder(VisibilityMessageFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->messageProducer = $this->getMock(MessageProducerInterface::class);
+        $this->messageProducer = $this->createMock(MessageProducerInterface::class);
         $this->visibilityMessageHandler = new VisibilityMessageHandler(
             $this->messageFactory,
             $this->messageProducer
@@ -47,11 +47,11 @@ class VisibilityMessageHandlerTest extends \PHPUnit_Framework_TestCase
         /** @var ProductVisibility $productVisibility **/
         $productVisibility = $this->getEntity(ProductVisibility::class, ['id' => 42]);
 
-        /** @var AccountProductVisibility $accountProductVisibility **/
-        $accountProductVisibility = $this->getEntity(AccountProductVisibility::class, ['id' => 123]);
+        /** @var CustomerProductVisibility $customerProductVisibility **/
+        $customerProductVisibility = $this->getEntity(CustomerProductVisibility::class, ['id' => 123]);
 
-        /** @var AccountGroupProductVisibility $accountGroupProductVisibility **/
-        $accountGroupProductVisibility = $this->getEntity(AccountGroupProductVisibility::class, ['id' => 321]);
+        /** @var CustomerGroupProductVisibility $customerGroupProductVisibility **/
+        $customerGroupProductVisibility = $this->getEntity(CustomerGroupProductVisibility::class, ['id' => 321]);
 
         $this->messageFactory->expects($this->any())
             ->method('createMessage')
@@ -64,19 +64,19 @@ class VisibilityMessageHandlerTest extends \PHPUnit_Framework_TestCase
                     ]
                 ],
                 [
-                    $accountProductVisibility,
+                    $customerProductVisibility,
                     [
                         VisibilityMessageFactory::ID => 123,
                         VisibilityMessageFactory::ENTITY_CLASS_NAME
-                            => ClassUtils::getClass($accountProductVisibility)
+                            => ClassUtils::getClass($customerProductVisibility)
                     ]
                 ],
                 [
-                    $accountGroupProductVisibility,
+                    $customerGroupProductVisibility,
                     [
                         VisibilityMessageFactory::ID => 321,
                         VisibilityMessageFactory::ENTITY_CLASS_NAME
-                            => ClassUtils::getClass($accountGroupProductVisibility)
+                            => ClassUtils::getClass($customerGroupProductVisibility)
                     ]
                 ]
             ]);
@@ -94,11 +94,11 @@ class VisibilityMessageHandlerTest extends \PHPUnit_Framework_TestCase
         // Add another messages
         $this->visibilityMessageHandler->addMessageToSchedule(
             'oro_visibility.visibility.resolve_product_visibility',
-            $accountProductVisibility
+            $customerProductVisibility
         );
         $this->visibilityMessageHandler->addMessageToSchedule(
             'oro_visibility.visibility.resolve_product_visibility',
-            $accountGroupProductVisibility
+            $customerGroupProductVisibility
         );
 
         $this->assertAttributeEquals(
@@ -108,15 +108,15 @@ class VisibilityMessageHandlerTest extends \PHPUnit_Framework_TestCase
                     VisibilityMessageFactory::ENTITY_CLASS_NAME =>
                         'Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility'
                 ],
-                'Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility:123' => [
+                'Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility:123' => [
                     VisibilityMessageFactory::ID => 123,
                     VisibilityMessageFactory::ENTITY_CLASS_NAME =>
-                        'Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility'
+                        'Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility'
                 ],
-                'Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility:321' => [
+                'Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility:321' => [
                     VisibilityMessageFactory::ID => 321,
                     VisibilityMessageFactory::ENTITY_CLASS_NAME =>
-                        'Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility'
+                        'Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility'
                 ]
             ]],
             'scheduledMessages',

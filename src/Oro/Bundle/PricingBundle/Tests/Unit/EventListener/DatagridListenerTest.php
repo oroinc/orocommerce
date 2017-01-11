@@ -65,55 +65,55 @@ class DatagridListenerTest extends \PHPUnit_Framework_TestCase
         unset($this->listener);
     }
 
-    public function testOnBuildBeforeAccounts()
+    public function testOnBuildBeforeCustomers()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
-        $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $config = DatagridConfiguration::create([]);
 
         $event = new BuildBefore($datagrid, $config);
-        $this->listener->onBuildBeforeAccounts($event);
+        $this->listener->onBuildBeforeCustomers($event);
 
         $expected = $this->expectedTemplate;
         $expected['source']['query']['join']['left'] = [
             [
-                'join' => 'Oro\Bundle\PricingBundle\Entity\PriceListToAccount',
-                'alias' => 'priceListToAccount',
+                'join' => 'Oro\Bundle\PricingBundle\Entity\PriceListToCustomer',
+                'alias' => 'priceListToCustomer',
                 'conditionType' => 'WITH',
-                'condition' => 'priceListToAccount.account = account',
+                'condition' => 'priceListToCustomer.customer = customer',
             ],
             [
-                'join' => 'priceListToAccount.priceList',
+                'join' => 'priceListToCustomer.priceList',
                 'alias' => 'priceList',
                 'conditionType' => 'WITH',
-                'condition' => 'priceListToAccount.priceList = priceList',
+                'condition' => 'priceListToCustomer.priceList = priceList',
             ],
         ];
         $this->assertEquals($expected, $config->toArray());
     }
 
-    public function testOnBuildBeforeAccountGroups()
+    public function testOnBuildBeforeCustomerGroups()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $datagrid */
-        $datagrid = $this->getMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
+        $datagrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
         $config = DatagridConfiguration::create([]);
 
         $event = new BuildBefore($datagrid, $config);
-        $this->listener->onBuildBeforeAccountGroups($event);
+        $this->listener->onBuildBeforeCustomerGroups($event);
 
         $expected = $this->expectedTemplate;
         $expected['source']['query']['join']['left'] = [
             [
-                'join' => 'Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup',
-                'alias' => 'priceListToAccountGroup',
+                'join' => 'Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup',
+                'alias' => 'priceListToCustomerGroup',
                 'conditionType' => 'WITH',
-                'condition' => 'priceListToAccountGroup.accountGroup = account_group',
+                'condition' => 'priceListToCustomerGroup.customerGroup = customer_group',
             ],
             [
-                'join' => 'priceListToAccountGroup.priceList',
+                'join' => 'priceListToCustomerGroup.priceList',
                 'alias' => 'priceList',
                 'conditionType' => 'WITH',
-                'condition' => 'priceListToAccountGroup.priceList = priceList',
+                'condition' => 'priceListToCustomerGroup.priceList = priceList',
             ],
         ];
         $this->assertEquals($expected, $config->toArray());

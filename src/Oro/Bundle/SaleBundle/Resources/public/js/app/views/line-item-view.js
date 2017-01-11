@@ -7,6 +7,7 @@ define(function(require) {
     var __ = require('orotranslation/js/translator');
     var BaseView = require('oroui/js/app/views/base/view');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
+    var mediator = require('oroui/js/mediator');
     var routing = require('routing');
     var messenger = require('oroui/js/messenger');
     require('jquery.validate');
@@ -49,7 +50,7 @@ define(function(require) {
             productReplacementContainer: '.quote-lineitem-product-replacement-row',
             sellerNotesContainer: '.quote-lineitem-notes-seller',
             requestsOnlyContainer: '.sale-quoteproductrequest-only',
-            errorMessage: 'Sorry, unexpected error was occurred',
+            errorMessage: 'Sorry, an unexpected error has occurred.',
             allUnits: {},
             units: {}
         },
@@ -150,6 +151,7 @@ define(function(require) {
             this.loadingMask = new LoadingMaskView({container: this.$el});
 
             this.delegate('click', '.removeLineItem', this.removeRow);
+            this.delegate('click', '.removeRow', this.removeOfferRow);
 
             this.$productSelect = this.$el.find(this.options.productSelect);
             this.$productReplacementSelect = this.$el.find(this.options.productReplacementSelect);
@@ -174,10 +176,52 @@ define(function(require) {
 
             this.$typeSelect.trigger('change');
 
+            this.$form = this.$el.closest('form');
+            this.$fields = this.$el.find(':input[name]');
+
+            this.fieldsByName = {};
+            this.$fields.each(_.bind(function(i, field) {
+                if (!this.fieldsByName[this.formFieldName(field)]) {
+                    this.fieldsByName[this.formFieldName(field)] = [];
+                }
+
+                this.fieldsByName[this.formFieldName(field)].push($(field));
+            }, this));
+
+            this.entryPointTriggers([
+                this.fieldsByName.quantity,
+                this.fieldsByName.productUnit,
+                this.fieldsByName.priceValue,
+                this.fieldsByName.priceType
+            ]);
+
             this.checkAddButton();
             this.checkAddNotes();
 
             this.updateValidation();
+        },
+
+        /**
+         * @param {Object} field
+         * @returns {String}
+         */
+        formFieldName: function(field) {
+            var name = '';
+            var nameParts = field.name.replace(/.*\[[0-9]+\]/, '').replace(/[\[\]]/g, '_').split('_');
+            var namePart;
+
+            for (var i = 0, iMax = nameParts.length; i < iMax; i++) {
+                namePart = nameParts[i];
+                if (!namePart.length) {
+                    continue;
+                }
+                if (name.length === 0) {
+                    name += namePart;
+                } else {
+                    name += namePart[0].toUpperCase() + namePart.substr(1);
+                }
+            }
+            return name;
         },
 
         checkAddButton: function() {
@@ -185,9 +229,29 @@ define(function(require) {
             this.$addItemButton.toggle(enabled);
         },
 
+        removeOfferRow: function()
+        {
+            mediator.trigger('entry-point:quote:trigger');
+        },
+
         removeRow: function() {
             this.$el.trigger('content:remove');
             this.remove();
+
+            mediator.trigger('entry-point:quote:trigger');
+        },
+
+        /**
+         * @param {jQuery|Array} fields
+         */
+        entryPointTriggers: function(fields) {
+            _.each(fields, function(fields) {
+                _.each(fields, function(field){
+                    $(field).attr('data-entry-point-trigger', true);
+                });
+            });
+
+            mediator.trigger('entry-point:quote:init');
         },
 
         /**
@@ -210,6 +274,8 @@ define(function(require) {
 
             var $quantitySelector = this.$el.find(this.options.offersQuantitySelector);
             $quantitySelector.trigger('change');
+
+            mediator.trigger('entry-point:quote:trigger');
         },
 
         /**

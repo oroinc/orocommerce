@@ -10,19 +10,19 @@ use Oro\Bundle\NoteBundle\Migration\UpdateNoteAssociationKindForRenamedEntitiesM
 class MigrateNotes extends UpdateNoteAssociationKindForRenamedEntitiesMigration
 {
     protected $entitiesNames = [
-        'Account',
-        'AccountAddress',
-        'AccountGroup',
-        'AccountUserSettings',
+        'Customer',
+        'CustomerGroup',
+        'CustomerAddress',
+        'CustomerUserSettings',
         'AccountUserRole',
-        'AccountUser',
-        'AccountUserAddress',
+        'CustomerUser',
+        'CustomerUserAddress',
         'ProductVisibility',
         'AccountProductVisibility',
         'CategoryVisibility',
-        'AccountCategoryVisibility',
-        'AccountGroupProductVisibility',
-        'AccountGroupCategoryVisibility',
+        'CustomerCategoryVisibility',
+        'CustomerGroupProductVisibility',
+        'CustomerGroupCategoryVisibility',
     ];
 
     /**

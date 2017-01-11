@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Validator\Constraints;
 
-use Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -22,10 +22,10 @@ class EnabledTypeConfigsValidationGroupValidator extends ConstraintValidator
 
         $enabledRules = [];
         foreach ($value as $config) {
-            if (!$config instanceof ShippingRuleMethodTypeConfig) {
+            if (!$config instanceof ShippingMethodTypeConfig) {
                 throw new UnexpectedTypeException(
                     $config,
-                    'Oro\Bundle\ShippingBundle\Entity\ShippingRuleMethodTypeConfig'
+                    'Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig'
                 );
             }
             if ($config->isEnabled()) {

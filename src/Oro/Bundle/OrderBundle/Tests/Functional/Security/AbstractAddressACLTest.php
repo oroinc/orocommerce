@@ -30,37 +30,37 @@ abstract class AbstractAddressACLTest extends WebTestCase
     protected function checkAddresses(Crawler $crawler, $formName, $addressType, array $expected)
     {
         if ($expected['manually']) {
-            $filter = sprintf('select[name="%s[%s][accountAddress]"]', $formName, $addressType);
-            $accountAddressSelector = $crawler->filter($filter)->html();
+            $filter = sprintf('select[name="%s[%s][customerAddress]"]', $formName, $addressType);
+            $customerAddressSelector = $crawler->filter($filter)->html();
 
-            $this->assertContains('Enter other address', $accountAddressSelector);
+            $this->assertContains('Enter other address', $customerAddressSelector);
         }
 
-        // Check account addresses
-        if (!empty($expected['account'])) {
+        // Check customer addresses
+        if (!empty($expected['customer'])) {
             $filter = sprintf(
-                'select[name="%s[%s][accountAddress]"] optgroup[label="Global Address Book"]',
+                'select[name="%s[%s][customerAddress]"] optgroup[label="Global Address Book"]',
                 $formName,
                 $addressType
             );
-            $accountAddresses = $crawler->filter($filter)->html();
+            $customerAddresses = $crawler->filter($filter)->html();
 
-            foreach ($expected['account'] as $accountAddress) {
-                $this->assertContains($accountAddress, $accountAddresses);
+            foreach ($expected['customer'] as $customerAddress) {
+                $this->assertContains($customerAddress, $customerAddresses);
             }
         }
 
-        // Check account users addresses
-        if (!empty($expected['accountUser'])) {
+        // Check customer users addresses
+        if (!empty($expected['customerUser'])) {
             $filter = sprintf(
-                'select[name="%s[%s][accountAddress]"] optgroup[label="My Address Book"]',
+                'select[name="%s[%s][customerAddress]"] optgroup[label="My Address Book"]',
                 $formName,
                 $addressType
             );
-            $accountUserAddresses = $crawler->filter($filter)->html();
+            $customerUserAddresses = $crawler->filter($filter)->html();
 
-            foreach ($expected['accountUser'] as $accountUserAddress) {
-                $this->assertContains($accountUserAddress, $accountUserAddresses);
+            foreach ($expected['customerUser'] as $customerUserAddress) {
+                $this->assertContains($customerUserAddress, $customerUserAddresses);
             }
         }
     }
@@ -91,22 +91,22 @@ abstract class AbstractAddressACLTest extends WebTestCase
     /**
      * @return AclPrivilegeIdentity
      */
-    protected function getAccountAddressIdentity()
+    protected function getCustomerAddressIdentity()
     {
         return new AclPrivilegeIdentity(
-            'entity:Oro\Bundle\CustomerBundle\Entity\AccountAddress',
-            'oro.customer.accountaddress.entity_label'
+            'entity:Oro\Bundle\CustomerBundle\Entity\CustomerAddress',
+            'oro.customer.customeraddress.entity_label'
         );
     }
 
     /**
      * @return AclPrivilegeIdentity
      */
-    protected function getAccountAddressUserIdentity()
+    protected function getCustomerAddressUserIdentity()
     {
         return new AclPrivilegeIdentity(
-            'entity:Oro\Bundle\CustomerBundle\Entity\AccountUserAddress',
-            'oro.customer.accountuseraddress.entity_label'
+            'entity:Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress',
+            'oro.customer.customeruseraddress.entity_label'
         );
     }
 

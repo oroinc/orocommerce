@@ -27,8 +27,10 @@ oro:
             slug_prototypes.label: Slug prototypes
             titles.label: Titles
             parent_scope_used.label: Inherit Parent
+            rewrite_variant_title.label: Rewrite Variant Title
             web_catalog.label: Web catalog
             scopes.label: Restrictions
+            localized_urls.label: Localized URLs
 
         contentvariant:
             entity_label: Content Variant

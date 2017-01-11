@@ -88,7 +88,7 @@ class CreditCardTypeTest extends FormIntegrationTestCase
     public function testFinishView()
     {
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $formView = new FormView();
         $formChildrenView = new FormView();

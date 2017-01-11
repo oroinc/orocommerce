@@ -11,7 +11,7 @@ use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -120,7 +120,7 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
 
         $this->securityFacade->expects($this->at(1))->method('isGranted')
-            ->with('oro_shopping_list_line_item_frontend_add')
+            ->with('oro_shopping_list_frontend_update')
             ->willReturn($isGrantedAdd);
 
         if ($shoppingList && $isGrantedAdd) {
@@ -160,17 +160,17 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
         array $expectedLineItems = []
     ) {
         /** @var \PHPUnit_Framework_MockObject_MockObject|ShoppingList $shoppingList */
-        $shoppingList = $this->getMock('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList');
+        $shoppingList = $this->createMock('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList');
         $shoppingList->expects($this->any())
             ->method('getId')
             ->willReturn(1);
 
-        $accountUser = new AccountUser();
+        $customerUser = new CustomerUser();
         $organization = new Organization();
 
         $shoppingList->expects($this->any())
-            ->method('getAccountUser')
-            ->willReturn($accountUser);
+            ->method('getCustomerUser')
+            ->willReturn($customerUser);
         $shoppingList->expects($this->any())
             ->method('getOrganization')
             ->willReturn($organization);
@@ -182,14 +182,14 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->shoppingListManager->expects($this->once())->method('bulkAddLineItems')->with(
             $this->callback(
-                function (array $lineItems) use ($expectedLineItems, $accountUser, $organization) {
+                function (array $lineItems) use ($expectedLineItems, $customerUser, $organization) {
                     /** @var LineItem $lineItem */
                     foreach ($lineItems as $key => $lineItem) {
                         /** @var LineItem $expectedLineItem */
                         $expectedLineItem = $expectedLineItems[$key];
 
                         $this->assertEquals($expectedLineItem->getQuantity(), $lineItem->getQuantity());
-                        $this->assertEquals($accountUser, $lineItem->getAccountUser());
+                        $this->assertEquals($customerUser, $lineItem->getCustomerUser());
                         $this->assertEquals($organization, $lineItem->getOrganization());
                         $this->assertInstanceOf('Oro\Bundle\ProductBundle\Entity\Product', $lineItem->getProduct());
                         $this->assertInstanceOf(
@@ -224,19 +224,19 @@ class ShoppingListLineItemHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testPrepareLineItemWithProduct()
     {
-        /** @var AccountUser $user */
-        $user = $this->getMock(AccountUser::class);
+        /** @var CustomerUser $user */
+        $user = $this->createMock(CustomerUser::class);
 
         /** @var ShoppingList $shoppingList */
-        $shoppingList = $this->getMock(ShoppingList::class);
+        $shoppingList = $this->createMock(ShoppingList::class);
 
         /** @var Product $product */
-        $product = $this->getMock(Product::class);
+        $product = $this->createMock(Product::class);
 
         $this->shoppingListManager->expects($this->once())->method('getCurrent')->willReturn($shoppingList);
 
         $item = $this->handler->prepareLineItemWithProduct($user, $product);
-        $this->assertSame($user, $item->getAccountUser());
+        $this->assertSame($user, $item->getCustomerUser());
         $this->assertSame($shoppingList, $item->getShoppingList());
         $this->assertSame($product, $item->getProduct());
     }

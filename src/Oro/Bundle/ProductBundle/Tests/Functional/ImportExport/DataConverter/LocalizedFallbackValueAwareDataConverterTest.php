@@ -116,6 +116,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'sku' => '',
                     'status' => '',
                     'type' => '',
+                    'attributeFamily.code' => '',
                     'inventory_status.id' => '',
                     'names.default.fallback' => 'system',
                     'names.default.value' => 'default value',
@@ -147,7 +148,6 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'shortDescriptions.English (Canada).value' => '',
                     'shortDescriptions.Spanish.fallback' => '',
                     'shortDescriptions.Spanish.value' => '',
-                    'hasVariants' => '',
                     'variantFields' => '',
                     'primaryUnitPrecision.unit.code' => '',
                     'primaryUnitPrecision.precision' => '',
@@ -183,6 +183,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'slugPrototypes.Spanish.value' => '',
                     'slugPrototypes.English (Canada).fallback' => '',
                     'slugPrototypes.English (Canada).value' => '',
+                    'attributeFamily.code' => ''
                 ],
             ],
             'en localization' => [
@@ -191,6 +192,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'sku' => '',
                     'status' => '',
                     'type' => '',
+                    'attributeFamily.code' => '',
                     'inventory_status.id' => '',
                     'names.default.fallback' => '',
                     'names.default.value' => '',
@@ -222,7 +224,6 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'shortDescriptions.English (Canada).value' => '',
                     'shortDescriptions.Spanish.fallback' => '',
                     'shortDescriptions.Spanish.value' => '',
-                    'hasVariants' => '',
                     'variantFields' => '',
                     'primaryUnitPrecision.unit.code' => '',
                     'primaryUnitPrecision.precision' => '',
@@ -258,6 +259,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'slugPrototypes.Spanish.value' => '',
                     'slugPrototypes.English (Canada).fallback' => '',
                     'slugPrototypes.English (Canada).value' => '',
+                    'attributeFamily.code' => ''
                 ],
             ],
             'custom localization' => [
@@ -271,6 +273,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'sku' => '',
                     'status' => '',
                     'type' => '',
+                    'attributeFamily.code' => '',
                     'inventory_status.id' => '',
                     'names.default.fallback' => '',
                     'names.default.value' => '',
@@ -302,7 +305,6 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'shortDescriptions.English (Canada).value' => '',
                     'shortDescriptions.Spanish.fallback' => '',
                     'shortDescriptions.Spanish.value' => '',
-                    'hasVariants' => '',
                     'variantFields' => '',
                     'primaryUnitPrecision.unit.code' => '',
                     'primaryUnitPrecision.precision' => '',
@@ -338,6 +340,7 @@ class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
                     'slugPrototypes.Spanish.value' => '',
                     'slugPrototypes.English (Canada).fallback' => '',
                     'slugPrototypes.English (Canada).value' => '',
+                    'attributeFamily.code' => ''
                 ],
             ],
         ];

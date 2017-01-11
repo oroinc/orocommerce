@@ -1,25 +1,25 @@
 security:
     providers:
-        commerce_account_user:
+        commerce_customer_user:
             id: oro_customer.security.provider
 
     encoders:
-        Oro\Bundle\CustomerBundle\Entity\AccountUser: sha512
+        Oro\Bundle\CustomerBundle\Entity\CustomerUser: sha512
 
     firewalls:
         frontend_secure:
-            # secure everything started with /account/ except basic user operations
+            # secure everything started with /customer/ except basic user operations
             # @todo: secure api BB-1206
-            pattern:                        ^/api/(rest|soap).|/account/(?!(user/login|user/reset-request|user/send-email|user/check-email|user/registration|user/confirm-email|user/reset)$).*$
-            provider:                       commerce_account_user
-            context:                        account_identity
+            pattern:                        ^/api/rest.|/customer/(?!(user/login|user/reset-request|user/send-email|user/check-email|user/registration|user/confirm-email|user/reset)$).*$
+            provider:                       commerce_customer_user
+            context:                        customer_identity
             organization-form-login:
                 csrf_provider:              form.csrf_provider
-                check_path:                 oro_customer_account_user_security_check
-                login_path:                 oro_customer_account_user_security_login
+                check_path:                 oro_customer_customer_user_security_check
+                login_path:                 oro_customer_customer_user_security_login
                 default_target_path:        oro_frontend_root
             logout:
-                path:                       oro_customer_account_user_security_logout
+                path:                       oro_customer_customer_user_security_logout
                 invalidate_session:         false
             organization-remember-me:
                 key:                        %secret%
@@ -30,14 +30,14 @@ security:
 
         frontend:
             pattern:                        ^/
-            provider:                       commerce_account_user
-            context:                        account_identity
+            provider:                       commerce_customer_user
+            context:                        customer_identity
             anonymous:                      true
 
 doctrine:
     orm:
         resolve_target_entities:
-            Oro\Bundle\CustomerBundle\Entity\CustomerUserIdentity: Oro\Bundle\CustomerBundle\Entity\AccountUser
+            Oro\Bundle\CustomerBundle\Entity\CustomerUserIdentity: Oro\Bundle\CustomerBundle\Entity\CustomerUser
         filters:
             soft_deleteable:
                 class:      Oro\Bundle\CustomerBundle\Doctrine\SoftDeleteableFilter

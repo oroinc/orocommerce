@@ -25,8 +25,8 @@ class OrderAddressEventListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->twigEngine = $this->getMock('Symfony\Component\Templating\EngineInterface');
-        $this->formFactory = $this->getMock('\Symfony\Component\Form\FormFactoryInterface');
+        $this->twigEngine = $this->createMock('Symfony\Component\Templating\EngineInterface');
+        $this->formFactory = $this->createMock('\Symfony\Component\Form\FormFactoryInterface');
 
         $this->listener = new OrderAddressEventListener($this->twigEngine, $this->formFactory);
     }
@@ -40,10 +40,10 @@ class OrderAddressEventListenerTest extends \PHPUnit_Framework_TestCase
     {
         $order = new Order();
 
-        $type = $this->getMock('Symfony\Component\Form\ResolvedFormTypeInterface');
+        $type = $this->createMock('Symfony\Component\Form\ResolvedFormTypeInterface');
         $type->expects($this->once())->method('getName')->willReturn('type');
 
-        $formConfig = $this->getMock('Symfony\Component\Form\FormConfigInterface');
+        $formConfig = $this->createMock('Symfony\Component\Form\FormConfigInterface');
         $formConfig->expects($this->once())->method('getType')->willReturn($type);
         $formConfig->expects($this->once())->method('getOptions')->willReturn([]);
 
@@ -62,7 +62,7 @@ class OrderAddressEventListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturnOnConsecutiveCalls(true, false);
 
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $field1 */
-        $field1 = $this->getMock('Symfony\Component\Form\FormInterface');
+        $field1 = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $oldForm->expects($this->once())->method('get')->with($billingAddressField)->willReturn($field1);
 
@@ -76,23 +76,23 @@ class OrderAddressEventListenerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $field2 */
-        $field2 = $this->getMock('Symfony\Component\Form\FormInterface');
+        $field2 = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $field2->expects($this->never())->method('createView');
 
         $this->twigEngine->expects($this->once())
             ->method('render')
-            ->with('OroOrderBundle:Form:accountAddressSelector.html.twig', ['form' => $field1View])
+            ->with('OroOrderBundle:Form:customerAddressSelector.html.twig', ['form' => $field1View])
             ->willReturn('view1');
 
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $field1 */
-        $newField1 = $this->getMock('Symfony\Component\Form\FormInterface');
+        $newField1 = $this->createMock('Symfony\Component\Form\FormInterface');
         $newField1->expects($this->once())->method('createView')->willReturn($field1View);
         /** @var Form|\PHPUnit_Framework_MockObject_MockObject $oldForm */
         $newForm = $this->getMockBuilder('Symfony\Component\Form\Form')
             ->disableOriginalConstructor()
             ->getMock();
-        $builder = $this->getMock('Symfony\Component\Form\FormBuilderInterface');
+        $builder = $this->createMock('Symfony\Component\Form\FormBuilderInterface');
         $builder->expects($this->once())->method('add')->with('billingAddress', 'type', $this->isType('array'))
             ->willReturnSelf();
         $builder->expects($this->once())->method('getForm')->willReturn($newForm);

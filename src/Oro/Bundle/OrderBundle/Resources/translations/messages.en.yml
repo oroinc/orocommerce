@@ -1,3 +1,21 @@
+"Order History": "Order History"
+"close": "close"
+"Billing Information": "Billing Information"
+"Payment": "Payment"
+"Shipping Information": "Shipping Information"
+"Billing Information": "Billing Information"
+"Shipping Method": "Shipping Method"
+"Order Review": "Order Review"
+"Payment": "Payment"
+"Paid in full": "Paid in full"
+"Payment authorized": "Payment authorized"
+"Pending payment": "Pending payment"
+"Payment declined": "Payment declined"
+"Paid partially": "Paid partially"
+"Alternative Checkout": "Alternative Checkout"
+"Checkout": "Checkout"
+"USD": "USD"
+"EUR": "EUR"
 oro:
     order:
         entity_label: Order
@@ -7,8 +25,8 @@ oro:
         identifier.label: Order Number
         identifier.short_label: 'Order #'
         owner.label: Owner
-        account.label: Account
-        account_user.label: Customer User
+        customer.label: Customer
+        customer_user.label: Customer User
         organization.label: Organization
         currency.label: Currency
         website.label: Website
@@ -16,8 +34,6 @@ oro:
         customer_notes.frontend.label: Notes
         po_number.label: PO Number
         ship_until.label: Do Not Ship Later Than
-        subtotal.label: Subtotal
-        total.label: Total
         payment_method.label: Payment Method
         payment_status.label: Payment Status
         billing_address.label: Billing Address
@@ -30,6 +46,22 @@ oro:
         overridden_shipping_cost.label: 'Overridden Shipping Cost'
         estimated_shipping_cost_amount.label: 'Estimated Shipping Cost Amount'
         overridden_shipping_cost_amount.label: 'Overridden Shipping Cost Amount'
+        total_currency.label: 'Total currency'
+        total_value.label: 'Total'
+        total_base_currency.label: 'Total (%sign%)'
+        base_total_value.label: 'Total (%sign%)'
+        subtotal_currency.label: 'Subtotal currency'
+        subtotal_value.label: 'Subtotal'
+        subtotal_base_currency.label: 'Subtotal (%sign%)'
+        base_subtotal_value.label: 'Subtotal (%sign%)'
+
+        subtotal:
+            label: Subtotal
+            base.label: 'Subtotal (%sign%)'
+
+        total:
+            label: Total
+            base.label: 'Total (%sign%)'
 
         # TODO: remove after resolving https://magecore.atlassian.net/browse/BAP-3940
         shipping_cost_amount.label: 'Shipping Cost Amount'
@@ -53,7 +85,7 @@ oro:
         discountitem.add_label: Add Discount
         order_history.label: Order History
         top_selling_items.label: Top Selling Items
-        frontend_index_title: Order History - My Account - Home page
+        frontend_index_title: Order History - My Customer - Home page
 
         shipping_tracking:
             entity_label: Shipping Tracking
@@ -80,8 +112,8 @@ oro:
             entity_label: Order Address
             entity_plural_label: Order Addresses
             id.label: ID
-            account_address.label: Customer address
-            account_user_address.label: Customer user address
+            customer_address.label: Customer address
+            customer_user_address.label: Customer user address
             label.label: Label
             first_name.label: First Name
             middle_name.label: Middle Name
@@ -173,15 +205,15 @@ oro:
 
         security:
             permission:
-                address_shipping_account_use_any: Use any shipping address from the customer address book
-                address_shipping_account_user_use_default: Use the default shipping address from the customer user's address book
-                address_shipping_account_user_use_any: Use any shipping address from the customer user's address book
+                address_shipping_customer_use_any: Use any shipping address from the customer address book
+                address_shipping_customer_user_use_default: Use the default shipping address from the customer user's address book
+                address_shipping_customer_user_use_any: Use any shipping address from the customer user's address book
                 address_shipping_allow_manual: Enter the shipping address manually
-                address_billing_account_use_any: Use any billing address from the customer address book
-                address_billing_account_user_use_default: Use the default billing address from the customer user's address book
-                address_billing_account_user_use_any: Use any billing address from the customer user's address book
+                address_billing_customer_use_any: Use any billing address from the customer address book
+                address_billing_customer_user_use_default: Use the default billing address from the customer user's address book
+                address_billing_customer_user_use_any: Use any billing address from the customer user's address book
                 address_billing_allow_manual: Enter the billing address manually
-                payment_term_account_can_override: Override customer payment term
+                payment_term_customer_can_override: Override customer payment term
 
         form:
             address:
@@ -189,8 +221,8 @@ oro:
                 choose_or_create: Select an existing address or enter a new address below
                 manual: Enter other address
                 group_label:
-                    account: Customer Address Book
-                    account_user: Customer User Address Book
+                    customer: Customer Address Book
+                    customer_user: Customer User Address Book
             shipping_options.label: Shipping Options
             override_shipping_cost.label: Override Shipping Cost
 
@@ -229,8 +261,8 @@ oro:
             create.label: 'Create Order'
             form:
                 group_label:
-                    account: Global Address Book
-                    account_user: My Address Book
+                    customer: Global Address Book
+                    customer_user: My Address Book
             past_orders.label: Past Orders
             method_type:
                 view:

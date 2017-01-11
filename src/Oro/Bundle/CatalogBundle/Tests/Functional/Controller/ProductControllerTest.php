@@ -97,7 +97,8 @@ class ProductControllerTest extends WebTestCase
             ),
             ['_widgetContainer' => 'widget']
         );
-        $json = $crawler->filterXPath('//*[@data-page-component-options]')->attr('data-page-component-options');
+        $json = $crawler->filterXPath('//*[@data-collapse-container][@data-page-component-options]')
+            ->attr('data-page-component-options');
         $this->assertJson($json);
         $arr = json_decode($json, true);
         $this->assertEquals($arr['defaultCategoryId'], $categoryId);
@@ -107,12 +108,15 @@ class ProductControllerTest extends WebTestCase
     /**
      * @dataProvider defaultUnitPrecisionDataProvider
      *
+     * @param boolean $singleUnitMode
      * @param string $category
      * @param string $expected
      */
-    public function testDefaultProductUnitPrecision($category, $expected)
+    public function testDefaultProductUnitPrecision($singleUnitMode, $category, $expected)
     {
         $configManager = $this->client->getContainer()->get('oro_config.manager');
+        $configManager->set('oro_product.single_unit_mode', $singleUnitMode);
+        $configManager->flush();
         $systemDefaultUnit = $configManager->get('oro_product.default_unit');
         $systemDefaultPrecision = $configManager->get('oro_product.default_unit_precision');
 
@@ -170,18 +174,27 @@ class ProductControllerTest extends WebTestCase
     {
         return [
             'noCategory' => [
+                'singleUnitMode' => false,
                 'category' => null,
                 'expectedData'  => 'systemPrecision'
             ],
             'CategoryWithPrecision' => [
+                'singleUnitMode' => false,
                 'category' => LoadCategoryData::SECOND_LEVEL1,
                 'expectedData'  => 'categoryPrecision'
             ],
+            'CategoryWithPrecisionButSingleUnitMode' => [
+                'singleUnitMode' => true,
+                'category' => LoadCategoryData::SECOND_LEVEL1,
+                'expectedData'  => 'systemPrecision'
+            ],
             'CategoryWithParentPrecision' => [
+                'singleUnitMode' => false,
                 'category' => LoadCategoryData::THIRD_LEVEL1,
                 'expectedData'  => 'categoryPrecision'
             ],
             'CategoryWithNoPrecision' => [
+                'singleUnitMode' => false,
                 'category' => LoadCategoryData::FIRST_LEVEL,
                 'expectedData'  => 'systemPrecision'
             ],

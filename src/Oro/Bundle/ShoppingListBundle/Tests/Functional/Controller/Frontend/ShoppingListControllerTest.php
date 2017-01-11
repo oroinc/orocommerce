@@ -2,9 +2,12 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 
+use Symfony\Component\DomCrawler\Crawler;
+
+use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadCheckoutUserACLData;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as BaseLoadAccountData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as BaseLoadCustomerData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -16,7 +19,6 @@ use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingList
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListUserACLData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * @dbIsolation
@@ -36,7 +38,7 @@ class ShoppingListControllerTest extends WebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(BaseLoadAccountData::AUTH_USER, BaseLoadAccountData::AUTH_PW)
+            $this->generateBasicAuthHeader(BaseLoadCustomerData::AUTH_USER, BaseLoadCustomerData::AUTH_PW)
         );
 
         $this->loadFixtures(
@@ -46,6 +48,7 @@ class ShoppingListControllerTest extends WebTestCase
                 LoadShoppingListLineItems::class,
                 LoadCombinedProductPrices::class,
                 LoadShoppingListACLData::class,
+                LoadCheckoutUserACLData::class,
             ]
         );
 
@@ -182,8 +185,9 @@ class ShoppingListControllerTest extends WebTestCase
      * @param string $resource
      * @param string $user
      * @param int $status
+     * @param bool $expectedCreateOrderButtonVisible
      */
-    public function testACL($route, $resource, $user, $status)
+    public function testACL($route, $resource, $user, $status, $expectedCreateOrderButtonVisible)
     {
         $this->loginUser($user);
 
@@ -194,10 +198,18 @@ class ShoppingListControllerTest extends WebTestCase
         $em->getRepository(ShoppingList::class);
 
         $url = $this->getUrl($route, ['id' => $resource->getId()]);
-        $this->client->request('GET', $url);
+        $crawler = $this->client->request('GET', $url);
 
         $response = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($response, $status);
+
+        if (200 === $response->getStatusCode()) {
+            if ($expectedCreateOrderButtonVisible) {
+                $this->assertContains('Create Order', $crawler->html());
+            } else {
+                $this->assertNotContains('Create Order', $crawler->html());
+            }
+        }
     }
 
     /**
@@ -211,60 +223,70 @@ class ShoppingListControllerTest extends WebTestCase
                 'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
                 'user' => '',
                 'status' => 401,
+                'expectedCreateOrderButtonVisible' => false
             ],
-            'VIEW (user from another account)' => [
+            'VIEW (user from another customer)' => [
                 'route' => 'oro_shopping_list_frontend_view',
                 'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
                 'user' => LoadShoppingListUserACLData::USER_ACCOUNT_2_ROLE_LOCAL,
                 'status' => 403,
+                'expectedCreateOrderButtonVisible' => false
             ],
-            'VIEW (user from parent account : DEEP_VIEW_ONLY)' => [
+            'VIEW (user from parent customer : DEEP_VIEW_ONLY)' => [
                 'route' => 'oro_shopping_list_frontend_view',
                 'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_1_USER_LOCAL,
                 'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY,
                 'status' => 200,
+                'expectedCreateOrderButtonVisible' => false
             ],
-            'VIEW (user from parent account : LOCAL)' => [
+            'VIEW (user from parent customer : LOCAL)' => [
                 'route' => 'oro_shopping_list_frontend_view',
                 'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_1_USER_LOCAL,
                 'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_DEEP,
                 'status' => 200,
+                'expectedCreateOrderButtonVisible' => true
             ],
-            'VIEW (user from same account : LOCAL)' => [
+            'VIEW (user from same customer : LOCAL)' => [
                 'route' => 'oro_shopping_list_frontend_view',
                 'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
                 'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL,
                 'status' => 403,
+                'expectedCreateOrderButtonVisible' => false
             ],
             'VIEW (BASIC)' => [
                 'route' => 'oro_shopping_list_frontend_view',
                 'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_BASIC,
                 'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC,
                 'status' => 200,
+                'expectedCreateOrderButtonVisible' => false
             ],
             'CREATE anon' => [
                 'route' => 'oro_shopping_list_frontend_create',
                 'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
                 'user' => '',
                 'status' => 401,
+                'expectedCreateOrderButtonVisible' => false
             ],
             'CREATE (user with create: LOCAL)' => [
                 'route' => 'oro_shopping_list_frontend_create',
                 'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
                 'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL,
                 'status' => 200,
+                'expectedCreateOrderButtonVisible' => false
             ],
             'CREATE (user with create: NONE)' => [
                 'route' => 'oro_shopping_list_frontend_create',
                 'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
                 'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_LOCAL_VIEW_ONLY,
                 'status' => 403,
+                'expectedCreateOrderButtonVisible' => false
             ],
             'CREATE (BASIC)' => [
                 'route' => 'oro_shopping_list_frontend_create',
                 'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_BASIC,
                 'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_BASIC,
                 'status' => 200,
+                'expectedCreateOrderButtonVisible' => false
             ],
         ];
     }

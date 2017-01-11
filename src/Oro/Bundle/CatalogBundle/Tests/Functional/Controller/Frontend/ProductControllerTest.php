@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CatalogBundle\Entity\Category;
@@ -27,7 +27,7 @@ class ProductControllerTest extends WebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
+            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
         $this->loadFixtures([LoadFrontendCategoryProductData::class]);
     }
@@ -126,9 +126,10 @@ class ProductControllerTest extends WebTestCase
      * @dataProvider navigationBarTestDataProvider
      *
      * @param $category
-     * @param $expectedParts
+     * @param array $expectedParts
+     * @param array $urlParts
      */
-    public function testNavigationBar($category, array $expectedParts)
+    public function testNavigationBar($category, array $expectedParts, array $urlParts)
     {
         $category = $this->getReference($category);
 
@@ -166,6 +167,13 @@ class ProductControllerTest extends WebTestCase
         }
 
         $this->assertSame($foundParts, $expectedParts);
+        $breadCrumbsNodes = $crawler->filter('span.path-info a');
+
+        foreach ($breadCrumbsNodes as $key => $node) {
+            $this->assertNotNull($node->getAttribute('href'));
+            $this->assertNotNull($node->textContent);
+            $this->assertEquals($urlParts[$key], trim($node->textContent));
+        }
     }
 
     /**
@@ -178,11 +186,23 @@ class ProductControllerTest extends WebTestCase
                 'category' => LoadCategoryData::SECOND_LEVEL1,
                 'expectedParts' => [
                     LoadCategoryData::SECOND_LEVEL1
+                ],
+                'urlParts' => [
+                    'Products categories',
+                    LoadCategoryData::FIRST_LEVEL,
+                    LoadCategoryData::SECOND_LEVEL1,
                 ]
+
             ],
             [
                 'categoryId' => LoadCategoryData::THIRD_LEVEL1,
                 'expectedParts' => [
+                    LoadCategoryData::SECOND_LEVEL1,
+                    LoadCategoryData::THIRD_LEVEL1
+                ],
+                'urlParts' => [
+                    'Products categories',
+                    LoadCategoryData::FIRST_LEVEL,
                     LoadCategoryData::SECOND_LEVEL1,
                     LoadCategoryData::THIRD_LEVEL1
                 ]
@@ -192,6 +212,11 @@ class ProductControllerTest extends WebTestCase
                 'expectedParts' => [
                     LoadCategoryData::SECOND_LEVEL1,
                     // filters are not expected to show as they render using javascript
+                ],
+                'urlParts' => [
+                    'Products categories',
+                    LoadCategoryData::FIRST_LEVEL,
+                    LoadCategoryData::SECOND_LEVEL1,
                 ]
             ]
         ];

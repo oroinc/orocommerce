@@ -12,6 +12,8 @@ system_configuration:
             icon: 'fa-briefcase'
         product_unit_rounding:
             title: oro.product.system_configuration.groups.product_unit_rounding.title
+        product_single_unit_mode:
+            title: oro.product.system_configuration.groups.product_single_unit_mode.title
         default_product_unit:
             title: oro.product.system_configuration.groups.default_product_unit.title
             icon: 'fa-briefcase'
@@ -24,6 +26,11 @@ system_configuration:
             icon: 'fa-picture-o'
         product_image_watermark:
             title: oro.product.system_configuration.groups.product_image_watermark.title
+        quick_order:
+            title: oro.product.system_configuration.groups.quick_order.title
+            icon: 'fa-shopping-cart'
+        quick_order_form:
+            title: oro.product.system_configuration.groups.quick_order_form.title
 
     fields:
         oro_product.unit_rounding_type:
@@ -42,6 +49,25 @@ system_configuration:
                     1: oro.product.rounding.type.floor.label
                     5: oro.product.rounding.type.half_down.label
                     6: oro.product.rounding.type.half_up.label
+
+        oro_product.single_unit_mode:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 20
+            options:
+                label: oro.product.system_configuration.fields.single_unit_mode.label
+                attr:
+                    'data-page-component-module': 'oroproduct/js/app/components/config-single-unit-component'
+                    'data-dependency-id': 'single_unit_mode'
+
+        oro_product.single_unit_mode_show_code:
+            data_type: boolean
+            type: oro_config_checkbox
+            priority: 10
+            options:
+                label: oro.product.system_configuration.fields.single_unit_mode_show_code.label
+                attr:
+                  'data-depends-on-field': 'single_unit_mode'
 
         oro_product.general_frontend_product_visibility:
             data_type: array
@@ -103,6 +129,13 @@ system_configuration:
                     bottomleft: oro.product.system_configuration.fields.product_image_watermark_position.bottomleft.label
                     bottom: oro.product.system_configuration.fields.product_image_watermark_position.bottom.label
                     bottomright: oro.product.system_configuration.fields.product_image_watermark_position.bottomright.label
+
+        oro_product.enable_quick_order_form:
+            data_type: boolean
+            type: oro_config_checkbox
+            options:
+                label: oro.product.system_configuration.fields.enable_quick_order_form.title
+
     tree:
         system_configuration:
             commerce:
@@ -116,6 +149,10 @@ system_configuration:
                                     product_unit_rounding:
                                         children:
                                             - oro_product.unit_rounding_type
+                                    product_single_unit_mode:
+                                        children:
+                                            - oro_product.single_unit_mode
+                                            - oro_product.single_unit_mode_show_code
                                     default_product_unit:
                                         children:
                                             - oro_product.default_unit
@@ -137,3 +174,11 @@ system_configuration:
                                     frontend_inventory_statuses_visibility:
                                         children:
                                             - oro_product.general_frontend_product_visibility
+                    sales:
+                        children:
+                            quick_order:
+                                priority: 500
+                                children:
+                                    quick_order_form:
+                                        children:
+                                            - oro_product.enable_quick_order_form

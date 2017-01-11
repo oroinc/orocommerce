@@ -45,8 +45,8 @@ services:
         tags:
             - { name: website_search.placeholder }
 
-    oro_website_search.account_id.placeholder:
-        class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\AccountIdPlaceholder'
+    oro_website_search.customer_id.placeholder:
+        class: 'Oro\Bundle\WebsiteSearchBundle\Placeholder\CustomerIdPlaceholder'
         public: false
         arguments:
             - '@security.token_storage'
@@ -85,9 +85,8 @@ services:
         class: 'Oro\Bundle\SearchBundle\EventListener\ORM\FulltextIndexListener'
         public: false
         arguments:
-            - '%database_driver%'
             - 'oro_website_search_text'
-            - '%oro_website_search.index_text_table_name%'
+            - '@doctrine.dbal.default_connection'
         tags:
             - { name: doctrine.event_listener, event: loadClassMetadata, connection: search }
 

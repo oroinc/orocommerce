@@ -6,8 +6,8 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\RFPBundle\Mailer\Processor;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Mailer\RequestRepresentativesNotifier;
@@ -26,11 +26,11 @@ class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
     /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request * */
     protected $request;
 
-    /** @var  AccountUser|\PHPUnit_Framework_MockObject_MockObject $accountUser */
-    protected $accountUser;
+    /** @var  CustomerUser|\PHPUnit_Framework_MockObject_MockObject $customerUser */
+    protected $customerUser;
 
-    /** @var  Account|\PHPUnit_Framework_MockObject_MockObject $accountUser */
-    protected $account;
+    /** @var  Customer|\PHPUnit_Framework_MockObject_MockObject $customerUser */
+    protected $customer;
 
     /** @var  User $owner */
     protected $owner;
@@ -46,7 +46,7 @@ class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
         $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->request = $this->getMock('Oro\Bundle\RFPBundle\Entity\Request');
+        $this->request = $this->createMock('Oro\Bundle\RFPBundle\Entity\Request');
 
         $this->requestToQuoteRepresentativesNotifier = new RequestRepresentativesNotifier(
             $this->processor,
@@ -57,18 +57,18 @@ class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
     public function testNotifyRepresentativesIgnoredIfNoId()
     {
         $this->request->expects($this->never())
-            ->method('getAccount');
+            ->method('getCustomer');
         $this->requestToQuoteRepresentativesNotifier->notifyRepresentatives($this->request);
     }
 
-    public function testNotifyRepresentativesForAccountUser()
+    public function testNotifyRepresentativesForCustomerUser()
     {
         $this->configureRequestMock();
         $salesReps = new ArrayCollection();
         $salesReps->add(new User());
         $salesReps->add(new User());
         $salesReps->add(new User());
-        $this->accountUser->expects($this->once())
+        $this->customerUser->expects($this->once())
             ->method('getSalesRepresentatives')
             ->willReturn($salesReps);
         $this->processor->expects($this->exactly(5))
@@ -76,16 +76,16 @@ class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
         $this->requestToQuoteRepresentativesNotifier->notifyRepresentatives($this->request);
     }
 
-    public function testNotifyRepresentativesShouldAlwaysNotifySalesRepsOfAccount()
+    public function testNotifyRepresentativesShouldAlwaysNotifySalesRepsOfCustomer()
     {
-        $this->configureNotifySalesRepsOfAccountTest();
+        $this->configureNotifySalesRepsOfCustomerTest();
         $this->configManager->expects($this->exactly(3))
             ->method('get')
             ->willReturn('always');
-        $this->accountUser->expects($this->any())
+        $this->customerUser->expects($this->any())
             ->method('getSalesRepresentatives')
             ->willReturn(new ArrayCollection());
-        $this->account->expects($this->any())
+        $this->customer->expects($this->any())
             ->method('hasSalesRepresentatives')
             ->willReturn(true);
 
@@ -95,19 +95,19 @@ class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
         $this->requestToQuoteRepresentativesNotifier->notifyRepresentatives($this->request);
     }
 
-    public function testNotifyRepresentativesShouldNotifySalesRepsOfAccountIfNoUserSalesReps()
+    public function testNotifyRepresentativesShouldNotifySalesRepsOfCustomerIfNoUserSalesReps()
     {
-        $this->configureNotifySalesRepsOfAccountTest();
+        $this->configureNotifySalesRepsOfCustomerTest();
         $this->configManager->expects($this->exactly(3))
             ->method('get')
             ->willReturn('notalways');
-        $this->accountUser->expects($this->any())
+        $this->customerUser->expects($this->any())
             ->method('getSalesRepresentatives')
             ->willReturn(new ArrayCollection());
-        $this->account->expects($this->any())
+        $this->customer->expects($this->any())
             ->method('hasSalesRepresentatives')
             ->willReturn(true);
-        $this->accountUser->expects($this->any())
+        $this->customerUser->expects($this->any())
             ->method('getSalesRepresentatives')
             ->willReturn($this->salesReps);
 
@@ -117,19 +117,19 @@ class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
         $this->requestToQuoteRepresentativesNotifier->notifyRepresentatives($this->request);
     }
 
-    public function testNotifyRepresentativesShouldNotNotifySalesRepsOfAccount()
+    public function testNotifyRepresentativesShouldNotNotifySalesRepsOfCustomer()
     {
-        $this->configureNotifySalesRepsOfAccountTest();
+        $this->configureNotifySalesRepsOfCustomerTest();
         $this->configManager->expects($this->exactly(3))
             ->method('get')
             ->willReturn('notalways');
-        $this->accountUser->expects($this->any())
+        $this->customerUser->expects($this->any())
             ->method('getSalesRepresentatives')
             ->willReturn(new ArrayCollection());
-        $this->account->expects($this->any())
+        $this->customer->expects($this->any())
             ->method('hasSalesRepresentatives')
             ->willReturn(true);
-        $this->accountUser->expects($this->any())
+        $this->customerUser->expects($this->any())
             ->method('hasSalesRepresentatives')
             ->willReturn(true);
 
@@ -139,13 +139,13 @@ class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
         $this->requestToQuoteRepresentativesNotifier->notifyRepresentatives($this->request);
     }
 
-    public function testNotifyRepresentativesShouldAlwaysNotifyOwnerOfAccount()
+    public function testNotifyRepresentativesShouldAlwaysNotifyOwnerOfCustomer()
     {
-        $this->configureNotifySalesRepsOfAccountTest();
-        $this->accountUser->expects($this->any())
+        $this->configureNotifySalesRepsOfCustomerTest();
+        $this->customerUser->expects($this->any())
             ->method('getSalesRepresentatives')
             ->willReturn(new ArrayCollection());
-        $this->account->expects($this->any())
+        $this->customer->expects($this->any())
             ->method('hasSalesRepresentatives')
             ->willReturn(false);
         $this->configManager->expects($this->exactly(2))
@@ -159,16 +159,16 @@ class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
         $this->requestToQuoteRepresentativesNotifier->notifyRepresentatives($this->request);
     }
 
-    public function testNotifyRepresentativesShouldNotifyOwnerOfAccountIfNoUserSalesReps()
+    public function testNotifyRepresentativesShouldNotifyOwnerOfCustomerIfNoUserSalesReps()
     {
-        $this->configureNotifySalesRepsOfAccountTest();
+        $this->configureNotifySalesRepsOfCustomerTest();
         $this->configManager->expects($this->exactly(2))
             ->method('get')
             ->willReturn('notalways');
-        $this->accountUser->expects($this->any())
+        $this->customerUser->expects($this->any())
             ->method('getSalesRepresentatives')
             ->willReturn(new ArrayCollection());
-        $this->account->expects($this->any())
+        $this->customer->expects($this->any())
             ->method('hasSalesRepresentatives')
             ->willReturn(false);
 
@@ -181,33 +181,33 @@ class RequestRepresentativesNotifierTest extends \PHPUnit_Framework_TestCase
     protected function configureRequestMock()
     {
         $this->owner = new User();
-        $this->accountUser = $this->getMock('Oro\Bundle\CustomerBundle\Entity\AccountUser');
-        $this->accountUser->expects($this->any())
+        $this->customerUser = $this->createMock('Oro\Bundle\CustomerBundle\Entity\CustomerUser');
+        $this->customerUser->expects($this->any())
             ->method('getOwner')
             ->willReturn($this->owner);
-        $this->account = $this->getMock('Oro\Bundle\CustomerBundle\Entity\AccountUser');
-        $this->account->expects($this->any())
+        $this->customer = $this->createMock('Oro\Bundle\CustomerBundle\Entity\CustomerUser');
+        $this->customer->expects($this->any())
             ->method('getOwner')
             ->willReturn($this->owner);
         $this->request->expects($this->once())
             ->method('getId')
             ->willReturn(1);
         $this->request->expects($this->any())
-            ->method('getAccount')
-            ->willReturn($this->account);
+            ->method('getCustomer')
+            ->willReturn($this->customer);
 
         $this->request->expects($this->any())
-            ->method('getAccountUser')
-            ->willReturn($this->accountUser);
+            ->method('getCustomerUser')
+            ->willReturn($this->customerUser);
     }
 
-    protected function configureNotifySalesRepsOfAccountTest()
+    protected function configureNotifySalesRepsOfCustomerTest()
     {
         $this->configureRequestMock();
         $this->salesReps = new ArrayCollection();
         $this->salesReps->add(new User());
         $this->salesReps->add(new User());
-        $this->account->expects($this->any())
+        $this->customer->expects($this->any())
             ->method('getSalesRepresentatives')
             ->willReturn($this->salesReps);
     }

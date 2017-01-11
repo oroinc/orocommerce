@@ -1,3 +1,10 @@
+"Billing Information": "Billing Information"
+"Payment": "Payment"
+"Shipping Information": "Shipping Information"
+"Shipping Method": "Shipping Method"
+"Order Review": "Order Review"
+"Alternative Checkout": "Alternative Checkout"
+"Checkout": "Checkout"
 oro:
     workflow:
         b2b_flow_checkout:
@@ -44,6 +51,26 @@ oro:
                     label: 'Internal checkout state token'
                 order:
                     label: 'Instance of Order entity'
+                save_billing_address:
+                    label: 'Save Billing Address'
+                save_shipping_address:
+                    label: 'Save Shipping Address'
+                ship_to_billing_address:
+                    label: 'Ship to this address'
+                po_number:
+                    label: 'PO Number'
+                ship_until:
+                    label: 'Do Not Ship Later Than'
+                customer_notes:
+                    label: 'Customer Notes'
+                payment_method:
+                    label: 'Payment Method'
+                shipping_method:
+                    label: 'Shipping method'
+                shipping_method_type:
+                    label: 'Shipping method type'
+                checkout_finished:
+                    label: 'Flag indicates that checkout is finished'
             transition:
                 start_from_shoppinglist:
                     label: 'Create Order'
@@ -56,6 +83,8 @@ oro:
                             label: 'Save address'
                         ship_to_billing_address:
                             label: 'Ship to this address'
+                        state_token:
+                            label: 'State token'
                 continue_to_shipping_method:
                     label: Continue
                     attribute:
@@ -81,6 +110,17 @@ oro:
                     label: 'Verify Payment'
                 place_order:
                     label: 'Submit Order'
+                    attribute:
+                        remove_source:
+                            label: 'Remove Source Entity'
+                        po_number:
+                            label: 'PO Number'
+                        ship_until:
+                            label: 'Do Not Ship Later Than'
+                        customer_notes:
+                            label: 'Customer Notes'
+                        state_token:
+                            label: 'State token'
                 finish_checkout:
                     label: 'Finish checkout'
                 payment_error:

@@ -11,21 +11,18 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class ShoppingListRepository extends EntityRepository
 {
-
     /**
      * @param AclHelper $aclHelper
      * @param bool $selectRelations
      * @return null|ShoppingList
      */
-    public function findAvailableForAccountUser(AclHelper $aclHelper, $selectRelations = false)
+    public function findAvailableForCustomerUser(AclHelper $aclHelper, $selectRelations = false)
     {
         /** @var ShoppingList $shoppingList */
         $qb = $this->getShoppingListQueryBuilder($selectRelations);
-        $qb->addOrderBy('list.id', 'DESC')
-            ->setMaxResults(1);
-        $shoppingList = $aclHelper->apply($qb)->getOneOrNullResult();
+        $qb->addOrderBy('list.id', 'DESC')->setMaxResults(1);
 
-        return $shoppingList;
+        return $aclHelper->apply($qb)->getOneOrNullResult();
     }
 
     /**

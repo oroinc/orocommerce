@@ -5,7 +5,7 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub;
 use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 
 use Oro\Bundle\AddressBundle\Form\Type\AddressCollectionType;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountTypedAddressType;
+use Oro\Bundle\CustomerBundle\Form\Type\CustomerTypedAddressType;
 
 class AddressCollectionTypeStub extends AddressCollectionType
 {
@@ -15,8 +15,8 @@ class AddressCollectionTypeStub extends AddressCollectionType
     public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
         $resolver->setDefaults([
-            'type'     => AccountTypedAddressType::NAME,
-            'options'  => ['data_class' => 'Oro\Bundle\CustomerBundle\Entity\AccountAddress'],
+            'type'     => CustomerTypedAddressType::NAME,
+            'options'  => ['data_class' => 'Oro\Bundle\CustomerBundle\Entity\CustomerAddress'],
             'multiple' => true,
         ]);
 

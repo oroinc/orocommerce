@@ -4,7 +4,7 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\Event\LifecycleEventArgs;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\EventListener\RecordOwnerDataListener;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Fixtures\Entity\User;
 use Oro\Bundle\EntityConfigBundle\Config\Config;
@@ -59,7 +59,7 @@ class RecordOwnerDataListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getToken')
             ->will($this->returnValue($token));
 
-        $args = new LifecycleEventArgs($entity, $this->getMock(ObjectManager::class));
+        $args = new LifecycleEventArgs($entity, $this->createMock(ObjectManager::class));
         $this->configProvider->expects($this->once())
             ->method('hasConfig')
             ->will($this->returnValue(true));
@@ -88,8 +88,8 @@ class RecordOwnerDataListenerTest extends \PHPUnit_Framework_TestCase
         $user = new User();
         $user->setId(1);
 
-        $account = $this->getMock(Account::class);
-        $user->setAccount($account);
+        $customer = $this->createMock(Customer::class);
+        $user->setCustomer($customer);
 
         $userConfig = new Config($entityConfigId);
         $userConfig->setValues(
@@ -122,10 +122,10 @@ class RecordOwnerDataListenerTest extends \PHPUnit_Framework_TestCase
                 $userConfig,
                 ['owner' => $user]
             ],
-            'OwnershipType Account with UsernamePasswordToken' => [
+            'OwnershipType Customer with UsernamePasswordToken' => [
                 new UsernamePasswordToken($user, 'admin', 'key'),
                 $buConfig,
-                ['owner' => $account]
+                ['owner' => $customer]
             ],
             'OwnershipType Organization with UsernamePasswordToken' => [
                 new UsernamePasswordToken($user, 'admin', 'key'),

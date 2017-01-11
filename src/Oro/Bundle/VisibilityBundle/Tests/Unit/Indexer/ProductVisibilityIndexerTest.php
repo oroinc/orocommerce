@@ -38,6 +38,7 @@ class ProductVisibilityIndexerTest extends \PHPUnit_Framework_TestCase
         $entityIds = [1, 2, 3];
         $websiteId = 1;
         $event = new IndexEntityEvent(
+            \stdClass::class,
             $entityIds,
             [
                 AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY => $websiteId
@@ -46,20 +47,20 @@ class ProductVisibilityIndexerTest extends \PHPUnit_Framework_TestCase
 
         $this->visibilityProvider
             ->expects($this->once())
-            ->method('getAccountVisibilitiesForProducts')
+            ->method('getCustomerVisibilitiesForProducts')
             ->with($entityIds, $websiteId)
             ->willReturn([
                 [
                     'productId' => 1,
-                    'accountId' => 1,
+                    'customerId' => 1,
                 ],
                 [
                     'productId' => 2,
-                    'accountId' => 3,
+                    'customerId' => 3,
                 ],
                 [
                     'productId' => 3,
-                    'accountId' => 2,
+                    'customerId' => 2,
                 ]
             ]);
 
@@ -92,27 +93,36 @@ class ProductVisibilityIndexerTest extends \PHPUnit_Framework_TestCase
 
         $expectedEntitiesData = [
             1 => [
-                'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_HIDDEN,
-                'visibility_new' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
-                'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
-                'visibility_account_ACCOUNT_ID' => [
-                    new PlaceholderValue(1, ['ACCOUNT_ID' => 1]),
+                'visibility_anonymous' =>
+                    ['value' => BaseVisibilityResolved::VISIBILITY_HIDDEN, 'all_text' => false],
+                'visibility_new' =>
+                    ['value' => BaseVisibilityResolved::VISIBILITY_VISIBLE, 'all_text' => false],
+                'is_visible_by_default' =>
+                    ['value' => BaseVisibilityResolved::VISIBILITY_VISIBLE, 'all_text' => false],
+                'visibility_customer_ACCOUNT_ID' => [
+                    ['value' => new PlaceholderValue(1, ['ACCOUNT_ID' => 1]), 'all_text' => false],
                 ]
             ],
             2 => [
-                'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
-                'visibility_new' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
-                'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_HIDDEN,
-                'visibility_account_ACCOUNT_ID' => [
-                    new PlaceholderValue(1, ['ACCOUNT_ID' => 3])
+                'visibility_anonymous' =>
+                    ['value' => BaseVisibilityResolved::VISIBILITY_VISIBLE, 'all_text' => false],
+                'visibility_new' =>
+                    ['value' => BaseVisibilityResolved::VISIBILITY_VISIBLE, 'all_text' => false],
+                'is_visible_by_default' =>
+                    ['value' => BaseVisibilityResolved::VISIBILITY_HIDDEN, 'all_text' => false],
+                'visibility_customer_ACCOUNT_ID' => [
+                    ['value' => new PlaceholderValue(1, ['ACCOUNT_ID' => 3]), 'all_text' => false]
                 ]
             ],
             3 => [
-                'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
-                'visibility_new' => BaseVisibilityResolved::VISIBILITY_HIDDEN,
-                'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
-                'visibility_account_ACCOUNT_ID' => [
-                    new PlaceholderValue(1, ['ACCOUNT_ID' => 2]),
+                'visibility_anonymous' =>
+                    ['value' => BaseVisibilityResolved::VISIBILITY_VISIBLE, 'all_text' => false],
+                'visibility_new' =>
+                    ['value' => BaseVisibilityResolved::VISIBILITY_HIDDEN, 'all_text' => false],
+                'is_visible_by_default' =>
+                    ['value' => BaseVisibilityResolved::VISIBILITY_VISIBLE, 'all_text' => false],
+                'visibility_customer_ACCOUNT_ID' => [
+                    ['value' => new PlaceholderValue(1, ['ACCOUNT_ID' => 2]), 'all_text' => false],
                 ]
             ]
         ];

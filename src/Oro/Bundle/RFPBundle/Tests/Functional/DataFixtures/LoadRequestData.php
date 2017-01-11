@@ -37,6 +37,8 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
     const REQUEST9 = 'rfp.request.9';
     const REQUEST10 = 'rfp.request.10';
     const REQUEST11 = 'rfp.request.11';
+    const REQUEST12 = 'rfp.request.12';
+    const REQUEST13 = 'rfp.request.13';
 
     /**
      * @var array
@@ -61,8 +63,8 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'company' => 'Google',
             'role' => 'CEO',
             'note' => self::REQUEST2,
-            'account' => LoadUserData::ACCOUNT1,
-            'accountUser' => LoadUserData::ACCOUNT1_USER1,
+            'customer' => LoadUserData::ACCOUNT1,
+            'customerUser' => LoadUserData::ACCOUNT1_USER1,
             'po_number' => self::PO_NUMBER,
             'ship_until' => true,
         ],
@@ -74,8 +76,8 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'company' => 'Google',
             'role' => 'CEO',
             'note' => self::REQUEST3,
-            'account' => LoadUserData::ACCOUNT1,
-            'accountUser' => LoadUserData::ACCOUNT1_USER2,
+            'customer' => LoadUserData::ACCOUNT1,
+            'customerUser' => LoadUserData::ACCOUNT1_USER2,
         ],
         self::REQUEST4 => [
             'first_name' => self::FIRST_NAME,
@@ -85,8 +87,8 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'company' => 'Google',
             'role' => 'CEO',
             'note' => self::REQUEST4,
-            'account' => LoadUserData::ACCOUNT1,
-            'accountUser' => LoadUserData::ACCOUNT1_USER3,
+            'customer' => LoadUserData::ACCOUNT1,
+            'customerUser' => LoadUserData::ACCOUNT1_USER3,
         ],
         self::REQUEST5 => [
             'first_name' => self::FIRST_NAME,
@@ -96,8 +98,8 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'company' => 'Google',
             'role' => 'CEO',
             'note' => self::REQUEST5,
-            'account' => LoadUserData::ACCOUNT2,
-            'accountUser' => LoadUserData::ACCOUNT2_USER1,
+            'customer' => LoadUserData::ACCOUNT2,
+            'customerUser' => LoadUserData::ACCOUNT2_USER1,
         ],
         self::REQUEST6 => [
             'first_name' => self::FIRST_NAME,
@@ -107,8 +109,8 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'company' => 'Google',
             'role' => 'CEO',
             'note' => self::REQUEST6,
-            'account' => LoadUserData::ACCOUNT2,
-            'accountUser' => LoadUserData::ACCOUNT2_USER1,
+            'customer' => LoadUserData::ACCOUNT2,
+            'customerUser' => LoadUserData::ACCOUNT2_USER1,
         ],
         self::REQUEST7 => [
             'first_name' => self::FIRST_NAME,
@@ -118,8 +120,8 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'company' => 'Google',
             'role' => 'CEO',
             'note' => self::REQUEST7,
-            'account' => LoadUserData::ACCOUNT1,
-            'accountUser' => LoadUserData::ACCOUNT1_USER1,
+            'customer' => LoadUserData::ACCOUNT1,
+            'customerUser' => LoadUserData::ACCOUNT1_USER1,
         ],
         self::REQUEST8 => [
             'first_name' => self::FIRST_NAME,
@@ -129,8 +131,8 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'company' => 'Google',
             'role' => 'CEO',
             'note' => self::REQUEST8,
-            'account' => LoadUserData::ACCOUNT1,
-            'accountUser' => LoadUserData::ACCOUNT1_USER1,
+            'customer' => LoadUserData::ACCOUNT1,
+            'customerUser' => LoadUserData::ACCOUNT1_USER1,
             'po_number' => self::PO_NUMBER,
             'ship_until' => true,
         ],
@@ -142,8 +144,8 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'company' => 'Google',
             'role' => 'CEO',
             'note' => self::REQUEST8,
-            'account' => LoadUserData::ACCOUNT1,
-            'accountUser' => LoadUserData::ACCOUNT1_USER3,
+            'customer' => LoadUserData::ACCOUNT1,
+            'customerUser' => LoadUserData::ACCOUNT1_USER3,
             'po_number' => self::PO_NUMBER,
             'ship_until' => true,
             'deleted' => '-1 day'
@@ -156,8 +158,8 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'company' => 'Google',
             'role' => 'CEO',
             'note' => self::REQUEST10,
-            'account' => LoadUserData::PARENT_ACCOUNT,
-            'accountUser' => LoadUserData::PARENT_ACCOUNT_USER1
+            'customer' => LoadUserData::PARENT_ACCOUNT,
+            'customerUser' => LoadUserData::PARENT_ACCOUNT_USER1
         ],
         self::REQUEST11 => [
             'first_name' => 'PAUser2FN',
@@ -167,8 +169,28 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'company' => 'Google',
             'role' => 'CEO',
             'note' => self::REQUEST11,
-            'account' => LoadUserData::PARENT_ACCOUNT,
-            'accountUser' => LoadUserData::PARENT_ACCOUNT_USER2
+            'customer' => LoadUserData::PARENT_ACCOUNT,
+            'customerUser' => LoadUserData::PARENT_ACCOUNT_USER2
+        ],
+        self::REQUEST12 => [
+            'first_name' => 'PAWithoutUserFN',
+            'last_name' => 'PAWithoutUserLN',
+            'email' => 'test@example.com',
+            'phone' => '2-(999)111-1456',
+            'company' => 'Google',
+            'role' => 'CEO',
+            'note' => self::REQUEST12,
+            'customer' => LoadUserData::PARENT_ACCOUNT
+        ],
+        self::REQUEST13 => [
+            'first_name' => 'AWithoutUserFN',
+            'last_name' => 'AWithoutUserLN',
+            'email' => 'test@example.com',
+            'phone' => '2-(999)111-4625',
+            'company' => 'Google',
+            'role' => 'CEO',
+            'note' => self::REQUEST13,
+            'customer' => LoadUserData::ACCOUNT2
         ],
     ];
 
@@ -229,12 +251,12 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
                 ->setOwner($owner)
                 ->setOrganization($organization);
 
-            if (!empty($rawRequest['account'])) {
-                $request->setAccount($this->getReference($rawRequest['account']));
+            if (!empty($rawRequest['customer'])) {
+                $request->setCustomer($this->getReference($rawRequest['customer']));
             }
 
-            if (!empty($rawRequest['accountUser'])) {
-                $request->setAccountUser($this->getReference($rawRequest['accountUser']));
+            if (!empty($rawRequest['customerUser'])) {
+                $request->setCustomerUser($this->getReference($rawRequest['customerUser']));
             }
 
             $this->processRequestProducts($request);

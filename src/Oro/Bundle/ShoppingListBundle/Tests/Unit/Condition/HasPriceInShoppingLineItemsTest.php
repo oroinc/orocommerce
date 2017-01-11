@@ -6,7 +6,7 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\ConfigExpression\ContextAccessorInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
@@ -71,7 +71,7 @@ class HasPriceInShoppingLineItemsTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $priceListRequestHandler->expects($this->any())
-            ->method('getPriceListByAccount')
+            ->method('getPriceListByCustomer')
             ->will($this->returnValue(new BasePriceList()));
 
         $condition = new HasPriceInShoppingLineItems(
@@ -145,7 +145,7 @@ class HasPriceInShoppingLineItemsTest extends \PHPUnit_Framework_TestCase
      *
      * @param $context
      * @param LineItem[] $lineItems
-     * @param AccountUser $user
+     * @param CustomerUser $user
      * @param Price[] $prices
      */
     public function testEvaluates($context, $lineItems, $user, $prices, $expectedResult)
@@ -189,14 +189,14 @@ class HasPriceInShoppingLineItemsTest extends \PHPUnit_Framework_TestCase
             [
                 $shoppingList,
                 $lineItems,
-                new AccountUser(),
+                new CustomerUser(),
                 [$price],
                 true
             ],
             [
                 $shoppingList,
                 $lineItems,
-                new AccountUser(),
+                new CustomerUser(),
                 [],
                 false
             ],

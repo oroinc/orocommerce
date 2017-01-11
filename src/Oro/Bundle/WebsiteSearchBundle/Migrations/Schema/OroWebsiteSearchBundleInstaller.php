@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Migrations\Schema;
 
+use Oro\Bundle\WebsiteSearchBundle\Migrations\Schema\v1_1\OroWebsiteSearchBundleUseInnoDbQuery;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
@@ -28,7 +29,7 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
      */
     public function getMigrationVersion()
     {
-        return 'v1_0';
+        return 'v1_1';
     }
 
     /**
@@ -51,6 +52,8 @@ class OroWebsiteSearchBundleInstaller implements Installation, ContainerAwareInt
 
         $query = $this->container->get('oro_website_search.fulltext_index_manager')->getQuery();
         $queries->addQuery($query);
+        // switch oro_website_search_text table to InnoDB in case of MySQL >= 5.6
+        $queries->addPostQuery(new OroWebsiteSearchBundleUseInnoDbQuery());
     }
 
     /**

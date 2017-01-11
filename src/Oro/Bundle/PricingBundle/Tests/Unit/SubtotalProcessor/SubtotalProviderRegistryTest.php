@@ -57,7 +57,7 @@ class SubtotalProviderRegistryTest extends \PHPUnit_Framework_TestCase
      */
     protected function getProviderMock($name)
     {
-        $provider = $this->getMock('Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface');
+        $provider = $this->createMock('Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalProviderInterface');
         $provider->expects($this->any())
             ->method('getName')
             ->will($this->returnValue($name));

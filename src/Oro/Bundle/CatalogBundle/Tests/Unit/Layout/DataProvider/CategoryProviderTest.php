@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Layout\DataProvider;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
@@ -30,9 +30,9 @@ class CategoryProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->requestProductHandler = $this->getMock(RequestProductHandler::class, [], [], '', false);
-        $this->categoryRepository = $this->getMock(CategoryRepository::class, [], [], '', false);
-        $this->categoryTreeProvider = $this->getMock(CategoryTreeProvider::class, [], [], '', false);
+        $this->requestProductHandler = $this->createMock(RequestProductHandler::class);
+        $this->categoryRepository = $this->createMock(CategoryRepository::class);
+        $this->categoryTreeProvider = $this->createMock(CategoryTreeProvider::class);
 
         $this->categoryProvider = new CategoryProvider(
             $this->requestProductHandler,
@@ -105,7 +105,7 @@ class CategoryProviderTest extends \PHPUnit_Framework_TestCase
         $rootCategory->setLevel(0);
         $rootCategory->addChildCategory($mainCategory);
 
-        $user = new AccountUser();
+        $user = new CustomerUser();
 
         $this->categoryRepository
             ->expects($this->once())
@@ -124,11 +124,11 @@ class CategoryProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetParentCategories()
     {
-        $category = $this->getMock(Category::class);
+        $category = $this->createMock(Category::class);
         $categoryId = 1;
 
-        $categoryParent = $this->getMock(Category::class);
-        $categoryParent2 = $this->getMock(Category::class);
+        $categoryParent = $this->createMock(Category::class);
+        $categoryParent2 = $this->createMock(Category::class);
 
         $category->expects($this->once())
             ->method('getParentCategory')

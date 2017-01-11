@@ -6,9 +6,9 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\OrderBundle\Tests\Unit\Provider\AbstractQuoteAddressProviderTest;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressProvider;
 
@@ -32,7 +32,7 @@ class QuoteAddressProviderTest extends AbstractQuoteAddressProviderTest
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
 
         $this->aclHelper = $this->getMockBuilder('Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper')
             ->disableOriginalConstructor()
@@ -42,8 +42,8 @@ class QuoteAddressProviderTest extends AbstractQuoteAddressProviderTest
             $this->securityFacade,
             $this->registry,
             $this->aclHelper,
-            $this->accountAddressClass,
-            $this->accountUserAddressClass
+            $this->customerAddressClass,
+            $this->customerUserAddressClass
         );
     }
 
@@ -51,61 +51,61 @@ class QuoteAddressProviderTest extends AbstractQuoteAddressProviderTest
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Unknown type "test", known types are: shipping
      */
-    public function testGetAccountAddressesUnsupportedType()
+    public function testGetCustomerAddressesUnsupportedType()
     {
-        $this->provider->getAccountAddresses(new Account(), 'test');
+        $this->provider->getCustomerAddresses(new Customer(), 'test');
     }
 
     /**
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Unknown type "test", known types are: shipping
      */
-    public function testGetAccountUserAddressesUnsupportedType()
+    public function testGetCustomerUserAddressesUnsupportedType()
     {
-        $this->provider->getAccountUserAddresses(new AccountUser(), 'test');
+        $this->provider->getCustomerUserAddresses(new CustomerUser(), 'test');
     }
 
     /**
      * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function accountUserAddressPermissions()
+    public function customerUserAddressPermissions()
     {
         return [
             [
                 'shipping',
                 [
-                    'oro_quote_address_shipping_account_user_use_any' => false,
-                    'oro_quote_address_shipping_account_user_use_default' => false,
+                    'oro_quote_address_shipping_customer_user_use_any' => false,
+                    'oro_quote_address_shipping_customer_user_use_default' => false,
                 ],
                 null,
                 [],
-                new AccountUser()
+                new CustomerUser()
             ],
             [
                 'shipping',
                 [
-                    'oro_quote_address_shipping_account_user_use_any' => true
+                    'oro_quote_address_shipping_customer_user_use_any' => true
                 ],
                 'getAddressesByType',
-                [new AccountUserAddress()],
-                new AccountUser()
+                [new CustomerUserAddress()],
+                new CustomerUser()
             ],
             [
                 'shipping',
                 [
-                    'oro_quote_address_shipping_account_user_use_any' => false,
-                    'oro_quote_address_shipping_account_user_use_default' => true
+                    'oro_quote_address_shipping_customer_user_use_any' => false,
+                    'oro_quote_address_shipping_customer_user_use_default' => true
                 ],
                 'getDefaultAddressesByType',
-                [new AccountUserAddress()],
-                new AccountUser()
+                [new CustomerUserAddress()],
+                new CustomerUser()
             ],
             [
                 'shipping',
                 [
-                    'oro_quote_address_shipping_account_user_use_any_backend' => false,
-                    'oro_quote_address_shipping_account_user_use_default_backend' => false,
+                    'oro_quote_address_shipping_customer_user_use_any_backend' => false,
+                    'oro_quote_address_shipping_customer_user_use_default_backend' => false,
                 ],
                 null,
                 [],
@@ -114,20 +114,20 @@ class QuoteAddressProviderTest extends AbstractQuoteAddressProviderTest
             [
                 'shipping',
                 [
-                    'oro_quote_address_shipping_account_user_use_any_backend' => true
+                    'oro_quote_address_shipping_customer_user_use_any_backend' => true
                 ],
                 'getAddressesByType',
-                [new AccountUserAddress()],
+                [new CustomerUserAddress()],
                 new \stdClass()
             ],
             [
                 'shipping',
                 [
-                    'oro_quote_address_shipping_account_user_use_any_backend' => false,
-                    'oro_quote_address_shipping_account_user_use_default_backend' => true
+                    'oro_quote_address_shipping_customer_user_use_any_backend' => false,
+                    'oro_quote_address_shipping_customer_user_use_default_backend' => true
                 ],
                 'getDefaultAddressesByType',
-                [new AccountUserAddress()],
+                [new CustomerUserAddress()],
                 new \stdClass()
             ]
         ];
@@ -136,11 +136,11 @@ class QuoteAddressProviderTest extends AbstractQuoteAddressProviderTest
     /**
      * @return array
      */
-    public function accountAddressPermissions()
+    public function customerAddressPermissions()
     {
         return [
-            ['shipping', 'oro_quote_address_shipping_account_use_any', new AccountUser()],
-            ['shipping', 'oro_quote_address_shipping_account_use_any_backend', new \stdClass()],
+            ['shipping', 'oro_quote_address_shipping_customer_use_any', new CustomerUser()],
+            ['shipping', 'oro_quote_address_shipping_customer_use_any_backend', new \stdClass()],
         ];
     }
 }

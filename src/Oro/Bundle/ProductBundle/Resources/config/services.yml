@@ -53,6 +53,22 @@ services:
         tags:
             - { name: twig.extension }
 
+    oro_product.twig.product_form_unit_fields_settings:
+        class: 'Oro\Bundle\ProductBundle\Twig\ProductUnitFieldsSettingsExtension'
+        public: false
+        arguments:
+            - "@oro_product.visibility.product_unit_fields_settings"
+        tags:
+            - { name: twig.extension }
+
+    oro_product.twig.unit_visibility:
+        class: 'Oro\Bundle\ProductBundle\Twig\UnitVisibilityExtension'
+        public: false
+        arguments:
+            - "@oro_product.visibility.unit"
+        tags:
+            - { name: twig.extension }
+
     oro_product.twig.product_unit_label:
         class: 'Oro\Bundle\ProductBundle\Twig\ProductUnitLabelExtension'
         public: false
@@ -219,6 +235,33 @@ services:
             - "@doctrine"
             - "@oro_product.formatter.product_unit_label"
 
+    oro_product.service.single_unit_mode:
+        class: 'Oro\Bundle\ProductBundle\Service\SingleUnitModeService'
+        public: false
+        arguments:
+            - "@oro_config.manager"
+
+    oro_product.layout.data_provider.single_unit_mode:
+        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\SingleUnitModeProvider'
+        arguments:
+            - "@oro_product.service.single_unit_mode"
+        tags:
+            - { name: layout.data_provider, alias: oro_product_single_unit_mode }
+
+    oro_product.layout.data_provider.unit_visibility:
+        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\UnitVisibilityProvider'
+        arguments:
+            - "@oro_product.visibility.unit"
+        tags:
+            - { name: layout.data_provider, alias: oro_unit_visibility }
+
+    oro_product.layout.data_provider.product_unit_fields_settings:
+        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\ProductUnitFieldsSettingsProvider'
+        arguments:
+            - "@oro_product.visibility.product_unit_fields_settings"
+        tags:
+            - { name: layout.data_provider, alias: oro_product_unit_fields_settings }
+
     oro_product.provider.default_product_unit_provider.chain:
         class: 'Oro\Bundle\ProductBundle\Provider\ChainDefaultProductUnitProvider'
         public: false
@@ -228,18 +271,18 @@ services:
         public: false
         arguments:
             - "@oro_config.manager"
-            - "@doctrine"
+            - "@oro_entity.doctrine_helper"
         tags:
             - {name: oro_product.default_product_unit_provider, priority: 0}
 
-    oro_product.provider.product_title_provider:
-        class: 'Oro\Bundle\ProductBundle\Provider\ProductTitleProvider'
+    oro_product.provider.default_product_unit_provider.single_unit:
+        class: 'Oro\Bundle\ProductBundle\Provider\SingleUnitDefaultProductUnitProvider'
         public: false
         arguments:
-            - '@property_accessor'
-            - '@oro_locale.helper.localization.link'
+            - "@oro_product.service.single_unit_mode"
+            - "@oro_product.provider.default_product_unit_provider.system"
         tags:
-            - { name: oro_web_catalog.content_variant_title_provider }
+            - {name: oro_product.default_product_unit_provider, priority: 240}
 
     oro_product.event_listener.product_variant_custom_fields_datagrid:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductVariantCustomFieldsDatagridListener'
@@ -247,14 +290,16 @@ services:
             - "@oro_entity.doctrine_helper"
             - "@oro_product.provider.custom_field_provider"
             - '%oro_product.entity.product.class%'
+            - '%oro_product.entity.product_variant_link.class%'
         tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.oro_product-product_variants-product_view, method: onBuildBefore }
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.oro_product-product_variants-product_view, method: onResultAfter }
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.oro_product-product_variants-product_edit, method: onBuildBefore }
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.oro_product-product_variants-product_edit, method: onResultAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-product-variants-view, method: onBuildAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-product-variants-edit, method: onBuildAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.product-product-variants-edit, method: onBuildBeforeHideUnsuitable }
 
     oro_product.validator.unique_variant_links:
         class: 'Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator'
+        arguments:
+            - "@property_accessor"
         tags:
             - { name: validator.constraint_validator, alias: oro_product_unique_variant_links }
 
@@ -280,6 +325,14 @@ services:
             - "@oro_entity_config.config_model_manager"
         tags:
             - { name: kernel.event_listener, event: console.command, name: onConsoleCommand }
+
+    oro_product.event_listener.product_content_variant_reindex:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductContentVariantReindexEventListener'
+        arguments:
+            - "@event_dispatcher"
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+            - { name: kernel.event_listener, event: oro.form.update_handler.after_entity_flush, method: onFormAfterFlush }
 
     oro_product.model.product_visibility_query_builder_modifier:
         class: 'Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier'
@@ -385,6 +438,14 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.frontend-product-search-grid, method: onPreBuild }
             - { name: kernel.event_listener, event: oro_datagrid.search_datasource.result.after.frontend-product-search-grid, method: onResultAfter }
 
+    oro_product.event_listener.product_handler:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductHandlerListener'
+        arguments:
+            - '@property_accessor'
+            - '@logger'
+        tags:
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush, method: onBeforeFlush }
+
     oro_product.layout.data_provider.frontend_datagrid_row_view:
         class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\FrontendDatagridRowViewProvider'
         arguments:
@@ -399,6 +460,13 @@ services:
             - '@router'
         tags:
             - { name: layout.data_provider, alias: oro_product_form }
+
+    oro_product.layout.data_provider.product_variant:
+        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\ProductVariantProvider'
+        arguments:
+            - '@oro_product.provider.product_variant_availability_provider'
+        tags:
+            - { name: layout.data_provider, alias: oro_product_variant }
 
     oro_product.api.processor.update_product.build_query:
         class: 'Oro\Bundle\ProductBundle\Api\Processor\BuildSingleProductQuery'
@@ -434,6 +502,15 @@ services:
             - 'oro_product.general_frontend_product_visibility'
         tags:
             - { name: kernel.event_listener, event: oro_website_search.event.restrict_index_entity.product, method: onRestrictIndexEntityEvent }
+
+    oro_product.event_listener.restrict_product_variant_event:
+        class: 'Oro\Bundle\ProductBundle\EventListener\RestrictProductVariantEventListener'
+        arguments:
+            - '@oro_config.manager'
+            - '@oro_product.model.product_visibility_query_builder_modifier'
+            - 'oro_product.general_frontend_product_visibility'
+        tags:
+            - { name: kernel.event_listener, event: oro_product.event.restrict_product_variant_event, method: onRestrictProductVariantEvent }
 
     oro_product.layout.data_provider.featured_products:
         class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\FeaturedProductsProvider'
@@ -523,3 +600,70 @@ services:
             - '@request_stack'
         tags:
             - { name: layout.data_provider, alias: oro_product_quick_add_collection }
+
+    oro_product.provider.product_content_variant_provider:
+        class: Oro\Bundle\ProductBundle\Provider\ProductContentVariantProvider
+        tags:
+            - { name: oro_web_catalog.content_variant_provider }
+
+    oro_product.event_listener.attribute_family_form_view:
+        parent: oro_entity_config.event_listener.attribute_family_form_view.abstract
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-one, method: onEdit }
+
+    oro_product.event_listener.attributes_form_view:
+        parent: oro_entity_config.event_listener.attributes_form_view.abstract
+        tags:
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onEdit, priority: -255 }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-two, method: onEdit, priority: -255 }
+            - { name: kernel.event_listener, event: entity_form.render.before, method: onFormRender, priority: -255 }
+            - { name: kernel.event_listener, event: entity_view.render.before, method: onViewRender, priority: -255 }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onViewList, priority: -255 }
+
+    oro_product.provider.product_variant_availability_provider:
+        class: 'Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_entity_extend.enum_value_provider'
+            - '@oro_product.provider.custom_field_provider'
+            - '@property_accessor'
+            - '@event_dispatcher'
+
+    oro_product.visibility.product_unit_fields_settings:
+        class: 'Oro\Bundle\ProductBundle\Visibility\BasicProductUnitFieldsSettings'
+        public: false
+        arguments:
+            - "@oro_entity.doctrine_helper"
+
+    oro_product.visibility.single_unit_mode_product_unit_fields_settings_decorator:
+        class: 'Oro\Bundle\ProductBundle\Visibility\SingleUnitModeProductUnitFieldsSettingsDecorator'
+        public: false
+        decorates: oro_product.visibility.product_unit_fields_settings
+        decoration_priority: 10
+        arguments:
+            - "@oro_product.visibility.single_unit_mode_product_unit_fields_settings_decorator.inner"
+            - "@oro_product.service.single_unit_mode"
+            - "@oro_entity.doctrine_helper"
+
+    oro_product.visibility.unit:
+        class: 'Oro\Bundle\ProductBundle\Visibility\BasicUnitVisibility'
+        public: false
+
+    oro_product.visibility.single_unit_mode_unit:
+        class: 'Oro\Bundle\ProductBundle\Visibility\SingleUnitModeUnitVisibilityDecorator'
+        public: false
+        decorates: oro_product.visibility.unit
+        decoration_priority: 10
+        arguments:
+            - "@oro_product.visibility.single_unit_mode_unit.inner"
+            - "@oro_product.service.single_unit_mode"
+
+    oro_product.event_listener.unit_visibility.datagrid_basic:
+        class: 'Oro\Bundle\ProductBundle\EventListener\UnitVisibilityModeDataGridListener'
+        abstract: true
+        arguments:
+            - 'unitCode'
+            - 'quantity'
+            - 'OroProductBundle:ProductUnit:Datagrid/quantity.html.twig'
+            - {isShortUnitCode: true}
+            - '@oro_product.service.single_unit_mode'

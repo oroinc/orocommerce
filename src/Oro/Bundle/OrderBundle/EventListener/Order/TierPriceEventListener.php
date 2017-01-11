@@ -46,7 +46,7 @@ class TierPriceEventListener
             }
         );
 
-        $priceList = $this->priceListTreeHandler->getPriceList($order->getAccount(), $order->getWebsite());
+        $priceList = $this->priceListTreeHandler->getPriceList($order->getCustomer(), $order->getWebsite());
         $prices = [];
         if ($priceList) {
             $prices = $this->productPriceProvider->getPriceByPriceListIdAndProductIds(

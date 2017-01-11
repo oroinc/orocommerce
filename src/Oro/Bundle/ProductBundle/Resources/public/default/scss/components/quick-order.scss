@@ -127,7 +127,7 @@
   margin: 0 -7px 15px;
 
   @media (max-width: $screen-md) {
-    margin: 0 -5px;
+    margin: 5px -5px;
   }
 
   @include clearfix();
@@ -262,8 +262,6 @@
 
   .widget-content {
     .action-button {
-      background-color: get-color('additional', 'darker');
-
       &.btn-inactive {
         background-color: get-color('additional', 'middle');
       }
@@ -282,6 +280,13 @@
 
   table {
     width: 100%;
+  }
+
+  tr:first-child {
+    th,
+    td {
+      border-top: none;
+    }
   }
 
   .import-errors {

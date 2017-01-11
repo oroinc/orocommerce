@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Model;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData as AccountLoadAccountUserData;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData as CustomerLoadCustomerUserData;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -40,11 +40,11 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(AccountLoadAccountUserData::EMAIL, AccountLoadAccountUserData::PASSWORD)
+            $this->generateBasicAuthHeader(CustomerLoadCustomerUserData::EMAIL, CustomerLoadCustomerUserData::PASSWORD)
         );
 
         $this->loadFixtures([
-            LoadAccountUserData::class,
+            LoadCustomerUserData::class,
             LoadCategoryVisibilityData::class,
             LoadProductVisibilityData::class
         ]);
@@ -70,7 +70,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
     public function testModify($configValue, $user, $expectedData)
     {
         if ($user) {
-            /** @var AccountUser $user */
+            /** @var CustomerUser $user */
             $user = $this->getReference($user);
             $token = new UsernamePasswordToken($user, $user->getPassword(), 'key');
             $this->client->getContainer()->get('security.token_storage')->setToken($token);
@@ -108,7 +108,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         return [
             'config visible' => [
                 'configValue' => ProductVisibility::VISIBLE,
-                'user' => AccountLoadAccountUserData::EMAIL,
+                'user' => CustomerLoadCustomerUserData::EMAIL,
                 'expectedData' => [
                     'product.1',
                     'product.5',
@@ -118,7 +118,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
             ],
             'config hidden' => [
                 'configValue' => ProductVisibility::HIDDEN,
-                'user' => AccountLoadAccountUserData::EMAIL,
+                'user' => CustomerLoadCustomerUserData::EMAIL,
                 'expectedData' => [
                     'product.1',
                     'product.7',
@@ -147,7 +147,7 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
             ],
             'group config visible' => [
                 'configValue' => ProductVisibility::VISIBLE,
-                'user' => AccountLoadAccountUserData::GROUP2_EMAIL,
+                'user' => CustomerLoadCustomerUserData::GROUP2_EMAIL,
                 'expectedData' => [
                     'product.1',
                     'product.3',
@@ -156,9 +156,9 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     'product.8',
                 ]
             ],
-            'account without group and config visible' => [
+            'customer without group and config visible' => [
                 'configValue' => ProductVisibility::VISIBLE,
-                'user' => AccountLoadAccountUserData::ORPHAN_EMAIL,
+                'user' => CustomerLoadCustomerUserData::ORPHAN_EMAIL,
                 'expectedData' => [
                     'product.1',
                     'product.2',
@@ -170,9 +170,9 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                     'product.8',
                 ]
             ],
-            'account without group and config hidden' => [
+            'customer without group and config hidden' => [
                 'configValue' => ProductVisibility::HIDDEN,
-                'user' => AccountLoadAccountUserData::ORPHAN_EMAIL,
+                'user' => CustomerLoadCustomerUserData::ORPHAN_EMAIL,
                 'expectedData' => [
                     'product.2',
                     'product.3',
@@ -188,7 +188,8 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
             ->select('p.sku')->orderBy('p.sku');
 
         $message = sprintf('%s::productConfigPath not configured', get_class($this->modifier));
-        $this->setExpectedException('\LogicException', $message);
+        $this->expectException('\LogicException');
+        $this->expectExceptionMessage($message);
         $this->modifier->modify($queryBuilder);
     }
 
@@ -198,7 +199,8 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
             ->select('p.sku')->orderBy('p.sku');
 
         $message = sprintf('%s::categoryConfigPath not configured', get_class($this->modifier));
-        $this->setExpectedException('\LogicException', $message);
+        $this->expectException('\LogicException');
+        $this->expectExceptionMessage($message);
         $this->modifier->setProductVisibilitySystemConfigurationPath(self::PRODUCT_VISIBILITY_CONFIGURATION_PATH);
         $this->modifier->modify($queryBuilder);
     }

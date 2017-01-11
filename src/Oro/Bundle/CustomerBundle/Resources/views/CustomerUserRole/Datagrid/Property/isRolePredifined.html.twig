@@ -1,0 +1,5 @@
+{% if record.getValue('isRolePredefined') %}
+    {{ 'oro.customer.customeruserrole.type.predefined.label'|trans }}
+{% else %}
+    {{ 'oro.customer.customeruserrole.type.customizable.label'|trans }}
+{% endif %}

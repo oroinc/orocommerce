@@ -13,12 +13,12 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            account: null,
+            customer: null,
             currency: null,
             tierPrices: null,
             tierPricesRoute: '',
             requestKeys: {
-                ACCOUNT: 'account_id',
+                ACCOUNT: 'customer_id',
                 CURRENCY: 'currency'
             }
         },
@@ -43,7 +43,7 @@ define(function(require) {
 
         initFieldsListeners: function() {
             mediator.on('update:currency', this.setCurrency, this);
-            mediator.on('update:account', this.setAccount, this);
+            mediator.on('update:customer', this.setCustomer, this);
         },
 
         /**
@@ -73,7 +73,7 @@ define(function(require) {
                     product_ids: products
                 };
                 params[this.options.requestKeys.CURRENCY] = this.getCurrency();
-                params[this.options.requestKeys.ACCOUNT] = this.getAccount();
+                params[this.options.requestKeys.ACCOUNT] = this.getCustomer();
                 params = _.extend({}, params, context.requestAttributes || {});
 
                 $.get(routing.generate(this.options.tierPricesRoute, params), callback);
@@ -135,12 +135,12 @@ define(function(require) {
             this.reloadPrices();
         },
 
-        getAccount: function() {
-            return this.options.account;
+        getCustomer: function() {
+            return this.options.customer;
         },
 
-        setAccount: function(val) {
-            this.options.account = val;
+        setCustomer: function(val) {
+            this.options.customer = val;
             this.reloadPrices();
         },
 

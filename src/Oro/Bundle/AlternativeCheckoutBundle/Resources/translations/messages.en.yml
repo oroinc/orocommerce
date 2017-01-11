@@ -1,11 +1,35 @@
+"Alternative Checkout: Order Approval": "Alternative Checkout: Order Approval"
+"Alternative Checkout: Billing Information": "Alternative Checkout: Billing Information"
+"Alternative Checkout: Payment": "Alternative Checkout: Payment"
+"Alternative Checkout: Shipping Information": "Alternative Checkout: Shipping Information"
+"Alternative Checkout: Shipping Method": "Alternative Checkout: Shipping Method"
+"Alternative Checkout: Order Review": "Alternative Checkout: Order Review"
+"Alternative Checkout: Request Approval": "Alternative Checkout: Request Approval"
+"Checkout: Billing Information": "Checkout: Billing Information"
+"Checkout: Payment": "Checkout: Payment"
+"Checkout: Shipping Information": "Checkout: Shipping Information"
+"Checkout: Shipping Method": "Checkout: Shipping Method"
+"Checkout: Order Review": "Checkout: Order Review"
+"Alternative Checkout: Alternative Checkout: Order Approval": "Alternative Checkout: Alternative Checkout: Order Approval"
+"Alternative Checkout: Alternative Checkout: Billing Information": "Alternative Checkout: Alternative Checkout: Billing Information"
+"Alternative Checkout: Alternative Checkout: Payment": "Alternative Checkout: Alternative Checkout: Payment"
+"Alternative Checkout: Alternative Checkout: Shipping Information": "Alternative Checkout: Alternative Checkout: Shipping Information"
+"Alternative Checkout: Alternative Checkout: Shipping Method": "Alternative Checkout: Alternative Checkout: Shipping Method"
+"Alternative Checkout: Alternative Checkout: Order Review": "Alternative Checkout: Alternative Checkout: Order Review"
+"Alternative Checkout: Alternative Checkout: Request Approval": "Alternative Checkout: Alternative Checkout: Request Approval"
+"Checkout: Checkout: Billing Information": "Checkout: Checkout: Billing Information"
+"Checkout: Checkout: Payment": "Checkout: Checkout: Payment"
+"Checkout: Checkout: Shipping Information": "Checkout: Checkout: Shipping Information"
+"Checkout: Checkout: Shipping Method": "Checkout: Checkout: Shipping Method"
+"Checkout: Checkout: Order Review": "Checkout: Checkout: Order Review"
 oro:
     alternativecheckout:
         entity_label: Alternative Checkout
         entity_plural_label: Alternative Checkouts
         id.label: Id
         owner.label: Owner
-        account.label: Account
-        account_user.label: Customer User
+        customer.label: Customer
+        customer_user.label: Customer User
         organization.label: Organization
         customer_notes.label: Customer Notes
         customer_notes.frontend.label: Notes

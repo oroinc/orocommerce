@@ -7,6 +7,7 @@ use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\DBAL\Platforms\PostgreSqlPlatform;
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\EntityConfigBundle\Migration\RemoveFieldQuery;
 use Oro\Bundle\NoteBundle\Migration\UpdateNoteAssociationKindQuery;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
@@ -20,7 +21,6 @@ use Oro\Bundle\MigrationBundle\Migration\Extension\DatabasePlatformAwareInterfac
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
-use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\PaymentTermBundle\Migration\Extension\PaymentTermExtensionAwareInterface;
 use Oro\Bundle\PaymentTermBundle\Migration\Extension\PaymentTermExtensionAwareTrait;
@@ -61,10 +61,6 @@ class OroPaymentTermBundleInstaller implements
      * Table name for PaymentTerm
      */
     const TABLE_NAME = 'oro_payment_term';
-    const PAYMENT_TERM_TO_ACCOUNT_TABLE = 'oro_payment_term_to_account';
-    const PAYMENT_TERM_TO_ACCOUNT_GROUP_TABLE = 'oro_payment_term_to_acc_grp';
-    const ACCOUNT_TABLE = 'oro_account';
-    const ACCOUNT_GROUP_TABLE = 'oro_account_group';
 
     /**
      * {@inheritdoc}
@@ -105,8 +101,8 @@ class OroPaymentTermBundleInstaller implements
 
         $this->activityExtension->addActivityAssociation($schema, 'oro_note', self::TABLE_NAME);
 
-        $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_account');
-        $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_account_group');
+        $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_customer');
+        $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_customer_group');
     }
 
     /**
@@ -127,8 +123,8 @@ class OroPaymentTermBundleInstaller implements
      */
     public function migrate(Schema $schema, QueryBag $queries)
     {
-        $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_account');
-        $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_account_group');
+        $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_customer');
+        $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_customer_group');
 
         $associationTableName = $this->activityExtension->getAssociationTableName('oro_note', self::TABLE_NAME);
         if (!$schema->hasTable($associationTableName)) {
@@ -154,69 +150,38 @@ class OroPaymentTermBundleInstaller implements
     {
         if ($this->platform instanceof MySqlPlatform) {
             $queryAccount = <<<QUERY
-UPDATE oro_account a
-JOIN oro_payment_term_to_account pta ON pta.account_id = a.id
+UPDATE oro_customer a
+JOIN oro_payment_term_to_account pta ON pta.customer_id = a.id
 SET a.payment_term_7c4f1e8e_id = pta.payment_term_id;
 QUERY;
             $queryGroup = <<<QUERY
-UPDATE oro_account_group ag
-JOIN oro_payment_term_to_acc_grp ptag ON ptag.account_group_id = ag.id
+UPDATE oro_customer_group ag
+JOIN oro_payment_term_to_acc_grp ptag ON ptag.customer_group_id = ag.id
 SET ag.payment_term_7c4f1e8e_id = ptag.payment_term_id;
 QUERY;
         } elseif ($this->platform instanceof PostgreSqlPlatform) {
             $queryAccount = <<<QUERY
-UPDATE oro_account a
+UPDATE oro_customer a
 SET payment_term_7c4f1e8e_id = pta.payment_term_id
 FROM oro_payment_term_to_account pta
-WHERE pta.account_id = a.id;
+WHERE pta.customer_id = a.id;
 QUERY;
             $queryGroup = <<<QUERY
-UPDATE oro_account_group ag
+UPDATE oro_customer_group ag
 SET payment_term_7c4f1e8e_id = ptag.payment_term_id
 FROM oro_payment_term_to_acc_grp ptag
-WHERE ptag.account_group_id = ag.id;
+WHERE ptag.customer_group_id = ag.id;
 QUERY;
+        } else {
+            throw new \RuntimeException('Unsupported platform ');
         }
 
-        $configIndexValueSql = <<<QUERY
-DELETE FROM oro_entity_config_index_value
-WHERE field_id  = (
-    SELECT id FROM oro_entity_config_field
-    WHERE entity_id = (SELECT id FROM oro_entity_config WHERE class_name = :class)
-    AND field_name = :field_name
-)
-QUERY;
-
-        $configFieldSql = <<<QUERY
-DELETE FROM oro_entity_config_field
-WHERE entity_id = (SELECT id FROM oro_entity_config WHERE class_name = :class)
-AND field_name = :field_name
-QUERY;
-
         $queries->addPostQuery(
-            new ParametrizedSqlMigrationQuery(
-                $configIndexValueSql,
-                ['class' => 'Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm', 'field_name' => 'accounts']
-            )
+            new RemoveFieldQuery('Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm', 'accounts')
         );
 
         $queries->addPostQuery(
-            new ParametrizedSqlMigrationQuery(
-                $configIndexValueSql,
-                ['class' => 'Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm', 'field_name' => 'accountGroups']
-            )
-        );
-        $queries->addPostQuery(
-            new ParametrizedSqlMigrationQuery(
-                $configFieldSql,
-                ['class' => 'Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm', 'field_name' => 'accounts']
-            )
-        );
-        $queries->addPostQuery(
-            new ParametrizedSqlMigrationQuery(
-                $configFieldSql,
-                ['class' => 'Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm', 'field_name' => 'accountGroups']
-            )
+            new RemoveFieldQuery('Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm', 'accountGroups')
         );
 
         $queries->addPostQuery($queryAccount);

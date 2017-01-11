@@ -24,7 +24,7 @@ class CategoryQuantityToOrderFormExtensionTest extends \PHPUnit_Framework_TestCa
     public function testBuildForm()
     {
         /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder * */
-        $builder = $this->getMock(FormBuilderInterface::class);
+        $builder = $this->createMock(FormBuilderInterface::class);
         $category = new CategoryStub();
         $builder->expects($this->once())
             ->method('getData')

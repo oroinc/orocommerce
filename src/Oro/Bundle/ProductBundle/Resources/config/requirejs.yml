@@ -14,14 +14,25 @@ config:
         'oroproduct/js/app/components/quick-add-import-validation-component': 'bundles/oroproduct/js/app/components/quick-add-import-validation-component.js'
         'oroproduct/js/app/components/redirect-component': 'bundles/oroproduct/js/app/components/redirect-component.js'
         'oroproduct/js/app/views/product-quantity-editable-view': 'bundles/oroproduct/js/app/views/product-quantity-editable-view.js'
+        'oroproduct/js/app/components/catalog-switch-component': 'bundles/oroproduct/js/app/components/catalog-switch-component.js'
         'oroproduct/js/app/datagrid/frontend-product-display-options-builder': 'bundles/oroproduct/js/app/datagrid/frontend-product-display-options-builder.js'
         'oroproduct/js/app/views/base-product-view': 'bundles/oroproduct/js/app/views/base-product-view.js'
+        'oroproduct/js/app/views/base-product-variants-view': 'bundles/oroproduct/js/app/views/base-product-variants-view.js'
         'oroproduct/js/app/views/line-item-product-view': 'bundles/oroproduct/js/app/views/line-item-product-view.js'
         'oroproduct/js/content-processor/product-add-to-dropdown-button': 'bundles/oroproduct/js/content-processor/product-add-to-dropdown-button.js'
-        'oroproduct/js/vendors/elevatezoom/jquery-elevatezoom': 'bundles/oroproduct/js/vendors/elevatezoom/jquery-elevatezoom.js'
+        'oroproduct/js/widget/zoom-widget': 'bundles/oroproduct/js/widget/zoom-widget.js'
+        'jquery-elevatezoom': 'bundles/bowerassets/elevatezoom3/jquery.elevatezoom.js'
         'oroproduct/js/app/components/product-image-type-radio-control-component': 'bundles/oroproduct/js/app/components/product-image-type-radio-control-component.js'
         'oroproduct/js/app/components/breadcrumbs-navigation-block': 'bundles/oroproduct/js/app/components/breadcrumbs-navigation-block.js'
         'oroproduct/js/app/datagrid/frontend-product-filters-events-dispatcher-builder': 'bundles/oroproduct/js/app/datagrid/frontend-product-filters-events-dispatcher-builder.js'
+        'oroproduct/js/app/datagrid/backend-datagrid-component': 'bundles/oroproduct/js/app/datagrid/backend-datagrid-component.js'
+        'oroproduct/js/app/datagrid/backend-grid': 'bundles/oroproduct/js/app/datagrid/backend-grid.js'
+        'oroproduct/js/app/datagrid/backend-toolbar': 'bundles/oroproduct/js/app/datagrid/backend-toolbar.js'
+        'oroproduct/js/app/datagrid/backend-page-size': 'bundles/oroproduct/js/app/datagrid/backend-page-size.js'
+        'oroproduct/js/app/datagrid/map-custom-module-name': 'bundles/oroproduct/js/app/datagrid/map-custom-module-name'
+        'oroproduct/js/app/datagrid/backend-pageable-collection': 'bundles/oroproduct/js/app/datagrid/backend-pageable-collection.js'
+        'oroproduct/js/app/datagrid/sorting/backend-dropdown': 'bundles/oroproduct/js/app/datagrid/sorting/backend-dropdown.js'
+
 
     shim:
         'tinymce/plugins/fullscreen/plugin.min':

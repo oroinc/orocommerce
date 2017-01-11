@@ -5,8 +5,8 @@ namespace Oro\Bundle\RFPBundle\Tests\Unit\Model;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Model\RequestManager;
 
@@ -43,20 +43,20 @@ class RequestManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testCreate()
     {
-        $account = new Account();
-        $accountUser = new AccountUser();
-        $accountUser->setAccount($account);
+        $customer = new Customer();
+        $customerUser = new CustomerUser();
+        $customerUser->setCustomer($customer);
         $this->securityFacade->expects($this->once())
             ->method('getLoggedUser')
-            ->willReturn($accountUser);
+            ->willReturn($customerUser);
         $expected = new Request();
-        $expected->setAccountUser($accountUser);
-        $expected->setAccount($account);
+        $expected->setCustomerUser($customerUser);
+        $expected->setCustomer($customer);
 
         $actual = $this->requestManager->create();
         $this->assertInstanceOf(Request::class, $actual);
-        $this->assertEquals($expected->getAccount(), $actual->getAccount());
-        $this->assertEquals($expected->getAccountUser(), $actual->getAccountUser());
+        $this->assertEquals($expected->getCustomer(), $actual->getCustomer());
+        $this->assertEquals($expected->getCustomerUser(), $actual->getCustomerUser());
         $this->assertEquals($expected->getCreatedAt(), $actual->getCreatedAt(), '', 5);
         $this->assertEquals($expected->getUpdatedAt(), $actual->getUpdatedAt(), '', 5);
     }

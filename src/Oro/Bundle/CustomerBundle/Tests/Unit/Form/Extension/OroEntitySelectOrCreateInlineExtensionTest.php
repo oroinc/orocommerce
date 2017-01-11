@@ -7,10 +7,10 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Form\Extension\OroEntitySelectOrCreateInlineExtension;
 
-class OroEntitySelectOrCreateInlineExtensionTest extends AbstractAccountUserAwareExtensionTest
+class OroEntitySelectOrCreateInlineExtensionTest extends AbstractCustomerUserAwareExtensionTest
 {
     protected function setUp()
     {
@@ -24,14 +24,14 @@ class OroEntitySelectOrCreateInlineExtensionTest extends AbstractAccountUserAwar
         $this->assertEquals(OroEntitySelectOrCreateInlineType::NAME, $this->extension->getExtendedType());
     }
 
-    public function testConfigureOptionsNonAccountUser()
+    public function testConfigureOptionsNonCustomerUser()
     {
-        $this->assertOptionsNotChangedForNonAccountUser();
+        $this->assertOptionsNotChangedForNonCustomerUser();
     }
 
-    public function testConfigureOptionsAccountUser()
+    public function testConfigureOptionsCustomerUser()
     {
-        $this->assertAccountUserTokenCall();
+        $this->assertCustomerUserTokenCall();
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
         $resolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolver')
@@ -52,11 +52,11 @@ class OroEntitySelectOrCreateInlineExtensionTest extends AbstractAccountUserAwar
      */
     public function testBuildView($user, $route, $expectedRoute)
     {
-        $this->assertAccountUserTokenCall($user);
+        $this->assertCustomerUserTokenCall($user);
 
         $view = new FormView();
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $options = [];
 
         $view->vars['configs']['route_name'] = $route;
@@ -72,8 +72,8 @@ class OroEntitySelectOrCreateInlineExtensionTest extends AbstractAccountUserAwar
     {
         return [
             [new \stdClass(), 'oro_form_autocomplete_search', 'oro_form_autocomplete_search'],
-            [new AccountUser(), 'custom_route', 'custom_route'],
-            [new AccountUser(), 'oro_form_autocomplete_search', 'oro_frontend_autocomplete_search'],
+            [new CustomerUser(), 'custom_route', 'custom_route'],
+            [new CustomerUser(), 'oro_form_autocomplete_search', 'oro_frontend_autocomplete_search'],
         ];
     }
 }

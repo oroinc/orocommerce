@@ -41,7 +41,7 @@ class InventoryLevelGridTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->formFactory = $this->getMock('Symfony\Component\Form\FormFactoryInterface');
+        $this->formFactory = $this->createMock('Symfony\Component\Form\FormFactoryInterface');
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
             ->getMock();
@@ -155,7 +155,7 @@ class InventoryLevelGridTypeTest extends FormIntegrationTestCase
         $constraintsView = new FormView();
         $constraintsView->vars['attr']['data-validation'] = json_encode($constraints);
 
-        $constraintsForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $constraintsForm = $this->createMock('Symfony\Component\Form\FormInterface');
         $constraintsForm->expects($this->once())
             ->method('createView')
             ->willReturn($constraintsView);
@@ -167,7 +167,7 @@ class InventoryLevelGridTypeTest extends FormIntegrationTestCase
 
         $view = new FormView();
         /** @var FormInterface $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $options = ['product' => $product];
 
         $this->type->finishView($view, $form, $options);

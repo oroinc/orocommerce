@@ -76,11 +76,11 @@ class CategoryResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuild
             $container->get('oro_config.manager'),
             $this->scopeManager
         );
-        $positionChangeBuilder->setAccountCategoryRepository(
-            $container->get('oro_visibility.account_category_repository')
+        $positionChangeBuilder->setCustomerCategoryRepository(
+            $container->get('oro_visibility.customer_category_repository')
         );
-        $positionChangeBuilder->setAccountGroupCategoryRepository(
-            $container->get('oro_visibility.account_group_category_repository')
+        $positionChangeBuilder->setCustomerGroupCategoryRepository(
+            $container->get('oro_visibility.customer_group_category_repository')
         );
 
         $this->builder->setPositionChangeCategorySubtreeCacheBuilder($positionChangeBuilder);

@@ -1,0 +1,51 @@
+Oro\Bundle\CustomerBundle\Entity\Customer:
+   customer1:
+       name: 'Company A'
+       organization: '@organization'
+       owner: '@admin'
+
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+   amanda:
+       email: 'AmandaRCole@example.org'
+       username: 'AmandaRCole@example.org'
+       password: 'gxP1L8r86hrdUMg9wKdfnsS/EZC4a7jOIdn6BMzegqL2S6e+KBIuHCrDVciMdiR/64osNnabmFonwK8l09vQxA=='
+       salt: 'fgswya1kzw0sck8ck48kosowckwo0ws'
+       firstName: 'Amanda'
+       lastName: 'Cole'
+       enabled: '1'
+       confirmed: '1'
+       customer: '@customer1'
+       organization: ['@organization']
+       role: ['@buyer']
+       owner: '@admin'
+       website: '@website1'
+
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+   precision1:
+       unit: '@item'
+       precision: '1'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    locvalue1: ~
+
+Oro\Bundle\ProductBundle\Entity\Product:
+   product1:
+       sku: 'AA1'
+       primaryUnitPrecision: '@precision1'
+       addName: ['@locvalue1']
+       inventoryStatus: '@enumInventoryStatuses'
+       status: 'enabled'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+   shoppinglist1:
+       label: 'Shopping List 1'
+       customerUser: '@amanda'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+   lineitem1:
+       product: '@product1'
+       quantity: '5'
+       unit: '@item'
+       customerUser: '@amanda'
+       shoppingList: '@shoppinglist1'
+       organization: '@organization'

@@ -1,0 +1,24 @@
+.entity-select-btn {
+    padding: $entity-select-btn-padding;
+
+    background: get-color('additional', 'ultra');
+    color: get-color('additional', 'dark');
+
+    line-height: 1;
+
+    border: 1px solid get-color('additional', 'light');
+
+    @include element-state('hover') {
+        border-color: get-color('additional', 'light');
+        background: get-color('additional', 'ultra');
+        color: get-color('additional', 'dark');
+    }
+
+    @include element-state('focus') {
+        border-color: get-color('additional', 'light');
+    }
+
+    i {
+        margin-right: 0;
+    }
+}

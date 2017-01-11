@@ -3,6 +3,6 @@ layout:
         - '@setBlockTheme':
             themes: 'oro_customer_menu.html.twig'
         - '@setOption':
-            id: account_sidebar
+            id: customer_sidebar
             optionName: attr.data-collapse-container
             optionValue: true

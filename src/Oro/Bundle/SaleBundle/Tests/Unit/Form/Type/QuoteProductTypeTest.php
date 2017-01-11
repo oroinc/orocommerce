@@ -74,13 +74,13 @@ class QuoteProductTypeTest extends AbstractTest
             ->getMock()
         ;
 
-        $this->manager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $this->manager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
         $this->manager->expects($this->any())
             ->method('getRepository')
             ->willReturn($this->repository)
         ;
 
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
             ->willReturn($this->manager)
@@ -122,7 +122,7 @@ class QuoteProductTypeTest extends AbstractTest
     public function testConfigureOptions()
     {
         /* @var $resolver \PHPUnit_Framework_MockObject_MockObject|OptionsResolver */
-        $resolver = $this->getMock('Symfony\Component\OptionsResolver\OptionsResolver');
+        $resolver = $this->createMock('Symfony\Component\OptionsResolver\OptionsResolver');
         $resolver->expects($this->once())
             ->method('setDefaults')
             ->with($this->callback(function (array $options) {
@@ -158,7 +158,7 @@ class QuoteProductTypeTest extends AbstractTest
         $view->vars = $inputData['vars'];
 
         /* @var $form \PHPUnit_Framework_MockObject_MockObject|FormInterface */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $this->formType->finishView($view, $form, $inputData['options']);
 
@@ -407,7 +407,7 @@ class QuoteProductTypeTest extends AbstractTest
                     'product'   => 2,
                     'type'      => self::QP_TYPE1,
                     'comment'   => 'comment1',
-                    'commentAccount' => 'comment2',
+                    'commentCustomer' => 'comment2',
                     'quoteProductOffers' => [
                         [
                             'quantity'      => 10,
@@ -437,7 +437,7 @@ class QuoteProductTypeTest extends AbstractTest
                 'submittedData' => [
                     'type'      => self::QP_TYPE1,
                     'comment'   => 'comment1',
-                    'commentAccount' => 'comment2',
+                    'commentCustomer' => 'comment2',
                     'quoteProductOffers' => [
                         [
                             'quantity'      => 10,
@@ -467,7 +467,7 @@ class QuoteProductTypeTest extends AbstractTest
                 'submittedData' => [
                     'product'   => 2,
                     'comment'   => 'comment1',
-                    'commentAccount' => 'comment2',
+                    'commentCustomer' => 'comment2',
                     'quoteProductOffers' => [
                         [
                             'quantity'      => 10,
@@ -497,7 +497,7 @@ class QuoteProductTypeTest extends AbstractTest
                 'submittedData' => [
                     'product'   => 2,
                     'comment'   => 'comment1',
-                    'commentAccount' => 'comment2',
+                    'commentCustomer' => 'comment2',
                 ],
                 'expectedData'  => $this->getQuoteProduct(2, null, 'comment1', 'comment2', [], []),
                 'inputData'     => $this->getQuoteProduct(2)->setProduct(null),
@@ -508,7 +508,7 @@ class QuoteProductTypeTest extends AbstractTest
                     'product'   => 2,
                     'type'      => self::QP_TYPE1,
                     'comment'   => 'comment1',
-                    'commentAccount' => 'comment2',
+                    'commentCustomer' => 'comment2',
                     'quoteProductOffers' => [
                         [
                             'quantity'      => 10,
@@ -554,7 +554,7 @@ class QuoteProductTypeTest extends AbstractTest
         $type = QuoteProduct::TYPE_OFFER
     ) {
         /* @var $quoteProduct \PHPUnit_Framework_MockObject_MockObject|QuoteProduct */
-        $quoteProduct = $this->getMock('Oro\Bundle\SaleBundle\Entity\QuoteProduct');
+        $quoteProduct = $this->createMock('Oro\Bundle\SaleBundle\Entity\QuoteProduct');
         $quoteProduct
             ->expects($this->any())
             ->method('getId')

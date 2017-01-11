@@ -15,15 +15,15 @@ oro:
             role.label: 'Role'
             status.label: 'Status'
             note.label: 'Notes'
-            account_user.label: 'Submitted By'
-            account.label: 'Account'
+            customer_user.label: 'Submitted By'
+            customer.label: 'Customer'
             organization.label: 'Organization'
             owner.label: 'Owner'
             po_number.label: 'PO Number'
             ship_until.label: 'Do Not Ship Later Than'
             request_products.label: 'Request Products'
             assigned_users.label: 'Assigned To'
-            assigned_account_users.label: 'Assigned Customers'
+            assigned_customer_users.label: 'Assigned Customers'
             cancellation_reason.label: 'Cancelation reason'
             cancellation_success.label: 'Cancellation was successful'
             deleted_at.label: 'Deleted At'
@@ -98,15 +98,15 @@ oro:
                 frontend_product_visibility.title: 'Can Be Added to RFQs'
                 notification:
                     sales_reps:
-                        label: 'Notify assigned sales representatives of the account'
-                        always_notify_sale_reps_of_account: 'Always'
+                        label: 'Notify assigned sales representatives of the customer'
+                        always_notify_sale_reps_of_customer: 'Always'
                         if_no_sales_reps_assigned: 'If user has no sales reps assigned'
-                    account_user_record:
+                    customer_user_record:
                         label: 'Notify the owner of the customer user record'
                         always_notify_owner: 'Always'
                         if_no_sales_reps_assigned: 'If user has no sales reps assigned'
-                    account:
-                        label: 'Notify the owner of the account'
+                    customer:
+                        label: 'Notify the owner of the customer'
                         always_notify_owner: 'Always'
                         if_no_sales_reps_assigned: 'If customer has no sales reps assigned'
 
@@ -121,8 +121,8 @@ oro:
 
         datagrid:
             action_restore: 'Restore'
-            account.label: 'Requests for Quote'
-            account_user.label: 'Requests for Quote'
+            customer.label: 'Requests for Quote'
+            customer_user.label: 'Requests for Quote'
 
         controller:
             request:
@@ -149,15 +149,17 @@ oro:
 
         frontend:
             request:
+                title.label: 'Products'
                 lineitem:
                     product: 'Product'
                     requested:
                         label: ''
                         quantity: 'Requested Quantity'
                         price: 'Target Price'
-                        add: 'Add Line'
+                        add: 'Add Another Line'
                     notes: 'Notes'
-                    add: 'Add Product'
+                    add: 'Add Another Product'
+                    qty: 'QTY'
         feature:
             label: 'Request For Quote'
             description: 'Request For Quote allows users to place Requests for chosen products'
@@ -186,13 +188,14 @@ oro:
                 company.label: 'Company'
                 role.label: 'Role'
                 status.label: 'Status'
-                account_user.label: 'Owner'
+                customer_user.label: 'Owner'
                 is_draft.label: 'Draft'
                 po_number.label: 'PO Number'
                 ship_until.label: 'Do Not Ship Later Than'
-                assigned_account_users.label: 'Assigned To'
+                assigned_customer_users.label: 'Assigned To'
                 create_form.back.label: 'Back'
                 create_form.submit.label: 'Submit Request For Quote'
+                create_form.send.label: 'Submit Request'
                 page_title.label: 'RFQ #%id%: %firstName% %lastName%'
                 title.label: 'Request For Quote #%id%'
                 cancellation_reason.label: 'Cancelation Reason'

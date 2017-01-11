@@ -191,10 +191,10 @@ class QuoteProductType extends AbstractType
             ->add('type', 'hidden', [
                 'data' => QuoteProduct::TYPE_REQUESTED,
             ])
-            ->add('commentAccount', 'textarea', [
+            ->add('commentCustomer', 'textarea', [
                 'required' => false,
                 'read_only' => true,
-                'label' => 'oro.sale.quoteproduct.comment_account.label',
+                'label' => 'oro.sale.quoteproduct.comment_customer.label',
             ])
             ->add('comment', 'textarea', [
                 'required' => false,

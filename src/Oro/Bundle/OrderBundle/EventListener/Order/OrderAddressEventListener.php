@@ -63,6 +63,6 @@ class OrderAddressEventListener
      */
     protected function renderForm(FormView $formView)
     {
-        return $this->engine->render('OroOrderBundle:Form:accountAddressSelector.html.twig', ['form' => $formView]);
+        return $this->engine->render('OroOrderBundle:Form:customerAddressSelector.html.twig', ['form' => $formView]);
     }
 }

@@ -8,8 +8,8 @@ use Symfony\Component\Translation\TranslatorInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\UIBundle\View\ScrollData;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 
 class FormViewListener
 {
@@ -46,14 +46,14 @@ class FormViewListener
     /**
      * @param BeforeListRenderEvent $event
      */
-    public function onAccountUserView(BeforeListRenderEvent $event)
+    public function onCustomerUserView(BeforeListRenderEvent $event)
     {
-        /** @var AccountUser $accountUser */
-        $accountUser = $this->getEntityFromRequestId('OroCustomerBundle:AccountUser');
-        if ($accountUser) {
+        /** @var CustomerUser $customerUser */
+        $customerUser = $this->getEntityFromRequestId('OroCustomerBundle:CustomerUser');
+        if ($customerUser) {
             $template = $event->getEnvironment()->render(
-                'OroOrderBundle:AccountUser:orders_view.html.twig',
-                ['entity' => $accountUser]
+                'OroOrderBundle:CustomerUser:orders_view.html.twig',
+                ['entity' => $customerUser]
             );
             $this->addSalesOrdersBlock($event->getScrollData(), $template);
         }
@@ -62,14 +62,14 @@ class FormViewListener
     /**
      * @param BeforeListRenderEvent $event
      */
-    public function onAccountView(BeforeListRenderEvent $event)
+    public function onCustomerView(BeforeListRenderEvent $event)
     {
-        /** @var Account $account */
-        $account = $this->getEntityFromRequestId('OroCustomerBundle:Account');
-        if ($account) {
+        /** @var Customer $customer */
+        $customer = $this->getEntityFromRequestId('OroCustomerBundle:Customer');
+        if ($customer) {
             $template = $event->getEnvironment()->render(
-                'OroOrderBundle:Account:orders_view.html.twig',
-                ['entity' => $account]
+                'OroOrderBundle:Customer:orders_view.html.twig',
+                ['entity' => $customer]
             );
             $this->addSalesOrdersBlock($event->getScrollData(), $template);
         }

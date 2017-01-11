@@ -69,36 +69,36 @@ datagrids:
                 acl_resource:  oro_rfp_request_view
                 rowAction:     true
 
-    account-view-rfq-grid:
+    customer-view-rfq-grid:
         extends: base-rfq-grid
         source:
             query:
                 select:
-                    - CONCAT(requestAccountUser.firstName, ' ', requestAccountUser.lastName) as accountUserName
+                    - CONCAT(requestCustomerUser.firstName, ' ', requestCustomerUser.lastName) as customerUserName
                 where:
                     and:
-                        - requestAccountUser.account = :account_id
+                        - requestCustomerUser.customer = :customer_id
                 join:
                     left:
-                        - { join: request.accountUser, alias: requestAccountUser }
+                        - { join: request.customerUser, alias: requestCustomerUser }
             bind_parameters:
-                - account_id
+                - customer_id
         columns:
-            accountUserName:
-                label:         oro.rfp.request.account_user.label
+            customerUserName:
+                label:         oro.rfp.request.customer_user.label
                 order:         1
         sorters:
             columns:
-                accountUserName:
-                    data_name: accountUserName
+                customerUserName:
+                    data_name: customerUserName
         filters:
             columns:
                 id:
                     type:      number
                     data_name: request.id
-                accountUserName:
+                customerUserName:
                     type:      string
-                    data_name: accountUserName
+                    data_name: customerUserName
                 status_label:
                     type:      entity
                     data_name: status.id
@@ -120,15 +120,15 @@ datagrids:
                     type:      datetime
                     data_name: request.updatedAt
 
-    account-user-view-rfq-grid:
+    customer-user-view-rfq-grid:
         extends: base-rfq-grid
         source:
             query:
                 where:
                     and:
-                        - request.accountUser = :account_user_id
+                        - request.customerUser = :customer_user_id
             bind_parameters:
-                - account_user_id
+                - customer_user_id
         filters:
             columns:
                 id:
@@ -161,8 +161,8 @@ datagrids:
             type:         orm
             query:
                 select:
-                    - requestAccount.name as accountName
-                    - CONCAT(requestAccountUser.firstName, ' ', requestAccountUser.lastName) as accountUserName
+                    - requestCustomer.name as customerName
+                    - CONCAT(requestCustomerUser.firstName, ' ', requestCustomerUser.lastName) as customerUserName
                     - request.firstName
                     - request.lastName
                     - request.email
@@ -171,8 +171,8 @@ datagrids:
                     - request.role
                 join:
                     left:
-                        - { join: request.account, alias: requestAccount }
-                        - { join: request.accountUser, alias: requestAccountUser }
+                        - { join: request.customer, alias: requestCustomer }
+                        - { join: request.customerUser, alias: requestCustomerUser }
             hints:
                 - { name: HINT_CUSTOM_OUTPUT_WALKER, value: %oro_translation.translation_walker.class%}
         columns:
@@ -194,11 +194,11 @@ datagrids:
             role:
                 label:         oro.rfp.request.role.label
                 order:         6
-            accountUserName:
-                label:         oro.rfp.request.account_user.label
+            customerUserName:
+                label:         oro.rfp.request.customer_user.label
                 order:         7
-            accountName:
-                label:         oro.rfp.request.account.label
+            customerName:
+                label:         oro.rfp.request.customer.label
                 order:         8
         sorters:
             columns:
@@ -214,10 +214,10 @@ datagrids:
                     data_name: request.company
                 role:
                     data_name: request.role
-                accountUserName:
-                    data_name: accountUserName
-                accountName:
-                    data_name: accountName
+                customerUserName:
+                    data_name: customerUserName
+                customerName:
+                    data_name: customerName
         filters:
             columns:
                 id:
@@ -241,12 +241,12 @@ datagrids:
                 role:
                     type:      string
                     data_name: request.role
-                accountUserName:
+                customerUserName:
                     type:      string
-                    data_name: accountUserName
-                accountName:
+                    data_name: customerUserName
+                customerName:
                     type:      string
-                    data_name: accountName
+                    data_name: customerName
                 status_label:
                     type:      entity
                     data_name: status.id
@@ -374,8 +374,8 @@ datagrids:
         options:
             entityHint:        request
             entity_pagination: true
-            accountUserOwner:
-                accountUserColumn: accountUserName
+            customerUserOwner:
+                customerUserColumn: customerUserName
         source:
             type: orm
             query:
@@ -384,13 +384,13 @@ datagrids:
                     - request.createdAt
                     - request.poNumber
                     - request.shipUntil
-                    - CONCAT(requestAccountUser.firstName, ' ', requestAccountUser.lastName) as accountUserName
+                    - CONCAT(requestCustomerUser.firstName, ' ', requestCustomerUser.lastName) as customerUserName
                     - requestStatus.label as statusLabel
                 from:
                     - { table: %oro_rfp.entity.request.class%, alias: request }
                 join:
                     left:
-                        - { join: request.accountUser, alias: requestAccountUser }
+                        - { join: request.customerUser, alias: requestCustomerUser }
                         - { join: request.status, alias: requestStatus }
 
         columns:
@@ -406,8 +406,8 @@ datagrids:
             createdAt:
                 label:         oro.ui.created_at
                 frontend_type: datetime
-            accountUserName:
-                label:         oro.frontend.rfp.request.account_user.label
+            customerUserName:
+                label:         oro.frontend.rfp.request.customer_user.label
         properties:
             id: ~
             view_link:
@@ -420,8 +420,8 @@ datagrids:
                 params: [ id ]
         sorters:
             columns:
-                accountUserName:
-                    data_name: accountUserName
+                customerUserName:
+                    data_name: customerUserName
                 poNumber:
                     data_name: request.poNumber
                 shipUntil:
@@ -431,9 +431,9 @@ datagrids:
             disable_default_sorting: true
         filters:
             columns:
-                accountUserName:
+                customerUserName:
                     type:      string
-                    data_name: accountUserName
+                    data_name: customerUserName
                 poNumber:
                     type:      string
                     data_name: request.poNumber
@@ -450,7 +450,7 @@ datagrids:
                 link:           view_link
                 icon:           eye
                 rowAction:      true
-                acl_permission: ACCOUNT_VIEW
+                acl_permission: VIEW
                 acl_class:      %oro_rfp.entity.request.class%
             update:
                 type:           navigate
@@ -458,5 +458,5 @@ datagrids:
                 link:           update_link
                 icon:           pencil-square-o
                 rowAction:      true
-                acl_permission: ACCOUNT_EDIT
+                acl_permission: EDIT
                 acl_class:      %oro_rfp.entity.request.class%

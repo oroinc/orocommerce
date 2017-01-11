@@ -39,41 +39,41 @@ class OrderRequestHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * @var string
      */
-    protected $accountClass = 'Oro\Bundle\CustomerBundle\Entity\Account';
+    protected $customerClass = 'Oro\Bundle\CustomerBundle\Entity\Customer';
 
     /**
      * @var string
      */
-    protected $accountUserClass = 'Oro\Bundle\CustomerBundle\Entity\AccountUser';
+    protected $customerUserClass = 'Oro\Bundle\CustomerBundle\Entity\CustomerUser';
 
     protected function setUp()
     {
-        $this->objectManager = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
+        $this->objectManager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
 
-        $this->registry = $this->getMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $this->registry->expects($this->any())->method('getManagerForClass')->willReturn($this->objectManager);
 
-        $this->request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+        $this->request = $this->createMock('Symfony\Component\HttpFoundation\Request');
 
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
 
         $this->handler = new OrderRequestHandler(
             $this->registry,
             $requestStack,
-            $this->accountClass,
-            $this->accountUserClass
+            $this->customerClass,
+            $this->customerUserClass
         );
     }
 
     protected function tearDown()
     {
-        unset($this->handler, $this->objectManager, $this->request, $this->accountClass, $this->accountUserClass);
+        unset($this->handler, $this->objectManager, $this->request, $this->customerClass, $this->customerUserClass);
     }
 
     /**
-     * @dataProvider getAccountDataProvider
+     * @dataProvider getCustomerDataProvider
      *
      * @param string $method
      */
@@ -84,7 +84,7 @@ class OrderRequestHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider getAccountDataProvider
+     * @dataProvider getCustomerDataProvider
      *
      * @param string $method
      */
@@ -95,7 +95,7 @@ class OrderRequestHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider getAccountDataProvider
+     * @dataProvider getCustomerDataProvider
      *
      * @param string $method
      * @param string $class
@@ -117,13 +117,13 @@ class OrderRequestHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider getAccountDataProvider
+     * @dataProvider getCustomerDataProvider
      *
      * @param string $method
      * @param string $class
      * @param string $param
      */
-    public function testGetAccount($method, $class, $param)
+    public function testGetCustomer($method, $class, $param)
     {
         $entity = $this->getEntity($class, ['id' => 42]);
 
@@ -141,11 +141,11 @@ class OrderRequestHandlerTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function getAccountDataProvider()
+    public function getCustomerDataProvider()
     {
         return [
-            ['getAccount', $this->accountClass, 'account'],
-            ['getAccountUser', $this->accountUserClass, 'accountUser']
+            ['getCustomer', $this->customerClass, 'customer'],
+            ['getCustomerUser', $this->customerUserClass, 'customerUser']
         ];
     }
 }

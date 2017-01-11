@@ -60,7 +60,7 @@ class ProductType extends AbstractType
             ->add('sku', 'text', ['required' => true, 'label' => 'oro.product.sku.label'])
             ->add('status', ProductStatusType::NAME, ['label' => 'oro.product.status.label'])
             ->add(
-                'inventoryStatus',
+                'inventory_status',
                 'oro_enum_select',
                 [
                     'label'     => 'oro.product.inventory_status.label',
@@ -137,8 +137,11 @@ class ProductType extends AbstractType
             )
             ->add(
                 'variantFields',
-                ProductCustomFieldsChoiceType::NAME,
-                ['label' => 'oro.product.variant_fields.label']
+                ProductCustomVariantFieldsChoiceType::NAME,
+                [
+                    'label' => 'oro.product.variant_fields.label',
+                    'tooltip' => 'oro.product.form.tooltip.variant_fields',
+                ]
             )
             ->add(
                 'images',
@@ -184,7 +187,8 @@ class ProductType extends AbstractType
                 ]
             );
         }
-        if ($product instanceof Product && $product->getHasVariants()) {
+
+        if ($product instanceof Product && $product->getId() && $product->isConfigurable()) {
             $form
                 ->add(
                     'variantLinks',
@@ -244,13 +248,13 @@ class ProductType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults(
-            [
-                'data_class' => $this->dataClass,
-                'intention' => 'product',
-                'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
-            ]
-        );
+        $resolver->setDefaults([
+            'data_class' => $this->dataClass,
+            'intention' => 'product',
+            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
+            'enable_attributes' => true,
+            'enable_attribute_family' => true,
+        ]);
     }
 
     /**

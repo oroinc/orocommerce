@@ -17,7 +17,7 @@ use Oro\Component\TestUtils\ORM\OrmTestCase;
 use Oro\Bundle\SecurityBundle\Owner\OwnerTree;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Owner\FrontendOwnerTreeProvider;
 use Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
@@ -109,16 +109,16 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
                 ->getMock();
         $this->ownershipMetadataProvider->expects($this->any())
             ->method('getBasicLevelClass')
-            ->willReturn(self::ENTITY_NAMESPACE . '\TestAccountUser');
+            ->willReturn(self::ENTITY_NAMESPACE . '\TestCustomerUser');
         $this->ownershipMetadataProvider->expects($this->any())
             ->method('getLocalLevelClass')
-            ->willReturn(self::ENTITY_NAMESPACE . '\TestAccount');
+            ->willReturn(self::ENTITY_NAMESPACE . '\TestCustomer');
 
         $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->container = $this->getMock('Symfony\Component\DependencyInjection\ContainerInterface');
+        $this->container = $this->createMock('Symfony\Component\DependencyInjection\ContainerInterface');
         $this->container->expects($this->any())
             ->method('get')
             ->willReturnMap(
@@ -152,33 +152,13 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
      * @param string                                   $sql
      * @param array                                    $result
      */
-    protected function setQueryExpectationAt(
-        \PHPUnit_Framework_MockObject_MockObject $conn,
-        $expectsAt,
-        $sql,
-        $result
-    ) {
-        $stmt = $this->createFetchStatementMock($result);
-        $conn
-            ->expects($this->at($expectsAt))
-            ->method('query')
-            ->with($sql)
-            ->will($this->returnValue($stmt));
-    }
-
-    /**
-     * @param \PHPUnit_Framework_MockObject_MockObject $conn
-     * @param int                                      $expectsAt
-     * @param string                                   $sql
-     * @param array                                    $result
-     */
     protected function setFetchAllQueryExpectationAt(
         \PHPUnit_Framework_MockObject_MockObject $conn,
         $expectsAt,
         $sql,
         $result
     ) {
-        $stmt = $this->getMock('Oro\Component\TestUtils\ORM\Mocks\StatementMock');
+        $stmt = $this->createMock('Oro\Component\TestUtils\ORM\Mocks\StatementMock');
         $stmt->expects($this->once())
             ->method('fetchAll')
             ->willReturn($result);
@@ -205,12 +185,12 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
 
     /**
      * @param \PHPUnit_Framework_MockObject_MockObject $connection
-     * @param string[]                                 $accounts
+     * @param string[]                                 $customers
      */
-    protected function setGetAccountsExpectation($connection, array $accounts)
+    protected function setGetCustomersExpectation($connection, array $customers)
     {
         $queryResult = [];
-        foreach ($accounts as $item) {
+        foreach ($customers as $item) {
             $queryResult[] = [
                 'id_0'   => $item['id'],
                 'sclr_1' => $item['orgId'],
@@ -222,7 +202,7 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
             1,
             'SELECT t0_.id AS id_0, t0_.organization_id AS sclr_1, t0_.parent_id AS sclr_2,'
             . ' (CASE WHEN t0_.parent_id IS NULL THEN 0 ELSE 1 END) AS sclr_3'
-            . ' FROM tbl_account t0_'
+            . ' FROM tbl_customer t0_'
             . ' ORDER BY sclr_3 ASC, sclr_2 ASC',
             $queryResult
         );
@@ -239,15 +219,15 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
             $queryResult[] = [
                 'id_0'   => $item['userId'],
                 'id_1'   => $item['orgId'],
-                'sclr_2' => $item['accountId'],
+                'sclr_2' => $item['customerId'],
             ];
         }
         $this->setQueryExpectationAt(
             $connection,
             2,
-            'SELECT t0_.id AS id_0, t1_.id AS id_1, t0_.account_id AS sclr_2'
-            . ' FROM tbl_account_user t0_'
-            . ' INNER JOIN tbl_account_user_to_organization t2_ ON t0_.id = t2_.account_user_id'
+            'SELECT t0_.id AS id_0, t1_.id AS id_1, t0_.customer_id AS sclr_2'
+            . ' FROM tbl_customer_user t0_'
+            . ' INNER JOIN tbl_customer_user_to_organization t2_ ON t0_.id = t2_.customer_user_id'
             . ' INNER JOIN tbl_organization t1_ ON t1_.id = t2_.organization_id'
             . ' ORDER BY id_1 ASC',
             $queryResult
@@ -269,13 +249,13 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
         }
     }
 
-    public function testAccountsWithoutOrganization()
+    public function testCustomersWithoutOrganization()
     {
         $connection = $this->getDriverConnectionMock($this->em);
-        $this->setTablesExistExpectation($connection, ['tbl_account_user']);
-        // the accounts without parent should be at the top,
-        // rest accounts are sorted by parent id
-        $this->setGetAccountsExpectation(
+        $this->setTablesExistExpectation($connection, ['tbl_customer_user']);
+        // the customers without parent should be at the top,
+        // rest customers are sorted by parent id
+        $this->setGetCustomersExpectation(
             $connection,
             [
                 [
@@ -307,7 +287,7 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
                 [
                     'orgId'     => self::ORG_1,
                     'userId'    => self::USER_1,
-                    'accountId' => self::MAIN_ACCOUNT_1,
+                    'customerId' => self::MAIN_ACCOUNT_1,
                 ],
             ]
         );
@@ -355,13 +335,13 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testAccountTree()
+    public function testCustomerTree()
     {
         $connection = $this->getDriverConnectionMock($this->em);
-        $this->setTablesExistExpectation($connection, ['tbl_account_user']);
-        // the accounts without parent should be at the top,
-        // rest accounts are sorted by parent id
-        $this->setGetAccountsExpectation(
+        $this->setTablesExistExpectation($connection, ['tbl_customer_user']);
+        // the customers without parent should be at the top,
+        // rest customers are sorted by parent id
+        $this->setGetCustomersExpectation(
             $connection,
             [
                 [
@@ -393,7 +373,7 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
                 [
                     'orgId'     => self::ORG_1,
                     'userId'    => self::USER_1,
-                    'accountId' => self::MAIN_ACCOUNT_1,
+                    'customerId' => self::MAIN_ACCOUNT_1,
                 ],
             ]
         );
@@ -443,13 +423,13 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function testAccountTreeWhenChildAccountAreLoadedBeforeParentAccount()
+    public function testCustomerTreeWhenChildCustomerAreLoadedBeforeParentCustomer()
     {
         $connection = $this->getDriverConnectionMock($this->em);
-        $this->setTablesExistExpectation($connection, ['tbl_account_user']);
-        // the accounts without parent should be at the top,
-        // rest accounts are sorted by parent id
-        $this->setGetAccountsExpectation(
+        $this->setTablesExistExpectation($connection, ['tbl_customer_user']);
+        // the customers without parent should be at the top,
+        // rest customers are sorted by parent id
+        $this->setGetCustomersExpectation(
             $connection,
             [
                 [
@@ -481,7 +461,7 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
                 [
                     'orgId'     => self::ORG_1,
                     'userId'    => self::USER_1,
-                    'accountId' => self::MAIN_ACCOUNT_1,
+                    'customerId' => self::MAIN_ACCOUNT_1,
                 ],
             ]
         );
@@ -528,13 +508,13 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
         );
     }
 
-    public function testUserDoesNotHaveParentAccount()
+    public function testUserDoesNotHaveParentCustomer()
     {
         $connection = $this->getDriverConnectionMock($this->em);
-        $this->setTablesExistExpectation($connection, ['tbl_account_user']);
-        // the accounts without parent should be at the top,
-        // rest accounts are sorted by parent id
-        $this->setGetAccountsExpectation(
+        $this->setTablesExistExpectation($connection, ['tbl_customer_user']);
+        // the customers without parent should be at the top,
+        // rest customers are sorted by parent id
+        $this->setGetCustomersExpectation(
             $connection,
             [
                 [
@@ -556,7 +536,7 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
                 [
                     'orgId'     => self::ORG_1,
                     'userId'    => self::USER_1,
-                    'accountId' => null,
+                    'customerId' => null,
                 ],
             ]
         );
@@ -596,10 +576,10 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
     public function testSeveralOrganizations()
     {
         $connection = $this->getDriverConnectionMock($this->em);
-        $this->setTablesExistExpectation($connection, ['tbl_account_user']);
-        // the accounts without parent should be at the top,
-        // rest accounts are sorted by parent id
-        $this->setGetAccountsExpectation(
+        $this->setTablesExistExpectation($connection, ['tbl_customer_user']);
+        // the customers without parent should be at the top,
+        // rest customers are sorted by parent id
+        $this->setGetCustomersExpectation(
             $connection,
             [
                 [
@@ -631,12 +611,12 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
                 [
                     'orgId'     => self::ORG_1,
                     'userId'    => self::USER_1,
-                    'accountId' => self::ACCOUNT_1,
+                    'customerId' => self::ACCOUNT_1,
                 ],
                 [
                     'orgId'     => self::ORG_2,
                     'userId'    => self::USER_2,
-                    'accountId' => self::ACCOUNT_2,
+                    'customerId' => self::ACCOUNT_2,
                 ],
             ]
         );
@@ -694,7 +674,7 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
     {
         $this->securityFacade->expects($this->exactly(2))
             ->method('getLoggedUser')
-            ->willReturnOnConsecutiveCalls(new AccountUser(), new User());
+            ->willReturnOnConsecutiveCalls(new CustomerUser(), new User());
 
         $this->assertTrue($this->treeProvider->supports());
         $this->assertFalse($this->treeProvider->supports());

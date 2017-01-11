@@ -4,14 +4,13 @@ namespace Oro\Bundle\ShippingBundle\Twig;
 
 use Oro\Bundle\ShippingBundle\Event\ShippingMethodConfigDataEvent;
 use Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
-use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ShippingMethodExtension extends \Twig_Extension
 {
     const SHIPPING_METHOD_EXTENSION_NAME = 'oro_shipping_method';
-    const DEFAULT_METHOD_CONFIG_TEMPLATE = 'OroShippingBundle:ShippingRule:shippingMethodWithOptions.html.twig';
-    const FLAT_RATE_METHOD_CONFIG_TEMPLATE = 'OroShippingBundle:ShippingRule:flatRateMethodWithOptions.html.twig';
+    const DEFAULT_METHOD_CONFIG_TEMPLATE
+        = 'OroShippingBundle:ShippingMethodsConfigsRule:shippingMethodWithOptions.html.twig';
 
     /**
      * @var ShippingMethodLabelFormatter
@@ -60,9 +59,6 @@ class ShippingMethodExtension extends \Twig_Extension
             $template = $event->getTemplate();
             if (!$template) {
                 $template = static::DEFAULT_METHOD_CONFIG_TEMPLATE;
-                if ($shippingMethodName === FlatRateShippingMethod::IDENTIFIER) {
-                    $template = static::FLAT_RATE_METHOD_CONFIG_TEMPLATE;
-                }
             }
             $this->configCache[$shippingMethodName] = $template;
         }
@@ -83,6 +79,10 @@ class ShippingMethodExtension extends \Twig_Extension
             new \Twig_SimpleFunction(
                 'get_shipping_method_type_label',
                 [$this->shippingMethodLabelFormatter, 'formatShippingMethodTypeLabel']
+            ),
+            new \Twig_SimpleFunction(
+                'oro_shipping_method_with_type_label',
+                [$this->shippingMethodLabelFormatter, 'formatShippingMethodWithTypeLabel']
             ),
             new \Twig_SimpleFunction(
                 'oro_shipping_method_config_template',

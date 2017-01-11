@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method\View;
 
+use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\View\PayflowExpressCheckoutView;
@@ -20,7 +21,7 @@ class PayflowExpressCheckoutViewTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->paymentConfig =
-            $this->getMock('Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfigInterface');
+            $this->createMock('Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfigInterface');
 
         $this->methodView = $this->createMethodView();
     }
@@ -32,23 +33,14 @@ class PayflowExpressCheckoutViewTest extends \PHPUnit_Framework_TestCase
 
     public function testGetOptions()
     {
-        $this->assertEmpty($this->methodView->getOptions());
+        /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        $context = $this->createMock(PaymentContextInterface::class);
+        $this->assertEmpty($this->methodView->getOptions($context));
     }
 
     public function testGetBlock()
     {
         $this->assertEquals('_payment_methods_payflow_express_checkout_widget', $this->methodView->getBlock());
-    }
-
-    public function testGetOrder()
-    {
-        $order = '100';
-
-        $this->paymentConfig->expects($this->once())
-            ->method('getOrder')
-            ->willReturn((int)$order);
-
-        $this->assertSame((int)$order, $this->methodView->getOrder());
     }
 
     public function testGetPaymentMethodType()

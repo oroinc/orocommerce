@@ -50,7 +50,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->requestStack = $this->getMock('Symfony\Component\HttpFoundation\RequestStack');
+        $this->requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $this->productPriceProvider = $this->getMockBuilder('Oro\Bundle\PricingBundle\Provider\ProductPriceProvider')
             ->disableOriginalConstructor()->getMock();
         $this->priceListTreeHandler = $this->getMockBuilder('Oro\Bundle\PricingBundle\Model\PriceListTreeHandler')
@@ -95,7 +95,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
 
         /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
-        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+        $request = $this->createMock('Symfony\Component\HttpFoundation\Request');
         $request->expects($this->once())
             ->method('get')
             ->with(DataStorageInterface::STORAGE_KEY)
@@ -104,11 +104,11 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('getCurrentRequest')
             ->willReturn($request);
 
-        $priceList = $this->getMock('Oro\Bundle\PricingBundle\Entity\BasePriceList');
+        $priceList = $this->createMock('Oro\Bundle\PricingBundle\Entity\BasePriceList');
 
         $this->priceListTreeHandler->expects($this->once())
             ->method('getPriceList')
-            ->with($order->getAccount(), $order->getWebsite())
+            ->with($order->getCustomer(), $order->getWebsite())
             ->willReturn($priceList);
 
         $this->productPriceProvider->expects($this->once())
@@ -153,7 +153,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 'data' => [
-                    'account' => ['id' => 1],
+                    'customer' => ['id' => 1],
                     'website' => ['id' => 1],
                     'currency' => 'USD',
                     'lineItems' => [
@@ -209,7 +209,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
                 ->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', $lineItem['productUnit']);
             $lineItems->add($this->getEntity('Oro\Bundle\OrderBundle\Entity\OrderLineItem', $lineItem));
         }
-        $data['account'] = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', $data['account']);
+        $data['customer'] = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', $data['customer']);
         $data['website'] = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', $data['website']);
         $data['lineItems'] = $lineItems;
         return $this->getEntity('Oro\Bundle\OrderBundle\Entity\Order', $data);
@@ -233,7 +233,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
         $builder->expects($this->never())
             ->method('addEventListener');
         /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
-        $request = $this->getMock('Symfony\Component\HttpFoundation\Request');
+        $request = $this->createMock('Symfony\Component\HttpFoundation\Request');
         $request->expects($this->once())
             ->method('get')
             ->with(DataStorageInterface::STORAGE_KEY)
@@ -268,7 +268,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('addEventListener');
 
         /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
-        $request = $this->getMock(Request::class);
+        $request = $this->createMock(Request::class);
         $this->requestStack->expects($this->once())
             ->method('getCurrentRequest')
             ->willReturn($request);
@@ -281,6 +281,6 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected function getBuilderMock()
     {
-        return $this->getMock('Symfony\Component\Form\FormBuilderInterface');
+        return $this->createMock('Symfony\Component\Form\FormBuilderInterface');
     }
 }

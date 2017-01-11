@@ -8,9 +8,9 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\VisibilityBundle\Visibility\ProductVisibilityTrait;
 use Oro\Bundle\SearchBundle\Query\Modifier\QueryBuilderModifierInterface;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerProductVisibilityResolved;
 
 class ProductVisibilityQueryBuilderModifier implements QueryBuilderModifierInterface
 {
@@ -37,8 +37,8 @@ class ProductVisibilityQueryBuilderModifier implements QueryBuilderModifierInter
     public function modify(QueryBuilder $queryBuilder)
     {
         $visibilities[] = $this->getProductVisibilityResolvedTerm($queryBuilder);
-        $visibilities[] = $this->getAccountGroupProductVisibilityResolvedTerm($queryBuilder);
-        $visibilities[] = $this->getAccountProductVisibilityResolvedTerm($queryBuilder);
+        $visibilities[] = $this->getCustomerGroupProductVisibilityResolvedTerm($queryBuilder);
+        $visibilities[] = $this->getCustomerProductVisibilityResolvedTerm($queryBuilder);
 
         $queryBuilder->andWhere($queryBuilder->expr()->gt(implode(' + ', $visibilities), 0));
     }
@@ -76,23 +76,23 @@ class ProductVisibilityQueryBuilderModifier implements QueryBuilderModifierInter
      * @param QueryBuilder $queryBuilder
      * @return string
      */
-    protected function getAccountGroupProductVisibilityResolvedTerm(
+    protected function getCustomerGroupProductVisibilityResolvedTerm(
         QueryBuilder $queryBuilder
     ) {
-        $scope = $this->scopeManager->find(AccountGroupProductVisibility::VISIBILITY_TYPE);
+        $scope = $this->scopeManager->find(CustomerGroupProductVisibility::VISIBILITY_TYPE);
         if (!$scope) {
             $scope = 0;
         }
         $queryBuilder->leftJoin(
-            'Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupProductVisibilityResolved',
-            'account_group_product_visibility_resolved',
+            'Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupProductVisibilityResolved',
+            'customer_group_product_visibility_resolved',
             Join::WITH,
             $queryBuilder->expr()->andX(
                 $queryBuilder->expr()->eq(
                     $this->getRootAlias($queryBuilder),
-                    'account_group_product_visibility_resolved.product'
+                    'customer_group_product_visibility_resolved.product'
                 ),
-                $queryBuilder->expr()->eq('account_group_product_visibility_resolved.scope', ':scope_group')
+                $queryBuilder->expr()->eq('customer_group_product_visibility_resolved.scope', ':scope_group')
             )
         );
 
@@ -100,7 +100,7 @@ class ProductVisibilityQueryBuilderModifier implements QueryBuilderModifierInter
 
         return sprintf(
             'COALESCE(%s, 0) * 10',
-            $this->addCategoryConfigFallback('account_group_product_visibility_resolved.visibility')
+            $this->addCategoryConfigFallback('customer_group_product_visibility_resolved.visibility')
         );
     }
 
@@ -108,41 +108,41 @@ class ProductVisibilityQueryBuilderModifier implements QueryBuilderModifierInter
      * @param QueryBuilder $queryBuilder
      * @return string
      */
-    protected function getAccountProductVisibilityResolvedTerm(QueryBuilder $queryBuilder)
+    protected function getCustomerProductVisibilityResolvedTerm(QueryBuilder $queryBuilder)
     {
-        $scope = $this->scopeManager->find('account_product_visibility');
+        $scope = $this->scopeManager->find('customer_product_visibility');
         if (!$scope) {
             $scope = 0;
         }
         $queryBuilder->leftJoin(
-            'Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved',
-            'account_product_visibility_resolved',
+            'Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerProductVisibilityResolved',
+            'customer_product_visibility_resolved',
             Join::WITH,
             $queryBuilder->expr()->andX(
                 $queryBuilder->expr()->eq(
                     $this->getRootAlias($queryBuilder),
-                    'account_product_visibility_resolved.product'
+                    'customer_product_visibility_resolved.product'
                 ),
-                $queryBuilder->expr()->eq('account_product_visibility_resolved.scope', ':scope_account')
+                $queryBuilder->expr()->eq('customer_product_visibility_resolved.scope', ':scope_customer')
             )
         );
-        $queryBuilder->setParameter('scope_account', $scope);
+        $queryBuilder->setParameter('scope_customer', $scope);
 
         $productFallback = $this->addCategoryConfigFallback('product_visibility_resolved.visibility');
-        $accountFallback = $this->addCategoryConfigFallback('account_product_visibility_resolved.visibility');
+        $customerFallback = $this->addCategoryConfigFallback('customer_product_visibility_resolved.visibility');
 
         $term = <<<TERM
-CASE WHEN account_product_visibility_resolved.visibility = %s
+CASE WHEN customer_product_visibility_resolved.visibility = %s
     THEN (COALESCE(%s, %s) * 100)
 ELSE (COALESCE(%s, 0) * 100)
 END
 TERM;
         return sprintf(
             $term,
-            AccountProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL,
+            CustomerProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL,
             $productFallback,
             $this->getProductConfigValue(),
-            $accountFallback
+            $customerFallback
         );
     }
 }

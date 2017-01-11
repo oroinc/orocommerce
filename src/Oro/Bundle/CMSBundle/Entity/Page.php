@@ -17,7 +17,7 @@ use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
 
 /**
  * @ORM\Table(name="oro_cms_page")
- * @ORM\Entity()
+ * @ORM\Entity(repositoryClass="Oro\Bundle\CMSBundle\Entity\Repository\PageRepository")
  * @ORM\AssociationOverrides({
  *      @ORM\AssociationOverride(
  *          name="slugPrototypes",

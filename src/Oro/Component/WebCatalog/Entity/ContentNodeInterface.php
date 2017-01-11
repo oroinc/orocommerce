@@ -10,7 +10,7 @@ interface ContentNodeInterface
     public function getId();
 
     /**
-     * @return string
+     * @return ContentNodeInterface[]
      */
-    public function getName();
+    public function getContentVariants();
 }

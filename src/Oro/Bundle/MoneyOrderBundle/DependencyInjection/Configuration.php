@@ -2,24 +2,16 @@
 
 namespace Oro\Bundle\MoneyOrderBundle\DependencyInjection;
 
+use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
-use Oro\Bundle\ConfigBundle\DependencyInjection\SettingsBuilder;
-use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfiguration;
-use Oro\Bundle\PaymentBundle\DependencyInjection\Configuration as PaymentConfiguration;
-
 class Configuration implements ConfigurationInterface
 {
-    const MONEY_ORDER_ENABLED_KEY = 'money_order_enabled';
     const MONEY_ORDER_LABEL_KEY = 'money_order_label';
     const MONEY_ORDER_SHORT_LABEL_KEY = 'money_order_short_label';
-    const MONEY_ORDER_SORT_ORDER_KEY = 'money_order_sort_order';
     const MONEY_ORDER_PAY_TO_KEY = 'money_order_pay_to';
     const MONEY_ORDER_SEND_TO_KEY = 'money_order_send_to';
-    const MONEY_ORDER_ALLOWED_COUNTRIES_KEY = 'money_order_allowed_countries';
-    const MONEY_ORDER_SELECTED_COUNTRIES_KEY = 'money_order_selected_countries';
-    const MONEY_ORDER_ALLOWED_CURRENCIES = 'money_order_allowed_currencies';
 
     const MONEY_ORDER_LABEL = 'Check/Money Order';
     const MONEY_ORDER_SORT_ORDER = 50;
@@ -36,10 +28,6 @@ class Configuration implements ConfigurationInterface
         SettingsBuilder::append(
             $rootNode,
             [
-                self::MONEY_ORDER_ENABLED_KEY => [
-                    'type' => 'boolean',
-                    'value' => false
-                ],
                 self::MONEY_ORDER_LABEL_KEY => [
                     'type' => 'text',
                     'value' => self::MONEY_ORDER_LABEL
@@ -48,10 +36,6 @@ class Configuration implements ConfigurationInterface
                     'type' => 'text',
                     'value' => self::MONEY_ORDER_LABEL
                 ],
-                self::MONEY_ORDER_SORT_ORDER_KEY => [
-                    'type' => 'string',
-                    'value' => self::MONEY_ORDER_SORT_ORDER
-                ],
                 self::MONEY_ORDER_PAY_TO_KEY => [
                     'type' => 'string',
                     'value' => ''
@@ -59,18 +43,6 @@ class Configuration implements ConfigurationInterface
                 self::MONEY_ORDER_SEND_TO_KEY => [
                     'type' => 'text',
                     'value' => ''
-                ],
-                self::MONEY_ORDER_ALLOWED_COUNTRIES_KEY => [
-                    'type' => 'text',
-                    'value' => PaymentConfiguration::ALLOWED_COUNTRIES_ALL
-                ],
-                self::MONEY_ORDER_SELECTED_COUNTRIES_KEY => [
-                    'type' => 'array',
-                    'value' => []
-                ],
-                self::MONEY_ORDER_ALLOWED_CURRENCIES => [
-                    'type' => 'array',
-                    'value' => CurrencyConfiguration::$defaultCurrencies,
                 ],
             ]
         );

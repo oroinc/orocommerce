@@ -1,6 +1,8 @@
 // @theme: blank
 
 .header-row {
+    position: relative;
+
     margin-top: $offset-y;
 
     border: 1px solid get-color('additional', 'light');
@@ -15,7 +17,7 @@
         background-color: get-color('additional', 'base');
     }
 
-    &__togle {
+    &__toggle {
         background-color: get-color('additionl', 'ultra');
     }
 }
@@ -52,7 +54,7 @@
     .header-row {
         &__trigger {
             position: relative;
-            z-index: z('base') + 8999;
+            z-index: z('dropdown') + 1;
 
             text-align: center;
         }

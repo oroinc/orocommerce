@@ -66,7 +66,7 @@
 
 {% block _shopping_list_top_actions_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " cart__order__controls-list pull-right",
+        class: attr.class|default('') ~ " cart__order__controls-list",
         'data-name': "empty-items__hide"
     }) %}
     <div{{ block('block_attributes') }}>
@@ -185,6 +185,8 @@
                 {% set productAllPrices = productsAllPrices[lineItem.product.id]|default({}) is not empty ? productsAllPrices[lineItem.product.id] : null %}
                 {% set productMatchedPrice = productsMatchedPrice[lineItem.product.id][lineItem.unit.code] is not empty ? productsMatchedPrice[lineItem.product.id][lineItem.unit.code] : null %}
                 {% set currency = productMatchedPrice ? productMatchedPrice.currency : defaultCurrency %}
+                {% set isProductUnitSelectionVisible = productsUnitSelectionVisibilities[lineItem.product.id]|default({}) is not empty ? productsUnitSelectionVisibilities[lineItem.product.id] : null %}
+                {% set isLineItemUnitVisible = lineItemsUnitVisibilities[lineItem.id]|default({}) is not empty ? lineItemsUnitVisibilities  [lineItem.id] : null %}
                 <tbody class="line_item">
                     <tr class="line_item_view" {{ UI.renderPageComponentAttributes({
                         module: 'oroui/js/app/components/view-component',
@@ -227,32 +229,41 @@
                                         <a href="{{ path('oro_product_frontend_product_view', {'id': lineItem.product.id}) }}">{{ lineItem.product.names|localized_value }}</a>
                                     </h3>
                                     <div>{{ 'oro.frontend.shoppinglist.view.sku.label'|trans }} <span class="red">{{ lineItem.product.sku }}</span></div>
+                                    <div class="visible-xs">{{ lineItem.product.InventoryStatus }}</div>
                                 </div>
                             </div>
                         </td>
-                        <td class="va-t_md">
+                        <td class="va-t_md hidden-xs">
                             <div>{{ lineItem.product.InventoryStatus }}</div>
                         </td>
                         <td class="va-t_md">
-                            <form action="#">
+                            <form action="#" class="cart-table__form">
                                 <div class="product__qty-input product__qty-input_inline product__qty-input_more-info va-m_md">
                                     <div class="product__qty-input__count-option">
                                         <input type="number" value="{{ lineItem.quantity }}" name="product_qty" data-name="field__quantity"
                                             placeholder="{{ 'oro.frontend.shoppinglist.view.qty.label'|trans }}"
-                                            class="input  input--full text-center" disabled="disabled" required />
+                                            class="input  input--full text-center" disabled="disabled" required
+                                        />
                                     </div>
                                 </div>
                                 <div class="product__select inline va-m_md">
-                                    <select class="select select--full" name="product_unit" data-name="field__unit" required>
-                                        {% if productsUnits[lineItem.product.id] is defined %}
-                                            {% for unit in productsUnits[lineItem.product.id] %}
-                                            <option value="{{ unit }}" {% if unit == lineItem.unit.code %}selected="selected"{% endif %}>{{ unit|oro_format_product_unit_label}}</option>
-                                            {% endfor %}
-                                            {% if lineItem.unit.code not in productsUnits[lineItem.product.id] %}
-                                                <option value="{{ lineItem.unit.code }}" selected="selected" disabled="disabled">{{ lineItem.unit.code|oro_format_product_unit_label}}</option>
+                                    {% if isProductUnitSelectionVisible %}
+                                        <select class="select select--full" name="product_unit" data-name="field__unit" required>
+                                            {% if productsUnits[lineItem.product.id] is defined %}
+                                                {% for unit in productsUnits[lineItem.product.id] %}
+                                                <option value="{{ unit }}" {% if unit == lineItem.unit.code %}selected="selected"{% endif %}>{{ unit|oro_format_product_unit_label}}</option>
+                                                {% endfor %}
+                                                {% if lineItem.unit.code not in productsUnits[lineItem.product.id] %}
+                                                    <option value="{{ lineItem.unit.code }}" selected="selected" disabled="disabled">{{ lineItem.unit.code|oro_format_product_unit_label}}</option>
+                                                {% endif %}
                                             {% endif %}
+                                        </select>
+                                    {% else %}
+                                        <input type="hidden" name="product_unit" value="{{ lineItem.unit.code }}" />
+                                        {% if isLineItemUnitVisible %}
+                                            {{ lineItem.unit.code|oro_format_product_unit_label}}
                                         {% endif %}
-                                    </select>
+                                    {% endif %}
                                 </div>
                             </form>
                         </td>

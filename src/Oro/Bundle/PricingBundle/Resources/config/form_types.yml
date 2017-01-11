@@ -67,19 +67,19 @@ services:
         tags:
             - { name: form.type, alias: oro_pricing_product_price_filter }
 
-    oro_pricing.form.extension.account_type:
-        class: 'Oro\Bundle\PricingBundle\Form\Extension\AccountFormExtension'
+    oro_pricing.form.extension.customer_type:
+        class: 'Oro\Bundle\PricingBundle\Form\Extension\CustomerFormExtension'
         arguments:
-            - "@oro_pricing.entity_listener.account"
+            - "@oro_pricing.entity_listener.customer"
         tags:
-            - { name: form.type_extension, alias: oro_account_type }
+            - { name: form.type_extension, alias: oro_customer_type }
 
-    oro_pricing.form.extension.account_group_type:
-        class: 'Oro\Bundle\PricingBundle\Form\Extension\AccountGroupFormExtension'
+    oro_pricing.form.extension.customer_group_type:
+        class: 'Oro\Bundle\PricingBundle\Form\Extension\CustomerGroupFormExtension'
         arguments:
-            - "@oro_pricing.entity_listener.account_group"
+            - "@oro_pricing.entity_listener.customer_group"
         tags:
-            - { name: form.type_extension, alias: oro_account_group_type }
+            - { name: form.type_extension, alias: oro_customer_group_type }
 
     oro_pricing.form.extension.product_type:
         class: 'Oro\Bundle\PricingBundle\Form\Extension\ProductFormExtension'
@@ -94,16 +94,6 @@ services:
             - '@doctrine'
         tags:
             - { name: form.type_extension, alias: oro_product }
-
-    oro_pricing.form.extension.currency_type:
-        class: 'Oro\Bundle\PricingBundle\Form\Extension\SystemCurrencyFormExtension'
-        public: true
-        arguments:
-            - '@oro_locale.settings'
-            - "@translator"
-            - "@oro_currency.config.currency"
-        tags:
-            - { name: form.type_extension, alias: oro_currency }
 
     oro_pricing.form.type.price_list_schedule:
         class: 'Oro\Bundle\PricingBundle\Form\Type\PriceListScheduleType'

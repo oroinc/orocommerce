@@ -5,8 +5,8 @@ namespace Oro\Bundle\OrderBundle\Form\Type;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Form\Type\PriceType;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountSelectType;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountUserSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserSelectType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\EventListener\Order\OrderPossibleShippingMethodsEventListener;
@@ -67,12 +67,12 @@ class OrderType extends AbstractType
         $this->orderCurrencyHandler->setOrderCurrency($order);
 
         $builder
-            ->add('account', AccountSelectType::NAME, ['label' => 'oro.order.account.label', 'required' => true])
+            ->add('customer', CustomerSelectType::NAME, ['label' => 'oro.order.customer.label', 'required' => true])
             ->add(
-                'accountUser',
-                AccountUserSelectType::NAME,
+                'customerUser',
+                CustomerUserSelectType::NAME,
                 [
-                    'label' => 'oro.order.account_user.label',
+                    'label' => 'oro.order.customer_user.label',
                     'required' => false,
                 ]
             )

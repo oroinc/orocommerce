@@ -3,16 +3,17 @@
         '~class': ' primary-menu-container'
     }) %}
     <div class="collapse-view"
-         data-page-component-module="oroui/js/app/components/jquery-widget-component"
+         data-page-component-module="oroui/js/app/components/viewport-component"
          data-page-component-options="{{ {
+             screenType: 'tablet',
+             component: 'oroui/js/app/components/jquery-widget-component',
              widgetModule: 'oroui/js/widget/collapse-widget',
-             storageKey: id,
-             breakpoint: 1100
+             storageKey: id
          }|json_encode() }}"
     >
         <div {{ block('block_attributes') }}>
             <h3 class="primary-menu-title" data-collapse-trigger>
-                {{ 'oro.customer.frontend.menu.account_user_profile.label'|trans }}
+                {{ 'oro.customer.frontend.menu.customer_user_profile.label'|trans }}
                 <i class="fa-plus"></i>
                 <i class="fa-minus"></i>
             </h3>

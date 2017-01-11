@@ -3,9 +3,9 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\CheckoutBundle\Event\CheckoutValidateEvent;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
-use Oro\Bundle\ShippingBundle\Entity\ShippingRule;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Symfony\Component\DomCrawler\Crawler;
@@ -60,7 +60,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
     {
         $crawler = $this->client->request('GET', self::$checkoutUrl);
         $form = $this->getTransitionForm($crawler);
-        $this->setAccountAddress(self::MANUAL_ADDRESS, $form, self::BILLING_ADDRESS);
+        $this->setCustomerAddress(self::MANUAL_ADDRESS, $form, self::BILLING_ADDRESS);
         $crawler = $this->client->submit($form);
         $this->assertContains(self::BILLING_ADDRESS_SIGN, $crawler->html());
         $invalidFields = $this->getRequiredFields(self::BILLING_ADDRESS);
@@ -89,7 +89,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $this->assertContains(self::BILLING_ADDRESS_SIGN, $crawler->html());
         $this->checkDataPreSet($crawler);
         $form = $this->getTransitionForm($crawler);
-        $this->setAccountAddress(
+        $this->setCustomerAddress(
             $this->getReference(self::ANOTHER_ACCOUNT_ADDRESS)->getId(),
             $form,
             self::BILLING_ADDRESS
@@ -118,7 +118,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $form = $this->getTransitionForm($crawler);
         $crawler = $this->client->submit($form);
         $form = $this->getTransitionForm($crawler);
-        $this->setAccountAddress(self::MANUAL_ADDRESS, $form, self::SHIPPING_ADDRESS);
+        $this->setCustomerAddress(self::MANUAL_ADDRESS, $form, self::SHIPPING_ADDRESS);
         $crawler = $this->client->submit($form);
         $this->assertContains(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
         $invalidFields = $this->getRequiredFields(self::SHIPPING_ADDRESS);
@@ -147,7 +147,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $this->assertContains(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
         $this->checkDataPreSet($crawler);
         $form = $this->getTransitionForm($crawler);
-        $this->setAccountAddress(
+        $this->setCustomerAddress(
             $this->getReference(self::ANOTHER_ACCOUNT_ADDRESS)->getId(),
             $form,
             self::SHIPPING_ADDRESS
@@ -327,14 +327,14 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
     }
 
     /**
-     * @param Account $account
+     * @param Customer $customer
      */
-    protected function setCurrentAccountOnAddresses(Account $account)
+    protected function setCurrentCustomerOnAddresses(Customer $customer)
     {
-        $addresses = $this->registry->getRepository('OroCustomerBundle:AccountAddress')->findAll();
-        /** @var AccountAddress $address */
+        $addresses = $this->registry->getRepository('OroCustomerBundle:CustomerAddress')->findAll();
+        /** @var CustomerAddress $address */
         foreach ($addresses as $address) {
-            $address->setFrontendOwner($account);
+            $address->setFrontendOwner($customer);
         }
         $this->registry->getManager()->flush();
     }
@@ -359,11 +359,11 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
      * @param Form $form
      * @param string $addressType
      */
-    protected function setAccountAddress($addressId, Form $form, $addressType)
+    protected function setCustomerAddress($addressId, Form $form, $addressType)
     {
         $addressId = $addressId == 0 ?: 'a_' . $addressId;
 
-        $addressTypePath = sprintf('%s[%s][accountAddress]', self::ORO_WORKFLOW_TRANSITION, $addressType);
+        $addressTypePath = sprintf('%s[%s][customerAddress]', self::ORO_WORKFLOW_TRANSITION, $addressType);
         $form->setValues([$addressTypePath => $addressId]);
     }
 
@@ -401,12 +401,12 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
     protected function disableShippingRules()
     {
         $modifiedRules = [];
-        $shippingRules = $this->registry->getRepository(ShippingRule::class)->findAll();
-        /** @var ShippingRule $shippingRule */
+        $shippingRules = $this->registry->getRepository(ShippingMethodsConfigsRule::class)->findAll();
+        /** @var ShippingMethodsConfigsRule $shippingRule */
         foreach ($shippingRules as $shippingRule) {
-            if ($shippingRule->isEnabled()) {
+            if ($shippingRule->getRule()->isEnabled()) {
                 $modifiedRules[] = $shippingRule->getId();
-                $shippingRule->setEnabled(false);
+                $shippingRule->getRule()->setEnabled(false);
             }
         }
         $this->registry->getManager()->flush();
@@ -419,11 +419,11 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
      */
     protected function enableShippingRules($modifiedRules)
     {
-        $shippingRules = $this->registry->getRepository(ShippingRule::class)->findAll();
-        /** @var ShippingRule $shippingRule */
+        $shippingRules = $this->registry->getRepository(ShippingMethodsConfigsRule::class)->findAll();
+        /** @var ShippingMethodsConfigsRule $shippingRule */
         foreach ($shippingRules as $shippingRule) {
             if (in_array($shippingRule->getId(), $modifiedRules, null)) {
-                $shippingRule->setEnabled(true);
+                $shippingRule->getRule()->setEnabled(true);
             }
         }
         $this->registry->getManager()->flush();

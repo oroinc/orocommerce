@@ -1,64 +1,58 @@
-oro_account_address_api:
-    resource: "@OroCustomerBundle/Controller/Api/Rest/AccountAddressController.php"
+oro_customer_address_api:
+    resource: "@OroCustomerBundle/Controller/Api/Rest/CommerceCustomerAddressController.php"
     type:     rest
 
-oro_account_group_api:
-    resource: "@OroCustomerBundle/Controller/Api/Rest/AccountGroupController.php"
+oro_customer_group_api:
+    resource: "@OroCustomerBundle/Controller/Api/Rest/CustomerGroupController.php"
     type:     rest
 
-oro_account_frontend_account_user_api:
-    resource: "@OroCustomerBundle/Controller/Frontend/Api/Rest/AccountUserController.php"
-    type:     rest
-    options:
-        frontend: true
-
-oro_customer_account_user_address_api:
-    resource: "@OroCustomerBundle/Controller/Api/Rest/AccountUserAddressController.php"
-    type:     rest
-
-oro_account_frontend_account_user_address_api:
-    resource: "@OroCustomerBundle/Controller/Frontend/Api/Rest/AccountUserAddressController.php"
+oro_customer_frontend_customer_user_api:
+    resource: "@OroCustomerBundle/Controller/Frontend/Api/Rest/CustomerUserController.php"
     type:     rest
     options:
         frontend: true
 
-oro_account_frontend_account_address_api:
-    resource: "@OroCustomerBundle/Controller/Frontend/Api/Rest/AccountAddressController.php"
+oro_customer_customer_user_address_api:
+    resource: "@OroCustomerBundle/Controller/Api/Rest/CustomerUserAddressController.php"
+    type:     rest
+
+oro_customer_frontend_customer_user_address_api:
+    resource: "@OroCustomerBundle/Controller/Frontend/Api/Rest/CustomerUserAddressController.php"
     type:     rest
     options:
         frontend: true
 
-oro_account_api_pinbar:
+oro_customer_frontend_customer_address_api:
+    resource: "@OroCustomerBundle/Controller/Frontend/Api/Rest/CustomerAddressController.php"
+    type:     rest
+    options:
+        frontend: true
+
+oro_customer_api_pinbar:
     resource:     "@OroCustomerBundle/Controller/Frontend/Api/Rest/NavigationItemController.php"
     type:         rest
     options:
         frontend: true
 
-oro_account_sidebar_api:
+oro_customer_sidebar_api:
     resource: "@OroCustomerBundle/Controller/Frontend/Api/Rest/SidebarController.php"
     type:     rest
     options:
         frontend: true
 
-oro_account_widget_api:
+oro_customer_widget_api:
     resource: "@OroCustomerBundle/Controller/Frontend/Api/Rest/WidgetController.php"
     type:     rest
     options:
         frontend: true
 
-oro_account_pagestate_api:
+oro_customer_pagestate_api:
     resource: "@OroCustomerBundle/Controller/Frontend/Api/Rest/PagestateController.php"
     type:     rest
     options:
         frontend: true
 
-oro_account_frontend_account_user_role_api:
-    resource: "@OroCustomerBundle/Controller/Frontend/Api/Rest/AccountUserRoleController.php"
-    type:     rest
-    options:
-        frontend: true
-
-oro_account_frontend_country_region_api:
+oro_customer_frontend_country_region_api:
     resource: "@OroCustomerBundle/Controller/Frontend/Api/Rest/CountryRegionsController.php"
     type:     rest
     options:

@@ -12,23 +12,35 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 class LoadContentVariantsData extends AbstractFixture implements DependentFixtureInterface
 {
     const CUSTOMER_VARIANT = 'web_catalog.content_variant.customer';
+    const ROOT_VARIANT = 'web_catalog.content_variant.root';
 
     /**
      * {@inheritdoc}
      */
     public function load(ObjectManager $manager)
     {
-        /** @var ContentNode $node */
-        $node = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT);
+        /** @var ContentNode $firstCatalogNode */
+        $firstCatalogNode = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT);
 
-        $contentVariant = new ContentVariant();
-        $contentVariant->setType(SystemPageContentVariantType::TYPE);
-        $contentVariant->setSystemPageRoute('oro_customer_frontend_account_user_index');
-        $contentVariant->setNode($node);
+        $firstContentVariant = new ContentVariant();
+        $firstContentVariant->setType(SystemPageContentVariantType::TYPE);
+        $firstContentVariant->setSystemPageRoute('oro_customer_frontend_customer_user_index');
+        $firstContentVariant->setNode($firstCatalogNode);
 
-        $this->setReference(self::CUSTOMER_VARIANT, $contentVariant);
+        $this->setReference(self::CUSTOMER_VARIANT, $firstContentVariant);
+        $manager->persist($firstContentVariant);
 
-        $manager->persist($contentVariant);
+        /** @var ContentNode $secondCatalogNode */
+        $secondCatalogNode = $this->getReference(LoadContentNodesData::CATALOG_2_ROOT);
+
+        $secondContentVariant = new ContentVariant();
+        $secondContentVariant->setType(SystemPageContentVariantType::TYPE);
+        $secondContentVariant->setSystemPageRoute('oro_frontend_root');
+        $secondContentVariant->setNode($secondCatalogNode);
+
+        $this->setReference(self::ROOT_VARIANT, $secondContentVariant);
+        $manager->persist($secondContentVariant);
+
         $manager->flush();
     }
 

@@ -6,8 +6,8 @@ use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\DataChangesetTypeStub;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\EntityChangesetTypeStub;
 use Oro\Bundle\FormBundle\Form\Type\DataChangesetType;
 use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityPostSetDataListener;
 use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
@@ -62,7 +62,7 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $validator = $this->getMock(ValidatorInterface::class);
+        $validator = $this->createMock(ValidatorInterface::class);
         $metadata = $this->getMockBuilder(ClassMetadata::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -97,25 +97,25 @@ class EntityVisibilityTypeTest extends FormIntegrationTestCase
 
         $options = [
             'allClass' => ProductVisibility::class,
-            'accountGroupClass' => AccountGroupProductVisibility::class,
-            'accountClass' => AccountProductVisibility::class,
+            'customerGroupClass' => CustomerGroupProductVisibility::class,
+            'customerClass' => CustomerProductVisibility::class,
         ];
 
         $form = $this->factory->create($this->formType, [], $options);
 
-        $accountGroupData = '{"1":{"visibility":"hidden"},"2":{"visibility":"hidden"}}';
-        $accountData = '{"1":{"visibility":"account_group"},"2":{"visibility":"visible"}}';
+        $customerGroupData = '{"1":{"visibility":"hidden"},"2":{"visibility":"hidden"}}';
+        $customerData = '{"1":{"visibility":"customer_group"},"2":{"visibility":"visible"}}';
         $form->submit(
             [
                 'all' => 'visible',
-                'accountGroup' => $accountGroupData,
-                'account' => $accountData,
+                'customerGroup' => $customerGroupData,
+                'customer' => $customerData,
             ]
         );
 
         $this->assertTrue($form->isSynchronized());
         $this->assertSame('visible', $form->get('all')->getData());
-        $this->assertSame($accountData, $form->get('account')->getData());
-        $this->assertSame($accountGroupData, $form->get('accountGroup')->getData());
+        $this->assertSame($customerData, $form->get('customer')->getData());
+        $this->assertSame($customerGroupData, $form->get('customerGroup')->getData());
     }
 }

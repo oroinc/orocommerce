@@ -9,7 +9,7 @@ use Symfony\Component\Form\FormInterface;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TaxBundle\Entity\AbstractTaxCode;
 use Oro\Bundle\TaxBundle\Form\Extension\AbstractTaxExtension;
@@ -38,7 +38,7 @@ abstract class AbstractTaxExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('getEntityIdentifier')
             ->willReturnCallback(
                 function ($entity) {
-                    /** @var Account|Product $entity */
+                    /** @var Customer|Product $entity */
                     return $entity->getId();
                 }
             );
@@ -85,10 +85,10 @@ abstract class AbstractTaxExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected function createEvent($data)
     {
-        $taxCodeForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $taxCodeForm = $this->createMock('Symfony\Component\Form\FormInterface');
 
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $mainForm */
-        $mainForm = $this->getMock('Symfony\Component\Form\FormInterface');
+        $mainForm = $this->createMock('Symfony\Component\Form\FormInterface');
         $mainForm->expects($this->any())
             ->method('get')
             ->with('taxCode')

@@ -4,9 +4,7 @@
     }) %}
     <div {{ block('block_attributes') }}>
         <div class="container-fluid">
-            <div class="row">
-                {{ block_widget(block) }}
-            </div>
+            {{ block_widget(block) }}
         </div>
     </div>
 {% endblock %}
@@ -31,7 +29,7 @@
 
 {% block _top_nav_menu_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " col-md-7 col-sm-7 text-right"
+        '~class': " pull-right"
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -40,12 +38,12 @@
 
 {% block _top_nav_controls_widget %}
     {% set attr = layout_attr_defaults(attr, {
-    '~class': " pull-left col-md-5 col-sm-5"
+    '~class': " pull-left"
     }) %}
     {% set dom_relocation_options =  {
         responsive: [
             {
-                breakpoint: 1099,
+                screenType: 'tablet',
                 moveTo: '[data-main-menu-container]'
             }
         ]

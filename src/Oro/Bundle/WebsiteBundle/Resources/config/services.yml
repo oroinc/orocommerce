@@ -73,6 +73,8 @@ services:
     oro_website.entity_listener.website:
         class: 'Oro\Bundle\WebsiteBundle\Entity\EntityListener\WebsiteEntityListener'
         public: false
+        arguments:
+            - '@oro_scope.scope_manager'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_website.entity.website.class%', event: prePersist }
 
@@ -89,3 +91,9 @@ services:
         factory:  ["@oro_entity.doctrine_helper", getEntityRepository]
         arguments:
             - '%oro_website.entity.website.class%'
+
+    oro_website.assetic_context:
+        class: 'Oro\Bundle\WebsiteBundle\Asset\AssetsContext'
+        decorates: assets.context
+        arguments:
+            - '@request_stack'

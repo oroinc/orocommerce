@@ -23,18 +23,32 @@ define(function(require) {
         },
 
         /**
+         * @property {Object}
+         */
+        options: {
+            events: {
+                before: 'entry-point:order:load:before',
+                load: 'entry-point:order:load',
+                after: 'entry-point:order:load:after',
+                trigger: 'entry-point:order:trigger'
+            }
+        },
+
+        /**
          * @constructor
          * @param {Object} options
          */
         initialize: function(options) {
-            this.$el = options._sourceElement;
+            this.options = $.extend(true, {}, this.options, options || {});
+
+            this.$el = this.options._sourceElement;
             this.loadingMaskView = new LoadingMaskView({container: this.$el});
             this.orderHasChanged = false;
             var self = this;
             this.getPossibleShippingMethodForm().hide();
             this.getToggleButton().on('click', function() {
                 self.getCalculateShippingElement().val(true);
-                mediator.trigger('entry-point:order:trigger');
+                mediator.trigger(self.options.events.trigger);
             });
             this.getPossibleShippingMethodForm().on(
                 'change',
@@ -50,9 +64,9 @@ define(function(require) {
             if ($(document).find('.selected-shipping-method').length > 0) {
                 this.savedShippingMethod = $(document).find('.selected-shipping-method').text();
             }
-            mediator.on('entry-point:order:load:before', this.showLoadingMask, this);
-            mediator.on('entry-point:order:load', this.onOrderChange, this);
-            mediator.on('entry-point:order:load:after', this.hideLoadingMask, this);
+            mediator.on(this.options.events.before, this.showLoadingMask, this);
+            mediator.on(this.options.events.load, this.onOrderChange, this);
+            mediator.on(this.options.events.after, this.hideLoadingMask, this);
 
             this.$el.closest('form').on('submit', _.bind(this.onSaveForm, this));
         },
@@ -64,7 +78,7 @@ define(function(require) {
             var form = $(e.target);
             form.find(this.selectors.calculateShipping).val(true);
             form.validate();
-            if (form.valid() && this.orderHasChanged) {
+            if (form.valid() && this.orderHasChanged && !this.getOverriddenShippingCostElement().val()) {
                 this.showConfirmation(form);
                 return false;
             }
@@ -107,7 +121,10 @@ define(function(require) {
         },
 
         onOrderChange: function(e) {
-            this.$totals = e.totals;
+            if (e.totals) {
+                this.$totals = e.totals;
+            }
+
             if (e.possibleShippingMethods != undefined ) {
                 this.getCalculateShippingElement().val(null);
                 this.getToggleButton().parent('div').hide();
@@ -186,6 +203,8 @@ define(function(require) {
                     '</span>';
                 this.getPossibleShippingMethodForm().html(str);
             }
+
+            this.allowUnlistedAndLockFlags();
         },
 
         /**
@@ -240,6 +259,21 @@ define(function(require) {
             }
         },
 
+        allowUnlistedAndLockFlags: function()
+        {
+            var $shippingMethodLockedFlag = $('[name$="[shippingMethodLocked]"]');
+            var $allowUnlistedShippingMethodFlag = $('[name$="[allowUnlistedShippingMethod]"]');
+
+            if ($shippingMethodLockedFlag.length <= 0 || $allowUnlistedShippingMethodFlag.length <= 0) {
+                return;
+            }
+
+            var disableFlags = $('[name$="[estimatedShippingCostAmount]"]').val() <= 0;
+
+            $shippingMethodLockedFlag.prop('disabled', disableFlags);
+            $allowUnlistedShippingMethodFlag.prop('disabled', disableFlags);
+        },
+
         /**
          * @param {string|null} type
          * @param {string|null} method
@@ -258,7 +292,7 @@ define(function(require) {
          * @param {number} cost
          */
         updateTotals: function(cost) {
-            if (cost !== null) {
+            if (this.$totals && cost !== null) {
                 var totals = _.clone(this.$totals);
                 var newTotalAmount = 0;
                 $.each(totals.subtotals, function(key, subtotal) {
@@ -285,6 +319,7 @@ define(function(require) {
             var method = method_type.data('shipping-method');
             var estimated_cost = method_type.data('shipping-price');
             this.updateElementsValue(method_type.val(), method, estimated_cost, false);
+            this.allowUnlistedAndLockFlags();
         },
 
         /**
@@ -385,9 +420,9 @@ define(function(require) {
             this.getToggleButton().off('click');
             this.getPossibleShippingMethodType().off('change');
 
-            mediator.off('entry-point:order:load:before', this.showLoadingMask, this);
-            mediator.off('entry-point:order:load', this.onOrderChange, this);
-            mediator.off('entry-point:order:load:after', this.hideLoadingMask, this);
+            mediator.off(this.options.events.before, this.showLoadingMask, this);
+            mediator.off(this.options.events.load, this.onOrderChange, this);
+            mediator.off(this.options.events.after, this.hideLoadingMask, this);
 
             PossibleShippingMethodsComponent.__super__.dispose.call(this);
         }

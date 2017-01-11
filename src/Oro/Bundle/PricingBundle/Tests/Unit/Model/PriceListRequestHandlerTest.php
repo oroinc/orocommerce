@@ -6,9 +6,9 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Provider\AccountUserRelationsProvider;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
@@ -68,7 +68,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
     protected $em;
 
     /**
-     * @var AccountUserRelationsProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var CustomerUserRelationsProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $relationsProvider;
 
@@ -82,7 +82,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->session = $this->getMock(SessionInterface::class);
+        $this->session = $this->createMock(SessionInterface::class);
 
         $this->securityFacade = $this->getMockBuilder(SecurityFacade::class)
             ->disableOriginalConstructor()
@@ -92,15 +92,15 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->request = $this->getMock(Request::class);
+        $this->request = $this->createMock(Request::class);
         $this->request->expects($this->any())->method('getSession')->willReturn($this->session);
-        $this->requestStack = $this->getMock(RequestStack::class);
+        $this->requestStack = $this->createMock(RequestStack::class);
         $this->requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
 
         $this->repository = $this->getMockBuilder(PriceListRepository::class)
             ->disableOriginalConstructor()->getMock();
-        $this->registry = $this->getMock(ManagerRegistry::class);
-        $this->relationsProvider = $this->getMockBuilder(AccountUserRelationsProvider::class)
+        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->relationsProvider = $this->getMockBuilder(CustomerUserRelationsProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->websiteManager = $this->getMockBuilder(WebsiteManager::class)
@@ -139,7 +139,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetPriceListWithoutRequest()
     {
-        $em = $this->getMock(ObjectManager::class);
+        $em = $this->createMock(ObjectManager::class);
         $em->expects($this->any())
             ->method('getRepository')
             ->willReturn($this->repository);
@@ -158,7 +158,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetPriceListWithoutParam()
     {
-        $em = $this->getMock(ObjectManager::class);
+        $em = $this->createMock(ObjectManager::class);
         $em->expects($this->any())
             ->method('getRepository')
             ->willReturn($this->repository);
@@ -176,7 +176,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetPriceList()
     {
-        $em = $this->getMock(ObjectManager::class);
+        $em = $this->createMock(ObjectManager::class);
         $em->expects($this->any())
             ->method('getRepository')
             ->willReturn($this->repository);
@@ -205,7 +205,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testDefaultPriceListNotFound()
     {
-        $em = $this->getMock(ObjectManager::class);
+        $em = $this->createMock(ObjectManager::class);
         $em->expects($this->any())
             ->method('getRepository')
             ->willReturn($this->repository);
@@ -221,7 +221,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function testGetPriceListNotFound()
     {
-        $em = $this->getMock(ObjectManager::class);
+        $em = $this->createMock(ObjectManager::class);
         $em->expects($this->any())
             ->method('getRepository')
             ->willReturn($this->repository);
@@ -241,16 +241,16 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider getPriceListByAccountForUserDataProvider
+     * @dataProvider getPriceListByCustomerForUserDataProvider
      *
-     * @param int|null $accountId
+     * @param int|null $customerId
      * @param int|null $websiteId
-     * @param Account $expectedAccount
+     * @param Customer $expectedCustomer
      */
-    public function testGetPriceListByAccountForUser(
-        $accountId,
+    public function testGetPriceListByCustomerForUser(
+        $customerId,
         $websiteId,
-        Account $expectedAccount = null
+        Customer $expectedCustomer = null
     ) {
         /** @var User $user */
         $user = $this->getEntity(User::class, 11);
@@ -269,7 +269,7 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
             ->method('get')
             ->willReturnMap(
                 [
-                    [PriceListRequestHandler::ACCOUNT_ID_KEY, null, false, $accountId],
+                    [PriceListRequestHandler::ACCOUNT_ID_KEY, null, false, $customerId],
                     [PriceListRequestHandler::WEBSITE_KEY, null, false, $websiteId]
                 ]
             );
@@ -289,20 +289,20 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
                 ->willReturn($website);
         }
 
-        if ($accountId) {
-            /** @var Account $expectedAccount */
-            $expectedAccount = $this->getEntity(Account::class, $accountId);
-            $accountRepo = $this->getMockBuilder(EntityRepository::class)
+        if ($customerId) {
+            /** @var Customer $expectedCustomer */
+            $expectedCustomer = $this->getEntity(Customer::class, $customerId);
+            $customerRepo = $this->getMockBuilder(EntityRepository::class)
                 ->disableOriginalConstructor()->getMock();
-            $accountRepo->expects($this->once())
+            $customerRepo->expects($this->once())
                 ->method('find')
-                ->with($accountId)
-                ->willReturn($expectedAccount);
+                ->with($customerId)
+                ->willReturn($expectedCustomer);
 
-            $repositoryMap[] = [Account::class, $accountRepo];
+            $repositoryMap[] = [Customer::class, $customerRepo];
         }
 
-        $em = $this->getMock(ObjectManager::class);
+        $em = $this->createMock(ObjectManager::class);
         $em->expects($this->any())
             ->method('getRepository')
             ->willReturnMap($repositoryMap);
@@ -312,42 +312,42 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->priceListTreeHandler->expects($this->once())
             ->method('getPriceList')
-            ->with($expectedAccount, $website)
+            ->with($expectedCustomer, $website)
             ->willReturn($priceList);
 
-        $this->assertSame($priceList, $this->createHandler()->getPriceListByAccount());
+        $this->assertSame($priceList, $this->createHandler()->getPriceListByCustomer());
     }
 
     /**
      * @return array
      */
-    public function getPriceListByAccountForUserDataProvider()
+    public function getPriceListByCustomerForUserDataProvider()
     {
         return [
-            'user, with account id, website' => [
-                'accountId' => 1,
+            'user, with customer id, website' => [
+                'customerId' => 1,
                 'websiteId' => 1,
-                'expectedAccount' => new Account(),
+                'expectedCustomer' => new Customer(),
             ],
-            'user, with account id, no website' => [
-                'accountId' => 1,
+            'user, with customer id, no website' => [
+                'customerId' => 1,
                 'websiteId' => null,
-                'expectedAccount' => new Account(),
+                'expectedCustomer' => new Customer(),
             ],
             'default price list' => [
-                'accountId' => null,
+                'customerId' => null,
                 'websiteId' => null,
-                'expectedAccount' => null,
+                'expectedCustomer' => null,
             ]
         ];
     }
 
     /**
-     * @dataProvider accountUserAccountDataProvider
-     * @param AccountUser|null $user
-     * @param Account|null $expectedAccount
+     * @dataProvider customerUserCustomerDataProvider
+     * @param CustomerUser|null $user
+     * @param Customer|null $expectedCustomer
      */
-    public function testGetPriceListByAccountForAccountUser($user, $expectedAccount)
+    public function testGetPriceListByCustomerForCustomerUser($user, $expectedCustomer)
     {
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(CombinedPriceList::class, 42);
@@ -365,27 +365,27 @@ class PriceListRequestHandlerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($user);
 
         $this->relationsProvider->expects($this->once())
-            ->method('getAccountIncludingEmpty')
+            ->method('getCustomerIncludingEmpty')
             ->with($user)
-            ->will($this->returnValue($expectedAccount));
+            ->will($this->returnValue($expectedCustomer));
 
         $this->priceListTreeHandler->expects($this->once())
             ->method('getPriceList')
-            ->with($expectedAccount, $website)
+            ->with($expectedCustomer, $website)
             ->willReturn($priceList);
 
-        $this->assertSame($priceList, $this->createHandler()->getPriceListByAccount());
+        $this->assertSame($priceList, $this->createHandler()->getPriceListByCustomer());
     }
 
     /**
      * @return array
      */
-    public function accountUserAccountDataProvider()
+    public function customerUserCustomerDataProvider()
     {
         return [
             [null, null],
-            [null, new Account()],
-            [new AccountUser(), new Account()]
+            [null, new Customer()],
+            [new CustomerUser(), new Customer()]
         ];
     }
 

@@ -29,7 +29,7 @@ class LoadMinimalProductPrices extends AbstractFixture implements DependentFixtu
             'currency' => 'USD'
         ],
 
-        // website 1 (PriceListToWebsite, priceListsToAccountGroups)
+        // website 1 (PriceListToWebsite, priceListsToCustomerGroups)
         [
             'product' => LoadProductData::PRODUCT_1,
             'cpl' => '1t_2t_3t',
@@ -56,7 +56,7 @@ class LoadMinimalProductPrices extends AbstractFixture implements DependentFixtu
 //            'currency' => 'EUR'
 //        ],
 
-        // website 1 (priceListsToAccounts)
+        // website 1 (priceListsToCustomers)
         [
             'product' => LoadProductData::PRODUCT_1,
             'cpl' => '2t_3f_1t',

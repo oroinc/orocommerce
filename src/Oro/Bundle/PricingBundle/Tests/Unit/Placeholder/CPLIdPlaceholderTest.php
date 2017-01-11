@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Placeholder;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use Oro\Bundle\PricingBundle\Placeholder\CPLIdPlaceholder;
@@ -36,7 +36,7 @@ class CPLIdPlaceholderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->tokenStorage = $this->getMock(TokenStorageInterface::class);
+        $this->tokenStorage = $this->createMock(TokenStorageInterface::class);
 
         $this->placeholder = new CPLIdPlaceholder($this->priceListTreeHandler, $this->tokenStorage);
     }
@@ -53,17 +53,17 @@ class CPLIdPlaceholderTest extends \PHPUnit_Framework_TestCase
 
     public function testReplaceDefault()
     {
-        $user = new AccountUser();
-        $account = new Account();
-        $user->setAccount($account);
+        $user = new CustomerUser();
+        $customer = new Customer();
+        $user->setCustomer($customer);
 
-        $token = $this->getMock(TokenInterface::class);
+        $token = $this->createMock(TokenInterface::class);
         $token->method('getUser')->willReturn($user);
         $this->tokenStorage->method('getToken')->willReturn($token);
 
         $this->priceListTreeHandler->expects($this->once())
             ->method('getPriceList')
-            ->with($account)
+            ->with($customer)
             ->willReturn($this->getEntity(CombinedPriceList::class, ['id' => 1]));
 
         $this->assertSame("test_1", $this->placeholder->replaceDefault("test_CPL_ID"));
@@ -71,7 +71,7 @@ class CPLIdPlaceholderTest extends \PHPUnit_Framework_TestCase
 
     public function testReplaceDefaultUserNotAuthenticated()
     {
-        $token = $this->getMock(TokenInterface::class);
+        $token = $this->createMock(TokenInterface::class);
         $token->method('getUser')->willReturn(null);
         $this->tokenStorage->method('getToken')->willReturn($token);
 
@@ -99,17 +99,17 @@ class CPLIdPlaceholderTest extends \PHPUnit_Framework_TestCase
      */
     public function testReplaceDefaultCplNotFound()
     {
-        $user = new AccountUser();
-        $account = new Account();
-        $user->setAccount($account);
+        $user = new CustomerUser();
+        $customer = new Customer();
+        $user->setCustomer($customer);
 
-        $token = $this->getMock(TokenInterface::class);
+        $token = $this->createMock(TokenInterface::class);
         $token->method('getUser')->willReturn($user);
         $this->tokenStorage->method('getToken')->willReturn($token);
 
         $this->priceListTreeHandler->expects($this->once())
             ->method('getPriceList')
-            ->with($account)
+            ->with($customer)
             ->willReturn(null);
 
         $this->placeholder->replaceDefault("test_CPL_ID");

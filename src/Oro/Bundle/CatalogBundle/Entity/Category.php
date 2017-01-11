@@ -7,6 +7,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Oro\Bundle\CatalogBundle\Model\ExtendCategory;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -72,8 +74,9 @@ use Oro\Component\Tree\Entity\TreeTrait;
  *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class Category extends ExtendCategory implements SluggableInterface
+class Category extends ExtendCategory implements SluggableInterface, DatesAwareInterface
 {
+    use DatesAwareTrait;
     use TreeTrait;
     use SluggableTrait;
 
@@ -148,34 +151,6 @@ class Category extends ExtendCategory implements SluggableInterface
      * )
      */
     protected $childCategories;
-
-    /**
-     * @var \DateTime $createdAt
-     *
-     * @ORM\Column(name="created_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.created_at"
-     *          }
-     *      }
-     * )
-     */
-    protected $createdAt;
-
-    /**
-     * @var \DateTime $updatedAt
-     *
-     * @ORM\Column(name="updated_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.updated_at"
-     *          }
-     *      }
-     * )
-     */
-    protected $updatedAt;
 
     /**
      * @var Collection|Product[]
@@ -396,46 +371,6 @@ class Category extends ExtendCategory implements SluggableInterface
     }
 
     /**
-     * @return \DateTime
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @param \DateTime $createdAt
-     *
-     * @return $this
-     */
-    public function setCreatedAt($createdAt)
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getUpdatedAt()
-    {
-        return $this->updatedAt;
-    }
-
-    /**
-     * @param \DateTime $updatedAt
-     *
-     * @return $this
-     */
-    public function setUpdatedAt($updatedAt)
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    /**
      * @return Collection|Product[]
      */
     public function getProducts()
@@ -450,7 +385,7 @@ class Category extends ExtendCategory implements SluggableInterface
      */
     public function addProduct(Product $product)
     {
-        if (!$this->products->contains($product)) {
+        if (!$this->hasProduct($product)) {
             $this->products->add($product);
         }
 
@@ -464,11 +399,20 @@ class Category extends ExtendCategory implements SluggableInterface
      */
     public function removeProduct(Product $product)
     {
-        if ($this->products->contains($product)) {
+        if ($this->hasProduct($product)) {
             $this->products->removeElement($product);
         }
 
         return $this;
+    }
+
+    /**
+     * @param Product $product
+     * @return bool
+     */
+    public function hasProduct(Product $product)
+    {
+        return $this->products->contains($product);
     }
 
     /**

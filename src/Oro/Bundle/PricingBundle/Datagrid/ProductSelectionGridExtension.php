@@ -9,7 +9,7 @@ use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\DatasourceInterface;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Extension\AbstractExtension;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PricingBundle\Model\FrontendProductListModifier;
 
 class ProductSelectionGridExtension extends AbstractExtension
@@ -83,6 +83,6 @@ class ProductSelectionGridExtension extends AbstractExtension
         return !$this->applied
         && static::SUPPORTED_GRID === $config->getName()
         && ($token = $this->tokenStorage->getToken())
-        && $token->getUser() instanceof AccountUser;
+        && $token->getUser() instanceof CustomerUser;
     }
 }

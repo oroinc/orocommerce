@@ -10,10 +10,6 @@ Oro\Bundle\ProductBundle\Entity\Product:
             - Length:
                 min: 3
                 max: 255
-        owner:
-            - NotBlank: ~
-        organization:
-            - NotBlank: ~
         unitPrecisions:
             - Count:
                 min: 1
@@ -32,8 +28,6 @@ Oro\Bundle\ProductBundle\Entity\Product:
             - Valid: ~
         descriptions:
             - Valid: ~
-        organization:
-            - NotBlank: ~
         inventory_status:
             - NotBlank: ~
         variantLinks:
@@ -41,8 +35,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
         images:
             - Valid: ~
             - Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageCollection: ~
-        hasVariants:
-            - NotNull: ~
+        attributeFamily:
+            - NotBlank: ~
 
 Oro\Bundle\ProductBundle\Entity\ProductUnit:
     properties:

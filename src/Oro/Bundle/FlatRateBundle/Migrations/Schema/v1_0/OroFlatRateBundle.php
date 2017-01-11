@@ -1,0 +1,62 @@
+<?php
+
+namespace Oro\Bundle\FlatRateBundle\Migrations\Schema\v1_0;
+
+use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Schema\SchemaException;
+use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+
+class OroFlatRateBundle implements Migration
+{
+    /**
+     * @param Schema   $schema
+     * @param QueryBag $queries
+     *
+     * @throws SchemaException
+     */
+    public function up(Schema $schema, QueryBag $queries)
+    {
+        $this->createOroFlatRateTransportLabelTable($schema);
+        $this->addOroFlatRateTransportLabelForeignKeys($schema);
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    private function createOroFlatRateTransportLabelTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_flat_rate_transport_label');
+
+        $table->addColumn('transport_id', 'integer', []);
+        $table->addColumn('localized_value_id', 'integer', []);
+
+        $table->setPrimaryKey(['transport_id', 'localized_value_id']);
+        $table->addIndex(['transport_id'], 'oro_flat_rate_transport_label_transport_id', []);
+        $table->addUniqueIndex(['localized_value_id'], 'oro_flat_rate_transport_label_localized_value_id', []);
+    }
+
+    /**
+     * @param Schema $schema
+     *
+     * @throws SchemaException
+     */
+    private function addOroFlatRateTransportLabelForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_flat_rate_transport_label');
+
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_fallback_localization_val'),
+            ['localized_value_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_integration_transport'),
+            ['transport_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+    }
+}

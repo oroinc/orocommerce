@@ -1,5 +1,8 @@
 {% extends 'OroUIBundle:actions:view.html.twig' %}
 {% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+{% import 'OroProductBundle::image_macros.html.twig' as Image %}
+{% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
+{% import 'OroUIBundle::macros.html.twig' as UII %}
 
 {% oro_title_set({params : {"%sku%": entity.sku|default('N/A'|trans), "%name%": entity.defaultName.string|default('N/A'|trans) }}) %}
 
@@ -40,18 +43,38 @@
         {{ UI.renderHtmlProperty('oro.product.short_descriptions.label'|trans, entity.defaultShortDescription) }}
     {% endset %}
 
-    {% set dataBlocks = [
-        {
+    {% set productInfo %}
+        {% embed '@OroProduct/Product/widget/info.html.twig' with {'product': entity} %}
+            {% block sku_and_name %}{% endblock %}
+            {% block images %}{% endblock %}
+        {% endembed %}
+    {% endset %}
+
+    {% set dataBlocks = {
+        'general': {
             'title': 'oro.product.sections.general'|trans,
             'class': 'active',
             'subblocks': [
-                {'data' : [productInformationWidget]},
-                {'data' : [productDescription, productShortDescription]}
+                {
+                    'data' : {
+                        'sku': UI.renderProperty('oro.product.sku.label'|trans, entity.sku),
+                        'names': UI.renderProperty('oro.product.names.label'|trans, entity.defaultName),
+                        'slugPrototypes': UI.renderProperty(
+                            'oro.product.slug_prototypes.label'|trans,
+                            entity.defaultSlugPrototype
+                        ),
+                        'info': productInfo
+                    }
+                },
+                {'data' : {
+                    'descriptions': productDescription,
+                    'shortDescriptions': productShortDescription
+                }}
             ]
         }
-    ] %}
+    } %}
 
-    {% if entity.getHasVariants %}
+    {% if entity.isConfigurable %}
         {% set dataBlocks = dataBlocks|merge([{
             'title' : 'oro.product.sections.productVariants'|trans,
             'subblocks': [{
@@ -59,7 +82,7 @@
                 'useSpan': false,
                 'data' : [
                     dataGrid.renderGrid(
-                        'oro_product-product_variants-product_view',
+                        'product-product-variants-view',
                         {'parentProduct': entity.id},
                         { cssClass: 'inner-grid' }
                     )
@@ -68,16 +91,39 @@
         }] ) %}
     {% endif %}
 
-    {% set dataBlocks = dataBlocks|merge([{
-        'title': 'oro.product.sections.inventory'|trans,
-        'priority': 5,
-        'subblocks': [{
-            'title': '',
-            'data': [
-                UI.renderHtmlProperty('oro.product.inventory_status.label'|trans, entity.inventoryStatus)
-            ]
-        }]
-    }] ) %}
+    {% set dataBlocks = dataBlocks|merge({
+        'inventory': {
+            'title': 'oro.product.sections.inventory'|trans,
+            'priority': 5,
+            'subblocks': [{
+                'title': '',
+                'data': {
+                    'inventory_status': UI.renderProperty('oro.product.inventory_status.label'|trans, entity.inventoryStatus)
+                }
+            }]
+        }
+    }) %}
+
+    {% set imagesData = '' %}
+    {% if entity.images.count %}
+        {% set imagesData = UI.renderHtmlProperty(
+                'oro.product.images.label'|trans,
+                Image.renderProductImages(entity.images, imageTypes)
+            )
+        %}
+    {% else %}
+        {% set imagesData = 'oro.product.form.no_images'|trans %}
+    {% endif %}
+
+    {% set dataBlocks = dataBlocks|merge({
+        'images': {
+            'title': 'oro.product.sections.images'|trans,
+            'priority': 0,
+            'subblocks': [{
+                'data': {'images': imagesData}
+            }]
+        }
+    }) %}
 
     {% set id = 'product-view' %}
     {% set data = {'dataBlocks': dataBlocks} %}

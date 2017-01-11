@@ -16,15 +16,15 @@ datagrids:
                     - cachedTotal.currency
                     - shopping_list.createdAt
                     - shopping_list.updatedAt
-                    - shopping_list_account.name as account
-                    - CONCAT(shopping_list_acc_user.firstName, ' ', shopping_list_acc_user.lastName) as account_user
+                    - shopping_list_customer.name as customer
+                    - CONCAT(shopping_list_acc_user.firstName, ' ', shopping_list_acc_user.lastName) as customer_user
                 from:
                     - { table: %oro_shopping_list.entity.shopping_list.class%, alias: shopping_list }
                 join:
                     left:
-                        - { join: shopping_list.account, alias: shopping_list_account }
-                        - { join: shopping_list.accountUser, alias: shopping_list_acc_user }
-                        - { join: %oro_customer.entity.account_user_settings.class%, alias: userSettings, conditionType: WITH, condition: "shopping_list_acc_user = userSettings.accountUser and userSettings.website = shopping_list.website" }
+                        - { join: shopping_list.customer, alias: shopping_list_customer }
+                        - { join: shopping_list.customerUser, alias: shopping_list_acc_user }
+                        - { join: %oro_customer.entity.customer_user_settings.class%, alias: userSettings, conditionType: WITH, condition: "shopping_list_acc_user = userSettings.customerUser and userSettings.website = shopping_list.website" }
                         - { join: %oro_shopping_list.entity.shopping_list_total.class%, alias: cachedTotal, conditionType: WITH, condition: "cachedTotal.shoppingList = shopping_list AND cachedTotal.currency = COALESCE(userSettings.currency, '@oro_pricing.user_currency_manager->getDefaultCurrency()')" }
 
         columns:
@@ -34,10 +34,10 @@ datagrids:
                 label:         oro.shoppinglist.label.label
             notes:
                 label:         oro.shoppinglist.notes.label
-            account:
-                label:         oro.shoppinglist.account.label
-            account_user:
-                label:         oro.shoppinglist.account_user.label
+            customer:
+                label:         oro.shoppinglist.customer.label
+            customer_user:
+                label:         oro.shoppinglist.customer_user.label
             subtotal:
                 label:         oro.shoppinglist.subtotal.label
                 type:          twig
@@ -60,10 +60,10 @@ datagrids:
                     data_name: shopping_list.id
                 label:
                     data_name: shopping_list.label
-                account:
-                    data_name: account
-                account_user:
-                    data_name: account_user
+                customer:
+                    data_name: customer
+                customer_user:
+                    data_name: customer_user
                 subtotal:
                     data_name: subtotal
                 createdAt:
@@ -80,12 +80,12 @@ datagrids:
                 label:
                     type:      string
                     data_name: shopping_list.label
-                account:
+                customer:
                     type:      string
-                    data_name: account
-                account_user:
+                    data_name: customer
+                customer_user:
                     type:      string
-                    data_name: account_user
+                    data_name: customer_user
                 subtotal:
                     type:      number
                     data_name: subtotal

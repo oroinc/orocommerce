@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\PaymentTermBundle\Method\PaymentTerm;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteProductDemandData;
 
@@ -18,10 +19,12 @@ class LoadQuoteCheckoutsData extends AbstractLoadCheckouts
     {
         return [
             self::CHECKOUT_1 => [
+                'customerUser' => LoadCustomerUserData::EMAIL,
                 'source' => LoadQuoteProductDemandData::QUOTE_DEMAND_1,
                 'checkout' => ['payment_method' => PaymentTerm::TYPE]
             ],
             self::CHECKOUT_2 => [
+                'customerUser' => LoadCustomerUserData::LEVEL_1_EMAIL,
                 'source' => LoadQuoteProductDemandData::QUOTE_DEMAND_2,
                 'checkout' => ['payment_method' => PaymentTerm::TYPE]
             ]
@@ -59,7 +62,7 @@ class LoadQuoteCheckoutsData extends AbstractLoadCheckouts
     {
         return array_merge(
             parent::getDependencies(),
-            ['Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteProductDemandData']
+            [LoadQuoteProductDemandData::class]
         );
     }
 }

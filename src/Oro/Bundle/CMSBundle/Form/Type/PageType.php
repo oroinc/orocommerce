@@ -29,7 +29,7 @@ class PageType extends AbstractType
                 [
                     'label'    => 'oro.cms.page.titles.label',
                     'required' => true,
-                    'constraints' => [new NotBlank()],
+                    'options'  => ['constraints' => [new NotBlank()]],
                 ]
             )
             ->add(

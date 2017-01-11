@@ -56,9 +56,9 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
     protected function setUp()
     {
         parent::setUp();
-        $this->translator = $this->getMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
 
-        $this->roundingService = $this->getMock('Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface');
+        $this->roundingService = $this->createMock('Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface');
         $this->roundingService->expects($this->any())
             ->method('round')
             ->will(
@@ -126,7 +126,7 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
 
         $this->priceListTreeHandler->expects($this->exactly($entity->getLineItems()->count()))
             ->method('getPriceList')
-            ->with($entity->getAccount(), $entity->getWebsite())
+            ->with($entity->getCustomer(), $entity->getWebsite())
             ->willReturn($priceList);
 
         $subtotal = $this->provider->getSubtotal($entity);

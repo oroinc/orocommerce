@@ -4,8 +4,8 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
@@ -43,8 +43,8 @@ class OrderTest extends \PHPUnit_Framework_TestCase
             ['currency', 'USD'],
             ['subtotal', 999.99],
             ['total', 999.99],
-            ['account', new Account()],
-            ['accountUser', new AccountUser()],
+            ['customer', new Customer()],
+            ['customerUser', new CustomerUser()],
             ['website', new Website()],
             ['sourceEntityClass', 'EntityClass'],
             ['sourceEntityIdentifier', 'source-identifier-test-01'],
@@ -91,27 +91,27 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $email = 'test@test.com';
         $order = new Order();
         $this->assertEmpty($order->getEmail());
-        $accountUser = new AccountUser();
-        $accountUser->setEmail($email);
-        $order->setAccountUser($accountUser);
+        $customerUser = new CustomerUser();
+        $customerUser->setEmail($email);
+        $order->setCustomerUser($customerUser);
         $this->assertEquals($email, $order->getEmail());
     }
 
-    public function testAccountUserToAccountRelation()
+    public function testCustomerUserToCustomerRelation()
     {
         $order = new Order();
 
-        /** @var Account|\PHPUnit_Framework_MockObject_MockObject $account */
-        $account = $this->getMock('Oro\Bundle\CustomerBundle\Entity\Account');
-        $account->expects($this->any())
+        /** @var Customer|\PHPUnit_Framework_MockObject_MockObject $customer */
+        $customer = $this->createMock('Oro\Bundle\CustomerBundle\Entity\Customer');
+        $customer->expects($this->any())
             ->method('getId')
             ->will($this->returnValue(1));
-        $accountUser = new AccountUser();
-        $accountUser->setAccount($account);
+        $customerUser = new CustomerUser();
+        $customerUser->setCustomer($customer);
 
-        $this->assertEmpty($order->getAccount());
-        $order->setAccountUser($accountUser);
-        $this->assertSame($account, $order->getAccount());
+        $this->assertEmpty($order->getCustomer());
+        $order->setCustomerUser($customerUser);
+        $this->assertSame($customer, $order->getCustomer());
     }
 
     public function testPrePersist()

@@ -6,7 +6,7 @@ use Doctrine\Common\Cache\Cache;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Rounding\QuantityRoundingService;
@@ -22,9 +22,9 @@ use Symfony\Component\Translation\TranslatorInterface;
 class ShoppingListManager
 {
     /**
-     * @var AccountUser
+     * @var CustomerUser
      */
-    private $accountUser;
+    private $customerUser;
 
     /**
      * @var TranslatorInterface
@@ -110,9 +110,9 @@ class ShoppingListManager
     {
         $shoppingList = new ShoppingList();
         $shoppingList
-            ->setOrganization($this->getAccountUser()->getOrganization())
-            ->setAccount($this->getAccountUser()->getAccount())
-            ->setAccountUser($this->getAccountUser())
+            ->setOrganization($this->getCustomerUser()->getOrganization())
+            ->setCustomer($this->getCustomerUser()->getCustomer())
+            ->setCustomerUser($this->getCustomerUser())
             ->setWebsite($this->websiteManager->getCurrentWebsite());
 
         $shoppingList->setLabel($label !== '' ? $label : $this->translator->trans('oro.shoppinglist.default.label'));
@@ -136,18 +136,18 @@ class ShoppingListManager
     public function createCurrent($label = '')
     {
         $shoppingList = $this->create(true, $label);
-        $this->setCurrent($this->getAccountUser(), $shoppingList);
+        $this->setCurrent($this->getCustomerUser(), $shoppingList);
 
         return $shoppingList;
     }
 
     /**
-     * @param AccountUser  $accountUser
+     * @param CustomerUser  $customerUser
      * @param ShoppingList $shoppingList
      */
-    public function setCurrent(AccountUser $accountUser, ShoppingList $shoppingList)
+    public function setCurrent(CustomerUser $customerUser, ShoppingList $shoppingList)
     {
-        $this->cache->save($accountUser->getId(), $shoppingList->getId());
+        $this->cache->save($customerUser->getId(), $shoppingList->getId());
         $shoppingList->setCurrent(true);
     }
 
@@ -159,6 +159,7 @@ class ShoppingListManager
      */
     public function addLineItem(LineItem $lineItem, ShoppingList $shoppingList, $flush = true, $concatNotes = false)
     {
+        $this->ensureProductTypeAllowed($lineItem);
         $em = $this->managerRegistry->getManagerForClass('OroShoppingListBundle:LineItem');
         $lineItem->setShoppingList($shoppingList);
         /** @var LineItemRepository $repository */
@@ -277,16 +278,16 @@ class ShoppingListManager
     {
         /* @var $repository ShoppingListRepository */
         $repository = $this->getRepository('OroShoppingListBundle:ShoppingList');
-        if (!$this->getAccountUser()) {
+        if (!$this->getCustomerUser()) {
             return null;
         }
-        $currentListId = $this->cache->fetch($this->getAccountUser()->getId());
+        $currentListId = $this->cache->fetch($this->getCustomerUser()->getId());
         $shoppingList = null;
         if ($currentListId) {
             $shoppingList = $repository->findByUserAndId($this->aclHelper, $currentListId);
         }
         if (!$shoppingList) {
-            $shoppingList  = $repository->findAvailableForAccountUser($this->aclHelper);
+            $shoppingList  = $repository->findAvailableForCustomerUser($this->aclHelper);
         }
         if ($create && !$shoppingList instanceof ShoppingList) {
             $label = $this->translator->trans($label ?: 'oro.shoppinglist.default.label');
@@ -340,21 +341,33 @@ class ShoppingListManager
     }
 
     /**
-     * @return string|AccountUser
+     * @return string|CustomerUser
      */
-    protected function getAccountUser()
+    protected function getCustomerUser()
     {
-        if (!$this->accountUser) {
+        if (!$this->customerUser) {
             $token = $this->tokenStorage->getToken();
             if ($token) {
-                $this->accountUser = $token->getUser();
+                $this->customerUser = $token->getUser();
             }
         }
 
-        if (!$this->accountUser || !is_object($this->accountUser)) {
+        if (!$this->customerUser || !is_object($this->customerUser)) {
             return null;
         }
 
-        return $this->accountUser;
+        return $this->customerUser;
+    }
+
+    /**
+     * @param LineItem $lineItem
+     */
+    private function ensureProductTypeAllowed(LineItem $lineItem)
+    {
+        $product = $lineItem->getProduct();
+
+        if ($product && !$product->isSimple()) {
+            throw new \InvalidArgumentException('Can not save not simple product');
+        }
     }
 }

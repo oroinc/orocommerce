@@ -39,8 +39,8 @@ class PriceListsFilterTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->form = $this->getMock('Symfony\Component\Form\Test\FormInterface');
-        $this->formFactory = $this->getMock('Symfony\Component\Form\FormFactoryInterface');
+        $this->form = $this->createMock('Symfony\Component\Form\Test\FormInterface');
+        $this->formFactory = $this->createMock('Symfony\Component\Form\FormFactoryInterface');
         $this->formFactory->expects($this->any())
             ->method('create')
             ->will($this->returnValue($this->form));
@@ -83,7 +83,7 @@ class PriceListsFilterTest extends \PHPUnit_Framework_TestCase
         $this->priceListsFilter->init(
             'price_list',
             [
-                PriceListsFilter::RELATION_CLASS_NAME_PARAMETER => 'OroPricingBundle:PriceListToAccount'
+                PriceListsFilter::RELATION_CLASS_NAME_PARAMETER => 'OroPricingBundle:PriceListToCustomer'
             ]
         );
 
@@ -113,7 +113,7 @@ class PriceListsFilterTest extends \PHPUnit_Framework_TestCase
             ->willReturn($queryBuilder);
 
         $repository = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\Entity\Repository\PriceListToAccountRepository')
+            ->getMockBuilder('Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerRepository')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -126,18 +126,18 @@ class PriceListsFilterTest extends \PHPUnit_Framework_TestCase
 
         $em->expects($this->once())
             ->method('getRepository')
-            ->with('OroPricingBundle:PriceListToAccount')
+            ->with('OroPricingBundle:PriceListToCustomer')
             ->willReturn($repository);
 
         $this->registry->expects($this->once())
             ->method('getManagerForClass')
-            ->with('OroPricingBundle:PriceListToAccount')
+            ->with('OroPricingBundle:PriceListToCustomer')
             ->willReturn($em);
 
         $this->priceListsFilter->init(
             'price_list',
             [
-                PriceListsFilter::RELATION_CLASS_NAME_PARAMETER => 'OroPricingBundle:PriceListToAccount'
+                PriceListsFilter::RELATION_CLASS_NAME_PARAMETER => 'OroPricingBundle:PriceListToCustomer'
             ]
         );
 

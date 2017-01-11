@@ -27,7 +27,7 @@ class QuoteToOrderResizeFormSubscriberTest extends FormIntegrationTestCase
     public function testPreSetDataEmpty()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
         $form->expects($this->never())
             ->method('remove');
         $form->expects($this->never())
@@ -61,7 +61,7 @@ class QuoteToOrderResizeFormSubscriberTest extends FormIntegrationTestCase
     public function testPreSetDataInvalid()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|FormInterface $form */
-        $form = $this->getMock('Symfony\Component\Form\FormInterface');
+        $form = $this->createMock('Symfony\Component\Form\FormInterface');
 
         $this->subscriber->preSetData(new FormEvent($form, new \stdClass()));
     }

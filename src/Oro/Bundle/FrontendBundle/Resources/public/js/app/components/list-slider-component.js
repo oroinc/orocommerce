@@ -29,10 +29,20 @@ define(function(require) {
          */
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
+            this.$el = options._sourceElement;
 
             if (this.options.mobileEnabled) {
                 $(this.options._sourceElement).slick(this.options);
             }
+
+            this.onChange();
+        },
+
+        onChange: function() {
+            this.$el.on('beforeChange', function(event, slick, currentSlide, nextSlide) {
+                var $activeImage = $(this).find('.slick-slide[data-slick-index=' + nextSlide + '] img');
+                $(this).find('.slick-slide img').trigger('slider:activeImage', $activeImage.get(0));
+            });
         }
     });
 
