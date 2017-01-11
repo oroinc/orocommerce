@@ -75,7 +75,7 @@ oro.tax:
 
     controller:
         customer_tax_code:
-            saved.message: 'Account Tax Code has been saved'
+            saved.message: 'Customer Tax Code has been saved'
         product_tax_code:
             saved.message: 'Product Tax Code has been saved'
         tax:
