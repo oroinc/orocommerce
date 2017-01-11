@@ -51,7 +51,7 @@ class CustomerUserControllerRegisterTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $form = $crawler->selectButton('Create An Customer')->form();
+        $form = $crawler->selectButton('Create An Account')->form();
 
         $submittedData = [
             'oro_customer_frontend_customer_user_register' => [
@@ -225,7 +225,7 @@ class CustomerUserControllerRegisterTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $form = $crawler->selectButton('Create An Customer')->form();
+        $form = $crawler->selectButton('Create An Account')->form();
         $submittedData = [
             'oro_customer_frontend_customer_user_register' => [
                 '_token' => $form->get('oro_customer_frontend_customer_user_register[_token]')->getValue(),
@@ -331,7 +331,7 @@ class CustomerUserControllerRegisterTest extends WebTestCase
      */
     protected function submitRegisterForm(Crawler $crawler, $email)
     {
-        $form = $crawler->selectButton('Create An Customer')->form();
+        $form = $crawler->selectButton('Create An Account')->form();
         $submittedData = [
             'oro_customer_frontend_customer_user_register' => [
                 '_token' => $form->get('oro_customer_frontend_customer_user_register[_token]')->getValue(),
