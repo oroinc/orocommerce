@@ -26,7 +26,7 @@
              }|json_encode }}">
 
             <fieldset class="checkout__form__row">
-                {{ form_row(form.billing_address.accountAddress) }}
+                {{ form_row(form.billing_address.customerAddress) }}
             </fieldset>
 
             {{ address.address_form(form.billing_address, form.save_billing_address, hasCustomAddress) }}
