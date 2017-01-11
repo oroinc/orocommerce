@@ -1,4 +1,4 @@
-actions:
+operations:
     oro_rfp_create_quote:
         label: oro.rfp.btn.create_quote
         applications: [default]

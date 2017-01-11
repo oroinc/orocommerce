@@ -24,8 +24,6 @@ layout:
             items:
                 rfp_request_view_page:
                     blockType: container
-                rfp_request_view_top:
-                    blockType: container
                 rfp_request_view_top_actions:
                     blockType: line_buttons
                     options:
@@ -35,6 +33,11 @@ layout:
                     blockType: block
                     options:
                         visible: false
+                rfp_request_view_customer_status:
+                    blockType: text
+                    options:
+                        visible: '=data["entity"].getCustomerStatus()!=null'
+                        text: '=data["entity"].getCustomerStatus().getName()'
                 rfp_request_view_information:
                     blockType: rfp_request_information
                     options:
@@ -62,8 +65,8 @@ layout:
             tree:
                 page_content:
                     rfp_request_view_page:
-                        rfp_request_view_top:
-                            rfp_request_view_top_actions: ~
+                        rfp_request_view_customer_status: ~
+                        rfp_request_view_top_actions: ~
                         rfp_request_view_controls_list: ~
                         rfp_request_view_information: ~
                         rfp_request_view_additional_notes: ~
