@@ -49,7 +49,6 @@ class FrontendRequestVoterTest extends \PHPUnit_Framework_TestCase
         $this->doctrineHelper->expects($this->any())->method('getEntityClass')->willReturn(Request::class);
         $this->doctrineHelper->expects($this->any())->method('getSingleEntityIdentifier')->willReturn(1);
 
-
         $this->voter = new FrontendRequestVoter(
             $this->doctrineHelper,
             $this->applicationProvider,

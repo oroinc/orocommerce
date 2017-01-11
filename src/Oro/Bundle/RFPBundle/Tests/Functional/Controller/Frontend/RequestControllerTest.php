@@ -104,13 +104,7 @@ class RequestControllerTest extends WebTestCase
 
             foreach ($expectedData['action_configuration'] as $actionName => $actionData) {
                 static::assertArrayHasKey($actionName, $data[0]['action_configuration']);
-                static::assertThat(
-                    $data[0]['action_configuration'][$actionName],
-                    $this->logicalOr(
-                        $this->logicalAnd($this->isType('boolean'), $this->equalTo($actionData)),
-                        $this->logicalAnd($this->isType('array'), $this->logicalNot($this->isEmpty()))
-                    )
-                );
+                static::assertEquals($actionData, $data[0]['action_configuration'][$actionName]);
             }
 
             static::assertEquals($expectedColumns, $testedColumns);
