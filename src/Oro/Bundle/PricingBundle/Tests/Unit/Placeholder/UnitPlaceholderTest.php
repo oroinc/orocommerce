@@ -28,6 +28,6 @@ class UnitPlaceholderTest extends \PHPUnit_Framework_TestCase
 
     public function testReplaceDefault()
     {
-        $this->markTestIncomplete("fix in BB-4178");
+        $this->assertSame('test_', $this->placeholder->replaceDefault('test_UNIT'));
     }
 }
