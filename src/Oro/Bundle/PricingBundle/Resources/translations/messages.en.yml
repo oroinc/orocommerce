@@ -32,7 +32,7 @@ oro.pricing:
             label: Set default
             message: The "{{ priceListName }}" has been made default
         customer_groups.label: Customer Groups
-        customers.label: Accounts
+        customers.label: Customers
         websites.label: Websites
         prices.label: Prices
         priority.label: Priority

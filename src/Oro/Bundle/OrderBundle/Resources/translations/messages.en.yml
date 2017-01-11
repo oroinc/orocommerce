@@ -25,7 +25,7 @@ oro:
         identifier.label: Order Number
         identifier.short_label: 'Order #'
         owner.label: Owner
-        customer.label: Account
+        customer.label: Customer
         customer_user.label: Customer User
         organization.label: Organization
         currency.label: Currency

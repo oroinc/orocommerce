@@ -16,7 +16,7 @@ oro:
             status.label: 'Status'
             note.label: 'Notes'
             customer_user.label: 'Submitted By'
-            customer.label: 'Account'
+            customer.label: 'Customer'
             organization.label: 'Organization'
             owner.label: 'Owner'
             po_number.label: 'PO Number'
@@ -98,7 +98,7 @@ oro:
                 frontend_product_visibility.title: 'Can Be Added to RFQs'
                 notification:
                     sales_reps:
-                        label: 'Notify assigned sales representatives of the account'
+                        label: 'Notify assigned sales representatives of the customer'
                         always_notify_sale_reps_of_customer: 'Always'
                         if_no_sales_reps_assigned: 'If user has no sales reps assigned'
                     customer_user_record:
@@ -106,7 +106,7 @@ oro:
                         always_notify_owner: 'Always'
                         if_no_sales_reps_assigned: 'If user has no sales reps assigned'
                     customer:
-                        label: 'Notify the owner of the account'
+                        label: 'Notify the owner of the customer'
                         always_notify_owner: 'Always'
                         if_no_sales_reps_assigned: 'If customer has no sales reps assigned'
 

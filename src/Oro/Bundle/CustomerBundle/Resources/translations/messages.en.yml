@@ -467,5 +467,5 @@ oro.customer:
         module_label: 'Audit history for Customer User'
 
 oro.scope:
-    customer.label: Account
-    customer_group.label: Account Group
+    customer.label: Customer
+    customer_group.label: Customer Group
