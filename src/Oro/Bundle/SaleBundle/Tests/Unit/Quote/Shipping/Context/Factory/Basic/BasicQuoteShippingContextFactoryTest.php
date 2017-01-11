@@ -3,9 +3,12 @@
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Quote\Shipping\Context\Factory\Basic;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
+use Oro\Bundle\SaleBundle\Quote\Calculable\CalculableQuoteInterface;
+use Oro\Bundle\SaleBundle\Quote\Calculable\Factory\CalculableQuoteFactoryInterface;
 use Oro\Bundle\SaleBundle\Quote\Shipping\Context\Factory\Basic\BasicQuoteShippingContextFactory;
 use Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\QuoteToShippingLineItemConverterInterface;
 use Oro\Bundle\ShippingBundle\Context\Builder\Factory\ShippingContextBuilderFactoryInterface;
@@ -16,6 +19,11 @@ use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 
 class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var BasicQuoteShippingContextFactory
+     */
+    private $basicQuoteShippingContextFactory;
+
     /**
      * @var ShippingContextBuilderFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -32,9 +40,9 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
     private $totalProcessorProviderMock;
 
     /**
-     * @var BasicQuoteShippingContextFactory
+     * @var CalculableQuoteFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $basicQuoteShippingContextFactory;
+    private $calculableQuoteFactoryMock;
 
     public function setUp()
     {
@@ -51,10 +59,15 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->calculableQuoteFactoryMock = $this
+            ->getMockBuilder(CalculableQuoteFactoryInterface::class)
+            ->getMock();
+
         $this->basicQuoteShippingContextFactory = new BasicQuoteShippingContextFactory(
             $this->shippingContextBuilderFactoryMock,
             $this->quoteToShippingLineItemConverterMock,
-            $this->totalProcessorProviderMock
+            $this->totalProcessorProviderMock,
+            $this->calculableQuoteFactoryMock
         );
     }
 
@@ -62,7 +75,11 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $quoteId = 5;
         $currency = 'USD';
+        $amount = 20;
+        $subTotal = Price::create($amount, $currency);
 
+        $totalMock = $this->getTotalMock();
+        $calculableQuoteMock = $this->getCalculableQuoteMock();
         $shippingAddressMock = $this->getShippingAddressMock();
         $shippingLineItems = new DoctrineShippingLineItemCollection(
             [
@@ -72,6 +89,28 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
         $quoteMock = $this->getQuoteMock();
         $shippingContextMock = $this->getShippingContextMock();
         $builder = $this->getShippingContextBuilderMock();
+
+        $this->calculableQuoteFactoryMock
+            ->expects($this->once())
+            ->method('createCalculableQuote')
+            ->with($shippingLineItems)
+            ->willReturn($calculableQuoteMock);
+
+        $totalMock
+            ->expects($this->once())
+            ->method('getAmount')
+            ->willReturn($amount);
+
+        $totalMock
+            ->expects($this->once())
+            ->method('getCurrency')
+            ->willReturn($currency);
+
+        $this->totalProcessorProviderMock
+            ->expects($this->once())
+            ->method('getTotal')
+            ->with($calculableQuoteMock)
+            ->willReturn($totalMock);
 
         $this->quoteToShippingLineItemConverterMock
             ->expects($this->once())
@@ -112,12 +151,32 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
         $this->shippingContextBuilderFactoryMock
             ->expects($this->once())
             ->method('createShippingContextBuilder')
-            ->with($currency, Price::create(0, ''), $quoteMock, $quoteId)//@TODO: change price
+            ->with($currency, $subTotal, $quoteMock, $quoteId)
             ->willReturn($builder);
 
         $actualContext = $this->basicQuoteShippingContextFactory->create($quoteMock);
 
         $this->assertEquals($shippingContextMock, $actualContext);
+    }
+
+    /**
+     * @return Subtotal|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function getTotalMock()
+    {
+        return $this
+            ->getMockBuilder(Subtotal::class)
+            ->getMock();
+    }
+
+    /**
+     * @return CalculableQuoteInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function getCalculableQuoteMock()
+    {
+        return $this
+            ->getMockBuilder(CalculableQuoteInterface::class)
+            ->getMock();
     }
 
     /**
@@ -131,7 +190,7 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return ShippingLineItemInterface[]|\PHPUnit_Framework_MockObject_MockObject
+     * @return ShippingLineItemInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private function getShippingLineItemMock()
     {
