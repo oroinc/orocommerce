@@ -113,7 +113,7 @@ operations:
             - oro_rfp_frontend_request_view
         datagrids:
             - frontend-requests-grid
-        acl_resource: workflow_available_by_record_group
+        acl_resource: oro_rfp_frontend_request_update
         order: 10
         button_options:
             icon: pencil-square-o
