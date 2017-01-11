@@ -124,6 +124,11 @@
 {% endblock %}
 
 {% block combined_buttons_widget %}
+    {% set dropdownActionClass = dropdownActionClass|default('btn btn--info btn--size-l direct-link') %}
+    {% set dropdownToggleClass = dropdownToggleClass|default('btn btn--info btn--size-l dropdown-toggle') %}
+    {% set dropdownItemClass = dropdownItemClass|default('dropdown-item') %}
+    {% set actionButtonClass = actionButtonClass|default('btn btn--action btn--size-s direct-link') %}
+
     {% set buttonsCount = buttons|length %}
     {% if buttonsCount > 0 %}
         {% import 'OroActionBundle:layouts/base:layout.html.twig' as _layout %}
@@ -148,20 +153,20 @@
             <div{{ block('block_attributes') }}>
 
 
-                {% include button.template with button.templateData|merge({onlyLink: true, aClass: ' btn btn--info btn--size-l direct-link ', noIcon: true, noIconText: true}) %}
+                {% include button.template with button.templateData|merge({onlyLink: true, aClass: dropdownActionClass, noIcon: true, noIconText: true}) %}
 
-                <a href="#" class="btn btn--info btn--size-l dropdown-toggle" data-toggle="dropdown" data-container="body" aria-haspopup="true" aria-expanded="true"></a>
+                <a href="#" class="{{ dropdownToggleClass }}" data-toggle="dropdown" data-container="body" aria-haspopup="true" aria-expanded="true"></a>
 
                 <ul class="dropdown-menu" data-options={{ dropdownMenuOptions|json_encode }}>
                     {% for button in buttons|slice(1) %}
                         <li>
-                            {% include button.template with button.templateData|merge({onlyLink: true, aClass: ' dropdown-item ', noIcon: true, noIconText: true}) %}
+                            {% include button.template with button.templateData|merge({onlyLink: true, aClass: dropdownItemClass, noIcon: true, noIconText: true}) %}
                         </li>
                     {% endfor %}
                 </ul>
             </div>
         {% else %}
-            {% include button.template with button.templateData|merge({onlyLink: true, aClass: '  btn btn--action btn--size-s direct-link ', noIcon: true, noIconText: true}) %}
+            {% include button.template with button.templateData|merge({onlyLink: true, aClass: actionButtonClass, noIcon: true, noIconText: true}) %}
         {% endif %}
     {% endif %}
 {% endblock %}

@@ -274,14 +274,14 @@ class Quote extends ExtendQuote implements
     protected $shippingMethodType;
 
     /**
-     * @ORM\Column(name="shipping_method_locked", type="boolean")
+     * @ORM\Column(name="shipping_method_locked", type="boolean", options={"default"=false})
      *
      * @var bool
      */
     private $shippingMethodLocked = false;
 
     /**
-     * @ORM\Column(name="allow_unlisted_shipping_method", type="boolean")
+     * @ORM\Column(name="allow_unlisted_shipping_method", type="boolean", options={"default"=false})
      *
      * @var bool
      */

@@ -201,6 +201,21 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessage Can not save not simple product
+     */
+    public function testAddLineItemNotAllowedProductType()
+    {
+        $shoppingList = new ShoppingList();
+        $lineItem = new LineItem();
+        $configurableProduct = new Product();
+        $configurableProduct->setType(Product::TYPE_CONFIGURABLE);
+        $lineItem->setProduct($configurableProduct);
+
+        $this->manager->addLineItem($lineItem, $shoppingList);
+    }
+
+    /**
      * @dataProvider removeProductDataProvider
      *
      * @param array $lineItems

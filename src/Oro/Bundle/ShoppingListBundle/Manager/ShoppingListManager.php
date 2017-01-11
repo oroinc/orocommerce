@@ -361,6 +361,7 @@ class ShoppingListManager
 
     /**
      * @param LineItem $lineItem
+     * @throws \InvalidArgumentException
      */
     private function ensureProductTypeAllowed(LineItem $lineItem)
     {

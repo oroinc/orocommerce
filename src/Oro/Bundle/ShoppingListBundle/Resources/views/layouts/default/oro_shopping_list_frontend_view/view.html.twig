@@ -475,9 +475,10 @@
 {% endblock %}
 
 {% block _shopping_list_combined_button_widget %}
+    {% set actionButtonClass = 'btn btn--info btn--size-l full direct-link' %}
     <div data-name="empty-items__hide" class="clearfix">
         <div class="order-checkout-widget__col">
-            {{ block_widget(block) }}
+            {{ block('combined_buttons_widget') }}
         </div>
     </div>
 {% endblock %}
