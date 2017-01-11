@@ -6,7 +6,7 @@ oro.tax:
     id.label: 'id'
     rate.label: 'Rate'
     taxcode.label: 'Tax Code'
-    taxcode.customergroup.label: 'Customer Group Tax Code'
+    taxcode.customergroup.label: 'Account Group Tax Code'
 
     subtotals.tax: 'Tax'
 
@@ -24,7 +24,7 @@ oro.tax:
         description.label: 'Description'
 
     customertaxcode:
-        entity_label: 'Customer Tax Code'
+        entity_label: 'Account Tax Code'
         entity_plural_label: 'Customer Tax Codes'
         description: 'List of Customer Tax Codes'
         customers.label: 'Customers'
@@ -41,7 +41,7 @@ oro.tax:
         description: 'List of Tax Rules'
         description.label: 'Description'
         id.label: 'ID'
-        customer_tax_code.label: 'Customer Tax Code'
+        customer_tax_code.label: 'Account Tax Code'
         product_tax_code.label: 'Product Tax Code'
         tax.label: 'Tax'
         tax_jurisdiction.label: 'Tax Jurisdiction'
@@ -75,7 +75,7 @@ oro.tax:
 
     controller:
         customer_tax_code:
-            saved.message: 'Customer Tax Code has been saved'
+            saved.message: 'Account Tax Code has been saved'
         product_tax_code:
             saved.message: 'Product Tax Code has been saved'
         tax:

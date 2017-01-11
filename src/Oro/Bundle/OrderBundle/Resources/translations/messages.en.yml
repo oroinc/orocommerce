@@ -25,7 +25,7 @@ oro:
         identifier.label: Order Number
         identifier.short_label: 'Order #'
         owner.label: Owner
-        customer.label: Customer
+        customer.label: Account
         customer_user.label: Customer User
         organization.label: Organization
         currency.label: Currency
@@ -85,7 +85,7 @@ oro:
         discountitem.add_label: Add Discount
         order_history.label: Order History
         top_selling_items.label: Top Selling Items
-        frontend_index_title: Order History - My Customer - Home page
+        frontend_index_title: Order History - My Account - Home page
 
         shipping_tracking:
             entity_label: Shipping Tracking

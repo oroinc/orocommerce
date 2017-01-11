@@ -8,7 +8,7 @@ oro:
             label: Label
             edit.tooltip: Edit Shoppping List Label
         notes.label: Notes
-        customer.label: Customer
+        customer.label: Account
         customer_user.label: Customer User
         organization.label: Organization
         owner.label: Owner

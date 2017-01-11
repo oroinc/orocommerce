@@ -11,13 +11,13 @@ oro:
         id.label: ID
         label.label: Label
         form.choose: 'Choose a payment term...'
-        customer_groups.label: 'Customer Group'
-        customers.label: 'Customer'
+        customer_groups.label: 'Account Group'
+        customers.label: 'Account'
 
         has_payment_term.label: Has Payment Term
 
         customer:
-            customer_group_defined: '{{ payment_term }} (Defined for Customer Group)'
+            customer_group_defined: '{{ payment_term }} (Defined for Account Group)'
 
         controller:
             paymentterm:
