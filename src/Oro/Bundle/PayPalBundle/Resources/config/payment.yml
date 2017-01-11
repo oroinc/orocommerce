@@ -23,30 +23,33 @@ services:
         arguments:
            - '@oro_config.global'
 
-    oro_paypal.payment_method.payflow_gateway:
-        class: 'Oro\Bundle\PayPalBundle\Method\PayflowGateway'
+    oro_paypal.payment_method_provider.payflow_gateway:
+        class: 'Oro\Bundle\PayPalBundle\Method\PayPalMethodProvider'
         public: false
         arguments:
+            - 'payflow_gateway'
             - '@oro_paypal.paypal.payflow_gateway.gateway='
             - '@oro_paypal.payment_method.payflow_gateway.config'
             - '@router'
         tags:
-            - { name: oro_payment.payment_method }
+            - { name: oro_payment.payment_method_provider }
 
-    oro_paypal.payment_method.paypal_payments_pro:
-        class: 'Oro\Bundle\PayPalBundle\Method\PayPalPaymentsPro'
+    oro_paypal.payment_method_provider.paypal_payments_pro:
+        class: 'Oro\Bundle\PayPalBundle\Method\PayPalMethodProvider'
         public: false
         arguments:
+            - 'paypal_payments_pro'
             - '@oro_paypal.paypal.payflow_gateway.gateway='
             - '@oro_paypal.payment_method.payflow_gateway.config'
             - '@router'
         tags:
-            - { name: oro_payment.payment_method }
+            - { name: oro_payment.payment_method_provider }
 
-    oro_paypal.payment_method.payflow_express_checkout:
-        class: 'Oro\Bundle\PayPalBundle\Method\PayflowExpressCheckout'
+    oro_paypal.payment_method_provider.payflow_express_checkout:
+        class: 'Oro\Bundle\PayPalBundle\Method\PayPalMethodProvider'
         public: false
         arguments:
+            - 'payflow_express_checkout'
             - '@oro_paypal.paypal.payflow_express_checkout.gateway='
             - '@oro_paypal.payment_method.payflow_express_checkout.config'
             - '@router'
@@ -54,12 +57,13 @@ services:
             - '@oro_payment.provider.extract_options'
             - '@oro_payment.provider.surcharge'
         tags:
-            - { name: oro_payment.payment_method }
+            - { name: oro_payment.payment_method_provider }
 
     oro_paypal.payment_method.paypal_payments_pro_express_checkout:
-        class: 'Oro\Bundle\PayPalBundle\Method\PayPalPaymentsProExpressCheckout'
+        class: 'Oro\Bundle\PayPalBundle\Method\PayPalMethodProvider'
         public: false
         arguments:
+            - 'paypal_payments_pro_express_checkout'
             - '@oro_paypal.paypal.payflow_express_checkout.gateway='
             - '@oro_paypal.payment_method.paypal_payments_pro_express_checkout.config'
             - '@router'
@@ -67,40 +71,44 @@ services:
             - '@oro_payment.provider.extract_options'
             - '@oro_payment.provider.surcharge'
         tags:
-            - { name: oro_payment.payment_method }
+            - { name: oro_payment.payment_method_provider }
 
-    oro_paypal.payment_method.view.payflow_gateway:
-        class: 'Oro\Bundle\PayPalBundle\Method\View\PayflowGatewayView'
+    oro_paypal.payment_method_view_provider.payflow_gateway:
+        class: 'Oro\Bundle\PayPalBundle\Method\View\PayPalMethodViewProvider'
         public: false
         arguments:
-            - '@form.factory'
+            - 'payflow_gateway'
             - '@oro_paypal.payment_method.payflow_gateway.config'
+            - '@form.factory'
             - '@oro_payment.provider.payment_transaction'
         tags:
-            - { name: oro_payment.payment_method_view }
+            - { name: oro_payment.payment_method_view_provider }
 
-    oro_paypal.payment_method.view.payflow_express_checkout:
-        class: 'Oro\Bundle\PayPalBundle\Method\View\PayflowExpressCheckoutView'
+    oro_paypal.payment_method_view_provider.payflow_express_checkout:
+        class: 'Oro\Bundle\PayPalBundle\Method\View\PayPalMethodViewProvider'
         public: false
         arguments:
+            - 'payflow_express_checkout'
             - '@oro_paypal.payment_method.payflow_express_checkout.config'
         tags:
-            - { name: oro_payment.payment_method_view }
+            - { name: oro_payment.payment_method_view_provider }
 
     oro_paypal.payment_method.view.paypal_payments_pro_express_checkout:
-        class: 'Oro\Bundle\PayPalBundle\Method\View\PayPalPaymentsProExpressCheckoutView'
+        class: 'Oro\Bundle\PayPalBundle\Method\View\PayPalMethodViewProvider'
         public: false
         arguments:
+            - 'paypal_payments_pro_express_checkout'
             - '@oro_paypal.payment_method.paypal_payments_pro_express_checkout.config'
         tags:
-            - { name: oro_payment.payment_method_view }
+            - { name: oro_payment.payment_method_view_provider }
 
-    oro_paypal.payment_method.view.paypal_payments_pro:
-        class: 'Oro\Bundle\PayPalBundle\Method\View\PayPalPaymentsProView'
+    oro_paypal.payment_method_view_provider.paypal_payments_pro:
+        class: 'Oro\Bundle\PayPalBundle\Method\View\PayPalMethodViewProvider'
         public: false
         arguments:
-            - '@form.factory'
+            - 'paypal_payments_pro'
             - '@oro_paypal.payment_method.paypal_payments_pro.config'
+            - '@form.factory'
             - '@oro_payment.provider.payment_transaction'
         tags:
-            - { name: oro_payment.payment_method_view }
+            - { name: oro_payment.payment_method_view_provider }
