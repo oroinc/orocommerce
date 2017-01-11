@@ -224,6 +224,7 @@ class RequestControllerTest extends WebTestCase
                         'poNumber',
                         'shipUntil',
                         'createdAt',
+                        'update_link',
                         'view_link',
                         'action_configuration',
                         'customerStatusName',
@@ -233,7 +234,6 @@ class RequestControllerTest extends WebTestCase
                         'view' => true,
                         'update' => false,
                         'delete' => false,
-                        'oro_rfp_frontend_request_edit' => false,
                     ],
                 ],
             ],
@@ -254,6 +254,7 @@ class RequestControllerTest extends WebTestCase
                         'poNumber',
                         'shipUntil',
                         'createdAt',
+                        'update_link',
                         'view_link',
                         'action_configuration',
                         'customerStatusName',
@@ -261,10 +262,9 @@ class RequestControllerTest extends WebTestCase
                     ],
                     'action_configuration' => [
                         'view' => true,
-                        'update' => false,
-                        'delete' => false,
-                        'oro_rfp_frontend_request_edit' => [],
-                    ],
+                        'update' => true,
+                        'delete' => false
+                    ]
                 ],
             ],
             'customer1 user2 (all customer requests)' => [
@@ -287,6 +287,7 @@ class RequestControllerTest extends WebTestCase
                         'shipUntil',
                         'createdAt',
                         'customerUserName',
+                        'update_link',
                         'view_link',
                         'action_configuration',
                         'customerStatusName',
@@ -295,8 +296,7 @@ class RequestControllerTest extends WebTestCase
                     'action_configuration' => [
                         'view' => true,
                         'update' => false,
-                        'delete' => false,
-                        'oro_rfp_frontend_request_edit' => false,
+                        'delete' => false
                     ]
                 ],
             ],
@@ -315,6 +315,7 @@ class RequestControllerTest extends WebTestCase
                         'poNumber',
                         'shipUntil',
                         'createdAt',
+                        'update_link',
                         'view_link',
                         'action_configuration',
                         'customerStatusName',
@@ -323,8 +324,7 @@ class RequestControllerTest extends WebTestCase
                     'action_configuration' => [
                         'view' => true,
                         'update' => false,
-                        'delete' => false,
-                        'oro_rfp_frontend_request_edit' => false,
+                        'delete' => false
                     ]
                 ],
             ],
@@ -344,6 +344,7 @@ class RequestControllerTest extends WebTestCase
                         'poNumber',
                         'shipUntil',
                         'createdAt',
+                        'update_link',
                         'view_link',
                         'action_configuration',
                         'customerStatusName',
@@ -351,9 +352,8 @@ class RequestControllerTest extends WebTestCase
                     ],
                     'action_configuration' => [
                         'view' => true,
-                        'update' => false,
-                        'delete' => false,
-                        'oro_rfp_frontend_request_edit' => [],
+                        'update' => true,
+                        'delete' => false
                     ]
                 ],
             ],
@@ -374,6 +374,7 @@ class RequestControllerTest extends WebTestCase
                         'poNumber',
                         'shipUntil',
                         'createdAt',
+                        'update_link',
                         'view_link',
                         'action_configuration',
                         'customerUserName',
@@ -382,9 +383,8 @@ class RequestControllerTest extends WebTestCase
                     ],
                     'action_configuration' => [
                         'view' => true,
-                        'update' => false,
-                        'delete' => false,
-                        'oro_rfp_frontend_request_edit' => [],
+                        'update' => true,
+                        'delete' => false
                     ]
                 ],
             ],

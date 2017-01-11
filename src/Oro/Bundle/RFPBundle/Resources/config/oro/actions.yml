@@ -111,17 +111,10 @@ operations:
         applications: [commerce]
         routes:
             - oro_rfp_frontend_request_view
-        datagrids:
-            - frontend-requests-grid
-        acl_resource: oro_rfp_frontend_request_update
+        acl_resource: [EDIT, $.data]
         order: 10
         button_options:
-            icon: pencil-square-o
-        preconditions:
-            '@not':
-                - '@workflow_available_by_record_group':
-                    entity_class: '%oro_rfp.entity.request.class%'
-                    group_name: 'b2b_rfq_frontoffice_flow'
+            icon: fa-pencil
         actions:
             - '@redirect':
                 parameters:
