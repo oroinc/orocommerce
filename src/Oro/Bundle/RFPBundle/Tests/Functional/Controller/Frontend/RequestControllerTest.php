@@ -10,6 +10,7 @@ use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
 /**
  * @dbIsolation
@@ -23,6 +24,9 @@ class RequestControllerTest extends WebTestCase
     const REQUEST = 'request body';
     const PO_NUMBER = 'CA245566789KL';
 
+    /** @var WorkflowManager */
+    protected $manager;
+
     /**
      * {@inheritdoc}
      */
@@ -30,6 +34,9 @@ class RequestControllerTest extends WebTestCase
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
+
+        $this->manager = $this->getContainer()->get('oro_workflow.manager');
+
         $this->loadFixtures(
             [
                 LoadUserData::class,
@@ -59,6 +66,10 @@ class RequestControllerTest extends WebTestCase
      */
     public function testIndex(array $inputData, array $expectedData)
     {
+        if (empty($expectedData['activateFrontoffice'])) {
+            $this->manager->deactivateWorkflow('rfq_frontoffice_default');
+        }
+
         $authParams = $inputData['login']
             ? static::generateBasicAuthHeader($inputData['login'], $inputData['password'])
             : [];
@@ -93,7 +104,13 @@ class RequestControllerTest extends WebTestCase
 
             foreach ($expectedData['action_configuration'] as $actionName => $actionData) {
                 static::assertArrayHasKey($actionName, $data[0]['action_configuration']);
-                static::assertEquals($actionData, $data[0]['action_configuration'][$actionName]);
+                static::assertThat(
+                    $data[0]['action_configuration'][$actionName],
+                    $this->logicalOr(
+                        $this->logicalAnd($this->isType('boolean'), $this->equalTo($actionData)),
+                        $this->logicalAnd($this->isType('array'), $this->logicalNot($this->isEmpty()))
+                    )
+                );
             }
 
             static::assertEquals($expectedColumns, $testedColumns);
@@ -189,6 +206,37 @@ class RequestControllerTest extends WebTestCase
     public function indexProvider()
     {
         return [
+            'customer1 user1 (only customer user requests) and active frontoffice' => [
+                'input' => [
+                    'login' => LoadUserData::ACCOUNT1_USER1,
+                    'password' => LoadUserData::ACCOUNT1_USER1,
+                ],
+                'expected' => [
+                    'code' => 200,
+                    'data' => [
+                        LoadRequestData::REQUEST2,
+                        LoadRequestData::REQUEST7,
+                        LoadRequestData::REQUEST8,
+                    ],
+                    'activateFrontoffice' => true,
+                    'columns' => [
+                        'id',
+                        'poNumber',
+                        'shipUntil',
+                        'createdAt',
+                        'view_link',
+                        'action_configuration',
+                        'customerStatusName',
+                        'workflowStepLabel',
+                    ],
+                    'action_configuration' => [
+                        'view' => true,
+                        'update' => false,
+                        'delete' => false,
+                        'oro_rfp_frontend_request_edit' => false,
+                    ],
+                ],
+            ],
             'customer1 user1 (only customer user requests)' => [
                 'input' => [
                     'login' => LoadUserData::ACCOUNT1_USER1,
@@ -206,7 +254,6 @@ class RequestControllerTest extends WebTestCase
                         'poNumber',
                         'shipUntil',
                         'createdAt',
-                        'update_link',
                         'view_link',
                         'action_configuration',
                         'customerStatusName',
@@ -214,9 +261,10 @@ class RequestControllerTest extends WebTestCase
                     ],
                     'action_configuration' => [
                         'view' => true,
-                        'update' => true,
-                        'delete' => false
-                    ]
+                        'update' => false,
+                        'delete' => false,
+                        'oro_rfp_frontend_request_edit' => [],
+                    ],
                 ],
             ],
             'customer1 user2 (all customer requests)' => [
@@ -239,7 +287,6 @@ class RequestControllerTest extends WebTestCase
                         'shipUntil',
                         'createdAt',
                         'customerUserName',
-                        'update_link',
                         'view_link',
                         'action_configuration',
                         'customerStatusName',
@@ -248,7 +295,8 @@ class RequestControllerTest extends WebTestCase
                     'action_configuration' => [
                         'view' => true,
                         'update' => false,
-                        'delete' => false
+                        'delete' => false,
+                        'oro_rfp_frontend_request_edit' => false,
                     ]
                 ],
             ],
@@ -267,7 +315,6 @@ class RequestControllerTest extends WebTestCase
                         'poNumber',
                         'shipUntil',
                         'createdAt',
-                        'update_link',
                         'view_link',
                         'action_configuration',
                         'customerStatusName',
@@ -276,7 +323,8 @@ class RequestControllerTest extends WebTestCase
                     'action_configuration' => [
                         'view' => true,
                         'update' => false,
-                        'delete' => false
+                        'delete' => false,
+                        'oro_rfp_frontend_request_edit' => false,
                     ]
                 ],
             ],
@@ -296,7 +344,6 @@ class RequestControllerTest extends WebTestCase
                         'poNumber',
                         'shipUntil',
                         'createdAt',
-                        'update_link',
                         'view_link',
                         'action_configuration',
                         'customerStatusName',
@@ -304,8 +351,9 @@ class RequestControllerTest extends WebTestCase
                     ],
                     'action_configuration' => [
                         'view' => true,
-                        'update' => true,
-                        'delete' => false
+                        'update' => false,
+                        'delete' => false,
+                        'oro_rfp_frontend_request_edit' => [],
                     ]
                 ],
             ],
@@ -326,7 +374,6 @@ class RequestControllerTest extends WebTestCase
                         'poNumber',
                         'shipUntil',
                         'createdAt',
-                        'update_link',
                         'view_link',
                         'action_configuration',
                         'customerUserName',
@@ -335,8 +382,9 @@ class RequestControllerTest extends WebTestCase
                     ],
                     'action_configuration' => [
                         'view' => true,
-                        'update' => true,
-                        'delete' => false
+                        'update' => false,
+                        'delete' => false,
+                        'oro_rfp_frontend_request_edit' => [],
                     ]
                 ],
             ],
