@@ -60,7 +60,8 @@ use Oro\Component\Tree\Entity\TreeTrait;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"=""
+ *              "group_name"="",
+ *              "category"="catalog"
  *          },
  *          "activity"={
  *              "show_on_page"="\Oro\Bundle\ActivityBundle\EntityConfig\ActivityScope::UPDATE_PAGE"
