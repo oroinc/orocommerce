@@ -26,7 +26,7 @@ layout:
                         grid_name: frontend-customer-customer-users-grid-update
                         grid_parameters:
                             role: '=data["entity"].getId()'
-                            customer: '=data["entity"].getCustomer()'
+                            customer: '=data["customizableRole"].getCustomer()'
                         form: '=data["oro_customer_frontend_customer_user_role_form"].getRoleFormView(data["entity"])'
                 __customer_user_role_form_end:
                     blockType: form_end

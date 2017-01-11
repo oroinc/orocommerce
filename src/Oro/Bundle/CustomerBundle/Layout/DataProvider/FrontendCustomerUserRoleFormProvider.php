@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CustomerBundle\Layout\DataProvider;
 
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
@@ -42,6 +43,25 @@ class FrontendCustomerUserRoleFormProvider extends AbstractFormProvider
      */
     public function getRoleFormView(CustomerUserRole $customerUserRole)
     {
+        return $this->getFormView('', $customerUserRole, $this->getRoleOptions($customerUserRole));
+    }
+
+    /**
+     * @param CustomerUserRole $customerUserRole
+     * @return FormInterface
+     */
+    public function getRoleForm(CustomerUserRole $customerUserRole)
+    {
+        return $this->getForm('', $customerUserRole, $this->getRoleOptions($customerUserRole));
+    }
+
+    /**
+     * @param CustomerUserRole $customerUserRole
+     * @return array
+     */
+    public function getRoleOptions(CustomerUserRole $customerUserRole)
+    {
+        $options = [];
         if ($customerUserRole->getId()) {
             $options['action'] = $this->generateUrl(
                 self::CUSTOMER_USER_ROLE_UPDATE_ROUTE_NAME,
@@ -52,8 +72,7 @@ class FrontendCustomerUserRoleFormProvider extends AbstractFormProvider
                 self::CUSTOMER_USER_ROLE_CREATE_ROUTE_NAME
             );
         }
-
-        return $this->getFormView('', $customerUserRole, $options);
+        return $options;
     }
 
     /**
