@@ -8,6 +8,7 @@ define(function(require) {
     var NumberFormatter = require('orolocale/js/formatter/number');
     var $ = require('jquery');
     var _ = require('underscore');
+    var __ = require('orotranslation/js/translator');
 
     FrontendLineItemView = BaseView.extend(_.extend({}, ElementsHelper, {
         elements: {
@@ -65,8 +66,9 @@ define(function(require) {
         viewMode: function(action) {
             if (!this.validate()) {
                 if (action === 'update') {
-                    Messenger.notificationMessage('warning', 'Product is invalid or doesn’t selected', {
-                        container: this.getElement('editView').get(),
+                    Messenger.notificationMessage('error',
+                      __('oro.rfp.request.actions.update_frp_confirm'), {
+                        container: this.getElement('editView'),
                         delay: 3000
                     });
                 }
@@ -151,7 +153,6 @@ define(function(require) {
         },
 
         revertChanges: function() {
-
             if (!this.formState) {
                 return;
             }
