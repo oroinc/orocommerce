@@ -8,9 +8,9 @@ use Oro\Bundle\PayPalBundle\DependencyInjection\OroPayPalExtension;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalPaymentsProExpressCheckoutConfig;
 use Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
-use Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config\AbstractPaymentConfigTestCase;
+use Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config\AbstractPaymentSystemConfigTestCase;
 
-class PayPalPaymentsProExpressCheckoutConfigTest extends AbstractPaymentConfigTestCase
+class PayPalPaymentsProExpressCheckoutConfigTest extends AbstractPaymentSystemConfigTestCase
 {
     /** @var PayflowExpressCheckoutConfigInterface */
     protected $config;
