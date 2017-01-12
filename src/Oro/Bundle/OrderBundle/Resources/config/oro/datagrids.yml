@@ -686,9 +686,6 @@ datagrids:
                             join: lineitem.product
                             alias: product
                 groupBy: product.id, unitCode
-                where:
-                    and:
-                        - product.id IS NOT NULL
         properties:
             productName:
                 type: localized_value
@@ -724,10 +721,6 @@ datagrids:
                 sku: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
         filters:
             columns:
-                skip_empty_periods:
-                    type:      skip_empty_periods
-                    data_name: calendarDate.date
-                    label:     oro.product.skip_empty_periods.label
                 createdAt:
                     label: oro.product.time_period.label
                     type:      datetime
@@ -738,6 +731,11 @@ datagrids:
                 productName:
                     type:      string
                     data_name: productName
+                skip_empty_periods:
+                    type:      skip_empty_periods
+                    data_name: calendarDate.date
+                    label:     oro.product.skip_empty_periods.label
+                    not_nullable_field: product.id
                 grouping:
                     type:      date_grouping
                     data_name: calendarDate.date
@@ -749,3 +747,5 @@ datagrids:
             default:
                 grouping:
                     value: day
+                skip_empty_periods:
+                    value: true
