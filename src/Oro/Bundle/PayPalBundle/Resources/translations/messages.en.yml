@@ -102,6 +102,12 @@ oro:
         payflow_express_checkout:
             redirect_to_paypal: 'You will be redirected to PayPal website to complete your purchase after the order review step.'
 
+        channel_type:
+            payflow_gateway.label:  PayPal Payflow Gateway
+            payments_pro.label: PayPal Payments Pro
+        settings:
+            label: PayPal Transport Settings
+
     payment:
         admin:
             paypal_payments_pro.label: 'PayPal Payments Pro'

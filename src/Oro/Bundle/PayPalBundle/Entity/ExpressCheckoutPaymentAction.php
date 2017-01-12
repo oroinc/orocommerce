@@ -120,4 +120,12 @@ class ExpressCheckoutPaymentAction
     {
         return $this->payPalSettings;
     }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->getLabel();
+    }
 }
