@@ -68,7 +68,7 @@ define(function(require) {
                 if (action === 'update') {
                     Messenger.notificationMessage('error',
                       __('oro.rfp.request.actions.update_frp_confirm'), {
-                        container: this.getElement('editView'),
+                        container: this.getElement('editView').find('.request-form-editline__product'),
                         delay: 3000
                     });
                 }
