@@ -665,6 +665,11 @@ services:
             - {isShortUnitCode: true}
             - '@oro_product.service.single_unit_mode'
 
+    oro_product.provider.privilege_category_provider:
+        class: 'Oro\Bundle\ProductBundle\Provider\PrivilegeCategoryProvider'
+        tags:
+            - { name: oro_user.privilege_category }
+
     oro_product.layout.attribute_block_type_mapper:
         parent: oro_entity_config.block_type.abstract_attribute_block_type_mapper
         calls:

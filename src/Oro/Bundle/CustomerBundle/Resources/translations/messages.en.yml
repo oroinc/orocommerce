@@ -115,8 +115,8 @@ oro.customer:
             company_name: 'Company Name'
             registration.title: 'Registration'
             register: 'Registration'
-            register.description: 'Please register if you do not have an customer. A sales representative will contact you shortly.'
-            create_an_customer: 'Create An Customer'
+            register.description: 'Please register if you do not have an account. A sales representative will contact you shortly.'
+            create_an_customer: 'Create An Account'
             forgot_password: 'Forgot Your Password?'
             enter_password: 'Enter your password'
             reset_password:
@@ -302,7 +302,7 @@ oro.customer:
         shortcut_list_customer_user_roles.label: 'Show customer user roles'
         shortcut_list_customer_user_roles.description: 'View list of customer user roles'
 
-        customer_user.label: My Customer
+        customer_user.label: My Account
         customer_user_profile.label: My Profile
         customer_user_login.label: Login
         customer_user_logout.label: Logout
@@ -447,7 +447,7 @@ oro.customer:
         customer_user_link.text: '< Back to Customer User List'
         action:
             back.label: "< Back"
-            back_to_login.label: "Already have an customer? Log in >"
+            back_to_login.label: "Already have an account? Log in >"
             customer_user_role.edit: "Edit Role"
         table:
             entity:
@@ -457,7 +457,7 @@ oro.customer:
         menu:
             customer_user_signed_in_as.label: 'Signed in as:'
             customer_user_sign_out.label: 'Sign Out'
-            customer_user_profile.label: 'Customer'
+            customer_user_profile.label: 'Account'
 
     customer_typed_address_with_default_type:
         choice.default_text: 'Default %type_name%'

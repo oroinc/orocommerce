@@ -95,8 +95,8 @@ class CustomerUserRoleVoterTest extends \PHPUnit_Framework_TestCase
             'CREATE'                       => ['CREATE', false],
             'EDIT'                         => ['EDIT', false],
             'DELETE'                       => [CustomerUserRoleVoter::ATTRIBUTE_DELETE, true],
-            'FRONTEND ACCOUNT ROLE UPDATE' => [CustomerUserRoleVoter::ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_UPDATE, true],
-            'FRONTEND ACCOUNT ROLE VIEW'   => [CustomerUserRoleVoter::ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_VIEW, true],
+            'FRONTEND ACCOUNT ROLE UPDATE' => [CustomerUserRoleVoter::ATTRIBUTE_FRONTEND_CUSTOMER_ROLE_UPDATE, true],
+            'FRONTEND ACCOUNT ROLE VIEW'   => [CustomerUserRoleVoter::ATTRIBUTE_FRONTEND_CUSTOMER_ROLE_VIEW, true],
         ];
     }
 
@@ -210,7 +210,7 @@ class CustomerUserRoleVoterTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             $expected,
             $this->voter
-                ->vote($token, $customerUserRole, [CustomerUserRoleVoter::ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_UPDATE])
+                ->vote($token, $customerUserRole, [CustomerUserRoleVoter::ATTRIBUTE_FRONTEND_CUSTOMER_ROLE_UPDATE])
         );
     }
 
@@ -259,7 +259,12 @@ class CustomerUserRoleVoterTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $expected,
-            $this->voter->vote($token, $customerUserRole, [CustomerUserRoleVoter::ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_VIEW])
+            $this->voter
+                ->vote(
+                    $token,
+                    $customerUserRole,
+                    [CustomerUserRoleVoter::ATTRIBUTE_FRONTEND_CUSTOMER_ROLE_VIEW]
+                )
         );
     }
 

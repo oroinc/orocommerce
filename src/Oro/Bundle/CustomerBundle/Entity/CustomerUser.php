@@ -52,7 +52,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *              "owner_type"="USER",
  *              "owner_field_name"="owner",
  *              "owner_column_name"="owner_id",
- *              "frontend_owner_type"="FRONTEND_ACCOUNT",
+ *              "frontend_owner_type"="FRONTEND_CUSTOMER",
  *              "frontend_owner_field_name"="customer",
  *              "frontend_owner_column_name"="customer_id",
  *              "organization_field_name"="organization",

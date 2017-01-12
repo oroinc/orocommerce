@@ -45,20 +45,20 @@ class FrontendOwnershipMetadataTest extends \PHPUnit_Framework_TestCase
                 FrontendOwnershipMetadata::OWNER_TYPE_FRONTEND_USER,
             ],
             [
-                ['FRONTEND_ACCOUNT', 'FRONTEND_ACCOUNT', 'customer_id'],
-                FrontendOwnershipMetadata::OWNER_TYPE_FRONTEND_ACCOUNT,
+                ['FRONTEND_CUSTOMER', 'FRONTEND_CUSTOMER', 'customer_id'],
+                FrontendOwnershipMetadata::OWNER_TYPE_FRONTEND_CUSTOMER,
             ],
             [
-                ['UNKNOWN', 'FRONTEND_ACCOUNT', 'customer_id'],
-                FrontendOwnershipMetadata::OWNER_TYPE_FRONTEND_ACCOUNT,
+                ['UNKNOWN', 'FRONTEND_CUSTOMER', 'customer_id'],
+                FrontendOwnershipMetadata::OWNER_TYPE_FRONTEND_CUSTOMER,
                 [
                     '\InvalidArgumentException',
                     'Unknown owner type: UNKNOWN.',
                 ],
             ],
             [
-                ['UNKNOWN', 'FRONTEND_ACCOUNT', 'customer_id'],
-                FrontendOwnershipMetadata::OWNER_TYPE_FRONTEND_ACCOUNT,
+                ['UNKNOWN', 'FRONTEND_CUSTOMER', 'customer_id'],
+                FrontendOwnershipMetadata::OWNER_TYPE_FRONTEND_CUSTOMER,
                 [
                     '\InvalidArgumentException',
                     'Unknown owner type: UNKNOWN.',
@@ -69,16 +69,16 @@ class FrontendOwnershipMetadataTest extends \PHPUnit_Framework_TestCase
                 FrontendOwnershipMetadata::OWNER_TYPE_NONE,
             ],
             [
-                ['FRONTEND_ACCOUNT', '', 'customer_id'],
-                FrontendOwnershipMetadata::OWNER_TYPE_FRONTEND_ACCOUNT,
+                ['FRONTEND_CUSTOMER', '', 'customer_id'],
+                FrontendOwnershipMetadata::OWNER_TYPE_FRONTEND_CUSTOMER,
                 [
                     '\InvalidArgumentException',
                     'The owner field name must not be empty.',
                 ],
             ],
             [
-                ['FRONTEND_ACCOUNT', 'FRONTEND_ACCOUNT', ''],
-                FrontendOwnershipMetadata::OWNER_TYPE_FRONTEND_ACCOUNT,
+                ['FRONTEND_CUSTOMER', 'FRONTEND_CUSTOMER', ''],
+                FrontendOwnershipMetadata::OWNER_TYPE_FRONTEND_CUSTOMER,
                 [
                     '\InvalidArgumentException',
                     'The owner column name must not be empty.',
@@ -95,7 +95,7 @@ class FrontendOwnershipMetadataTest extends \PHPUnit_Framework_TestCase
         $metadata = new FrontendOwnershipMetadata('FRONTEND_USER', 'customer_user', 'customer_user_id');
         $this->assertTrue($metadata->isBasicLevelOwned());
 
-        $metadata = new FrontendOwnershipMetadata('FRONTEND_ACCOUNT', 'FRONTEND_ACCOUNT', 'customer_id');
+        $metadata = new FrontendOwnershipMetadata('FRONTEND_CUSTOMER', 'FRONTEND_CUSTOMER', 'customer_id');
         $this->assertFalse($metadata->isBasicLevelOwned());
     }
 
@@ -105,7 +105,7 @@ class FrontendOwnershipMetadataTest extends \PHPUnit_Framework_TestCase
         $this->assertFalse($metadata->isLocalLevelOwned());
         $this->assertFalse($metadata->isLocalLevelOwned(true));
 
-        $metadata = new FrontendOwnershipMetadata('FRONTEND_ACCOUNT', 'FRONTEND_ACCOUNT', 'customer_id');
+        $metadata = new FrontendOwnershipMetadata('FRONTEND_CUSTOMER', 'FRONTEND_CUSTOMER', 'customer_id');
         $this->assertTrue($metadata->isLocalLevelOwned());
         $this->assertTrue($metadata->isLocalLevelOwned(true));
 
@@ -174,7 +174,7 @@ class FrontendOwnershipMetadataTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
             'local level owned' => [
-                'arguments' => ['FRONTEND_ACCOUNT', 'owner', 'owner_id'],
+                'arguments' => ['FRONTEND_CUSTOMER', 'owner', 'owner_id'],
                 'levels' => [
                     0 => AccessLevel::NONE_LEVEL_NAME,
                     2 => AccessLevel::getAccessLevelName(2),
