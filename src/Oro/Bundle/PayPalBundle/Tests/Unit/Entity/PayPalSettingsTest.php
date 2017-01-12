@@ -4,7 +4,7 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\PayPalBundle\Entity\CreditCardPaymentAction;
-use Oro\Bundle\PayPalBundle\Entity\CreditCardTypes;
+use Oro\Bundle\PayPalBundle\Entity\CreditCardType;
 use Oro\Bundle\PayPalBundle\Entity\ExpressCheckoutPaymentAction;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
@@ -36,7 +36,7 @@ class PayPalSettingsTest extends \PHPUnit_Framework_TestCase
             ['creditCardPaymentAction', new CreditCardPaymentAction()],
         ]);
         static::assertPropertyCollections(new PayPalSettings(), [
-            ['allowedCreditCardTypes', new CreditCardTypes()],
+            ['allowedCreditCardTypes', new CreditCardType()],
             ['creditCardLabels', new LocalizedFallbackValue()],
             ['creditCardShortLabels', new LocalizedFallbackValue()],
             ['expressCheckoutLabels', new LocalizedFallbackValue()],
@@ -63,7 +63,7 @@ class PayPalSettingsTest extends \PHPUnit_Framework_TestCase
                 'useProxy' => true,
                 'proxyHost' => 'some host',
                 'proxyPort' => 'some proxy',
-                'allowedCreditCardTypes' => [new CreditCardTypes()],
+                'allowedCreditCardTypes' => [new CreditCardType()],
                 'expressCheckoutPaymentAction' => new ExpressCheckoutPaymentAction(),
                 'creditCardPaymentAction' => new CreditCardPaymentAction(),
                 'creditCardLabels' => [(new LocalizedFallbackValue())->setString('label')],
