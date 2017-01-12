@@ -21,31 +21,9 @@
     &__item {
         display: block;
 
-        min-height: 49px;
+        min-height: $main-menu-item-height;
 
         flex-grow: 1;
-
-        @include breakpoint('desktop') {
-            &--ancestor {
-                &:hover {
-                    .main-menu__link {
-                        background: get-color('additional', 'base');
-                    }
-                }
-            }
-
-            &[data-dropdown-trigger] {
-                &:hover {
-                    .main-menu__sublist-container {
-                        display: block !important;
-                    }
-
-                    .messages-widget__dropdown-mode {
-                        display: block;
-                    }
-                }
-            }
-        }
 
         .messages-widget {
             &__trigger {
@@ -70,6 +48,18 @@
             vertical-align: middle;
 
             background: get-color('additional', 'base');
+        }
+
+        &.open {
+            background: get-color('additional', 'base');
+
+            .main-menu__sublist-container {
+                display: block !important;
+            }
+
+            .messages-widget__dropdown-mode {
+                display: block;
+            }
         }
     }
 
@@ -107,14 +97,48 @@
     &__sublist {
         display: none;
     }
+
+    &__button-arrow {
+        padding: 8px 12px 8px 8px;
+
+        font-size: inherit;
+
+        background: none;
+        border: 0;
+
+        cursor: pointer;
+    }
 }
 
+@include only-desktop() {
+    .main-menu {
+        &__item {
+            &--ancestor {
+                &:hover {
+                    background: get-color('additional', 'base');
+                }
+            }
+
+            &[data-dropdown-trigger] {
+                &:hover {
+                    .main-menu__sublist-container {
+                        display: block !important;
+                    }
+
+                    .messages-widget__dropdown-mode {
+                        display: block;
+                    }
+                }
+            }
+        }
+    }
+}
 @include breakpoint('desktop') {
     .main-menu {
-        max-height: 49px;
+        max-height: $main-menu-item-height;
 
         &__item {
-            min-height: 49px;
+            min-height: $main-menu-item-height;
 
             &--ancestor {
                 .main-menu__link {
@@ -124,7 +148,9 @@
         }
 
         &__link {
-            min-height: 49px;
+            min-height: $main-menu-item-height;
+
+            display: inline-block;
         }
     }
 }
@@ -146,6 +172,10 @@
 
         &__sublist-container {
             box-shadow: none;
+        }
+
+        &__button-arrow {
+            display: none;
         }
     }
 }
