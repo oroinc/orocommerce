@@ -3,9 +3,10 @@
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+
+use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData;
-use Oro\Component\Duplicator\Test\Stub\RFPRequest;
 
 /**
  * @dbIsolation
@@ -49,7 +50,7 @@ class RequestControllerTest extends WebTestCase
      */
     public function testView()
     {
-        /** @var RFPRequest $request */
+        /** @var Request $request */
         $request = $this->getReference(LoadRequestData::REQUEST1);
         $id = $request->getId();
 
@@ -99,7 +100,7 @@ class RequestControllerTest extends WebTestCase
         $form['oro_rfp_request[poNumber]'] = $updatedPoNumber;
 
         $form['oro_rfp_request[assignedUsers]'] = $this->getReference(LoadUserData::USER1)->getId();
-        $form['oro_rfp_request[assignedAccountUsers]'] = implode(',', [
+        $form['oro_rfp_request[assignedCustomerUsers]'] = implode(',', [
             $this->getReference(LoadUserData::ACCOUNT1_USER1)->getId(),
             $this->getReference(LoadUserData::ACCOUNT1_USER2)->getId()
         ]);

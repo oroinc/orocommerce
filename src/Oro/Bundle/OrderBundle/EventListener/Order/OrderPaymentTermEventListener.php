@@ -10,8 +10,8 @@ use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 
 class OrderPaymentTermEventListener
 {
-    const ACCOUNT_PAYMENT_TERM_KEY = 'accountPaymentTerm';
-    const ACCOUNT_GROUP_PAYMENT_TERM_KEY = 'accountGroupPaymentTerm';
+    const ACCOUNT_PAYMENT_TERM_KEY = 'customerPaymentTerm';
+    const ACCOUNT_GROUP_PAYMENT_TERM_KEY = 'customerGroupPaymentTerm';
 
     /** @var PaymentTermProvider */
     protected $provider;
@@ -29,26 +29,26 @@ class OrderPaymentTermEventListener
      */
     public function onOrderEvent(OrderEvent $event)
     {
-        $accountPaymentTerm = null;
-        $accountGroupPaymentTerm = null;
+        $customerPaymentTerm = null;
+        $customerGroupPaymentTerm = null;
 
         $order = $event->getOrder();
         $this->validateRelation($order);
 
-        $account = $order->getAccount();
+        $customer = $order->getCustomer();
 
-        if ($account) {
-            $paymentTerm = $this->provider->getAccountPaymentTerm($account);
-            $accountPaymentTerm = $paymentTerm ? $paymentTerm->getId() : null;
+        if ($customer) {
+            $paymentTerm = $this->provider->getCustomerPaymentTerm($customer);
+            $customerPaymentTerm = $paymentTerm ? $paymentTerm->getId() : null;
         }
 
-        if ($account && $account->getGroup()) {
-            $paymentTerm = $this->provider->getAccountGroupPaymentTerm($account->getGroup());
-            $accountGroupPaymentTerm = $paymentTerm ? $paymentTerm->getId() : null;
+        if ($customer && $customer->getGroup()) {
+            $paymentTerm = $this->provider->getCustomerGroupPaymentTerm($customer->getGroup());
+            $customerGroupPaymentTerm = $paymentTerm ? $paymentTerm->getId() : null;
         }
 
-        $event->getData()->offsetSet(self::ACCOUNT_PAYMENT_TERM_KEY, $accountPaymentTerm);
-        $event->getData()->offsetSet(self::ACCOUNT_GROUP_PAYMENT_TERM_KEY, $accountGroupPaymentTerm);
+        $event->getData()->offsetSet(self::ACCOUNT_PAYMENT_TERM_KEY, $customerPaymentTerm);
+        $event->getData()->offsetSet(self::ACCOUNT_GROUP_PAYMENT_TERM_KEY, $customerGroupPaymentTerm);
     }
 
     /**
@@ -59,18 +59,18 @@ class OrderPaymentTermEventListener
      */
     protected function validateRelation(Order $order)
     {
-        $accountUser = $order->getAccountUser();
-        if (!$accountUser) {
+        $customerUser = $order->getCustomerUser();
+        if (!$customerUser) {
             return;
         }
 
-        $account = $order->getAccount();
-        if (!$account || !$accountUser->getAccount()) {
-            throw new BadRequestHttpException('AccountUser without Account is not allowed');
+        $customer = $order->getCustomer();
+        if (!$customer || !$customerUser->getCustomer()) {
+            throw new BadRequestHttpException('CustomerUser without Customer is not allowed');
         }
 
-        if ($accountUser->getAccount()->getId() !== $account->getId()) {
-            throw new BadRequestHttpException('AccountUser must belong to Account');
+        if ($customerUser->getCustomer()->getId() !== $customer->getId()) {
+            throw new BadRequestHttpException('CustomerUser must belong to Customer');
         }
     }
 }

@@ -3,33 +3,23 @@
 namespace Oro\Bundle\CheckoutBundle\WorkflowState\Mapper;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory;
-use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
+use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInterface;
 
 class ShippingMethodEnabledMapper implements CheckoutStateDiffMapperInterface
 {
     const DATA_NAME = 'shipping_method_enabled';
 
     /**
-     * @var ShippingPriceProvider
+     * @var CheckoutShippingMethodsProviderInterface
      */
-    protected $shippingPriceProvider;
+    private $checkoutShippingMethodsProvider;
 
     /**
-     * @var CheckoutShippingContextFactory
+     * @param CheckoutShippingMethodsProviderInterface $checkoutShippingMethodsProvider
      */
-    protected $shippingContextFactory;
-
-    /**
-     * @param ShippingPriceProvider          $shippingPriceProvider
-     * @param CheckoutShippingContextFactory $shippingContextFactory
-     */
-    public function __construct(
-        ShippingPriceProvider $shippingPriceProvider,
-        CheckoutShippingContextFactory $shippingContextFactory
-    ) {
-        $this->shippingPriceProvider = $shippingPriceProvider;
-        $this->shippingContextFactory = $shippingContextFactory;
+    public function __construct(CheckoutShippingMethodsProviderInterface $checkoutShippingMethodsProvider)
+    {
+        $this->checkoutShippingMethodsProvider = $checkoutShippingMethodsProvider;
     }
 
     /**
@@ -67,17 +57,14 @@ class ShippingMethodEnabledMapper implements CheckoutStateDiffMapperInterface
      */
     public function isStatesEqual($entity, $state1, $state2)
     {
-        if (!$entity->getShippingMethod()) {
+        $shippingMethod = $entity->getShippingMethod();
+
+        if (!$shippingMethod) {
             return true;
         }
 
-        $shippingMethod = $entity->getShippingMethod();
         if ($shippingMethod) {
-            return null !== $this->shippingPriceProvider->getPrice(
-                $this->shippingContextFactory->create($entity),
-                $shippingMethod,
-                $entity->getShippingMethodType()
-            );
+            return null !== $this->checkoutShippingMethodsProvider->getPrice($entity);
         }
 
         return false;

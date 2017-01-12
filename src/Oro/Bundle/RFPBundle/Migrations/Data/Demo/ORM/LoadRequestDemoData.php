@@ -12,7 +12,7 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\MigrationBundle\Fixture\AbstractEntityReferenceFixture;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Entity\RequestProduct;
@@ -44,7 +44,7 @@ class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
+            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerUserDemoData',
             'Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData',
         ];
     }
@@ -57,7 +57,7 @@ class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
     {
         $organization = $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
 
-        $accountUsers = $this->getAccountUsers($manager);
+        $customerUsers = $this->getCustomerUsers($manager);
 
         /** @var User $user */
         $owner = $manager->getRepository('OroUserBundle:User')->findOneBy([]);
@@ -74,7 +74,7 @@ class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
         while (($data = fgetcsv($handler, 5000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
 
-            $accountUser = $accountUsers[rand(0, count($accountUsers) - 1)];
+            $customerUser = $customerUsers[rand(0, count($customerUsers) - 1)];
             $poNumber = 'CA' . rand(1000, 9999) . 'USD';
 
             $request = new Request();
@@ -88,8 +88,8 @@ class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
                 ->setNote($row['note'])
                 ->setShipUntil(new \DateTime('+10 day'))
                 ->setPoNumber($poNumber)
-                ->setAccountUser($accountUser)
-                ->setAccount($accountUser ? $accountUser->getAccount() : null)
+                ->setCustomerUser($customerUser)
+                ->setCustomer($customerUser ? $customerUser->getCustomer() : null)
             ;
 
             $request->setOwner($owner);
@@ -130,11 +130,11 @@ class LoadRequestDemoData extends AbstractEntityReferenceFixture implements
 
     /**
      * @param ObjectManager $manager
-     * @return AccountUser[]
+     * @return CustomerUser[]
      */
-    protected function getAccountUsers(ObjectManager $manager)
+    protected function getCustomerUsers(ObjectManager $manager)
     {
-        return array_merge([null], $manager->getRepository('OroCustomerBundle:AccountUser')->findBy([], null, 10));
+        return array_merge([null], $manager->getRepository('OroCustomerBundle:CustomerUser')->findBy([], null, 10));
     }
 
     /**

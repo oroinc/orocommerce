@@ -5,7 +5,21 @@ layout:
         - '@addTree':
             items:
                 __line_item_form:
-                    blockType: form
+                    blockType: container
+                __line_item_form_start:
+                    blockType: form_start
+                    options:
+                        form: '=data["oro_product_form"].getLineItemFormView(data.offsetExists("product")?data["product"], instance_name)'
+                __line_item_form_fields:
+                    blockType: form_fields
+                    options:
+                        vars:
+                            form: '=data["oro_product_form"].getLineItemFormView(data.offsetExists("product")?data["product"], instance_name)'
+                            singleUnitMode: '=data["oro_product_single_unit_mode"].isSingleUnitMode()'
+                            singleUnitModeCodeVisible: '=data["oro_product_single_unit_mode"].isSingleUnitModeCodeVisible()'
+                            defaultUnitCode: '=data["oro_product_single_unit_mode"].getDefaultUnitCode()'
+                __line_item_form_end:
+                    blockType: form_end
                     options:
                         form: '=data["oro_product_form"].getLineItemFormView(data.offsetExists("product")?data["product"], instance_name)'
                 __line_item_form_buttons:
@@ -13,7 +27,10 @@ layout:
             tree:
                 __root:
                     __line_item_form:
+                        __line_item_form_start: ~
+                        __line_item_form_fields: ~
                         __line_item_form_buttons: ~
+                        __line_item_form_end: ~
         - '@move':
             id: __line_item_form_buttons
             parentId: __line_item_form

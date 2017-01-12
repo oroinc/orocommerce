@@ -44,11 +44,17 @@ class AjaxLineItemController extends Controller
         $shoppingListManager = $this->get('oro_shopping_list.shopping_list.manager');
         $shoppingList = $shoppingListManager->getForCurrentUser($request->get('shoppingListId'));
 
+        $parentProduct = $this->getParentProduct($request);
+
         $lineItem = (new LineItem())
             ->setProduct($product)
             ->setShoppingList($shoppingList)
-            ->setAccountUser($shoppingList->getAccountUser())
+            ->setCustomerUser($shoppingList->getCustomerUser())
             ->setOrganization($shoppingList->getOrganization());
+
+        if ($parentProduct && $parentProduct->isConfigurable()) {
+            $lineItem->setParentProduct($parentProduct);
+        }
 
         $form = $this->createForm(FrontendLineItemType::NAME, $lineItem);
 
@@ -208,5 +214,20 @@ class AjaxLineItemController extends Controller
                 'label' => $shoppingList->getLabel()
             ]
         ];
+    }
+
+    /**
+     * @param Request $request
+     * @return null|Product
+     */
+    protected function getParentProduct(Request $request)
+    {
+        if ($parentProductId = $request->get('parentProductId')) {
+            $doctrineHelper = $this->get('oro_entity.doctrine_helper');
+            $productRepository = $doctrineHelper->getEntityRepositoryForClass(Product::class);
+            return $productRepository->find($parentProductId);
+        }
+
+        return null;
     }
 }

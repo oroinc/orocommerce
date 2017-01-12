@@ -8,14 +8,37 @@ use Oro\Bundle\EntityConfigBundle\Migration\RemoveFieldQuery;
 use Oro\Bundle\EntityConfigBundle\Migration\RemoveTableQuery;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
+use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
+use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\TranslationBundle\Migration\DeleteTranslationKeysQuery;
 
-class OroRFPBundle implements Migration, ExtendExtensionAwareInterface
+class OroRFPBundle implements
+    Migration,
+    RenameExtensionAwareInterface,
+    OrderedMigrationInterface,
+    ExtendExtensionAwareInterface
 {
+    use MigrationConstraintTrait;
+
+    /** @var RenameExtension */
+    private $renameExtension;
+
     /** @var ExtendExtension */
     protected $extendExtension;
+
+    /**
+     * Sets the RenameExtension
+     *
+     * @param RenameExtension $renameExtension
+     */
+    public function setRenameExtension(RenameExtension $renameExtension)
+    {
+        $this->renameExtension = $renameExtension;
+    }
 
     /**
      * {@inheritdoc}
@@ -23,6 +46,16 @@ class OroRFPBundle implements Migration, ExtendExtensionAwareInterface
     public function setExtendExtension(ExtendExtension $extendExtension)
     {
         $this->extendExtension = $extendExtension;
+    }
+
+    /**
+     * Get the order of this migration
+     *
+     * @return integer
+     */
+    public function getOrder()
+    {
+        return 1;
     }
 
     /**
@@ -41,6 +74,8 @@ class OroRFPBundle implements Migration, ExtendExtensionAwareInterface
         foreach ($this->getTranslationKeysForRemove() as $domain => $keys) {
             $queries->addQuery(new DeleteTranslationKeysQuery($domain, $keys));
         }
+
+        $this->renameAccountToCustomer($schema, $queries);
     }
 
     /**
@@ -72,6 +107,47 @@ class OroRFPBundle implements Migration, ExtendExtensionAwareInterface
 
         $table = $schema->getTable('oro_rfp_request');
         $table->dropColumn('status_id');
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     */
+    protected function renameAccountToCustomer(Schema $schema, QueryBag $queries)
+    {
+        $table = $schema->getTable('oro_rfp_request');
+        $table->removeForeignKey($this->getConstraintName($table, 'account_user_id'));
+        $this->renameExtension->renameColumn(
+            $schema,
+            $queries,
+            $table,
+            'account_user_id',
+            'customer_user_id'
+        );
+        $table->removeForeignKey($this->getConstraintName($table, 'account_id'));
+        $this->renameExtension->renameColumn(
+            $schema,
+            $queries,
+            $table,
+            'account_id',
+            'customer_id'
+        );
+
+        $table = $schema->getTable('oro_rfp_assigned_acc_users');
+        $table->removeForeignKey($this->getConstraintName($table, 'account_user_id'));
+        $this->renameExtension->renameColumn(
+            $schema,
+            $queries,
+            $table,
+            'account_user_id',
+            'customer_user_id'
+        );
+        $this->renameExtension->renameTable(
+            $schema,
+            $queries,
+            'oro_rfp_assigned_acc_users',
+            'oro_rfp_assigned_cus_users'
+        );
     }
 
     /**

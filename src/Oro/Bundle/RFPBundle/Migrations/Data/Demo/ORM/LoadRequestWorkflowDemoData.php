@@ -73,7 +73,7 @@ class LoadRequestWorkflowDemoData extends AbstractFixture implements
         $this->startWorkflows(self::WORKFLOW_BACKOFFICE, $this->requests);
         $this->startWorkflows(self::WORKFLOW_FRONTOFFICE, $this->requests);
 
-        $user = $manager->getRepository('OroUserBundle:User')->findOneBy([]);
+        $user = $manager->getRepository(User::class)->findOneBy([]);
         $this->generateTransitionsHistory(self::WORKFLOW_BACKOFFICE, $this->requests, $user);
         $this->generateTransitionsHistory(self::WORKFLOW_FRONTOFFICE, $this->requests);
     }
@@ -104,10 +104,10 @@ class LoadRequestWorkflowDemoData extends AbstractFixture implements
         foreach ($requests as $request) {
             $workflowItem = $this->workflowManager->getWorkflowItem($request, $workflowName);
 
+            $user = $user ?: $request->getCustomerUser();
             if (null === $user) {
-                $user = $request->getAccountUser();
+                continue;
             }
-
             $this->setUserToken($user);
             $this->randomTransitionWalk($workflowItem, rand(0, 4));
         }

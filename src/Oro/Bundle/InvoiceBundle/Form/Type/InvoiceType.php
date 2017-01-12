@@ -8,8 +8,8 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountUserSelectType;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
 use Oro\Bundle\InvoiceBundle\Entity\Invoice;
 
 class InvoiceType extends AbstractType
@@ -46,18 +46,18 @@ class InvoiceType extends AbstractType
                 ]
             )
             ->add(
-                'accountUser',
-                AccountUserSelectType::NAME,
+                'customerUser',
+                CustomerUserSelectType::NAME,
                 [
-                    'label' => 'oro.invoice.account_user.label',
+                    'label' => 'oro.invoice.customer_user.label',
                     'required' => false,
                 ]
             )
             ->add(
-                'account',
-                AccountSelectType::NAME,
+                'customer',
+                CustomerSelectType::NAME,
                 [
-                    'label' => 'oro.invoice.account.label',
+                    'label' => 'oro.invoice.customer.label',
                     'required' => true,
                 ]
             )

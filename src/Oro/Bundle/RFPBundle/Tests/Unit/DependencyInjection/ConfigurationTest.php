@@ -57,15 +57,15 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                             ],
                             'scope' => 'app'
                         ],
-                        'notify_assigned_sales_reps_of_the_account' => [
+                        'notify_assigned_sales_reps_of_the_customer' => [
                             'value' => 'always',
                             'scope' => 'app',
                         ],
-                        'notify_owner_of_account_user_record' => [
+                        'notify_owner_of_customer_user_record' => [
                             'value' => 'always',
                             'scope' => 'app',
                         ],
-                        'notify_owner_of_account' => [
+                        'notify_owner_of_customer' => [
                             'value' => 'always',
                             'scope' => 'app',
                         ],

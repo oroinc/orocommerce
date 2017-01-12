@@ -46,7 +46,7 @@ class RequestProductType extends AbstractType
                 ],
                 'data_parameters' => [
                     'scope' => 'rfp',
-                    'price_list' => 'default_account_user'
+                    'price_list' => 'default_customer_user'
                 ]
             ])
             ->add('requestProductItems', RequestProductItemCollectionType::NAME, [

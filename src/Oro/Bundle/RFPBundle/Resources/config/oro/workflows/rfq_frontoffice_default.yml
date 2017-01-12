@@ -37,6 +37,8 @@ workflows:
                 is_unavailable_hidden: true
                 step_to: submitted
                 transition_definition: __start___definition
+                frontend_options:
+                    icon: fa-envelope-o
             more_information_requested_transition:
                 step_to: requires_attention
                 transition_definition: more_information_requested_transition_definition
@@ -47,6 +49,8 @@ workflows:
                         event: update
                         field: internal_status
                         require: "entity.getInternalStatus().getId() === 'more_info_requested'"
+                frontend_options:
+                    icon: fa-question-circle-o
             provide_more_information_transition:
                 step_to: submitted
                 transition_definition: provide_more_information_transition_definition
@@ -58,12 +62,18 @@ workflows:
                                 required: true
                                 constraints:
                                   - NotBlank: ~
+                frontend_options:
+                    icon: fa-comment-o
             cancel_transition:
                 step_to: cancelled
                 transition_definition: cancel_transition_definition
+                frontend_options:
+                    icon: fa-times
             resubmit_transition:
                 step_to: cancelled
                 transition_definition: resubmit_transition_definition
+                frontend_options:
+                    icon: fa-repeat
             reopen_transition:
                 step_to: submitted
                 transition_definition: reopen_transition_definition
@@ -77,6 +87,8 @@ workflows:
                             prevEntity.getCustomerStatus() !== null &&
                             entity.getCustomerStatus().getId() === 'submitted' &&
                             prevEntity.getCustomerStatus().getId() === 'cancelled'
+                frontend_options:
+                    icon: fa-external-link
 
         transition_definitions:
             __start___definition:
@@ -136,7 +148,6 @@ workflows:
                         enum_code: 'rfp_customer_status'
                         attribute: $request.customerStatus
                         identifier: 'submitted'
-
                     - '@assign_constant_value':
                         attribute: $.result.note_type
                         value: Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote::TYPE_CUSTOMER_NOTE

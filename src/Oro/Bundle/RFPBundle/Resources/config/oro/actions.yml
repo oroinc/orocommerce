@@ -1,4 +1,4 @@
-actions:
+operations:
     oro_rfp_create_quote:
         label: oro.rfp.btn.create_quote
         applications: [default]
@@ -10,9 +10,6 @@ actions:
             icon: fa-file-text
             class: icons-holder-text no-hash btn
 
-#        ToDo: how we should change this condition ?
-#        preconditions:
-#            '@equal': [$status.draft, false]
         actions:
             - '@call_service_method':
                 service: oro_rfp.service.request_to_quote_data_storage
@@ -179,8 +176,8 @@ action_groups:
                   - [[setNull], [propertyName, [id]]]
                   - [[collection], [propertyType, ['Doctrine\Common\Collections\Collection']]]
                   - [[setNull], [propertyName, [status]]]
-                  - [[keep], [propertyName, [accountUser]]]
-                  - [[keep], [propertyName, [account]]]
+                  - [[keep], [propertyName, [customerUser]]]
+                  - [[keep], [propertyName, [customer]]]
                   - [[keep], [propertyName, [organization]]]
                   - [[keep], [propertyName, [owner]]]
                   - [[keep], [propertyName, [internal_status]]]
@@ -189,14 +186,6 @@ action_groups:
                   - [[keep], [property, ["%oro_rfp.entity.request_product_item.class%", productUnit]]]
             - '@assign_value': [$.entityCopy.createdAt, $.currentDatetime]
             - '@assign_value': [$.entityCopy.updatedAt, $.currentDatetime]
-            - '@assign_constant_value':
-                attribute: $.openStatusName
-                value: Oro\Bundle\RFPBundle\Entity\RequestStatus::OPEN
-            - '@find_entity':
-                class: Oro\Bundle\RFPBundle\Entity\RequestStatus
-                attribute: $.requestCopy.status
-                where:
-                    name: $.openStatusName
             - '@flush_entity':
                 conditions:
                     '@equal': [true, $.flush]

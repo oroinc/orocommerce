@@ -5,7 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadCheckoutACLData;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadCheckoutUserACLData;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrdersACLData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -18,7 +18,7 @@ class CheckoutControllerAclTest extends WebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
+            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
         $this->loadFixtures(
             [
@@ -93,7 +93,7 @@ class CheckoutControllerAclTest extends WebTestCase
                     LoadCheckoutACLData::CHECKOUT_ACC_1_USER_BASIC
                 ],
             ],
-            'LOCAL: all orders on account level' => [
+            'LOCAL: all orders on customer level' => [
                 'user' => LoadCheckoutUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
                 'indexResponseStatus' => 200,
                 'gridResponseStatus' => 200,
@@ -103,7 +103,7 @@ class CheckoutControllerAclTest extends WebTestCase
                     LoadCheckoutACLData::CHECKOUT_ACC_1_USER_LOCAL,
                 ],
             ],
-            'DEEP: all orders on account level and child accounts' => [
+            'DEEP: all orders on customer level and child customers' => [
                 'user' => LoadCheckoutUserACLData::USER_ACCOUNT_1_ROLE_DEEP,
                 'indexResponseStatus' => 200,
                 'gridResponseStatus' => 200,
@@ -148,27 +148,27 @@ class CheckoutControllerAclTest extends WebTestCase
                 'user' => '',
                 'status' => 401,
             ],
-            'user from another account' => [
+            'user from another customer' => [
                 'resource' => LoadCheckoutACLData::CHECKOUT_ACC_1_USER_BASIC,
                 'user' => LoadCheckoutUserACLData::USER_ACCOUNT_2_ROLE_LOCAL,
                 'status' => 403,
             ],
-            'user from parent account : LOCAL' => [
+            'user from parent customer : LOCAL' => [
                 'resource' => LoadCheckoutACLData::CHECKOUT_ACC_1_1_USER_LOCAL,
                 'user' => LoadCheckoutUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
                 'status' => 403,
             ],
-            'user from same account : BASIC' => [
+            'user from same customer : BASIC' => [
                 'resource' => LoadCheckoutACLData::CHECKOUT_ACC_1_USER_LOCAL,
                 'user' => LoadCheckoutUserACLData::USER_ACCOUNT_1_ROLE_BASIC,
                 'status' => 403,
             ],
-            'user from same account : LOCAL' => [
+            'user from same customer : LOCAL' => [
                 'resource' => LoadCheckoutACLData::CHECKOUT_ACC_1_USER_BASIC,
                 'user' => LoadCheckoutUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
                 'status' => 200,
             ],
-            'user from parent account : DEEP' => [
+            'user from parent customer : DEEP' => [
                 'resource' => LoadCheckoutACLData::CHECKOUT_ACC_1_1_USER_LOCAL,
                 'user' => LoadCheckoutUserACLData::USER_ACCOUNT_1_ROLE_DEEP,
                 'status' => 200,

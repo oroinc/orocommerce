@@ -36,6 +36,12 @@
     label {
       display: none;
     }
+
+    .unit-label {
+      @extend .label;
+
+      line-height: 40px;
+    }
   }
 
   .add-product-from-view-component {

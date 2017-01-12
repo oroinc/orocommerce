@@ -145,7 +145,7 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
 
         $crawler = $this->client->request('GET', self::$checkoutUrl);
         $form = $this->getTransitionForm($crawler);
-        $this->setAccountAddress(
+        $this->setCustomerAddress(
             $this->getReference(self::ANOTHER_ACCOUNT_ADDRESS)->getId(),
             $form,
             self::BILLING_ADDRESS
@@ -153,7 +153,7 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
         $crawler = $this->client->submit($form);
 
         $form = $this->getTransitionForm($crawler);
-        $this->setAccountAddress(
+        $this->setCustomerAddress(
             $this->getReference(self::ANOTHER_ACCOUNT_ADDRESS)->getId(),
             $form,
             self::SHIPPING_ADDRESS
@@ -202,11 +202,11 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
      * @param Form $form
      * @param string $addressType
      */
-    protected function setAccountAddress($addressId, Form $form, $addressType)
+    protected function setCustomerAddress($addressId, Form $form, $addressType)
     {
         $addressId = $addressId === 0 ?: 'a_' . $addressId;
 
-        $addressTypePath = sprintf('%s[%s][accountAddress]', self::ORO_WORKFLOW_TRANSITION, $addressType);
+        $addressTypePath = sprintf('%s[%s][customerAddress]', self::ORO_WORKFLOW_TRANSITION, $addressType);
         $form->setValues([$addressTypePath => $addressId]);
     }
 }

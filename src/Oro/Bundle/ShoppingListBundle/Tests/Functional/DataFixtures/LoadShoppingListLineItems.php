@@ -114,7 +114,7 @@ class LoadShoppingListLineItems extends AbstractFixture implements DependentFixt
         $owner = $this->getFirstUser($manager);
         $item = new LineItem();
         $item->setNotes('Test Notes')
-            ->setAccountUser($shoppingList->getAccountUser())
+            ->setCustomerUser($shoppingList->getCustomerUser())
             ->setOrganization($shoppingList->getOrganization())
             ->setOwner($owner)
             ->setShoppingList($shoppingList)

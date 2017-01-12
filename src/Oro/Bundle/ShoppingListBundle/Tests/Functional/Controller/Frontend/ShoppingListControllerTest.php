@@ -7,7 +7,7 @@ use Symfony\Component\DomCrawler\Crawler;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadCheckoutUserACLData;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as BaseLoadAccountData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as BaseLoadCustomerData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -38,7 +38,7 @@ class ShoppingListControllerTest extends WebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(BaseLoadAccountData::AUTH_USER, BaseLoadAccountData::AUTH_PW)
+            $this->generateBasicAuthHeader(BaseLoadCustomerData::AUTH_USER, BaseLoadCustomerData::AUTH_PW)
         );
 
         $this->loadFixtures(
@@ -225,28 +225,28 @@ class ShoppingListControllerTest extends WebTestCase
                 'status' => 401,
                 'expectedCreateOrderButtonVisible' => false
             ],
-            'VIEW (user from another account)' => [
+            'VIEW (user from another customer)' => [
                 'route' => 'oro_shopping_list_frontend_view',
                 'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
                 'user' => LoadShoppingListUserACLData::USER_ACCOUNT_2_ROLE_LOCAL,
                 'status' => 403,
                 'expectedCreateOrderButtonVisible' => false
             ],
-            'VIEW (user from parent account : DEEP_VIEW_ONLY)' => [
+            'VIEW (user from parent customer : DEEP_VIEW_ONLY)' => [
                 'route' => 'oro_shopping_list_frontend_view',
                 'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_1_USER_LOCAL,
                 'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY,
                 'status' => 200,
                 'expectedCreateOrderButtonVisible' => false
             ],
-            'VIEW (user from parent account : LOCAL)' => [
+            'VIEW (user from parent customer : LOCAL)' => [
                 'route' => 'oro_shopping_list_frontend_view',
                 'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_1_USER_LOCAL,
                 'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_DEEP,
                 'status' => 200,
                 'expectedCreateOrderButtonVisible' => true
             ],
-            'VIEW (user from same account : LOCAL)' => [
+            'VIEW (user from same customer : LOCAL)' => [
                 'route' => 'oro_shopping_list_frontend_view',
                 'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
                 'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL,

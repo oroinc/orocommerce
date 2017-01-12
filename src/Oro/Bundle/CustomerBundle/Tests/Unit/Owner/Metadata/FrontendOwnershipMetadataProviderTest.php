@@ -12,7 +12,7 @@ use Oro\Bundle\EntityConfigBundle\Config\Id\EntityConfigId;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadata;
 use Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
@@ -22,8 +22,8 @@ use Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
  */
 class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
 {
-    const LOCAL_LEVEL = 'Oro\Bundle\CustomerBundle\Entity\Account';
-    const BASIC_LEVEL = 'Oro\Bundle\CustomerBundle\Entity\AccountUser';
+    const LOCAL_LEVEL = 'Oro\Bundle\CustomerBundle\Entity\Customer';
+    const BASIC_LEVEL = 'Oro\Bundle\CustomerBundle\Entity\CustomerUser';
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ConfigProvider
@@ -81,8 +81,8 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getEntityClass')
             ->willReturnMap(
                 [
-                    ['OroCustomerBundle:Account', self::LOCAL_LEVEL],
-                    ['OroCustomerBundle:AccountUser', self::BASIC_LEVEL],
+                    ['OroCustomerBundle:Customer', self::LOCAL_LEVEL],
+                    ['OroCustomerBundle:CustomerUser', self::BASIC_LEVEL],
                     [self::LOCAL_LEVEL, self::LOCAL_LEVEL],
                     [self::BASIC_LEVEL, self::BASIC_LEVEL],
                 ]
@@ -152,8 +152,8 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
     {
         $provider = new FrontendOwnershipMetadataProvider(
             [
-                'local_level' => 'OroCustomerBundle:Account',
-                'basic_level' => 'OroCustomerBundle:AccountUser',
+                'local_level' => 'OroCustomerBundle:Customer',
+                'basic_level' => 'OroCustomerBundle:CustomerUser',
             ]
         );
         $provider->setContainer($this->container);
@@ -261,8 +261,8 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
                 'securityFacadeUser' => new \stdClass(),
                 'expectedResult' => false,
             ],
-            'account user' => [
-                'securityFacadeUser' => new AccountUser(),
+            'customer user' => [
+                'securityFacadeUser' => new CustomerUser(),
                 'expectedResult' => true,
             ],
             'user is not logged in' => [
@@ -297,7 +297,7 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
             ],
             [
                 'owningEntityNames' => [
-                    'local_level' => 'AcmeBundle\Entity\Account',
+                    'local_level' => 'AcmeBundle\Entity\Customer',
                 ],
             ],
             [
@@ -382,7 +382,7 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
     public function testWarmUpCacheFilterConfigsByScope()
     {
         $config1 = new Config(new EntityConfigId('ownership', 'AcmeBundle\Entity\User'));
-        $config2 = new Config(new EntityConfigId('ownership', 'AcmeBundle\Entity\Account'));
+        $config2 = new Config(new EntityConfigId('ownership', 'AcmeBundle\Entity\Customer'));
 
         $this->configProvider->expects($this->once())->method('getConfigs')->willReturn([$config1, $config2]);
         $this->securityConfigProvider->expects($this->atLeastOnce())->method('hasConfig')->willReturn(true);
@@ -396,7 +396,7 @@ class FrontendOwnershipMetadataProviderTest extends \PHPUnit_Framework_TestCase
         $this->securityConfigProvider->expects($this->atLeastOnce())->method('getConfig')
             ->will($this->onConsecutiveCalls($securityConfig1, $securityConfig2));
 
-        $this->cache->expects($this->once())->method('fetch') ->with($this->equalTo('AcmeBundle\Entity\Account'));
+        $this->cache->expects($this->once())->method('fetch') ->with($this->equalTo('AcmeBundle\Entity\Customer'));
 
         $this->provider->warmUpCache();
     }

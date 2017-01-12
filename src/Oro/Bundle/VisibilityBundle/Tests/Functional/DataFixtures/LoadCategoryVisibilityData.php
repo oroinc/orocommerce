@@ -7,13 +7,13 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -67,7 +67,7 @@ class LoadCategoryVisibilityData extends AbstractFixture implements DependentFix
     public function getDependencies()
     {
         return [
-            LoadAccounts::class,
+            LoadCustomers::class,
             LoadGroups::class,
             LoadCategoryData::class,
         ];
@@ -81,9 +81,9 @@ class LoadCategoryVisibilityData extends AbstractFixture implements DependentFix
     {
         $this->createCategoryVisibility($category, $categoryData['all']);
 
-        $this->createAccountGroupCategoryVisibilities($category, $categoryData['groups']);
+        $this->createCustomerGroupCategoryVisibilities($category, $categoryData['groups']);
 
-        $this->createAccountCategoryVisibilities($category, $categoryData['accounts']);
+        $this->createCustomerCategoryVisibilities($category, $categoryData['customers']);
     }
 
     /**
@@ -110,53 +110,53 @@ class LoadCategoryVisibilityData extends AbstractFixture implements DependentFix
 
     /**
      * @param Category $category
-     * @param array $accountGroupVisibilityData
+     * @param array $customerGroupVisibilityData
      */
-    protected function createAccountGroupCategoryVisibilities(Category $category, array $accountGroupVisibilityData)
+    protected function createCustomerGroupCategoryVisibilities(Category $category, array $customerGroupVisibilityData)
     {
-        foreach ($accountGroupVisibilityData as $accountGroupReference => $data) {
-            /** @var AccountGroup $accountGroup */
-            $accountGroup = $this->getReference($accountGroupReference);
+        foreach ($customerGroupVisibilityData as $customerGroupReference => $data) {
+            /** @var CustomerGroup $customerGroup */
+            $customerGroup = $this->getReference($customerGroupReference);
             $scope = $this->scopeManager->findOrCreate(
-                AccountGroupCategoryVisibility::VISIBILITY_TYPE,
-                ['accountGroup' => $accountGroup]
+                CustomerGroupCategoryVisibility::VISIBILITY_TYPE,
+                ['customerGroup' => $customerGroup]
             );
 
-            $accountGroupCategoryVisibility = (new AccountGroupCategoryVisibility())
+            $customerGroupCategoryVisibility = (new CustomerGroupCategoryVisibility())
                 ->setCategory($category)
                 ->setScope($scope)
                 ->setVisibility($data['visibility']);
 
-            $this->setReference($data['reference'], $accountGroupCategoryVisibility);
+            $this->setReference($data['reference'], $customerGroupCategoryVisibility);
 
-            $this->em->persist($accountGroupCategoryVisibility);
-            $this->em->flush($accountGroupCategoryVisibility);
+            $this->em->persist($customerGroupCategoryVisibility);
+            $this->em->flush($customerGroupCategoryVisibility);
         }
     }
 
     /**
      * @param Category $category
-     * @param array $accountVisibilityData
+     * @param array $customerVisibilityData
      */
-    protected function createAccountCategoryVisibilities(Category $category, array $accountVisibilityData)
+    protected function createCustomerCategoryVisibilities(Category $category, array $customerVisibilityData)
     {
-        foreach ($accountVisibilityData as $accountReference => $data) {
-            /** @var Account $account */
-            $account = $this->getReference($accountReference);
+        foreach ($customerVisibilityData as $customerReference => $data) {
+            /** @var Customer $customer */
+            $customer = $this->getReference($customerReference);
             $scope = $this->scopeManager->findOrCreate(
-                AccountCategoryVisibility::VISIBILITY_TYPE,
-                ['account' => $account]
+                CustomerCategoryVisibility::VISIBILITY_TYPE,
+                ['customer' => $customer]
             );
 
-            $accountCategoryVisibility = (new AccountCategoryVisibility())
+            $customerCategoryVisibility = (new CustomerCategoryVisibility())
                 ->setCategory($category)
                 ->setScope($scope)
                 ->setVisibility($data['visibility']);
 
-            $this->setReference($data['reference'], $accountCategoryVisibility);
+            $this->setReference($data['reference'], $customerCategoryVisibility);
 
-            $this->em->persist($accountCategoryVisibility);
-            $this->em->flush($accountCategoryVisibility);
+            $this->em->persist($customerCategoryVisibility);
+            $this->em->flush($customerCategoryVisibility);
         }
     }
 

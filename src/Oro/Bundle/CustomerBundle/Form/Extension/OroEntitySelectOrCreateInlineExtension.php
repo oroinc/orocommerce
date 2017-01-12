@@ -9,7 +9,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class OroEntitySelectOrCreateInlineExtension extends AbstractTypeExtension
 {
@@ -64,6 +64,6 @@ class OroEntitySelectOrCreateInlineExtension extends AbstractTypeExtension
     {
         $token = $this->tokenStorage->getToken();
 
-        return $token && $token->getUser() instanceof AccountUser;
+        return $token && $token->getUser() instanceof CustomerUser;
     }
 }

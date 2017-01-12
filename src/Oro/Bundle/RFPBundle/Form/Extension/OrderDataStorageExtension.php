@@ -145,6 +145,6 @@ class OrderDataStorageExtension extends AbstractTypeExtension implements Feature
      */
     protected function getPriceList(Order $order)
     {
-        return $this->priceListTreeHandler->getPriceList($order->getAccount(), $order->getWebsite());
+        return $this->priceListTreeHandler->getPriceList($order->getCustomer(), $order->getWebsite());
     }
 }

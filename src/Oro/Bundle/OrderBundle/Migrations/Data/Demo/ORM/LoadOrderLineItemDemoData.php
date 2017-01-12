@@ -93,7 +93,7 @@ class LoadOrderLineItemDemoData extends AbstractFixture implements ContainerAwar
             $price = Price::create(mt_rand(10, 1000), $order->getCurrency());
             if ($product) {
                 $priceList = $this->container->get('oro_pricing.model.price_list_tree_handler')
-                    ->getPriceList($order->getAccount(), $order->getWebsite());
+                    ->getPriceList($order->getCustomer(), $order->getWebsite());
                 if ($priceList) {
                     $price = $this->getPrice(
                         $product,

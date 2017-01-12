@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\Command;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
-use Oro\Bundle\CustomerBundle\Entity\Repository\AccountGroupRepository;
-use Oro\Bundle\CustomerBundle\Entity\Repository\AccountRepository;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerGroupRepository;
+use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerRepository;
 use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
@@ -23,8 +23,8 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
 {
     const NAME = 'oro:price-lists:recalculate';
     const ALL = 'all';
-    const ACCOUNT = 'account';
-    const ACCOUNT_GROUP = 'account-group';
+    const ACCOUNT = 'customer';
+    const ACCOUNT_GROUP = 'customer-group';
     const WEBSITE = 'website';
     const PRICE_LIST = 'price-list';
 
@@ -40,14 +40,14 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
                 self::ACCOUNT,
                 null,
                 InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
-                'account ids for prices recalculate',
+                'customer ids for prices recalculate',
                 []
             )
             ->addOption(
                 self::ACCOUNT_GROUP,
                 null,
                 InputOption::VALUE_OPTIONAL | InputOption::VALUE_IS_ARRAY,
-                'account group ids for prices recalculate',
+                'customer group ids for prices recalculate',
                 []
             )
             ->addOption(
@@ -133,23 +133,23 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
         $output->writeln('<info>Start combining Price Lists</info>');
 
         $websites = $this->getWebsites($input);
-        $accountGroups = $this->getAccountGroups($input);
-        $accounts = $this->getAccounts($input);
+        $customerGroups = $this->getCustomerGroups($input);
+        $customers = $this->getCustomers($input);
 
         $container = $this->getContainer();
         $websiteCPLBuilder = $container->get('oro_pricing.builder.website_combined_price_list_builder');
-        $accountGroupCPLBuilder = $container->get('oro_pricing.builder.account_group_combined_price_list_builder');
-        $accountCPLBuilder = $container->get('oro_pricing.builder.account_combined_price_list_builder');
+        $customerGroupCPLBuilder = $container->get('oro_pricing.builder.customer_group_combined_price_list_builder');
+        $customerCPLBuilder = $container->get('oro_pricing.builder.customer_combined_price_list_builder');
 
         foreach ($websites as $website) {
-            if (count($accountGroups) === 0 && count($accounts) === 0) {
+            if (count($customerGroups) === 0 && count($customers) === 0) {
                 $websiteCPLBuilder->build($website, true);
             } else {
-                foreach ($accountGroups as $accountGroup) {
-                    $accountGroupCPLBuilder->build($website, $accountGroup, true);
+                foreach ($customerGroups as $customerGroup) {
+                    $customerGroupCPLBuilder->build($website, $customerGroup, true);
                 }
-                foreach ($accounts as $account) {
-                    $accountCPLBuilder->build($website, $account, true);
+                foreach ($customers as $customer) {
+                    $customerCPLBuilder->build($website, $customer, true);
                 }
             }
         }
@@ -242,39 +242,39 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
 
     /**
      * @param InputInterface $input
-     * @return array|AccountGroup[]
+     * @return array|CustomerGroup[]
      */
-    protected function getAccountGroups(InputInterface $input)
+    protected function getCustomerGroups(InputInterface $input)
     {
-        $accountGroupIds = $input->getOption(self::ACCOUNT_GROUP);
-        /** @var AccountGroupRepository $repository */
+        $customerGroupIds = $input->getOption(self::ACCOUNT_GROUP);
+        /** @var CustomerGroupRepository $repository */
         $repository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass(AccountGroup::class)
-            ->getRepository(AccountGroup::class);
-        $accountGroups = [];
-        if (count($accountGroupIds)) {
-            $accountGroups = $repository->findBy(['id' => $accountGroupIds]);
+            ->getManagerForClass(CustomerGroup::class)
+            ->getRepository(CustomerGroup::class);
+        $customerGroups = [];
+        if (count($customerGroupIds)) {
+            $customerGroups = $repository->findBy(['id' => $customerGroupIds]);
         }
 
-        return $accountGroups;
+        return $customerGroups;
     }
 
     /**
      * @param InputInterface $input
-     * @return array|Account[]
+     * @return array|Customer[]
      */
-    protected function getAccounts(InputInterface $input)
+    protected function getCustomers(InputInterface $input)
     {
-        $accountIds = $input->getOption(self::ACCOUNT);
-        /** @var AccountRepository $repository */
+        $customerIds = $input->getOption(self::ACCOUNT);
+        /** @var CustomerRepository $repository */
         $repository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass(Account::class)
-            ->getRepository(Account::class);
-        $accounts = [];
-        if (count($accountIds)) {
-            $accounts = $repository->findBy(['id' => $accountIds]);
+            ->getManagerForClass(Customer::class)
+            ->getRepository(Customer::class);
+        $customers = [];
+        if (count($customerIds)) {
+            $customers = $repository->findBy(['id' => $customerIds]);
         }
 
-        return $accounts;
+        return $customers;
     }
 }

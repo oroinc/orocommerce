@@ -7,8 +7,8 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
@@ -35,8 +35,8 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
             ['poNumber', 'PO-#1'],
             ['customerNotes', 'customer notes'],
             ['shipUntil', $now],
-            ['account', new Account()],
-            ['accountUser', new AccountUser()],
+            ['customer', new Customer()],
+            ['customerUser', new CustomerUser()],
             ['website', new Website()],
             ['source', new CheckoutSource()],
             ['shippingCost', Price::create(2, 'USD')],
@@ -49,14 +49,14 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
         $this->assertPropertyAccessors($entity, $properties);
     }
 
-    public function testSetAccountUser()
+    public function testSetCustomerUser()
     {
-        $account = new Account();
-        $accountUser = new AccountUser();
-        $accountUser->setAccount($account);
+        $customer = new Customer();
+        $customerUser = new CustomerUser();
+        $customerUser->setCustomer($customer);
         $entity = new Checkout();
-        $entity->setAccountUser($accountUser);
-        $this->assertSame($account, $entity->getAccount());
+        $entity->setCustomerUser($customerUser);
+        $this->assertSame($customer, $entity->getCustomer());
     }
 
     /**

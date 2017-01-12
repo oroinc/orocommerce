@@ -4,7 +4,7 @@ namespace Oro\Bundle\PaymentTermBundle\EventListener;
 
 use Doctrine\Common\Util\ClassUtils;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\EntityExtendBundle\Event\ValueRenderEvent;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
@@ -42,7 +42,7 @@ class ValueRenderEventListener
     public function beforeValueRender(ValueRenderEvent $event)
     {
         $entity = $event->getEntity();
-        if (!$entity instanceof Account) {
+        if (!$entity instanceof Customer) {
             return;
         }
 
@@ -52,10 +52,10 @@ class ValueRenderEventListener
             return;
         }
 
-        $accountPaymentTerm = $this->paymentTermAssociationProvider->getPaymentTerm($entity, $fieldName);
-        if ($accountPaymentTerm) {
+        $customerPaymentTerm = $this->paymentTermAssociationProvider->getPaymentTerm($entity, $fieldName);
+        if ($customerPaymentTerm) {
             $event->setFieldViewValue(
-                ['title' => $accountPaymentTerm->getLabel(), 'link' => $this->getLink($accountPaymentTerm)]
+                ['title' => $customerPaymentTerm->getLabel(), 'link' => $this->getLink($customerPaymentTerm)]
             );
 
             return;
@@ -65,26 +65,26 @@ class ValueRenderEventListener
             return;
         }
 
-        $accountGroupAssociationNames = $this->paymentTermAssociationProvider->getAssociationNames(
+        $customerGroupAssociationNames = $this->paymentTermAssociationProvider->getAssociationNames(
             ClassUtils::getClass($entity->getGroup())
         );
 
-        foreach ($accountGroupAssociationNames as $accountGroupAssociationName) {
-            $accountGroupPaymentTerm = $this->paymentTermAssociationProvider->getPaymentTerm(
+        foreach ($customerGroupAssociationNames as $customerGroupAssociationName) {
+            $customerGroupPaymentTerm = $this->paymentTermAssociationProvider->getPaymentTerm(
                 $entity->getGroup(),
-                $accountGroupAssociationName
+                $customerGroupAssociationName
             );
 
-            if ($accountGroupPaymentTerm) {
+            if ($customerGroupPaymentTerm) {
                 $event->setFieldViewValue(
                     [
                         'title' => $this->translator->trans(
-                            'oro.paymentterm.account.account_group_defined',
+                            'oro.paymentterm.customer.customer_group_defined',
                             [
-                                '{{ payment_term }}' => $accountGroupPaymentTerm->getLabel(),
+                                '{{ payment_term }}' => $customerGroupPaymentTerm->getLabel(),
                             ]
                         ),
-                        'link' => $this->getLink($accountGroupPaymentTerm),
+                        'link' => $this->getLink($customerGroupPaymentTerm),
                     ]
                 );
 

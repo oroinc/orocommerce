@@ -2,35 +2,35 @@
 
 namespace Oro\Bundle\CustomerBundle\Entity\Ownership;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 trait FrontendCustomerUserAwareTrait
 {
     use FrontendCustomerAwareTrait;
 
     /**
-     * @var AccountUser
+     * @var CustomerUser
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountUser")
-     * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser")
+     * @ORM\JoinColumn(name="customer_user_id", referencedColumnName="id", nullable=true, onDelete="SET NULL")
      */
-    protected $accountUser;
+    protected $customerUser;
 
     /**
-     * @return AccountUser|null
+     * @return CustomerUser|null
      */
     public function getCustomerUser()
     {
-        return $this->accountUser;
+        return $this->customerUser;
     }
 
     /**
-     * @param AccountUser|null $customerUser
+     * @param CustomerUser|null $customerUser
      * @return $this
      */
-    public function setCustomerUser(AccountUser $customerUser = null)
+    public function setCustomerUser(CustomerUser $customerUser = null)
     {
-        $this->accountUser = $customerUser;
+        $this->customerUser = $customerUser;
 
         if ($customerUser && $customerUser->getCustomer()) {
             $this->setCustomer($customerUser->getCustomer());

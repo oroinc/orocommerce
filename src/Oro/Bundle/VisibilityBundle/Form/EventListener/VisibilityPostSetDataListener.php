@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\VisibilityBundle\Form\EventListener;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountAwareInterface;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroupAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroupAwareInterface;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Form\Type\EntityVisibilityType;
 use Symfony\Component\Form\FormEvent;
@@ -36,8 +36,8 @@ class VisibilityPostSetDataListener
         }
 
         $this->setFormAllData($form);
-        $this->setFormAccountGroupData($form);
-        $this->setFormAccountData($form);
+        $this->setFormCustomerGroupData($form);
+        $this->setFormCustomerData($form);
     }
 
     /**
@@ -62,19 +62,19 @@ class VisibilityPostSetDataListener
     /**
      * @param FormInterface $form
      */
-    protected function setFormAccountGroupData(FormInterface $form)
+    protected function setFormCustomerGroupData(FormInterface $form)
     {
         $visibilities = $this->fieldDataProvider
             ->findFormFieldData($form, EntityVisibilityType::ACCOUNT_GROUP_FIELD);
 
         $data = array_map(
             function ($visibility) {
-                /** @var VisibilityInterface|AccountGroupAwareInterface $visibility */
+                /** @var VisibilityInterface|CustomerGroupAwareInterface $visibility */
                 /** @noinspection PhpUndefinedMethodInspection - field added through entity extend */
-                $accountGroup = $visibility->getScope()->getAccountGroup();
+                $customerGroup = $visibility->getScope()->getCustomerGroup();
 
                 return [
-                    'entity' => $accountGroup,
+                    'entity' => $customerGroup,
                     'data' => [
                         'visibility' => $visibility->getVisibility(),
                     ],
@@ -89,19 +89,19 @@ class VisibilityPostSetDataListener
     /**
      * @param FormInterface $form
      */
-    protected function setFormAccountData(FormInterface $form)
+    protected function setFormCustomerData(FormInterface $form)
     {
         $visibilities = $this->fieldDataProvider
             ->findFormFieldData($form, EntityVisibilityType::ACCOUNT_FIELD);
 
         $data = array_map(
             function ($visibility) {
-                /** @var VisibilityInterface|AccountAwareInterface $visibility */
+                /** @var VisibilityInterface|CustomerAwareInterface $visibility */
                 /** @noinspection PhpUndefinedMethodInspection - field added through entity extend */
-                $account = $visibility->getScope()->getAccount();
+                $customer = $visibility->getScope()->getCustomer();
 
                 return [
-                    'entity' => $account,
+                    'entity' => $customer,
                     'data' => [
                         'visibility' => $visibility->getVisibility(),
                     ],

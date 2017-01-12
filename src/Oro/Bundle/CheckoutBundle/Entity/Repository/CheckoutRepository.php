@@ -5,7 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Entity\Repository;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityRepository;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\SaleBundle\Entity\Quote;
@@ -97,10 +97,10 @@ class CheckoutRepository extends EntityRepository
 
     /**
      * @param Quote $quote
-     * @param AccountUser $accountUser
+     * @param CustomerUser $customerUser
      * @return Checkout
      */
-    public function getCheckoutByQuote(Quote $quote, AccountUser $accountUser)
+    public function getCheckoutByQuote(Quote $quote, CustomerUser $customerUser)
     {
         $qb = $this->createQueryBuilder('checkout');
 
@@ -110,32 +110,32 @@ class CheckoutRepository extends EntityRepository
             ->innerJoin('qd.quote', 'quote')
             ->where(
                 $qb->expr()->eq('quote', ':quote'),
-                $qb->expr()->eq('qd.accountUser', ':accountUser'),
+                $qb->expr()->eq('qd.customerUser', ':customerUser'),
                 $qb->expr()->eq('source.deleted', ':deleted'),
                 $qb->expr()->eq('checkout.deleted', ':deleted')
             )
             ->setParameter('quote', $quote)
-            ->setParameter('accountUser', $accountUser)
+            ->setParameter('customerUser', $customerUser)
             ->setParameter('deleted', false, Type::BOOLEAN)
             ->getQuery()
             ->getOneOrNullResult();
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $customerUser
      * @param array $sourceCriteria [shoppingList => ShoppingList, deleted => false]
      * @return array
      */
-    public function findCheckoutByAccountUserAndSourceCriteria(AccountUser $accountUser, array $sourceCriteria)
+    public function findCheckoutByCustomerUserAndSourceCriteria(CustomerUser $customerUser, array $sourceCriteria)
     {
         $qb = $this->createQueryBuilder('c');
         $qb->innerJoin('c.source', 's')
             ->where(
-                $qb->expr()->eq('c.accountUser', ':accountUser'),
+                $qb->expr()->eq('c.customerUser', ':customerUser'),
                 $qb->expr()->eq('c.deleted', ':deleted'),
                 $qb->expr()->eq('s.deleted', ':deleted')
             )
-            ->setParameter('accountUser', $accountUser)
+            ->setParameter('customerUser', $customerUser)
             ->setParameter('deleted', false, Type::BOOLEAN);
 
         foreach ($sourceCriteria as $field => $value) {

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend\Api\Rest;
 
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListACLData;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListUserACLData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -16,7 +16,7 @@ class ShoppingListControllerTest extends WebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
+            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
 
         $this->loadFixtures(
@@ -91,22 +91,22 @@ class ShoppingListControllerTest extends WebTestCase
                 'user' => '',
                 'status' => 401,
             ],
-            'user from another account' => [
+            'user from another customer' => [
                 'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
                 'user' => LoadShoppingListUserACLData::USER_ACCOUNT_2_ROLE_LOCAL,
                 'status' => 403,
             ],
-            'user from parent account : DEEP_VIEW_ONLY' => [
+            'user from parent customer : DEEP_VIEW_ONLY' => [
                 'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_1_USER_LOCAL,
                 'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY,
                 'status' => 403,
             ],
-            'EDIT (user from parent account : LOCAL)' => [
+            'EDIT (user from parent customer : LOCAL)' => [
                 'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_1_USER_LOCAL,
                 'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_DEEP,
                 'status' => 204,
             ],
-            'user from same account : LOCAL' => [
+            'user from same customer : LOCAL' => [
                 'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_USER_LOCAL,
                 'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_DEEP,
                 'status' => 204,
@@ -153,37 +153,37 @@ class ShoppingListControllerTest extends WebTestCase
                 'assignedUserEmail' => LoadShoppingListUserACLData::USER_ACCOUNT_2_ROLE_BASIC,
                 'status' => 401,
             ],
-            'user from another account' => [
+            'user from another customer' => [
                 'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_2_USER_LOCAL,
                 'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
                 'assignedUserEmail' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
                 'status' => 403,
             ],
-            'user from parent account : DEEP_VIEW_ONLY' => [
+            'user from parent customer : DEEP_VIEW_ONLY' => [
                 'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_2_USER_LOCAL,
                 'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY,
                 'assignedUserEmail' => LoadShoppingListUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL,
                 'status' => 403,
             ],
-            'assign to user from another account : LOCAL' => [
+            'assign to user from another customer : LOCAL' => [
                 'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_2_USER_DEEP,
                 'user' => LoadShoppingListUserACLData::USER_ACCOUNT_2_ROLE_DEEP,
                 'assignedUserEmail' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
                 'status' => 403,
             ],
-            'assign to user in same account : BASIC' => [
+            'assign to user in same customer : BASIC' => [
                 'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_2_USER_BASIC,
                 'user' => LoadShoppingListUserACLData::USER_ACCOUNT_2_ROLE_BASIC,
                 'assignedUserEmail' => LoadShoppingListUserACLData::USER_ACCOUNT_2_ROLE_LOCAL,
                 'status' => 403,
             ],
-            'assign to user in same account : LOCAL' => [
+            'assign to user in same customer : LOCAL' => [
                 'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_2_USER_LOCAL,
                 'user' => LoadShoppingListUserACLData::USER_ACCOUNT_2_ROLE_LOCAL,
                 'assignedUserEmail' => LoadShoppingListUserACLData::USER_ACCOUNT_2_ROLE_BASIC,
                 'status' => 200,
             ],
-            'assign to user in child account : DEEP' => [
+            'assign to user in child customer : DEEP' => [
                 'resource' => LoadShoppingListACLData::SHOPPING_LIST_ACC_1_2_USER_LOCAL,
                 'user' => LoadShoppingListUserACLData::USER_ACCOUNT_1_ROLE_DEEP,
                 'assignedUserEmail' => LoadShoppingListUserACLData::USER_ACCOUNT_1_1_ROLE_BASIC,

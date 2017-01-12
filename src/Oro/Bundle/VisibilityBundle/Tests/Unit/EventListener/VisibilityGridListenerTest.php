@@ -18,10 +18,10 @@ use Oro\Bundle\DataGridBundle\Event\OrmResultBefore;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
 use Oro\Component\TestUtils\ORM\Mocks\EntityManagerMock;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\EventListener\VisibilityGridListener;
 use Oro\Bundle\VisibilityBundle\Provider\VisibilityChoicesProvider;
 use Oro\Bundle\CatalogBundle\Entity\Category;
@@ -29,8 +29,8 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 
 class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
 {
-    const ACCOUNT_CATEGORY_VISIBILITY_GRID = 'account-category-visibility-grid';
-    const ACCOUNT_GROUP_PRODUCT_VISIBILITY_GRID = 'account-group-product-visibility-grid';
+    const ACCOUNT_CATEGORY_VISIBILITY_GRID = 'customer-category-visibility-grid';
+    const ACCOUNT_GROUP_PRODUCT_VISIBILITY_GRID = 'customer-group-product-visibility-grid';
 
     const COLUMNS_PATH = '[columns][visibility]';
     const FILTERS_PATH = '[filters][columns][visibility][options][field_options]';
@@ -90,15 +90,15 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->listener->addSubscribedGridConfig(
             self::ACCOUNT_CATEGORY_VISIBILITY_GRID,
-            'account',
-            AccountCategoryVisibility::class,
+            'customer',
+            CustomerCategoryVisibility::class,
             Category::class
         );
 
         $this->listener->addSubscribedGridConfig(
             self::ACCOUNT_GROUP_PRODUCT_VISIBILITY_GRID,
-            'accountGroup',
-            AccountGroupProductVisibility::class,
+            'customerGroup',
+            CustomerGroupProductVisibility::class,
             Product::class
         );
     }
@@ -117,7 +117,7 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
         $config->method('offsetGetByPath')
             ->willReturnMap(
                 [
-                    ['[options][cellSelection][selector]', null, '#account-category-visibility-changeset'],
+                    ['[options][cellSelection][selector]', null, '#customer-category-visibility-changeset'],
                     ['[scope]', null, 'scope'],
                     ['[columns][visibility]', null, []],
                     ['[filters][columns][visibility][options][field_options]', null, []],
@@ -128,7 +128,7 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
         $config->expects($this->exactly(4))
             ->method('offsetSetByPath')
             ->withConsecutive(
-                ['[options][cellSelection][selector]', '#account-category-visibility-changeset-2'],
+                ['[options][cellSelection][selector]', '#customer-category-visibility-changeset-2'],
                 ['[scope]', 'scope-2'],
                 ['[columns][visibility]', ['choices' => $this->choices]],
                 ['[filters][columns][visibility][options][field_options]', ['choices' => $this->choices]]
@@ -149,7 +149,7 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->scopeManager->expects($this->once())->method('getCriteriaByScope')
-            ->with($scope, 'account_category_visibility')
+            ->with($scope, 'customer_category_visibility')
             ->willReturn($scopeCriteria);
 
         $datagrid = $this->createMock(DatagridInterface::class);
@@ -159,7 +159,7 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $scopeCriteria->expects($this->once())->method('applyToJoin')
-            ->with($qb, 'scope', ['account']);
+            ->with($qb, 'scope', ['customer']);
 
         $event = new OrmResultBeforeQuery($datagrid, $qb);
         $this->listener->onOrmResultBeforeQuery($event);
@@ -173,7 +173,7 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->scopeManager->expects($this->once())->method('getCriteriaByScope')
-            ->with($scope, 'account_category_visibility')
+            ->with($scope, 'customer_category_visibility')
             ->willReturn($scopeCriteria);
 
         $datagrid = $this->createMock(DatagridInterface::class);
@@ -183,7 +183,7 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $scopeCriteria->expects($this->once())->method('applyToJoin')
-            ->with($qb, 'scope', ['account']);
+            ->with($qb, 'scope', ['customer']);
 
         $event = new OrmResultBeforeQuery($datagrid, $qb);
         $this->listener->onOrmResultBeforeQuery($event);
@@ -193,7 +193,7 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
     {
         $event = $this->getOrmResultBeforeEvent(
             self::ACCOUNT_CATEGORY_VISIBILITY_GRID,
-            $this->getParameterBag(AccountCategoryVisibility::getDefault(new Category()))
+            $this->getParameterBag(CustomerCategoryVisibility::getDefault(new Category()))
         );
         $expected = (string)(new Expr())->orX(
             (new Expr())->isNull(VisibilityGridListener::VISIBILITY_FIELD)
@@ -207,7 +207,7 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
     {
         $event = $this->getOrmResultBeforeEvent(
             self::ACCOUNT_CATEGORY_VISIBILITY_GRID,
-            $this->getParameterBag($this->getNotDefaultAccountCategoryVisibility())
+            $this->getParameterBag($this->getNotDefaultCustomerCategoryVisibility())
         );
         $this->listener->onResultBefore($event);
         $this->assertNull($event->getQuery()->getDQL());
@@ -328,11 +328,11 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
     /**
      * @return string|null
      */
-    protected function getNotDefaultAccountCategoryVisibility()
+    protected function getNotDefaultCustomerCategoryVisibility()
     {
         $category = new Category();
-        foreach (AccountCategoryVisibility::getVisibilityList($category) as $visibility) {
-            if (AccountCategoryVisibility::getDefault($category) != $visibility) {
+        foreach (CustomerCategoryVisibility::getVisibilityList($category) as $visibility) {
+            if (CustomerCategoryVisibility::getDefault($category) != $visibility) {
                 return $visibility;
             }
         };

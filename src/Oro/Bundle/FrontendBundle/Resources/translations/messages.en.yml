@@ -20,7 +20,7 @@ oro_frontend:
             commerce.title: 'Commerce'
         fields:
             frontend_theme.label: 'Theme'
-    copyright: '&copy; 2016 Oro.Inc. All Rights Reserved.'
+    copyright: '&copy; 2017 Oro.Inc. All Rights Reserved.'
 
     home_page:
         title: 'Home page'

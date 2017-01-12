@@ -39,6 +39,6 @@ oro_product_frontend_variant_ajax:
 oro_product_frontend_quick_add:
     resource:     "@OroProductBundle/Controller/Frontend/QuickAddController.php"
     type:         annotation
-    prefix:       /account/product/quick-add
+    prefix:       /customer/product/quick-add
     options:
         frontend: true

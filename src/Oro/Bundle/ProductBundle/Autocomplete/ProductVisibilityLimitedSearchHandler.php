@@ -19,13 +19,13 @@ class ProductVisibilityLimitedSearchHandler extends SearchHandler
     /** @var RequestStack */
     protected $requestStack;
 
-    /** @var  ProductRepository */
+    /** @var ProductRepository */
     protected $entityRepository;
 
-    /** @var  ProductManager */
+    /** @var ProductManager */
     protected $productManager;
 
-    /** @var  FrontendHelper */
+    /** @var FrontendHelper */
     protected $frontendHelper;
 
     /** @var \Oro\Bundle\ProductBundle\Search\ProductRepository */

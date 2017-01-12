@@ -6,7 +6,7 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\VisibilityBundle\Validator\Constraints\VisibilityChangeSet;
 use Oro\Bundle\VisibilityBundle\Validator\Constraints\VisibilityChangeSetValidator;
 
@@ -29,7 +29,7 @@ class VisibilityChangeSetValidatorTest extends \PHPUnit_Framework_TestCase
      */
     public function setUp()
     {
-        $this->constraint = new VisibilityChangeSet(['entityClass' => Account::class]);
+        $this->constraint = new VisibilityChangeSet(['entityClass' => Customer::class]);
         $this->value = new ArrayCollection();
         $this->visibilityChangeSetValidator = new VisibilityChangeSetValidator();
         $this->context = $this->createMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
@@ -54,7 +54,7 @@ class VisibilityChangeSetValidatorTest extends \PHPUnit_Framework_TestCase
     public function testValidData()
     {
         $data['data']['visibility'] = 'visible';
-        $data['entity'] = new Account();
+        $data['entity'] = new Customer();
         $this->value->offsetSet('1', $data);
         $this->context->expects($this->never())->method('addViolation');
         $this->visibilityChangeSetValidator->validate($data, $this->constraint);

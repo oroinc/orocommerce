@@ -6,7 +6,7 @@ oro_rfp_request:
 oro_rfp_frontend:
     resource: "@OroRFPBundle/Controller/Frontend/RequestController.php"
     type: annotation
-    prefix: /account/rfp
+    prefix: /customer/rfp
     options:
         frontend: true
 oro_rfp_request_order:

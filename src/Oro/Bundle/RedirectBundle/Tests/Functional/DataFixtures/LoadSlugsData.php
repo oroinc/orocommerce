@@ -25,8 +25,8 @@ class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
         /** @var Page $page */
         $page = $this->getReference(LoadPageData::PAGE_1);
         $this->createSlug($manager, self::SLUG_URL_ANONYMOUS, 'oro_cms_frontend_page_view', ['id' => $page->getId()]);
-        $this->createSlug($manager, self::SLUG_URL_USER, 'oro_customer_frontend_account_user_index', []);
-        $this->createSlug($manager, self::SLUG_TEST_DUPLICATE_URL, 'oro_customer_frontend_account_user_index', []);
+        $this->createSlug($manager, self::SLUG_URL_USER, 'oro_customer_frontend_customer_user_index', []);
+        $this->createSlug($manager, self::SLUG_TEST_DUPLICATE_URL, 'oro_customer_frontend_customer_user_index', []);
         $this->createSlug(
             $manager,
             self::SLUG_TEST_DUPLICATE_URL,
@@ -34,7 +34,7 @@ class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
             ['id' => $page->getId()],
             self::SLUG_TEST_DUPLICATE_REFERENCE
         );
-        $this->createSlug($manager, self::SLUG_URL_PAGE, 'oro_customer_frontend_account_user_index', []);
+        $this->createSlug($manager, self::SLUG_URL_PAGE, 'oro_customer_frontend_customer_user_index', []);
 
         $manager->flush();
     }

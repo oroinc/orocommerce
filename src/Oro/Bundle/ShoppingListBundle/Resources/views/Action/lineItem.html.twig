@@ -10,6 +10,7 @@
         >
             <fieldset class="form-horizontal">
                 {% if form.lineItem.product is defined %}
+                    {{ form_row(form.lineItem.owner, { 'attr': {'class': 'product-owner'} }) }}
                     {{ form_row(form.lineItem.product, { 'attr': {'class': 'product-product'} }) }}
                     {{ form_row(form.lineItem.quantity, { 'attr': {'class': 'product-quantity'} }) }}
                     {{ form_row(form.lineItem.unit, { 'attr': {'class': 'product-unit'} }) }}

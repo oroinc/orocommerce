@@ -14,7 +14,7 @@ use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\ImportExportBundle\Serializer\Serializer;
 use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
-use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\CustomerBundle\Entity\AbstractDefaultTypedAddress;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
@@ -66,7 +66,7 @@ abstract class AbstractOrderAddressType extends AbstractType
         $isEditEnabled = $options['isEditEnabled'];
 
         $isManualEditGranted = $this->orderAddressSecurityProvider->isManualEditGranted($type);
-        $this->initAccountAddressField($builder, $type, $order, $isManualEditGranted, $isEditEnabled);
+        $this->initCustomerAddressField($builder, $type, $order, $isManualEditGranted, $isEditEnabled);
 
         $builder->add('phone', 'text', ['required' => false]);
 
@@ -78,16 +78,16 @@ abstract class AbstractOrderAddressType extends AbstractType
                 }
 
                 $form = $event->getForm();
-                if (!$form->has('accountAddress')) {
+                if (!$form->has('customerAddress')) {
                     return;
                 }
 
-                $identifier = $form->get('accountAddress')->getData();
+                $identifier = $form->get('customerAddress')->getData();
                 if ($identifier === null) {
                     return;
                 }
 
-                //Enter manually or Account/AccountUser address
+                //Enter manually or Customer/CustomerUser address
                 $orderAddress = $event->getData();
 
                 $address = null;
@@ -114,8 +114,8 @@ abstract class AbstractOrderAddressType extends AbstractType
             $child->vars['disabled'] = !$isManualEditGranted || $options['disabled'];
         }
 
-        if ($view->offsetExists('accountAddress')) {
-            $view->offsetGet('accountAddress')->vars['disabled'] = false;
+        if ($view->offsetExists('customerAddress')) {
+            $view->offsetGet('customerAddress')->vars['disabled'] = false;
         }
     }
 
@@ -131,7 +131,7 @@ abstract class AbstractOrderAddressType extends AbstractType
                 'isEditEnabled' => true,
             ])
             ->setAllowedValues('addressType', [AddressType::TYPE_BILLING, AddressType::TYPE_SHIPPING])
-            ->setAllowedTypes('object', 'Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface');
+            ->setAllowedTypes('object', 'Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface');
     }
 
     /**
@@ -164,20 +164,20 @@ abstract class AbstractOrderAddressType extends AbstractType
     }
 
     /**
-     * @param AccountOwnerAwareInterface $entity
+     * @param CustomerOwnerAwareInterface $entity
      * @param string $type
      * @param array $addresses
      *
      * @return null|string
      */
-    protected function getDefaultAddressKey(AccountOwnerAwareInterface $entity, $type, array $addresses)
+    protected function getDefaultAddressKey(CustomerOwnerAwareInterface $entity, $type, array $addresses)
     {
         if (!$addresses) {
             return null;
         }
 
         $addresses = call_user_func_array('array_merge', array_values($addresses));
-        $accountUser = $entity->getAccountUser();
+        $customerUser = $entity->getCustomerUser();
         $addressKey = null;
 
         /** @var AbstractDefaultTypedAddress $address */
@@ -185,7 +185,7 @@ abstract class AbstractOrderAddressType extends AbstractType
             if ($address->hasDefault($type)) {
                 $addressKey = $key;
                 if ($address instanceof CustomerUserAddress &&
-                    $address->getFrontendOwner()->getId() === $accountUser->getId()
+                    $address->getFrontendOwner()->getId() === $customerUser->getId()
                 ) {
                     break;
                 }
@@ -219,16 +219,16 @@ abstract class AbstractOrderAddressType extends AbstractType
     /**
      * @param FormBuilderInterface $builder
      * @param string $type - address type
-     * @param AccountOwnerAwareInterface $entity
+     * @param CustomerOwnerAwareInterface $entity
      * @param bool $isManualEditGranted
      * @param bool $isEditEnabled
      *
      * @return bool
      */
-    abstract protected function initAccountAddressField(
+    abstract protected function initCustomerAddressField(
         FormBuilderInterface $builder,
         $type,
-        AccountOwnerAwareInterface $entity,
+        CustomerOwnerAwareInterface $entity,
         $isManualEditGranted,
         $isEditEnabled
     );

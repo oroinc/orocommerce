@@ -2,51 +2,51 @@
 
 namespace Oro\Bundle\CustomerBundle\Mailer;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
-class Processor extends AccountUserProcessor
+class Processor extends CustomerUserProcessor
 {
-    const WELCOME_EMAIL_TEMPLATE_NAME = 'account_user_welcome_email';
-    const CONFIRMATION_EMAIL_TEMPLATE_NAME = 'account_user_confirmation_email';
-    const RESET_PASSWORD_EMAIL_TEMPLATE_NAME = 'account_user_reset_password';
+    const WELCOME_EMAIL_TEMPLATE_NAME = 'customer_user_welcome_email';
+    const CONFIRMATION_EMAIL_TEMPLATE_NAME = 'customer_user_confirmation_email';
+    const RESET_PASSWORD_EMAIL_TEMPLATE_NAME = 'customer_user_reset_password';
 
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $customerUser
      * @param string $password
      * @return int
      */
-    public function sendWelcomeNotification(AccountUser $accountUser, $password)
+    public function sendWelcomeNotification(CustomerUser $customerUser, $password)
     {
         return $this->getEmailTemplateAndSendEmail(
-            $accountUser,
+            $customerUser,
             static::WELCOME_EMAIL_TEMPLATE_NAME,
-            ['entity' => $accountUser, 'password' => $password]
+            ['entity' => $customerUser, 'password' => $password]
         );
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $customerUser
      * @return int
      */
-    public function sendConfirmationEmail(AccountUser $accountUser)
+    public function sendConfirmationEmail(CustomerUser $customerUser)
     {
         return $this->getEmailTemplateAndSendEmail(
-            $accountUser,
+            $customerUser,
             static::CONFIRMATION_EMAIL_TEMPLATE_NAME,
-            ['entity' => $accountUser, 'token' => $accountUser->getConfirmationToken()]
+            ['entity' => $customerUser, 'token' => $customerUser->getConfirmationToken()]
         );
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $customerUser
      * @return int
      */
-    public function sendResetPasswordEmail(AccountUser $accountUser)
+    public function sendResetPasswordEmail(CustomerUser $customerUser)
     {
         return $this->getEmailTemplateAndSendEmail(
-            $accountUser,
+            $customerUser,
             static::RESET_PASSWORD_EMAIL_TEMPLATE_NAME,
-            ['entity' => $accountUser]
+            ['entity' => $customerUser]
         );
     }
 }

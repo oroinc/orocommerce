@@ -29,7 +29,7 @@
                 'dataRedirect': path('oro_catalog_category_index'),
                 'aCss': 'no-hash remove-button',
                 'dataId': entityId,
-                'id': 'btn-remove-account',
+                'id': 'btn-remove-customer',
                 'entity_label': 'oro.catalog.category.entity_label'|trans,
             }) }}
         {% endif %}
@@ -125,8 +125,26 @@
         'dataBlocks': dataBlocks
     }%}
 
-    <div class="category-container tree-component-container">
+    {% set componentOptions = {
+        container: 'category-container',
+        sidebar: 'category-tree',
+        sidebarAlias: 'categories-sidebar',
+        widgetAlias: 'category-data--widget',
+        widgetContainer: '.category-data'
+    } %}
+
+    <div class="category-container tree-component-container"
+         data-page-component-module="oroproduct/js/app/components/grid-sidebar-component"
+         data-page-component-options="{{ componentOptions|json_encode }}">
         <div class="category category-tree tree-component">
+            <div class="left-panel-header">
+                <div class="left-panel-control left-panel-control-maximize">
+                    <i class="fa-forward control-maximize"></i>
+                </div>
+                <div class="left-panel-control left-panel-control-minimize">
+                    <i class="fa-backward control-minimize"></i>
+                </div>
+            </div>
             {% set treeOptions = {
                 'key' : 'commerce-category',
                 'data' : oro_category_list(),

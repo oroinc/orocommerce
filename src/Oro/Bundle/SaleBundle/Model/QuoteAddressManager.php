@@ -61,13 +61,13 @@ class QuoteAddressManager extends AbstractAddressManager
             }
         }
 
-        $quoteAddress->setAccountAddress(null);
-        $quoteAddress->setAccountUserAddress(null);
+        $quoteAddress->setCustomerAddress(null);
+        $quoteAddress->setCustomerUserAddress(null);
 
         if ($address instanceof CustomerAddress) {
-            $quoteAddress->setAccountAddress($address);
+            $quoteAddress->setCustomerAddress($address);
         } elseif ($address instanceof CustomerUserAddress) {
-            $quoteAddress->setAccountUserAddress($address);
+            $quoteAddress->setCustomerUserAddress($address);
         }
 
         return $quoteAddress;

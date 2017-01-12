@@ -72,26 +72,26 @@ abstract class CategoryCacheTestCase extends WebTestCase
     /**
      * @return array
      */
-    protected function getHiddenProductsByAccountGroups()
+    protected function getHiddenProductsByCustomerGroups()
     {
         /** @var EntityRepository $repository */
         $repository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountGroupProductVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountGroupProductVisibilityResolved');
+            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CustomerGroupProductVisibilityResolved')
+            ->getRepository('OroVisibilityBundle:VisibilityResolved\CustomerGroupProductVisibilityResolved');
         $queryBuilder = $repository->createQueryBuilder('agpvr')
-            ->select('accountGroup.name as account_group_name')
+            ->select('customerGroup.name as customer_group_name')
             ->join('agpvr.scope', 'scope')
-            ->join('scope.accountGroup', 'accountGroup')
-            ->orderBy('accountGroup.name');
+            ->join('scope.customerGroup', 'customerGroup')
+            ->orderBy('customerGroup.name');
         $this->selectHiddenProductSku($queryBuilder, 'agpvr');
         $results = $queryBuilder->getQuery()
             ->getScalarResult();
 
         return array_reduce($results, function ($results, $row) {
-            if (!isset($results[$row['account_group_name']])) {
-                $results[$row['account_group_name']] = [];
+            if (!isset($results[$row['customer_group_name']])) {
+                $results[$row['customer_group_name']] = [];
             }
-            $results[$row['account_group_name']][] = $row['sku'];
+            $results[$row['customer_group_name']][] = $row['sku'];
             return $results;
         }, []);
     }
@@ -99,28 +99,28 @@ abstract class CategoryCacheTestCase extends WebTestCase
     /**
      * @return array
      */
-    protected function getHiddenCategoriesByAccountGroups()
+    protected function getHiddenCategoriesByCustomerGroups()
     {
         /** @var EntityRepository $repository */
         $repository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved');
+            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved')
+            ->getRepository('OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved');
         $queryBuilder = $repository->createQueryBuilder('agcvr')
-            ->select('accountGroup.name as account_group_name')
-            ->addSelect('accountGroup.id')
+            ->select('customerGroup.name as customer_group_name')
+            ->addSelect('customerGroup.id')
             ->addSelect('agcvr.visibility')
             ->join('agcvr.scope', 'scope')
-            ->join('scope.accountGroup', 'accountGroup')
-            ->orderBy('accountGroup.name');
+            ->join('scope.customerGroup', 'customerGroup')
+            ->orderBy('customerGroup.name');
         $this->selectHiddenCategoryTitles($queryBuilder, 'agcvr');
         $results = $queryBuilder->getQuery()
             ->getScalarResult();
 
         return array_reduce($results, function ($results, $row) {
-            if (!isset($results[$row['account_group_name']])) {
-                $results[$row['account_group_name']] = [];
+            if (!isset($results[$row['customer_group_name']])) {
+                $results[$row['customer_group_name']] = [];
             }
-            $results[$row['account_group_name']][] = $row['title'];
+            $results[$row['customer_group_name']][] = $row['title'];
             return $results;
         }, []);
     }
@@ -128,26 +128,26 @@ abstract class CategoryCacheTestCase extends WebTestCase
     /**
      * @return array
      */
-    protected function getHiddenProductsByAccounts()
+    protected function getHiddenProductsByCustomers()
     {
         /** @var EntityRepository $repository */
         $repository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountProductVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountProductVisibilityResolved');
+            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CustomerProductVisibilityResolved')
+            ->getRepository('OroVisibilityBundle:VisibilityResolved\CustomerProductVisibilityResolved');
         $queryBuilder = $repository->createQueryBuilder('apvr')
-            ->select('account.name as account_name')
+            ->select('customer.name as customer_name')
             ->join('apvr.scope', 'scope')
-            ->join('scope.account', 'account')
-            ->orderBy('account.name');
+            ->join('scope.customer', 'customer')
+            ->orderBy('customer.name');
         $this->selectHiddenProductSku($queryBuilder, 'apvr');
         $results = $queryBuilder->getQuery()
             ->getScalarResult();
 
         return array_reduce($results, function ($results, $row) {
-            if (!isset($results[$row['account_name']])) {
-                $results[$row['account_name']] = [];
+            if (!isset($results[$row['customer_name']])) {
+                $results[$row['customer_name']] = [];
             }
-            $results[$row['account_name']][] = $row['sku'];
+            $results[$row['customer_name']][] = $row['sku'];
             return $results;
         }, []);
     }
@@ -155,26 +155,26 @@ abstract class CategoryCacheTestCase extends WebTestCase
     /**
      * @return array
      */
-    protected function getHiddenCategoriesByAccounts()
+    protected function getHiddenCategoriesByCustomers()
     {
         /** @var EntityRepository $repository */
         $repository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
-            ->getRepository('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved');
+            ->getManagerForClass('OroVisibilityBundle:VisibilityResolved\CustomerCategoryVisibilityResolved')
+            ->getRepository('OroVisibilityBundle:VisibilityResolved\CustomerCategoryVisibilityResolved');
         $queryBuilder = $repository->createQueryBuilder('acvr')
-            ->select('account.name as account_name')
+            ->select('customer.name as customer_name')
             ->join('acvr.scope', 'scope')
-            ->join('scope.account', 'account')
-            ->orderBy('account.name');
+            ->join('scope.customer', 'customer')
+            ->orderBy('customer.name');
         $this->selectHiddenCategoryTitles($queryBuilder, 'acvr');
         $results = $queryBuilder->getQuery()
             ->getScalarResult();
 
         return array_reduce($results, function ($results, $row) {
-            if (!isset($results[$row['account_name']])) {
-                $results[$row['account_name']] = [];
+            if (!isset($results[$row['customer_name']])) {
+                $results[$row['customer_name']] = [];
             }
-            $results[$row['account_name']][] = $row['title'];
+            $results[$row['customer_name']][] = $row['title'];
             return $results;
         }, []);
     }
@@ -220,11 +220,11 @@ abstract class CategoryCacheTestCase extends WebTestCase
     {
         return [
             'hiddenCategories' => $this->getHiddenCategories(),
-            'hiddenCategoriesByAccountGroups' => $this->getHiddenCategoriesByAccountGroups(),
-            'hiddenCategoriesByAccounts' => $this->getHiddenCategoriesByAccounts(),
+            'hiddenCategoriesByCustomerGroups' => $this->getHiddenCategoriesByCustomerGroups(),
+            'hiddenCategoriesByCustomers' => $this->getHiddenCategoriesByCustomers(),
             'hiddenProducts' => $this->getHiddenProducts(),
-            'hiddenProductsByAccountGroups' => $this->getHiddenProductsByAccountGroups(),
-            'hiddenProductsByAccounts' => $this->getHiddenProductsByAccounts(),
+            'hiddenProductsByCustomerGroups' => $this->getHiddenProductsByCustomerGroups(),
+            'hiddenProductsByCustomers' => $this->getHiddenProductsByCustomers(),
         ];
     }
 }

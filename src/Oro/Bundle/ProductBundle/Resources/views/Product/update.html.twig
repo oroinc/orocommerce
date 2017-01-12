@@ -53,10 +53,15 @@
 
     {% set generalData = generalData|merge([
         form_row(form.slugPrototypes),
-        form_row(form.status),
-        form_row(form.primaryUnitPrecision),
-        form_row(form.additionalUnitPrecisions)
+        form_row(form.status)
     ]) %}
+
+    {% if oro_is_product_primary_unit_visible(entity) %}
+        {% set generalData = generalData|merge([
+            form_row(form.primaryUnitPrecision),
+            form_row(form.additionalUnitPrecisions)
+        ]) %}
+    {% endif %}
 
     {% set generalBlock = {
         'title': 'oro.product.sections.general'|trans,

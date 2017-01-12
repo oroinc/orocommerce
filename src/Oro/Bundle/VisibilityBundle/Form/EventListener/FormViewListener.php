@@ -58,13 +58,13 @@ class FormViewListener
         $category = $this->doctrineHelper->getEntityReference('OroCatalogBundle:Category', $categoryId);
         if ($category) {
             $template = $event->getEnvironment()->render(
-                'OroVisibilityBundle:Category:account_category_visibility_edit.html.twig',
+                'OroVisibilityBundle:Category:customer_category_visibility_edit.html.twig',
                 [
                     'entity' => $category,
                     'form' => $event->getFormView(),
                 ]
             );
-            $this->addAccountCategoryVisibilityBlock($event->getScrollData(), $template);
+            $this->addCustomerCategoryVisibilityBlock($event->getScrollData(), $template);
         }
     }
 
@@ -72,7 +72,7 @@ class FormViewListener
      * @param ScrollData $scrollData
      * @param string $html
      */
-    protected function addAccountCategoryVisibilityBlock(ScrollData $scrollData, $html)
+    protected function addCustomerCategoryVisibilityBlock(ScrollData $scrollData, $html)
     {
         $blockLabel = $this->translator->trans('oro.visibility.categoryvisibility.visibility.label');
         $blockId = $scrollData->addBlock($blockLabel);

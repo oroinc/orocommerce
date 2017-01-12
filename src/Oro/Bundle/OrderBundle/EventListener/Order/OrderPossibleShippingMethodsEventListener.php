@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\EventListener\Order;
 
-use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\OrderBundle\Converter\ShippingPricesConverter;
 use Oro\Bundle\OrderBundle\Event\OrderEvent;
 use Oro\Bundle\OrderBundle\Factory\OrderShippingContextFactory;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
@@ -23,12 +23,22 @@ class OrderPossibleShippingMethodsEventListener
     protected $priceProvider;
 
     /**
+     * @var ShippingPricesConverter
+     */
+    protected $priceConverter;
+
+    /**
      * @param OrderShippingContextFactory $factory
+     * @param ShippingPricesConverter $priceConverter
      * @param ShippingPriceProvider|null $priceProvider
      */
-    public function __construct(OrderShippingContextFactory $factory, ShippingPriceProvider $priceProvider = null)
-    {
+    public function __construct(
+        OrderShippingContextFactory $factory,
+        ShippingPricesConverter $priceConverter,
+        ShippingPriceProvider $priceProvider = null
+    ) {
         $this->factory = $factory;
+        $this->priceConverter = $priceConverter;
         $this->priceProvider = $priceProvider;
     }
 
@@ -46,31 +56,13 @@ class OrderPossibleShippingMethodsEventListener
         ) {
             $data = [];
             if ($this->priceProvider) {
-                $data = $this->priceProvider
-                    ->getApplicableMethodsWithTypesData($this->factory->create($event->getOrder()));
-                $data = $this->convertPricesToArray($data);
+                $shippingContext = $this->factory->create($event->getOrder());
+                $shippingMethodViews = $this->priceProvider
+                    ->getApplicableMethodsViews($shippingContext)
+                    ->toArray();
+                $data = $this->priceConverter->convertPricesToArray($shippingMethodViews);
             }
             $event->getData()->offsetSet(self::POSSIBLE_SHIPPING_METHODS_KEY, $data);
         }
-    }
-
-    /**
-     * @param array $data
-     * @return array
-     */
-    protected function convertPricesToArray(array $data)
-    {
-        return array_map(function ($methodData) {
-            $methodData['types'] = array_map(function ($typeData) {
-                /** @var Price $price */
-                $price = $typeData['price'];
-                $typeData['price'] = [
-                    'value' => $price->getValue(),
-                    'currency' => $price->getCurrency(),
-                ];
-                return $typeData;
-            }, $methodData['types']);
-            return $methodData;
-        }, $data);
     }
 }

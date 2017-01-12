@@ -2,14 +2,14 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
-use Oro\Bundle\CustomerBundle\Provider\ScopeAccountCriteriaProvider;
-use Oro\Bundle\CustomerBundle\Provider\ScopeAccountGroupCriteriaProvider;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\CustomerBundle\Provider\ScopeCustomerCriteriaProvider;
+use Oro\Bundle\CustomerBundle\Provider\ScopeCustomerGroupCriteriaProvider;
 use Oro\Bundle\VisibilityBundle\Provider\VisibilityScopeProvider;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
@@ -51,29 +51,29 @@ class VisibilityScopeProviderTest extends \PHPUnit_Framework_TestCase
         $this->provider->getProductVisibilityScope($this->website);
     }
 
-    public function testGetAccountProductVisibilityScope()
+    public function testGetCustomerProductVisibilityScope()
     {
-        $account = $this->createMock(Account::class);
+        $customer = $this->createMock(Customer::class);
         $this->scopeManager
             ->expects($this->once())
             ->method('findOrCreate')
-            ->with(AccountProductVisibility::getScopeType(), [
-                ScopeAccountCriteriaProvider::ACCOUNT => $account
+            ->with(CustomerProductVisibility::getScopeType(), [
+                ScopeCustomerCriteriaProvider::ACCOUNT => $customer
             ]);
 
-        $this->provider->getAccountProductVisibilityScope($account, $this->website);
+        $this->provider->getCustomerProductVisibilityScope($customer, $this->website);
     }
 
-    public function testGetAccountGroupProductVisibilityScope()
+    public function testGetCustomerGroupProductVisibilityScope()
     {
-        $accountGroup = $this->createMock(AccountGroup::class);
+        $customerGroup = $this->createMock(CustomerGroup::class);
         $this->scopeManager
             ->expects($this->once())
             ->method('findOrCreate')
-            ->with(AccountGroupProductVisibility::getScopeType(), [
-                ScopeAccountGroupCriteriaProvider::FIELD_NAME => $accountGroup
+            ->with(CustomerGroupProductVisibility::getScopeType(), [
+                ScopeCustomerGroupCriteriaProvider::FIELD_NAME => $customerGroup
             ]);
 
-        $this->provider->getAccountGroupProductVisibilityScope($accountGroup, $this->website);
+        $this->provider->getCustomerGroupProductVisibilityScope($customerGroup, $this->website);
     }
 }

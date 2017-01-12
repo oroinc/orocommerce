@@ -4,7 +4,7 @@ namespace Oro\Bundle\CustomerBundle\EventListener;
 
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\Event\LifecycleEventArgs;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Component\DependencyInjection\ServiceLink;
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -44,7 +44,7 @@ class RecordOwnerDataListener
             return;
         }
         $user = $token->getUser();
-        if (!($user instanceof AccountUser)) {
+        if (!($user instanceof CustomerUser)) {
             return;
         }
         $entity    = $args->getEntity();
@@ -64,7 +64,7 @@ class RecordOwnerDataListener
                     $owner = $user;
                 }
                 if ($frontendOwnerType === self::OWNER_TYPE_ACCOUNT) {
-                    $owner = $user->getAccount();
+                    $owner = $user->getCustomer();
                 }
                 $accessor->setValue(
                     $entity,

@@ -8,8 +8,8 @@ use Symfony\Component\Form\FormView;
 use Oro\Bundle\SecurityBundle\Form\Type\AclAccessLevelSelectorType;
 use Oro\Bundle\CustomerBundle\Acl\Resolver\RoleTranslationPrefixResolver;
 use Oro\Bundle\CustomerBundle\Form\Extension\AclAccessLevelSelectorExtension;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountUserRoleType;
-use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserRoleType;
+use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserRoleType;
+use Oro\Bundle\CustomerBundle\Form\Type\FrontendCustomerUserRoleType;
 
 class AclAccessLevelSelectorExtensionTest extends \PHPUnit_Framework_TestCase
 {
@@ -148,22 +148,22 @@ class AclAccessLevelSelectorExtensionTest extends \PHPUnit_Framework_TestCase
             'no privileges form' => [true, true, true],
             'no role form' => [true, true, true, true],
             'not supported form name' => [true, true, true, true, true, 'not_supported_form'],
-            'supported form name (AccountUserRoleType)' => [
+            'supported form name (CustomerUserRoleType)' => [
                 true,
                 true,
                 true,
                 true,
                 true,
-                AccountUserRoleType::NAME,
+                CustomerUserRoleType::NAME,
                 'oro.customer.security.access-level.'
             ],
-            'supported form name (FrontendAccountUserRoleType)' => [
+            'supported form name (FrontendCustomerUserRoleType)' => [
                 true,
                 true,
                 true,
                 true,
                 true,
-                FrontendAccountUserRoleType::NAME,
+                FrontendCustomerUserRoleType::NAME,
                 'oro.customer.security.frontend.access-level.'
             ],
         ];

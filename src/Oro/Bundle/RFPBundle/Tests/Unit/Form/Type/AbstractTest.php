@@ -14,8 +14,8 @@ use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\PriceTypeGenerator;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Form\Type\UserMultiSelectType;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountUserMultiSelectType;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserMultiSelectType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -153,7 +153,7 @@ abstract class AbstractTest extends FormIntegrationTestCase
             [
                 'data_parameters' => [],
                 'grid_name' => 'products-select-grid-frontend',
-                'grid_widget_route' => 'oro_account_frontend_datagrid_widget',
+                'grid_widget_route' => 'oro_customer_frontend_datagrid_widget',
                 'grid_view_widget_route' => 'oro_frontend_datagrid_widget',
                 'configs'         => [
                     'placeholder' => null,
@@ -221,14 +221,14 @@ abstract class AbstractTest extends FormIntegrationTestCase
     /**
      * @return EntityType
      */
-    protected function prepareAccountUserMultiSelectType()
+    protected function prepareCustomerUserMultiSelectType()
     {
         return new EntityType(
             [
-                10 => $this->getAccountUser(10),
-                11 => $this->getAccountUser(11),
+                10 => $this->getCustomerUser(10),
+                11 => $this->getCustomerUser(11),
             ],
-            AccountUserMultiSelectType::NAME,
+            CustomerUserMultiSelectType::NAME,
             [
                 'multiple' => true
             ]
@@ -332,11 +332,11 @@ abstract class AbstractTest extends FormIntegrationTestCase
 
     /**
      * @param int $id
-     * @return AccountUser
+     * @return CustomerUser
      */
-    protected function getAccountUser($id)
+    protected function getCustomerUser($id)
     {
-        return $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', $id);
+        return $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', $id);
     }
 
     /**

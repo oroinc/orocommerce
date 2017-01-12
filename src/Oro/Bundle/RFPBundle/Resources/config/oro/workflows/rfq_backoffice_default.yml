@@ -4,6 +4,7 @@ workflows:
         entity_attribute: request
 
         applications: ['default']
+        datagrids: ['rfp-requests-grid']
         defaults: {active: true}
 
         exclusive_record_groups: ['b2b_rfq_backoffice_flow']
@@ -61,6 +62,8 @@ workflows:
             request_more_information_transition:
                 step_to: more_info_requested
                 transition_definition: request_more_information_transition_definition
+                frontend_options:
+                    icon: 'fa-question-circle-o'
                 form_options:
                     attribute_fields:
                         notes:
@@ -72,8 +75,12 @@ workflows:
             decline_transition:
                 step_to: declined
                 transition_definition: decline_transition_definition
+                frontend_options:
+                    icon: 'fa-minus-square'
             delete_transition:
                 step_to: deleted
+                frontend_options:
+                    icon: 'fa-times'
                 transition_definition: delete_transition_definition
             info_provided_transition:
                 step_to: open
@@ -97,6 +104,8 @@ workflows:
                         require: "entity.getInternalStatus().getId() === 'open'"
             undelete_transition:
                 step_to: open
+                frontend_options:
+                    icon: 'fa-undo'
                 transition_definition: undelete_transition_definition
 
         transition_definitions:
