@@ -5,6 +5,7 @@ define(function(require) {
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var BaseView = require('oroui/js/app/views/base/view');
     var NumberFormatter = require('orolocale/js/formatter/number');
+    var mediator = require('oroui/js/mediator');
     var $ = require('jquery');
     var _ = require('underscore');
 
@@ -38,13 +39,7 @@ define(function(require) {
             this.initializeElements(options);
             this.template = _.template(this.getElement('template').text());
 
-            this._deferredRender();
-            this.initLayout().done(_.bind(this.handleLayoutInit, this));
-        },
-
-        handleLayoutInit: function() {
-            this.viewMode();
-            this._resolveDeferredRender();
+            this.listenTo(mediator, 'line-items:show:before', this.viewMode);
         },
 
         render: function() {
@@ -71,6 +66,7 @@ define(function(require) {
         },
 
         editMode: function() {
+            this.$el.removeAttr('data-skip-input-widgets').inputWidget('seekAndCreate');
             this.toggleEditMode('enable');
         },
 

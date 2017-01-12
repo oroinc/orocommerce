@@ -23,7 +23,8 @@
             blockId: id,
             reloadEvents: ['shopping-list:refresh', 'frontend:item:delete'],
         },
-        '~class': " header-row__toggle hidden-on-desktop header-row__wrapper"
+        '~class': " header-row__toggle hidden-on-desktop header-row__wrapper",
+        'data-header-row-toggle': ''
     }) %}
     <div {{ block('block_attributes') }}>
         <div class="header-row__dropdown"

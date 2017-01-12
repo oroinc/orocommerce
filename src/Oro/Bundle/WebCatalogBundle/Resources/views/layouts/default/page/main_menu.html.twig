@@ -159,11 +159,11 @@
         <a href="{{ app.request.uriForPath(category.url) }}"
            class="main-menu__link" data-collapse-trigger-second>
             <span>{{ category.label }}</span>
-            {% if hasSublist %}
-                <i class="fa-angle-down"></i>
-            {% endif %}
         </a>
         {% if hasSublist %}
+            <button data-toggle="dropdown" aria-haspopup="true" class="main-menu__button-arrow">
+                <i class="fa-angle-down fa--no-offset"></i>
+            </button>
             {{ block(sub_block) }}
         {% endif %}
     </li>
