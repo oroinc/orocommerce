@@ -8,7 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Table(name="oro_paypal_credit_card_types")
  * @ORM\Entity
  */
-class CreditCardTypes
+class CreditCardType
 {
     const CARD_VISA = 'visa';
     const CARD_MASTERCARD = 'mastercard';
@@ -44,7 +44,7 @@ class CreditCardTypes
      *
      * @param string $label
      *
-     * @return CreditCardTypes
+     * @return CreditCardType
      */
     public function setLabel($label)
     {
@@ -61,5 +61,13 @@ class CreditCardTypes
     public function getLabel()
     {
         return $this->label;
+    }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->getLabel();
     }
 }
