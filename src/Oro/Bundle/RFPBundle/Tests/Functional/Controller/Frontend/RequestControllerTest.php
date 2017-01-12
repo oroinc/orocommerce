@@ -252,7 +252,6 @@ class RequestControllerTest extends WebTestCase
                         'view_link',
                         'action_configuration',
                         'customerStatusName',
-                        'workflowStepLabel',
                     ],
                     'action_configuration' => [
                         'view' => true,
@@ -285,7 +284,6 @@ class RequestControllerTest extends WebTestCase
                         'view_link',
                         'action_configuration',
                         'customerStatusName',
-                        'workflowStepLabel',
                     ],
                     'action_configuration' => [
                         'view' => true,
@@ -313,7 +311,6 @@ class RequestControllerTest extends WebTestCase
                         'view_link',
                         'action_configuration',
                         'customerStatusName',
-                        'workflowStepLabel',
                     ],
                     'action_configuration' => [
                         'view' => true,
@@ -342,7 +339,6 @@ class RequestControllerTest extends WebTestCase
                         'view_link',
                         'action_configuration',
                         'customerStatusName',
-                        'workflowStepLabel',
                     ],
                     'action_configuration' => [
                         'view' => true,
@@ -373,7 +369,6 @@ class RequestControllerTest extends WebTestCase
                         'action_configuration',
                         'customerUserName',
                         'customerStatusName',
-                        'workflowStepLabel',
                     ],
                     'action_configuration' => [
                         'view' => true,
