@@ -447,7 +447,7 @@ oro.customer:
         customer_user_link.text: '< Back to Customer User List'
         action:
             back.label: "< Back"
-            back_to_login.label: "Already have an customer? Log in >"
+            back_to_login.label: "Already have an account? Log in >"
             customer_user_role.edit: "Edit Role"
         table:
             entity:

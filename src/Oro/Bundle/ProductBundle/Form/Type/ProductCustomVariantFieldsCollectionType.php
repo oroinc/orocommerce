@@ -45,6 +45,7 @@ class ProductCustomVariantFieldsCollectionType extends AbstractType
             'expanded' => true,
             'allow_add' => false,
             'allow_delete' => false,
+            'handle_primary' => false
         ]);
     }
 
