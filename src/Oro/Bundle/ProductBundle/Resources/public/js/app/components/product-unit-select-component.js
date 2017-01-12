@@ -41,7 +41,6 @@ define(function(require) {
                 var select = this.options._sourceElement.find('select');
 
                 if (this.isProductApplySingleUnitMode(productUnits)) {
-                    select.inputWidget('dispose');
                     if (this.options.singleUnitModeCodeVisible) {
                         select.parent().append('<span class="unit-label">' + productUnits[0] + '</span>');
                         select.remove();
