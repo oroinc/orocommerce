@@ -13,7 +13,11 @@ class OroPayPalExtensionTest extends ExtensionTestCase
 
         $expectedDefinitions = [
             'oro_paypal.payment_method.payflow_gateway.config',
-            'oro_paypal.event_listener.callback.payflow'
+            'oro_paypal.event_listener.callback.payflow',
+            'oro_paypal.integation.payflow_gateway.channel',
+            'oro_paypal.integation.payments_pro.channel',
+            'oro_paypal.integration.payflow_gateway.transport',
+            'oro_paypal.integration.payments_pro.transport'
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }
