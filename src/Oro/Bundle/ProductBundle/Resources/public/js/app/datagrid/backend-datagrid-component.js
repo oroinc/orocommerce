@@ -31,6 +31,26 @@ define(function(require) {
             var selector = options.gridMainContainer || '.oro-datagrid';
 
             this.$el = options.$el.find(selector);
+        },
+
+        /**
+         * @inheritDoc
+         */
+        build: function() {
+            ProductDataGidComponent.__super__.build.apply(this, arguments);
+
+            this.grid.on('shown', function() {
+                this.$el.removeAttr('data-skip-input-widgets').inputWidget('seekAndCreate');
+            }, this);
+        },
+
+        /**
+         * @inheritDoc
+         */
+        dispose: function() {
+            this.grid.off('shown');
+
+            ProductDataGidComponent.__super__.dispose.call(this);
         }
     });
 

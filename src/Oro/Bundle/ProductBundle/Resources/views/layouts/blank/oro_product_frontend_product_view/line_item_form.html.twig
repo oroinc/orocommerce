@@ -14,6 +14,7 @@
         <div class="form__col">
             {{ form_label(form.quantity) }}
             {{ form_widget(form.quantity, {'attr' : {'class': 'input--short'}}) }}
+            {{ form_widget(form.unit, {'attr' : {'class': 'no-select2'}}) }}
 
             {% if isUnitVisible %}
                 <span class="label">
@@ -39,9 +40,6 @@
             {{ UI.pinnedDropdownButton({
                 'html': block_widget(block),
                 'mobileEnabled': true,
-                'dataAttributes': {
-                    'layout': 'separate'
-                },
                 'options': {
                     'widgetModule': 'oroproduct/js/content-processor/product-add-to-dropdown-button',
                     'widgetName': 'productAddToDropdownButtonProcessor',

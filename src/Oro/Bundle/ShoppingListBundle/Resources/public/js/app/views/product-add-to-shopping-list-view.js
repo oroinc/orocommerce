@@ -41,11 +41,16 @@ define(function(require) {
         initialize: function(options) {
             ProductAddToShoppingListView.__super__.initialize.apply(this, arguments);
             this.options = $.extend(true, {}, this.options, _.pick(options, _.keys(this.options)));
+            if (options.productModel) {
+                this.model = options.productModel;
+            }
 
-            this.dropdownWidget = options.dropdownWidget;
-            this.$form = this.dropdownWidget.element.closest('form');
+            this.initModel(this.options);
 
-            this.initModel(options);
+            if (this.model) {
+                this.model.on('change:unit', this._onUnitChanged, this);
+                this.model.on('editLineItem', this._onEditLineItem, this);
+            }
 
             if (this.options.buttonTemplate) {
                 this.options.buttonTemplate = _.template(this.options.buttonTemplate);
@@ -59,15 +64,16 @@ define(function(require) {
 
             this.saveApiAccessor = new ApiAccessor(this.options.save_api_accessor);
 
-            if (this.model) {
-                this.model.on('change:unit', this._onUnitChanged, this);
-                this.model.on('editLineItem', this._onEditLineItem, this);
-            }
-
-            this.$form.find(this.options.quantityField).on('keydown', _.bind(this._onQuantityEnter, this));
-
             ShoppingListCollectionService.shoppingListCollection.done(_.bind(function(collection) {
+                var properties = {
+                    callback: this.renderDropdowns,
+                    context: this
+                };
+
                 this.shoppingListCollection = collection;
+
+                mediator.trigger('shopping-list-view:init:' + this.model.get('id'), properties, this);
+
                 this.listenTo(collection, 'change', this._onCollectionChange);
                 this.render();
             }, this));
@@ -77,16 +83,13 @@ define(function(require) {
             var modelAttr = options.modelAttr || {};
             this.modelAttr = $.extend(true, {}, this.modelAttr, modelAttr);
             this.$el.trigger('options:set:productModel', options);
-            if (options.productModel) {
-                this.model = options.productModel;
-            }
 
             if (!this.model) {
                 return;
             }
 
             _.each(this.modelAttr, function(value, attribute) {
-                if (!this.model.has(attribute) || modelAttr[attribute] !== undefined ) {
+                if (!this.model.has(attribute) || modelAttr[attribute] !== undefined) {
                     this.model.set(attribute, value);
                 }
             }, this);
@@ -94,6 +97,17 @@ define(function(require) {
 
         render: function() {
             this._setEditLineItem(null, true);
+        },
+
+        renderDropdowns: function(options) {
+            if (!this.dropdownWidget) {
+                this.dropdownWidget = options.dropdownWidget;
+            }
+
+            if (!this.$form) {
+                this.$form = this.dropdownWidget.element.closest('form');
+                this.$form.find(this.options.quantityField).on('keydown', _.bind(this._onQuantityEnter, this));
+            }
 
             var buttons = this._collectAllButtons();
 
