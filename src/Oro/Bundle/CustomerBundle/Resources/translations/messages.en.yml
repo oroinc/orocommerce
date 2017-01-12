@@ -217,7 +217,7 @@ oro.customer:
             disable: 'Disable'
             confirm: 'Confirm'
             send_confirmation: 'Resend Confirmation Email'
-            create: 'Create Customer User'
+            create: 'Create User'
             edit: 'Edit'
             delete: 'Delete'
 
@@ -410,7 +410,7 @@ oro.customer:
                 NONE: 'None'
         customer_user:
             role.entity_plural_label: Roles
-            entity_plural_label: Customer Users
+            entity_plural_label: Users
             profile.label: Profile
             address.label: Address Book
             full_name.label: Name
