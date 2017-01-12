@@ -14,7 +14,8 @@ use Oro\Bundle\ProductBundle\Migrations\Data\ORM\MakeProductAttributesTrait;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
 class LoadProductSeoAttributesAndGroupData extends AbstractFixture implements
-    DependentFixtureInterface, ContainerAwareInterface
+    DependentFixtureInterface,
+    ContainerAwareInterface
 {
     use MakeProductAttributesTrait;
 
