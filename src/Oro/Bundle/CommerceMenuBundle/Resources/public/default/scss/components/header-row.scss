@@ -19,8 +19,6 @@
     }
 
     &__trigger {
-        border-right: 1px solid get-color('additional', 'ultra');
-
         &.active,
         &:hover {
             & + .header-row__toggle,
@@ -32,12 +30,6 @@
 
     &--from-left .main-menu-outer {
         justify-content: flex-start;
-    }
-}
-
-@include breakpoint('tablet') {
-    .shown-on-desktop {
-        display: none !important;
     }
 }
 
@@ -67,6 +59,8 @@
 
 @include breakpoint('tablet') {
     .header-row {
+        margin: 0 -($offset-x-m);
+
         &__container {
             position: static;
 
@@ -110,5 +104,9 @@
         & .main-menu__sublist-container {
             width: auto;
         }
+    }
+
+    .shown-on-desktop {
+        display: none !important;
     }
 }
