@@ -27,18 +27,18 @@ class AbstractProductDataStorageExtensionTest extends AbstractProductDataStorage
         $this->entity->product = null;
         $this->entity->scalar = null;
         $this->entity->assignedUsers = null;
-        $this->entity->assignedAccountUsers = null;
+        $this->entity->assignedCustomerUsers = null;
 
         $sku = 'TEST';
         $product = $this->getProductEntity($sku);
         $assignedUsers = [2, 4, 8];
-        $assignedAccountUsers = [3, 6];
+        $assignedCustomerUsers = [3, 6];
         $data = [
             ProductDataStorage::ENTITY_DATA_KEY => [
                 'product' => 1,
                 'scalar' => 1,
                 'assignedUsers' => $assignedUsers,
-                'assignedAccountUsers' => $assignedAccountUsers,
+                'assignedCustomerUsers' => $assignedCustomerUsers,
             ],
             ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                 [
@@ -51,7 +51,7 @@ class AbstractProductDataStorageExtensionTest extends AbstractProductDataStorage
         $this->assertMetadataCalled([
             'product' => ['targetClass' => 'Oro\Bundle\ProductBundle\Entity\Product'],
             'assignedUsers' => ['targetClass' => 'Oro\Bundle\UserBundle\Entity\User'],
-            'assignedAccountUsers' => ['targetClass' => 'Oro\Bundle\CustomerBundle\Entity\AccountUser'],
+            'assignedCustomerUsers' => ['targetClass' => 'Oro\Bundle\CustomerBundle\Entity\CustomerUser'],
         ]);
         $this->assertRequestGetCalled();
         $this->assertStorageCalled($data);
@@ -65,7 +65,7 @@ class AbstractProductDataStorageExtensionTest extends AbstractProductDataStorage
         $this->assertEquals(1, $this->entity->product->getId());
         $this->assertEquals(1, $this->entity->scalar);
         $this->assertCount(3, $this->entity->assignedUsers);
-        $this->assertCount(2, $this->entity->assignedAccountUsers);
+        $this->assertCount(2, $this->entity->assignedCustomerUsers);
 
         foreach ($this->entity->assignedUsers as $assignedUser) {
             $this->assertInstanceOf('Oro\Bundle\UserBundle\Entity\User', $assignedUser);
@@ -73,10 +73,10 @@ class AbstractProductDataStorageExtensionTest extends AbstractProductDataStorage
             unset($assignedUsers[array_search($assignedUser->getId(), $assignedUsers)]);
         }
 
-        foreach ($this->entity->assignedAccountUsers as $assignedAccountUser) {
-            $this->assertInstanceOf('Oro\Bundle\CustomerBundle\Entity\AccountUser', $assignedAccountUser);
-            $this->assertContains($assignedAccountUser->getId(), $assignedAccountUsers);
-            unset($assignedAccountUsers[array_search($assignedAccountUser->getId(), $assignedAccountUsers)]);
+        foreach ($this->entity->assignedCustomerUsers as $assignedCustomerUser) {
+            $this->assertInstanceOf('Oro\Bundle\CustomerBundle\Entity\CustomerUser', $assignedCustomerUser);
+            $this->assertContains($assignedCustomerUser->getId(), $assignedCustomerUsers);
+            unset($assignedCustomerUsers[array_search($assignedCustomerUser->getId(), $assignedCustomerUsers)]);
         }
     }
 }

@@ -32,7 +32,7 @@ class RequestToQuoteDataStorage
                 'poNumber' => $rfpRequest->getPoNumber(),
                 'shipUntil' => $rfpRequest->getShipUntil(),
                 'assignedUsers' => $this->getEntitiesIds($rfpRequest->getAssignedUsers()),
-                'assignedAccountUsers' => $this->getEntitiesIds($rfpRequest->getAssignedAccountUsers()),
+                'assignedCustomerUsers' => $this->getEntitiesIds($rfpRequest->getAssignedCustomerUsers()),
             ],
         ];
 
