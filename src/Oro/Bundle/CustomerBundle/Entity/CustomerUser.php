@@ -432,7 +432,7 @@ class CustomerUser extends AbstractUser implements FullNameInterface, EmailHolde
     /**
      * {@inheritDoc}
      */
-    public function isCustomerNonLocked()
+    public function isAccountNonLocked()
     {
         return $this->isEnabled() && $this->isConfirmed();
     }
