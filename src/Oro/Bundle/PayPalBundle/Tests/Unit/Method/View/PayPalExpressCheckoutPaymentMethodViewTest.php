@@ -5,10 +5,10 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method\View;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfigInterface;
-use Oro\Bundle\PayPalBundle\Method\View\PayflowExpressCheckoutView;
+use Oro\Bundle\PayPalBundle\Method\View\PayPalExpressCheckoutPaymentMethodView;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 
-class PayflowExpressCheckoutViewTest extends \PHPUnit_Framework_TestCase
+class PayPalExpressCheckoutPaymentMethodViewTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
@@ -43,9 +43,12 @@ class PayflowExpressCheckoutViewTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('_payment_methods_payflow_express_checkout_widget', $this->methodView->getBlock());
     }
 
-    public function testGetPaymentMethodType()
+    public function testGetPaymentMethodIdentifier()
     {
-        $this->assertEquals('payflow_express_checkout', $this->methodView->getPaymentMethodType());
+        $this->paymentConfig->expects(static::once())
+            ->method('getPaymentMethodIdentifier')
+            ->willReturn('payflow_express_checkout');
+        $this->assertSame('payflow_express_checkout', $this->methodView->getPaymentMethodIdentifier());
     }
 
     public function testGetLabel()
@@ -75,6 +78,6 @@ class PayflowExpressCheckoutViewTest extends \PHPUnit_Framework_TestCase
      */
     protected function createMethodView()
     {
-        return new PayflowExpressCheckoutView($this->paymentConfig);
+        return new PayPalExpressCheckoutPaymentMethodView($this->paymentConfig);
     }
 }

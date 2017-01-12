@@ -21,10 +21,8 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Routing\RouterInterface;
 
-class PayflowExpressCheckout implements PaymentMethodInterface
+class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
 {
-    const TYPE = 'payflow_express_checkout';
-
     const COMPLETE = 'complete';
 
     const PILOT_REDIRECT_URL = 'https://www.sandbox.paypal.com/webscr?cmd=_express-checkout&useraction=commit&token=%s';
@@ -94,7 +92,7 @@ class PayflowExpressCheckout implements PaymentMethodInterface
      */
     public function getIdentifier()
     {
-        return static::TYPE;
+        return $this->config->getPaymentMethodIdentifier();
     }
 
     /**

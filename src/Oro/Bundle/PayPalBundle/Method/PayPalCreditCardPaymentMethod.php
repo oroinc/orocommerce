@@ -18,11 +18,9 @@ use Symfony\Component\Routing\RouterInterface;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-class PayflowGateway implements PaymentMethodInterface
+class PayPalCreditCardPaymentMethod implements PaymentMethodInterface
 {
     const COMPLETE = 'complete';
-
-    const TYPE = 'payflow_gateway';
 
     const ZERO_AMOUNT = 0;
 
@@ -330,7 +328,7 @@ class PayflowGateway implements PaymentMethodInterface
      */
     public function getIdentifier()
     {
-        return static::TYPE;
+        return $this->config->getPaymentMethodIdentifier();
     }
 
     /**
