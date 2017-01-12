@@ -8,6 +8,8 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FrontendBundle\Provider\ActionCurrentApplicationProvider as ApplicationProvider;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Acl\Voter\FrontendRequestVoter;
+use Oro\Bundle\WorkflowBundle\Model\Workflow;
+use Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
 class FrontendRequestVoterTest extends \PHPUnit_Framework_TestCase
@@ -78,11 +80,17 @@ class FrontendRequestVoterTest extends \PHPUnit_Framework_TestCase
 
     public function testVoteWithActiveFrontoffice()
     {
+        $definition = new WorkflowDefinition();
+        $definition->setExclusiveRecordGroups(['b2b_rfq_frontoffice_flow']);
+
+        $workflow = $this->getMockBuilder(Workflow::class)->disableOriginalConstructor()->getMock();
+        $workflow->expects($this->once())->method('getDefinition')->willReturn($definition);
+
         $this->applicationProvider->expects($this->once())
             ->method('getCurrentApplication')->willReturn(ApplicationProvider::COMMERCE_APPLICATION);
 
-        $this->workflowManager->expects($this->once())->method('isActiveWorkflow')
-            ->with('rfq_frontoffice_default')->willReturn(true);
+        $this->workflowManager->expects($this->once())->method('getApplicableWorkflows')
+            ->with(Request::class)->willReturn([$workflow]);
 
         $this->assertEquals(
             FrontendRequestVoter::ACCESS_DENIED,
@@ -95,8 +103,8 @@ class FrontendRequestVoterTest extends \PHPUnit_Framework_TestCase
         $this->applicationProvider->expects($this->once())
             ->method('getCurrentApplication')->willReturn(ApplicationProvider::COMMERCE_APPLICATION);
 
-        $this->workflowManager->expects($this->once())->method('isActiveWorkflow')
-            ->with('rfq_frontoffice_default')->willReturn(false);
+        $this->workflowManager->expects($this->once())->method('getApplicableWorkflows')
+            ->with(Request::class)->willReturn([]);
 
         $this->assertEquals(
             FrontendRequestVoter::ACCESS_ABSTAIN,
@@ -109,7 +117,7 @@ class FrontendRequestVoterTest extends \PHPUnit_Framework_TestCase
         $this->applicationProvider->expects($this->once())
             ->method('getCurrentApplication')->willReturn('unknown_application');
 
-        $this->workflowManager->expects($this->never())->method('isActiveWorkflow');
+        $this->workflowManager->expects($this->never())->method('getApplicableWorkflows');
 
         $this->assertEquals(
             FrontendRequestVoter::ACCESS_ABSTAIN,

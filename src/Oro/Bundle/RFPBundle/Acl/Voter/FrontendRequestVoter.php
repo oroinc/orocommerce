@@ -53,10 +53,26 @@ class FrontendRequestVoter extends AbstractEntityVoter
     protected function getPermissionForAttribute($class, $identifier, $attribute)
     {
         if ($this->applicationProvider->getCurrentApplication() === ApplicationProvider::COMMERCE_APPLICATION
-                && $this->workflowManager->isActiveWorkflow('rfq_frontoffice_default')) {
+                && $this->hasActiveWorkflows('b2b_rfq_frontoffice_flow')) {
             return self::ACCESS_DENIED;
         }
 
         return self::ACCESS_ABSTAIN;
+    }
+
+    /**
+     * @param string $groupName
+     * @return boolean
+     */
+    protected function hasActiveWorkflows($groupName)
+    {
+        $workflows = $this->workflowManager->getApplicableWorkflows(Request::class);
+        foreach ($workflows as $workflow) {
+            if (in_array($groupName, $workflow->getDefinition()->getExclusiveRecordGroups(), true)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
