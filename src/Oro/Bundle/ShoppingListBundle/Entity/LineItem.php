@@ -167,7 +167,7 @@ class LineItem extends ExtendLineItem implements
      *      }
      * )
      */
-    protected $accountUser;
+    protected $customerUser;
 
     /**
      * @return integer
@@ -300,9 +300,9 @@ class LineItem extends ExtendLineItem implements
     /**
      * @return CustomerUser
      */
-    public function getAccountUser()
+    public function getCustomerUser()
     {
-        return $this->accountUser;
+        return $this->customerUser;
     }
 
     /**
@@ -310,9 +310,9 @@ class LineItem extends ExtendLineItem implements
      *
      * @return $this
      */
-    public function setAccountUser(CustomerUser $user)
+    public function setCustomerUser(CustomerUser $user)
     {
-        $this->accountUser = $user;
+        $this->customerUser = $user;
 
         return $this;
     }

@@ -89,7 +89,7 @@ class LoginListenerTest extends \PHPUnit_Framework_TestCase
                 'user' => new User(),
                 'expected' => null,
             ],
-            'account user' => [
+            'customer user' => [
                 'user' => new CustomerUser(),
                 'expected' => true,
             ],

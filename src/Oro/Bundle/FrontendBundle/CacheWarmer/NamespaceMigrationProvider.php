@@ -30,6 +30,10 @@ class NamespaceMigrationProvider implements NamespaceMigrationProviderInterface
             'OroB2B'                            => 'Oro',
             'orob2b'                            => 'oro',
             'Oro\Bundle\CustomerBundle\Entity\Account' => 'Oro\Bundle\CustomerBundle\Entity\Customer',
+            'Oro\Bundle\VisibilityBundle\Entity\Visibility\Account'
+                => 'Oro\Bundle\VisibilityBundle\Entity\Visibility\Customer',
+            'Oro\Bundle\TaxBundle\Entity\AccountTaxCode' => 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode',
+            'FRONTEND_ACCOUNT' => 'FRONTEND_CUSTOMER'
         ];
 
     /**

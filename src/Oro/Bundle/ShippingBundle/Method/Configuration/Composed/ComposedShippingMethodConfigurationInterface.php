@@ -1,0 +1,17 @@
+<?php
+
+namespace Oro\Bundle\ShippingBundle\Method\Configuration\Composed;
+
+use Oro\Bundle\ShippingBundle\Method\Configuration\AllowUnlistedShippingMethodConfigurationInterface;
+use Oro\Bundle\ShippingBundle\Method\Configuration\MethodLockedShippingMethodConfigurationInterface;
+use Oro\Bundle\ShippingBundle\Method\Configuration\OverriddenCostShippingMethodConfigurationInterface;
+use Oro\Bundle\ShippingBundle\Method\Configuration\PreConfiguredShippingMethodConfigurationInterface;
+
+interface ComposedShippingMethodConfigurationInterface extends
+    PreConfiguredShippingMethodConfigurationInterface,
+    AllowUnlistedShippingMethodConfigurationInterface,
+    OverriddenCostShippingMethodConfigurationInterface,
+    MethodLockedShippingMethodConfigurationInterface
+{
+
+}

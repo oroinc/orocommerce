@@ -17,20 +17,20 @@ class CustomerUserRoleTest extends \PHPUnit_Framework_TestCase
     {
         $name = 'test role#$%';
         $role = new CustomerUserRole();
-        $account = new Customer();
+        $customer = new Customer();
         $organization = new Organization();
 
         $this->assertEmpty($role->getId());
         $this->assertEmpty($role->getLabel());
         $this->assertEmpty($role->getRole());
         $this->assertEmpty($role->getOrganization());
-        $this->assertEmpty($role->getAccount());
+        $this->assertEmpty($role->getCustomer());
 
-        $role->setAccount($account);
+        $role->setCustomer($customer);
         $role->setOrganization($organization);
 
         $this->assertEquals($organization, $role->getOrganization());
-        $this->assertEquals($account, $role->getAccount());
+        $this->assertEquals($customer, $role->getCustomer());
 
         $role->setLabel($name);
         $this->assertEquals($name, $role->getLabel());
@@ -50,11 +50,11 @@ class CustomerUserRoleTest extends \PHPUnit_Framework_TestCase
     {
         static::assertPropertyCollections(new CustomerUserRole(), [
             ['websites', new Website()],
-            ['accountUsers', new CustomerUser()],
+            ['customerUsers', new CustomerUser()],
         ]);
 
         static::assertPropertyAccessors(new CustomerUserRole(), [
-            ['account', new Customer()],
+            ['customer', new Customer()],
             ['organization', new Organization()]
         ]);
     }
@@ -85,7 +85,7 @@ class CustomerUserRoleTest extends \PHPUnit_Framework_TestCase
         $role = new CustomerUserRole($name);
         $this->assertTrue($role->isPredefined());
 
-        $role->setAccount(new Customer());
+        $role->setCustomer(new Customer());
         $this->assertFalse($role->isPredefined());
     }
 }

@@ -3,15 +3,13 @@
 namespace Oro\Bundle\SaleBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
-use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
-use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendAccountUserAwareTrait;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
+use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendCustomerUserAwareTrait;
 use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
@@ -36,7 +34,7 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
  *          },
  *          "ownership"={
  *              "frontend_owner_type"="FRONTEND_USER",
- *              "frontend_owner_field_name"="accountUser",
+ *              "frontend_owner_field_name"="customerUser",
  *              "frontend_owner_column_name"="customer_user_id"
  *          }
  *      }
@@ -47,9 +45,9 @@ class QuoteDemand implements
     LineItemsAwareInterface,
     ShippingAwareInterface,
     SubtotalAwareInterface,
-    AccountOwnerAwareInterface
+    CustomerOwnerAwareInterface
 {
-    use AuditableFrontendAccountUserAwareTrait;
+    use AuditableFrontendCustomerUserAwareTrait;
 
     /**
      * @var int
@@ -62,7 +60,7 @@ class QuoteDemand implements
 
     /**
      * @var Quote
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\SaleBundle\Entity\Quote")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\SaleBundle\Entity\Quote", inversedBy="demands")
      * @ORM\JoinColumn(name="quote_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $quote;
@@ -186,7 +184,7 @@ class QuoteDemand implements
     public function getShippingCost()
     {
         if ($this->quote) {
-            return $this->quote->getShippingEstimate();
+            return $this->quote->getShippingCost();
         }
 
         return null;

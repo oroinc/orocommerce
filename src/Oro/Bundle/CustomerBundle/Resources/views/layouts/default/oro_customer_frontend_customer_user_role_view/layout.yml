@@ -32,7 +32,7 @@ layout:
                 customer_user_role_items_view_users:
                     blockType: datagrid
                     options:
-                        grid_name: frontend-account-account-users-grid-view
+                        grid_name: frontend-customer-customer-users-grid-view
                         grid_parameters:
                             role: '=data["entity"].getId()'
             tree:

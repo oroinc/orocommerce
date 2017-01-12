@@ -4,8 +4,8 @@ oro:
         entity_plural_label: Open Orders
         id.label: Id
         owner.label: Owner
-        account.label: Global Address Book
-        account_user.label: My Address Book
+        customer.label: Global Address Book
+        customer_user.label: My Address Book
         organization.label: Organization
         customer_notes.label: Customer Notes
         customer_notes.frontend.label: Notes
@@ -42,8 +42,8 @@ oro:
             entity_plural_label: Base Checkouts
             id.label: Id
             owner.label: Owner
-            account.label: Global Address Book
-            account_user.label: My Address Book
+            customer.label: Global Address Book
+            customer_user.label: My Address Book
             organization.label: Organization
             customer_notes.label: Customer Notes
             customer_notes.frontend.label: Notes

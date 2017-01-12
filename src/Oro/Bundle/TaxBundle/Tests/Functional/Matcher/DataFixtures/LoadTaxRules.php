@@ -5,14 +5,14 @@ namespace Oro\Bundle\TaxBundle\Tests\Functional\Matcher\DataFixtures;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
-use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
+use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\Entity\Tax;
 use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
 use Oro\Bundle\TaxBundle\Entity\TaxRule;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxes;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxRules as BaseLoadTaxRules;
-use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes;
+use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadCustomerTaxCodes;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
 
 class LoadTaxRules extends BaseLoadTaxRules
@@ -31,7 +31,7 @@ class LoadTaxRules extends BaseLoadTaxRules
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadAccountTaxCodes',
+            'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadCustomerTaxCodes',
             'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes',
             'Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxes',
             'Oro\Bundle\TaxBundle\Tests\Functional\Matcher\DataFixtures\LoadTaxJurisdictions',
@@ -98,18 +98,18 @@ class LoadTaxRules extends BaseLoadTaxRules
         TaxJurisdiction $taxJurisdiction,
         $reference
     ) {
-        /** @var AccountTaxCode $accountTaxCode */
-        $accountTaxCode = $this->getReference(LoadAccountTaxCodes::REFERENCE_PREFIX . '.' . LoadAccountTaxCodes::TAX_1);
+        /** @var CustomerTaxCode $customerTaxCode */
+        $customerTaxCode = $this->getReference(LoadCustomerTaxCodes::REFERENCE_PREFIX.'.'.LoadCustomerTaxCodes::TAX_1);
 
         /** @var ProductTaxCode $productTaxCode */
-        $productTaxCode = $this->getReference(LoadProductTaxCodes::REFERENCE_PREFIX . '.' . LoadProductTaxCodes::TAX_1);
+        $productTaxCode = $this->getReference(LoadProductTaxCodes::REFERENCE_PREFIX.'.'.LoadProductTaxCodes::TAX_1);
 
         /** @var Tax $tax */
         $tax = $this->getReference(LoadTaxes::REFERENCE_PREFIX . '.' . LoadTaxes::TAX_1);
 
         return $this->createTaxRule(
             $manager,
-            $accountTaxCode,
+            $customerTaxCode,
             $productTaxCode,
             $tax,
             $taxJurisdiction,

@@ -30,7 +30,7 @@ use Oro\Bundle\CustomerBundle\Model\ExtendCustomerAddress;
  *              "owner_type"="USER",
  *              "owner_field_name"="owner",
  *              "owner_column_name"="owner_id",
- *              "frontend_owner_type"="FRONTEND_ACCOUNT",
+ *              "frontend_owner_type"="FRONTEND_CUSTOMER",
  *              "frontend_owner_field_name"="frontendOwner",
  *              "frontend_owner_column_name"="frontend_owner_id",
  *              "organization_field_name"="systemOrganization",

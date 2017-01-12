@@ -40,7 +40,7 @@ class ShoppingListHandlerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $this->shoppingList = $this->createMock('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList');
         $this->shoppingList->expects($this->any())
-            ->method('getAccountUser')
+            ->method('getCustomerUser')
             ->willReturn(new CustomerUser());
         $this->manager = $this->getMockBuilder('Oro\Bundle\ShoppingListBundle\Manager\ShoppingListManager')
             ->disableOriginalConstructor()

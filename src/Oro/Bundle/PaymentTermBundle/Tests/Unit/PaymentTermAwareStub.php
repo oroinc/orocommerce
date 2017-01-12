@@ -3,16 +3,16 @@
 namespace Oro\Bundle\PaymentTermBundle\Tests\Unit;
 
 use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 
-class PaymentTermAwareStub implements AccountOwnerAwareInterface
+class PaymentTermAwareStub implements CustomerOwnerAwareInterface
 {
     /** @var PaymentTerm */
     private $paymentTerm;
 
     /** @var Customer */
-    private $account;
+    private $customer;
 
     /**
      * @param PaymentTerm $paymentTerm
@@ -31,24 +31,24 @@ class PaymentTermAwareStub implements AccountOwnerAwareInterface
     }
 
     /** {@inheritdoc} */
-    public function getAccount()
+    public function getCustomer()
     {
-        return $this->account;
+        return $this->customer;
     }
 
     /** {@inheritdoc} */
-    public function getAccountUser()
+    public function getCustomerUser()
     {
     }
 
     /**
-     * @param Customer|null $account
+     * @param Customer|null $customer
      * @return PaymentTermAwareStub
      */
-    public static function create(Customer $account = null)
+    public static function create(Customer $customer = null)
     {
         $self = new self();
-        $self->account = $account;
+        $self->customer = $customer;
 
         return $self;
     }

@@ -29,7 +29,7 @@
                 'dataRedirect': path('oro_catalog_category_index'),
                 'aCss': 'no-hash remove-button',
                 'dataId': entityId,
-                'id': 'btn-remove-account',
+                'id': 'btn-remove-customer',
                 'entity_label': 'oro.catalog.category.entity_label'|trans,
             }) }}
         {% endif %}
@@ -134,7 +134,7 @@
     } %}
 
     <div class="category-container tree-component-container"
-         data-page-component-module="oroproduct/js/app/components/grid-sidebar-component"
+         data-page-component-module="orodatagrid/js/app/components/grid-sidebar-component"
          data-page-component-options="{{ componentOptions|json_encode }}">
         <div class="category category-tree tree-component">
             <div class="left-panel-header">

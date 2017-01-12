@@ -59,13 +59,13 @@ class CustomerUserRoleControllerACLTest extends WebTestCase
     public function viewProvider()
     {
         return [
-            'VIEW (user from parent account : DEEP)' => [
+            'VIEW (user from parent customer : DEEP)' => [
                 'route' => 'oro_customer_frontend_customer_user_role_view',
                 'role' => LoadCustomerUserRoleACLData::ROLE_WITH_ACCOUNT_1_2_USER_LOCAL,
                 'user' => LoadCustomerUserRoleACLData::USER_ACCOUNT_1_ROLE_DEEP,
                 'expectedStatus' => 200
             ],
-            'VIEW (user from another account)' => [
+            'VIEW (user from another customer)' => [
                 'route' => 'oro_customer_frontend_customer_user_role_view',
                 'role' => LoadCustomerUserRoleACLData::ROLE_WITH_ACCOUNT_1_2_USER_LOCAL,
                 'user' => LoadCustomerUserRoleACLData::USER_ACCOUNT_2_ROLE_LOCAL,
@@ -77,19 +77,19 @@ class CustomerUserRoleControllerACLTest extends WebTestCase
                 'user' => '',
                 'expectedStatus' => 401
             ],
-            'VIEW (user from same account : LOCAL)' => [
+            'VIEW (user from same customer : LOCAL)' => [
                 'route' => 'oro_customer_frontend_customer_user_role_view',
                 'role' => LoadCustomerUserRoleACLData::ROLE_WITH_ACCOUNT_1_USER_DEEP,
                 'user' => LoadCustomerUserRoleACLData::USER_ACCOUNT_1_ROLE_LOCAL,
                 'expectedStatus' => 200
             ],
-            'UPDATE (user from parent account : DEEP)' => [
+            'UPDATE (user from parent customer : DEEP)' => [
                 'route' => 'oro_customer_frontend_customer_user_role_update',
                 'role' => LoadCustomerUserRoleACLData::ROLE_WITH_ACCOUNT_1_2_USER_LOCAL,
                 'user' => LoadCustomerUserRoleACLData::USER_ACCOUNT_1_ROLE_DEEP,
                 'expectedStatus' => 200
             ],
-            'UPDATE (user from another account)' => [
+            'UPDATE (user from another customer)' => [
                 'route' => 'oro_customer_frontend_customer_user_role_update',
                 'role' => LoadCustomerUserRoleACLData::ROLE_WITH_ACCOUNT_1_2_USER_LOCAL,
                 'user' => LoadCustomerUserRoleACLData::USER_ACCOUNT_2_ROLE_LOCAL,
@@ -101,7 +101,7 @@ class CustomerUserRoleControllerACLTest extends WebTestCase
                 'user' => '',
                 'expectedStatus' => 401
             ],
-            'UPDATE (user from same account : LOCAL)' => [
+            'UPDATE (user from same customer : LOCAL)' => [
                 'route' => 'oro_customer_frontend_customer_user_role_update',
                 'role' => LoadCustomerUserRoleACLData::ROLE_WITH_ACCOUNT_1_USER_DEEP,
                 'user' => LoadCustomerUserRoleACLData::USER_ACCOUNT_1_ROLE_LOCAL,
@@ -126,7 +126,7 @@ class CustomerUserRoleControllerACLTest extends WebTestCase
         $this->assertSame($indexResponseStatus, $this->client->getResponse()->getStatusCode());
         $response = $this->client->requestGrid(
             [
-                'gridName' => 'frontend-account-customer-user-roles-grid',
+                'gridName' => 'frontend-customer-customer-user-roles-grid',
             ]
         );
         self::assertResponseStatusCodeEquals($response, $gridResponseStatus);

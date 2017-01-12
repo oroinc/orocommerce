@@ -51,12 +51,12 @@ abstract class AbstractFormViewListener
             return null;
         }
 
-        $accountId = filter_var($request->get('id'), FILTER_VALIDATE_INT);
-        if (false === $accountId) {
+        $customerId = filter_var($request->get('id'), FILTER_VALIDATE_INT);
+        if (false === $customerId) {
             return null;
         }
 
-        return $this->doctrineHelper->getEntityReference($this->entityClass, $accountId);
+        return $this->doctrineHelper->getEntityReference($this->entityClass, $customerId);
     }
 
     /**

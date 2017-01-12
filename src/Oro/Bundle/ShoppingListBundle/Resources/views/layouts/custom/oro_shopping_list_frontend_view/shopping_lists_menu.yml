@@ -15,5 +15,5 @@ layout:
             parentId: shopping_list_view_tabs
             blockType: shopping_lists_menu
             options:
-                shoppingLists: '=data["oro_shopping_list_account_user_shopping_lists"].getShoppingLists()'
+                shoppingLists: '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingLists()'
                 selectedShoppingList: '=data["entity"]'

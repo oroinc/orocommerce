@@ -215,8 +215,8 @@ class AddLineItemMassActionProviderTest extends \PHPUnit_Framework_TestCase
                 'id' => $id,
                 'label' => 'shopping_list_' . $id,
                 'organization' => new Organization(),
-                'account' => new Customer(),
-                'accountUser' => new CustomerUser(),
+                'customer' => new Customer(),
+                'customerUser' => new CustomerUser(),
                 'current' => $isCurrent
             ]
         );

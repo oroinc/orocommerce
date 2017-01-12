@@ -11,34 +11,34 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserManager;
-use Oro\Bundle\CustomerBundle\Form\Handler\AccountUserPasswordRequestHandler;
-use Oro\Bundle\CustomerBundle\Form\Handler\AccountUserPasswordResetHandler;
+use Oro\Bundle\CustomerBundle\Form\Handler\CustomerUserPasswordRequestHandler;
+use Oro\Bundle\CustomerBundle\Form\Handler\CustomerUserPasswordResetHandler;
 
 class ResetController extends Controller
 {
-    const SESSION_EMAIL = 'oro_account_user_reset_email';
+    const SESSION_EMAIL = 'oro_customer_user_reset_email';
 
     /**
      * @Layout()
-     * @Route("/reset-request", name="oro_customer_frontend_account_user_reset_request")
+     * @Route("/reset-request", name="oro_customer_frontend_customer_user_reset_request")
      * @Method({"GET", "POST"})
      */
     public function requestAction()
     {
         if ($this->getUser()) {
-            return $this->redirect($this->generateUrl('oro_customer_frontend_account_user_profile'));
+            return $this->redirect($this->generateUrl('oro_customer_frontend_customer_user_profile'));
         }
 
-        /** @var AccountUserPasswordRequestHandler $handler */
-        $handler = $this->get('oro_customer.account_user.password_request.handler');
-        $form = $this->get('oro_customer.provider.frontend_account_user_form')
+        /** @var CustomerUserPasswordRequestHandler $handler */
+        $handler = $this->get('oro_customer.customer_user.password_request.handler');
+        $form = $this->get('oro_customer.provider.frontend_customer_user_form')
             ->getForgotPasswordForm();
 
         $request = $this->get('request_stack')->getCurrentRequest();
         $user = $handler->process($form, $request);
         if ($user) {
             $this->get('session')->set(static::SESSION_EMAIL, $this->getObfuscatedEmail($user));
-            return $this->redirect($this->generateUrl('oro_customer_frontend_account_user_reset_check_email'));
+            return $this->redirect($this->generateUrl('oro_customer_frontend_customer_user_reset_check_email'));
         }
 
         return [];
@@ -48,7 +48,7 @@ class ResetController extends Controller
      * Tell the user to check his email
      *
      * @Layout()
-     * @Route("/check-email", name="oro_customer_frontend_account_user_reset_check_email")
+     * @Route("/check-email", name="oro_customer_frontend_customer_user_reset_check_email")
      * @Method({"GET"})
      */
     public function checkEmailAction()
@@ -59,7 +59,7 @@ class ResetController extends Controller
 
         if (empty($email)) {
             // the user does not come from the sendEmail action
-            return $this->redirect($this->generateUrl('oro_customer_frontend_account_user_reset_request'));
+            return $this->redirect($this->generateUrl('oro_customer_frontend_customer_user_reset_request'));
         }
 
         return [
@@ -73,7 +73,7 @@ class ResetController extends Controller
      * Reset user password
      *
      * @Layout
-     * @Route("/reset", name="oro_customer_frontend_account_user_password_reset")
+     * @Route("/reset", name="oro_customer_frontend_customer_user_password_reset")
      * @Method({"GET", "POST"})
      * @return array|RedirectResponse
      */
@@ -100,12 +100,12 @@ class ResetController extends Controller
                 'oro.customer.customeruser.profile.password.reset.ttl_expired.message'
             );
 
-            return $this->redirect($this->generateUrl('oro_customer_frontend_account_user_reset_request'));
+            return $this->redirect($this->generateUrl('oro_customer_frontend_customer_user_reset_request'));
         }
 
-        /** @var AccountUserPasswordResetHandler $handler */
-        $handler = $this->get('oro_customer.account_user.password_reset.handler');
-        $form = $this->get('oro_customer.provider.frontend_account_user_form')
+        /** @var CustomerUserPasswordResetHandler $handler */
+        $handler = $this->get('oro_customer.customer_user.password_reset.handler');
+        $form = $this->get('oro_customer.provider.frontend_customer_user_form')
             ->getResetPasswordForm($user);
 
         if ($handler->process($form, $this->getRequest())) {
@@ -118,7 +118,7 @@ class ResetController extends Controller
                 'oro.customer.customeruser.profile.password_reset.message'
             );
 
-            return $this->redirect($this->generateUrl('oro_customer_account_user_security_login'));
+            return $this->redirect($this->generateUrl('oro_customer_customer_user_security_login'));
         }
 
         return [
@@ -152,6 +152,6 @@ class ResetController extends Controller
      */
     protected function getUserManager()
     {
-        return $this->get('oro_account_user.manager');
+        return $this->get('oro_customer_user.manager');
     }
 }

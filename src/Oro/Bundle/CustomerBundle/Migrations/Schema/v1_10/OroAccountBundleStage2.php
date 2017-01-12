@@ -44,6 +44,7 @@ class OroAccountBundleStage2 implements
         $this->renameAccountAddressToAddressType($schema);
         $this->renameAccountUserRole($schema);
         $this->renameCustomerGroup($schema);
+        $this->renameAccWindowsState($schema);
 
         $this->activityExtension->addActivityAssociation(
             $schema,
@@ -60,6 +61,7 @@ class OroAccountBundleStage2 implements
             'oro_note',
             'oro_customer'
         );
+        $this->alterScopes($schema, $queries);
     }
 
     /**
@@ -120,6 +122,22 @@ class OroAccountBundleStage2 implements
         );
         $table->addIndex(['position'], 'oro_cus_sdar_wdgs_pos_idx', []);
         $table->addIndex(['customer_user_id', 'placement'], 'oro_cus_sdbr_wdgs_usr_place_idx', []);
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    private function renameAccWindowsState(Schema $schema)
+    {
+        $table = $schema->getTable("oro_cus_windows_state");
+
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_customer_user'),
+            ['customer_user_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $table->addIndex(['customer_user_id'], 'oro_cus_windows_state_acu_idx', []);
     }
 
     /**
@@ -279,13 +297,14 @@ class OroAccountBundleStage2 implements
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
 
-//        $schema->getTable('oro_audit')
-//            ->addForeignKeyConstraint(
-//                $schema->getTable('oro_customer_user'),
-//                ['customer_user_id'],
-//                ['id'],
-//                ['onDelete' => 'CASCADE', 'onUpdate' => null]
-//            );
+        $schema->getTable('oro_audit')
+            ->addForeignKeyConstraint(
+                $schema->getTable('oro_customer_user'),
+                ['customer_user_id'],
+                ['id'],
+                ['onDelete' => 'CASCADE', 'onUpdate' => null],
+                'fk_oro_audit_account_user_id'
+            );
 
         $schema->getTable('oro_cus_navigation_history')
             ->addForeignKeyConstraint(
@@ -343,6 +362,27 @@ class OroAccountBundleStage2 implements
             ['customer_user_539cf909_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     */
+    private function alterScopes(Schema $schema, QueryBag $queries)
+    {
+        $table = $schema->getTable('oro_scope');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_customer'),
+            ['customer_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_customer_group'),
+            ['customerGroup_id'],
+            ['id'],
+            ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
     }
 

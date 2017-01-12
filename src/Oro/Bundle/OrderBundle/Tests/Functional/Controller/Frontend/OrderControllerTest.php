@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\LocaleBundle\Formatter\DateTimeFormatter;
 use Oro\Bundle\LocaleBundle\Formatter\NumberFormatter;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -41,7 +41,7 @@ class OrderControllerTest extends WebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
+            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
 
         $this->loadFixtures(
@@ -141,7 +141,7 @@ class OrderControllerTest extends WebTestCase
                     LoadOrdersACLData::ORDER_ACC_1_USER_BASIC
                 ],
             ],
-            'LOCAL: all orders on account level' => [
+            'LOCAL: all orders on customer level' => [
                 'user' => LoadOrderUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
                 'indexResponseStatus' => 200,
                 'gridResponseStatus' => 200,
@@ -151,7 +151,7 @@ class OrderControllerTest extends WebTestCase
                     LoadOrdersACLData::ORDER_ACC_1_USER_LOCAL,
                 ],
             ],
-            'DEEP: all orders on account level and child accounts' => [
+            'DEEP: all orders on customer level and child customers' => [
                 'user' => LoadOrderUserACLData::USER_ACCOUNT_1_ROLE_DEEP,
                 'indexResponseStatus' => 200,
                 'gridResponseStatus' => 200,
@@ -199,27 +199,27 @@ class OrderControllerTest extends WebTestCase
                 'user' => '',
                 'status' => 401,
             ],
-            'user from another account' => [
+            'user from another customer' => [
                 'resource' => LoadOrdersACLData::ORDER_ACC_1_USER_BASIC,
                 'user' => LoadOrderUserACLData::USER_ACCOUNT_2_ROLE_LOCAL,
                 'status' => 403,
             ],
-            'user from parent account : LOCAL' => [
+            'user from parent customer : LOCAL' => [
                 'resource' => LoadOrdersACLData::ORDER_ACC_1_1_USER_LOCAL,
                 'user' => LoadOrderUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
                 'status' => 403,
             ],
-            'user from same account : BASIC' => [
+            'user from same customer : BASIC' => [
                 'resource' => LoadOrdersACLData::ORDER_ACC_1_USER_LOCAL,
                 'user' => LoadOrderUserACLData::USER_ACCOUNT_1_ROLE_BASIC,
                 'status' => 403,
             ],
-            'user from same account : LOCAL' => [
+            'user from same customer : LOCAL' => [
                 'resource' => LoadOrdersACLData::ORDER_ACC_1_USER_BASIC,
                 'user' => LoadOrderUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
                 'status' => 200,
             ],
-            'user from parent account : DEEP' => [
+            'user from parent customer : DEEP' => [
                 'resource' => LoadOrdersACLData::ORDER_ACC_1_1_USER_LOCAL,
                 'user' => LoadOrderUserACLData::USER_ACCOUNT_1_ROLE_DEEP,
                 'status' => 200,

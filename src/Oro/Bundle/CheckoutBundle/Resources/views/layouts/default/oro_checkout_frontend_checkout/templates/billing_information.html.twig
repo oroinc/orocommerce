@@ -11,14 +11,14 @@
         {% import 'OroCheckoutBundle:layouts/default/oro_checkout_frontend_checkout/templates:address.html.twig' as address %}
         {% set hasCustomAddress = false %}
         {% if form.billing_address.id.vars.value %}
-            {% set hasCustomAddress = not form.billing_address.vars.value.accountUserAddress and not form.billing_address.vars.value.accountAddress %}
+            {% set hasCustomAddress = not form.billing_address.vars.value.customerUserAddress and not form.billing_address.vars.value.customerAddress %}
         {% endif %}
         {% set billingAddress = form.billing_address.vars.value %}
         <div data-page-component-module="oroui/js/app/components/view-component"
              data-page-component-options="{{ {
                  view: 'orocheckout/js/app/views/address-view',
                  selectors: {
-                     address: '#' ~ form.billing_address.accountAddress.vars.id,
+                     address: '#' ~ form.billing_address.customerAddress.vars.id,
                      region: '#' ~ form.billing_address.region.vars.id,
                      shipToBillingCheckbox: '#' ~ form.ship_to_billing_address.vars.id,
                      fieldsContainer: '#checkout-address-fields-container'
@@ -26,7 +26,7 @@
              }|json_encode }}">
 
             <fieldset class="checkout__form__row">
-                {{ form_row(form.billing_address.accountAddress) }}
+                {{ form_row(form.billing_address.customerAddress) }}
             </fieldset>
 
             {{ address.address_form(form.billing_address, form.save_billing_address, hasCustomAddress) }}
@@ -35,9 +35,9 @@
 
     {% set hideShipping = false %}
     {% if billingAddress %}
-        {% set typedAddress  = billingAddress.accountAddress %}
+        {% set typedAddress  = billingAddress.customerAddress %}
         {% if typedAddress is empty %}
-            {% set typedAddress  = billingAddress.accountUserAddress %}
+            {% set typedAddress  = billingAddress.customerUserAddress %}
         {% endif %}
 
         {% set hideShipping = typedAddress is not empty and not typedAddress.hasTypeWithName('shipping')  %}

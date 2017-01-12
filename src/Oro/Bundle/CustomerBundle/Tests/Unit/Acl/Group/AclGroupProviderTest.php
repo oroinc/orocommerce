@@ -74,7 +74,7 @@ class AclGroupProviderTest extends \PHPUnit_Framework_TestCase
                 'securityFacadeUser' => new \stdClass(),
                 'expectedResult' => false
             ],
-            'account user' => [
+            'customer user' => [
                 'securityFacadeUser' => new CustomerUser(),
                 'expectedResult' => true
             ],

@@ -5,8 +5,8 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Controller;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
@@ -14,8 +14,8 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData;
@@ -32,7 +32,7 @@ class CategoryControllerTest extends WebTestCase
     protected $category;
 
     /** @var  Customer */
-    protected $account;
+    protected $customer;
 
     /** @var CustomerGroup */
     protected $group;
@@ -47,30 +47,30 @@ class CategoryControllerTest extends WebTestCase
         $this->loadFixtures(
             [
                 LoadCategoryVisibilityData::class,
-                LoadAccounts::class
+                LoadCustomers::class,
             ]
         );
         $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
         $this->scopeManager = $this->getContainer()->get('oro_scope.scope_manager');
 
         $this->category = $this->getReference(LoadCategoryData::THIRD_LEVEL1);
-        $this->account = $this->getReference('account.level_1');
+        $this->customer = $this->getReference('customer.level_1');
         $this->group = $this->getReference(LoadGroups::GROUP1);
     }
 
     public function testEdit()
     {
         $categoryVisibility = CategoryVisibility::HIDDEN;
-        $visibilityForAccount = AccountCategoryVisibility::VISIBLE;
-        $visibilityForAccountGroup = AccountGroupCategoryVisibility::VISIBLE;
+        $visibilityForCustomer = CustomerCategoryVisibility::VISIBLE;
+        $visibilityForCustomerGroup = CustomerGroupCategoryVisibility::VISIBLE;
 
         $crawler = $this->submitForm(
             $categoryVisibility,
-            json_encode([$this->account->getId() => ['visibility' => $visibilityForAccount]]),
-            json_encode([$this->group->getId() => ['visibility' => $visibilityForAccountGroup]])
+            json_encode([$this->customer->getId() => ['visibility' => $visibilityForCustomer]]),
+            json_encode([$this->group->getId() => ['visibility' => $visibilityForCustomerGroup]])
         );
 
-        $this->assertNotContains('grid-account-category-visibility-grid', $crawler->html());
+        $this->assertNotContains('grid-customer-category-visibility-grid', $crawler->html());
 
         $crawler = $this->client->request(
             'GET',
@@ -83,23 +83,23 @@ class CategoryControllerTest extends WebTestCase
 
         $this->assertEquals($categoryVisibility, $selectedCatalogVisibility);
 
-        $accountGroupCategoryVisibilityData = $this->getChangeSetData(
+        $customerGroupCategoryVisibilityData = $this->getChangeSetData(
             $crawler,
-            'accountgroup-category-visibility-changeset'
+            'customergroup-category-visibility-changeset'
         );
 
         $this->checkVisibilityValue(
-            $accountGroupCategoryVisibilityData,
+            $customerGroupCategoryVisibilityData,
             $this->group->getId(),
-            $visibilityForAccountGroup
+            $visibilityForCustomerGroup
         );
 
-        $accountCategoryVisibilityData = $this->getChangeSetData(
+        $customerCategoryVisibilityData = $this->getChangeSetData(
             $crawler,
-            'account-category-visibility-changeset'
+            'customer-category-visibility-changeset'
         );
 
-        $this->checkVisibilityValue($accountCategoryVisibilityData, $this->account->getId(), $visibilityForAccount);
+        $this->checkVisibilityValue($customerCategoryVisibilityData, $this->customer->getId(), $visibilityForCustomer);
     }
 
     public function testSubmitInvalidData()
@@ -126,15 +126,15 @@ class CategoryControllerTest extends WebTestCase
         );
 
         $this->assertNotNull(
-            $this->getCategoryVisibilityForAccount(
+            $this->getCategoryVisibilityForCustomer(
                 $manager,
                 $this->category,
-                $this->account
+                $this->customer
             )->getId()
         );
 
         $this->assertNotNull(
-            $this->getCategoryVisibilityForAccountGroup(
+            $this->getCategoryVisibilityForCustomerGroup(
                 $manager,
                 $this->category,
                 $this->group
@@ -144,10 +144,14 @@ class CategoryControllerTest extends WebTestCase
         $this->submitForm(
             CategoryVisibility::getDefault($this->category),
             json_encode(
-                [$this->account->getId() => ['visibility' => AccountCategoryVisibility::getDefault($this->category)]]
+                [$this->customer->getId() => ['visibility' => CustomerCategoryVisibility::getDefault($this->category)]]
             ),
             json_encode(
-                [$this->group->getId() => ['visibility' => AccountGroupCategoryVisibility::getDefault($this->category)]]
+                [
+                    $this->group->getId() => [
+                        'visibility' => CustomerGroupCategoryVisibility::getDefault($this->category),
+                    ],
+                ]
             )
         );
 
@@ -156,15 +160,15 @@ class CategoryControllerTest extends WebTestCase
         );
 
         $this->assertNull(
-            $this->getCategoryVisibilityForAccount(
+            $this->getCategoryVisibilityForCustomer(
                 $manager,
                 $this->category,
-                $this->account
+                $this->customer
             )->getId()
         );
 
         $this->assertNull(
-            $this->getCategoryVisibilityForAccountGroup(
+            $this->getCategoryVisibilityForCustomerGroup(
                 $manager,
                 $this->category,
                 $this->group
@@ -180,14 +184,17 @@ class CategoryControllerTest extends WebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
+            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
-        $this->client->request('GET', $this->getUrl(
-            'oro_product_frontend_product_index',
-            [
-                RequestProductHandler::CATEGORY_ID_KEY => $categoryId
-            ]
-        ));
+        $this->client->request(
+            'GET',
+            $this->getUrl(
+                'oro_product_frontend_product_index',
+                [
+                    RequestProductHandler::CATEGORY_ID_KEY => $categoryId,
+                ]
+            )
+        );
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 404);
@@ -215,14 +222,17 @@ class CategoryControllerTest extends WebTestCase
 
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
+            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
-        $this->client->request('GET', $this->getUrl(
-            'oro_product_frontend_product_index',
-            [
-                RequestProductHandler::CATEGORY_ID_KEY => $categoryId
-            ]
-        ));
+        $this->client->request(
+            'GET',
+            $this->getUrl(
+                'oro_product_frontend_product_index',
+                [
+                    RequestProductHandler::CATEGORY_ID_KEY => $categoryId,
+                ]
+            )
+        );
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 404);
@@ -230,11 +240,11 @@ class CategoryControllerTest extends WebTestCase
 
     /**
      * @param string $categoryVisibility
-     * @param string $visibilityForAccount
-     * @param string $visibilityForAccountGroup
+     * @param string $visibilityForCustomer
+     * @param string $visibilityForCustomerGroup
      * @return Crawler
      */
-    protected function submitForm($categoryVisibility, $visibilityForAccount, $visibilityForAccountGroup)
+    protected function submitForm($categoryVisibility, $visibilityForCustomer, $visibilityForCustomerGroup)
     {
         $this->client->followRedirects();
         $crawler = $this->client->request(
@@ -253,8 +263,8 @@ class CategoryControllerTest extends WebTestCase
                 '_token' => $token,
                 'visibility' => [
                     'all' => $categoryVisibility,
-                    'account' => $visibilityForAccount,
-                    'accountGroup' => $visibilityForAccountGroup,
+                    'customer' => $visibilityForCustomer,
+                    'customerGroup' => $visibilityForCustomerGroup,
                 ],
             ]
         );

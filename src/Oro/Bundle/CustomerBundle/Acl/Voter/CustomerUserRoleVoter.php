@@ -15,9 +15,9 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 class CustomerUserRoleVoter extends AbstractEntityVoter
 {
     const ATTRIBUTE_DELETE = 'DELETE';
-    const ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_UPDATE = 'FRONTEND_ACCOUNT_ROLE_UPDATE';
-    const ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_VIEW = 'FRONTEND_ACCOUNT_ROLE_VIEW';
-    const ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_DELETE = 'FRONTEND_ACCOUNT_ROLE_DELETE';
+    const ATTRIBUTE_FRONTEND_CUSTOMER_ROLE_UPDATE = 'FRONTEND_CUSTOMER_ROLE_UPDATE';
+    const ATTRIBUTE_FRONTEND_CUSTOMER_ROLE_VIEW = 'FRONTEND_CUSTOMER_ROLE_VIEW';
+    const ATTRIBUTE_FRONTEND_CUSTOMER_ROLE_DELETE = 'FRONTEND_CUSTOMER_ROLE_DELETE';
 
     const VIEW = 'view';
     const UPDATE = 'update';
@@ -27,9 +27,9 @@ class CustomerUserRoleVoter extends AbstractEntityVoter
      */
     protected $supportedAttributes = [
         self::ATTRIBUTE_DELETE,
-        self::ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_UPDATE,
-        self::ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_VIEW,
-        self::ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_DELETE,
+        self::ATTRIBUTE_FRONTEND_CUSTOMER_ROLE_UPDATE,
+        self::ATTRIBUTE_FRONTEND_CUSTOMER_ROLE_VIEW,
+        self::ATTRIBUTE_FRONTEND_CUSTOMER_ROLE_DELETE,
     ];
 
     /**
@@ -72,11 +72,11 @@ class CustomerUserRoleVoter extends AbstractEntityVoter
         switch ($attribute) {
             case static::ATTRIBUTE_DELETE:
                 return $this->getPermissionForDelete();
-            case static::ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_VIEW:
-                return $this->getPermissionForAccountRole(self::VIEW);
-            case static::ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_UPDATE:
-                return $this->getPermissionForAccountRole(self::UPDATE);
-            case static::ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_DELETE:
+            case static::ATTRIBUTE_FRONTEND_CUSTOMER_ROLE_VIEW:
+                return $this->getPermissionForCustomerRole(self::VIEW);
+            case static::ATTRIBUTE_FRONTEND_CUSTOMER_ROLE_UPDATE:
+                return $this->getPermissionForCustomerRole(self::UPDATE);
+            case static::ATTRIBUTE_FRONTEND_CUSTOMER_ROLE_DELETE:
                 return $this->getFrontendPermissionForDelete();
             default:
                 return self::ACCESS_ABSTAIN;
@@ -105,7 +105,7 @@ class CustomerUserRoleVoter extends AbstractEntityVoter
      * @param string $type
      * @return int
      */
-    protected function getPermissionForAccountRole($type)
+    protected function getPermissionForCustomerRole($type)
     {
         /* @var $user CustomerUser */
         $user = $this->getLoggedUser();

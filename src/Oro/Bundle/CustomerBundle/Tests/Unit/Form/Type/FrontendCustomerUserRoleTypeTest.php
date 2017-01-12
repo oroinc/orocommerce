@@ -7,14 +7,14 @@ use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Validator\Validation;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as AccountSelectTypeStub;
+use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType as CustomerSelectTypeStub;
 
 use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
 
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendCustomerUserRoleType;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\AclPriviledgeTypeStub;
 use Oro\Bundle\SecurityBundle\Form\Type\PrivilegeCollectionType;
@@ -23,13 +23,16 @@ use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\FrontendOwnerSelectTypeS
 
 class FrontendCustomerUserRoleTypeTest extends AbstractCustomerUserRoleTypeTest
 {
+    /** @var CustomerUser[] */
+    protected $customerUsers = [];
+
     /**
      * @return array
      */
     protected function getExtensions()
     {
-        $entityIdentifierType = new EntityIdentifierType([]);
-        $accountSelectType = new AccountSelectTypeStub($this->getAccounts(), AccountSelectType::NAME);
+        $entityIdentifierType = new EntityIdentifierType($this->getCustomerUsers());
+        $customerSelectType = new CustomerSelectTypeStub($this->getCustomers(), CustomerSelectType::NAME);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatableEntityType $registry */
         $translatableEntity = $this->getMockBuilder('Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType')
@@ -40,7 +43,7 @@ class FrontendCustomerUserRoleTypeTest extends AbstractCustomerUserRoleTypeTest
             new PreloadedExtension(
                 [
                     $entityIdentifierType->getName() => $entityIdentifierType,
-                    $accountSelectType->getName() => $accountSelectType,
+                    $customerSelectType->getName() => $customerSelectType,
                     'oro_acl_collection' => new PrivilegeCollectionType(),
                     AclPriviledgeTypeStub::NAME => new AclPriviledgeTypeStub(),
                     FrontendOwnerSelectTypeStub::NAME => new FrontendOwnerSelectTypeStub(),
@@ -68,7 +71,7 @@ class FrontendCustomerUserRoleTypeTest extends AbstractCustomerUserRoleTypeTest
 
         $this->assertTrue($form->has('appendUsers'));
         $this->assertTrue($form->has('removeUsers'));
-        $this->assertTrue($form->has('account'));
+        $this->assertTrue($form->has('customer'));
         $this->assertFalse($form->has('selfManaged'));
 
         $formConfig = $form->getConfig();
@@ -97,25 +100,25 @@ class FrontendCustomerUserRoleTypeTest extends AbstractCustomerUserRoleTypeTest
      */
     public function submitDataProvider()
     {
-        $roleLabel = 'account_role_label';
+        $roleLabel = 'customer_role_label';
         $alteredRoleLabel = 'altered_role_label';
-        $account = new Customer();
+        $customer = new Customer();
 
         $defaultRole = new CustomerUserRole();
         $defaultRole->setLabel($roleLabel);
-        $defaultRole->setAccount($account);
+        $defaultRole->setCustomer($customer);
         /** @var CustomerUserRole $existingRoleBefore */
         $existingRoleBefore = $this->getEntity(self::DATA_CLASS, 1);
         $existingRoleBefore
             ->setLabel($roleLabel)
             ->setRole($roleLabel, false)
-            ->setAccount($account);
+            ->setCustomer($customer);
 
         $existingRoleAfter = $this->getEntity(self::DATA_CLASS, 1);
         $existingRoleAfter
             ->setLabel($alteredRoleLabel)
             ->setRole($roleLabel, false)
-            ->setAccount($account);
+            ->setCustomer($customer);
 
         return [
             'empty' => [
@@ -124,7 +127,7 @@ class FrontendCustomerUserRoleTypeTest extends AbstractCustomerUserRoleTypeTest
                 'viewData' => $defaultRole,
                 'submittedData' => [
                     'label' => $roleLabel,
-                    'account' => $defaultRole->getAccount()->getName()
+                    'customer' => $defaultRole->getCustomer()->getName()
                 ],
                 'expectedData' => $defaultRole
             ],
@@ -134,41 +137,29 @@ class FrontendCustomerUserRoleTypeTest extends AbstractCustomerUserRoleTypeTest
                 'viewData' => $existingRoleBefore,
                 'submittedData' => [
                     'label' => $alteredRoleLabel,
-                    'account' => $existingRoleBefore->getAccount()->getName()
+                    'customer' => $existingRoleBefore->getCustomer()->getName()
                 ],
                 'expectedData' => $existingRoleAfter
             ]
         ];
     }
 
-    public function testSubmitUpdateAccountUsers()
+    public function testSubmitUpdateCustomerUsers()
     {
-        /** @var Customer $account */
-        $account1 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', 1);
-        $account2 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', 2);
+        list($customer1, $customer2) = array_values($this->getCustomers());
+        list($customerUser1, $customerUser2, $customerUser3) = array_values($this->getCustomerUsers());
 
         /** @var CustomerUserRole $role */
         $role = $this->getEntity(self::DATA_CLASS, 1);
         $role->setRole('label');
-        $role->setAccount($account1);
-
-        /** @var CustomerUser $accountUser1 */
-        $accountUser1 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', 1);
-        $accountUser1->setAccount($account1);
-
-        /** @var CustomerUser $accountUser2 */
-        $accountUser2 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', 2);
-        $accountUser2->setAccount($account2);
-
-        /** @var CustomerUser $accountUser3 */
-        $accountUser3 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', 3);
+        $role->setCustomer($customer1);
 
         /** @var CustomerUserRole $predefinedRole */
         $predefinedRole = $this->getEntity(self::DATA_CLASS, 2);
         $role->setRole('predefined');
-        $predefinedRole->addAccountUser($accountUser1);
-        $predefinedRole->addAccountUser($accountUser2);
-        $predefinedRole->addAccountUser($accountUser3);
+        $predefinedRole->addCustomerUser($customerUser1);
+        $predefinedRole->addCustomerUser($customerUser2);
+        $predefinedRole->addCustomerUser($customerUser3);
 
         $form = $this->factory->create(
             $this->formType,
@@ -177,7 +168,20 @@ class FrontendCustomerUserRoleTypeTest extends AbstractCustomerUserRoleTypeTest
         );
 
         $this->assertTrue($form->has('appendUsers'));
-        $this->assertEquals([$accountUser1], $form->get('appendUsers')->getData());
+        $this->assertEquals([$customerUser1], $form->get('appendUsers')->getData());
+
+        $form->get('appendUsers')->setData([$customerUser1, $customerUser2]);
+        $form->get('removeUsers')->setData([$customerUser1]);
+        $form->submit([
+            'label' => 'test label',
+            'customer' => new Customer(),
+            'appendUsers' => [1, 2],
+            'removeUsers' => [1],
+        ]);
+
+        $this->assertTrue($predefinedRole->getCustomerUsers()->contains($customerUser1));
+        $this->assertFalse($predefinedRole->getCustomerUsers()->contains($customerUser2));
+        $this->assertTrue($predefinedRole->getCustomerUsers()->contains($customerUser3));
     }
 
     /**
@@ -195,5 +199,34 @@ class FrontendCustomerUserRoleTypeTest extends AbstractCustomerUserRoleTypeTest
     {
         $this->formType = new FrontendCustomerUserRoleType();
         $this->formType->setDataClass(self::DATA_CLASS);
+    }
+
+    /**
+     * @return CustomerUser[]
+     */
+    protected function getCustomerUsers()
+    {
+        if (!$this->customerUsers) {
+            list($customer1, $customer2) = array_values($this->getCustomers());
+
+            /** @var CustomerUser $customerUser1 */
+            $customerUser1 = $this->getEntity(CustomerUser::class, 1);
+            $customerUser1->setCustomer($customer1);
+
+            /** @var CustomerUser $customerUser2 */
+            $customerUser2 = $this->getEntity(CustomerUser::class, 2);
+            $customerUser2->setCustomer($customer2);
+
+            /** @var CustomerUser $customerUser3 */
+            $customerUser3 = $this->getEntity(CustomerUser::class, 3);
+
+            $this->customerUsers = [
+                $customerUser1->getId() => $customerUser1,
+                $customerUser2->getId() => $customerUser2,
+                $customerUser3->getId() => $customerUser3,
+            ];
+        }
+
+        return $this->customerUsers;
     }
 }

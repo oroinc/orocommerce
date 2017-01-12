@@ -35,8 +35,8 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
             ['poNumber', 'PO-#1'],
             ['customerNotes', 'customer notes'],
             ['shipUntil', $now],
-            ['account', new Customer()],
-            ['accountUser', new CustomerUser()],
+            ['customer', new Customer()],
+            ['customerUser', new CustomerUser()],
             ['website', new Website()],
             ['source', new CheckoutSource()],
             ['shippingCost', Price::create(2, 'USD')],
@@ -49,14 +49,14 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
         $this->assertPropertyAccessors($entity, $properties);
     }
 
-    public function testSetAccountUser()
+    public function testSetCustomerUser()
     {
-        $account = new Customer();
-        $accountUser = new CustomerUser();
-        $accountUser->setAccount($account);
+        $customer = new Customer();
+        $customerUser = new CustomerUser();
+        $customerUser->setCustomer($customer);
         $entity = new Checkout();
-        $entity->setAccountUser($accountUser);
-        $this->assertSame($account, $entity->getAccount());
+        $entity->setCustomerUser($customerUser);
+        $this->assertSame($customer, $entity->getCustomer());
     }
 
     /**

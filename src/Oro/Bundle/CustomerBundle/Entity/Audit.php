@@ -16,16 +16,16 @@ class Audit extends AbstractAudit
      * @var CustomerUser $user
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser", cascade={"persist"})
-     * @ORM\JoinColumn(name="account_user_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
+     * @ORM\JoinColumn(name="customer_user_id", referencedColumnName="id", nullable=true, onDelete="CASCADE")
      */
-    protected $accountUser;
+    protected $customerUser;
 
     /**
      * {@inheritdoc}
      */
     public function setUser(AbstractUser $user = null)
     {
-        $this->accountUser = $user;
+        $this->customerUser = $user;
     }
 
     /**
@@ -33,6 +33,6 @@ class Audit extends AbstractAudit
      */
     public function getUser()
     {
-        return $this->accountUser;
+        return $this->customerUser;
     }
 }

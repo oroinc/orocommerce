@@ -13,8 +13,8 @@ define(function(require) {
          * @property {Object}
          */
         options: {
-            accountFieldId: '#accountFieldId',
-            datagridName: 'account-users-datagrid',
+            customerFieldId: '#customerFieldId',
+            datagridName: 'customer-users-datagrid',
             originalValue: null,
             previousValueDataAttribute: 'previousValue'
         },
@@ -22,7 +22,7 @@ define(function(require) {
         /**
          * @property {jQuery.Element}
          */
-        accountField: null,
+        customerField: null,
 
         /**
          * @inheritDoc
@@ -30,17 +30,17 @@ define(function(require) {
         initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
-            this.accountField = this.options._sourceElement.find(this.options.accountFieldId);
-            this.accountField.data(this.options.previousValueDataAttribute, this.options.originalValue);
+            this.customerField = this.options._sourceElement.find(this.options.customerFieldId);
+            this.customerField.data(this.options.previousValueDataAttribute, this.options.originalValue);
 
             this.options._sourceElement
-                .on('change', this.options.accountFieldId, _.bind(this.onAccountSelectorChange, this));
+                .on('change', this.options.customerFieldId, _.bind(this.onCustomerSelectorChange, this));
         },
 
         /**
          * @param {jQuery.Event} e
          */
-        onAccountSelectorChange: function(e) {
+        onCustomerSelectorChange: function(e) {
             var value = e.target.value;
 
             if (value === this.options.originalValue) {
@@ -49,14 +49,14 @@ define(function(require) {
                 return;
             }
 
-            this._getAccountConfirmDialog(
+            this._getCustomerConfirmDialog(
                 function() {
                     this._updateGridAndSaveParameters(value);
                 },
                 function() {
-                    this.accountField
-                        .inputWidget('val', this.accountField.data(this.options.previousValueDataAttribute));
-                    this.accountField.data(this.options.previousValueDataAttribute, this.options.originalValue);
+                    this.customerField
+                        .inputWidget('val', this.customerField.data(this.options.previousValueDataAttribute));
+                    this.customerField.data(this.options.previousValueDataAttribute, this.options.originalValue);
                 }
             );
         },
@@ -66,8 +66,8 @@ define(function(require) {
          * @private
          */
         _updateGridAndSaveParameters: function(value) {
-            this._updateAccountUserGrid(value);
-            this.accountField.data(this.options.previousValueDataAttribute, value);
+            this._updateCustomerUserGrid(value);
+            this.customerField.data(this.options.previousValueDataAttribute, value);
         },
 
         dispose: function() {
@@ -77,43 +77,43 @@ define(function(require) {
 
             this.options._sourceElement.off('change');
 
-            if (this.changeAccountConfirmDialog) {
-                this.changeAccountConfirmDialog.off();
-                this.changeAccountConfirmDialog.dispose();
-                delete this.changeAccountConfirmDialog;
+            if (this.changeCustomerConfirmDialog) {
+                this.changeCustomerConfirmDialog.off();
+                this.changeCustomerConfirmDialog.dispose();
+                delete this.changeCustomerConfirmDialog;
             }
 
             CustomerUserRole.__super__.dispose.call(this);
         },
 
         /**
-         * Show account confirmation dialog
+         * Show customer confirmation dialog
          *
          * @param {function()} okCallback
          * @param {function()} cancelCallback
          * @private
          */
-        _getAccountConfirmDialog: function(okCallback, cancelCallback) {
-            if (!this.changeAccountConfirmDialog) {
-                this.changeAccountConfirmDialog = this._createChangeAccountConfirmationDialog();
+        _getCustomerConfirmDialog: function(okCallback, cancelCallback) {
+            if (!this.changeCustomerConfirmDialog) {
+                this.changeCustomerConfirmDialog = this._createChangeCustomerConfirmationDialog();
             }
 
-            this.changeAccountConfirmDialog
+            this.changeCustomerConfirmDialog
                 .off('ok').on('ok', _.bind(okCallback, this))
                 .off('cancel').on('cancel', _.bind(cancelCallback, this));
 
-            this.changeAccountConfirmDialog.open();
+            this.changeCustomerConfirmDialog.open();
         },
 
         /**
-         * Create change account confirmation dialog
+         * Create change customer confirmation dialog
          *
          * @returns {Modal}
          * @private
          */
-        _createChangeAccountConfirmationDialog: function() {
+        _createChangeCustomerConfirmationDialog: function() {
             return new Modal({
-                title: __('oro.customer.customer_user_role.change_account_confirmation_title'),
+                title: __('oro.customer.customer_user_role.change_customer_confirmation_title'),
                 okText: __('oro.customer.customer_user_role.continue'),
                 cancelText: __('oro.customer.customer_user_role.cancel'),
                 content: __('oro.customer.customer_user_role.content'),
@@ -123,20 +123,20 @@ define(function(require) {
         },
 
         /**
-         * Update account user grid
+         * Update customer user grid
          *
          * @param {String} value
          * @private
          */
-        _updateAccountUserGrid: function(value) {
+        _updateCustomerUserGrid: function(value) {
             if (value) {
-                mediator.trigger('datagrid:setParam:' + this.options.datagridName, 'newAccount', value);
+                mediator.trigger('datagrid:setParam:' + this.options.datagridName, 'newCustomer', value);
             } else {
-                mediator.trigger('datagrid:removeParam:' + this.options.datagridName, 'newAccount');
+                mediator.trigger('datagrid:removeParam:' + this.options.datagridName, 'newCustomer');
             }
 
-            // Add param to know this request is change account action
-            mediator.trigger('datagrid:setParam:' + this.options.datagridName, 'changeAccountAction', 1);
+            // Add param to know this request is change customer action
+            mediator.trigger('datagrid:setParam:' + this.options.datagridName, 'changeCustomerAction', 1);
             mediator.trigger('datagrid:doReset:' + this.options.datagridName);
         }
     });

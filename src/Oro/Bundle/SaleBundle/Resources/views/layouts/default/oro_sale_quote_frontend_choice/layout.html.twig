@@ -61,22 +61,22 @@
 {% endblock %}
 
 {% block _quote_view_information_widget %}
-    <div class="account-oq-container">
-        <div class="account-oq__item__head">
-            <div class="account-oq__item account-oq__item_full mb0-sm">
-                <h2 class="account-oq__item__title">
+    <div class="customer-oq-container">
+        <div class="customer-oq__item__head">
+            <div class="customer-oq__item customer-oq__item_full mb0-sm">
+                <h2 class="customer-oq__item__title">
                     {{ 'oro.frontend.sale.quote.sections.general'|trans }}
                 </h2>
             </div>
         </div>
-        <div class="account-oq__item__body">
-            <div class="account-oq__item">
-                <div class="account-oq__order-info">
+        <div class="customer-oq__item__body">
+            <div class="customer-oq__item">
+                <div class="customer-oq__order-info">
                     <table class="table borderless mobile-table">
                         <tbody>
                         {% if quote.assignedUsers | length %}
                             <tr>
-                                <td class="account-oq__order-info__title">{{ 'oro.frontend.sale.quote.assigned_account_users.label'|trans }}</td>
+                                <td class="customer-oq__order-info__title">{{ 'oro.frontend.sale.quote.assigned_customer_users.label'|trans }}</td>
                                 <td>
                                     {% set assigned_users = [] %}
                                     {% for entity in quote.assignedUsers %}
@@ -86,29 +86,29 @@
                                 </td>
                             </tr>
                         {% endif %}
-                        <tr class="account-oq__order-info__control">
-                            <td class="account-oq__order-info__title">{{ 'oro.frontend.sale.quote.valid_until.label'|trans }}</td>
+                        <tr class="customer-oq__order-info__control">
+                            <td class="customer-oq__order-info__title">{{ 'oro.frontend.sale.quote.valid_until.label'|trans }}</td>
                             <td>{{ quote.validUntil ? quote.validUntil|oro_format_datetime : 'N/A'|trans }}</td>
                         </tr>
-                        <tr class="account-oq__order-info__control">
-                            <td class="account-oq__order-info__title">{{ 'oro.frontend.sale.quote.po_number.label'|trans }}</td>
+                        <tr class="customer-oq__order-info__control">
+                            <td class="customer-oq__order-info__title">{{ 'oro.frontend.sale.quote.po_number.label'|trans }}</td>
                             <td>{{ quote.poNumber|default('N/A'|trans) }}</td>
                         </tr>
                         </tbody>
                     </table>
                 </div>
             </div>
-            <div class="account-oq__item">
-                <div class="account-oq__order-info">
+            <div class="customer-oq__item">
+                <div class="customer-oq__order-info">
                     <table class="table borderless  mobile-table">
                         <tbody>
-                        <tr class="account-oq__order-info__control">
-                            <td class="account-oq__order-info__title">{{ 'oro.frontend.sale.quote.ship_until.label'|trans }}</td>
+                        <tr class="customer-oq__order-info__control">
+                            <td class="customer-oq__order-info__title">{{ 'oro.frontend.sale.quote.ship_until.label'|trans }}</td>
                             <td>{{ quote.shipUntil|oro_format_date|default('N/A'|trans) }}</td>
                         </tr>
                         {% if paymentTerm is defined and paymentTerm is not empty %}
-                            <tr class="account-oq__order-info__control">
-                                <td class="account-oq__order-info__title">{{ 'oro.paymentterm.entity_label'|trans }}</td>
+                            <tr class="customer-oq__order-info__control">
+                                <td class="customer-oq__order-info__title">{{ 'oro.paymentterm.entity_label'|trans }}</td>
                                 <td>{{ paymentTerm.label|escape }}</td>
                             </tr>
                         {% endif %}
@@ -135,8 +135,8 @@
 
 {% block quote_body_column_element_widget %}
     {% if address is not null %}
-        <tr class="account-oq__order-info__control">
-            <td class="account-oq__order-info__title">{{ label|trans }}</td>
+        <tr class="customer-oq__order-info__control">
+            <td class="customer-oq__order-info__title">{{ label|trans }}</td>
             <td>{{ block_widget(block) }}</td>
         </tr>
     {% endif %}

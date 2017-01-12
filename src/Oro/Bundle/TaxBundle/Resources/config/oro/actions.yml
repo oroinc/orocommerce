@@ -3,18 +3,18 @@ operations:
       exclude_datagrids:
           - tax-product-grid
           - products-tax-code-select-grid
-          - accounts-tax-code-select-grid
+          - customers-tax-code-select-grid
           - tax-taxes-select-grid
           - tax-jurisdiction-select-grid
-          - tax-account-group-grid
-          - tax-account-grid
+          - tax-customer-group-grid
+          - tax-customer-grid
 
     DELETE:
       exclude_datagrids:
           - tax-product-grid
           - products-tax-code-select-grid
-          - accounts-tax-code-select-grid
+          - customers-tax-code-select-grid
           - tax-taxes-select-grid
           - tax-jurisdiction-select-grid
-          - tax-account-group-grid
-          - tax-account-grid
+          - tax-customer-group-grid
+          - tax-customer-grid

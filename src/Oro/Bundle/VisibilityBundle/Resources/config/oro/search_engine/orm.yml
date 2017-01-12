@@ -1,6 +1,6 @@
 services:
-    oro_website_search.driver.account_partial_update_driver:
-        class: 'Oro\Bundle\VisibilityBundle\Driver\OrmAccountPartialUpdateDriver'
+    oro_website_search.driver.customer_partial_update_driver:
+        class: 'Oro\Bundle\VisibilityBundle\Driver\OrmCustomerPartialUpdateDriver'
         arguments:
             - '@oro_website_search.provider.placeholder_provider'
             - '@oro_visibility.visibility.provider.product_visibility_provider'

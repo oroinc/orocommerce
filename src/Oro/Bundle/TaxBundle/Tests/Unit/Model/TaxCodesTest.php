@@ -79,7 +79,7 @@ class TaxCodesTest extends \PHPUnit_Framework_TestCase
                 ],
                 'expected' => true
             ],
-            'without account' => [
+            'without customer' => [
                 'codes' => [
                     TaxCode::create('val1', TaxCodeInterface::TYPE_PRODUCT),
                 ],

@@ -49,9 +49,12 @@ class OroAccountBundle implements
         $this->renameAccountAdrAdrTypeTable($schema, $queries);
         $this->renameAccountUserAddressTable($schema, $queries);
         $this->renameAccountAddressTable($schema, $queries);
+        $this->renameAccWindowsStateTable($schema, $queries);
+        $this->renameAccNavItemPinbarTable($schema, $queries);
         $this->renameCustomerUserRole($schema, $queries);
         $this->renameCustomerGroup($schema, $queries);
-
+        $this->renameLoadedFixtures($queries);
+        $this->updateEntityConfigAcl();
 
         $configManager = $this->container->get('oro_entity_config.config_manager');
         $registry = $this->container->get('doctrine');
@@ -71,6 +74,7 @@ class OroAccountBundle implements
             'accountuserrole',
             'customeruserrole'
         );
+        $this->alterScopes($schema, $queries);
     }
 
     /**
@@ -135,7 +139,6 @@ class OroAccountBundle implements
 
         $this->renameAccountId($schema, $queries, 'oro_account_user');
 
-//        $schema->getTable('oro_account_user_role')->dropIndex('oro_customer_user_role_account_id_label_idx');
         $this->renameAccountId($schema, $queries, 'oro_account_user_role');
 
         $this->renameAccountId($schema, $queries, 'oro_account_sales_reps');
@@ -572,7 +575,6 @@ class OroAccountBundle implements
                 $query->setTargetClass('CustomerGroup');
                 $queries->addPostQuery($query);
             }
-
             $this->migrateConfig(
                 $configManager,
                 'Oro\Bundle\ActivityListBundle\Entity\ActivityList',
@@ -648,7 +650,7 @@ class OroAccountBundle implements
             'oro_customer_user'
         );
 
-//        $this->renameAccountUserId($schema, $queries, 'oro_audit');
+        $this->renameAccountUserId($schema, $queries, 'oro_audit');
 
         $this->renameAccountUserId($schema, $queries, 'oro_acc_pagestate');
         $this->renameExtension->renameTable(
@@ -667,6 +669,25 @@ class OroAccountBundle implements
         );
 
         $this->renameAccountUserId($schema, $queries, 'oro_acc_navigation_history');
+
+        $accNavigationHistory = $schema->getTable('oro_acc_navigation_history');
+        $accNavigationHistory->dropIndex('oro_acc_nav_history_route_idx');
+        $accNavigationHistory->dropIndex('oro_acc_nav_history_entity_id_idx');
+        $extension->addIndex(
+            $schema,
+            $queries,
+            'oro_acc_navigation_history',
+            ['route'],
+            'oro_cus_nav_history_route_idx'
+        );
+        $extension->addIndex(
+            $schema,
+            $queries,
+            'oro_acc_navigation_history',
+            ['entity_id'],
+            'oro_cus_nav_history_entity_id_idx'
+        );
+
         $this->renameExtension->renameTable(
             $schema,
             $queries,
@@ -690,23 +711,66 @@ class OroAccountBundle implements
 
         $queries->addQuery(new UpdateTableFieldQuery(
             'oro_email_template',
+            'content',
+            'oro_customer_frontend_account_user_confirmation',
+            'oro_customer_frontend_customer_user_confirmation'
+        ));
+
+        $queries->addQuery(new UpdateTableFieldQuery(
+            'oro_email_template',
+            'content',
+            'oro_customer_account_user_security_login',
+            'oro_customer_customer_user_security_login'
+        ));
+
+        $queries->addQuery(new UpdateTableFieldQuery(
+            'oro_email_template',
+            'content',
+            'oro_customer_frontend_account_user_password_reset',
+            'oro_customer_frontend_customer_user_password_reset'
+        ));
+        $queries->addQuery(new UpdateTableFieldQuery(
+            'oro_email_template',
             'entityName',
             'AccountUser',
             'CustomerUser'
         ));
-//        $queries->addQuery(new UpdateTableFieldQuery(
-//            'oro_customer_user',
-//            'first_name',
-//            'AccountUser',
-//            'CustomerUser'
-//        ));
-//        $queries->addQuery(new UpdateTableFieldQuery(
-//            'oro_customer_user',
-//            'last_name',
-//            'AccountUser',
-//            'CustomerUser'
-//        ));
-
+        $queries->addQuery(new UpdateTableFieldQuery(
+            'oro_email_template',
+            'entityName',
+            'AccountUser',
+            'CustomerUser'
+        ));
+        $queries->addQuery(new UpdateTableFieldQuery(
+            'oro_customer_user',
+            'first_name',
+            'AccountUser',
+            'CustomerUser'
+        ));
+        $queries->addQuery(new UpdateTableFieldQuery(
+            'oro_customer_user',
+            'last_name',
+            'AccountUser',
+            'CustomerUser'
+        ));
+        $queries->addQuery(new UpdateTableFieldQuery(
+            'oro_customer_user',
+            'username',
+            'account_user@example.com',
+            'customer_user@example.com'
+        ));
+        $queries->addQuery(new UpdateTableFieldQuery(
+            'oro_customer_user',
+            'email',
+            'account_user@example.com',
+            'customer_user@example.com'
+        ));
+        $queries->addQuery(new UpdateTableFieldQuery(
+            'oro_customer_user',
+            'password',
+            'sYCOBCtj8wbkvl6IFqAn43MR22NMOEqI8z368IYucept7U4w+MqGLIwvPTP/mpCfovQOKAl2GZBp0KAqqfB15A==',
+            'ie6IPwSIHjZA7OWy5pTb9ae8dz94+ks5JOERDiDXyzhhneKnjsSJ8wKQXTmvVFUoGnLVY+yQheI89TgWjzHaOQ=='
+        ));
         $queries->addQuery(new UpdateTableFieldQuery(
             'oro_migrations_data',
             'class_name',
@@ -732,7 +796,6 @@ class OroAccountBundle implements
                 $query->setFieldName($relation);
                 $queries->addPostQuery($query);
             }
-
             $this->migrateConfig(
                 $configManager,
                 'Oro\Bundle\ActivityListBundle\Entity\ActivityList',
@@ -754,17 +817,7 @@ class OroAccountBundle implements
             );
         }
         if ($schema->hasTable('oro_rel_6f8f552aa6adb604264ef1')) {
-//            $table = $schema->getTable('oro_rel_6f8f552aa6adb604264ef1');
             $schema->dropTable('oro_rel_6f8f552aa6adb604264ef1');
-//            $fk = $this->getConstraintName($table, 'accountuser_id');
-//            $table->removeForeignKey($fk);
-//            $extension->renameColumn($schema, $queries, $table, 'accountuser_id', 'customeruser_id');
-//            $extension->renameTable(
-//                $schema,
-//                $queries,
-//                'oro_rel_6f8f552aa6adb604264ef1',
-//                'oro_rel_6f8f552a3708e583c5ba51'
-//            );
         }
         $this->migrateConfig(
             $configManager,
@@ -802,7 +855,6 @@ class OroAccountBundle implements
             'oro_rel_46a29d19a6adb604a9b8e1',
             'oro_rel_46a29d193708e583c5ba51'
         );
-
         $this->migrateConfig(
             $configManager,
             'Oro\Bundle\AttachmentBundle\Entity\Attachment',
@@ -835,6 +887,16 @@ class OroAccountBundle implements
             '.customeruser'
         );
         $migration->migrate(
+            'Oro\Bundle\CustomerBundle\Entity\Customer',
+            'account-accounts-select-grid',
+            'customer-customers-select-grid'
+        );
+        $migration->migrate(
+            'Oro\Bundle\CustomerBundle\Entity\Customer',
+            'oro_customer_account_select',
+            'oro_customer_customer_select'
+        );
+        $migration->migrate(
             'Oro\Bundle\ActivityListBundle\Entity\ActivityList',
             '.accountuser',
             '.customeruser'
@@ -859,7 +921,6 @@ class OroAccountBundle implements
             '.accountuser',
             '.customeruser'
         );
-
         $this->migrateConfig(
             $configManager,
             'Oro\Bundle\EmailBundle\Entity\Email',
@@ -876,28 +937,45 @@ class OroAccountBundle implements
             'customer_user_d5622eff',
             RelationType::MANY_TO_MANY
         );
-//        $this->migrateConfig(
-//            $configManager,
-//            'Oro\Bundle\NoteBundle\Entity\Note',
-//            'Oro\Bundle\CustomerBundle\Entity\CustomerUser',
-//            'account_user_741cdecd',
-//            'customer_user_d5622eff',
-//            RelationType::MANY_TO_MANY
-//        );
-//        $this->migrateConfig(
-//            $configManager,
-//            'Oro\Bundle\NoteBundle\Entity\Note',
-//            'Oro\Bundle\CustomerBundle\Entity\CustomerUser',
-//            'account_user_1cc98a31',
-//            'customer_user_d5622eff',
-//            RelationType::MANY_TO_MANY
-//        );
 
         $this->renameRelationTable(
             $schema,
             $queries,
             'oro_rel_26535370a6adb604264ef1',
             'oro_rel_265353703708e583c5ba51'
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     */
+    private function renameAccWindowsStateTable(Schema $schema, QueryBag $queries)
+    {
+        $windowsState = $schema->getTable('oro_acc_windows_state');
+        $windowsState->dropIndex('oro_acc_windows_state_acu_idx');
+        $windowsStateForeignKey = $this->getConstraintName($windowsState, 'customer_user_id');
+        $windowsState->removeForeignKey($windowsStateForeignKey);
+
+        $this->renameExtension->renameTable(
+            $schema,
+            $queries,
+            "oro_acc_windows_state",
+            "oro_cus_windows_state"
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     */
+    private function renameAccNavItemPinbarTable(Schema $schema, QueryBag $queries)
+    {
+        $this->renameExtension->renameTable(
+            $schema,
+            $queries,
+            "oro_acc_nav_item_pinbar",
+            "oro_cus_nav_item_pinbar"
         );
     }
 
@@ -973,5 +1051,192 @@ class OroAccountBundle implements
             $extension->renameColumn($schema, $queries, $table, 'accountuser_id', 'customeruser_id');
             $extension->renameTable($schema, $queries, $tableName, $newTableName);
         }
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     */
+    private function alterScopes(Schema $schema, QueryBag $queries)
+    {
+        /** @var ConfigManager $configManager */
+        $configManager = $this->container->get('oro_entity_config.config_manager');
+
+        $extension = $this->renameExtension;
+        $table = $schema->getTable('oro_scope');
+        if ($table->hasColumn('account_id')) {
+            $fk = $this->getConstraintName($table, 'account_id');
+            $table->removeForeignKey($fk);
+            try {
+                $fk = $this->getConstraintName($table, 'accountGroup_id');
+                $table->removeForeignKey($fk);
+                $extension->renameColumn($schema, $queries, $table, 'accountGroup_id', 'customerGroup_id');
+            } catch (\LogicException $ex) {
+                $fk = $this->getConstraintName($table, 'accountgroup_id');
+                $table->removeForeignKey($fk);
+                $extension->renameColumn($schema, $queries, $table, 'accountgroup_id', 'customergroup_id');
+            }
+            $extension->renameColumn($schema, $queries, $table, 'account_id', 'customer_id');
+        }
+        $this->migrateConfig(
+            $configManager,
+            'Oro\Bundle\ScopeBundle\Entity\Scope',
+            'Oro\Bundle\CustomerBundle\Entity\Customer',
+            'account',
+            'customer',
+            RelationType::MANY_TO_ONE
+        );
+        $this->migrateConfig(
+            $configManager,
+            'Oro\Bundle\ScopeBundle\Entity\Scope',
+            'Oro\Bundle\CustomerBundle\Entity\CustomerGroup',
+            'accountGroup',
+            'customerGroup',
+            RelationType::MANY_TO_ONE
+        );
+    }
+
+    /**
+     * @param QueryBag $queries
+     */
+    private function renameLoadedFixtures(QueryBag $queries)
+    {
+        $queries->addQuery(new UpdateTableFieldQuery(
+            'oro_migrations_data',
+            'class_name',
+            'LoadAccountUserRoles',
+            'LoadCustomerUserRoles'
+        ));
+        $queries->addQuery(new UpdateTableFieldQuery(
+            'oro_migrations_data',
+            'class_name',
+            'Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadAnonymousAccountGroup',
+            'Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadAnonymousCustomerGroup'
+        ));
+        $queries->addQuery(new UpdateTableFieldQuery(
+            'oro_migrations_data',
+            'class_name',
+            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccount',
+            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomer'
+        ));
+        $queries->addQuery(new UpdateTableFieldQuery(
+            'oro_migrations_data',
+            'class_name',
+            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccount',
+            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomer'
+        ));
+        $queries->addQuery(new UpdateTableFieldQuery(
+            'oro_migrations_data',
+            'class_name',
+            'Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData',
+            'Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData'
+        ));
+        $queries->addQuery(new UpdateTableFieldQuery(
+            'oro_migrations_data',
+            'class_name',
+            'Oro\Bundle\MenuBundle\Migrations\Data\ORM\AddConditionForMyAccountMenu',
+            'Oro\Bundle\MenuBundle\Migrations\Data\ORM\AddConditionForMyCustomerMenu'
+        ));
+        $queries->addQuery(new UpdateTableFieldQuery(
+            'oro_migrations_data',
+            'class_name',
+            'Oro\Bundle\PaymentBundle\Migrations\Data\Demo\ORM\LoadPaymentTermToAccount',
+            'Oro\Bundle\PaymentBundle\Migrations\Data\Demo\ORM\LoadPaymentTermToCustomer'
+        ));
+        $queries->addQuery(new UpdateTableFieldQuery(
+            'oro_migrations_data',
+            'class_name',
+            'Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListToAccount',
+            'Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListToCustomer'
+        ));
+        $queries->addQuery(new UpdateTableFieldQuery(
+            'oro_config_value',
+            'name',
+            'anonymous_account_group',
+            'anonymous_customer_group'
+        ));
+
+        $queries->addQuery(new UpdateTableFieldQuery(
+            'oro_email_template',
+            'name',
+            'account_user_welcome_email',
+            'customer_user_welcome_email'
+        ));
+        $queries->addQuery(new UpdateTableFieldQuery(
+            'oro_email_template',
+            'content',
+            'accountUser',
+            'customerUser'
+        ));
+
+        $queries->addQuery(new UpdateTableFieldQuery(
+            'oro_email_template',
+            'name',
+            'account_user_confirmation_email',
+            'customer_user_confirmation_email'
+        ));
+
+        $queries->addQuery(new UpdateTableFieldQuery(
+            'oro_email_template',
+            'name',
+            'account_user_reset_password',
+            'customer_user_reset_password'
+        ));
+    }
+
+    private function updateEntityConfigAcl()
+    {
+        /** @var ConfigManager $configManager */
+        $configManager = $this->container->get('oro_entity_config.config_manager');
+        $registry = $this->container->get('doctrine');
+
+        $migration = new ConfigMigration($registry, $configManager);
+
+        $classes = [
+            'Oro\Bundle\CustomerBundle\Entity\Customer',
+            'Oro\Bundle\CustomerBundle\Entity\CustomerUser',
+            'Oro\Bundle\CustomerBundle\Entity\CustomerAddress',
+            'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress',
+            'Oro\Bundle\CustomerBundle\Entity\CustomerGroup',
+            'Oro\Bundle\CustomerBundle\Entity\CustomerUserRole',
+            'Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings',
+            'Oro\Bundle\ActivityListBundle\Entity\ActivityList',
+            'Oro\Bundle\AttachmentBundle\Entity\Attachment',
+            'Oro\Bundle\CalendarBundle\Entity\CalendarEvent',
+            'Oro\Bundle\EmailBundle\Entity\Email',
+            'Oro\Bundle\NoteBundle\Entity\Note',
+            'Oro\Bundle\SaleBundle\Entity\QuoteProduct',
+            'Oro\Bundle\ScopeBundle\Entity\Scope',
+            'Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility',
+            'Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility',
+            'Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibility',
+            'Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility',
+            'Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility',
+            'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode',
+        ];
+        foreach ($classes as $class) {
+            $migration->migrate($class, '.account', '.customer');
+        }
+        $classes = [
+            'Oro\Bundle\CheckoutBundle\Entity\Checkout',
+            'Oro\Bundle\InvoiceBundle\Entity\Invoice',
+            'Oro\Bundle\OrderBundle\Entity\Order',
+            'Oro\Bundle\RFPBundle\Entity\Request',
+            'Oro\Bundle\SaleBundle\Entity\Quote',
+            'Oro\Bundle\ShoppingListBundle\Entity\ShoppingList',
+            'Oro\Bundle\ShoppingListBundle\Entity\LineItem',
+        ];
+        foreach ($classes as $class) {
+            $migration->migrate($class, 'account_user_id', 'customer_user_id');
+            $migration->migrate($class, 'accountUser', 'customerUser');
+        }
+        $migration->migrate('Oro\Bundle\CustomerBundle\Entity\CustomerUser', 'account', 'customer');
+        $migration->migrate('Oro\Bundle\CustomerBundle\Entity\CustomerUserRole', 'account', 'customer');
+
+        $migration->migrate(
+            'Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility',
+            '.account',
+            '.customer'
+        );
     }
 }
