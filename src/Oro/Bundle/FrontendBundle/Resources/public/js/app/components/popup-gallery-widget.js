@@ -70,13 +70,13 @@ define(function(require) {
                 self.renderThumbnails();
                 self.setDependentSlide();
                 $('body').addClass('gallery-popup-opened');
-                self.$el.addClass('show-gallery-popup');
+                self.$el.addClass('popup-gallery-widget--opened');
 
                 self.onOpen();
             });
             $('[data-trigger-gallery-close]').on('click', function() {
                 $('body').removeClass('gallery-popup-opened');
-                self.$el.removeClass('show-gallery-popup');
+                self.$el.removeClass('popup-gallery-widget--opened');
 
                 setTimeout(function() {
                     self.setDependentSlide();

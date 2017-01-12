@@ -17,7 +17,8 @@
     transition: .4s all;
 
     //Slick slider customization
-    .slick-prev, .slick-next {
+    .slick-prev,
+    .slick-next {
         position: absolute;
         top: 50%;
 
@@ -285,20 +286,12 @@
             }
         }
     }
-}
 
-.show-gallery-popup {
-    opacity: 1;
-    visibility: visible;
-
-    .popup-gallery-widget {
-        &__images,
-        &__thumbnails {
-            &.slick-initialized {
-                opacity: 1;
-                visibility: visible;
-            }
-        }
+    &--opened,
+    &--opened &__images.slick-initialized,
+    &--opened &__thumbnails.slick-initialized {
+        opacity: 1;
+        visibility: visible;
     }
 }
 
