@@ -743,6 +743,9 @@ datagrids:
                     data_name: calendarDate.date
                     label:     oro.product.grouping.label
                     column_name: dateGrouping
+                    calendar_entity: %oro_report.calendar_date.entity.class%
+                    target_entity: %oro_order.entity.order.class%
+                    not_nullable_field: product.id
             default:
                 grouping:
                     value: day
