@@ -141,9 +141,6 @@ define(function(require) {
         },
 
         revertChanges: function() {
-            if (!this.formState) {
-                return;
-            }
             this.$el.find(':input[data-name]').each(_.bind(function(i, el) {
                 var value = this.formState[el.name];
                 if (value !== undefined && el.value !== value) {

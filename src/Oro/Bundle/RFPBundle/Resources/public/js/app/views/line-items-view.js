@@ -5,6 +5,7 @@ define(function(require) {
     var $ = require('jquery');
     var _ = require('underscore');
     var BaseView = require('oroui/js/app/views/base/view');
+    var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var ProductsPricesComponent = require('oropricing/js/app/components/products-prices-component');
     var mediator = require('oroui/js/mediator');
 
@@ -13,7 +14,7 @@ define(function(require) {
      * @extends oroui.app.views.base.View
      * @class ororfp.app.views.LineItemsView
      */
-    LineItemsView = BaseView.extend({
+    LineItemsView = BaseView.extend(_.extend({}, ElementsHelper, {
         /**
          * @property {Object}
          */
@@ -35,6 +36,10 @@ define(function(require) {
                 tierPricesRoute: this.options.tierPricesRoute
             }));
 
+            this.initializeSubviews();
+        },
+
+        handleLayoutInit: function() {
             this.$el.find('.add-lineitem').mousedown(function(e) {
                 $(this).click();
             });
@@ -93,7 +98,7 @@ define(function(require) {
 
             LineItemsView.__super__.dispose.call(this);
         }
-    });
+    }));
 
     return LineItemsView;
 });

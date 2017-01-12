@@ -56,9 +56,11 @@ define(function(require) {
             if (layout === 'deferred-initialize') {
                 this.$el.trigger('deferredInitialize', options);
                 this.handleLayoutInit();
-            } else {
+            } else if (layout === 'separate') {
                 this.initLayout(options)
                     .done(_.bind(this.handleLayoutInit, this));
+            } else {
+                this.handleLayoutInit();
             }
         },
 
