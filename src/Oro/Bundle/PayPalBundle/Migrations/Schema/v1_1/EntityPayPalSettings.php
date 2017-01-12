@@ -19,7 +19,7 @@ class EntityPayPalSettings implements Migration
         $this->createOroPaypalCcPaymentActionTable($schema);
         $this->createOroPaypalCreditCardLblTable($schema);
         $this->createOroPaypalCreditCardShLblTable($schema);
-        $this->createOroPaypalCreditCardTypesTable($schema);
+        $this->createOroPaypalCreditCardTypeTable($schema);
         $this->createOroPaypalEcPaymentActionTable($schema);
         $this->createOroPaypalXprssChktLblTable($schema);
         $this->createOroPaypalXprssChktShrtLblTable($schema);
@@ -118,7 +118,7 @@ class EntityPayPalSettings implements Migration
      *
      * @param Schema $schema
      */
-    protected function createOroPaypalCreditCardTypesTable(Schema $schema)
+    protected function createOroPaypalCreditCardTypeTable(Schema $schema)
     {
         $table = $schema->createTable('oro_paypal_credit_card_types');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);

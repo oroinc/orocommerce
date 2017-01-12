@@ -42,9 +42,9 @@ class PayPalSettings extends Transport
     protected $expressCheckoutPaymentAction;
 
     /**
-     * @var CreditCardTypes[]|Collection
+     * @var CreditCardType[]|Collection
      *
-     * @ORM\ManyToMany(targetEntity="Oro\Bundle\PayPalBundle\Entity\CreditCardTypes")
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\PayPalBundle\Entity\CreditCardType")
      * @ORM\JoinTable(
      *      name="oro_paypal_allowed_cc_types",
      *      joinColumns={
@@ -791,11 +791,11 @@ class PayPalSettings extends Transport
     /**
      * Add allowedCreditCardType
      *
-     * @param CreditCardTypes $allowedCreditCardType
+     * @param CreditCardType $allowedCreditCardType
      *
      * @return PayPalSettings
      */
-    public function addAllowedCreditCardType(CreditCardTypes $allowedCreditCardType)
+    public function addAllowedCreditCardType(CreditCardType $allowedCreditCardType)
     {
         if (!$this->allowedCreditCardTypes->contains($allowedCreditCardType)) {
             $this->allowedCreditCardTypes->add($allowedCreditCardType);
@@ -807,11 +807,11 @@ class PayPalSettings extends Transport
     /**
      * Remove allowedCreditCardType
      *
-     * @param CreditCardTypes $allowedCreditCardType
+     * @param CreditCardType $allowedCreditCardType
      *
      * @return PayPalSettings
      */
-    public function removeAllowedCreditCardType(CreditCardTypes $allowedCreditCardType)
+    public function removeAllowedCreditCardType(CreditCardType $allowedCreditCardType)
     {
         if ($this->allowedCreditCardTypes->contains($allowedCreditCardType)) {
             $this->allowedCreditCardTypes->removeElement($allowedCreditCardType);
