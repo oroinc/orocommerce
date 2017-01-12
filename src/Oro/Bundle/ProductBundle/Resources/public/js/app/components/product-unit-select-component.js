@@ -60,7 +60,7 @@ define(function(require) {
                         _.__(this.options.unitLabel.replace('%s', unitCode)) + '</option>';
                 }
 
-                select .html(content);
+                select.html(content);
             }
         },
 

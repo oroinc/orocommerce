@@ -14,7 +14,6 @@
         <div class="form__col">
             {{ form_label(form.quantity) }}
             {{ form_widget(form.quantity, {'attr' : {'class': 'input--short'}}) }}
-            {{ form_widget(form.unit, {'attr' : {'class': 'no-select2'}}) }}
 
             {% if isUnitVisible %}
                 <span class="label">

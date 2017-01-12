@@ -48,7 +48,7 @@ define(function(require) {
          * @inheritDoc
          */
         dispose: function() {
-            this.grid.off('shown');
+            this.grid.off(null, null, this);
 
             ProductDataGidComponent.__super__.dispose.call(this);
         }
