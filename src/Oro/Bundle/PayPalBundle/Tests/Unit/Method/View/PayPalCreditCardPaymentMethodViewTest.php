@@ -4,10 +4,9 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method\View;
 
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Bundle\PayPalBundle\Form\Type\CreditCardType;
-use Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfigInterface;
+use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\View\PayPalCreditCardPaymentMethodView;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -25,7 +24,7 @@ class PayPalCreditCardPaymentMethodViewTest extends \PHPUnit_Framework_TestCase
     /** @var  PaymentTransactionProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $paymentTransactionProvider;
 
-    /** @var PayflowGatewayConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PayPalCreditCardConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $paymentConfig;
 
     protected function setUp()
@@ -40,7 +39,7 @@ class PayPalCreditCardPaymentMethodViewTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->paymentConfig =
-            $this->createMock('Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfigInterface');
+            $this->createMock('Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface');
 
         $this->methodView = new PayPalCreditCardPaymentMethodView(
             $this->formFactory,

@@ -4,9 +4,9 @@ namespace Oro\Bundle\PayPalBundle\Method\Config;
 
 use Oro\Bundle\PaymentBundle\Method\Config\PaymentConfigInterface;
 
-interface PayflowGatewayConfigInterface extends
+interface PayPalCreditCardConfigInterface extends
     PaymentConfigInterface,
-    PayflowConfigInterface
+    PayPalConfigInterface
 {
     /**
      * @return bool

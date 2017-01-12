@@ -5,7 +5,7 @@ namespace Oro\Bundle\PayPalBundle\Method;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfigInterface;
+use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Option as GatewayOption;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
@@ -30,15 +30,15 @@ class PayPalCreditCardPaymentMethod implements PaymentMethodInterface
     /** @var RouterInterface */
     protected $router;
 
-    /** @var PayflowGatewayConfigInterface */
+    /** @var PayPalCreditCardConfigInterface */
     protected $config;
 
     /**
      * @param Gateway $gateway
-     * @param PayflowGatewayConfigInterface $config
+     * @param PayPalCreditCardConfigInterface $config
      * @param RouterInterface $router
      */
-    public function __construct(Gateway $gateway, PayflowGatewayConfigInterface $config, RouterInterface $router)
+    public function __construct(Gateway $gateway, PayPalCreditCardConfigInterface $config, RouterInterface $router)
     {
         $this->gateway = $gateway;
         $this->config = $config;

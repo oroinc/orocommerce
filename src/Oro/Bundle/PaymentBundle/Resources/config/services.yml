@@ -256,3 +256,31 @@ services:
             - '@oro_payment.query_designer.select_query_converter'
             - '@doctrine'
             - '@oro_entity.helper.field_helper'
+
+    oro_paypal.config.provider.payments_pro_credit_card:
+        class: 'Oro\Bundle\PaymentBundle\Method\Provider\PayPalCreditCardConfigProvider'
+        arguments:
+            - '@doctrine'
+            - '@oro_security.encoder.mcrypt'
+            - 'paypal_payments_pro'
+
+    oro_paypal.config.provider.payments_pro_express_checkout:
+        class: 'Oro\Bundle\PaymentBundle\Method\Provider\PayPalExpressCheckoutConfigProvider'
+        arguments:
+            - '@doctrine'
+            - '@oro_security.encoder.mcrypt'
+            - 'paypal_payments_pro'
+
+    oro_paypal.config.provider.payflow_gateway_credit_card:
+        class: 'Oro\Bundle\PaymentBundle\Method\Provider\PayPalCreditCardConfigProvider'
+        arguments:
+            - '@doctrine'
+            - '@oro_security.encoder.mcrypt'
+            - 'paypal_payflow_gateway'
+
+    oro_paypal.config.provider.payflow_gateway_express_checkout:
+        class: 'Oro\Bundle\PaymentBundle\Method\Provider\PayPalExpressCheckoutConfigProvider'
+        arguments:
+            - '@doctrine'
+            - '@oro_security.encoder.mcrypt'
+            - 'paypal_payflow_gateway'

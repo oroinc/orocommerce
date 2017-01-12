@@ -1,24 +1,14 @@
 services:
-    oro_paypal.payment_method.payflow_gateway.config:
-        class: 'Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfig'
+    oro_paypal.payment_method.paypal_credit_card.config:
+        class: 'Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfig'
         public: false
         arguments:
             - '@oro_config.global'
+            - '@oro_security.encoder.mcrypt'
 
-    oro_paypal.payment_method.paypal_payments_pro.config:
-        class: 'Oro\Bundle\PayPalBundle\Method\Config\PayPalPaymentsProConfig'
-        public: false
-        arguments:
-            - '@oro_config.global'
-
-    oro_paypal.payment_method.payflow_express_checkout.config:
-        class: 'Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfig'
+    oro_paypal.payment_method.paypal_express_checkout.config:
+        class: 'Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfig'
         public: false
         arguments:
            - '@oro_config.global'
-
-    oro_paypal.payment_method.paypal_payments_pro_express_checkout.config:
-        class: 'Oro\Bundle\PayPalBundle\Method\Config\PayPalPaymentsProExpressCheckoutConfig'
-        public: false
-        arguments:
-           - '@oro_config.global'
+           - '@oro_security.encoder.mcrypt'

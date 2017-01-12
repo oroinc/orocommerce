@@ -2,14 +2,33 @@
 
 namespace Oro\Bundle\PayPalBundle\Method\Config;
 
+use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\PayPalBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PayPalBundle\DependencyInjection\OroPayPalExtension;
-use Oro\Bundle\PayPalBundle\Method\PayflowGateway;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 use Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentConfig;
+use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 
-class PayflowGatewayConfig extends AbstractPaymentConfig implements PayflowGatewayConfigInterface
+class PayPalCreditCardConfig extends AbstractPaymentConfig implements PayPalCreditCardConfigInterface
 {
+    const TYPE = 'credit_card';
+
+    /**
+     * @var SymmetricCrypterInterface
+     */
+    protected $encoder;
+
+    /**
+     * @param Channel $channel
+     * @param SymmetricCrypterInterface $encoder
+     */
+    public function __construct(Channel $channel, SymmetricCrypterInterface $encoder)
+    {
+        parent::__construct($channel);
+
+        $this->encoder = $encoder;
+    }
+
     /**
      * @return string
      */
@@ -26,7 +45,9 @@ class PayflowGatewayConfig extends AbstractPaymentConfig implements PayflowGatew
         return [
             Option\Vendor::VENDOR => $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_VENDOR_KEY),
             Option\User::USER => $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_USER_KEY),
-            Option\Password::PASSWORD => $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_PASSWORD_KEY),
+            Option\Password::PASSWORD =>
+                $this->encoder->encryptData($this->getConfigValue(Configuration::PAYFLOW_GATEWAY_PASSWORD_KEY))
+            ,
             Option\Partner::PARTNER => $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_PARTNER_KEY),
         ];
     }
@@ -88,7 +109,7 @@ class PayflowGatewayConfig extends AbstractPaymentConfig implements PayflowGatew
     /** {@inheritdoc} */
     public function getPaymentMethodIdentifier()
     {
-        return (string)PayflowGateway::TYPE;
+        return $this->channel->getType() . '_' . self::TYPE . '_' . $this->channel->getId();
     }
 
     /**

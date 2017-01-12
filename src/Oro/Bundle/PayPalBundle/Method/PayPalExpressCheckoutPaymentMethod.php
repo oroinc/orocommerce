@@ -9,7 +9,7 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Provider\ExtractOptionsProvider;
 use Oro\Bundle\PaymentBundle\Provider\SurchargeProvider;
-use Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfigInterface;
+use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\ExpressCheckout\Option as ECOption;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
@@ -40,7 +40,7 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
     /** @var PropertyAccessor */
     protected $propertyAccessor;
 
-    /** @var PayflowExpressCheckoutConfigInterface */
+    /** @var PayPalExpressCheckoutConfigInterface */
     protected $config;
 
     /** @var ExtractOptionsProvider */
@@ -51,7 +51,7 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
 
     /**
      * @param Gateway $gateway
-     * @param PayflowExpressCheckoutConfigInterface $config
+     * @param PayPalExpressCheckoutConfigInterface $config
      * @param RouterInterface $router
      * @param DoctrineHelper $doctrineHelper
      * @param ExtractOptionsProvider $optionsProvider
@@ -59,7 +59,7 @@ class PayPalExpressCheckoutPaymentMethod implements PaymentMethodInterface
      */
     public function __construct(
         Gateway $gateway,
-        PayflowExpressCheckoutConfigInterface $config,
+        PayPalExpressCheckoutConfigInterface $config,
         RouterInterface $router,
         DoctrineHelper $doctrineHelper,
         ExtractOptionsProvider $optionsProvider,
