@@ -222,7 +222,6 @@ class RequestControllerTest extends WebTestCase
                         'view_link',
                         'action_configuration',
                         'customerStatusName',
-                        'workflowStepLabel',
                     ],
                     'action_configuration' => [
                         'view' => true,
