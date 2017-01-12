@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PaymentBundle\Method\Config;
+namespace Oro\Bundle\PaymentBundle\Method\Provider;
 
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;

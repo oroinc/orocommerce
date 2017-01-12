@@ -6,7 +6,7 @@ use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfig;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
 
-class PayPalCreditCardConfigProvider extends PayPalConfigProvider
+class PayPalCreditCardConfigProvider extends PayPalConfigProvider implements PayPalCreditCardConfigProviderInterface
 {
     /**
      * @return PayPalCreditCardConfigInterface[]

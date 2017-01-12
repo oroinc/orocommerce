@@ -6,7 +6,8 @@ use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfig;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
 
-class PayPalExpressCheckoutConfigProvider extends PayPalConfigProvider
+class PayPalExpressCheckoutConfigProvider extends PayPalConfigProvider implements
+    PayPalExpressCheckoutConfigProviderInterface
 {
     /**
      * @return PayPalExpressCheckoutConfigInterface[]
