@@ -3,6 +3,7 @@ define(function(require) {
 
     var ProductAddToShoppingListView;
     var BaseView = require('oroui/js/app/views/base/view');
+    var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var ShoppingListCreateWidget = require('oro/shopping-list-create-widget');
     var ApiAccessor = require('oroui/js/tools/api-accessor');
     var routing = require('routing');
@@ -11,7 +12,7 @@ define(function(require) {
     var _ = require('underscore');
     var ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
 
-    ProductAddToShoppingListView = BaseView.extend({
+    ProductAddToShoppingListView = BaseView.extend(_.extend({}, ElementsHelper, {
         options: {
             buttonTemplate: '',
             createNewButtonTemplate: '',
@@ -40,17 +41,16 @@ define(function(require) {
 
         initialize: function(options) {
             ProductAddToShoppingListView.__super__.initialize.apply(this, arguments);
+            this.deferredInitializeCheck(options, ['productModel', 'dropdownWidget']);
+        },
+
+        deferredInitialize: function(options) {
             this.options = $.extend(true, {}, this.options, _.pick(options, _.keys(this.options)));
-            if (options.productModel) {
-                this.model = options.productModel;
-            }
 
-            this.initModel(this.options);
+            this.dropdownWidget = options.dropdownWidget;
+            this.$form = this.dropdownWidget.element.closest('form');
 
-            if (this.model) {
-                this.model.on('change:unit', this._onUnitChanged, this);
-                this.model.on('editLineItem', this._onEditLineItem, this);
-            }
+            this.initModel(options);
 
             if (this.options.buttonTemplate) {
                 this.options.buttonTemplate = _.template(this.options.buttonTemplate);
@@ -64,16 +64,15 @@ define(function(require) {
 
             this.saveApiAccessor = new ApiAccessor(this.options.save_api_accessor);
 
+            if (this.model) {
+                this.model.on('change:unit', this._onUnitChanged, this);
+                this.model.on('editLineItem', this._onEditLineItem, this);
+            }
+
+            this.$form.find(this.options.quantityField).on('keydown', _.bind(this._onQuantityEnter, this));
+
             ShoppingListCollectionService.shoppingListCollection.done(_.bind(function(collection) {
-                var properties = {
-                    callback: this.renderDropdowns,
-                    context: this
-                };
-
                 this.shoppingListCollection = collection;
-
-                mediator.trigger('shopping-list-view:init:' + this.model.get('id'), properties, this);
-
                 this.listenTo(collection, 'change', this._onCollectionChange);
                 this.render();
             }, this));
@@ -85,6 +84,9 @@ define(function(require) {
                 }) || {};
             this.modelAttr = $.extend(true, {}, this.modelAttr, modelAttr);
             this.$el.trigger('options:set:productModel', options);
+            if (options.productModel) {
+                this.model = options.productModel;
+            }
 
             if (!this.model) {
                 return;
@@ -103,17 +105,6 @@ define(function(require) {
 
         render: function() {
             this._setEditLineItem(null, true);
-        },
-
-        renderDropdowns: function(options) {
-            if (!this.dropdownWidget) {
-                this.dropdownWidget = options.dropdownWidget;
-            }
-
-            if (!this.$form) {
-                this.$form = this.dropdownWidget.element.closest('form');
-                this.$form.find(this.options.quantityField).on('keydown', _.bind(this._onQuantityEnter, this));
-            }
 
             var buttons = this._collectAllButtons();
 
@@ -426,7 +417,7 @@ define(function(require) {
 
             ProductAddToShoppingListView.__super__.dispose.apply(this, arguments);
         }
-    });
+    }));
 
     return ProductAddToShoppingListView;
 });

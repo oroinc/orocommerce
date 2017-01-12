@@ -39,6 +39,9 @@
             {{ UI.pinnedDropdownButton({
                 'html': block_widget(block),
                 'mobileEnabled': true,
+                'dataAttributes': {
+                    'layout': 'deferred-initialize'
+                },
                 'options': {
                     'widgetModule': 'oroproduct/js/content-processor/product-add-to-dropdown-button',
                     'widgetName': 'productAddToDropdownButtonProcessor',

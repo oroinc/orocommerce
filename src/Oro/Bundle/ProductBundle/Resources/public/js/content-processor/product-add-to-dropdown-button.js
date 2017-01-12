@@ -1,14 +1,16 @@
 define([
     'oroui/js/content-processor/pinned-dropdown-button',
     'underscore',
-    'oroui/js/mediator'
-], function($, _, mediator) {
+    'oroui/js/mediator',
+    'oroui/js/tools',
+    'oroui/js/app/components/base/component-container-mixin'
+], function($, _, mediator, tools, componentContainerMixin) {
     'use strict';
 
     $.widget(
         'oroui.productAddToDropdownButtonProcessor',
         $.oroui.pinnedDropdownButtonProcessor,
-        {
+        _.extend(componentContainerMixin, {
             keyPreffix: 'product-add-to-dropdown-button-processor-',
 
             modules: [],
@@ -18,29 +20,32 @@ define([
             },
 
             _create: function() {
-                var args = arguments;
-                var _super = this._super;
-
-                mediator.on('shopping-list-view:init:' + this.options.productModel.get('id'), function(obj) {
-                    this.shoppingListView = obj.context;
-                    if (_.isFunction(obj.callback)) {
-                        obj.callback.call(this.shoppingListView, {dropdownWidget: this});
+                var modules = this.modules = [];
+                $(this.element).trigger('deferredInitialize', {
+                    dropdownWidget: this,
+                    productModel: this.options.productModel,
+                    callback: function(module) {
+                        modules.push(module);
                     }
-
-                    _super.apply(this, args);
-                }, this);
+                });
+                this._super.apply(this, arguments);
             },
 
             _destroy: function() {
-                delete this.shoppingListView;
+                delete this.modules;
+                this.disposePageComponents();
                 this._super();
             },
 
             _renderButtons: function() {
                 this._super.apply(this, arguments);
-                if (this.shoppingListView) {
-                    this.shoppingListView._afterRenderButtons();
-                }
+                _.each(this.modules, function(module) {
+                    if (_.isFunction(module._afterRenderButtons)) {
+                        module._afterRenderButtons();
+                    } else if (module.view && _.isFunction(module.view._afterRenderButtons)) {
+                        module.view._afterRenderButtons();
+                    }
+                });
             },
 
             _moreButton: function() {
@@ -64,7 +69,7 @@ define([
 
                 return $form.data('validator') ? $form.valid() : true;
             }
-        }
+        })
     );
 
     return $;

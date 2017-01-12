@@ -43,7 +43,11 @@ define(function(require) {
             $deferredInitialize.one('deferredInitialize', _.bind(function(e, deferredOptions) {
                 e.preventDefault();
                 e.stopPropagation();
+
                 this.deferredInitialize(_.extend({}, options, deferredOptions));
+                if (deferredOptions.callback) {
+                    deferredOptions.callback(this);
+                }
             }, this));
         },
 

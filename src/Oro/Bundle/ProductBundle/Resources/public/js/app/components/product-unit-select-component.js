@@ -49,8 +49,6 @@ define(function(require) {
                     return ;
                 }
 
-                select.html('');
-
                 var content = '';
                 var length = productUnits.length;
 
@@ -60,7 +58,7 @@ define(function(require) {
                         _.__(this.options.unitLabel.replace('%s', unitCode)) + '</option>';
                 }
 
-                select.html(content);
+                select.html(content).change();
             }
         },
 
