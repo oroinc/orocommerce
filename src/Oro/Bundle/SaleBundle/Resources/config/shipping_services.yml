@@ -5,6 +5,7 @@ services:
             - '@oro_shipping.context.builder_factory_basic'
             - '@oro_sale.quote.shipping_line_items_converter_selected_offers'
             - '@oro_pricing.subtotal_processor.total_processor_provider'
+            - '@oro_sale.quote.calculable_quote_factory_parameter_bag'
 
     oro_sale.quote.first_offers_shipping_context_factory:
         class: 'Oro\Bundle\SaleBundle\Quote\Shipping\Context\Factory\Basic\BasicQuoteShippingContextFactory'
@@ -12,6 +13,10 @@ services:
             - '@oro_shipping.context.builder_factory_basic'
             - '@oro_sale.quote.shipping_line_items_converter_first_offers'
             - '@oro_pricing.subtotal_processor.total_processor_provider'
+            - '@oro_sale.quote.calculable_quote_factory_parameter_bag'
+
+    oro_sale.quote.calculable_quote_factory_parameter_bag:
+        class: 'Oro\Bundle\SaleBundle\Quote\Calculable\ParameterBag\Factory\ParameterBagCalculableQuoteFactory'
 
     oro_sale.quote_event_listener.possible_shipping_methods:
         class: 'Oro\Bundle\SaleBundle\EventListener\Quote\QuotePossibleShippingMethodsEventListener'
@@ -36,7 +41,7 @@ services:
         class: 'Oro\Bundle\ShippingBundle\Provider\Price\Configured\Decorator\OverriddenCost\OverriddenCostShippingConfiguredPriceProviderDecorator'
         public: false
         decorates: oro_sale.quote.configured_shipping_price_provider
-        decoration_priority: 1
+        decoration_priority: 30
         arguments:
             - '@oro_sale.quote.configured_shipping_price_provider_overridden_decorator.inner'
 
@@ -44,7 +49,7 @@ services:
         class: 'Oro\Bundle\ShippingBundle\Provider\Price\Configured\Decorator\AllowUnlisted\AllowUnlistedConfiguredPriceProviderDecorator'
         public: false
         decorates: oro_sale.quote.configured_shipping_price_provider
-        decoration_priority: 2
+        decoration_priority: 20
         arguments:
             - '@oro_shipping.method.view_factory'
             - '@oro_sale.quote.configured_shipping_price_provider_allow_unlisted_decorator.inner'
@@ -53,7 +58,7 @@ services:
         class: 'Oro\Bundle\ShippingBundle\Provider\Price\Configured\Decorator\Locked\MethodLockedConfiguredPriceProviderDecorator'
         public: false
         decorates: oro_sale.quote.configured_shipping_price_provider
-        decoration_priority: 3
+        decoration_priority: 10
         arguments:
             - '@oro_sale.quote.configured_shipping_price_provider_method_locked_decorator.inner'
 
@@ -61,7 +66,7 @@ services:
         class: 'Oro\Bundle\SaleBundle\Quote\Demand\Subtotals\Calculator\Decorator\ShippingCost\ShippingCostQuoteDemandSubtotalsCalculatorDecorator'
         public: false
         decorates: oro_sale.quote_demand.subtotals_calculator_main
-        decoration_priority: 1
+        decoration_priority: 10
         arguments:
             - '@oro_sale.quote.selected_offers_shipping_context_factory'
             - '@oro_sale.quote.shipping_configuration_factory'

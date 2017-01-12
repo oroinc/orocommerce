@@ -39,6 +39,7 @@ class FrontendCustomerUserRoleType extends AbstractCustomerUserRoleType
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'updateCustomerUsers']);
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
+        $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'postSubmit']);
     }
 
     /**
@@ -59,32 +60,50 @@ class FrontendCustomerUserRoleType extends AbstractCustomerUserRoleType
      */
     public function updateCustomerUsers(FormEvent $event)
     {
-        $options = $event->getForm()->getConfig()->getOptions();
-
-        $predefinedRole = $options['predefined_role'];
-        if (!$predefinedRole instanceof CustomerUserRole) {
-            return;
-        }
-
-        $role = $event->getData();
-        if (!$role instanceof CustomerUserRole || !$role->getCustomer()) {
+        $role = $this->getRole($event);
+        $predefinedRole = $this->getPredefinedRole($event);
+        if (!$role || !$predefinedRole) {
             return;
         }
 
         $customerUsers = $predefinedRole->getCustomerUsers()->filter(
-            function (CustomerUser $customerUser) use ($role) {
-                return $customerUser->getCustomer() &&
-                    $customerUser->getCustomer()->getId() === $role->getCustomer()->getId();
-            }
-        );
-
-        $customerUsers->map(
-            function (CustomerUser $customerUser) use ($predefinedRole) {
-                $customerUser->removeRole($predefinedRole);
+            function (CustomerUser $accountUser) use ($role) {
+                return $accountUser->getCustomer() &&
+                    $accountUser->getCustomer()->getId() === $role->getCustomer()->getId();
             }
         );
 
         $event->getForm()->get('appendUsers')->setData($customerUsers->toArray());
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function postSubmit(FormEvent $event)
+    {
+        $role = $this->getRole($event);
+        $predefinedRole = $this->getPredefinedRole($event);
+
+        if (!$role || !$predefinedRole) {
+            return;
+        }
+
+        $form = $event->getForm();
+
+        /** @var \SplObjectStorage|CustomerUser[] $addedUsers */
+        $addedUsers = new \SplObjectStorage();
+        foreach ($form->get('appendUsers')->getData() as $accountUser) {
+            $addedUsers->attach($accountUser);
+        }
+
+        foreach ($form->get('removeUsers')->getData() as $accountUser) {
+            $addedUsers->detach($accountUser);
+        }
+
+        foreach ($addedUsers as $accountUser) {
+            $predefinedRole->removeCustomerUser($accountUser);
+            $accountUser->removeRole($predefinedRole);
+        }
     }
 
     /**
@@ -101,5 +120,28 @@ class FrontendCustomerUserRoleType extends AbstractCustomerUserRoleType
                 'hide_self_managed' => true
             ]
         );
+    }
+
+    /**
+     * @param FormEvent $event
+     * @return null|CustomerUserRole
+     */
+    protected function getPredefinedRole(FormEvent $event)
+    {
+        $config = $event->getForm()->getConfig();
+        $predefinedRole = $config->getOption('predefined_role');
+
+        return ($predefinedRole !== null && $predefinedRole instanceof CustomerUserRole) ? $predefinedRole : null;
+    }
+
+    /**
+     * @param FormEvent $event
+     * @return null|CustomerUserRole
+     */
+    protected function getRole(FormEvent $event)
+    {
+        $role = $event->getData();
+
+        return ($role instanceof CustomerUserRole && $role->getCustomer()) ? $role : null;
     }
 }
