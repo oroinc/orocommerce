@@ -215,3 +215,8 @@ services:
             - '@oro_workflow.manager'
         tags:
             - { name: security.voter }
+
+    oro_rfp.datagrid.listener.column:
+        class: 'Oro\Bundle\RFPBundle\EventListener\RFPDatagridColumnListener'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before, method: onBuildBefore }

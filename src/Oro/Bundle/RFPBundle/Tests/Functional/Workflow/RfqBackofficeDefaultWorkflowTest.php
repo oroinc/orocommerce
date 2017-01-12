@@ -14,7 +14,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 class RfqBackofficeDefaultWorkflowTest extends WebTestCase
 {
     const WORKFLOW_BUTTONS = [
-        'Start',
+        'Open',
         'Process',
         'Request More Information',
         'Delete',

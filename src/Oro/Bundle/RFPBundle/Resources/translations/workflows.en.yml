@@ -18,7 +18,7 @@ oro:
                     label: 'Notes'
             transition:
                 __start__:
-                    label: 'Start'
+                    label: 'Open'
                 process_transition:
                     label: 'Process'
                 request_more_information_transition:
@@ -28,7 +28,7 @@ oro:
                 delete_transition:
                     label: 'Delete'
                 info_provided_transition:
-                    label: 'Information Provided'
+                    label: 'Info Provided'
                 reprocess_transition:
                     label: 'Reprocess'
                 undelete_transition:
@@ -48,9 +48,9 @@ oro:
                     label: 'Notes'
             transition:
                 __start__:
-                    label: 'Start'
+                    label: 'Submit'
                 more_information_requested_transition:
-                    label: 'More Information requested'
+                    label: 'Request More Information'
                 provide_more_information_transition:
                     label: 'Provide More Information'
                 cancel_transition:
