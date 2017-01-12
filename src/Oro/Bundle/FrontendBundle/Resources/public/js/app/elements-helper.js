@@ -40,7 +40,7 @@ define(function(require) {
                 return this.deferredInitialize(options);
             }
 
-            $deferredInitialize.on('deferredInitialize', _.bind(function(e, deferredOptions) {
+            $deferredInitialize.one('deferredInitialize', _.bind(function(e, deferredOptions) {
                 e.preventDefault();
                 e.stopPropagation();
                 this.deferredInitialize(_.extend({}, options, deferredOptions));

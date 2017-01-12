@@ -66,6 +66,7 @@ define(function(require) {
         },
 
         editMode: function() {
+            this.$el.removeAttr('data-skip-input-widgets').inputWidget('seekAndCreate');
             this.toggleEditMode('enable');
         },
 
@@ -140,6 +141,9 @@ define(function(require) {
         },
 
         revertChanges: function() {
+            if (!this.formState) {
+                return;
+            }
             this.$el.find(':input[data-name]').each(_.bind(function(i, el) {
                 var value = this.formState[el.name];
                 if (value !== undefined && el.value !== value) {
