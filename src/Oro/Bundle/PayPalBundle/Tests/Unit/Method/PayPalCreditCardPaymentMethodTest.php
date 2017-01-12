@@ -7,7 +7,7 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Tests\Unit\Method\ConfigTestTrait;
 use Oro\Bundle\PayPalBundle\DependencyInjection\OroPayPalExtension;
-use Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfigInterface;
+use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\PayPalCreditCardPaymentMethod;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
@@ -38,7 +38,7 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit_Framework_TestCase
     /** @var PayPalCreditCardPaymentMethod */
     protected $method;
 
-    /** @var PayflowGatewayConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PayPalCreditCardConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $paymentConfig;
 
     protected function setUp()
@@ -52,7 +52,7 @@ class PayPalCreditCardPaymentMethodTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->paymentConfig =
-            $this->createMock('Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfigInterface');
+            $this->createMock('Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface');
 
         $this->method = new PayPalCreditCardPaymentMethod($this->gateway, $this->paymentConfig, $this->router);
     }

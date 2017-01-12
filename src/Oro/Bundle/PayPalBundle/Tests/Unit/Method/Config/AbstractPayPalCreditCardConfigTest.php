@@ -4,16 +4,20 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method\Config;
 
 use Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config\AbstractPaymentConfigTestCase;
 use Oro\Bundle\PayPalBundle\DependencyInjection\OroPayPalExtension;
-use Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfigInterface;
+use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
+use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-abstract class AbstractPayflowGatewayConfigTest extends AbstractPaymentConfigTestCase
+abstract class AbstractPayPalCreditCardConfigTest extends AbstractPaymentConfigTestCase
 {
-    /** @var PayflowGatewayConfigInterface */
+    /** @var PayPalCreditCardConfigInterface */
     protected $config;
+
+    /** @var SymmetricCrypterInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $encoder;
 
     public function testGetCredentials()
     {

@@ -7,7 +7,7 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Bundle\PayPalBundle\Form\Type\CreditCardType;
-use Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfigInterface;
+use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Option as GatewayOption;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -20,17 +20,17 @@ class PayPalCreditCardPaymentMethodView implements PaymentMethodViewInterface
     /** @var PaymentTransactionProvider */
     protected $paymentTransactionProvider;
 
-    /** @var PayflowGatewayConfigInterface */
+    /** @var PayPalCreditCardConfigInterface */
     protected $config;
 
     /**
      * @param FormFactoryInterface $formFactory
-     * @param PayflowGatewayConfigInterface $config
+     * @param PayPalCreditCardConfigInterface $config
      * @param PaymentTransactionProvider $paymentTransactionProvider
      */
     public function __construct(
         FormFactoryInterface $formFactory,
-        PayflowGatewayConfigInterface $config,
+        PayPalCreditCardConfigInterface $config,
         PaymentTransactionProvider $paymentTransactionProvider
     ) {
         $this->formFactory = $formFactory;

@@ -11,7 +11,7 @@ interface PaymentConfigProviderInterface
 
     /**
      * @param string $identifier
-     * @return PaymentConfigInterface
+     * @return PaymentConfigInterface|null
      */
     public function getPaymentConfig($identifier);
 

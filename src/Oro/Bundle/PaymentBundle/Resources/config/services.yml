@@ -256,3 +256,17 @@ services:
             - '@oro_payment.query_designer.select_query_converter'
             - '@doctrine'
             - '@oro_entity.helper.field_helper'
+
+    oro_paypal.config.provider.credit_card:
+        class: 'Oro\Bundle\PaymentBundle\Method\Provider\PayPalConfigProvider'
+        arguments:
+            - '@doctrine'
+            - '@oro_security.encoder.mcrypt'
+            - 'credit_card'
+
+    oro_paypal.config.provider.express_checkout:
+        class: 'Oro\Bundle\PaymentBundle\Method\Provider\PayPalConfigProvider'
+        arguments:
+            - '@doctrine'
+            - '@oro_security.encoder.mcrypt'
+            - 'express_checkout'
