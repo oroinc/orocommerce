@@ -11,16 +11,24 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 class PaymentTermMethodViewProvider implements PaymentMethodViewProviderInterface
 {
-    /** @var  PaymentMethodViewInterface[] */
+    /**
+     * @var  PaymentMethodViewInterface[]
+     */
     protected $methodViews;
     
-    /** @var PaymentTermProvider */
+    /**
+     * @var PaymentTermProvider
+     */
     protected $paymentTermProvider;
 
-    /**  @var TranslatorInterface */
+    /**
+     *  @var TranslatorInterface
+     */
     protected $translator;
 
-    /** @var PaymentTermConfigInterface */
+    /**
+     * @var PaymentTermConfigInterface
+     */
     protected $config;
 
     /**
@@ -49,21 +57,26 @@ class PaymentTermMethodViewProvider implements PaymentMethodViewProviderInterfac
         }
         $matchedViews = [];
         foreach ($paymentMethods as $paymentMethod) {
-            $matchedViews[$paymentMethod] = $this->getPaymentMethodView($paymentMethod);
+            if ($this->hasPaymentMethodView($paymentMethod)) {
+                $matchedViews[$paymentMethod] = $this->getPaymentMethodView($paymentMethod);
+            }
         }
         return $matchedViews;
     }
 
     /**
      * @param string $identifier
-     * @return PaymentMethodViewInterface
+     * @return PaymentMethodViewInterface|null
      */
     public function getPaymentMethodView($identifier)
     {
         if ($this->methodViews === null) {
             $this->collectPaymentMethodViews();
         }
-        return $this->methodViews[$identifier];
+        if ($this->hasPaymentMethodView($identifier)) {
+            return $this->methodViews[$identifier];
+        }
+        return null;
     }
 
     /**

@@ -6,14 +6,17 @@ use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigInterface;
 use Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
-use Oro\Bundle\PaymentTermBundle\Method\PaymentTerm;
 
 class MoneyOrderMethodViewProvider implements PaymentMethodViewProviderInterface
 {
-    /** @var  PaymentMethodViewInterface[] */
+    /**
+     * @var  PaymentMethodViewInterface[]
+     */
     protected $methodViews;
 
-    /** @var MoneyOrderConfigInterface */
+    /**
+     * @var MoneyOrderConfigInterface
+     */
     protected $config;
 
     /**
@@ -35,7 +38,9 @@ class MoneyOrderMethodViewProvider implements PaymentMethodViewProviderInterface
         }
         $matchedViews = [];
         foreach ($paymentMethods as $paymentMethod) {
-            $matchedViews[$paymentMethod] = $this->getPaymentMethodView($paymentMethod);
+            if ($this->hasPaymentMethodView($paymentMethod)) {
+                $matchedViews[$paymentMethod] = $this->getPaymentMethodView($paymentMethod);
+            }
         }
         return $matchedViews;
     }
@@ -49,7 +54,10 @@ class MoneyOrderMethodViewProvider implements PaymentMethodViewProviderInterface
         if ($this->methodViews === null) {
             $this->collectPaymentMethodViews();
         }
-        return $this->methodViews[$identifier];
+        if ($this->hasPaymentMethodView($identifier)) {
+            return $this->methodViews[$identifier];
+        }
+        return null;
     }
 
     /**

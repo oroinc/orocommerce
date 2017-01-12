@@ -17,11 +17,15 @@ class MoneyOrderMethodProvider implements PaymentMethodProviderInterface
     }
 
     /**
+     * @param string $identifier
      * @return PaymentMethodInterface
      */
     public function getPaymentMethod($identifier)
     {
-        return $this->getPaymentMethods()[$identifier];
+        if ($this->hasPaymentMethod($identifier)) {
+            return $this->getPaymentMethods()[$identifier];
+        }
+        return null;
     }
 
     /**

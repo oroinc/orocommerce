@@ -11,16 +11,22 @@ use Psr\Log\LoggerAwareTrait;
 
 class PaymentTermMethodProvider implements PaymentMethodProviderInterface
 {
-    /** @var PaymentTermProvider */
+    use LoggerAwareTrait;
+    
+    /**
+     * @var PaymentTermProvider
+     */
     protected $paymentTermProvider;
 
-    /** @var PaymentTermAssociationProvider */
+    /**
+     * @var PaymentTermAssociationProvider
+     */
     protected $paymentTermAssociationProvider;
 
-    /** @var DoctrineHelper */
+    /**
+     * @var DoctrineHelper
+     */
     protected $doctrineHelper;
-
-    use LoggerAwareTrait;
 
     /**
      * @param PaymentTermProvider $paymentTermProvider
@@ -52,11 +58,14 @@ class PaymentTermMethodProvider implements PaymentMethodProviderInterface
     }
 
     /**
+     * @param string $identifier
      * @return PaymentMethodInterface
      */
     public function getPaymentMethod($identifier)
     {
-        return $this->getPaymentMethods()[$identifier];
+        if ($this->hasPaymentMethod($identifier)) {
+            return $this->getPaymentMethods()[$identifier];
+        }
     }
 
     /**
