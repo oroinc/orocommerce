@@ -4,7 +4,6 @@ namespace Oro\Bundle\PaymentBundle\Method\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\PaymentBundle\Method\Config\PaymentConfigProviderInterface;
-use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 
 abstract class PayPalConfigProvider implements PaymentConfigProviderInterface
