@@ -24,17 +24,15 @@
         background-color: get-color('additionl', 'ultra');
     }
 
-    &__container {
-        &.open {
-            .header-row__trigger {
-                background: get-color('additional', 'ultra');
+    &.open {
+        .header-row__trigger {
+            background: get-color('additional', 'ultra');
 
-                z-index: auto;
-            }
+            z-index: auto;
+        }
 
-            .header-row__toggle {
-                display: block;
-            }
+        .header-row__toggle {
+            display: block;
         }
     }
 }
