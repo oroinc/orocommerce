@@ -3,10 +3,10 @@
 namespace Oro\Bundle\MoneyOrderBundle\Tests\Unit\Method\Config;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\MoneyOrderBundle\DependencyInjection\Configuration;
 use Oro\Bundle\MoneyOrderBundle\DependencyInjection\OroMoneyOrderExtension;
 use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig;
 use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigInterface;
+use Oro\Bundle\MoneyOrderBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config\AbstractPaymentConfigTestCase;
 
 class MoneyOrderConfigTest extends AbstractPaymentConfigTestCase
@@ -52,26 +52,5 @@ class MoneyOrderConfigTest extends AbstractPaymentConfigTestCase
     protected function getExtensionAlias()
     {
         return OroMoneyOrderExtension::ALIAS;
-    }
-
-    public function testGetLabel()
-    {
-        $returnValue = 'test label';
-        $this->setConfig($this->once(), $this->getConfigPrefix() . 'label', $returnValue);
-        $this->assertSame($returnValue, $this->config->getLabel());
-    }
-
-    public function testGetShortLabel()
-    {
-        $returnValue = 'test short label';
-        $this->setConfig($this->once(), $this->getConfigPrefix() . 'short_label', $returnValue);
-        $this->assertSame($this->getConfigPrefix() . 'short_label', $this->config->getShortLabel());
-    }
-
-    public function testIsRequireCvvEntryEnabled()
-    {
-        $returnValue = true;
-        $this->setConfig($this->once(), $this->getConfigPrefix() . 'require_cvv', $returnValue);
-        $this->assertSame($returnValue, $this->config->isRequireCvvEntryEnabled());
     }
 }

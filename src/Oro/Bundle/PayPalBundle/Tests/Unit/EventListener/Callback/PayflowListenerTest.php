@@ -7,7 +7,6 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Event\CallbackNotifyEvent;
 use Oro\Bundle\PaymentBundle\Event\CallbackReturnEvent;
 
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProviderInterface;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
 use Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowListener;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseStatusMap;
@@ -63,15 +62,10 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
             ->method('execute')
             ->with('complete', $paymentTransaction);
 
-        $paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
-        $paymentMethodProvider->expects($this->once())
-            ->method('getPaymentMethod')
-            ->willReturn($paymentMethod);
-
         $this->paymentMethodRegistry->expects($this->once())
-            ->method('getPaymentMethodProvider')
+            ->method('getPaymentMethod')
             ->with($paymentTransaction->getPaymentMethod())
-            ->willReturn($paymentMethodProvider);
+            ->willReturn($paymentMethod);
 
         $event = new CallbackNotifyEvent(['RESULT' => ResponseStatusMap::APPROVED]);
         $event->setPaymentTransaction($paymentTransaction);
@@ -99,15 +93,10 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
             ->method('execute')
             ->willThrowException(new \InvalidArgumentException());
 
-        $paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
-        $paymentMethodProvider->expects($this->once())
-            ->method('getPaymentMethod')
-            ->willReturn($paymentMethod);
-
         $this->paymentMethodRegistry->expects($this->once())
-            ->method('getPaymentMethodProvider')
+            ->method('getPaymentMethod')
             ->with($paymentTransaction->getPaymentMethod())
-            ->willReturn($paymentMethodProvider);
+            ->willReturn($paymentMethod);
 
         $event = new CallbackNotifyEvent(['RESULT' => ResponseStatusMap::APPROVED]);
         $event->setPaymentTransaction($paymentTransaction);

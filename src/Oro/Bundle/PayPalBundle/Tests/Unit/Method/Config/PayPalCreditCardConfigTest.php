@@ -10,9 +10,6 @@ use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyMethods)
- */
 class PayPalCreditCardConfigTest extends AbstractPayPalCreditCardConfigTest
 {
     use EntityTrait;
