@@ -7,10 +7,12 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\PaymentBundle\Method\Provider\PayPalConfigProvider;
+use Oro\Bundle\PaymentBundle\Method\Provider\PayPalCreditCardConfigProvider;
+use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfig;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class PayPalConfigProviderTest extends \PHPUnit_Framework_TestCase
+class PayPalCreditCardConfigProviderTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
@@ -36,15 +38,15 @@ class PayPalConfigProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->type = 'credit_card';
+        $this->type = 'paypal_payments_pro';
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->encoder = $this->createMock(SymmetricCrypterInterface::class);
-        $this->payPalConfigProvider = new PayPalConfigProvider($this->doctrine, $this->encoder, $this->type);
+        $this->payPalConfigProvider = new PayPalCreditCardConfigProvider($this->doctrine, $this->encoder, $this->type);
     }
 
     public function testGetType()
     {
-        $this->assertEquals('credit_card', $this->payPalConfigProvider->getType());
+        $this->assertEquals('paypal_payments_pro', $this->payPalConfigProvider->getType());
     }
 
     public function testGetConfigs()
@@ -85,7 +87,10 @@ class PayPalConfigProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->doctrine->expects(static::once())->method('getManagerForClass')->willReturn($objectManager);
 
-        $this->assertCount(1, $this->payPalConfigProvider->getPaymentConfig($identifier));
+        $this->assertInstanceOf(
+            PayPalCreditCardConfig::class,
+            $this->payPalConfigProvider->getPaymentConfig($identifier)
+        );
     }
 
     public function testHasPaymentConfig()

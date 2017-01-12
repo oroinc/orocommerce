@@ -2,16 +2,19 @@
 
 namespace Oro\Bundle\PaymentBundle\Method\Config;
 
+use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
+use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
+
 interface PaymentConfigProviderInterface
 {
     /**
-     * @return PaymentConfigInterface[]
+     * @return PayPalCreditCardConfigInterface[]|PayPalExpressCheckoutConfigInterface[]
      */
     public function getPaymentConfigs();
 
     /**
      * @param string $identifier
-     * @return PaymentConfigInterface|null
+     * @return PayPalCreditCardConfigInterface|PayPalExpressCheckoutConfigInterface|null
      */
     public function getPaymentConfig($identifier);
 

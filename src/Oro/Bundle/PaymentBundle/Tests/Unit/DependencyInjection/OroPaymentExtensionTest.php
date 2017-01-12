@@ -27,8 +27,10 @@ class OroPaymentExtensionTest extends ExtensionTestCase
             'oro_payment.query_designer.select_query_converter',
             'oro_payment.expression_language.decorated_product_line_item_factory',
             'oro_payment.datagrid.payment_rule_actions_visibility_provider',
-            'oro_paypal.config.provider.credit_card',
-            'oro_paypal.config.provider.express_checkout'
+            'oro_paypal.config.provider.payments_pro_credit_card',
+            'oro_paypal.config.provider.payments_pro_express_checkout',
+            'oro_paypal.config.provider.payflow_gateway_credit_card',
+            'oro_paypal.config.provider.payflow_gateway_express_checkout'
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }
