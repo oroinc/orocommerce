@@ -1,3 +1,7 @@
+parameters:
+    oro_product.form.type.product_primary_unit_precision.class: 'Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType'
+    oro_product.form.type.product_unit_selection.class: 'Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType'
+
 services:
     # Product form types
     oro_product.form.type.product:
@@ -26,7 +30,7 @@ services:
             - { name: form.type, alias: oro_product_row_collection }
 
     oro_product.form.type.product_unit_selection:
-        class: 'Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType'
+        class: '%oro_product.form.type.product_unit_selection.class%'
         arguments:
             - "@oro_product.formatter.product_unit_label"
             - "@translator"
@@ -44,7 +48,7 @@ services:
             - { name: form.type, alias: oro_quantity }
 
     oro_product.form.type.product_primary_unit_precision:
-        class: 'Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType'
+        class: '%oro_product.form.type.product_primary_unit_precision.class%'
         public: true
         calls:
             - [setDataClass, ['%oro_product.entity.product_unit_precision.class%']]
@@ -96,13 +100,18 @@ services:
         tags:
             - { name: form.type_extension, alias: integer }
 
-    oro_product.form.type.custom_variant_fields_choice:
-        class: 'Oro\Bundle\ProductBundle\Form\Type\ProductCustomVariantFieldsChoiceType'
+    oro_product.form.type.custom_variant_fields_collection:
+        class: 'Oro\Bundle\ProductBundle\Form\Type\ProductCustomVariantFieldsCollectionType'
         arguments:
             - '@oro_product.provider.custom_field_provider'
             - '%oro_product.entity.product.class%'
         tags:
-            - { name: form.type, alias: oro_product_custom_variant_fields_choice }
+            - { name: form.type, alias: oro_product_custom_variant_fields_collection }
+
+    oro_product.type.variant_field:
+        class: 'Oro\Bundle\ProductBundle\Form\Type\ProductVariantFieldType'
+        tags:
+            - { name: form.type, alias: oro_product_variant_field }
 
     oro_product.form.type.product_variant_links:
         class: 'Oro\Bundle\ProductBundle\Form\Type\ProductVariantLinksType'
@@ -150,6 +159,8 @@ services:
 
     oro_product.form.type.frontend_line_item:
         class: 'Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType'
+        arguments:
+            - '@oro_product.visibility.product_unit_fields_settings'
         tags:
             - { name: form.type, alias: oro_product_frontend_line_item }
 
@@ -175,3 +186,12 @@ services:
             - '%oro_product.entity.product.class%'
         tags:
             - { name: form.type, alias: oro_product_frontend_variant_field }
+
+    oro_product.form.type.extension.choices_primary_unit_selection:
+        class: 'Oro\Bundle\ProductBundle\Form\Extension\ChoicesProductPrimaryUnitSelectionOwnerTypeExtension'
+        arguments:
+            - 'unit'
+            - '%oro_product.form.type.product_primary_unit_precision.class%'
+            - "@oro_product.visibility.product_unit_fields_settings"
+        tags:
+            - { name: form.type_extension, extended_type: '%oro_product.form.type.product_primary_unit_precision.class%' }

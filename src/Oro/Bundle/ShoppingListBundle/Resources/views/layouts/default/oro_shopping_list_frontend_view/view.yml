@@ -24,7 +24,7 @@ layout:
                     blockType: shopping_list_owner_select_block
                     options:
                         visible: '=data["entity"]!=null'
-                        form: '=data["oro_account_frontend_account_user_form"].getAccountUserSelectFormView(data["entity"].getAccountUser(), data["entity"])'
+                        form: '=data["oro_customer_frontend_customer_user_form"].getCustomerUserSelectFormView(data["entity"].getCustomerUser(), data["entity"])'
                         shoppingList: '=data["entity"]'
                 shopping_list_top_actions:
                     blockType: line_buttons
@@ -47,6 +47,8 @@ layout:
                         productsMatchedPrice: '=data["oro_shopping_list_products"].getMatchedPrice(data["entity"])'
                         productsAllPrices: '=data["oro_shopping_list_products"].getAllPrices(data["entity"])'
                         productsUnits: '=data["oro_shopping_list_products_units"].getProductsUnits(data["entity"])'
+                        productsUnitSelectionVisibilities: '=data["oro_shopping_list_product_unit_code_visibility"].getProductsUnitSelectionVisibilities(data["entity"])'
+                        lineItemsUnitVisibilities: '=data["oro_shopping_list_product_unit_code_visibility"].getLineItemsUnitVisibilities(data["entity"])'
                 shopping_list_line_items_empty:
                     blockType: block
                     options:

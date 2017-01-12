@@ -3,14 +3,14 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\EventListener;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData;
 
@@ -31,7 +31,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
         $this->scopeManager = $this->getContainer()->get('oro_scope.scope_manager');
         $this->client->useHashNavigation(true);
         $this->loadFixtures([
-            LoadAccountUserData::class,
+            LoadCustomerUserData::class,
             LoadCategoryVisibilityData::class
         ]);
     }
@@ -76,19 +76,19 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
     }
 
     /**
-     * @dataProvider changeAccountGroupCategoryVisibilityToHiddenDataProvider
+     * @dataProvider changeCustomerGroupCategoryVisibilityToHiddenDataProvider
      * @param string $categoryToHide
      * @param array $visibleCategories
      * @param array $invisibleCategories
      */
-    public function testChangeAccountGroupCategoryVisibilityToHidden(
+    public function testChangeCustomerGroupCategoryVisibilityToHidden(
         $categoryToHide,
         array $visibleCategories,
         array $invisibleCategories
     ) {
         /** @var Category $category */
         $category = $this->getReference($categoryToHide);
-        $this->createAccountGroupCategoryVisibility($category, AccountGroupCategoryVisibility::HIDDEN);
+        $this->createCustomerGroupCategoryVisibility($category, CustomerGroupCategoryVisibility::HIDDEN);
         $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
         $this->assertTreeCategories($visibleCategories, $invisibleCategories);
     }
@@ -96,7 +96,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
     /**
      * @return array
      */
-    public function changeAccountGroupCategoryVisibilityToHiddenDataProvider()
+    public function changeCustomerGroupCategoryVisibilityToHiddenDataProvider()
     {
         return [
             [
@@ -118,13 +118,13 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
     }
 
     /**
-     * @depends testChangeAccountGroupCategoryVisibilityToHidden
-     * @dataProvider changeAccountGroupCategoryVisibilityToVisibleDataProvider
+     * @depends testChangeCustomerGroupCategoryVisibilityToHidden
+     * @dataProvider changeCustomerGroupCategoryVisibilityToVisibleDataProvider
      * @param string $categoryToShow
      * @param array $visibleCategories
      * @param array $invisibleCategories
      */
-    public function testChangeAccountGroupCategoryVisibilityToVisible(
+    public function testChangeCustomerGroupCategoryVisibilityToVisible(
         $categoryToShow,
         array $visibleCategories,
         array $invisibleCategories
@@ -132,7 +132,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
         /** @var Category $category */
         $category = $this->getReference($categoryToShow);
 
-        $this->updateAccountGroupCategoryVisibility($category, AccountGroupCategoryVisibility::VISIBLE);
+        $this->updateCustomerGroupCategoryVisibility($category, CustomerGroupCategoryVisibility::VISIBLE);
         $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
         $this->assertTreeCategories($visibleCategories, $invisibleCategories);
     }
@@ -140,7 +140,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
     /**
      * @return array
      */
-    public function changeAccountGroupCategoryVisibilityToVisibleDataProvider()
+    public function changeCustomerGroupCategoryVisibilityToVisibleDataProvider()
     {
         return [
             [
@@ -162,20 +162,20 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
     }
 
     /**
-     * @depends testChangeAccountGroupCategoryVisibilityToVisible
-     * @dataProvider changeAccountCategoryVisibilityToHiddenDataProvider
+     * @depends testChangeCustomerGroupCategoryVisibilityToVisible
+     * @dataProvider changeCustomerCategoryVisibilityToHiddenDataProvider
      * @param string $categoryToShow
      * @param array $visibleCategories
      * @param array $invisibleCategories
      */
-    public function testChangeAccountCategoryVisibilityToHidden(
+    public function testChangeCustomerCategoryVisibilityToHidden(
         $categoryToShow,
         array $visibleCategories,
         array $invisibleCategories
     ) {
         /** @var Category $category */
         $category = $this->getReference($categoryToShow);
-        $this->updateAccountCategoryVisibility($category, AccountCategoryVisibility::HIDDEN);
+        $this->updateCustomerCategoryVisibility($category, CustomerCategoryVisibility::HIDDEN);
         $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
         $this->assertTreeCategories($visibleCategories, $invisibleCategories);
     }
@@ -183,7 +183,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
     /**
      * @return array
      */
-    public function changeAccountCategoryVisibilityToHiddenDataProvider()
+    public function changeCustomerCategoryVisibilityToHiddenDataProvider()
     {
         return [
             [
@@ -205,20 +205,20 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
     }
 
     /**
-     * @depends testChangeAccountCategoryVisibilityToHidden
-     * @dataProvider changeAccountCategoryVisibilityToVisibleDataProvider
+     * @depends testChangeCustomerCategoryVisibilityToHidden
+     * @dataProvider changeCustomerCategoryVisibilityToVisibleDataProvider
      * @param string $categoryToShow
      * @param array $visibleCategories
      * @param array $invisibleCategories
      */
-    public function testChangeAccountCategoryVisibility(
+    public function testChangeCustomerCategoryVisibility(
         $categoryToShow,
         array $visibleCategories,
         array $invisibleCategories
     ) {
         /** @var Category $category */
         $category = $this->getReference($categoryToShow);
-        $this->updateAccountCategoryVisibility($category, AccountCategoryVisibility::VISIBLE);
+        $this->updateCustomerCategoryVisibility($category, CustomerCategoryVisibility::VISIBLE);
         $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
         $this->assertTreeCategories($visibleCategories, $invisibleCategories);
     }
@@ -226,7 +226,7 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
     /**
      * @return array
      */
-    public function changeAccountCategoryVisibilityToVisibleDataProvider()
+    public function changeCustomerCategoryVisibilityToVisibleDataProvider()
     {
         return [
             [
@@ -251,25 +251,25 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
      * @param Category $category
      * @param string $visibility
      */
-    protected function createAccountGroupCategoryVisibility(Category $category, $visibility)
+    protected function createCustomerGroupCategoryVisibility(Category $category, $visibility)
     {
         $em = $this->getContainer()
             ->get('doctrine')
-            ->getManagerForClass('OroVisibilityBundle:Visibility\AccountGroupCategoryVisibility');
+            ->getManagerForClass('OroVisibilityBundle:Visibility\CustomerGroupCategoryVisibility');
 
-        $accountGroupVisibility = new AccountGroupCategoryVisibility();
+        $customerGroupVisibility = new CustomerGroupCategoryVisibility();
 
-        /** @var CustomerGroup $accountGroup */
-        $accountGroup = $this->getReference('account_group.group1');
+        /** @var CustomerGroup $customerGroup */
+        $customerGroup = $this->getReference('customer_group.group1');
         $scope = $this->scopeManager->findOrCreate(
-            AccountGroupCategoryVisibility::VISIBILITY_TYPE,
-            ['accountGroup' => $accountGroup]
+            CustomerGroupCategoryVisibility::VISIBILITY_TYPE,
+            ['customerGroup' => $customerGroup]
         );
-        $accountGroupVisibility->setScope($scope);
-        $accountGroupVisibility->setCategory($category);
-        $accountGroupVisibility->setVisibility($visibility);
+        $customerGroupVisibility->setScope($scope);
+        $customerGroupVisibility->setCategory($category);
+        $customerGroupVisibility->setVisibility($visibility);
 
-        $em->persist($accountGroupVisibility);
+        $em->persist($customerGroupVisibility);
         $em->flush();
     }
 
@@ -277,23 +277,23 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
      * @param Category $category
      * @param string $visibility
      */
-    protected function updateAccountGroupCategoryVisibility(
+    protected function updateCustomerGroupCategoryVisibility(
         Category $category,
         $visibility
     ) {
         $em = $this->getContainer()
             ->get('doctrine')
-            ->getManagerForClass('OroVisibilityBundle:Visibility\AccountGroupCategoryVisibility');
+            ->getManagerForClass('OroVisibilityBundle:Visibility\CustomerGroupCategoryVisibility');
 
-        /** @var CustomerGroup $accountGroup */
-        $accountGroup = $this->getReference('account_group.group1');
-        /** @var AccountGroupCategoryVisibility $accountGroupVisibility */
+        /** @var CustomerGroup $customerGroup */
+        $customerGroup = $this->getReference('customer_group.group1');
+        /** @var CustomerGroupCategoryVisibility $customerGroupVisibility */
         $scope = $this->scopeManager->findOrCreate(
-            AccountGroupCategoryVisibility::VISIBILITY_TYPE,
-            ['accountGroup' => $accountGroup]
+            CustomerGroupCategoryVisibility::VISIBILITY_TYPE,
+            ['customerGroup' => $customerGroup]
         );
-        $accountGroupVisibility = $em
-            ->getRepository('OroVisibilityBundle:Visibility\AccountGroupCategoryVisibility')
+        $customerGroupVisibility = $em
+            ->getRepository('OroVisibilityBundle:Visibility\CustomerGroupCategoryVisibility')
             ->findOneBy(
                 [
                     'category' => $category,
@@ -301,9 +301,9 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
                 ]
             );
 
-        $accountGroupVisibility->setVisibility($visibility);
+        $customerGroupVisibility->setVisibility($visibility);
 
-        $em->persist($accountGroupVisibility);
+        $em->persist($customerGroupVisibility);
         $em->flush();
     }
 
@@ -311,36 +311,39 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
      * @param Category $category
      * @param string $visibility
      */
-    protected function updateAccountCategoryVisibility(Category $category, $visibility)
+    protected function updateCustomerCategoryVisibility(Category $category, $visibility)
     {
         $em = $this->getContainer()
             ->get('doctrine')
-            ->getManagerForClass('OroVisibilityBundle:Visibility\AccountCategoryVisibility');
+            ->getManagerForClass('OroVisibilityBundle:Visibility\CustomerCategoryVisibility');
 
-        /** @var Account $account */
-        $account = $this->getReference('account.level_1');
-        /** @var AccountCategoryVisibility $accountVisibility */
-        $scope = $this->scopeManager->findOrCreate(AccountCategoryVisibility::VISIBILITY_TYPE, ['account' => $account]);
-        $accountVisibility = $em
-            ->getRepository(AccountCategoryVisibility::class)
+        /** @var Customer $customer */
+        $customer = $this->getReference('customer.level_1');
+        /** @var CustomerCategoryVisibility $customerVisibility */
+        $scope = $this->scopeManager->findOrCreate(
+            CustomerCategoryVisibility::VISIBILITY_TYPE,
+            ['customer' => $customer]
+        );
+        $customerVisibility = $em
+            ->getRepository(CustomerCategoryVisibility::class)
             ->findOneBy(['category' => $category, 'scope' => $scope]);
 
-        $accountVisibility->setVisibility($visibility);
+        $customerVisibility->setVisibility($visibility);
 
-        $em->persist($accountVisibility);
+        $em->persist($customerVisibility);
         $em->flush();
     }
 
     /**
-     * @return AccountUser
+     * @return CustomerUser
      */
-    protected function getAccountUser()
+    protected function getCustomerUser()
     {
         return $this->getContainer()
             ->get('doctrine')
-            ->getManagerForClass('OroCustomerBundle:AccountUser')
-            ->getRepository('OroCustomerBundle:AccountUser')
-            ->findOneBy(['email' => LoadAccountUserData::EMAIL]);
+            ->getManagerForClass('OroCustomerBundle:CustomerUser')
+            ->getRepository('OroCustomerBundle:CustomerUser')
+            ->findOneBy(['email' => LoadCustomerUserData::EMAIL]);
     }
 
     /**
@@ -348,10 +351,10 @@ class CategoryTreeHandlerListenerTest extends WebTestCase
      */
     protected function getActualCategories()
     {
-        $accountUser = $this->getAccountUser();
+        $customerUser = $this->getCustomerUser();
         $categories = $this->getContainer()
             ->get('oro_catalog.provider.category_tree_provider')
-            ->getCategories($accountUser);
+            ->getCategories($customerUser);
 
         $categoryTitles = [];
         foreach ($categories as $category) {

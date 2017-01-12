@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\PricingBundle\Command;
 
-use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-
 use Oro\Bundle\CronBundle\Command\CronCommandInterface;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Input\InputInterface;
+
+use Symfony\Component\Console\Output\OutputInterface;
 
 class CombinedPriceListScheduleCommand extends ContainerAwareCommand implements CronCommandInterface
 {
@@ -21,6 +21,20 @@ class CombinedPriceListScheduleCommand extends ContainerAwareCommand implements 
         $this
             ->setName(self::NAME)
             ->setDescription('Prepare and activate combined price list by schedule');
+    }
+
+    public function isActive()
+    {
+        $container = $this->getContainer();
+        $offsetHours = $container->get('oro_config.manager')
+            ->get('oro_pricing.offset_of_processing_cpl_prices');
+
+        $count = $container->get('doctrine')
+            ->getManagerForClass(CombinedPriceList::class)
+            ->getRepository(CombinedPriceList::class)
+            ->getCPLsForPriceCollectByTimeOffsetCount($offsetHours);
+
+        return ($count > 0);
     }
 
     /**

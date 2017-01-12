@@ -61,10 +61,6 @@ class OroPaymentTermBundleInstaller implements
      * Table name for PaymentTerm
      */
     const TABLE_NAME = 'oro_payment_term';
-    const PAYMENT_TERM_TO_ACCOUNT_TABLE = 'oro_payment_term_to_account';
-    const PAYMENT_TERM_TO_ACCOUNT_GROUP_TABLE = 'oro_payment_term_to_acc_grp';
-    const ACCOUNT_TABLE = 'oro_account';
-    const CUSTOMER_GROUP_TABLE = 'oro_customer_group';
 
     /**
      * {@inheritdoc}
@@ -105,7 +101,7 @@ class OroPaymentTermBundleInstaller implements
 
         $this->activityExtension->addActivityAssociation($schema, 'oro_note', self::TABLE_NAME);
 
-        $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_account');
+        $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_customer');
         $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_customer_group');
     }
 
@@ -127,7 +123,7 @@ class OroPaymentTermBundleInstaller implements
      */
     public function migrate(Schema $schema, QueryBag $queries)
     {
-        $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_account');
+        $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_customer');
         $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_customer_group');
 
         $associationTableName = $this->activityExtension->getAssociationTableName('oro_note', self::TABLE_NAME);
@@ -154,8 +150,8 @@ class OroPaymentTermBundleInstaller implements
     {
         if ($this->platform instanceof MySqlPlatform) {
             $queryAccount = <<<QUERY
-UPDATE oro_account a
-JOIN oro_payment_term_to_account pta ON pta.account_id = a.id
+UPDATE oro_customer a
+JOIN oro_payment_term_to_account pta ON pta.customer_id = a.id
 SET a.payment_term_7c4f1e8e_id = pta.payment_term_id;
 QUERY;
             $queryGroup = <<<QUERY
@@ -165,10 +161,10 @@ SET ag.payment_term_7c4f1e8e_id = ptag.payment_term_id;
 QUERY;
         } elseif ($this->platform instanceof PostgreSqlPlatform) {
             $queryAccount = <<<QUERY
-UPDATE oro_account a
+UPDATE oro_customer a
 SET payment_term_7c4f1e8e_id = pta.payment_term_id
 FROM oro_payment_term_to_account pta
-WHERE pta.account_id = a.id;
+WHERE pta.customer_id = a.id;
 QUERY;
             $queryGroup = <<<QUERY
 UPDATE oro_customer_group ag

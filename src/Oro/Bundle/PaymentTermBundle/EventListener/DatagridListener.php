@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PaymentTermBundle\EventListener;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
@@ -77,13 +77,13 @@ class DatagridListener
             }
 
             $entity = $record->getRootEntity();
-            if (!$entity instanceof AccountOwnerAwareInterface) {
+            if (!$entity instanceof CustomerOwnerAwareInterface) {
                 return;
             }
 
-            $accountGroupPaymentTerm = $this->paymentTermProvider->getAccountGroupPaymentTermByOwner($entity);
-            if ($accountGroupPaymentTerm) {
-                $record->setValue('account_group_payment_term', $accountGroupPaymentTerm->getLabel());
+            $customerGroupPaymentTerm = $this->paymentTermProvider->getCustomerGroupPaymentTermByOwner($entity);
+            if ($customerGroupPaymentTerm) {
+                $record->setValue('customer_group_payment_term', $customerGroupPaymentTerm->getLabel());
             }
         }
     }

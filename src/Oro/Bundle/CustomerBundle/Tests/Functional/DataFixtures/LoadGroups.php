@@ -9,9 +9,9 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 
 class LoadGroups extends AbstractFixture
 {
-    const GROUP1 = 'account_group.group1';
-    const GROUP2 = 'account_group.group2';
-    const GROUP3 = 'account_group.group3';
+    const GROUP1 = 'customer_group.group1';
+    const GROUP2 = 'customer_group.group2';
+    const GROUP3 = 'customer_group.group3';
 
     /**
      * {@inheritdoc}

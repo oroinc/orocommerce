@@ -4,7 +4,7 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCase;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 
 class CustomerGroupTest extends EntityTestCase
 {
@@ -13,53 +13,53 @@ class CustomerGroupTest extends EntityTestCase
      */
     public function testAccessors()
     {
-        $this->assertPropertyAccessors($this->createAccountGroupEntity(), [
+        $this->assertPropertyAccessors($this->createCustomerGroupEntity(), [
             ['id', 42],
             ['name', 'Illuminatenorden'],
         ]);
     }
 
     /**
-     * Test accounts
+     * Test customers
      */
-    public function testAccountCollection()
+    public function testCustomerCollection()
     {
-        $accountGroup = $this->createAccountGroupEntity();
+        $customerGroup = $this->createCustomerGroupEntity();
 
-        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $accountGroup->getCustomers());
-        $this->assertCount(0, $accountGroup->getCustomers());
+        $this->assertInstanceOf('Doctrine\Common\Collections\ArrayCollection', $customerGroup->getCustomers());
+        $this->assertCount(0, $customerGroup->getCustomers());
 
-        $account = $this->createAccountEntity();
+        $customer = $this->createCustomerEntity();
 
         $this->assertInstanceOf(
             'Oro\Bundle\CustomerBundle\Entity\CustomerGroup',
-            $accountGroup->addCustomer($account)
+            $customerGroup->addCustomer($customer)
         );
 
-        $this->assertCount(1, $accountGroup->getCustomers());
+        $this->assertCount(1, $customerGroup->getCustomers());
 
-        $accountGroup->addCustomer($account);
+        $customerGroup->addCustomer($customer);
 
-        $this->assertCount(1, $accountGroup->getCustomers());
+        $this->assertCount(1, $customerGroup->getCustomers());
 
-        $accountGroup->removeCustomer($account);
+        $customerGroup->removeCustomer($customer);
 
-        $this->assertCount(0, $accountGroup->getCustomers());
+        $this->assertCount(0, $customerGroup->getCustomers());
     }
 
     /**
      * @return CustomerGroup
      */
-    protected function createAccountGroupEntity()
+    protected function createCustomerGroupEntity()
     {
         return new CustomerGroup();
     }
 
     /**
-     * @return Account
+     * @return Customer
      */
-    protected function createAccountEntity()
+    protected function createCustomerEntity()
     {
-        return new Account();
+        return new Customer();
     }
 }

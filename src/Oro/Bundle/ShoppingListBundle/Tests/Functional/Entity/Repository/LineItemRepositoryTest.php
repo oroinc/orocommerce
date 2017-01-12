@@ -4,8 +4,8 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as OroLoadAccountUserData;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as OroLoadCustomerUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -68,15 +68,16 @@ class LineItemRepositoryTest extends WebTestCase
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
 
-        /** @var AccountUser $accountUser */
-        $accountUser = $this->getAccountUserRepository()->findOneBy(['username' => OroLoadAccountUserData::AUTH_USER]);
+        /** @var CustomerUser $customerUser */
+        $customerUser = $this->getCustomerUserRepository()
+            ->findOneBy(['username' => OroLoadCustomerUserData::AUTH_USER]);
 
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
 
         $lineItems = $this
             ->getLineItemRepository()
-            ->getOneProductLineItemsWithShoppingListNames($product, $accountUser);
+            ->getOneProductLineItemsWithShoppingListNames($product, $customerUser);
 
         $this->assertTrue(count($lineItems) > 1);
 
@@ -96,13 +97,14 @@ class LineItemRepositoryTest extends WebTestCase
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
 
-        /** @var AccountUser $accountUser */
-        $accountUser = $this->getAccountUserRepository()->findOneBy(['username' => OroLoadAccountUserData::AUTH_USER]);
+        /** @var CustomerUser $customerUser */
+        $customerUser = $this->getCustomerUserRepository()
+            ->findOneBy(['username' => OroLoadCustomerUserData::AUTH_USER]);
 
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
 
-        $lineItems = $this->getLineItemRepository()->getProductItemsWithShoppingListNames($product, $accountUser);
+        $lineItems = $this->getLineItemRepository()->getProductItemsWithShoppingListNames($product, $customerUser);
 
         $this->assertTrue(count($lineItems) > 1);
 
@@ -165,9 +167,9 @@ class LineItemRepositoryTest extends WebTestCase
     /**
      * @return EntityRepository
      */
-    protected function getAccountUserRepository()
+    protected function getCustomerUserRepository()
     {
-        return $this->getContainer()->get('doctrine')->getRepository('OroCustomerBundle:AccountUser');
+        return $this->getContainer()->get('doctrine')->getRepository('OroCustomerBundle:CustomerUser');
     }
 
     /**

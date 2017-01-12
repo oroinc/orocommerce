@@ -122,7 +122,7 @@ class ProductSelectPriceListAwareListenerTest extends \PHPUnit_Framework_TestCas
     public function onDBQueryDataProvider()
     {
         return [
-            'applicable default account user' => [
+            'applicable default customer user' => [
                 'applicable' => true,
                 'parameters' => ['price_list' => ProductSelectPriceListAwareListener::DEFAULT_ACCOUNT_USER],
                 'withPriceList' => false

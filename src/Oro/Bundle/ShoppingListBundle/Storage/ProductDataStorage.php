@@ -27,8 +27,8 @@ class ProductDataStorage
     {
         $data = [
             Storage::ENTITY_DATA_KEY => [
-                'accountUser' => $shoppingList->getAccountUser()->getId(),
-                'account' => $shoppingList->getAccount()->getId(),
+                'customerUser' => $shoppingList->getCustomerUser()->getId(),
+                'customer' => $shoppingList->getCustomer()->getId(),
                 'sourceEntityId' => $shoppingList->getId(),
                 'sourceEntityClass' => ClassUtils::getClass($shoppingList),
                 'sourceEntityIdentifier' => $shoppingList->getIdentifier(),

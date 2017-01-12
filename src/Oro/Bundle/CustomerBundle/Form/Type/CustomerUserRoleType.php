@@ -6,7 +6,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 
 class CustomerUserRoleType extends AbstractCustomerUserRoleType
 {
-    const NAME = 'oro_account_customer_user_role';
+    const NAME = 'oro_customer_customer_user_role';
 
     /**
      * {@inheritdoc}
@@ -15,11 +15,11 @@ class CustomerUserRoleType extends AbstractCustomerUserRoleType
     {
         parent::buildForm($builder, $options);
         $builder->add(
-            'account',
-            AccountSelectType::NAME,
+            'customer',
+            CustomerSelectType::NAME,
             [
                 'required' => false,
-                'label' => 'oro.customer.customeruserrole.account.label'
+                'label' => 'oro.customer.customeruserrole.customer.label'
             ]
         );
     }

@@ -4,7 +4,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Visibility\Cache\Product\
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
@@ -77,15 +77,15 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
                 $scope = $this->scopeManager->findOrCreate(CategoryVisibility::VISIBILITY_TYPE);
                 $visibilityEntity->setScope($scope);
                 break;
-            case 'account':
-                /** @var Account $account */
-                $account = $this->getReference($visibility[$visibility['type']]);
-                $visibilityEntity = $this->getCategoryVisibilityForAccount($registry, $category, $account);
+            case 'customer':
+                /** @var Customer $customer */
+                $customer = $this->getReference($visibility[$visibility['type']]);
+                $visibilityEntity = $this->getCategoryVisibilityForCustomer($registry, $category, $customer);
                 break;
-            case 'accountGroup':
-                /** @var CustomerGroup $accountGroup */
-                $accountGroup = $this->getReference($visibility[$visibility['type']]);
-                $visibilityEntity = $this->getCategoryVisibilityForAccountGroup($registry, $category, $accountGroup);
+            case 'customerGroup':
+                /** @var CustomerGroup $customerGroup */
+                $customerGroup = $this->getReference($visibility[$visibility['type']]);
+                $visibilityEntity = $this->getCategoryVisibilityForCustomerGroup($registry, $category, $customerGroup);
                 break;
             default:
                 throw new \InvalidArgumentException('Unknown visibility type');

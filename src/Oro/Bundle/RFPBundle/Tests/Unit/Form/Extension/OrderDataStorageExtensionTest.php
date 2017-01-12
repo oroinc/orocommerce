@@ -108,7 +108,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
 
         $this->priceListTreeHandler->expects($this->once())
             ->method('getPriceList')
-            ->with($order->getAccount(), $order->getWebsite())
+            ->with($order->getCustomer(), $order->getWebsite())
             ->willReturn($priceList);
 
         $this->productPriceProvider->expects($this->once())
@@ -153,7 +153,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 'data' => [
-                    'account' => ['id' => 1],
+                    'customer' => ['id' => 1],
                     'website' => ['id' => 1],
                     'currency' => 'USD',
                     'lineItems' => [
@@ -209,7 +209,7 @@ class OrderDataStorageExtensionTest extends \PHPUnit_Framework_TestCase
                 ->getEntity('Oro\Bundle\ProductBundle\Entity\ProductUnit', $lineItem['productUnit']);
             $lineItems->add($this->getEntity('Oro\Bundle\OrderBundle\Entity\OrderLineItem', $lineItem));
         }
-        $data['account'] = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', $data['account']);
+        $data['customer'] = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', $data['customer']);
         $data['website'] = $this->getEntity('Oro\Bundle\WebsiteBundle\Entity\Website', $data['website']);
         $data['lineItems'] = $lineItems;
         return $this->getEntity('Oro\Bundle\OrderBundle\Entity\Order', $data);

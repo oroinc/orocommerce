@@ -17,6 +17,10 @@
         width: 47%;
     }
 
+    &__select .select2-chosen {
+        min-width: 50px;
+    }
+
     &__qty-input {
         width: 48%;
         min-width: 60px;

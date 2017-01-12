@@ -35,7 +35,7 @@ class OrderAddressValidator extends ConstraintValidator
         if (!$constraint instanceof ConstraintByValidationGroups) {
             throw new UnexpectedTypeException($constraint, __NAMESPACE__ . '\ConstraintByValidationGroups');
         }
-        if ($value && !$value->getAccountAddress() && !$value->getAccountUserAddress()) {
+        if ($value && !$value->getCustomerAddress() && !$value->getCustomerUserAddress()) {
             /** @var ConstraintViolationList $violationList */
             $violationList = $this->validator->validate($value, null, $constraint->getValidationGroups());
             /** @var ConstraintViolation $violation */

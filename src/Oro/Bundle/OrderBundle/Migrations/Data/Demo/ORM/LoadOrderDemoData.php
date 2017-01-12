@@ -14,7 +14,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
@@ -53,8 +53,8 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData',
-            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
+            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerDemoData',
+            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerUserDemoData',
             'Oro\Bundle\PaymentTermBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData',
             'Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData',
             'Oro\Bundle\ShoppingListBundle\Migrations\Data\Demo\ORM\LoadShoppingListDemoData',
@@ -88,7 +88,7 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
         /** @var User $user */
         $user = $userRepository->findOneBy([]);
 
-        $accountUser = $this->getAccountUser($manager);
+        $customerUser = $this->getCustomerUser($manager);
 
         $rateConverter = $this->container->get('oro_currency.converter.rate');
 
@@ -125,9 +125,9 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
 
             $order
                 ->setOwner($user)
-                ->setAccount($accountUser->getAccount())
+                ->setCustomer($customerUser->getCustomer())
                 ->setIdentifier($row['identifier'])
-                ->setAccountUser($accountUser)
+                ->setCustomerUser($customerUser)
                 ->setOrganization($user->getOrganization())
                 ->setBillingAddress($this->createOrderAddress($manager, $billingAddress))
                 ->setShippingAddress($this->createOrderAddress($manager, $shippingAddress))
@@ -181,11 +181,11 @@ class LoadOrderDemoData extends AbstractFixture implements ContainerAwareInterfa
 
     /**
      * @param ObjectManager $manager
-     * @return AccountUser|null
+     * @return CustomerUser|null
      */
-    protected function getAccountUser(ObjectManager $manager)
+    protected function getCustomerUser(ObjectManager $manager)
     {
-        return $manager->getRepository('OroCustomerBundle:AccountUser')->findOneBy([]);
+        return $manager->getRepository('OroCustomerBundle:CustomerUser')->findOneBy([]);
     }
 
     /**

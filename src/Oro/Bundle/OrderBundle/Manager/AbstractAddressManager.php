@@ -13,16 +13,16 @@ use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Component\PropertyAccess\PropertyAccessor;
-use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 
 class AbstractAddressManager
 {
     const DELIMITER = '_';
 
-    // TODO use oro.order.form.group_label.account in the admin
-    const ACCOUNT_LABEL = 'oro.frontend.order.form.group_label.account';
-    // TODO use oro.order.form.group_label.account_user in the admin
-    const ACCOUNT_USER_LABEL = 'oro.frontend.order.form.group_label.account_user';
+    // TODO use oro.order.form.group_label.customer in the admin
+    const ACCOUNT_LABEL = 'oro.frontend.order.form.group_label.customer';
+    // TODO use oro.order.form.group_label.customer_user in the admin
+    const ACCOUNT_USER_LABEL = 'oro.frontend.order.form.group_label.customer_user';
 
     /**
      * @var AddressProviderInterface
@@ -84,29 +84,29 @@ class AbstractAddressManager
     }
 
     /**
-     * @param AccountOwnerAwareInterface $entity
+     * @param CustomerOwnerAwareInterface $entity
      * @param string $type
      * @return array
      */
-    public function getGroupedAddresses(AccountOwnerAwareInterface $entity, $type)
+    public function getGroupedAddresses(CustomerOwnerAwareInterface $entity, $type)
     {
         $addresses = [];
 
-        $account = $entity->getAccount();
-        if ($account) {
-            $accountAddresses = $this->addressProvider->getAccountAddresses($account, $type);
-            foreach ($accountAddresses as $accountAddress) {
-                $addresses[self::ACCOUNT_LABEL][$this->getIdentifier($accountAddress)] = $accountAddress;
+        $customer = $entity->getCustomer();
+        if ($customer) {
+            $customerAddresses = $this->addressProvider->getCustomerAddresses($customer, $type);
+            foreach ($customerAddresses as $customerAddress) {
+                $addresses[self::ACCOUNT_LABEL][$this->getIdentifier($customerAddress)] = $customerAddress;
             }
         }
 
-        $accountUser = $entity->getAccountUser();
-        if ($accountUser) {
-            $accountUserAddresses = $this->addressProvider->getAccountUserAddresses($accountUser, $type);
-            if ($accountUserAddresses) {
-                foreach ($accountUserAddresses as $accountUserAddress) {
-                    $addresses[self::ACCOUNT_USER_LABEL][$this->getIdentifier($accountUserAddress)] =
-                        $accountUserAddress;
+        $customerUser = $entity->getCustomerUser();
+        if ($customerUser) {
+            $customerUserAddresses = $this->addressProvider->getCustomerUserAddresses($customerUser, $type);
+            if ($customerUserAddresses) {
+                foreach ($customerUserAddresses as $customerUserAddress) {
+                    $addresses[self::ACCOUNT_USER_LABEL][$this->getIdentifier($customerUserAddress)] =
+                        $customerUserAddress;
                 }
             }
         }

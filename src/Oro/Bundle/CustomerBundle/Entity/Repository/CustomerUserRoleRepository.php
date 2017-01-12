@@ -6,8 +6,8 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
@@ -61,9 +61,9 @@ class CustomerUserRoleRepository extends EntityRepository
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $findResult = $qb
-            ->select('accountUser.id')
-            ->from('OroCustomerBundle:AccountUser', 'accountUser')
-            ->innerJoin('accountUser.roles', 'CustomerUserRole')
+            ->select('customerUser.id')
+            ->from('OroCustomerBundle:CustomerUser', 'customerUser')
+            ->innerJoin('customerUser.roles', 'CustomerUserRole')
             ->where($qb->expr()->eq('CustomerUserRole', ':CustomerUserRole'))
             ->setParameter('CustomerUserRole', $role)
             ->setMaxResults(1)
@@ -77,15 +77,15 @@ class CustomerUserRoleRepository extends EntityRepository
      * Return array of assigned users to the given role
      *
      * @param CustomerUserRole $role
-     * @return AccountUser[]
+     * @return CustomerUser[]
      */
     public function getAssignedUsers(CustomerUserRole $role)
     {
         $qb = $this->getEntityManager()->createQueryBuilder();
         $findResult = $qb
-            ->select('accountUser')
-            ->from('OroCustomerBundle:AccountUser', 'accountUser')
-            ->innerJoin('accountUser.roles', 'CustomerUserRole')
+            ->select('customerUser')
+            ->from('OroCustomerBundle:CustomerUser', 'customerUser')
+            ->innerJoin('customerUser.roles', 'CustomerUserRole')
             ->where($qb->expr()->eq('CustomerUserRole', ':CustomerUserRole'))
             ->setParameter('CustomerUserRole', $role)
             ->getQuery()
@@ -96,28 +96,28 @@ class CustomerUserRoleRepository extends EntityRepository
 
     /**
      * @param OrganizationInterface $organization
-     * @param mixed                 $account
+     * @param mixed                 $customer
      * @param bool                  $onlySelfManaged
      * @return QueryBuilder
      */
-    public function getAvailableRolesByAccountUserQueryBuilder(
+    public function getAvailableRolesByCustomerUserQueryBuilder(
         OrganizationInterface $organization,
-        $account,
+        $customer,
         $onlySelfManaged = false
     ) {
-        if ($account instanceof Account) {
-            $account = $account->getId();
+        if ($customer instanceof Customer) {
+            $customer = $customer->getId();
         }
 
         $qb = $this->createQueryBuilder('CustomerUserRole');
 
-        $expr = $qb->expr()->isNull('CustomerUserRole.account');
-        if ($account) {
+        $expr = $qb->expr()->isNull('CustomerUserRole.customer');
+        if ($customer) {
             $expr = $qb->expr()->orX(
                 $expr,
-                $qb->expr()->eq('CustomerUserRole.account', ':account')
+                $qb->expr()->eq('CustomerUserRole.customer', ':customer')
             );
-            $qb->setParameter('account', (int)$account);
+            $qb->setParameter('customer', (int)$customer);
         }
 
         if ($onlySelfManaged) {
@@ -145,11 +145,13 @@ class CustomerUserRoleRepository extends EntityRepository
 
     /**
      * @param OrganizationInterface $organization
-     * @param mixed $account
+     * @param mixed $customer
      * @return QueryBuilder
      */
-    public function getAvailableSelfManagedRolesByAccountUserQueryBuilder(OrganizationInterface $organization, $account)
-    {
-        return $this->getAvailableRolesByAccountUserQueryBuilder($organization, $account, true);
+    public function getAvailableSelfManagedRolesByCustomerUserQueryBuilder(
+        OrganizationInterface $organization,
+        $customer
+    ) {
+        return $this->getAvailableRolesByCustomerUserQueryBuilder($organization, $customer, true);
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Controller\Frontend;
 
+use Oro\Bundle\SaleBundle\Quote\Demand\Subtotals\Calculator\QuoteDemandSubtotalsCalculatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -16,7 +17,6 @@ use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteDemandType;
@@ -134,7 +134,7 @@ class QuoteController extends Controller
                 'data' => $quoteDemand,
                 'form' => $form->createView(),
                 'quote' => $quoteDemand->getQuote(),
-                'totals' => (object)$this->getTotalProcessor()->getTotalWithSubtotalsAsArray($quoteDemand)
+                'totals' => (object)$this->getSubtotalsCalculator()->calculateSubtotals($quoteDemand)
             ]
         ];
     }
@@ -157,22 +157,23 @@ class QuoteController extends Controller
     public function subtotalsAction(Request $request, QuoteDemand $quoteDemand)
     {
         $form = $this->createForm(QuoteDemandType::NAME, $quoteDemand);
+
         if ($request->isMethod(Request::METHOD_POST)) {
             $form->handleRequest($request);
         }
 
         return [
             'data' => [
-                'totals' => (object)$this->getTotalProcessor()->getTotalWithSubtotalsAsArray($quoteDemand)
+                'totals' => (object)$this->getSubtotalsCalculator()->calculateSubtotals($quoteDemand)
             ]
         ];
     }
 
     /**
-     * @return TotalProcessorProvider
+     * @return QuoteDemandSubtotalsCalculatorInterface
      */
-    protected function getTotalProcessor()
+    protected function getSubtotalsCalculator()
     {
-        return $this->get('oro_pricing.subtotal_processor.total_processor_provider');
+        return $this->get('oro_sale.quote_demand.subtotals_calculator_main');
     }
 }

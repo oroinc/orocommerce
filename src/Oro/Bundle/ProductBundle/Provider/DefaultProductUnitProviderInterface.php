@@ -7,7 +7,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 interface DefaultProductUnitProviderInterface
 {
     /**
-     * @return ProductUnitPrecision
+     * @return ProductUnitPrecision|null
      */
     public function getDefaultProductUnitPrecision();
 }

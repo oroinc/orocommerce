@@ -13,8 +13,8 @@ use Doctrine\ORM\QueryBuilder;
 
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserRoleRepository;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserRoleSelectType;
@@ -45,11 +45,11 @@ class FrontendCustomerUserRoleSelectTypeTest extends FormIntegrationTestCase
 
     protected function setUp()
     {
-        $account = $this->createAccount(1, 'account');
+        $customer = $this->createCustomer(1, 'customer');
         $organization = $this->createOrganization(1);
-        $user = new AccountUser();
+        $user = new CustomerUser();
         $criteria = new Criteria();
-        $user->setAccount($account);
+        $user->setCustomer($customer);
         $user->setOrganization($organization);
         $this->qb = $this->getMockBuilder('Doctrine\ORM\QueryBuilder')
             ->disableOriginalConstructor()
@@ -67,7 +67,7 @@ class FrontendCustomerUserRoleSelectTypeTest extends FormIntegrationTestCase
             ->getMock();
         $repo->expects($this->any())
             ->method('createQueryBuilder')
-            ->with('account')
+            ->with('customer')
             ->willReturn($this->qb);
         /** @var $em ObjectManager|\PHPUnit_Framework_MockObject_MockObject */
         $em = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
@@ -144,19 +144,19 @@ class FrontendCustomerUserRoleSelectTypeTest extends FormIntegrationTestCase
     /**
      * @param int $id
      * @param string $name
-     * @return Account
+     * @return Customer
      */
-    protected function createAccount($id, $name)
+    protected function createCustomer($id, $name)
     {
-        $account = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', ['id' => $id]);
-        $account->setName($name);
+        $customer = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => $id]);
+        $customer->setName($name);
 
-        return $account;
+        return $customer;
     }
 
     /**
      * @param int $id
-     * @return Account
+     * @return Customer
      */
     protected function createOrganization($id)
     {

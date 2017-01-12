@@ -113,9 +113,9 @@ class QuoteProduct implements ProductHolderInterface
     /**
      * @var string
      *
-     * @ORM\Column(name="comment_account", type="text", nullable=true)
+     * @ORM\Column(name="comment_customer", type="text", nullable=true)
      */
-    protected $commentAccount;
+    protected $commentCustomer;
 
     /**
      * @var Collection|QuoteProductOffer[]
@@ -471,26 +471,26 @@ class QuoteProduct implements ProductHolderInterface
     }
 
     /**
-     * Set account comment
+     * Set customer comment
      *
-     * @param string $commentAccount
+     * @param string $commentCustomer
      * @return QuoteProduct
      */
-    public function setCommentAccount($commentAccount)
+    public function setCommentCustomer($commentCustomer)
     {
-        $this->commentAccount = $commentAccount;
+        $this->commentCustomer = $commentCustomer;
 
         return $this;
     }
 
     /**
-     * Get account comment
+     * Get customer comment
      *
      * @return string
      */
-    public function getCommentAccount()
+    public function getCommentCustomer()
     {
-        return $this->commentAccount;
+        return $this->commentCustomer;
     }
 
     /**

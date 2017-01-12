@@ -4,10 +4,10 @@ namespace Oro\Bundle\PaymentTermBundle\Provider;
 
 use Doctrine\Common\Util\ClassUtils;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
-use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Event\ResolvePaymentTermEvent;
 
@@ -41,15 +41,15 @@ class PaymentTermProvider
     }
 
     /**
-     * @param Account $account
+     * @param Customer $customer
      * @return PaymentTerm|null
      */
-    public function getPaymentTerm(Account $account)
+    public function getPaymentTerm(Customer $customer)
     {
-        $paymentTerm = $this->getAccountPaymentTerm($account);
+        $paymentTerm = $this->getCustomerPaymentTerm($customer);
 
-        if (!$paymentTerm && $account->getGroup()) {
-            $paymentTerm = $this->getAccountGroupPaymentTerm($account->getGroup());
+        if (!$paymentTerm && $customer->getGroup()) {
+            $paymentTerm = $this->getCustomerGroupPaymentTerm($customer->getGroup());
         }
 
         return $paymentTerm;
@@ -64,9 +64,9 @@ class PaymentTermProvider
 
         $paymentTermEvent = new ResolvePaymentTermEvent();
 
-        /** @var AccountUser $user */
-        if ($token && ($user = $token->getUser()) instanceof AccountUser) {
-            $paymentTermEvent->setPaymentTerm($this->getPaymentTerm($user->getAccount()));
+        /** @var CustomerUser $user */
+        if ($token && ($user = $token->getUser()) instanceof CustomerUser) {
+            $paymentTermEvent->setPaymentTerm($this->getPaymentTerm($user->getCustomer()));
         }
 
         $this->eventDispatcher->dispatch(ResolvePaymentTermEvent::NAME, $paymentTermEvent);
@@ -75,49 +75,49 @@ class PaymentTermProvider
     }
 
     /**
-     * @param Account $account
+     * @param Customer $customer
      * @return PaymentTerm|null
      */
-    public function getAccountPaymentTerm(Account $account)
+    public function getCustomerPaymentTerm(Customer $customer)
     {
-        return $this->paymentTermAssociationProvider->getPaymentTerm($account);
+        return $this->paymentTermAssociationProvider->getPaymentTerm($customer);
     }
 
     /**
-     * @param CustomerGroup $accountGroup
+     * @param CustomerGroup $customerGroup
      * @return PaymentTerm|null
      */
-    public function getAccountGroupPaymentTerm(CustomerGroup $accountGroup)
+    public function getCustomerGroupPaymentTerm(CustomerGroup $customerGroup)
     {
-        return $this->paymentTermAssociationProvider->getPaymentTerm($accountGroup);
+        return $this->paymentTermAssociationProvider->getPaymentTerm($customerGroup);
     }
 
     /**
-     * @param AccountOwnerAwareInterface $accountOwnerAware
+     * @param CustomerOwnerAwareInterface $customerOwnerAware
      * @return PaymentTerm|null
      */
-    public function getAccountPaymentTermByOwner(AccountOwnerAwareInterface $accountOwnerAware)
+    public function getCustomerPaymentTermByOwner(CustomerOwnerAwareInterface $customerOwnerAware)
     {
-        $account = $accountOwnerAware->getAccount();
-        if (!$account) {
+        $customer = $customerOwnerAware->getCustomer();
+        if (!$customer) {
             return null;
         }
 
-        return $this->getAccountPaymentTerm($account);
+        return $this->getCustomerPaymentTerm($customer);
     }
 
     /**
-     * @param AccountOwnerAwareInterface $accountOwnerAware
+     * @param CustomerOwnerAwareInterface $customerOwnerAware
      * @return PaymentTerm|null
      */
-    public function getAccountGroupPaymentTermByOwner(AccountOwnerAwareInterface $accountOwnerAware)
+    public function getCustomerGroupPaymentTermByOwner(CustomerOwnerAwareInterface $customerOwnerAware)
     {
-        $account = $accountOwnerAware->getAccount();
-        if (!$account || !$account->getGroup()) {
+        $customer = $customerOwnerAware->getCustomer();
+        if (!$customer || !$customer->getGroup()) {
             return null;
         }
 
-        return $this->getAccountGroupPaymentTerm($account->getGroup());
+        return $this->getCustomerGroupPaymentTerm($customer->getGroup());
     }
 
     /**

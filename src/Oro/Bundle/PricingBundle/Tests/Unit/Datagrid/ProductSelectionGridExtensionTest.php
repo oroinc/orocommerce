@@ -9,7 +9,7 @@ use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PricingBundle\Datagrid\ProductSelectionGridExtension;
 use Oro\Bundle\PricingBundle\Model\FrontendProductListModifier;
 
@@ -94,7 +94,7 @@ class ProductSelectionGridExtensionTest extends \PHPUnit_Framework_TestCase
         if ($getUser) {
             $tokenMock->expects($this->any())
                 ->method('getUser')
-                ->will($this->returnValue(new AccountUser()));
+                ->will($this->returnValue(new CustomerUser()));
         }
 
         return $tokenMock;
@@ -118,7 +118,7 @@ class ProductSelectionGridExtensionTest extends \PHPUnit_Framework_TestCase
         $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
         $token->expects($this->any())
             ->method('getUser')
-            ->will($this->returnValue(new AccountUser()));
+            ->will($this->returnValue(new CustomerUser()));
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridConfiguration $config */
         $config = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration')
             ->disableOriginalConstructor()

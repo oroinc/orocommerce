@@ -6,7 +6,7 @@ use Doctrine\ORM\QueryBuilder;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 
 class FrontendProductListModifier
@@ -42,9 +42,9 @@ class FrontendProductListModifier
         BasePriceList $priceList = null
     ) {
         $token = $this->tokenStorage->getToken();
-        /** @var AccountUser $user */
-        if ($token && ($user = $token->getUser()) instanceof AccountUser) {
-            $priceList = $priceList ?: $this->priceListTreeHandler->getPriceList($user->getAccount());
+        /** @var CustomerUser $user */
+        if ($token && ($user = $token->getUser()) instanceof CustomerUser) {
+            $priceList = $priceList ?: $this->priceListTreeHandler->getPriceList($user->getCustomer());
 
             if ($priceList) {
                 list($rootAlias) = $queryBuilder->getRootAliases();

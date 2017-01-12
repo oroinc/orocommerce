@@ -6,12 +6,12 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\CustomerBundle\Acl\Group\AclGroupProvider;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class AclGroupProviderTest extends \PHPUnit_Framework_TestCase
 {
-    const LOCAL_LEVEL = 'Oro\Bundle\CustomerBundle\Entity\Account';
-    const BASIC_LEVEL = 'Oro\Bundle\CustomerBundle\Entity\AccountUser';
+    const LOCAL_LEVEL = 'Oro\Bundle\CustomerBundle\Entity\Customer';
+    const BASIC_LEVEL = 'Oro\Bundle\CustomerBundle\Entity\CustomerUser';
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade
@@ -74,8 +74,8 @@ class AclGroupProviderTest extends \PHPUnit_Framework_TestCase
                 'securityFacadeUser' => new \stdClass(),
                 'expectedResult' => false
             ],
-            'account user' => [
-                'securityFacadeUser' => new AccountUser(),
+            'customer user' => [
+                'securityFacadeUser' => new CustomerUser(),
                 'expectedResult' => true
             ],
             'user is not logged in' => [
@@ -87,7 +87,7 @@ class AclGroupProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetGroup()
     {
-        $this->assertEquals(AccountUser::SECURITY_GROUP, $this->provider->getGroup());
+        $this->assertEquals(CustomerUser::SECURITY_GROUP, $this->provider->getGroup());
     }
 
     /**

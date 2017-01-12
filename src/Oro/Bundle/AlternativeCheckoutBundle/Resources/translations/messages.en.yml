@@ -28,8 +28,8 @@ oro:
         entity_plural_label: Alternative Checkouts
         id.label: Id
         owner.label: Owner
-        account.label: Account
-        account_user.label: Customer User
+        customer.label: Customer
+        customer_user.label: Customer User
         organization.label: Organization
         customer_notes.label: Customer Notes
         customer_notes.frontend.label: Notes

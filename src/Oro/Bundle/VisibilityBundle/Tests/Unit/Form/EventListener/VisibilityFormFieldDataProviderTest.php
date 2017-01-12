@@ -4,7 +4,7 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Form\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
@@ -12,8 +12,8 @@ use Oro\Bundle\ScopeBundle\Form\FormScopeCriteriaResolver;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\ScopeBundle\Tests\Unit\Stub\StubScope;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\VisibilityRepositoryInterface;
 use Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityFormFieldDataProvider;
@@ -96,7 +96,7 @@ class VisibilityFormFieldDataProviderTest extends \PHPUnit_Framework_TestCase
             [
                 'id' => 1,
                 'visibility' => 'visible',
-                'scope' => new StubScope(['accountGroup' => null, 'account' => null]),
+                'scope' => new StubScope(['customerGroup' => null, 'customer' => null]),
             ]
         );
 
@@ -112,7 +112,7 @@ class VisibilityFormFieldDataProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($visibility, $actual);
     }
 
-    public function testFindAccountGroupFormFieldData()
+    public function testFindCustomerGroupFormFieldData()
     {
         // visibility target entity
         $product = $this->getEntity(Product::class, ['id' => 1]);
@@ -125,37 +125,37 @@ class VisibilityFormFieldDataProviderTest extends \PHPUnit_Framework_TestCase
         $formConfig->method('getOption')
             ->willReturnMap(
                 [
-                    ['accountGroupClass', null, AccountGroupProductVisibility::class],
+                    ['customerGroupClass', null, CustomerGroupProductVisibility::class],
                     ['scope', null, $rootScope],
                 ]
             );
         $form->method('getConfig')->willReturn($formConfig);
-        $accountGroupForm = $this->createMock(FormInterface::class);
-        $form->expects($this->once())->method('get')->with('accountGroup')->willReturn($accountGroupForm);
+        $customerGroupForm = $this->createMock(FormInterface::class);
+        $form->expects($this->once())->method('get')->with('customerGroup')->willReturn($customerGroupForm);
 
         $this->formScopeCriteriaResolver->expects($this->once())
             ->method('resolve')
-            ->with($accountGroupForm, AccountGroupProductVisibility::VISIBILITY_TYPE)
+            ->with($customerGroupForm, CustomerGroupProductVisibility::VISIBILITY_TYPE)
             ->willReturn(new ScopeCriteria([]));
 
         // configure database queries results
         $visibility1 = $this->getEntity(
-            AccountGroupProductVisibility::class,
+            CustomerGroupProductVisibility::class,
             [
                 'id' => 1,
                 'visibility' => 'visible',
                 'scope' => new StubScope(
-                    ['accountGroup' => $this->getEntity(CustomerGroup::class, ['id' => 2]), 'account' => null]
+                    ['customerGroup' => $this->getEntity(CustomerGroup::class, ['id' => 2]), 'customer' => null]
                 ),
             ]
         );
         $visibility2 = $this->getEntity(
-            AccountGroupProductVisibility::class,
+            CustomerGroupProductVisibility::class,
             [
                 'id' => 2,
                 'visibility' => 'hidden',
                 'scope' => new StubScope(
-                    ['accountGroup' => $this->getEntity(CustomerGroup::class, ['id' => 4]), 'account' => null]
+                    ['customerGroup' => $this->getEntity(CustomerGroup::class, ['id' => 4]), 'customer' => null]
                 ),
             ]
         );
@@ -169,11 +169,11 @@ class VisibilityFormFieldDataProviderTest extends \PHPUnit_Framework_TestCase
 
         $expected = [2 => $visibility1, 4 => $visibility2];
 
-        $actual = $this->dataProvider->findFormFieldData($form, 'accountGroup');
+        $actual = $this->dataProvider->findFormFieldData($form, 'customerGroup');
         $this->assertEquals($expected, $actual);
     }
 
-    public function testFindAccountFormFieldData()
+    public function testFindCustomerFormFieldData()
     {
         // visibility target entity
         $product = $this->getEntity(Product::class, ['id' => 1]);
@@ -186,37 +186,37 @@ class VisibilityFormFieldDataProviderTest extends \PHPUnit_Framework_TestCase
         $formConfig->method('getOption')
             ->willReturnMap(
                 [
-                    ['accountClass', null, AccountProductVisibility::class],
+                    ['customerClass', null, CustomerProductVisibility::class],
                     ['scope', null, $rootScope],
                 ]
             );
         $form->method('getConfig')->willReturn($formConfig);
-        $accountForm = $this->createMock(FormInterface::class);
-        $form->expects($this->once())->method('get')->with('account')->willReturn($accountForm);
+        $customerForm = $this->createMock(FormInterface::class);
+        $form->expects($this->once())->method('get')->with('customer')->willReturn($customerForm);
 
         $this->formScopeCriteriaResolver->expects($this->once())
             ->method('resolve')
-            ->with($accountForm, AccountProductVisibility::VISIBILITY_TYPE)
+            ->with($customerForm, CustomerProductVisibility::VISIBILITY_TYPE)
             ->willReturn(new ScopeCriteria([]));
 
         // configure database queries results
         $visibility1 = $this->getEntity(
-            AccountProductVisibility::class,
+            CustomerProductVisibility::class,
             [
                 'id' => 1,
                 'visibility' => 'visible',
                 'scope' => new StubScope(
-                    ['account' => $this->getEntity(Account::class, ['id' => 2]), 'accountGroup' => null]
+                    ['customer' => $this->getEntity(Customer::class, ['id' => 2]), 'customerGroup' => null]
                 ),
             ]
         );
         $visibility2 = $this->getEntity(
-            AccountProductVisibility::class,
+            CustomerProductVisibility::class,
             [
                 'id' => 2,
                 'visibility' => 'hidden',
                 'scope' => new StubScope(
-                    ['account' => $this->getEntity(Account::class, ['id' => 4]), 'accountGroup' => null]
+                    ['customer' => $this->getEntity(Customer::class, ['id' => 4]), 'customerGroup' => null]
                 ),
             ]
         );
@@ -230,7 +230,7 @@ class VisibilityFormFieldDataProviderTest extends \PHPUnit_Framework_TestCase
 
         $expected = [2 => $visibility1, 4 => $visibility2];
 
-        $actual = $this->dataProvider->findFormFieldData($form, 'account');
+        $actual = $this->dataProvider->findFormFieldData($form, 'customer');
         $this->assertEquals($expected, $actual);
     }
 
@@ -245,25 +245,25 @@ class VisibilityFormFieldDataProviderTest extends \PHPUnit_Framework_TestCase
         $formConfig->method('getOption')
             ->willReturnMap(
                 [
-                    ['accountClass', null, AccountProductVisibility::class],
+                    ['customerClass', null, CustomerProductVisibility::class],
                     ['scope', null, $rootScope],
                 ]
             );
         $form->method('getConfig')->willReturn($formConfig);
         $this->scopeManager->expects($this->once())
             ->method('getCriteriaByScope')
-            ->with($rootScope, 'account_product_visibility')
-            ->willReturn(new ScopeCriteria(['account' => $this->getEntity(Account::class, ['id' => 3])]));
+            ->with($rootScope, 'customer_product_visibility')
+            ->willReturn(new ScopeCriteria(['customer' => $this->getEntity(Customer::class, ['id' => 3])]));
 
-        $fieldData = new Account();
+        $fieldData = new Customer();
         $scope = new Scope();
         $this->scopeManager->expects($this->once())
             ->method('findOrCreate')
-            ->with('account_product_visibility', ['account' => $fieldData])
+            ->with('customer_product_visibility', ['customer' => $fieldData])
             ->willReturn($scope);
 
-        $actual = $this->dataProvider->createFormFieldData($form, 'account', $fieldData);
-        $expected = (new AccountProductVisibility())->setProduct($product)->setScope($scope);
+        $actual = $this->dataProvider->createFormFieldData($form, 'customer', $fieldData);
+        $expected = (new CustomerProductVisibility())->setProduct($product)->setScope($scope);
         $this->assertEquals($expected, $actual);
     }
 }

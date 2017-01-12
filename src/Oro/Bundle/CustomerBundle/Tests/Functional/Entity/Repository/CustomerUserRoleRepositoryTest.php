@@ -4,9 +4,9 @@ namespace Oro\Bundle\CustomerBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserRoleRepository;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserRoleData;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
@@ -78,7 +78,7 @@ class CustomerUserRoleRepositoryTest extends WebTestCase
         $role = $this->getReference(LoadCustomerUserRoleData::ROLE_WITH_ACCOUNT_USER);
         $assignedUsers = $this->repository->getAssignedUsers($role);
         $expectedUsers = [
-            $this->getReference(LoadAccountUserData::EMAIL)
+            $this->getReference(LoadCustomerUserData::EMAIL)
         ];
 
         $this->assertEquals($expectedUsers, $assignedUsers);
@@ -98,18 +98,18 @@ class CustomerUserRoleRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider customerUserRolesDataProvider
-     * @param string $accountUser
+     * @param string $customerUser
      * @param array $expectedCustomerUserRoles
      */
-    public function testGetAvailableRolesByAccountUserQueryBuilder($accountUser, array $expectedCustomerUserRoles)
+    public function testGetAvailableRolesByCustomerUserQueryBuilder($customerUser, array $expectedCustomerUserRoles)
     {
-        /** @var AccountUser $accountUser */
-        $accountUser = $this->getReference($accountUser);
+        /** @var CustomerUser $customerUser */
+        $customerUser = $this->getReference($customerUser);
         /** @var CustomerUserRole[] $actual */
         $actual = $this->repository
-            ->getAvailableRolesByAccountUserQueryBuilder(
-                $accountUser->getOrganization(),
-                $accountUser->getAccount()
+            ->getAvailableRolesByCustomerUserQueryBuilder(
+                $customerUser->getOrganization(),
+                $customerUser->getCustomer()
             )
             ->getQuery()
             ->getResult();
@@ -125,18 +125,18 @@ class CustomerUserRoleRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider customerUserRolesDataProvider
-     * @param string $accountUser
+     * @param string $customerUser
      */
-    public function testGetAvailableSelfManagedRolesByAccountUserQueryBuilder(
-        $accountUser
+    public function testGetAvailableSelfManagedRolesByCustomerUserQueryBuilder(
+        $customerUser
     ) {
-        /** @var AccountUser $accountUser */
-        $accountUser = $this->getReference($accountUser);
+        /** @var CustomerUser $customerUser */
+        $customerUser = $this->getReference($customerUser);
         /** @var CustomerUserRole[] $actual */
         $actual = $this->repository
-            ->getAvailableSelfManagedRolesByAccountUserQueryBuilder(
-                $accountUser->getOrganization(),
-                $accountUser->getAccount()
+            ->getAvailableSelfManagedRolesByCustomerUserQueryBuilder(
+                $customerUser->getOrganization(),
+                $customerUser->getCustomer()
             )
             ->getQuery()
             ->getResult();
@@ -159,7 +159,7 @@ class CustomerUserRoleRepositoryTest extends WebTestCase
     public function customerUserRolesDataProvider()
     {
         return [
-            'user from account with custom role' => [
+            'user from customer with custom role' => [
                 'grzegorz.brzeczyszczykiewicz@example.com',
                 [
                     LoadCustomerUserRoleData::ROLE_WITH_ACCOUNT,
@@ -171,7 +171,7 @@ class CustomerUserRoleRepositoryTest extends WebTestCase
                     LoadCustomerUserRoleData::ROLE_NOT_PUBLIC,
                 ]
             ],
-            'user from account without custom roles' => [
+            'user from customer without custom roles' => [
                 'orphan.user@test.com',
                 [
                     LoadCustomerUserRoleData::ROLE_WITH_ACCOUNT_USER,

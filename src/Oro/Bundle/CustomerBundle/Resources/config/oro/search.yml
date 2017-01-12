@@ -1,12 +1,12 @@
 search:
-    Oro\Bundle\CustomerBundle\Entity\Account:
-        alias:                          oro_customer_account
+    Oro\Bundle\CustomerBundle\Entity\Customer:
+        alias:                          oro_customer_customer
         title_fields:                   [name]
         route:
-            name:                       oro_customer_account_view
+            name:                       oro_customer_customer_view
             parameters:
                 id:                     id
-        search_template:                OroCustomerBundle:Account:searchResult.html.twig
+        search_template:                OroCustomerBundle:Customer:searchResult.html.twig
         fields:
             -
                 name:                   name
@@ -22,28 +22,28 @@ search:
                         target_fields:  [group]
 
     Oro\Bundle\CustomerBundle\Entity\CustomerGroup:
-        alias:                          oro_account_group
+        alias:                          oro_customer_group
         title_fields:                   [name]
         route:
-            name:                       oro_customer_account_group_view
+            name:                       oro_customer_customer_group_view
             parameters:
                 id:                     id
-        search_template:                OroCustomerBundle:AccountGroup:searchResult.html.twig
+        search_template:                OroCustomerBundle:CustomerGroup:searchResult.html.twig
         fields:
             -
                 name:                   name
                 target_type:            text
                 target_fields:          [name]
 
-    Oro\Bundle\CustomerBundle\Entity\AccountUser:
-        alias: oro_account_account_user
-        label: oro.customer.accountuser.entity_plural_label
+    Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+        alias: oro_customer_customer_user
+        label: oro.customer.customeruser.entity_plural_label
         title_fields: [email]
         route:
-            name: oro_customer_account_user_view
+            name: oro_customer_customer_user_view
             parameters:
                 id: id
-        search_template: OroCustomerBundle:AccountUser:searchResult.html.twig
+        search_template: OroCustomerBundle:CustomerUser:searchResult.html.twig
         fields:
             -
                 name: email

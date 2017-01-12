@@ -16,7 +16,10 @@ layout:
                     blockType: container
                     options:
                         vars:
-                            shoppingLists: '=data["oro_shopping_list_account_user_shopping_lists"].getShoppingLists()'
+                            shoppingLists: '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingLists()'
+                            defaultUnitCode: '=data["oro_product_single_unit_mode"].getDefaultUnitCode()'
+                            singleUnitMode: '=data["oro_product_single_unit_mode"].isSingleUnitMode()'
+                            singleUnitModeCodeVisible: '=data["oro_product_single_unit_mode"].isSingleUnitModeCodeVisible()'
                 __shopping_lists_popup_template:
                     blockType: block
             tree:

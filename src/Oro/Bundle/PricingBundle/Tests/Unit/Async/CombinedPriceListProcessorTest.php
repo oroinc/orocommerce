@@ -5,17 +5,17 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\PricingBundle\Async\CombinedPriceListProcessor;
-use Oro\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder;
-use Oro\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder;
+use Oro\Bundle\PricingBundle\Builder\CustomerCombinedPriceListsBuilder;
+use Oro\Bundle\PricingBundle\Builder\CustomerGroupCombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\Builder\CombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
-use Oro\Bundle\PricingBundle\Event\CombinedPriceList\AccountCPLUpdateEvent;
-use Oro\Bundle\PricingBundle\Event\CombinedPriceList\AccountGroupCPLUpdateEvent;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CustomerCPLUpdateEvent;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CustomerGroupCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\ConfigCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\WebsiteCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
@@ -55,14 +55,14 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
     protected $cplWebsiteBuilder;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|AccountGroupCombinedPriceListsBuilder
+     * @var \PHPUnit_Framework_MockObject_MockObject|CustomerGroupCombinedPriceListsBuilder
      */
-    protected $cplAccountGroupBuilder;
+    protected $cplCustomerGroupBuilder;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|AccountCombinedPriceListsBuilder
+     * @var \PHPUnit_Framework_MockObject_MockObject|CustomerCombinedPriceListsBuilder
      */
-    protected $cplAccountBuilder;
+    protected $cplCustomerBuilder;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|EventDispatcherInterface
@@ -104,13 +104,13 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $cplAccountGroupBuilderClass = 'Oro\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder';
-        $this->cplAccountGroupBuilder = $this->getMockBuilder($cplAccountGroupBuilderClass)
+        $cplCustomerGroupBuilderClass = 'Oro\Bundle\PricingBundle\Builder\CustomerGroupCombinedPriceListsBuilder';
+        $this->cplCustomerGroupBuilder = $this->getMockBuilder($cplCustomerGroupBuilderClass)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $cplAccountBuilderClass = 'Oro\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder';
-        $this->cplAccountBuilder = $this->getMockBuilder($cplAccountBuilderClass)
+        $cplCustomerBuilderClass = 'Oro\Bundle\PricingBundle\Builder\CustomerCombinedPriceListsBuilder';
+        $this->cplCustomerBuilder = $this->getMockBuilder($cplCustomerBuilderClass)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -131,8 +131,8 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
         $this->processor = new CombinedPriceListProcessor(
             $this->cplBuilder,
             $this->cplWebsiteBuilder,
-            $this->cplAccountGroupBuilder,
-            $this->cplAccountBuilder,
+            $this->cplCustomerGroupBuilder,
+            $this->cplCustomerBuilder,
             $this->dispatcher,
             $this->logger,
             $this->triggerFactory,
@@ -210,11 +210,11 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
      */
     public function processDataProvider()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Account $account */
-        $account = $this->createMock(Account::class);
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Customer $customer */
+        $customer = $this->createMock(Customer::class);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|CustomerGroup $accountGroup */
-        $accountGroup = $this->createMock('Oro\Bundle\CustomerBundle\Entity\CustomerGroup');
+        /** @var \PHPUnit_Framework_MockObject_MockObject|CustomerGroup $customerGroup */
+        $customerGroup = $this->createMock('Oro\Bundle\CustomerBundle\Entity\CustomerGroup');
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|Website $website */
         $website = $this->createMock(Website::class);
@@ -227,19 +227,19 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
                 'trigger' => $trigger->setWebsite($website),
             ],
             [
-                'trigger' => $trigger->setAccountGroup($accountGroup),
+                'trigger' => $trigger->setCustomerGroup($customerGroup),
             ],
             [
-                'trigger' => $trigger->setAccount($account),
+                'trigger' => $trigger->setCustomer($customer),
             ],
         ];
     }
 
     /**
-     * @dataProvider dispatchAccountScopeEventDataProvider
+     * @dataProvider dispatchCustomerScopeEventDataProvider
      * @param array $builtList
      */
-    public function testDispatchAccountScopeEvent(array $builtList)
+    public function testDispatchCustomerScopeEvent(array $builtList)
     {
         $em = $this->createMock(EntityManagerInterface::class);
 
@@ -257,13 +257,13 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
             ->with(CombinedPriceList::class)
             ->willReturn($em);
 
-        $this->cplAccountBuilder->expects($this->once())
+        $this->cplCustomerBuilder->expects($this->once())
             ->method('getBuiltList')
             ->willReturn($builtList);
-        if (isset($builtList['account'])) {
+        if (isset($builtList['customer'])) {
             $this->dispatcher->expects($this->once())
                 ->method('dispatch')
-                ->with(AccountCPLUpdateEvent::NAME);
+                ->with(CustomerCPLUpdateEvent::NAME);
         } else {
             $this->dispatcher->expects($this->never())
                 ->method('dispatch');
@@ -276,15 +276,15 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|Account $account */
-        $account = $this->createMock(Account::class);
+        /** @var \PHPUnit_Framework_MockObject_MockObject|Customer $customer */
+        $customer = $this->createMock(Customer::class);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|Website $website */
         $website = $this->createMock(Website::class);
 
         $trigger = new PriceListRelationTrigger();
         $trigger->setWebsite($website)
-            ->setAccount($account);
+            ->setCustomer($customer);
         $this->triggerFactory->method('createFromArray')->willReturn($trigger);
 
         $this->processor->process($message, $session);
@@ -293,12 +293,12 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function dispatchAccountScopeEventDataProvider()
+    public function dispatchCustomerScopeEventDataProvider()
     {
         return [
-            'with account scope' => [
+            'with customer scope' => [
                 'builtList' => [
-                    'account' => [
+                    'customer' => [
                         1 => [
                             1 => true,
                             2 => true
@@ -306,17 +306,17 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
                     ]
                 ]
             ],
-            'without account scope' => [
+            'without customer scope' => [
                 'builtList' => []
             ],
         ];
     }
 
     /**
-     * @dataProvider dispatchAccountGroupScopeEventDataProvider
+     * @dataProvider dispatchCustomerGroupScopeEventDataProvider
      * @param array $builtList
      */
-    public function testDispatchAccountGroupScopeEvent(array $builtList)
+    public function testDispatchCustomerGroupScopeEvent(array $builtList)
     {
         $em = $this->createMock(EntityManagerInterface::class);
 
@@ -334,13 +334,13 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
             ->with(CombinedPriceList::class)
             ->willReturn($em);
 
-        $this->cplAccountGroupBuilder->expects($this->once())
+        $this->cplCustomerGroupBuilder->expects($this->once())
             ->method('getBuiltList')
             ->willReturn($builtList);
         if ($builtList) {
             $this->dispatcher->expects($this->once())
                 ->method('dispatch')
-                ->with(AccountGroupCPLUpdateEvent::NAME);
+                ->with(CustomerGroupCPLUpdateEvent::NAME);
         } else {
             $this->dispatcher->expects($this->never())
                 ->method('dispatch');
@@ -352,15 +352,15 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|CustomerGroup $account */
-        $accountGroup = $this->createMock(CustomerGroup::class);
+        /** @var \PHPUnit_Framework_MockObject_MockObject|CustomerGroup $customer */
+        $customerGroup = $this->createMock(CustomerGroup::class);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|Website $website */
         $website = $this->createMock(Website::class);
 
         $trigger = new PriceListRelationTrigger();
         $trigger->setWebsite($website)
-            ->setAccountGroup($accountGroup);
+            ->setCustomerGroup($customerGroup);
         $this->triggerFactory->method('createFromArray')->willReturn($trigger);
 
         $this->processor->process($message, $session);
@@ -369,10 +369,10 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function dispatchAccountGroupScopeEventDataProvider()
+    public function dispatchCustomerGroupScopeEventDataProvider()
     {
         return [
-            'with account group scope' => [
+            'with customer group scope' => [
                 'builtList' => [
                     1 => [
                         1 => true,
@@ -380,7 +380,7 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
                     ]
                 ]
             ],
-            'without account group scope' => [
+            'without customer group scope' => [
                 'builtList' => []
             ],
         ];
@@ -443,10 +443,10 @@ class CombinedPriceListProcessorTest extends \PHPUnit_Framework_TestCase
     public function dispatchWebsiteScopeEventDataProvider()
     {
         return [
-            'with account group scope' => [
+            'with customer group scope' => [
                 'builtList' => [1, 2, 3]
             ],
-            'without account group scope' => [
+            'without customer group scope' => [
                 'builtList' => []
             ],
         ];

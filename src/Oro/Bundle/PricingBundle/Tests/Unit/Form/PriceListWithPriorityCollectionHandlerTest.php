@@ -5,8 +5,8 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Form;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\PricingBundle\Entity\PriceListToAccount;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
 use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
 use Oro\Bundle\PricingBundle\Form\PriceListWithPriorityCollectionHandler;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -149,9 +149,9 @@ class PriceListWithPriorityCollectionHandlerTest extends \PHPUnit_Framework_Test
     public function testNewRelationsAdded()
     {
         $website = new Website();
-        $account = new Account();
-        $newRelation = new PriceListToAccount();
-        $notChangedRelation = new PriceListToAccount();
+        $customer = new Customer();
+        $newRelation = new PriceListToCustomer();
+        $notChangedRelation = new PriceListToCustomer();
 
         $existing = [
             $notChangedRelation,
@@ -167,8 +167,8 @@ class PriceListWithPriorityCollectionHandlerTest extends \PHPUnit_Framework_Test
 
         $meta->expects($this->once())
             ->method('getAssociationsByTargetClass')
-            ->with(get_class($account))
-            ->willReturn([['fieldName'=>'account']]);
+            ->with(get_class($customer))
+            ->willReturn([['fieldName'=>'customer']]);
 
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManagerInterface')
             ->disableOriginalConstructor()
@@ -187,8 +187,8 @@ class PriceListWithPriorityCollectionHandlerTest extends \PHPUnit_Framework_Test
             ->method('persist')
             ->with($newRelation);
 
-        $hasChanges = $this->handler->handleChanges($submitted, $existing, $account, $website);
+        $hasChanges = $this->handler->handleChanges($submitted, $existing, $customer, $website);
         $this->assertTrue($hasChanges);
-        $this->assertSame($account, $newRelation->getAccount());
+        $this->assertSame($customer, $newRelation->getCustomer());
     }
 }

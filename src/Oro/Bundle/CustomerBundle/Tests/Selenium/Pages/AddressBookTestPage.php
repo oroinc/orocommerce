@@ -11,7 +11,7 @@ class AddressBookTestPage extends AbstractPage
 
     const ACCOUNT_ADDRESS_BLOCK_SELECTOR = "//h1[contains(@class,'page-title')]/following-sibling::div[2]";
     const USER_ADDRESS_BLOCK_SELECTOR = "//h1[contains(@class,'page-title')]/following-sibling::div[4]";
-    const ADDRESS_BOOK_URL = '/account/user/address';
+    const ADDRESS_BOOK_URL = '/customer/user/address';
 
     /**
      * @param string $username
@@ -20,7 +20,7 @@ class AddressBookTestPage extends AbstractPage
      */
     public function login($username = 'AmandaRCole@example.org', $password = 'AmandaRCole@example.org')
     {
-        $this->test->url('/account/user/login');
+        $this->test->url('/customer/user/login');
         $this->waitPageToLoad();
         $this->waitForAjax();
 
@@ -62,7 +62,7 @@ class AddressBookTestPage extends AbstractPage
     /**
      * @return \PHPUnit_Extensions_Selenium2TestCase_Element
      */
-    public function getAccountAddressBlock()
+    public function getCustomerAddressBlock()
     {
         return $this->getElement(self::ACCOUNT_ADDRESS_BLOCK_SELECTOR);
     }
@@ -92,9 +92,9 @@ class AddressBookTestPage extends AbstractPage
     /**
      * @param bool $isGrid
      */
-    public function deleteAccountAddresses($isGrid)
+    public function deleteCustomerAddresses($isGrid)
     {
-        foreach ($this->getAccountAddressDeleteButtons($isGrid) as $button) {
+        foreach ($this->getCustomerAddressDeleteButtons($isGrid) as $button) {
             $button->click();
             $this->confirmModalDelete();
             $this->waitForAjax();
@@ -104,7 +104,7 @@ class AddressBookTestPage extends AbstractPage
     /**
      * @return \PHPUnit_Extensions_Selenium2TestCase_Element|\PHPUnit_Extensions_Selenium2TestCase_Element[]
      */
-    public function getAccountAddressAddButtons()
+    public function getCustomerAddressAddButtons()
     {
         return $this->getElement("//a[text()='Add Company Address']", true, false);
     }
@@ -121,7 +121,7 @@ class AddressBookTestPage extends AbstractPage
      * @param bool $grid
      * @return \PHPUnit_Extensions_Selenium2TestCase_Element|\PHPUnit_Extensions_Selenium2TestCase_Element[]
      */
-    public function getAccountAddressEditButtons($grid = true)
+    public function getCustomerAddressEditButtons($grid = true)
     {
         return $this->getElement(
             $this->getEditButtonSelector(self::ACCOUNT_ADDRESS_BLOCK_SELECTOR, $grid),
@@ -147,7 +147,7 @@ class AddressBookTestPage extends AbstractPage
      * @param bool $grid
      * @return \PHPUnit_Extensions_Selenium2TestCase_Element|\PHPUnit_Extensions_Selenium2TestCase_Element[]
      */
-    public function getAccountAddressDeleteButtons($grid = true)
+    public function getCustomerAddressDeleteButtons($grid = true)
     {
         return $this->getElement(
             $this->getDeleteButtonSelector(self::ACCOUNT_ADDRESS_BLOCK_SELECTOR, $grid),
@@ -172,7 +172,7 @@ class AddressBookTestPage extends AbstractPage
     /**
      * @return \PHPUnit_Extensions_Selenium2TestCase_Element|\PHPUnit_Extensions_Selenium2TestCase_Element[]
      */
-    public function getAccountAddressShowOnMapButtons()
+    public function getCustomerAddressShowOnMapButtons()
     {
         return $this->getElement(
             self::ACCOUNT_ADDRESS_BLOCK_SELECTOR . "//li//i[contains(@class, 'icon-map-marker')]",

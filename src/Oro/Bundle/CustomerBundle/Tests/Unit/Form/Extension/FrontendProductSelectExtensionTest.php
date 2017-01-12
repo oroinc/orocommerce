@@ -7,7 +7,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\CustomerBundle\Form\Extension\FrontendProductSelectExtension;
 
-class FrontendProductSelectExtensionTest extends AbstractAccountUserAwareExtensionTest
+class FrontendProductSelectExtensionTest extends AbstractCustomerUserAwareExtensionTest
 {
     protected function setUp()
     {
@@ -21,14 +21,14 @@ class FrontendProductSelectExtensionTest extends AbstractAccountUserAwareExtensi
         $this->assertEquals(ProductSelectType::NAME, $this->extension->getExtendedType());
     }
 
-    public function testConfigureOptionsNonAccountUser()
+    public function testConfigureOptionsNonCustomerUser()
     {
-        $this->assertOptionsNotChangedForNonAccountUser();
+        $this->assertOptionsNotChangedForNonCustomerUser();
     }
 
-    public function testConfigureOptionsAccountUser()
+    public function testConfigureOptionsCustomerUser()
     {
-        $this->assertAccountUserTokenCall();
+        $this->assertCustomerUserTokenCall();
         /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
         $resolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolver')
             ->disableOriginalConstructor()

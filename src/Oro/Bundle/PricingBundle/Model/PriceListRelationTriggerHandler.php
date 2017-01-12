@@ -3,13 +3,13 @@
 namespace Oro\Bundle\PricingBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Entity\PriceListToAccount;
-use Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
+use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
+use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListRelationTrigger;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -71,14 +71,14 @@ class PriceListRelationTriggerHandler
     }
 
     /**
-     * @param Account $account
+     * @param Customer $customer
      * @param Website $website
      */
-    public function handleAccountChange(Account $account, Website $website)
+    public function handleCustomerChange(Customer $customer, Website $website)
     {
         $trigger = $this->triggerFactory->create();
-        $trigger->setAccount($account)
-            ->setAccountGroup($account->getGroup())
+        $trigger->setCustomer($customer)
+            ->setCustomerGroup($customer->getGroup())
             ->setWebsite($website);
         $this->scheduledTriggers[] = $trigger->toArray();
     }
@@ -90,13 +90,13 @@ class PriceListRelationTriggerHandler
     }
 
     /**
-     * @param CustomerGroup $accountGroup
+     * @param CustomerGroup $customerGroup
      * @param Website $website
      */
-    public function handleAccountGroupChange(CustomerGroup $accountGroup, Website $website)
+    public function handleCustomerGroupChange(CustomerGroup $customerGroup, Website $website)
     {
         $trigger = $this->triggerFactory->create();
-        $trigger->setAccountGroup($accountGroup)
+        $trigger->setCustomerGroup($customerGroup)
             ->setWebsite($website);
         $this->scheduledTriggers[] = $trigger->toArray();
     }
@@ -117,13 +117,13 @@ class PriceListRelationTriggerHandler
             $this->handleFullRebuild();
         }
 
-        $priceListToAccountRepository = $this->registry->getRepository(PriceListToAccount::class);
-        foreach ($priceListToAccountRepository->getIteratorByPriceList($priceList) as $item) {
+        $priceListToCustomerRepository = $this->registry->getRepository(PriceListToCustomer::class);
+        foreach ($priceListToCustomerRepository->getIteratorByPriceList($priceList) as $item) {
             $this->scheduledTriggers[] = $item;
         }
 
-        $priceListToAccountGroupRepository = $this->registry->getRepository(PriceListToAccountGroup::class);
-        foreach ($priceListToAccountGroupRepository->getIteratorByPriceList($priceList) as $item) {
+        $priceListToCustomerGroupRepository = $this->registry->getRepository(PriceListToCustomerGroup::class);
+        foreach ($priceListToCustomerGroupRepository->getIteratorByPriceList($priceList) as $item) {
             $this->scheduledTriggers[] = $item;
         }
 
@@ -142,12 +142,12 @@ class PriceListRelationTriggerHandler
     }
 
     /**
-     * @param CustomerGroup $accountGroup
+     * @param CustomerGroup $customerGroup
      */
-    public function handleAccountGroupRemove(CustomerGroup $accountGroup)
+    public function handleCustomerGroupRemove(CustomerGroup $customerGroup)
     {
-        $iterator = $this->registry->getRepository(PriceListToAccount::class)
-            ->getAccountWebsitePairsByAccountGroupIterator($accountGroup);
+        $iterator = $this->registry->getRepository(PriceListToCustomer::class)
+            ->getCustomerWebsitePairsByCustomerGroupIterator($customerGroup);
         foreach ($iterator as $item) {
             $this->scheduledTriggers[] = $item;
         }

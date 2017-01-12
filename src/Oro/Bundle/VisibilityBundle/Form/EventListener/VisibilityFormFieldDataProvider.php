@@ -3,7 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Form\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\ScopeBundle\Form\FormScopeCriteriaResolver;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
@@ -125,18 +125,18 @@ class VisibilityFormFieldDataProvider
         foreach ($visibilities as $visibilityEntity) {
             $scope = $visibilityEntity->getScope();
 
-            /** @var Account $account */
+            /** @var Customer $customer */
             /** @noinspection PhpUndefinedMethodInspection - field added through entity extend */
-            $account = $scope->getAccount();
+            $customer = $scope->getCustomer();
 
-            /** @var CustomerGroup $accountGroup */
+            /** @var CustomerGroup $customerGroup */
             /** @noinspection PhpUndefinedMethodInspection - field added through entity extend */
-            $accountGroup = $scope->getAccountGroup();
+            $customerGroup = $scope->getCustomerGroup();
 
-            if (null !== $accountGroup) {
-                $visibilitiesById[$accountGroup->getId()] = $visibilityEntity;
-            } elseif (null !== $account) {
-                $visibilitiesById[$account->getId()] = $visibilityEntity;
+            if (null !== $customerGroup) {
+                $visibilitiesById[$customerGroup->getId()] = $visibilityEntity;
+            } elseif (null !== $customer) {
+                $visibilitiesById[$customer->getId()] = $visibilityEntity;
             }
         }
 

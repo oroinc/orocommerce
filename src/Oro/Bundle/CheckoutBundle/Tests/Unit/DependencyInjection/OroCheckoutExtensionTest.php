@@ -10,6 +10,24 @@ class OroCheckoutExtensionTest extends ExtensionTestCase
     /** @var OroCheckoutExtension */
     protected $extension;
 
+    /**
+     * {@inheritdoc}
+     */
+    protected function buildContainerMock()
+    {
+        $mockBuilder = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
+            ->setMethods(['setDefinition', 'setParameter', 'prependExtensionConfig', 'getParameter'])
+            ->getMock();
+
+        $mockBuilder
+            ->expects($this->once())
+            ->method('getParameter')
+            ->with('kernel.bundles')
+            ->willReturn(['OroSaleBundle' => []]);
+
+        return $mockBuilder;
+    }
+
     protected function setUp()
     {
         $this->extension = new OroCheckoutExtension();

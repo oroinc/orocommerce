@@ -27,7 +27,6 @@ class OroTaxBundleStage2 implements Migration, OrderedMigrationInterface
     private function restoreForeigneys(Schema $schema)
     {
         $table = $schema->getTable('oro_tax_cus_grp_tc_cus_grp');
-
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_customer_group'),
             ['customer_group_id'],
@@ -35,8 +34,39 @@ class OroTaxBundleStage2 implements Migration, OrderedMigrationInterface
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_tax_account_tax_code'),
+            $schema->getTable('oro_tax_customer_tax_code'),
             ['customer_group_tax_code_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+
+        $table = $schema->getTable('oro_tax_cus_tax_code_cus');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_tax_customer_tax_code'),
+            ['customer_tax_code_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_customer'),
+            ['customer_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addUniqueIndex(['customer_id'], 'UNIQ_53167F2A9B6B5FBA');
+
+        $table = $schema->getTable('oro_tax_cus_grp_tc_cus_grp');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_tax_customer_tax_code'),
+            ['customer_group_tax_code_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+
+        $table = $schema->getTable('oro_tax_rule');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_tax_customer_tax_code'),
+            ['customer_tax_code_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );

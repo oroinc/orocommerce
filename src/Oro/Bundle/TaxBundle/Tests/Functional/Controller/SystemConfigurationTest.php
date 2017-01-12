@@ -79,7 +79,7 @@ class SystemConfigurationTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $this->configManager->reload();
-        $this->assertFalse($this->configManager->get('oro_tax.tax_enable'));
+        $this->assertFalse((bool)$this->configManager->get('oro_tax.tax_enable'));
         $this->assertEquals(BuiltInTaxProvider::NAME, $this->configManager->get('oro_tax.tax_provider'));
         $this->assertEquals(
             [

@@ -6,9 +6,8 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressProvider;
 
@@ -50,8 +49,8 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
             $this->securityFacade,
             $this->registry,
             $this->aclHelper,
-            $this->accountAddressClass,
-            $this->accountUserAddressClass
+            $this->customerAddressClass,
+            $this->customerUserAddressClass
         );
     }
 
@@ -59,30 +58,30 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Unknown type "test", known types are: billing, shipping
      */
-    public function testGetAccountAddressesUnsupportedType()
+    public function testGetCustomerAddressesUnsupportedType()
     {
-        $this->provider->getAccountAddresses(new Account(), 'test');
+        $this->provider->getCustomerAddresses(new Customer(), 'test');
     }
 
     /**
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Unknown type "test", known types are: billing, shipping
      */
-    public function testGetAccountUserAddressesUnsupportedType()
+    public function testGetCustomerUserAddressesUnsupportedType()
     {
-        $this->provider->getAccountUserAddresses(new AccountUser(), 'test');
+        $this->provider->getCustomerUserAddresses(new CustomerUser(), 'test');
     }
 
     /**
      * @return array
      */
-    public function accountAddressPermissions()
+    public function customerAddressPermissions()
     {
         return [
-            ['shipping', 'oro_order_address_shipping_account_use_any', new AccountUser()],
-            ['shipping', 'oro_order_address_shipping_account_use_any_backend', new \stdClass()],
-            ['billing', 'oro_order_address_billing_account_use_any', new AccountUser()],
-            ['billing', 'oro_order_address_billing_account_use_any_backend', new \stdClass()],
+            ['shipping', 'oro_order_address_shipping_customer_use_any', new CustomerUser()],
+            ['shipping', 'oro_order_address_shipping_customer_use_any_backend', new \stdClass()],
+            ['billing', 'oro_order_address_billing_customer_use_any', new CustomerUser()],
+            ['billing', 'oro_order_address_billing_customer_use_any_backend', new \stdClass()],
         ];
     }
 
@@ -90,72 +89,72 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
      * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function accountUserAddressPermissions()
+    public function customerUserAddressPermissions()
     {
         return [
             [
                 'shipping',
                 [
-                    'oro_order_address_shipping_account_user_use_any' => false,
-                    'oro_order_address_shipping_account_user_use_default' => false,
+                    'oro_order_address_shipping_customer_user_use_any' => false,
+                    'oro_order_address_shipping_customer_user_use_default' => false,
                 ],
                 null,
                 [],
-                new AccountUser()
+                new CustomerUser()
             ],
             [
                 'shipping',
                 [
-                    'oro_order_address_shipping_account_user_use_any' => true
+                    'oro_order_address_shipping_customer_user_use_any' => true
                 ],
                 'getAddressesByType',
                 [new CustomerUserAddress()],
-                new AccountUser()
+                new CustomerUser()
             ],
             [
                 'shipping',
                 [
-                    'oro_order_address_shipping_account_user_use_any' => false,
-                    'oro_order_address_shipping_account_user_use_default' => true
+                    'oro_order_address_shipping_customer_user_use_any' => false,
+                    'oro_order_address_shipping_customer_user_use_default' => true
                 ],
                 'getDefaultAddressesByType',
                 [new CustomerUserAddress()],
-                new AccountUser()
+                new CustomerUser()
             ],
             [
                 'billing',
                 [
-                    'oro_order_address_billing_account_user_use_any' => false,
-                    'oro_order_address_billing_account_user_use_default' => false,
+                    'oro_order_address_billing_customer_user_use_any' => false,
+                    'oro_order_address_billing_customer_user_use_default' => false,
                 ],
                 null,
                 [],
-                new AccountUser()
+                new CustomerUser()
             ],
             [
                 'billing',
                 [
-                    'oro_order_address_billing_account_user_use_any' => true
+                    'oro_order_address_billing_customer_user_use_any' => true
                 ],
                 'getAddressesByType',
                 [new CustomerUserAddress()],
-                new AccountUser()
+                new CustomerUser()
             ],
             [
                 'billing',
                 [
-                    'oro_order_address_billing_account_user_use_any' => false,
-                    'oro_order_address_billing_account_user_use_default' => true
+                    'oro_order_address_billing_customer_user_use_any' => false,
+                    'oro_order_address_billing_customer_user_use_default' => true
                 ],
                 'getDefaultAddressesByType',
                 [new CustomerUserAddress()],
-                new AccountUser()
+                new CustomerUser()
             ],
             [
                 'shipping',
                 [
-                    'oro_order_address_shipping_account_user_use_any_backend' => false,
-                    'oro_order_address_shipping_account_user_use_default_backend' => false,
+                    'oro_order_address_shipping_customer_user_use_any_backend' => false,
+                    'oro_order_address_shipping_customer_user_use_default_backend' => false,
                 ],
                 null,
                 [],
@@ -164,7 +163,7 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
             [
                 'shipping',
                 [
-                    'oro_order_address_shipping_account_user_use_any_backend' => true
+                    'oro_order_address_shipping_customer_user_use_any_backend' => true
                 ],
                 'getAddressesByType',
                 [new CustomerUserAddress()],
@@ -173,8 +172,8 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
             [
                 'shipping',
                 [
-                    'oro_order_address_shipping_account_user_use_any_backend' => false,
-                    'oro_order_address_shipping_account_user_use_default_backend' => true
+                    'oro_order_address_shipping_customer_user_use_any_backend' => false,
+                    'oro_order_address_shipping_customer_user_use_default_backend' => true
                 ],
                 'getDefaultAddressesByType',
                 [new CustomerUserAddress()],
@@ -183,8 +182,8 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
             [
                 'billing',
                 [
-                    'oro_order_address_billing_account_user_use_any_backend' => false,
-                    'oro_order_address_billing_account_user_use_default_backend' => false,
+                    'oro_order_address_billing_customer_user_use_any_backend' => false,
+                    'oro_order_address_billing_customer_user_use_default_backend' => false,
                 ],
                 null,
                 [],
@@ -193,7 +192,7 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
             [
                 'billing',
                 [
-                    'oro_order_address_billing_account_user_use_any_backend' => true
+                    'oro_order_address_billing_customer_user_use_any_backend' => true
                 ],
                 'getAddressesByType',
                 [new CustomerUserAddress()],
@@ -202,8 +201,8 @@ class OrderAddressProviderTest extends AbstractQuoteAddressProviderTest
             [
                 'billing',
                 [
-                    'oro_order_address_billing_account_user_use_any_backend' => false,
-                    'oro_order_address_billing_account_user_use_default_backend' => true
+                    'oro_order_address_billing_customer_user_use_any_backend' => false,
+                    'oro_order_address_billing_customer_user_use_default_backend' => true
                 ],
                 'getDefaultAddressesByType',
                 [new CustomerUserAddress()],

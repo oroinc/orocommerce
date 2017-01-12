@@ -6,8 +6,8 @@ use Symfony\Component\Finder\Finder;
 use Symfony\Component\Yaml\Parser;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressProvider;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
@@ -36,8 +36,8 @@ class OrderAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
         $this->provider = new OrderAddressSecurityProvider(
             $this->securityFacade,
             $this->orderAddressProvider,
-            'AccountOrderClass',
-            'AccountUserOrderClass'
+            'CustomerOrderClass',
+            'CustomerUserOrderClass'
         );
     }
 
@@ -80,53 +80,53 @@ class OrderAddressSecurityProviderTest extends \PHPUnit_Framework_TestCase
      * @param string $userClass
      * @param string $addressType
      * @param array|null $isGranted
-     * @param bool $hasAccountAddresses
-     * @param bool $hasAccountUserAddresses
+     * @param bool $hasCustomerAddresses
+     * @param bool $hasCustomerUserAddresses
      * @param bool $hasEntity
      * @param bool $isAddressGranted
-     * @param bool $isAccountAddressGranted
-     * @param bool $isAccountUserAddressGranted
+     * @param bool $isCustomerAddressGranted
+     * @param bool $isCustomerUserAddressGranted
      */
     public function testIsAddressGranted(
         $userClass,
         $addressType,
         $isGranted,
-        $hasAccountAddresses,
-        $hasAccountUserAddresses,
+        $hasCustomerAddresses,
+        $hasCustomerUserAddresses,
         $hasEntity,
         $isAddressGranted,
-        $isAccountAddressGranted,
-        $isAccountUserAddressGranted
+        $isCustomerAddressGranted,
+        $isCustomerUserAddressGranted
     ) {
-        $this->orderAddressProvider->expects($this->any())->method('getAccountAddresses')
-            ->willReturn($hasAccountAddresses);
-        $this->orderAddressProvider->expects($this->any())->method('getAccountUserAddresses')
-            ->willReturn($hasAccountUserAddresses);
+        $this->orderAddressProvider->expects($this->any())->method('getCustomerAddresses')
+            ->willReturn($hasCustomerAddresses);
+        $this->orderAddressProvider->expects($this->any())->method('getCustomerUserAddresses')
+            ->willReturn($hasCustomerUserAddresses);
 
         $this->securityFacade->expects($this->any())->method('getLoggedUser')->willReturn(new $userClass);
         $this->securityFacade->expects($this->any())->method('isGranted')->with($this->isType('string'))
             ->will($this->returnValueMap((array)$isGranted));
 
         $order = null;
-        $account = null;
-        $accountUser = null;
+        $customer = null;
+        $customerUser = null;
         if ($hasEntity) {
-            $account = new Account();
-            $accountUser = new AccountUser();
+            $customer = new Customer();
+            $customerUser = new CustomerUser();
         }
-        $order = (new Order())->setAccount($account)->setAccountUser($accountUser);
+        $order = (new Order())->setCustomer($customer)->setCustomerUser($customerUser);
 
         $this->assertEquals(
             $isAddressGranted,
             $this->provider->isAddressGranted($order, $addressType)
         );
         $this->assertEquals(
-            $isAccountAddressGranted,
-            $this->provider->isAccountAddressGranted($addressType, $account)
+            $isCustomerAddressGranted,
+            $this->provider->isCustomerAddressGranted($addressType, $customer)
         );
         $this->assertEquals(
-            $isAccountUserAddressGranted,
-            $this->provider->isAccountUserAddressGranted($addressType, $accountUser)
+            $isCustomerUserAddressGranted,
+            $this->provider->isCustomerUserAddressGranted($addressType, $customerUser)
         );
     }
 

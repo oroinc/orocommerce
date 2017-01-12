@@ -3,7 +3,7 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Visibility\Resolver;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
@@ -162,13 +162,13 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->hiddenCategoryIds, $this->resolver->getHiddenCategoryIds());
     }
 
-    public function testIsCategoryVisibleForAccountGroup()
+    public function testIsCategoryVisibleForCustomerGroup()
     {
         /** @var Category $category */
         $category = $this->getEntity('Oro\Bundle\CatalogBundle\Entity\Category', ['id' => 123]);
 
-        /** @var CustomerGroup $accountGroup */
-        $accountGroup = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerGroup', ['id' => 42]);
+        /** @var CustomerGroup $customerGroup */
+        $customerGroup = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerGroup', ['id' => 42]);
 
         $scope = $this->getEntity(Scope::class, ['id' => 1]);
         $this->scopeManager->method('findOrCreate')->willReturn($scope);
@@ -179,7 +179,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $categoryVisibilityResolvedRepository = $this
             ->getMockBuilder(
-                'Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountGroupCategoryRepository'
+                'Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerGroupCategoryRepository'
             )
             ->disableOriginalConstructor()
             ->getMock();
@@ -191,20 +191,20 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $em->expects($this->once())
             ->method('getRepository')
-            ->with('OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->with('OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved')
             ->willReturn($categoryVisibilityResolvedRepository);
 
         $this->registry->expects($this->once())
             ->method('getManagerForClass')
             ->willReturn($em);
 
-        $this->assertFalse($this->resolver->isCategoryVisibleForAccountGroup($category, $accountGroup));
+        $this->assertFalse($this->resolver->isCategoryVisibleForCustomerGroup($category, $customerGroup));
     }
 
-    public function testGetVisibleCategoryIdsForAccountGroup()
+    public function testGetVisibleCategoryIdsForCustomerGroup()
     {
-        /** @var CustomerGroup $accountGroup */
-        $accountGroup = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerGroup', ['id' => 42]);
+        /** @var CustomerGroup $customerGroup */
+        $customerGroup = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerGroup', ['id' => 42]);
 
         $scope = $this->getEntity(Scope::class, ['id' => 1]);
         $this->scopeManager->method('findOrCreate')->willReturn($scope);
@@ -215,7 +215,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $categoryVisibilityResolvedRepository = $this
             ->getMockBuilder(
-                'Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountGroupCategoryRepository'
+                'Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerGroupCategoryRepository'
             )
             ->disableOriginalConstructor()
             ->getMock();
@@ -231,7 +231,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $em->expects($this->once())
             ->method('getRepository')
-            ->with('OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->with('OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved')
             ->willReturn($categoryVisibilityResolvedRepository);
 
         $this->registry->expects($this->once())
@@ -240,14 +240,14 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $this->visibleCategoryIds,
-            $this->resolver->getVisibleCategoryIdsForAccountGroup($accountGroup)
+            $this->resolver->getVisibleCategoryIdsForCustomerGroup($customerGroup)
         );
     }
 
-    public function testGetHiddenCategoryIdsForAccountGroup()
+    public function testGetHiddenCategoryIdsForCustomerGroup()
     {
-        /** @var CustomerGroup $accountGroup */
-        $accountGroup = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerGroup', ['id' => 42]);
+        /** @var CustomerGroup $customerGroup */
+        $customerGroup = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerGroup', ['id' => 42]);
 
         $scope = $this->getEntity(Scope::class, ['id' => 1]);
         $this->scopeManager->method('findOrCreate')->willReturn($scope);
@@ -258,7 +258,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $categoryVisibilityResolvedRepository = $this
             ->getMockBuilder(
-                'Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountGroupCategoryRepository'
+                'Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerGroupCategoryRepository'
             )
             ->disableOriginalConstructor()
             ->getMock();
@@ -274,7 +274,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $em->expects($this->once())
             ->method('getRepository')
-            ->with('OroVisibilityBundle:VisibilityResolved\AccountGroupCategoryVisibilityResolved')
+            ->with('OroVisibilityBundle:VisibilityResolved\CustomerGroupCategoryVisibilityResolved')
             ->willReturn($categoryVisibilityResolvedRepository);
 
         $this->registry->expects($this->once())
@@ -283,18 +283,18 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $this->hiddenCategoryIds,
-            $this->resolver->getHiddenCategoryIdsForAccountGroup($accountGroup)
+            $this->resolver->getHiddenCategoryIdsForCustomerGroup($customerGroup)
         );
     }
 
-    public function testIsCategoryVisibleForAccount()
+    public function testIsCategoryVisibleForCustomer()
     {
         /** @var Category $category */
         $category = $this->getEntity(Category::class, ['id' => 10]);
 
-        /** @var Account $account */
-        $account = $this->getEntity(Account::class, ['id' => 20]);
-        $account->setGroup($this->getEntity(CustomerGroup::class, ['id' => 1]));
+        /** @var Customer $customer */
+        $customer = $this->getEntity(Customer::class, ['id' => 20]);
+        $customer->setGroup($this->getEntity(CustomerGroup::class, ['id' => 1]));
 
         $scope = $this->getEntity(Scope::class, ['id' => 1]);
         $this->scopeManager->method('findOrCreate')->willReturn($scope);
@@ -308,7 +308,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $categoryVisibilityResolvedRepository = $this
             ->getMockBuilder(
-                'Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountCategoryRepository'
+                'Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerCategoryRepository'
             )
             ->disableOriginalConstructor()
             ->getMock();
@@ -320,21 +320,21 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $em->expects($this->once())
             ->method('getRepository')
-            ->with('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->with('OroVisibilityBundle:VisibilityResolved\CustomerCategoryVisibilityResolved')
             ->willReturn($categoryVisibilityResolvedRepository);
 
         $this->registry->expects($this->once())
             ->method('getManagerForClass')
             ->willReturn($em);
 
-        $this->assertTrue($this->resolver->isCategoryVisibleForAccount($category, $account));
+        $this->assertTrue($this->resolver->isCategoryVisibleForCustomer($category, $customer));
     }
 
-    public function testGetVisibleCategoryIdsForAccount()
+    public function testGetVisibleCategoryIdsForCustomer()
     {
-        /** @var Account $account */
-        $account = $this->getEntity(Account::class, ['id' => 20]);
-        $account->setGroup($this->getEntity(CustomerGroup::class, ['id' => 1]));
+        /** @var Customer $customer */
+        $customer = $this->getEntity(Customer::class, ['id' => 20]);
+        $customer->setGroup($this->getEntity(CustomerGroup::class, ['id' => 1]));
 
         $scope = $this->getEntity(Scope::class, ['id' => 1]);
         $this->scopeManager->method('findOrCreate')->willReturn($scope);
@@ -348,7 +348,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $categoryVisibilityResolvedRepository = $this
             ->getMockBuilder(
-                'Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountCategoryRepository'
+                'Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerCategoryRepository'
             )
             ->disableOriginalConstructor()
             ->getMock();
@@ -365,7 +365,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $em->expects($this->once())
             ->method('getRepository')
-            ->with('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->with('OroVisibilityBundle:VisibilityResolved\CustomerCategoryVisibilityResolved')
             ->willReturn($categoryVisibilityResolvedRepository);
 
         $this->registry->expects($this->once())
@@ -374,15 +374,15 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $this->visibleCategoryIds,
-            $this->resolver->getVisibleCategoryIdsForAccount($account)
+            $this->resolver->getVisibleCategoryIdsForCustomer($customer)
         );
     }
 
-    public function testGetHiddenCategoryIdsForAccount()
+    public function testGetHiddenCategoryIdsForCustomer()
     {
-        /** @var Account $account */
-        $account = $this->getEntity(Account::class, ['id' => 20]);
-        $account->setGroup($this->getEntity(CustomerGroup::class, ['id' => 1]));
+        /** @var Customer $customer */
+        $customer = $this->getEntity(Customer::class, ['id' => 20]);
+        $customer->setGroup($this->getEntity(CustomerGroup::class, ['id' => 1]));
 
         $scope = $this->getEntity(Scope::class, ['id' => 1]);
         $this->scopeManager->method('findOrCreate')->willReturn($scope);
@@ -396,7 +396,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $categoryVisibilityResolvedRepository = $this
             ->getMockBuilder(
-                'Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountCategoryRepository'
+                'Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerCategoryRepository'
             )
             ->disableOriginalConstructor()
             ->getMock();
@@ -413,7 +413,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $em->expects($this->once())
             ->method('getRepository')
-            ->with('OroVisibilityBundle:VisibilityResolved\AccountCategoryVisibilityResolved')
+            ->with('OroVisibilityBundle:VisibilityResolved\CustomerCategoryVisibilityResolved')
             ->willReturn($categoryVisibilityResolvedRepository);
 
         $this->registry->expects($this->once())
@@ -422,7 +422,7 @@ class CategoryVisibilityResolverTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $this->hiddenCategoryIds,
-            $this->resolver->getHiddenCategoryIdsForAccount($account)
+            $this->resolver->getHiddenCategoryIdsForCustomer($customer)
         );
     }
 }

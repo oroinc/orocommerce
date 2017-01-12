@@ -6,14 +6,14 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
-use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadAnonymousAccountGroup;
+use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadAnonymousCustomerGroup;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -41,7 +41,7 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
     {
         return [
             LoadGroups::class,
-            LoadAccounts::class,
+            LoadCustomers::class,
             LoadCategoryProductData::class,
         ];
     }
@@ -87,88 +87,88 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
 
         $this->setReference($data['all']['reference'], $productVisibility);
 
-        $this->createAccountGroupVisibilities($manager, $product, $data['groups']);
+        $this->createCustomerGroupVisibilities($manager, $product, $data['groups']);
 
-        $this->createAccountVisibilities($manager, $product, $data['accounts']);
+        $this->createCustomerVisibilities($manager, $product, $data['customers']);
     }
 
     /**
      * @param string $groupReference
      * @return CustomerGroup
      */
-    private function getAccountGroup($groupReference)
+    private function getCustomerGroup($groupReference)
     {
-        if ($groupReference === 'account_group.anonymous') {
-            $accountGroup = $this->container
+        if ($groupReference === 'customer_group.anonymous') {
+            $customerGroup = $this->container
                 ->get('doctrine')
                 ->getManagerForClass('OroCustomerBundle:CustomerGroup')
                 ->getRepository('OroCustomerBundle:CustomerGroup')
-                ->findOneBy(['name' => LoadAnonymousAccountGroup::GROUP_NAME_NON_AUTHENTICATED]);
+                ->findOneBy(['name' => LoadAnonymousCustomerGroup::GROUP_NAME_NON_AUTHENTICATED]);
         } else {
-            /** @var CustomerGroup $accountGroup */
-            $accountGroup = $this->getReference($groupReference);
+            /** @var CustomerGroup $customerGroup */
+            $customerGroup = $this->getReference($groupReference);
         }
 
-        return $accountGroup;
+        return $customerGroup;
     }
 
     /**
      * @param ObjectManager $manager
      * @param Product $product
-     * @param array $accountGroupsData
+     * @param array $customerGroupsData
      */
-    protected function createAccountGroupVisibilities(
+    protected function createCustomerGroupVisibilities(
         ObjectManager $manager,
         Product $product,
-        array $accountGroupsData
+        array $customerGroupsData
     ) {
-        foreach ($accountGroupsData as $groupReference => $accountGroupData) {
-            /** @var CustomerGroup $accountGroup */
-            $accountGroup = $this->getAccountGroup($groupReference);
+        foreach ($customerGroupsData as $groupReference => $customerGroupData) {
+            /** @var CustomerGroup $customerGroup */
+            $customerGroup = $this->getCustomerGroup($groupReference);
 
-            $accountGroupProductVisibility = new AccountGroupProductVisibility();
-            $accountGroupProductVisibility->setProduct($product)
-                ->setVisibility($accountGroupData['visibility']);
+            $customerGroupProductVisibility = new CustomerGroupProductVisibility();
+            $customerGroupProductVisibility->setProduct($product)
+                ->setVisibility($customerGroupData['visibility']);
 
             $scopeManager = $this->container->get('oro_scope.scope_manager');
             $scope = $scopeManager->findOrCreate(
-                AccountGroupProductVisibility::VISIBILITY_TYPE,
-                ['accountGroup' => $accountGroup]
+                CustomerGroupProductVisibility::VISIBILITY_TYPE,
+                ['customerGroup' => $customerGroup]
             );
 
-            $accountGroupProductVisibility->setScope($scope);
+            $customerGroupProductVisibility->setScope($scope);
 
-            $manager->persist($accountGroupProductVisibility);
+            $manager->persist($customerGroupProductVisibility);
 
-            $this->setReference($accountGroupData['reference'], $accountGroupProductVisibility);
+            $this->setReference($customerGroupData['reference'], $customerGroupProductVisibility);
         }
     }
 
     /**
      * @param ObjectManager $manager
      * @param Product $product
-     * @param array $accountsData
+     * @param array $customersData
      */
-    protected function createAccountVisibilities(
+    protected function createCustomerVisibilities(
         ObjectManager $manager,
         Product $product,
-        array $accountsData
+        array $customersData
     ) {
-        foreach ($accountsData as $accountReference => $accountData) {
-            /** @var Account $account */
-            $account = $this->getReference($accountReference);
+        foreach ($customersData as $customerReference => $customerData) {
+            /** @var Customer $customer */
+            $customer = $this->getReference($customerReference);
 
-            $accountProductVisibility = new AccountProductVisibility();
-            $accountProductVisibility->setProduct($product)
-                ->setVisibility($accountData['visibility']);
+            $customerProductVisibility = new CustomerProductVisibility();
+            $customerProductVisibility->setProduct($product)
+                ->setVisibility($customerData['visibility']);
 
             $scopeManager = $this->container->get('oro_scope.scope_manager');
-            $scope = $scopeManager->findOrCreate('account_product_visibility', ['account' => $account]);
-            $accountProductVisibility->setScope($scope);
+            $scope = $scopeManager->findOrCreate('customer_product_visibility', ['customer' => $customer]);
+            $customerProductVisibility->setScope($scope);
 
-            $manager->persist($accountProductVisibility);
+            $manager->persist($customerProductVisibility);
 
-            $this->setReference($accountData['reference'], $accountProductVisibility);
+            $this->setReference($customerData['reference'], $customerProductVisibility);
         }
     }
 

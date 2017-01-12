@@ -4,10 +4,10 @@
 // are selected for demo and testing purposes only. More examples can be found in
 // Sales and Use Tax: Exemptions and Exclusions (Publication 61) at http://www.boe.ca.gov/pdf/pub61.pdf
 
-$accountTaxCodes = [
+$customerTaxCodes = [
     'NON_EXEMPT' => [
         'description' => '',
-        'account_groups' => ['All Customers', 'Wholesale Accounts', 'Partners'],
+        'customer_groups' => ['All Customers', 'Wholesale Customers', 'Partners'],
     ],
     'FOREIGN_GOVERNMENTS' => [
         'description' => <<<DESC
@@ -17,7 +17,7 @@ However, sales to these entities in California are subject to sales tax except w
 See http://www.boe.ca.gov/lawguides/business/current/btlg/vol1/sutl/6005.html
 DESC
         ,
-        'accounts' => ['Account G'],
+        'customers' => ['Customer G'],
     ],
     'STATE_GOVERNMENTS' => [
         'description' => <<<DESC
@@ -152,31 +152,31 @@ $taxJurisdictions = [
 
 $taxRules = [
     [
-        'account_tax_code' => 'NON_EXEMPT',
+        'customer_tax_code' => 'NON_EXEMPT',
         'product_tax_code' => 'TAXABLE_ITEMS',
         'tax_jurisdiction' => 'LOS_ANGELES_COUNTY',
         'tax' => 'LOS_ANGELES_COUNTY_SALES_TAX'
     ],
     [
-        'account_tax_code' => 'NON_EXEMPT',
+        'customer_tax_code' => 'NON_EXEMPT',
         'product_tax_code' => 'TAXABLE_ITEMS',
         'tax_jurisdiction' => 'ORANGE_COUNTY',
         'tax' => 'ORANGE_COUNTY_SALES_TAX'
     ],
     [
-        'account_tax_code' => 'NON_EXEMPT',
+        'customer_tax_code' => 'NON_EXEMPT',
         'product_tax_code' => 'TAXABLE_ITEMS',
         'tax_jurisdiction' => 'VENTURA_COUNTY',
         'tax' => 'VENTURA_COUNTY_SALES_TAX'
     ],
     [
-        'account_tax_code' => 'NON_EXEMPT',
+        'customer_tax_code' => 'NON_EXEMPT',
         'product_tax_code' => 'TAXABLE_ITEMS',
         'tax_jurisdiction' => 'CULVER_CITY',
         'tax' => 'CULVER_CITY_SALES_TAX'
     ],
     [
-        'account_tax_code' => 'NON_EXEMPT',
+        'customer_tax_code' => 'NON_EXEMPT',
         'product_tax_code' => 'TAXABLE_ITEMS',
         'tax_jurisdiction' => 'SANTA_MONICA',
         'tax' => 'SANTA_MONICA_SALES_TAX'
@@ -184,7 +184,7 @@ $taxRules = [
 ];
 
 return [
-    'account_tax_codes' => $accountTaxCodes,
+    'customer_tax_codes' => $customerTaxCodes,
     'product_tax_codes' => $productTaxCodes,
     'taxes' => $taxes,
     'tax_jurisdictions' => $taxJurisdictions,

@@ -1,17 +1,17 @@
-.account-oq-container {
+.customer-oq-container {
   margin: 23px -15px 0;
 
   @include clearfix();
 }
 
-.account-oq__item {
+.customer-oq__item {
   position: relative;
 
   float: left;
   width: 50%;
   padding: 0 15px;
 
-  &.account-oq__item_full {
+  &.customer-oq__item_full {
     float: none;
     width: 100%;
 
@@ -56,7 +56,7 @@
   }
 }
 
-.account-oq__order-info {
+.customer-oq__order-info {
   max-width: 350px;
 
   &__title {
@@ -85,7 +85,7 @@
   }
 }
 
-.account-oq__order-item-more {
+.customer-oq__order-item-more {
   width: 52%;
 
   color: get-color('additional', 'dark');
@@ -110,7 +110,7 @@
   }
 }
 
-.account-oq__order-breakdown {
+.customer-oq__order-breakdown {
   > a {
     color: get-color('primary', 'dark');
   }
@@ -139,7 +139,7 @@
         }
       }
 
-      &.account-oq__order__size-table {
+      &.customer-oq__order__size-table {
         > tbody {
           > tr {
             > td {
