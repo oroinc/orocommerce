@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method\View\Provider;
 
-use Oro\Bundle\PaymentBundle\Method\Config\PaymentConfigInterface;
-use Oro\Bundle\PaymentBundle\Method\Config\PaymentConfigProviderInterface;
+use Oro\Bundle\PaymentBundle\Method\Provider\PayPalCreditCardConfigProviderInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\View\PayPalCreditCardPaymentMethodView;
 use Oro\Bundle\PayPalBundle\Method\View\Provider\CreditCardMethodViewProvider;
 use Symfony\Component\Form\FormFactoryInterface;
@@ -26,13 +26,13 @@ class CreditCardMethodViewProviderTest extends \PHPUnit_Framework_TestCase
     /** @var PaymentTransactionProvider */
     private $transactionProvider;
 
-    /** @var PaymentConfigProviderInterface */
+    /** @var PayPalCreditCardConfigProviderInterface */
     private $configProvider;
 
     /** @var CreditCardMethodViewProvider */
     private $provider;
 
-    /** @var array|PaymentConfigInterface[]|\PHPUnit_Framework_MockObject_MockObject[] */
+    /** @var array|PayPalCreditCardConfigInterface[]|\PHPUnit_Framework_MockObject_MockObject[] */
     private $paymentConfigs;
 
     public function setUp()
@@ -45,7 +45,7 @@ class CreditCardMethodViewProviderTest extends \PHPUnit_Framework_TestCase
             $this->buildPaymentConfig(self::IDENTIFIER2),
         ];
 
-        $this->configProvider = $this->createMock(PaymentConfigProviderInterface::class);
+        $this->configProvider = $this->createMock(PayPalCreditCardConfigProviderInterface::class);
         $this->configProvider->expects(static::once())
             ->method('getPaymentConfigs')
             ->willReturn($this->paymentConfigs);
@@ -64,7 +64,7 @@ class CreditCardMethodViewProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testHasPaymentMethodViewForWrongIdentifier()
     {
-        static::assertTrue($this->provider->hasPaymentMethodView(self::WRONG_IDENTIFIER));
+        static::assertFalse($this->provider->hasPaymentMethodView(self::WRONG_IDENTIFIER));
     }
 
     public function testGetPaymentMethodViewReturnsCorrectObject()
@@ -97,17 +97,17 @@ class CreditCardMethodViewProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetPaymentMethodViewsForWrongIdentifier()
     {
-        static::assertEmpty($this->provider->getPaymentMethodViews(self::WRONG_IDENTIFIER));
+        static::assertEmpty($this->provider->getPaymentMethodViews([self::WRONG_IDENTIFIER]));
     }
 
     /**
      * @param string $identifier
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject|PaymentConfigInterface
+     * @return \PHPUnit_Framework_MockObject_MockObject|PayPalCreditCardConfigInterface
      */
     private function buildPaymentConfig($identifier)
     {
-        $config = $this->createMock(PaymentConfigInterface::class);
+        $config = $this->createMock(PayPalCreditCardConfigInterface::class);
         $config->expects(static::any())
             ->method('getPaymentMethodIdentifier')
             ->willReturn($identifier);
@@ -116,11 +116,11 @@ class CreditCardMethodViewProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param PaymentConfigInterface $config
+     * @param PayPalCreditCardConfigInterface $config
      *
      * @return PayPalCreditCardPaymentMethodView
      */
-    private function buildCreditCardMethodView(PaymentConfigInterface $config)
+    private function buildCreditCardMethodView(PayPalCreditCardConfigInterface $config)
     {
         return new PayPalCreditCardPaymentMethodView(
             $this->formFactory,

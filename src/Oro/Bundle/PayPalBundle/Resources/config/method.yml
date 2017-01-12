@@ -4,13 +4,13 @@ services:
         arguments:
             - '@form.factory'
             - '@oro_payment.provider.payment_transaction'
-            - '@oro_paypal.config.provider.credit_card'
+            - '@oro_paypal.config.provider.payments_pro_credit_card'
         tags:
             - { name: oro_payment.payment_method_view_provider }
 
     oro_paypal.method.view.provider.express_checkout:
-        class: 'Oro\Bundle\PayPalBundle\Method\Provider\ExpressCheckoutMethodViewProvider'
+        class: 'Oro\Bundle\PayPalBundle\Method\View\Provider\ExpressCheckoutMethodViewProvider'
         arguments:
-            - '@oro_paypal.config.provider.express_checkout'
+            - '@oro_paypal.config.provider.payments_pro_express_checkout'
         tags:
             - { name: oro_payment.payment_method_view_provider }

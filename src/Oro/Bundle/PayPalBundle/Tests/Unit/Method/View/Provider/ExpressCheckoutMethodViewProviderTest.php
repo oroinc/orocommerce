@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method\View\Provider;
 
-use Oro\Bundle\PaymentBundle\Method\Config\PaymentConfigInterface;
-use Oro\Bundle\PaymentBundle\Method\Config\PaymentConfigProviderInterface;
-use Oro\Bundle\PayPalBundle\Method\Provider\ExpressCheckoutMethodViewProvider;
+use Oro\Bundle\PaymentBundle\Method\Provider\PayPalExpressCheckoutConfigProviderInterface;
+use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\View\PayPalExpressCheckoutPaymentMethodView;
+use Oro\Bundle\PayPalBundle\Method\View\Provider\ExpressCheckoutMethodViewProvider;
 
 class ExpressCheckoutMethodViewProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -18,13 +18,13 @@ class ExpressCheckoutMethodViewProviderTest extends \PHPUnit_Framework_TestCase
     /** @internal */
     const WRONG_IDENTIFIER = 'wrong';
 
-    /** @var PaymentConfigProviderInterface */
+    /** @var PayPalExpressCheckoutConfigProviderInterface */
     private $configProvider;
 
     /** @var ExpressCheckoutMethodViewProvider */
     private $provider;
 
-    /** @var array|PaymentConfigInterface[]|\PHPUnit_Framework_MockObject_MockObject[] */
+    /** @var array|PayPalExpressCheckoutConfigInterface[]|\PHPUnit_Framework_MockObject_MockObject[] */
     private $paymentConfigs;
 
     public function setUp()
@@ -34,7 +34,7 @@ class ExpressCheckoutMethodViewProviderTest extends \PHPUnit_Framework_TestCase
             $this->buildPaymentConfig(self::IDENTIFIER2),
         ];
 
-        $this->configProvider = $this->createMock(PaymentConfigProviderInterface::class);
+        $this->configProvider = $this->createMock(PayPalExpressCheckoutConfigProviderInterface::class);
         $this->configProvider->expects(static::once())
             ->method('getPaymentConfigs')
             ->willReturn($this->paymentConfigs);
@@ -49,7 +49,7 @@ class ExpressCheckoutMethodViewProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testHasPaymentMethodViewForWrongIdentifier()
     {
-        static::assertTrue($this->provider->hasPaymentMethodView(self::WRONG_IDENTIFIER));
+        static::assertFalse($this->provider->hasPaymentMethodView(self::WRONG_IDENTIFIER));
     }
 
     public function testGetPaymentMethodViewReturnsCorrectObject()
@@ -82,17 +82,17 @@ class ExpressCheckoutMethodViewProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetPaymentMethodViewsForWrongIdentifier()
     {
-        static::assertEmpty($this->provider->getPaymentMethodViews(self::WRONG_IDENTIFIER));
+        static::assertEmpty($this->provider->getPaymentMethodViews([self::WRONG_IDENTIFIER]));
     }
 
     /**
      * @param string $identifier
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject|PaymentConfigInterface
+     * @return \PHPUnit_Framework_MockObject_MockObject|PayPalExpressCheckoutConfigInterface
      */
     private function buildPaymentConfig($identifier)
     {
-        $config = $this->createMock(PaymentConfigInterface::class);
+        $config = $this->createMock(PayPalExpressCheckoutConfigInterface::class);
         $config->expects(static::any())
             ->method('getPaymentMethodIdentifier')
             ->willReturn($identifier);
@@ -101,11 +101,11 @@ class ExpressCheckoutMethodViewProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param PaymentConfigInterface $config
+     * @param PayPalExpressCheckoutConfigInterface $config
      *
      * @return PayPalExpressCheckoutPaymentMethodView
      */
-    private function buildExpressCheckoutMethodView(PaymentConfigInterface $config)
+    private function buildExpressCheckoutMethodView(PayPalExpressCheckoutConfigInterface $config)
     {
         return new PayPalExpressCheckoutPaymentMethodView($config);
     }

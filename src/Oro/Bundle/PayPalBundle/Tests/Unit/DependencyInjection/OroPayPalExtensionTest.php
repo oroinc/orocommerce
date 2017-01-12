@@ -18,7 +18,7 @@ class OroPayPalExtensionTest extends ExtensionTestCase
             'oro_paypal.integation.payflow_gateway.channel',
             'oro_paypal.integation.payments_pro.channel',
             'oro_paypal.integration.payflow_gateway.transport',
-            'oro_paypal.integration.payments_pro.transport'
+            'oro_paypal.integration.payments_pro.transport',
             'oro_paypal.method.view.provider.credit_card',
             'oro_paypal.method.view.provider.express_checkout',
         ];

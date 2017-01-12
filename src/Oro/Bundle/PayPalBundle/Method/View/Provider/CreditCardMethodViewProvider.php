@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\PayPalBundle\Method\View\Provider;
 
-use Oro\Bundle\PaymentBundle\Method\Config\PaymentConfigInterface;
-use Oro\Bundle\PaymentBundle\Method\Config\PaymentConfigProviderInterface;
+use Oro\Bundle\PaymentBundle\Method\Provider\PayPalCreditCardConfigProviderInterface;
 use Oro\Bundle\PaymentBundle\Method\View\AbstractPaymentMethodViewProvider;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
+use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\View\PayPalCreditCardPaymentMethodView;
 use Symfony\Component\Form\FormFactoryInterface;
 
@@ -17,22 +17,22 @@ class CreditCardMethodViewProvider extends AbstractPaymentMethodViewProvider
     /** @var PaymentTransactionProvider */
     protected $transactionProvider;
 
-    /** @var PaymentConfigProviderInterface */
+    /** @var PayPalCreditCardConfigProviderInterface */
     protected $configProvider;
 
     /**
      * @param FormFactoryInterface $formFactory
      * @param PaymentTransactionProvider $transactionProvider
-     * @param PaymentConfigProviderInterface $configProvider
+     * @param PayPalCreditCardConfigProviderInterface $configProvider
      */
     public function __construct(
         FormFactoryInterface $formFactory,
         PaymentTransactionProvider $transactionProvider,
-        PaymentConfigProviderInterface $configProvider
+        PayPalCreditCardConfigProviderInterface $configProvider
     ) {
         $this->formFactory = $formFactory;
-        $this->configProvider = $configProvider;
         $this->transactionProvider = $transactionProvider;
+        $this->configProvider = $configProvider;
 
         parent::__construct();
     }
@@ -46,9 +46,9 @@ class CreditCardMethodViewProvider extends AbstractPaymentMethodViewProvider
     }
 
     /**
-     * @param PaymentConfigInterface $config
+     * @param PayPalCreditCardConfigInterface $config
      */
-    protected function addCreditCardView(PaymentConfigInterface $config)
+    protected function addCreditCardView(PayPalCreditCardConfigInterface $config)
     {
         $this->addView(
             $config->getPaymentMethodIdentifier(),
@@ -57,11 +57,11 @@ class CreditCardMethodViewProvider extends AbstractPaymentMethodViewProvider
     }
 
     /**
-     * @param PaymentConfigInterface $config
+     * @param PayPalCreditCardConfigInterface $config
      *
      * @return PayPalCreditCardPaymentMethodView
      */
-    protected function buildView(PaymentConfigInterface $config)
+    protected function buildView(PayPalCreditCardConfigInterface $config)
     {
         return new PayPalCreditCardPaymentMethodView(
             $this->formFactory,

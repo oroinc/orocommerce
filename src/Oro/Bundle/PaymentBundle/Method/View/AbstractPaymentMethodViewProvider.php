@@ -52,7 +52,9 @@ abstract class AbstractPaymentMethodViewProvider implements PaymentMethodViewPro
     {
         $views = [];
         foreach ($identifiers as $identifier) {
-            $views[] = $this->getPaymentMethodView($identifier);
+            if ($this->hasPaymentMethodView($identifier)) {
+                $views[] = $this->getPaymentMethodView($identifier);
+            }
         }
 
         return $views;

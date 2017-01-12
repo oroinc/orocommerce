@@ -1,21 +1,21 @@
 <?php
 
-namespace Oro\Bundle\PayPalBundle\Method\Provider;
+namespace Oro\Bundle\PayPalBundle\Method\View\Provider;
 
-use Oro\Bundle\PaymentBundle\Method\Config\PaymentConfigInterface;
-use Oro\Bundle\PaymentBundle\Method\Config\PaymentConfigProviderInterface;
+use Oro\Bundle\PaymentBundle\Method\Provider\PayPalExpressCheckoutConfigProviderInterface;
 use Oro\Bundle\PaymentBundle\Method\View\AbstractPaymentMethodViewProvider;
+use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\View\PayPalExpressCheckoutPaymentMethodView;
 
 class ExpressCheckoutMethodViewProvider extends AbstractPaymentMethodViewProvider
 {
-    /** @var PaymentConfigProviderInterface */
+    /** @var PayPalExpressCheckoutConfigProviderInterface */
     protected $configProvider;
 
     /**
-     * @param PaymentConfigProviderInterface $configProvider
+     * @param PayPalExpressCheckoutConfigProviderInterface $configProvider
      */
-    public function __construct(PaymentConfigProviderInterface $configProvider)
+    public function __construct(PayPalExpressCheckoutConfigProviderInterface $configProvider)
     {
         $this->configProvider = $configProvider;
 
@@ -31,9 +31,9 @@ class ExpressCheckoutMethodViewProvider extends AbstractPaymentMethodViewProvide
     }
 
     /**
-     * @param PaymentConfigInterface $config
+     * @param PayPalExpressCheckoutConfigInterface $config
      */
-    protected function addExpressCheckoutView(PaymentConfigInterface $config)
+    protected function addExpressCheckoutView(PayPalExpressCheckoutConfigInterface $config)
     {
         $this->addView(
             $config->getPaymentMethodIdentifier(),
@@ -42,11 +42,11 @@ class ExpressCheckoutMethodViewProvider extends AbstractPaymentMethodViewProvide
     }
 
     /**
-     * @param PaymentConfigInterface $config
+     * @param PayPalExpressCheckoutConfigInterface $config
      *
      * @return PayPalExpressCheckoutPaymentMethodView
      */
-    protected function buildView(PaymentConfigInterface $config)
+    protected function buildView(PayPalExpressCheckoutConfigInterface $config)
     {
         return new PayPalExpressCheckoutPaymentMethodView($config);
     }
