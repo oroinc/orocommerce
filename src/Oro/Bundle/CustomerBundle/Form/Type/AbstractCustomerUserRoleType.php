@@ -105,7 +105,7 @@ abstract class AbstractCustomerUserRoleType extends AbstractType
         $resolver->setRequired(['privilege_config']);
         $resolver->setDefaults([
             'data_class' => $this->dataClass,
-            'access_level_route' => 'oro_account_acl_access_levels',
+            'access_level_route' => 'oro_customer_acl_access_levels',
             'hide_self_managed' => false
         ]);
     }

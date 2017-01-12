@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
@@ -49,7 +49,7 @@ class PriceListControllerTest extends WebTestCase
                 LoadProductPrices::class,
                 LoadCategoryProductData::class,
                 LoadWebsiteData::class,
-                LoadAccounts::class,
+                LoadCustomers::class,
                 LoadPriceListRelations::class,
             ]
         );
@@ -271,10 +271,10 @@ class PriceListControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        //Create relation price list to account for CPL's check
+        //Create relation price list to customer for CPL's check
 
-        /** @var Customer $account */
-        $account = $this->getReference('account.level_1.2.1');
+        /** @var Customer $customer */
+        $customer = $this->getReference('customer.level_1.2.1');
 
         /** @var Website $website */
         $website = $this->getReference(LoadWebsiteData::WEBSITE1);
@@ -286,7 +286,7 @@ class PriceListControllerTest extends WebTestCase
             ->buildByPriceList($priceList);
 
         //Get combined price list which would be used at frontend
-        $cpl = $container->get('oro_pricing.model.price_list_tree_handler')->getPriceList($account, $website);
+        $cpl = $container->get('oro_pricing.model.price_list_tree_handler')->getPriceList($customer, $website);
 
         /** @var EntityManager $manager */
         $prices = $container->get('doctrine')
@@ -407,7 +407,7 @@ class PriceListControllerTest extends WebTestCase
      *
      * @return Customer
      */
-    protected function getAccount($reference)
+    protected function getCustomer($reference)
     {
         return $this->getReference($reference);
     }
@@ -417,7 +417,7 @@ class PriceListControllerTest extends WebTestCase
      *
      * @return CustomerGroup
      */
-    protected function getAccountGroup($reference)
+    protected function getCustomerGroup($reference)
     {
         return $this->getReference($reference);
     }

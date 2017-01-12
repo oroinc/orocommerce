@@ -10,8 +10,8 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Entity\PriceListToAccount;
-use Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup;
+use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
+use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
@@ -39,8 +39,8 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
                     'mergeAllowed' => false,
                 ],
             ],
-            'priceListsToAccounts' => [
-                'account.level_1_1' => [ // No group
+            'priceListsToCustomers' => [
+                'customer.level_1_1' => [ // No group
                     [
                         'priceList' => 'price_list_1',
                         'priority' => 300,
@@ -52,7 +52,7 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
                         'mergeAllowed' => false,
                     ]
                 ],
-                'account.level_1.3' => [// Assigned to group1
+                'customer.level_1.3' => [// Assigned to group1
                     [
                         'priceList' => 'price_list_6',
                         'priority' => 100,
@@ -69,7 +69,7 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
                         'mergeAllowed' => true,
                     ]
                 ],
-                'account.level_1.2' => [ // Assigned to group2
+                'customer.level_1.2' => [ // Assigned to group2
                     [
                         'priceList' => 'price_list_2',
                         'priority' => 100,
@@ -77,8 +77,8 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
                     ]
                 ],
             ],
-            'priceListsToAccountGroups' => [
-                'account_group.group1' => [
+            'priceListsToCustomerGroups' => [
+                'customer_group.group1' => [
                     [
                         'priceList' => 'price_list_6',
                         'priority' => 500,
@@ -95,7 +95,7 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
                         'mergeAllowed' => false,
                     ],
                 ],
-                'account_group.group2' => [
+                'customer_group.group2' => [
                     [
                         'priceList' => 'price_list_4',
                         'priority' => 100,
@@ -112,15 +112,15 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
                     'mergeAllowed' => true,
                 ]
             ],
-            'priceListsToAccounts' => [
-                'account.level_1_1' => [ // No group
+            'priceListsToCustomers' => [
+                'customer.level_1_1' => [ // No group
                     [
                         'priceList' => 'price_list_1',
                         'priority' => 100,
                         'mergeAllowed' => true,
                     ]
                 ],
-                'account.level_1.1.1' => [
+                'customer.level_1.1.1' => [
                     [
                         'priceList' => 'price_list_5',
                         'priority' => 100,
@@ -128,8 +128,8 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
                     ]
                 ]
             ],
-            'priceListsToAccountGroups' => [
-                'account_group.group3' => [
+            'priceListsToCustomerGroups' => [
+                'customer_group.group3' => [
                     [
                         'priceList' => 'price_list_5',
                         'priority' => 100,
@@ -147,7 +147,7 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
     {
         return [
             'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
-            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts',
+            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers',
             'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups',
             'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists',
         ];
@@ -168,27 +168,27 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
                 $manager->persist($priceListToWebsite);
             }
 
-            foreach ($priceListsData['priceListsToAccounts'] as $accountReference => $priceLists) {
-                /** @var Customer $account */
-                $account = $this->getReference($accountReference);
+            foreach ($priceListsData['priceListsToCustomers'] as $customerReference => $priceLists) {
+                /** @var Customer $customer */
+                $customer = $this->getReference($customerReference);
                 foreach ($priceLists as $priceListData) {
-                    $priceListToAccount = new PriceListToAccount();
-                    $priceListToAccount->setAccount($account);
-                    $this->fillRelationData($priceListToAccount, $website, $priceListData);
+                    $priceListToCustomer = new PriceListToCustomer();
+                    $priceListToCustomer->setCustomer($customer);
+                    $this->fillRelationData($priceListToCustomer, $website, $priceListData);
 
-                    $manager->persist($priceListToAccount);
+                    $manager->persist($priceListToCustomer);
                 }
             }
 
-            foreach ($priceListsData['priceListsToAccountGroups'] as $accountGroupReference => $priceLists) {
-                /** @var CustomerGroup $accountGroup */
-                $accountGroup = $this->getReference($accountGroupReference);
+            foreach ($priceListsData['priceListsToCustomerGroups'] as $customerGroupReference => $priceLists) {
+                /** @var CustomerGroup $customerGroup */
+                $customerGroup = $this->getReference($customerGroupReference);
                 foreach ($priceLists as $priceListData) {
-                    $priceListToAccountGroup = new PriceListToAccountGroup();
-                    $priceListToAccountGroup->setAccountGroup($accountGroup);
-                    $this->fillRelationData($priceListToAccountGroup, $website, $priceListData);
+                    $priceListToCustomerGroup = new PriceListToCustomerGroup();
+                    $priceListToCustomerGroup->setCustomerGroup($customerGroup);
+                    $this->fillRelationData($priceListToCustomerGroup, $website, $priceListData);
 
-                    $manager->persist($priceListToAccountGroup);
+                    $manager->persist($priceListToCustomerGroup);
                 }
             }
         }

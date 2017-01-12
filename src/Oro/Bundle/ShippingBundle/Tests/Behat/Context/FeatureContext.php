@@ -8,7 +8,14 @@ use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
+use Oro\Bundle\FlatRateBundle\Method\FlatRateMethodType;
 use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
+use Oro\Bundle\RuleBundle\Entity\Rule;
+use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
@@ -16,6 +23,9 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
 {
     use PageObjectDictionary, KernelDictionary;
@@ -24,6 +34,49 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      * @var OroMainContext
      */
     private $oroMainContext;
+
+    /**
+     * @BeforeScenario
+     * @param BeforeScenarioScope $scope
+     */
+    public function loadFlatRateConfig(BeforeScenarioScope $scope)
+    {
+        $shippingRuleName = 'Shipping Rule First';
+
+        $em = $this->getContainer()->get('oro_entity.doctrine_helper')
+            ->getEntityManagerForClass(ShippingMethodsConfigsRule::class);
+        $rule = $em->getRepository(Rule::class)->findOneBy(['name' => $shippingRuleName]);
+        /** @var ShippingMethodsConfigsRuleRepository $repository */
+        $repository = $em->getRepository(ShippingMethodsConfigsRule::class);
+        /** @var ShippingMethodsConfigsRule $shippingRule */
+        $shippingRule = $repository->findOneBy(['rule' => $rule]);
+        $methodConfigs = $shippingRule->getMethodConfigs();
+        $methods = $this->getContainer()->get('oro_flat_rate.method.provider')->getShippingMethods();
+        /** @var ShippingMethodInterface $method */
+        $method = reset($methods);
+        foreach ($methodConfigs as $methodConfig) {
+            if ($methodConfig->getMethod() === $method->getIdentifier()) {
+                return;
+            }
+        }
+        $types = $method->getTypes();
+        $type = reset($types);
+        $typeConfig = new ShippingMethodTypeConfig();
+        $typeConfig->setType($type->getIdentifier())
+            ->setEnabled(true)
+            ->setOptions([
+                FlatRateMethodType::PRICE_OPTION => 1.5,
+                FlatRateMethodType::TYPE_OPTION => FlatRateMethodType::PER_ORDER_TYPE,
+                FlatRateMethodType::HANDLING_FEE_OPTION => 1.5,
+            ]);
+        $methodConfig = new ShippingMethodConfig();
+        $methodConfig->setMethod($method->getIdentifier())
+            ->addTypeConfig($typeConfig);
+        $shippingRule->addMethodConfig($methodConfig);
+        $em->persist($typeConfig);
+        $em->persist($methodConfig);
+        $em->flush();
+    }
 
     /**
      * @BeforeScenario
@@ -207,7 +260,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $manager = $this->getContainer()->get('doctrine')->getManagerForClass(ShoppingList::class);
         /** @var ShoppingList $shoppingList */
         $shoppingList = $manager->getRepository(ShoppingList::class)->findOneBy(['label' => $shoppingListName]);
-        $this->visitPath('account/shoppinglist/'.$shoppingList->getId());
+        $this->visitPath('customer/shoppinglist/'.$shoppingList->getId());
         $this->waitForAjax();
         $this->getSession()->getPage()->clickLink('Create Order');
         $this->waitForAjax();

@@ -11,7 +11,7 @@ layout:
         - '@setOption':
             id: __datagrid
             optionName: grid_name
-            optionValue: frontend-account-customer-user-roles-grid
+            optionValue: frontend-customer-customer-user-roles-grid
 
         - '@setOption':
             id: __datagrid_toolbar_button_container

@@ -102,8 +102,8 @@ class CheckoutShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
             ->setShippingAddress($address)
             ->setCurrency($currency)
             ->setPaymentMethod($paymentMethod)
-            ->setAccount($customer)
-            ->setAccountUser($customerUser);
+            ->setCustomer($customer)
+            ->setCustomerUser($customerUser);
 
         $this->contextBuilderMock
             ->method('setShippingAddress')
@@ -189,8 +189,8 @@ class CheckoutShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
             ->setShippingAddress($address)
             ->setCurrency($currency)
             ->setPaymentMethod($paymentMethod)
-            ->setAccount($customer)
-            ->setAccountUser($customerUser);
+            ->setCustomer($customer)
+            ->setCustomerUser($customerUser);
 
         $this->contextBuilderMock
             ->method('setShippingAddress')

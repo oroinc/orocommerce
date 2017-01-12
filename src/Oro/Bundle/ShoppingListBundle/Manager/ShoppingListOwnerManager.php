@@ -51,11 +51,11 @@ class ShoppingListOwnerManager
         if (null === $user) {
             throw new \InvalidArgumentException(sprintf("User with id=%s not exists", $ownerId));
         }
-        if ($user === $shoppingList->getAccountUser()) {
+        if ($user === $shoppingList->getCustomerUser()) {
             return;
         }
         if ($this->isUserAssignable($ownerId)) {
-            $shoppingList->setAccountUser($user);
+            $shoppingList->setCustomerUser($user);
             $this->registry->getManagerForClass(ShoppingList::class)->flush();
         } else {
             throw new AccessDeniedException();

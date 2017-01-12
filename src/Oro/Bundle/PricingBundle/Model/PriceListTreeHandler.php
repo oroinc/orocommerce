@@ -57,24 +57,24 @@ class PriceListTreeHandler
     }
 
     /**
-     * @param Customer|null $account
+     * @param Customer|null $customer
      * @param Website|null $website
      * @return BasePriceList|null
      */
-    public function getPriceList(Customer $account = null, Website $website = null)
+    public function getPriceList(Customer $customer = null, Website $website = null)
     {
         if (!$website) {
             $website = $this->websiteManager->getCurrentWebsite();
         }
 
-        $key = $this->getUniqueKey($account, $website);
+        $key = $this->getUniqueKey($customer, $website);
         if (array_key_exists($key, $this->priceLists)) {
             return $this->priceLists[$key];
         }
 
         $priceList = null;
-        if ($account) {
-            $priceList = $this->getPriceListByAccount($account, $website);
+        if ($customer) {
+            $priceList = $this->getPriceListByCustomer($customer, $website);
         }
         if (!$priceList) {
             $priceList = $this->getPriceListRepository()->getPriceListByWebsite($website);
@@ -88,48 +88,48 @@ class PriceListTreeHandler
     }
 
     /**
-     * @param Customer $account
+     * @param Customer $customer
      * @param Website $website
      * @return null|CombinedPriceList
      */
-    protected function getPriceListByAccount(Customer $account, Website $website)
+    protected function getPriceListByCustomer(Customer $customer, Website $website)
     {
-        if ($account->getId()) {
-            $priceList = $this->getPriceListRepository()->getPriceListByAccount($account, $website);
+        if ($customer->getId()) {
+            $priceList = $this->getPriceListRepository()->getPriceListByCustomer($customer, $website);
             if ($priceList) {
                 return $priceList;
             }
         }
 
-        return $this->getPriceListByAccountGroup($account, $website);
+        return $this->getPriceListByCustomerGroup($customer, $website);
     }
 
     /**
-     * @param Customer|null $account
+     * @param Customer|null $customer
      * @param Website|null $website
      * @return null|CombinedPriceList
      */
-    protected function getPriceListByAccountGroup(Customer $account, Website $website)
+    protected function getPriceListByCustomerGroup(Customer $customer, Website $website)
     {
         $priceList = null;
-        $accountGroup = $account->getGroup();
-        if ($accountGroup && $accountGroup->getId()) {
-            $priceList = $this->getPriceListRepository()->getPriceListByAccountGroup($accountGroup, $website);
+        $customerGroup = $customer->getGroup();
+        if ($customerGroup && $customerGroup->getId()) {
+            $priceList = $this->getPriceListRepository()->getPriceListByCustomerGroup($customerGroup, $website);
         }
 
         return $priceList;
     }
 
     /**
-     * @param Customer|null $account
+     * @param Customer|null $customer
      * @param Website|null $website
      * @return string
      */
-    protected function getUniqueKey(Customer $account = null, Website $website = null)
+    protected function getUniqueKey(Customer $customer = null, Website $website = null)
     {
         $key = '';
-        if ($account) {
-            $key .= spl_object_hash($account);
+        if ($customer) {
+            $key .= spl_object_hash($customer);
         }
         if ($website) {
             $key .= spl_object_hash($website);

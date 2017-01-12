@@ -40,14 +40,14 @@ class CustomerUserRoleDatagridListener
                 CustomerUserRole::class,
                 $criteria,
                 'VIEW',
-                ['account' => $alias.'.account', 'organization' => $alias.'.organization']
+                ['customer' => $alias.'.customer', 'organization' => $alias.'.organization']
             );
 
             $qb->addCriteria($criteria);
             $qb->orWhere(
                 $alias . '.selfManaged = :isActive AND '.
                 $alias . '.public = :isActive AND '.
-                $alias . '.account is NULL'
+                $alias . '.customer is NULL'
             );
             $qb->setParameter('isActive', true, \PDO::PARAM_BOOL);
         }

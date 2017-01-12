@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\CustomerBundle\Entity\AccountAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsNotPricedAwareInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
@@ -14,7 +14,7 @@ use Oro\Bundle\WebsiteBundle\Entity\WebsiteAwareInterface;
 class EntityNotPricedStub implements
     LineItemsNotPricedAwareInterface,
     CurrencyAwareInterface,
-    AccountAwareInterface,
+    CustomerAwareInterface,
     WebsiteAwareInterface
 {
     /**
@@ -30,7 +30,7 @@ class EntityNotPricedStub implements
     /**
      * @var Customer
      */
-    protected $account;
+    protected $customer;
 
     /**
      * @var Website
@@ -88,19 +88,19 @@ class EntityNotPricedStub implements
     /**
      * @return Customer
      */
-    public function getAccount()
+    public function getCustomer()
     {
-        return $this->account;
+        return $this->customer;
     }
 
     /**
-     * @param Customer $account
+     * @param Customer $customer
      *
      * @return $this
      */
-    public function setAccount(Customer $account)
+    public function setCustomer(Customer $customer)
     {
-        $this->account = $account;
+        $this->customer = $customer;
 
         return $this;
     }

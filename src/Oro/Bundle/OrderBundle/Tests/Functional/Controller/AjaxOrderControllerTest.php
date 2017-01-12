@@ -4,8 +4,8 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountAddresses;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserAddresses;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserAddresses;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -24,8 +24,8 @@ class AjaxOrderControllerTest extends WebTestCase
         $this->loadFixtures(
             [
                 LoadOrders::class,
-                LoadAccountAddresses::class,
-                LoadAccountUserAddresses::class
+                LoadCustomerAddresses::class,
+                LoadCustomerUserAddresses::class
             ]
         );
     }
@@ -79,16 +79,16 @@ class AjaxOrderControllerTest extends WebTestCase
     /**
      * @dataProvider getRelatedDataActionDataProvider
      *
-     * @param string $account
-     * @param string|null $accountUser
+     * @param string $customer
+     * @param string|null $customerUser
      */
-    public function testGetRelatedDataAction($account, $accountUser = null)
+    public function testGetRelatedDataAction($customer, $customerUser = null)
     {
         /** @var Customer $order */
-        $accountEntity = $this->getReference($account);
+        $customerEntity = $this->getReference($customer);
 
         /** @var CustomerUser $order */
-        $accountUserEntity = $accountUser ? $this->getReference($accountUser) : null;
+        $customerUserEntity = $customerUser ? $this->getReference($customerUser) : null;
 
         $website = $this->getContainer()->get('oro_website.manager')->getDefaultWebsite();
 
@@ -97,9 +97,9 @@ class AjaxOrderControllerTest extends WebTestCase
             $this->getUrl('oro_order_entry_point'),
             [
                 OrderType::NAME => [
-                    'account' => $accountEntity->getId(),
+                    'customer' => $customerEntity->getId(),
                     'website' => $website->getId(),
-                    'accountUser' => $accountUserEntity ? $accountUserEntity->getId() : null
+                    'customerUser' => $customerUserEntity ? $customerUserEntity->getId() : null
                 ]
             ]
         );
@@ -110,8 +110,8 @@ class AjaxOrderControllerTest extends WebTestCase
         $result = $this->getJsonResponseContent($response, 200);
         $this->assertArrayHasKey('billingAddress', $result);
         $this->assertArrayHasKey('shippingAddress', $result);
-        $this->assertArrayHasKey('accountPaymentTerm', $result);
-        $this->assertArrayHasKey('accountGroupPaymentTerm', $result);
+        $this->assertArrayHasKey('customerPaymentTerm', $result);
+        $this->assertArrayHasKey('customerGroupPaymentTerm', $result);
     }
 
     /**
@@ -121,12 +121,12 @@ class AjaxOrderControllerTest extends WebTestCase
     {
         return [
             [
-                'account' => 'account.level_1',
-                'accountUser' => 'grzegorz.brzeczyszczykiewicz@example.com'
+                'customer' => 'customer.level_1',
+                'customerUser' => 'grzegorz.brzeczyszczykiewicz@example.com'
             ],
             [
-                'account' => 'account.level_1',
-                'accountUser' => null
+                'customer' => 'customer.level_1',
+                'customerUser' => null
             ]
         ];
     }

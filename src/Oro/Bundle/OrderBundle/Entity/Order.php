@@ -10,8 +10,8 @@ use Oro\Bundle\CurrencyBundle\Entity\MultiCurrency;
 use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\CurrencyBundle\Entity\MultiCurrencyHolderInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
-use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendAccountUserAwareTrait;
+use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\Ownership\AuditableFrontendCustomerUserAwareTrait;
 use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
@@ -45,7 +45,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *              "organization_field_name"="organization",
  *              "organization_column_name"="organization_id",
  *              "frontend_owner_type"="FRONTEND_USER",
- *              "frontend_owner_field_name"="accountUser",
+ *              "frontend_owner_field_name"="customerUser",
  *              "frontend_owner_column_name"="customer_user_id",
  *          },
  *          "dataaudit"={
@@ -70,7 +70,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 class Order extends ExtendOrder implements
     OrganizationAwareInterface,
     EmailHolderInterface,
-    AccountOwnerAwareInterface,
+    CustomerOwnerAwareInterface,
     LineItemsAwareInterface,
     ShippingAwareInterface,
     CurrencyAwareInterface,
@@ -79,7 +79,7 @@ class Order extends ExtendOrder implements
     MultiCurrencyHolderInterface
 {
     use AuditableUserAwareTrait;
-    use AuditableFrontendAccountUserAwareTrait;
+    use AuditableFrontendCustomerUserAwareTrait;
     use DatesAwareTrait;
 
     /**
@@ -884,8 +884,8 @@ class Order extends ExtendOrder implements
      */
     public function getEmail()
     {
-        if (null !== $this->getAccountUser()) {
-            return $this->getAccountUser()->getEmail();
+        if (null !== $this->getCustomerUser()) {
+            return $this->getCustomerUser()->getEmail();
         }
 
         return '';

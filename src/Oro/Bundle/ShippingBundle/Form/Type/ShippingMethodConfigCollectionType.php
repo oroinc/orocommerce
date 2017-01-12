@@ -4,7 +4,6 @@ namespace Oro\Bundle\ShippingBundle\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\ShippingBundle\Form\EventSubscriber\MethodConfigCollectionSubscriber;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;

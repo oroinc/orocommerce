@@ -24,20 +24,20 @@ abstract class AbstractFallbackRepositoryTest extends WebTestCase
     }
 
     /**
-     * @param string[] $expectedAccounts
+     * @param string[] $expectedCustomers
      * @param BufferedQueryResultIterator|array $iterator
      */
-    public function checkExpectedAccounts($expectedAccounts, $iterator)
+    public function checkExpectedCustomers($expectedCustomers, $iterator)
     {
-        $accounts = [];
-        $accountRepository = $this->doctrine->getRepository('OroCustomerBundle:Customer');
+        $customers = [];
+        $customerRepository = $this->doctrine->getRepository('OroCustomerBundle:Customer');
         foreach ($iterator as $item) {
-            $accounts[] = $accountRepository->find($item['id']);
-            $accountRepository->find($item['id'])->getName();
+            $customers[] = $customerRepository->find($item['id']);
+            $customerRepository->find($item['id'])->getName();
         }
-        $this->assertCount(count($accounts), $expectedAccounts);
-        foreach ($accounts as $account) {
-            $this->assertContains($account->getName(), $expectedAccounts);
+        $this->assertCount(count($customers), $expectedCustomers);
+        foreach ($customers as $customer) {
+            $this->assertContains($customer->getName(), $expectedCustomers);
         }
     }
 }

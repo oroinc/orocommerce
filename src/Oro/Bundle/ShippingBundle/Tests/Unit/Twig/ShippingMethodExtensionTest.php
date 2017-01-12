@@ -4,7 +4,6 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\ShippingBundle\Event\ShippingMethodConfigDataEvent;
 use Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
-use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
 use Oro\Bundle\ShippingBundle\Twig\ShippingMethodExtension;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -113,24 +112,5 @@ class ShippingMethodExtensionTest extends \PHPUnit_Framework_TestCase
             ));
 
         self::assertEquals($template, $this->extension->getShippingMethodConfigRenderData($methodName));
-    }
-
-    public function testGetShippingMethodConfigRenderDataFlatRate()
-    {
-        $methodName = FlatRateShippingMethod::IDENTIFIER;
-        $this->dispatcher
-            ->expects(static::once())
-            ->method('dispatch')
-            ->with(ShippingMethodConfigDataEvent::NAME)
-            ->will(static::returnCallback(
-                function ($name, ShippingMethodConfigDataEvent $event) use ($methodName) {
-                    static::assertEquals($methodName, $event->getMethodIdentifier());
-                }
-            ));
-
-        self::assertEquals(
-            ShippingMethodExtension::FLAT_RATE_METHOD_CONFIG_TEMPLATE,
-            $this->extension->getShippingMethodConfigRenderData($methodName)
-        );
     }
 }

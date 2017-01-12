@@ -81,56 +81,56 @@ class FrontendOrderDataHandlerTest extends \PHPUnit_Framework_TestCase
         unset($this->securityFacade, $this->paymentTermProvider);
     }
 
-    public function testGetAccountUser()
+    public function testGetCustomerUser()
     {
-        $accountUser = new CustomerUser();
+        $customerUser = new CustomerUser();
         $this->securityFacade->expects($this->once())
             ->method('getLoggedUser')
-            ->willReturn($accountUser);
+            ->willReturn($customerUser);
 
-        $this->assertSame($accountUser, $this->handler->getAccountUser());
+        $this->assertSame($customerUser, $this->handler->getCustomerUser());
     }
 
     /**
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Only CustomerUser can create an Order
      */
-    public function testGetAccountUserWithoutAccountUser()
+    public function testGetCustomerUserWithoutCustomerUser()
     {
         $this->securityFacade->expects($this->once())
             ->method('getLoggedUser')
             ->willReturn(new \stdClass());
 
-        $this->handler->getAccountUser();
+        $this->handler->getCustomerUser();
     }
 
-    public function testGetAccount()
+    public function testGetCustomer()
     {
-        $account = new Customer();
-        $accountUser = new CustomerUser();
-        $accountUser->setAccount($account);
+        $customer = new Customer();
+        $customerUser = new CustomerUser();
+        $customerUser->setCustomer($customer);
 
         $this->securityFacade->expects($this->once())
             ->method('getLoggedUser')
-            ->willReturn($accountUser);
+            ->willReturn($customerUser);
 
-        $this->assertSame($account, $this->handler->getAccount());
+        $this->assertSame($customer, $this->handler->getCustomer());
     }
 
     public function testGetPaymentTerm()
     {
-        $account = new Customer();
-        $accountUser = new CustomerUser();
-        $accountUser->setAccount($account);
+        $customer = new Customer();
+        $customerUser = new CustomerUser();
+        $customerUser->setCustomer($customer);
 
         $this->securityFacade->expects($this->once())
             ->method('getLoggedUser')
-            ->willReturn($accountUser);
+            ->willReturn($customerUser);
 
         $paymentTerm = new PaymentTerm();
         $this->paymentTermProvider->expects($this->once())
             ->method('getPaymentTerm')
-            ->with($account)
+            ->with($customer)
             ->willReturn($paymentTerm);
 
         $this->assertSame($paymentTerm, $this->handler->getPaymentTerm());

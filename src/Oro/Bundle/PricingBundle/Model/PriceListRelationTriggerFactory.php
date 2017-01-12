@@ -42,20 +42,20 @@ class PriceListRelationTriggerFactory
 
         $priceListChangeTrigger = new PriceListRelationTrigger();
         if ($data[PriceListRelationTrigger::ACCOUNT]) {
-            $account = $this->registry->getRepository(Customer::class)
+            $customer = $this->registry->getRepository(Customer::class)
                 ->find($data[PriceListRelationTrigger::ACCOUNT]);
-            if (!$account) {
-                throw new InvalidArgumentException('Account was not found');
+            if (!$customer) {
+                throw new InvalidArgumentException('Customer was not found');
             }
-            $priceListChangeTrigger->setAccount($account);
+            $priceListChangeTrigger->setCustomer($customer);
         }
         if ($data[PriceListRelationTrigger::ACCOUNT_GROUP]) {
-            $accountGroup = $this->registry->getRepository(CustomerGroup::class)
+            $customerGroup = $this->registry->getRepository(CustomerGroup::class)
                 ->find($data[PriceListRelationTrigger::ACCOUNT_GROUP]);
-            if (!$accountGroup) {
-                throw new InvalidArgumentException('Account was not found');
+            if (!$customerGroup) {
+                throw new InvalidArgumentException('Customer was not found');
             }
-            $priceListChangeTrigger->setAccountGroup($accountGroup);
+            $priceListChangeTrigger->setCustomerGroup($customerGroup);
         }
         if ($data[PriceListRelationTrigger::WEBSITE]) {
             $website = $this->registry->getRepository(Website::class)

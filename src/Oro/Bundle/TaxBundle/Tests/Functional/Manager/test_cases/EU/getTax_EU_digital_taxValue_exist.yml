@@ -5,7 +5,7 @@ databaseBefore:
     'Oro\Bundle\OrderBundle\Entity\Order':
         simple_order:
             poNumber: { property_value: simple_order }
-            account: { class: 'Oro\Bundle\CustomerBundle\Entity\Customer', query: { name: 'account.orphan' } }
+            customer: { class: 'Oro\Bundle\CustomerBundle\Entity\Customer', query: { name: 'customer.orphan' } }
             currency: 'USD'
             billingAddress:
                 class: 'Oro\Bundle\OrderBundle\Entity\OrderAddress'
@@ -49,17 +49,17 @@ databaseBefore:
             tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX3' } }
             taxJurisdiction: { reference: europe_germany_jurisdiction }
             productTaxCode: { reference: product_tax_code.TAX1 }
-            accountTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\AccountTaxCode', query: { code: 'TAX1' } }
+            customerTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', query: { code: 'TAX1' } }
         tax_rule.TAX4:
             tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX2' } }
             taxJurisdiction: { reference: europe_germany_jurisdiction }
             productTaxCode: { reference: product_tax_code.TAX1 }
-            accountTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\AccountTaxCode', query: { code: 'TAX1' } }
+            customerTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', query: { code: 'TAX1' } }
         tax_rule.TAX5:
             tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }
             taxJurisdiction: { reference: europe_germany_non_digital_jurisdiction_code }
             productTaxCode: { reference: product_tax_code.TAX2 }
-            accountTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\AccountTaxCode', query: { code: 'TAX1' } }
+            customerTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', query: { code: 'TAX1' } }
     'Oro\Bundle\TaxBundle\Entity\TaxValue':
         simple_order_tax_value:
             entityClass: { property_value: 'Oro\Bundle\OrderBundle\Entity\Order' }

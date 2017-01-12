@@ -107,9 +107,9 @@ class ShippingResolver implements ResolverInterface
             $taxCodes[] = TaxCode::create($shippingTaxCode, TaxCodeInterface::TYPE_PRODUCT);
         }
 
-        $accountContextCode = $taxable->getContextValue(Taxable::ACCOUNT_TAX_CODE);
-        if (null !== $accountContextCode) {
-            $taxCodes[] = TaxCode::create($accountContextCode, TaxCodeInterface::TYPE_ACCOUNT);
+        $customerContextCode = $taxable->getContextValue(Taxable::ACCOUNT_TAX_CODE);
+        if (null !== $customerContextCode) {
+            $taxCodes[] = TaxCode::create($customerContextCode, TaxCodeInterface::TYPE_ACCOUNT);
         }
 
         return TaxCodes::create($taxCodes);

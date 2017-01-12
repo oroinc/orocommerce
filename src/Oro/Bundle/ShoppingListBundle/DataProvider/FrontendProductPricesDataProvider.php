@@ -58,9 +58,9 @@ class FrontendProductPricesDataProvider
      */
     public function getProductsMatchedPrice(array $lineItems)
     {
-        /** @var CustomerUser $accountUser */
-        $accountUser = $this->securityFacade->getLoggedUser();
-        if (!$accountUser) {
+        /** @var CustomerUser $customerUser */
+        $customerUser = $this->securityFacade->getLoggedUser();
+        if (!$customerUser) {
             return null;
         }
 
@@ -68,7 +68,7 @@ class FrontendProductPricesDataProvider
 
         $prices = $this->productPriceProvider->getMatchedPrices(
             $productsPriceCriteria,
-            $this->priceListRequestHandler->getPriceListByAccount()
+            $this->priceListRequestHandler->getPriceListByCustomer()
         );
 
         $result = [];
@@ -87,14 +87,14 @@ class FrontendProductPricesDataProvider
      */
     public function getProductsAllPrices(array $lineItems)
     {
-        /** @var CustomerUser $accountUser */
-        $accountUser = $this->securityFacade->getLoggedUser();
-        if (!$accountUser) {
+        /** @var CustomerUser $customerUser */
+        $customerUser = $this->securityFacade->getLoggedUser();
+        if (!$customerUser) {
             return null;
         }
 
         $prices = $this->productPriceProvider->getPriceByPriceListIdAndProductIds(
-            $this->priceListRequestHandler->getPriceListByAccount()->getId(),
+            $this->priceListRequestHandler->getPriceListByCustomer()->getId(),
             array_map(function (LineItem $lineItem) {
                 return $lineItem->getProduct()->getId();
             }, $lineItems),

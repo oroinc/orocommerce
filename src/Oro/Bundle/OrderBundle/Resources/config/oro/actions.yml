@@ -62,7 +62,7 @@ operations:
         preconditions:
             '@not_blank': $.data
         datagrids:
-            - account-user-orders-grid
+            - customer-user-orders-grid
 
     oro_order_delete_order:
         extends: DELETE
@@ -73,7 +73,7 @@ operations:
         preconditions:
             '@not_blank': $.data
         datagrids:
-            - account-user-orders-grid
+            - customer-user-orders-grid
 
     oro_order_shipping_trackings_change:
         label: oro.order.widgets.shipping_tracking

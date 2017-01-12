@@ -10,7 +10,7 @@ databaseBefore:
     'Oro\Bundle\OrderBundle\Entity\Order':
         simple_order:
             poNumber: { property_value: simple_order }
-            account: { class: 'Oro\Bundle\CustomerBundle\Entity\Customer', query: { name: 'account.orphan' } }
+            customer: { class: 'Oro\Bundle\CustomerBundle\Entity\Customer', query: { name: 'customer.orphan' } }
             currency: 'USD'
             shippingAddress:
                 class: 'Oro\Bundle\OrderBundle\Entity\OrderAddress'
@@ -65,12 +65,12 @@ databaseBefore:
             tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }
             taxJurisdiction: { class: 'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction', query: { code: 'TAX3' } }
             productTaxCode: { reference: product_tax_code }
-            accountTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\AccountTaxCode', query: { code: 'TAX1' } }
+            customerTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', query: { code: 'TAX1' } }
         tax_rule_2:
             tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX3' } }
             taxJurisdiction: { class: 'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction', query: { code: 'TAX3' } }
             productTaxCode: { reference: product_tax_code }
-            accountTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\AccountTaxCode', query: { code: 'TAX1' } }
+            customerTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', query: { code: 'TAX1' } }
 expectedResult:
     total:
         includingTax: '1611.07' # 164.7585 + 150.69375 + 275.71375 + 1019.9 = 1611.066

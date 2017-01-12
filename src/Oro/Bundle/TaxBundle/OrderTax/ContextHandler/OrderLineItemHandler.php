@@ -30,7 +30,7 @@ class OrderLineItemHandler
     /**
      * @var string
      */
-    protected $accountTaxCodeClass;
+    protected $customerTaxCodeClass;
 
     /**
      * @var string
@@ -46,20 +46,20 @@ class OrderLineItemHandler
      * @param TaxationAddressProvider $addressProvider
      * @param DoctrineHelper $doctrineHelper
      * @param string $productTaxCodeClass
-     * @param string $accountTaxCodeClass
+     * @param string $customerTaxCodeClass
      * @param string $orderLineItemClass
      */
     public function __construct(
         TaxationAddressProvider $addressProvider,
         DoctrineHelper $doctrineHelper,
         $productTaxCodeClass,
-        $accountTaxCodeClass,
+        $customerTaxCodeClass,
         $orderLineItemClass
     ) {
         $this->addressProvider = $addressProvider;
         $this->doctrineHelper = $doctrineHelper;
         $this->productTaxCodeClass = $productTaxCodeClass;
-        $this->accountTaxCodeClass = $accountTaxCodeClass;
+        $this->customerTaxCodeClass = $customerTaxCodeClass;
         $this->orderLineItemClass = $orderLineItemClass;
     }
 
@@ -78,7 +78,7 @@ class OrderLineItemHandler
 
         $context->offsetSet(Taxable::DIGITAL_PRODUCT, $this->isDigital($lineItem));
         $context->offsetSet(Taxable::PRODUCT_TAX_CODE, $this->getProductTaxCode($lineItem));
-        $context->offsetSet(Taxable::ACCOUNT_TAX_CODE, $this->getAccountTaxCode($lineItem));
+        $context->offsetSet(Taxable::ACCOUNT_TAX_CODE, $this->getCustomerTaxCode($lineItem));
     }
 
     /**
@@ -132,7 +132,7 @@ class OrderLineItemHandler
      * @param OrderLineItem $lineItem
      * @return null|string
      */
-    protected function getAccountTaxCode(OrderLineItem $lineItem)
+    protected function getCustomerTaxCode(OrderLineItem $lineItem)
     {
         $cacheKey  = $this->getCacheTaxCodeKey(TaxCodeInterface::TYPE_ACCOUNT, $lineItem);
         $cachedTaxCode = $this->getCachedTaxCode($cacheKey);
@@ -142,15 +142,15 @@ class OrderLineItemHandler
         }
 
         $taxCode = null;
-        $account = null;
+        $customer = null;
 
-        if ($lineItem->getOrder() && $lineItem->getOrder()->getAccount()) {
-            $account = $lineItem->getOrder()->getAccount();
-            $taxCode = $this->getTaxCode(TaxCodeInterface::TYPE_ACCOUNT, $account);
+        if ($lineItem->getOrder() && $lineItem->getOrder()->getCustomer()) {
+            $customer = $lineItem->getOrder()->getCustomer();
+            $taxCode = $this->getTaxCode(TaxCodeInterface::TYPE_ACCOUNT, $customer);
         }
 
-        if (!$taxCode && $account && $account->getGroup()) {
-            $taxCode = $this->getTaxCode(TaxCodeInterface::TYPE_ACCOUNT_GROUP, $account->getGroup());
+        if (!$taxCode && $customer && $customer->getGroup()) {
+            $taxCode = $this->getTaxCode(TaxCodeInterface::TYPE_ACCOUNT_GROUP, $customer->getGroup());
         }
 
         $this->taxCodes[$cacheKey] = $taxCode;
@@ -178,7 +178,7 @@ class OrderLineItemHandler
         if ($type === TaxCodeInterface::TYPE_PRODUCT) {
             return $this->doctrineHelper->getEntityRepositoryForClass($this->productTaxCodeClass);
         } elseif ($type === TaxCodeInterface::TYPE_ACCOUNT || $type === TaxCodeInterface::TYPE_ACCOUNT_GROUP) {
-            return $this->doctrineHelper->getEntityRepositoryForClass($this->accountTaxCodeClass);
+            return $this->doctrineHelper->getEntityRepositoryForClass($this->customerTaxCodeClass);
         }
 
         throw new \InvalidArgumentException(sprintf('Unknown type: %s', $type));

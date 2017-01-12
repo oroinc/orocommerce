@@ -26,7 +26,7 @@ class LineItemTest extends \PHPUnit_Framework_TestCase
             ['notes', 'notes-test-123'],
             ['unit', new ProductUnit()],
             ['quantity', 12.5],
-            ['accountUser', new CustomerUser()],
+            ['customerUser', new CustomerUser()],
             ['organization', new Organization()],
             ['owner', new User()],
         ];

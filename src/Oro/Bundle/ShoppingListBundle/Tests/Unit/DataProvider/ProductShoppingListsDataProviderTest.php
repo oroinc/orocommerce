@@ -82,17 +82,17 @@ class ProductShoppingListsDataProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getCurrent')
             ->willReturn($shoppingList);
 
-        /** @var  CustomerUser $accountUser */
-        $accountUser = new CustomerUser();
+        /** @var  CustomerUser $customerUser */
+        $customerUser = new CustomerUser();
 
         $this->lineItemRepository->expects($product && $shoppingList ? $this->once() : $this->never())
             ->method('getProductItemsWithShoppingListNames')
-            ->with([$product], $accountUser)
+            ->with([$product], $customerUser)
             ->willReturn($lineItems);
 
         $this->securityFacade->expects($this->any())
             ->method('getLoggedUser')
-            ->willReturn($accountUser);
+            ->willReturn($customerUser);
 
         $this->assertEquals($expected, $this->provider->getProductUnitsQuantity($product));
     }

@@ -28,14 +28,14 @@ class CustomerUserRoleUpdateHandler extends AbstractCustomerUserRoleHandler
     /**
      * @var Customer
      */
-    protected $originalAccount;
+    protected $originalCustomer;
 
     /**
      * {@inheritDoc}
      */
     protected function onSuccess(AbstractRole $role, array $appendUsers, array $removeUsers)
     {
-        $this->applyAccountLimits($role, $appendUsers, $removeUsers);
+        $this->applyCustomerLimits($role, $appendUsers, $removeUsers);
 
         parent::onSuccess($role, $appendUsers, $removeUsers);
     }
@@ -81,16 +81,16 @@ class CustomerUserRoleUpdateHandler extends AbstractCustomerUserRoleHandler
      * @param array                        $appendUsers
      * @param array                        $removeUsers
      */
-    protected function applyAccountLimits(CustomerUserRole $role, array &$appendUsers, array &$removeUsers)
+    protected function applyCustomerLimits(CustomerUserRole $role, array &$appendUsers, array &$removeUsers)
     {
         /** @var CustomerUserRoleRepository $roleRepository */
         $roleRepository = $this->doctrineHelper->getEntityRepository($role);
 
-        // Role moved to another account OR account added
+        // Role moved to another customer OR customer added
         if ($role->getId() && (
-                ($this->originalAccount !== $role->getAccount() &&
-                    $this->originalAccount !== null && $role->getAccount() !== null) ||
-                ($this->originalAccount === null && $role->getAccount() !== null)
+                ($this->originalCustomer !== $role->getCustomer() &&
+                    $this->originalCustomer !== null && $role->getCustomer() !== null) ||
+                ($this->originalCustomer === null && $role->getCustomer() !== null)
             )
         ) {
             // Remove assigned users
@@ -100,8 +100,8 @@ class CustomerUserRoleUpdateHandler extends AbstractCustomerUserRoleHandler
                 $removeUsers,
                 array_filter(
                     $assignedUsers,
-                    function (CustomerUser $accountUser) use ($role) {
-                        return $accountUser->getAccount() !== $role->getAccount();
+                    function (CustomerUser $customerUser) use ($role) {
+                        return $customerUser->getCustomer() !== $role->getCustomer();
                     }
                 )
             );
@@ -113,12 +113,12 @@ class CustomerUserRoleUpdateHandler extends AbstractCustomerUserRoleHandler
             $appendUsers = $appendNewUsers;
         }
 
-        if ($role->getAccount()) {
+        if ($role->getCustomer()) {
             // Security check
             $appendUsers = array_filter(
                 $appendUsers,
                 function (CustomerUser $user) use ($role) {
-                    return $user->getAccount() === $role->getAccount();
+                    return $user->getCustomer() === $role->getCustomer();
                 }
             );
         }
@@ -130,7 +130,7 @@ class CustomerUserRoleUpdateHandler extends AbstractCustomerUserRoleHandler
     public function process(AbstractRole $role)
     {
         if ($role instanceof CustomerUserRole) {
-            $this->originalAccount = $role->getAccount();
+            $this->originalCustomer = $role->getCustomer();
         }
 
         return parent::process($role);

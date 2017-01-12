@@ -24,7 +24,7 @@ class LoadContentVariantsData extends AbstractFixture implements DependentFixtur
 
         $firstContentVariant = new ContentVariant();
         $firstContentVariant->setType(SystemPageContentVariantType::TYPE);
-        $firstContentVariant->setSystemPageRoute('oro_customer_frontend_account_user_index');
+        $firstContentVariant->setSystemPageRoute('oro_customer_frontend_customer_user_index');
         $firstContentVariant->setNode($firstCatalogNode);
 
         $this->setReference(self::CUSTOMER_VARIANT, $firstContentVariant);

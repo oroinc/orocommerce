@@ -6,7 +6,7 @@ use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\CurrencyBundle\DependencyInjection\Configuration as CurrencyConfig;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserSettings;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -22,7 +22,7 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
+            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
 
         $this->loadFixtures(
@@ -38,14 +38,16 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
 
-        // set account user not default currency
+        // set customer user not default currency
         $manager = $this->getContainer()->get('oro_config.manager');
         $manager->set(CurrencyConfig::getConfigKeyByName(CurrencyConfig::KEY_DEFAULT_CURRENCY), 'EUR');
+
         $user = $this->getCurrentUser();
         $website = $this->getCurrentWebsite();
         $settings = new CustomerUserSettings($website);
         $settings->setCurrency('EUR');
         $user->setWebsiteSettings($settings);
+
         $em = $this->getContainer()->get('doctrine')->getManager();
         $em->persist($settings);
         $em->flush();
@@ -94,7 +96,7 @@ class AjaxEntityTotalsControllerTest extends WebTestCase
     {
         return $this->getContainer()->get('doctrine')
             ->getRepository('OroCustomerBundle:CustomerUser')
-            ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
+            ->findOneBy(['username' => LoadCustomerUserData::AUTH_USER]);
     }
 
     /**

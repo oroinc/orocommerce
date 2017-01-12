@@ -345,24 +345,24 @@ class CustomerUserRoleUpdateHandlerTest extends AbstractCustomerUserRoleUpdateHa
 
     /**
      * @param CustomerUserRole $role
-     * @param Customer|null    $newAccount
+     * @param Customer|null    $newCustomer
      * @param CustomerUser[]   $appendUsers
      * @param CustomerUser[]   $removedUsers
      * @param CustomerUser[]   $assignedUsers
      * @param CustomerUser[]   $expectedUsersWithRole
      * @param CustomerUser[]   $expectedUsersWithoutRole
-     * @param bool            $changeAccountProcessed
-     * @dataProvider processWithAccountProvider
+     * @param bool            $changeCustomerProcessed
+     * @dataProvider processWithCustomerProvider
      */
-    public function testProcessWithAccount(
+    public function testProcessWithCustomer(
         CustomerUserRole $role,
-        $newAccount,
+        $newCustomer,
         array $appendUsers,
         array $removedUsers,
         array $assignedUsers,
         array $expectedUsersWithRole,
         array $expectedUsersWithoutRole,
-        $changeAccountProcessed = true
+        $changeCustomerProcessed = true
     ) {
         $request = new Request();
         $request->setMethod('POST');
@@ -371,13 +371,13 @@ class CustomerUserRoleUpdateHandlerTest extends AbstractCustomerUserRoleUpdateHa
         $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
         $requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
 
-        $this->setUpMocksForProcessWithAccount(
+        $this->setUpMocksForProcessWithCustomer(
             $role,
             $appendUsers,
             $removedUsers,
             $assignedUsers,
-            $newAccount,
-            $changeAccountProcessed
+            $newCustomer,
+            $changeCustomerProcessed
         );
 
         // Array of persisted users
@@ -427,82 +427,83 @@ class CustomerUserRoleUpdateHandlerTest extends AbstractCustomerUserRoleUpdateHa
     /**
      * @return array
      */
-    public function processWithAccountProvider()
+    public function processWithCustomerProvider()
     {
-        $oldAccount = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => 1]);
-        $newAccount1 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => 10]);
+        $oldCustomer = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => 1]);
+        $newCustomer1 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => 10]);
         $role1 = $this->createCustomerUserRole('test role1', 1);
         $users1 =
-            $this->createUsersWithRole($role1, 6, $newAccount1) + $this->createUsersWithRole($role1, 2, $oldAccount, 6);
+            $this->createUsersWithRole($role1, 6, $newCustomer1)
+            + $this->createUsersWithRole($role1, 2, $oldCustomer, 6);
 
-        $newAccount2 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => 20]);
+        $newCustomer2 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => 20]);
         $oldAcc2 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => 21]);
         $role2 = $this->createCustomerUserRole('test role2', 2);
-        $role2->setAccount($oldAcc2);
+        $role2->setCustomer($oldAcc2);
         $users2 =
-            $this->createUsersWithRole($role2, 6, $newAccount2) + $this->createUsersWithRole($role2, 2, $oldAcc2, 6);
+            $this->createUsersWithRole($role2, 6, $newCustomer2) + $this->createUsersWithRole($role2, 2, $oldAcc2, 6);
 
         $role3 = $this->createCustomerUserRole('test role3', 3);
-        $role3->setAccount($this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => 31]));
-        $users3 = $this->createUsersWithRole($role3, 6, $role3->getAccount());
+        $role3->setCustomer($this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => 31]));
+        $users3 = $this->createUsersWithRole($role3, 6, $role3->getCustomer());
 
-        $newAccount4 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => 41]);
+        $newCustomer4 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => 41]);
         $role4 = $this->createCustomerUserRole('test role4', 4);
-        $role4->setAccount($this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => 40]));
-        $users4 = $this->createUsersWithRole($role4, 6, $newAccount4);
+        $role4->setCustomer($this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => 40]));
+        $users4 = $this->createUsersWithRole($role4, 6, $newCustomer4);
 
-        $newAccount5 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => 50]);
+        $newCustomer5 = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => 50]);
         $role5 = $this->createCustomerUserRole('test role5');
-        $role5->setAccount($this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => 51]));
-        $users5 = $this->createUsersWithRole($role5, 6, $newAccount5);
+        $role5->setCustomer($this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => 51]));
+        $users5 = $this->createUsersWithRole($role5, 6, $newCustomer5);
 
         return [
-            'set account for role without account (assigned users should be removed except appendUsers)'      => [
+            'set customer for role without customer (assigned users should be removed except appendUsers)'      => [
                 'role'                     => $role1,
-                'newAccount'               => $newAccount1,
+                'newCustomer'               => $newCustomer1,
                 'appendUsers'              => [$users1[1], $users1[5], $users1[6]],
                 'removedUsers'             => [$users1[3], $users1[4]],
                 'assignedUsers'            => [$users1[1], $users1[2], $users1[3], $users1[4], $users1[7]],
                 'expectedUsersWithRole'    => [$users1[5], $users1[6]], // $users[1] already has role
                 'expectedUsersWithoutRole' => [$users1[7], $users1[3], $users1[4]],
             ],
-            'set another account for role with account (assigned users should be removed except appendUsers)' => [
+            'set another customer for role with customer (assigned users should be removed except appendUsers)' => [
                 'role'                     => $role2,
-                'newAccount'               => $newAccount2,
+                'newCustomer'               => $newCustomer2,
                 'appendUsers'              => [$users2[1], $users2[5], $users2[6]],
                 'removedUsers'             => [$users2[3], $users2[4]],
                 'assignedUsers'            => [$users2[1], $users2[2], $users2[3], $users2[4], $users1[7], $users1[8]],
                 'expectedUsersWithRole'    => [$users2[5], $users2[6]], // $users0 not changed, because already has role
                 'expectedUsersWithoutRole' => [$users1[7], $users1[8], $users2[3], $users2[4]],
             ],
-            'add/remove users for role with account (account not changed)'                                    => [
+            'add/remove users for role with customer (customer not changed)'                                    => [
                 'role'                     => $role3,
-                'newAccount'               => $role3->getAccount(),
+                'newCustomer'               => $role3->getCustomer(),
                 'appendUsers'              => [$users3[5], $users3[6]],
                 'removedUsers'             => [$users3[3], $users3[4]],
                 'assignedUsers'            => [$users3[1], $users3[2], $users3[3], $users3[4]],
                 'expectedUsersWithRole'    => [$users3[5], $users3[6]],
                 'expectedUsersWithoutRole' => [$users3[3], $users3[4]],
-                'changeAccountProcessed'   => false,
+                'changeCustomerProcessed'   => false,
             ],
-            'remove account for role with account (assigned users should not be removed)'                     => [
+            'remove customer for role with customer (assigned users should not be removed)'                     => [
                 'role'                     => $role4,
-                'newAccount'               => $newAccount4,
+                'newCustomer'               => $newCustomer4,
                 'appendUsers'              => [$users4[1], $users4[5], $users4[6]],
                 'removedUsers'             => [$users4[3], $users4[4]],
                 'assignedUsers'            => [$users4[1], $users4[2], $users4[3], $users4[4]],
                 'expectedUsersWithRole'    => [$users4[5], $users4[6]],
                 'expectedUsersWithoutRole' => [$users4[3], $users4[4]],
             ],
-            'change account logic shouldn\'t be processed (role without ID)'                                  => [
+            'change customer logic shouldn\'t be processed (role without ID)'                                  => [
                 'role'                     => $role5,
-                'newAccount'               => $newAccount5,
+                'newCustomer'               => $newCustomer5,
                 'appendUsers'              => [$users5[1], $users5[5], $users5[6]],
                 'removedUsers'             => [$users5[3], $users5[4]],
                 'assignedUsers'            => [$users5[1], $users5[2], $users5[3], $users5[4]],
                 'expectedUsersWithRole'    => [$users5[5], $users5[6]],
                 'expectedUsersWithoutRole' => [$users5[3], $users5[4]],
-                'changeAccountProcessed'   => false,
+                'changeCustomerProcessed'   => false,
             ],
         ];
     }
@@ -708,16 +709,16 @@ class CustomerUserRoleUpdateHandlerTest extends AbstractCustomerUserRoleUpdateHa
      * @param array            $appendUsers
      * @param array            $removedUsers
      * @param array            $assignedUsers
-     * @param Customer|null    $newAccount
-     * @param bool             $changeAccountProcessed
+     * @param Customer|null    $newCustomer
+     * @param bool             $changeCustomerProcessed
      */
-    protected function setUpMocksForProcessWithAccount(
+    protected function setUpMocksForProcessWithCustomer(
         CustomerUserRole $role,
         array $appendUsers,
         array $removedUsers,
         array $assignedUsers,
-        $newAccount,
-        $changeAccountProcessed
+        $newCustomer,
+        $changeCustomerProcessed
     ) {
         $appendForm = $this->createMock('Symfony\Component\Form\FormInterface');
         $appendForm->expects($this->once())
@@ -733,9 +734,9 @@ class CustomerUserRoleUpdateHandlerTest extends AbstractCustomerUserRoleUpdateHa
         $form->expects($this->once())
             ->method('submit')
             ->willReturnCallback(
-                function () use ($role, $newAccount) {
-                    $role->setAccount($newAccount);
-                    $role->setOrganization($newAccount->getOrganization());
+                function () use ($role, $newCustomer) {
+                    $role->setCustomer($newCustomer);
+                    $role->setOrganization($newCustomer->getOrganization());
                 }
             );
         $form->expects($this->once())
@@ -754,7 +755,7 @@ class CustomerUserRoleUpdateHandlerTest extends AbstractCustomerUserRoleUpdateHa
             ->method('create')
             ->willReturn($form);
 
-        $this->roleRepository->expects($changeAccountProcessed ? $this->once() : $this->never())
+        $this->roleRepository->expects($changeCustomerProcessed ? $this->once() : $this->never())
             ->method('getAssignedUsers')
             ->with($role)
             ->willReturn($assignedUsers);

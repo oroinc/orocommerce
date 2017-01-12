@@ -76,7 +76,7 @@ class OroCalendarCommerceBridgeBundle implements Migration, RenameExtensionAware
 
         $queries->addQuery(new UpdateExtendRelationQuery(
             'Oro\Bundle\CalendarBundle\Entity\CalendarEvent',
-            'Oro\Bundle\AccountBundle\Entity\AccountUser',
+            'Oro\Bundle\AccountBundle\Entity\CustomerUser',
             'account_user_489123cf',
             'account_user_795f990e',
             RelationType::MANY_TO_MANY

@@ -153,7 +153,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
 
             $actionData = new ActionData([
                 'shoppingList' => $shoppingList,
-                'redirectUrl' => $isSetRedirectUrl ? '/account/shoppingList/123' : null,
+                'redirectUrl' => $isSetRedirectUrl ? '/customer/shoppingList/123' : null,
             ]);
 
             $entitiesCount = count($data);
@@ -257,7 +257,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
                 'request' => new Request(),
                 'productIds' =>['sku1' => 1, 'sku2' => 2],
                 'productQuantities' => [1 => 2, 2 => 3],
-                'redirectUrl' => '/account/shoppingList/123',
+                'redirectUrl' => '/customer/shoppingList/123',
                 'failed' => true
             ],
             'without redirect url' => [

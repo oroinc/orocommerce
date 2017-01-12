@@ -67,7 +67,7 @@ class PaymentTransactionProvider
     /**
      * @return CustomerUser|null
      */
-    protected function getLoggedAccountUser()
+    protected function getLoggedCustomerUser()
     {
         $token = $this->tokenStorage->getToken();
         if (!$token) {
@@ -160,8 +160,8 @@ class PaymentTransactionProvider
      */
     public function getActiveValidatePaymentTransaction($paymentMethod)
     {
-        $accountUser = $this->getLoggedAccountUser();
-        if (!$accountUser) {
+        $customerUser = $this->getLoggedCustomerUser();
+        if (!$customerUser) {
             return null;
         }
 
@@ -171,7 +171,7 @@ class PaymentTransactionProvider
                 'successful' => true,
                 'action' => PaymentMethodInterface::VALIDATE,
                 'paymentMethod' => (string)$paymentMethod,
-                'frontendOwner' => $accountUser,
+                'frontendOwner' => $customerUser,
             ],
             ['id' => Criteria::DESC]
         );
@@ -195,7 +195,7 @@ class PaymentTransactionProvider
             ->setAction($type)
             ->setEntityClass($className)
             ->setEntityIdentifier($identifier)
-            ->setFrontendOwner($this->getLoggedAccountUser());
+            ->setFrontendOwner($this->getLoggedCustomerUser());
 
         return $paymentTransaction;
     }
