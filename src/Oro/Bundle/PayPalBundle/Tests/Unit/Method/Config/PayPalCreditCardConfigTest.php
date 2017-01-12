@@ -24,11 +24,30 @@ class PayPalCreditCardConfigTest extends AbstractPayPalCreditCardConfigTest
     {
         $this->encoder = $this->createMock(SymmetricCrypterInterface::class);
 
+        $bag = [
+            $this->getConfigPrefix() . 'short_label' => 'test short label',
+            $this->getConfigPrefix() . 'proxy_port' => '8099',
+            $this->getConfigPrefix() . 'proxy_host' => 'proxy host',
+            $this->getConfigPrefix() . 'use_proxy' => true,
+            $this->getConfigPrefix() . 'test_mode' => true,
+            $this->getConfigPrefix() . 'label' => 'test label',
+            $this->getConfigPrefix() . 'require_cvv' => true,
+            $this->getConfigPrefix() . 'enable_ssl_verification' => true,
+            $this->getConfigPrefix() . 'debug_mode' => true,
+            $this->getConfigPrefix() . 'authorization_for_required_amount' => true,
+            $this->getConfigPrefix() . 'zero_amount_authorization' => true,
+            $this->getConfigPrefix() . 'allowed_cc_types' => ['Master Card', 'Visa'],
+            $this->getConfigPrefix() . 'payment_action' => 'string',
+            $this->getConfigPrefix() . 'vendor' => 'string',
+            $this->getConfigPrefix() . 'user' => 'string',
+            $this->getConfigPrefix() . 'password' => 'string',
+            $this->getConfigPrefix() . 'partner' => 'string',
+        ];
         $settingsBag = $this->createMock(ParameterBag::class);
         $settingsBag->expects(static::any())->method('get')->willReturnCallback(
-            function () {
+            function () use ($bag) {
                 $args = func_get_args();
-                return $args[0];
+                return $bag[$args[0]];
             }
         );
 

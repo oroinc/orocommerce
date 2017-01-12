@@ -5,11 +5,9 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method\Config;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
-use Oro\Bundle\PayPalBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PayPalBundle\DependencyInjection\OroPayPalExtension;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfig;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
-use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 use Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config\AbstractPaymentConfigTestCase;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -29,11 +27,19 @@ class PayPalExpressCheckoutConfigTest extends AbstractPaymentConfigTestCase
     {
         $this->encoder = $this->createMock(SymmetricCrypterInterface::class);
 
+        $bag = [
+            $this->getConfigPrefix() . 'short_label' => 'test short label',
+            $this->getConfigPrefix() . 'proxy_port' => '8099',
+            $this->getConfigPrefix() . 'checkout_label' => 'test label',
+            $this->getConfigPrefix() . 'checkout_short_label' => 'test short label',
+            $this->getConfigPrefix() . 'checkout_payment_action' => 'paypal_payments_pro_express_payment_action',
+            $this->getConfigPrefix() . 'test_mode' => true,
+        ];
         $settingsBag = $this->createMock(ParameterBag::class);
         $settingsBag->expects(static::any())->method('get')->willReturnCallback(
-            function () {
+            function () use ($bag) {
                 $args = func_get_args();
-                return $args[0];
+                return $bag[$args[0]];
             }
         );
 
@@ -57,7 +63,7 @@ class PayPalExpressCheckoutConfigTest extends AbstractPaymentConfigTestCase
      */
     protected function getConfigPrefix()
     {
-        return 'paypal_payments_pro_express_checkout_';
+        return 'paypal_payments_pro_express_';
     }
 
     public function testIsTestMode()

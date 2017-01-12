@@ -31,6 +31,7 @@ class Configuration implements ConfigurationInterface
 
     const PAYPAL_PAYMENTS_PRO_EXPRESS_CHECKOUT_LABEL_KEY = 'paypal_payments_pro_express_checkout_label';
     const PAYPAL_PAYMENTS_PRO_EXPRESS_CHECKOUT_SHORT_LABEL_KEY = 'paypal_payments_pro_express_checkout_short_label';
+    const PAYPAL_PAYMENTS_PRO_EXPRESS_CHECKOUT_TEST_MODE_KEY = 'paypal_payments_pro_express_test_mode';
     const PAYPAL_PAYMENTS_PRO_EXPRESS_CHECKOUT_PAYMENT_ACTION_KEY =
         'paypal_payments_pro_express_checkout_payment_action';
 

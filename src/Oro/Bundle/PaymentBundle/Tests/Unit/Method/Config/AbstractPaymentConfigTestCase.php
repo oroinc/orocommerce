@@ -45,12 +45,14 @@ abstract class AbstractPaymentConfigTestCase extends \PHPUnit_Framework_TestCase
 
     public function testGetLabel()
     {
-        $this->assertSame($this->getConfigPrefix() . 'label', $this->config->getLabel());
+        $returnValue = 'test label';
+        $this->assertSame($returnValue, $this->config->getLabel());
     }
 
     public function testGetShortLabel()
     {
-        $this->assertSame($this->getConfigPrefix() . 'short_label', $this->config->getShortLabel());
+        $returnValue = 'test short label';
+        $this->assertSame($returnValue, $this->config->getShortLabel());
     }
 
     /**

@@ -66,7 +66,7 @@ class PayPalExpressCheckoutConfig extends AbstractPaymentConfig implements
      */
     public function isTestMode()
     {
-        return (bool)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_TEST_MODE_KEY);
+        return (bool)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_EXPRESS_CHECKOUT_TEST_MODE_KEY);
     }
 
     /**

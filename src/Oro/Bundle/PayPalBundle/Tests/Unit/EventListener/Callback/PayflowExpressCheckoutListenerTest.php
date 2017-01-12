@@ -7,6 +7,7 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Event\CallbackErrorEvent;
 
 use Oro\Bundle\PaymentBundle\Event\CallbackReturnEvent;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodProviderInterface;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
 use Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowExpressCheckoutListener;
 use Psr\Log\LoggerInterface;
@@ -85,10 +86,15 @@ class PayflowExpressCheckoutListenerTest extends \PHPUnit_Framework_TestCase
             ->method('execute')
             ->with('complete', $transaction);
 
-        $this->paymentMethodRegistry->expects($this->once())
+        $paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
+        $paymentMethodProvider->expects($this->once())
             ->method('getPaymentMethod')
-            ->with($transaction->getPaymentMethod())
             ->willReturn($paymentMethod);
+
+        $this->paymentMethodRegistry->expects($this->once())
+            ->method('getPaymentMethodProvider')
+            ->with($transaction->getPaymentMethod())
+            ->willReturn($paymentMethodProvider);
 
         $this->assertEquals(Response::HTTP_FORBIDDEN, $event->getResponse()->getStatusCode());
 
@@ -160,10 +166,15 @@ class PayflowExpressCheckoutListenerTest extends \PHPUnit_Framework_TestCase
             ->method('execute')
             ->willThrowException(new \InvalidArgumentException());
 
-        $this->paymentMethodRegistry->expects($this->once())
+        $paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
+        $paymentMethodProvider->expects($this->once())
             ->method('getPaymentMethod')
-            ->with($transaction->getPaymentMethod())
             ->willReturn($paymentMethod);
+
+        $this->paymentMethodRegistry->expects($this->once())
+            ->method('getPaymentMethodProvider')
+            ->with($transaction->getPaymentMethod())
+            ->willReturn($paymentMethodProvider);
 
         $event = new CallbackReturnEvent($data);
         $event->setPaymentTransaction($transaction);
