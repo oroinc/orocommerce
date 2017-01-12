@@ -13,8 +13,8 @@ use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFami
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\MakeProductAttributesTrait;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
-class LoadProductSeoAttributesAndGroupData extends AbstractFixture
-    implements DependentFixtureInterface, ContainerAwareInterface
+class LoadProductSeoAttributesAndGroupData extends AbstractFixture implements
+    DependentFixtureInterface, ContainerAwareInterface
 {
     use MakeProductAttributesTrait;
 
@@ -46,7 +46,9 @@ class LoadProductSeoAttributesAndGroupData extends AbstractFixture
         $attributeGroupRepository = $manager->getRepository(AttributeGroup::class);
 
         $defaultFamily =
-            $attributeFamilyRepository->findOneBy(['code' => LoadProductDefaultAttributeFamilyData::DEFAULT_FAMILY_CODE]);
+            $attributeFamilyRepository->findOneBy([
+                'code' => LoadProductDefaultAttributeFamilyData::DEFAULT_FAMILY_CODE
+            ]);
 
         $seoGroup = $attributeGroupRepository->findOneBy(['code' => self::GROUP_CODE]);
 
