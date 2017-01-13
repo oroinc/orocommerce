@@ -3,11 +3,11 @@
 namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Method\Config;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config\AbstractPaymentConfigTestCase;
+use Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config\AbstractPaymentSystemConfigTestCase;
 use Oro\Bundle\PaymentTermBundle\DependencyInjection\OroPaymentTermExtension;
 use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfig;
 
-class PaymentTermConfigTest extends AbstractPaymentConfigTestCase
+class PaymentTermConfigTest extends AbstractPaymentSystemConfigTestCase
 {
     /**
      * {@inheritdoc}

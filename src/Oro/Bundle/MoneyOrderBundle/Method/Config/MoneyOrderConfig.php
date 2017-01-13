@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\MoneyOrderBundle\Method\Config;
 
+use Oro\Bundle\MoneyOrderBundle\DependencyInjection\Configuration;
 use Oro\Bundle\MoneyOrderBundle\DependencyInjection\OroMoneyOrderExtension;
 use Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder;
-use Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentConfig;
-use Oro\Bundle\MoneyOrderBundle\DependencyInjection\Configuration;
+use Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentSystemConfig;
 
-class MoneyOrderConfig extends AbstractPaymentConfig implements MoneyOrderConfigInterface
+class MoneyOrderConfig extends AbstractPaymentSystemConfig implements MoneyOrderConfigInterface
 {
     /** {@inheritdoc} */
     protected function getPaymentExtensionAlias()

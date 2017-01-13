@@ -10,7 +10,7 @@ use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
-abstract class AbstractPaymentConfigTestCase extends \PHPUnit_Framework_TestCase
+abstract class AbstractPaymentSystemConfigTestCase extends \PHPUnit_Framework_TestCase
 {
     use ConfigTestTrait;
 

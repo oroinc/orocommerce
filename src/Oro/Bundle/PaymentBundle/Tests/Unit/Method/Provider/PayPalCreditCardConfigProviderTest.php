@@ -44,16 +44,6 @@ class PayPalCreditCardConfigProviderTest extends \PHPUnit_Framework_TestCase
         $this->payPalConfigProvider = new PayPalCreditCardConfigProvider($this->doctrine, $this->encoder, $this->type);
     }
 
-    public function testGetType()
-    {
-        $this->assertEquals('paypal_payments_pro', $this->payPalConfigProvider->getType());
-    }
-
-    public function testGetConfigs()
-    {
-        $this->assertEquals(null, $this->payPalConfigProvider->getConfigs());
-    }
-
     public function testGetPaymentConfigs()
     {
         $channels = [];

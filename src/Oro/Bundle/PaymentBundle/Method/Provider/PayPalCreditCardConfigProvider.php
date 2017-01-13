@@ -3,20 +3,16 @@
 namespace Oro\Bundle\PaymentBundle\Method\Provider;
 
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
+use Oro\Bundle\PaymentBundle\Method\Config\PaymentConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfig;
-use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
 
 class PayPalCreditCardConfigProvider extends PayPalConfigProvider implements PayPalCreditCardConfigProviderInterface
 {
     /**
-     * @return PayPalCreditCardConfigInterface[]
+     * @return PaymentConfigInterface[]
      */
-    public function getPaymentConfigs()
+    protected function fillConfigs()
     {
-        if ($this->getConfigs() !== null) {
-            return $this->getConfigs();
-        }
-
         $channels = $this->doctrine->getManagerForClass('OroIntegrationBundle:Channel')
             ->getRepository('OroIntegrationBundle:Channel')
             ->findBy(['type' => $this->getType(), 'enabled' => true])

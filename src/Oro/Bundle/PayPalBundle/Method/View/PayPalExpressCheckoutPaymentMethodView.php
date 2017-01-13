@@ -4,10 +4,19 @@ namespace Oro\Bundle\PayPalBundle\Method\View;
 
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
+use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
+use Oro\Bundle\PayPalBundle\Method\PayflowExpressCheckout;
+use Symfony\Component\Form\FormFactoryInterface;
 
 class PayPalExpressCheckoutPaymentMethodView implements PaymentMethodViewInterface
 {
+    /** @var FormFactoryInterface */
+    protected $formFactory;
+
+    /** @var PaymentTransactionProvider */
+    protected $paymentTransactionProvider;
+
     /** @var PayPalExpressCheckoutConfigInterface */
     protected $config;
 

@@ -48,16 +48,6 @@ class PayPalExpressCheckoutConfigProviderTest extends \PHPUnit_Framework_TestCas
         );
     }
 
-    public function testGetType()
-    {
-        $this->assertEquals('paypal_payflow_gateway', $this->payPalConfigProvider->getType());
-    }
-
-    public function testGetConfigs()
-    {
-        $this->assertEquals(null, $this->payPalConfigProvider->getConfigs());
-    }
-
     public function testGetPaymentConfigs()
     {
         $channels = [];

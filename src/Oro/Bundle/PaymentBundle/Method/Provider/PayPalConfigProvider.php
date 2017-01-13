@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PaymentBundle\Method\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\PaymentBundle\Method\Config\PaymentConfigInterface;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 
 abstract class PayPalConfigProvider implements PaymentConfigProviderInterface
@@ -45,23 +46,35 @@ abstract class PayPalConfigProvider implements PaymentConfigProviderInterface
     /**
      * @return string
      */
-    public function getType()
+    protected function getType()
     {
         return $this->type;
     }
 
     /**
-     * @return array|null
+     * @return PaymentConfigInterface[]
      */
-    public function getConfigs()
+    protected function getConfigs()
     {
-        return count($this->configs) > 0 ? $this->configs : null;
+        return $this->configs;
     }
 
     /**
      * {@inheritdoc}
      */
-    abstract public function getPaymentConfigs();
+    public function getPaymentConfigs()
+    {
+        if (count($this->getConfigs()) > 0) {
+            return $this->getConfigs();
+        }
+
+        return $this->fillConfigs();
+    }
+
+    /**
+     * @return PaymentConfigInterface[]
+     */
+    abstract protected function fillConfigs();
 
     /**
      * {@inheritdoc}
