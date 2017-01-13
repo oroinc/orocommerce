@@ -128,6 +128,9 @@ class ProductVariantAvailabilityProvider
                 switch ($fieldType) {
                     case 'enum':
                         $id = $this->doctrineHelper->getSingleEntityIdentifier($variantValue);
+                        if ($id === null) {
+                            continue;
+                        }
                         $allVariants[$variantField][$id] = true;
                         break;
 
@@ -221,7 +224,7 @@ class ProductVariantAvailabilityProvider
             throw new \InvalidArgumentException('Variant values provided don\'t match exactly one simple product');
         }
 
-        return $simpleProducts[0];
+        return reset($simpleProducts);
     }
 
     /**

@@ -65,7 +65,7 @@ class ShoppingListHandler
                     $em->persist($shoppingList);
                     $em->flush();
                     $this->manager->setCurrent(
-                        $shoppingList->getAccountUser(),
+                        $shoppingList->getCustomerUser(),
                         $shoppingList
                     );
                 } else {

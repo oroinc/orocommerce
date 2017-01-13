@@ -21,8 +21,8 @@ class LoadTransportData extends AbstractFixture implements DependentFixtureInter
             'apiUser' => 'user_1',
             'apiPassword' => 'password_1',
             'apiKey' => 'key_1',
-            'shippingAccountNumber' => 'ship_account_number_1',
-            'shippingAccountName' => 'ship_account_name_1',
+            'shippingAccountNumber' => 'ship_customer_number_1',
+            'shippingAccountName' => 'ship_customer_name_1',
             'country' => 'ups.shipping_country.1',
             'applicableShippingServices' => [
                 'ups.shipping_service.1'
@@ -34,8 +34,8 @@ class LoadTransportData extends AbstractFixture implements DependentFixtureInter
             'apiUser' => 'user_2',
             'apiPassword' => 'password_2',
             'apiKey' => 'key_2',
-            'shippingAccountNumber' => 'ship_account_number_2',
-            'shippingAccountName' => 'ship_account_name_2',
+            'shippingAccountNumber' => 'ship_customer_number_2',
+            'shippingAccountName' => 'ship_customer_name_2',
             'country' => 'ups.shipping_country.1',
             'applicableShippingServices' => [
                 'ups.shipping_service.1',

@@ -29,10 +29,10 @@ class CountryMatcherTest extends AbstractMatcherTest
      * @param TaxRule[] $expected
      * @param Country $country
      * @param string $productTaxCode
-     * @param string $accountTaxCode
+     * @param string $customerTaxCode
      * @param TaxRule[] $taxRules
      */
-    public function testMatch($expected, $country, $productTaxCode, $accountTaxCode, $taxRules)
+    public function testMatch($expected, $country, $productTaxCode, $customerTaxCode, $taxRules)
     {
         $address = (new Address())
             ->setCountry($country);
@@ -41,8 +41,8 @@ class CountryMatcherTest extends AbstractMatcherTest
         if ($productTaxCode) {
             $taxCodes[] = TaxCode::create($productTaxCode, TaxCodeInterface::TYPE_PRODUCT);
         }
-        if ($accountTaxCode) {
-            $taxCodes[] = TaxCode::create($accountTaxCode, TaxCodeInterface::TYPE_ACCOUNT);
+        if ($customerTaxCode) {
+            $taxCodes[] = TaxCode::create($customerTaxCode, TaxCodeInterface::TYPE_ACCOUNT);
         }
 
 
@@ -77,28 +77,28 @@ class CountryMatcherTest extends AbstractMatcherTest
                 'expected' => $taxRules,
                 'country' => new Country('US'),
                 'productTaxCode' => 'PRODUCT_TAX_CODE',
-                'accountTaxCode' => 'ACCOUNT_TAX_CODE',
+                'customerTaxCode' => 'ACCOUNT_TAX_CODE',
                 'taxRules' => $taxRules,
             ],
             'address without country' => [
                 'expected' => [],
                 'country' => null,
                 'productTaxCode' => 'PRODUCT_TAX_CODE',
-                'accountTaxCode' => 'ACCOUNT_TAX_CODE',
+                'customerTaxCode' => 'ACCOUNT_TAX_CODE',
                 'taxRules' => [],
             ],
             'address without product tax code' => [
                 'expected' => [],
                 'country' => new Country('US'),
                 'productTaxCode' => null,
-                'accountTaxCode' => 'ACCOUNT_TAX_CODE',
+                'customerTaxCode' => 'ACCOUNT_TAX_CODE',
                 'taxRules' => [],
             ],
-            'address without account tax code' => [
+            'address without customer tax code' => [
                 'expected' => [],
                 'country' => new Country('US'),
                 'productTaxCode' => 'PRODUCT_TAX_CODE',
-                'accountTaxCode' => null,
+                'customerTaxCode' => null,
                 'taxRules' => [],
             ],
         ];

@@ -3,39 +3,39 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 
 class LoadCustomerUserRoleACLData extends AbstractLoadACLData
 {
-    const ROLE_WITHOUT_ACCOUNT_1_USER_LOCAL = 'Role without account user local';
-    const ROLE_WITH_ACCOUNT_1_USER_LOCAL = 'Role with account user local';
-    const ROLE_WITH_ACCOUNT_1_USER_DEEP = 'Role with account user deep';
-    const ROLE_WITH_ACCOUNT_1_2_USER_LOCAL = 'Role with account 1.2 user local';
-    const ROLE_WITH_ACCOUNT_2_USER_LOCAL = 'Role with account 2 user local';
-    const ROLE_WITHOUT_ACCOUNT_1_USER_LOCAL_CANT_DELETED = 'Role without account user local for user';
-    const ROLE_WITH_ACCOUNT_1_USER_LOCAL_CANT_DELETED = 'Role with account user local for user';
-    const ROLE_WITH_ACCOUNT_1_USER_DEEP_CANT_DELETED = 'Role with account user deep for user';
-    const ROLE_WITH_ACCOUNT_1_2_USER_LOCAL_CANT_DELETED = 'Role with account 1.2 user local for user';
-    const ROLE_WITH_ACCOUNT_2_USER_LOCAL_CANT_DELETED = 'Role with account 2 user local for user';
+    const ROLE_WITHOUT_ACCOUNT_1_USER_LOCAL = 'Role without customer user local';
+    const ROLE_WITH_ACCOUNT_1_USER_LOCAL = 'Role with customer user local';
+    const ROLE_WITH_ACCOUNT_1_USER_DEEP = 'Role with customer user deep';
+    const ROLE_WITH_ACCOUNT_1_2_USER_LOCAL = 'Role with customer 1.2 user local';
+    const ROLE_WITH_ACCOUNT_2_USER_LOCAL = 'Role with customer 2 user local';
+    const ROLE_WITHOUT_ACCOUNT_1_USER_LOCAL_CANT_DELETED = 'Role without customer user local for user';
+    const ROLE_WITH_ACCOUNT_1_USER_LOCAL_CANT_DELETED = 'Role with customer user local for user';
+    const ROLE_WITH_ACCOUNT_1_USER_DEEP_CANT_DELETED = 'Role with customer user deep for user';
+    const ROLE_WITH_ACCOUNT_1_2_USER_LOCAL_CANT_DELETED = 'Role with customer 1.2 user local for user';
+    const ROLE_WITH_ACCOUNT_2_USER_LOCAL_CANT_DELETED = 'Role with customer 2 user local for user';
     /**
      * @var array
      */
     protected static $roles = [
         self::ROLE_WITHOUT_ACCOUNT_1_USER_LOCAL => [
-            'accountUser' => self::USER_ACCOUNT_1_ROLE_LOCAL
+            'customerUser' => self::USER_ACCOUNT_1_ROLE_LOCAL
         ],
         self::ROLE_WITH_ACCOUNT_1_USER_DEEP => [
-            'accountUser' => self::USER_ACCOUNT_1_ROLE_DEEP
+            'customerUser' => self::USER_ACCOUNT_1_ROLE_DEEP
         ],
         self::ROLE_WITH_ACCOUNT_1_USER_LOCAL => [
-            'accountUser' => self::USER_ACCOUNT_1_ROLE_LOCAL
+            'customerUser' => self::USER_ACCOUNT_1_ROLE_LOCAL
         ],
         self::ROLE_WITH_ACCOUNT_1_2_USER_LOCAL => [
-            'accountUser' => self::USER_ACCOUNT_1_2_ROLE_LOCAL
+            'customerUser' => self::USER_ACCOUNT_1_2_ROLE_LOCAL
         ],
         self::ROLE_WITH_ACCOUNT_2_USER_LOCAL => [
-            'accountUser' => self::USER_ACCOUNT_2_ROLE_LOCAL
+            'customerUser' => self::USER_ACCOUNT_2_ROLE_LOCAL
         ]
     ];
 
@@ -58,18 +58,18 @@ class LoadCustomerUserRoleACLData extends AbstractLoadACLData
             $entity->setLabel($name);
             $entity->setSelfManaged(true);
 
-            /** @var AccountUser $accountUser */
-            $accountUser = $this->getReference($role['accountUser']);
+            /** @var CustomerUser $customerUser */
+            $customerUser = $this->getReference($role['customerUser']);
             if ($name !== self::ROLE_WITHOUT_ACCOUNT_1_USER_LOCAL) {
-                $entity->setAccount($accountUser->getCustomer());
+                $entity->setCustomer($customerUser->getCustomer());
             }
-            $entity->setOrganization($accountUser->getOrganization());
+            $entity->setOrganization($customerUser->getOrganization());
             $entityForDelete = clone $entity;
 
             //need to have role to get permission
             //role with users can't be deleted
             $entity->setLabel($entity->getLabel() . ' for user');
-            $accountUser->addRole($entity);
+            $customerUser->addRole($entity);
             $this->setReference($entity->getLabel(), $entity);
             $this->setReference($entityForDelete->getLabel(), $entityForDelete);
             $manager->persist($entityForDelete);

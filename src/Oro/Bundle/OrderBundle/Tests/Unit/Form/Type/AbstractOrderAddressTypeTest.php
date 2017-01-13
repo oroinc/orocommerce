@@ -158,11 +158,11 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
                 'expectedData' => (new OrderAddress())->setCountry(new Country('US')),
                 'defaultData' => new OrderAddress(),
             ],
-            'account address preselector' => [
+            'customer address preselector' => [
                 'isValid' => true,
                 'submittedData' => [
                     'country' => 'US',
-                    'accountAddress' => null,
+                    'customerAddress' => null,
                 ],
                 'expectedData' => (new OrderAddress())->setCountry(new Country('US')),
                 'defaultData' => new OrderAddress(),
@@ -295,22 +295,22 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
             'not valid identifier' => [
                 'isValid' => false,
                 'submittedData' => [
-                    'accountAddress' => 'a_1',
+                    'customerAddress' => 'a_1',
                 ],
                 'expectedData' => null,
                 'defaultData' => new OrderAddress(),
-                'formErrors' => ['accountAddress' => 'This value is not valid.'],
+                'formErrors' => ['customerAddress' => 'This value is not valid.'],
             ],
             'has identifier' => [
                 'isValid' => true,
                 'submittedData' => [
-                    'accountAddress' => 'a_1',
+                    'customerAddress' => 'a_1',
                 ],
                 'expectedData' => (new OrderAddress())
                     ->setCountry($country)
                     ->setStreet('Street'),
                 'defaultData' => new OrderAddress(),
-                'formErrors' => ['accountAddress' => 1],
+                'formErrors' => ['customerAddress' => 1],
                 'groupedAddresses' => [
                     'group_name' => [
                         'a_1' => (new CustomerAddress())
@@ -325,7 +325,7 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
     public function testFinishView()
     {
         $view = new FormView();
-        $view->children = ['country' => new FormView(), 'city' => new FormView(), 'accountAddress' => new FormView()];
+        $view->children = ['country' => new FormView(), 'city' => new FormView(), 'customerAddress' => new FormView()];
 
         $this->orderAddressManager->expects($this->once())->method('getGroupedAddresses')->willReturn([]);
         $this->orderAddressSecurityProvider->expects($this->atLeastOnce())->method('isManualEditGranted')
@@ -343,7 +343,7 @@ abstract class AbstractOrderAddressTypeTest extends AbstractAddressTypeTest
             $this->assertTrue($view->offsetGet($childName)->vars['disabled']);
         }
 
-        $this->assertFalse($view->offsetGet('accountAddress')->vars['disabled']);
+        $this->assertFalse($view->offsetGet('customerAddress')->vars['disabled']);
     }
 
     abstract protected function getEntity();

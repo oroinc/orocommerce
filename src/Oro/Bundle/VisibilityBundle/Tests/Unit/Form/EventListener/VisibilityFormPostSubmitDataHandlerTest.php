@@ -4,9 +4,9 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Unit\Form\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityFormFieldDataProvider;
 use Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityFormPostSubmitDataHandler;
@@ -75,45 +75,45 @@ class VisibilityFormPostSubmitDataHandlerTest extends \PHPUnit_Framework_TestCas
 
         $allForm = $this->createMock(FormInterface::class);
         $allForm->method('getData')->willReturn('hidden');
-        $accountForm = $this->createMock(FormInterface::class);
-        $account3 = $this->getEntity(Account::class, ['id' => 3]);
-        $accountForm->method('getData')->willReturn(
+        $customerForm = $this->createMock(FormInterface::class);
+        $customer3 = $this->getEntity(Customer::class, ['id' => 3]);
+        $customerForm->method('getData')->willReturn(
             [
                 1 => [
                     'data' => ['visibility' => 'category'],
-                    'entity' => $this->getEntity(Account::class, ['id' => 1]),
+                    'entity' => $this->getEntity(Customer::class, ['id' => 1]),
                 ],
                 2 => [
-                    'data' => ['visibility' => 'account_group'],
-                    'entity' => $this->getEntity(Account::class, ['id' => 2]),
+                    'data' => ['visibility' => 'customer_group'],
+                    'entity' => $this->getEntity(Customer::class, ['id' => 2]),
                 ],
                 3 => [
                     'data' => ['visibility' => 'visible'],
-                    'entity' => $account3,
+                    'entity' => $customer3,
                 ],
             ]
         );
-        $accountGroupForm = $this->createMock(FormInterface::class);
-        $accountGroupForm->method('getData')->willReturn([]);
+        $customerGroupForm = $this->createMock(FormInterface::class);
+        $customerGroupForm->method('getData')->willReturn([]);
 
         $form->method('get')->willReturnMap(
             [
                 ['all', $allForm],
-                ['account', $accountForm],
-                ['accountGroup', $accountGroupForm],
+                ['customer', $customerForm],
+                ['customerGroup', $customerGroupForm],
             ]
         );
 
         $productVisibility = new ProductVisibility();
-        $accountProductVisibility1 = (new AccountProductVisibility())->setVisibility('hidden');
-        $accountProductVisibility2 = (new AccountProductVisibility())->setVisibility('visible');
-        $accountProductVisibility3 = (new AccountProductVisibility());
+        $customerProductVisibility1 = (new CustomerProductVisibility())->setVisibility('hidden');
+        $customerProductVisibility2 = (new CustomerProductVisibility())->setVisibility('visible');
+        $customerProductVisibility3 = (new CustomerProductVisibility());
         $this->fieldDataProvider->method('findFormFieldData')
             ->willReturnMap(
                 [
                     [$form, 'all', null],
-                    [$form, 'account', [1 => $accountProductVisibility1, 2 => $accountProductVisibility2]],
-                    [$form, 'accountGroup', []],
+                    [$form, 'customer', [1 => $customerProductVisibility1, 2 => $customerProductVisibility2]],
+                    [$form, 'customerGroup', []],
                 ]
             );
         // expect new visibility entities will be created with following arguments
@@ -121,7 +121,7 @@ class VisibilityFormPostSubmitDataHandlerTest extends \PHPUnit_Framework_TestCas
             ->willReturnMap(
                 [
                     [$form, 'all', null, $productVisibility],
-                    [$form, 'account', $account3, $accountProductVisibility3],
+                    [$form, 'customer', $customer3, $customerProductVisibility3],
                 ]
             );
 
@@ -130,24 +130,24 @@ class VisibilityFormPostSubmitDataHandlerTest extends \PHPUnit_Framework_TestCas
             ->method('persist')
             ->with($productVisibility);
 
-        // assert that existing account visibility with new non default will be persisted
+        // assert that existing customer visibility with new non default will be persisted
         $this->em->expects($this->at(1))
             ->method('persist')
-            ->with($accountProductVisibility1);
+            ->with($customerProductVisibility1);
 
-        // assert that existing account visibility with new default will be remove
+        // assert that existing customer visibility with new default will be remove
         $this->em->expects($this->at(2))
             ->method('remove')
-            ->with($accountProductVisibility2);
+            ->with($customerProductVisibility2);
 
-        // assert that account visibility with non default will be persisted
+        // assert that customer visibility with non default will be persisted
         $this->em->expects($this->at(3))
             ->method('persist')
-            ->with($accountProductVisibility3);
+            ->with($customerProductVisibility3);
         $this->dataHandler->saveForm($form, $targetEntity);
 
         $this->assertEquals($productVisibility->getVisibility(), 'hidden');
-        $this->assertEquals($accountProductVisibility1->getVisibility(), 'category');
-        $this->assertEquals($accountProductVisibility3->getVisibility(), 'visible');
+        $this->assertEquals($customerProductVisibility1->getVisibility(), 'category');
+        $this->assertEquals($customerProductVisibility3->getVisibility(), 'visible');
     }
 }

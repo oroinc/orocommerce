@@ -6,7 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
@@ -47,12 +47,12 @@ class QuoteToOrderConverter
 
     /**
      * @param Quote $quote
-     * @param AccountUser|null $user
+     * @param CustomerUser|null $user
      * @param array|null $selectedOffers
      * @param bool $needFlush
      * @return Order
      */
-    public function convert(Quote $quote, AccountUser $user = null, array $selectedOffers = null, $needFlush = false)
+    public function convert(Quote $quote, CustomerUser $user = null, array $selectedOffers = null, $needFlush = false)
     {
         $order = $this->createOrder($quote, $user);
 
@@ -74,9 +74,8 @@ class QuoteToOrderConverter
             }
         }
 
-        $this->orderCurrencyHandler->setOrderCurrency($order);
-        if ($quote->getShippingEstimate() !== null) {
-            $this->fillShippingCost($quote->getShippingEstimate(), $order);
+        if ($order->getCurrency() === null) {
+            $this->orderCurrencyHandler->setOrderCurrency($order);
         }
 
         $this->orderTotalsHandler->fillSubtotals($order);
@@ -92,19 +91,19 @@ class QuoteToOrderConverter
 
     /**
      * @param Quote $quote
-     * @param AccountUser|null $user
+     * @param CustomerUser|null $user
      * @return Order
      */
-    protected function createOrder(Quote $quote, AccountUser $user = null)
+    protected function createOrder(Quote $quote, CustomerUser $user = null)
     {
-        $accountUser = $user ?: $quote->getAccountUser();
-        $account = $user ? $user->getAccount() : $quote->getAccount();
+        $customerUser = $user ?: $quote->getCustomerUser();
+        $customer = $user ? $user->getCustomer() : $quote->getCustomer();
         $orderShippingAddress = $this->createOrderAddress($quote->getShippingAddress());
 
         $order = new Order();
         $order
-            ->setAccount($account)
-            ->setAccountUser($accountUser)
+            ->setCustomer($customer)
+            ->setCustomerUser($customerUser)
             ->setOwner($quote->getOwner())
             ->setOrganization($quote->getOrganization())
             ->setPoNumber($quote->getPoNumber())
@@ -112,7 +111,10 @@ class QuoteToOrderConverter
             ->setShippingAddress($orderShippingAddress)
             ->setSourceEntityClass(ClassUtils::getClass($quote))
             ->setSourceEntityId($quote->getId())
-            ->setSourceEntityIdentifier($quote->getPoNumber());
+            ->setSourceEntityIdentifier($quote->getPoNumber())
+            ->setCurrency($quote->getCurrency())
+            ->setEstimatedShippingCostAmount($quote->getEstimatedShippingCostAmount())
+            ->setOverriddenShippingCostAmount($quote->getOverriddenShippingCostAmount());
 
         return $order;
     }
@@ -129,8 +131,8 @@ class QuoteToOrderConverter
         if ($quoteAddress) {
             $orderAddress = new OrderAddress();
 
-            $orderAddress->setAccountAddress($quoteAddress->getAccountAddress());
-            $orderAddress->setAccountUserAddress($quoteAddress->getAccountUserAddress());
+            $orderAddress->setCustomerAddress($quoteAddress->getCustomerAddress());
+            $orderAddress->setCustomerUserAddress($quoteAddress->getCustomerUserAddress());
             $orderAddress->setLabel($quoteAddress->getLabel());
             $orderAddress->setStreet($quoteAddress->getStreet());
             $orderAddress->setStreet2($quoteAddress->getStreet2());

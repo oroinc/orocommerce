@@ -55,12 +55,12 @@ class OrderController extends Controller
     {
         $data = [];
 
-        if ($request->getAccountUser()) {
-            $data['accountUser'] = $request->getAccountUser()->getId();
+        if ($request->getCustomerUser()) {
+            $data['customerUser'] = $request->getCustomerUser()->getId();
         }
 
-        if ($request->getAccount()) {
-            $data['account'] = $request->getAccount()->getId();
+        if ($request->getCustomer()) {
+            $data['customer'] = $request->getCustomer()->getId();
         }
 
         $data['sourceEntityId'] = $request->getId();

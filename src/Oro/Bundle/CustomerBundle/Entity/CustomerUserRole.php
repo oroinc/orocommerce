@@ -18,8 +18,8 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  * @ORM\Entity(repositoryClass="Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserRoleRepository")
  * @ORM\Table(name="oro_customer_user_role",
  *      uniqueConstraints={
- *          @ORM\UniqueConstraint(name="oro_customer_user_role_account_id_label_idx", columns={
- *              "account_id",
+ *          @ORM\UniqueConstraint(name="oro_customer_user_role_customer_id_label_idx", columns={
+ *              "customer_id",
  *              "label"
  *          })
  *      }
@@ -36,9 +36,9 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *              "group_name"="commerce"
  *          },
  *          "ownership"={
- *              "frontend_owner_type"="FRONTEND_ACCOUNT",
- *              "frontend_owner_field_name"="account",
- *              "frontend_owner_column_name"="account_id",
+ *              "frontend_owner_type"="FRONTEND_CUSTOMER",
+ *              "frontend_owner_field_name"="customer",
+ *              "frontend_owner_column_name"="customer_id",
  *              "organization_field_name"="organization",
  *              "organization_column_name"="organization_id"
  *          },
@@ -75,10 +75,10 @@ class CustomerUserRole extends AbstractRole implements OrganizationAwareInterfac
     protected $role;
 
     /**
-     * @var Account
+     * @var Customer
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\Account")
-     * @ORM\JoinColumn(name="account_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\Customer")
+     * @ORM\JoinColumn(name="customer_id", referencedColumnName="id", onDelete="SET NULL")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -87,7 +87,7 @@ class CustomerUserRole extends AbstractRole implements OrganizationAwareInterfac
      *      }
      * )
      */
-    protected $account;
+    protected $customer;
 
     /**
      * @var Organization
@@ -123,7 +123,7 @@ class CustomerUserRole extends AbstractRole implements OrganizationAwareInterfac
      *
      * @ORM\ManyToMany(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
      * @ORM\JoinTable(
-     *      name="oro_account_role_to_website",
+     *      name="oro_customer_role_to_website",
      *      joinColumns={
      *          @ORM\JoinColumn(name="customer_user_role_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
@@ -135,11 +135,11 @@ class CustomerUserRole extends AbstractRole implements OrganizationAwareInterfac
     protected $websites;
 
     /**
-     * @var AccountUser[]|Collection
+     * @var CustomerUser[]|Collection
      *
-     * @ORM\ManyToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountUser", mappedBy="roles")
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser", mappedBy="roles")
      */
-    protected $accountUsers;
+    protected $customerUsers;
 
     /**
      * @var boolean
@@ -165,7 +165,7 @@ class CustomerUserRole extends AbstractRole implements OrganizationAwareInterfac
         }
 
         $this->websites = new ArrayCollection();
-        $this->accountUsers = new ArrayCollection();
+        $this->customerUsers = new ArrayCollection();
     }
 
     /**
@@ -246,20 +246,20 @@ class CustomerUserRole extends AbstractRole implements OrganizationAwareInterfac
     }
 
     /**
-     * @return Account
+     * @return Customer
      */
-    public function getAccount()
+    public function getCustomer()
     {
-        return $this->account;
+        return $this->customer;
     }
 
     /**
-     * @param Account|null $account
+     * @param Customer|null $customer
      * @return CustomerUserRole
      */
-    public function setAccount(Account $account = null)
+    public function setCustomer(Customer $customer = null)
     {
-        $this->account = $account;
+        $this->customer = $customer;
 
         return $this;
     }
@@ -287,7 +287,7 @@ class CustomerUserRole extends AbstractRole implements OrganizationAwareInterfac
      */
     public function isPredefined()
     {
-        return !$this->getAccount();
+        return !$this->getCustomer();
     }
 
     public function __clone()
@@ -295,41 +295,41 @@ class CustomerUserRole extends AbstractRole implements OrganizationAwareInterfac
         $this->id = null;
         $this->setRole($this->getLabel());
         $this->websites = new ArrayCollection();
-        $this->accountUsers = new ArrayCollection();
+        $this->customerUsers = new ArrayCollection();
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $customerUser
      *
      * @return $this
      */
-    public function addAccountUser(AccountUser $accountUser)
+    public function addCustomerUser(CustomerUser $customerUser)
     {
-        if (!$this->accountUsers->contains($accountUser)) {
-            $this->accountUsers[] = $accountUser;
+        if (!$this->customerUsers->contains($customerUser)) {
+            $this->customerUsers[] = $customerUser;
         }
 
         return $this;
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $customerUser
      *
      * @return $this
      */
-    public function removeAccountUser(AccountUser $accountUser)
+    public function removeCustomerUser(CustomerUser $customerUser)
     {
-        $this->accountUsers->removeElement($accountUser);
+        $this->customerUsers->removeElement($customerUser);
 
         return $this;
     }
 
     /**
-     * @return Collection|AccountUser[]
+     * @return Collection|CustomerUser[]
      */
-    public function getAccountUsers()
+    public function getCustomerUsers()
     {
-        return $this->accountUsers;
+        return $this->customerUsers;
     }
 
     /**
@@ -397,6 +397,6 @@ class CustomerUserRole extends AbstractRole implements OrganizationAwareInterfac
             ) = unserialize($serialized);
 
         $this->websites     = new ArrayCollection();
-        $this->accountUsers = new ArrayCollection();
+        $this->customerUsers = new ArrayCollection();
     }
 }

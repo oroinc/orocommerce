@@ -1,0 +1,30 @@
+layout:
+    imports:
+        -
+            id: oro_customer_address_grid
+            root: customer_address_book_addresses
+            namespace: customer_address_book
+        -
+            id: oro_customer_user_address_grid
+            root: customer_address_book_user_addresses
+            namespace: customer_address_book
+
+    actions:
+        - '@setOption':
+            id: page_title
+            optionName: text
+            optionValue: 'oro.customer.frontend.customer_user.address.label'
+
+        - '@addTree':
+            items:
+                customer_address_book_page:
+                    blockType: container
+                customer_address_book_addresses:
+                    blockType: container
+                customer_address_book_user_addresses:
+                    blockType: container
+            tree:
+                page_content:
+                    customer_address_book_page:
+                        customer_address_book_addresses: ~
+                        customer_address_book_user_addresses: ~

@@ -33,6 +33,16 @@ define(function(require) {
         initModel: function(options) {
             if (options.productModel) {
                 this.model = options.productModel;
+
+                var productType = this.model.get('type');
+                var productId = this.model.get('id');
+                if (!_.isUndefined(productType)
+                    && productType === 'configurable'
+                    && !_.isUndefined(productId)
+                    && productId.length !== 0
+                ) {
+                    this.model.set('parentProduct', productId);
+                }
             }
         },
 

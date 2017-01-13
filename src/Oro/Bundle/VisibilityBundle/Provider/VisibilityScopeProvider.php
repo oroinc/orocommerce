@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\VisibilityBundle\Provider;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
-use Oro\Bundle\CustomerBundle\Provider\ScopeAccountCriteriaProvider;
-use Oro\Bundle\CustomerBundle\Provider\ScopeAccountGroupCriteriaProvider;
+use Oro\Bundle\CustomerBundle\Provider\ScopeCustomerCriteriaProvider;
+use Oro\Bundle\CustomerBundle\Provider\ScopeCustomerGroupCriteriaProvider;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
@@ -34,31 +34,31 @@ class VisibilityScopeProvider
     }
 
     /**
-     * @param Account $account
+     * @param Customer $customer
      * @param Website $website
      * @return \Oro\Bundle\ScopeBundle\Entity\Scope
      */
-    public function getAccountProductVisibilityScope(Account $account, Website $website)
+    public function getCustomerProductVisibilityScope(Customer $customer, Website $website)
     {
         return $this->scopeManager->findOrCreate(
-            AccountProductVisibility::getScopeType(),
+            CustomerProductVisibility::getScopeType(),
             [
-                ScopeAccountCriteriaProvider::ACCOUNT => $account
+                ScopeCustomerCriteriaProvider::ACCOUNT => $customer
             ]
         );
     }
 
     /**
-     * @param CustomerGroup $accountGroup
+     * @param CustomerGroup $customerGroup
      * @param Website $website
      * @return \Oro\Bundle\ScopeBundle\Entity\Scope
      */
-    public function getAccountGroupProductVisibilityScope(CustomerGroup $accountGroup, Website $website)
+    public function getCustomerGroupProductVisibilityScope(CustomerGroup $customerGroup, Website $website)
     {
         return $this->scopeManager->findOrCreate(
-            AccountGroupProductVisibility::getScopeType(),
+            CustomerGroupProductVisibility::getScopeType(),
             [
-                ScopeAccountGroupCriteriaProvider::FIELD_NAME => $accountGroup
+                ScopeCustomerGroupCriteriaProvider::FIELD_NAME => $customerGroup
             ]
         );
     }

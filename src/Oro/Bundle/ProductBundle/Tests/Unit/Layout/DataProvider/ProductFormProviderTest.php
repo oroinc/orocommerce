@@ -15,6 +15,9 @@ use Oro\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 {
     /** @var ProductFormProvider */
@@ -237,9 +240,8 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(FormView::class, $data);
     }
 
-    public function testgetVariantFieldsFormView()
+    public function testGetVariantFieldsFormView()
     {
-        $product = new Product();
         $formView = $this->createMock(FormView::class);
 
         $expectedForm = $this->createMock(FormInterface::class);
@@ -252,7 +254,20 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
             ->with(FrontendVariantFiledType::NAME)
             ->willReturn($expectedForm);
 
-        $data = $this->provider->getVariantFieldsFormView($product);
+        $data = $this->provider->getVariantFieldsFormView(new Product());
         $this->assertInstanceOf(FormView::class, $data);
+    }
+
+    public function testGetVariantFieldsForm()
+    {
+        $expectedForm = $this->createMock(FormInterface::class);
+
+        $this->formFactory->expects($this->once())
+            ->method('create')
+            ->with(FrontendVariantFiledType::NAME)
+            ->willReturn($expectedForm);
+
+        $data = $this->provider->getVariantFieldsForm(new Product());
+        $this->assertInstanceOf(FormInterface::class, $data);
     }
 }

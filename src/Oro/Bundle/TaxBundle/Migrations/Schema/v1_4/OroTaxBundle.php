@@ -34,6 +34,7 @@ class OroTaxBundle implements Migration, RenameExtensionAwareInterface, OrderedM
      */
     private function rename(Schema $schema, QueryBag $queries)
     {
+        // account group
         $extension = $this->renameExtension;
 
         $table = $schema->getTable('oro_tax_acc_grp_tc_acc_grp');
@@ -58,6 +59,27 @@ class OroTaxBundle implements Migration, RenameExtensionAwareInterface, OrderedM
             'customer_group_tax_code_id'
         );
         $extension->renameTable($schema, $queries, 'oro_tax_acc_grp_tc_acc_grp', 'oro_tax_cus_grp_tc_cus_grp');
+
+        // account
+        // drop fk
+        $table = $schema->getTable('oro_tax_acc_tax_code_acc');
+        $table->removeForeignKey($this->getConstraintName($table, 'account_tax_code_id'));
+        $table->removeForeignKey($this->getConstraintName($table, 'account_id'));
+        $table->dropIndex('UNIQ_53167F2A9B6B5FBA');
+
+        $table = $schema->getTable('oro_tax_rule');
+        $table->removeForeignKey($this->getConstraintName($table, 'account_tax_code_id'));
+
+        // rename
+        $table = $schema->getTable('oro_tax_acc_tax_code_acc');
+        $extension->renameColumn($schema, $queries, $table, 'account_tax_code_id', 'customer_tax_code_id');
+        $extension->renameColumn($schema, $queries, $table, 'account_id', 'customer_id');
+        $extension->renameTable($schema, $queries, 'oro_tax_acc_tax_code_acc', 'oro_tax_cus_tax_code_cus');
+
+        $table = $schema->getTable('oro_tax_rule');
+        $extension->renameColumn($schema, $queries, $table, 'account_tax_code_id', 'customer_tax_code_id');
+
+        $extension->renameTable($schema, $queries, 'oro_tax_account_tax_code', 'oro_tax_customer_tax_code');
     }
 
     /**

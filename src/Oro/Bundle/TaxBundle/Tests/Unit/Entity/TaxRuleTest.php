@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\Entity;
 
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-use Oro\Bundle\TaxBundle\Entity\AccountTaxCode;
+use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\Entity\Tax;
 use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
@@ -22,7 +22,7 @@ class TaxRuleTest extends \PHPUnit_Framework_TestCase
             ['id', 1],
             ['description', 'tax rule description'],
             ['productTaxCode', new ProductTaxCode()],
-            ['accountTaxCode', new AccountTaxCode()],
+            ['customerTaxCode', new CustomerTaxCode()],
             ['tax', new Tax()],
             ['taxJurisdiction', new TaxJurisdiction()],
             ['createdAt', new \DateTime()],

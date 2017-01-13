@@ -26,11 +26,11 @@ define(function(require) {
             this.options = $.extend(true, {}, this.options, options || {});
             this.view = new FormView(this.options);
 
-            mediator.on('account-account-user:change', this.onChangeAccountUser, this);
+            mediator.on('customer-customer-user:change', this.onChangeCustomerUser, this);
             mediator.on('entry-point:order:load', this.loadRelatedData, this);
         },
 
-        onChangeAccountUser: function() {
+        onChangeCustomerUser: function() {
             mediator.trigger('order:load:related-data');
 
             mediator.trigger('entry-point:order:trigger');
@@ -51,7 +51,7 @@ define(function(require) {
                 return;
             }
 
-            mediator.off('account-account-user:change', this.onChangeAccountUser, this);
+            mediator.off('customer-customer-user:change', this.onChangeCustomerUser, this);
             mediator.off('entry-point:order:load', this.loadRelatedData, this);
 
             RelatedDataComponent.__super__.dispose.call(this);

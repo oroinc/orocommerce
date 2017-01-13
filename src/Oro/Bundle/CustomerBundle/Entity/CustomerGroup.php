@@ -19,16 +19,16 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *      }
  * )
  * @Config(
- *      routeName="oro_customer_account_group_index",
- *      routeView="oro_customer_account_group_view",
- *      routeUpdate="oro_customer_account_group_update",
+ *      routeName="oro_customer_customer_group_index",
+ *      routeView="oro_customer_customer_group_view",
+ *      routeUpdate="oro_customer_customer_group_update",
  *      defaultValues={
  *          "entity"={
  *              "icon"="fa-users"
  *          },
  *          "form"={
- *              "form_type"="oro_customer_account_group_select",
- *              "grid_name"="account-groups-select-grid",
+ *              "form_type"="oro_customer_customer_group_select",
+ *              "grid_name"="customer-groups-select-grid",
  *          },
  *          "dataaudit"={
  *              "auditable"=true
@@ -62,9 +62,9 @@ class CustomerGroup extends ExtendCustomerGroup
     protected $name;
 
     /**
-     * @var Collection|Account[]
+     * @var Collection|Customer[]
      *
-     * @ORM\OneToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\Account", mappedBy="group")
+     * @ORM\OneToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\Customer", mappedBy="group")
      * @ConfigField(
      *      defaultValues={
      *          "dataaudit"={
@@ -119,10 +119,10 @@ class CustomerGroup extends ExtendCustomerGroup
     /**
      * Add customer
      *
-     * @param Account $customer
+     * @param Customer $customer
      * @return CustomerGroup
      */
-    public function addCustomer(Account $customer)
+    public function addCustomer(Customer $customer)
     {
         if (!$this->customers->contains($customer)) {
             $this->customers->add($customer);
@@ -134,9 +134,9 @@ class CustomerGroup extends ExtendCustomerGroup
     /**
      * Remove customer
      *
-     * @param Account $customer
+     * @param Customer $customer
      */
-    public function removeCustomer(Account $customer)
+    public function removeCustomer(Customer $customer)
     {
         if ($this->customers->contains($customer)) {
             $this->customers->removeElement($customer);
@@ -146,7 +146,7 @@ class CustomerGroup extends ExtendCustomerGroup
     /**
      * Get customers
      *
-     * @return Collection|Account[]
+     * @return Collection|Customer[]
      */
     public function getCustomers()
     {

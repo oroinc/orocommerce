@@ -2,21 +2,19 @@
 
 namespace Oro\Bundle\ProductBundle\Twig;
 
-use Oro\Bundle\ProductBundle\Formatter\ProductUnitValueFormatter;
+use Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface;
 
 class ProductUnitValueExtension extends \Twig_Extension
 {
-    const NAME = 'oro_product_unit_value';
-
     /**
-     * @var ProductUnitValueFormatter
+     * @var UnitValueFormatterInterface
      */
     protected $formatter;
 
     /**
-     * @param ProductUnitValueFormatter $formatter
+     * @param UnitValueFormatterInterface $formatter
      */
-    public function __construct(ProductUnitValueFormatter $formatter)
+    public function __construct(UnitValueFormatterInterface $formatter)
     {
         $this->formatter = $formatter;
     }
@@ -43,13 +41,5 @@ class ProductUnitValueExtension extends \Twig_Extension
                 ['is_safe' => ['html']]
             ),
         ];
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return static::NAME;
     }
 }

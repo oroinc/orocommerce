@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\CustomerBundle\Entity;
 
+use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareInterface;
+
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -9,7 +12,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\UserBundle\Entity\BaseUserManager;
 use Oro\Bundle\CustomerBundle\Mailer\Processor;
 
-class CustomerUserManager extends BaseUserManager implements ContainerAwareInterface
+class CustomerUserManager extends BaseUserManager implements ContainerAwareInterface, LoggerAwareInterface
 {
     /**
      * @var ConfigManager
@@ -21,15 +24,25 @@ class CustomerUserManager extends BaseUserManager implements ContainerAwareInter
      */
     protected $emailProcessor;
 
+    /** @var LoggerInterface */
+    protected $logger;
     /**
      * @var ContainerInterface
      */
     protected $container;
 
     /**
-     * @param AccountUser $user
+     * @param LoggerInterface $logger
      */
-    public function register(AccountUser $user)
+    public function setLogger(LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
+     * @param CustomerUser $user
+     */
+    public function register(CustomerUser $user)
     {
         if ($this->isConfirmationRequired()) {
             $this->sendConfirmationEmail($user);
@@ -39,9 +52,9 @@ class CustomerUserManager extends BaseUserManager implements ContainerAwareInter
     }
 
     /**
-     * @param AccountUser $user
+     * @param CustomerUser $user
      */
-    public function confirmRegistration(AccountUser $user)
+    public function confirmRegistration(CustomerUser $user)
     {
         $user->setConfirmed(true)
             ->setConfirmationToken(null);
@@ -49,30 +62,42 @@ class CustomerUserManager extends BaseUserManager implements ContainerAwareInter
     }
 
     /**
-     * @param AccountUser $user
+     * @param CustomerUser $user
      */
-    public function sendWelcomeEmail(AccountUser $user)
+    public function sendWelcomeEmail(CustomerUser $user)
     {
-        $this->getEmailProcessor()->sendWelcomeNotification(
-            $user,
-            $this->isSendPasswordInWelcomeEmail() ? $user->getPlainPassword() : null
-        );
+        try {
+            $this->getEmailProcessor()->sendWelcomeNotification(
+                $user,
+                $this->isSendPasswordInWelcomeEmail() ? $user->getPlainPassword() : null
+            );
+        } catch (\Swift_SwiftException $exception) {
+            if (null !== $this->logger) {
+                $this->logger->error('Unable to send welcome notification email', ['exception' => $exception]);
+            }
+        }
     }
 
     /**
-     * @param AccountUser $user
+     * @param CustomerUser $user
      */
-    public function sendConfirmationEmail(AccountUser $user)
+    public function sendConfirmationEmail(CustomerUser $user)
     {
         $user->setConfirmed(false)
             ->setConfirmationToken($user->generateToken());
-        $this->getEmailProcessor()->sendConfirmationEmail($user);
+        try {
+            $this->getEmailProcessor()->sendConfirmationEmail($user);
+        } catch (\Swift_SwiftException $exception) {
+            if (null !== $this->logger) {
+                $this->logger->error('Unable to send confirmation email', ['exception' => $exception]);
+            }
+        }
     }
 
     /**
-     * @param AccountUser $user
+     * @param CustomerUser $user
      */
-    public function sendResetPasswordEmail(AccountUser $user)
+    public function sendResetPasswordEmail(CustomerUser $user)
     {
         $this->getEmailProcessor()->sendResetPasswordEmail($user);
     }

@@ -7,15 +7,15 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class LoadCustomerUserRoleData extends AbstractFixture implements DependentFixtureInterface
 {
-    const ROLE_WITH_ACCOUNT_USER = 'Role with account user';
-    const ROLE_WITH_ACCOUNT = 'Role with account';
+    const ROLE_WITH_ACCOUNT_USER = 'Role with customer user';
+    const ROLE_WITH_ACCOUNT = 'Role with customer';
     const ROLE_WITH_WEBSITE = 'Role with website';
     const ROLE_EMPTY = 'Role without any additional attributes';
     const ROLE_NOT_SELF_MANAGED = 'Role that is not self managed';
@@ -29,8 +29,8 @@ class LoadCustomerUserRoleData extends AbstractFixture implements DependentFixtu
     {
         return [
             'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
-            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData',
-            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts'
+            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData',
+            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers'
         ];
     }
 
@@ -39,12 +39,12 @@ class LoadCustomerUserRoleData extends AbstractFixture implements DependentFixtu
      */
     public function load(ObjectManager $manager)
     {
-        $this->loadRoleWithAccountUser(
+        $this->loadRoleWithCustomerUser(
             $manager,
             self::ROLE_WITH_ACCOUNT_USER,
             'grzegorz.brzeczyszczykiewicz@example.com'
         );
-        $this->loadRoleWithAccount($manager, self::ROLE_WITH_ACCOUNT, 'account.level_1');
+        $this->loadRoleWithCustomer($manager, self::ROLE_WITH_ACCOUNT, 'customer.level_1');
         $this->loadRoleWithWebsite($manager, self::ROLE_WITH_WEBSITE, 'Canada');
         $this->loadEmptyRole($manager, self::ROLE_EMPTY);
         $this->loadNotSelfManagedRole($manager, self::ROLE_NOT_SELF_MANAGED);
@@ -75,16 +75,16 @@ class LoadCustomerUserRoleData extends AbstractFixture implements DependentFixtu
     /**
      * @param ObjectManager $manager
      * @param string $roleLabel
-     * @param string $accountUser
+     * @param string $customerUser
      */
-    protected function loadRoleWithAccountUser(ObjectManager $manager, $roleLabel, $accountUser)
+    protected function loadRoleWithCustomerUser(ObjectManager $manager, $roleLabel, $customerUser)
     {
         $entity = $this->loadEmptyRole($manager, $roleLabel);
         $entity->setSelfManaged(true);
 
-        /** @var AccountUser $accountUser */
-        $accountUser = $this->getReference($accountUser);
-        $accountUser->addRole($entity);
+        /** @var CustomerUser $customerUser */
+        $customerUser = $this->getReference($customerUser);
+        $customerUser->addRole($entity);
 
         $this->setReference($entity->getLabel(), $entity);
         $manager->persist($entity);
@@ -93,15 +93,15 @@ class LoadCustomerUserRoleData extends AbstractFixture implements DependentFixtu
     /**
      * @param ObjectManager $manager
      * @param string $roleLabel
-     * @param string $account
+     * @param string $customer
      */
-    protected function loadRoleWithAccount(ObjectManager $manager, $roleLabel, $account)
+    protected function loadRoleWithCustomer(ObjectManager $manager, $roleLabel, $customer)
     {
         $entity = $this->loadEmptyRole($manager, $roleLabel);
 
-        /** @var Account $account */
-        $account = $this->getReference($account);
-        $entity->setAccount($account);
+        /** @var Customer $customer */
+        $customer = $this->getReference($customer);
+        $entity->setCustomer($customer);
         $entity->setSelfManaged(true);
 
         $this->setReference($entity->getLabel(), $entity);

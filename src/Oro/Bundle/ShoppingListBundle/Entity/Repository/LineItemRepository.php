@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -39,18 +39,18 @@ class LineItemRepository extends EntityRepository
 
     /**
      * @param array|Product $products
-     * @param AccountUser $accountUser
+     * @param CustomerUser $customerUser
      * @return array|LineItem[]
      */
-    public function getProductItemsWithShoppingListNames($products, $accountUser)
+    public function getProductItemsWithShoppingListNames($products, $customerUser)
     {
         $qb = $this->createQueryBuilder('li')
             ->select('li, shoppingList')
             ->join('li.shoppingList', 'shoppingList')
-            ->andWhere('li.accountUser = :accountUser')
+            ->andWhere('li.customerUser = :customerUser')
             ->andWhere('li.product IN (:products)')
             ->setParameter('products', $products)
-            ->setParameter('accountUser', $accountUser);
+            ->setParameter('customerUser', $customerUser);
 
         return $qb->getQuery()->getResult();
     }
@@ -89,18 +89,18 @@ class LineItemRepository extends EntityRepository
 
     /**
      * @param Product $product
-     * @param AccountUser $accountUser
+     * @param CustomerUser $customerUser
      * @return array|LineItem[]
      */
-    public function getOneProductLineItemsWithShoppingListNames(Product $product, AccountUser $accountUser)
+    public function getOneProductLineItemsWithShoppingListNames(Product $product, CustomerUser $customerUser)
     {
         $qb = $this->createQueryBuilder('li')
             ->select('li, shoppingList')
             ->join('li.shoppingList', 'shoppingList')
             ->andWhere('li.product = :product')
-            ->andWhere('li.accountUser = :accountUser')
+            ->andWhere('li.customerUser = :customerUser')
             ->setParameter('product', $product)
-            ->setParameter('accountUser', $accountUser);
+            ->setParameter('customerUser', $customerUser);
 
         return $qb->getQuery()->getResult();
     }

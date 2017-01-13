@@ -4,11 +4,10 @@ define(function(require) {
     var FrontendLineItemView;
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var BaseView = require('oroui/js/app/views/base/view');
-    var Messenger = require('oroui/js/messenger');
     var NumberFormatter = require('orolocale/js/formatter/number');
+    var mediator = require('oroui/js/mediator');
     var $ = require('jquery');
     var _ = require('underscore');
-    var __ = require('orotranslation/js/translator');
 
     FrontendLineItemView = BaseView.extend(_.extend({}, ElementsHelper, {
         elements: {
@@ -39,13 +38,8 @@ define(function(require) {
             FrontendLineItemView.__super__.initialize.apply(this, arguments);
             this.initializeElements(options);
             this.template = _.template(this.getElement('template').text());
-            this._deferredRender();
-            this.initLayout().done(_.bind(this.handleLayoutInit, this));
-        },
 
-        handleLayoutInit: function() {
-            this.viewMode();
-            this._resolveDeferredRender();
+            this.listenTo(mediator, 'line-items:show:before', this.viewMode);
         },
 
         render: function() {
@@ -63,15 +57,8 @@ define(function(require) {
             }
         },
 
-        viewMode: function(action) {
+        viewMode: function() {
             if (!this.validate()) {
-                if (action === 'update') {
-                    Messenger.notificationMessage('error',
-                      __('oro.rfp.request.actions.update_frp_confirm'), {
-                        container: this.getElement('editView').find('.request-form-editline__product'),
-                        delay: 3000
-                    });
-                }
                 return;
             }
             this.render();
@@ -79,6 +66,7 @@ define(function(require) {
         },
 
         editMode: function() {
+            this.$el.removeAttr('data-skip-input-widgets').inputWidget('seekAndCreate');
             this.toggleEditMode('enable');
         },
 
@@ -91,12 +79,12 @@ define(function(require) {
         decline: function(e) {
             e.preventDefault();
             this.revertChanges();
-            this.toggleEditMode('disable');
+            this.viewMode();
         },
 
         update: function(e) {
             e.preventDefault();
-            this.viewMode('update');
+            this.viewMode();
         },
 
         getData: function() {
@@ -153,10 +141,6 @@ define(function(require) {
         },
 
         revertChanges: function() {
-            if (!this.formState) {
-                return;
-            }
-
             this.$el.find(':input[data-name]').each(_.bind(function(i, el) {
                 var value = this.formState[el.name];
                 if (value !== undefined && el.value !== value) {

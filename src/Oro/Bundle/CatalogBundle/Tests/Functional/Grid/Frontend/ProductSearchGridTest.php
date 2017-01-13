@@ -5,7 +5,7 @@ namespace Oro\Bundle\CatalogBundle\Tests\Functional\Grid\Frontend;
 use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\DataGridBundle\Extension\Sorter\AbstractSorterExtension;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadFrontendCategoryProductData;
@@ -24,7 +24,7 @@ class ProductSearchGridTest extends FrontendWebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW),
+            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW),
             true
         );
         $this->getContainer()->get('request_stack')->push(Request::create(''));

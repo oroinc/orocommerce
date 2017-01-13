@@ -6,7 +6,7 @@ services:
             - '@security.token_storage'
             - '@oro_config.manager'
             - '@oro_website.manager'
-            - '@oro_account_user.manager'
+            - '@oro_customer_user.manager'
             - '@oro_locale.manager.localization'
 
     oro_frontend_localization.extension.current_localization:

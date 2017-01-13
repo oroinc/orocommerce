@@ -7,7 +7,7 @@ use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\TaxBundle\Entity\TaxValue;
 
@@ -92,8 +92,8 @@ class OrderTaxListenerTest extends WebTestCase
                 $this->doctrine->getRepository('OroOrganizationBundle:Organization')->findOneBy([])
             );
         }
-        /** @var AccountUser $accountUser */
-        $accountUser = $this->doctrine->getRepository('OroCustomerBundle:AccountUser')->findOneBy([]);
+        /** @var CustomerUser $customerUser */
+        $customerUser = $this->doctrine->getRepository('OroCustomerBundle:CustomerUser')->findOneBy([]);
 
         $order = new Order();
         $order
@@ -104,8 +104,8 @@ class OrderTaxListenerTest extends WebTestCase
             ->setCurrency('EUR')
             ->setPoNumber('PO_NUM')
             ->setSubtotal('1500')
-            ->setAccount($accountUser->getAccount())
-            ->setAccountUser($accountUser);
+            ->setCustomer($customerUser->getCustomer())
+            ->setCustomerUser($customerUser);
 
         $this->orderEm->persist($order);
 

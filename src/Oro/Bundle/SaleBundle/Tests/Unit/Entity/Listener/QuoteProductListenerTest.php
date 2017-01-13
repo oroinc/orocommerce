@@ -44,7 +44,7 @@ class QuoteProductListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testPreUpdate($route, $restoreValue)
     {
-        $fieldToKeep = 'commentAccount';
+        $fieldToKeep = 'commentCustomer';
 
         $this->request->expects($this->once())
             ->method('get')

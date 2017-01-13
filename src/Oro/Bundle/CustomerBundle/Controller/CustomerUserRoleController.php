@@ -20,7 +20,7 @@ class CustomerUserRoleController extends Controller
     /**
      * @Route("/", name="oro_customer_customer_user_role_index")
      * @Template
-     * @AclAncestor("oro_account_customer_user_role_view")
+     * @AclAncestor("oro_customer_customer_user_role_view")
      *
      * @return array
      */
@@ -35,7 +35,7 @@ class CustomerUserRoleController extends Controller
      * @Route("/view/{id}", name="oro_customer_customer_user_role_view", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="oro_account_customer_user_role_view",
+     *      id="oro_customer_customer_user_role_view",
      *      type="entity",
      *      class="OroCustomerBundle:CustomerUserRole",
      *      permission="VIEW"
@@ -63,7 +63,7 @@ class CustomerUserRoleController extends Controller
      * @Route("/create", name="oro_customer_customer_user_role_create")
      * @Template("OroCustomerBundle:CustomerUserRole:update.html.twig")
      * @Acl(
-     *      id="oro_account_customer_user_role_create",
+     *      id="oro_customer_customer_user_role_create",
      *      type="entity",
      *      class="OroCustomerBundle:CustomerUserRole",
      *      permission="CREATE"
@@ -82,7 +82,7 @@ class CustomerUserRoleController extends Controller
      * @Route("/update/{id}", name="oro_customer_customer_user_role_update", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="oro_account_customer_user_role_update",
+     *      id="oro_customer_customer_user_role_update",
      *      type="entity",
      *      class="OroCustomerBundle:CustomerUserRole",
      *      permission="EDIT"

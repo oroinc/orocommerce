@@ -5,9 +5,9 @@ namespace Oro\Bundle\CustomerBundle\Tests\Functional\Controller\Frontend;
 use Oro\Bundle\SecurityBundle\Acl\Domain\ObjectIdentityFactory;
 use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as OroLoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as OroLoadCustomerUserData;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserRoleData;
 
@@ -20,8 +20,8 @@ class CustomerUserRoleControllerTest extends WebTestCase
 {
     const PREDEFINED_ROLE = 'Test predefined role';
     const CUSTOMIZED_ROLE = 'Test customized role';
-    const ACCOUNT_ROLE = 'Test account user role';
-    const ACCOUNT_UPDATED_ROLE = 'Updated test account user role';
+    const ACCOUNT_ROLE = 'Test customer user role';
+    const ACCOUNT_UPDATED_ROLE = 'Updated test customer user role';
 
     /**
      * @var array
@@ -39,8 +39,8 @@ class CustomerUserRoleControllerTest extends WebTestCase
         'entity' => [
             0 => [
                 'identity' => [
-                    'id' => 'entity:Oro\Bundle\CustomerBundle\Entity\Account',
-                    'name' => 'oro.customer.account.entity_label',
+                    'id' => 'entity:Oro\Bundle\CustomerBundle\Entity\Customer',
+                    'name' => 'oro.customer.customer.entity_label',
                 ],
                 'permissions' => [],
             ],
@@ -48,7 +48,7 @@ class CustomerUserRoleControllerTest extends WebTestCase
     ];
 
     /**
-     * @var AccountUser
+     * @var CustomerUser
      */
     protected $currentUser;
 
@@ -61,12 +61,12 @@ class CustomerUserRoleControllerTest extends WebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(OroLoadAccountUserData::AUTH_USER, OroLoadAccountUserData::AUTH_PW)
+            $this->generateBasicAuthHeader(OroLoadCustomerUserData::AUTH_USER, OroLoadCustomerUserData::AUTH_PW)
         );
         $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
-                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts',
+                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers',
                 'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserRoleData'
             ]
         );
@@ -80,7 +80,7 @@ class CustomerUserRoleControllerTest extends WebTestCase
     protected function warmUpAces()
     {
         $classes = [
-            $this->getContainer()->getParameter('oro_customer.entity.account_user.class'),
+            $this->getContainer()->getParameter('oro_customer.entity.customer_user.class'),
             $this->getContainer()->getParameter('oro_customer.entity.customer_user_role.class'),
         ];
 
@@ -105,11 +105,11 @@ class CustomerUserRoleControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_customer_frontend_customer_user_role_create'));
 
         $this->assertContains('frontend-customer-user-role-permission-grid', $crawler->html());
-        $this->assertContains('frontend-account-account-users-grid', $crawler->html());
+        $this->assertContains('frontend-customer-customer-users-grid', $crawler->html());
 
         $form = $crawler->selectButton('Create')->form();
-        $form['oro_account_frontend_customer_user_role[label]'] = self::ACCOUNT_ROLE;
-        $form['oro_account_frontend_customer_user_role[privileges]'] = json_encode($this->privileges);
+        $form['oro_customer_frontend_customer_user_role[label]'] = self::ACCOUNT_ROLE;
+        $form['oro_customer_frontend_customer_user_role[privileges]'] = json_encode($this->privileges);
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -129,7 +129,7 @@ class CustomerUserRoleControllerTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $response = $this->client->requestFrontendGrid('frontend-account-customer-user-roles-grid');
+        $response = $this->client->requestFrontendGrid('frontend-customer-customer-user-roles-grid');
 
         $this->assertJsonResponseStatusCodeEquals($response, 200);
         $this->assertContains(LoadCustomerUserRoleData::ROLE_WITH_ACCOUNT_USER, $response->getContent());
@@ -143,9 +143,9 @@ class CustomerUserRoleControllerTest extends WebTestCase
     public function testUpdate()
     {
         $response = $this->client->requestFrontendGrid(
-            'frontend-account-customer-user-roles-grid',
+            'frontend-customer-customer-user-roles-grid',
             [
-                'frontend-account-customer-user-roles-grid[_filter][label][value]' => self::ACCOUNT_ROLE
+                'frontend-customer-customer-user-roles-grid[_filter][label][value]' => self::ACCOUNT_ROLE
             ]
         );
 
@@ -162,11 +162,11 @@ class CustomerUserRoleControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save')->form();
 
         $token = $this->getContainer()->get('security.csrf.token_manager')
-            ->getToken('oro_account_frontend_customer_user_role')->getValue();
+            ->getToken('oro_customer_frontend_customer_user_role')->getValue();
 
         $this->client->followRedirects(true);
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), [
-            'oro_account_frontend_customer_user_role' => [
+            'oro_customer_frontend_customer_user_role' => [
                 '_token' => $token,
                 'label' => self::ACCOUNT_UPDATED_ROLE,
                 'appendUsers' => $this->currentUser->getId(),
@@ -188,7 +188,7 @@ class CustomerUserRoleControllerTest extends WebTestCase
         $this->assertEquals(self::ACCOUNT_UPDATED_ROLE, $role->getLabel());
         $this->assertNotEmpty($role->getRole());
 
-        /** @var \Oro\Bundle\CustomerBundle\Entity\AccountUser $user */
+        /** @var \Oro\Bundle\CustomerBundle\Entity\CustomerUser $user */
         $user = $this->getCurrentUser();
 
         $this->assertEquals($role, $user->getRole($role->getRole()));
@@ -209,11 +209,12 @@ class CustomerUserRoleControllerTest extends WebTestCase
 
         $this->assertResponseStatusCodeEquals($this->client->getResponse(), 200);
 
+        $authUser = OroLoadCustomerUserData::AUTH_USER;
         $response = $this->client->requestFrontendGrid(
-            'frontend-account-account-users-grid-view',
+            'frontend-customer-customer-users-grid-view',
             [
-                'frontend-account-account-users-grid-view[role]' => $id,
-                'frontend-account-account-users-grid-view[_filter][email][value]' => OroLoadAccountUserData::AUTH_USER
+                'frontend-customer-customer-users-grid-view[role]' => $id,
+                'frontend-customer-customer-users-grid-view[_filter][email][value]' => $authUser
             ]
         );
 
@@ -245,11 +246,11 @@ class CustomerUserRoleControllerTest extends WebTestCase
 
         $form = $crawler->selectButton('Save')->form();
         $token = $this->getContainer()->get('security.csrf.token_manager')
-            ->getToken('oro_account_frontend_customer_user_role')->getValue();
+            ->getToken('oro_customer_frontend_customer_user_role')->getValue();
 
         $this->client->followRedirects(true);
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), [
-            'oro_account_frontend_customer_user_role' => [
+            'oro_customer_frontend_customer_user_role' => [
                 '_token' => $token,
                 'label' => self::CUSTOMIZED_ROLE,
                 'appendUsers' => $this->currentUser->getId(),
@@ -265,9 +266,9 @@ class CustomerUserRoleControllerTest extends WebTestCase
 
         // Find id of new role
         $response = $this->client->requestFrontendGrid(
-            'frontend-account-customer-user-roles-grid',
+            'frontend-customer-customer-user-roles-grid',
             [
-                'frontend-account-customer-user-roles-grid[_filter][label][value]' => self::CUSTOMIZED_ROLE
+                'frontend-customer-customer-user-roles-grid[_filter][label][value]' => self::CUSTOMIZED_ROLE
             ]
         );
 
@@ -284,7 +285,7 @@ class CustomerUserRoleControllerTest extends WebTestCase
         $this->assertEquals(self::CUSTOMIZED_ROLE, $role->getLabel());
         $this->assertNotEmpty($role->getRole());
 
-        /** @var \Oro\Bundle\CustomerBundle\Entity\AccountUser $user */
+        /** @var \Oro\Bundle\CustomerBundle\Entity\CustomerUser $user */
         $user = $this->getCurrentUser();
 
         // Add new role
@@ -298,9 +299,9 @@ class CustomerUserRoleControllerTest extends WebTestCase
     public function testIndexFromPredefined()
     {
         $response = $this->client->requestFrontendGrid(
-            'frontend-account-customer-user-roles-grid',
+            'frontend-customer-customer-user-roles-grid',
             [
-                'frontend-account-customer-user-roles-grid[_filter][label][value]' => self::CUSTOMIZED_ROLE
+                'frontend-customer-customer-user-roles-grid[_filter][label][value]' => self::CUSTOMIZED_ROLE
             ]
         );
 
@@ -315,7 +316,7 @@ class CustomerUserRoleControllerTest extends WebTestCase
 
     public function testDisplaySelfManagedPublicRoles()
     {
-        $response = $this->client->requestFrontendGrid('frontend-account-customer-user-roles-grid');
+        $response = $this->client->requestFrontendGrid('frontend-customer-customer-user-roles-grid');
         $result = $this->getJsonResponseContent($response, 200);
 
         $visibleRoleIds = array_map(
@@ -400,15 +401,15 @@ class CustomerUserRoleControllerTest extends WebTestCase
      */
     protected function getUserRepository()
     {
-        return $this->getObjectManager()->getRepository('OroCustomerBundle:AccountUser');
+        return $this->getObjectManager()->getRepository('OroCustomerBundle:CustomerUser');
     }
 
     /**
-     * @return \Oro\Bundle\CustomerBundle\Entity\Repository\AccountRepository
+     * @return \Oro\Bundle\CustomerBundle\Entity\Repository\CustomerRepository
      */
-    protected function getAccountRepository()
+    protected function getCustomerRepository()
     {
-        return $this->getObjectManager()->getRepository('OroCustomerBundle:Account');
+        return $this->getObjectManager()->getRepository('OroCustomerBundle:Customer');
     }
 
     /**
@@ -420,10 +421,10 @@ class CustomerUserRoleControllerTest extends WebTestCase
     }
 
     /**
-     * @return AccountUser
+     * @return CustomerUser
      */
     protected function getCurrentUser()
     {
-        return $this->getUserRepository()->findOneBy(['username' => OroLoadAccountUserData::AUTH_USER]);
+        return $this->getUserRepository()->findOneBy(['username' => OroLoadCustomerUserData::AUTH_USER]);
     }
 }

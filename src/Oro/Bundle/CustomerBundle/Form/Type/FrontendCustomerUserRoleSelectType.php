@@ -11,13 +11,13 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Collections\Criteria;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserRoleRepository;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 class FrontendCustomerUserRoleSelectType extends AbstractType
 {
-    const NAME = 'oro_account_frontend_customer_user_role_select';
+    const NAME = 'oro_customer_frontend_customer_user_role_select';
 
     /** @var SecurityFacade */
     protected $securityFacade;
@@ -83,7 +83,7 @@ class FrontendCustomerUserRoleSelectType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $loggedUser = $this->securityFacade->getLoggedUser();
-        if (!$loggedUser instanceof AccountUser) {
+        if (!$loggedUser instanceof CustomerUser) {
             return;
         }
 
@@ -92,16 +92,16 @@ class FrontendCustomerUserRoleSelectType extends AbstractType
             $repo = $this->registry->getManagerForClass($this->roleClass)
                 ->getRepository($this->roleClass);
             $criteria = new Criteria();
-            $qb = $repo->createQueryBuilder('account');
+            $qb = $repo->createQueryBuilder('customer');
             $this->aclHelper->applyAclToCriteria(
                 $this->roleClass,
                 $criteria,
                 'ASSIGN',
-                ['account' => 'account.account', 'organization' => 'account.organization']
+                ['customer' => 'customer.customer', 'organization' => 'customer.organization']
             );
             $qb->addCriteria($criteria);
             $qb->orWhere(
-                'account.selfManaged = :isActive AND account.public = :isActive AND account.account is NULL'
+                'customer.selfManaged = :isActive AND customer.public = :isActive AND customer.customer is NULL'
             );
             $qb->setParameter('isActive', true, \PDO::PARAM_BOOL);
 

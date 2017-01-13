@@ -7,12 +7,12 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 
 class FrontendCustomerUserRoleType extends AbstractCustomerUserRoleType
 {
-    const NAME = 'oro_account_frontend_customer_user_role';
+    const NAME = 'oro_customer_frontend_customer_user_role';
 
     /**
      * {@inheritdoc}
@@ -37,8 +37,9 @@ class FrontendCustomerUserRoleType extends AbstractCustomerUserRoleType
     {
         parent::buildForm($builder, $options);
 
-        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'updateAccountUsers']);
+        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'updateCustomerUsers']);
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
+        $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'postSubmit']);
     }
 
     /**
@@ -48,8 +49,8 @@ class FrontendCustomerUserRoleType extends AbstractCustomerUserRoleType
      */
     public function preSetData(FormEvent $event)
     {
-        $event->getForm()->add('account', FrontendOwnerSelectType::NAME, [
-            'label' => 'oro.customer.account.entity_label',
+        $event->getForm()->add('customer', FrontendOwnerSelectType::NAME, [
+            'label' => 'oro.customer.customer.entity_label',
             'targetObject' => $event->getData()
         ]);
     }
@@ -57,34 +58,52 @@ class FrontendCustomerUserRoleType extends AbstractCustomerUserRoleType
     /**
      * @param FormEvent $event
      */
-    public function updateAccountUsers(FormEvent $event)
+    public function updateCustomerUsers(FormEvent $event)
     {
-        $options = $event->getForm()->getConfig()->getOptions();
-
-        $predefinedRole = $options['predefined_role'];
-        if (!$predefinedRole instanceof CustomerUserRole) {
+        $role = $this->getRole($event);
+        $predefinedRole = $this->getPredefinedRole($event);
+        if (!$role || !$predefinedRole) {
             return;
         }
 
-        $role = $event->getData();
-        if (!$role instanceof CustomerUserRole || !$role->getAccount()) {
+        $customerUsers = $predefinedRole->getCustomerUsers()->filter(
+            function (CustomerUser $accountUser) use ($role) {
+                return $accountUser->getCustomer() &&
+                    $accountUser->getCustomer()->getId() === $role->getCustomer()->getId();
+            }
+        );
+
+        $event->getForm()->get('appendUsers')->setData($customerUsers->toArray());
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function postSubmit(FormEvent $event)
+    {
+        $role = $this->getRole($event);
+        $predefinedRole = $this->getPredefinedRole($event);
+
+        if (!$role || !$predefinedRole) {
             return;
         }
 
-        $accountUsers = $predefinedRole->getAccountUsers()->filter(
-            function (AccountUser $accountUser) use ($role) {
-                return $accountUser->getAccount() &&
-                    $accountUser->getAccount()->getId() === $role->getAccount()->getId();
-            }
-        );
+        $form = $event->getForm();
 
-        $accountUsers->map(
-            function (AccountUser $accountUser) use ($predefinedRole) {
-                $accountUser->removeRole($predefinedRole);
-            }
-        );
+        /** @var \SplObjectStorage|CustomerUser[] $addedUsers */
+        $addedUsers = new \SplObjectStorage();
+        foreach ($form->get('appendUsers')->getData() as $accountUser) {
+            $addedUsers->attach($accountUser);
+        }
 
-        $event->getForm()->get('appendUsers')->setData($accountUsers->toArray());
+        foreach ($form->get('removeUsers')->getData() as $accountUser) {
+            $addedUsers->detach($accountUser);
+        }
+
+        foreach ($addedUsers as $accountUser) {
+            $predefinedRole->removeCustomerUser($accountUser);
+            $accountUser->removeRole($predefinedRole);
+        }
     }
 
     /**
@@ -96,10 +115,33 @@ class FrontendCustomerUserRoleType extends AbstractCustomerUserRoleType
 
         $resolver->setDefaults(
             [
-                'access_level_route' => 'oro_account_frontend_acl_access_levels',
+                'access_level_route' => 'oro_customer_frontend_acl_access_levels',
                 'predefined_role' => null,
                 'hide_self_managed' => true
             ]
         );
+    }
+
+    /**
+     * @param FormEvent $event
+     * @return null|CustomerUserRole
+     */
+    protected function getPredefinedRole(FormEvent $event)
+    {
+        $config = $event->getForm()->getConfig();
+        $predefinedRole = $config->getOption('predefined_role');
+
+        return ($predefinedRole !== null && $predefinedRole instanceof CustomerUserRole) ? $predefinedRole : null;
+    }
+
+    /**
+     * @param FormEvent $event
+     * @return null|CustomerUserRole
+     */
+    protected function getRole(FormEvent $event)
+    {
+        $role = $event->getData();
+
+        return ($role instanceof CustomerUserRole && $role->getCustomer()) ? $role : null;
     }
 }

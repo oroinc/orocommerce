@@ -6,14 +6,14 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Util\ClassUtils;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -36,14 +36,14 @@ class DefaultVisibilityListenerTest extends WebTestCase
     protected $category;
 
     /**
-     * @var Account
+     * @var Customer
      */
-    protected $account;
+    protected $customer;
 
     /**
      * @var CustomerGroup
      */
-    protected $accountGroup;
+    protected $customerGroup;
 
     protected function setUp()
     {
@@ -53,13 +53,13 @@ class DefaultVisibilityListenerTest extends WebTestCase
             LoadProductData::class,
             LoadCategoryData::class,
             LoadGroups::class,
-            LoadAccounts::class
+            LoadCustomers::class
         ]);
 
         $this->product = $this->getReference(LoadProductData::PRODUCT_1);
         $this->category = $this->getReference(LoadCategoryData::FIRST_LEVEL);
-        $this->account = $this->getReference('account.level_1');
-        $this->accountGroup = $this->getReference(LoadGroups::GROUP1);
+        $this->customer = $this->getReference('customer.level_1');
+        $this->customerGroup = $this->getReference(LoadGroups::GROUP1);
     }
 
     /**
@@ -121,18 +121,18 @@ class DefaultVisibilityListenerTest extends WebTestCase
                     'scope' => ['category_visibility', []]
                 ],
             ],
-            'account category visibility' => [
-                'entityClass' => 'Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility',
+            'customer category visibility' => [
+                'entityClass' => 'Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility',
                 'parameters' => [
                     'category' => 'category',
-                    'scope' => ['account_category_visibility', ['account']]
+                    'scope' => ['customer_category_visibility', ['customer']]
                 ],
             ],
-            'account group category visibility' => [
-                'entityClass' => 'Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility',
+            'customer group category visibility' => [
+                'entityClass' => 'Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibility',
                 'parameters' => [
                     'category' => 'category',
-                    'scope' => ['account_group_category_visibility', ['accountGroup']]
+                    'scope' => ['customer_group_category_visibility', ['customerGroup']]
                 ],
             ],
             'product visibility' => [
@@ -142,18 +142,18 @@ class DefaultVisibilityListenerTest extends WebTestCase
                     'scope' => [ProductVisibility::VISIBILITY_TYPE, []]
                 ],
             ],
-            'account product visibility' => [
-                'entityClass' => 'Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility',
+            'customer product visibility' => [
+                'entityClass' => 'Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility',
                 'parameters' => [
                     'product' => 'product',
-                    'scope' => ['account_product_visibility', ['account']]
+                    'scope' => ['customer_product_visibility', ['customer']]
                 ],
             ],
-            'account group product visibility' => [
-                'entityClass' => 'Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility',
+            'customer group product visibility' => [
+                'entityClass' => 'Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility',
                 'parameters' => [
                     'product' => 'product',
-                    'scope' => [AccountGroupProductVisibility::VISIBILITY_TYPE, ['accountGroup']]
+                    'scope' => [CustomerGroupProductVisibility::VISIBILITY_TYPE, ['customerGroup']]
                 ],
 
             ],

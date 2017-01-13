@@ -7,14 +7,14 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -55,7 +55,7 @@ class LoadProductVisibilityFallbackCategoryData extends AbstractFixture implemen
     /**
      * @var array
      */
-    protected $accountGroups = [
+    protected $customerGroups = [
         LoadGroups::GROUP2,
         LoadGroups::GROUP3,
     ];
@@ -63,14 +63,14 @@ class LoadProductVisibilityFallbackCategoryData extends AbstractFixture implemen
     /**
      * @var array
      */
-    protected $accounts = [
-        'account.level_1.1',
-        'account.level_1.2',
-        'account.level_1.2.1',
-        'account.level_1.2.1.1',
-        'account.level_1.3.1',
-        'account.level_1.3.1.1',
-        'account.level_1.4',
+    protected $customers = [
+        'customer.level_1.1',
+        'customer.level_1.2',
+        'customer.level_1.2.1',
+        'customer.level_1.2.1.1',
+        'customer.level_1.3.1',
+        'customer.level_1.3.1.1',
+        'customer.level_1.4',
     ];
 
     /**
@@ -104,15 +104,15 @@ class LoadProductVisibilityFallbackCategoryData extends AbstractFixture implemen
             /** @var Product $product */
             $product = $this->getReference($productReference);
             $this->createProductVisibility($product);
-            foreach ($this->accountGroups as $accountGroupReference) {
-                /** @var CustomerGroup $accountGroup */
-                $accountGroup = $this->getReference($accountGroupReference);
-                $this->createAccountGroupProductVisibilityResolved($accountGroup, $product);
+            foreach ($this->customerGroups as $customerGroupReference) {
+                /** @var CustomerGroup $customerGroup */
+                $customerGroup = $this->getReference($customerGroupReference);
+                $this->createCustomerGroupProductVisibilityResolved($customerGroup, $product);
             }
-            foreach ($this->accounts as $accountReference) {
-                /** @var Account $account */
-                $account = $this->getReference($accountReference);
-                $this->createAccountProductVisibilityResolved($account, $product);
+            foreach ($this->customers as $customerReference) {
+                /** @var Customer $customer */
+                $customer = $this->getReference($customerReference);
+                $this->createCustomerProductVisibilityResolved($customer, $product);
             }
         }
 
@@ -135,38 +135,38 @@ class LoadProductVisibilityFallbackCategoryData extends AbstractFixture implemen
     }
 
     /**
-     * @param CustomerGroup $accountGroup
+     * @param CustomerGroup $customerGroup
      * @param Product $product
      */
-    protected function createAccountGroupProductVisibilityResolved(CustomerGroup $accountGroup, Product $product)
+    protected function createCustomerGroupProductVisibilityResolved(CustomerGroup $customerGroup, Product $product)
     {
         $scope = $this->scopeManager->findOrCreate(
-            AccountGroupProductVisibility::VISIBILITY_TYPE,
-            ['accountGroup' => $accountGroup]
+            CustomerGroupProductVisibility::VISIBILITY_TYPE,
+            ['customerGroup' => $customerGroup]
         );
-        $accountGroupVisibility = (new AccountGroupProductVisibility())
+        $customerGroupVisibility = (new CustomerGroupProductVisibility())
             ->setProduct($product)
             ->setScope($scope)
-            ->setVisibility(AccountGroupProductVisibility::CATEGORY);
+            ->setVisibility(CustomerGroupProductVisibility::CATEGORY);
 
-        $this->em->persist($accountGroupVisibility);
+        $this->em->persist($customerGroupVisibility);
     }
 
     /**
-     * @param Account $account
+     * @param Customer $customer
      * @param Product $product
      */
-    protected function createAccountProductVisibilityResolved(Account $account, Product $product)
+    protected function createCustomerProductVisibilityResolved(Customer $customer, Product $product)
     {
         $scope = $this->scopeManager->findOrCreate(
-            AccountProductVisibility::VISIBILITY_TYPE,
-            ['account' => $account]
+            CustomerProductVisibility::VISIBILITY_TYPE,
+            ['customer' => $customer]
         );
-        $accountVisibility = (new AccountProductVisibility())
+        $customerVisibility = (new CustomerProductVisibility())
             ->setProduct($product)
             ->setScope($scope)
-            ->setVisibility(AccountProductVisibility::CATEGORY);
+            ->setVisibility(CustomerProductVisibility::CATEGORY);
 
-        $this->em->persist($accountVisibility);
+        $this->em->persist($customerVisibility);
     }
 }

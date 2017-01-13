@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 use Oro\Bundle\SecurityBundle\Acl\Domain\ObjectIdentityFactory;
 use Oro\Bundle\UserBundle\Entity\AbstractRole;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Form\Type\FrontendCustomerUserRoleType;
 
@@ -23,9 +23,9 @@ class CustomerUserRoleUpdateFrontendHandler extends AbstractCustomerUserRoleHand
     protected $tokenStorage;
 
     /**
-     * @var AccountUser
+     * @var CustomerUser
      */
-    protected $loggedAccountUser;
+    protected $loggedCustomerUser;
 
     /** @var  RequestStack */
     protected $requestStack;
@@ -96,36 +96,36 @@ class CustomerUserRoleUpdateFrontendHandler extends AbstractCustomerUserRoleHand
      */
     protected function createNewRole(CustomerUserRole $role)
     {
-        /** @var AccountUser $accountUser */
-        $accountUser = $this->getLoggedUser();
+        /** @var CustomerUser $customerUser */
+        $customerUser = $this->getLoggedUser();
 
         $newRole = clone $role;
 
         $newRole
-            ->setAccount($accountUser->getAccount())
-            ->setOrganization($accountUser->getOrganization());
+            ->setCustomer($customerUser->getCustomer())
+            ->setOrganization($customerUser->getOrganization());
 
         return $newRole;
     }
 
     /**
-     * @return AccountUser
+     * @return CustomerUser
      */
     protected function getLoggedUser()
     {
-        if (!$this->loggedAccountUser) {
+        if (!$this->loggedCustomerUser) {
             $token = $this->tokenStorage->getToken();
 
             if ($token) {
-                $this->loggedAccountUser = $token->getUser();
+                $this->loggedCustomerUser = $token->getUser();
             }
         }
 
-        if (!$this->loggedAccountUser instanceof AccountUser) {
+        if (!$this->loggedCustomerUser instanceof CustomerUser) {
             throw new AccessDeniedException();
         }
 
-        return $this->loggedAccountUser;
+        return $this->loggedCustomerUser;
     }
 
     /**

@@ -12,16 +12,16 @@
                     localization: null
                     website: null
                     webCatalog: "Default Web Catalog"
-                    account: null
-                    accountGroup: null
+                    customer: null
+                    customerGroup: null
     parentScopeUsed: false
     scopes:
         -
             localization: null
             website: null
             webCatalog: "Default Web Catalog"
-            account: null
-            accountGroup: null
+            customer: null
+            customerGroup: null
     children:
         Products:
             defaultTitle: Products
@@ -37,16 +37,16 @@
                             localization: null
                             website: null
                             webCatalog: "Default Web Catalog"
-                            account: null
-                            accountGroup: null
+                            customer: null
+                            customerGroup: null
             parentScopeUsed: true
             scopes:
                 -
                     localization: null
                     website: null
                     webCatalog: "Default Web Catalog"
-                    account: null
-                    accountGroup: null
+                    customer: null
+                    customerGroup: null
             children:
                 "By Category":
                     defaultTitle: "By Category"
@@ -62,16 +62,16 @@
                                     localization: null
                                     website: null
                                     webCatalog: "Default Web Catalog"
-                                    account: null
-                                    accountGroup: null
+                                    customer: null
+                                    customerGroup: null
                     parentScopeUsed: true
                     scopes:
                         -
                             localization: null
                             website: null
                             webCatalog: "Default Web Catalog"
-                            account: null
-                            accountGroup: null
+                            customer: null
+                            customerGroup: null
                     children:
                         Industrial:
                             defaultTitle: Industrial
@@ -87,16 +87,16 @@
                                             localization: null
                                             website: null
                                             webCatalog: "Default Web Catalog"
-                                            account: null
-                                            accountGroup: null
+                                            customer: null
+                                            customerGroup: null
                             parentScopeUsed: true
                             scopes:
                                 -
                                     localization: null
                                     website: null
                                     webCatalog: "Default Web Catalog"
-                                    account: null
-                                    accountGroup: null
+                                    customer: null
+                                    customerGroup: null
                             children:
                                 "Lighting Products":
                                     defaultTitle: "Lighting  Products"
@@ -107,8 +107,8 @@
                                             localization: null
                                             website: null
                                             webCatalog: "Default Web Catalog"
-                                            account: null
-                                            accountGroup: null
+                                            customer: null
+                                            customerGroup: null
                                     contentVariants:
                                         -    
                                             type: category_page
@@ -120,8 +120,8 @@
                                                     localization: null
                                                     website: null
                                                     webCatalog: "Default Web Catalog"
-                                                    account: null
-                                                    accountGroup: null
+                                                    customer: null
+                                                    customerGroup: null
                                     children: ~
                                 "Architectural Floodlighting":
                                     defaultTitle: "Architectural Floodlighting"
@@ -132,8 +132,8 @@
                                             localization: null
                                             website: null
                                             webCatalog: "Default Web Catalog"
-                                            account: null
-                                            accountGroup: null
+                                            customer: null
+                                            customerGroup: null
                                     contentVariants:
                                         -
                                             type: category_page
@@ -145,8 +145,8 @@
                                                     localization: null
                                                     website: null
                                                     webCatalog: "Default Web Catalog"
-                                                    account: null
-                                                    accountGroup: null
+                                                    customer: null
+                                                    customerGroup: null
                                     children: ~
                         Medical:
                             defaultTitle: Medical
@@ -162,16 +162,16 @@
                                             localization: null
                                             website: null
                                             webCatalog: "Default Web Catalog"
-                                            account: null
-                                            accountGroup: null
+                                            customer: null
+                                            customerGroup: null
                             parentScopeUsed: true
                             scopes:
                                 -
                                     localization: null
                                     website: null
                                     webCatalog: "Default Web Catalog"
-                                    account: null
-                                    accountGroup: null
+                                    customer: null
+                                    customerGroup: null
                             children:
                                 "Medical Apparel":
                                     defaultTitle: "Medical Apparel"
@@ -182,8 +182,8 @@
                                             localization: null
                                             website: null
                                             webCatalog: "Default Web Catalog"
-                                            account: null
-                                            accountGroup: null
+                                            customer: null
+                                            customerGroup: null
                                     contentVariants:
                                         -
                                             type: category_page
@@ -195,8 +195,8 @@
                                                     localization: null
                                                     website: null
                                                     webCatalog: "Default Web Catalog"
-                                                    account: null
-                                                    accountGroup: null
+                                                    customer: null
+                                                    customerGroup: null
                                     children: ~
                 "By Brand":
                     defaultTitle: "By Brand"
@@ -212,16 +212,16 @@
                                     localization: null
                                     website: null
                                     webCatalog: "Default Web Catalog"
-                                    account: null
-                                    accountGroup: null
+                                    customer: null
+                                    customerGroup: null
                     parentScopeUsed: true
                     scopes:
                         -
                             localization: null
                             website: null
                             webCatalog: "Default Web Catalog"
-                            account: null
-                            accountGroup: null
+                            customer: null
+                            customerGroup: null
                     children:
                         "Retail Supplies":
                             defaultTitle: "Retail Supplies"
@@ -232,8 +232,8 @@
                                     localization: null
                                     website: null
                                     webCatalog: "Default Web Catalog"
-                                    account: null
-                                    accountGroup: null
+                                    customer: null
+                                    customerGroup: null
                             contentVariants:
                                 -
                                     type: category_page
@@ -245,8 +245,8 @@
                                             localization: null
                                             website: null
                                             webCatalog: "Default Web Catalog"
-                                            account: null
-                                            accountGroup: null
+                                            customer: null
+                                            customerGroup: null
                             children: ~
                         "Office Furniture":
                             defaultTitle: "Office Furniture"
@@ -257,21 +257,21 @@
                                     localization: null
                                     website: null
                                     webCatalog: "Default Web Catalog"
-                                    account: null
-                                    accountGroup: null
+                                    customer: null
+                                    customerGroup: null
                             contentVariants:
                                 -
                                     type: category_page
                                     params:
-                                        title: "Medical Apparel"
+                                        title: "Office Furniture"
                                     isDefault: true
                                     scopes:
                                         -
                                             localization: null
                                             website: null
                                             webCatalog: "Default Web Catalog"
-                                            account: null
-                                            accountGroup: null
+                                            customer: null
+                                            customerGroup: null
                             children: ~
                         Retail:
                             defaultTitle: Retail
@@ -287,16 +287,16 @@
                                             localization: null
                                             website: null
                                             webCatalog: "Default Web Catalog"
-                                            account: null
-                                            accountGroup: null
+                                            customer: null
+                                            customerGroup: null
                             parentScopeUsed: true
                             scopes:
                                 -
                                     localization: null
                                     website: null
                                     webCatalog: "Default Web Catalog"
-                                    account: null
-                                    accountGroup: null
+                                    customer: null
+                                    customerGroup: null
                             children: ~
                 "By Item":
                     defaultTitle: "Clearance"
@@ -312,16 +312,16 @@
                                     localization: null
                                     website: null
                                     webCatalog: "Default Web Catalog"
-                                    account: null
-                                    accountGroup: null
+                                    customer: null
+                                    customerGroup: null
                     parentScopeUsed: true
                     scopes:
                         -
                             localization: null
                             website: null
                             webCatalog: "Default Web Catalog"
-                            account: null
-                            accountGroup: null
+                            customer: null
+                            customerGroup: null
                     children:
                         "Lighting Products":
                             defaultTitle: "Lighting  Products"
@@ -332,8 +332,8 @@
                                     localization: null
                                     website: null
                                     webCatalog: "Default Web Catalog"
-                                    account: null
-                                    accountGroup: null
+                                    customer: null
+                                    customerGroup: null
                             contentVariants:
                                 -
                                     type: category_page
@@ -345,8 +345,8 @@
                                             localization: null
                                             website: null
                                             webCatalog: "Default Web Catalog"
-                                            account: null
-                                            accountGroup: null
+                                            customer: null
+                                            customerGroup: null
                             children: ~
                         "Architectural Floodlighting":
                             defaultTitle: "Architectural Floodlighting"
@@ -357,8 +357,8 @@
                                     localization: null
                                     website: null
                                     webCatalog: "Default Web Catalog"
-                                    account: null
-                                    accountGroup: null
+                                    customer: null
+                                    customerGroup: null
                             contentVariants:
                                 -
                                     type: category_page
@@ -370,8 +370,8 @@
                                             localization: null
                                             website: null
                                             webCatalog: "Default Web Catalog"
-                                            account: null
-                                            accountGroup: null
+                                            customer: null
+                                            customerGroup: null
                             children: ~
                         "Medical Apparel":
                             defaultTitle: "Medical Apparel"
@@ -382,8 +382,8 @@
                                     localization: null
                                     website: null
                                     webCatalog: "Default Web Catalog"
-                                    account: null
-                                    accountGroup: null
+                                    customer: null
+                                    customerGroup: null
                             contentVariants:
                                 -
                                     type: category_page
@@ -395,8 +395,8 @@
                                             localization: null
                                             website: null
                                             webCatalog: "Default Web Catalog"
-                                            account: null
-                                            accountGroup: null
+                                            customer: null
+                                            customerGroup: null
                             children: ~
                         "Office Furniture":
                             defaultTitle: "Office Furniture"
@@ -407,8 +407,8 @@
                                     localization: null
                                     website: null
                                     webCatalog: "Default Web Catalog"
-                                    account: null
-                                    accountGroup: null
+                                    customer: null
+                                    customerGroup: null
                             contentVariants:
                                 -
                                     type: category_page
@@ -420,8 +420,8 @@
                                             localization: null
                                             website: null
                                             webCatalog: "Default Web Catalog"
-                                            account: null
-                                            accountGroup: null
+                                            customer: null
+                                            customerGroup: null
                             children: ~
                         "Retail Supplies":
                             defaultTitle: "Retail Supplies"
@@ -432,8 +432,8 @@
                                     localization: null
                                     website: null
                                     webCatalog: "Default Web Catalog"
-                                    account: null
-                                    accountGroup: null
+                                    customer: null
+                                    customerGroup: null
                             contentVariants:
                                 -
                                     type: category_page
@@ -445,8 +445,8 @@
                                             localization: null
                                             website: null
                                             webCatalog: "Default Web Catalog"
-                                            account: null
-                                            accountGroup: null
+                                            customer: null
+                                            customerGroup: null
                             children: ~
         "New Arrivals":
             defaultTitle: "New Arrivals"
@@ -462,16 +462,16 @@
                             localization: null
                             website: null
                             webCatalog: "Default Web Catalog"
-                            account: null
-                            accountGroup: null
+                            customer: null
+                            customerGroup: null
             parentScopeUsed: true
             scopes:
                 -
                     localization: null
                     website: null
                     webCatalog: "Default Web Catalog"
-                    account: null
-                    accountGroup: null
+                    customer: null
+                    customerGroup: null
             children:
                 "Lighting Products":
                     defaultTitle: "Lighting  Products"
@@ -482,8 +482,8 @@
                             localization: null
                             website: null
                             webCatalog: "Default Web Catalog"
-                            account: null
-                            accountGroup: null
+                            customer: null
+                            customerGroup: null
                     contentVariants:
                         -
                             type: category_page
@@ -495,8 +495,8 @@
                                     localization: null
                                     website: null
                                     webCatalog: "Default Web Catalog"
-                                    account: null
-                                    accountGroup: null
+                                    customer: null
+                                    customerGroup: null
                     children: ~
                 "Architectural Floodlighting":
                     defaultTitle: "Architectural Floodlighting"
@@ -507,8 +507,8 @@
                             localization: null
                             website: null
                             webCatalog: "Default Web Catalog"
-                            account: null
-                            accountGroup: null
+                            customer: null
+                            customerGroup: null
                     contentVariants:
                         -
                             type: category_page
@@ -520,8 +520,8 @@
                                     localization: null
                                     website: null
                                     webCatalog: "Default Web Catalog"
-                                    account: null
-                                    accountGroup: null
+                                    customer: null
+                                    customerGroup: null
                     children: ~
                 "Medical Apparel":
                     defaultTitle: "Medical Apparel"
@@ -532,8 +532,8 @@
                             localization: null
                             website: null
                             webCatalog: "Default Web Catalog"
-                            account: null
-                            accountGroup: null
+                            customer: null
+                            customerGroup: null
                     contentVariants:
                         -
                             type: category_page
@@ -545,8 +545,8 @@
                                     localization: null
                                     website: null
                                     webCatalog: "Default Web Catalog"
-                                    account: null
-                                    accountGroup: null
+                                    customer: null
+                                    customerGroup: null
                     children: ~
                 "Office Furniture":
                     defaultTitle: "Office Furniture"
@@ -557,8 +557,8 @@
                             localization: null
                             website: null
                             webCatalog: "Default Web Catalog"
-                            account: null
-                            accountGroup: null
+                            customer: null
+                            customerGroup: null
                     contentVariants:
                         -
                             type: category_page
@@ -570,8 +570,8 @@
                                     localization: null
                                     website: null
                                     webCatalog: "Default Web Catalog"
-                                    account: null
-                                    accountGroup: null
+                                    customer: null
+                                    customerGroup: null
                     children: ~
                 "Retail Supplies":
                     defaultTitle: "Retail Supplies"
@@ -582,8 +582,8 @@
                             localization: null
                             website: null
                             webCatalog: "Default Web Catalog"
-                            account: null
-                            accountGroup: null
+                            customer: null
+                            customerGroup: null
                     contentVariants:
                         -
                             type: category_page
@@ -595,8 +595,8 @@
                                     localization: null
                                     website: null
                                     webCatalog: "Default Web Catalog"
-                                    account: null
-                                    accountGroup: null
+                                    customer: null
+                                    customerGroup: null
                     children: ~
         "Clearance":
             defaultTitle: "Clearance"
@@ -612,16 +612,16 @@
                             localization: null
                             website: null
                             webCatalog: "Default Web Catalog"
-                            account: null
-                            accountGroup: null
+                            customer: null
+                            customerGroup: null
             parentScopeUsed: true
             scopes:
                 -
                     localization: null
                     website: null
                     webCatalog: "Default Web Catalog"
-                    account: null
-                    accountGroup: null
+                    customer: null
+                    customerGroup: null
             children:
                 "Lighting Products":
                     defaultTitle: "Lighting  Products"
@@ -632,8 +632,8 @@
                             localization: null
                             website: null
                             webCatalog: "Default Web Catalog"
-                            account: null
-                            accountGroup: null
+                            customer: null
+                            customerGroup: null
                     contentVariants:
                         -
                             type: category_page
@@ -645,8 +645,8 @@
                                     localization: null
                                     website: null
                                     webCatalog: "Default Web Catalog"
-                                    account: null
-                                    accountGroup: null
+                                    customer: null
+                                    customerGroup: null
                     children: ~
                 "Architectural Floodlighting":
                     defaultTitle: "Architectural Floodlighting"
@@ -657,8 +657,8 @@
                             localization: null
                             website: null
                             webCatalog: "Default Web Catalog"
-                            account: null
-                            accountGroup: null
+                            customer: null
+                            customerGroup: null
                     contentVariants:
                         -
                             type: category_page
@@ -670,8 +670,8 @@
                                     localization: null
                                     website: null
                                     webCatalog: "Default Web Catalog"
-                                    account: null
-                                    accountGroup: null
+                                    customer: null
+                                    customerGroup: null
                     children: ~
                 "Medical Apparel":
                     defaultTitle: "Medical Apparel"
@@ -682,8 +682,8 @@
                             localization: null
                             website: null
                             webCatalog: "Default Web Catalog"
-                            account: null
-                            accountGroup: null
+                            customer: null
+                            customerGroup: null
                     contentVariants:
                         -
                             type: category_page
@@ -695,8 +695,8 @@
                                     localization: null
                                     website: null
                                     webCatalog: "Default Web Catalog"
-                                    account: null
-                                    accountGroup: null
+                                    customer: null
+                                    customerGroup: null
                     children: ~
                 "Office Furniture":
                     defaultTitle: "Office Furniture"
@@ -707,8 +707,8 @@
                             localization: null
                             website: null
                             webCatalog: "Default Web Catalog"
-                            account: null
-                            accountGroup: null
+                            customer: null
+                            customerGroup: null
                     contentVariants:
                         -
                             type: category_page
@@ -720,8 +720,8 @@
                                     localization: null
                                     website: null
                                     webCatalog: "Default Web Catalog"
-                                    account: null
-                                    accountGroup: null
+                                    customer: null
+                                    customerGroup: null
                     children: ~
                 "Retail Supplies":
                     defaultTitle: "Retail Supplies"
@@ -732,8 +732,8 @@
                             localization: null
                             website: null
                             webCatalog: "Default Web Catalog"
-                            account: null
-                            accountGroup: null
+                            customer: null
+                            customerGroup: null
                     contentVariants:
                         -
                             type: category_page
@@ -745,6 +745,6 @@
                                     localization: null
                                     website: null
                                     webCatalog: "Default Web Catalog"
-                                    account: null
-                                    accountGroup: null
+                                    customer: null
+                                    customerGroup: null
                     children: ~

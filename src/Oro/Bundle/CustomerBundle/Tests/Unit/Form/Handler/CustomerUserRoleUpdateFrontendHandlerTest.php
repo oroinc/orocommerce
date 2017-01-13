@@ -11,8 +11,8 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 use Oro\Bundle\SecurityBundle\Model\AclPrivilege;
 use Oro\Bundle\SecurityBundle\Model\AclPrivilegeIdentity;
 use Oro\Bundle\SecurityBundle\Acl\Domain\ObjectIdentityFactory;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Form\Handler\CustomerUserRoleUpdateFrontendHandler;
 
@@ -34,7 +34,7 @@ class CustomerUserRoleUpdateFrontendHandlerTest extends AbstractCustomerUserRole
     /**
      * @param CustomerUserRole $role
      * @param CustomerUserRole $expectedRole
-     * @param AccountUser $accountUser
+     * @param CustomerUser $customerUser
      * @param CustomerUserRole $expectedPredefinedRole
      *
      * @dataProvider successDataProvider
@@ -42,7 +42,7 @@ class CustomerUserRoleUpdateFrontendHandlerTest extends AbstractCustomerUserRole
     public function testOnSuccess(
         CustomerUserRole $role,
         CustomerUserRole $expectedRole,
-        AccountUser $accountUser,
+        CustomerUser $customerUser,
         CustomerUserRole $expectedPredefinedRole = null
     ) {
         $request = new Request();
@@ -79,7 +79,7 @@ class CustomerUserRoleUpdateFrontendHandlerTest extends AbstractCustomerUserRole
         $handler->setTokenStorage($this->tokenStorage);
 
         $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
-        $token->expects($this->any())->method('getUser')->willReturn($accountUser);
+        $token->expects($this->any())->method('getUser')->willReturn($customerUser);
         $this->tokenStorage->expects($this->any())->method('getToken')->willReturn($token);
 
         $handler->createForm($role);
@@ -90,22 +90,22 @@ class CustomerUserRoleUpdateFrontendHandlerTest extends AbstractCustomerUserRole
      */
     public function successDataProvider()
     {
-        $accountUser = new AccountUser();
-        $account = new Account();
-        $accountUser->setAccount($account);
+        $customerUser = new CustomerUser();
+        $customer = new Customer();
+        $customerUser->setCustomer($customer);
 
         return [
             'edit predefined role should pass it to from and' => [
                 (new CustomerUserRole()),
-                (new CustomerUserRole())->setAccount($account),
-                $accountUser,
+                (new CustomerUserRole())->setCustomer($customer),
+                $customerUser,
                 (new CustomerUserRole()),
             ],
-            'edit account role should not pass predefined role to form' => [
+            'edit customer role should not pass predefined role to form' => [
 
-                (new CustomerUserRole())->setAccount($account),
-                (new CustomerUserRole())->setAccount($account),
-                $accountUser,
+                (new CustomerUserRole())->setCustomer($customer),
+                (new CustomerUserRole())->setCustomer($customer),
+                $customerUser,
             ],
         ];
     }
@@ -113,7 +113,7 @@ class CustomerUserRoleUpdateFrontendHandlerTest extends AbstractCustomerUserRole
     /**
      * @param CustomerUserRole $role
      * @param CustomerUserRole $expectedRole
-     * @param AccountUser $accountUser
+     * @param CustomerUser $customerUser
      * @param array $existingPrivileges
 
      * @dataProvider successDataPrivilegesProvider
@@ -121,7 +121,7 @@ class CustomerUserRoleUpdateFrontendHandlerTest extends AbstractCustomerUserRole
     public function testOnSuccessSetPrivileges(
         CustomerUserRole $role,
         CustomerUserRole $expectedRole,
-        AccountUser $accountUser,
+        CustomerUser $customerUser,
         array $existingPrivileges
     ) {
         $request = new Request();
@@ -141,7 +141,7 @@ class CustomerUserRoleUpdateFrontendHandlerTest extends AbstractCustomerUserRole
         $handler->setTokenStorage($this->tokenStorage);
 
         $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
-        $token->expects($this->any())->method('getUser')->willReturn($accountUser);
+        $token->expects($this->any())->method('getUser')->willReturn($customerUser);
         $this->tokenStorage->expects($this->any())->method('getToken')->willReturn($token);
 
         $handler->createForm($role);
@@ -177,9 +177,9 @@ class CustomerUserRoleUpdateFrontendHandlerTest extends AbstractCustomerUserRole
      */
     public function successDataPrivilegesProvider()
     {
-        $accountUser = new AccountUser();
-        $account = new Account();
-        $accountUser->setAccount($account);
+        $customerUser = new CustomerUser();
+        $customer = new Customer();
+        $customerUser->setCustomer($customer);
 
         $privilege = new AclPrivilege();
         $privilege->setExtensionKey('entity');
@@ -203,13 +203,13 @@ class CustomerUserRoleUpdateFrontendHandlerTest extends AbstractCustomerUserRole
             'edit predefined role should use privileges form predefined' => [
                 (new CustomerUserRole()),
                 (new CustomerUserRole()),
-                $accountUser,
+                $customerUser,
                 ['valid' => $privilege, 'action' => $privilege2, 'no_owner' => $privilege3, 'root' => $privilege4],
             ],
-            'edit account role should use own privileges' => [
-                (new CustomerUserRole())->setAccount($account),
-                (new CustomerUserRole())->setAccount($account),
-                $accountUser,
+            'edit customer role should use own privileges' => [
+                (new CustomerUserRole())->setCustomer($customer),
+                (new CustomerUserRole())->setCustomer($customer),
+                $customerUser,
                 ['valid' => $privilege, 'action' => $privilege2, 'no_owner' => $privilege3, 'root' => $privilege4],
             ],
         ];
@@ -218,7 +218,7 @@ class CustomerUserRoleUpdateFrontendHandlerTest extends AbstractCustomerUserRole
     /**
      * @expectedException \Symfony\Component\Security\Core\Exception\AccessDeniedException
      */
-    public function testMissingAccountUser()
+    public function testMissingCustomerUser()
     {
         $request = new Request();
         $request->setMethod('POST');

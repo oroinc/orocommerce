@@ -14,8 +14,8 @@ use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadRolesData;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
@@ -51,8 +51,8 @@ class LoadQuoteDemoData extends AbstractFixture implements
         return [
             'Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData',
             'Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData',
-            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
-            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData',
+            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerUserDemoData',
+            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerDemoData',
             'Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM\LoadPriceListDemoData',
             'Oro\Bundle\RFPBundle\Migrations\Data\Demo\ORM\LoadRequestDemoData'
         ];
@@ -66,21 +66,21 @@ class LoadQuoteDemoData extends AbstractFixture implements
         $user = $this->getUser($manager);
         $requests = $this->getRequests($manager);
         $organization = $user->getOrganization();
-        $accounts = $this->getAccounts($manager);
+        $customers = $this->getCustomers($manager);
         $website = $this->container->get('doctrine')
             ->getRepository('OroWebsiteBundle:Website')
             ->findOneBy(['name' => 'Default']);
 
         for ($i = 0; $i < 20; $i++) {
-            /* @var $account Account */
-            $account = $accounts[mt_rand(0, count($accounts) - 1)];
+            /* @var $customer Customer */
+            $customer = $customers[mt_rand(0, count($customers) - 1)];
 
-            if (!$account) {
-                $accountUser = null;
+            if (!$customer) {
+                $customerUser = null;
             } else {
-                $accountUsers = array_merge([null], $account->getUsers()->getValues());
-                /* @var $accountUser AccountUser */
-                $accountUser = $accountUsers[mt_rand(0, count($accountUsers) - 1)];
+                $customerUsers = array_merge([null], $customer->getUsers()->getValues());
+                /* @var $customerUser CustomerUser */
+                $customerUser = $customerUsers[mt_rand(0, count($customerUsers) - 1)];
             }
 
             // set date in future
@@ -93,8 +93,8 @@ class LoadQuoteDemoData extends AbstractFixture implements
                 ->setOwner($user)
                 ->setOrganization($organization)
                 ->setValidUntil($validUntil)
-                ->setAccountUser($accountUser)
-                ->setAccount($account)
+                ->setCustomerUser($customerUser)
+                ->setCustomer($customer)
                 ->setLocked(mt_rand(0, 1))
                 ->setShipUntil(new \DateTime('+10 day'))
                 ->setPoNumber($poNumber)
@@ -114,11 +114,11 @@ class LoadQuoteDemoData extends AbstractFixture implements
 
     /**
      * @param ObjectManager $manager
-     * @return Collection|Account[]
+     * @return Collection|Customer[]
      */
-    protected function getAccounts(ObjectManager $manager)
+    protected function getCustomers(ObjectManager $manager)
     {
-        return array_merge([null], $manager->getRepository('OroCustomerBundle:Account')->findBy([], null, 10));
+        return array_merge([null], $manager->getRepository('OroCustomerBundle:Customer')->findBy([], null, 10));
     }
 
     /**
@@ -222,7 +222,7 @@ class LoadQuoteDemoData extends AbstractFixture implements
             ->setProduct($product)
             ->setType($type)
             ->setComment(sprintf('Seller Notes %s', $index + 1))
-            ->setCommentAccount(sprintf('Account Notes %s', $index + 1));
+            ->setCommentCustomer(sprintf('Customer Notes %s', $index + 1));
 
         $isFreeFormProduct = mt_rand(0, 1);
         if ($isFreeFormProduct) {

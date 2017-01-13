@@ -3,11 +3,11 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
-use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccount;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
@@ -53,10 +53,10 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         $this->assertEquals($expected, $actual);
     }
 
-    public function testAccountPriceList()
+    public function testCustomerPriceList()
     {
-        /** @var Account $account */
-        $account = $this->getReference('account.level_1.2');
+        /** @var Customer $customer */
+        $customer = $this->getReference('customer.level_1.2');
 
         /** @var CombinedPriceList $priceList */
         $priceList = $this->getReference('2t_3f_1t');
@@ -69,15 +69,15 @@ class CombinedPriceListRepositoryTest extends WebTestCase
 
         $this->assertEquals(
             $priceList->getId(),
-            $this->getRepository()->getPriceListByAccount($account, $websiteUs)->getId()
+            $this->getRepository()->getPriceListByCustomer($customer, $websiteUs)->getId()
         );
-        $this->assertNull($this->getRepository()->getPriceListByAccount($account, $websiteCa));
+        $this->assertNull($this->getRepository()->getPriceListByCustomer($customer, $websiteCa));
     }
 
-    public function testAccountGroupPriceList()
+    public function testCustomerGroupPriceList()
     {
-        /** @var CustomerGroup $accountGroup */
-        $accountGroup = $this->getReference('account_group.group1');
+        /** @var CustomerGroup $customerGroup */
+        $customerGroup = $this->getReference('customer_group.group1');
 
         /** @var CombinedPriceList $priceList */
         $priceList = $this->getReference('1t_2t_3t');
@@ -90,9 +90,9 @@ class CombinedPriceListRepositoryTest extends WebTestCase
 
         $this->assertEquals(
             $priceList->getId(),
-            $this->getRepository()->getPriceListByAccountGroup($accountGroup, $websiteUs)->getId()
+            $this->getRepository()->getPriceListByCustomerGroup($customerGroup, $websiteUs)->getId()
         );
-        $this->assertNull($this->getRepository()->getPriceListByAccountGroup($accountGroup, $websiteCa));
+        $this->assertNull($this->getRepository()->getPriceListByCustomerGroup($customerGroup, $websiteCa));
     }
 
     public function testWebsitePriceList()
@@ -190,7 +190,7 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         $website = $this->getReference($website);
 
         if ($targetEntity) {
-            /** @var Account|CustomerGroup $targetEntity */
+            /** @var Customer|CustomerGroup $targetEntity */
             $targetEntity = $this->getReference($targetEntity);
         }
 
@@ -212,21 +212,21 @@ class CombinedPriceListRepositoryTest extends WebTestCase
                 ->findOneBy(array_merge(['website' => $website], $additionalCriteria));
         };
 
-        $getAccountConnection = function (Website $website, Account $targetEntity) use ($getConnection) {
+        $getCustomerConnection = function (Website $website, Customer $targetEntity) use ($getConnection) {
             return call_user_func(
                 $getConnection,
-                'OroPricingBundle:CombinedPriceListToAccount',
+                'OroPricingBundle:CombinedPriceListToCustomer',
                 $website,
-                ['account' => $targetEntity]
+                ['customer' => $targetEntity]
             );
         };
 
-        $getAccountGroupConnection = function (Website $website, CustomerGroup $targetEntity) use ($getConnection) {
+        $getCustomerGroupConnection = function (Website $website, CustomerGroup $targetEntity) use ($getConnection) {
             return call_user_func(
                 $getConnection,
-                'OroPricingBundle:CombinedPriceListToAccountGroup',
+                'OroPricingBundle:CombinedPriceListToCustomerGroup',
                 $website,
-                ['accountGroup' => $targetEntity]
+                ['customerGroup' => $targetEntity]
             );
         };
 
@@ -239,41 +239,41 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         };
 
         return [
-            'not changed for account' => [
+            'not changed for customer' => [
                 '2t_3f_1t',
                 LoadWebsiteData::WEBSITE1,
-                $getAccountConnection,
-                'account.level_1.2'
+                $getCustomerConnection,
+                'customer.level_1.2'
             ],
-            'changed for account' => [
+            'changed for customer' => [
                 '2f_1t_3t',
                 LoadWebsiteData::WEBSITE1,
-                $getAccountConnection,
-                'account.level_1.2'
+                $getCustomerConnection,
+                'customer.level_1.2'
             ],
-            'new for account' => [
+            'new for customer' => [
                 '2f_1t_3t',
                 LoadWebsiteData::WEBSITE1,
-                $getAccountConnection,
-                'account.level_1'
+                $getCustomerConnection,
+                'customer.level_1'
             ],
-            'not changed for account group' => [
+            'not changed for customer group' => [
                 '1t_2t_3t',
                 LoadWebsiteData::WEBSITE1,
-                $getAccountGroupConnection,
-                'account_group.group1'
+                $getCustomerGroupConnection,
+                'customer_group.group1'
             ],
-            'changed for account group' => [
+            'changed for customer group' => [
                 '2f_1t_3t',
                 LoadWebsiteData::WEBSITE1,
-                $getAccountGroupConnection,
-                'account_group.group1'
+                $getCustomerGroupConnection,
+                'customer_group.group1'
             ],
-            'new for account group' => [
+            'new for customer group' => [
                 '2f_1t_3t',
                 LoadWebsiteData::WEBSITE2,
-                $getAccountGroupConnection,
-                'account_group.group1'
+                $getCustomerGroupConnection,
+                'customer_group.group1'
             ],
             'not changed for website' => [
                 '1t_2t_3t',
@@ -384,11 +384,11 @@ class CombinedPriceListRepositoryTest extends WebTestCase
         $relation3 = $this->getManager()->getRepository(CombinedPriceListToWebsite::class)
             ->findOneBy(['priceList' => $priceList]);
         $this->assertFalse($this->getRepository()->hasOtherRelations($relation3));
-        $cplToAccount = new CombinedPriceListToAccount();
-        $cplToAccount->setWebsite($relation3->getWebsite());
-        $cplToAccount->setPriceList($priceList);
-        $cplToAccount->setAccount($this->getReference('account.level_1.2'));
-        $this->getManager()->persist($cplToAccount);
+        $cplToCustomer = new CombinedPriceListToCustomer();
+        $cplToCustomer->setWebsite($relation3->getWebsite());
+        $cplToCustomer->setPriceList($priceList);
+        $cplToCustomer->setCustomer($this->getReference('customer.level_1.2'));
+        $this->getManager()->persist($cplToCustomer);
         $this->getManager()->flush();
         $this->assertTrue($this->getRepository()->hasOtherRelations($relation3));
     }

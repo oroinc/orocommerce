@@ -5,6 +5,7 @@ namespace Oro\Bundle\SaleBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -14,10 +15,11 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Model\QuoteRequestHandler;
+use Oro\Bundle\SaleBundle\Event\QuoteEvent;
 
 class AjaxQuoteController extends Controller
 {
@@ -33,20 +35,20 @@ class AjaxQuoteController extends Controller
     public function getRelatedDataAction()
     {
         $quote = new Quote();
-        $accountUser = $this->getQuoteRequestHandler()->getAccountUser();
-        $account = $this->getAccount($accountUser);
+        $customerUser = $this->getQuoteRequestHandler()->getCustomerUser();
+        $customer = $this->getCustomer($customerUser);
 
-        $quote->setAccount($account);
-        $quote->setAccountUser($accountUser);
+        $quote->setCustomer($customer);
+        $quote->setCustomerUser($customerUser);
 
-        $accountPaymentTerm = null;
-        if ($account) {
-            $accountPaymentTerm = $this->getPaymentTermProvider()->getAccountPaymentTerm($account);
+        $customerPaymentTerm = null;
+        if ($customer) {
+            $customerPaymentTerm = $this->getPaymentTermProvider()->getCustomerPaymentTerm($customer);
         }
-        $accountGroupPaymentTerm = null;
-        if ($account->getGroup()) {
-            $accountGroupPaymentTerm = $this->getPaymentTermProvider()
-                ->getAccountGroupPaymentTerm($account->getGroup());
+        $customerGroupPaymentTerm = null;
+        if ($customer->getGroup()) {
+            $customerGroupPaymentTerm = $this->getPaymentTermProvider()
+                ->getCustomerGroupPaymentTerm($customer->getGroup());
         }
 
         $orderForm = $this->createForm($this->getQuoteFormTypeName(), $quote);
@@ -56,10 +58,37 @@ class AjaxQuoteController extends Controller
                 'shippingAddress' => $this->renderForm(
                     $orderForm->get(AddressType::TYPE_SHIPPING . 'Address')->createView()
                 ),
-                'accountPaymentTerm' => $accountPaymentTerm ? $accountPaymentTerm->getId() : null,
-                'accountGroupPaymentTerm' => $accountGroupPaymentTerm ? $accountGroupPaymentTerm->getId() : null,
+                'customerPaymentTerm' => $customerPaymentTerm ? $customerPaymentTerm->getId() : null,
+                'customerGroupPaymentTerm' => $customerGroupPaymentTerm ? $customerGroupPaymentTerm->getId() : null,
             ]
         );
+    }
+
+    /**
+     * @Route("/entry-point/{id}", name="oro_quote_entry_point", defaults={"id" = 0})
+     * @AclAncestor("oro_order_update")
+     *
+     * @param Request    $request
+     * @param Quote|null $quote
+     *
+     * @return JsonResponse
+     */
+    public function entryPointAction(Request $request, Quote $quote = null)
+    {
+        if (!$quote) {
+            $quote = new Quote();
+        }
+
+        $form = $this->createForm($this->getQuoteFormTypeName(), $quote);
+
+        $submittedData = $request->get($form->getName());
+
+        $form->submit($submittedData);
+
+        $event = new QuoteEvent($form, $form->getData(), $submittedData);
+        $this->get('event_dispatcher')->dispatch(QuoteEvent::NAME, $event);
+
+        return new JsonResponse($event->getData());
     }
 
     /**
@@ -69,36 +98,39 @@ class AjaxQuoteController extends Controller
      */
     protected function renderForm(FormView $formView)
     {
-        return $this->renderView('OroSaleBundle:Form:accountAddressSelector.html.twig', ['form' => $formView]);
+        return $this->renderView('OroSaleBundle:Form:customerAddressSelector.html.twig', ['form' => $formView]);
     }
 
     /**
-     * @param AccountUser $accountUser
-     * @return null|Account
+     * @param CustomerUser $customerUser
+     * @return null|Customer
      */
-    protected function getAccount(AccountUser $accountUser = null)
+    protected function getCustomer(CustomerUser $customerUser = null)
     {
-        $account = $this->getQuoteRequestHandler()->getAccount();
-        if (!$account && $accountUser) {
-            $account = $accountUser->getAccount();
+        $customer = $this->getQuoteRequestHandler()->getCustomer();
+        if (!$customer && $customerUser) {
+            $customer = $customerUser->getCustomer();
         }
-        if ($account && $accountUser) {
-            $this->validateRelation($accountUser, $account);
+        if ($customer && $customerUser) {
+            $this->validateRelation($customerUser, $customer);
         }
 
-        return $account;
+        return $customer;
     }
 
     /**
-     * @param AccountUser $accountUser
-     * @param Account $account
+     * @param CustomerUser $customerUser
+     * @param Customer $customer
      *
      * @throws BadRequestHttpException
      */
-    protected function validateRelation(AccountUser $accountUser, Account $account)
+    protected function validateRelation(CustomerUser $customerUser, Customer $customer)
     {
-        if ($accountUser && $accountUser->getAccount() && $accountUser->getAccount()->getId() !== $account->getId()) {
-            throw new BadRequestHttpException('AccountUser must belong to Account');
+        if ($customerUser &&
+            $customerUser->getCustomer() &&
+            $customerUser->getCustomer()->getId() !== $customer->getId()
+        ) {
+            throw new BadRequestHttpException('CustomerUser must belong to Customer');
         }
     }
 

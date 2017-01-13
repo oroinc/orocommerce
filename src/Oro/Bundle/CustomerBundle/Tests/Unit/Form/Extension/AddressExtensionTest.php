@@ -6,7 +6,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\CustomerBundle\Form\Extension\AddressExtension;
 
-class AddressExtensionTest extends AbstractAccountUserAwareExtensionTest
+class AddressExtensionTest extends AbstractCustomerUserAwareExtensionTest
 {
     protected function setUp()
     {
@@ -20,14 +20,14 @@ class AddressExtensionTest extends AbstractAccountUserAwareExtensionTest
         $this->assertEquals('oro_address', $this->extension->getExtendedType());
     }
 
-    public function testConfigureOptionsNonAccountUser()
+    public function testConfigureOptionsNonCustomerUser()
     {
-        $this->assertOptionsNotChangedForNonAccountUser();
+        $this->assertOptionsNotChangedForNonCustomerUser();
     }
 
-    public function testConfigureOptionsAccountUser()
+    public function testConfigureOptionsCustomerUser()
     {
-        $this->assertAccountUserTokenCall();
+        $this->assertCustomerUserTokenCall();
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
         $resolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolver')

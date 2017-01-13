@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Builder;
 
-use Oro\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder;
+use Oro\Bundle\PricingBundle\Builder\CustomerGroupCombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
@@ -18,9 +18,9 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
     protected $builder;
 
     /**
-     * @var AccountGroupCombinedPriceListsBuilder|\PHPUnit_Framework_MockObject_MockObject
+     * @var CustomerGroupCombinedPriceListsBuilder|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $accountGroupBuilder;
+    protected $customerGroupBuilder;
 
     /**
      * @return string
@@ -37,8 +37,8 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
     {
         parent::setUp();
 
-        $this->accountGroupBuilder = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder')
+        $this->customerGroupBuilder = $this
+            ->getMockBuilder('Oro\Bundle\PricingBundle\Builder\CustomerGroupCombinedPriceListsBuilder')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -51,7 +51,7 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
             $this->priceResolver,
             $this->triggerHandler
         );
-        $this->builder->setAccountGroupCombinedPriceListsBuilder($this->accountGroupBuilder);
+        $this->builder->setCustomerGroupCombinedPriceListsBuilder($this->customerGroupBuilder);
         $this->builder->setPriceListToEntityClassName($this->priceListToEntityClass);
         $this->builder->setCombinedPriceListClassName($this->combinedPriceListClass);
         $this->builder->setCombinedPriceListToEntityClassName($this->combinedPriceListToEntityClass);
@@ -188,7 +188,7 @@ class WebsiteCombinedPriceListsBuilderTest extends AbstractCombinedPriceListsBui
             ->with($combinedPriceList, $combinedPriceList, $website)
             ->willReturn($relation);
 
-        $this->accountGroupBuilder->expects($this->exactly($callExpects))
+        $this->customerGroupBuilder->expects($this->exactly($callExpects))
             ->method('build')
             ->with($website, null);
     }

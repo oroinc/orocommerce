@@ -7,7 +7,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserRoleSelectType;
 
@@ -70,23 +70,23 @@ class CustomerUserRoleSelectTypeTest extends FormIntegrationTestCase
         $this->assertArrayHasKey('choice_label', $formOptions);
         $this->assertInternalType('callable', $formOptions['choice_label']);
 
-        $roleWithoutAccount = new CustomerUserRole();
-        $roleWithoutAccount->setLabel('roleWithoutAccount');
+        $roleWithoutCustomer = new CustomerUserRole();
+        $roleWithoutCustomer->setLabel('roleWithoutCustomer');
         $this->assertEquals(
-            'roleWithoutAccount (oro.customer.customeruserrole.type.predefined.label.trans)',
-            $formOptions['choice_label']($roleWithoutAccount)
+            'roleWithoutCustomer (oro.customer.customeruserrole.type.predefined.label.trans)',
+            $formOptions['choice_label']($roleWithoutCustomer)
         );
 
-        $account = new Account();
-        $roleWithAccount = new CustomerUserRole();
-        $roleWithAccount->setAccount($account);
-        $roleWithAccount->setLabel('roleWithAccount');
+        $customer = new Customer();
+        $roleWithCustomer = new CustomerUserRole();
+        $roleWithCustomer->setCustomer($customer);
+        $roleWithCustomer->setLabel('roleWithCustomer');
         $this->assertEquals(
-            'roleWithAccount (oro.customer.customeruserrole.type.customizable.label.trans)',
-            $formOptions['choice_label']($roleWithAccount)
+            'roleWithCustomer (oro.customer.customeruserrole.type.customizable.label.trans)',
+            $formOptions['choice_label']($roleWithCustomer)
         );
 
-        $testEntity = new Account();
+        $testEntity = new Customer();
         $testEntity->setName('TestEntityValue');
         $this->assertEquals('TestEntityValue', $formOptions['choice_label']($testEntity));
     }

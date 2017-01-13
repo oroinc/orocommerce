@@ -52,7 +52,9 @@ define(function(require) {
         },
 
         initModel: function(options) {
-            var modelAttr = options.modelAttr || {};
+            var modelAttr = _.each(options.modelAttr, function(value, attribute) {
+                    options.modelAttr[attribute] = value === 'undefined' ? undefined : value;
+                }) || {};
             this.modelAttr = $.extend(true, {}, this.modelAttr, modelAttr);
             this.$el.trigger('options:set:productModel', options);
             if (options.productModel) {
@@ -60,10 +62,14 @@ define(function(require) {
             }
 
             _.each(this.modelAttr, function(value, attribute) {
-                if (!this.model.has(attribute) || modelAttr[attribute] !== undefined ) {
+                if (!this.model.has(attribute) || modelAttr[attribute] !== undefined) {
                     this.model.set(attribute, value);
                 }
             }, this);
+
+            if (this.model.get('shopping_lists') === undefined) {
+                this.model.set('shopping_lists', []);
+            }
         },
 
         dispose: function() {

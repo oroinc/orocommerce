@@ -213,6 +213,7 @@ services:
             - '@oro_shipping.methods_configs_rules.provider'
             - '@oro_shipping.shipping_method.registry'
             - '@oro_shipping.shipping_price.provider.cache'
+            - '@oro_shipping.method.view_factory'
 
     oro_shipping.methods_configs_rules.provider:
         class: 'Oro\Bundle\ShippingBundle\Provider\ShippingMethodsConfigsRulesProvider'
@@ -336,3 +337,11 @@ services:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig', event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig', event: postUpdate }
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig', event: postRemove }
+
+    oro_shipping.method.view_factory:
+        class: Oro\Bundle\ShippingBundle\Method\ShippingMethodViewFactory
+        arguments:
+            - '@oro_shipping.shipping_method.registry'
+
+    oro_shipping.method.composed_configuration_builder_factory:
+        class: Oro\Bundle\ShippingBundle\Method\Configuration\Composed\ComposedShippingMethodConfigurationBuilderFactory

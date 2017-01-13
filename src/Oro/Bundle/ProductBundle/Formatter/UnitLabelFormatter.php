@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Formatter;
 
 use Oro\Bundle\ProductBundle\Entity\MeasureUnitInterface;
 
-class UnitLabelFormatter extends AbstractUnitFormatter
+class UnitLabelFormatter extends AbstractUnitFormatter implements UnitLabelFormatterInterface
 {
     /**
      * @param string $code
