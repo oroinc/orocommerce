@@ -37,25 +37,35 @@ class LoadProductSeoAttributesAndGroupData extends AbstractFixture implements
      */
     public function load(ObjectManager $manager)
     {
-        $this->makeProductAttributes($this->fields);
-        $this->addSeoGroup($manager);
+        if (!$this->skipIfAppliedPreviously()) {
+            $this->makeProductAttributes($this->fields);
+            $this->addSeoGroup($manager);
+        }
     }
 
+    /**
+     * If metaKeywords is already attribute then old version of AttributeFamilyData migration was applied.
+     *
+     * @return bool
+     */
+    private function skipIfAppliedPreviously()
+    {
+        $attributeHelper = $this->container->get('oro_entity_config.config.attributes_config_helper');
+
+        return $attributeHelper->isFieldAttribute(Product::class, 'metaKeywords');
+    }
+
+    /**
+     * @param ObjectManager $manager
+     */
     private function addSeoGroup(ObjectManager $manager)
     {
         $attributeFamilyRepository = $manager->getRepository(AttributeFamily::class);
-        $attributeGroupRepository = $manager->getRepository(AttributeGroup::class);
 
         $defaultFamily =
             $attributeFamilyRepository->findOneBy([
                 'code' => LoadProductDefaultAttributeFamilyData::DEFAULT_FAMILY_CODE
             ]);
-
-        $seoGroup = $attributeGroupRepository->findOneBy(['code' => self::GROUP_CODE]);
-
-        if ($seoGroup) {
-            return;
-        }
 
         $attributeGroup = new AttributeGroup();
         $attributeGroup->setAttributeFamily($defaultFamily);
