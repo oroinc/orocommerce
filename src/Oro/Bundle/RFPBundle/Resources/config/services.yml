@@ -205,3 +205,8 @@ services:
            - '@doctrine'
        tags:
            - { name: oro_multi_currency.currency_checker_provider }
+
+    oro_rfp.datagrid.listener.column:
+        class: 'Oro\Bundle\RFPBundle\EventListener\RFPDatagridColumnListener'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before, method: onBuildBefore }

@@ -160,21 +160,27 @@ datagrids:
             firstName:
                 label:         oro.rfp.request.first_name.label
                 order:         1
+                renderable:    false
             lastName:
                 label:         oro.rfp.request.last_name.label
                 order:         2
+                renderable:    false
             email:
                 label:         oro.rfp.request.email.label
                 order:         3
+                renderable:    false
             phone:
                 label:         oro.rfp.request.phone.label
                 order:         4
+                renderable:    false
             company:
                 label:         oro.rfp.request.company.label
                 order:         5
+                renderable:    false
             role:
                 label:         oro.rfp.request.role.label
                 order:         6
+                renderable:    false
             customerUserName:
                 label:         oro.rfp.request.customer_user.label
                 order:         7
@@ -187,6 +193,11 @@ datagrids:
             customerStatusName:
                 label:         oro.rfp.request.customer_status.label
                 order:         10
+                renderable:    false
+            createdAt:
+                label:         oro.ui.created_at
+                frontend_type: datetime
+                renderable:    false
         sorters:
             columns:
                 firstName:
