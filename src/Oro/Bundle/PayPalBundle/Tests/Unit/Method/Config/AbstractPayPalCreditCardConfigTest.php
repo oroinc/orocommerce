@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method\Config;
 
-use Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config\AbstractPaymentConfigTestCase;
+use Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config\AbstractPaymentSystemConfigTestCase;
 use Oro\Bundle\PayPalBundle\DependencyInjection\OroPayPalExtension;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
@@ -11,7 +11,7 @@ use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-abstract class AbstractPayPalCreditCardConfigTest extends AbstractPaymentConfigTestCase
+abstract class AbstractPayPalCreditCardConfigTest extends AbstractPaymentSystemConfigTestCase
 {
     /** @var PayPalCreditCardConfigInterface */
     protected $config;

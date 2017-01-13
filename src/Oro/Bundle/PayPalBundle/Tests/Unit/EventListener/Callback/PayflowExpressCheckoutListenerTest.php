@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\EventListener\Callback;
 
-use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
-
 use Oro\Bundle\PaymentBundle\Event\CallbackErrorEvent;
-
 use Oro\Bundle\PaymentBundle\Event\CallbackReturnEvent;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodProviderInterface;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
 use Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowExpressCheckoutListener;
 use Psr\Log\LoggerInterface;
@@ -73,7 +72,7 @@ class PayflowExpressCheckoutListenerTest extends \PHPUnit_Framework_TestCase
         $transaction = new PaymentTransaction();
         $transaction
             ->setAction('action')
-            ->setPaymentMethod('payflow_express_checkout')
+            ->setPaymentMethod('payment_method_id')
             ->setReference('token')
             ->setResponse(['PayerID' => 'old payerId', 'token' => 'old token']);
 
@@ -85,10 +84,19 @@ class PayflowExpressCheckoutListenerTest extends \PHPUnit_Framework_TestCase
             ->method('execute')
             ->with('complete', $transaction);
 
-        $this->paymentMethodRegistry->expects($this->once())
+        $paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
+        $paymentMethodProvider->expects(static::any())
+            ->method('hasPaymentMethod')
+            ->with('payment_method_id')
+            ->willReturn(true);
+        $paymentMethodProvider->expects(static::any())
             ->method('getPaymentMethod')
-            ->with($transaction->getPaymentMethod())
+            ->with('payment_method_id')
             ->willReturn($paymentMethod);
+
+        $this->paymentMethodRegistry->expects(static::once())
+            ->method('getPaymentMethodProviders')
+            ->willReturn([$paymentMethodProvider]);
 
         $this->assertEquals(Response::HTTP_FORBIDDEN, $event->getResponse()->getStatusCode());
 
@@ -152,7 +160,7 @@ class PayflowExpressCheckoutListenerTest extends \PHPUnit_Framework_TestCase
 
         $transaction = new PaymentTransaction();
         $transaction
-            ->setPaymentMethod('complete')
+            ->setPaymentMethod('payment_method_id')
             ->setReference('token');
 
         $paymentMethod = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
@@ -160,10 +168,19 @@ class PayflowExpressCheckoutListenerTest extends \PHPUnit_Framework_TestCase
             ->method('execute')
             ->willThrowException(new \InvalidArgumentException());
 
-        $this->paymentMethodRegistry->expects($this->once())
+        $paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
+        $paymentMethodProvider->expects(static::any())
+            ->method('hasPaymentMethod')
+            ->with('payment_method_id')
+            ->willReturn(true);
+        $paymentMethodProvider->expects(static::any())
             ->method('getPaymentMethod')
-            ->with($transaction->getPaymentMethod())
+            ->with('payment_method_id')
             ->willReturn($paymentMethod);
+
+        $this->paymentMethodRegistry->expects(static::once())
+            ->method('getPaymentMethodProviders')
+            ->willReturn([$paymentMethodProvider]);
 
         $event = new CallbackReturnEvent($data);
         $event->setPaymentTransaction($transaction);
