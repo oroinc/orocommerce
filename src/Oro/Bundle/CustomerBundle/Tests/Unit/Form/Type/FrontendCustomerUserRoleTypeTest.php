@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
+use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Validator\Validation;
 
@@ -25,6 +26,11 @@ class FrontendCustomerUserRoleTypeTest extends AbstractCustomerUserRoleTypeTest
 {
     /** @var CustomerUser[] */
     protected $customerUsers = [];
+
+    /**
+     * @var FrontendCustomerUserRoleType
+     */
+    protected $formType;
 
     /**
      * @return array
@@ -144,48 +150,78 @@ class FrontendCustomerUserRoleTypeTest extends AbstractCustomerUserRoleTypeTest
         ];
     }
 
-    public function testSubmitUpdateCustomerUsers()
+    /**
+     * @dataProvider preSubmitProvider
+     * @param array $data
+     * @param array $expected
+     */
+    public function testPreSubmit(array $data, array $expected)
     {
-        list($customer1, $customer2) = array_values($this->getCustomers());
-        list($customerUser1, $customerUser2, $customerUser3) = array_values($this->getCustomerUsers());
+        $event = new FormEvent($this->prepareFormForEvents(), $data);
 
-        /** @var CustomerUserRole $role */
-        $role = $this->getEntity(self::DATA_CLASS, 1);
-        $role->setRole('label');
-        $role->setCustomer($customer1);
+        $this->formType->preSubmit($event);
 
-        /** @var CustomerUserRole $predefinedRole */
-        $predefinedRole = $this->getEntity(self::DATA_CLASS, 2);
-        $role->setRole('predefined');
-        $predefinedRole->addCustomerUser($customerUser1);
-        $predefinedRole->addCustomerUser($customerUser2);
-        $predefinedRole->addCustomerUser($customerUser3);
-
-        $form = $this->factory->create(
-            $this->formType,
-            $role,
-            ['privilege_config' => $this->privilegeConfig, 'predefined_role' => $predefinedRole]
-        );
-
-        $this->assertTrue($form->has('appendUsers'));
-        $this->assertEquals([$customerUser1], $form->get('appendUsers')->getData());
-
-        $form->get('appendUsers')->setData([$customerUser1, $customerUser2]);
-        $form->get('removeUsers')->setData([$customerUser1]);
-        $form->submit([
-            'label' => 'test label',
-            'customer' => new Customer(),
-            'appendUsers' => [1, 2],
-            'removeUsers' => [1],
-        ]);
-
-        $this->assertTrue($predefinedRole->getCustomerUsers()->contains($customerUser1));
-        $this->assertFalse($predefinedRole->getCustomerUsers()->contains($customerUser2));
-        $this->assertTrue($predefinedRole->getCustomerUsers()->contains($customerUser3));
+        $this->assertEquals($expected, $event->getData());
     }
 
     /**
-     * @inheritdoc
+     * @return array
+     */
+    public function preSubmitProvider()
+    {
+        return [
+            'append and remove users are empty' => [
+                'data' => [
+                    'customer' => '1',
+                    'appendUsers' => '',
+                    'removeUsers' => '',
+                ],
+                'expected' => [
+                    'customer' => '1',
+                    'appendUsers' => '1,4',
+                    'removeUsers' => '',
+                ]
+
+            ],
+            'append new user and remove one from predifined role' => [
+                'data' => [
+                    'customer' => '1',
+                    'appendUsers' => '2',
+                    'removeUsers' => '4',
+                ],
+                'expected' => [
+                    'customer' => '1',
+                    'appendUsers' => '1,2',
+                    'removeUsers' => '4',
+                ]
+
+            ]
+        ];
+    }
+
+    public function testPostSubmit()
+    {
+        list($customerUser1, , , $customerUser4) = array_values($this->getCustomerUsers());
+        list($customer1) = array_values($this->getCustomers());
+
+        $form = $this->prepareFormForEvents();
+        $form->get('appendUsers')->setData([$customerUser1]);
+        $form->get('removeUsers')->setData([$customerUser4]);
+
+        $role = $this->getEntity(self::DATA_CLASS, 1);
+        $role->setCustomer($customer1);
+
+        $event = new FormEvent($form, $role);
+
+        $this->formType->postSubmit($event);
+
+        $predefinedRole = $form->getConfig()->getOption('predefined_role');
+        $this->assertTrue($predefinedRole->getCustomerUsers()->contains($customerUser4));
+        $this->assertFalse($predefinedRole->getCustomerUsers()->contains($customerUser1));
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function testGetName()
     {
@@ -193,7 +229,7 @@ class FrontendCustomerUserRoleTypeTest extends AbstractCustomerUserRoleTypeTest
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     protected function createCustomerUserRoleFormTypeAndSetDataClass()
     {
@@ -220,13 +256,41 @@ class FrontendCustomerUserRoleTypeTest extends AbstractCustomerUserRoleTypeTest
             /** @var CustomerUser $customerUser3 */
             $customerUser3 = $this->getEntity(CustomerUser::class, 3);
 
+            /** @var CustomerUser $customerUser4 */
+            $customerUser4 = $this->getEntity(CustomerUser::class, 4);
+            $customerUser4->setCustomer($customer1);
+
             $this->customerUsers = [
                 $customerUser1->getId() => $customerUser1,
                 $customerUser2->getId() => $customerUser2,
                 $customerUser3->getId() => $customerUser3,
+                $customerUser4->getId() => $customerUser4,
             ];
         }
 
         return $this->customerUsers;
+    }
+
+    /**
+     * @return \Symfony\Component\Form\FormInterface
+     */
+    protected function prepareFormForEvents()
+    {
+        list($customerUser1, $customerUser2, $customerUser3, $customerUser4) = array_values($this->getCustomerUsers());
+
+        $role = $this->getEntity(self::DATA_CLASS, 1);
+        $predefinedRole = $this->getEntity(self::DATA_CLASS, 2);
+        $predefinedRole->addCustomerUser($customerUser1);
+        $predefinedRole->addCustomerUser($customerUser2);
+        $predefinedRole->addCustomerUser($customerUser3);
+        $predefinedRole->addCustomerUser($customerUser4);
+
+        $form = $this->factory->create(
+            $this->formType,
+            $role,
+            ['privilege_config' => $this->privilegeConfig, 'predefined_role' => $predefinedRole]
+        );
+
+        return $form;
     }
 }
