@@ -223,18 +223,18 @@ class CustomerUserTest extends AbstractUserTest
         $this->assertTrue($user->isEnabled());
         $this->assertTrue($user->isConfirmed());
         $this->assertTrue($user->isAccountNonExpired());
-        $this->assertTrue($user->isCustomerNonLocked());
+        $this->assertTrue($user->isAccountNonLocked());
 
         $user->setEnabled(false);
 
         $this->assertFalse($user->isEnabled());
-        $this->assertFalse($user->isCustomerNonLocked());
+        $this->assertFalse($user->isAccountNonLocked());
 
         $user->setEnabled(true);
         $user->setConfirmed(false);
 
         $this->assertFalse($user->isConfirmed());
-        $this->assertFalse($user->isCustomerNonLocked());
+        $this->assertFalse($user->isAccountNonLocked());
     }
 
     public function testGetFullName()
