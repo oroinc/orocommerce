@@ -7,7 +7,7 @@ oro:
         sku.label: SKU
         grouping.label: "Grouping"
         qty_sold.label: "Qty Sold"
-        skip_empty_periods.label: "Skip Empty Periods"
+        skip_empty_periods.label: "Exclude Empty Periods"
         item_number.label: "Item #"
         sku.placeholder: "Enter Item Number"
         quantity.label: Qty

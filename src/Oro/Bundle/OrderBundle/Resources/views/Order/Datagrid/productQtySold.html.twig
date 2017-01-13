@@ -3,7 +3,11 @@
 <table>
     <tr>
         <td class="renderable">
-            {{ qtySold }} {{ unitCode|oro_format_product_unit_label(false, qtySold > 1)|capitalize }}
+            {% if qtySold %}
+                {{ qtySold }} {{ unitCode|oro_format_product_unit_label(false, qtySold > 1)|capitalize }}
+            {% else %}
+                {{ 'N/A'|trans }}
+            {% endif %}
         </td>
     </tr>
 </table>
