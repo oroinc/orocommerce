@@ -2,14 +2,14 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method\Config;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
-use Oro\Bundle\PayPalBundle\DependencyInjection\OroPayPalExtension;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config\AbstractPaymentConfigTestCase;
+use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfig;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
-use Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config\AbstractPaymentConfigTestCase;
-use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
@@ -23,17 +23,21 @@ class PayPalExpressCheckoutConfigTest extends AbstractPaymentConfigTestCase
     /**
      * {@inheritdoc}
      */
-    protected function getPaymentConfig(ConfigManager $configManager)
+    protected function getPaymentConfig()
     {
-        $this->encoder = $this->createMock(SymmetricCrypterInterface::class);
+        $label = (new LocalizedFallbackValue())->setString('test label');
+        $labels = new ArrayCollection();
+        $labels->add($label);
+
+        $short_label = (new LocalizedFallbackValue())->setString('test short label');
+        $short_labels = new ArrayCollection();
+        $short_labels->add($short_label);
 
         $bag = [
-            $this->getConfigPrefix() . 'short_label' => 'test short label',
-            $this->getConfigPrefix() . 'proxy_port' => '8099',
-            $this->getConfigPrefix() . 'checkout_label' => 'test label',
-            $this->getConfigPrefix() . 'checkout_short_label' => 'test short label',
-            $this->getConfigPrefix() . 'checkout_payment_action' => 'paypal_payments_pro_express_payment_action',
-            $this->getConfigPrefix() . 'test_mode' => true,
+            PayPalSettings::EXPRESS_CHECKOUT_LABELS_KEY =>$labels,
+            PayPalSettings::EXPRESS_CHECKOUT_SHORT_LABELS_KEY => $short_labels,
+            PayPalSettings::EXPRESS_CHECKOUT_PAYMENT_ACTION_KEY => 'paypal_payments_pro_express_payment_action',
+            PayPalSettings::TEST_MODE_KEY => true,
         ];
         $settingsBag = $this->createMock(ParameterBag::class);
         $settingsBag->expects(static::any())->method('get')->willReturnCallback(
@@ -54,16 +58,9 @@ class PayPalExpressCheckoutConfigTest extends AbstractPaymentConfigTestCase
 
         return new PayPalExpressCheckoutConfig(
             $channel,
-            $this->encoder
+            $this->encoder,
+            $this->localizationHelper
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getConfigPrefix()
-    {
-        return 'paypal_payments_pro_express_';
     }
 
     public function testIsTestMode()
@@ -73,14 +70,6 @@ class PayPalExpressCheckoutConfigTest extends AbstractPaymentConfigTestCase
 
     public function testGetPurchaseAction()
     {
-        $this->assertSame($this->getConfigPrefix() . 'payment_action', $this->config->getPurchaseAction());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getExtensionAlias()
-    {
-        return OroPayPalExtension::ALIAS;
+        $this->assertSame('paypal_payments_pro_express_payment_action', $this->config->getPurchaseAction());
     }
 }

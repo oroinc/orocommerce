@@ -25,6 +25,7 @@ abstract class AbstractPaymentConfig
      */
     protected function getConfigValue($key)
     {
+        $val = $this->channel->getTransport()->getSettingsBag()->get($key);
         return $this->channel->getTransport()->getSettingsBag()->get($key);
     }
 }

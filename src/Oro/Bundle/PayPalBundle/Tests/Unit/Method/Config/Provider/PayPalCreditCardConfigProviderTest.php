@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfig;
 use Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalCreditCardConfigProvider;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
@@ -27,6 +28,11 @@ class PayPalCreditCardConfigProviderTest extends \PHPUnit_Framework_TestCase
     protected $encoder;
 
     /**
+     * @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $localizationHelper;
+
+    /**
      * @var string
      */
     protected $type;
@@ -41,11 +47,13 @@ class PayPalCreditCardConfigProviderTest extends \PHPUnit_Framework_TestCase
         $this->type = 'paypal_payments_pro';
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->encoder = $this->createMock(SymmetricCrypterInterface::class);
+        $this->localizationHelper = $this->createMock(LocalizationHelper::class);
         $logger = $this->createMock(LoggerInterface::class);
 
         $this->payPalConfigProvider = new PayPalCreditCardConfigProvider(
             $this->doctrine,
             $this->encoder,
+            $this->localizationHelper,
             $logger,
             $this->type
         );

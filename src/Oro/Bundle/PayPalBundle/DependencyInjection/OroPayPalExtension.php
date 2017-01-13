@@ -24,7 +24,6 @@ class OroPayPalExtension extends Extension
         $loader->load('services.yml');
         $loader->load('form_types.yml');
         $loader->load('payflow.yml');
-        $loader->load('payment.yml');
         $loader->load('block_types.yml');
         $loader->load('method.yml');
     }

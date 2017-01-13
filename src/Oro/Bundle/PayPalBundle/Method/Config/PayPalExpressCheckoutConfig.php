@@ -3,8 +3,10 @@
 namespace Oro\Bundle\PayPalBundle\Method\Config;
 
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\PayPalBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PayPalBundle\DependencyInjection\OroPayPalExtension;
+use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 use Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentConfig;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
@@ -20,22 +22,24 @@ class PayPalExpressCheckoutConfig extends AbstractPaymentConfig implements
     protected $encoder;
 
     /**
+     * @var LocalizationHelper
+     */
+    protected $localizationHelper;
+
+    /**
      * @param Channel $channel
      * @param SymmetricCrypterInterface $encoder
+     * @param LocalizationHelper $localizationHelper
      */
-    public function __construct(Channel $channel, SymmetricCrypterInterface $encoder)
-    {
+    public function __construct(
+        Channel $channel,
+        SymmetricCrypterInterface $encoder,
+        LocalizationHelper $localizationHelper
+    ) {
         parent::__construct($channel);
 
         $this->encoder = $encoder;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getPaymentExtensionAlias()
-    {
-        return OroPayPalExtension::ALIAS;
+        $this->localizationHelper = $localizationHelper;
     }
 
     /**
@@ -44,11 +48,11 @@ class PayPalExpressCheckoutConfig extends AbstractPaymentConfig implements
     public function getCredentials()
     {
         return [
-            Option\Partner::PARTNER => $this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_PARTNER_KEY),
-            Option\Vendor::VENDOR => $this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_VENDOR_KEY),
-            Option\User::USER => $this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_USER_KEY),
+            Option\Partner::PARTNER => $this->getConfigValue(PayPalSettings::PARTNER_KEY),
+            Option\Vendor::VENDOR => $this->getConfigValue(PayPalSettings::VENDOR_KEY),
+            Option\User::USER => $this->getConfigValue(PayPalSettings::USER_KEY),
             Option\Password::PASSWORD =>
-                $this->encoder->encryptData($this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_PASSWORD_KEY))
+                $this->encoder->decryptData($this->getConfigValue(PayPalSettings::PASSWORD_KEY))
             ,
         ];
     }
@@ -58,7 +62,7 @@ class PayPalExpressCheckoutConfig extends AbstractPaymentConfig implements
      */
     public function getPurchaseAction()
     {
-        return (string)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_EXPRESS_CHECKOUT_PAYMENT_ACTION_KEY);
+        return (string)$this->getConfigValue(PayPalSettings::EXPRESS_CHECKOUT_PAYMENT_ACTION_KEY);
     }
 
     /**
@@ -66,7 +70,7 @@ class PayPalExpressCheckoutConfig extends AbstractPaymentConfig implements
      */
     public function isTestMode()
     {
-        return (bool)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_EXPRESS_CHECKOUT_TEST_MODE_KEY);
+        return (bool)$this->getConfigValue(PayPalSettings::TEST_MODE_KEY);
     }
 
     /**
@@ -74,7 +78,8 @@ class PayPalExpressCheckoutConfig extends AbstractPaymentConfig implements
      */
     public function getLabel()
     {
-        return (string)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_EXPRESS_CHECKOUT_LABEL_KEY);
+        return (string)$this->localizationHelper
+            ->getLocalizedValue($this->getConfigValue(PayPalSettings::EXPRESS_CHECKOUT_LABELS_KEY));
     }
 
     /**
@@ -82,13 +87,14 @@ class PayPalExpressCheckoutConfig extends AbstractPaymentConfig implements
      */
     public function getShortLabel()
     {
-        return (string)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_EXPRESS_CHECKOUT_SHORT_LABEL_KEY);
+        return (string)$this->localizationHelper
+            ->getLocalizedValue($this->getConfigValue(PayPalSettings::EXPRESS_CHECKOUT_SHORT_LABELS_KEY));
     }
 
     /** {@inheritdoc} */
     public function getAdminLabel()
     {
-        return (string)$this->getLabel();
+        return sprintf('%s (Express Checkout)', $this->channel->getName());
     }
 
     /** {@inheritdoc} */

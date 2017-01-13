@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method\Config;
 
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config\AbstractPaymentConfigTestCase;
 use Oro\Bundle\PayPalBundle\DependencyInjection\OroPayPalExtension;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
@@ -13,11 +14,10 @@ use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
  */
 abstract class AbstractPayPalCreditCardConfigTest extends AbstractPaymentConfigTestCase
 {
-    /** @var PayPalCreditCardConfigInterface */
+    /**
+     * @var PayPalCreditCardConfigInterface
+     */
     protected $config;
-
-    /** @var SymmetricCrypterInterface|\PHPUnit_Framework_MockObject_MockObject */
-    protected $encoder;
 
     public function testIsTestMode()
     {

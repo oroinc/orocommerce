@@ -2,11 +2,12 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method\Config;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfig;
-use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
@@ -17,28 +18,34 @@ class PayPalCreditCardConfigTest extends AbstractPayPalCreditCardConfigTest
     /**
      * {@inheritdoc}
      */
-    protected function getPaymentConfig(ConfigManager $configManager)
+    protected function getPaymentConfig()
     {
-        $this->encoder = $this->createMock(SymmetricCrypterInterface::class);
+        $label = (new LocalizedFallbackValue())->setString('test label');
+        $labels = new ArrayCollection();
+        $labels->add($label);
+
+        $short_label = (new LocalizedFallbackValue())->setString('test short label');
+        $short_labels = new ArrayCollection();
+        $short_labels->add($short_label);
 
         $bag = [
-            $this->getConfigPrefix() . 'short_label' => 'test short label',
-            $this->getConfigPrefix() . 'proxy_port' => '8099',
-            $this->getConfigPrefix() . 'proxy_host' => 'proxy host',
-            $this->getConfigPrefix() . 'use_proxy' => true,
-            $this->getConfigPrefix() . 'test_mode' => true,
-            $this->getConfigPrefix() . 'label' => 'test label',
-            $this->getConfigPrefix() . 'require_cvv' => true,
-            $this->getConfigPrefix() . 'enable_ssl_verification' => true,
-            $this->getConfigPrefix() . 'debug_mode' => true,
-            $this->getConfigPrefix() . 'authorization_for_required_amount' => true,
-            $this->getConfigPrefix() . 'zero_amount_authorization' => true,
-            $this->getConfigPrefix() . 'allowed_cc_types' => ['Master Card', 'Visa'],
-            $this->getConfigPrefix() . 'payment_action' => 'string',
-            $this->getConfigPrefix() . 'vendor' => 'string',
-            $this->getConfigPrefix() . 'user' => 'string',
-            $this->getConfigPrefix() . 'password' => 'string',
-            $this->getConfigPrefix() . 'partner' => 'string',
+            PayPalSettings::CREDIT_CARD_LABELS_KEY => $labels,
+            PayPalSettings::CREDIT_CARD_SHORT_LABELS_KEY => $short_labels,
+            PayPalSettings::PROXY_PORT_KEY => '8099',
+            PayPalSettings::PROXY_HOST_KEY => 'proxy host',
+            PayPalSettings::USE_PROXY_KEY => true,
+            PayPalSettings::TEST_MODE_KEY => true,
+            PayPalSettings::REQUIRE_CVV_ENTRY_KEY => true,
+            PayPalSettings::ENABLE_SSL_VERIFICATION_KEY => true,
+            PayPalSettings::DEBUG_MODE_KEY => true,
+            PayPalSettings::AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY => true,
+            PayPalSettings::ZERO_AMOUNT_AUTHORIZATION_KEY => true,
+            PayPalSettings::ALLOWED_CREDIT_CARD_TYPES_KEY => ['Master Card', 'Visa'],
+            PayPalSettings::CREDIT_CARD_PAYMENT_ACTION_KEY => 'string',
+            PayPalSettings::VENDOR_KEY => 'string',
+            PayPalSettings::USER_KEY => 'string',
+            PayPalSettings::PASSWORD_KEY => 'string',
+            PayPalSettings::PARTNER_KEY => 'string',
         ];
         $settingsBag = $this->createMock(ParameterBag::class);
         $settingsBag->expects(static::any())->method('get')->willReturnCallback(
@@ -59,15 +66,8 @@ class PayPalCreditCardConfigTest extends AbstractPayPalCreditCardConfigTest
 
         return new PayPalCreditCardConfig(
             $channel,
-            $this->encoder
+            $this->encoder,
+            $this->localizationHelper
         );
-    }
-
-    /**
-     * @return string
-     */
-    protected function getConfigPrefix()
-    {
-        return 'payflow_gateway_';
     }
 }

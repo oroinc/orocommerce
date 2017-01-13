@@ -37,6 +37,7 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_security.encoder.mcrypt'
+            - '@oro_locale.helper.localization'
             - '@logger'
 
     oro_paypal.method.config.provider.payments_pro_credit_card:

@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfig;
 use Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalExpressCheckoutConfigProvider;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
@@ -27,6 +28,11 @@ class PayPalExpressCheckoutConfigProviderTest extends \PHPUnit_Framework_TestCas
     protected $encoder;
 
     /**
+     * @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $localizationHelper;
+
+    /**
      * @var string
      */
     protected $type;
@@ -41,11 +47,13 @@ class PayPalExpressCheckoutConfigProviderTest extends \PHPUnit_Framework_TestCas
         $this->type = 'paypal_payflow_gateway';
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->encoder = $this->createMock(SymmetricCrypterInterface::class);
+        $this->localizationHelper = $this->createMock(LocalizationHelper::class);
         $logger = $this->createMock(LoggerInterface::class);
 
         $this->payPalConfigProvider = new PayPalExpressCheckoutConfigProvider(
             $this->doctrine,
             $this->encoder,
+            $this->localizationHelper,
             $logger,
             $this->type
         );

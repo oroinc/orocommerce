@@ -3,10 +3,10 @@
 namespace Oro\Bundle\PayPalBundle\Method\Config;
 
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\PayPalBundle\DependencyInjection\Configuration;
-use Oro\Bundle\PayPalBundle\DependencyInjection\OroPayPalExtension;
-use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentConfig;
+use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
+use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 
 class PayPalCreditCardConfig extends AbstractPaymentConfig implements PayPalCreditCardConfigInterface
@@ -19,22 +19,24 @@ class PayPalCreditCardConfig extends AbstractPaymentConfig implements PayPalCred
     protected $encoder;
 
     /**
+     * @var LocalizationHelper
+     */
+    protected $localizationHelper;
+
+    /**
      * @param Channel $channel
      * @param SymmetricCrypterInterface $encoder
+     * @param LocalizationHelper $localizationHelper
      */
-    public function __construct(Channel $channel, SymmetricCrypterInterface $encoder)
-    {
+    public function __construct(
+        Channel $channel,
+        SymmetricCrypterInterface $encoder,
+        LocalizationHelper $localizationHelper
+    ) {
         parent::__construct($channel);
 
         $this->encoder = $encoder;
-    }
-
-    /**
-     * @return string
-     */
-    protected function getPaymentExtensionAlias()
-    {
-        return OroPayPalExtension::ALIAS;
+        $this->localizationHelper = $localizationHelper;
     }
 
     /**
@@ -43,12 +45,12 @@ class PayPalCreditCardConfig extends AbstractPaymentConfig implements PayPalCred
     public function getCredentials()
     {
         return [
-            Option\Vendor::VENDOR => $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_VENDOR_KEY),
-            Option\User::USER => $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_USER_KEY),
+            Option\Vendor::VENDOR => $this->getConfigValue(PayPalSettings::VENDOR_KEY),
+            Option\User::USER => $this->getConfigValue(PayPalSettings::USER_KEY),
             Option\Password::PASSWORD =>
-                $this->encoder->encryptData($this->getConfigValue(Configuration::PAYFLOW_GATEWAY_PASSWORD_KEY))
+                $this->encoder->decryptData($this->getConfigValue(PayPalSettings::PASSWORD_KEY))
             ,
-            Option\Partner::PARTNER => $this->getConfigValue(Configuration::PAYFLOW_GATEWAY_PARTNER_KEY),
+            Option\Partner::PARTNER => $this->getConfigValue(PayPalSettings::PARTNER_KEY),
         ];
     }
 
@@ -57,7 +59,7 @@ class PayPalCreditCardConfig extends AbstractPaymentConfig implements PayPalCred
      */
     public function isTestMode()
     {
-        return (bool)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_TEST_MODE_KEY);
+        return (bool)$this->getConfigValue(PayPalSettings::TEST_MODE_KEY);
     }
 
     /**
@@ -65,7 +67,7 @@ class PayPalCreditCardConfig extends AbstractPaymentConfig implements PayPalCred
      */
     public function getPurchaseAction()
     {
-        return (string)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_PAYMENT_ACTION_KEY);
+        return (string)$this->getConfigValue(PayPalSettings::CREDIT_CARD_PAYMENT_ACTION_KEY);
     }
 
     /**
@@ -73,7 +75,7 @@ class PayPalCreditCardConfig extends AbstractPaymentConfig implements PayPalCred
      */
     public function isZeroAmountAuthorizationEnabled()
     {
-        return (bool)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_ZERO_AMOUNT_AUTHORIZATION_KEY);
+        return (bool)$this->getConfigValue(PayPalSettings::ZERO_AMOUNT_AUTHORIZATION_KEY);
     }
 
     /**
@@ -81,7 +83,7 @@ class PayPalCreditCardConfig extends AbstractPaymentConfig implements PayPalCred
      */
     public function isAuthorizationForRequiredAmountEnabled()
     {
-        return (bool)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY);
+        return (bool)$this->getConfigValue(PayPalSettings::AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY);
     }
 
     /**
@@ -89,7 +91,8 @@ class PayPalCreditCardConfig extends AbstractPaymentConfig implements PayPalCred
      */
     public function getLabel()
     {
-        return (string)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_LABEL_KEY);
+        return (string)$this->localizationHelper
+            ->getLocalizedValue($this->getConfigValue(PayPalSettings::CREDIT_CARD_LABELS_KEY));
     }
 
     /**
@@ -97,13 +100,14 @@ class PayPalCreditCardConfig extends AbstractPaymentConfig implements PayPalCred
      */
     public function getShortLabel()
     {
-        return (string)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_SHORT_LABEL_KEY);
+        return (string)$this->localizationHelper
+            ->getLocalizedValue($this->getConfigValue(PayPalSettings::CREDIT_CARD_SHORT_LABELS_KEY));
     }
 
     /** {@inheritdoc} */
     public function getAdminLabel()
     {
-        return (string)$this->getLabel();
+        return sprintf('%s (Credit Card)', $this->channel->getName());
     }
 
     /** {@inheritdoc} */
@@ -117,7 +121,7 @@ class PayPalCreditCardConfig extends AbstractPaymentConfig implements PayPalCred
      */
     public function getAllowedCreditCards()
     {
-        return (array)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_ALLOWED_CC_TYPES_KEY);
+        return (array)$this->getConfigValue(PayPalSettings::ALLOWED_CREDIT_CARD_TYPES_KEY);
     }
 
     /**
@@ -125,7 +129,7 @@ class PayPalCreditCardConfig extends AbstractPaymentConfig implements PayPalCred
      */
     public function isDebugModeEnabled()
     {
-        return (bool)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_DEBUG_MODE_KEY);
+        return (bool)$this->getConfigValue(PayPalSettings::DEBUG_MODE_KEY);
     }
 
     /**
@@ -133,7 +137,7 @@ class PayPalCreditCardConfig extends AbstractPaymentConfig implements PayPalCred
      */
     public function isUseProxyEnabled()
     {
-        return (bool)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_USE_PROXY_KEY);
+        return (bool)$this->getConfigValue(PayPalSettings::USE_PROXY_KEY);
     }
 
     /**
@@ -141,7 +145,7 @@ class PayPalCreditCardConfig extends AbstractPaymentConfig implements PayPalCred
      */
     public function getProxyHost()
     {
-        return (string)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_PROXY_HOST_KEY);
+        return (string)$this->getConfigValue(PayPalSettings::PROXY_HOST_KEY);
     }
 
     /**
@@ -149,7 +153,7 @@ class PayPalCreditCardConfig extends AbstractPaymentConfig implements PayPalCred
      */
     public function getProxyPort()
     {
-        return (int)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_PROXY_PORT_KEY);
+        return (int)$this->getConfigValue(PayPalSettings::PROXY_PORT_KEY);
     }
 
     /**
@@ -157,7 +161,7 @@ class PayPalCreditCardConfig extends AbstractPaymentConfig implements PayPalCred
      */
     public function isSslVerificationEnabled()
     {
-        return (bool)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_ENABLE_SSL_VERIFICATION_KEY);
+        return (bool)$this->getConfigValue(PayPalSettings::ENABLE_SSL_VERIFICATION_KEY);
     }
 
     /**
@@ -165,6 +169,6 @@ class PayPalCreditCardConfig extends AbstractPaymentConfig implements PayPalCred
      */
     public function isRequireCvvEntryEnabled()
     {
-        return (bool)$this->getConfigValue(Configuration::PAYFLOW_GATEWAY_REQUIRE_CVV_KEY);
+        return (bool)$this->getConfigValue(PayPalSettings::REQUIRE_CVV_ENTRY_KEY);
     }
 }
