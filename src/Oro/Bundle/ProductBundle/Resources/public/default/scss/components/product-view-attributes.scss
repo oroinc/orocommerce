@@ -15,7 +15,7 @@
             border-top-left-radius: $product-view-attributes-tabs-border-radius;
             border-top-right-radius: $product-view-attributes-tabs-border-radius;
         }
-        
+
         .nav-item {
             text-align: center;
 
@@ -57,6 +57,14 @@
 
         .tab-content {
             padding: $product-view-attributes-tab-content-offset-inner;
+
+            label {
+                font-weight: bold;
+            }
+
+            p {
+                margin-bottom: $product-view-attributes-tab-content-attribute-offset-bottom;
+            }
         }
     }
 }

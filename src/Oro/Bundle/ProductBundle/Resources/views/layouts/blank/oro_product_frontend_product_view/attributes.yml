@@ -11,8 +11,6 @@ layout:
                     options:
                         entity: '=data["product"]'
                         attribute_family: '=context["attribute_family"]'
-                        options:
-                            tabsOptions: '=data["attribute_group_rest"].getTabsOptions(context["attribute_family"])'
             tree:
                 product_view_additional_container:
                     product_view_attributes_container:
