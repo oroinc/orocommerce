@@ -49,7 +49,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $this->createOroPriceProductTable($schema);
         $this->createOroPriceListCombinedTable($schema);
         $this->createOroPriceProductCombinedTable($schema);
-        $this->createOroPriceProductMinimalTable($schema);
         $this->createOroPlistCurrCombinedTable($schema);
         $this->createOroPriceListAccountFallbackTable($schema);
         $this->createOroPriceListAccGroupFallbackTable($schema);
@@ -75,7 +74,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $this->addOroPriceListToWebsiteForeignKeys($schema);
         $this->addOroPriceProductForeignKeys($schema);
         $this->addOroPriceProductCombinedForeignKeys($schema);
-        $this->addOroPriceProductMinimalForeignKeys($schema);
         $this->addOroPlistCurrCombinedForeignKeys($schema);
         $this->addOroPriceListAccountFallbackForeignKeys($schema);
         $this->addOroPriceListAccGroupFallbackForeignKeys($schema);
@@ -244,33 +242,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
                 'currency'
             ],
             'oro_combined_price_uidx'
-        );
-    }
-
-    /**
-     * Create oro_price_product_minimal table
-     *
-     * @param Schema $schema
-     */
-    protected function createOroPriceProductMinimalTable(Schema $schema)
-    {
-        $table = $schema->createTable('oro_price_product_minimal');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('unit_code', 'string', ['length' => 255]);
-        $table->addColumn('product_id', 'integer', []);
-        $table->addColumn('combined_price_list_id', 'integer', []);
-        $table->addColumn('product_sku', 'string', ['length' => 255]);
-        $table->addColumn('quantity', 'float', []);
-        $table->addColumn('value', 'money', ['precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']);
-        $table->addColumn('currency', 'string', ['length' => 3]);
-        $table->setPrimaryKey(['id']);
-        $table->addUniqueIndex(
-            [
-                'product_id',
-                'combined_price_list_id',
-                'currency',
-            ],
-            'oro_minimal_price_uidx'
         );
     }
 
@@ -637,34 +608,6 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
     protected function addOroPriceProductCombinedForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_price_product_combined');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_product_unit'),
-            ['unit_code'],
-            ['code'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_product'),
-            ['product_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_price_list_combined'),
-            ['combined_price_list_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
-        );
-    }
-
-    /**
-     * Add oro_price_product_minimal foreign keys.
-     *
-     * @param Schema $schema
-     */
-    protected function addOroPriceProductMinimalForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable('oro_price_product_minimal');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_product_unit'),
             ['unit_code'],
