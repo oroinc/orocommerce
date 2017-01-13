@@ -669,3 +669,12 @@ services:
         class: 'Oro\Bundle\ProductBundle\Provider\PrivilegeCategoryProvider'
         tags:
             - { name: oro_user.privilege_category }
+
+    oro_product.layout.data_provider.configurable_products:
+        class: 'Oro\Bundle\ProductBundle\Provider\ConfigurableProductProvider'
+        arguments:
+            - '@oro_product.provider.custom_field_provider'
+            - '@oro_product.provider.product_variant_availability_provider'
+            - '@property_accessor'
+        tags:
+            - { name: layout.data_provider, alias: oro_product_configurable_products }
