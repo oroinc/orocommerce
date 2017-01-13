@@ -111,7 +111,7 @@ operations:
         applications: [commerce]
         routes:
             - oro_rfp_frontend_request_view
-        acl_resource: [ACCOUNT_EDIT, entity:commerce@Oro\Bundle\RFPBundle\Entity\Request]
+        acl_resource: [EDIT, $.data]
         order: 10
         button_options:
             icon: fa-pencil

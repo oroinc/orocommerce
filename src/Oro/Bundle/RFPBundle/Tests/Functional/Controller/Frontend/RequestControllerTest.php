@@ -10,6 +10,7 @@ use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
 /**
  * @dbIsolation
@@ -23,6 +24,9 @@ class RequestControllerTest extends WebTestCase
     const REQUEST = 'request body';
     const PO_NUMBER = 'CA245566789KL';
 
+    /** @var WorkflowManager */
+    protected $manager;
+
     /**
      * {@inheritdoc}
      */
@@ -30,6 +34,9 @@ class RequestControllerTest extends WebTestCase
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
+
+        $this->manager = $this->getContainer()->get('oro_workflow.manager');
+
         $this->loadFixtures(
             [
                 LoadUserData::class,
@@ -54,11 +61,16 @@ class RequestControllerTest extends WebTestCase
     /**
      * @param array $inputData
      * @param array $expectedData
+     * @param bool $activateFrontoffice
      *
      * @dataProvider indexProvider
      */
-    public function testIndex(array $inputData, array $expectedData)
+    public function testIndex(array $inputData, array $expectedData, $activateFrontoffice = false)
     {
+        if (!$activateFrontoffice) {
+            $this->manager->deactivateWorkflow('rfq_frontoffice_default');
+        }
+
         $authParams = $inputData['login']
             ? static::generateBasicAuthHeader($inputData['login'], $inputData['password'])
             : [];
@@ -189,6 +201,36 @@ class RequestControllerTest extends WebTestCase
     public function indexProvider()
     {
         return [
+            'customer1 user1 (only customer user requests) and active frontoffice' => [
+                'input' => [
+                    'login' => LoadUserData::ACCOUNT1_USER1,
+                    'password' => LoadUserData::ACCOUNT1_USER1,
+                ],
+                'expected' => [
+                    'code' => 200,
+                    'data' => [
+                        LoadRequestData::REQUEST2,
+                        LoadRequestData::REQUEST7,
+                        LoadRequestData::REQUEST8,
+                    ],
+                    'columns' => [
+                        'id',
+                        'poNumber',
+                        'shipUntil',
+                        'createdAt',
+                        'update_link',
+                        'view_link',
+                        'action_configuration',
+                        'customerStatusName',
+                    ],
+                    'action_configuration' => [
+                        'view' => true,
+                        'update' => false,
+                        'delete' => false,
+                    ],
+                ],
+                'activateFrontoffice' => true
+            ],
             'customer1 user1 (only customer user requests)' => [
                 'input' => [
                     'login' => LoadUserData::ACCOUNT1_USER1,

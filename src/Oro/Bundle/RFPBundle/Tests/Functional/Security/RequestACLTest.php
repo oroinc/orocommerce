@@ -16,18 +16,27 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadCustomerUsersData;
+use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
 /**
  * @dbIsolation
  */
 class RequestACLTest extends WebTestCase
 {
+    /** @var WorkflowManager */
+    protected $manager;
+
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->initClient(
             [],
             $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
+
+        $this->manager = $this->getContainer()->get('oro_workflow.manager');
 
         $this->loadFixtures([
             'Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadCustomerUsersData'
@@ -42,6 +51,8 @@ class RequestACLTest extends WebTestCase
      */
     public function testRFPPermissions($level, $permissions, $expectedCode)
     {
+        $this->manager->deactivateWorkflow('rfq_frontoffice_default');
+
         $this->setRolePermissions($level);
         $this->login(LoadCustomerUsersData::USER_EMAIL, LoadCustomerUsersData::USER_PASSWORD);
 

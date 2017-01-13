@@ -206,6 +206,15 @@ services:
        tags:
            - { name: oro_multi_currency.currency_checker_provider }
 
+    oro_rfp.acl.voter.frontend_request:
+        class: 'Oro\Bundle\RFPBundle\Acl\Voter\FrontendRequestVoter'
+        public: false
+        arguments:
+            - '@oro_frontend.provider.current_application'
+            - '@oro_workflow.manager'
+        tags:
+            - { name: security.voter }
+
     oro_rfp.datagrid.listener.column:
         class: 'Oro\Bundle\RFPBundle\EventListener\RFPDatagridColumnListener'
         tags:
