@@ -23,7 +23,7 @@
                 <span class="fa-navicon fa--gray fa--no-offset"></span>
             </span>
         </button>
-        <div class="header-row__toggle" data-header-row-toggle>
+        <div class="header-row__toggle">
             <div class="header-row__dropdown" data-main-menu-container>
                 {{ block_widget(block) }}
             </div>
@@ -33,7 +33,8 @@
 
 {% block _main_menu_extra_container_widget %}
     {% set attr =  layout_attr_defaults(attr, {
-        'data-main-menu-extra-container': ''
+        'data-main-menu-extra-container': '',
+        'data-header-row-toggle': ''
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -48,6 +49,15 @@
         '~data-page-component-options': {
             widgetModule: 'oroui/js/widget/collapse-widget',
             open: false
+        },
+        'data-dom-relocation': '',
+        'data-dom-relocation-options': {
+            responsive: [
+                {
+                    screenType: 'tablet',
+                    moveTo: '[data-main-menu-extra-container]'
+                }
+            ]
         }
     }) %}
 
