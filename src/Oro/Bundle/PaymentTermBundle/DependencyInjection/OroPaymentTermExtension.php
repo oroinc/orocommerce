@@ -24,6 +24,7 @@ class OroPaymentTermExtension extends Extension
         $loader->load('form_types.yml');
         $loader->load('payment.yml');
         $loader->load('services.yml');
+        $loader->load('integration.yml');
     }
 
     /**

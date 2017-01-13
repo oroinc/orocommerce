@@ -3,6 +3,8 @@ oro:
         settings:
             label: Payment Term Settings
             labels.label: Label
+        channel_type:
+            label: Payment Term
         menu:
             payment_terms.label:       Payment terms
             payment_terms.description: List of payment terms
