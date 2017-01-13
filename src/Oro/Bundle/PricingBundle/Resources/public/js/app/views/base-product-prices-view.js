@@ -25,8 +25,7 @@ define(function(require) {
 
         modelAttr: {
             prices: {},
-            price: 0,
-            quantity: 0
+            price: 0
         },
 
         modelEvents: {
@@ -75,6 +74,9 @@ define(function(require) {
 
         initModel: function(options) {
             this.modelAttr = $.extend(true, {}, this.modelAttr, options.modelAttr || {});
+            if (!options.productModel) {
+                this.$el.trigger('options:set:productModel', options);
+            }
             if (options.productModel) {
                 this.model = options.productModel;
             }
@@ -167,6 +169,7 @@ define(function(require) {
 
             var foundKey = unit + ' ' + quantity + ' ' + (changeQuantity ? 1 : 0);
             var price = this.foundPrice[foundKey] || null;
+
             if (!price) {
                 if (changeQuantity) {
                     price = _.last(this.prices[unit]) || null;//sorted by quantity, get smallest
