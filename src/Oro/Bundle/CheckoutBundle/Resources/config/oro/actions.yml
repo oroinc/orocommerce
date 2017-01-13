@@ -17,6 +17,10 @@ operations:
             - applications
             - preconditions
             - datagrids
+        preactions:
+            - '@trans':
+                id: oro.checkout.open_order.label
+                attribute: $.entityLabel
 
     oro_checkout_frontend_quote_submit_to_order:
         label: oro.checkout.frontend.quote.submit_to_order
