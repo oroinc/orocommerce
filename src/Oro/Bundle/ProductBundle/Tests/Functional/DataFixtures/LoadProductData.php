@@ -24,14 +24,14 @@ class LoadProductData extends AbstractFixture implements DependentFixtureInterfa
 {
     use UserUtilityTrait;
 
-    const PRODUCT_1 = 'product.1';
-    const PRODUCT_2 = 'product.2';
-    const PRODUCT_3 = 'product.3';
-    const PRODUCT_4 = 'product.4';
-    const PRODUCT_5 = 'product.5';
-    const PRODUCT_6 = 'product.6';
-    const PRODUCT_7 = 'product.7';
-    const PRODUCT_8 = 'product.8';
+    const PRODUCT_1 = 'product-1';
+    const PRODUCT_2 = 'product-2';
+    const PRODUCT_3 = 'product-3';
+    const PRODUCT_4 = 'product-4';
+    const PRODUCT_5 = 'product-5';
+    const PRODUCT_6 = 'product-6';
+    const PRODUCT_7 = 'product-7';
+    const PRODUCT_8 = 'product-8';
 
     /**
      * {@inheritdoc}

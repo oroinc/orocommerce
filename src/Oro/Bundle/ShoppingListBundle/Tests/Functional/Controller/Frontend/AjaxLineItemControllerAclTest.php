@@ -92,7 +92,7 @@ class AjaxLineItemControllerAclTest extends WebTestCase
                     'actionName' => 'oro_shoppinglist_frontend_addlineitemlist' . $this->shoppingList->getId(),
                     'shoppingList' => $this->shoppingList->getId(),
                     'inset' => 1,
-                    'values' => $this->getReference('product.1')->getId(),
+                    'values' => $this->getReference('product-1')->getId(),
                 ]
             )
         );

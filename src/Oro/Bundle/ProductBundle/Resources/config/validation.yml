@@ -1,6 +1,8 @@
 Oro\Bundle\ProductBundle\Entity\Product:
     constraints:
-        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: sku
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
+            fields: [sku]
+            repositoryMethod: findByCaseInsensitive
         - Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantField: ~
         - Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinks: ~
     properties:
@@ -10,6 +12,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
             - Length:
                 min: 3
                 max: 255
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\AlphanumericDashUnderscore: ~
         unitPrecisions:
             - Count:
                 min: 1

@@ -79,9 +79,12 @@ class ProductRepository extends EntityRepository
             ->select('p.id, p.sku');
 
         if ($productSkus) {
+            // Convert to uppercase for insensitive search in all DB
+            $upperCaseSkus = array_map("strtoupper", $productSkus);
+
             $productsQueryBuilder
-                ->where($productsQueryBuilder->expr()->in('p.sku', ':product_skus'))
-                ->setParameter('product_skus', $productSkus);
+                ->where($productsQueryBuilder->expr()->in('UPPER(p.sku)', ':product_skus'))
+                ->setParameter('product_skus', $upperCaseSkus);
         }
 
         $productsData = $productsQueryBuilder
@@ -89,13 +92,13 @@ class ProductRepository extends EntityRepository
             ->getQuery()
             ->getArrayResult();
 
-        $productsIdsToSku = [];
+        $productsSkusToIds = [];
         foreach ($productsData as $key => $productData) {
-            $productsIdsToSku[$productData['sku']] = $productData['id'];
+            $productsSkusToIds[$productData['sku']] = $productData['id'];
             unset($productsData[$key]);
         }
 
-        return $productsIdsToSku;
+        return $productsSkusToIds;
     }
 
     /**
@@ -153,9 +156,12 @@ class ProductRepository extends EntityRepository
      */
     public function getProductWithNamesBySkuQueryBuilder(array $skus)
     {
+        // Convert to uppercase for insensitive search in all DB
+        $upperCaseSkus = array_map("strtoupper", $skus);
+
         $qb = $this->getProductWithNamesQueryBuilder();
-        $qb->where($qb->expr()->in('product.sku', ':product_skus'))
-            ->setParameter('product_skus', $skus);
+        $qb->where($qb->expr()->in('UPPER(product.sku)', ':product_skus'))
+            ->setParameter('product_skus', $upperCaseSkus);
 
         return $qb;
     }
@@ -300,5 +306,28 @@ class ProductRepository extends EntityRepository
         }
 
         return $qb;
+    }
+
+    /**
+     * @param array $criteria
+     * @return Product[]
+     * @throws \LogicException
+     */
+    public function findByCaseInsensitive(array $criteria)
+    {
+        $queryBuilder = $this->createQueryBuilder('product');
+
+        foreach ($criteria as $fieldName => $fieldValue) {
+            if (!is_string($fieldValue)) {
+                throw new \LogicException(sprintf('Value of %s must be string', $fieldName));
+            }
+
+            $parameterName = $fieldName . 'Value';
+            $queryBuilder
+                ->andWhere("UPPER(product.$fieldName) = :$parameterName")
+                ->setParameter($parameterName, mb_strtoupper($fieldValue));
+        }
+
+        return $queryBuilder->getQuery()->getResult();
     }
 }

@@ -133,14 +133,14 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
         $values = $this->runIndexationAndSearch($expectedCount);
 
         $this->assertCount($expectedCount, $values);
-        $this->assertSearchItems('product.1', $values[0]);
-        $this->assertSearchItems('product.2', $values[1]);
-        $this->assertSearchItems('product.3', $values[2]);
-        $this->assertSearchItems('product.4', $values[3]);
-        $this->assertSearchItems('product.5', $values[4]);
-        $this->assertSearchItems('product.6', $values[5]);
-        $this->assertSearchItems('product.7', $values[6]);
-        $this->assertSearchItems('product.8', $values[7]);
+        $this->assertSearchItems('product-1', $values[0]);
+        $this->assertSearchItems('product-2', $values[1]);
+        $this->assertSearchItems('product-3', $values[2]);
+        $this->assertSearchItems('product-4', $values[3]);
+        $this->assertSearchItems('product-5', $values[4]);
+        $this->assertSearchItems('product-6', $values[5]);
+        $this->assertSearchItems('product-7', $values[6]);
+        $this->assertSearchItems('product-8', $values[7]);
     }
 
     public function testRestrictIndexEntityEventListenerWhenAllFallBacksAreHidden()
@@ -158,11 +158,11 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
         $values = $this->runIndexationAndSearch($expectedCount);
 
         $this->assertCount($expectedCount, $values);
-        $this->assertSearchItems('product.1', $values[0]);
-        $this->assertSearchItems('product.2', $values[1]);
-        $this->assertSearchItems('product.3', $values[2]);
-        $this->assertSearchItems('product.4', $values[3]);
-        $this->assertSearchItems('product.5', $values[4]);
+        $this->assertSearchItems('product-1', $values[0]);
+        $this->assertSearchItems('product-2', $values[1]);
+        $this->assertSearchItems('product-3', $values[2]);
+        $this->assertSearchItems('product-4', $values[3]);
+        $this->assertSearchItems('product-5', $values[4]);
     }
 
     public function testRestrictIndexEntityEventListenerWhenProductFallBackIsVisibleAndCategoryFallBackIsHidden()
@@ -180,14 +180,14 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
         $values = $this->runIndexationAndSearch($expectedCount);
 
         $this->assertCount($expectedCount, $values);
-        $this->assertSearchItems('product.1', $values[0]);
-        $this->assertSearchItems('product.2', $values[1]);
-        $this->assertSearchItems('product.3', $values[2]);
-        $this->assertSearchItems('product.4', $values[3]);
-        $this->assertSearchItems('product.5', $values[4]);
-        $this->assertSearchItems('product.6', $values[5]);
-        $this->assertSearchItems('product.7', $values[6]);
-        $this->assertSearchItems('product.8', $values[7]);
+        $this->assertSearchItems('product-1', $values[0]);
+        $this->assertSearchItems('product-2', $values[1]);
+        $this->assertSearchItems('product-3', $values[2]);
+        $this->assertSearchItems('product-4', $values[3]);
+        $this->assertSearchItems('product-5', $values[4]);
+        $this->assertSearchItems('product-6', $values[5]);
+        $this->assertSearchItems('product-7', $values[6]);
+        $this->assertSearchItems('product-8', $values[7]);
     }
 
     public function testRestrictIndexEntityEventListenerWhenProductFallBackIsHiddenAndCategoryFallBackIsVisible()
@@ -205,13 +205,13 @@ class RestrictProductsIndexEventListenerTest extends WebTestCase
         $values = $this->runIndexationAndSearch($expectedCount);
 
         $this->assertCount($expectedCount, $values);
-        $this->assertSearchItems('product.1', $values[0]);
-        $this->assertSearchItems('product.2', $values[1]);
-        $this->assertSearchItems('product.3', $values[2]);
-        $this->assertSearchItems('product.4', $values[3]);
-        $this->assertSearchItems('product.5', $values[4]);
-        $this->assertSearchItems('product.7', $values[5]);
-        $this->assertSearchItems('product.8', $values[6]);
+        $this->assertSearchItems('product-1', $values[0]);
+        $this->assertSearchItems('product-2', $values[1]);
+        $this->assertSearchItems('product-3', $values[2]);
+        $this->assertSearchItems('product-4', $values[3]);
+        $this->assertSearchItems('product-5', $values[4]);
+        $this->assertSearchItems('product-7', $values[5]);
+        $this->assertSearchItems('product-8', $values[6]);
     }
 
     /**

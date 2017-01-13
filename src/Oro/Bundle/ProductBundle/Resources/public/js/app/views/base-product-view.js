@@ -50,20 +50,15 @@ define(function(require) {
 
             this.originalProductId = this.model.get('id');
 
-            this._deferredRender();
-            this.initLayout({
+            this.initializeSubviews({
                 productModel: this.model
-            }).done(_.bind(this.handleLayoutInit, this));
+            });
         },
 
         optionsSetProductModel: function(e, options) {
             options.productModel = this.model;
             e.preventDefault();
             e.stopPropagation();
-        },
-
-        handleLayoutInit: function() {
-            this._resolveDeferredRender();
         },
 
         initModel: function(options) {

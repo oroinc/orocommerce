@@ -163,7 +163,7 @@ oro:
             select:
                 product: Select product
                 free_form: Free-form entry
-
+            parent_product.label: 'Parent Product'
             column:
                 product: 'Product'
 

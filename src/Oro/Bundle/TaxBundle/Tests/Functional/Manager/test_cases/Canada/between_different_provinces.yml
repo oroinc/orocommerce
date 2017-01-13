@@ -28,7 +28,7 @@ databaseBefore:
             order: { reference: simple_order }
             quantity: { property_value: 5 }
             price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '15.99', currency: USD } }
-            product: { reference: product.1 }
+            product: { reference: product-1 }
     'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction':
         canada_ontario_jurisdiction:
             code: { property_value: canada_on_jurisdiction_code }

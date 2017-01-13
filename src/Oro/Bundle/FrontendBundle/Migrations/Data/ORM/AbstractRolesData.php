@@ -86,8 +86,9 @@ abstract class AbstractRolesData extends AbstractFixture implements DependentFix
         foreach ($bundles as $bundle) {
             $fileName = $this->getFileName($bundle);
             try {
-                $file = $kernel->locateResource($fileName);
-                $rolesData = array_merge_recursive($rolesData, Yaml::parse($file));
+                foreach ($kernel->locateResource($fileName, null, false) as $file) {
+                    $rolesData = array_merge_recursive($rolesData, Yaml::parse($file));
+                }
             } catch (\InvalidArgumentException $e) {
             }
         }

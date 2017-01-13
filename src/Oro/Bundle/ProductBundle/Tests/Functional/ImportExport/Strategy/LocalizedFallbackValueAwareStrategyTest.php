@@ -114,7 +114,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
         return [
             [
                 [
-                    'sku' => 'product.1',
+                    'sku' => 'product-1',
                     'primaryUnitPrecision' => [
                         'testEntity' => 'Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision',
                         'testProperties' => [
@@ -129,13 +129,13 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                         [
                             'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
                             'testProperties' => [
-                                'string' => 'product.1 Default Name'
+                                'string' => 'product-1 Default Name'
                             ],
                         ],
                         [
                             'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
                             'testProperties' => [
-                                'string' => 'product.1 en_US Name',
+                                'string' => 'product-1 en_US Name',
                                 'fallback' => 'parent_localization',
                                 'localization' => [
                                     'testEntity' => Localization::class,
@@ -148,7 +148,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                         [
                             'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
                             'testProperties' => [
-                                'string' => 'product.1 en_CA Name',
+                                'string' => 'product-1 en_CA Name',
                                 'localization' => [
                                     'testEntity' => Localization::class,
                                     'testProperties' => [
@@ -161,33 +161,33 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                 ],
                 [
                     'default' => [
-                        'reference' => 'product.1.names.default',
-                        'string' => 'product.1 Default Name',
+                        'reference' => 'product-1.names.default',
+                        'string' => 'product-1 Default Name',
                         'text' => null,
                         'fallback' => null,
                     ],
                     'English (United States)' => [
-                        'reference' => 'product.1.names.en_US',
-                        'string' => 'product.1 en_US Name',
+                        'reference' => 'product-1.names.en_US',
+                        'string' => 'product-1 en_US Name',
                         'text' => null,
                         'fallback' => 'system',
                     ],
                     'English (Canada)' => [
                         'reference' => null,
-                        'string' => 'product.1 en_CA Name',
+                        'string' => 'product-1 en_CA Name',
                         'text' => null,
                         'fallback' => null,
                     ],
                 ],
                 [
-                    'sku' => 'product.1',
+                    'sku' => 'product-1',
                     'names' => [
                         'English (United States)' => [
-                            'string' => 'product.1 en_US Name',
+                            'string' => 'product-1 en_US Name',
                             'fallback' => 'parent_localization',
                         ],
                         'English (Canada)' => [
-                            'string' => 'product.1 en_CA Name',
+                            'string' => 'product-1 en_CA Name',
                         ],
                     ],
                 ],
@@ -261,7 +261,7 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
             ],
             'existing product with, id not mapped for new fallback' => [
                 [
-                    'sku' => 'product.4',
+                    'sku' => 'product-4',
                     'attributeFamily' => 'default_family',
                     'primaryUnitPrecision' => [
                         'testEntity' => 'Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision',
@@ -276,12 +276,12 @@ class LocalizedFallbackValueAwareStrategyTest extends WebTestCase
                     'names' => [
                         [
                             'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
-                            'testProperties' => ['string' => 'product.4 Default Name']
+                            'testProperties' => ['string' => 'product-4 Default Name']
                         ],
                         [
                             'testEntity' => 'Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue',
                             'testProperties' => [
-                                'string' => 'product.4 en_US Name',
+                                'string' => 'product-4 en_US Name',
                                 'localization' => [
                                     'testEntity' => Localization::class,
                                     'testProperties' => [
