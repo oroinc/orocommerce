@@ -8,6 +8,7 @@ use Oro\Bundle\PayPalBundle\Entity\CreditCardType;
 use Oro\Bundle\PayPalBundle\Entity\ExpressCheckoutPaymentAction;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -19,6 +20,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
 use Symfony\Component\Validator\Exception\InvalidOptionsException;
 use Symfony\Component\Validator\Exception\MissingOptionsException;
+use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -33,12 +35,17 @@ class PayPalSettingsType extends AbstractType
      */
     protected $translator;
 
+    /** @var SymmetricCrypterInterface */
+    protected $encoder;
+
     /**
      * @param TranslatorInterface $translator
+     * @param SymmetricCrypterInterface $encoder
      */
-    public function __construct(TranslatorInterface $translator)
+    public function __construct(TranslatorInterface $translator, SymmetricCrypterInterface $encoder)
     {
         $this->translator = $translator;
+        $this->encoder = $encoder;
     }
 
     /**
@@ -160,6 +167,14 @@ class PayPalSettingsType extends AbstractType
                 'required' => false,
             ])
         ;
+        $builder->get('password')->addModelTransformer(new CallbackTransformer(
+            function ($password) {
+                return $password;
+            },
+            function ($password) {
+                return $this->encoder->encryptData($password);
+            }
+        ));
     }
 
     /**
