@@ -210,7 +210,6 @@ services:
         class: 'Oro\Bundle\RFPBundle\Acl\Voter\FrontendRequestVoter'
         public: false
         arguments:
-            - '@oro_entity.doctrine_helper'
             - '@oro_frontend.provider.current_application'
             - '@oro_workflow.manager'
         tags:

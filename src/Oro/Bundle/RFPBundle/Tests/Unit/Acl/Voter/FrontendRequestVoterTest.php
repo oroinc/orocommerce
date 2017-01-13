@@ -4,7 +4,6 @@ namespace Oro\Bundle\RFPBundle\Tests\Unit\Acl\Voter;
 
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FrontendBundle\Provider\ActionCurrentApplicationProvider as ApplicationProvider;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Acl\Voter\FrontendRequestVoter;
@@ -14,9 +13,6 @@ use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
 class FrontendRequestVoterTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
-    protected $doctrineHelper;
-
     /** @var ApplicationProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $applicationProvider;
 
@@ -34,48 +30,11 @@ class FrontendRequestVoterTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->applicationProvider = $this->getMockBuilder(ApplicationProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->workflowManager = $this->getMockBuilder(WorkflowManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->applicationProvider = $this->createMock(ApplicationProvider::class);
+        $this->workflowManager = $this->createMock(WorkflowManager::class);
         $this->token = $this->createMock(TokenInterface::class);
 
-        $this->doctrineHelper->expects($this->any())->method('getEntityClass')->willReturn(Request::class);
-        $this->doctrineHelper->expects($this->any())->method('getSingleEntityIdentifier')->willReturn(1);
-
-        $this->voter = new FrontendRequestVoter(
-            $this->doctrineHelper,
-            $this->applicationProvider,
-            $this->workflowManager
-        );
-    }
-
-    public function testSupportsClass()
-    {
-        $this->assertTrue($this->voter->supportsClass(Request::class));
-    }
-
-    public function testSupportsClassWithUnsupportedClass()
-    {
-        $this->assertFalse($this->voter->supportsClass('stdClass'));
-    }
-
-    public function testSupportsAttribute()
-    {
-        $this->assertTrue($this->voter->supportsAttribute('EDIT'));
-    }
-
-    public function testSupportsAttributeWithUnsupportedAttribute()
-    {
-        $this->assertFalse($this->voter->supportsAttribute('VIEW'));
+        $this->voter = new FrontendRequestVoter($this->applicationProvider, $this->workflowManager);
     }
 
     public function testVoteWithActiveFrontoffice()
@@ -87,41 +46,72 @@ class FrontendRequestVoterTest extends \PHPUnit_Framework_TestCase
         $workflow->expects($this->once())->method('getDefinition')->willReturn($definition);
 
         $this->applicationProvider->expects($this->once())
-            ->method('getCurrentApplication')->willReturn(ApplicationProvider::COMMERCE_APPLICATION);
+            ->method('getCurrentApplication')
+            ->willReturn(ApplicationProvider::COMMERCE_APPLICATION);
 
-        $this->workflowManager->expects($this->once())->method('getApplicableWorkflows')
-            ->with(Request::class)->willReturn([$workflow]);
+        $this->workflowManager->expects($this->once())
+            ->method('getApplicableWorkflows')
+            ->with(Request::class)
+            ->willReturn([$workflow]);
 
         $this->assertEquals(
             FrontendRequestVoter::ACCESS_DENIED,
-            $this->voter->vote($this->token, new Request(), [FrontendRequestVoter::ATTRIBUTE_EDIT])
+            $this->voter->vote($this->token, new Request(), ['EDIT'])
         );
     }
 
     public function testVoteWithInactiveFrontoffice()
     {
         $this->applicationProvider->expects($this->once())
-            ->method('getCurrentApplication')->willReturn(ApplicationProvider::COMMERCE_APPLICATION);
+            ->method('getCurrentApplication')
+            ->willReturn(ApplicationProvider::COMMERCE_APPLICATION);
 
-        $this->workflowManager->expects($this->once())->method('getApplicableWorkflows')
-            ->with(Request::class)->willReturn([]);
+        $this->workflowManager->expects($this->once())
+            ->method('getApplicableWorkflows')
+            ->with(Request::class)
+            ->willReturn([]);
 
         $this->assertEquals(
-            FrontendRequestVoter::ACCESS_ABSTAIN,
-            $this->voter->vote($this->token, new Request(), [FrontendRequestVoter::ATTRIBUTE_EDIT])
+            FrontendRequestVoter::ACCESS_GRANTED,
+            $this->voter->vote($this->token, new Request(), ['EDIT'])
         );
     }
 
     public function testVoteWithUnknownApplication()
     {
         $this->applicationProvider->expects($this->once())
-            ->method('getCurrentApplication')->willReturn('unknown_application');
+            ->method('getCurrentApplication')
+            ->willReturn('unknown_application');
 
         $this->workflowManager->expects($this->never())->method('getApplicableWorkflows');
 
         $this->assertEquals(
             FrontendRequestVoter::ACCESS_ABSTAIN,
-            $this->voter->vote($this->token, new Request(), [FrontendRequestVoter::ATTRIBUTE_EDIT])
+            $this->voter->vote($this->token, new Request(), ['EDIT'])
+        );
+    }
+
+    public function testVoteWithUnsupportedAttribute()
+    {
+        $this->applicationProvider->expects($this->never())->method('getCurrentApplication');
+
+        $this->workflowManager->expects($this->never())->method('getApplicableWorkflows');
+
+        $this->assertEquals(
+            FrontendRequestVoter::ACCESS_ABSTAIN,
+            $this->voter->vote($this->token, new Request(), ['VIEW'])
+        );
+    }
+
+    public function testVoteWithUnsupportedClass()
+    {
+        $this->applicationProvider->expects($this->never())->method('getCurrentApplication');
+
+        $this->workflowManager->expects($this->never())->method('getApplicableWorkflows');
+
+        $this->assertEquals(
+            FrontendRequestVoter::ACCESS_ABSTAIN,
+            $this->voter->vote($this->token, new \stdClass(), ['EDIT'])
         );
     }
 }

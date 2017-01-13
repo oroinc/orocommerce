@@ -61,12 +61,13 @@ class RequestControllerTest extends WebTestCase
     /**
      * @param array $inputData
      * @param array $expectedData
+     * @param bool $activateFrontoffice
      *
      * @dataProvider indexProvider
      */
-    public function testIndex(array $inputData, array $expectedData)
+    public function testIndex(array $inputData, array $expectedData, $activateFrontoffice = false)
     {
-        if (empty($expectedData['activateFrontoffice'])) {
+        if (!$activateFrontoffice) {
             $this->manager->deactivateWorkflow('rfq_frontoffice_default');
         }
 
@@ -212,7 +213,6 @@ class RequestControllerTest extends WebTestCase
                         LoadRequestData::REQUEST7,
                         LoadRequestData::REQUEST8,
                     ],
-                    'activateFrontoffice' => true,
                     'columns' => [
                         'id',
                         'poNumber',
@@ -229,6 +229,7 @@ class RequestControllerTest extends WebTestCase
                         'delete' => false,
                     ],
                 ],
+                'activateFrontoffice' => true
             ],
             'customer1 user1 (only customer user requests)' => [
                 'input' => [

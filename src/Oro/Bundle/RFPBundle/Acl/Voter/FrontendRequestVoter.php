@@ -2,21 +2,14 @@
 
 namespace Oro\Bundle\RFPBundle\Acl\Voter;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FrontendBundle\Provider\ActionCurrentApplicationProvider as ApplicationProvider;
 use Oro\Bundle\RFPBundle\Entity\Request;
-use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
+use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
+use Symfony\Component\Security\Core\Authorization\Voter\Voter;
 
-class FrontendRequestVoter extends AbstractEntityVoter
+class FrontendRequestVoter extends Voter
 {
-    const ATTRIBUTE_EDIT = 'EDIT';
-
-    /** @var array */
-    protected $supportedAttributes = [
-        self::ATTRIBUTE_EDIT,
-    ];
-
     /** @var ApplicationProvider */
     protected $applicationProvider;
 
@@ -24,17 +17,11 @@ class FrontendRequestVoter extends AbstractEntityVoter
     protected $workflowManager;
 
     /**
-     * @param DoctrineHelper $doctrineHelper
      * @param ApplicationProvider $applicationProvider
      * @param WorkflowManager $workflowManager
      */
-    public function __construct(
-        DoctrineHelper $doctrineHelper,
-        ApplicationProvider $applicationProvider,
-        WorkflowManager $workflowManager
-    ) {
-        parent::__construct($doctrineHelper);
-
+    public function __construct(ApplicationProvider $applicationProvider, WorkflowManager $workflowManager)
+    {
         $this->applicationProvider = $applicationProvider;
         $this->workflowManager = $workflowManager;
     }
@@ -42,22 +29,19 @@ class FrontendRequestVoter extends AbstractEntityVoter
     /**
      * {@inheritdoc}
      */
-    public function supportsClass($class)
+    protected function supports($attribute, $subject)
     {
-        return is_a($class, Request::class, true);
+        return $attribute === 'EDIT' &&
+            $subject instanceof Request &&
+            $this->applicationProvider->getCurrentApplication() === ApplicationProvider::COMMERCE_APPLICATION;
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function getPermissionForAttribute($class, $identifier, $attribute)
+    protected function voteOnAttribute($attribute, $subject, TokenInterface $token)
     {
-        if ($this->applicationProvider->getCurrentApplication() === ApplicationProvider::COMMERCE_APPLICATION
-                && $this->hasActiveWorkflows('b2b_rfq_frontoffice_flow')) {
-            return self::ACCESS_DENIED;
-        }
-
-        return self::ACCESS_ABSTAIN;
+        return !$this->hasActiveWorkflows('b2b_rfq_frontoffice_flow');
     }
 
     /**
