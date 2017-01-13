@@ -805,17 +805,14 @@ class OroAccountBundle implements
                 RelationType::MANY_TO_MANY
             );
         }
-        if ($schema->hasTable('oro_rel_c3990ba6a6adb604bad737')) {
-            //activitylist - customeruser
-            $table = $schema->getTable('oro_rel_c3990ba6a6adb604bad737');
-            $extension->renameColumn($schema, $queries, $table, 'accountuser_id', 'customeruser_id');
-            $extension->renameTable(
-                $schema,
-                $queries,
-                'oro_rel_c3990ba6a6adb604bad737',
-                'oro_rel_c3990ba63708e583a2c61e'
-            );
-        }
+
+        $this->renameRelationTable(
+            $schema,
+            $queries,
+            'oro_rel_c3990ba6a6adb604bad737',
+            'oro_rel_c3990ba63708e583a2c61e'
+        );
+
         if ($schema->hasTable('oro_rel_6f8f552aa6adb604264ef1')) {
             $schema->dropTable('oro_rel_6f8f552aa6adb604264ef1');
         }
