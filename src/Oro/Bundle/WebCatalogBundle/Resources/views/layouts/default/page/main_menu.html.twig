@@ -99,11 +99,11 @@
                 <img class="main-menu-column__image" src="{% image '@OroWebCatalogBundle/Resources/public/images/adv_1.jpg' %}{{ asset_url }}{% endimage %}">
             </a>
         </li>
-        <li class="main-menu-column__item">
-            <a class="main-menu-column__link" href="#">
-                <img class="main-menu-column__image" src="{% image '@OroWebCatalogBundle/Resources/public/images/adv_2.jpg' %}{{ asset_url }}{% endimage %}">
-            </a>
-        </li>
+        {#<li class="main-menu-column__item">#}
+            {#<a class="main-menu-column__link" href="#">#}
+                {#<img class="main-menu-column__image" src="{% image '@OroWebCatalogBundle/Resources/public/images/adv_2.jpg' %}{{ asset_url }}{% endimage %}">#}
+            {#</a>#}
+        {#</li>#}
     {% endset %}
     {{ block('_web_catalog_menu_second_level_column') }}
 {% endblock %}
