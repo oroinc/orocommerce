@@ -9,9 +9,6 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
 class CreatePaymentTermTransportLabelTable implements Migration
 {
-    /** @internal */
-    const TABLE_NAME = 'oro_payment_term_trans_label';
-
     /**
      * @param Schema   $schema
      * @param QueryBag $queries
@@ -29,14 +26,14 @@ class CreatePaymentTermTransportLabelTable implements Migration
      */
     private function createOroPaymentTermTransportLabelTable(Schema $schema)
     {
-        $table = $schema->createTable(self::TABLE_NAME);
+        $table = $schema->createTable('oro_payment_term_trans_label');
 
         $table->addColumn('transport_id', 'integer', []);
         $table->addColumn('localized_value_id', 'integer', []);
 
         $table->setPrimaryKey(['transport_id', 'localized_value_id']);
-        $table->addIndex(['transport_id'], 'oro_flat_rate_transport_label_transport_id', []);
-        $table->addUniqueIndex(['localized_value_id'], 'oro_flat_rate_transport_label_localized_value_id', []);
+        $table->addIndex(['transport_id'], 'oro_payment_term_trans_label_transport_id', []);
+        $table->addUniqueIndex(['localized_value_id'], 'oro_payment_term_trans_label_localized_value_id', []);
     }
 
     /**
@@ -46,7 +43,7 @@ class CreatePaymentTermTransportLabelTable implements Migration
      */
     private function addOroPaymentTermTransportLabelForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable(self::TABLE_NAME);
+        $table = $schema->getTable('oro_payment_term_trans_label');
 
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_fallback_localization_val'),

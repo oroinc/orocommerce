@@ -203,8 +203,8 @@ QUERY;
         $table->addColumn('localized_value_id', 'integer', []);
 
         $table->setPrimaryKey(['transport_id', 'localized_value_id']);
-        $table->addIndex(['transport_id'], 'oro_flat_rate_transport_label_transport_id', []);
-        $table->addUniqueIndex(['localized_value_id'], 'oro_flat_rate_transport_label_localized_value_id', []);
+        $table->addIndex(['transport_id'], 'oro_payment_term_trans_label_transport_id', []);
+        $table->addUniqueIndex(['localized_value_id'], 'oro_payment_term_trans_label_localized_value_id', []);
     }
 
     /**
