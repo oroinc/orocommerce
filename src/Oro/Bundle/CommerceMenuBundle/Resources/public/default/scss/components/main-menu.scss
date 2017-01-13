@@ -133,6 +133,7 @@
         }
     }
 }
+
 @include breakpoint('desktop') {
     .main-menu {
         max-height: $main-menu-item-height;
@@ -151,6 +152,10 @@
             min-height: $main-menu-item-height;
 
             display: inline-block;
+
+            .fa-angle-down {
+                display: none;
+            }
         }
     }
 }
