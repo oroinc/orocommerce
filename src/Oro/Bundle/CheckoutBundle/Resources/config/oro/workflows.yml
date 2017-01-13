@@ -376,6 +376,7 @@ workflows:
 
             __start___definition:
                 actions:
+                    - '@assign_value': [$shipping_method, null]
                     - '@assign_value': [$payment_save_for_later, true]
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
