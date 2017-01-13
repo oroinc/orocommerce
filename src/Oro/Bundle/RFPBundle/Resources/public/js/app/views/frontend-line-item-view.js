@@ -23,7 +23,8 @@ define(function(require) {
             fieldQuantity: '[data-name="field__quantity"]',
             fieldUnit: '[data-name="field__product-unit"]',
             fieldPrice: '[data-name="field__value"]',
-            fieldComment: '[data-name="field__comment"]'
+            fieldComment: '[data-name="field__comment"]',
+            remove: '[data-role="remove"]'
         },
 
         elementsEvents: {
@@ -39,7 +40,13 @@ define(function(require) {
             this.initializeElements(options);
             this.template = _.template(this.getElement('template').text());
 
-            this.listenTo(mediator, 'line-items:show:before', this.viewMode);
+            this.listenTo(mediator, 'line-items:show:before', this.onShowBefore);
+        },
+
+        onShowBefore: function() {
+            if (!_.isEmpty(this.getProduct())) {
+                this.viewMode();
+            }
         },
 
         render: function() {
@@ -78,13 +85,21 @@ define(function(require) {
 
         decline: function(e) {
             e.preventDefault();
-            this.revertChanges();
-            this.viewMode();
+            if (_.isEmpty(this.getProduct())) {
+                this.remove();
+            } else {
+                this.revertChanges();
+                this.viewMode();
+            }
         },
 
         update: function(e) {
             e.preventDefault();
             this.viewMode();
+        },
+
+        remove: function() {
+            this.getElement('remove').click();
         },
 
         getData: function() {
@@ -122,6 +137,10 @@ define(function(require) {
         validate: function() {
             var isValid = !_.isEmpty(this.getProduct());
             var validator = this.$el.closest('form').validate();
+            if (!isValid && validator) {
+                validator.showLabel(this.getElement('fieldProduct')[0], _.__('oro.rfp.requestproduct.product.blank'));
+                return isValid;
+            }
 
             if (validator) {
                 this.$el.find(':input').each(function() {
@@ -141,6 +160,9 @@ define(function(require) {
         },
 
         revertChanges: function() {
+            if (!this.formState) {
+                return;
+            }
             this.$el.find(':input[data-name]').each(_.bind(function(i, el) {
                 var value = this.formState[el.name];
                 if (value !== undefined && el.value !== value) {
