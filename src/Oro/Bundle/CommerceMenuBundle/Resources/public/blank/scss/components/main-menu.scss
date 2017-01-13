@@ -35,7 +35,8 @@
         }
     }
 }
-@include breakpoint('desktop') {
+
+@include only-desktop {
     .main-menu {
         &__item {
             &:hover {

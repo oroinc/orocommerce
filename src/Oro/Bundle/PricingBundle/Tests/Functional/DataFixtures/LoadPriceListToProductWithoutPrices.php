@@ -19,11 +19,11 @@ class LoadPriceListToProductWithoutPrices extends AbstractFixture implements Dep
     protected $relations = [
         [
             'priceList' => 'price_list_2',
-            'product' => 'product.3'
+            'product' => 'product-3'
         ],
         [
             'priceList' => 'price_list_2',
-            'product' => 'product.4'
+            'product' => 'product-4'
         ]
     ];
 

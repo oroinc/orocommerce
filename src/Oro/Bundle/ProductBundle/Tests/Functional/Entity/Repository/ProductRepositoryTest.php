@@ -74,14 +74,14 @@ class ProductRepositoryTest extends WebTestCase
                 'firstResult' => 0,
                 'maxResult' => 10,
                 'expected' => [
-                    'product.1',
-                    'product.2',
-                    'product.3',
-                    'product.4',
-                    'product.5',
-                    'product.6',
-                    'product.7',
-                    'product.8',
+                    'product-1',
+                    'product-2',
+                    'product-3',
+                    'product-4',
+                    'product-5',
+                    'product-6',
+                    'product-7',
+                    'product-8',
                 ],
             ],
             'product, 1, 1' => [
@@ -89,7 +89,7 @@ class ProductRepositoryTest extends WebTestCase
                 'firstResult' => 1,
                 'maxResult' => 1,
                 'expected' => [
-                    'product.2',
+                    'product-2',
                 ],
             ],
             'product, 0, 2' => [
@@ -97,8 +97,8 @@ class ProductRepositoryTest extends WebTestCase
                 'firstResult' => 0,
                 'maxResult' => 2,
                 'expected' => [
-                    'product.1',
-                    'product.2',
+                    'product-1',
+                    'product-2',
                 ],
             ],
         ];
@@ -139,9 +139,9 @@ class ProductRepositoryTest extends WebTestCase
             'exact search 1' => [ProductFixture::PRODUCT_1, [ProductFixture::PRODUCT_1]],
             'exact search 2' => [ProductFixture::PRODUCT_2, [ProductFixture::PRODUCT_2]],
             'not found' => [uniqid('_fake_', true), []],
-            'mask all products 1' => ['product.%', $allProducts],
+            'mask all products 1' => ['product-%', $allProducts],
             'mask all products 2' => ['pro%', $allProducts],
-            'product suffixed with 1' => ['%.1', [ProductFixture::PRODUCT_1]],
+            'product suffixed with 1' => ['%-1', [ProductFixture::PRODUCT_1]],
             'product suffixed with 2' => ['%2', [ProductFixture::PRODUCT_2]],
         ];
     }
@@ -149,7 +149,7 @@ class ProductRepositoryTest extends WebTestCase
     public function testGetProductsQueryBuilder()
     {
         /** @var Product $product */
-        $product = $this->getRepository()->findOneBy(['sku' => 'product.1']);
+        $product = $this->getRepository()->findOneBy(['sku' => 'product-1']);
         $builder = $this->getRepository()->getProductsQueryBuilder([$product->getId()]);
         $result = $builder->getQuery()->getResult();
         $this->assertCount(1, $result);
@@ -188,8 +188,8 @@ class ProductRepositoryTest extends WebTestCase
             $this->getRepository()->getProductsIdsBySku(
                 [
                     $product3->getSku(),
-                    $product1->getSku(),
-                    $product2->getSku(),
+                    strtoupper($product1->getSku()),
+                    strtolower($product2->getSku()),
                 ]
             )
         );
@@ -220,8 +220,8 @@ class ProductRepositoryTest extends WebTestCase
             [
                 'skus' => [
                     ProductFixture::PRODUCT_1,
-                    ProductFixture::PRODUCT_2,
-                    ProductFixture::PRODUCT_3,
+                    strtoupper(ProductFixture::PRODUCT_2),
+                    strtolower(ProductFixture::PRODUCT_3),
                     'not a sku',
                 ],
                 'expectedData' => [
@@ -242,7 +242,7 @@ class ProductRepositoryTest extends WebTestCase
     public function testGetFilterSkuQueryBuilder()
     {
         /** @var Product $product */
-        $product = $this->getRepository()->findOneBy(['sku' => 'product.1']);
+        $product = $this->getRepository()->findOneBy(['sku' => 'product-1']);
 
         $builder = $this->getRepository()->getFilterSkuQueryBuilder([$product->getSku()]);
         $result = $builder->getQuery()->getResult();
@@ -272,28 +272,28 @@ class ProductRepositoryTest extends WebTestCase
         return [
             [
                 'products' => [
-                    'product.1',
-                    'product.2',
-                    'product.3',
-                    'product.4',
-                    'product.5',
-                    'product.6',
-                    'product.7',
-                    'product.8',
+                    'product-1',
+                    'product-2',
+                    'product-3',
+                    'product-4',
+                    'product-5',
+                    'product-6',
+                    'product-7',
+                    'product-8',
                 ],
                 'expectedImages' => [
-                    'img.product.1',
-                    'img.product.2',
+                    'img.product-1',
+                    'img.product-2',
                 ],
             ],
             [
                 'products' => [
-                    'product.1',
-                    'product.2',
+                    'product-1',
+                    'product-2',
                 ],
                 'expectedImages' => [
-                    'img.product.1',
-                    'img.product.2',
+                    'img.product-1',
+                    'img.product-2',
                 ],
             ],
         ];
@@ -339,5 +339,56 @@ class ProductRepositoryTest extends WebTestCase
                 ]
             )
         );
+    }
+
+    /**
+     * @param array $criteria
+     * @param array $expectedSkus
+     * @dataProvider findByCaseInsensitiveDataProvider
+     */
+    public function testFindByCaseInsensitive(array $criteria, array $expectedSkus)
+    {
+        $actualProducts = $this->repository->findByCaseInsensitive($criteria);
+
+        $actualSkus = [];
+        foreach ($actualProducts as $product) {
+            $actualSkus[] = $product->getSku();
+        }
+
+        $this->assertEquals($expectedSkus, $actualSkus);
+    }
+
+    /**
+     * @return array
+     */
+    public function findByCaseInsensitiveDataProvider()
+    {
+        return [
+            'regular sku' => [
+                'criteria' => ['sku' => ProductFixture::PRODUCT_1],
+                'expectedSkus' => [ProductFixture::PRODUCT_1]
+            ],
+            'upper sku' => [
+                'criteria' => ['sku' => strtoupper(ProductFixture::PRODUCT_2)],
+                'expectedSkus' => [ProductFixture::PRODUCT_2]
+            ],
+            'lower sku' => [
+                'criteria' => ['sku' => strtolower(ProductFixture::PRODUCT_3)],
+                'expectedSkus' => [ProductFixture::PRODUCT_3]
+            ],
+            'undefined sku' => [
+                'criteria' => ['sku' => 'UndefinedSku'],
+                'expectedSkus' => []
+            ],
+        ];
+    }
+
+    /**
+     * @expectedException \LogicException
+     * @expectedExceptionMessage Value of testField must be string
+     */
+    public function testFindByCaseInsensitiveWithInvalidCriteria()
+    {
+        $this->repository->findByCaseInsensitive(['testField' => new \DateTime()]);
     }
 }

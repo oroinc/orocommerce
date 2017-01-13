@@ -66,6 +66,14 @@ class OrderLineItem extends ExtendOrderLineItem implements
     protected $product;
 
     /**
+     * @var Product
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ProductBundle\Entity\Product")
+     * @ORM\JoinColumn(name="parent_product_id", referencedColumnName="id", onDelete="CASCADE")
+     */
+    protected $parentProduct;
+
+    /**
      * @var string
      *
      * @ORM\Column(name="product_sku", type="string", length=255, nullable=true)
@@ -217,6 +225,25 @@ class OrderLineItem extends ExtendOrderLineItem implements
     public function getProduct()
     {
         return $this->product;
+    }
+
+    /**
+     * @return Product
+     */
+    public function getParentProduct()
+    {
+        return $this->parentProduct;
+    }
+
+    /**
+     * @param Product $parentProduct
+     *
+     * @return $this
+     */
+    public function setParentProduct(Product $parentProduct)
+    {
+        $this->parentProduct = $parentProduct;
+        return $this;
     }
 
     /**

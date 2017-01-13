@@ -97,11 +97,11 @@ class ProductVisibilityProviderTest extends WebTestCase
 
         $expectedCustomersVisibilities = [
             [
-                'productId' => $this->getReference('product.1')->getId(),
+                'productId' => $this->getReference('product-1')->getId(),
                 'customerId' => $this->getReference('customer.level_1')->getId(),
             ],
             [
-                'productId' => $this->getReference('product.4')->getId(),
+                'productId' => $this->getReference('product-4')->getId(),
                 'customerId' => $this->getReference('customer.orphan')->getId(),
             ],
         ];
@@ -110,8 +110,8 @@ class ProductVisibilityProviderTest extends WebTestCase
             $expectedCustomersVisibilities,
             $this->provider->getCustomerVisibilitiesForProducts(
                 [
-                    $this->getReference('product.1'),
-                    $this->getReference('product.4'),
+                    $this->getReference('product-1'),
+                    $this->getReference('product-4'),
                 ],
                 $this->getDefaultWebsiteId()
             )
@@ -134,27 +134,27 @@ class ProductVisibilityProviderTest extends WebTestCase
 
         $expectedCustomersVisibilities = [
             [
-                'productId' => $this->getReference('product.3')->getId(),
+                'productId' => $this->getReference('product-3')->getId(),
                 'customerId' => $this->getReference('customer.level_1')->getId(),
             ],
             [
-                'productId' => $this->getReference('product.3')->getId(),
+                'productId' => $this->getReference('product-3')->getId(),
                 'customerId' => $this->getReference('customer.level_1.3')->getId(),
             ],
             [
-                'productId' => $this->getReference('product.5')->getId(),
+                'productId' => $this->getReference('product-5')->getId(),
                 'customerId' => $this->getReference('customer.level_1.2')->getId(),
             ],
             [
-                'productId' => $this->getReference('product.5')->getId(),
+                'productId' => $this->getReference('product-5')->getId(),
                 'customerId' => $this->getReference('customer.level_1.2.1')->getId(),
             ],
             [
-                'productId' => $this->getReference('product.5')->getId(),
+                'productId' => $this->getReference('product-5')->getId(),
                 'customerId' => $this->getReference('customer.level_1.2.1.1')->getId(),
             ],
             [
-                'productId' => $this->getReference('product.5')->getId(),
+                'productId' => $this->getReference('product-5')->getId(),
                 'customerId' => $this->getReference('customer.level_1.3')->getId(),
             ],
         ];
@@ -163,8 +163,8 @@ class ProductVisibilityProviderTest extends WebTestCase
             $expectedCustomersVisibilities,
             $this->provider->getCustomerVisibilitiesForProducts(
                 [
-                    $this->getReference('product.3'),
-                    $this->getReference('product.5')
+                    $this->getReference('product-3'),
+                    $this->getReference('product-5')
                 ],
                 $this->getDefaultWebsiteId()
             )
@@ -187,23 +187,23 @@ class ProductVisibilityProviderTest extends WebTestCase
 
         $expectedCustomersVisibilities = [
             [
-                'productId' => $this->getReference('product.1')->getId(),
+                'productId' => $this->getReference('product-1')->getId(),
                 'customerId' => $this->getReference('customer.level_1.3')->getId(),
             ],
             [
-                'productId' => $this->getReference('product.2')->getId(),
+                'productId' => $this->getReference('product-2')->getId(),
                 'customerId' => $this->getReference('customer.level_1')->getId(),
             ],
             [
-                'productId' => $this->getReference('product.2')->getId(),
+                'productId' => $this->getReference('product-2')->getId(),
                 'customerId' => $this->getReference('customer.level_1.2')->getId(),
             ],
             [
-                'productId' => $this->getReference('product.2')->getId(),
+                'productId' => $this->getReference('product-2')->getId(),
                 'customerId' => $this->getReference('customer.level_1.2.1')->getId(),
             ],
             [
-                'productId' => $this->getReference('product.2')->getId(),
+                'productId' => $this->getReference('product-2')->getId(),
                 'customerId' => $this->getReference('customer.level_1.2.1.1')->getId(),
             ],
         ];
@@ -212,8 +212,8 @@ class ProductVisibilityProviderTest extends WebTestCase
             $expectedCustomersVisibilities,
             $this->provider->getCustomerVisibilitiesForProducts(
                 [
-                    $this->getReference('product.1'),
-                    $this->getReference('product.2')
+                    $this->getReference('product-1'),
+                    $this->getReference('product-2')
                 ],
                 $this->getDefaultWebsiteId()
             )
@@ -236,63 +236,63 @@ class ProductVisibilityProviderTest extends WebTestCase
 
         $expectedCustomersVisibilities = [
             [
-                'productId' => $this->getReference('product.1')->getId(),
+                'productId' => $this->getReference('product-1')->getId(),
                 'customerId' => 1
             ],
             [
-                'productId' => $this->getReference('product.1')->getId(),
+                'productId' => $this->getReference('product-1')->getId(),
                 'customerId' => $this->getReference('customer.orphan')->getId(),
             ],
             [
-                'productId' => $this->getReference('product.1')->getId(),
+                'productId' => $this->getReference('product-1')->getId(),
                 'customerId' => $this->getReference('customer.level_1.1')->getId(),
             ],
             [
-                'productId' => $this->getReference('product.1')->getId(),
+                'productId' => $this->getReference('product-1')->getId(),
                 'customerId' => $this->getReference('customer.level_1.1.1')->getId(),
             ],
             [
-                'productId' => $this->getReference('product.1')->getId(),
+                'productId' => $this->getReference('product-1')->getId(),
                 'customerId' => $this->getReference('customer.level_1.1.2')->getId(),
             ],
             [
-                'productId' => $this->getReference('product.1')->getId(),
+                'productId' => $this->getReference('product-1')->getId(),
                 'customerId' => $this->getReference('customer.level_1.2')->getId(),
             ],
             [
-                'productId' => $this->getReference('product.1')->getId(),
+                'productId' => $this->getReference('product-1')->getId(),
                 'customerId' => $this->getReference('customer.level_1.2.1')->getId(),
             ],
             [
-                'productId' => $this->getReference('product.1')->getId(),
+                'productId' => $this->getReference('product-1')->getId(),
                 'customerId' => $this->getReference('customer.level_1.2.1.1')->getId(),
             ],
             [
-                'productId' => $this->getReference('product.1')->getId(),
+                'productId' => $this->getReference('product-1')->getId(),
                 'customerId' => $this->getReference('customer.level_1.3')->getId(),
             ],
             [
-                'productId' => $this->getReference('product.1')->getId(),
+                'productId' => $this->getReference('product-1')->getId(),
                 'customerId' => $this->getReference('customer.level_1.3.1')->getId(),
             ],
             [
-                'productId' => $this->getReference('product.1')->getId(),
+                'productId' => $this->getReference('product-1')->getId(),
                 'customerId' => $this->getReference('customer.level_1.3.1.1')->getId(),
             ],
             [
-                'productId' => $this->getReference('product.1')->getId(),
+                'productId' => $this->getReference('product-1')->getId(),
                 'customerId' => $this->getReference('customer.level_1.4')->getId(),
             ],
             [
-                'productId' => $this->getReference('product.1')->getId(),
+                'productId' => $this->getReference('product-1')->getId(),
                 'customerId' => $this->getReference('customer.level_1.4.1')->getId(),
             ],
             [
-                'productId' => $this->getReference('product.1')->getId(),
+                'productId' => $this->getReference('product-1')->getId(),
                 'customerId' => $this->getReference('customer.level_1.4.1.1')->getId(),
             ],
             [
-                'productId' => $this->getReference('product.1')->getId(),
+                'productId' => $this->getReference('product-1')->getId(),
                 'customerId' => $this->getReference('customer.level_1_1')->getId(),
             ],
         ];
@@ -301,7 +301,7 @@ class ProductVisibilityProviderTest extends WebTestCase
             $expectedCustomersVisibilities,
             $this->provider->getCustomerVisibilitiesForProducts(
                 [
-                    $this->getReference('product.1'),
+                    $this->getReference('product-1'),
                 ],
                 $this->getDefaultWebsiteId()
             )
@@ -342,13 +342,13 @@ class ProductVisibilityProviderTest extends WebTestCase
 
         $expectedVisibilities = [
             [
-                'productId' => $this->getReference('product.3')->getId(),
+                'productId' => $this->getReference('product-3')->getId(),
                 'visibility_new' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
                 'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
                 'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_HIDDEN
             ],
             [
-                'productId' => $this->getReference('product.5')->getId(),
+                'productId' => $this->getReference('product-5')->getId(),
                 'visibility_new' => BaseVisibilityResolved::VISIBILITY_HIDDEN,
                 'visibility_anonymous' => BaseVisibilityResolved::VISIBILITY_VISIBLE,
                 'is_visible_by_default' => BaseVisibilityResolved::VISIBILITY_HIDDEN
@@ -358,8 +358,8 @@ class ProductVisibilityProviderTest extends WebTestCase
         $this->assertEquals(
             $expectedVisibilities,
             $this->provider->getNewUserAndAnonymousVisibilitiesForProducts([
-                $this->getReference('product.3'),
-                $this->getReference('product.5'),
+                $this->getReference('product-3'),
+                $this->getReference('product-5'),
             ], $this->getDefaultWebsiteId())
         );
     }

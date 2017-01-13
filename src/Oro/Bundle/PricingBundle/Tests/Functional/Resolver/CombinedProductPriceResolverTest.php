@@ -91,24 +91,24 @@ class CombinedProductPriceResolverTest extends WebTestCase
             [
                 '1t_2t_3t',
                 [
-                    'product.1' => [
+                    'product-1' => [
                         '1 USD/1 liter',
                         '2 EUR/1 liter',
                         '3 USD/1 bottle',
                         '10 USD/9 liter',
                         '15 USD/10 liter'
                     ],
-                    'product.2' => [
+                    'product-2' => [
                         '1 USD/1 bottle',
                         '10 USD/10 bottle'
                     ]
                 ],
                 [
-                    'product.1' => [
+                    'product-1' => [
                         '1 USD/1 liter',
                         '2 EUR/1 liter',
                     ],
-                    'product.2' => [
+                    'product-2' => [
                         '1 USD/1 bottle',
                     ]
                 ],
@@ -116,22 +116,22 @@ class CombinedProductPriceResolverTest extends WebTestCase
             [
                 '2t_3f_1t',
                 [
-                    'product.1' => [
+                    'product-1' => [
                         '2 EUR/1 liter',
                         '2 USD/1 liter',
                         '3 USD/1 bottle',
                         '10 USD/9 liter',
                     ],
-                    'product.2' => [
+                    'product-2' => [
                         '10 USD/10 bottle'
                     ]
                 ],
                 [
-                    'product.1' => [
+                    'product-1' => [
                         '2 EUR/1 liter',
                         '2 USD/1 liter',
                     ],
-                    'product.2' => [
+                    'product-2' => [
                         '10 USD/10 bottle',
                     ]
                 ],
@@ -139,22 +139,22 @@ class CombinedProductPriceResolverTest extends WebTestCase
             [
                 '2f_1t_3t',
                 [
-                    'product.1' => [
+                    'product-1' => [
                         '2 EUR/1 liter',
                         '2 USD/1 liter',
                         '3 USD/1 bottle',
                     ],
-                    'product.2' => [
+                    'product-2' => [
                         '1 USD/1 bottle',
                         '10 USD/10 bottle'
                     ]
                 ],
                 [
-                    'product.1' => [
+                    'product-1' => [
                         '2 EUR/1 liter',
                         '2 USD/1 liter',
                     ],
-                    'product.2' => [
+                    'product-2' => [
                         '1 USD/1 bottle',
                     ]
                 ],
@@ -177,7 +177,7 @@ class CombinedProductPriceResolverTest extends WebTestCase
         $this->assertNotEmpty($this->getCombinedPrices($combinedPriceList));
 
         /** @var Product $product */
-        $product = $this->getReference('product.2');
+        $product = $this->getReference('product-2');
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_2');
         /** @var ProductUnit $unit */
@@ -212,14 +212,14 @@ class CombinedProductPriceResolverTest extends WebTestCase
             [
                 '1t_2t_3t',
                 [
-                    'product.1' => [
+                    'product-1' => [
                         '1 USD/1 liter',
                         '2 EUR/1 liter',
                         '3 USD/1 bottle',
                         '10 USD/9 liter',
                         '15 USD/10 liter'
                     ],
-                    'product.2' => [
+                    'product-2' => [
                         '1 USD/1 bottle',
                         '42 EUR/1 liter',
                         '10 USD/10 bottle',
@@ -229,13 +229,13 @@ class CombinedProductPriceResolverTest extends WebTestCase
             [
                 '2t_3f_1t',
                 [
-                    'product.1' => [
+                    'product-1' => [
                         '2 EUR/1 liter',
                         '2 USD/1 liter',
                         '3 USD/1 bottle',
                         '10 USD/9 liter',
                     ],
-                    'product.2' => [
+                    'product-2' => [
                         '1 USD/1 bottle',
                         '42 EUR/1 liter',
                     ]
@@ -244,12 +244,12 @@ class CombinedProductPriceResolverTest extends WebTestCase
             [
                 '2f_1t_3t',
                 [
-                    'product.1' => [
+                    'product-1' => [
                         '2 EUR/1 liter',
                         '2 USD/1 liter',
                         '3 USD/1 bottle',
                     ],
-                    'product.2' => [
+                    'product-2' => [
                         '42 EUR/1 liter',
                     ]
                 ]
@@ -291,14 +291,14 @@ class CombinedProductPriceResolverTest extends WebTestCase
             [
                 '1t_2t_3t',
                 [
-                    'product.1' => [
+                    'product-1' => [
                         '1 USD/1 liter',
                         '2 EUR/1 liter',
                         '3 USD/1 bottle',
                         '10 USD/9 liter',
                         '15 USD/10 liter'
                     ],
-                    'product.2' => [
+                    'product-2' => [
                         '1 USD/1 bottle',
                         '10 USD/20 bottle'
                     ]
@@ -307,13 +307,13 @@ class CombinedProductPriceResolverTest extends WebTestCase
             [
                 '2t_3f_1t',
                 [
-                    'product.1' => [
+                    'product-1' => [
                         '2 EUR/1 liter',
                         '2 USD/1 liter',
                         '3 USD/1 bottle',
                         '10 USD/9 liter',
                     ],
-                    'product.2' => [
+                    'product-2' => [
                         '10 USD/20 bottle'
                     ]
                 ]
@@ -321,12 +321,12 @@ class CombinedProductPriceResolverTest extends WebTestCase
             [
                 '2f_1t_3t',
                 [
-                    'product.1' => [
+                    'product-1' => [
                         '2 EUR/1 liter',
                         '2 USD/1 liter',
                         '3 USD/1 bottle',
                     ],
-                    'product.2' => [
+                    'product-2' => [
                         '1 USD/1 bottle',
                         '10 USD/20 bottle'
                     ]
@@ -349,7 +349,7 @@ class CombinedProductPriceResolverTest extends WebTestCase
         $this->assertNotEmpty($this->getCombinedPrices($combinedPriceList));
 
         /** @var Product $product */
-        $product = $this->getReference('product.2');
+        $product = $this->getReference('product-2');
         /** @var ProductPrice $price */
         $price = $this->getReference('product_price.7');
         $this->getEntityManager()->remove($price);
@@ -374,14 +374,14 @@ class CombinedProductPriceResolverTest extends WebTestCase
             [
                 '1t_2t_3t',
                 [
-                    'product.1' => [
+                    'product-1' => [
                         '1 USD/1 liter',
                         '2 EUR/1 liter',
                         '3 USD/1 bottle',
                         '10 USD/9 liter',
                         '15 USD/10 liter'
                     ],
-                    'product.2' => [
+                    'product-2' => [
                         '1 USD/1 bottle'
                     ]
                 ]
@@ -389,13 +389,13 @@ class CombinedProductPriceResolverTest extends WebTestCase
             [
                 '2t_3f_1t',
                 [
-                    'product.1' => [
+                    'product-1' => [
                         '2 EUR/1 liter',
                         '2 USD/1 liter',
                         '3 USD/1 bottle',
                         '10 USD/9 liter',
                     ],
-                    'product.2' => [
+                    'product-2' => [
                         '1 USD/1 bottle'
                     ]
                 ]
@@ -403,12 +403,12 @@ class CombinedProductPriceResolverTest extends WebTestCase
             [
                 '2f_1t_3t',
                 [
-                    'product.1' => [
+                    'product-1' => [
                         '2 EUR/1 liter',
                         '2 USD/1 liter',
                         '3 USD/1 bottle',
                     ],
-                    'product.2' => [
+                    'product-2' => [
                         '1 USD/1 bottle',
                     ]
                 ]

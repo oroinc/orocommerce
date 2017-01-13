@@ -23,6 +23,55 @@ define(function(require) {
 
         elementEventNamespace: '.elementEvent',
 
+        deferredInitializeCheck: function(options, checkOptions) {
+            var $deferredInitialize = this.$el.parent().closest('[data-layout="deferred-initialize"]');
+            if (checkOptions === undefined || !$deferredInitialize.length) {
+                return this.deferredInitialize(options);
+            }
+
+            var wait = false;
+            _.each(checkOptions, function(option) {
+                if (options[option] === undefined) {
+                    wait = true;
+                }
+            });
+
+            if (!wait) {
+                return this.deferredInitialize(options);
+            }
+
+            $deferredInitialize.one('deferredInitialize', _.bind(function(e, deferredOptions) {
+                e.preventDefault();
+                e.stopPropagation();
+
+                this.deferredInitialize(_.extend({}, options, deferredOptions));
+                if (deferredOptions.callback) {
+                    deferredOptions.callback(this);
+                }
+            }, this));
+        },
+
+        deferredInitialize: function(options) {
+        },
+
+        initializeSubviews: function(options) {
+            this._deferredRender();
+            var layout = this.$el.data('layout');
+            if (layout === 'deferred-initialize') {
+                this.$el.trigger('deferredInitialize', options);
+                this.handleLayoutInit();
+            } else if (layout === 'separate') {
+                this.initLayout(options)
+                    .done(_.bind(this.handleLayoutInit, this));
+            } else {
+                this.handleLayoutInit();
+            }
+        },
+
+        handleLayoutInit: function() {
+            this._resolveDeferredRender();
+        },
+
         initializeElements: function(options) {
             this.$html = $('html');
             this.elementsInitialized = true;

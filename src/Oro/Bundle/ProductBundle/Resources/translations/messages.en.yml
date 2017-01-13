@@ -54,6 +54,10 @@ oro:
             simple: Simple Product
             configurable: Configurable Product
 
+        variant_fields:
+            yes.label: Yes
+            no.label: No
+
         visibility:
             visible.label: Yes
             not_visible.label: No

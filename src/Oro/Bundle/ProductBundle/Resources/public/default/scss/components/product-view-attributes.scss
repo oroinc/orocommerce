@@ -6,6 +6,10 @@
 
         border-radius: $product-view-attributes-tabs-border-radius;
 
+        &:empty {
+            display: none;
+        }
+
         .nav-tabs {
             display: flex;
 

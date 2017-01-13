@@ -348,3 +348,10 @@ services:
 
     oro_order.converter.shipping_prices:
         class: 'Oro\Bundle\OrderBundle\Converter\ShippingPricesConverter'
+
+    oro_order.event_listener.order_line_items_frontend_datagrid:
+        class: 'Oro\Bundle\OrderBundle\EventListener\LineItemsFrontendDatagridListener'
+        arguments:
+            - '@oro_product.layout.data_provider.configurable_products'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.order-line-items-grid-frontend, method: onResultAfter }

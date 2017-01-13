@@ -128,8 +128,8 @@ abstract class AbstractCustomerPartialUpdateDriverTest extends WebTestCase
         $values = $searchResult->getElements();
 
         $this->assertEquals(2, $searchResult->getRecordsCount());
-        $this->assertStringStartsWith('product.2', $values[0]->getSelectedData()['sku']);
-        $this->assertStringStartsWith('product.3', $values[1]->getSelectedData()['sku']);
+        $this->assertStringStartsWith('product-2', $values[0]->getSelectedData()['sku']);
+        $this->assertStringStartsWith('product-3', $values[1]->getSelectedData()['sku']);
     }
 
     public function testUpdateCustomerVisibility()
@@ -145,8 +145,8 @@ abstract class AbstractCustomerPartialUpdateDriverTest extends WebTestCase
         $values = $searchResult->getElements();
 
         $this->assertEquals(2, $searchResult->getRecordsCount());
-        $this->assertStringStartsWith('product.2', $values[0]->getSelectedData()['sku']);
-        $this->assertStringStartsWith('product.3', $values[1]->getSelectedData()['sku']);
+        $this->assertStringStartsWith('product-2', $values[0]->getSelectedData()['sku']);
+        $this->assertStringStartsWith('product-3', $values[1]->getSelectedData()['sku']);
 
         $visibilityManager = $this
             ->getContainer()
@@ -162,7 +162,7 @@ abstract class AbstractCustomerPartialUpdateDriverTest extends WebTestCase
 
         /** @var CustomerProductVisibility $productVisibility */
         $productVisibility = $visibilityRepository->findOneBy([
-            'product' => $this->getReference('product.2'),
+            'product' => $this->getReference('product-2'),
             'scope' => $scope
         ]);
 
@@ -178,7 +178,7 @@ abstract class AbstractCustomerPartialUpdateDriverTest extends WebTestCase
         $values = $searchResult->getElements();
 
         $this->assertEquals(1, $searchResult->getRecordsCount());
-        $this->assertStringStartsWith('product.3', $values[0]->getSelectedData()['sku']);
+        $this->assertStringStartsWith('product-3', $values[0]->getSelectedData()['sku']);
     }
 
     public function testDeleteCustomerVisibility()
@@ -194,8 +194,8 @@ abstract class AbstractCustomerPartialUpdateDriverTest extends WebTestCase
         $values = $searchResult->getElements();
 
         $this->assertEquals(2, $searchResult->getRecordsCount());
-        $this->assertStringStartsWith('product.2', $values[0]->getSelectedData()['sku']);
-        $this->assertStringStartsWith('product.3', $values[1]->getSelectedData()['sku']);
+        $this->assertStringStartsWith('product-2', $values[0]->getSelectedData()['sku']);
+        $this->assertStringStartsWith('product-3', $values[1]->getSelectedData()['sku']);
 
         $manager = $this->getContainer()->get('doctrine')->getManagerForClass(Customer::class);
         $manager->remove($customer);

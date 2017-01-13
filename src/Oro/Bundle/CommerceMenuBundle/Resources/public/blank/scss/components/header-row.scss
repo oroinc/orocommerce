@@ -9,16 +9,31 @@
     border-width: 1px 0;
 
     &__trigger {
+        width: 100%;
+
         display: block;
 
         margin: 0;
         padding: 7px 20px;
 
         background-color: get-color('additional', 'base');
+        border: 0;
     }
 
     &__toggle {
         background-color: get-color('additionl', 'ultra');
+    }
+
+    &.open {
+        .header-row__trigger {
+            background: get-color('additional', 'ultra');
+
+            z-index: auto;
+        }
+
+        .header-row__toggle {
+            display: block;
+        }
     }
 }
 

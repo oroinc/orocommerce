@@ -46,7 +46,7 @@ class CustomerGroupProductVisibilityRepositoryTest extends AbstractProductVisibi
         return [
             [
                 'category' => LoadCategoryData::FOURTH_LEVEL2,
-                'deletedCategoryProducts' => ['product.8'],
+                'deletedCategoryProducts' => ['product-8'],
             ],
         ];
     }

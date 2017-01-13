@@ -263,7 +263,7 @@
                                 -
                                     type: category_page
                                     params:
-                                        title: "Medical Apparel"
+                                        title: "Office Furniture"
                                     isDefault: true
                                     scopes:
                                         -
@@ -413,7 +413,7 @@
                                 -
                                     type: category_page
                                     params:
-                                        title: "Medical Apparel"
+                                        title: "Office Furniture"
                                     isDefault: true
                                     scopes:
                                         -
@@ -563,7 +563,7 @@
                         -
                             type: category_page
                             params:
-                                title: "Medical Apparel"
+                                title: "Office Furniture"
                             isDefault: true
                             scopes:
                                 -
@@ -713,7 +713,7 @@
                         -
                             type: category_page
                             params:
-                                title: "Medical Apparel"
+                                title: "Office Furniture"
                             isDefault: true
                             scopes:
                                 -
