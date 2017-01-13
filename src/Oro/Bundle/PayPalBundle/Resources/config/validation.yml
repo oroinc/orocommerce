@@ -1,0 +1,21 @@
+Oro\Bundle\PayPalBundle\Entity\PayPalSettings:
+    properties:
+        creditCardLabels:
+            - NotBlank: ~
+        creditCardShortLabels:
+            - NotBlank: ~
+        expressCheckoutLabels:
+            - NotBlank: ~
+        expressCheckoutShortLabels:
+            - NotBlank: ~
+        expressCheckoutName:
+            - NotBlank: ~
+        creditCardPaymentAction:
+            - NotBlank: ~
+            - Valid: ~
+        expressCheckoutPaymentAction:
+            - NotBlank: ~
+            - Valid: ~
+        allowedCreditCardTypes:
+            - NotBlank: ~
+            - Valid: ~

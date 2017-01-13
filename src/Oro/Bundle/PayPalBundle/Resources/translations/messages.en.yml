@@ -9,10 +9,15 @@ oro:
                 The American Express security code is a 4-digit
                 number printed on the front of your card.
         settings:
+            label.tooltip: 'This label is used on the checkout screens'
+            short_label.tooltip: 'This label is used in order history'
+            credit_card_payment_action.label: 'Credit Card Payment Action'
+            express_checkout_payment_action.label: 'Express Checkout Payment Action'
             credit_card_labels.label: 'Credit Card Label'
             credit_card_short_labels.label: 'Credit Card Short Label'
             express_checkout_labels.label: 'Express Checkout Label'
             express_checkout_short_labels.label: 'Express Checkout Short Label'
+            express_checkout_name.label: 'Express Checkout Name'
             partner.label: 'Partner'
             user.label: 'User'
             vendor.label: 'Vendor'
@@ -40,6 +45,14 @@ oro:
                     If enabled it provides additional convenience to your customers, so that they do not need to re-enter credit card details every time they return back to checkout.
                     Please note that zero amount authorizations are subject to the transaction fees.
             authorization_for_required_amount.label: 'Authorization For Required Amount'
+            form:
+                groups:
+                    display_options.title: 'Display Options'
+                    integration.title: 'Integration'
+                    connection.title: 'Connection Options'
+                    advanced_settings.title: 'Advanced Settings'
+                    express_checkout.title: 'Express Checkout'
+                    other.title: 'Other'
         credit_card_types:
           label.label: 'Credit Card Type'
         express_checkout_payment.action:
