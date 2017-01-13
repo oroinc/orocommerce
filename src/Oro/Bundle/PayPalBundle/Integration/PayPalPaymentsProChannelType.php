@@ -22,6 +22,6 @@ class PayPalPaymentsProChannelType implements ChannelInterface, IconAwareIntegra
      */
     public function getIcon()
     {
-        return 'bundles/oropaypal/img/payments_pro.png';
+        return 'bundles/oropaypal/img/paypal-logo.png';
     }
 }
