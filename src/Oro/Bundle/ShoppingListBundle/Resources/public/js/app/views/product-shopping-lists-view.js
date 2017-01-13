@@ -56,7 +56,10 @@ define(function(require) {
                     options.modelAttr[attribute] = value === 'undefined' ? undefined : value;
                 }) || {};
             this.modelAttr = $.extend(true, {}, this.modelAttr, modelAttr);
-            this.$el.trigger('options:set:productModel', options);
+
+            if (!options.productModel) {
+                this.$el.trigger('options:set:productModel', options);
+            }
             if (options.productModel) {
                 this.model = options.productModel;
             }

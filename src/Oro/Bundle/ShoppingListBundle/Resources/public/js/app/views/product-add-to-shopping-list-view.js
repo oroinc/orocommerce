@@ -80,10 +80,9 @@ define(function(require) {
 
         initModel: function(options) {
             var modelAttr = _.each(options.modelAttr, function(value, attribute) {
-                    options.modelAttr[attribute] = value === 'undefined' ? undefined : value;
-                }) || {};
+                options.modelAttr[attribute] = value === 'undefined' ? undefined : value;
+            }) || {};
             this.modelAttr = $.extend(true, {}, this.modelAttr, modelAttr);
-            this.$el.trigger('options:set:productModel', options);
             if (options.productModel) {
                 this.model = options.productModel;
             }
