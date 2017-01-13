@@ -4,18 +4,17 @@ namespace Oro\Bundle\PayPalBundle\Form\Type;
 
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\PayPalBundle\Entity\CreditCardPaymentAction;
+use Oro\Bundle\PayPalBundle\Entity\CreditCardType;
 use Oro\Bundle\PayPalBundle\Entity\ExpressCheckoutPaymentAction;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
-use Oro\Bundle\PayPalBundle\Form\Provider\CreditCardTypeProvider;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
 use Symfony\Component\Validator\Exception\InvalidOptionsException;
@@ -26,7 +25,21 @@ use Symfony\Component\Validator\Exception\MissingOptionsException;
  */
 class PayPalSettingsType extends AbstractType
 {
-    const BLOCK_PREFIX = 'oro_pay_pal_settings';
+    const BLOCK_PREFIX = 'oro_paypal_settings';
+
+
+    /**
+     * @var TranslatorInterface
+     */
+    protected $translator;
+
+    /**
+     * @param TranslatorInterface $translator
+     */
+    public function __construct(TranslatorInterface $translator)
+    {
+        $this->translator = $translator;
+    }
 
     /**
      * @param FormBuilderInterface $builder
@@ -65,23 +78,34 @@ class PayPalSettingsType extends AbstractType
             ])
             ->add('creditCardPaymentAction', 'entity', [
                 'class' => CreditCardPaymentAction::class,
-                'choice_label' => 'label',
+                'choice_label' => function (CreditCardPaymentAction $entity) {
+                    return $this->translator->trans(
+                        sprintf('oro.paypal.settings.payment_action.%s', $entity->getLabel())
+                    );
+                },
                 'label'    => 'oro.paypal.settings.credit_card_payment_action.label',
                 'required' => true,
             ])
             ->add('expressCheckoutPaymentAction', 'entity', [
                 'class' => ExpressCheckoutPaymentAction::class,
-                'choice_label' => 'label',
+                'choice_label' => function (ExpressCheckoutPaymentAction $entity) {
+                    return $this->translator->trans(
+                        sprintf('oro.paypal.settings.payment_action.%s', $entity->getLabel())
+                    );
+                },
                 'label'    => 'oro.paypal.settings.express_checkout_payment_action.label',
                 'required' => true,
             ])
-            ->add('allowedCreditCardTypes', CollectionType::class, [
-                'entry_type'   => ChoiceType::class,
+            ->add('allowedCreditCardTypes', 'entity', [
+                'class'   => CreditCardType::class,
+                'choice_label' => function (CreditCardType $entity) {
+                    return $this->translator->trans(
+                        sprintf('oro.paypal.settings.allowed_cc_types.%s', $entity->getLabel())
+                    );
+                },
                 'label'    => 'oro.paypal.settings.allowed_cc_types.label',
                 'required' => true,
-                'entry_options'  => [
-                    'choices'  => CreditCardTypeProvider::get(),
-                ],
+                'multiple'  => true,
             ])
             ->add('partner', TextType::class, [
                 'label'    => 'oro.paypal.settings.partner.label',

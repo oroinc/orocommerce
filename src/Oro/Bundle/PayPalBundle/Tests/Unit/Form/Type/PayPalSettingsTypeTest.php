@@ -4,6 +4,7 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
 use Oro\Bundle\PayPalBundle\Entity\CreditCardPaymentAction;
+use Oro\Bundle\PayPalBundle\Entity\CreditCardType;
 use Oro\Bundle\PayPalBundle\Entity\ExpressCheckoutPaymentAction;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Form\Type\PayPalSettingsType;
@@ -12,6 +13,7 @@ use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validation;
 
 /**
@@ -26,7 +28,9 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->formType = new PayPalSettingsType();
+        /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject $translator */
+        $translator = $this->createMock(TranslatorInterface::class);
+        $this->formType = new PayPalSettingsType($translator);
     }
 
     /**
@@ -37,6 +41,8 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
         $entityType = new EntityType([
             'creditCardPaymentAction' => new CreditCardPaymentAction(),
             'expressCheckoutPaymentAction' => new ExpressCheckoutPaymentAction(),
+            'mastercard' => new CreditCardType(),
+            'visa' => new CreditCardType(),
         ]);
         $localizedType = new LocalizedFallbackValueCollectionTypeStub();
 
@@ -54,7 +60,7 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
 
     public function testGetBlockPrefixReturnsCorrectString()
     {
-        static::assertSame('oro_pay_pal_settings', $this->formType->getBlockPrefix());
+        static::assertSame(PayPalSettingsType::BLOCK_PREFIX, $this->formType->getBlockPrefix());
     }
 
     public function testSubmit()
@@ -65,6 +71,7 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
             'expressCheckoutLabels' => [['string' => 'expressCheckout']],
             'expressCheckoutShortLabels' => [['string' => 'expressCheckoutShort']],
             'expressCheckoutName' => 'checkoutName',
+            'allowedCreditCardTypes' => ['mastercard', 'visa'],
             'creditCardPaymentAction' => 'creditCardPaymentAction',
             'expressCheckoutPaymentAction' => 'expressCheckoutPaymentAction',
             'partner' => 'partner',
