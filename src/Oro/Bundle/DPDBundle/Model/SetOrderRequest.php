@@ -5,6 +5,9 @@ namespace Oro\Bundle\DPDBundle\Model;
 
 class SetOrderRequest extends DPDRequest
 {
+    const START_ORDER_ACTION = 'startOrder';
+    const CHECK_ORDER_ACTION = 'checkOrderData';
+
     /** @var  string  */
     protected $orderAction;
 

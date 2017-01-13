@@ -11,19 +11,14 @@ class SetOrderResponse extends DPDResponse
     const DPD_LABEL_DATA_PARCEL_NUMBER_KEY = 'ParcelNo';
 
     /**
-     * @var string|null
+     * @var string
      */
     protected $labelPDF;
 
     /**
-     * @var string|null
+     * @var array
      */
-    protected $parcelNumber;
-
-    /**
-     * @var string|null
-     */
-    protected $yourInternalId;
+    protected $parcelNumbers = array();
 
     /**
      * @param array $values
@@ -46,40 +41,36 @@ class SetOrderResponse extends DPDResponse
             if (!array_key_exists(self::DPD_LABEL_DATA_LIST_KEY, $labelResponse)) {
                 throw new \InvalidArgumentException('No LabelDataList parameter found in response data');
             }
-            //TODO: we are using the first item on the LabelDataList.
-            // Could this list have more than one item? Not clear on the API doc
-            $labelData = reset($labelResponse[self::DPD_LABEL_DATA_LIST_KEY]);
-            if (!array_key_exists(self::DPD_LABEL_DATA_PARCEL_NUMBER_KEY, $labelData)) {
-                throw new \InvalidArgumentException('No ParcelNo parameter found in LabelData');
-            }
-            $this->parcelNumber = $labelData[self::DPD_LABEL_DATA_PARCEL_NUMBER_KEY];
+            $labelDataList = $labelResponse[self::DPD_LABEL_DATA_LIST_KEY];
 
-            if (!array_key_exists(self::DPD_LABEL_DATA_YOUR_INTERNAL_ID_KEY, $labelData)) {
-                throw new \InvalidArgumentException('No YourInternalID parameter found in LabelData');
+            foreach ($labelDataList as $labelData) {
+                if (!array_key_exists(self::DPD_LABEL_DATA_PARCEL_NUMBER_KEY, $labelData)) {
+                    throw new \InvalidArgumentException('No ParcelNo parameter found in LabelData');
+                }
+                $parcelNumber = $labelData[self::DPD_LABEL_DATA_PARCEL_NUMBER_KEY];
+                if (!array_key_exists(self::DPD_LABEL_DATA_YOUR_INTERNAL_ID_KEY, $labelData)) {
+                    throw new \InvalidArgumentException('No YourInternalID parameter found in LabelData');
+                }
+                $yourInternalId = $labelData[self::DPD_LABEL_DATA_YOUR_INTERNAL_ID_KEY];
+                $this->parcelNumbers[$yourInternalId] = $parcelNumber;
             }
-            $this->yourInternalId = $labelData[self::DPD_LABEL_DATA_YOUR_INTERNAL_ID_KEY];
+
+
         }
     }
 
     /**
-     * @return string|null
+     * @param bool $decode
+     * @return string
      */
-    public function getLabelPDF() {
-        return $this->labelPDF;
+    public function getLabelPDF($decode = true) {
+        return $decode?base64_decode($this->labelPDF):$this->labelPDF;
     }
 
     /**
-     * @return string|null
+     * @return array
      */
-    public function getParcelNumber() {
-        return $this->parcelNumber;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getYourInternalId()
-    {
-        return $this->yourInternalId;
+    public function getParcelNumbers() {
+        return $this->parcelNumbers;
     }
 }

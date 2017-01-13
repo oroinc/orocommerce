@@ -1,45 +1,124 @@
 operations:
-    oro_dpd_setorder:
-        label: oro.dpd.actions.set_order.widgets.set_order.label
+    oro_dpd_ship_order:
+        label: oro.dpd.actions.ship_order.widgets.ship_order.label
         routes:
             - oro_order_view
         acl_resource: [UPDATE, entity:Oro\Bundle\OrderBundle\Entity\Order]
         button_options:
             icon: fa-list-alt
         frontend_options:
-            title: oro.dpd.actions.set_order.frontend_options.title
+            title: oro.dpd.actions.ship_order.frontend_options.title
             confirmation:
-                title: oro.dpd.actions.set_order.frontend_options.confirmation.title
-                okText: oro.dpd.actions.set_order.frontend_options.confirmation.ok_text
-                message: oro.dpd.actions.set_order.frontend_options.confirmation.message
+                title: oro.dpd.actions.ship_order.frontend_options.confirmation.title
+                okText: oro.dpd.actions.ship_order.frontend_options.confirmation.ok_text
+                message: oro.dpd.actions.ship_order.frontend_options.confirmation.message
                 message_parameters:
                     entityLabel: $.entityLabel
+        preactions:
+            - '@find_entity':
+                class: Oro\Bundle\DPDBundle\Entity\DPDTransaction
+                attribute: $.dpdTransaction
+                where:
+                    order: $.data
         preconditions:
             '@and':
                 - '@not_blank': $.data
                 - '@shipped_with_dpd': $.data.shippingMethod
+                - '@blank': $.dpdTransaction
         actions:
             - '@call_service_method':
                 attribute: $.result
                 service: oro_dpd.handler.order_shipping_dpd
-                method: process
+                method: shipOrder
                 method_parameters: [$.data]
-            - '@flash_message':
+            - '@tree':
                 conditions:
                     '@equal': ['$.result[successful]', true]
-                message: oro.dpd.actions.set_order.flash.success
-                type: 'success'
-            - '@traverse':
+                actions:
+                    - '@call_service_method':
+                        service: oro_dpd.handler.order_shipping_dpd
+                        method: linkLabelToOrder
+                        method_parameters: [$.data, '$.result[transaction]']
+                    - '@call_service_method':
+                        service: oro_dpd.handler.order_shipping_dpd
+                        method: addTrackingNumbersToOrder
+                        method_parameters: [$.data, '$.result[transaction]']
+                    - '@flash_message':
+                        message: oro.dpd.actions.ship_order.flash.success
+                        type: 'success'
+                    - '@refresh_grid': order-shipping-trackings-grid
+                    - '@refresh_grid': attachment-grid
+            - '@foreach':
+                array: $.result[errors]
+                value: $.errorMsgTemp
+                actions:
+                    - '@flash_message':
+                        message: $.errorMsgTemp
+                        type: 'error'
+
+    oro_dpd_reship_order:
+        label: oro.dpd.actions.reship_order.widgets.reship_order.label
+        routes:
+            - oro_order_view
+        acl_resource: [UPDATE, entity:Oro\Bundle\OrderBundle\Entity\Order]
+        button_options:
+            icon: fa-list-alt
+        frontend_options:
+            title: oro.dpd.actions.reship_order.frontend_options.title
+            confirmation:
+                title: oro.dpd.actions.reship_order.frontend_options.confirmation.title
+                okText: oro.dpd.actions.reship_order.frontend_options.confirmation.ok_text
+                message: oro.dpd.actions.reship_order.frontend_options.confirmation.message
+                message_parameters:
+                    entityLabel: $.entityLabel
+        preactions:
+            - '@find_entity':
+                class: Oro\Bundle\DPDBundle\Entity\DPDTransaction
+                attribute: $.lastDpdTransaction
+                where:
+                    order: $.data
+                order_by:
+                    createdAt: DESC
+        preconditions:
+            '@and':
+                - '@not_blank': $.data
+                - '@shipped_with_dpd': $.data.shippingMethod
+                - '@not_blank': $.lastDpdTransaction
+        actions:
+            - '@call_service_method':
+                attribute: $.result
+                service: oro_dpd.handler.order_shipping_dpd
+                method: shipOrder
+                method_parameters: [$.data]
+            - '@tree':
                 conditions:
-                    '@and':
-                        - '@equal': ['$.result[successful]', false]
-                        - '@not_empty': $.result[errors]
-                parameters:
-                    array: $.result[errors]
-                    value: $.errorMsgTemp
-                    actions:
-                        - '@flash_message':
-                            message: $.errorMsgTemp
-                            type: 'error'
-            - '@refresh_grid': order-shipping-trackings-grid
-            - '@refresh_grid': attachment-grid
+                    '@equal': ['$.result[successful]', true]
+                actions:
+                    - '@call_service_method':
+                        service: oro_dpd.handler.order_shipping_dpd
+                        method: linkLabelToOrder
+                        method_parameters: [$.data, '$.result[transaction]']
+                    - '@call_service_method':
+                        service: oro_dpd.handler.order_shipping_dpd
+                        method: unlinkLabelFromOrder
+                        method_parameters: [$.data, $.lastDpdTransaction]
+                    - '@call_service_method':
+                        service: oro_dpd.handler.order_shipping_dpd
+                        method: removeTrackingNumbersFromOrder
+                        method_parameters: [$.data, $.lastDpdTransaction]
+                    - '@call_service_method':
+                        service: oro_dpd.handler.order_shipping_dpd
+                        method: addTrackingNumbersToOrder
+                        method_parameters: [$.data, '$.result[transaction]']
+                    - '@flash_message':
+                        message: oro.dpd.actions.reship_order.flash.success
+                        type: 'success'
+                    - '@refresh_grid': order-shipping-trackings-grid
+                    - '@refresh_grid': attachment-grid
+            - '@foreach':
+                array: $.result[errors]
+                value: $.errorMsgTemp
+                actions:
+                    - '@flash_message':
+                        message: $.errorMsgTemp
+                        type: 'error'

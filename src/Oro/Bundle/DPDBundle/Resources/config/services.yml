@@ -20,6 +20,7 @@ services:
         arguments:
             - '@doctrine'
             - '@oro_shipping.provider.measure_units.conversion'
+            - '@oro_locale.helper.localization'
 
     oro_dpd.factory.dpd_request_factory:
         class: 'Oro\Bundle\DPDBundle\Factory\DPDRequestFactory'
@@ -37,13 +38,16 @@ services:
             - '@oro_dpd.factory.dpd_request_factory'
             - '@oro_locale.helper.localization'
             - '@oro_dpd.provider.package'
-            - '@oro_attachment.file_manager'
+            - '@oro_dpd.zip_code_rules_cache'
+            - '@oro_order.shipping_line_item.converter_basic'
         tags:
             - { name: oro_shipping_method_provider }
 
     oro_dpd.handler.order_shipping_dpd:
         class: 'Oro\Bundle\DPDBundle\Handler\OrderShippingDPDHandler'
         arguments:
+            - '@doctrine'
+            - '@oro_attachment.file_manager'
             - '@oro_dpd.shipping_method_provider.dpd'
 
     oro_dpd.entity_listener.channel:
@@ -71,14 +75,14 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_dpd_remove_used_shipping_service_validator }
 
-#    oro_dpd.zip_code_rules_cache:
-#        class: 'Oro\Bundle\DPDBundle\Cache\ZipCodeRulesCache'
-#        public: false
-#        arguments:
-#            - "@oro_dpd.cache.zip_code_rules"
-#
-#    oro_dpd.cache.zip_code_rules:
-#        public: false
-#        parent: oro.cache.abstract
-#        calls:
-#            - [setNamespace, ['oro_dpd_zip_code_rules']]
+    oro_dpd.zip_code_rules_cache:
+        class: 'Oro\Bundle\DPDBundle\Cache\ZipCodeRulesCache'
+        public: false
+        arguments:
+            - "@oro_dpd.cache.zip_code_rules"
+
+    oro_dpd.cache.zip_code_rules:
+        public: false
+        parent: oro.cache.abstract
+        calls:
+            - [setNamespace, ['oro_dpd_zip_code_rules']]

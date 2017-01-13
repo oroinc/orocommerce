@@ -7,6 +7,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\DPDBundle\Model\Package;
 use Oro\Bundle\DPDBundle\Provider\PackageProvider;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
@@ -35,6 +37,11 @@ class PackageProviderTest extends \PHPUnit_Framework_TestCase
     protected $measureUnitConversion;
 
     /**
+     * @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $localizationHelper;
+
+    /**
      * @var  PackageProvider
      */
     protected $packageProvider;
@@ -54,7 +61,11 @@ class PackageProviderTest extends \PHPUnit_Framework_TestCase
             }
         );
 
-        $this->packageProvider = new PackageProvider($this->registry, $this->measureUnitConversion);
+        $this->localizationHelper = $this->getMockBuilder(LocalizationHelper::class)
+            ->disableOriginalConstructor()->getMock();
+
+        $this->packageProvider =
+            new PackageProvider($this->registry, $this->measureUnitConversion, $this->localizationHelper);
     }
 
     /**
@@ -66,6 +77,10 @@ class PackageProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testCreatePackages($lineItemCnt, $productWeight, $expectedPackages)
     {
+        $this->localizationHelper
+            ->expects(self::any())
+            ->method('getLocalizedValue')->willReturn('product name');
+
         $lineItems = [];
         $allProductsShippingOptions = [];
         for ($i = 1; $i <= $lineItemCnt; $i++) {
@@ -119,7 +134,7 @@ class PackageProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->registry->expects(self::any())->method('getManagerForClass')->willReturn($manager);
 
-        $packages = $this->packageProvider->createPackages($context);
+        $packages = $this->packageProvider->createPackages($context->getLineItems());
 
         static::assertEquals($expectedPackages, $packages);
     }
@@ -134,15 +149,15 @@ class PackageProviderTest extends \PHPUnit_Framework_TestCase
                 'lineItemCnt' => 2,
                 'productWeight' => 15,
                 'expectedPackages' => [
-                    (new Package())->setWeight(30)
+                    (new Package())->setWeight(30)->setContents('product name,product name')
                 ]
             ],
             'TwoPackages' => [
                 'lineItemCnt' => 2,
                 'productWeight' => 30,
                 'expectedPackages' => [
-                    (new Package())->setWeight(30),
-                    (new Package())->setWeight(30),
+                    (new Package())->setWeight(30)->setContents('product name'),
+                    (new Package())->setWeight(30)->setContents('product name'),
                 ]
             ],
             'TooBigToFit' => [

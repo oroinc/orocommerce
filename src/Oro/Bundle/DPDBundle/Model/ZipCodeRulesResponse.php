@@ -2,8 +2,7 @@
 
 namespace Oro\Bundle\DPDBundle\Model;
 
-
-class GetZipCodeRulesResponse extends DPDResponse
+class ZipCodeRulesResponse extends DPDResponse
 {
     const DPD_ZIP_CODE_RULES_KEY = 'ZipCodeRules';
     const DPD_ZIP_CODE_RULES_COUNTRY_KEY = 'Country';
@@ -115,6 +114,14 @@ class GetZipCodeRulesResponse extends DPDResponse
     public function getZipCode()
     {
         return $this->zipCode;
+    }
+
+    /**
+     * @return array
+     */
+    public function getNoPickupDays()
+    {
+        return array_keys($this->noPickupDays);
     }
 
     /**
