@@ -5,24 +5,24 @@ services:
         arguments:
            - '@oro_config.global'
 
-    oro_payment_term.payment_method.payment_term:
-        class: 'Oro\Bundle\PaymentTermBundle\Method\PaymentTerm'
+    oro_payment_term.payment_method_provider.payment_term:
+        class: 'Oro\Bundle\PaymentTermBundle\Method\PaymentTermMethodProvider'
         public: false
         arguments:
             - '@oro_payment_term.provider.payment_term'
             - '@oro_payment_term.provider.payment_term_association'
             - '@oro_entity.doctrine_helper'
         tags:
-            - { name: oro_payment.payment_method }
+            - { name: oro_payment.payment_method_provider }
         calls:
             - [setLogger,  ["@logger"]]
 
-    oro_payment_term.payment_method.view.payment_term:
-        class: 'Oro\Bundle\PaymentTermBundle\Method\View\PaymentTermView'
+    oro_payment_term.payment_method_view_provider.payment_term:
+        class: 'Oro\Bundle\PaymentTermBundle\Method\View\PaymentTermMethodViewProvider'
         public: false
         arguments:
             - '@oro_payment_term.provider.payment_term'
             - '@translator'
             - '@oro_payment_term.payment_method.payment_term.config'
         tags:
-            - { name: oro_payment.payment_method_view }
+            - { name: oro_payment.payment_method_view_provider }

@@ -7,9 +7,9 @@ use Oro\Bundle\MoneyOrderBundle\DependencyInjection\Configuration;
 use Oro\Bundle\MoneyOrderBundle\DependencyInjection\OroMoneyOrderExtension;
 use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig;
 use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigInterface;
-use Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config\AbstractPaymentConfigTestCase;
+use Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config\AbstractPaymentSystemConfigTestCase;
 
-class MoneyOrderConfigTest extends AbstractPaymentConfigTestCase
+class MoneyOrderConfigTest extends AbstractPaymentSystemConfigTestCase
 {
     /**
      * @var MoneyOrderConfigInterface

@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Method\Config;
 
+use Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentSystemConfig;
 use Oro\Bundle\PaymentTermBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PaymentTermBundle\DependencyInjection\OroPaymentTermExtension;
-use Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentConfig;
 use Oro\Bundle\PaymentTermBundle\Method\PaymentTerm;
 
-class PaymentTermConfig extends AbstractPaymentConfig implements PaymentTermConfigInterface
+class PaymentTermConfig extends AbstractPaymentSystemConfig implements PaymentTermConfigInterface
 {
     /**
      * {@inheritdoc}

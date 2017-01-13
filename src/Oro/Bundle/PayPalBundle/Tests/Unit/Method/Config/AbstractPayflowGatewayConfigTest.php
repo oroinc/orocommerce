@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method\Config;
 
-use Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config\AbstractPaymentConfigTestCase;
+use Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config\AbstractPaymentSystemConfigTestCase;
 use Oro\Bundle\PayPalBundle\DependencyInjection\OroPayPalExtension;
 use Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfigInterface;
 
@@ -10,7 +10,7 @@ use Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfigInterface;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
-abstract class AbstractPayflowGatewayConfigTest extends AbstractPaymentConfigTestCase
+abstract class AbstractPayflowGatewayConfigTest extends AbstractPaymentSystemConfigTestCase
 {
     /** @var PayflowGatewayConfigInterface */
     protected $config;

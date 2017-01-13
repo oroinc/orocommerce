@@ -83,7 +83,7 @@ class PaymentMethodProvider
         foreach ($this->paymentMethodRegistry->getPaymentMethodProviders() as $provider) {
             $paymentMethod = $provider
                 ->getPaymentMethod($methodConfig->getType());
-            if ($paymentMethod->isApplicable($context)) {
+            if ($paymentMethod && $paymentMethod->isApplicable($context)) {
                 $paymentMethods[$methodConfig->getType()] = $paymentMethod;
             }
         }

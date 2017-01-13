@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\PayPalBundle\Method\Config;
 
+use Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentSystemConfig;
 use Oro\Bundle\PayPalBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PayPalBundle\DependencyInjection\OroPayPalExtension;
 use Oro\Bundle\PayPalBundle\Method\PayflowGateway;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
-use Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentConfig;
 
-class PayflowGatewayConfig extends AbstractPaymentConfig implements PayflowGatewayConfigInterface
+class PayflowGatewayConfig extends AbstractPaymentSystemConfig implements PayflowGatewayConfigInterface
 {
     /**
      * @return string
