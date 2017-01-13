@@ -157,7 +157,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
     {
         return [
             'with customer and website' => [
-                'product' => 'product.1',
+                'product' => 'product-1',
                 'expected' => [
                     ['price' => '1.1000', 'currency' => 'USD', 'quantity' => 1, 'unit' => 'bottle'],
                     ['price' => '1.2000', 'currency' => 'USD', 'quantity' => 10, 'unit' => 'liter'],
@@ -167,7 +167,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
                 'website' => LoadWebsiteData::WEBSITE1
             ],
             'default, without customer and website' => [
-                'product' => 'product.1',
+                'product' => 'product-1',
                 'expected' => [
                     ['price' => '12.2000', 'currency' => 'EUR', 'quantity' => 1, 'unit' => 'bottle'],
                     ['price' => '13.1000', 'currency' => 'USD', 'quantity' => 1, 'unit' => 'bottle'],
