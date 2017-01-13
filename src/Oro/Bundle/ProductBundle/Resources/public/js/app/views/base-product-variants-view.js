@@ -14,7 +14,7 @@ define(function(require) {
         },
 
         elements: {
-            variantForm: '[data-name="form__oro-product-frontend-variant-field"]',
+            variantForm: '[data-name="form__oro-product-product-variant-frontend-variant-field"]',
             variantFields: ['variantForm', ':input[data-name]']
         },
 
@@ -36,16 +36,6 @@ define(function(require) {
             }
             if (options.productModel) {
                 this.model = options.productModel;
-
-                var productType = this.model.get('type');
-                var productId = this.model.get('id');
-                if (!_.isUndefined(productType)
-                    && productType === 'configurable'
-                    && !_.isUndefined(productId)
-                    && productId.length !== 0
-                ) {
-                    this.model.set('parentProduct', productId);
-                }
             }
         },
 

@@ -1123,7 +1123,6 @@ class Product extends ExtendProduct implements
             'id' => $this->getId(),
             'product_units' => $this->getAvailableUnitCodes(),
             'name' => $this->getDefaultName() ? $this->getDefaultName()->getString() : '',
-            'type' => $this->getType(),
         ];
     }
 
