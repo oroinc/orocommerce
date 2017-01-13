@@ -1,8 +1,8 @@
 {% block _checkout_form_fields_widget -%}
     {% from 'OroAddressBundle::macros.html.twig' import renderAddress %}
     {% if workflowItem.data.get('disallow_shipping_address_edit') %}
-        <fieldset class="checkout__form__row">
-            <div class="checkout__form__col form__col_x6">
+        <fieldset class="grid__row grid__row--offset-none">
+            <div class="grid__column grid__column--offset-y grid__column--6">
                 {{ renderAddress(checkout.shippingAddress) }}
             </div>
         </fieldset>
@@ -31,8 +31,10 @@
             {{ address.address_form(form.shipping_address, form.save_shipping_address, hasCustomAddress) }}
 
             {% if workflowItem.data.get('billing_address_has_shipping') %}
-                <fieldset class="checkout__form__row">
-                    {{ form_row(form.ship_to_billing_address) }}
+                <fieldset class="grid__row grid__row--offset-none">
+                    <div class="grid__column grid__column--offset-y">
+                        {{ form_row(form.ship_to_billing_address) }}
+                    </div>
                 </fieldset>
             {% endif %}
             {%  if  form.state_token is defined %}

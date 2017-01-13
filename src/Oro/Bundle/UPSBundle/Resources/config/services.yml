@@ -18,13 +18,39 @@ services:
         class: 'Oro\Bundle\UPSBundle\Method\UPSShippingMethodProvider'
         public: false
         arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_ups.method.factory.method'
+        tags:
+            - { name: oro_shipping_method_provider }
+
+    oro_ups.method.identifier_generator.method:
+        class: 'Oro\Bundle\UPSBundle\Method\Identifier\UPSMethodIdentifierGenerator'
+        public: false
+
+    oro_ups.method.identifier_generator.type:
+        class: 'Oro\Bundle\UPSBundle\Method\Identifier\UPSMethodTypeIdentifierGenerator'
+        public: false
+
+    oro_ups.method.factory.method:
+        class: 'Oro\Bundle\UPSBundle\Method\Factory\UPSShippingMethodFactory'
+        public: false
+        arguments:
             - '@oro_ups.provider.transport'
-            - '@doctrine'
             - '@oro_ups.factory.price_request_factory'
             - '@oro_locale.helper.localization'
             - '@oro_ups.shipping_price_cache'
-        tags:
-            - { name: oro_shipping_method_provider }
+            - '@oro_ups.method.identifier_generator.method'
+            - '@oro_ups.method.factory.type'
+
+    oro_ups.method.factory.type:
+        class: 'Oro\Bundle\UPSBundle\Method\Factory\UPSShippingMethodTypeFactory'
+        public: false
+        arguments:
+            - '@oro_ups.method.identifier_generator.type'
+            - '@oro_ups.method.identifier_generator.method'
+            - '@oro_ups.provider.transport'
+            - '@oro_ups.factory.price_request_factory'
+            - '@oro_ups.shipping_price_cache'
 
     oro_ups.validator.remove_used_shipping_service:
         class: 'Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceValidator'
@@ -35,12 +61,19 @@ services:
             - { name: validator.constraint_validator, alias: oro_ups_remove_used_shipping_service_validator }
 
     oro_ups.entity_listener.channel:
-        class: 'Oro\Bundle\UPSBundle\EventListener\UPSChannelEntityListener'
+        class: 'Oro\Bundle\UPSBundle\EventListener\IntegrationRemovalListener'
+        arguments:
+            - '@oro_ups.method.identifier_generator.method'
+            - '@oro_shipping.method.event.dispatcher.method_removal'
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\IntegrationBundle\Entity\Channel', event: preRemove }
 
     oro_ups.entity_listener.transport:
         class: 'Oro\Bundle\UPSBundle\EventListener\UPSTransportEntityListener'
+        arguments:
+            - '@oro_ups.method.identifier_generator.method'
+            - '@oro_ups.method.identifier_generator.type'
+            - '@oro_shipping.method.event.dispatcher.type_removal'
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\UPSBundle\Entity\UPSTransport', event: postUpdate }
 

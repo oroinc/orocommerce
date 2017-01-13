@@ -53,7 +53,7 @@ class ShippingMethodConfig extends ExtendShippingMethodConfig
     protected $options = [];
 
     /**
-     * @var Collection|ShippingMethodConfig[]
+     * @var Collection|ShippingMethodTypeConfig[]
      *
      * @ORM\OneToMany(
      *     targetEntity="Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig",

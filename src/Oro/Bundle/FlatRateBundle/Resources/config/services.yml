@@ -15,8 +15,11 @@ services:
         class: 'Oro\Bundle\FlatRateBundle\Method\FlatRateMethodProvider'
         public: false
         arguments:
+            - '@oro_entity.doctrine_helper'
             - '@oro_flat_rate.builder.flat_rate_method_from_channel'
-        calls:
-            - [setChannelRepository, ['@?oro_integration.repository.channel']]
         tags:
             - { name: oro_shipping_method_provider }
+
+    oro_flat_rate.method.identifier_generator.method:
+        class: 'Oro\Bundle\FlatRateBundle\Method\Identifier\FlatRateMethodIdentifierGenerator'
+        public: false

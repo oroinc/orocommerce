@@ -1,5 +1,5 @@
 Customize products using layouts
-=============================
+================================
 
 The goal of this guide is to demonstrate how to cutomize product view or product list pages.
 This guide is intended for those already familiar with layouts. So, please, read our [Quick Start guide](https://github.com/orocrm/platform/blob/master/src/Oro/Bundle/LayoutBundle/Resources/doc/quick_start.md) before proceeding.
