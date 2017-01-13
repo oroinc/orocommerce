@@ -25,7 +25,8 @@ define(function(require) {
 
         modelAttr: {
             prices: {},
-            price: 0
+            price: 0,
+            quantity: 0
         },
 
         modelEvents: {
@@ -166,7 +167,6 @@ define(function(require) {
 
             var foundKey = unit + ' ' + quantity + ' ' + (changeQuantity ? 1 : 0);
             var price = this.foundPrice[foundKey] || null;
-
             if (!price) {
                 if (changeQuantity) {
                     price = _.last(this.prices[unit]) || null;//sorted by quantity, get smallest
