@@ -409,7 +409,7 @@
             '~class': 'request-form-lineitem-unit__input'
         }) %}
 
-        {{ 'oro.rfp.requestproductitem.price.label'|trans }}: {{ form_widget(form.price.value, {attr: input_price}) }}
+        <span class="request-form-lineitem-unit__label">{{ 'oro.rfp.requestproductitem.price.label'|trans }}:</span> {{ form_widget(form.price.value, {attr: input_price}) }}
         <div class="hidden">{{ form_widget(form.price.currency) }}</div>
         {{ form_errors(form.price) }}
     </div>

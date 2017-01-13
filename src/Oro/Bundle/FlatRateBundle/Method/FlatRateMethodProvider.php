@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\FlatRateBundle\Method;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FlatRateBundle\Builder\FlatRateMethodFromChannelBuilder;
 use Oro\Bundle\FlatRateBundle\Integration\FlatRateChannelType;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
@@ -11,8 +12,8 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 
 class FlatRateMethodProvider implements ShippingMethodProviderInterface
 {
-    /** @var ChannelRepository|null */
-    private $channelRepository;
+    /** @var DoctrineHelper */
+    private $doctrineHelper;
 
     /** @var FlatRateMethodFromChannelBuilder */
     private $methodBuilder;
@@ -21,20 +22,14 @@ class FlatRateMethodProvider implements ShippingMethodProviderInterface
     protected $methods;
 
     /**
+     * @param DoctrineHelper $doctrineHelper
      * @param FlatRateMethodFromChannelBuilder $methodBuilder
      */
-    public function __construct(FlatRateMethodFromChannelBuilder $methodBuilder)
+    public function __construct(DoctrineHelper $doctrineHelper, FlatRateMethodFromChannelBuilder $methodBuilder)
     {
+        $this->doctrineHelper = $doctrineHelper;
         $this->methodBuilder = $methodBuilder;
         $this->methods = [];
-    }
-
-    /**
-     * @param ChannelRepository $channelRepository
-     */
-    public function setChannelRepository(ChannelRepository $channelRepository)
-    {
-        $this->channelRepository = $channelRepository;
     }
 
     /**
@@ -90,10 +85,14 @@ class FlatRateMethodProvider implements ShippingMethodProviderInterface
      */
     private function getFlatRateChannels()
     {
-        if (!$this->channelRepository) {
-            return [];
-        }
+        return $this->getRepository()->findByType(FlatRateChannelType::TYPE);
+    }
 
-        return $this->channelRepository->findByType(FlatRateChannelType::TYPE);
+    /**
+     * @return ChannelRepository|\Doctrine\ORM\EntityRepository
+     */
+    private function getRepository()
+    {
+        return $this->doctrineHelper->getEntityRepository('OroIntegrationBundle:Channel');
     }
 }
