@@ -17,7 +17,6 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\Transition;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
-use Oro\Bundle\WorkflowBundle\Model\WorkflowStartArguments;
 
 class LoadRequestWorkflowDemoData extends AbstractFixture implements
     ContainerAwareInterface,
@@ -42,9 +41,27 @@ class LoadRequestWorkflowDemoData extends AbstractFixture implements
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function load(ObjectManager $manager)
+    {
+        //Backup Original Token
+        $originalToken = $this->container->get('security.token_storage')->getToken();
+
+        $requests = $manager->getRepository(Request::class)->findAll();
+        $user = $manager->getRepository(User::class)->findOneBy([]);
+
+        $this->generateTransitionsHistory(self::WORKFLOW_BACKOFFICE, $requests, $user);
+        $this->generateTransitionsHistory(self::WORKFLOW_FRONTOFFICE, $requests);
+
+        //Restore Original Token
+        $this->container->get('security.token_storage')->setToken($originalToken);
+    }
+
+    /**
      * @return object|WorkflowManager
      */
-    protected function getWorkflowManager()
+    private function getWorkflowManager()
     {
         static $workflowManager;
         if (!$workflowManager) {
@@ -55,47 +72,11 @@ class LoadRequestWorkflowDemoData extends AbstractFixture implements
     }
 
     /**
-     * {@inheritdoc}
-     */
-    public function load(ObjectManager $manager)
-    {
-        //Backup Original Token
-        $originalToken = $this->container->get('security.token_storage')->getToken();
-
-        $requests = $manager->getRepository(Request::class)->findAll();
-        $this->startWorkflows(self::WORKFLOW_BACKOFFICE, $requests);
-        $this->startWorkflows(self::WORKFLOW_FRONTOFFICE, $requests);
-
-        $user = $manager->getRepository(User::class)->findOneBy([]);
-        $this->generateTransitionsHistory(self::WORKFLOW_BACKOFFICE, $requests, $user);
-        $this->generateTransitionsHistory(self::WORKFLOW_FRONTOFFICE, $requests);
-
-        //Restore Original Token
-        $this->container->get('security.token_storage')->setToken($originalToken);
-    }
-
-    /**
-     * @param string $workflowName
-     * @param array|Request[] $requests
-     */
-    protected function startWorkflows($workflowName, array $requests)
-    {
-        $this->getWorkflowManager()->massStartWorkflow(
-            array_map(
-                function ($request) use ($workflowName) {
-                    return new WorkflowStartArguments($workflowName, $request);
-                },
-                $requests
-            )
-        );
-    }
-
-    /**
      * @param string $workflowName
      * @param array|Request[] $requests
      * @param AbstractUser $user
      */
-    protected function generateTransitionsHistory($workflowName, array $requests, AbstractUser $user = null)
+    private function generateTransitionsHistory($workflowName, array $requests, AbstractUser $user = null)
     {
         foreach ($requests as $request) {
             $workflowItem = $this->getWorkflowManager()->getWorkflowItem($request, $workflowName);
@@ -113,7 +94,7 @@ class LoadRequestWorkflowDemoData extends AbstractFixture implements
      * @param $workflowItem
      * @param int $count
      */
-    protected function randomTransitionWalk(WorkflowItem $workflowItem, $count)
+    private function randomTransitionWalk(WorkflowItem $workflowItem, $count)
     {
         while ($count--) {
             $transitions = $this->getWorkflowManager()->getTransitionsByWorkflowItem($workflowItem)->toArray();
