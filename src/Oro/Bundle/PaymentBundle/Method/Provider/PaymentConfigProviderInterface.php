@@ -1,6 +1,8 @@
 <?php
 
-namespace Oro\Bundle\PaymentBundle\Method\Config;
+namespace Oro\Bundle\PaymentBundle\Method\Provider;
+
+use Oro\Bundle\PaymentBundle\Method\Config\PaymentConfigInterface;
 
 interface PaymentConfigProviderInterface
 {
@@ -11,7 +13,7 @@ interface PaymentConfigProviderInterface
 
     /**
      * @param string $identifier
-     * @return PaymentConfigInterface
+     * @return PaymentConfigInterface|null
      */
     public function getPaymentConfig($identifier);
 

@@ -2,15 +2,34 @@
 
 namespace Oro\Bundle\PayPalBundle\Method\Config;
 
-use Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentSystemConfig;
+use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\PayPalBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PayPalBundle\DependencyInjection\OroPayPalExtension;
-use Oro\Bundle\PayPalBundle\Method\PayPalPaymentsProExpressCheckout;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
+use Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentConfig;
+use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 
-class PayPalPaymentsProExpressCheckoutConfig extends AbstractPaymentSystemConfig implements
-    PayflowExpressCheckoutConfigInterface
+class PayPalExpressCheckoutConfig extends AbstractPaymentConfig implements
+    PayPalExpressCheckoutConfigInterface
 {
+    const TYPE = 'express_checkout';
+
+    /**
+     * @var SymmetricCrypterInterface
+     */
+    protected $encoder;
+
+    /**
+     * @param Channel $channel
+     * @param SymmetricCrypterInterface $encoder
+     */
+    public function __construct(Channel $channel, SymmetricCrypterInterface $encoder)
+    {
+        parent::__construct($channel);
+
+        $this->encoder = $encoder;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -28,7 +47,9 @@ class PayPalPaymentsProExpressCheckoutConfig extends AbstractPaymentSystemConfig
             Option\Partner::PARTNER => $this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_PARTNER_KEY),
             Option\Vendor::VENDOR => $this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_VENDOR_KEY),
             Option\User::USER => $this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_USER_KEY),
-            Option\Password::PASSWORD => $this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_PASSWORD_KEY),
+            Option\Password::PASSWORD =>
+                $this->encoder->encryptData($this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_PASSWORD_KEY))
+            ,
         ];
     }
 
@@ -45,7 +66,7 @@ class PayPalPaymentsProExpressCheckoutConfig extends AbstractPaymentSystemConfig
      */
     public function isTestMode()
     {
-        return (bool)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_TEST_MODE_KEY);
+        return (bool)$this->getConfigValue(Configuration::PAYPAL_PAYMENTS_PRO_EXPRESS_CHECKOUT_TEST_MODE_KEY);
     }
 
     /**
@@ -73,6 +94,6 @@ class PayPalPaymentsProExpressCheckoutConfig extends AbstractPaymentSystemConfig
     /** {@inheritdoc} */
     public function getPaymentMethodIdentifier()
     {
-        return (string)PayPalPaymentsProExpressCheckout::TYPE;
+        return $this->channel->getType() . '_' . self::TYPE . '_' . $this->channel->getId();
     }
 }

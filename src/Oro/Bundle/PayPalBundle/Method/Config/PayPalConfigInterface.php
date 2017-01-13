@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PayPalBundle\Method\Config;
 
-interface PayflowConfigInterface
+interface PayPalConfigInterface
 {
     /**
      * @return string

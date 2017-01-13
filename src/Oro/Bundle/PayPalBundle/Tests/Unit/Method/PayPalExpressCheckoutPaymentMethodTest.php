@@ -13,7 +13,7 @@ use Oro\Bundle\PaymentBundle\Model\Surcharge;
 use Oro\Bundle\PaymentBundle\Provider\ExtractOptionsProvider;
 use Oro\Bundle\PaymentBundle\Provider\SurchargeProvider;
 use Oro\Bundle\PaymentBundle\Tests\Unit\Method\EntityStub;
-use Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfigInterface;
+use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\PayPalExpressCheckoutPaymentMethod;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
@@ -45,7 +45,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit_Framework_TestCase
     /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
     protected $doctrineHelper;
 
-    /** @var PayflowExpressCheckoutConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PayPalExpressCheckoutConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $paymentConfig;
 
     /** @var ExtractOptionsProvider|\PHPUnit_Framework_MockObject_MockObject */
@@ -58,7 +58,7 @@ class PayPalExpressCheckoutPaymentMethodTest extends \PHPUnit_Framework_TestCase
     {
         $this->gateway = $this->getMockBuilder(Gateway::class)->disableOriginalConstructor()->getMock();
         $this->router = $this->createMock(RouterInterface::class);
-        $this->paymentConfig = $this->createMock(PayflowExpressCheckoutConfigInterface::class);
+        $this->paymentConfig = $this->createMock(PayPalExpressCheckoutConfigInterface::class);
         $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)->disableOriginalConstructor()->getMock();
 
         $this->optionsProvider = $this->getMockBuilder(ExtractOptionsProvider::class)

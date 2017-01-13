@@ -4,7 +4,7 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method\View;
 
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfigInterface;
+use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\View\PayPalExpressCheckoutPaymentMethodView;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 
@@ -15,13 +15,13 @@ class PayPalExpressCheckoutPaymentMethodViewTest extends \PHPUnit_Framework_Test
     /** @var PaymentMethodViewInterface */
     protected $methodView;
 
-    /** @var PayflowExpressCheckoutConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PayPalExpressCheckoutConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $paymentConfig;
 
     protected function setUp()
     {
         $this->paymentConfig =
-            $this->createMock('Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfigInterface');
+            $this->createMock('Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface');
 
         $this->methodView = $this->createMethodView();
     }
