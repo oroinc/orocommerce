@@ -28,5 +28,6 @@ services:
         class: Oro\Bundle\PayPalBundle\Form\Type\PayPalSettingsType
         arguments:
             - '@translator.default'
+            - '@oro_security.encoder.mcrypt'
         tags:
             - { name: form.type }
