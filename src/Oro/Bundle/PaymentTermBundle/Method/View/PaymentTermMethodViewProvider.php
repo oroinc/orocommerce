@@ -47,16 +47,16 @@ class PaymentTermMethodViewProvider implements PaymentMethodViewProviderInterfac
     }
 
     /**
-     * @param array $paymentMethods
+     * @param array $identifiers
      * @return PaymentMethodViewInterface[]
      */
-    public function getPaymentMethodViews(array $paymentMethods)
+    public function getPaymentMethodViews($identifiers)
     {
         if ($this->methodViews === null) {
             $this->collectPaymentMethodViews();
         }
         $matchedViews = [];
-        foreach ($paymentMethods as $paymentMethod) {
+        foreach ($identifiers as $paymentMethod) {
             if ($this->hasPaymentMethodView($paymentMethod)) {
                 $matchedViews[$paymentMethod] = $this->getPaymentMethodView($paymentMethod);
             }
