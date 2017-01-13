@@ -1,18 +1,18 @@
 <?php
 
-namespace Oro\Bundle\PaymentBundle\Tests\Unit\Method\Provider;
+namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method\Config\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\PaymentBundle\Method\Provider\PayPalConfigProvider;
-use Oro\Bundle\PaymentBundle\Method\Provider\PayPalCreditCardConfigProvider;
-use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfig;
+use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfig;
+use Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalExpressCheckoutConfigProvider;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Psr\Log\LoggerInterface;
 
-class PayPalCreditCardConfigProviderTest extends \PHPUnit_Framework_TestCase
+class PayPalExpressCheckoutConfigProviderTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
@@ -32,16 +32,23 @@ class PayPalCreditCardConfigProviderTest extends \PHPUnit_Framework_TestCase
     protected $type;
 
     /**
-     * @var PayPalConfigProvider
+     * @var PayPalExpressCheckoutConfigProvider
      */
     protected $payPalConfigProvider;
 
     protected function setUp()
     {
-        $this->type = 'paypal_payments_pro';
+        $this->type = 'paypal_payflow_gateway';
         $this->doctrine = $this->createMock(ManagerRegistry::class);
         $this->encoder = $this->createMock(SymmetricCrypterInterface::class);
-        $this->payPalConfigProvider = new PayPalCreditCardConfigProvider($this->doctrine, $this->encoder, $this->type);
+        $logger = $this->createMock(LoggerInterface::class);
+
+        $this->payPalConfigProvider = new PayPalExpressCheckoutConfigProvider(
+            $this->doctrine,
+            $this->encoder,
+            $logger,
+            $this->type
+        );
     }
 
     public function testGetPaymentConfigs()
@@ -63,7 +70,7 @@ class PayPalCreditCardConfigProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetPaymentConfig()
     {
-        $identifier = 'paypal_payflow_gateway_credit_card_1';
+        $identifier = 'paypal_payflow_gateway_express_checkout_1';
 
         $channels = [];
         $channels[] = $this->getEntity(Channel::class, ['id' => 1, 'type' => 'paypal_payflow_gateway']);
@@ -78,14 +85,14 @@ class PayPalCreditCardConfigProviderTest extends \PHPUnit_Framework_TestCase
         $this->doctrine->expects(static::once())->method('getManagerForClass')->willReturn($objectManager);
 
         $this->assertInstanceOf(
-            PayPalCreditCardConfig::class,
+            PayPalExpressCheckoutConfig::class,
             $this->payPalConfigProvider->getPaymentConfig($identifier)
         );
     }
 
     public function testHasPaymentConfig()
     {
-        $identifier = 'paypal_payments_pro_credit_card_2';
+        $identifier = 'paypal_payments_pro_express_checkout_2';
 
         $channels = [];
         $channels[] = $this->getEntity(Channel::class, ['id' => 1, 'type' => 'paypal_payflow_gateway']);

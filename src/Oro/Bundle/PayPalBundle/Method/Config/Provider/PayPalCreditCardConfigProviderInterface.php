@@ -1,19 +1,19 @@
 <?php
 
-namespace Oro\Bundle\PaymentBundle\Method\Provider;
+namespace Oro\Bundle\PayPalBundle\Method\Config\Provider;
 
-use Oro\Bundle\PaymentBundle\Method\Config\PaymentConfigInterface;
+use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
 
-interface PaymentConfigProviderInterface
+interface PayPalCreditCardConfigProviderInterface
 {
     /**
-     * @return PaymentConfigInterface[]
+     * @return array|PayPalCreditCardConfigInterface[]
      */
     public function getPaymentConfigs();
 
     /**
      * @param string $identifier
-     * @return PaymentConfigInterface|null
+     * @return PayPalCreditCardConfigInterface|null
      */
     public function getPaymentConfig($identifier);
 

@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\PayPalBundle\Method\View\Provider;
 
-use Oro\Bundle\PaymentBundle\Method\Provider\PayPalExpressCheckoutConfigProviderInterface;
 use Oro\Bundle\PaymentBundle\Method\View\AbstractPaymentMethodViewProvider;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
+use Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalExpressCheckoutConfigProviderInterface;
 use Oro\Bundle\PayPalBundle\Method\View\PayPalExpressCheckoutPaymentMethodView;
 
 class ExpressCheckoutMethodViewProvider extends AbstractPaymentMethodViewProvider

@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\PayPalBundle\Method\View\Provider;
 
-use Oro\Bundle\PaymentBundle\Method\Provider\PayPalCreditCardConfigProviderInterface;
 use Oro\Bundle\PaymentBundle\Method\View\AbstractPaymentMethodViewProvider;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
+use Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalCreditCardConfigProviderInterface;
 use Oro\Bundle\PayPalBundle\Method\View\PayPalCreditCardPaymentMethodView;
 use Symfony\Component\Form\FormFactoryInterface;
 

@@ -4,7 +4,7 @@ services:
         arguments:
             - '@form.factory'
             - '@oro_payment.provider.payment_transaction'
-            - '@oro_paypal.config.provider.payments_pro_credit_card'
+            - '@oro_paypal.method.config.provider.payments_pro_credit_card'
         tags:
             - { name: oro_payment.payment_method_view_provider }
 
@@ -13,20 +13,52 @@ services:
         arguments:
             - '@form.factory'
             - '@oro_payment.provider.payment_transaction'
-            - '@oro_paypal.config.provider.payflow_gateway_credit_card'
+            - '@oro_paypal.method.config.provider.payflow_gateway_credit_card'
         tags:
             - { name: oro_payment.payment_method_view_provider }
 
     oro_paypal.method.view.provider.payments_pro_express_checkout:
         class: 'Oro\Bundle\PayPalBundle\Method\View\Provider\ExpressCheckoutMethodViewProvider'
         arguments:
-            - '@oro_paypal.config.provider.payments_pro_express_checkout'
+            - '@oro_paypal.method.config.provider.payments_pro_express_checkout'
         tags:
             - { name: oro_payment.payment_method_view_provider }
 
     oro_paypal.method.view.provider.payflow_gateway_express_checkout:
         class: 'Oro\Bundle\PayPalBundle\Method\View\Provider\ExpressCheckoutMethodViewProvider'
         arguments:
-            - '@oro_paypal.config.provider.payflow_gateway_express_checkout'
+            - '@oro_paypal.method.config.provider.payflow_gateway_express_checkout'
         tags:
             - { name: oro_payment.payment_method_view_provider }
+
+    oro_paypal.method.config.provider:
+        abstract: true
+        public: false
+        arguments:
+            - '@doctrine'
+            - '@oro_security.encoder.mcrypt'
+            - '@logger'
+
+    oro_paypal.method.config.provider.payments_pro_credit_card:
+        class: 'Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalCreditCardConfigProvider'
+        parent: oro_paypal.method.config.provider
+        arguments:
+            - 'paypal_payments_pro'
+
+    oro_paypal.method.config.provider.payments_pro_express_checkout:
+        class: 'Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalExpressCheckoutConfigProvider'
+        parent: oro_paypal.method.config.provider
+        arguments:
+            - 'paypal_payments_pro'
+
+    oro_paypal.method.config.provider.payflow_gateway_credit_card:
+        class: 'Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalCreditCardConfigProvider'
+        parent: oro_paypal.method.config.provider
+        arguments:
+            - 'paypal_payflow_gateway'
+
+    oro_paypal.method.config.provider.payflow_gateway_express_checkout:
+        class: 'Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalExpressCheckoutConfigProvider'
+        parent: oro_paypal.method.config.provider
+        arguments:
+            - 'paypal_payflow_gateway'
