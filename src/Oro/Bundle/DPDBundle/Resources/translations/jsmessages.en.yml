@@ -1,10 +1,17 @@
 oro:
     dpd:
         actions:
-            set_order:
+            ship_order:
                 frontend_options:
                     title: 'Send order to DPD'
                     confirmation:
                         title: 'Confirm DPD shipping label request'
                         ok_text: 'Confirm'
                         message: 'Send order shipping information to DPD?'
+            reship_order:
+                frontend_options:
+                    title: 'Retransmit order to DPD'
+                    confirmation:
+                        title: 'Confirm DPD shipping label retransmission'
+                        ok_text: 'Confirm'
+                        message: 'Retransmit order shipping information to DPD? This will remove current trackings and labels'

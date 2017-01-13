@@ -33,6 +33,9 @@ oro:
                     label: 'Handling fee'
                     tooltip: 'A fee applied to the shipping costs'
         actions:
-            set_order:
-                flash.success: 'Order set successfully. Check attachments to get shipping labels.'
-                widgets.set_order.label: 'Request DPD shipping label'
+            ship_order:
+                flash.success: 'Order shipped successfully. Check attachments to get shipping labels.'
+                widgets.ship_order.label: 'Request DPD shipping label'
+            reship_order:
+                flash.success: 'Order reshipped successfully. Check attachments to get shipping labels.'
+                widgets.reship_order.label: 'Retransmit request DPD shipping label'

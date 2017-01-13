@@ -4,8 +4,11 @@ namespace Oro\Bundle\DPDBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\DPDBundle\Model\Package;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
+use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
+use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\Model\Weight;
 use Oro\Bundle\ShippingBundle\Provider\MeasureUnitConversion;
@@ -21,46 +24,56 @@ class PackageProvider
     /** @var MeasureUnitConversion */
     protected $measureUnitConversion;
 
+    /** @var  LocalizationHelper */
+    protected $localizationHelper;
+
     public function __construct(
         ManagerRegistry $registry,
-        MeasureUnitConversion $measureUnitConversion
+        MeasureUnitConversion $measureUnitConversion,
+        LocalizationHelper $localizationHelper
     ){
         $this->registry = $registry;
         $this->measureUnitConversion = $measureUnitConversion;
+        $this->localizationHelper = $localizationHelper;
     }
 
     /**
-     * @param ShippingContextInterface $context
-     * @return \Oro\Bundle\DPDBundle\Model\Package[]|null
+     * @param ShippingLineItemCollectionInterface $lineItems
+     * @return null|\Oro\Bundle\DPDBundle\Model\Package[]
      */
-    public function createPackages(ShippingContextInterface $context)
+    public function createPackages(ShippingLineItemCollectionInterface $lineItems)
     {
-        if ($context->getLineItems()->isEmpty()) {
+        if ($lineItems->isEmpty()) {
             return null;
         }
 
         $packages = [];
-        $productsWeightByUnit = $this->getProductWeightByUnit($context->getLineItems());
-        if (count($productsWeightByUnit) > 0) {
+        $productsInfoByUnit = $this->getProductInfoByUnit($lineItems);
+        if (count($productsInfoByUnit) > 0) {
             $weight = 0;
-            /** @var array $weightParams */
-            foreach ($productsWeightByUnit as $unit) {
+            $contents = [];
+            /** @var array $unit */
+            foreach ($productsInfoByUnit as $unit) {
                 if ($unit['weight'] > static::MAX_PACKAGE_WEIGHT_KGS) {
                     return null;
                 }
                 if (($weight + $unit['weight']) > static::MAX_PACKAGE_WEIGHT_KGS) {
                     $packages[] = (new Package)
-                        ->setWeight((string)$weight);
+                        ->setWeight((string)$weight)
+                        ->setContents(implode(',',$contents));
 
                     $weight = 0;
+                    $contents = [];
                 }
 
                 $weight += $unit['weight'];
+                $contents[$unit['productId']] = $unit['productName'];
             }
 
             if ($weight > 0) {
                 $packages[] = (new Package)
-                    ->setWeight((string)$weight);
+                    ->setWeight((string)$weight)
+                    ->setContents(implode(',',$contents));
             }
         }
 
@@ -72,11 +85,12 @@ class PackageProvider
      * @return array
      * @throws \UnexpectedValueException
      */
-    protected function getProductWeightByUnit($lineItems)
+    protected function getProductInfoByUnit(ShippingLineItemCollectionInterface $lineItems)
     {
-        $productsWeightByUnit = [];
+        $productsInfoByUnit = [];
 
         $productsInfo =[];
+        /** @var ShippingLineItemInterface $lineItem */
         foreach ($lineItems as $lineItem) {
             $productsInfo[$lineItem->getProduct()->getId()] = [
                 'product' => $lineItem->getProduct(),
@@ -101,6 +115,9 @@ class PackageProvider
         /** @var ProductShippingOptions $productShippingOptions */
         foreach ($allProductsShippingOptions as $productShippingOptions) {
             $productId = $productShippingOptions->getProduct()->getId();
+            //$productDefaultName = $productShippingOptions->getProduct()->getDefaultName()->getString();
+            $productName = (string)$this->localizationHelper
+                ->getLocalizedValue($productShippingOptions->getProduct()->getNames());
 
             $lineItemWeight = null;
             if ($productShippingOptions->getWeight() instanceof Weight) {
@@ -120,13 +137,15 @@ class PackageProvider
             }
 
             for ($i = 0; $i < $productsInfo[$productId]['quantity']; $i++) {
-                $productsWeightByUnit[] = [
+                $productsInfoByUnit[] = [
+                    'productId' => $productId,
+                    'productName' => $productName,
                     'weightUnit' => static::UNIT_OF_WEIGHT,
                     'weight' => $lineItemWeight
                 ];
             }
         }
 
-        return $productsWeightByUnit;
+        return $productsInfoByUnit;
     }
 }

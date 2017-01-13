@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\DPDBundle\Provider;
 
-use Oro\Bundle\DPDBundle\Model\GetZipCodeRulesRequest;
-use Oro\Bundle\DPDBundle\Model\GetZipCodeRulesResponse;
+use Oro\Bundle\DPDBundle\Model\ZipCodeRulesRequest;
+use Oro\Bundle\DPDBundle\Model\ZipCodeRulesResponse;
 use Oro\Bundle\DPDBundle\Model\SetOrderRequest;
 use Oro\Bundle\DPDBundle\Model\SetOrderResponse;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
@@ -100,18 +100,14 @@ class DPDTransport extends AbstractRestTransport
     /**
      * @param SetOrderRequest $setOrderRequest
      * @param Transport $transportEntity
-     * @return SetOrderResponse|null
+     * @return null|SetOrderResponse
      */
-    public function setOrderResponse(SetOrderRequest $setOrderRequest, Transport $transportEntity)
+    public function getSetOrderResponse(SetOrderRequest $setOrderRequest, Transport $transportEntity)
     {
         try {
             $this->client = $this->createRestClient($transportEntity);
             $headers = $this->getRequestHeaders($transportEntity);
             $data = $this->client->post(static::API_SET_ORDER, $setOrderRequest->toArray(), $headers)->json();
-
-            if (!is_array($data)) {
-                return null;
-            }
 
             return (new SetOrderResponse($data));
         } catch (RestException $restException) {
@@ -128,26 +124,22 @@ class DPDTransport extends AbstractRestTransport
     }
 
     /**
-     * @param GetZipCodeRulesRequest $getZipCodeRulesRequest
+     * @param ZipCodeRulesRequest $zipCodeRulesRequest
      * @param Transport $transportEntity
-     * @return null|GetZipCodeRulesResponse
+     * @return null|ZipCodeRulesResponse
      */
-    public function getZipCodeRulesResponse(GetZipCodeRulesRequest $getZipCodeRulesRequest, Transport $transportEntity)
+    public function getZipCodeRulesResponse(ZipCodeRulesRequest $zipCodeRulesRequest, Transport $transportEntity)
     {
         try {
             $this->client = $this->createRestClient($transportEntity);
             $headers = $this->getRequestHeaders($transportEntity);
             $data = $this->client->get(static::API_GET_ZIPCODE_RULES, [], $headers)->json();
 
-            if (!is_array($data)) {
-                return null;
-            }
-
-            return (new GetZipCodeRulesResponse($data));
+            return (new ZipCodeRulesResponse($data));
         } catch (RestException $restException) {
             $this->logger->error(
                 sprintf(
-                    'getZipCodeRules REST request failed for transport #%s. %s',
+                    'ZipCodeRules REST request failed for transport #%s. %s',
                     $transportEntity->getId(),
                     $restException->getMessage()
                 )

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\DPDBundle\Model;
 
 
-class GetZipCodeRulesRequest extends DPDRequest
+class ZipCodeRulesRequest extends DPDRequest
 {
     /**
      * @return array

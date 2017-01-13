@@ -67,6 +67,14 @@ class DPDResponse
     }
 
     /**
+     * @return \DateTime
+     */
+    public function getTimeStamp()
+    {
+        return $this->timeStamp;
+    }
+
+    /**
      * @return array
      */
     public function getErrors() {

@@ -238,10 +238,10 @@ class OrderData
             'ParcelData' => [
                 'ShipService' => $this->shipServiceCode,
                 'Weight' => $this->weight,
-                'Content' => $this->content,
-                'YourInternalID' => $this->yourInternalId,
-                'Reference1' => $this->reference1,
-                'Reference2' => $this->reference2
+                'Content' => substr($this->content, 0, 35),
+                'YourInternalID' => substr($this->yourInternalId, 0, 35),
+                'Reference1' => substr($this->reference1, 0, 35),
+                'Reference2' => substr($this->reference2, 0, 35)
             ]
         ];
 
