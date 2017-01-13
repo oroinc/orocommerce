@@ -5,8 +5,8 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Model;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\ORM\Registry;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
-use Oro\Bundle\PricingBundle\Entity\MinimalProductPrice;
-use Oro\Bundle\PricingBundle\Entity\Repository\MinimalProductPriceRepository;
+use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\PricingBundle\Model\CombinedPriceListTriggerHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -30,7 +30,7 @@ class CombinedPriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
     protected $triggerHandler;
 
     /**
-     * @var MinimalProductPriceRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var CombinedProductPriceRepository|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $repository;
 
@@ -41,12 +41,12 @@ class CombinedPriceListTriggerHandlerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->repository = $this->getMockBuilder(MinimalProductPriceRepository::class)
+        $this->repository = $this->getMockBuilder(CombinedProductPriceRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
 
         $manager = $this->createMock(EntityManagerInterface::class);
-        $manager->method('getRepository')->with(MinimalProductPrice::class)->willReturn($this->repository);
+        $manager->method('getRepository')->with(CombinedProductPrice::class)->willReturn($this->repository);
 
         $this->registry = $this->getMockBuilder(Registry::class)->disableOriginalConstructor()->getMock();
         $this->registry->method('getManagerForClass')->willReturn($manager);

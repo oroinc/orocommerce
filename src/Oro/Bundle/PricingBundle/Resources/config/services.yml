@@ -19,7 +19,6 @@ parameters:
     oro_pricing.entity.product_price.class: Oro\Bundle\PricingBundle\Entity\ProductPrice
     oro_pricing.entity.combined_product_price.class: Oro\Bundle\PricingBundle\Entity\CombinedProductPrice
     oro_pricing.entity.price_list_currency.class: Oro\Bundle\PricingBundle\Entity\PriceListCurrency
-    oro_pricing.entity.minimal_product_price.class: Oro\Bundle\PricingBundle\Entity\MinimalProductPrice
     oro_pricing.entity.price_attribute_price_list.class: Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList
     oro_pricing.entity.price_attribute_currency.class: Oro\Bundle\PricingBundle\Entity\PriceAttributeCurrency
     oro_pricing.entity.price_attribute_product_price.class: Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice
