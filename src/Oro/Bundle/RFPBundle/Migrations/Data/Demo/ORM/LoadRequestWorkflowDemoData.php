@@ -5,7 +5,6 @@ namespace Oro\Bundle\RFPBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\ORM\EntityManager;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
@@ -29,15 +28,6 @@ class LoadRequestWorkflowDemoData extends AbstractFixture implements
     const WORKFLOW_FRONTOFFICE = 'rfq_frontoffice_default';
     const WORKFLOW_BACKOFFICE = 'rfq_backoffice_default';
 
-    /** @var  Request[] */
-    protected $requests;
-
-    /** @var  EntityManager */
-    protected $em;
-
-    /** @var WorkflowManager */
-    protected $workflowManager;
-
     /** @var array */
     protected $transitionsWithNotes = ['provide_more_information_transition', 'request_more_information_transition'];
 
@@ -52,15 +42,16 @@ class LoadRequestWorkflowDemoData extends AbstractFixture implements
     }
 
     /**
-     * @param ObjectManager $manager
+     * @return object|WorkflowManager
      */
-    protected function initSupportingEntities(ObjectManager $manager)
+    protected function getWorkflowManager()
     {
-        $repo = $this->container->get('oro_entity.doctrine_helper')->getEntityRepositoryForClass(Request::class);
-        $this->requests = $repo->findAll();
+        static $workflowManager;
+        if (!$workflowManager) {
+            $workflowManager = $this->container->get('oro_workflow.manager');
+        }
 
-        $this->em = $manager;
-        $this->workflowManager = $this->container->get('oro_workflow.manager');
+        return $workflowManager;
     }
 
     /**
@@ -68,23 +59,28 @@ class LoadRequestWorkflowDemoData extends AbstractFixture implements
      */
     public function load(ObjectManager $manager)
     {
-        $this->initSupportingEntities($manager);
+        //Backup Original Token
+        $originalToken = $this->container->get('security.token_storage')->getToken();
 
-        $this->startWorkflows(self::WORKFLOW_BACKOFFICE, $this->requests);
-        $this->startWorkflows(self::WORKFLOW_FRONTOFFICE, $this->requests);
+        $requests = $manager->getRepository(Request::class)->findAll();
+        $this->startWorkflows(self::WORKFLOW_BACKOFFICE, $requests);
+        $this->startWorkflows(self::WORKFLOW_FRONTOFFICE, $requests);
 
         $user = $manager->getRepository(User::class)->findOneBy([]);
-        $this->generateTransitionsHistory(self::WORKFLOW_BACKOFFICE, $this->requests, $user);
-        $this->generateTransitionsHistory(self::WORKFLOW_FRONTOFFICE, $this->requests);
+        $this->generateTransitionsHistory(self::WORKFLOW_BACKOFFICE, $requests, $user);
+        $this->generateTransitionsHistory(self::WORKFLOW_FRONTOFFICE, $requests);
+
+        //Restore Original Token
+        $this->container->get('security.token_storage')->setToken($originalToken);
     }
 
     /**
      * @param string $workflowName
-     * @param array $requests
+     * @param array|Request[] $requests
      */
     protected function startWorkflows($workflowName, array $requests)
     {
-        $this->workflowManager->massStartWorkflow(
+        $this->getWorkflowManager()->massStartWorkflow(
             array_map(
                 function ($request) use ($workflowName) {
                     return new WorkflowStartArguments($workflowName, $request);
@@ -96,13 +92,13 @@ class LoadRequestWorkflowDemoData extends AbstractFixture implements
 
     /**
      * @param string $workflowName
-     * @param Request[] $requests
+     * @param array|Request[] $requests
      * @param AbstractUser $user
      */
     protected function generateTransitionsHistory($workflowName, array $requests, AbstractUser $user = null)
     {
         foreach ($requests as $request) {
-            $workflowItem = $this->workflowManager->getWorkflowItem($request, $workflowName);
+            $workflowItem = $this->getWorkflowManager()->getWorkflowItem($request, $workflowName);
 
             $user = $user ?: $request->getCustomerUser();
             if (null === $user) {
@@ -120,16 +116,16 @@ class LoadRequestWorkflowDemoData extends AbstractFixture implements
     protected function randomTransitionWalk(WorkflowItem $workflowItem, $count)
     {
         while ($count--) {
-            $transitions = $this->workflowManager->getTransitionsByWorkflowItem($workflowItem)->toArray();
+            $transitions = $this->getWorkflowManager()->getTransitionsByWorkflowItem($workflowItem)->toArray();
             /** @var Transition $transition */
             $transition = $transitions[array_rand($transitions)];
 
-            if (in_array($transition->getName(), $this->transitionsWithNotes)) {
+            if (in_array($transition->getName(), $this->transitionsWithNotes, true)) {
                 $workflowItem->getData()->set('notes', $this->getNote());
             }
 
-            if ($this->workflowManager->isTransitionAvailable($workflowItem, $transition)) {
-                $this->workflowManager->transit(
+            if ($this->getWorkflowManager()->isTransitionAvailable($workflowItem, $transition)) {
+                $this->getWorkflowManager()->transit(
                     $workflowItem,
                     $transition
                 );
@@ -137,6 +133,9 @@ class LoadRequestWorkflowDemoData extends AbstractFixture implements
         }
     }
 
+    /**
+     * @param AbstractUser $user
+     */
     private function setUserToken(AbstractUser $user)
     {
         /** @var Organization $organization */
@@ -152,7 +151,7 @@ class LoadRequestWorkflowDemoData extends AbstractFixture implements
     private function getNote()
     {
         return 'Aliquam quis turpis eget elit sodales scelerisque.' .
-            'Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.' .
-            'Sed ante. Vivamus tortor. Duis mattis egestas metus.';
+        'Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.' .
+        'Sed ante. Vivamus tortor. Duis mattis egestas metus.';
     }
 }
