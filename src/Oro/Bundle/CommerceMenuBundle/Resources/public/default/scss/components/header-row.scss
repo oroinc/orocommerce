@@ -30,14 +30,6 @@
 
     &__trigger {
         border-right: 1px solid get-color('additional', 'ultra');
-
-        &.active,
-        &:hover {
-            & + .header-row__toggle,
-            .header-row__toggle {
-                display: block;
-            }
-        }
     }
 
     &--from-left .main-menu-outer {

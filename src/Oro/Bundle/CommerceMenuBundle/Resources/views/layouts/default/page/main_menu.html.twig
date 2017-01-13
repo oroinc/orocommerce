@@ -45,8 +45,10 @@
 {% block _main_menu_container_widget %}
     {% set attr =  layout_attr_defaults(attr, {
         '~class': ' main-menu-outer collapse-view',
-        'data-page-component-module': "oroui/js/app/components/jquery-widget-component",
+        'data-page-component-module': "oroui/js/app/components/viewport-component",
         '~data-page-component-options': {
+            screenType: 'tablet',
+            component: 'oroui/js/app/components/jquery-widget-component',
             widgetModule: 'oroui/js/widget/collapse-widget',
             open: false
         },
