@@ -1,36 +1,4 @@
 services:
-    oro_paypal.method.view.provider.payments_pro_credit_card:
-        class: 'Oro\Bundle\PayPalBundle\Method\View\Provider\CreditCardMethodViewProvider'
-        arguments:
-            - '@form.factory'
-            - '@oro_payment.provider.payment_transaction'
-            - '@oro_paypal.method.config.provider.payments_pro_credit_card'
-        tags:
-            - { name: oro_payment.payment_method_view_provider }
-
-    oro_paypal.method.view.provider.payflow_gateway_credit_card:
-        class: 'Oro\Bundle\PayPalBundle\Method\View\Provider\CreditCardMethodViewProvider'
-        arguments:
-            - '@form.factory'
-            - '@oro_payment.provider.payment_transaction'
-            - '@oro_paypal.method.config.provider.payflow_gateway_credit_card'
-        tags:
-            - { name: oro_payment.payment_method_view_provider }
-
-    oro_paypal.method.view.provider.payments_pro_express_checkout:
-        class: 'Oro\Bundle\PayPalBundle\Method\View\Provider\ExpressCheckoutMethodViewProvider'
-        arguments:
-            - '@oro_paypal.method.config.provider.payments_pro_express_checkout'
-        tags:
-            - { name: oro_payment.payment_method_view_provider }
-
-    oro_paypal.method.view.provider.payflow_gateway_express_checkout:
-        class: 'Oro\Bundle\PayPalBundle\Method\View\Provider\ExpressCheckoutMethodViewProvider'
-        arguments:
-            - '@oro_paypal.method.config.provider.payflow_gateway_express_checkout'
-        tags:
-            - { name: oro_payment.payment_method_view_provider }
-
     oro_paypal.method.config.provider:
         abstract: true
         public: false

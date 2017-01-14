@@ -5,20 +5,20 @@ namespace Oro\Bundle\PaymentBundle\Method\View;
 interface PaymentMethodViewProviderInterface
 {
     /**
-     * @param array $identifiers
+     * @param array $paymentMethods
      * @return PaymentMethodViewInterface[]
      */
-    public function getPaymentMethodViews($identifiers);
+    public function getPaymentMethodViews(array $paymentMethods);
 
     /**
-     * @param string $identifier
-     * @return PaymentMethodViewInterface|null
+     * @param string $name
+     * @return PaymentMethodViewInterface
      */
-    public function getPaymentMethodView($identifier);
+    public function getPaymentMethodView($name);
 
     /**
-     * @param string $identifier
+     * @param string $name
      * @return bool
      */
-    public function hasPaymentMethodView($identifier);
+    public function hasPaymentMethodView($name);
 }
