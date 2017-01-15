@@ -18,7 +18,8 @@
       width: 50%;
 
       + .line_item_form_fields__form__row {
-        width: calc(50% - 10px);
+        width: calc(40% - 10px);
+        margin-right: 10px;
       }
     }
   }

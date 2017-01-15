@@ -106,7 +106,7 @@ class LoadFlatRateIntegration extends AbstractFixture implements
             ]);
 
         $methodConfig = new ShippingMethodConfig();
-        $methodConfig->setMethod(FlatRateMethod::IDENTIFIER . $channel->getId())
+        $methodConfig->setMethod($this->getFlatRateIdentifier($channel))
             ->addTypeConfig($typeConfig);
 
         $rule = new Rule();
@@ -137,5 +137,14 @@ class LoadFlatRateIntegration extends AbstractFixture implements
                 ->getRepository('OroOrganizationBundle:Organization')
                 ->getFirst();
         }
+    }
+
+    /**
+     * @param Channel $channel
+     * @return int|string
+     */
+    private function getFlatRateIdentifier(Channel $channel)
+    {
+        return $this->container->get('oro_flat_rate.method.identifier_generator.method')->generateIdentifier($channel);
     }
 }

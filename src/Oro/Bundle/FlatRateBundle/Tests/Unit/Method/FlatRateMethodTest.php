@@ -12,22 +12,19 @@ class FlatRateMethodTest extends \PHPUnit_Framework_TestCase
     const LABEL = 'test';
 
     /** @internal */
-    const CHANNEL_ID = 1;
+    const IDENTIFIER = 'flat_rate';
 
     /** @var FlatRateMethod */
     protected $flatRate;
 
     protected function setUp()
     {
-        $this->flatRate = new FlatRateMethod(self::LABEL, self::CHANNEL_ID);
+        $this->flatRate = new FlatRateMethod(self::IDENTIFIER, self::LABEL);
     }
 
     public function testGetIdentifier()
     {
-        static::assertEquals(
-            FlatRateMethod::IDENTIFIER . self::CHANNEL_ID,
-            $this->flatRate->getIdentifier()
-        );
+        static::assertEquals(self::IDENTIFIER, $this->flatRate->getIdentifier());
     }
 
     public function testIsGrouped()

@@ -49,9 +49,8 @@ class CombinedProductPriceResolverTest extends WebTestCase
      * @dataProvider combinePricesDataProvider
      * @param string $combinedPriceList
      * @param array $expectedPrices
-     * @param array $expectedMinPrices
      */
-    public function testCombinePrices($combinedPriceList, array $expectedPrices, array $expectedMinPrices)
+    public function testCombinePrices($combinedPriceList, array $expectedPrices)
     {
         $collector = self::getMessageCollector();
         $collector->clear();
@@ -61,8 +60,6 @@ class CombinedProductPriceResolverTest extends WebTestCase
 
         $actualPrices = $this->getCombinedPrices($combinedPriceList);
         $this->assertEquals($expectedPrices, $actualPrices);
-        $actualMinimalPrices = $this->getMinimalPrices($combinedPriceList);
-        $this->assertEquals($expectedMinPrices, $actualMinimalPrices);
 
         $messages = $collector->getTopicSentMessages(AsyncIndexer::TOPIC_REINDEX);
         $this->assertCount(1, $messages);
@@ -103,15 +100,6 @@ class CombinedProductPriceResolverTest extends WebTestCase
                         '10 USD/10 bottle'
                     ]
                 ],
-                [
-                    'product-1' => [
-                        '1 USD/1 liter',
-                        '2 EUR/1 liter',
-                    ],
-                    'product-2' => [
-                        '1 USD/1 bottle',
-                    ]
-                ],
             ],
             [
                 '2t_3f_1t',
@@ -126,15 +114,6 @@ class CombinedProductPriceResolverTest extends WebTestCase
                         '10 USD/10 bottle'
                     ]
                 ],
-                [
-                    'product-1' => [
-                        '2 EUR/1 liter',
-                        '2 USD/1 liter',
-                    ],
-                    'product-2' => [
-                        '10 USD/10 bottle',
-                    ]
-                ],
             ],
             [
                 '2f_1t_3t',
@@ -147,15 +126,6 @@ class CombinedProductPriceResolverTest extends WebTestCase
                     'product-2' => [
                         '1 USD/1 bottle',
                         '10 USD/10 bottle'
-                    ]
-                ],
-                [
-                    'product-1' => [
-                        '2 EUR/1 liter',
-                        '2 USD/1 liter',
-                    ],
-                    'product-2' => [
-                        '1 USD/1 bottle',
                     ]
                 ],
             ]
@@ -426,26 +396,6 @@ class CombinedProductPriceResolverTest extends WebTestCase
         $repository = $this->getContainer()->get('doctrine')
             ->getManagerForClass('OroPricingBundle:CombinedProductPrice')
             ->getRepository('OroPricingBundle:CombinedProductPrice');
-
-        /** @var CombinedProductPrice[] $prices */
-        $prices = $repository->findBy(
-            ['priceList' => $combinedPriceList],
-            ['product' => 'ASC', 'quantity' => 'ASC', 'value' => 'ASC', 'currency' => 'ASC']
-        );
-
-        return $this->formatPrices($prices);
-    }
-
-    /**
-     * @param CombinedPriceList $combinedPriceList
-     * @return array
-     */
-    protected function getMinimalPrices(CombinedPriceList $combinedPriceList)
-    {
-        /** @var CombinedProductPriceRepository $repository */
-        $repository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroPricingBundle:MinimalProductPrice')
-            ->getRepository('OroPricingBundle:MinimalProductPrice');
 
         /** @var CombinedProductPrice[] $prices */
         $prices = $repository->findBy(

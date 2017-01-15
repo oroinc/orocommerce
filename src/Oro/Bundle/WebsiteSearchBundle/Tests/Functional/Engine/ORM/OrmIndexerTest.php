@@ -10,6 +10,7 @@ use Oro\Bundle\EntityBundle\ORM\Registry;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestDepartment;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestEmployee;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Engine\ORM\OrmIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDatetime;
@@ -39,6 +40,13 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
      */
     protected $doctrine;
 
+    public static function checkSearchEngine(WebTestCase $webTestCase)
+    {
+        if ($webTestCase->getContainer()->getParameter('oro_website_search.engine') !== 'orm') {
+            $webTestCase->markTestSkipped('Should be tested only with ORM engine');
+        }
+    }
+    
     protected function preSetUp()
     {
         $this->checkEngine();
@@ -48,12 +56,10 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
     {
         $this->checkEngine();
     }
-
+    
     protected function checkEngine()
     {
-        if ($this->getContainer()->getParameter('oro_website_search.engine') !== 'orm') {
-            $this->markTestSkipped('Should be tested only with ORM engine');
-        }
+        self::checkSearchEngine($this);
     }
 
     /**
