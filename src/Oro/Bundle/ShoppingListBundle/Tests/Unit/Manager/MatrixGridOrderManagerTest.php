@@ -2,10 +2,14 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager;
 
+use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Manager\MatrixGridOrderManager;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollection;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn;
@@ -123,5 +127,64 @@ class MatrixGridOrderManagerTest extends \PHPUnit_Framework_TestCase
         $expectedCollection->rows = [$rowSmall, $rowMedium];
 
         $this->assertEquals($expectedCollection, $this->manager->getMatrixCollection($product));
+    }
+
+    public function testConvertMatrixIntoLineItems()
+    {
+        $productUnit = $this->getEntity(ProductUnit::class);
+
+        $simpleProductSmallRed = (new ProductWithSizeAndColor())->setSize('s')->setColor('red');
+        $simpleProductMediumGreen = (new ProductWithSizeAndColor())->setSize('m')->setColor('green');
+
+        $columnSmallRed = new MatrixCollectionColumn();
+        $columnSmallGreen = new MatrixCollectionColumn();
+        $columnMediumRed = new MatrixCollectionColumn();
+        $columnMediumGreen = new MatrixCollectionColumn();
+
+        $columnSmallRed->product = $simpleProductSmallRed;
+        $columnSmallRed->quantity = 1;
+        $columnMediumGreen->product = $simpleProductMediumGreen;
+        $columnMediumGreen->quantity = 4;
+
+        $rowSmall = new MatrixCollectionRow();
+        $rowSmall->label = 'Small';
+        $rowSmall->columns = [$columnSmallRed, $columnSmallGreen];
+
+        $rowMedium = new MatrixCollectionRow();
+        $rowMedium->label = 'Medium';
+        $rowMedium->columns = [$columnMediumRed, $columnMediumGreen];
+
+        $collection = new MatrixCollection();
+        $collection->unit = $productUnit;
+        $collection->rows = [$rowSmall, $rowMedium];
+
+        $accountUser = $this->getEntity(AccountUser::class, ['id' => 1]);
+        $organization = $this->getEntity(Organization::class, ['id' => 1]);
+
+        $lineItem1 = $this->getEntity(LineItem::class, [
+            'product' => $simpleProductSmallRed,
+            'unit' => $productUnit,
+            'quantity' => 1,
+            'accountUser' => $accountUser,
+            'organization' => $organization
+        ]);
+        $lineItem2 = $this->getEntity(LineItem::class, [
+            'product' => $simpleProductMediumGreen,
+            'unit' => $productUnit,
+            'quantity' => 4,
+            'accountUser' => $accountUser,
+            'organization' => $organization
+        ]);
+
+        $shoppingList = $this->getEntity(ShoppingList::class, [
+            'lineItems' => [$lineItem1, $lineItem2],
+            'accountUser' => $accountUser,
+            'organization' => $organization
+        ]);
+
+        $this->assertEquals(
+            [$lineItem1, $lineItem2],
+            $this->manager->convertMatrixIntoLineItems($collection, $shoppingList)
+        );
     }
 }

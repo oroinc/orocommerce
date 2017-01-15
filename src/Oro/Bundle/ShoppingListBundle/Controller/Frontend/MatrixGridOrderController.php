@@ -33,12 +33,22 @@ class MatrixGridOrderController extends Controller
     public function orderAction(Request $request, Product $product)
     {
         $matrixOrderFormProvider = $this->get('oro_shopping_list.layout.data_provider.matrix_order_form');
+        $matrixGridOrderManager = $this->get('oro_shopping_list.provider.matrix_grid_order_manager');
+
+        $shoppingListManager = $this->get('oro_shopping_list.shopping_list.manager');
+        $shoppingList = $shoppingListManager->getForCurrentUser($request->get('shoppingListId'));
 
         $form = $matrixOrderFormProvider->getMatrixOrderForm($product);
         $form->handleRequest($request);
 
-        //TODO: handle form
+        if ($form->isSubmitted() && $form->isValid()) {
+            $lineItems = $matrixGridOrderManager->convertMatrixIntoLineItems($form->getData(), $shoppingList);
 
-        return ['data' => ['product' => $product]];
+            foreach ($lineItems as $lineItem) {
+                $shoppingListManager->addLineItem($lineItem, $shoppingList, true, true);
+            }
+        }
+
+        return ['data' => ['product' => $product, 'form_action' => $request->getUri()]];
     }
 }

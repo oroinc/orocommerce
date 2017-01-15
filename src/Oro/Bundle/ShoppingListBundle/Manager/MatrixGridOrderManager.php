@@ -7,6 +7,8 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollection;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionRow;
@@ -160,5 +162,34 @@ class MatrixGridOrderManager
         );
 
         return $productUnits->contains($unit->getUnit());
+    }
+
+    /**
+     * @param MatrixCollection $collection
+     * @param ShoppingList $shoppingList
+     *
+     * @return array|LineItem[]
+     */
+    public function convertMatrixIntoLineItems(MatrixCollection $collection, ShoppingList $shoppingList)
+    {
+        $lineItems = [];
+
+        /** @var MatrixCollectionRow $row */
+        foreach ($collection->rows as $row) {
+            /** @var MatrixCollectionColumn $column */
+            foreach ($row->columns as $column) {
+                if ($column->product && $column->quantity) {
+                    $lineItems[] = (new LineItem())
+                        ->setProduct($column->product)
+                        ->setQuantity($column->quantity)
+                        ->setShoppingList($shoppingList)
+                        ->setUnit($collection->unit)
+                        ->setAccountUser($shoppingList->getAccountUser())
+                        ->setOrganization($shoppingList->getOrganization());
+                }
+            }
+        }
+
+        return $lineItems;
     }
 }
