@@ -62,15 +62,6 @@ class LoadProductDefaultAttributeFamilyData extends AbstractFixture implements
             'groupVisibility' => false
         ],
         [
-            'groupLabel' => 'SEO',
-            'groupCode' => 'seo',
-            'attributes' => [
-                'metaKeywords',
-                'metaDescriptions'
-            ],
-            'groupVisibility' => false
-        ],
-        [
             'groupLabel' => 'Images',
             'groupCode' => 'images',
             'attributes' => [

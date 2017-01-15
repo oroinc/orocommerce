@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\FlatRateBundle\Tests\Unit\Method;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FlatRateBundle\Builder\FlatRateMethodFromChannelBuilder;
 use Oro\Bundle\FlatRateBundle\Method\FlatRateMethod;
 use Oro\Bundle\FlatRateBundle\Method\FlatRateMethodProvider;
@@ -15,6 +16,9 @@ class FlatRateMethodProviderTest extends \PHPUnit_Framework_TestCase
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|ChannelRepository */
     private $channelRepository;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper */
+    private $doctrineHelper;
 
     /** @var FlatRateMethod */
     private $method;
@@ -38,37 +42,35 @@ class FlatRateMethodProviderTest extends \PHPUnit_Framework_TestCase
         $disabledChannel = new Channel();
         $disabledChannel->setEnabled(false);
 
-        $this->channelRepository = $this->getMockBuilder(ChannelRepository::class)
+        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
+
+        $this->channelRepository = $this->getMockBuilder(ChannelRepository::class)
+            ->disableOriginalConstructor()->getMock();
+
         $this->channelRepository->expects(static::any())
             ->method('findByType')
             ->willReturn([$enabledChannel, $disabledChannel]);
 
-        $this->provider = new FlatRateMethodProvider($this->methodBuilder);
+        $this->doctrineHelper
+            ->method('getEntityRepository')
+            ->with('OroIntegrationBundle:Channel')
+            ->willReturn($this->channelRepository);
+
+        $this->provider = new FlatRateMethodProvider($this->doctrineHelper, $this->methodBuilder);
     }
 
     public function testGetShippingMethodsReturnsCorrectObjects()
     {
-        $this->provider->setChannelRepository($this->channelRepository);
-
         $actualMethods = $this->provider->getShippingMethods();
 
         static::assertCount(1, $actualMethods);
         static::assertSame($this->method, array_shift($actualMethods));
     }
 
-    public function testGetShippingMethodsWithoutChannelRepositoryReturnsEmptyArray()
-    {
-        $actualMethods = $this->provider->getShippingMethods();
-
-        static::assertCount(0, $actualMethods);
-    }
-
     public function testGetShippingMethodReturnsCorrectObject()
     {
-        $this->provider->setChannelRepository($this->channelRepository);
-
         $actualMethod = $this->provider->getShippingMethod($this->method->getIdentifier());
 
         static::assertSame($this->method, $actualMethod);
@@ -76,22 +78,16 @@ class FlatRateMethodProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetShippingMethodReturnsNull()
     {
-        $this->provider->setChannelRepository($this->channelRepository);
-
         static::assertNull($this->provider->getShippingMethod(''));
     }
 
     public function testHasShippingMethodOnCorrectIdentifier()
     {
-        $this->provider->setChannelRepository($this->channelRepository);
-
         static::assertTrue($this->provider->hasShippingMethod($this->method->getIdentifier()));
     }
 
     public function testHasShippingMethodOnWrongIdentifier()
     {
-        $this->provider->setChannelRepository($this->channelRepository);
-
         static::assertFalse($this->provider->hasShippingMethod(''));
     }
 }

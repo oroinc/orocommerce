@@ -29,8 +29,6 @@
     }
 
     &__trigger {
-        border-right: 1px solid get-color('additional', 'ultra');
-
         &.active,
         &:hover {
             & + .header-row__toggle,
@@ -88,6 +86,8 @@
 
 @include breakpoint('tablet') {
     .header-row {
+        margin: 0 -($offset-x-m);
+
         &__container {
             position: static;
 
@@ -131,5 +131,9 @@
         & .main-menu__sublist-container {
             width: auto;
         }
+    }
+
+    .shown-on-desktop {
+        display: none !important;
     }
 }

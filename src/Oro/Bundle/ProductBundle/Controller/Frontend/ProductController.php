@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Controller\Frontend;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
@@ -43,16 +44,27 @@ class ProductController extends Controller
      *      group_name="commerce"
      * )
      *
+     * @param Request $request
      * @param Product $product
      *
      * @return array
      */
-    public function viewAction(Product $product)
+    public function viewAction(Request $request, Product $product)
     {
+        $data = ['product' => $product];
+
+        $ignoreProductVariants = $request->get('ignoreProductVariant', false);
+
+        if (!$ignoreProductVariants && $product->isConfigurable()) {
+            $productAvailabilityProvider = $this->get('oro_product.provider.product_variant_availability_provider');
+            $simpleProduct = $productAvailabilityProvider->getSimpleProductByVariantFields($product, [], false);
+            if ($simpleProduct) {
+                $data['productVariant'] = $simpleProduct;
+            }
+        }
+
         return [
-            'data' => [
-                'product' => $product,
-            ],
+            'data' => $data,
             'product_type' => $product->getType(),
             'attribute_family' => $product->getAttributeFamily(),
         ];

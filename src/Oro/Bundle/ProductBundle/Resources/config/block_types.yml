@@ -19,7 +19,12 @@ services:
     oro_product.layout.type.product_view_container:
         parent: oro_layout.block_type.abstract_configurable_container
         calls:
-            - [setOptionsConfig, [{product: {required: true}}]]
+            -
+                - setOptionsConfig
+                -
+                    -
+                        parentProduct: ~
+                        product: {required: true}
             - [setName, ['product_view_container']]
         tags:
              - { name: layout.block_type, alias: product_view_container }

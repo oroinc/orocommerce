@@ -111,7 +111,7 @@
                         </li>
                         <li class="actions-row__item actions-row__item--separate">|</li>
                         <li class="actions-row__item actions-row__item--remove">
-                            <button class="actions-row__button removeRow" title="Delete">
+                            <button class="actions-row__button removeRow" title="Delete" data-role="remove">
                                 <i class="actions-row__icon fa-trash"></i>
                             </button>
                         </li>
@@ -409,7 +409,7 @@
             '~class': 'request-form-lineitem-unit__input'
         }) %}
 
-        {{ 'oro.rfp.requestproductitem.price.label'|trans }}: {{ form_widget(form.price.value, {attr: input_price}) }}
+        <span class="request-form-lineitem-unit__label">{{ 'oro.rfp.requestproductitem.price.label'|trans }}:</span> {{ form_widget(form.price.value, {attr: input_price}) }}
         <div class="hidden">{{ form_widget(form.price.currency) }}</div>
         {{ form_errors(form.price) }}
     </div>

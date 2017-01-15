@@ -3,8 +3,8 @@
         <span class="notification__text">{{ transitionData.transition.message|trans({}, 'workflows')|raw }}</span>
     </div>
 
-    <fieldset class="checkout__form__row">
-        <div class="checkout__form__col form__col_x6 mmb5-md mmb5-sm">
+    <fieldset class="grid__row grid__row--offset-none">
+        <div class="grid__column grid__column--offset-y grid__column--6 mmb5-md mmb5-sm">
             {{ form_row(form.request_approval_notes, {'attr': {'class': 'input input--full input--size-m', 'placeholder': 'oro.checkout.order_review.note_placeholder'|trans}}) }}
         </div>
     </fieldset>
