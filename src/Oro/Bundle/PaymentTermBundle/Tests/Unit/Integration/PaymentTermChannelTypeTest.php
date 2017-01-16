@@ -14,13 +14,13 @@ class PaymentTermChannelTypeTest extends \PHPUnit_Framework_TestCase
         $this->channel = new PaymentTermChannelType();
     }
 
-    public function testGetLabelReturnsString()
+    public function testGetLabelReturnsCorrectString()
     {
-        static::assertTrue(is_string($this->channel->getLabel()));
+        static::assertSame('oro.paymentterm.channel_type.label', $this->channel->getLabel());
     }
 
-    public function testGetIconReturnsString()
+    public function testGetIconReturnsCorrectString()
     {
-        static::assertTrue(is_string($this->channel->getIcon()));
+        static::assertSame('', $this->channel->getIcon());
     }
 }

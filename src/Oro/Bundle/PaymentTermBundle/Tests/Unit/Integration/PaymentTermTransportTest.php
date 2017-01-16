@@ -31,8 +31,8 @@ class PaymentTermTransportTest extends \PHPUnit_Framework_TestCase
         static::assertSame(PaymentTermSettings::class, $this->transport->getSettingsEntityFQCN());
     }
 
-    public function testGetLabelReturnsString()
+    public function testGetLabelReturnsCorrectString()
     {
-        static::assertTrue(is_string($this->transport->getLabel()));
+        static::assertSame('oro.paymentterm.settings.label', $this->transport->getLabel());
     }
 }
