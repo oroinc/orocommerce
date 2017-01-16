@@ -2,55 +2,81 @@
 
 namespace Oro\Bundle\MoneyOrderBundle\Tests\Unit\Method\Config;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\MoneyOrderBundle\DependencyInjection\Configuration;
-use Oro\Bundle\MoneyOrderBundle\DependencyInjection\OroMoneyOrderExtension;
+use Oro\Bundle\IntegrationBundle\Entity\Channel;
+use Oro\Bundle\IntegrationBundle\Entity\Transport;
 use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig;
-use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigInterface;
-use Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config\AbstractPaymentSystemConfigTestCase;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
-class MoneyOrderConfigTest extends AbstractPaymentSystemConfigTestCase
+class MoneyOrderConfigTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var MoneyOrderConfigInterface
-     */
-    protected $config;
+    const LABEL = 'label';
+    const SHORT_LABEL = 'short label';
+    const PAY_TO = 'pay to';
+    const SEND_TO = 'send to';
+    const CHANNEL_ID = 5;
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getPaymentConfig(ConfigManager $configManager)
+    /** @var MoneyOrderConfig */
+    private $config;
+
+    /** @var Channel|\PHPUnit_Framework_MockObject_MockObject */
+    private $channel;
+
+    protected function setUp()
     {
-        return new MoneyOrderConfig($configManager);
+        $settingsBag = new ParameterBag([
+            'money_order_label' => self::LABEL,
+            'money_order_short_label' => self::SHORT_LABEL,
+            'money_order_pay_to' => self::PAY_TO,
+            'money_order_send_to' => self::SEND_TO,
+        ]);
+
+        $transport = $this->createMock(Transport::class);
+        $transport->expects(static::any())
+            ->method('getSettingsBag')
+            ->willReturn($settingsBag);
+
+        $this->channel = $this->createMock(Channel::class);
+        $this->channel->expects(static::any())
+            ->method('getTransport')
+            ->willReturn($transport);
+
+        $this->config = new MoneyOrderConfig($this->channel);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getConfigPrefix()
+    public function testGetLabelReturnsCorrectString()
     {
-        return 'money_order_';
+        static::assertSame(self::LABEL, $this->config->getLabel());
     }
 
-    public function testGetPayToKey()
+    public function testGetShortLabelReturnsCorrectString()
     {
-        $returnValue = 'pay_to';
-        $this->setConfig($this->once(), Configuration::MONEY_ORDER_PAY_TO_KEY, $returnValue);
-        $this->assertSame($returnValue, $this->config->getPayTo());
+        static::assertSame(self::SHORT_LABEL, $this->config->getShortLabel());
     }
 
-    public function testGetSendToKey()
+    public function testGetAdminLabelReturnsCorrectString()
     {
-        $returnValue = 'send_to';
-        $this->setConfig($this->once(), Configuration::MONEY_ORDER_SEND_TO_KEY, $returnValue);
-        $this->assertSame($returnValue, $this->config->getSendTo());
+        static::assertSame(self::LABEL, $this->config->getAdminLabel());
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getExtensionAlias()
+    public function testGetPayToReturnsCorrectString()
     {
-        return OroMoneyOrderExtension::ALIAS;
+        static::assertSame(self::PAY_TO, $this->config->getPayTo());
+    }
+
+    public function testGetSendToReturnsCorrectString()
+    {
+        static::assertSame(self::SEND_TO, $this->config->getSendTo());
+    }
+
+    public function testGetPaymentMethodIdentifierReturnsCorrectString()
+    {
+        $this->channel->expects(static::once())
+            ->method('getId')
+            ->willReturn(self::CHANNEL_ID);
+
+        static::assertSame(
+            'money_order_' . self::CHANNEL_ID,
+            $this->config->getPaymentMethodIdentifier()
+        );
     }
 }

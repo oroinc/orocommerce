@@ -2,17 +2,19 @@
 
 namespace Oro\Bundle\MoneyOrderBundle\Method\Config;
 
+use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\MoneyOrderBundle\DependencyInjection\Configuration;
-use Oro\Bundle\MoneyOrderBundle\DependencyInjection\OroMoneyOrderExtension;
 use Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder;
-use Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentSystemConfig;
+use Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentConfig;
 
-class MoneyOrderConfig extends AbstractPaymentSystemConfig implements MoneyOrderConfigInterface
+class MoneyOrderConfig extends AbstractPaymentConfig implements MoneyOrderConfigInterface
 {
-    /** {@inheritdoc} */
-    protected function getPaymentExtensionAlias()
+    /**
+     * @param Channel $channel
+     */
+    public function __construct(Channel $channel)
     {
-        return OroMoneyOrderExtension::ALIAS;
+        parent::__construct($channel);
     }
 
     /** {@inheritdoc} */
@@ -48,6 +50,6 @@ class MoneyOrderConfig extends AbstractPaymentSystemConfig implements MoneyOrder
     /** {@inheritdoc} */
     public function getPaymentMethodIdentifier()
     {
-        return (string)MoneyOrder::TYPE;
+        return (string)MoneyOrder::TYPE . '_' . $this->channel->getId();
     }
 }

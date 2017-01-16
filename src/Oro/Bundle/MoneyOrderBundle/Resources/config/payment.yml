@@ -1,10 +1,4 @@
 services:
-    oro_money_order.payment_method.money_order.config:
-        class: 'Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig'
-        public: false
-        arguments:
-            - '@oro_config.global'
-
     oro_money_order.payment_method_provider.money_order:
         class: 'Oro\Bundle\MoneyOrderBundle\Method\MoneyOrderMethodProvider'
         public: false
