@@ -1,0 +1,16 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'product_info.html.twig'
+        - '@addTree':
+            items:
+                product_info_page:
+                    blockType: container
+                product_info_information:
+                    blockType: product_info_information
+                    options:
+                        product: '=data["entity"]'
+            tree:
+                page_content:
+                    product_info_page:
+                        product_info_information: ~

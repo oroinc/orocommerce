@@ -72,9 +72,8 @@ class ProductController extends Controller
 
     /**
      * @Route("/info/{id}", name="oro_product_frontend_product_info", requirements={"id"="\d+"})
-     * @Template("OroProductBundle:Product\Frontend\widget:info.html.twig")
+     * @Layout()
      * @AclAncestor("oro_product_frontend_view")
-     *
      * @param Product $product
      *
      * @return array
@@ -82,7 +81,7 @@ class ProductController extends Controller
     public function infoAction(Product $product)
     {
         return [
-            'product' => $product
+            'data' => ['entity' => $product]
         ];
     }
 }
