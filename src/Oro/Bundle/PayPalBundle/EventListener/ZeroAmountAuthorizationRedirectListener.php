@@ -2,20 +2,20 @@
 
 namespace Oro\Bundle\PayPalBundle\EventListener;
 
-use Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfigInterface;
+use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
 use Oro\Bundle\PaymentBundle\Event\RequirePaymentRedirectEvent;
 
 class ZeroAmountAuthorizationRedirectListener
 {
     /**
-     * @var PayflowGatewayConfigInterface
+     * @var PayPalCreditCardConfigInterface
      */
     private $config;
 
     /**
-     * @param PayflowGatewayConfigInterface $config
+     * @param PayPalCreditCardConfigInterface $config
      */
-    public function __construct(PayflowGatewayConfigInterface $config)
+    public function __construct(PayPalCreditCardConfigInterface $config)
     {
         $this->config = $config;
     }

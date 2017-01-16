@@ -2,16 +2,14 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Twig;
 
-use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
-use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
 use Oro\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter;
-
-use Symfony\Component\Translation\TranslatorInterface;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistry;
 
 class PaymentMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var PaymentMethodViewRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentMethodViewProvidersRegistry|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $paymentMethodViewRegistry;
 
@@ -25,45 +23,17 @@ class PaymentMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
      */
     protected $formatter;
 
-    /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $translator;
-
-
     public function setUp()
     {
-        $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
         $this->paymentMethodViewRegistry = $this
-            ->getMockBuilder('Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry')
+            ->getMockBuilder(PaymentMethodViewProvidersRegistry::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->paymentMethodView = $this
-            ->getMockBuilder('Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface')
+            ->getMockBuilder(PaymentMethodViewInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->formatter = new PaymentMethodLabelFormatter(
-            $this->paymentMethodViewRegistry,
-            $this->translator
-        );
-    }
-
-    /**
-     * @param string $paymentMethod
-     * @param string $returnLabel
-     * @param bool $isShort
-     */
-    public function paymentMethodLabelMock($paymentMethod, $returnLabel, $isShort = true)
-    {
-        $this->paymentMethodViewRegistry
-            ->expects($this->once())
-            ->method('getPaymentMethodView')
-            ->with($paymentMethod)
-            ->willReturn($this->paymentMethodView);
-        $this->paymentMethodView
-            ->expects($this->once())
-            ->method($isShort ? 'getShortLabel' : 'getLabel')
-            ->willReturn($returnLabel);
+        $this->formatter = new PaymentMethodLabelFormatter($this->paymentMethodViewRegistry);
     }
 
     public function testFormatPaymentMethodLabel()
@@ -102,48 +72,25 @@ class PaymentMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($this->formatter->formatPaymentMethodLabel($paymentMethodConstant, false), $label);
     }
 
-    /**
-     * @dataProvider paymentProvider
-     * @param string $paymentMethod
-     * @param string $paymentMethodLabel
-     * @param string $paymentMethodShortLabel
-     * @param string $expectedResult
-     */
-    public function testFormatPaymentMethodAdminLabel(
-        $paymentMethod,
-        $paymentMethodLabel,
-        $paymentMethodShortLabel,
-        $expectedResult
-    ) {
-        $this->translator
-            ->expects($this->once())
-            ->method('trans')
-            ->with(sprintf('oro.payment.admin.%s.label', $paymentMethod))
-            ->willReturn($paymentMethodLabel);
+    public function testFormatPaymentMethodAdminLabel()
+    {
+        $paymentMethod = 'payment_method';
+        $paymentMethodAdminLabel = 'Payment Method';
+        $expectedResult = 'Payment Method';
 
-        $this->paymentMethodLabelMock($paymentMethod, $paymentMethodShortLabel);
+        $this->paymentMethodViewRegistry
+            ->expects($this->once())
+            ->method('getPaymentMethodView')
+            ->with($paymentMethod)
+            ->willReturn($this->paymentMethodView)
+        ;
+
+        $this->paymentMethodView
+            ->expects($this->once())
+            ->method('getAdminLabel')
+            ->willReturn($paymentMethodAdminLabel)
+        ;
 
         $this->assertEquals($this->formatter->formatPaymentMethodAdminLabel($paymentMethod), $expectedResult);
-    }
-
-    /**
-     * @return array
-     */
-    public function paymentProvider()
-    {
-        return [
-            [
-                '$paymentMethod'           => 'payment_method',
-                '$paymentMethodLabel'      => 'Payment Method',
-                '$paymentMethodShortLabel' => 'Payment Method Short',
-                '$expectedResult'          => 'Payment Method Short (Payment Method)',
-            ],
-            [
-                '$paymentMethod'           => 'payment_method',
-                '$paymentMethodLabel'      => 'Payment Method',
-                '$paymentMethodShortLabel' => 'Payment Method',
-                '$expectedResult'          => 'Payment Method',
-            ],
-        ];
     }
 }

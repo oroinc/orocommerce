@@ -2,17 +2,17 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\EventListener\Callback;
 
-use Psr\Log\LoggerInterface;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Session\Session;
+use Oro\Bundle\PaymentBundle\Event\CallbackNotifyEvent;
+use Oro\Bundle\PaymentBundle\Event\CallbackReturnEvent;
 
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
 use Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowListener;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseStatusMap;
-use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use Oro\Bundle\PaymentBundle\Event\CallbackReturnEvent;
-use Oro\Bundle\PaymentBundle\Event\CallbackNotifyEvent;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Psr\Log\LoggerInterface;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 class PayflowListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -22,7 +22,7 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
     /** @var Session|\PHPUnit_Framework_MockObject_MockObject */
     protected $session;
 
-    /** @var PaymentMethodRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentMethodProvidersRegistry|\PHPUnit_Framework_MockObject_MockObject */
     protected $paymentMethodRegistry;
 
     /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject $dispatcher */
@@ -34,7 +34,7 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->paymentMethodRegistry = $this->getMockBuilder('Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry')
+        $this->paymentMethodRegistry = $this->getMockBuilder(PaymentMethodProvidersRegistry::class)
             ->disableOriginalConstructor()
             ->getMock();
 

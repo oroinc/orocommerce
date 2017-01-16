@@ -3,40 +3,40 @@
 namespace Oro\Bundle\PaymentBundle\Form\Type;
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodProviderInterface;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistry;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
 
 class PaymentMethodConfigType extends AbstractType
 {
     const NAME = 'oro_payment_method_config';
 
     /**
-     * @var PaymentMethodRegistry
+     * @var PaymentMethodProvidersRegistry
      */
     protected $methodRegistry;
 
     /**
-     * @var TranslatorInterface
+     * @var PaymentMethodViewProvidersRegistry
      */
-    protected $translator;
+    protected $methodViewRegistry;
 
     /**
-     * @param PaymentMethodRegistry $methodRegistry
-     * @param TranslatorInterface $translator
+     * @param PaymentMethodProvidersRegistry $methodRegistry
+     * @param PaymentMethodViewProvidersRegistry $methodViewRegistry
      */
     public function __construct(
-        PaymentMethodRegistry $methodRegistry,
-        TranslatorInterface $translator
+        PaymentMethodProvidersRegistry $methodRegistry,
+        PaymentMethodViewProvidersRegistry $methodViewRegistry
     ) {
         $this->methodRegistry = $methodRegistry;
-        $this->translator = $translator;
+        $this->methodViewRegistry = $methodViewRegistry;
     }
 
     /**
@@ -62,10 +62,13 @@ class PaymentMethodConfigType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $view->vars['methods_labels'] = array_reduce(
-            $this->methodRegistry->getPaymentMethods(),
-            function (array $result, PaymentMethodInterface $method) {
-                $type = $method->getType();
-                $result[$type] = $this->translator->trans(sprintf('oro.payment.admin.%s.label', $type));
+            $this->methodRegistry->getPaymentMethodProviders(),
+            function (array $result, PaymentMethodProviderInterface $provider) {
+                foreach ($provider->getPaymentMethods() as $method) {
+                    $result[$method->getIdentifier()] = $this
+                        ->methodViewRegistry->getPaymentMethodView($method->getIdentifier())
+                        ->getAdminLabel();
+                }
                 return $result;
             },
             []
