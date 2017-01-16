@@ -3,6 +3,10 @@ layout:
         - '@setBlockTheme':
             themes: 'layout.html.twig'
         - '@add':
+            id: product_view_price_container
+            parentId: product_view_specification_container
+            blockType: container
+        - '@add':
             id: product_prices_subtree_update
             parentId: product_view_price_container
             blockType: layout_subtree_update
@@ -12,8 +16,11 @@ layout:
         - '@add':
             id: product_prices
             parentId: product_prices_subtree_update
-            blockType: product_prices
+            blockType: attribute_group
             options:
-                visible: '=data["product"].getUnitPrecisions()!=null'
-                productUnitSelectionVisible: '=data["oro_product_unit_fields_settings"].isProductUnitSelectionVisible(data["product"])'
-                productPrices: '=data["frontend_product_prices"].getByProduct(data["product"])'
+                entity: '=data["oro_product_variant"].getProductVariantOrProduct(data)'
+                attribute_family: '=context["attribute_family"]'
+                group: 'prices'
+                visible: '=data["oro_product_variant"].getProductVariantOrProduct(data).getUnitPrecisions()!=null'
+                vars:
+                    productUnitSelectionVisible: '=data["oro_product_unit_fields_settings"].isProductUnitSelectionVisible(data["oro_product_variant"].getProductVariantOrProduct(data))'

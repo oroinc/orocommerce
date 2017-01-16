@@ -37,7 +37,7 @@ class InventoryLevelControllerTest extends WebTestCase
     public function testUpdateAction()
     {
         /** @var Product $product */
-        $product = $this->getReference('product.1');
+        $product = $this->getReference('product-1');
 
         // open product view page
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_view', ['id' => $product->getId()]));

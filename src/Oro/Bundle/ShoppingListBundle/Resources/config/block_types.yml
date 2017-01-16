@@ -28,6 +28,7 @@ services:
                         productsAllPrices: {required: true}
                         productsUnits: {required: true}
                         productsUnitSelectionVisibilities: {required: true}
+                        configurableProducts: {required: true}
                         lineItemsUnitVisibilities: {required: true}
             - [setName, ['shopping_list_line_items_list']]
         tags:

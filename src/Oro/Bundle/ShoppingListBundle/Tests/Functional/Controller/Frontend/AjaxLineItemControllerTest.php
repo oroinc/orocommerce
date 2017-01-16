@@ -136,7 +136,7 @@ class AjaxLineItemControllerTest extends WebTestCase
     public function testAddProductFromViewNotValidData()
     {
         /** @var Product $product */
-        $product = $this->getReference('product.1');
+        $product = $this->getReference('product-1');
 
         $this->client->request(
             'POST',
@@ -428,7 +428,7 @@ class AjaxLineItemControllerTest extends WebTestCase
                     'actionName' => 'oro_shoppinglist_frontend_addlineitemlist'.$shoppingList->getId(),
                     'shoppingList' => $shoppingList->getId(),
                     'inset' => 1,
-                    'values' => $this->getReference('product.1')->getId(),
+                    'values' => $this->getReference('product-1')->getId(),
                 ]
             )
         );

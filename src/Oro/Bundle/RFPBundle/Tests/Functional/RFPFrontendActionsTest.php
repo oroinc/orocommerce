@@ -42,7 +42,7 @@ class RFPFrontendActionsTest extends WebTestCase
         $form = $crawler->filter('form[name="oro_product_quick_add"]')->form();
 
         /** @var Product $product */
-        $product = $this->getReference('product.3');
+        $product = $this->getReference('product-3');
 
         $products = [
             [

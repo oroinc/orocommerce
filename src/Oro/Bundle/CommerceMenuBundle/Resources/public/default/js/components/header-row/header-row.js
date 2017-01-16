@@ -19,6 +19,14 @@ define(function(require) {
          */
         initialize: function(options) {
             this.$el = $(options._sourceElement);
+            this.$mainMenuDropdown = this.$el.find('[data-header-row-toggle]');
+
+            /**
+             * Prevent to close Bootstrap dropdowns
+             */
+            this.$mainMenuDropdown.on('click', function(e) {
+                e.stopPropagation();
+            });
         },
 
         /**
@@ -29,6 +37,7 @@ define(function(require) {
                 this.listenTo(mediator, 'layout:reposition', _.debounce(this.addScroll, 40));
                 this.listenTo(mediator, 'sticky-panel:toggle-state', _.debounce(this.addScroll, 40));
             }
+
             return HeaderRowComponent.__super__.delegateListeners.apply(this, arguments);
         },
 
@@ -43,7 +52,6 @@ define(function(require) {
             if (!isSticky) {
                 menuHeight = windowHeight - headerRowHeight - middleBarHeight;
             }
-
             $.each($dropdowns, function(index, dropdown) {
                 $(dropdown).parent().removeAttr('style');
 
@@ -62,6 +70,9 @@ define(function(require) {
                 return;
             }
 
+            this.$mainMenuDropdown.off('click');
+
+            delete this.$mainMenuDropdown;
             delete this.$el;
 
             HeaderRowComponent.__super__.dispose.call(this);

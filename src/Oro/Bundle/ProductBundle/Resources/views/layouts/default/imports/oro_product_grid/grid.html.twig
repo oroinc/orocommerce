@@ -65,19 +65,22 @@
         {% set row_view_key = constant('Oro\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::GRID_THEME_PARAM_NAME') %}
         <span class="fs14 va-m_md hidden-sm hidden-xs">Display: &nbsp;</span>
         <div class="buttons-group">
+            {% set url_prefix = app.request.baseUrl ~ app.request.pathInfo %}
+            {% set query_parameters = app.request.query.all() %}
+
             {% set row_view = constant('Oro\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::VIEW_TILES') %}
-            <a href="{{ path('oro_product_frontend_product_index', {'frontend-product-search-grid': {(row_view_key): row_view}}) }}"
+            <a href="{{ url_prefix ~ '?' ~ query_parameters|merge({'frontend-product-search-grid': {(row_view_key): row_view}})|url_encode }}"
                class="buttons-group__el {% if current_row_view == row_view %}current{% endif %}" data-catalog-view-trigger="gallery-view">
                     <i class="fa-th fa--no-offset"></i>
             </a>
             {% set row_view = constant('Oro\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::VIEW_GRID') %}
-            <a href="{{ path('oro_product_frontend_product_index', {'frontend-product-search-grid': {(row_view_key): row_view}}) }}"
+            <a href="{{ url_prefix ~ '?' ~ query_parameters|merge({'frontend-product-search-grid': {(row_view_key): row_view}})|url_encode }}"
                class="buttons-group__el {% if current_row_view == row_view %}current{% endif %}"
                data-catalog-view-trigger="list-view">
                     <i class="fa-th-list fa--no-offset"></i>
             </a>
             {% set row_view = constant('Oro\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::VIEW_LIST') %}
-            <a href="{{ path('oro_product_frontend_product_index', {'frontend-product-search-grid': {(row_view_key): row_view}}) }}"
+            <a href="{{ url_prefix ~ '?' ~ query_parameters|merge({'frontend-product-search-grid': {(row_view_key): row_view}})|url_encode }}"
                class="buttons-group__el {% if current_row_view == row_view %}current{% endif %}" data-catalog-view-trigger="no-image-view">
                     <i class="fa-bars fa--no-offset"></i>
             </a>
