@@ -34,17 +34,6 @@ class RequestAdditionalNoteTest extends AbstractTest
         $this->assertPropertyAccessors($this->requestAdditionalNote, $properties);
     }
 
-    public function testConstruct()
-    {
-        $now = new \DateTime();
-
-        $this->assertInstanceOf('DateTime', $this->requestAdditionalNote->getCreatedAt());
-        $this->assertLessThanOrEqual($now, $this->requestAdditionalNote->getCreatedAt());
-
-        $this->assertInstanceOf('DateTime', $this->requestAdditionalNote->getUpdatedAt());
-        $this->assertLessThanOrEqual($now, $this->requestAdditionalNote->getUpdatedAt());
-    }
-
     public function testGetAllowedTypes()
     {
         $this->assertEquals(
