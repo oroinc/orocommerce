@@ -1,5 +1,5 @@
 {% block _rfp_request_view_top_actions_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ " oro-customer-user-role__controls-list mt0-md mb0-md mt0-sm mb0-sm" }) %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " oro-customer-user-role__controls-list" }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
