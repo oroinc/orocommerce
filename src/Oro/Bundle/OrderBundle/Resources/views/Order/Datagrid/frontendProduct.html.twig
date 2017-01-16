@@ -3,9 +3,25 @@
     {% if isFreeFormProduct %}
         {{ record.getValue('freeFormProduct') }}
     {% else %}
-        <a href="{{ path('oro_product_frontend_product_view', {'id': record.getValue('product.id')}) }}">{{ record.getValue('productName') }}</a>
+        {% set productId = record.getValue('product.id') %}
+        {% set product = record.getValue('product') %}
+        {% if record.getValue('parentProduct') %}
+            {% set product = record.getValue('parentProduct') %}
+        {% endif %}
+        <a href="{{ path('oro_product_frontend_product_view', {'id': product.id }) }}">{{ product.name }}</a>
     {% endif %}
 </h3>
 {% if not isFreeFormProduct %}
-    <div>{{ 'oro.product.item_number.label'|trans }}: <span class="red">{{ record.getValue('productSku') }}</span></div>
+    <div>{{ 'oro.product.item_number.label'|trans }}: <span class="red">{{ product.sku }}</span></div>
+    {% if record.getValue(productId) is defined %}
+        {% for field in record.getValue(productId) %}
+            <div>{{ field.label|trans }}:
+                {% if field.type == 'boolean' %}
+                    {{ field.value ? 'oro.product.variant_fields.yes.label'|trans : 'oro.product.variant_fields.no.label'|trans }}
+                {% else %}
+                    {{ field.value }}
+                {% endif %}
+            </div>
+        {% endfor %}
+    {% endif %}
 {% endif %}

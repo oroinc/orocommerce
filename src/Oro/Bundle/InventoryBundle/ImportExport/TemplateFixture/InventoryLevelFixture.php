@@ -58,7 +58,7 @@ class InventoryLevelFixture extends AbstractTemplateRepository implements Templa
             ->setString('US Product Name')
             ->setFallback('system');
 
-        $product->setSku('product.1')
+        $product->setSku('product-1')
             ->setInventoryStatus($inventoryStatus)
             ->addName($name)
             ->addName($localizedName);

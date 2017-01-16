@@ -85,7 +85,9 @@ class PaymentTermSettings extends Transport
     public function getSettingsBag()
     {
         if (null === $this->settings) {
-            $this->settings = new ParameterBag([]);
+            $this->settings = new ParameterBag([
+                'labels' => $this->getLabels()->toArray(),
+            ]);
         }
 
         return $this->settings;

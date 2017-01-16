@@ -828,8 +828,6 @@ datagrids:
                 where:
                     and:
                         - user.customer = :customer
-            bind_parameters:
-                - customer
         columns:
             hasRole:
                 label: oro.customer.customeruser.has_role.label

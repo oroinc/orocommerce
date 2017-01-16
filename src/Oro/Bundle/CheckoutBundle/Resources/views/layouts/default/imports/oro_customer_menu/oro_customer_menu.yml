@@ -16,7 +16,7 @@ layout:
             blockType: link
             options:
                 route_name: oro_checkout_frontend_open_orders
-                text: oro.checkout.entity_plural_label
+                text: oro.checkout.open_order.plural_label
                 visible: '=data["oro_checkout_separate_open_orders"].getOpenOrdersSeparatePageConfig()'
             siblingId: customer_sidebar_sign_out
             prepend: true

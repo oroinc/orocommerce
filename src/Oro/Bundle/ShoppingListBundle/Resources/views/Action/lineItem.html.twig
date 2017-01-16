@@ -1,12 +1,12 @@
 {% extends 'OroActionBundle:Operation:form.html.twig' %}
 
 {% block form %}
-    {% set buttonOptions = operation.definition.buttonOptions %}
+    {% set frontendOptions = operation.definition.frontendOptions.options %}
     {% set pageComponentOptions = {} %}
     <div class="widget-content add-product-widget">
         <form id="{{ form.vars.id }}" name="{{ form.vars.name }}" action="{{ app.request.uri }}" {{ form_enctype(form) }}
             method="{{ form.vars.method }}" data-collect="true" class="form-dialog"
-            {% if buttonOptions.page_component_module is defined %}data-page-component-module="{{ buttonOptions.page_component_module }}"{% endif %}
+            {% if frontendOptions.form_page_component_module is defined %}data-page-component-module="{{ frontendOptions.form_page_component_module }}"{% endif %}
         >
             <fieldset class="form-horizontal">
                 {% if form.lineItem.product is defined %}

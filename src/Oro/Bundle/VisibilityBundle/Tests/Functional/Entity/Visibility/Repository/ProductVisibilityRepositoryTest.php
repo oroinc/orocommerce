@@ -78,35 +78,35 @@ class ProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositor
                 'categoryName' => LoadCategoryData::FOURTH_LEVEL2,
                 'expected' => [
                     [
-                        'product' => 'product.1',
+                        'product' => 'product-1',
                         'visibility' => ProductVisibility::CONFIG
                     ],
                     [
-                        'product' => 'product.2',
+                        'product' => 'product-2',
                         'visibility' => ProductVisibility::VISIBLE
                     ],
                     [
-                        'product' => 'product.3',
+                        'product' => 'product-3',
                         'visibility' => ProductVisibility::VISIBLE
                     ],
                     [
-                        'product' => 'product.4',
+                        'product' => 'product-4',
                         'visibility' => ProductVisibility::HIDDEN
                     ],
                     [
-                        'product' => 'product.5',
+                        'product' => 'product-5',
                         'visibility' => ProductVisibility::CONFIG
                     ],
                     [
-                        'product' => 'product.6',
+                        'product' => 'product-6',
                         'visibility' => ProductVisibility::CONFIG
                     ],
                     [
-                        'product' => 'product.7',
+                        'product' => 'product-7',
                         'visibility' => ProductVisibility::CONFIG
                     ],
                     [
-                        'product' => 'product.8',
+                        'product' => 'product-8',
                         'visibility' => ProductVisibility::CONFIG
                     ],
                 ]

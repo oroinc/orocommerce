@@ -108,10 +108,9 @@ define(function(require) {
                 options.lineItemModel = this.model;
             }, this));
 
-            this._deferredRender();
-            this.initLayout({
+            this.initializeSubviews({
                 lineItemModel: this.model
-            }).done(_.bind(this.handleLayoutInit, this));
+            });
         },
 
         initModel: function(options) {

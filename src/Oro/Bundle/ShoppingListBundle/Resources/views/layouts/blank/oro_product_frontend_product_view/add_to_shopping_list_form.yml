@@ -12,11 +12,11 @@ layout:
         - '@setOption':
             id: product_shopping_lists
             optionName: productShoppingLists
-            optionValue: '=data["oro_shopping_list_product_units_quantity"].getByProduct(data.offsetExists("product")?data["product"])'
+            optionValue: '=data["oro_shopping_list_product_units_quantity"].getByProduct(data["oro_product_variant"].getProductVariantOrProduct(data))'
         - '@setOption':
             id: product_line_item_form_buttons_shopping_list
             optionName: productShoppingLists
-            optionValue: '=data["oro_shopping_list_product_units_quantity"].getByProduct(data.offsetExists("product")?data["product"])'
+            optionValue: '=data["oro_shopping_list_product_units_quantity"].getByProduct(data["oro_product_variant"].getProductVariantOrProduct(data))'
         - '@add':
             id: line_item_form_shopping_lists
             parentId: line_item_form

@@ -1,93 +1,93 @@
-product.1:
+product-1:
     all:
         visibility: config
-        reference: product.1.visibility.all
+        reference: product-1.visibility.all
     groups:
         customer_group.group1:
             visibility: hidden
-            reference: product.1.visibility.customer_group.group1
+            reference: product-1.visibility.customer_group.group1
     customers:
         customer.level_1:
             visibility: visible
-            reference: product.1.visibility.customer.level_1
-product.2:
+            reference: product-1.visibility.customer.level_1
+product-2:
     all:
         visibility: visible
-        reference: product.2.visibility.all
+        reference: product-2.visibility.all
     groups:
         customer_group.group1:
             visibility: visible
-            reference: product.2.visibility.customer_group.group1
+            reference: product-2.visibility.customer_group.group1
         customer_group.group2:
             visibility: hidden
-            reference: product.2.visibility.customer_group.group2
+            reference: product-2.visibility.customer_group.group2
     customers:
         customer.level_1:
             visibility: hidden
-            reference: product.2.visibility.customer.level_1
-product.3:
+            reference: product-2.visibility.customer.level_1
+product-3:
     all:
         visibility: visible
-        reference: product.3.visibility.all
+        reference: product-3.visibility.all
     groups:
         customer_group.group1:
             visibility: hidden
-            reference: product.3.visibility.customer_group.group1
+            reference: product-3.visibility.customer_group.group1
         customer_group.anonymous:
             visibility: visible
-            reference: product.8.visibility.customer_group.anonymous
+            reference: product-8.visibility.customer_group.anonymous
     customers: {}
-product.4:
+product-4:
     all:
         visibility: hidden
-        reference: product.4.visibility.all
+        reference: product-4.visibility.all
     groups: {}
     customers:
         customer.orphan:
             visibility: visible
-            reference: product.6.visibility.customer.orphan
-product.5:
+            reference: product-6.visibility.customer.orphan
+product-5:
     all:
         visibility: config
-        reference: product.5.visibility.all
+        reference: product-5.visibility.all
     groups:
         customer_group.group1:
             visibility: hidden
-            reference: product.5.visibility.customer_group.group1
+            reference: product-5.visibility.customer_group.group1
         customer_group.group2:
             visibility: hidden
-            reference: product.5.visibility.customer_group.group2
+            reference: product-5.visibility.customer_group.group2
         customer_group.anonymous:
             visibility: visible
-            reference: product.8.visibility.customer_group.anonymous
+            reference: product-8.visibility.customer_group.anonymous
     customers:
         customer.level_1:
             visibility: current_product
-            reference: product.5.visibility.customer.level_1
-product.6:
+            reference: product-5.visibility.customer.level_1
+product-6:
     all:
         visibility: config
-        reference: product.6.visibility.all
+        reference: product-6.visibility.all
     groups: {}
     customers: {}
-product.7:
+product-7:
     all:
         visibility: config
-        reference: product.7.visibility.all
+        reference: product-7.visibility.all
     groups:
         customer_group.group1:
             visibility: category
-            reference: product.7.visibility.customer_group.group1
+            reference: product-7.visibility.customer_group.group1
     customers: {}
-product.8:
+product-8:
     all:
         visibility: config
-        reference: product.8.visibility.all
+        reference: product-8.visibility.all
     groups:
         customer_group.group1:
             visibility: category
-            reference: product.8.visibility.customer_group.group1
+            reference: product-8.visibility.customer_group.group1
     customers:
         customer.level_1:
             visibility: category
-            reference: product.8.visibility.customer.level_1
+            reference: product-8.visibility.customer.level_1

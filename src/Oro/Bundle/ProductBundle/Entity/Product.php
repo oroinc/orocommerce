@@ -81,7 +81,8 @@ use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"=""
+ *              "group_name"="",
+ *              "category"="catalog"
  *          },
  *          "form"={
  *              "form_type"="oro_product_select",
@@ -1122,7 +1123,6 @@ class Product extends ExtendProduct implements
             'id' => $this->getId(),
             'product_units' => $this->getAvailableUnitCodes(),
             'name' => $this->getDefaultName() ? $this->getDefaultName()->getString() : '',
-            'type' => $this->getType(),
         ];
     }
 

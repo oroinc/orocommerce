@@ -81,7 +81,7 @@ class ProductPriceImportStrategyTest extends WebTestCase
         $unit = $this->getReference('product_unit.liter');
 
         /** @var Product $product */
-        $product = $this->getReference('product.1');
+        $product = $this->getReference('product-1');
 
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_1');

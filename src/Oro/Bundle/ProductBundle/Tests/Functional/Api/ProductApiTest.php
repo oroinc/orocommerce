@@ -78,7 +78,7 @@ class ProductApiTest extends RestJsonApiTestCase
                     [
                         'method' => 'getSku',
                         'key' => 'sku',
-                        'references' => ['product.1']
+                        'references' => ['product-1']
                     ],
                 ],
                 'expectedCount' => 1,
@@ -86,7 +86,7 @@ class ProductApiTest extends RestJsonApiTestCase
                     [
                         'type' => 'products',
                         'attributes' => [
-                            'sku' => 'product.1',
+                            'sku' => 'product-1',
                         ],
                         'relationships' => [
                             'inventory_status' => [
@@ -104,7 +104,7 @@ class ProductApiTest extends RestJsonApiTestCase
                     [
                         'method' => 'getSku',
                         'key' => 'sku',
-                        'references' => ['product.2', 'product.3']
+                        'references' => ['product-2', 'product-3']
                     ],
                 ],
                 'expectedCount' => 2,
@@ -112,7 +112,7 @@ class ProductApiTest extends RestJsonApiTestCase
                     [
                         'type' => 'products',
                         'attributes' => [
-                            'sku' => 'product.2',
+                            'sku' => 'product-2',
                         ],
                         'relationships' => [
                             'inventory_status' => [
@@ -126,7 +126,7 @@ class ProductApiTest extends RestJsonApiTestCase
                     [
                         'type' => 'products',
                         'attributes' => [
-                            'sku' => 'product.3',
+                            'sku' => 'product-3',
                         ],
                         'relationships' => [
                             'inventory_status' => [

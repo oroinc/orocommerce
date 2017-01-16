@@ -59,7 +59,7 @@ class LoadProductDefaultAttributeFamilyData extends AbstractFixture implements
             'attributes' => [
                 'inventory_status'
             ],
-            'groupVisibility' => true
+            'groupVisibility' => false
         ],
         [
             'groupLabel' => 'Images',

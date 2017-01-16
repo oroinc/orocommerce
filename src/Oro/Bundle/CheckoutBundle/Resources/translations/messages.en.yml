@@ -1,7 +1,7 @@
 oro:
     checkout:
-        entity_label: Open Order
-        entity_plural_label: Open Orders
+        entity_label: Checkout
+        entity_plural_label: Checkouts
         id.label: Id
         owner.label: Owner
         customer.label: Global Address Book
@@ -35,6 +35,9 @@ oro:
         line_items_count.label: Items
         started_from.label: Started From
         order_history.label: Order History
+        open_order:
+            label: Open Order
+            plural_label: Open Orders
         deleted.label: Deleted
 
         basecheckout:

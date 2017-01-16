@@ -31,7 +31,7 @@ class InventoryLevelControllerTest extends WebTestCase
     {
         /** @var InventoryLevel $entity */
         $entity = $this->getInventoryLevelReference(
-            'product_unit_precision.product.1.liter'
+            'product_unit_precision.product-1.liter'
         );
         $this->client->request(
             Request::METHOD_DELETE,
