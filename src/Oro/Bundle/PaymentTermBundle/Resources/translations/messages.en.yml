@@ -1,8 +1,5 @@
 oro:
     paymentterm:
-        settings:
-            label: Payment Term Settings
-            labels.label: Label
         menu:
             payment_terms.label:       Payment terms
             payment_terms.description: List of payment terms
