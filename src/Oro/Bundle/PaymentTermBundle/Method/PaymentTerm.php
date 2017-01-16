@@ -6,8 +6,8 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
+use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
@@ -86,7 +86,7 @@ class PaymentTerm implements PaymentMethodInterface, LoggerAwareInterface
     }
 
     /** {@inheritdoc} */
-    public function getType()
+    public function getIdentifier()
     {
         return self::TYPE;
     }

@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Action;
 
-use Symfony\Component\PropertyAccess\PropertyPath;
-
-use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Action\CaptureAction;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodProviderInterface;
+use Symfony\Component\PropertyAccess\PropertyPath;
 
 class CaptureActionTest extends AbstractActionTest
 {
@@ -79,7 +79,7 @@ class CaptureActionTest extends AbstractActionTest
             ->setEntityIdentifier($data['testEntityIdentifier']);
 
         /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
-        $paymentMethod = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
+        $paymentMethod = $this->createMock(PaymentMethodInterface::class);
         $paymentMethod->expects($this->once())
             ->method('execute')
             ->with(PaymentMethodInterface::CAPTURE, $capturePaymentTransaction)
@@ -91,11 +91,24 @@ class CaptureActionTest extends AbstractActionTest
             ->with($options['paymentMethod'], PaymentMethodInterface::CAPTURE, $options['object'])
             ->willReturn($capturePaymentTransaction);
 
-        $this->paymentMethodRegistry
+        $paymentMethodProvider = $this->getMockBuilder(PaymentMethodProviderInterface::class)->getMock();
+
+        $paymentMethodProvider
+            ->expects($this->once())
+            ->method('hasPaymentMethod')
+            ->with($options['paymentMethod'])
+            ->willReturn(true);
+        
+        $paymentMethodProvider
             ->expects($this->once())
             ->method('getPaymentMethod')
             ->with($options['paymentMethod'])
             ->willReturn($paymentMethod);
+
+        $this->paymentMethodProvidersRegistry
+            ->expects($this->once())
+            ->method('getPaymentMethodProviders')
+            ->willReturn([$paymentMethodProvider]);
 
         $this->paymentTransactionProvider
             ->expects($this->exactly(2))
@@ -179,7 +192,7 @@ class CaptureActionTest extends AbstractActionTest
     {
         return new CaptureAction(
             $this->contextAccessor,
-            $this->paymentMethodRegistry,
+            $this->paymentMethodProvidersRegistry,
             $this->paymentTransactionProvider,
             $this->router
         );

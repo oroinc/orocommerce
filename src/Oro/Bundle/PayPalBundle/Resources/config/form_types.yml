@@ -23,3 +23,11 @@ services:
             - '@oro_currency.helper.currency_name'
         tags:
             - { name: form.type, alias: oro_paypal_currency_selection }
+
+    oro_paypal.form.type.settings:
+        class: Oro\Bundle\PayPalBundle\Form\Type\PayPalSettingsType
+        arguments:
+            - '@translator.default'
+            - '@oro_security.encoder.mcrypt'
+        tags:
+            - { name: form.type }

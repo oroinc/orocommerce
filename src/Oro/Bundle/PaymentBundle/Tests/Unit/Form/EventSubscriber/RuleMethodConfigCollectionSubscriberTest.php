@@ -18,30 +18,31 @@ use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigCollectionType;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigType;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationType;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleType;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistry;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\Translation\TranslatorInterface;
 
 class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
 {
     const PAYMENT_TYPE = 'payment_type_mock';
+    
     /**
      * @var RuleMethodConfigCollectionSubscriberProxy
      */
     protected $subscriber;
 
     /**
-     * @var PaymentMethodRegistry
+     * @var PaymentMethodProvidersRegistry
      */
     protected $methodRegistry;
 
     public function setUp()
     {
-        $this->methodRegistry = new PaymentMethodRegistry();
+        $this->methodRegistry = new PaymentMethodProvidersRegistry();
         $this->subscriber = new RuleMethodConfigCollectionSubscriberProxy();
         parent::setUp();
         $this->subscriber->setFactory($this->factory)->setMethodRegistry($this->methodRegistry);
@@ -112,23 +113,18 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject $translator */
-        $translator = $this->getMockBuilder(TranslatorInterface::class)->getMock();
-        $translator->expects(static::any())
-            ->method('trans')
-            ->will(static::returnCallback(function ($message) {
-                return $message.'_translated';
-            }));
+        /** @var PaymentMethodViewProvidersRegistry $methodViewRegistry */
+        $methodViewRegistry = new PaymentMethodViewProvidersRegistry();
 
         return [
             new PreloadedExtension(
                 [
                     PaymentMethodsConfigsRuleType::class
-                    => new PaymentMethodsConfigsRuleType($this->methodRegistry, $translator),
+                    => new PaymentMethodsConfigsRuleType($this->methodRegistry, $methodViewRegistry),
                     PaymentMethodConfigCollectionType::class
                     => new PaymentMethodConfigCollectionType($this->subscriber),
                     PaymentMethodConfigType::class
-                    => new PaymentMethodConfigType($this->methodRegistry, $translator),
+                    => new PaymentMethodConfigType($this->methodRegistry, $methodViewRegistry),
                     CurrencySelectionType::NAME => new CurrencySelectionType(
                         $currencyProvider,
                         $this->getMockBuilder(LocaleSettings::class)->disableOriginalConstructor()->getMock(),

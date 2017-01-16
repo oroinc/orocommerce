@@ -37,7 +37,7 @@ class MoneyOrderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetType()
     {
-        $this->assertEquals(MoneyOrder::TYPE, $this->method->getType());
+        $this->assertEquals(MoneyOrder::TYPE, $this->method->getIdentifier());
     }
 
     /**
