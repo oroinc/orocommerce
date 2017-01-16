@@ -62,6 +62,7 @@ class OroMoneyOrderBundleInstaller implements Installation, ContainerAwareInterf
         $table->addIndex(['transport_id'], 'oro_money_order_trans_label_transport_id', []);
         $table->addUniqueIndex(['localized_value_id'], 'oro_money_order_trans_label_localized_value_id', []);
     }
+
     /**
      * @param Schema $schema
      *
