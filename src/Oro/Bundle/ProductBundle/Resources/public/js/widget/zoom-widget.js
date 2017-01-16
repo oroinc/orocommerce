@@ -21,10 +21,8 @@ define(function(require) {
         },
 
         _init: function() {
-            var self = this;
-
             this.element.elevateZoom(this.options);
-
+            var self = this;
             this.element.on('slider:activeImage', function(e, activeImage) {
                 $(this).data('zoom-image', $(activeImage).attr('data-url-zoom'));
                 self._destroy();

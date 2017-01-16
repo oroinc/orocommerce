@@ -41,9 +41,7 @@ define(function(require) {
         onChange: function() {
             this.$el.on('beforeChange', function(event, slick, currentSlide, nextSlide) {
                 var $activeImage = $(this).find('.slick-slide[data-slick-index=' + nextSlide + '] img');
-                var $images = $(this).find('.slick-slide img');
-
-                $images.trigger('slider:activeImage', $activeImage.get(0));
+                $(this).find('.slick-slide img').trigger('slider:activeImage', $activeImage.get(0));
             });
         }
     });
