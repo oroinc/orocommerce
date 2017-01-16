@@ -61,7 +61,6 @@ services:
         arguments:
             - '@oro_web_catalog.model.content_node_materialized_path_modifier'
             - '@oro_commerce_entity.extra_insert_entity_storage'
-            - '@oro_web_catalog.generator.slug_generator.link'
             - '@oro_message_queue.client.message_producer'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_web_catalog.entity.content_node.class%', event: postPersist }

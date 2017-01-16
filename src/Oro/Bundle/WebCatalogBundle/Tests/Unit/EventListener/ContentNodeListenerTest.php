@@ -6,11 +6,9 @@ use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorageInterface;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\WebCatalogBundle\Async\Topics;
-use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
-use Oro\Bundle\WebCatalogBundle\Model\ContentNodeMaterializedPathModifier;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\EventListener\ContentNodeListener;
-use Oro\Component\DependencyInjection\ServiceLink;
+use Oro\Bundle\WebCatalogBundle\Model\ContentNodeMaterializedPathModifier;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -29,11 +27,6 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
     protected $storage;
 
     /**
-     * @var SlugGenerator|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $slugGenerator;
-
-    /**
      * @var ContentNodeListener
      */
     protected $contentNodeListener;
@@ -50,22 +43,11 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $this->storage = $this->createMock(ExtraActionEntityStorageInterface::class);
-
-        $this->slugGenerator = $this->getMockBuilder(SlugGenerator::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $generatorLink = $this->getMockBuilder(ServiceLink::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $generatorLink->expects($this->any())
-            ->method('getService')
-            ->willReturn($this->slugGenerator);
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);
 
         $this->contentNodeListener = new ContentNodeListener(
             $this->modifier,
             $this->storage,
-            $generatorLink,
             $this->messageProducer
         );
     }
@@ -120,10 +102,6 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
         $this->storage->expects($this->at(1))
             ->method('scheduleForExtraInsert')
             ->with($childNode);
-
-        $this->slugGenerator->expects($this->once())
-            ->method('generate')
-            ->with($contentNode);
 
         $this->contentNodeListener->preUpdate($contentNode, $args);
     }
