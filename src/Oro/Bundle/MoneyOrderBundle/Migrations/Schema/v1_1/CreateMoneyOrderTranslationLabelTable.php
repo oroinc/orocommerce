@@ -1,51 +1,24 @@
 <?php
 
-namespace Oro\Bundle\FrontendBundle\Migrations\Schema;
+namespace Oro\Bundle\FrontendBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
-use Oro\Bundle\ConfigBundle\Migration\RenameConfigSectionQuery;
-use Oro\Bundle\MigrationBundle\Migration\Installation;
+use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class OroMoneyOrderBundleInstaller implements Installation, ContainerAwareInterface
+class CreateMoneyOrderTranslationLabelTable implements Migration
 {
     /**
-     * @var ContainerInterface
-     */
-    protected $container;
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getMigrationVersion()
-    {
-        return 'v1_1';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function setContainer(ContainerInterface $container = null)
-    {
-        $this->container = $container;
-    }
-
-    /**
-     * {@inheritdoc}
+     * @param Schema   $schema
+     * @param QueryBag $queries
+     *
+     * @throws SchemaException
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        // update system configuration for installed instances
-        if ($this->container->hasParameter('installed') && $this->container->getParameter('installed')) {
-            $queries->addPostQuery(new RenameConfigSectionQuery('orob2b_money_order', 'oro_money_order'));
-        }
-
         $this->createOroMoneyOrderTransportLabelTable($schema);
         $this->addOroMoneyOrderTransportLabelForeignKeys($schema);
-        $this->updateOroIntegrationTransportTable($schema);
     }
 
     /**
@@ -83,18 +56,5 @@ class OroMoneyOrderBundleInstaller implements Installation, ContainerAwareInterf
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
-    }
-
-    /**
-     * @param Schema $schema
-     *
-     * @throws SchemaException
-     */
-    private function updateOroIntegrationTransportTable(Schema $schema)
-    {
-        $table = $schema->getTable('oro_integration_transport');
-
-        $table->addColumn('money_order_pay_to', 'string', ['notnull' => false, 'length' => 255]);
-        $table->addColumn('money_order_send_to', 'text', ['notnull' => false]);
     }
 }

@@ -1,5 +1,10 @@
 oro:
     money_order:
+        settings:
+            label: 'Check/Money Order Settings'
+            pay_to.label: 'Pay To'
+            send_to.label: 'Send To'
+            labels.label: 'Label'
         menu:
             money_order.label: 'Check/Money Order'
 
