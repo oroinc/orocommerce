@@ -91,6 +91,9 @@ class OroPaymentTermBundleInstaller implements
      */
     public function up(Schema $schema, QueryBag $queries)
     {
+        $this->createOroPaymentTermTransportLabelTable($schema);
+        $this->addOroPaymentTermTransportLabelForeignKeys($schema);
+
         if ($schema->hasTable(self::TABLE_NAME)) {
             $this->migrate($schema, $queries);
 
@@ -98,8 +101,6 @@ class OroPaymentTermBundleInstaller implements
         }
 
         $this->createOroPaymentTermTable($schema);
-        $this->createOroPaymentTermTransportLabelTable($schema);
-        $this->addOroPaymentTermTransportLabelForeignKeys($schema);
 
         $this->activityExtension->addActivityAssociation($schema, 'oro_note', self::TABLE_NAME);
 
