@@ -10,7 +10,7 @@ layout:
             options:
                 visible: '=data["feature"].isFeatureEnabled("rfp_frontend")'
                 units: '=data["product_units_without_prices"].getProductUnits(data["oro_product_variant"].getProductVariantOrProduct(data))'
-                productUnitSelectionVisible: '=data["oro_product_unit_fields_settings"].isProductUnitSelectionVisible(data["oro_product_variant"].getProductVariantOrProduct(data))'0
+                productUnitSelectionVisible: '=data["oro_product_unit_fields_settings"].isProductUnitSelectionVisible(data["oro_product_variant"].getProductVariantOrProduct(data))'
         - '@add':
             id: request_a_quote_form_button
             parentId: line_item_buttons

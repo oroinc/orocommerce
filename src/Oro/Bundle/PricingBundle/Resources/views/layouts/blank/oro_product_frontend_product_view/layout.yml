@@ -18,9 +18,9 @@ layout:
             parentId: product_prices_subtree_update
             blockType: attribute_group
             options:
-                entity: '=data["oro_product_variant"]'
+                entity: '=data["oro_product_variant"].getProductVariantOrProduct(data)'
                 attribute_family: '=context["attribute_family"]'
                 group: 'prices'
-                visible: '=data["oro_product_variant"].getUnitPrecisions()!=null'
+                visible: '=data["oro_product_variant"].getProductVariantOrProduct(data).getUnitPrecisions()!=null'
                 vars:
-                    productUnitSelectionVisible: '=data["oro_product_unit_fields_settings"].isProductUnitSelectionVisible(data["oro_product_variant"])'
+                    productUnitSelectionVisible: '=data["oro_product_unit_fields_settings"].isProductUnitSelectionVisible(data["oro_product_variant"].getProductVariantOrProduct(data))'
