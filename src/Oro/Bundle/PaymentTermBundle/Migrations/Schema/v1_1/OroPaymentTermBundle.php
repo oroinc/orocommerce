@@ -15,6 +15,6 @@ class OroPaymentTermBundle extends OroPaymentTermBundleInstaller implements Migr
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->migrateRelations($queries);
+        $this->migrateRelations($schema, $queries);
     }
 }
