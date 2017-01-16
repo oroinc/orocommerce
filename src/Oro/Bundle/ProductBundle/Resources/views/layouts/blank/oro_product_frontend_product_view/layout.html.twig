@@ -108,26 +108,27 @@
         {% set zoomOptions = {
             screenType: 'desktop',
             component: 'oroui/js/app/components/jquery-widget-component',
-            widgetModule: 'oroproduct/js/widget/zoom-widget'
+            widgetModule: 'oroproduct/js/widget/zoom-widget',
+            dependentSlider: '.product-view-media__gallery'
         } %}
 
         {% set imageListOptions = {
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        fade: true,
-        arrows: false,
-        asNavFor: '.product-gallery__nav',
-        lazyLoad: 'ondemand',
-        infinite: false,
+            slidesToShow: 1,
+            slidesToScroll: 1,
+            fade: true,
+            arrows: false,
+            asNavFor: '.product-gallery__nav',
+            lazyLoad: 'ondemand',
+            infinite: false,
         } %}
 
         {% set navListOptions = {
-        slidesToShow: 4,
-        slidesToScroll: 1,
-        asNavFor: '.product-view-media__gallery',
-        focusOnSelect: true,
-        infinite: false,
-        arrows: true
+            slidesToShow: 4,
+            slidesToScroll: 1,
+            asNavFor: '.product-view-media__gallery',
+            focusOnSelect: true,
+            infinite: false,
+            arrows: true
         } %}
 
         {% if product.imagesByType('additional')|length == 1 %}
