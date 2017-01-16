@@ -69,19 +69,4 @@ class ProductController extends Controller
             'attribute_family' => $product->getAttributeFamily(),
         ];
     }
-
-    /**
-     * @Route("/info/{id}", name="oro_product_frontend_product_info", requirements={"id"="\d+"})
-     * @Layout()
-     * @AclAncestor("oro_product_frontend_view")
-     * @param Product $product
-     *
-     * @return array
-     */
-    public function infoAction(Product $product)
-    {
-        return [
-            'data' => ['entity' => $product]
-        ];
-    }
 }
