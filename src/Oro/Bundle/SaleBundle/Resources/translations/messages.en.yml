@@ -27,7 +27,7 @@ oro:
             price_list.label: 'Price List'
             expired.label: 'Expired'
             assigned_users.label: 'Assigned To'
-            assigned_customer_users.label: 'Assigned Customers'
+            assigned_customer_users.label: 'Assigned Customer Users'
             shipping_estimate_amount.label: 'Shipping Estimate Ammount'
             shipping_estimate_currency.label: 'Shipping Estimate Currency'
             shipping_cost.label: 'Shipping Cost'
