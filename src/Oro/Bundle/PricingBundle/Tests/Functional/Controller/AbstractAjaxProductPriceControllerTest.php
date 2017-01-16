@@ -131,14 +131,14 @@ abstract class AbstractAjaxProductPriceControllerTest extends WebTestCase
     {
         return [
             [
-                'product' => 'product.1',
+                'product' => 'product-1',
                 'qty' => 0.1,
                 'unit' => 'liter',
                 'currency' => 'USD',
                 'expected' => []
             ],
             [
-                'product' => 'product.1',
+                'product' => 'product-1',
                 'qty' => 1,
                 'unit' => 'liter',
                 'currency' => 'USD',
@@ -148,7 +148,7 @@ abstract class AbstractAjaxProductPriceControllerTest extends WebTestCase
                 ]
             ],
             [
-                'product' => 'product.1',
+                'product' => 'product-1',
                 'qty' => 10,
                 'unit' => 'liter',
                 'currency' => 'USD',
@@ -158,7 +158,7 @@ abstract class AbstractAjaxProductPriceControllerTest extends WebTestCase
                 ]
             ],
             [
-                'product' => 'product.1',
+                'product' => 'product-1',
                 'qty' => 100,
                 'unit' => 'liter',
                 'currency' => 'USD',

@@ -24,11 +24,6 @@ class CustomerUserRoleUpdateHandler extends AbstractCustomerUserRoleHandler
         $this->requestStack = $requestStack;
         $this->request = $requestStack->getCurrentRequest();
     }
-    
-    /**
-     * @var Customer
-     */
-    protected $originalCustomer;
 
     /**
      * {@inheritDoc}

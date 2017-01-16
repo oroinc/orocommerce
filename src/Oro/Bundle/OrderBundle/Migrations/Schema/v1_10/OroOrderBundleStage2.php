@@ -18,13 +18,15 @@ class OroOrderBundleStage2 implements Migration, OrderedMigrationInterface
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->addForeignKeyConstraint($schema);
+        $this->addOroOrderAddressForeignKeys($schema);
+        $this->updateOroOrderListLineItemTable($schema);
+        $this->addOroOrderLineItemForeignKeys($schema);
     }
 
     /**
      * @param Schema $schema
      */
-    private function addForeignKeyConstraint(Schema $schema)
+    private function addOroOrderAddressForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_order_address');
 
@@ -39,6 +41,29 @@ class OroOrderBundleStage2 implements Migration, OrderedMigrationInterface
             ['customer_user_address_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    private function updateOroOrderListLineItemTable(Schema $schema)
+    {
+        $table = $schema->getTable('oro_order_line_item');
+        $table->addColumn('parent_product_id', 'integer', ['notnull' => false]);
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    private function addOroOrderLineItemForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_order_line_item');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product'),
+            ['parent_product_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 

@@ -50,7 +50,7 @@ class CustomerProductVisibilityRepositoryTest extends AbstractProductVisibilityR
         return [
             [
                 'category' => LoadCategoryData::FOURTH_LEVEL2,
-                'deletedCategoryProducts' => ['product.8'],
+                'deletedCategoryProducts' => ['product-8'],
             ],
         ];
     }

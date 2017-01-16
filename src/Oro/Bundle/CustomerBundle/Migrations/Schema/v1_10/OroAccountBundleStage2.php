@@ -341,6 +341,16 @@ class OroAccountBundleStage2 implements
         $table = $schema->getTable('oro_cus_navigation_item');
         $table->addIndex(['customer_user_id', 'position'], 'oro_sorted_items_idx', []);
 
+        if ($schema->hasTable('oro_rel_c3990ba63708e583a2c61e')) {
+            $table = $schema->getTable('oro_rel_c3990ba63708e583a2c61e');
+            $table->addForeignKeyConstraint(
+                $schema->getTable('oro_customer_user'),
+                ['customeruser_id'],
+                ['id'],
+                ['onDelete' => 'CASCADE', 'onUpdate' => null]
+            );
+        }
+
         $table = $schema->getTable('oro_rel_46a29d193708e583c5ba51');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_customer_user'),

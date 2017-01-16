@@ -37,8 +37,8 @@ class FrontendCustomerUserRoleType extends AbstractCustomerUserRoleType
     {
         parent::buildForm($builder, $options);
 
-        $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'updateCustomerUsers']);
         $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'preSubmit']);
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'postSubmit']);
     }
 
@@ -58,22 +58,56 @@ class FrontendCustomerUserRoleType extends AbstractCustomerUserRoleType
     /**
      * @param FormEvent $event
      */
-    public function updateCustomerUsers(FormEvent $event)
+    public function preSubmit(FormEvent $event)
     {
-        $role = $this->getRole($event);
+        $this->updateCustomerUsers($event);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    protected function updateCustomerUsers(FormEvent $event)
+    {
+        $data = $event->getData();
         $predefinedRole = $this->getPredefinedRole($event);
-        if (!$role || !$predefinedRole) {
+
+        if (!isset($data['customer'])) {
+            return;
+        }
+
+        $customerId = $data['customer'];
+
+        if (!$customerId || !$predefinedRole) {
             return;
         }
 
         $customerUsers = $predefinedRole->getCustomerUsers()->filter(
-            function (CustomerUser $accountUser) use ($role) {
-                return $accountUser->getCustomer() &&
-                    $accountUser->getCustomer()->getId() === $role->getCustomer()->getId();
+            function (CustomerUser $customerUser) use ($customerId) {
+                return $customerUser->getCustomer() &&
+                    $customerUser->getCustomer()->getId() === (int)$customerId;
             }
         );
 
-        $event->getForm()->get('appendUsers')->setData($customerUsers->toArray());
+        $customerUsersIds = $customerUsers->map(function (CustomerUser $customerUser) {
+            return $customerUser->getId();
+        })->toArray();
+
+        $appendUsersIds = explode(',', $data['appendUsers']);
+        $appendUsersIds = array_filter($appendUsersIds, 'strlen');
+
+        $usersToAppend = array_merge($customerUsersIds, $appendUsersIds);
+
+        $removedUsersIds = explode(',', $data['removeUsers']);
+        $removedUsersIds = array_filter($removedUsersIds, 'strlen');
+
+        foreach ($removedUsersIds as $removedUserId) {
+            if ($key = array_search($removedUserId, $usersToAppend)) {
+                unset($usersToAppend[$key]);
+            }
+        }
+
+        $data['appendUsers'] = implode(',', $usersToAppend);
+        $event->setData($data);
     }
 
     /**
@@ -92,17 +126,17 @@ class FrontendCustomerUserRoleType extends AbstractCustomerUserRoleType
 
         /** @var \SplObjectStorage|CustomerUser[] $addedUsers */
         $addedUsers = new \SplObjectStorage();
-        foreach ($form->get('appendUsers')->getData() as $accountUser) {
-            $addedUsers->attach($accountUser);
+        foreach ($form->get('appendUsers')->getData() as $customerUser) {
+            $addedUsers->attach($customerUser);
         }
 
-        foreach ($form->get('removeUsers')->getData() as $accountUser) {
-            $addedUsers->detach($accountUser);
+        foreach ($form->get('removeUsers')->getData() as $customerUser) {
+            $addedUsers->detach($customerUser);
         }
 
-        foreach ($addedUsers as $accountUser) {
-            $predefinedRole->removeCustomerUser($accountUser);
-            $accountUser->removeRole($predefinedRole);
+        foreach ($addedUsers as $customerUser) {
+            $predefinedRole->removeCustomerUser($customerUser);
+            $customerUser->removeRole($predefinedRole);
         }
     }
 

@@ -1,10 +1,14 @@
 {# Product view Layout START #}
 {% block _product_view_container_widget %}
+    {% set modelAttr = product.jsonSerialize() %}
+    {% if parentProduct is not null %}
+        {% set modelAttr = modelAttr|merge({parentProduct: parentProduct.id}) %}
+    {% endif %}
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'oroui/js/app/components/view-component',
         '~data-page-component-options': {
             view: 'oroproduct/js/app/views/base-product-view',
-            modelAttr: product.jsonSerialize()
+            modelAttr: modelAttr
         },
         'data-layout': 'separate',
         '~class': ' product-view'
@@ -41,7 +45,7 @@
     }) %}
 
     <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
+        {{ parent_block_widget(block) }}
     </div>
 {% endblock %}
 
@@ -87,15 +91,15 @@
 {% endblock %}
 {# Product view Layout START #}
 
-{% block _product_view_title_widget %}
+{% block _product_view_attribute_group_general_attribute_localized_fallback_names_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' page-title'
     }) %}
 
-    <h1 {{ block('block_attributes') }}>{{ text }}</h1>
+    <h1 {{ block('block_attributes') }}>{{ block_widget(block) }}</h1>
 {% endblock %}
 
-{% block _product_view_sku_widget %}
+{% block _product_view_attribute_group_general_attribute_text_sku_widget %}
     <p class="sku">
         {{ 'oro.product.frontend.index.item'|trans }} <span class="sku__code">{{ block_widget(block) }}</span>
     </p>

@@ -99,11 +99,11 @@
                 <img class="main-menu-column__image" src="{% image '@OroWebCatalogBundle/Resources/public/images/adv_1.jpg' %}{{ asset_url }}{% endimage %}">
             </a>
         </li>
-        <li class="main-menu-column__item">
-            <a class="main-menu-column__link" href="#">
-                <img class="main-menu-column__image" src="{% image '@OroWebCatalogBundle/Resources/public/images/adv_2.jpg' %}{{ asset_url }}{% endimage %}">
-            </a>
-        </li>
+        {#<li class="main-menu-column__item">#}
+            {#<a class="main-menu-column__link" href="#">#}
+                {#<img class="main-menu-column__image" src="{% image '@OroWebCatalogBundle/Resources/public/images/adv_2.jpg' %}{{ asset_url }}{% endimage %}">#}
+            {#</a>#}
+        {#</li>#}
     {% endset %}
     {{ block('_web_catalog_menu_second_level_column') }}
 {% endblock %}
@@ -159,11 +159,11 @@
         <a href="{{ app.request.uriForPath(category.url) }}"
            class="main-menu__link" data-collapse-trigger-second>
             <span>{{ category.label }}</span>
-            {% if hasSublist %}
-                <i class="fa-angle-down"></i>
-            {% endif %}
         </a>
         {% if hasSublist %}
+            <button data-toggle="dropdown" aria-haspopup="true" class="main-menu__button-arrow">
+                <i class="fa-angle-down fa--no-offset"></i>
+            </button>
             {{ block(sub_block) }}
         {% endif %}
     </li>

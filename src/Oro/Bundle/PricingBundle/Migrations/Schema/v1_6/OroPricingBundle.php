@@ -29,6 +29,7 @@ class OroPricingBundle implements
     {
         $this->renameCustomerColumns($schema, $queries);
         $this->renameCustomerTables($schema, $queries);
+        $schema->dropTable('oro_price_product_minimal');
     }
 
     /**

@@ -26,7 +26,7 @@ databaseBefore:
             order: { reference: simple_order }
             quantity: { property_value: 5 }
             price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '20.00', currency: USD } }
-            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.1' } }
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-1' } }
     'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction':
         us_any_state_jurisdiction_code:
             code: { property_value: us_any_state_jurisdiction_code }
