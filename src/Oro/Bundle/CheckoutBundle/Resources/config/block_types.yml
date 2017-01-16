@@ -102,6 +102,7 @@ services:
                         workflowStep: {required: true}
                         workflowItem: {required: true}
                         lineItemErrors: {required: true}
+                        configurableProducts: {required: true}
             - [setName, ['checkout_order_summary_line_items']]
         tags:
             - { name: layout.block_type, alias: checkout_order_summary_line_items }

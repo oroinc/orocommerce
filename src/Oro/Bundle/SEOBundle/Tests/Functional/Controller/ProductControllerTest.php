@@ -22,7 +22,7 @@ class ProductControllerTest extends WebTestCase
 
     public function testViewProduct()
     {
-        $product = $this->getReference('product.1');
+        $product = $this->getReference('product-1');
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_view', ['id' => $product->getId()]));
 
@@ -31,7 +31,7 @@ class ProductControllerTest extends WebTestCase
 
     public function testEditProduct()
     {
-        $product = $this->getReference('product.1');
+        $product = $this->getReference('product-1');
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $product->getId()]));
 

@@ -25,7 +25,7 @@ class LoadInventoryLevelWithPrimaryUnit extends AbstractFixture implements Depen
     public function load(ObjectManager $manager)
     {
         /** @var Product $product */
-        $product = $this->getReference('product.1');
+        $product = $this->getReference('product-1');
 
         $level = new InventoryLevel();
         $level

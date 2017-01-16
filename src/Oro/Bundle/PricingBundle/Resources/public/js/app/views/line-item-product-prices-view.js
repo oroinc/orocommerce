@@ -23,8 +23,8 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        initialize: function(options) {
-            LineItemProductPricesView.__super__.initialize.apply(this, arguments);
+        deferredInitialize: function(options) {
+            LineItemProductPricesView.__super__.deferredInitialize.apply(this, arguments);
 
             mediator.on('pricing:collect:line-items', this.collectLineItems, this);
             mediator.on('pricing:refresh:products-tier-prices', this.setTierPrices, this);

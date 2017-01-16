@@ -24,7 +24,7 @@ class LoadDefaultAttributesData extends AbstractFixture implements
      */
     private $fields = [
         'inventory_status' => [
-            'visible' => true
+            'visible' => false
         ]
     ];
 

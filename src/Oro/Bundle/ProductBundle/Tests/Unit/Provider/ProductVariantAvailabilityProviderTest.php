@@ -10,12 +10,15 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityExtendBundle\Provider\EnumValueProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Event\RestrictProductVariantEvent;
 use Oro\Bundle\ProductBundle\Exception\InvalidArgumentException;
 use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
+use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
 class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
@@ -23,26 +26,29 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
     /** @var ProductVariantAvailabilityProvider */
     protected $availabilityProvider;
 
-    /** @var  EntityRepository|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject */
     protected $productRepository;
 
-    /** @var  QueryBuilder|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var QueryBuilder|\PHPUnit_Framework_MockObject_MockObject */
     protected $qb;
 
-    /** @var  AbstractQuery|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var AbstractQuery|\PHPUnit_Framework_MockObject_MockObject */
     protected $query;
 
-    /** @var  PropertyAccessor|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PropertyAccessor */
     protected $propertyAccessor;
 
-    /** @var  DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
     protected $doctrineHelper;
 
-    /** @var  EnumValueProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EnumValueProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $enumValueProvider;
 
-    /** @var  CustomFieldProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var CustomFieldProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $customFieldProvider;
+
+    /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $dispatcher;
 
     /**
      * {@inheritdoc}
@@ -56,9 +62,18 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
         $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
+
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityRepository')
             ->willReturn($this->productRepository);
+
+        $this->doctrineHelper->expects($this->any())
+            ->method('getSingleEntityIdentifier')
+            ->willReturnCallback(
+                function (StubEnumValue $variantValue) {
+                    return $variantValue->getId();
+                }
+            );
 
         $this->customFieldProvider = $this->getMockBuilder(CustomFieldProvider::class)
             ->disableOriginalConstructor()
@@ -68,18 +83,18 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->propertyAccessor = $this->getMockBuilder(PropertyAccessor::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
 
-        $eventDispatcher = new EventDispatcher();
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
 
         $this->qb = $this->getMockBuilder(QueryBuilder::class)
             ->disableOriginalConstructor()
             ->getMock();
+
         $this->query = $this->getMockBuilder(AbstractQuery::class)
             ->disableOriginalConstructor()
             ->getMock();
+
         $this->qb
             ->expects($this->any())
             ->method('getQuery')
@@ -90,27 +105,27 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
             $this->enumValueProvider,
             $this->customFieldProvider,
             $this->propertyAccessor,
-            $eventDispatcher
+            $this->dispatcher
         );
     }
 
     /**
-     * @return Product
+     * @return ProductStub
      */
     protected function getConfigurableProduct()
     {
-        $configurableProduct = new Product();
+        $configurableProduct = new ProductStub();
         $configurableProduct->setType(Product::TYPE_CONFIGURABLE);
 
         return $configurableProduct;
     }
 
     /**
-     * @return Product
+     * @return ProductStub
      */
     protected function getSimpleProduct()
     {
-        $simpleProduct = new Product();
+        $simpleProduct = new ProductStub();
         $simpleProduct->setType(Product::TYPE_SIMPLE);
 
         return $simpleProduct;
@@ -148,6 +163,10 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
             new Product(),
             new Product(),
         ];
+
+        $this->dispatcher->expects($this->once())
+            ->method('dispatch')
+            ->with(RestrictProductVariantEvent::NAME, $this->isInstanceOf(RestrictProductVariantEvent::class));
 
         $this->setUpRepositoryResult($configurableProduct, $variantParameters, $expected);
 
@@ -222,15 +241,56 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
         $this->availabilityProvider->getSimpleProductByVariantFields($configurableProduct);
     }
 
+    public function testGetVariantFieldsValuesForVariant()
+    {
+        $configurableProduct = $this->getConfigurableProduct();
+        $configurableProduct->setVariantFields(['color', 'new']);
+
+        $variantsData = [
+            'color' => [
+                'type' => 'enum',
+                'values' => [
+                    'red' => 'Red',
+                    'green' => 'Green',
+                    'blue' => 'Blue',
+                ]
+            ],
+            'new' => [
+                'type' => 'boolean',
+            ]
+        ];
+
+        $expectedProductSku = 'product1';
+        $productData = [
+            $expectedProductSku => [
+                'color' => 'red',
+                'new' => true
+            ]
+        ];
+
+        $this->customFieldProvider->expects($this->any())
+            ->method('getEntityCustomFields')
+            ->with(Product::class)
+            ->willReturn($variantsData);
+
+        $simpleProducts = $this->getSimpleProductsWithVariants($variantsData, $productData);
+        $simpleProduct = reset($simpleProducts);
+
+        $actualFields = $this->availabilityProvider
+            ->getVariantFieldsValuesForVariant($configurableProduct, $simpleProduct);
+
+        $this->assertEquals($productData[$expectedProductSku], $actualFields);
+    }
+
     /**
      * @param array $variantsData
      * @param array $productData
      * @param array $variantParameters
      * @param array $variantFields
      * @param array $expected
-     * @dataProvider variantFieldsWithAvailabilityProvider
+     * @dataProvider variantFieldsAvailabilityProvider
      */
-    public function testGetVariantFieldsWithAvailability(
+    public function testGetVariantFieldsAvailability(
         $variantsData,
         $productData,
         $variantParameters,
@@ -244,7 +304,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $expected,
-            $this->availabilityProvider->getVariantFieldsWithAvailability($configurableProduct, $variantParameters)
+            $this->availabilityProvider->getVariantFieldsAvailability($configurableProduct, $variantParameters)
         );
     }
 
@@ -252,7 +312,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
      * @return array
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
-    public function variantFieldsWithAvailabilityProvider()
+    public function variantFieldsAvailabilityProvider()
     {
         return [
             'variant 1' => [
@@ -398,7 +458,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
                     ],
                     'slim_fit' => [
                         0 => true,
-                        1 => true
+                        1 => false
                     ]
                 ],
             ],
@@ -435,7 +495,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
                 ],
                 'expected' => [
                     'color' => [
-                        'red' => true,
+                        'red' => false,
                         'green' => true,
                         'blue' => false,
                     ]
@@ -444,36 +504,12 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    protected function configureMocks($variantsData, $productData)
+    /**
+     * @param array $variantsData
+     * @param array $productData
+     */
+    protected function configureMocks(array $variantsData, array $productData)
     {
-        $this->propertyAccessor->expects($this->any())
-            ->method('getValue')
-            ->willReturnCallback(
-                function (Product $product, $fieldName) use ($productData, $variantsData) {
-                    foreach ($productData as $mockProductSku => $mockProductData) {
-                        if ($mockProductSku !== $product->getSku()) {
-                            continue;
-                        }
-
-                        switch ($variantsData[$fieldName]['type']) {
-                            case 'enum':
-                                return new StubEnumValue($mockProductData[$fieldName], $mockProductData[$fieldName]);
-
-                            case 'boolean':
-                                return $mockProductData[$fieldName];
-                        }
-                    }
-                }
-            );
-
-        $this->doctrineHelper->expects($this->any())
-            ->method('getSingleEntityIdentifier')
-            ->willReturnCallback(
-                function (StubEnumValue $variantValue) {
-                    return $variantValue->getId();
-                }
-            );
-
         $this->enumValueProvider->expects($this->any())
             ->method('getEnumChoicesByCode')
             ->willReturnCallback(
@@ -491,30 +527,35 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
             ->with(Product::class)
             ->willReturn($variantsData);
 
-        $this->configureRepositoryMock($productData);
+        $this->configureRepositoryMock($variantsData, $productData);
     }
 
-    protected function configureRepositoryMock($productData)
+    /**
+     * @param array $variantsData
+     * @param array $productData
+     */
+    protected function configureRepositoryMock(array $variantsData, array $productData)
     {
+        $simpleProducts = $this->getSimpleProductsWithVariants($variantsData, $productData);
+
         $this->productRepository
             ->expects($this->any())
             ->method('getSimpleProductsByVariantFieldsQueryBuilder')
             ->willReturnCallback(
-                function ($configurableProduct, $variantParameters) use ($productData) {
-                    $products = [];
-                    foreach ($productData as $mockProductSku => $mockProductData) {
-                        foreach ($variantParameters as $variantName => $variantValue) {
-                            if (!isset($mockProductData[$variantName]) ||
-                                $mockProductData[$variantName] !== $variantValue
-                            ) {
-                                continue 2;
-                            }
-                        }
+                function ($configurableProduct, array $variantParameters) use ($simpleProducts) {
 
-                        $simpleProduct = $this->getSimpleProduct();
-                        $simpleProduct->setSku($mockProductSku);
-                        $products[] = $simpleProduct;
-                    }
+                    $filteredProducts = array_filter(
+                        $simpleProducts,
+                        function (Product $simpleProduct) use ($variantParameters) {
+                            foreach ($variantParameters as $name => $value) {
+                                if ($simpleProduct->{$name} != $value) {
+                                    return false;
+                                }
+                            }
+
+                            return true;
+                        }
+                    );
 
                     $queryAvailableSimpleProducts = $this->getMockBuilder(AbstractQuery::class)
                         ->disableOriginalConstructor()
@@ -522,7 +563,7 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
                     $queryAvailableSimpleProducts
                         ->expects($this->any())
                         ->method('getResult')
-                        ->willReturn($products);
+                        ->willReturn($filteredProducts);
                     $qbAvailableSimpleProducts = $this->getMockBuilder(QueryBuilder::class)
                         ->disableOriginalConstructor()
                         ->getMock();
@@ -534,5 +575,36 @@ class ProductVariantAvailabilityProviderTest extends \PHPUnit_Framework_TestCase
                     return $qbAvailableSimpleProducts;
                 }
             );
+    }
+
+    /**
+     * @param array $variantsData
+     * @param array $productData
+     * @return Product[]
+     */
+    private function getSimpleProductsWithVariants(array $variantsData, array $productData)
+    {
+        $products = [];
+        foreach ($productData as $sku => $data) {
+            $products[] = $product = $this->getSimpleProduct();
+            $product->setSku($sku);
+
+            foreach ($data as $field => $value) {
+                switch ($variantsData[$field]['type']) {
+                    case 'enum':
+                        $fieldValue = $value ? new StubEnumValue($value, $value) : null;
+                        break;
+                    case 'boolean':
+                        $fieldValue = $value;
+                        break;
+                    default:
+                        throw new \InvalidArgumentException('Unknown type');
+                }
+
+                $product->{$field} = $fieldValue;
+            }
+        }
+
+        return $products;
     }
 }

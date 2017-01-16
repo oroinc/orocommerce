@@ -22,7 +22,7 @@ layout:
             siblingId: ~
             prepend: true
             options:
-                text: 'oro.checkout.entity_plural_label'
+                text: 'oro.checkout.open_order.plural_label'
                 visible: '=data["oro_checkout_separate_open_orders"].getOpenOrdersSeparatePageConfig()!=true'
 
         - '@setOption':

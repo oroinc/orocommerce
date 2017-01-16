@@ -48,6 +48,7 @@ layout:
                         productsAllPrices: '=data["oro_shopping_list_products"].getAllPrices(data["entity"])'
                         productsUnits: '=data["oro_shopping_list_products_units"].getProductsUnits(data["entity"])'
                         productsUnitSelectionVisibilities: '=data["oro_shopping_list_product_unit_code_visibility"].getProductsUnitSelectionVisibilities(data["entity"])'
+                        configurableProducts: '=data["oro_product_configurable_products"].getProducts(data["entity"].getLineItems())'
                         lineItemsUnitVisibilities: '=data["oro_shopping_list_product_unit_code_visibility"].getLineItemsUnitVisibilities(data["entity"])'
                 shopping_list_line_items_empty:
                     blockType: block

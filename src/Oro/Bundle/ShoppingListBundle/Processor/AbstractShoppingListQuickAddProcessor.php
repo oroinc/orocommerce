@@ -65,15 +65,16 @@ abstract class AbstractShoppingListQuickAddProcessor implements ComponentProcess
         $productSkuQuantities = [];
         foreach ($data as $product) {
             $productQuantity = $product['productQuantity'];
-            if (array_key_exists($product['productSku'], $productSkuQuantities)) {
-                $productQuantity += $productSkuQuantities[$product['productSku']];
+            $upperSku = strtoupper($product['productSku']);
+            if (array_key_exists($upperSku, $productSkuQuantities)) {
+                $productQuantity += $productSkuQuantities[$upperSku];
             }
-            $productSkuQuantities[$product['productSku']] = $productQuantity;
+            $productSkuQuantities[$upperSku] = $productQuantity;
         }
 
         $productIdsQuantities = [];
         foreach ($productIds as $productSku => $productId) {
-            $productIdsQuantities[$productId] = $productSkuQuantities[$productSku];
+            $productIdsQuantities[$productId] = $productSkuQuantities[strtoupper($productSku)];
         }
 
         try {

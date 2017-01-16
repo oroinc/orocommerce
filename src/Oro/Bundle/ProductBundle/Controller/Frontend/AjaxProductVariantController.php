@@ -10,6 +10,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\ProductVariant\Form\Type\FrontendVariantFiledType;
 
 class AjaxProductVariantController extends Controller
 {
@@ -46,26 +47,15 @@ class AjaxProductVariantController extends Controller
      */
     private function getAvailableProduct(Request $request, Product $configurableProduct)
     {
-        $productFormDataProvider = $this->get('oro_product.layout.data_provider.product_form');
-        $productVariantForm = $productFormDataProvider->getVariantFieldsForm($configurableProduct);
+        $options = [
+            'parentProduct' => $configurableProduct
+        ];
 
-        $productVariantAvailabilityProvider = $this->get('oro_product.provider.product_variant_availability_provider');
+        $form = $this->createForm(FrontendVariantFiledType::NAME, new Product(), $options);
+        $form->handleRequest($request);
 
-        /** @var array $variantFields */
-        $variantFields = $request->get($productVariantForm->getName(), []);
-
-        $fieldsToSearch = [];
-        foreach ($variantFields as $name => $value) {
-            if ($productVariantForm->has($name)) {
-                $fieldsToSearch[$name] = $value;
-            }
-        }
-
-        try {
-            return $productVariantAvailabilityProvider
-                ->getSimpleProductByVariantFields($configurableProduct, $fieldsToSearch);
-        } catch (\InvalidArgumentException $e) {
-            // Can't find one product by parameters
+        if ($form->isValid()) {
+            return $form->getData();
         }
 
         return null;

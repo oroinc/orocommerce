@@ -16,4 +16,4 @@ layout:
             siblingId: ~
             prepend: true
             options:
-                text: 'oro.checkout.entity_plural_label'
+                text: 'oro.checkout.open_order.plural_label'

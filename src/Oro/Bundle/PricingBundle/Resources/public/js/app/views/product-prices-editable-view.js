@@ -45,8 +45,6 @@ define(function(require) {
             this.templates = $.extend(true, {}, this.templates, options.templates || {});
 
             ProductPricesEditableView.__super__.initialize.apply(this, arguments);
-            this.initPriceOverridden();
-            this.initHint();
         },
 
         /**
@@ -89,6 +87,7 @@ define(function(require) {
         },
 
         initPriceOverridden: function() {
+            this.priceOverriddenInitialized = true;
             if (!this.options.matchedPriceEnabled) {
                 return;
             }
@@ -107,6 +106,7 @@ define(function(require) {
         },
 
         initHint: function() {
+            this.hintInitialized = true;
             this.templates.pricesHintContent = _.template(this.getElement('pricesHintContent').text());
 
             var $pricesHint = $(_.template(this.getElement('pricesHint').text())());
@@ -136,6 +136,13 @@ define(function(require) {
             }));
         },
 
+        renderHint: function() {
+            if (!this.hintInitialized) {
+                this.initHint();
+            }
+            return ProductPricesEditableView.__super__.renderHint.apply(this, arguments);
+        },
+
         onPriceSetManually: function(e, options) {
             if (options.manually && this.options.matchedPriceEnabled) {
                 this.getElement('priceValue').removeClass('matched-price');
@@ -153,6 +160,11 @@ define(function(require) {
             if (!this.options.matchedPriceEnabled) {
                 return;
             }
+
+            if (!this.priceOverriddenInitialized) {
+                this.initPriceOverridden();
+            }
+
             var priceValue = this.getElement('priceValue').val();
             var price = this.findPriceValue();
 
