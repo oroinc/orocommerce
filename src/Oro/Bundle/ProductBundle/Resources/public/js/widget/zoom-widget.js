@@ -16,20 +16,17 @@ define(function(require) {
             lensOpacity: 0.22
         },
 
-        initialized: false,
+        _create: function () {
+            this._setActiveImage();
+        },
 
         _init: function() {
             var self = this;
-
-            this._setActiveImage();
 
             this.element.elevateZoom(this.options);
 
             this.element.on('slider:activeImage', function(e, activeImage) {
                 $(this).data('zoom-image', $(activeImage).attr('data-url-zoom'));
-            });
-
-            this.element.on('slider:beforeChange', function(e) {
                 self._destroy();
                 self._init();
             });
@@ -38,16 +35,15 @@ define(function(require) {
         _setActiveImage: function () {
             var self = this;
             var dependentSlider = this.options.dependentSlider;
-            if (dependentSlider && self.initialized) {
+            if (dependentSlider) {
                 var activeImageIndex = $(dependentSlider).slick('slickCurrentSlide');
                 var activeImage = $(dependentSlider).find('.slick-slide[data-slick-index=' + activeImageIndex + '] img');
                 self.element.data('zoom-image', $(activeImage).attr('data-url-zoom'));
-                self.initialized = true;
             }
         },
 
         _destroy: function() {
-            this.element.off('slider:beforeChange');
+            this.element.off('slider:activeImage');
             var elevateZoom = this.element.data('elevateZoom');
             if (elevateZoom && elevateZoom.zoomContainer) {
                 elevateZoom.zoomContainer.remove();// remove zoom container from DOM

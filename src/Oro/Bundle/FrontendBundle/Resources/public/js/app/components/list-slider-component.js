@@ -44,7 +44,6 @@ define(function(require) {
                 var $images = $(this).find('.slick-slide img');
 
                 $images.trigger('slider:activeImage', $activeImage.get(0));
-                $images.trigger('slider:beforeChange', $activeImage.get(0));
             });
         }
     });
