@@ -20,15 +20,19 @@ define([
             },
 
             _create: function() {
-                var args = arguments;
-                var _super = this._super;
-                this.initPageComponents({
+                if (!this.options.productModel) {
+                    $(this.element).trigger('options:set:productModel', this.options);
+                }
+
+                var modules = this.modules = [];
+                $(this.element).trigger('deferredInitialize', {
                     dropdownWidget: this,
-                    productModel: this.options.productModel
-                }).done(_.bind(function(modules) {
-                    this.modules = modules;
-                    _super.apply(this, args);
-                }, this));
+                    productModel: this.options.productModel,
+                    callback: function(module) {
+                        modules.push(module);
+                    }
+                });
+                this._super.apply(this, arguments);
             },
 
             _destroy: function() {

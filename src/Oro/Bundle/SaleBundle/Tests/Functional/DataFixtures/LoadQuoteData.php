@@ -29,8 +29,8 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
     const QUOTE10    = 'sale.quote.10';
     const QUOTE11    = 'sale.quote.11';
 
-    const PRODUCT1  = 'product.1';
-    const PRODUCT2  = 'product.2';
+    const PRODUCT1  = 'product-1';
+    const PRODUCT2  = 'product-2';
 
     const UNIT1     = 'product_unit.liter';
     const UNIT2     = 'product_unit.bottle';
@@ -273,7 +273,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
 
             $manager->persist($productOffer);
 
-            // e.g sale.quote.1.product.1.offer.1
+            // e.g sale.quote.1.product-1.offer.1
             $this->addReference($quote->getQid() . '.' . $sku . '.offer.' . ($index + 1), $productOffer);
 
             $product->addQuoteProductOffer($productOffer);

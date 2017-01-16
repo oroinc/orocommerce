@@ -165,7 +165,7 @@ class OrderControllerTest extends WebTestCase
         $orderCustomer = $this->getReference('customer.level_1');
         
         /** @var Product $product */
-        $product = $this->getReference('product.1');
+        $product = $this->getReference('product-1');
 
         $date = (new \DateTime('now'))->format('Y-m-d');
         $lineItems = [
@@ -653,7 +653,7 @@ class OrderControllerTest extends WebTestCase
     protected function getLineItemsToUpdate($date)
     {
         /** @var Product $product */
-        $product = $this->getReference('product.1');
+        $product = $this->getReference('product-1');
 
         return [
             [
@@ -688,7 +688,7 @@ class OrderControllerTest extends WebTestCase
     protected function getExpectedLineItemsAfterUpdate($date)
     {
         /** @var Product $product */
-        $product = $this->getReference('product.1');
+        $product = $this->getReference('product-1');
 
         return [
             [

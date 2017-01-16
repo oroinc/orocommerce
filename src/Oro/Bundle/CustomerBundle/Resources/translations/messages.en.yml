@@ -217,7 +217,7 @@ oro.customer:
             disable: 'Disable'
             confirm: 'Confirm'
             send_confirmation: 'Resend Confirmation Email'
-            create: 'Create Customer User'
+            create: 'Create User'
             edit: 'Edit'
             delete: 'Delete'
 
@@ -410,7 +410,7 @@ oro.customer:
                 NONE: 'None'
         customer_user:
             role.entity_plural_label: Roles
-            entity_plural_label: Customer Users
+            entity_plural_label: Users
             profile.label: Profile
             address.label: Address Book
             full_name.label: Name
@@ -447,7 +447,7 @@ oro.customer:
         customer_user_link.text: '< Back to Customer User List'
         action:
             back.label: "< Back"
-            back_to_login.label: "Already have an customer? Log in >"
+            back_to_login.label: "Already have an account? Log in >"
             customer_user_role.edit: "Edit Role"
         table:
             entity:

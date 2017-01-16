@@ -48,22 +48,17 @@ define(function(require) {
             this.initModel(options);
             this.initializeElements(options);
 
-            this.originalProductId = this.model.get('id');
+            this.originalProductId = this.model.get('parentProduct');
 
-            this._deferredRender();
-            this.initLayout({
+            this.initializeSubviews({
                 productModel: this.model
-            }).done(_.bind(this.handleLayoutInit, this));
+            });
         },
 
         optionsSetProductModel: function(e, options) {
             options.productModel = this.model;
             e.preventDefault();
             e.stopPropagation();
-        },
-
-        handleLayoutInit: function() {
-            this._resolveDeferredRender();
         },
 
         initModel: function(options) {
@@ -89,7 +84,10 @@ define(function(require) {
 
             var productId = modelProductId || this.originalProductId;
             mediator.trigger('layout-subtree:update:product', {
-                layoutSubtreeUrl: routing.generate('oro_product_frontend_product_view', {id: productId}),
+                layoutSubtreeUrl: routing.generate('oro_product_frontend_product_view', {
+                    id: productId,
+                    ignoreProductVariant: true
+                }),
                 layoutSubtreeCallback: _.bind(this.afterProductChanged, this)
             });
         },

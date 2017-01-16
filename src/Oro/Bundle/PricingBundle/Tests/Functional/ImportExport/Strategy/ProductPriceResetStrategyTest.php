@@ -141,7 +141,7 @@ class ProductPriceResetStrategyTest extends WebTestCase
     protected function createProductPrice()
     {
         /** @var Product $product */
-        $product = $this->getReference('product.1');
+        $product = $this->getReference('product-1');
 
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_1');

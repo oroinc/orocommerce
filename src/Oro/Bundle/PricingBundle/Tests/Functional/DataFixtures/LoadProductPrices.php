@@ -42,7 +42,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
      */
     protected $data = [
         [
-            'product' => 'product.1',
+            'product' => 'product-1',
             'priceList' => 'price_list_1',
             'qty' => 10,
             'unit' => 'product_unit.liter',
@@ -51,7 +51,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
             'reference' => self::PRODUCT_PRICE_1
         ],
         [
-            'product' => 'product.1',
+            'product' => 'product-1',
             'priceList' => 'price_list_1',
             'qty' => 11,
             'unit' => 'product_unit.bottle',
@@ -60,7 +60,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
             'reference' => self::PRODUCT_PRICE_2
         ],
         [
-            'product' => 'product.2',
+            'product' => 'product-2',
             'priceList' => 'price_list_1',
             'qty' => 12,
             'unit' => 'product_unit.liter',
@@ -69,7 +69,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
             'reference' => self::PRODUCT_PRICE_3
         ],
         [
-            'product' => 'product.2',
+            'product' => 'product-2',
             'priceList' => 'price_list_2',
             'qty' => 13,
             'unit' => 'product_unit.liter',
@@ -78,7 +78,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
             'reference' => self::PRODUCT_PRICE_4
         ],
         [
-            'product' => 'product.2',
+            'product' => 'product-2',
             'priceList' => 'price_list_2',
             'qty' => 14,
             'unit' => 'product_unit.bottle',
@@ -87,7 +87,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
             'reference' => self::PRODUCT_PRICE_5
         ],
         [
-            'product' => 'product.1',
+            'product' => 'product-1',
             'priceList' => 'price_list_2',
             'qty' => 15,
             'unit' => 'product_unit.liter',
@@ -96,7 +96,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
             'reference' => self::PRODUCT_PRICE_6
         ],
         [
-            'product' => 'product.1',
+            'product' => 'product-1',
             'priceList' => 'price_list_1',
             'qty' => 1,
             'unit' => 'product_unit.liter',
@@ -105,7 +105,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
             'reference' => self::PRODUCT_PRICE_7
         ],
         [
-            'product' => 'product.2',
+            'product' => 'product-2',
             'priceList' => 'price_list_1',
             'qty' => 1,
             'unit' => 'product_unit.liter',
@@ -114,7 +114,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
             'reference' => self::PRODUCT_PRICE_8
         ],
         [
-            'product' => 'product.3',
+            'product' => 'product-3',
             'priceList' => 'price_list_1',
             'qty' => 1,
             'unit' => 'product_unit.liter',
@@ -123,7 +123,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
             'reference' => self::PRODUCT_PRICE_9
         ],
         [
-            'product' => 'product.1',
+            'product' => 'product-1',
             'priceList' => 'price_list_1',
             'qty' => 1,
             'unit' => 'product_unit.bottle',
@@ -132,7 +132,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
             'reference' => self::PRODUCT_PRICE_10
         ],
         [
-            'product' => 'product.2',
+            'product' => 'product-2',
             'priceList' => 'price_list_1',
             'qty' => 14,
             'unit' => 'product_unit.liter',
@@ -141,7 +141,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
             'reference' => self::PRODUCT_PRICE_11
         ],
         [
-            'product' => 'product.2',
+            'product' => 'product-2',
             'priceList' => 'price_list_2',
             'qty' => 24,
             'unit' => 'product_unit.bottle',
@@ -150,7 +150,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
             'reference' => self::PRODUCT_PRICE_12
         ],
         [
-            'product' => 'product.2',
+            'product' => 'product-2',
             'priceList' => 'default_price_list',
             'qty' => 1,
             'unit' => 'product_unit.bottle',
@@ -159,7 +159,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
             'reference' => self::PRODUCT_PRICE_13
         ],
         [
-            'product' => 'product.3',
+            'product' => 'product-3',
             'priceList' => 'default_price_list',
             'qty' => 1,
             'unit' => 'product_unit.bottle',
@@ -168,7 +168,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
             'reference' => self::PRODUCT_PRICE_14
         ],
         [
-            'product' => 'product.2',
+            'product' => 'product-2',
             'priceList' => 'price_list_6',
             'qty' => 97,
             'unit' => 'product_unit.liter',
@@ -177,7 +177,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
             'reference' => self::PRODUCT_PRICE_15
         ],
         [
-            'product' => 'product.2',
+            'product' => 'product-2',
             'priceList' => 'price_list_6',
             'qty' => 97,
             'unit' => 'product_unit.bottle',

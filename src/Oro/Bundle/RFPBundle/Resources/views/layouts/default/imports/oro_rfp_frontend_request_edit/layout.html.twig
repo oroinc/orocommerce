@@ -104,9 +104,7 @@
              view: 'ororfp/js/app/views/line-items-view',
              tierPrices: tierPrices|default({}),
              tierPricesRoute: 'oro_pricing_frontend_price_by_customer'
-         }|json_encode }}"
-         data-layout="separate"
-    >
+         }|json_encode }}">
         {{ block_widget(block) }}
     </div>
 {% endblock %}
