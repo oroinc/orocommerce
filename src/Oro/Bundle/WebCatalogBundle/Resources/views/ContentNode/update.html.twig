@@ -125,8 +125,14 @@
         'formErrors': form_errors(form),
         'dataBlocks': dataBlocks
     }%}
-
-    <div class="web-catalog-page-container tree-component-container">
+    {% set componentOptions = {
+    container: 'web-catalog-page-container',
+    sidebar: 'tree-component',
+    fixSidebarHeight: true
+    } %}
+    <div class="web-catalog-page-container tree-component-container"
+         data-page-component-module="orodatagrid/js/app/components/grid-sidebar-component"
+         data-page-component-options="{{ componentOptions|json_encode }}">
         <div class="page page-tree tree-component">
             {% set nodeId = null %}
             {% if entity.id %}
