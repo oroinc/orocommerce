@@ -51,6 +51,7 @@ abstract class QuickAddControllerTest extends WebTestCase
     public function testCopyPasteAction($processorName, $routerName, array $routerParams, $expectedMessage)
     {
         $example = [
+            "10, 5",
             LoadProductData::PRODUCT_1 . ", 1",
             strtoupper(LoadProductData::PRODUCT_2) . ",     2",
             strtolower(LoadProductData::PRODUCT_3) . "\t3",
@@ -58,10 +59,11 @@ abstract class QuickAddControllerTest extends WebTestCase
         ];
 
         $expectedValidationResult = [
-            self::VALIDATION_TOTAL_ROWS => 4,
+            self::VALIDATION_TOTAL_ROWS => 5,
             self::VALIDATION_VALID_ROWS => 3,
-            self::VALIDATION_ERROR_ROWS => 1,
+            self::VALIDATION_ERROR_ROWS => 2,
             self::VALIDATION_ERRORS     => [
+                sprintf(self::VALIDATION_ERROR_NOT_FOUND, '10'),
                 sprintf(self::VALIDATION_ERROR_NOT_FOUND, 'not-existing-product'),
             ]
         ];
