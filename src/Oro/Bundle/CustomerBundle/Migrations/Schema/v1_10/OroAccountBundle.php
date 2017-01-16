@@ -179,7 +179,9 @@ class OroAccountBundle implements
         ];
         if (!$schema->hasTable('oro_rel_c3990ba6784fec5f6e321b')) {
             foreach ($possibleTableNames as $tableName) {
-                $schema->dropTable($tableName);
+                if ($schema->hasTable($tableName)) {
+                    $schema->dropTable($tableName);
+                }
             }
         } else {
             foreach ($possibleTableNames as $tableName) {
