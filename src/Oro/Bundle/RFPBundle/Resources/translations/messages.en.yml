@@ -121,8 +121,8 @@ oro:
 
         datagrid:
             action_restore: 'Restore'
-            customer.label: 'Requests for Quote'
-            customer_user.label: 'Requests for Quote'
+            customer.label: 'Requests For Quote'
+            customer_user.label: 'Requests For Quote'
 
         controller:
             request:
