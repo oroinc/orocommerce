@@ -23,8 +23,7 @@ services:
     oro_payment.formatter.payment_method_label:
         class: 'Oro\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter'
         arguments:
-            - "@oro_payment.payment_method.view.registry"
-            - "@translator"
+            - "@oro_payment.payment_method_view_provider.registry"
 
     oro_payment.twig.payment_method_extension:
         class: 'Oro\Bundle\PaymentBundle\Twig\PaymentMethodExtension'
@@ -51,13 +50,13 @@ services:
     oro_payment.method.provider.method_provider:
         class: 'Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider'
         arguments:
-            - '@oro_payment.payment_method.registry'
+            - '@oro_payment.payment_method_provider.registry'
             - '@oro_payment.payment_methods_configs.rules_provider_basic'
 
     oro_payment.provider.methods_provider:
         class: 'Oro\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodViewsProvider'
         arguments:
-            - '@oro_payment.payment_method.view.registry'
+            - '@oro_payment.payment_method_view_provider.registry'
             - '@oro_payment.method.provider.method_provider'
             - '@oro_payment.provider.payment_transaction'
         tags:
@@ -95,7 +94,7 @@ services:
         abstract: true
         arguments:
             - '@oro_action.expression.context_accessor'
-            - '@oro_payment.payment_method.registry'
+            - '@oro_payment.payment_method_provider.registry'
             - '@oro_payment.provider.payment_transaction'
             - '@router'
         calls:
@@ -158,7 +157,7 @@ services:
     oro_payment.condition.payment_method_supports:
         class: 'Oro\Bundle\PaymentBundle\Condition\PaymentMethodSupports'
         arguments:
-            - '@oro_payment.payment_method.registry'
+            - '@oro_payment.payment_method_provider.registry'
         tags:
             - { name: oro_action.condition, alias: 'payment_method_supports' }
 
@@ -192,20 +191,18 @@ services:
     oro_payment.condition.require_payment_redirect:
         class: 'Oro\Bundle\PaymentBundle\Condition\RequirePaymentRedirect'
         arguments:
-            - '@oro_payment.payment_method.registry'
+            - '@oro_payment.payment_method_provider.registry'
             - '@event_dispatcher'
         tags:
             - { name: oro_action.condition, alias: 'require_payment_redirect' }
 
-    oro_payment.payment_method.registry:
-        class: 'Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry'
+    oro_payment.payment_method_provider.registry:
+        class: 'Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry'
         public: false
 
-    oro_payment.payment_method.view.registry:
-        class: 'Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry'
+    oro_payment.payment_method_view_provider.registry:
+        class: 'Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistry'
         public: false
-        arguments:
-            - '@oro_payment.payment_method.registry'
 
     oro_payment.provider.extract_options:
         class: 'Oro\Bundle\PaymentBundle\Provider\ExtractOptionsProvider'
@@ -259,3 +256,31 @@ services:
             - '@oro_payment.query_designer.select_query_converter'
             - '@doctrine'
             - '@oro_entity.helper.field_helper'
+
+    oro_paypal.config.provider.payments_pro_credit_card:
+        class: 'Oro\Bundle\PaymentBundle\Method\Provider\PayPalCreditCardConfigProvider'
+        arguments:
+            - '@doctrine'
+            - '@oro_security.encoder.mcrypt'
+            - 'paypal_payments_pro'
+
+    oro_paypal.config.provider.payments_pro_express_checkout:
+        class: 'Oro\Bundle\PaymentBundle\Method\Provider\PayPalExpressCheckoutConfigProvider'
+        arguments:
+            - '@doctrine'
+            - '@oro_security.encoder.mcrypt'
+            - 'paypal_payments_pro'
+
+    oro_paypal.config.provider.payflow_gateway_credit_card:
+        class: 'Oro\Bundle\PaymentBundle\Method\Provider\PayPalCreditCardConfigProvider'
+        arguments:
+            - '@doctrine'
+            - '@oro_security.encoder.mcrypt'
+            - 'paypal_payflow_gateway'
+
+    oro_paypal.config.provider.payflow_gateway_express_checkout:
+        class: 'Oro\Bundle\PaymentBundle\Method\Provider\PayPalExpressCheckoutConfigProvider'
+        arguments:
+            - '@doctrine'
+            - '@oro_security.encoder.mcrypt'
+            - 'paypal_payflow_gateway'

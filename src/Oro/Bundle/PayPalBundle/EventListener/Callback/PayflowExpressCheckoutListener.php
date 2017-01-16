@@ -7,19 +7,19 @@ use Psr\Log\LoggerAwareTrait;
 use Oro\Bundle\PayPalBundle\Method\PayflowExpressCheckout;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Option as GatewayOption;
 use Oro\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
 
 class PayflowExpressCheckoutListener
 {
     use LoggerAwareTrait;
 
-    /** @var PaymentMethodRegistry */
+    /** @var PaymentMethodProvidersRegistry */
     protected $paymentMethodRegistry;
 
     /**
-     * @param PaymentMethodRegistry $paymentMethodRegistry
+     * @param PaymentMethodProvidersRegistry $paymentMethodRegistry
      */
-    public function __construct(PaymentMethodRegistry $paymentMethodRegistry)
+    public function __construct(PaymentMethodProvidersRegistry $paymentMethodRegistry)
     {
         $this->paymentMethodRegistry = $paymentMethodRegistry;
     }

@@ -3,16 +3,17 @@
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Method\View;
 
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
-use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistry;
 
-class PaymentMethodViewRegistryTest extends \PHPUnit_Framework_TestCase
+class PaymentMethodViewProvidersRegistryTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var PaymentMethodViewRegistry */
+    /** @var PaymentMethodViewProvidersRegistry */
     protected $registry;
 
     protected function setUp()
     {
-        $this->registry = new PaymentMethodViewRegistry();
+        $this->registry = new PaymentMethodViewProvidersRegistry();
     }
 
     public function testGetPaymentMethodViews()
@@ -20,8 +21,12 @@ class PaymentMethodViewRegistryTest extends \PHPUnit_Framework_TestCase
         $testView = $this->getTypeMock('test_method_view');
         $testView2 = $this->getTypeMock('test_method_view2');
 
-        $this->registry->addPaymentMethodView($testView);
-        $this->registry->addPaymentMethodView($testView2);
+        $viewProvider = $this->createMock(PaymentMethodViewProviderInterface::class);
+        $viewProvider->expects($this->any())->method('getPaymentMethodViews')
+            ->with(['test_method_view', 'test_method_view2'])
+            ->will($this->returnValue([$testView, $testView2]));
+
+        $this->registry->addProvider($viewProvider);
 
         $views = $this->registry->getPaymentMethodViews(['test_method_view', 'test_method_view2']);
         $this->assertCount(2, $views);
@@ -32,9 +37,17 @@ class PaymentMethodViewRegistryTest extends \PHPUnit_Framework_TestCase
     {
         $testView = $this->getTypeMock('test_method_view');
 
-        $this->registry->addPaymentMethodView($testView);
+        $viewProvider = $this->createMock(PaymentMethodViewProviderInterface::class);
+        $viewProvider->expects($this->any())->method('getPaymentMethodView')
+            ->with('test_method_view')
+            ->will($this->returnValue($testView));
+        $viewProvider->expects($this->any())->method('hasPaymentMethodView')
+            ->with('test_method_view')
+            ->will($this->returnValue(true));
 
-        $paymentMethodView = $this->registry->getPaymentMethodView($testView->getPaymentMethodType());
+        $this->registry->addProvider($viewProvider);
+
+        $paymentMethodView = $this->registry->getPaymentMethodView($testView->getPaymentMethodIdentifier());
 
         $this->assertEquals($paymentMethodView, $testView);
     }
@@ -55,7 +68,7 @@ class PaymentMethodViewRegistryTest extends \PHPUnit_Framework_TestCase
     protected function getTypeMock($name)
     {
         $type = $this->createMock(PaymentMethodViewInterface::class);
-        $type->expects($this->any())->method('getPaymentMethodType')->will($this->returnValue($name));
+        $type->expects($this->any())->method('getPaymentMethodIdentifier')->will($this->returnValue($name));
 
         return $type;
     }

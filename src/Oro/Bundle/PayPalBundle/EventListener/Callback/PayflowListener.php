@@ -10,7 +10,7 @@ use Oro\Bundle\PayPalBundle\Method\PayflowGateway;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseStatusMap;
 use Oro\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
 
 class PayflowListener
 {
@@ -19,14 +19,14 @@ class PayflowListener
     /** @var Session */
     protected $session;
 
-    /** @var PaymentMethodRegistry */
+    /** @var PaymentMethodProvidersRegistry */
     protected $paymentMethodRegistry;
 
     /**
      * @param Session $session
-     * @param PaymentMethodRegistry $paymentMethodRegistry
+     * @param PaymentMethodProvidersRegistry $paymentMethodRegistry
      */
-    public function __construct(Session $session, PaymentMethodRegistry $paymentMethodRegistry)
+    public function __construct(Session $session, PaymentMethodProvidersRegistry $paymentMethodRegistry)
     {
         $this->session = $session;
         $this->paymentMethodRegistry = $paymentMethodRegistry;
