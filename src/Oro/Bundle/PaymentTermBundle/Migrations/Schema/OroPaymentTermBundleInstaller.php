@@ -155,25 +155,27 @@ class OroPaymentTermBundleInstaller implements
             $queryAccount = <<<QUERY
 UPDATE oro_customer a
 JOIN oro_payment_term_to_account pta ON pta.account_id = a.id
-SET a.payment_term_7c4f1e8e_id = pta.payment_term_id;
+SET a.payment_term_7c4f1e8e_id = pta.payment_term_id
+WHERE a.payment_term_7c4f1e8e_id IS NULL;
 QUERY;
             $queryGroup = <<<QUERY
 UPDATE oro_customer_group ag
 JOIN oro_payment_term_to_acc_grp ptag ON ptag.account_group_id = ag.id
 SET ag.payment_term_7c4f1e8e_id = ptag.payment_term_id;
+WHERE ag.payment_term_7c4f1e8e_id IS NULL;
 QUERY;
         } elseif ($this->platform instanceof PostgreSqlPlatform) {
             $queryAccount = <<<QUERY
 UPDATE oro_customer a
 SET payment_term_7c4f1e8e_id = pta.payment_term_id
 FROM oro_payment_term_to_account pta
-WHERE pta.account_id = a.id;
+WHERE pta.account_id = a.id AND a.payment_term_7c4f1e8e_id IS NULL;
 QUERY;
             $queryGroup = <<<QUERY
 UPDATE oro_customer_group ag
 SET payment_term_7c4f1e8e_id = ptag.payment_term_id
 FROM oro_payment_term_to_acc_grp ptag
-WHERE ptag.account_group_id = ag.id;
+WHERE ptag.account_group_id = ag.id AND ag.payment_term_7c4f1e8e_id IS NULL;
 QUERY;
         } else {
             throw new \RuntimeException('Unsupported platform ');
