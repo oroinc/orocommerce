@@ -11,8 +11,10 @@
         '~class': ' header-row' ~ (blocks.header_row.children|length > 2 ? ' header-row--from-left')
     }) %}
 
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
+    <div class="container-fluid">
+        <div {{ block('block_attributes') }}>
+            {{ block_widget(block) }}
+        </div>
     </div>
 {% endblock %}
 

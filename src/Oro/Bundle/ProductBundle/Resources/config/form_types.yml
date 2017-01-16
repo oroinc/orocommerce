@@ -92,6 +92,8 @@ services:
             - "@oro_product.storage.product_data_storage"
             - "@oro_entity.doctrine_helper"
             - '%oro_product.entity.product.class%'
+        calls:
+            - [setLogger,  ["@logger"]]
 
     oro_product.form.type.extension.integer:
         class: 'Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension'
@@ -176,14 +178,15 @@ services:
         tags:
             - { name: form.type, alias: oro_product_page_variant }
 
-    oro_product.form.type.frontend_variant_field:
-        class: 'Oro\Bundle\ProductBundle\Form\Type\FrontendVariantFiledType'
+    oro_product.product_variant.form.type.frontend_variant_field:
+        class: 'Oro\Bundle\ProductBundle\ProductVariant\Form\Type\FrontendVariantFiledType'
         arguments:
-            - '@oro_product.provider.custom_field_provider'
             - '@oro_product.provider.product_variant_availability_provider'
+            - '@oro_product.product_variant.registry.product_variant_type_handler_factory'
+            - '@property_accessor'
             - '%oro_product.entity.product.class%'
         tags:
-            - { name: form.type, alias: oro_product_frontend_variant_field }
+            - { name: form.type, alias: oro_product_product_variant_frontend_variant_field }
 
     oro_product.form.type.extension.choices_primary_unit_selection:
         class: 'Oro\Bundle\ProductBundle\Form\Extension\ChoicesProductPrimaryUnitSelectionOwnerTypeExtension'

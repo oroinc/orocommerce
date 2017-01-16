@@ -48,7 +48,7 @@ define(function(require) {
             this.initModel(options);
             this.initializeElements(options);
 
-            this.originalProductId = this.model.get('id');
+            this.originalProductId = this.model.get('parentProduct');
 
             this.initializeSubviews({
                 productModel: this.model
@@ -84,7 +84,10 @@ define(function(require) {
 
             var productId = modelProductId || this.originalProductId;
             mediator.trigger('layout-subtree:update:product', {
-                layoutSubtreeUrl: routing.generate('oro_product_frontend_product_view', {id: productId}),
+                layoutSubtreeUrl: routing.generate('oro_product_frontend_product_view', {
+                    id: productId,
+                    ignoreProductVariant: true
+                }),
                 layoutSubtreeCallback: _.bind(this.afterProductChanged, this)
             });
         },

@@ -31,6 +31,11 @@ class CustomerUserRoleUpdateFrontendHandler extends AbstractCustomerUserRoleHand
     protected $requestStack;
 
     /**
+     * @var CustomerUserRole
+     */
+    protected $predefinedRole;
+
+    /**
      * @param RequestStack $requestStack
      */
     public function setRequestStack($requestStack)
@@ -38,11 +43,6 @@ class CustomerUserRoleUpdateFrontendHandler extends AbstractCustomerUserRoleHand
         $this->requestStack = $requestStack;
         $this->request = $requestStack->getCurrentRequest();
     }
-
-    /**
-     * @var CustomerUserRole
-     */
-    protected $predefinedRole;
 
     /**
      * @param TokenStorageInterface $tokenStorage

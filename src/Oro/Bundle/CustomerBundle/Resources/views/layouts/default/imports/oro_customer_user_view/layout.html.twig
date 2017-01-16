@@ -61,12 +61,12 @@
                         {{ UI.renderProperty('oro.customer.customeruser.profile.company_name'|trans, customerUser.customer.name) }}
                     {% endif %}
 
-                    {% if resource_granted('oro_customer_customer_user_role_view') %}
+                    {% if resource_granted('oro_customer_frontend_customer_user_role_view') %}
                         {% set roles = [] %}
                         {% for customerUserRole in customerUser.roles %}
-                            {% set roles = roles|merge([customerUserRole.label]) %}
+                            {% set roles = roles|merge([customerUserRole.label|escape]) %}
                         {% endfor %}
-                        {{ UI.renderProperty('oro.customer.customeruser.roles.label'|trans, roles|join('<br />')) }}
+                        {{ UI.renderHtmlProperty('oro.customer.customeruser.roles.label'|trans, roles|join('<br />')) }}
                     {% endif %}
 
                     {% if customerUser.salesRepresentatives | length %}

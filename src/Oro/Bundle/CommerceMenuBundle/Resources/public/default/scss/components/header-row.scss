@@ -80,6 +80,8 @@
 
 @include breakpoint('tablet') {
     .header-row {
+        margin: 0 -($offset-x-m);
+
         &__container {
             position: static;
 
@@ -123,5 +125,9 @@
         & .main-menu__sublist-container {
             width: auto;
         }
+    }
+
+    .shown-on-desktop {
+        display: none !important;
     }
 }
