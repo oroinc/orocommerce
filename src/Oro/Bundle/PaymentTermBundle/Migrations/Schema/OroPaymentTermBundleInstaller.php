@@ -125,6 +125,8 @@ class OroPaymentTermBundleInstaller implements
     {
         $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_customer');
         $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_customer_group');
+        
+        $this->migrateRelations($queries);
 
         $associationTableName = $this->activityExtension->getAssociationTableName('oro_note', self::TABLE_NAME);
         if (!$schema->hasTable($associationTableName)) {
