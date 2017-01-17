@@ -6,6 +6,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 use Psr\Log\LoggerAwareInterface;
@@ -25,21 +26,27 @@ class PaymentTerm implements PaymentMethodInterface, LoggerAwareInterface
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
+    /** @var PaymentTermConfigInterface */
+    protected $config;
+
     use LoggerAwareTrait;
 
     /**
      * @param PaymentTermProvider $paymentTermProvider
      * @param PaymentTermAssociationProvider $paymentTermAssociationProvider
      * @param DoctrineHelper $doctrineHelper
+     * @param PaymentTermConfigInterface $config
      */
     public function __construct(
         PaymentTermProvider $paymentTermProvider,
         PaymentTermAssociationProvider $paymentTermAssociationProvider,
-        DoctrineHelper $doctrineHelper
+        DoctrineHelper $doctrineHelper,
+        PaymentTermConfigInterface $config
     ) {
         $this->paymentTermProvider = $paymentTermProvider;
         $this->paymentTermAssociationProvider = $paymentTermAssociationProvider;
         $this->doctrineHelper = $doctrineHelper;
+        $this->config = $config;
     }
 
     /** {@inheritdoc} */
@@ -88,7 +95,7 @@ class PaymentTerm implements PaymentMethodInterface, LoggerAwareInterface
     /** {@inheritdoc} */
     public function getIdentifier()
     {
-        return self::TYPE;
+        return $this->config->getPaymentMethodIdentifier();
     }
 
     /**

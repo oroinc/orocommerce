@@ -8,6 +8,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
+use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface;
 use Oro\Bundle\PaymentTermBundle\Method\PaymentTerm as PaymentTermMethod;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
@@ -28,6 +29,9 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
 
     /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
     protected $doctrineHelper;
+
+    /** @var PaymentTermConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $paymentConfig;
 
     /** @var PaymentTransaction */
     protected $paymentTransaction;
@@ -53,6 +57,9 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->paymentConfig = $this->createMock(PaymentTermConfigInterface::class);
+        $this->paymentConfig->expects(static::any())->method('getPaymentMethodIdentifier')->willReturn('payment_term');
+
         $this->paymentTransaction = new PaymentTransaction();
         $this->paymentTransaction->setSuccessful(false);
 
@@ -61,7 +68,8 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
         $this->method = new PaymentTermMethod(
             $this->paymentTermProvider,
             $this->paymentTermAssociationProvider,
-            $this->doctrineHelper
+            $this->doctrineHelper,
+            $this->paymentConfig
         );
 
         $this->method->setLogger($this->logger);
