@@ -98,7 +98,13 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
 
         $this->gateway->expects($this->any())
             ->method('request')
-            ->with('S', ['ACTION' => 'S'])
+            ->with(
+                'S',
+                array_merge(
+                    ['ACTION' => 'S'],
+                    $this->getAdditionalOptions()
+                )
+            )
             ->willReturn(new Response(['RESPMSG' => 'Approved', 'RESULT' => '0']));
 
         $this->gateway->expects($this->exactly(1))
@@ -786,7 +792,7 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
     protected function getLineItemOptionModel()
     {
         $lineItemModel = new LineItemOptionModel();
-        
+
         return $lineItemModel
             ->setName('Product Name')
             ->setDescription('Product Description')
