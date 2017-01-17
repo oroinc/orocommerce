@@ -31,7 +31,8 @@ class AuthorizationRequest extends AbstractRequest
             ->addOption(new ECOption\PaymentType())
             ->addOption(new ECOption\ShippingAddress())
             ->addOption(new ECOption\ShippingAddressOverride())
-            ->addOption(new Option\Verbosity());
+            ->addOption(new Option\Verbosity())
+            ->addOption(new Option\ButtonSource());
 
         return $this;
     }

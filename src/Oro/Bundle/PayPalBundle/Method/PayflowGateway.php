@@ -26,6 +26,9 @@ class PayflowGateway implements PaymentMethodInterface
 
     const ZERO_AMOUNT = 0;
 
+    // PayPal BN code
+    const BUTTON_SOURCE = 'OroCommerce_SP';
+
     /** @var Gateway */
     protected $gateway;
 
@@ -374,8 +377,19 @@ class PayflowGateway implements PaymentMethodInterface
     {
         return array_replace(
             $this->config->getCredentials(),
+            $this->getAdditionalOptions(),
             $options,
             $this->getVerbosityOption()
         );
+    }
+
+    /**
+     * @return array
+     */
+    protected function getAdditionalOptions()
+    {
+        return [
+            Option\ButtonSource::BUTTONSOURCE => self::BUTTON_SOURCE
+        ];
     }
 }
