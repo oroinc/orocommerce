@@ -16,6 +16,7 @@ class OroMoneyOrderExtensionTest extends ExtensionTestCase
             'oro_money_order.payment_method_view_provider.money_order',
             'oro_money_order.integration.channel',
             'oro_money_order.integration.transport',
+            'oro_money_order.payment_method.config.provider',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }

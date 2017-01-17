@@ -19,6 +19,7 @@ class MoneyOrderSettingsTest extends \PHPUnit_Framework_TestCase
 
         static::assertPropertyCollections(new MoneyOrderSettings(), [
             ['labels', new LocalizedFallbackValue()],
+            ['shortLabels', new LocalizedFallbackValue()],
         ]);
     }
 

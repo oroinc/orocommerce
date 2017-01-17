@@ -5,6 +5,7 @@ oro:
             pay_to.label: 'Pay To'
             send_to.label: 'Send To'
             labels.label: 'Label'
+            short_labels.label: 'Short Label'
         channel_type:
             label: 'Check/Money Order'
         menu:

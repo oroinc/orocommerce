@@ -46,6 +46,7 @@ class MoneyOrderSettingsTypeTest extends FormIntegrationTestCase
             'payTo' => 'payTo',
             'sendTo' => 'sendTo',
             'labels' => [['string' => 'first label']],
+            'shortLabels' => [['string' => 'short label']],
         ];
 
         $settings = new MoneyOrderSettings();

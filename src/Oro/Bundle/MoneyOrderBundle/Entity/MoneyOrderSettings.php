@@ -48,13 +48,35 @@ class MoneyOrderSettings extends Transport
      */
     private $labels;
 
+    /**
+     * @var Collection|LocalizedFallbackValue[]
+     *
+     * @ORM\ManyToMany(
+     *      targetEntity="Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue",
+     *      cascade={"ALL"},
+     *      orphanRemoval=true
+     * )
+     * @ORM\JoinTable(
+     *      name="oro_money_order_short_label",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="transport_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
+     *      }
+     * )
+     */
+    private $shortLabels;
+
     /** @var ParameterBag */
     private $settings;
 
     public function __construct()
     {
         $this->labels = new ArrayCollection();
+        $this->shortLabels = new ArrayCollection();
     }
+
     /**
      * @return Collection|LocalizedFallbackValue[]
      */
@@ -62,6 +84,7 @@ class MoneyOrderSettings extends Transport
     {
         return $this->labels;
     }
+
     /**
      * @param LocalizedFallbackValue $label
      *
@@ -75,6 +98,7 @@ class MoneyOrderSettings extends Transport
 
         return $this;
     }
+
     /**
      * @param LocalizedFallbackValue $label
      *
@@ -84,6 +108,42 @@ class MoneyOrderSettings extends Transport
     {
         if ($this->labels->contains($label)) {
             $this->labels->removeElement($label);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|LocalizedFallbackValue[]
+     */
+    public function getShortLabels()
+    {
+        return $this->shortLabels;
+    }
+
+    /**
+     * @param LocalizedFallbackValue $label
+     *
+     * @return MoneyOrderSettings
+     */
+    public function addShortLabel(LocalizedFallbackValue $label)
+    {
+        if (!$this->shortLabels->contains($label)) {
+            $this->shortLabels->add($label);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param LocalizedFallbackValue $label
+     *
+     * @return MoneyOrderSettings
+     */
+    public function removeShortLabel(LocalizedFallbackValue $label)
+    {
+        if ($this->shortLabels->contains($label)) {
+            $this->shortLabels->removeElement($label);
         }
 
         return $this;

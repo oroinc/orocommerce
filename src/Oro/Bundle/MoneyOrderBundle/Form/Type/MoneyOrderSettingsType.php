@@ -46,7 +46,17 @@ class MoneyOrderSettingsType extends AbstractType
                     'required' => true,
                     'options'  => ['constraints' => [new NotBlank()]],
                 ]
-            );
+            )
+            ->add(
+                'shortLabels',
+                LocalizedFallbackValueCollectionType::NAME,
+                [
+                    'label'    => 'oro.money_order.settings.short_labels.label',
+                    'required' => true,
+                    'options'  => ['constraints' => [new NotBlank()]],
+                ]
+            )
+        ;
     }
 
     /**

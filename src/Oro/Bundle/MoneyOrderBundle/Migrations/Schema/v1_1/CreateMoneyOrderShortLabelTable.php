@@ -7,7 +7,7 @@ use Doctrine\DBAL\Schema\SchemaException;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class CreateMoneyOrderTranslationLabelTable implements Migration
+class CreateMoneyOrderShortLabelTable implements Migration
 {
     /**
      * @param Schema $schema
@@ -17,32 +17,32 @@ class CreateMoneyOrderTranslationLabelTable implements Migration
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->createOroMoneyOrderTransportLabelTable($schema);
-        $this->addOroMoneyOrderTransportLabelForeignKeys($schema);
+        $this->createOroMoneyOrderShortLabelTable($schema);
+        $this->addOroMoneyOrderShortLabelForeignKeys($schema);
     }
 
     /**
      * @param Schema $schema
      */
-    private function createOroMoneyOrderTransportLabelTable(Schema $schema)
+    private function createOroMoneyOrderShortLabelTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_money_order_trans_label');
+        $table = $schema->createTable('oro_money_order_short_label');
 
         $table->addColumn('transport_id', 'integer', []);
         $table->addColumn('localized_value_id', 'integer', []);
 
         $table->setPrimaryKey(['transport_id', 'localized_value_id']);
-        $table->addIndex(['transport_id'], 'oro_money_order_trans_label_transport_id', []);
-        $table->addUniqueIndex(['localized_value_id'], 'oro_money_order_trans_label_localized_value_id', []);
+        $table->addIndex(['transport_id'], 'oro_money_order_short_label_transport_id', []);
+        $table->addUniqueIndex(['localized_value_id'], 'oro_money_order_short_label_localized_value_id', []);
     }
     /**
      * @param Schema $schema
      *
      * @throws SchemaException
      */
-    private function addOroMoneyOrderTransportLabelForeignKeys(Schema $schema)
+    private function addOroMoneyOrderShortLabelForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('oro_money_order_trans_label');
+        $table = $schema->getTable('oro_money_order_short_label');
 
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_fallback_localization_val'),

@@ -46,6 +46,9 @@ class OroMoneyOrderBundleInstaller implements Installation, ContainerAwareInterf
         $this->createOroMoneyOrderTransportLabelTable($schema);
         $this->addOroMoneyOrderTransportLabelForeignKeys($schema);
         $this->updateOroIntegrationTransportTable($schema);
+
+        $this->createOroMoneyOrderShortLabelTable($schema);
+        $this->addOroMoneyOrderShortLabelForeignKeys($schema);
     }
 
     /**
@@ -97,5 +100,42 @@ class OroMoneyOrderBundleInstaller implements Installation, ContainerAwareInterf
 
         $table->addColumn('money_order_pay_to', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('money_order_send_to', 'text', ['notnull' => false]);
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    private function createOroMoneyOrderShortLabelTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_money_order_short_label');
+
+        $table->addColumn('transport_id', 'integer', []);
+        $table->addColumn('localized_value_id', 'integer', []);
+
+        $table->setPrimaryKey(['transport_id', 'localized_value_id']);
+        $table->addIndex(['transport_id'], 'oro_money_order_short_label_transport_id', []);
+        $table->addUniqueIndex(['localized_value_id'], 'oro_money_order_short_label_localized_value_id', []);
+    }
+    /**
+     * @param Schema $schema
+     *
+     * @throws SchemaException
+     */
+    private function addOroMoneyOrderShortLabelForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_money_order_short_label');
+
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_fallback_localization_val'),
+            ['localized_value_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_integration_transport'),
+            ['transport_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
     }
 }
