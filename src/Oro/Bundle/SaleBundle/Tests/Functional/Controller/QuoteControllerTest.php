@@ -175,7 +175,7 @@ class QuoteControllerTest extends WebTestCase
         $form[sprintf('oro_sale_quote[%s]', $paymentTermProperty)] = $paymentTerm->getId();
 
         $form['oro_sale_quote[assignedUsers]'] = $this->getReference(LoadUserData::USER1)->getId();
-        $form['oro_sale_quote[assignedAccountUsers]'] = implode(',', [
+        $form['oro_sale_quote[assignedCustomerUsers]'] = implode(',', [
             $this->getReference(LoadUserData::ACCOUNT1_USER1)->getId(),
             $this->getReference(LoadUserData::ACCOUNT1_USER2)->getId()
         ]);

@@ -49,16 +49,16 @@ services:
             - '@oro_security.security_facade'
             - '@doctrine'
             - '@oro_security.acl_helper'
-            - '%oro_customer.entity.account_address.class%'
-            - '%oro_customer.entity.account_user_address.class%'
+            - '%oro_customer.entity.customer_address.class%'
+            - '%oro_customer.entity.customer_user_address.class%'
 
     oro_order.order.provider.order_address_security:
         class: 'Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider'
         arguments:
             - '@oro_security.security_facade'
             - '@oro_order.order.provider.order_address'
-            - '%oro_customer.entity.account_address.class%'
-            - '%oro_customer.entity.account_user_address.class%'
+            - '%oro_customer.entity.customer_address.class%'
+            - '%oro_customer.entity.customer_user_address.class%'
 
     oro_order.manager.order_address:
         class: 'Oro\Bundle\OrderBundle\Manager\OrderAddressManager'
@@ -68,16 +68,16 @@ services:
             - '@doctrine'
             - '%oro_order.entity.order_address.class%'
         calls:
-            - [addEntity, ['a', '%oro_customer.entity.account_address.class%']]
-            - [addEntity, ['au', '%oro_customer.entity.account_user_address.class%']]
+            - [addEntity, ['a', '%oro_customer.entity.customer_address.class%']]
+            - [addEntity, ['au', '%oro_customer.entity.customer_user_address.class%']]
 
     oro_order.request_handler.order_request_handler:
         class: 'Oro\Bundle\OrderBundle\RequestHandler\OrderRequestHandler'
         arguments:
             - '@doctrine'
             - '@request_stack'
-            - '%oro_customer.entity.account.class%'
-            - '%oro_customer.entity.account_user.class%'
+            - '%oro_customer.entity.customer.class%'
+            - '%oro_customer.entity.customer_user.class%'
 
     oro_order.request_handler.frontend_order_data_handler:
         class: 'Oro\Bundle\OrderBundle\RequestHandler\FrontendOrderDataHandler'
@@ -111,8 +111,8 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@request_stack'
         tags:
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-user-view, method: onAccountUserView }
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-view, method: onAccountView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-user-view, method: onCustomerUserView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-view, method: onCustomerView }
 
     oro_order.event_listener.product_db_query_restriction:
         class: '%oro_product.event_listener.scoped_product_db_query_restriction.common_class%'
@@ -348,3 +348,10 @@ services:
 
     oro_order.converter.shipping_prices:
         class: 'Oro\Bundle\OrderBundle\Converter\ShippingPricesConverter'
+
+    oro_order.event_listener.order_line_items_frontend_datagrid:
+        class: 'Oro\Bundle\OrderBundle\EventListener\LineItemsFrontendDatagridListener'
+        arguments:
+            - '@oro_product.layout.data_provider.configurable_products'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.order-line-items-grid-frontend, method: onResultAfter }

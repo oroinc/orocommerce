@@ -25,8 +25,8 @@ class LoadInvoiceDemoData extends AbstractFixture implements ContainerAwareInter
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData',
-            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountUserDemoData',
+            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerDemoData',
+            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerUserDemoData',
         ];
     }
 
@@ -48,8 +48,8 @@ class LoadInvoiceDemoData extends AbstractFixture implements ContainerAwareInter
         /** @var User $user */
         $owner = $manager->getRepository('OroUserBundle:User')->findOneBy([]);
 
-        /** @var Customer $account */
-        $account = $manager->getRepository('OroCustomerBundle:Customer')->findOneBy([]);
+        /** @var Customer $customer */
+        $customer = $manager->getRepository('OroCustomerBundle:Customer')->findOneBy([]);
 
         $website = $manager->getRepository('OroWebsiteBundle:Website')
             ->findOneBy(['name' => LoadWebsiteData::DEFAULT_WEBSITE_NAME]);
@@ -61,9 +61,9 @@ class LoadInvoiceDemoData extends AbstractFixture implements ContainerAwareInter
             $invoice = new Invoice();
             $invoice
                 ->setOwner($owner)
-                ->setAccount($account)
-                ->setAccountUser($account->getUsers()->first())
-                ->setOrganization($account->getOrganization())
+                ->setCustomer($customer)
+                ->setCustomerUser($customer->getUsers()->first())
+                ->setOrganization($customer->getOrganization())
                 ->setInvoiceNumber($row['invoiceNumber'])
                 ->setInvoiceDate($row['invoiceDate'])
                 ->setPaymentDueDate($row['invoiceDate'])

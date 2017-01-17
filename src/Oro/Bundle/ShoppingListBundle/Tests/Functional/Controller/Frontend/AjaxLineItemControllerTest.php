@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -23,7 +23,7 @@ class AjaxLineItemControllerTest extends WebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
+            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
 
         $this->loadFixtures(
@@ -136,7 +136,7 @@ class AjaxLineItemControllerTest extends WebTestCase
     public function testAddProductFromViewNotValidData()
     {
         /** @var Product $product */
-        $product = $this->getReference('product.1');
+        $product = $this->getReference('product-1');
 
         $this->client->request(
             'POST',
@@ -375,14 +375,14 @@ class AjaxLineItemControllerTest extends WebTestCase
             [
                 'productRef' => LoadProductData::PRODUCT_1,
                 'expectedResult' => true,
-                'expectedMessage' => 'Product has been removed from "<a href="/account/shoppinglist/%s">'.
+                'expectedMessage' => 'Product has been removed from "<a href="/customer/shoppinglist/%s">'.
                     'shopping_list_2_label</a>"',
                 'expectedInitCount' => 2,
             ],
             [
                 'productRef' => LoadProductData::PRODUCT_2,
                 'expectedResult' => true,
-                'expectedMessage' => 'Product has been removed from "<a href="/account/shoppinglist/%s">'.
+                'expectedMessage' => 'Product has been removed from "<a href="/customer/shoppinglist/%s">'.
                     'shopping_list_2_label</a>"',
                 'expectedInitCount' => 1,
             ],
@@ -403,7 +403,7 @@ class AjaxLineItemControllerTest extends WebTestCase
             [
                 'productRef' => LoadProductData::PRODUCT_1,
                 'expectedResult' => true,
-                'expectedMessage' => 'Product has been removed from "<a href="/account/shoppinglist/%s">'.
+                'expectedMessage' => 'Product has been removed from "<a href="/customer/shoppinglist/%s">'.
                     'shopping_list_1_label</a>"',
                 'expectedInitCount' => 1,
                 'removeCurrent' => false,
@@ -428,7 +428,7 @@ class AjaxLineItemControllerTest extends WebTestCase
                     'actionName' => 'oro_shoppinglist_frontend_addlineitemlist'.$shoppingList->getId(),
                     'shoppingList' => $shoppingList->getId(),
                     'inset' => 1,
-                    'values' => $this->getReference('product.1')->getId(),
+                    'values' => $this->getReference('product-1')->getId(),
                 ]
             )
         );

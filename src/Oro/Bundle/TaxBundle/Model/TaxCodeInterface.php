@@ -4,8 +4,8 @@ namespace Oro\Bundle\TaxBundle\Model;
 
 interface TaxCodeInterface
 {
-    const TYPE_ACCOUNT = 'account';
-    const TYPE_ACCOUNT_GROUP = 'account_group';
+    const TYPE_ACCOUNT = 'customer';
+    const TYPE_ACCOUNT_GROUP = 'customer_group';
 
     const TYPE_PRODUCT = 'product';
 

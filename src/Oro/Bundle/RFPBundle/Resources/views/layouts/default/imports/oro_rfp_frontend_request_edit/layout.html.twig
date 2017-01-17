@@ -74,7 +74,7 @@
         </div>
         <div class="request-form-grid__row">
             <div class="request-form-grid__column grid__column--6">
-                {{ form_row(form.assignedAccountUsers) }}
+                {{ form_row(form.assignedCustomerUsers) }}
             </div>
         </div>
     </div>
@@ -103,10 +103,8 @@
          data-page-component-options="{{ {
              view: 'ororfp/js/app/views/line-items-view',
              tierPrices: tierPrices|default({}),
-             tierPricesRoute: 'oro_pricing_frontend_price_by_account'
-         }|json_encode }}"
-         data-layout="separate"
-    >
+             tierPricesRoute: 'oro_pricing_frontend_price_by_customer'
+         }|json_encode }}">
         {{ block_widget(block) }}
     </div>
 {% endblock %}

@@ -126,22 +126,39 @@
                     <table data-scrollable-inner-content class="checkout-order-summary__table">
                         <tbody class="checkout-order-summary__table-inner">
                         {% for lineItem in lineItemsWithTotals %}
+                            {% set mainProduct = null %}
                             {% set lineItemInfo = lineItemsWithTotals.getInfo() %}
                             {% set productSku = lineItem.productSku %}
+
                             {% if lineItem.product is not null %}
-                                {% set productSku = lineItem.product.sku %}
+                                {% set mainProduct = lineItem.product %}
+                                {% if lineItem.parentProduct is not null %}
+                                    {% set mainProduct = lineItem.parentProduct %}
+                                {% endif %}
+                                {% set productSku = mainProduct.sku %}
                             {% endif %}
                             <tr data-scrollable-content-body>
                                 <td class="checkout-order-summary__table-col checkout-order-summary__product">
                                     <h3 class="product-item__title product-item__title_in-cart">
-                                        {% if lineItem.product is not null %}
-                                            <a href="{{ path('oro_product_frontend_product_view', {'id':lineItem.product.id}) }}" tabindex="-1">{{ lineItem.product.defaultName }}</a>
+                                        {% if mainProduct is not null %}
+                                            <a href="{{ path('oro_product_frontend_product_view', {'id':mainProduct.id}) }}" tabindex="-1">{{ mainProduct.defaultName }}</a>
                                         {% else %}
                                             {{ lineItem.freeFormProduct }}
                                         {% endif %}
                                     </h3>
                                     <div>{{ 'oro.checkout.order_summary.item'|trans }} #: <span
                                                 class="red">{{ productSku }}</span></div>
+                                    {% if mainProduct is not null and configurableProducts[lineItem.product.id] is defined %}
+                                        {% for product in configurableProducts[lineItem.product.id] %}
+                                            <div>{{ product.label|trans }}:
+                                                {% if product.type == 'boolean' %}
+                                                    {{ product.value ? 'oro.product.variant_fields.yes.label'|trans : 'oro.product.variant_fields.no.label'|trans }}
+                                                {% else %}
+                                                    {{ product.value }}
+                                                {% endif %}
+                                            </div>
+                                        {% endfor %}
+                                    {% endif %}
                                 </td>
                                 {% set quantity = lineItem.quantity %}
                                 <td class="checkout-order-summary__table-col checkout-order-summary__qty">
@@ -221,14 +238,14 @@
 
 {% block __oro_checkout_content__checkout_button_continue_widget -%}
     {% if transitionData is defined and transitionData %}
-        <fieldset class="checkout__form__row">
-            <fieldset class="checkout__form__row">
+        <fieldset class="grid__row grid__row--offset-y">
+            <div class="grid__column">
+                {{ block_widget(block) }}
+            </div>
+            <div class="grid__column">
                 <div class="checkout__form__req-text {% if transitionData.isAllowed == false %}hidden{% endif %}"><sup>*</sup>
                     {{ 'oro.checkout.workflow.b2b_flow_checkout.form.required.label'|trans }}
                 </div>
-            </fieldset>
-            <div class="checkout__form__col form__col_x12">
-                {{ block_widget(block) }}
             </div>
         </fieldset>
     {% endif %}

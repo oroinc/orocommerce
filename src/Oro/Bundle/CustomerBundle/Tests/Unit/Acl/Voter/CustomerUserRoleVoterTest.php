@@ -95,8 +95,8 @@ class CustomerUserRoleVoterTest extends \PHPUnit_Framework_TestCase
             'CREATE'                       => ['CREATE', false],
             'EDIT'                         => ['EDIT', false],
             'DELETE'                       => [CustomerUserRoleVoter::ATTRIBUTE_DELETE, true],
-            'FRONTEND ACCOUNT ROLE UPDATE' => [CustomerUserRoleVoter::ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_UPDATE, true],
-            'FRONTEND ACCOUNT ROLE VIEW'   => [CustomerUserRoleVoter::ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_VIEW, true],
+            'FRONTEND ACCOUNT ROLE UPDATE' => [CustomerUserRoleVoter::ATTRIBUTE_FRONTEND_CUSTOMER_ROLE_UPDATE, true],
+            'FRONTEND ACCOUNT ROLE VIEW'   => [CustomerUserRoleVoter::ATTRIBUTE_FRONTEND_CUSTOMER_ROLE_VIEW, true],
         ];
     }
 
@@ -164,44 +164,44 @@ class CustomerUserRoleVoterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param CustomerUser|null $accountUser
+     * @param CustomerUser|null $customerUser
      * @param bool             $isGranted
-     * @param int              $accountId
-     * @param int              $loggedUserAccountId
+     * @param int              $customerId
+     * @param int              $loggedUserCustomerId
      * @param int              $expected
      * @param bool             $failCustomerUserRole
      *
      * @dataProvider attributeFrontendUpdateViewDataProvider
      */
     public function testVoteFrontendUpdate(
-        $accountUser,
+        $customerUser,
         $isGranted,
-        $accountId,
-        $loggedUserAccountId,
+        $customerId,
+        $loggedUserCustomerId,
         $expected,
         $failCustomerUserRole = false
     ) {
-        /** @var Customer $roleAccount */
-        $roleAccount = $this->createEntity('Oro\Bundle\CustomerBundle\Entity\Customer', $accountId);
+        /** @var Customer $roleCustomer */
+        $roleCustomer = $this->createEntity('Oro\Bundle\CustomerBundle\Entity\Customer', $customerId);
 
-        /** @var Customer $userAccount */
-        $userAccount = $this->createEntity('Oro\Bundle\CustomerBundle\Entity\Customer', $loggedUserAccountId);
+        /** @var Customer $userCustomer */
+        $userCustomer = $this->createEntity('Oro\Bundle\CustomerBundle\Entity\Customer', $loggedUserCustomerId);
 
         if ($failCustomerUserRole) {
             $customerUserRole = new \stdClass();
         } else {
             $customerUserRole = new CustomerUserRole();
-            $customerUserRole->setAccount($roleAccount);
+            $customerUserRole->setCustomer($roleCustomer);
         }
 
-        if ($accountUser) {
-            $accountUser->setAccount($userAccount);
+        if ($customerUser) {
+            $customerUser->setCustomer($userCustomer);
         }
 
         $this->getMocksForVote($customerUserRole);
 
         if (!$failCustomerUserRole) {
-            $this->getMockForUpdateAndView($accountUser, $customerUserRole, $isGranted, 'EDIT');
+            $this->getMockForUpdateAndView($customerUser, $customerUserRole, $isGranted, 'EDIT');
         }
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TokenInterface $token */
@@ -210,48 +210,48 @@ class CustomerUserRoleVoterTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(
             $expected,
             $this->voter
-                ->vote($token, $customerUserRole, [CustomerUserRoleVoter::ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_UPDATE])
+                ->vote($token, $customerUserRole, [CustomerUserRoleVoter::ATTRIBUTE_FRONTEND_CUSTOMER_ROLE_UPDATE])
         );
     }
 
     /**
-     * @param CustomerUser|null $accountUser
+     * @param CustomerUser|null $customerUser
      * @param bool             $isGranted
-     * @param int              $accountId
-     * @param int              $loggedUserAccountId
+     * @param int              $customerId
+     * @param int              $loggedUserCustomerId
      * @param int              $expected
      * @param bool             $failCustomerUserRole
      * @dataProvider attributeFrontendUpdateViewDataProvider
      */
     public function testVoteFrontendView(
-        $accountUser,
+        $customerUser,
         $isGranted,
-        $accountId,
-        $loggedUserAccountId,
+        $customerId,
+        $loggedUserCustomerId,
         $expected,
         $failCustomerUserRole = false
     ) {
-        /** @var Customer $roleAccount */
-        $roleAccount = $this->createEntity('Oro\Bundle\CustomerBundle\Entity\Customer', $accountId);
+        /** @var Customer $roleCustomer */
+        $roleCustomer = $this->createEntity('Oro\Bundle\CustomerBundle\Entity\Customer', $customerId);
 
-        /** @var Customer $userAccount */
-        $userAccount = $this->createEntity('Oro\Bundle\CustomerBundle\Entity\Customer', $loggedUserAccountId);
+        /** @var Customer $userCustomer */
+        $userCustomer = $this->createEntity('Oro\Bundle\CustomerBundle\Entity\Customer', $loggedUserCustomerId);
 
         if ($failCustomerUserRole) {
             $customerUserRole = new \stdClass();
         } else {
             $customerUserRole = new CustomerUserRole();
-            $customerUserRole->setAccount($roleAccount);
+            $customerUserRole->setCustomer($roleCustomer);
         }
 
-        if ($accountUser) {
-            $accountUser->setAccount($userAccount);
+        if ($customerUser) {
+            $customerUser->setCustomer($userCustomer);
         }
 
         $this->getMocksForVote($customerUserRole);
 
         if (!$failCustomerUserRole) {
-            $this->getMockForUpdateAndView($accountUser, $customerUserRole, $isGranted, 'VIEW');
+            $this->getMockForUpdateAndView($customerUser, $customerUserRole, $isGranted, 'VIEW');
         }
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|TokenInterface $token */
@@ -259,7 +259,12 @@ class CustomerUserRoleVoterTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             $expected,
-            $this->voter->vote($token, $customerUserRole, [CustomerUserRoleVoter::ATTRIBUTE_FRONTEND_ACCOUNT_ROLE_VIEW])
+            $this->voter
+                ->vote(
+                    $token,
+                    $customerUserRole,
+                    [CustomerUserRoleVoter::ATTRIBUTE_FRONTEND_CUSTOMER_ROLE_VIEW]
+                )
         );
     }
 
@@ -268,35 +273,35 @@ class CustomerUserRoleVoterTest extends \PHPUnit_Framework_TestCase
      */
     public function attributeFrontendUpdateViewDataProvider()
     {
-        $accountUser = new CustomerUser();
+        $customerUser = new CustomerUser();
 
         return [
-            'account with logged user the same'  => [
-                'accountUser'         => $accountUser,
+            'customer with logged user the same'  => [
+                'customerUser'         => $customerUser,
                 'isGranted'           => true,
-                'accountId'           => 1,
-                'loggedUserAccountId' => 1,
+                'customerId'           => 1,
+                'loggedUserCustomerId' => 1,
                 'expected'            => VoterInterface::ACCESS_GRANTED,
             ],
             'isGranted false'                    => [
-                'accountUser'         => $accountUser,
+                'customerUser'         => $customerUser,
                 'isGranted'           => false,
-                'accountId'           => 1,
-                'loggedUserAccountId' => 1,
+                'customerId'           => 1,
+                'loggedUserCustomerId' => 1,
                 'expected'            => VoterInterface::ACCESS_DENIED,
             ],
-            'without accountUser'                => [
-                'accountUser'         => null,
+            'without customerUser'                => [
+                'customerUser'         => null,
                 'isGranted'           => false,
-                'accountId'           => 1,
-                'loggedUserAccountId' => 1,
+                'customerId'           => 1,
+                'loggedUserCustomerId' => 1,
                 'expected'            => VoterInterface::ACCESS_DENIED,
             ],
             'without customerUserRole'            => [
-                'accountUser'         => null,
+                'customerUser'         => null,
                 'isGranted'           => false,
-                'accountId'           => 1,
-                'loggedUserAccountId' => 1,
+                'customerId'           => 1,
+                'loggedUserCustomerId' => 1,
                 'expected'            => VoterInterface::ACCESS_ABSTAIN,
                 'failCustomerUserRole' => true,
             ],
@@ -340,12 +345,12 @@ class CustomerUserRoleVoterTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param CustomerUser|null $accountUser
+     * @param CustomerUser|null $customerUser
      * @param CustomerUserRole $customerUserRole
      * @param bool             $isGranted
      * @param string           $attribute
      */
-    protected function getMockForUpdateAndView($accountUser, $customerUserRole, $isGranted, $attribute)
+    protected function getMockForUpdateAndView($customerUser, $customerUserRole, $isGranted, $attribute)
     {
         /** @var SecurityFacade|\PHPUnit_Framework_MockObject_MockObject $securityFacade */
         $securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
@@ -359,9 +364,9 @@ class CustomerUserRoleVoterTest extends \PHPUnit_Framework_TestCase
 
         $securityFacade->expects($this->once())
             ->method('getLoggedUser')
-            ->willReturn($accountUser);
+            ->willReturn($customerUser);
 
-        $securityFacade->expects($accountUser ? $this->once() : $this->never())
+        $securityFacade->expects($customerUser ? $this->once() : $this->never())
             ->method('isGranted')
             ->with($attribute, $customerUserRole)
             ->willReturn($isGranted);

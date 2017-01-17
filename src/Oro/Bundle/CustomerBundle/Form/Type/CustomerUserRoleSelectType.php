@@ -10,7 +10,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 
 class CustomerUserRoleSelectType extends AbstractType
 {
-    const NAME = 'oro_account_customer_user_role_select';
+    const NAME = 'oro_customer_customer_user_role_select';
 
     /**
      * @var TranslatorInterface

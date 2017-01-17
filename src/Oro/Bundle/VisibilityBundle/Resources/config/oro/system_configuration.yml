@@ -1,8 +1,8 @@
 system_configuration:
     groups:
-        account_category_visibility:
+        customer_category_visibility:
             title: oro.visibility.system_configuration.groups.visibility.category.title
-        account_product_visibility:
+        customer_product_visibility:
             title: oro.visibility.system_configuration.groups.visibility.product.title
         visibility_title:
             title: oro.visibility.system_configuration.groups.visibility.title
@@ -30,15 +30,15 @@ system_configuration:
         system_configuration:
             commerce:
                 children:
-                    account:
+                    customer:
                         priority: 1000
                         children:
                             visibility_title:
                                 priority: 200
                                 children:
-                                    account_product_visibility:
+                                    customer_product_visibility:
                                         children:
                                             - oro_visibility.product_visibility
-                                    account_category_visibility:
+                                    customer_category_visibility:
                                         children:
                                             - oro_visibility.category_visibility

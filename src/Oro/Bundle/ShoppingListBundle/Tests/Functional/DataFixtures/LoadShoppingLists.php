@@ -5,8 +5,8 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as LoadBaseAccountUserData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as LoadBaseCustomerUserData;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
@@ -36,7 +36,7 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
     {
         return [
             LoadWebsiteData::class,
-            LoadAccountUserData::class
+            LoadCustomerUserData::class
         ];
     }
 
@@ -49,7 +49,7 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
             $isCurrent = $listLabel === self::SHOPPING_LIST_2;
             $this->createShoppingList(
                 $manager,
-                $this->getAccountUser($manager, $definition['accountUser']),
+                $this->getCustomerUser($manager, $definition['customerUser']),
                 $listLabel,
                 $isCurrent
             );
@@ -59,21 +59,21 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
 
     /**
      * @param ObjectManager $manager
-     * @param CustomerUser $accountUser
+     * @param CustomerUser $customerUser
      * @param string $name
      * @param bool $isCurrent
      * @return ShoppingList
      */
     protected function createShoppingList(
         ObjectManager $manager,
-        CustomerUser $accountUser,
+        CustomerUser $customerUser,
         $name,
         $isCurrent = false
     ) {
         $shoppingList = new ShoppingList();
-        $shoppingList->setOrganization($accountUser->getOrganization());
-        $shoppingList->setAccountUser($accountUser);
-        $shoppingList->setAccount($accountUser->getAccount());
+        $shoppingList->setOrganization($customerUser->getOrganization());
+        $shoppingList->setCustomerUser($customerUser);
+        $shoppingList->setCustomer($customerUser->getCustomer());
         $shoppingList->setLabel($name . '_label');
         $shoppingList->setNotes($name . '_notes');
         $shoppingList->setCurrent($isCurrent);
@@ -95,16 +95,16 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
      * @return CustomerUser
      * @throws \LogicException
      */
-    protected function getAccountUser(ObjectManager $manager, $email)
+    protected function getCustomerUser(ObjectManager $manager, $email)
     {
-        $accountUser = $manager->getRepository('OroCustomerBundle:CustomerUser')
+        $customerUser = $manager->getRepository('OroCustomerBundle:CustomerUser')
             ->findOneBy(['email' => $email]);
 
-        if (!$accountUser) {
-            throw new \LogicException('Test account user not loaded');
+        if (!$customerUser) {
+            throw new \LogicException('Test customer user not loaded');
         }
 
-        return $accountUser;
+        return $customerUser;
     }
 
     /**
@@ -114,25 +114,25 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
     {
         return [
             self::SHOPPING_LIST_1 => [
-                'accountUser' => LoadBaseAccountUserData::AUTH_USER,
+                'customerUser' => LoadBaseCustomerUserData::AUTH_USER,
             ],
             self::SHOPPING_LIST_2 => [
-                'accountUser' => LoadBaseAccountUserData::AUTH_USER,
+                'customerUser' => LoadBaseCustomerUserData::AUTH_USER,
             ],
             self::SHOPPING_LIST_3 => [
-                'accountUser' => LoadBaseAccountUserData::AUTH_USER,
+                'customerUser' => LoadBaseCustomerUserData::AUTH_USER,
             ],
             self::SHOPPING_LIST_4 => [
-                'accountUser' => LoadBaseAccountUserData::AUTH_USER,
+                'customerUser' => LoadBaseCustomerUserData::AUTH_USER,
             ],
             self::SHOPPING_LIST_5 => [
-                'accountUser' => LoadBaseAccountUserData::AUTH_USER,
+                'customerUser' => LoadBaseCustomerUserData::AUTH_USER,
             ],
             self::SHOPPING_LIST_6 => [
-                'accountUser' => LoadAccountUserData::LEVEL_1_1_EMAIL,
+                'customerUser' => LoadCustomerUserData::LEVEL_1_1_EMAIL,
             ],
             self::SHOPPING_LIST_7 => [
-                'accountUser' => LoadAccountUserData::LEVEL_1_EMAIL,
+                'customerUser' => LoadCustomerUserData::LEVEL_1_EMAIL,
             ],
         ];
     }

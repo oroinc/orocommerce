@@ -12,7 +12,7 @@ use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 use Oro\Bundle\SecurityBundle\Acl\Voter\AbstractEntityVoter;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 
 class CheckoutVoter extends AbstractEntityVoter implements ContainerAwareInterface
 {
@@ -53,8 +53,8 @@ class CheckoutVoter extends AbstractEntityVoter implements ContainerAwareInterfa
 
         // use owner from Checkout Source with permission level from Checkout to make decision
         // For example on Basic level create possibility on our shopping list
-        if ($object instanceof AccountOwnerAwareInterface) {
-            $checkout->setAccountUser($object->getAccountUser());
+        if ($object instanceof CustomerOwnerAwareInterface) {
+            $checkout->setCustomerUser($object->getCustomerUser());
         }
         if ($securityFacade->isGranted('VIEW', $object) && $securityFacade->isGranted('CREATE', $checkout)) {
             return self::ACCESS_GRANTED;

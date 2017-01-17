@@ -9,36 +9,36 @@ layout:
                     prepend: true
                 __list:
                     blockType: container
-                __account_user_profile:
+                __customer_user_profile:
                     blockType: link
                     options:
-                        visible: '=data["acl"].isGranted("oro_account_frontend_account_user_view")'
-                        route_name: oro_customer_frontend_account_user_profile
-                        text: oro.customer.frontend.account_user.profile.label
-                __account_user_address:
+                        visible: '=data["acl"].isGranted("oro_customer_frontend_customer_user_view")'
+                        route_name: oro_customer_frontend_customer_user_profile
+                        text: oro.customer.frontend.customer_user.profile.label
+                __customer_user_address:
                     blockType: link
                     options:
-                        route_name: oro_customer_frontend_account_user_address_index
-                        text: oro.customer.frontend.account_user.address.label
-                        visible: '=data["acl"].isGranted("oro_account_frontend_account_view") or data["acl"].isGranted("oro_account_frontend_account_user_view")'
-                __account_user:
+                        route_name: oro_customer_frontend_customer_user_address_index
+                        text: oro.customer.frontend.customer_user.address.label
+                        visible: '=data["acl"].isGranted("oro_customer_frontend_customer_view") or data["acl"].isGranted("oro_customer_frontend_customer_user_view")'
+                __customer_user:
                       blockType: link
                       options:
-                          visible: '=data["acl"].isGranted("oro_account_frontend_account_user_view")'
-                          route_name: oro_customer_frontend_account_user_index
-                          text: oro.customer.frontend.account_user.entity_plural_label
+                          visible: '=data["acl"].isGranted("oro_customer_frontend_customer_user_view")'
+                          route_name: oro_customer_frontend_customer_user_index
+                          text: oro.customer.frontend.customer_user.entity_plural_label
                 __customer_user_role:
                       blockType: link
                       options:
-                          visible: '=data["acl"].isGranted("oro_account_frontend_customer_user_role_index")'
+                          visible: '=data["acl"].isGranted("oro_customer_frontend_customer_user_role_index")'
                           route_name: oro_customer_frontend_customer_user_role_index
-                          text: oro.customer.frontend.account_user.role.entity_plural_label
+                          text: oro.customer.frontend.customer_user.role.entity_plural_label
             tree:
                 __root:
                     __container:
                         __list:
-                            __account_user_profile: ~
-                            __account_user_address: ~
-                            __account_user: ~
+                            __customer_user_profile: ~
+                            __customer_user_address: ~
+                            __customer_user: ~
                             __customer_user_role: ~
 

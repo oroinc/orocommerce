@@ -1,5 +1,5 @@
 Oro\Bundle\CustomerBundle\Entity\Customer:
-   account1:
+   customer1:
        name: 'Company A'
        organization: '@organization'
        owner: '@admin'
@@ -14,8 +14,8 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
        lastName: 'Cole'
        enabled: '1'
        confirmed: '1'
-       account: '@account1'
-       organization: ['@organization']
+       customer: '@customer1'
+       organizations: ['@organization']
        role: ['@buyer']
        owner: '@admin'
        website: '@website1'
@@ -39,13 +39,13 @@ Oro\Bundle\ProductBundle\Entity\Product:
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
    shoppinglist1:
        label: 'Shopping List 1'
-       accountUser: '@amanda'
+       customerUser: '@amanda'
 
 Oro\Bundle\ShoppingListBundle\Entity\LineItem:
    lineitem1:
        product: '@product1'
        quantity: '5'
        unit: '@item'
-       accountUser: '@amanda'
+       customerUser: '@amanda'
        shoppingList: '@shoppinglist1'
        organization: '@organization'

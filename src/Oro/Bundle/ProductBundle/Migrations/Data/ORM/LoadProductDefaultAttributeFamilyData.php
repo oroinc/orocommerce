@@ -43,6 +43,7 @@ class LoadProductDefaultAttributeFamilyData extends AbstractFixture implements
                 'descriptions',
                 'shortDescriptions',
             ],
+            'groupVisibility' => true
         ],
         [
             'groupLabel' => 'Product Prices',
@@ -50,6 +51,7 @@ class LoadProductDefaultAttributeFamilyData extends AbstractFixture implements
             'attributes' => [
                 'productPriceAttributesPrices'
             ],
+            'groupVisibility' => true
         ],
         [
             'groupLabel' => 'Inventory',
@@ -57,14 +59,7 @@ class LoadProductDefaultAttributeFamilyData extends AbstractFixture implements
             'attributes' => [
                 'inventory_status'
             ],
-        ],
-        [
-            'groupLabel' => 'SEO',
-            'groupCode' => 'seo',
-            'attributes' => [
-                'metaKeywords',
-                'metaDescriptions'
-            ],
+            'groupVisibility' => false
         ],
         [
             'groupLabel' => 'Images',
@@ -72,6 +67,7 @@ class LoadProductDefaultAttributeFamilyData extends AbstractFixture implements
             'attributes' => [
                 'images'
             ],
+            'groupVisibility' => true
         ],
     ];
 
@@ -104,6 +100,7 @@ class LoadProductDefaultAttributeFamilyData extends AbstractFixture implements
         foreach (self::$groups as $groupData) {
             $attributeGroup = new AttributeGroup();
             $attributeGroup->setDefaultLabel($groupData['groupLabel']);
+            $attributeGroup->setIsVisible($groupData['groupVisibility']);
             $attributeGroup->setCode($groupData['groupCode']);
             foreach ($groupData['attributes'] as $attribute) {
                 $fieldConfigModel = $configManager->getConfigFieldModel(Product::class, $attribute);

@@ -21,12 +21,12 @@ abstract class AbstractAddressDiffMapper implements CheckoutStateDiffMapperInter
             return [];
         }
 
-        if ($address->getAccountAddress()) {
-            return $this->getCompareString($address->getAccountAddress());
+        if ($address->getCustomerAddress()) {
+            return $this->getCompareString($address->getCustomerAddress());
         }
 
-        if ($address->getAccountUserAddress()) {
-            return $this->getCompareString($address->getAccountUserAddress());
+        if ($address->getCustomerUserAddress()) {
+            return $this->getCompareString($address->getCustomerUserAddress());
         }
 
         return $this->getCompareString($address);

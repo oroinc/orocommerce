@@ -8,7 +8,7 @@ use Symfony\Component\DomCrawler\Form;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadFrontendProductVisibilityData;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -28,7 +28,7 @@ abstract class QuickAddControllerTest extends WebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
+            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
 
         $this->loadFixtures(
@@ -51,17 +51,19 @@ abstract class QuickAddControllerTest extends WebTestCase
     public function testCopyPasteAction($processorName, $routerName, array $routerParams, $expectedMessage)
     {
         $example = [
+            "10, 5",
             LoadProductData::PRODUCT_1 . ", 1",
-            LoadProductData::PRODUCT_2 . ",     2",
-            LoadProductData::PRODUCT_3 . "\t3",
+            strtoupper(LoadProductData::PRODUCT_2) . ",     2",
+            strtolower(LoadProductData::PRODUCT_3) . "\t3",
             "not-existing-product\t  4",
         ];
 
         $expectedValidationResult = [
-            self::VALIDATION_TOTAL_ROWS => 4,
+            self::VALIDATION_TOTAL_ROWS => 5,
             self::VALIDATION_VALID_ROWS => 3,
-            self::VALIDATION_ERROR_ROWS => 1,
+            self::VALIDATION_ERROR_ROWS => 2,
             self::VALIDATION_ERRORS     => [
+                sprintf(self::VALIDATION_ERROR_NOT_FOUND, '10'),
                 sprintf(self::VALIDATION_ERROR_NOT_FOUND, 'not-existing-product'),
             ]
         ];

@@ -27,7 +27,7 @@ define(function(require) {
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
 
-            mediator.on('account-account-user:change', this.onAccountUserChange, this);
+            mediator.on('customer-customer-user:change', this.onAccountUserChange, this);
         },
 
         /**
@@ -43,11 +43,11 @@ define(function(require) {
         /**
          * Load related to user data and trigger event
          */
-        loadRelatedData: function(accountUser) {
+        loadRelatedData: function(customerUser) {
             var url = routing.generate(this.options.relatedDataRoute);
             var data = {
-                account: accountUser.accountId,
-                accountUser: accountUser.accountUserId
+                customer: customerUser.customerId,
+                customerUser: customerUser.customerUserId
             };
 
             var ajaxData = {};
@@ -80,7 +80,7 @@ define(function(require) {
                 return;
             }
 
-            mediator.off('account-account-user:change', this.loadRelatedData, this);
+            mediator.off('customer-customer-user:change', this.loadRelatedData, this);
 
             RelatedDataComponent.__super__.dispose.call(this);
         }

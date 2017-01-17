@@ -28,19 +28,19 @@ class AddressBookTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_customer_frontend_account_user_profile')
+            $this->getUrl('oro_customer_frontend_customer_user_profile')
         );
         $this->assertFalse($this->isAddressBookMenuVisible($crawler));
 
         $this->client->followRedirects();
         $this->client->request(
             'GET',
-            $this->getUrl('oro_customer_frontend_account_user_address_index')
+            $this->getUrl('oro_customer_frontend_customer_user_address_index')
         );
         $this->assertEquals($this->client->getResponse()->getStatusCode(), Response::HTTP_FORBIDDEN);
     }
 
-    public function testAccountAddressView()
+    public function testCustomerAddressView()
     {
         $this->initAddressBookClient(
             LoadAddressBookUserData::ACCOUNT1_USER1,
@@ -49,18 +49,18 @@ class AddressBookTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_customer_frontend_account_user_address_index')
+            $this->getUrl('oro_customer_frontend_customer_user_address_index')
         );
 
         $this->assertFalse($this->isAddUserAddressButtonVisible($crawler));
-        $this->assertFalse($this->isAddAccountAddressButtonVisible($crawler));
-        $this->assertFalse($this->isAccountUserAddressSectionVisible());
+        $this->assertFalse($this->isAddCustomerAddressButtonVisible($crawler));
+        $this->assertFalse($this->isCustomerUserAddressSectionVisible());
 
         $this->assertTrue($this->isAddressBookMenuVisible($crawler));
-        $this->assertTrue($this->isAccountAddressSectionVisible());
+        $this->assertTrue($this->isCustomerAddressSectionVisible());
     }
 
-    public function testAccountAndAccountUserAddressView()
+    public function testCustomerAndCustomerUserAddressView()
     {
         $this->initAddressBookClient(
             LoadAddressBookUserData::ACCOUNT1_USER3,
@@ -69,17 +69,17 @@ class AddressBookTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_customer_frontend_account_user_address_index')
+            $this->getUrl('oro_customer_frontend_customer_user_address_index')
         );
         $this->assertFalse($this->isAddUserAddressButtonVisible($crawler));
-        $this->assertFalse($this->isAddAccountAddressButtonVisible($crawler));
+        $this->assertFalse($this->isAddCustomerAddressButtonVisible($crawler));
 
-        $this->assertTrue($this->isAccountUserAddressSectionVisible());
+        $this->assertTrue($this->isCustomerUserAddressSectionVisible());
         $this->assertTrue($this->isAddressBookMenuVisible($crawler));
-        $this->assertTrue($this->isAccountAddressSectionVisible());
+        $this->assertTrue($this->isCustomerAddressSectionVisible());
     }
 
-    public function testAccountUserAddressView()
+    public function testCustomerUserAddressView()
     {
         $this->initAddressBookClient(
             LoadAddressBookUserData::ACCOUNT1_USER2,
@@ -88,18 +88,18 @@ class AddressBookTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_customer_frontend_account_user_address_index')
+            $this->getUrl('oro_customer_frontend_customer_user_address_index')
         );
 
         $this->assertFalse($this->isAddUserAddressButtonVisible($crawler));
-        $this->assertFalse($this->isAddAccountAddressButtonVisible($crawler));
-        $this->assertFalse($this->isAccountAddressSectionVisible());
+        $this->assertFalse($this->isAddCustomerAddressButtonVisible($crawler));
+        $this->assertFalse($this->isCustomerAddressSectionVisible());
 
         $this->assertTrue($this->isAddressBookMenuVisible($crawler));
-        $this->assertTrue($this->isAccountUserAddressSectionVisible());
+        $this->assertTrue($this->isCustomerUserAddressSectionVisible());
     }
 
-    public function testAccountAddressCreateButton()
+    public function testCustomerAddressCreateButton()
     {
         $this->initAddressBookClient(
             LoadAddressBookUserData::ACCOUNT1_USER6,
@@ -108,18 +108,18 @@ class AddressBookTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_customer_frontend_account_user_address_index')
+            $this->getUrl('oro_customer_frontend_customer_user_address_index')
         );
 
         $this->assertFalse($this->isAddUserAddressButtonVisible($crawler));
-        $this->assertFalse($this->isAccountUserAddressSectionVisible());
+        $this->assertFalse($this->isCustomerUserAddressSectionVisible());
 
-        $this->assertTrue($this->isAccountAddressSectionVisible());
-        $this->assertTrue($this->isAddAccountAddressButtonVisible($crawler));
+        $this->assertTrue($this->isCustomerAddressSectionVisible());
+        $this->assertTrue($this->isAddCustomerAddressButtonVisible($crawler));
         $this->assertTrue($this->isAddressBookMenuVisible($crawler));
     }
 
-    public function testAccountUserAddressCreateButton()
+    public function testCustomerUserAddressCreateButton()
     {
         $this->initAddressBookClient(
             LoadAddressBookUserData::ACCOUNT1_USER7,
@@ -128,13 +128,13 @@ class AddressBookTest extends WebTestCase
 
         $crawler = $this->client->request(
             'GET',
-            $this->getUrl('oro_customer_frontend_account_user_address_index')
+            $this->getUrl('oro_customer_frontend_customer_user_address_index')
         );
 
-        $this->assertFalse($this->isAccountAddressSectionVisible());
-        $this->assertFalse($this->isAddAccountAddressButtonVisible($crawler));
+        $this->assertFalse($this->isCustomerAddressSectionVisible());
+        $this->assertFalse($this->isAddCustomerAddressButtonVisible($crawler));
 
-        $this->assertTrue($this->isAccountUserAddressSectionVisible());
+        $this->assertTrue($this->isCustomerUserAddressSectionVisible());
         $this->assertTrue($this->isAddressBookMenuVisible($crawler));
     }
 
@@ -165,7 +165,7 @@ class AddressBookTest extends WebTestCase
      * @param Crawler $crawler
      * @return bool
      */
-    protected function isAddAccountAddressButtonVisible(Crawler $crawler)
+    protected function isAddCustomerAddressButtonVisible(Crawler $crawler)
     {
         return $crawler->selectLink('Add Company Address')->count() > 0;
     }
@@ -173,7 +173,7 @@ class AddressBookTest extends WebTestCase
     /**
      * @return bool
      */
-    protected function isAccountUserAddressSectionVisible()
+    protected function isCustomerUserAddressSectionVisible()
     {
         return false !== strpos($this->client->getResponse(), 'My Addresses');
     }
@@ -181,7 +181,7 @@ class AddressBookTest extends WebTestCase
     /**
      * @return bool
      */
-    protected function isAccountAddressSectionVisible()
+    protected function isCustomerAddressSectionVisible()
     {
         return false !== strpos($this->client->getResponse(), 'Company Addresses');
     }

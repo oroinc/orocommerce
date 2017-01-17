@@ -9,7 +9,7 @@ use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInt
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
-use Oro\Bundle\CustomerBundle\Provider\AccountUserRelationsProvider;
+use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
 use Oro\Bundle\UserBundle\Entity\UserInterface;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\VisibilityBundle\Visibility\Resolver\CategoryVisibilityResolverInterface;
@@ -30,9 +30,9 @@ class CategoryVisibleListener
     private $categoryRepository;
 
     /**
-     * @var AccountUserRelationsProvider
+     * @var CustomerUserRelationsProvider
      */
-    private $accountUserRelationsProvider;
+    private $customerUserRelationsProvider;
 
     /**
      * @var TokenStorageInterface
@@ -42,18 +42,18 @@ class CategoryVisibleListener
     /**
      * @param CategoryRepository                  $categoryRepository
      * @param CategoryVisibilityResolverInterface $categoryVisibilityResolver
-     * @param AccountUserRelationsProvider        $accountUserRelationsProvider
+     * @param CustomerUserRelationsProvider        $customerUserRelationsProvider
      * @param TokenStorageInterface               $tokenStorage
      */
     public function __construct(
         CategoryRepository $categoryRepository,
         CategoryVisibilityResolverInterface $categoryVisibilityResolver,
-        AccountUserRelationsProvider $accountUserRelationsProvider,
+        CustomerUserRelationsProvider $customerUserRelationsProvider,
         TokenStorageInterface $tokenStorage
     ) {
         $this->categoryVisibilityResolver = $categoryVisibilityResolver;
         $this->categoryRepository = $categoryRepository;
-        $this->accountUserRelationsProvider = $accountUserRelationsProvider;
+        $this->customerUserRelationsProvider = $customerUserRelationsProvider;
         $this->tokenStorage = $tokenStorage;
     }
 
@@ -99,15 +99,15 @@ class CategoryVisibleListener
     private function isCategoryVisible(Category $category)
     {
         $user = $this->getUser();
-        $account = $this->accountUserRelationsProvider->getAccount($user);
-        $accountGroup = $this->accountUserRelationsProvider->getAccountGroup($user);
+        $customer = $this->customerUserRelationsProvider->getCustomer($user);
+        $customerGroup = $this->customerUserRelationsProvider->getCustomerGroup($user);
 
-        if ($account) {
-            $isCategoryVisible = $this->categoryVisibilityResolver->isCategoryVisibleForAccount($category, $account);
-        } elseif ($accountGroup) {
-            $isCategoryVisible = $this->categoryVisibilityResolver->isCategoryVisibleForAccountGroup(
+        if ($customer) {
+            $isCategoryVisible = $this->categoryVisibilityResolver->isCategoryVisibleForCustomer($category, $customer);
+        } elseif ($customerGroup) {
+            $isCategoryVisible = $this->categoryVisibilityResolver->isCategoryVisibleForCustomerGroup(
                 $category,
-                $accountGroup
+                $customerGroup
             );
         } else {
             $isCategoryVisible = $this->categoryVisibilityResolver->isCategoryVisible($category);

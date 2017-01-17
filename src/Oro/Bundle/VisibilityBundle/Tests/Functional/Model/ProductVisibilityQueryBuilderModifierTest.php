@@ -3,9 +3,9 @@
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Model;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData as AccountLoadAccountUserData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData as CustomerLoadCustomerUserData;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -40,11 +40,11 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(AccountLoadAccountUserData::EMAIL, AccountLoadAccountUserData::PASSWORD)
+            $this->generateBasicAuthHeader(CustomerLoadCustomerUserData::EMAIL, CustomerLoadCustomerUserData::PASSWORD)
         );
 
         $this->loadFixtures([
-            LoadAccountUserData::class,
+            LoadCustomerUserData::class,
             LoadCategoryVisibilityData::class,
             LoadProductVisibilityData::class
         ]);
@@ -108,75 +108,75 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         return [
             'config visible' => [
                 'configValue' => ProductVisibility::VISIBLE,
-                'user' => AccountLoadAccountUserData::EMAIL,
+                'user' => CustomerLoadCustomerUserData::EMAIL,
                 'expectedData' => [
-                    'product.1',
-                    'product.5',
-                    'product.6',
-                    'product.7',
+                    'product-1',
+                    'product-5',
+                    'product-6',
+                    'product-7',
                 ]
             ],
             'config hidden' => [
                 'configValue' => ProductVisibility::HIDDEN,
-                'user' => AccountLoadAccountUserData::EMAIL,
+                'user' => CustomerLoadCustomerUserData::EMAIL,
                 'expectedData' => [
-                    'product.1',
-                    'product.7',
+                    'product-1',
+                    'product-7',
                 ]
             ],
             'anonymous config visible' => [
                 'configValue' => ProductVisibility::VISIBLE,
                 'user' => null,
                 'expectedData' => [
-                    'product.1',
-                    'product.2',
-                    'product.3',
-                    'product.5',
-                    'product.6',
-                    'product.7',
-                    'product.8',
+                    'product-1',
+                    'product-2',
+                    'product-3',
+                    'product-5',
+                    'product-6',
+                    'product-7',
+                    'product-8',
                 ]
             ],
             'anonymous config hidden' => [
                 'configValue' => ProductVisibility::HIDDEN,
                 'user' => null,
                 'expectedData' => [
-                    'product.2',
-                    'product.3',
+                    'product-2',
+                    'product-3',
                 ]
             ],
             'group config visible' => [
                 'configValue' => ProductVisibility::VISIBLE,
-                'user' => AccountLoadAccountUserData::GROUP2_EMAIL,
+                'user' => CustomerLoadCustomerUserData::GROUP2_EMAIL,
                 'expectedData' => [
-                    'product.1',
-                    'product.3',
-                    'product.6',
-                    'product.7',
-                    'product.8',
+                    'product-1',
+                    'product-3',
+                    'product-6',
+                    'product-7',
+                    'product-8',
                 ]
             ],
-            'account without group and config visible' => [
+            'customer without group and config visible' => [
                 'configValue' => ProductVisibility::VISIBLE,
-                'user' => AccountLoadAccountUserData::ORPHAN_EMAIL,
+                'user' => CustomerLoadCustomerUserData::ORPHAN_EMAIL,
                 'expectedData' => [
-                    'product.1',
-                    'product.2',
-                    'product.3',
-                    'product.4',
-                    'product.5',
-                    'product.6',
-                    'product.7',
-                    'product.8',
+                    'product-1',
+                    'product-2',
+                    'product-3',
+                    'product-4',
+                    'product-5',
+                    'product-6',
+                    'product-7',
+                    'product-8',
                 ]
             ],
-            'account without group and config hidden' => [
+            'customer without group and config hidden' => [
                 'configValue' => ProductVisibility::HIDDEN,
-                'user' => AccountLoadAccountUserData::ORPHAN_EMAIL,
+                'user' => CustomerLoadCustomerUserData::ORPHAN_EMAIL,
                 'expectedData' => [
-                    'product.2',
-                    'product.3',
-                    'product.4',
+                    'product-2',
+                    'product-3',
+                    'product-4',
                 ]
             ],
         ];

@@ -24,7 +24,7 @@ class TaxRuleRepositoryTest extends WebTestCase
         $this->loadFixtures(['Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxRules']);
     }
 
-    public function testFindByCountryAndProductTaxCodeAndAccountTaxCode()
+    public function testFindByCountryAndProductTaxCodeAndCustomerTaxCode()
     {
         /** @var TaxRule $taxRule */
         $taxRule = $this->getReference(LoadTaxRules::REFERENCE_PREFIX . '.' . LoadTaxRules::TAX_RULE_1);
@@ -34,7 +34,7 @@ class TaxRuleRepositoryTest extends WebTestCase
             TaxCodes::create(
                 [
                     TaxCode::create($taxRule->getProductTaxCode()->getCode(), TaxCodeInterface::TYPE_PRODUCT),
-                    TaxCode::create($taxRule->getAccountTaxCode()->getCode(), TaxCodeInterface::TYPE_ACCOUNT),
+                    TaxCode::create($taxRule->getCustomerTaxCode()->getCode(), TaxCodeInterface::TYPE_ACCOUNT),
                 ]
             ),
             $taxRule->getTaxJurisdiction()->getCountry()
@@ -43,7 +43,7 @@ class TaxRuleRepositoryTest extends WebTestCase
         $this->assertContainsId($taxRule, $result);
     }
 
-    public function testFindByCountryAndRegionAndProductTaxCodeAndAccountTaxCode()
+    public function testFindByCountryAndRegionAndProductTaxCodeAndCustomerTaxCode()
     {
         /** @var TaxRule $taxRule */
         $taxRule = $this->getReference(LoadTaxRules::REFERENCE_PREFIX . '.' . LoadTaxRules::TAX_RULE_2);
@@ -53,7 +53,7 @@ class TaxRuleRepositoryTest extends WebTestCase
             TaxCodes::create(
                 [
                     TaxCode::create($taxRule->getProductTaxCode()->getCode(), TaxCodeInterface::TYPE_PRODUCT),
-                    TaxCode::create($taxRule->getAccountTaxCode()->getCode(), TaxCodeInterface::TYPE_ACCOUNT),
+                    TaxCode::create($taxRule->getCustomerTaxCode()->getCode(), TaxCodeInterface::TYPE_ACCOUNT),
                 ]
             ),
             $taxRule->getTaxJurisdiction()->getCountry(),
@@ -63,7 +63,7 @@ class TaxRuleRepositoryTest extends WebTestCase
         $this->assertContainsId($taxRule, $result);
     }
 
-    public function testFindByZipCodeAndProductTaxCodeAndAccountTaxCode()
+    public function testFindByZipCodeAndProductTaxCodeAndCustomerTaxCode()
     {
         /** @var TaxRule $taxRule */
         $taxRule = $this->getReference(LoadTaxRules::REFERENCE_PREFIX . '.' . LoadTaxRules::TAX_RULE_4);
@@ -73,7 +73,7 @@ class TaxRuleRepositoryTest extends WebTestCase
             TaxCodes::create(
                 [
                     TaxCode::create($taxRule->getProductTaxCode()->getCode(), TaxCodeInterface::TYPE_PRODUCT),
-                    TaxCode::create($taxRule->getAccountTaxCode()->getCode(), TaxCodeInterface::TYPE_ACCOUNT),
+                    TaxCode::create($taxRule->getCustomerTaxCode()->getCode(), TaxCodeInterface::TYPE_ACCOUNT),
                 ]
             ),
             LoadTaxJurisdictions::ZIP_CODE,

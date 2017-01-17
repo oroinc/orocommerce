@@ -3,19 +3,13 @@
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Type;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\PreloadedExtension;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountUserSelectType;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserSelectType;
+use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateTimeType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
@@ -37,6 +31,10 @@ use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
 use Oro\Bundle\SaleBundle\Tests\Unit\Form\Type\Stub\EntityType as StubEntityType;
 use Oro\Bundle\UserBundle\Entity\User;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class QuoteTypeTest extends AbstractTest
 {
@@ -104,8 +102,8 @@ class QuoteTypeTest extends AbstractTest
 
     /**
      * @param int $ownerId
-     * @param int $accountUserId
-     * @param int $accountId
+     * @param int $customerUserId
+     * @param int $customerId
      * @param QuoteProduct[] $items
      * @param bool $locked
      * @param string $poNumber
@@ -116,8 +114,8 @@ class QuoteTypeTest extends AbstractTest
      */
     protected function getQuote(
         $ownerId,
-        $accountUserId = null,
-        $accountId = null,
+        $customerUserId = null,
+        $customerId = null,
         array $items = [],
         $locked = false,
         $poNumber = null,
@@ -142,27 +140,27 @@ class QuoteTypeTest extends AbstractTest
             ->setOrganization($organization);
         $quote->setOwner($owner);
 
-        if (null !== $accountUserId) {
-            $account = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\Customer')->getMock();
+        if (null !== $customerUserId) {
+            $customer = $this->getMockBuilder('Oro\Bundle\CustomerBundle\Entity\Customer')->getMock();
             $role = $this->getMockBuilder('Symfony\Component\Security\Core\Role\RoleInterface')->getMock();
 
-            /** @var CustomerUser $accountUser */
-            $accountUser = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', $accountUserId);
-            $accountUser->setEmail('test@test.test')
+            /** @var CustomerUser $customerUser */
+            $customerUser = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', $customerUserId);
+            $customerUser->setEmail('test@test.test')
                 ->setFirstName('First Name')
                 ->setLastName('Last Name')
                 ->setUsername('test@test.test')
-                ->setAccount($account)
+                ->setCustomer($customer)
                 ->setRoles([$role])
             ->setOrganization($organization);
-            $quote->setAccountUser($accountUser);
+            $quote->setCustomerUser($customerUser);
         }
 
-        if (null !== $accountId) {
-            /** @var Customer $account */
-            $account = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', $accountId);
-            $account->setName('Name');
-            $quote->setAccount($account);
+        if (null !== $customerId) {
+            /** @var Customer $customer */
+            $customer = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', $customerId);
+            $customer->setName('Name');
+            $quote->setCustomer($customer);
         }
 
         foreach ($items as $item) {
@@ -207,8 +205,8 @@ class QuoteTypeTest extends AbstractTest
                 'isValid'       => true,
                 'submittedData' => [
                     'owner' => 1,
-                    'accountUser' => 1,
-                    'account' => 2,
+                    'customerUser' => 1,
+                    'customer' => 2,
                     'locked' => false,
                     'poNumber'  => null,
                     'shipUntil' => null,
@@ -217,7 +215,7 @@ class QuoteTypeTest extends AbstractTest
                             'product'   => 2,
                             'type'      => self::QP_TYPE1,
                             'comment'   => 'comment1',
-                            'commentAccount' => 'comment2',
+                            'commentCustomer' => 'comment2',
                             'quoteProductOffers' => [
                                 [
                                     'quantity'      => 33,
@@ -259,8 +257,8 @@ class QuoteTypeTest extends AbstractTest
                 'isValid'       => true,
                 'submittedData' => [
                     'owner' => 1,
-                    'accountUser' => 1,
-                    'account' => 2,
+                    'customerUser' => 1,
+                    'customer' => 2,
                     'locked' => false,
                     'poNumber'  => 'poNumber',
                     'shipUntil' => $date,
@@ -269,7 +267,7 @@ class QuoteTypeTest extends AbstractTest
                             'product'   => 2,
                             'type'      => self::QP_TYPE1,
                             'comment'   => 'comment1',
-                            'commentAccount' => 'comment2',
+                            'commentCustomer' => 'comment2',
                             'quoteProductOffers' => [
                                 [
                                     'quantity'      => 33,
@@ -284,7 +282,7 @@ class QuoteTypeTest extends AbstractTest
                         ],
                     ],
                     'assignedUsers' => [1],
-                    'assignedAccountUsers' => [11],
+                    'assignedCustomerUsers' => [11],
                     'shippingMethod' => 'shippingMethod1',
                     'shippingMethodType' => 'shippingType1',
                     'estimatedShippingCostAmount' => 10,
@@ -303,7 +301,7 @@ class QuoteTypeTest extends AbstractTest
                     new \DateTime($date . 'T00:00:00+0000')
                 )
                     ->addAssignedUser($this->getUser(1))
-                    ->addAssignedAccountUser($this->getAccountUser(11))
+                    ->addAssignedCustomerUser($this->getCustomerUser(11))
                     ->setShippingMethod('shippingMethod1')
                     ->setShippingMethodType('shippingType1')
                     ->setCurrency('USD')
@@ -318,7 +316,7 @@ class QuoteTypeTest extends AbstractTest
                     'poNumber',
                     new \DateTime($date . 'T00:00:00+0000')
                 )->addAssignedUser($this->getUser(1))
-                    ->addAssignedAccountUser($this->getAccountUser(11))
+                    ->addAssignedCustomerUser($this->getCustomerUser(11))
                     ->setCurrency('USD'),
                 'options' => [
                     'data' => $this->getQuote(
@@ -330,7 +328,7 @@ class QuoteTypeTest extends AbstractTest
                         'poNumber',
                         new \DateTime($date . 'T00:00:00+0000')
                     )->addAssignedUser($this->getUser(1))
-                        ->addAssignedAccountUser($this->getAccountUser(11)),
+                        ->addAssignedCustomerUser($this->getCustomerUser(11)),
                 ]
             ],
         ];
@@ -341,10 +339,10 @@ class QuoteTypeTest extends AbstractTest
         /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
         $builder = $this->createMock(FormBuilderInterface::class);
         $quote = new Quote();
-        $accountGroup = new CustomerGroup();
-        $account = new Customer();
-        $account->setGroup($accountGroup);
-        $quote->setAccount($account);
+        $customerGroup = new CustomerGroup();
+        $customer = new Customer();
+        $customer->setGroup($customerGroup);
+        $quote->setCustomer($customer);
 
         $builder->expects($this->atMost(18))->method('add')->willReturn($builder);
         $builder->expects($this->once())->method('get')->willReturn($builder);
@@ -395,20 +393,20 @@ class QuoteTypeTest extends AbstractTest
             'oro_user_select'
         );
 
-        $accountSelectType = new StubEntityType(
+        $customerSelectType = new StubEntityType(
             [
                 1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', 1),
                 2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', 2),
             ],
-            AccountSelectType::NAME
+            CustomerSelectType::NAME
         );
 
-        $accountUserSelectType = new StubEntityType(
+        $customerUserSelectType = new StubEntityType(
             [
                 1 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', 1),
                 2 => $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', 2),
             ],
-            AccountUserSelectType::NAME
+            CustomerUserSelectType::NAME
         );
 
         $priceListSelectType = new StubEntityType(
@@ -427,7 +425,7 @@ class QuoteTypeTest extends AbstractTest
         $productUnitSelectionType   = $this->prepareProductUnitSelectionType();
         $quoteProductOfferType      = $this->prepareQuoteProductOfferType();
         $quoteProductRequestType    = $this->prepareQuoteProductRequestType();
-        $accountUserMultiSelectType  = $this->prepareAccountUserMultiSelectType();
+        $customerUserMultiSelectType  = $this->prepareCustomerUserMultiSelectType();
 
         $quoteProductType = new QuoteProductType(
             $translator,
@@ -460,9 +458,9 @@ class QuoteTypeTest extends AbstractTest
                     $quoteProductOfferType->getName()           => $quoteProductOfferType,
                     $quoteProductRequestType->getName()         => $quoteProductRequestType,
                     $productUnitSelectionType->getName()        => $productUnitSelectionType,
-                    $accountUserMultiSelectType->getName()      => $accountUserMultiSelectType,
-                    $accountSelectType->getName()               => $accountSelectType,
-                    $accountUserSelectType->getName()           => $accountUserSelectType,
+                    $customerUserMultiSelectType->getName()      => $customerUserMultiSelectType,
+                    $customerSelectType->getName()               => $customerSelectType,
+                    $customerUserSelectType->getName()           => $customerUserSelectType,
                     $priceListSelectType->getName()             => $priceListSelectType,
                     QuantityTypeTrait::$name                    => $this->getQuantityType(),
                 ],

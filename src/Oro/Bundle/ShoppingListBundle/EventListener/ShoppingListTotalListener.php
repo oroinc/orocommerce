@@ -4,11 +4,11 @@ namespace Oro\Bundle\ShoppingListBundle\EventListener;
 
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-use Oro\Bundle\PricingBundle\Entity\Repository\PriceListAccountFallbackRepository;
-use Oro\Bundle\PricingBundle\Entity\Repository\PriceListAccountGroupFallbackRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListCustomerFallbackRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\PriceListCustomerGroupFallbackRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListWebsiteFallbackRepository;
-use Oro\Bundle\PricingBundle\Event\CombinedPriceList\AccountCPLUpdateEvent;
-use Oro\Bundle\PricingBundle\Event\CombinedPriceList\AccountGroupCPLUpdateEvent;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CustomerCPLUpdateEvent;
+use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CustomerGroupCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\WebsiteCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\ConfigCPLUpdateEvent;
 use Oro\Bundle\PricingBundle\Event\CombinedPriceList\CombinedPriceListsUpdateEvent;
@@ -43,45 +43,45 @@ class ShoppingListTotalListener
     }
 
     /**
-     * @param AccountCPLUpdateEvent $event
+     * @param CustomerCPLUpdateEvent $event
      */
-    public function onAccountPriceListUpdate(AccountCPLUpdateEvent $event)
+    public function onCustomerPriceListUpdate(CustomerCPLUpdateEvent $event)
     {
-        $accountsData = $event->getAccountsData();
+        $customersData = $event->getCustomersData();
         /** @var ShoppingListTotalRepository $repository */
         $repository = $this->registry->getManagerForClass('OroShoppingListBundle:ShoppingListTotal')
             ->getRepository('OroShoppingListBundle:ShoppingListTotal');
-        foreach ($accountsData as $data) {
-            $repository->invalidateByAccounts($data['accounts'], $data['websiteId']);
+        foreach ($customersData as $data) {
+            $repository->invalidateByCustomers($data['customers'], $data['websiteId']);
         }
     }
 
     /**
-     * @param AccountGroupCPLUpdateEvent $event
+     * @param CustomerGroupCPLUpdateEvent $event
      */
-    public function onAccountGroupPriceListUpdate(AccountGroupCPLUpdateEvent $event)
+    public function onCustomerGroupPriceListUpdate(CustomerGroupCPLUpdateEvent $event)
     {
-        $accountsData = $event->getAccountGroupsData();
-        /** @var PriceListAccountFallbackRepository $fallbackRepository */
-        $fallbackRepository = $this->registry->getManagerForClass('OroPricingBundle:PriceListAccountFallback')
-            ->getRepository('OroPricingBundle:PriceListAccountFallback');
+        $customersData = $event->getCustomerGroupsData();
+        /** @var PriceListCustomerFallbackRepository $fallbackRepository */
+        $fallbackRepository = $this->registry->getManagerForClass('OroPricingBundle:PriceListCustomerFallback')
+            ->getRepository('OroPricingBundle:PriceListCustomerFallback');
         /** @var ShoppingListTotalRepository $shoppingTotalsRepository */
         $shoppingTotalsRepository = $this->registry->getManagerForClass('OroShoppingListBundle:ShoppingListTotal')
             ->getRepository('OroShoppingListBundle:ShoppingListTotal');
-        foreach ($accountsData as $data) {
-            $accounts = $fallbackRepository->getAccountIdentityByGroup($data['accountGroups'], $data['websiteId']);
+        foreach ($customersData as $data) {
+            $customers = $fallbackRepository->getCustomerIdentityByGroup($data['customerGroups'], $data['websiteId']);
             $i = 0;
             $ids = [];
-            foreach ($accounts as $accountData) {
-                $ids[] = $accountData['id'];
+            foreach ($customers as $customerData) {
+                $ids[] = $customerData['id'];
                 $i++;
                 if ($i % self::ACCOUNT_BATCH_SIZE === 0) {
-                    $shoppingTotalsRepository->invalidateByAccounts($ids, $data['websiteId']);
+                    $shoppingTotalsRepository->invalidateByCustomers($ids, $data['websiteId']);
                     $ids = [];
                 }
             }
             if (!empty($ids)) {
-                $shoppingTotalsRepository->invalidateByAccounts($ids, $data['websiteId']);
+                $shoppingTotalsRepository->invalidateByCustomers($ids, $data['websiteId']);
             }
         }
     }
@@ -92,26 +92,26 @@ class ShoppingListTotalListener
     public function onWebsitePriceListUpdate(WebsiteCPLUpdateEvent $event)
     {
         $websiteIds = $event->getWebsiteIds();
-        /** @var PriceListAccountGroupFallbackRepository $fallbackRepository */
-        $fallbackRepository = $this->registry->getManagerForClass('OroPricingBundle:PriceListAccountGroupFallback')
-            ->getRepository('OroPricingBundle:PriceListAccountGroupFallback');
+        /** @var PriceListCustomerGroupFallbackRepository $fallbackRepository */
+        $fallbackRepository = $this->registry->getManagerForClass('OroPricingBundle:PriceListCustomerGroupFallback')
+            ->getRepository('OroPricingBundle:PriceListCustomerGroupFallback');
         /** @var ShoppingListTotalRepository $shoppingTotalsRepository */
         $shoppingTotalsRepository = $this->registry->getManagerForClass('OroShoppingListBundle:ShoppingListTotal')
             ->getRepository('OroShoppingListBundle:ShoppingListTotal');
         foreach ($websiteIds as $websiteId) {
-            $accounts = $fallbackRepository->getAccountIdentityByWebsite($websiteId);
+            $customers = $fallbackRepository->getCustomerIdentityByWebsite($websiteId);
             $i = 0;
             $ids = [];
-            foreach ($accounts as $accountData) {
-                $ids[] = $accountData['id'];
+            foreach ($customers as $customerData) {
+                $ids[] = $customerData['id'];
                 $i++;
                 if ($i % self::ACCOUNT_BATCH_SIZE === 0) {
-                    $shoppingTotalsRepository->invalidateByAccounts($ids, $websiteId);
+                    $shoppingTotalsRepository->invalidateByCustomers($ids, $websiteId);
                     $ids = [];
                 }
             }
             if (!empty($ids)) {
-                $shoppingTotalsRepository->invalidateByAccounts($ids, $websiteId);
+                $shoppingTotalsRepository->invalidateByCustomers($ids, $websiteId);
             }
         }
     }
@@ -124,28 +124,28 @@ class ShoppingListTotalListener
         /** @var PriceListWebsiteFallbackRepository $fallbackWebsiteRepository */
         $fallbackWebsiteRepository = $this->registry->getManagerForClass('OroPricingBundle:PriceListWebsiteFallback')
             ->getRepository('OroPricingBundle:PriceListWebsiteFallback');
-        /** @var PriceListAccountGroupFallbackRepository $fallbackRepository */
-        $fallbackRepository = $this->registry->getManagerForClass('OroPricingBundle:PriceListAccountGroupFallback')
-            ->getRepository('OroPricingBundle:PriceListAccountGroupFallback');
+        /** @var PriceListCustomerGroupFallbackRepository $fallbackRepository */
+        $fallbackRepository = $this->registry->getManagerForClass('OroPricingBundle:PriceListCustomerGroupFallback')
+            ->getRepository('OroPricingBundle:PriceListCustomerGroupFallback');
         /** @var ShoppingListTotalRepository $shoppingTotalsRepository */
         $shoppingTotalsRepository = $this->registry->getManagerForClass('OroShoppingListBundle:ShoppingListTotal')
             ->getRepository('OroShoppingListBundle:ShoppingListTotal');
 
         $websitesData = $fallbackWebsiteRepository->getWebsiteIdByDefaultFallback();
         foreach ($websitesData as $websiteData) {
-            $accounts = $fallbackRepository->getAccountIdentityByWebsite($websiteData['id']);
+            $customers = $fallbackRepository->getCustomerIdentityByWebsite($websiteData['id']);
             $i = 0;
             $ids = [];
-            foreach ($accounts as $accountData) {
-                $ids[] = $accountData['id'];
+            foreach ($customers as $customerData) {
+                $ids[] = $customerData['id'];
                 $i++;
                 if ($i % self::ACCOUNT_BATCH_SIZE === 0) {
-                    $shoppingTotalsRepository->invalidateByAccounts($ids, $websiteData['id']);
+                    $shoppingTotalsRepository->invalidateByCustomers($ids, $websiteData['id']);
                     $ids = [];
                 }
             }
             if (!empty($ids)) {
-                $shoppingTotalsRepository->invalidateByAccounts($ids, $websiteData['id']);
+                $shoppingTotalsRepository->invalidateByCustomers($ids, $websiteData['id']);
             }
         }
     }

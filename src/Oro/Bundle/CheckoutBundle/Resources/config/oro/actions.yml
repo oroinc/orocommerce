@@ -17,6 +17,10 @@ operations:
             - applications
             - preconditions
             - datagrids
+        preactions:
+            - '@trans':
+                id: oro.checkout.open_order.label
+                attribute: $.entityLabel
 
     oro_checkout_frontend_quote_submit_to_order:
         label: oro.checkout.frontend.quote.submit_to_order
@@ -39,7 +43,7 @@ operations:
                 attribute: $.quoteDemand
                 where:
                     quote: $.data
-                    accountUser: $.currentUser
+                    customerUser: $.currentUser
             - '@tree':
                 conditions:
                     '@empty': $.quoteDemand
@@ -50,7 +54,7 @@ operations:
                             class: Oro\Bundle\SaleBundle\Entity\QuoteDemand
                             data:
                                 quote: $.data
-                                accountUser: $.currentUser
+                                customerUser: $.currentUser
                     - '@call_service_method':
                         service: oro_sale.manager.quote_demand_manager
                         method: recalculateSubtotals
@@ -157,7 +161,7 @@ action_groups:
             - '@call_service_method':
                 attribute: $.checkout
                 service: 'oro_checkout.repository.checkout'
-                method: findCheckoutByAccountUserAndSourceCriteria
+                method: findCheckoutByCustomerUserAndSourceCriteria
                 method_parameters: [$.currentUser, $.sourceCriteria]
 
             - '@tree':
@@ -173,7 +177,7 @@ action_groups:
                         class: 'Oro\Bundle\CheckoutBundle\Entity\Checkout'
                         data:
                             source: $.source
-                            accountUser: $.currentUser
+                            customerUser: $.currentUser
                     - '@create_datetime': {attribute: $.checkout.createdAt}
                     - '@create_datetime': {attribute: $.checkout.updatedAt}
                     - '@assign_value': [$.updateData, true]
@@ -189,8 +193,8 @@ action_groups:
                 conditions:
                     '@equal': [true, $.updateData]
                 actions:
-                    - '@assign_value': [$.checkout.account, $.currentUser.account]
-                    - '@assign_value': [$.checkout.organization, $.currentUser.account.organization]
+                    - '@assign_value': [$.checkout.customer, $.currentUser.customer]
+                    - '@assign_value': [$.checkout.organization, $.currentUser.customer.organization]
                     - '@call_service_method':
                         attribute: $.checkout.website
                         service: oro_website.manager

@@ -71,7 +71,7 @@ class HasPriceInShoppingLineItemsTest extends \PHPUnit_Framework_TestCase
             ->getMock();
 
         $priceListRequestHandler->expects($this->any())
-            ->method('getPriceListByAccount')
+            ->method('getPriceListByCustomer')
             ->will($this->returnValue(new BasePriceList()));
 
         $condition = new HasPriceInShoppingLineItems(

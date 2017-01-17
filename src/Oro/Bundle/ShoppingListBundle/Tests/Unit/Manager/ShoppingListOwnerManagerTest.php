@@ -40,7 +40,7 @@ class ShoppingListOwnerManagerTest extends \PHPUnit_Framework_TestCase
         $entityConfig = $this->createMock(ConfigInterface::class);
         $configProvider->method('getConfig')->with(ShoppingList::class)->willReturn($entityConfig);
         $entityConfig->method('get')->willReturnMap([
-            ['frontend_owner_field_name', false, null, 'accountUser'],
+            ['frontend_owner_field_name', false, null, 'customerUser'],
             ['organization_field_name', false, null, 'organisation'],
         ]);
 
@@ -71,7 +71,7 @@ class ShoppingListOwnerManagerTest extends \PHPUnit_Framework_TestCase
                 ShoppingList::class,
                 $criteria,
                 "ASSIGN",
-                ['accountUser' => 'user.id', 'organisation' => 'user.organization']
+                ['customerUser' => 'user.id', 'organisation' => 'user.organization']
             );
         $qb = $this->getQueryBuilder();
         $repo->expects($this->once())->method('createQueryBuilder')->willReturn($qb);
@@ -86,7 +86,7 @@ class ShoppingListOwnerManagerTest extends \PHPUnit_Framework_TestCase
         $em->expects($this->once())->method('flush');
 
         $this->manager->setOwner(1, $shoppingList);
-        $this->assertSame($user, $shoppingList->getAccountUser());
+        $this->assertSame($user, $shoppingList->getCustomerUser());
     }
 
     public function testSetSameOwner()
@@ -106,9 +106,9 @@ class ShoppingListOwnerManagerTest extends \PHPUnit_Framework_TestCase
         $em->expects($this->never())->method('flush');
 
         $shoppingList = new ShoppingList();
-        $shoppingList->setAccountUser($user);
+        $shoppingList->setCustomerUser($user);
         $this->manager->setOwner(1, $shoppingList);
-        $this->assertSame($user, $shoppingList->getAccountUser());
+        $this->assertSame($user, $shoppingList->getCustomerUser());
     }
 
     /**
@@ -151,7 +151,7 @@ class ShoppingListOwnerManagerTest extends \PHPUnit_Framework_TestCase
                 ShoppingList::class,
                 $criteria,
                 "ASSIGN",
-                ['accountUser' => 'user.id', 'organisation' => 'user.organization']
+                ['customerUser' => 'user.id', 'organisation' => 'user.organization']
             );
         $qb = $this->getQueryBuilder();
         $repo->expects($this->once())->method('createQueryBuilder')->willReturn($qb);

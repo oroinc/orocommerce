@@ -55,15 +55,15 @@ class LoadAddressBookUserData extends AbstractFixture implements ContainerAwareI
     const ROLE6_VC_AC_AD = 'role-VC_ac_addr';
     const ROLE7_VC_AU_AD = 'role-VC_acu_addr';
 
-    const ACCOUNT1 = 'account1';
+    const ACCOUNT1 = 'customer1';
 
-    const ACCOUNT1_USER1 = 'account1-user1@example.com';
-    const ACCOUNT1_USER2 = 'account1-user2@example.com';
-    const ACCOUNT1_USER3 = 'account1-user3@example.com';
-    const ACCOUNT1_USER4 = 'account1-user4@example.com';
-    const ACCOUNT1_USER5 = 'account1-user5@example.com';
-    const ACCOUNT1_USER6 = 'account1-user6@example.com';
-    const ACCOUNT1_USER7 = 'account1-user7@example.com';
+    const ACCOUNT1_USER1 = 'customer1-user1@example.com';
+    const ACCOUNT1_USER2 = 'customer1-user2@example.com';
+    const ACCOUNT1_USER3 = 'customer1-user3@example.com';
+    const ACCOUNT1_USER4 = 'customer1-user4@example.com';
+    const ACCOUNT1_USER5 = 'customer1-user5@example.com';
+    const ACCOUNT1_USER6 = 'customer1-user6@example.com';
+    const ACCOUNT1_USER7 = 'customer1-user7@example.com';
 
     /**
      * @var array
@@ -71,46 +71,46 @@ class LoadAddressBookUserData extends AbstractFixture implements ContainerAwareI
     protected $roles = [
         self::ROLE1_V_AC_AD => [
             [
-                'class' => 'oro_customer.entity.account_address.class',
+                'class' => 'oro_customer.entity.customer_address.class',
                 'acls' => ['VIEW_LOCAL'],
             ],
         ],
         self::ROLE2_V_ACU_AD => [
             [
-                'class' => 'oro_customer.entity.account_user_address.class',
+                'class' => 'oro_customer.entity.customer_user_address.class',
                 'acls' => ['VIEW_BASIC'],
             ],
         ],
         self::ROLE3_V_AC_AD_V_ACU_AD => [
             [
-                'class' => 'oro_customer.entity.account_user_address.class',
+                'class' => 'oro_customer.entity.customer_user_address.class',
                 'acls' => ['VIEW_BASIC'],
             ],
             [
-                'class' => 'oro_customer.entity.account_address.class',
+                'class' => 'oro_customer.entity.customer_address.class',
                 'acls' => ['VIEW_LOCAL'],
             ],
         ],
         self::ROLE4_NONE => [],
         self::ROLE5_VCED_AC_AD_VCED_AU_AD => [
             [
-                'class' => 'oro_customer.entity.account_user_address.class',
+                'class' => 'oro_customer.entity.customer_user_address.class',
                 'acls' => ['VIEW_BASIC', 'EDIT_BASIC', 'CREATE_BASIC'],
             ],
             [
-                'class' => 'oro_customer.entity.account_address.class',
+                'class' => 'oro_customer.entity.customer_address.class',
                 'acls' => ['VIEW_LOCAL'],
             ],
         ],
         self::ROLE6_VC_AC_AD => [
             [
-                'class' => 'oro_customer.entity.account_address.class',
+                'class' => 'oro_customer.entity.customer_address.class',
                 'acls' => ['VIEW_LOCAL', 'CREATE_LOCAL'],
             ],
         ],
         self::ROLE7_VC_AU_AD => [
             [
-                'class' => 'oro_customer.entity.account_user_address.class',
+                'class' => 'oro_customer.entity.customer_user_address.class',
                 'acls' => ['VIEW_BASIC', 'CREATE_BASIC'],
             ],
         ]
@@ -119,7 +119,7 @@ class LoadAddressBookUserData extends AbstractFixture implements ContainerAwareI
     /**
      * @var array
      */
-    protected $accounts = [
+    protected $customers = [
         [
             'name' => self::ACCOUNT1,
         ],
@@ -128,13 +128,13 @@ class LoadAddressBookUserData extends AbstractFixture implements ContainerAwareI
     /**
      * @var array
      */
-    protected $accountUsers = [
+    protected $customerUsers = [
         [
             'email' => self::ACCOUNT1_USER1,
             'firstname' => 'User1FN',
             'lastname' => 'User1LN',
             'password' => self::ACCOUNT1_USER1,
-            'account' => self::ACCOUNT1,
+            'customer' => self::ACCOUNT1,
             'role' => self::ROLE1_V_AC_AD,
         ],
         [
@@ -142,7 +142,7 @@ class LoadAddressBookUserData extends AbstractFixture implements ContainerAwareI
             'firstname' => 'User2FN',
             'lastname' => 'User2LN',
             'password' => self::ACCOUNT1_USER2,
-            'account' => self::ACCOUNT1,
+            'customer' => self::ACCOUNT1,
             'role' => self::ROLE2_V_ACU_AD,
         ],
         [
@@ -150,7 +150,7 @@ class LoadAddressBookUserData extends AbstractFixture implements ContainerAwareI
             'firstname' => 'User3FN',
             'lastname' => 'User3LN',
             'password' => self::ACCOUNT1_USER3,
-            'account' => self::ACCOUNT1,
+            'customer' => self::ACCOUNT1,
             'role' => self::ROLE3_V_AC_AD_V_ACU_AD,
         ],
         [
@@ -158,7 +158,7 @@ class LoadAddressBookUserData extends AbstractFixture implements ContainerAwareI
             'firstname' => 'User3FN',
             'lastname' => 'User3LN',
             'password' => self::ACCOUNT1_USER4,
-            'account' => self::ACCOUNT1,
+            'customer' => self::ACCOUNT1,
             'role' => self::ROLE4_NONE,
         ],
         [
@@ -166,7 +166,7 @@ class LoadAddressBookUserData extends AbstractFixture implements ContainerAwareI
             'firstname' => 'User4FN',
             'lastname' => 'User4LN',
             'password' => self::ACCOUNT1_USER5,
-            'account' => self::ACCOUNT1,
+            'customer' => self::ACCOUNT1,
             'role' => self::ROLE5_VCED_AC_AD_VCED_AU_AD,
         ],
         [
@@ -174,7 +174,7 @@ class LoadAddressBookUserData extends AbstractFixture implements ContainerAwareI
             'firstname' => 'User4FN',
             'lastname' => 'User4LN',
             'password' => self::ACCOUNT1_USER6,
-            'account' => self::ACCOUNT1,
+            'customer' => self::ACCOUNT1,
             'role' => self::ROLE6_VC_AC_AD
         ],
         [
@@ -182,7 +182,7 @@ class LoadAddressBookUserData extends AbstractFixture implements ContainerAwareI
             'firstname' => 'User4FN',
             'lastname' => 'User4LN',
             'password' => self::ACCOUNT1_USER7,
-            'account' => self::ACCOUNT1,
+            'customer' => self::ACCOUNT1,
             'role' => self::ROLE7_VC_AU_AD,
         ],
     ];
@@ -201,27 +201,27 @@ class LoadAddressBookUserData extends AbstractFixture implements ContainerAwareI
     public function load(ObjectManager $manager)
     {
         $this->loadRoles($manager);
-        $this->loadAccounts($manager);
-        $this->loadAccountUsers($manager);
+        $this->loadCustomers($manager);
+        $this->loadCustomerUsers($manager);
     }
 
     /**
      * @param ObjectManager $manager
      */
-    protected function loadAccounts(ObjectManager $manager)
+    protected function loadCustomers(ObjectManager $manager)
     {
         $defaultUser = $this->getUser($manager);
         $organization = $defaultUser->getOrganization();
 
-        foreach ($this->accounts as $item) {
-            $account = new Customer();
-            $account
+        foreach ($this->customers as $item) {
+            $customer = new Customer();
+            $customer
                 ->setName($item['name'])
                 ->setOrganization($organization)
                 ->setOwner($defaultUser);
-            $manager->persist($account);
+            $manager->persist($customer);
 
-            $this->addReference($item['name'], $account);
+            $this->addReference($item['name'], $customer);
         }
 
         $manager->flush();
@@ -257,21 +257,21 @@ class LoadAddressBookUserData extends AbstractFixture implements ContainerAwareI
     /**
      * @param ObjectManager $manager
      */
-    protected function loadAccountUsers(ObjectManager $manager)
+    protected function loadCustomerUsers(ObjectManager $manager)
     {
         /* @var $userManager CustomerUserManager */
-        $userManager = $this->container->get('oro_account_user.manager');
+        $userManager = $this->container->get('oro_customer_user.manager');
 
         $defaultUser = $this->getUser($manager);
         $organization = $defaultUser->getOrganization();
 
-        foreach ($this->accountUsers as $item) {
-            /* @var $accountUser CustomerUser */
-            $accountUser = $userManager->createUser();
+        foreach ($this->customerUsers as $item) {
+            /* @var $customerUser CustomerUser */
+            $customerUser = $userManager->createUser();
 
-            $accountUser
+            $customerUser
                 ->setEmail($item['email'])
-                ->setAccount($this->getReference($item['account']))
+                ->setCustomer($this->getReference($item['customer']))
                 ->setOwner($defaultUser)
                 ->setFirstName($item['firstname'])
                 ->setLastName($item['lastname'])
@@ -283,9 +283,9 @@ class LoadAddressBookUserData extends AbstractFixture implements ContainerAwareI
                 ->setPlainPassword($item['password'])
                 ->setEnabled(true);
 
-            $userManager->updateUser($accountUser);
+            $userManager->updateUser($customerUser);
 
-            $this->setReference($item['email'], $accountUser);
+            $this->setReference($item['email'], $customerUser);
         }
     }
 

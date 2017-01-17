@@ -8,7 +8,7 @@ elements:
     class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
   CheckoutFormRow:
-    selector: '.checkout__form__row'
+    selector: '.grid__row'
     class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
   Shipping Rule:

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as OroLoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as OroLoadCustomerUserData;
 
 /**
  * @dbIsolation
@@ -14,7 +14,7 @@ class OpenOrdersControllerTest extends WebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(OroLoadAccountUserData::AUTH_USER, OroLoadAccountUserData::AUTH_PW)
+            $this->generateBasicAuthHeader(OroLoadCustomerUserData::AUTH_USER, OroLoadCustomerUserData::AUTH_PW)
         );
     }
 

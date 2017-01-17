@@ -19,8 +19,8 @@ class LoadProductImageData extends AbstractFixture implements DependentFixtureIn
      * @var array
      */
     protected static $products = [
-        'product.1',
-        'product.2',
+        'product-1',
+        'product-2',
     ];
 
     /**

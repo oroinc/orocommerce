@@ -145,7 +145,7 @@ class CheckoutVoterTest extends \PHPUnit_Framework_TestCase
                 }
                 if ($attribute === $inputData['isGrantedAttrCheckout']) {
                     if ($object instanceof Quote) {
-                        $this->assertInstanceOf(CustomerUser::class, $object->getAccountUser());
+                        $this->assertInstanceOf(CustomerUser::class, $object->getCustomerUser());
                     }
 
                     return $inputData['isGrantedCheckout'];
@@ -170,7 +170,7 @@ class CheckoutVoterTest extends \PHPUnit_Framework_TestCase
     public function voteProvider()
     {
         $object = $this->createMock(Quote::class);
-        $object->expects($this->once())->method('getAccountUser')->willReturn(new CustomerUser());
+        $object->expects($this->once())->method('getCustomerUser')->willReturn(new CustomerUser());
 
         return [
             '!Entity' => [

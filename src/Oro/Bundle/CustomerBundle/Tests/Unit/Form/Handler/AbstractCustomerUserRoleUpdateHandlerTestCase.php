@@ -146,14 +146,14 @@ abstract class AbstractCustomerUserRoleUpdateHandlerTestCase extends \PHPUnit_Fr
     /**
      * @param CustomerUserRole $role
      * @param int $numberOfUsers
-     * @param Customer $account
+     * @param Customer $customer
      * @param int $offset
      * @return \Oro\Bundle\CustomerBundle\Entity\CustomerUser[]
      */
     protected function createUsersWithRole(
         CustomerUserRole $role,
         $numberOfUsers,
-        Customer $account = null,
+        Customer $customer = null,
         $offset = 0
     ) {
         /** @var CustomerUser[] $users */
@@ -163,7 +163,7 @@ abstract class AbstractCustomerUserRoleUpdateHandlerTestCase extends \PHPUnit_Fr
             $user = new CustomerUser();
             $user->setUsername('user_id_' . $userId . '_role_' . $role->getRole());
             $user->setRoles([$role]);
-            $user->setAccount($account);
+            $user->setCustomer($customer);
             $users[$userId] = $user;
         }
 

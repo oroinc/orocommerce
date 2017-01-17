@@ -76,6 +76,8 @@ class RequestDataStorageExtensionTest extends AbstractProductDataStorageExtensio
         $this->extension->setDataClass('Oro\Bundle\RFPBundle\Entity\Request');
         $this->extension->setConfigManager($this->configManager);
 
+        $this->setUpLoggerMock($this->extension);
+
         $this->container = $this->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
             ->disableOriginalConstructor()
             ->getMock();

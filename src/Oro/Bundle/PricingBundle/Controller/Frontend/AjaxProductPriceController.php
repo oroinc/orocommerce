@@ -13,14 +13,14 @@ use Oro\Bundle\PricingBundle\Controller\AbstractAjaxProductPriceController;
 class AjaxProductPriceController extends AbstractAjaxProductPriceController
 {
     /**
-     * @Route("/get-product-prices-by-account", name="oro_pricing_frontend_price_by_account")
+     * @Route("/get-product-prices-by-customer", name="oro_pricing_frontend_price_by_customer")
      * @Method({"GET"})
      *
      * {@inheritdoc}
      */
-    public function getProductPricesByAccount(Request $request)
+    public function getProductPricesByCustomer(Request $request)
     {
-        return parent::getProductPricesByAccount($request);
+        return parent::getProductPricesByCustomer($request);
     }
 
     /**
@@ -34,7 +34,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
         $lineItems = $request->get('items', []);
         $matchedPrices = $this->get('oro_pricing.provider.matching_price')->getMatchingPrices(
             $lineItems,
-            $this->get('oro_pricing.model.price_list_request_handler')->getPriceListByAccount()
+            $this->get('oro_pricing.model.price_list_request_handler')->getPriceListByCustomer()
         );
 
         return new JsonResponse($matchedPrices);
@@ -49,7 +49,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     public function getProductUnitsByCurrencyAction(Request $request)
     {
         return $this->getProductUnitsByCurrency(
-            $this->get('oro_pricing.model.price_list_request_handler')->getPriceListByAccount(),
+            $this->get('oro_pricing.model.price_list_request_handler')->getPriceListByCustomer(),
             $request,
             $this->getParameter('oro_pricing.entity.combined_product_price.class')
         );

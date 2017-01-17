@@ -63,12 +63,12 @@
 
     {% set dataBlocks = dataBlocks|merge([
         {
-            'title' : 'oro.customer.account.entity_plural_label'|trans,
+            'title' : 'oro.customer.customer.entity_plural_label'|trans,
             'subblocks': [
                 {
                     'title' : '',
                     'useSpan': false,
-                    'data' : [dataGrid.renderGrid('price-list-accounts-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]
+                    'data' : [dataGrid.renderGrid('price-list-customers-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]
                 }
             ]
         }
@@ -81,7 +81,7 @@
                 {
                     'title' : '',
                     'useSpan': false,
-                    'data' : [dataGrid.renderGrid('price-list-account-groups-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]
+                    'data' : [dataGrid.renderGrid('price-list-customer-groups-grid', {price_list_id: entity.id}, { cssClass: 'inner-grid' })]
                 }
             ]
         }

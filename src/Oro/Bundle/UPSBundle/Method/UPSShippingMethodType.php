@@ -6,7 +6,7 @@ use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use Oro\Bundle\UPSBundle\Cache\ShippingPriceCache;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
-use Oro\Bundle\UPSBundle\Entity\UPSTransport;
+use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSSettings;
 use Oro\Bundle\UPSBundle\Factory\PriceRequestFactory;
 use Oro\Bundle\UPSBundle\Form\Type\UPSShippingMethodOptionsType;
 use Oro\Bundle\UPSBundle\Provider\UPSTransport as UPSTransportProvider;
@@ -18,7 +18,7 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
     /** @var string */
     protected $methodId;
 
-    /** @var UPSTransport */
+    /** @var UPSSettings */
     protected $transport;
 
     /** @var UPSTransportProvider */
@@ -33,26 +33,38 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
     /** @var ShippingPriceCache */
     protected $cache;
 
+    /** @var string */
+    private $identifier;
+
+    /** @var string */
+    private $label;
+    
     /**
+     * @param string $identifier
+     * @param string $label
      * @param string $methodId
-     * @param UPSTransport $transport
+     * @param UPSSettings $transport
      * @param UPSTransportProvider $transportProvider
      * @param ShippingService $shippingService
      * @param PriceRequestFactory $priceRequestFactory
      * @param ShippingPriceCache $cache
      */
     public function __construct(
+        $identifier,
+        $label,
         $methodId,
-        UPSTransport $transport,
-        UPSTransportProvider $transportProvider,
         ShippingService $shippingService,
+        UPSSettings $transport,
+        UPSTransportProvider $transportProvider,
         PriceRequestFactory $priceRequestFactory,
         ShippingPriceCache $cache
     ) {
+        $this->identifier = $identifier;
+        $this->label = $label;
         $this->methodId = $methodId;
+        $this->shippingService = $shippingService;
         $this->transport = $transport;
         $this->transportProvider = $transportProvider;
-        $this->shippingService = $shippingService;
         $this->priceRequestFactory = $priceRequestFactory;
         $this->cache = $cache;
     }
@@ -63,7 +75,7 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
      */
     public function getIdentifier()
     {
-        return $this->shippingService->getCode();
+        return $this->identifier;
     }
 
     /**
@@ -71,7 +83,7 @@ class UPSShippingMethodType implements ShippingMethodTypeInterface
      */
     public function getLabel()
     {
-        return $this->shippingService->getDescription();
+        return $this->label;
     }
 
     /**

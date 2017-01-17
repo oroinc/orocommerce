@@ -42,8 +42,8 @@ class ScopeWithCustomerGroupAndCustomerValidatorTest extends \PHPUnit_Framework_
     {
         $index = 1;
         $notValidScope = new StubScope([
-            'account' => $this->getEntity(Customer::class, ['id' => 123]),
-            'accountGroup' => $this->getEntity(CustomerGroup::class, ['id' => 42]),
+            'customer' => $this->getEntity(Customer::class, ['id' => 123]),
+            'customerGroup' => $this->getEntity(CustomerGroup::class, ['id' => 42]),
         ]);
 
         $value = $this->createMock(Collection::class);

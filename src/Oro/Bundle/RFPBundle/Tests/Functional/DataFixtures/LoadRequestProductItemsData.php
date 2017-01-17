@@ -38,9 +38,9 @@ class LoadRequestProductItemsData extends AbstractFixture implements DependentFi
         /** @var ProductUnit $unit */
         $unit = $this->getReference('product_unit.bottle');
         /** @var Product $product */
-        $product = $this->getReference('product.1');
+        $product = $this->getReference('product-1');
 
-        $this->createRequestProduct($manager, $request, $unit, $product, 'request_product.1');
+        $this->createRequestProduct($manager, $request, $unit, $product, 'request_product-1');
 
         $manager->flush();
     }

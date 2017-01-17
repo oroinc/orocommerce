@@ -40,18 +40,18 @@ class ProductDataStorageTest extends \PHPUnit_Framework_TestCase
 
     public function testSaveToStorage()
     {
-        $accountId = 10;
-        $accountUserId = 42;
+        $customerId = 10;
+        $customerUserId = 42;
         $productSku = 'testSku';
         $quantity = 100;
         $comment = 'Test Comment';
         $unitCode = 'kg';
 
-        /** @var Customer $account */
-        $account = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => $accountId]);
+        /** @var Customer $customer */
+        $customer = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', ['id' => $customerId]);
 
-        /** @var CustomerUser $accountUser */
-        $accountUser = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', ['id' => $accountUserId]);
+        /** @var CustomerUser $customerUser */
+        $customerUser = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', ['id' => $customerUserId]);
 
         $product = new Product();
         $product->setSku($productSku);
@@ -70,8 +70,8 @@ class ProductDataStorageTest extends \PHPUnit_Framework_TestCase
 
         $this->setId($shoppingList, 1);
         $shoppingList
-            ->setAccount($account)
-            ->setAccountUser($accountUser)
+            ->setCustomer($customer)
+            ->setCustomerUser($customerUser)
             ->addLineItem($lineItem);
 
         $this->storage->expects($this->once())
@@ -79,8 +79,8 @@ class ProductDataStorageTest extends \PHPUnit_Framework_TestCase
             ->with(
                 [
                     Storage::ENTITY_DATA_KEY => [
-                        'account' => $accountId,
-                        'accountUser' => $accountUserId,
+                        'customer' => $customerId,
+                        'customerUser' => $customerUserId,
                         'sourceEntityId' => 1,
                         'sourceEntityClass' => ClassUtils::getClass($shoppingList),
                         'sourceEntityIdentifier' => 1

@@ -149,9 +149,9 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-checkouts-grid, method: onResultAfter }
 
     oro_checkout.datagrid.checkout_grid_column_filter:
-        class: 'Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridAccountUserNameListener'
+        class: 'Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridCustomerUserNameListener'
         arguments:
-            - '@oro_customer.security.account_user_provider'
+            - '@oro_customer.security.customer_user_provider'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-checkouts-grid, method: onBuildBefore }
 
@@ -336,6 +336,13 @@ services:
         class: 'Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetter'
         arguments:
             - '@oro_checkout.shipping_method.provider_main'
+
+    oro_checkout.action.default_shipping_method_setter_decorator:
+        class: 'Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetterDecorator'
+        decorates: oro_checkout.action.default_shipping_method_setter
+        public: false
+        arguments:
+            - '@oro_checkout.action.default_shipping_method_setter_decorator.inner'
 
     oro_checkout.factory.shipping_context_factory:
         class: 'Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory'

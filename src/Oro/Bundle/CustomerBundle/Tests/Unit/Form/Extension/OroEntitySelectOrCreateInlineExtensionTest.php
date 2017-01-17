@@ -10,7 +10,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroEntitySelectOrCreateInlineType;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Form\Extension\OroEntitySelectOrCreateInlineExtension;
 
-class OroEntitySelectOrCreateInlineExtensionTest extends AbstractAccountUserAwareExtensionTest
+class OroEntitySelectOrCreateInlineExtensionTest extends AbstractCustomerUserAwareExtensionTest
 {
     protected function setUp()
     {
@@ -24,14 +24,14 @@ class OroEntitySelectOrCreateInlineExtensionTest extends AbstractAccountUserAwar
         $this->assertEquals(OroEntitySelectOrCreateInlineType::NAME, $this->extension->getExtendedType());
     }
 
-    public function testConfigureOptionsNonAccountUser()
+    public function testConfigureOptionsNonCustomerUser()
     {
-        $this->assertOptionsNotChangedForNonAccountUser();
+        $this->assertOptionsNotChangedForNonCustomerUser();
     }
 
-    public function testConfigureOptionsAccountUser()
+    public function testConfigureOptionsCustomerUser()
     {
-        $this->assertAccountUserTokenCall();
+        $this->assertCustomerUserTokenCall();
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|OptionsResolver $resolver */
         $resolver = $this->getMockBuilder('Symfony\Component\OptionsResolver\OptionsResolver')
@@ -52,7 +52,7 @@ class OroEntitySelectOrCreateInlineExtensionTest extends AbstractAccountUserAwar
      */
     public function testBuildView($user, $route, $expectedRoute)
     {
-        $this->assertAccountUserTokenCall($user);
+        $this->assertCustomerUserTokenCall($user);
 
         $view = new FormView();
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */

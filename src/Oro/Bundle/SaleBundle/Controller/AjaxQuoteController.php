@@ -35,20 +35,20 @@ class AjaxQuoteController extends Controller
     public function getRelatedDataAction()
     {
         $quote = new Quote();
-        $accountUser = $this->getQuoteRequestHandler()->getAccountUser();
-        $account = $this->getAccount($accountUser);
+        $customerUser = $this->getQuoteRequestHandler()->getCustomerUser();
+        $customer = $this->getCustomer($customerUser);
 
-        $quote->setAccount($account);
-        $quote->setAccountUser($accountUser);
+        $quote->setCustomer($customer);
+        $quote->setCustomerUser($customerUser);
 
-        $accountPaymentTerm = null;
-        if ($account) {
-            $accountPaymentTerm = $this->getPaymentTermProvider()->getAccountPaymentTerm($account);
+        $customerPaymentTerm = null;
+        if ($customer) {
+            $customerPaymentTerm = $this->getPaymentTermProvider()->getCustomerPaymentTerm($customer);
         }
-        $accountGroupPaymentTerm = null;
-        if ($account->getGroup()) {
-            $accountGroupPaymentTerm = $this->getPaymentTermProvider()
-                ->getAccountGroupPaymentTerm($account->getGroup());
+        $customerGroupPaymentTerm = null;
+        if ($customer->getGroup()) {
+            $customerGroupPaymentTerm = $this->getPaymentTermProvider()
+                ->getCustomerGroupPaymentTerm($customer->getGroup());
         }
 
         $orderForm = $this->createForm($this->getQuoteFormTypeName(), $quote);
@@ -58,8 +58,8 @@ class AjaxQuoteController extends Controller
                 'shippingAddress' => $this->renderForm(
                     $orderForm->get(AddressType::TYPE_SHIPPING . 'Address')->createView()
                 ),
-                'accountPaymentTerm' => $accountPaymentTerm ? $accountPaymentTerm->getId() : null,
-                'accountGroupPaymentTerm' => $accountGroupPaymentTerm ? $accountGroupPaymentTerm->getId() : null,
+                'customerPaymentTerm' => $customerPaymentTerm ? $customerPaymentTerm->getId() : null,
+                'customerGroupPaymentTerm' => $customerGroupPaymentTerm ? $customerGroupPaymentTerm->getId() : null,
             ]
         );
     }
@@ -77,7 +77,6 @@ class AjaxQuoteController extends Controller
     {
         if (!$quote) {
             $quote = new Quote();
-            $quote->setWebsite($this->get('oro_website.manager')->getDefaultWebsite());
         }
 
         $form = $this->createForm($this->getQuoteFormTypeName(), $quote);
@@ -99,36 +98,39 @@ class AjaxQuoteController extends Controller
      */
     protected function renderForm(FormView $formView)
     {
-        return $this->renderView('OroSaleBundle:Form:accountAddressSelector.html.twig', ['form' => $formView]);
+        return $this->renderView('OroSaleBundle:Form:customerAddressSelector.html.twig', ['form' => $formView]);
     }
 
     /**
-     * @param CustomerUser $accountUser
+     * @param CustomerUser $customerUser
      * @return null|Customer
      */
-    protected function getAccount(CustomerUser $accountUser = null)
+    protected function getCustomer(CustomerUser $customerUser = null)
     {
-        $account = $this->getQuoteRequestHandler()->getAccount();
-        if (!$account && $accountUser) {
-            $account = $accountUser->getAccount();
+        $customer = $this->getQuoteRequestHandler()->getCustomer();
+        if (!$customer && $customerUser) {
+            $customer = $customerUser->getCustomer();
         }
-        if ($account && $accountUser) {
-            $this->validateRelation($accountUser, $account);
+        if ($customer && $customerUser) {
+            $this->validateRelation($customerUser, $customer);
         }
 
-        return $account;
+        return $customer;
     }
 
     /**
-     * @param CustomerUser $accountUser
-     * @param Customer $account
+     * @param CustomerUser $customerUser
+     * @param Customer $customer
      *
      * @throws BadRequestHttpException
      */
-    protected function validateRelation(CustomerUser $accountUser, Customer $account)
+    protected function validateRelation(CustomerUser $customerUser, Customer $customer)
     {
-        if ($accountUser && $accountUser->getAccount() && $accountUser->getAccount()->getId() !== $account->getId()) {
-            throw new BadRequestHttpException('CustomerUser must belong to Account');
+        if ($customerUser &&
+            $customerUser->getCustomer() &&
+            $customerUser->getCustomer()->getId() !== $customer->getId()
+        ) {
+            throw new BadRequestHttpException('CustomerUser must belong to Customer');
         }
     }
 

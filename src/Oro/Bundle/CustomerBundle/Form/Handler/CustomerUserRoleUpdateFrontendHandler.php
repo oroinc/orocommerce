@@ -25,10 +25,15 @@ class CustomerUserRoleUpdateFrontendHandler extends AbstractCustomerUserRoleHand
     /**
      * @var CustomerUser
      */
-    protected $loggedAccountUser;
+    protected $loggedCustomerUser;
 
     /** @var  RequestStack */
     protected $requestStack;
+
+    /**
+     * @var CustomerUserRole
+     */
+    protected $predefinedRole;
 
     /**
      * @param RequestStack $requestStack
@@ -38,11 +43,6 @@ class CustomerUserRoleUpdateFrontendHandler extends AbstractCustomerUserRoleHand
         $this->requestStack = $requestStack;
         $this->request = $requestStack->getCurrentRequest();
     }
-
-    /**
-     * @var CustomerUserRole
-     */
-    protected $predefinedRole;
 
     /**
      * @param TokenStorageInterface $tokenStorage
@@ -96,14 +96,14 @@ class CustomerUserRoleUpdateFrontendHandler extends AbstractCustomerUserRoleHand
      */
     protected function createNewRole(CustomerUserRole $role)
     {
-        /** @var CustomerUser $accountUser */
-        $accountUser = $this->getLoggedUser();
+        /** @var CustomerUser $customerUser */
+        $customerUser = $this->getLoggedUser();
 
         $newRole = clone $role;
 
         $newRole
-            ->setAccount($accountUser->getAccount())
-            ->setOrganization($accountUser->getOrganization());
+            ->setCustomer($customerUser->getCustomer())
+            ->setOrganization($customerUser->getOrganization());
 
         return $newRole;
     }
@@ -113,19 +113,19 @@ class CustomerUserRoleUpdateFrontendHandler extends AbstractCustomerUserRoleHand
      */
     protected function getLoggedUser()
     {
-        if (!$this->loggedAccountUser) {
+        if (!$this->loggedCustomerUser) {
             $token = $this->tokenStorage->getToken();
 
             if ($token) {
-                $this->loggedAccountUser = $token->getUser();
+                $this->loggedCustomerUser = $token->getUser();
             }
         }
 
-        if (!$this->loggedAccountUser instanceof CustomerUser) {
+        if (!$this->loggedCustomerUser instanceof CustomerUser) {
             throw new AccessDeniedException();
         }
 
-        return $this->loggedAccountUser;
+        return $this->loggedCustomerUser;
     }
 
     /**

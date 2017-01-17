@@ -2,18 +2,18 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -36,7 +36,8 @@ class ProductTest extends \PHPUnit_Framework_TestCase
             ['createdAt', $now, false],
             ['updatedAt', $now, false],
             ['status', Product::STATUS_ENABLED, Product::STATUS_DISABLED],
-            ['type', Product::TYPE_CONFIGURABLE, Product::TYPE_SIMPLE]
+            ['type', Product::TYPE_CONFIGURABLE, Product::TYPE_SIMPLE],
+            ['attributeFamily', new AttributeFamily()],
         ];
 
         $this->assertPropertyAccessors(new Product(), $properties);
@@ -428,5 +429,21 @@ class ProductTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFalse($simpleProduct->isConfigurable());
         $this->assertTrue($configurableProduct->isConfigurable());
+    }
+
+    public function testIsSimple()
+    {
+        $simpleProduct = new Product();
+
+        $configurableProduct = new Product();
+        $configurableProduct->setType(Product::TYPE_CONFIGURABLE);
+
+        $this->assertFalse($configurableProduct->isSimple());
+        $this->assertTrue($simpleProduct->isSimple());
+    }
+
+    public function testGetTypes()
+    {
+        $this->assertEquals([Product::TYPE_SIMPLE, Product::TYPE_CONFIGURABLE], Product::getTypes());
     }
 }

@@ -10,7 +10,7 @@ databaseBefore:
     'Oro\Bundle\OrderBundle\Entity\Order':
         simple_order:
             poNumber: { property_value: simple_order }
-            account: { class: 'Oro\Bundle\CustomerBundle\Entity\Customer', query: { name: 'account.orphan' } }
+            customer: { class: 'Oro\Bundle\CustomerBundle\Entity\Customer', query: { name: 'customer.orphan' } }
             currency: 'USD'
             shippingAddress:
                 class: 'Oro\Bundle\OrderBundle\Entity\OrderAddress'
@@ -32,31 +32,31 @@ databaseBefore:
             order: { reference: simple_order }
             quantity: { property_value: 1 }
             price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '22.21', currency: USD } }
-            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.4' } }
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-4' } }
         order_line_item_2:
             productSku: { property_value: order_line_item_2 }
             order: { reference: simple_order }
             quantity: { property_value: 1 }
             price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '22.21', currency: USD } }
-            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.5' } }
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-5' } }
         order_line_item_3:
             productSku: { property_value: order_line_item_3 }
             order: { reference: simple_order }
             quantity: { property_value: 1 }
             price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '22.21', currency: USD } }
-            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.6' } }
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-6' } }
         order_line_item_4:
             productSku: { property_value: order_line_item_4 }
             order: { reference: simple_order }
             quantity: { property_value: 1 }
             price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '22.21', currency: USD } }
-            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.7' } }
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-7' } }
         order_line_item_5:
             productSku: { property_value: order_line_item_5 }
             order: { reference: simple_order }
             quantity: { property_value: 1 }
             price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '22.21', currency: USD } }
-            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.8' } }
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-8' } }
         order_line_item_6:
             productSku: { property_value: order_line_item_5 }
             order: { reference: simple_order }
@@ -86,11 +86,11 @@ databaseBefore:
             code: 9_product
             products:
                 property_value:
-                    - { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.4' } }
-                    - { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.5' } }
-                    - { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.6' } }
-                    - { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.7' } }
-                    - { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.8' } }
+                    - { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-4' } }
+                    - { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-5' } }
+                    - { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-6' } }
+                    - { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-7' } }
+                    - { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-8' } }
                     - { reference: product_9 }
                     - { reference: product_10 }
                     - { reference: product_11 }
@@ -98,7 +98,7 @@ databaseBefore:
     'Oro\Bundle\TaxBundle\Entity\TaxRule':
         tax_rule_for_9_product:
             productTaxCode: { reference: product_tax_code_with_9_product }
-            accountTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\AccountTaxCode', query: { code: 'TAX1' } }
+            customerTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', query: { code: 'TAX1' } }
             tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }
             taxJurisdiction: { class: 'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction', query: { code: 'TAX1' } }
 expectedResult:

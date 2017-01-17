@@ -52,8 +52,8 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
     /**
      * @param AbstractAddress $address
      * @param QuoteAddress|null $expected
-     * @param AbstractAddress|null $expectedAccountAddress
-     * @param AbstractAddress|null $expectedAccountUserAddress
+     * @param AbstractAddress|null $expectedCustomerAddress
+     * @param AbstractAddress|null $expectedCustomerUserAddress
      * @param QuoteAddress|null $quoteAddress
      *
      * @dataProvider quoteDataProvider
@@ -61,8 +61,8 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
     public function testUpdateFromAbstract(
         AbstractAddress $address,
         QuoteAddress $expected = null,
-        AbstractAddress $expectedAccountAddress = null,
-        AbstractAddress $expectedAccountUserAddress = null,
+        AbstractAddress $expectedCustomerAddress = null,
+        AbstractAddress $expectedCustomerUserAddress = null,
         QuoteAddress $quoteAddress = null
     ) {
         $classMetadata = $this->createMock('Doctrine\Common\Persistence\Mapping\ClassMetadata');
@@ -78,8 +78,8 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
 
         $quoteAddress = $this->manager->updateFromAbstract($address, $quoteAddress);
         $this->assertEquals($expected, $quoteAddress);
-        $this->assertEquals($expectedAccountAddress, $quoteAddress->getAccountAddress());
-        $this->assertEquals($expectedAccountUserAddress, $quoteAddress->getAccountUserAddress());
+        $this->assertEquals($expectedCustomerAddress, $quoteAddress->getCustomerAddress());
+        $this->assertEquals($expectedCustomerUserAddress, $quoteAddress->getCustomerUserAddress());
     }
 
     /**
@@ -91,63 +91,63 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
         $region = new Region('US-AL');
 
         return [
-            'empty account address' => [
-                $accountAddress = new CustomerAddress(),
+            'empty customer address' => [
+                $customerAddress = new CustomerAddress(),
                 (new QuoteAddress())
-                    ->setAccountAddress($accountAddress),
-                $accountAddress
+                    ->setCustomerAddress($customerAddress),
+                $customerAddress
             ],
-            'empty account user address' => [
-                $accountUserAddress = new CustomerUserAddress(),
+            'empty customer user address' => [
+                $customerUserAddress = new CustomerUserAddress(),
                 (new QuoteAddress())
-                    ->setAccountUserAddress($accountUserAddress),
+                    ->setCustomerUserAddress($customerUserAddress),
                 null,
-                $accountUserAddress
+                $customerUserAddress
             ],
-            'from account address' => [
-                $accountAddress = (new CustomerAddress())
+            'from customer address' => [
+                $customerAddress = (new CustomerAddress())
                     ->setCountry($country)
                     ->setRegion($region)
                     ->setStreet('Street')
                     ->setCity('City'),
                 (new QuoteAddress())
-                    ->setAccountAddress($accountAddress)
+                    ->setCustomerAddress($customerAddress)
                     ->setCountry($country)
                     ->setRegion($region)
                     ->setStreet('Street')
                     ->setCity('City'),
-                $accountAddress
+                $customerAddress
             ],
-            'from account user address' => [
-                $accountUserAddress = (new CustomerUserAddress())
+            'from customer user address' => [
+                $customerUserAddress = (new CustomerUserAddress())
                     ->setCountry($country)
                     ->setRegion($region)
                     ->setStreet('Street')
                     ->setCity('City'),
                 (new QuoteAddress())
-                    ->setAccountUserAddress($accountUserAddress)
+                    ->setCustomerUserAddress($customerUserAddress)
                     ->setCountry($country)
                     ->setRegion($region)
                     ->setStreet('Street')
                     ->setCity('City'),
                 null,
-                $accountUserAddress
+                $customerUserAddress
             ],
             'do not override value from existing with empty one' => [
-                $accountUserAddress = (new CustomerUserAddress())
+                $customerUserAddress = (new CustomerUserAddress())
                     ->setCountry($country)
                     ->setRegion($region)
                     ->setStreet('Street')
                     ->setCity('City'),
                 (new QuoteAddress())
-                    ->setAccountUserAddress($accountUserAddress)
+                    ->setCustomerUserAddress($customerUserAddress)
                     ->setLabel('ExistingLabel')
                     ->setCountry($country)
                     ->setRegion($region)
                     ->setStreet('Street')
                     ->setCity('City'),
                 null,
-                $accountUserAddress,
+                $customerUserAddress,
                 (new QuoteAddress())
                     ->setLabel('ExistingLabel')
             ],
@@ -156,20 +156,20 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
 
     /**
      * @param Quote $quote
-     * @param array $accountAddresses
-     * @param array $accountUserAddresses
+     * @param array $customerAddresses
+     * @param array $customerUserAddresses
      * @param array $expected
      *
      * @dataProvider groupedAddressDataProvider
      */
     public function testGetGroupedAddresses(
         Quote $quote,
-        array $accountAddresses = [],
-        array $accountUserAddresses = [],
+        array $customerAddresses = [],
+        array $customerUserAddresses = [],
         array $expected = []
     ) {
-        $this->provider->expects($this->any())->method('getAccountAddresses')->willReturn($accountAddresses);
-        $this->provider->expects($this->any())->method('getAccountUserAddresses')->willReturn($accountUserAddresses);
+        $this->provider->expects($this->any())->method('getCustomerAddresses')->willReturn($customerAddresses);
+        $this->provider->expects($this->any())->method('getCustomerUserAddresses')->willReturn($customerUserAddresses);
 
         $this->manager->addEntity('au', 'Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress');
         $this->manager->addEntity('a', 'Oro\Bundle\CustomerBundle\Entity\CustomerAddress');
@@ -183,9 +183,9 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
     public function groupedAddressDataProvider()
     {
         return [
-            'empty account user' => [new Quote()],
-            'empty account' => [
-                (new Quote())->setAccountUser(new CustomerUser()),
+            'empty customer user' => [new Quote()],
+            'empty customer' => [
+                (new Quote())->setCustomerUser(new CustomerUser()),
                 [],
                 [
                     $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress', 1),
@@ -204,8 +204,8 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
                     ],
                 ],
             ],
-            'account' => [
-                (new Quote())->setAccountUser(new CustomerUser())->setAccount(new Customer()),
+            'customer' => [
+                (new Quote())->setCustomerUser(new CustomerUser())->setCustomer(new Customer()),
                 [
                     $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', 1),
                     $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', 2),
@@ -225,7 +225,7 @@ class QuoteAddressManagerTest extends AbstractAddressManagerTest
                 ],
             ],
             'full' => [
-                (new Quote())->setAccountUser(new CustomerUser())->setAccount(new Customer()),
+                (new Quote())->setCustomerUser(new CustomerUser())->setCustomer(new Customer()),
                 [
                     $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', 1),
                     $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerAddress', 2),
