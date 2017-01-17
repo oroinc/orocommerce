@@ -4,6 +4,7 @@ namespace Oro\Tests\Unit\Component\Action\Condition;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
+use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Component\Action\Condition\ExtendableCondition;
 use Oro\Component\Action\Exception\ExtendableEventNameMissingException;
@@ -21,6 +22,11 @@ class ExtendableConditionTest extends \PHPUnit_Framework_TestCase
     protected $flashBag;
 
     /**
+     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $translator;
+
+    /**
      * @var ExtendableCondition
      */
     protected $extendableCondition;
@@ -29,7 +35,12 @@ class ExtendableConditionTest extends \PHPUnit_Framework_TestCase
     {
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->flashBag = $this->createMock(FlashBag::class);
-        $this->extendableCondition = new ExtendableCondition($this->eventDispatcher, $this->flashBag);
+        $this->translator = $this->createMock(TranslatorInterface::class);
+        $this->extendableCondition = new ExtendableCondition(
+            $this->eventDispatcher,
+            $this->flashBag,
+            $this->translator
+        );
     }
 
     public function testIsConditionAllowedIsTrueIfNoEvents()
@@ -70,16 +81,13 @@ class ExtendableConditionTest extends \PHPUnit_Framework_TestCase
             );
     }
 
-    public function testIsConditionAllowedIsFalseIfEventHasErrors()
+    public function testIsConditionAllowedIsFalseIfEventHasErrorsWithDefaultOptions()
     {
         $this->expectsDispatchWithErrors(['events' => ['aaa']]);
-        $this->assertFalse($this->extendableCondition->isConditionAllowed([]));
-    }
 
-    public function testIsConditionAllowedNotShowErrorsWhenShowErrorsIsFalse()
-    {
-        $this->expectsDispatchWithErrors(['events' => ['aaa'], 'showErrors' => false]);
-
+        $this->translator
+            ->expects($this->never())
+            ->method('trans');
         $this->flashBag
             ->expects($this->never())
             ->method('add');
@@ -91,10 +99,15 @@ class ExtendableConditionTest extends \PHPUnit_Framework_TestCase
     {
         $this->expectsDispatchWithErrors(['events' => ['aaa'], 'showErrors' => true]);
 
+        $this->translator
+            ->expects($this->exactly(2))
+            ->method('trans')
+            ->withConsecutive(['First error'], ['Second error'])
+            ->willReturnOnConsecutiveCalls('Translated first error', 'Translated second error');
         $this->flashBag
             ->expects($this->exactly(2))
             ->method('add')
-            ->withConsecutive(['error', 'First error'], ['error', 'Second error']);
+            ->withConsecutive(['error', 'Translated first error'], ['error', 'Translated second error']);
 
         $this->assertFalse($this->extendableCondition->isConditionAllowed([]));
     }
@@ -103,10 +116,15 @@ class ExtendableConditionTest extends \PHPUnit_Framework_TestCase
     {
         $this->expectsDispatchWithErrors(['events' => ['aaa'], 'showErrors' => true, 'messageType' => 'info']);
 
+        $this->translator
+            ->expects($this->exactly(2))
+            ->method('trans')
+            ->withConsecutive(['First error'], ['Second error'])
+            ->willReturnOnConsecutiveCalls('Translated first error', 'Translated second error');
         $this->flashBag
             ->expects($this->exactly(2))
             ->method('add')
-            ->withConsecutive(['info', 'First error'], ['info', 'Second error']);
+            ->withConsecutive(['info', 'Translated first error'], ['info', 'Translated second error']);
 
         $this->assertFalse($this->extendableCondition->isConditionAllowed([]));
     }
