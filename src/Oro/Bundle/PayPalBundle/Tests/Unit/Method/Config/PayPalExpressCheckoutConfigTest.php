@@ -2,10 +2,6 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method\Config;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\IntegrationBundle\Entity\Transport;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config\AbstractPaymentConfigTestCase;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfig;
@@ -25,19 +21,13 @@ class PayPalExpressCheckoutConfigTest extends AbstractPaymentConfigTestCase
      */
     protected function getPaymentConfig()
     {
-        $label = (new LocalizedFallbackValue())->setString('test label');
-        $labels = new ArrayCollection();
-        $labels->add($label);
-
-        $short_label = (new LocalizedFallbackValue())->setString('test short label');
-        $short_labels = new ArrayCollection();
-        $short_labels->add($short_label);
-
         $bag = [
-            PayPalSettings::EXPRESS_CHECKOUT_LABELS_KEY =>$labels,
-            PayPalSettings::EXPRESS_CHECKOUT_SHORT_LABELS_KEY => $short_labels,
+            PayPalSettings::EXPRESS_CHECKOUT_LABELS_KEY =>'test label',
+            PayPalSettings::EXPRESS_CHECKOUT_SHORT_LABELS_KEY => 'test short label',
             PayPalSettings::EXPRESS_CHECKOUT_PAYMENT_ACTION_KEY => 'paypal_payments_pro_express_payment_action',
             PayPalSettings::TEST_MODE_KEY => true,
+            PayPalExpressCheckoutConfig::ADMIN_LABEL_KEY => 'test admin label',
+            PayPalExpressCheckoutConfig::PAYMENT_METHOD_IDENTIFIER_KEY => 'test_payment_method_identifier'
         ];
         $settingsBag = $this->createMock(ParameterBag::class);
         $settingsBag->expects(static::any())->method('get')->willReturnCallback(
@@ -47,20 +37,7 @@ class PayPalExpressCheckoutConfigTest extends AbstractPaymentConfigTestCase
             }
         );
 
-        $transport = $this->createMock(Transport::class);
-        $transport->expects(static::any())->method('getSettingsBag')->willReturn($settingsBag);
-
-        /** @var Channel $channel */
-        $channel = $this->getEntity(
-            Channel::class,
-            ['id' => 1, 'type' => 'paypal_payflow_gateway', 'transport' => $transport]
-        );
-
-        return new PayPalExpressCheckoutConfig(
-            $channel,
-            $this->encoder,
-            $this->localizationHelper
-        );
+        return new PayPalExpressCheckoutConfig($settingsBag);
     }
 
     public function testIsTestMode()

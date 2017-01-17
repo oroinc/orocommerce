@@ -4,8 +4,7 @@ namespace Oro\Bundle\PayPalBundle\Method\Config\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
-use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
+use Oro\Bundle\PayPalBundle\Method\Config\Builder\Factory\PayPalConfigFactoryInterface;
 use Psr\Log\LoggerInterface;
 
 abstract class AbstractPayPalConfigProvider
@@ -21,14 +20,9 @@ abstract class AbstractPayPalConfigProvider
     protected $doctrine;
 
     /**
-     * @var SymmetricCrypterInterface
+     * @var PayPalConfigFactoryInterface
      */
-    protected $encoder;
-
-    /**
-     * @var LocalizationHelper
-     */
-    protected $localizationHelper;
+    protected $factory;
 
     /**
      * @var LoggerInterface
@@ -42,22 +36,19 @@ abstract class AbstractPayPalConfigProvider
 
     /**
      * @param ManagerRegistry $doctrine
-     * @param SymmetricCrypterInterface $encoder
-     * @param LocalizationHelper $localizationHelper
      * @param LoggerInterface $logger
+     * @param PayPalConfigFactoryInterface $factory
      * @param string $type
      */
     public function __construct(
         ManagerRegistry $doctrine,
-        SymmetricCrypterInterface $encoder,
-        LocalizationHelper $localizationHelper,
         LoggerInterface $logger,
+        PayPalConfigFactoryInterface $factory,
         $type
     ) {
         $this->doctrine = $doctrine;
-        $this->encoder = $encoder;
-        $this->localizationHelper = $localizationHelper;
         $this->logger = $logger;
+        $this->factory = $factory;
         $this->type = $type;
     }
 

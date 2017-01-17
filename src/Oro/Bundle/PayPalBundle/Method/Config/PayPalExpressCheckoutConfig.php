@@ -10,36 +10,34 @@ use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 use Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentConfig;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
-class PayPalExpressCheckoutConfig extends AbstractPaymentConfig implements
-    PayPalExpressCheckoutConfigInterface
+class PayPalExpressCheckoutConfig implements PayPalExpressCheckoutConfigInterface
 {
     const TYPE = 'express_checkout';
+    const ADMIN_LABEL_KEY  = 'admin_label';
+    const PAYMENT_METHOD_IDENTIFIER_KEY = 'payment_method_identifier';
 
     /**
-     * @var SymmetricCrypterInterface
+     * @var ParameterBag
      */
-    protected $encoder;
+    protected $parameters;
 
     /**
-     * @var LocalizationHelper
+     * @param ParameterBag $parameters
      */
-    protected $localizationHelper;
+    public function __construct(ParameterBag $parameters)
+    {
+        $this->parameters = $parameters;
+    }
 
     /**
-     * @param Channel $channel
-     * @param SymmetricCrypterInterface $encoder
-     * @param LocalizationHelper $localizationHelper
+     * @param string $key
+     * @return mixed
      */
-    public function __construct(
-        Channel $channel,
-        SymmetricCrypterInterface $encoder,
-        LocalizationHelper $localizationHelper
-    ) {
-        parent::__construct($channel);
-
-        $this->encoder = $encoder;
-        $this->localizationHelper = $localizationHelper;
+    private function getConfigValue($key)
+    {
+        return $this->parameters->get($key);
     }
 
     /**
@@ -51,8 +49,7 @@ class PayPalExpressCheckoutConfig extends AbstractPaymentConfig implements
             Option\Partner::PARTNER => $this->getConfigValue(PayPalSettings::PARTNER_KEY),
             Option\Vendor::VENDOR => $this->getConfigValue(PayPalSettings::VENDOR_KEY),
             Option\User::USER => $this->getConfigValue(PayPalSettings::USER_KEY),
-            Option\Password::PASSWORD =>
-                $this->encoder->decryptData($this->getConfigValue(PayPalSettings::PASSWORD_KEY))
+            Option\Password::PASSWORD =>$this->getConfigValue(PayPalSettings::PASSWORD_KEY)
             ,
         ];
     }
@@ -78,8 +75,7 @@ class PayPalExpressCheckoutConfig extends AbstractPaymentConfig implements
      */
     public function getLabel()
     {
-        return (string)$this->localizationHelper
-            ->getLocalizedValue($this->getConfigValue(PayPalSettings::EXPRESS_CHECKOUT_LABELS_KEY));
+        return (string)$this->getConfigValue(PayPalSettings::EXPRESS_CHECKOUT_LABELS_KEY);
     }
 
     /**
@@ -87,19 +83,18 @@ class PayPalExpressCheckoutConfig extends AbstractPaymentConfig implements
      */
     public function getShortLabel()
     {
-        return (string)$this->localizationHelper
-            ->getLocalizedValue($this->getConfigValue(PayPalSettings::EXPRESS_CHECKOUT_SHORT_LABELS_KEY));
+        return (string)$this->getConfigValue(PayPalSettings::EXPRESS_CHECKOUT_SHORT_LABELS_KEY);
     }
 
     /** {@inheritdoc} */
     public function getAdminLabel()
     {
-        return sprintf('%s (Express Checkout)', $this->channel->getName());
+        return (string)$this->getConfigValue(self::ADMIN_LABEL_KEY);
     }
 
     /** {@inheritdoc} */
     public function getPaymentMethodIdentifier()
     {
-        return $this->channel->getType() . '_' . self::TYPE . '_' . $this->channel->getId();
+        return (string)$this->getConfigValue(self::PAYMENT_METHOD_IDENTIFIER_KEY);
     }
 }

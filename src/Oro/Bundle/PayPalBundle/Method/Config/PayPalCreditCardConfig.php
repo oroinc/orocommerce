@@ -2,41 +2,36 @@
 
 namespace Oro\Bundle\PayPalBundle\Method\Config;
 
-use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
-use Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentConfig;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
-use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
-class PayPalCreditCardConfig extends AbstractPaymentConfig implements PayPalCreditCardConfigInterface
+class PayPalCreditCardConfig implements PayPalCreditCardConfigInterface
 {
     const TYPE = 'credit_card';
+    const ADMIN_LABEL_KEY  = 'admin_label';
+    const PAYMENT_METHOD_IDENTIFIER_KEY = 'payment_method_identifier';
+    
+    /**
+     * @var ParameterBag
+     */
+    protected $parameters;
 
     /**
-     * @var SymmetricCrypterInterface
+     * @param ParameterBag $parameters
      */
-    protected $encoder;
+    public function __construct(ParameterBag $parameters)
+    {
+        $this->parameters = $parameters;
+    }
 
     /**
-     * @var LocalizationHelper
+     * @param string $key
+     * @return mixed
      */
-    protected $localizationHelper;
-
-    /**
-     * @param Channel $channel
-     * @param SymmetricCrypterInterface $encoder
-     * @param LocalizationHelper $localizationHelper
-     */
-    public function __construct(
-        Channel $channel,
-        SymmetricCrypterInterface $encoder,
-        LocalizationHelper $localizationHelper
-    ) {
-        parent::__construct($channel);
-
-        $this->encoder = $encoder;
-        $this->localizationHelper = $localizationHelper;
+    private function getConfigValue($key)
+    {
+        return $this->parameters->get($key);
     }
 
     /**
@@ -47,9 +42,7 @@ class PayPalCreditCardConfig extends AbstractPaymentConfig implements PayPalCred
         return [
             Option\Vendor::VENDOR => $this->getConfigValue(PayPalSettings::VENDOR_KEY),
             Option\User::USER => $this->getConfigValue(PayPalSettings::USER_KEY),
-            Option\Password::PASSWORD =>
-                $this->encoder->decryptData($this->getConfigValue(PayPalSettings::PASSWORD_KEY))
-            ,
+            Option\Password::PASSWORD =>$this->getConfigValue(PayPalSettings::PASSWORD_KEY),
             Option\Partner::PARTNER => $this->getConfigValue(PayPalSettings::PARTNER_KEY),
         ];
     }
@@ -91,8 +84,7 @@ class PayPalCreditCardConfig extends AbstractPaymentConfig implements PayPalCred
      */
     public function getLabel()
     {
-        return (string)$this->localizationHelper
-            ->getLocalizedValue($this->getConfigValue(PayPalSettings::CREDIT_CARD_LABELS_KEY));
+        return (string)$this->getConfigValue(PayPalSettings::CREDIT_CARD_LABELS_KEY);
     }
 
     /**
@@ -100,20 +92,19 @@ class PayPalCreditCardConfig extends AbstractPaymentConfig implements PayPalCred
      */
     public function getShortLabel()
     {
-        return (string)$this->localizationHelper
-            ->getLocalizedValue($this->getConfigValue(PayPalSettings::CREDIT_CARD_SHORT_LABELS_KEY));
+        return (string)$this->getConfigValue(PayPalSettings::CREDIT_CARD_SHORT_LABELS_KEY);
     }
 
     /** {@inheritdoc} */
     public function getAdminLabel()
     {
-        return sprintf('%s (Credit Card)', $this->channel->getName());
+        return (string)$this->getConfigValue(self::ADMIN_LABEL_KEY);
     }
 
     /** {@inheritdoc} */
     public function getPaymentMethodIdentifier()
     {
-        return $this->channel->getType() . '_' . self::TYPE . '_' . $this->channel->getId();
+        return (string)$this->getConfigValue(self::PAYMENT_METHOD_IDENTIFIER_KEY);
     }
 
     /**

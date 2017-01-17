@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PayPalBundle\Method\Config\Provider;
 
-use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfig;
+use Oro\Bundle\PayPalBundle\Method\Config\Builder\PayPalExpressCheckoutConfigBuilder;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
 
 class PayPalExpressCheckoutConfigProvider extends AbstractPayPalConfigProvider implements
@@ -43,9 +43,10 @@ class PayPalExpressCheckoutConfigProvider extends AbstractPayPalConfigProvider i
     protected function fillConfigs()
     {
         $channels = $this->getEnabledIntegrationChannels();
-
+        /** @var PayPalExpressCheckoutConfigBuilder $builder */
+        $builder = $this->factory->createPayPalConfigBuilder();
         foreach ($channels as $channel) {
-            $config = new PayPalExpressCheckoutConfig($channel, $this->encoder, $this->localizationHelper);
+            $config = $builder->setChannel($channel)->getResult();
             $this->configs[$config->getPaymentMethodIdentifier()] = $config;
         }
     }

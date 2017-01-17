@@ -1,33 +1,51 @@
+parameters:
+    oro_paypal.method.type.paypal_payments_pro: 'paypal_payments_pro'
+    oro_paypal.method.type.paypal_payflow_gateway: 'paypal_payflow_gateway'
+
 services:
     oro_paypal.method.config.provider:
         abstract: true
         public: false
         arguments:
             - '@doctrine'
-            - '@oro_security.encoder.mcrypt'
-            - '@oro_locale.helper.localization'
             - '@logger'
 
     oro_paypal.method.config.provider.payments_pro_credit_card:
         class: 'Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalCreditCardConfigProvider'
         parent: oro_paypal.method.config.provider
         arguments:
-            - 'paypal_payments_pro'
+            - '@oro_paypal.method.config.factory.credit_card'
+            - '%oro_paypal.method.type.paypal_payments_pro%'
 
     oro_paypal.method.config.provider.payments_pro_express_checkout:
         class: 'Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalExpressCheckoutConfigProvider'
         parent: oro_paypal.method.config.provider
         arguments:
-            - 'paypal_payments_pro'
+            - '@oro_paypal.method.config.factory.express_checkout'
+            - '%oro_paypal.method.type.paypal_payments_pro%'
 
     oro_paypal.method.config.provider.payflow_gateway_credit_card:
         class: 'Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalCreditCardConfigProvider'
         parent: oro_paypal.method.config.provider
         arguments:
-            - 'paypal_payflow_gateway'
+            - '@oro_paypal.method.config.factory.credit_card'
+            - '%oro_paypal.method.type.paypal_payflow_gateway%'
 
     oro_paypal.method.config.provider.payflow_gateway_express_checkout:
         class: 'Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalExpressCheckoutConfigProvider'
         parent: oro_paypal.method.config.provider
         arguments:
-            - 'paypal_payflow_gateway'
+            - '@oro_paypal.method.config.factory.express_checkout'
+            - '%oro_paypal.method.type.paypal_payflow_gateway%'
+
+    oro_paypal.method.config.factory.credit_card:
+        class: 'Oro\Bundle\PayPalBundle\Method\Config\Builder\Factory\PayPalCreditCardConfigFactory'
+        arguments:
+            - '@oro_security.encoder.mcrypt'
+            - '@oro_locale.helper.localization'
+
+    oro_paypal.method.config.factory.express_checkout:
+        class: 'Oro\Bundle\PayPalBundle\Method\Config\Builder\Factory\PayPalExpressCheckoutConfigFactory'
+        arguments:
+            - '@oro_security.encoder.mcrypt'
+            - '@oro_locale.helper.localization'

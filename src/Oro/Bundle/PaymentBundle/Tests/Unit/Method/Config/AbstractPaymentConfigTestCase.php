@@ -18,22 +18,10 @@ abstract class AbstractPaymentConfigTestCase extends \PHPUnit_Framework_TestCase
     protected $config;
 
     /**
-     * @var SymmetricCrypterInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $encoder;
-
-    /**
-     * @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $localizationHelper;
-
-    /**
      * {@inheritdoc}
      */
     protected function setUp()
     {
-        $this->encoder = $this->createMock(SymmetricCrypterInterface::class);
-        $this->localizationHelper = $this->createMock(LocalizationHelper::class);
         $this->config = $this->getPaymentConfig();
     }
 
@@ -44,27 +32,24 @@ abstract class AbstractPaymentConfigTestCase extends \PHPUnit_Framework_TestCase
 
     public function testGetLabel()
     {
-        $returnValue = 'test label';
-        $label = (new LocalizedFallbackValue())->setString($returnValue);
-        $labels = new ArrayCollection();
-        $labels->add($label);
-        $this->localizationHelper->expects(static::once())
-            ->method('getLocalizedValue')
-            ->with($labels)
-            ->willReturn($returnValue);
-        $this->assertSame($returnValue, $this->config->getLabel());
+        $this->assertSame('test label', $this->config->getLabel());
     }
 
     public function testGetShortLabel()
     {
-        $returnValue = 'test short label';
-        $label = (new LocalizedFallbackValue())->setString($returnValue);
-        $labels = new ArrayCollection();
-        $labels->add($label);
-        $this->localizationHelper->expects(static::once())
-            ->method('getLocalizedValue')
-            ->with($labels)
-            ->willReturn($returnValue);
-        $this->assertSame($returnValue, $this->config->getShortLabel());
+
+        $this->assertSame('test short label', $this->config->getShortLabel());
+    }
+
+    public function testGetAdminLabel()
+    {
+
+        $this->assertSame('test admin label', $this->config->getAdminLabel());
+    }
+
+    public function testGetPaymentMethodIdentifier()
+    {
+
+        $this->assertSame('test_payment_method_identifier', $this->config->getPaymentMethodIdentifier());
     }
 }

@@ -2,11 +2,8 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method\Config;
 
-use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config\AbstractPaymentConfigTestCase;
-use Oro\Bundle\PayPalBundle\DependencyInjection\OroPayPalExtension;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
-use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -81,13 +78,5 @@ abstract class AbstractPayPalCreditCardConfigTest extends AbstractPaymentConfigT
     public function testIsRequireCvvEntryEnabled()
     {
         $this->assertTrue($this->config->isRequireCvvEntryEnabled());
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getExtensionAlias()
-    {
-        return OroPayPalExtension::ALIAS;
     }
 }

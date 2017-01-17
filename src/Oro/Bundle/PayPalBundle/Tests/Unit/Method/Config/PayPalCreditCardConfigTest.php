@@ -2,10 +2,6 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method\Config;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\IntegrationBundle\Entity\Transport;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfig;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -20,17 +16,9 @@ class PayPalCreditCardConfigTest extends AbstractPayPalCreditCardConfigTest
      */
     protected function getPaymentConfig()
     {
-        $label = (new LocalizedFallbackValue())->setString('test label');
-        $labels = new ArrayCollection();
-        $labels->add($label);
-
-        $short_label = (new LocalizedFallbackValue())->setString('test short label');
-        $short_labels = new ArrayCollection();
-        $short_labels->add($short_label);
-
         $bag = [
-            PayPalSettings::CREDIT_CARD_LABELS_KEY => $labels,
-            PayPalSettings::CREDIT_CARD_SHORT_LABELS_KEY => $short_labels,
+            PayPalSettings::CREDIT_CARD_LABELS_KEY => 'test label',
+            PayPalSettings::CREDIT_CARD_SHORT_LABELS_KEY => 'test short label',
             PayPalSettings::PROXY_PORT_KEY => '8099',
             PayPalSettings::PROXY_HOST_KEY => 'proxy host',
             PayPalSettings::USE_PROXY_KEY => true,
@@ -46,6 +34,8 @@ class PayPalCreditCardConfigTest extends AbstractPayPalCreditCardConfigTest
             PayPalSettings::USER_KEY => 'string',
             PayPalSettings::PASSWORD_KEY => 'string',
             PayPalSettings::PARTNER_KEY => 'string',
+            PayPalCreditCardConfig::ADMIN_LABEL_KEY => 'test admin label',
+            PayPalCreditCardConfig::PAYMENT_METHOD_IDENTIFIER_KEY => 'test_payment_method_identifier'
         ];
         $settingsBag = $this->createMock(ParameterBag::class);
         $settingsBag->expects(static::any())->method('get')->willReturnCallback(
@@ -55,19 +45,6 @@ class PayPalCreditCardConfigTest extends AbstractPayPalCreditCardConfigTest
             }
         );
 
-        $transport = $this->createMock(Transport::class);
-        $transport->expects(static::any())->method('getSettingsBag')->willReturn($settingsBag);
-
-        /** @var Channel $channel */
-        $channel = $this->getEntity(
-            Channel::class,
-            ['id' => 1, 'type' => 'paypal_payflow_gateway', 'transport' => $transport]
-        );
-
-        return new PayPalCreditCardConfig(
-            $channel,
-            $this->encoder,
-            $this->localizationHelper
-        );
+        return new PayPalCreditCardConfig($settingsBag);
     }
 }

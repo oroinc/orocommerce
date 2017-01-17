@@ -8,7 +8,7 @@ interface PaymentMethodViewProviderInterface
      * @param array $paymentMethods
      * @return PaymentMethodViewInterface[]
      */
-    public function getPaymentMethodViews(array $paymentMethods);
+    public function getPaymentMethodViews($paymentMethods);
 
     /**
      * @param string $name

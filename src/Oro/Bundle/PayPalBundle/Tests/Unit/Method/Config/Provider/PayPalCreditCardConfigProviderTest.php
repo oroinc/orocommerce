@@ -6,10 +6,10 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\PayPalBundle\Method\Config\Builder\Factory\PayPalCreditCardConfigFactory;
+use Oro\Bundle\PayPalBundle\Method\Config\Builder\PayPalCreditCardConfigBuilder;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfig;
 use Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalCreditCardConfigProvider;
-use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
 
@@ -23,19 +23,14 @@ class PayPalCreditCardConfigProviderTest extends \PHPUnit_Framework_TestCase
     protected $doctrine;
 
     /**
-     * @var SymmetricCrypterInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $encoder;
-
-    /**
-     * @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $localizationHelper;
-
-    /**
      * @var string
      */
     protected $type;
+
+    /**
+     * @var Channel[]
+     */
+    protected $channels;
 
     /**
      * @var PayPalCreditCardConfigProvider
@@ -45,28 +40,51 @@ class PayPalCreditCardConfigProviderTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->type = 'paypal_payments_pro';
+
+        $this->channels = [];
+        $this->channels[] = $this->getEntity(Channel::class, ['id' => 1, 'type' => 'paypal_payflow_gateway']);
+        $this->channels[] = $this->getEntity(Channel::class, ['id' => 2, 'type' => 'paypal_payments_pro']);
+
+        $config = $this->createMock(PayPalCreditCardConfig::class);
+        $config->expects(static::at(0))
+            ->method('getPaymentMethodIdentifier')
+            ->willReturn('paypal_payflow_gateway_credit_card_1');
+        $config->expects(static::at(1))
+            ->method('getPaymentMethodIdentifier')
+            ->willReturn('paypal_payments_pro_credit_card_2');
+
         $this->doctrine = $this->createMock(ManagerRegistry::class);
-        $this->encoder = $this->createMock(SymmetricCrypterInterface::class);
-        $this->localizationHelper = $this->createMock(LocalizationHelper::class);
+
+        $builder = $this->createMock(PayPalCreditCardConfigBuilder::class);
+        $builder->expects(static::exactly(2))
+            ->method('setChannel')
+            ->willReturnSelf();
+
+        $builder->expects(static::exactly(2))
+            ->method('getResult')
+            ->willReturn($config);
+        
+        /** @var PayPalCreditCardConfigFactory|\PHPUnit_Framework_MockObject_MockObject $factory */
+        $factory = $this->createMock(PayPalCreditCardConfigFactory::class);
+        $factory->expects(static::once())
+            ->method('createPayPalConfigBuilder')
+            ->willReturn($builder);
+        
+        /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject $logger */
         $logger = $this->createMock(LoggerInterface::class);
 
         $this->payPalConfigProvider = new PayPalCreditCardConfigProvider(
             $this->doctrine,
-            $this->encoder,
-            $this->localizationHelper,
             $logger,
+            $factory,
             $this->type
         );
     }
 
     public function testGetPaymentConfigs()
     {
-        $channels = [];
-        $channels[] = $this->getEntity(Channel::class, ['id' => 1, 'type' => 'paypal_payflow_gateway']);
-        $channels[] = $this->getEntity(Channel::class, ['id' => 2, 'type' => 'paypal_payments_pro']);
-
         $objectRepository = $this->createMock(ObjectRepository::class);
-        $objectRepository->expects(static::once())->method('findBy')->willReturn($channels);
+        $objectRepository->expects(static::once())->method('findBy')->willReturn($this->channels);
 
         $objectManager = $this->createMock(ObjectManager::class);
         $objectManager->expects(static::once())->method('getRepository')->willReturn($objectRepository);
@@ -80,12 +98,8 @@ class PayPalCreditCardConfigProviderTest extends \PHPUnit_Framework_TestCase
     {
         $identifier = 'paypal_payflow_gateway_credit_card_1';
 
-        $channels = [];
-        $channels[] = $this->getEntity(Channel::class, ['id' => 1, 'type' => 'paypal_payflow_gateway']);
-        $channels[] = $this->getEntity(Channel::class, ['id' => 2, 'type' => 'paypal_payments_pro']);
-
         $objectRepository = $this->createMock(ObjectRepository::class);
-        $objectRepository->expects(static::once())->method('findBy')->willReturn($channels);
+        $objectRepository->expects(static::once())->method('findBy')->willReturn($this->channels);
 
         $objectManager = $this->createMock(ObjectManager::class);
         $objectManager->expects(static::once())->method('getRepository')->willReturn($objectRepository);
@@ -102,12 +116,8 @@ class PayPalCreditCardConfigProviderTest extends \PHPUnit_Framework_TestCase
     {
         $identifier = 'paypal_payments_pro_credit_card_2';
 
-        $channels = [];
-        $channels[] = $this->getEntity(Channel::class, ['id' => 1, 'type' => 'paypal_payflow_gateway']);
-        $channels[] = $this->getEntity(Channel::class, ['id' => 2, 'type' => 'paypal_payments_pro']);
-
         $objectRepository = $this->createMock(ObjectRepository::class);
-        $objectRepository->expects(static::once())->method('findBy')->willReturn($channels);
+        $objectRepository->expects(static::once())->method('findBy')->willReturn($this->channels);
 
         $objectManager = $this->createMock(ObjectManager::class);
         $objectManager->expects(static::once())->method('getRepository')->willReturn($objectRepository);
