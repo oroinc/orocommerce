@@ -53,6 +53,7 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_payment.provider.extract_options'
             - '@oro_payment.provider.surcharge'
+            - '@property_accessor'
         tags:
             - { name: oro_payment.payment_method }
 
@@ -66,6 +67,7 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_payment.provider.extract_options'
             - '@oro_payment.provider.surcharge'
+            - '@property_accessor'
         tags:
             - { name: oro_payment.payment_method }
 
