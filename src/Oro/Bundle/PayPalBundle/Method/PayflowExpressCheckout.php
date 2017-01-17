@@ -132,7 +132,6 @@ class PayflowExpressCheckout implements PaymentMethodInterface
     {
         $options = array_merge(
             $this->getCredentials(),
-            $this->getAdditionalOptions(),
             $this->getSetExpressCheckoutOptions($paymentTransaction),
             $this->getShippingAddressOptions($paymentTransaction)
         );
@@ -194,6 +193,7 @@ class PayflowExpressCheckout implements PaymentMethodInterface
     {
         $options = array_merge(
             $paymentTransaction->getRequest(),
+            $this->getAdditionalOptions(),
             [Option\Transaction::TRXTYPE => Option\Transaction::AUTHORIZATION]
         );
 
@@ -208,6 +208,7 @@ class PayflowExpressCheckout implements PaymentMethodInterface
     {
         $options = array_merge(
             $paymentTransaction->getRequest(),
+            $this->getAdditionalOptions(),
             [Option\Transaction::TRXTYPE => Option\Transaction::SALE]
         );
 

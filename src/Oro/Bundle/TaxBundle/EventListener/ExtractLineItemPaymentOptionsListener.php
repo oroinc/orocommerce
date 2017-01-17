@@ -42,7 +42,7 @@ class ExtractLineItemPaymentOptionsListener
             return;
         }
 
-        if ((float)$taxAmount === 0.) {
+        if (abs((float)$taxAmount) <= 1e-6) {
             return;
         }
 
