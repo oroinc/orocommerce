@@ -42,7 +42,7 @@ class ExtractLineItemPaymentOptionsListener
             return;
         }
 
-        if ($taxAmount === 0) {
+        if ((float)$taxAmount === 0.) {
             return;
         }
 

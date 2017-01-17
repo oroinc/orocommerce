@@ -17,6 +17,8 @@ use Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\PayflowExpressCheckout;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
+use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Routing\RouterInterface;
 
 /**
@@ -54,6 +56,9 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
     /** @var SurchargeProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $surchargeProvider;
 
+    /** @var PropertyAccessor */
+    protected $propertyAccessor;
+
     protected function setUp()
     {
         $this->gateway = $this->getMockBuilder(Gateway::class)->disableOriginalConstructor()->getMock();
@@ -69,13 +74,16 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
+
         $this->expressCheckout = new PayflowExpressCheckout(
             $this->gateway,
             $this->paymentConfig,
             $this->router,
             $this->doctrineHelper,
             $this->optionsProvider,
-            $this->surchargeProvider
+            $this->surchargeProvider,
+            $this->propertyAccessor
         );
     }
 
@@ -214,6 +222,7 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
 
         $requestData = array_merge(
             $this->getCredentials(),
+            $this->getAdditionalOptions(),
             $this->getExpressCheckoutOptions(),
             $this->getShippingAddressOptions(),
             $this->getLineItemOptions(),
@@ -302,6 +311,7 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
 
         $requestData = array_merge(
             $this->getCredentials(),
+            $this->getAdditionalOptions(),
             $this->getExpressCheckoutOptions(),
             $this->getLineItemOptions(),
             $this->getSurchargeOptions()
@@ -480,6 +490,7 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
                 'entity' => new \stdClass(),
                 'requestData' => array_merge(
                     $this->getCredentials(),
+                    $this->getAdditionalOptions(),
                     $this->getExpressCheckoutOptions(),
                     $this->getShippingAddressOptions(),
                     $this->getSurchargeOptions()
@@ -491,6 +502,7 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
                 'entity' => $this->getEntity(),
                 'requestData' => array_merge(
                     $this->getCredentials(),
+                    $this->getAdditionalOptions(),
                     $this->getExpressCheckoutOptions(),
                     $this->getShippingAddressOptions(),
                     $this->getSurchargeOptions(),
@@ -512,7 +524,7 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
             'PAYERID' => 'payerIdTest',
         ];
 
-        $transactionRequest = array_merge($transactionRequest, $this->getCredentials());
+        $transactionRequest = array_merge($transactionRequest, $this->getCredentials(), $this->getAdditionalOptions());
 
         $transaction = $this->createTransaction(PaymentMethodInterface::AUTHORIZE);
 
@@ -603,6 +615,7 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
 
         $requestOptions = array_merge(
             $this->getCredentials(),
+            $this->getAdditionalOptions(),
             [
                 'AMT' => 10,
                 'TOKEN' => self::TOKEN,
@@ -650,6 +663,7 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
 
         $requestOptions = array_merge(
             $this->getCredentials(),
+            $this->getAdditionalOptions(),
             $this->getDelayedCaptureOptions()
         );
 
@@ -826,5 +840,15 @@ class PayflowExpressCheckoutTest extends \PHPUnit_Framework_TestCase
         $this->paymentConfig->expects($this->once())
             ->method('getCredentials')
             ->willReturn($this->getCredentials());
+    }
+
+    /**
+     * @return array
+     */
+    protected function getAdditionalOptions()
+    {
+        return [
+            'BUTTONSOURCE' => 'OroCommerce_SP'
+        ];
     }
 }

@@ -27,6 +27,9 @@ class PayflowExpressCheckout implements PaymentMethodInterface
 
     const COMPLETE = 'complete';
 
+    // PayPal BN code
+    const BUTTON_SOURCE = 'OroCommerce_SP';
+
     const PILOT_REDIRECT_URL = 'https://www.sandbox.paypal.com/webscr?cmd=_express-checkout&useraction=commit&token=%s';
     const PRODUCTION_REDIRECT_URL = 'https://www.paypal.com/webscr?cmd=_express-checkout&useraction=commit&token=%s';
 
@@ -58,6 +61,7 @@ class PayflowExpressCheckout implements PaymentMethodInterface
      * @param DoctrineHelper $doctrineHelper
      * @param ExtractOptionsProvider $optionsProvider
      * @param SurchargeProvider $surchargeProvider
+     * @param PropertyAccessor $propertyAccessor
      */
     public function __construct(
         Gateway $gateway,
@@ -65,7 +69,8 @@ class PayflowExpressCheckout implements PaymentMethodInterface
         RouterInterface $router,
         DoctrineHelper $doctrineHelper,
         ExtractOptionsProvider $optionsProvider,
-        SurchargeProvider $surchargeProvider
+        SurchargeProvider $surchargeProvider,
+        PropertyAccessor $propertyAccessor
     ) {
         $this->gateway = $gateway;
         $this->config = $config;
@@ -73,6 +78,7 @@ class PayflowExpressCheckout implements PaymentMethodInterface
         $this->doctrineHelper = $doctrineHelper;
         $this->optionsProvider = $optionsProvider;
         $this->surchargeProvider = $surchargeProvider;
+        $this->propertyAccessor = $propertyAccessor;
     }
 
     /**
@@ -124,12 +130,14 @@ class PayflowExpressCheckout implements PaymentMethodInterface
      */
     protected function purchase(PaymentTransaction $paymentTransaction)
     {
-        $paymentTransaction->setRequest(array_merge(
+        $options = array_merge(
             $this->getCredentials(),
+            $this->getAdditionalOptions(),
             $this->getSetExpressCheckoutOptions($paymentTransaction),
             $this->getShippingAddressOptions($paymentTransaction)
-        ));
+        );
 
+        $paymentTransaction->setRequest($options);
         $paymentTransaction->setAction($this->config->getPurchaseAction());
 
         $this->execute($paymentTransaction->getAction(), $paymentTransaction);
@@ -148,11 +156,13 @@ class PayflowExpressCheckout implements PaymentMethodInterface
      */
     protected function complete(PaymentTransaction $paymentTransaction)
     {
-        $paymentTransaction->setRequest(array_merge(
+        $options = array_merge(
             $this->getCredentials(),
+            $this->getAdditionalOptions(),
             $this->getDoExpressCheckoutOptions($paymentTransaction)
-        ));
+        );
 
+        $paymentTransaction->setRequest($options);
         $response = $this->actionRequest($paymentTransaction, ECOption\Action::DO_EC);
 
         $data = $response->getData();
@@ -182,10 +192,12 @@ class PayflowExpressCheckout implements PaymentMethodInterface
      */
     protected function authorize(PaymentTransaction $paymentTransaction)
     {
-        $paymentTransaction->setRequest(array_merge(
+        $options = array_merge(
             $paymentTransaction->getRequest(),
             [Option\Transaction::TRXTYPE => Option\Transaction::AUTHORIZATION]
-        ));
+        );
+
+        $paymentTransaction->setRequest($options);
         $this->setExpressCheckoutRequest($paymentTransaction);
     }
 
@@ -194,10 +206,12 @@ class PayflowExpressCheckout implements PaymentMethodInterface
      */
     protected function charge(PaymentTransaction $paymentTransaction)
     {
-        $paymentTransaction->setRequest(array_merge(
+        $options = array_merge(
             $paymentTransaction->getRequest(),
             [Option\Transaction::TRXTYPE => Option\Transaction::SALE]
-        ));
+        );
+
+        $paymentTransaction->setRequest($options);
         $this->setExpressCheckoutRequest($paymentTransaction);
     }
 
@@ -218,6 +232,7 @@ class PayflowExpressCheckout implements PaymentMethodInterface
 
         $options = array_merge(
             $this->getCredentials(),
+            $this->getAdditionalOptions(),
             $this->getDelayedCaptureOptions($paymentTransaction)
         );
 
@@ -477,10 +492,6 @@ class PayflowExpressCheckout implements PaymentMethodInterface
      */
     protected function getPropertyAccessor()
     {
-        if (!$this->propertyAccessor) {
-            $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
-        }
-
         return $this->propertyAccessor;
     }
 
@@ -495,5 +506,15 @@ class PayflowExpressCheckout implements PaymentMethodInterface
                 Option\Tender::TENDER => Option\Tender::PAYPAL,
             ]
         );
+    }
+
+    /**
+     * @return array
+     */
+    protected function getAdditionalOptions()
+    {
+        return [
+            Option\ButtonSource::BUTTONSOURCE => self::BUTTON_SOURCE
+        ];
     }
 }
