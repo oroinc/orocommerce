@@ -399,7 +399,7 @@ class OroAccountBundleStage2 implements
                     $schema->getTable('oro_customer_user'),
                     ['customeruser_id'],
                     ['id'],
-                    ['onDelete' => 'SET NULL', 'onUpdate' => null]
+                    ['onDelete' => 'CASCADE', 'onUpdate' => null]
                 );
         }
 
@@ -411,7 +411,7 @@ class OroAccountBundleStage2 implements
                     $schema->getTable('oro_customer_user'),
                     ['customeruser_id'],
                     ['id'],
-                    ['onDelete' => 'SET NULL', 'onUpdate' => null]
+                    ['onDelete' => 'CASCADE', 'onUpdate' => null]
                 );
         }
     }
@@ -476,7 +476,7 @@ class OroAccountBundleStage2 implements
     {
         $foreignKeys = $table->getForeignKeys();
         foreach ($foreignKeys as $key) {
-            if ($key->getLocalColumns() === [$columnName]) {
+            if ($key->getLocalColumns() == [$columnName]) {
                 return true;
             }
         }
