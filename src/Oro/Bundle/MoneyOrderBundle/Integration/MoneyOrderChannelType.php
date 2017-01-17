@@ -21,6 +21,6 @@ class MoneyOrderChannelType implements ChannelInterface, IconAwareIntegrationInt
      */
     public function getIcon()
     {
-        return '';
+        return 'bundles/oromoneyorder/img/money-order-icon.png';
     }
 }
