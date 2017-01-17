@@ -918,7 +918,7 @@ class OroAccountBundle implements
             $table->removeForeignKey($fk);
             $extension->renameColumn($schema, $queries, $table, 'accountuser_id', 'customeruser_id');
         }
-        if ($schema->hasTable('oro_rel_46a29d19a6adb604aeb863') && $schema->getTable('oro_rel_c3990ba6a6adb604193652')
+        if ($schema->hasTable('oro_rel_c3990ba6a6adb604193652') && $schema->getTable('oro_rel_c3990ba6a6adb604193652')
             ->hasColumn('accountuser_id')
         ) {
             $table = $schema->getTable('oro_rel_c3990ba6a6adb604193652');

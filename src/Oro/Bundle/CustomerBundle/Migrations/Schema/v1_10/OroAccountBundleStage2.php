@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CustomerBundle\Migrations\Schema\v1_10;
 
 use Doctrine\DBAL\Schema\Schema;
+use Doctrine\DBAL\Schema\Table;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
@@ -96,7 +97,9 @@ class OroAccountBundleStage2 implements
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
 
-        if ($schema->hasTable("oro_rel_6f8f552a9df6f4d81e2432")) {
+        if ($schema->hasTable("oro_rel_6f8f552a9df6f4d81e2432") &&
+            !$this->fkExists($schema->getTable("oro_rel_6f8f552a9df6f4d81e2432"), 'customeruserrole_id')
+        ) {
             $table = $schema->getTable("oro_rel_6f8f552a9df6f4d81e2432");
             $table->addForeignKeyConstraint(
                 $schema->getTable('oro_customer_user_role'),
@@ -388,7 +391,9 @@ class OroAccountBundleStage2 implements
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
 
-        if ($schema->hasTable('oro_rel_46a29d19a6adb604aeb863')) {
+        if ($schema->hasTable('oro_rel_46a29d19a6adb604aeb863') &&
+            !$this->fkExists($schema->getTable("oro_rel_46a29d19a6adb604aeb863"), 'customeruser_id')
+        ) {
             $schema->getTable('oro_rel_46a29d19a6adb604aeb863')
                 ->addForeignKeyConstraint(
                     $schema->getTable('oro_customer_user'),
@@ -398,7 +403,9 @@ class OroAccountBundleStage2 implements
                 );
         }
 
-        if ($schema->hasTable('oro_rel_c3990ba6a6adb604193652')) {
+        if ($schema->hasTable('oro_rel_c3990ba6a6adb604193652') &&
+            !$this->fkExists($schema->getTable("oro_rel_c3990ba6a6adb604193652"), 'customeruser_id')
+        ) {
             $schema->getTable('oro_rel_c3990ba6a6adb604193652')
                 ->addForeignKeyConstraint(
                     $schema->getTable('oro_customer_user'),
@@ -457,5 +464,23 @@ class OroAccountBundleStage2 implements
     public function getOrder()
     {
         return 2;
+    }
+
+    /**
+     * @param Table $table
+     * @param $columnName
+     *
+     * @return bool
+     */
+    protected function fkExists(Table $table, $columnName)
+    {
+        $foreignKeys = $table->getForeignKeys();
+        foreach ($foreignKeys as $key) {
+            if ($key->getLocalColumns() === [$columnName]) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
