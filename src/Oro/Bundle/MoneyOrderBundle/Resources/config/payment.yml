@@ -2,6 +2,8 @@ services:
     oro_money_order.payment_method_provider.money_order:
         class: 'Oro\Bundle\MoneyOrderBundle\Method\MoneyOrderMethodProvider'
         public: false
+        arguments:
+            - '@oro_money_order.payment_method.config.provider'
         tags:
             - { name: oro_payment.payment_method_provider }
 
