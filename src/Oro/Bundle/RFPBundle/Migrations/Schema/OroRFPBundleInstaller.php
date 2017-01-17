@@ -8,8 +8,11 @@ use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\RFPBundle\Migrations\Data\ORM\LoadRequestCustomerStatuses;
+use Oro\Bundle\RFPBundle\Migrations\Data\ORM\LoadRequestInternalStatuses;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -124,7 +127,16 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
         $table->addColumn('deleted_at', 'datetime', ['notnull' => false, 'comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
 
-        $this->extendExtension->addEnumField(
+        self::addOroRfpRequestEnumField($this->extendExtension, $schema);
+    }
+
+    /**
+     * @param ExtendExtension $extendExtension
+     * @param Schema $schema
+     */
+    public static function addOroRfpRequestEnumField(ExtendExtension $extendExtension, Schema $schema)
+    {
+        $customerStatusEnumTable = $extendExtension->addEnumField(
             $schema,
             'oro_rfp_request',
             'customer_status',
@@ -134,7 +146,16 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
             ['dataaudit' => ['auditable' => true]]
         );
 
-        $this->extendExtension->addEnumField(
+        $customerStatusOptions = new OroOptions();
+        $customerStatusOptions->set(
+            'enum',
+            'immutable_codes',
+            LoadRequestCustomerStatuses::getDataKeys()
+        );
+
+        $customerStatusEnumTable->addOption(OroOptions::KEY, $customerStatusOptions);
+
+        $internalStatusEnumTable = $extendExtension->addEnumField(
             $schema,
             'oro_rfp_request',
             'internal_status',
@@ -143,6 +164,15 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
             false,
             ['dataaudit' => ['auditable' => true]]
         );
+
+        $internalStatusOptions = new OroOptions();
+        $internalStatusOptions->set(
+            'enum',
+            'immutable_codes',
+            LoadRequestInternalStatuses::getDataKeys()
+        );
+
+        $internalStatusEnumTable->addOption(OroOptions::KEY, $internalStatusOptions);
     }
 
     /**

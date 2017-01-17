@@ -14,6 +14,7 @@ use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\RFPBundle\Migrations\Schema\OroRFPBundleInstaller;
 use Oro\Bundle\TranslationBundle\Migration\DeleteTranslationKeysQuery;
 
 class OroRFPBundle implements
@@ -85,25 +86,7 @@ class OroRFPBundle implements
      */
     protected function updateOroRfpRequestTable(Schema $schema)
     {
-        $this->extendExtension->addEnumField(
-            $schema,
-            'oro_rfp_request',
-            'customer_status',
-            'rfp_customer_status',
-            false,
-            false,
-            ['dataaudit' => ['auditable' => true]]
-        );
-
-        $this->extendExtension->addEnumField(
-            $schema,
-            'oro_rfp_request',
-            'internal_status',
-            'rfp_internal_status',
-            false,
-            false,
-            ['dataaudit' => ['auditable' => true]]
-        );
+        OroRFPBundleInstaller::addOroRfpRequestEnumField($this->extendExtension, $schema);
 
         $table = $schema->getTable('oro_rfp_request');
         $table->dropColumn('status_id');
