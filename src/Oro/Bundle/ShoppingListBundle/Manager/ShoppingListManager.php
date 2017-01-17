@@ -162,6 +162,12 @@ class ShoppingListManager
         $this->ensureProductTypeAllowed($lineItem);
         $em = $this->managerRegistry->getManagerForClass('OroShoppingListBundle:LineItem');
         $lineItem->setShoppingList($shoppingList);
+        if ($shoppingList && $shoppingList->getAccountUser() && null === $lineItem->getAccountUser()) {
+            $lineItem->setAccountUser($shoppingList->getAccountUser());
+        }
+        if ($shoppingList && $shoppingList->getOrganization() && null === $lineItem->getOrganization()) {
+            $lineItem->setOrganization($shoppingList->getOrganization());
+        }
         /** @var LineItemRepository $repository */
         $repository = $em->getRepository('OroShoppingListBundle:LineItem');
         $duplicate = $repository->findDuplicate($lineItem);

@@ -10,7 +10,8 @@ layout:
                     blockType: form_start
                     options:
                         form: '=data["oro_shopping_list_matrix_order_form"].getMatrixOrderFormView(data["product"])'
-                        form_action: '=data["form_action"]'
+                        form_route_name: 'oro_shopping_list_frontend_matrix_grid_order'
+                        form_route_parameters: { productId: '=data["product"].getId()' }
                 form_fields:
                     blockType: form_fields
                     options:

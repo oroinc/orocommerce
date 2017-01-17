@@ -140,6 +140,25 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         $lineItem = new LineItem();
         $this->manager->addLineItem($lineItem, $shoppingList);
         $this->assertEquals(1, $shoppingList->getLineItems()->count());
+        $this->assertEquals(null, $lineItem->getAccountUser());
+        $this->assertEquals(null, $lineItem->getOrganization());
+
+    }
+
+    public function testAddLineItemWithShoppingListData()
+    {
+        $shoppingList = new ShoppingList();
+        $userName = 'Bob';
+        $organizationName = 'Organization';
+        $accountUser = (new AccountUser())->setFirstName($userName);
+        $shoppingList->setAccountUser($accountUser);
+        $organization = (new Organization())->setName($organizationName);
+        $shoppingList->setOrganization($organization);
+
+        $lineItem = new LineItem();
+        $this->manager->addLineItem($lineItem, $shoppingList);
+        $this->assertEquals($userName, $lineItem->getAccountUser()->getFirstName());
+        $this->assertEquals($organizationName, $lineItem->getOrganization()->getName());
     }
 
     public function testAddLineItemDuplicate()

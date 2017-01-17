@@ -166,11 +166,10 @@ class MatrixGridOrderManager
 
     /**
      * @param MatrixCollection $collection
-     * @param ShoppingList $shoppingList
      *
      * @return array|LineItem[]
      */
-    public function convertMatrixIntoLineItems(MatrixCollection $collection, ShoppingList $shoppingList)
+    public function convertMatrixIntoLineItems(MatrixCollection $collection)
     {
         $lineItems = [];
 
@@ -182,10 +181,7 @@ class MatrixGridOrderManager
                     $lineItems[] = (new LineItem())
                         ->setProduct($column->product)
                         ->setQuantity($column->quantity)
-                        ->setShoppingList($shoppingList)
-                        ->setUnit($collection->unit)
-                        ->setAccountUser($shoppingList->getAccountUser())
-                        ->setOrganization($shoppingList->getOrganization());
+                        ->setUnit($collection->unit);
                 }
             }
         }

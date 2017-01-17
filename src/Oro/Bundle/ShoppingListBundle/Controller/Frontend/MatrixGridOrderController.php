@@ -42,13 +42,13 @@ class MatrixGridOrderController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $lineItems = $matrixGridOrderManager->convertMatrixIntoLineItems($form->getData(), $shoppingList);
+            $lineItems = $matrixGridOrderManager->convertMatrixIntoLineItems($form->getData());
 
             foreach ($lineItems as $lineItem) {
                 $shoppingListManager->addLineItem($lineItem, $shoppingList, true, true);
             }
         }
 
-        return ['data' => ['product' => $product, 'form_action' => $request->getUri()]];
+        return ['data' => ['product' => $product]];
     }
 }

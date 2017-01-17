@@ -158,33 +158,20 @@ class MatrixGridOrderManagerTest extends \PHPUnit_Framework_TestCase
         $collection->unit = $productUnit;
         $collection->rows = [$rowSmall, $rowMedium];
 
-        $accountUser = $this->getEntity(AccountUser::class, ['id' => 1]);
-        $organization = $this->getEntity(Organization::class, ['id' => 1]);
-
         $lineItem1 = $this->getEntity(LineItem::class, [
             'product' => $simpleProductSmallRed,
             'unit' => $productUnit,
             'quantity' => 1,
-            'accountUser' => $accountUser,
-            'organization' => $organization
         ]);
         $lineItem2 = $this->getEntity(LineItem::class, [
             'product' => $simpleProductMediumGreen,
             'unit' => $productUnit,
             'quantity' => 4,
-            'accountUser' => $accountUser,
-            'organization' => $organization
-        ]);
-
-        $shoppingList = $this->getEntity(ShoppingList::class, [
-            'lineItems' => [$lineItem1, $lineItem2],
-            'accountUser' => $accountUser,
-            'organization' => $organization
         ]);
 
         $this->assertEquals(
             [$lineItem1, $lineItem2],
-            $this->manager->convertMatrixIntoLineItems($collection, $shoppingList)
+            $this->manager->convertMatrixIntoLineItems($collection)
         );
     }
 }
