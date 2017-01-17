@@ -362,7 +362,6 @@ workflows:
                 preconditions:
                     '@and':
                         - '@has_elements': $.result.shoppingList.lineItems
-                        - '@has_price_in_shopping_line_items': $.result.shoppingList.lineItems
                         - '@extendable':
                             events: [extendable_condition.start_checkout]
                 actions:
