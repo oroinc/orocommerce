@@ -364,6 +364,7 @@ workflows:
                         - '@has_elements': $.result.shoppingList.lineItems
                         - '@extendable':
                             events: [extendable_condition.start_checkout]
+                            showErrors: true
                 actions:
                     - '@run_action_group':
                         action_group: start_shoppinglist_checkout
