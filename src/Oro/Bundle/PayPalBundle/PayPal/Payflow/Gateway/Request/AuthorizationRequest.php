@@ -35,7 +35,8 @@ class AuthorizationRequest extends AbstractRequest
             ->addOption(new GatewayOption\TransparentRedirect())
             ->addOption(new GatewayOption\SecureTokenIdentifier())
             ->addOption(new GatewayOption\SilentPost())
-            ->addOption(new GatewayOption\CreateSecureToken());
+            ->addOption(new GatewayOption\CreateSecureToken())
+            ->addOption(new Option\ButtonSource());
 
         return $this;
     }
