@@ -3,6 +3,9 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\EventListener;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\ActionBundle\Model\ActionData;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
@@ -14,8 +17,6 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\EventListener\HasPriceInShoppingLineItemsListener;
-use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
-use Oro\Bundle\WorkflowBundle\Model\WorkflowResult;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -102,14 +103,14 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit_Framework_TestCas
         $lineItems = $this->createLineItems();
         $shoppingList = $this->getEntity(ShoppingList::class, ['lineItems' => $lineItems]);
 
-        $result = $this->createMock(WorkflowResult::class);
-        $result
+        $checkoutSourceMock = $this->createMock(CheckoutSource::class);
+        $checkoutSourceMock
             ->expects($this->once())
-            ->method('get')
-            ->with('shoppingList')
+            ->method('getEntity')
             ->willReturn($shoppingList);
 
-        $context = $this->getEntity(WorkflowItem::class, ['result' => $result]);
+        $checkout = $this->getEntity(Checkout::class, ['source' => $checkoutSourceMock]);
+        $context = new ActionData(['checkout' => $checkout]);
 
         $this->userCurrencyManager
             ->expects($this->exactly(2))
@@ -145,6 +146,27 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit_Framework_TestCas
             ->willReturn($prices);
 
         return new ExtendableConditionEvent($context);
+    }
+
+    public function testOnStartCheckoutConditionCheckWhenContextIsNotActionData()
+    {
+        $event = new ExtendableConditionEvent(new \stdClass());
+        $this->userCurrencyManager
+            ->expects($this->never())
+            ->method('getUserCurrency');
+
+        $this->listener->onStartCheckoutConditionCheck($event);
+    }
+
+    public function testOnStartCheckoutConditionCheckWhenCheckoutIsNotOfCheckoutType()
+    {
+        $context = new ActionData(['checkout' => new \stdClass()]);
+        $event = new ExtendableConditionEvent($context);
+        $this->userCurrencyManager
+            ->expects($this->never())
+            ->method('getUserCurrency');
+
+        $this->listener->onStartCheckoutConditionCheck($event);
     }
 
     public function testOnStartCheckoutConditionCheckWhenShoppingListHasNoPrices()
