@@ -52,6 +52,20 @@
   .form__col {
     padding-left: 0;
     padding-right: 0;
+
+    .select2-choice {
+      height: 38px;
+    }
+
+    .select2-chosen {
+      position: absolute;
+      width: calc(100% - 16px);
+    }
+  }
+  
+  .add-to-shopping-list-button {
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
