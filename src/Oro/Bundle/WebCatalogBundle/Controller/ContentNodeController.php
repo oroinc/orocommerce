@@ -3,7 +3,6 @@
 namespace Oro\Bundle\WebCatalogBundle\Controller;
 
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
-use Oro\Bundle\WebCatalogBundle\Async\Topics;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType;
@@ -84,14 +83,9 @@ class ContentNodeController extends Controller
         $parentId = (int)$request->get('parent');
         $position = (int)$request->get('position');
 
-        $response = new JsonResponse(
+        return new JsonResponse(
             $this->getTreeHandler()->moveNode($nodeId, $parentId, $position)
         );
-
-        // Schedule slugs reorganization after node move
-        $this->get('oro_message_queue.client.message_producer')->send(Topics::RESOLVE_NODE_SLUGS, $nodeId);
-
-        return $response;
     }
 
     /**

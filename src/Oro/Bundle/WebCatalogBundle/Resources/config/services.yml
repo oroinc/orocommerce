@@ -46,6 +46,7 @@ services:
             - '%oro_web_catalog.entity.content_node.class%'
             - '@doctrine'
             - '@oro_locale.helper.localization'
+            - '@oro_message_queue.client.message_producer'
 
     oro_web_catalog.twig.extension:
         class: Oro\Bundle\WebCatalogBundle\Twig\WebCatalogExtension
