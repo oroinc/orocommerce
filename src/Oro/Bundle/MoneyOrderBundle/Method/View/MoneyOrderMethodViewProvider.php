@@ -8,10 +8,10 @@ use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
 class MoneyOrderMethodViewProvider implements PaymentMethodViewProviderInterface
 {
     /** @var MoneyOrderView[] */
-    protected $views;
+    private $views;
 
     /** @var MoneyOrderConfigProvider */
-    protected $configProvider;
+    private $configProvider;
 
     /**
      * @param MoneyOrderConfigProvider $configProvider
@@ -69,7 +69,7 @@ class MoneyOrderMethodViewProvider implements PaymentMethodViewProviderInterface
     /**
      * @return MoneyOrderView[]
      */
-    protected function getAllPaymentMethodViews()
+    private function getAllPaymentMethodViews()
     {
         if (empty($this->views)) {
             $this->collectPaymentMethodViews();
@@ -78,7 +78,7 @@ class MoneyOrderMethodViewProvider implements PaymentMethodViewProviderInterface
         return $this->views;
     }
 
-    protected function collectPaymentMethodViews()
+    private function collectPaymentMethodViews()
     {
         foreach ($this->configProvider->getPaymentConfigs() as $config) {
             $view = new MoneyOrderView($config);
