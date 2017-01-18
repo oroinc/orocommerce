@@ -38,3 +38,13 @@ services:
             - '@oro_rule.rule_filtration.expression_language_decorator.inner'
             - '@logger'
 
+    oro_rule.enabled_rule_filtration.service:
+        class: 'Oro\Bundle\RuleBundle\RuleFiltration\BasicRuleFiltrationService'
+        public: false
+
+    oro_rule.enabled_rule_filtration.enabled_decorator:
+        class: 'Oro\Bundle\RuleBundle\RuleFiltration\EnabledRuleFiltrationServiceDecorator'
+        public: false
+        decorates: oro_rule.enabled_rule_filtration.enabled_decorator
+        arguments:
+            - '@oro_rule.rule_filtration.enabled_decorator.inner'
