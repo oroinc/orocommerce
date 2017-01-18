@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\FrontendBundle\Migrations\Schema;
+namespace Oro\Bundle\MoneyOrderBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\DBAL\Schema\SchemaException;
