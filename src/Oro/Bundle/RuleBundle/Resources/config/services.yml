@@ -45,6 +45,6 @@ services:
     oro_rule.enabled_rule_filtration.enabled_decorator:
         class: 'Oro\Bundle\RuleBundle\RuleFiltration\EnabledRuleFiltrationServiceDecorator'
         public: false
-        decorates: oro_rule.enabled_rule_filtration.enabled_decorator
+        decorates: oro_rule.enabled_rule_filtration.service
         arguments:
             - '@oro_rule.rule_filtration.enabled_decorator.inner'
