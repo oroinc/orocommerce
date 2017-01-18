@@ -36,6 +36,15 @@ class PaymentTermSettingsType extends AbstractType
                     'required' => true,
                     'options'  => ['constraints' => [new NotBlank()]],
                 ]
+            )
+            ->add(
+                'shortLabels',
+                LocalizedFallbackValueCollectionType::NAME,
+                [
+                    'label'    => 'oro.paymentterm.settings.short_labels.label',
+                    'required' => true,
+                    'options'  => ['constraints' => [new NotBlank()]],
+                ]
             );
     }
 

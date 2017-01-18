@@ -5,6 +5,7 @@ oro:
         settings:
             label: Payment Term Settings
             labels.label: Label
+            short_labels.label: 'Short Label'
         menu:
             payment_terms.label:       Payment terms
             payment_terms.description: List of payment terms
