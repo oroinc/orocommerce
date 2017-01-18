@@ -21,6 +21,9 @@ class MoneyOrderChannelTypeTest extends \PHPUnit_Framework_TestCase
 
     public function testGetIconReturnsCorrectString()
     {
-        static::assertSame('', $this->channel->getIcon());
+        static::assertSame(
+            'bundles/oromoneyorder/img/money-order-icon.png',
+            $this->channel->getIcon()
+        );
     }
 }
