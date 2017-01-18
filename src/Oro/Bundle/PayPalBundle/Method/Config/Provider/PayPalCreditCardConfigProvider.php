@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PayPalBundle\Method\Config\Provider;
 
-use Oro\Bundle\PayPalBundle\Method\Config\Builder\PayPalCreditCardConfigBuilder;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
 
 class PayPalCreditCardConfigProvider extends AbstractPayPalConfigProvider implements
@@ -11,15 +10,15 @@ class PayPalCreditCardConfigProvider extends AbstractPayPalConfigProvider implem
     /**
      * @var PayPalCreditCardConfigInterface[]
      */
-    protected $configs = [];
+    protected $configs;
 
     /**
-     * {inheritdoc}
+     * @return PayPalCreditCardConfigInterface[]
      */
     public function getPaymentConfigs()
     {
         if (0 === count($this->configs)) {
-            $this->fillConfigs();
+            return $this->configs = $this->collectConfigs();
         }
 
         return $this->configs;
@@ -38,16 +37,5 @@ class PayPalCreditCardConfigProvider extends AbstractPayPalConfigProvider implem
         $configs = $this->getPaymentConfigs();
 
         return $configs[$identifier];
-    }
-
-    protected function fillConfigs()
-    {
-        $channels = $this->getEnabledIntegrationChannels();
-        /** @var PayPalCreditCardConfigBuilder $builder */
-        $builder = $this->factory->createPayPalConfigBuilder();
-        foreach ($channels as $channel) {
-            $config = $builder->setChannel($channel)->getResult();
-            $this->configs[$config->getPaymentMethodIdentifier()] = $config;
-        }
     }
 }

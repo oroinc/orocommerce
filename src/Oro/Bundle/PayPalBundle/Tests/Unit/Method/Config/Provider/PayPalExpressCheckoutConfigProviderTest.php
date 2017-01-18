@@ -4,10 +4,10 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method\Config\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\PayPalBundle\Method\Config\Builder\Factory\PayPalExpressCheckoutConfigFactory;
-use Oro\Bundle\PayPalBundle\Method\Config\Builder\PayPalExpressCheckoutConfigBuilder;
+use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
+use Oro\Bundle\PayPalBundle\Entity\Repository\PayPalSettingsRepository;
+use Oro\Bundle\PayPalBundle\Method\Config\Factory\PayPalExpressCheckoutConfigFactory;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfig;
 use Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalExpressCheckoutConfigProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -28,9 +28,9 @@ class PayPalExpressCheckoutConfigProviderTest extends \PHPUnit_Framework_TestCas
     protected $type;
 
     /**
-     * @var Channel[]
+     * @var PayPalSettings[]
      */
-    protected $channels;
+    protected $settings;
 
     /**
      * @var PayPalExpressCheckoutConfigProvider
@@ -41,36 +41,38 @@ class PayPalExpressCheckoutConfigProviderTest extends \PHPUnit_Framework_TestCas
     {
         $this->type = 'paypal_payflow_gateway';
 
-        $this->channels = [];
-        $this->channels[] = $this->getEntity(Channel::class, ['id' => 1, 'type' => 'paypal_payflow_gateway']);
-        $this->channels[] = $this->getEntity(Channel::class, ['id' => 2, 'type' => 'paypal_payments_pro']);
+        $channel1 = $this->getEntity(Channel::class, ['id' => 1, 'type' => $this->type]);
+        $channel2 = $this->getEntity(Channel::class, ['id' => 2, 'type' => $this->type]);
+
+        $this->settings[] = $this->getEntity(PayPalSettings::class, ['id' => 1, 'channel' => $channel1]);
+        $this->settings[] = $this->getEntity(PayPalSettings::class, ['id' => 2, 'channel' => $channel2]);
 
         $config = $this->createMock(PayPalExpressCheckoutConfig::class);
         $config->expects(static::at(0))
             ->method('getPaymentMethodIdentifier')
-            ->willReturn('paypal_payflow_gateway_express_checkout_1');
+            ->willReturn('paypal_payments_pro_express_checkout_1');
         $config->expects(static::at(1))
             ->method('getPaymentMethodIdentifier')
             ->willReturn('paypal_payments_pro_express_checkout_2');
 
         $this->doctrine = $this->createMock(ManagerRegistry::class);
 
-        $builder = $this->createMock(PayPalExpressCheckoutConfigBuilder::class);
-        $builder->expects(static::exactly(2))
-            ->method('setChannel')
-            ->willReturnSelf();
+        $objectRepository = $this->createMock(PayPalSettingsRepository::class);
+        $objectRepository->expects(static::once())
+            ->method('getEnabledSettingsByType')
+            ->with($this->type)
+            ->willReturn($this->settings);
 
-        $builder->expects(static::exactly(2))
-            ->method('getResult')
-            ->willReturn($config);
+        $objectManager = $this->createMock(ObjectManager::class);
+        $objectManager->expects(static::once())->method('getRepository')->willReturn($objectRepository);
+
+        $this->doctrine->expects(static::once())->method('getManagerForClass')->willReturn($objectManager);
 
         /** @var PayPalExpressCheckoutConfigFactory|\PHPUnit_Framework_MockObject_MockObject $factory */
         $factory = $this->createMock(PayPalExpressCheckoutConfigFactory::class);
-        $factory->expects(static::once())
-            ->method('createPayPalConfigBuilder')
-            ->willReturn($builder);
-
-        $this->doctrine = $this->createMock(ManagerRegistry::class);
+        $factory->expects(static::exactly(2))
+            ->method('createConfig')
+            ->willReturn($config);
 
         /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject $logger */
         $logger = $this->createMock(LoggerInterface::class);
@@ -85,47 +87,19 @@ class PayPalExpressCheckoutConfigProviderTest extends \PHPUnit_Framework_TestCas
 
     public function testGetPaymentConfigs()
     {
-        $objectRepository = $this->createMock(ObjectRepository::class);
-        $objectRepository->expects(static::once())->method('findBy')->willReturn($this->channels);
-
-        $objectManager = $this->createMock(ObjectManager::class);
-        $objectManager->expects(static::once())->method('getRepository')->willReturn($objectRepository);
-
-        $this->doctrine->expects(static::once())->method('getManagerForClass')->willReturn($objectManager);
-
         $this->assertCount(2, $this->payPalConfigProvider->getPaymentConfigs());
     }
 
     public function testGetPaymentConfig()
     {
-        $identifier = 'paypal_payflow_gateway_express_checkout_1';
-
-        $objectRepository = $this->createMock(ObjectRepository::class);
-        $objectRepository->expects(static::once())->method('findBy')->willReturn($this->channels);
-
-        $objectManager = $this->createMock(ObjectManager::class);
-        $objectManager->expects(static::once())->method('getRepository')->willReturn($objectRepository);
-
-        $this->doctrine->expects(static::once())->method('getManagerForClass')->willReturn($objectManager);
-
         $this->assertInstanceOf(
             PayPalExpressCheckoutConfig::class,
-            $this->payPalConfigProvider->getPaymentConfig($identifier)
+            $this->payPalConfigProvider->getPaymentConfig('paypal_payments_pro_express_checkout_1')
         );
     }
 
     public function testHasPaymentConfig()
     {
-        $identifier = 'paypal_payments_pro_express_checkout_2';
-
-        $objectRepository = $this->createMock(ObjectRepository::class);
-        $objectRepository->expects(static::once())->method('findBy')->willReturn($this->channels);
-
-        $objectManager = $this->createMock(ObjectManager::class);
-        $objectManager->expects(static::once())->method('getRepository')->willReturn($objectRepository);
-
-        $this->doctrine->expects(static::once())->method('getManagerForClass')->willReturn($objectManager);
-
-        $this->assertTrue($this->payPalConfigProvider->hasPaymentConfig($identifier));
+        $this->assertTrue($this->payPalConfigProvider->hasPaymentConfig('paypal_payments_pro_express_checkout_2'));
     }
 }
