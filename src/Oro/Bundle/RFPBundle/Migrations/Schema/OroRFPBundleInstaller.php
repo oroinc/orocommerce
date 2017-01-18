@@ -127,16 +127,15 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
         $table->addColumn('deleted_at', 'datetime', ['notnull' => false, 'comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
 
-        self::addOroRfpRequestEnumField($this->extendExtension, $schema);
+        $this->addOroRfpRequestEnumField($schema);
     }
 
     /**
-     * @param ExtendExtension $extendExtension
      * @param Schema $schema
      */
-    public static function addOroRfpRequestEnumField(ExtendExtension $extendExtension, Schema $schema)
+    protected function addOroRfpRequestEnumField(Schema $schema)
     {
-        $customerStatusEnumTable = $extendExtension->addEnumField(
+        $customerStatusEnumTable = $this->extendExtension->addEnumField(
             $schema,
             'oro_rfp_request',
             'customer_status',
@@ -155,7 +154,7 @@ class OroRFPBundleInstaller implements Installation, ActivityExtensionAwareInter
 
         $customerStatusEnumTable->addOption(OroOptions::KEY, $customerStatusOptions);
 
-        $internalStatusEnumTable = $extendExtension->addEnumField(
+        $internalStatusEnumTable = $this->extendExtension->addEnumField(
             $schema,
             'oro_rfp_request',
             'internal_status',

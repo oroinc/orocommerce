@@ -8,13 +8,15 @@ use Oro\Bundle\EntityConfigBundle\Migration\RemoveFieldQuery;
 use Oro\Bundle\EntityConfigBundle\Migration\RemoveTableQuery;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\MigrationConstraintTrait;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
-use Oro\Bundle\RFPBundle\Migrations\Schema\OroRFPBundleInstaller;
+use Oro\Bundle\RFPBundle\Migrations\Data\ORM\LoadRequestCustomerStatuses;
+use Oro\Bundle\RFPBundle\Migrations\Data\ORM\LoadRequestInternalStatuses;
 use Oro\Bundle\TranslationBundle\Migration\DeleteTranslationKeysQuery;
 
 class OroRFPBundle implements
@@ -86,7 +88,43 @@ class OroRFPBundle implements
      */
     protected function updateOroRfpRequestTable(Schema $schema)
     {
-        OroRFPBundleInstaller::addOroRfpRequestEnumField($this->extendExtension, $schema);
+        $customerStatusEnumTable = $this->extendExtension->addEnumField(
+            $schema,
+            'oro_rfp_request',
+            'customer_status',
+            'rfp_customer_status',
+            false,
+            false,
+            ['dataaudit' => ['auditable' => true]]
+        );
+
+        $customerStatusOptions = new OroOptions();
+        $customerStatusOptions->set(
+            'enum',
+            'immutable_codes',
+            LoadRequestCustomerStatuses::getDataKeys()
+        );
+
+        $customerStatusEnumTable->addOption(OroOptions::KEY, $customerStatusOptions);
+
+        $internalStatusEnumTable = $this->extendExtension->addEnumField(
+            $schema,
+            'oro_rfp_request',
+            'internal_status',
+            'rfp_internal_status',
+            false,
+            false,
+            ['dataaudit' => ['auditable' => true]]
+        );
+
+        $internalStatusOptions = new OroOptions();
+        $internalStatusOptions->set(
+            'enum',
+            'immutable_codes',
+            LoadRequestInternalStatuses::getDataKeys()
+        );
+
+        $internalStatusEnumTable->addOption(OroOptions::KEY, $internalStatusOptions);
 
         $table = $schema->getTable('oro_rfp_request');
         $table->dropColumn('status_id');
