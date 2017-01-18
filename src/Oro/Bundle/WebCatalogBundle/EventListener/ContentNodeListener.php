@@ -7,9 +7,7 @@ use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorageInterface;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\WebCatalogBundle\Async\Topics;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
-use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
 use Oro\Bundle\WebCatalogBundle\Model\ContentNodeMaterializedPathModifier;
-use Oro\Component\DependencyInjection\ServiceLink;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 class ContentNodeListener
@@ -25,11 +23,6 @@ class ContentNodeListener
     protected $storage;
 
     /**
-     * @var ServiceLink
-     */
-    protected $slugGeneratorLink;
-
-    /**
      * @var MessageProducerInterface
      */
     protected $messageProducer;
@@ -37,18 +30,15 @@ class ContentNodeListener
     /**
      * @param ContentNodeMaterializedPathModifier $modifier
      * @param ExtraActionEntityStorageInterface $storage
-     * @param ServiceLink $slugGenerator
      * @param MessageProducerInterface $messageProducer
      */
     public function __construct(
         ContentNodeMaterializedPathModifier $modifier,
         ExtraActionEntityStorageInterface $storage,
-        ServiceLink $slugGenerator,
         MessageProducerInterface $messageProducer
     ) {
         $this->modifier = $modifier;
         $this->storage = $storage;
-        $this->slugGeneratorLink = $slugGenerator;
         $this->messageProducer = $messageProducer;
     }
 
@@ -70,7 +60,6 @@ class ContentNodeListener
         $changeSet = $args->getEntityChangeSet();
 
         if (!empty($changeSet[ContentNode::FIELD_PARENT_NODE])) {
-            $this->getSlugGeneratorLink()->generate($contentNode);
             $this->modifier->calculateMaterializedPath($contentNode);
             $childNodes = $this->modifier->calculateChildrenMaterializedPath($contentNode);
 
@@ -90,19 +79,14 @@ class ContentNodeListener
     }
 
     /**
+     * Form after flush is used to catch all content node fields update, including collections of
+     * localized fallback values which are used for Titles and Slug Prototypes.
+     *
      * @param AfterFormProcessEvent $event
      */
     public function onFormAfterFlush(AfterFormProcessEvent $event)
     {
         $this->scheduleContentNodeRecalculation($event->getData());
-    }
-
-    /**
-     * @return SlugGenerator
-     */
-    protected function getSlugGeneratorLink()
-    {
-        return $this->slugGeneratorLink->getService();
     }
 
     /**

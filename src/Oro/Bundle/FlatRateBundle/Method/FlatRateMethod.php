@@ -7,8 +7,6 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class FlatRateMethod implements ShippingMethodInterface
 {
-    const IDENTIFIER = 'flat_rate';
-
     /** @var FlatRateMethodType */
     protected $type;
 
@@ -16,17 +14,17 @@ class FlatRateMethod implements ShippingMethodInterface
     protected $label;
 
     /** @var int */
-    protected $channelId;
+    protected $identifier;
 
     /**
-     * @param string $label
-     * @param int    $channelId
+     * @param int|string $identifier
+     * @param string     $label
      */
-    public function __construct($label, $channelId)
+    public function __construct($identifier, $label)
     {
-        $this->type = new FlatRateMethodType($label);
+        $this->identifier = $identifier;
         $this->label = $label;
-        $this->channelId = $channelId;
+        $this->type = new FlatRateMethodType($label);
     }
 
     /**
@@ -34,7 +32,7 @@ class FlatRateMethod implements ShippingMethodInterface
      */
     public function getIdentifier()
     {
-        return static::IDENTIFIER . $this->channelId;
+        return $this->identifier;
     }
 
     /**

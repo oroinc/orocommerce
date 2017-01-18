@@ -40,7 +40,7 @@ class AjaxProductShippingOptionsControllerTest extends WebTestCase
         ];
 
         /** @var Product $product */
-        $product = $this->getReference('product.1');
+        $product = $this->getReference('product-1');
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $product->getId()]));
 

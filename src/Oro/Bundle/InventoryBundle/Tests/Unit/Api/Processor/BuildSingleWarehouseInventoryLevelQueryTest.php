@@ -75,7 +75,7 @@ class BuildSingleWarehouseInventoryLevelQueryTest extends GetProcessorOrmRelated
     public function testProcessBuildQueryWithOneWarehouses()
     {
         $requestData = [
-            'sku' => 'product.1',
+            'sku' => 'product-1',
             'unit' => 'liter'
         ];
         $this->context->setRequestData($requestData);

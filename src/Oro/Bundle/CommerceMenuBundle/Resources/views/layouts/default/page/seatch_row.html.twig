@@ -1,14 +1,11 @@
 {% block _search_row_widget %}
-    <input type="radio" id="header-row-search" class="header-row-helper" name="dropdowns" hidden="hidden">
     <div class="header-row__container hidden-on-desktop">
-        <label class="header-row__trigger hidden-on-desktop" for="header-row-search">
-            <div class="nav-trigger">
-                <span class="nav-trigger__icon nav-trigger__icon--transparent nav-trigger__icon--large">
-                    <span class="fa-search fa--gray fa--no-offset"></span>
-                </span>
-            </div>
-        </label>
-        <div class="header-row__toggle">
+        <button class="header-row__trigger hidden-on-desktop" data-toggle="dropdown">
+            <span class="nav-trigger__icon nav-trigger__icon--transparent nav-trigger__icon--large">
+                <span class="fa-search fa--gray fa--no-offset"></span>
+            </span>
+        </button>
+        <div class="header-row__toggle" data-header-row-toggle>
             <div class="header-row__dropdown" data-header-row-search-container></div>
         </div>
     </div>

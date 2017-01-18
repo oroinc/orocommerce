@@ -6,17 +6,25 @@ use Oro\Bundle\FlatRateBundle\Entity\FlatRateSettings;
 use Oro\Bundle\FlatRateBundle\Method\FlatRateMethod;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGeneratorInterface;
 
 class FlatRateMethodFromChannelBuilder
 {
+    /** @var IntegrationMethodIdentifierGeneratorInterface */
+    private $identifierGenerator;
+
     /** @var LocalizationHelper */
     private $localizationHelper;
 
     /**
+     * @param IntegrationMethodIdentifierGeneratorInterface $identifierGenerator
      * @param LocalizationHelper $localizationHelper
      */
-    public function __construct(LocalizationHelper $localizationHelper)
-    {
+    public function __construct(
+        IntegrationMethodIdentifierGeneratorInterface $identifierGenerator,
+        LocalizationHelper $localizationHelper
+    ) {
+        $this->identifierGenerator = $identifierGenerator;
         $this->localizationHelper = $localizationHelper;
     }
 
@@ -27,9 +35,10 @@ class FlatRateMethodFromChannelBuilder
      */
     public function build(Channel $channel)
     {
+        $id = $this->identifierGenerator->generateIdentifier($channel);
         $label = $this->getChannelLabel($channel);
 
-        return new FlatRateMethod($label, $channel->getId());
+        return new FlatRateMethod($id, $label);
     }
 
     /**

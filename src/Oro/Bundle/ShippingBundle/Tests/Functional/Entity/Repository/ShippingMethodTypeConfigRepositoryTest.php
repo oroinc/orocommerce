@@ -3,7 +3,9 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodTypeConfigRepository;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRules;
+use Oro\Bundle\ShippingBundle\Tests\Functional\Helper\FlatRateIntegrationTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
@@ -11,6 +13,8 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class ShippingMethodTypeConfigRepositoryTest extends WebTestCase
 {
+    use FlatRateIntegrationTrait;
+
     /**
      * @var ShippingMethodTypeConfigRepository
      */
@@ -27,28 +31,39 @@ class ShippingMethodTypeConfigRepositoryTest extends WebTestCase
             ->getRepository('OroShippingBundle:ShippingMethodTypeConfig');
     }
 
-    public function testDeleteByMethodAndType()
+    public function testFindShippingMethodTypeConfigConfigsByMethodAndType()
     {
-        $methodConfig = $this->getReference('shipping_rule.1')->getMethodConfigs()->first();
-
-        static::assertNotEmpty(
-            $this->repository->findBy(
-                [
-                    'methodConfig' => $methodConfig,
-                    'type' => 'primary'
-                ]
-            )
+        $ids = $this->repository->findIdsByMethodAndType(
+            $this->getFlatRateIdentifier(),
+            $this->getFlatRatePrimaryIdentifier()
         );
 
-        $this->repository->deleteByMethodAndType($methodConfig, 'primary');
+        static::assertContains($this->getFirstTypeId('shipping_rule.1'), $ids);
+        static::assertContains($this->getFirstTypeId('shipping_rule.2'), $ids);
+    }
 
-        static::assertEmpty(
-            $this->repository->findBy(
-                [
-                    'methodConfig' => $methodConfig,
-                    'type' => 'primary'
-                ]
-            )
-        );
+    /**
+     * @param string $ruleReference
+     * @return int
+     */
+    private function getFirstTypeId($ruleReference)
+    {
+        /** @var ShippingMethodConfig $methodConfig */
+        $methodConfig = $this->getReference($ruleReference)->getMethodConfigs()->first();
+        return $methodConfig->getTypeConfigs()->first()->getId();
+    }
+
+    public function testDeleteMethodConfigByIds()
+    {
+        $ids = [
+            $this->getFirstTypeId('shipping_rule.1'),
+            $this->getFirstTypeId('shipping_rule.2'),
+        ];
+
+        static::assertCount(2, $this->repository->findBy(['id' => $ids]));
+
+        $this->repository->deleteByIds($ids);
+
+        static::assertEmpty($this->repository->findBy(['id' => $ids]));
     }
 }

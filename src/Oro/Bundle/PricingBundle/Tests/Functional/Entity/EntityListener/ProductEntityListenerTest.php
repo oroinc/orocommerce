@@ -37,7 +37,7 @@ class ProductEntityListenerTest extends WebTestCase
         /** @var PriceList $expectedPriceList */
         $expectedPriceList = $this->getReference('price_list_1');
         /** @var Product $product */
-        $product = $this->getReference('product.1');
+        $product = $this->getReference('product-1');
         $this->assertNotEquals(Product::STATUS_DISABLED, $product->getStatus());
         $product->setStatus(Product::STATUS_DISABLED);
         $em->persist($product);

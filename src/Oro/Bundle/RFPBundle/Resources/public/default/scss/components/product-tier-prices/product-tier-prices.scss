@@ -3,7 +3,11 @@
     left: -1px;
 
     display: inline-block;
+    width: 27px;
+
     vertical-align: middle;
+
+    border-left: 1px solid get-color('additional', 'light');
 
     .popover-trigger {
         border-left: none;

@@ -7,13 +7,6 @@
             params:
                 route: "oro_frontend_root"
             isDefault: true
-            scopes:
-                -
-                    localization: null
-                    website: null
-                    webCatalog: "Default Web Catalog"
-                    customer: null
-                    customerGroup: null
     parentScopeUsed: false
     scopes:
         -
@@ -32,21 +25,7 @@
                     params:
                         title: "Bonum negas esse divitias"
                     isDefault: true
-                    scopes:
-                        -
-                            localization: null
-                            website: null
-                            webCatalog: "Default Web Catalog"
-                            customer: null
-                            customerGroup: null
             parentScopeUsed: true
-            scopes:
-                -
-                    localization: null
-                    website: null
-                    webCatalog: "Default Web Catalog"
-                    customer: null
-                    customerGroup: null
             children:
                 "By Category":
                     defaultTitle: "By Category"
@@ -57,21 +36,7 @@
                             params:
                                 title: "Ita fit cum gravior"
                             isDefault: true
-                            scopes:
-                                -
-                                    localization: null
-                                    website: null
-                                    webCatalog: "Default Web Catalog"
-                                    customer: null
-                                    customerGroup: null
                     parentScopeUsed: true
-                    scopes:
-                        -
-                            localization: null
-                            website: null
-                            webCatalog: "Default Web Catalog"
-                            customer: null
-                            customerGroup: null
                     children:
                         Industrial:
                             defaultTitle: Industrial
@@ -82,71 +47,29 @@
                                     params:
                                         title: "Haec quo modo conveniant"
                                     isDefault: true
-                                    scopes:
-                                        -
-                                            localization: null
-                                            website: null
-                                            webCatalog: "Default Web Catalog"
-                                            customer: null
-                                            customerGroup: null
                             parentScopeUsed: true
-                            scopes:
-                                -
-                                    localization: null
-                                    website: null
-                                    webCatalog: "Default Web Catalog"
-                                    customer: null
-                                    customerGroup: null
                             children:
                                 "Lighting Products":
                                     defaultTitle: "Lighting  Products"
                                     defaultSlugPrototype: "lighting-products"
                                     parentScopeUsed: true
-                                    scopes:
-                                        -
-                                            localization: null
-                                            website: null
-                                            webCatalog: "Default Web Catalog"
-                                            customer: null
-                                            customerGroup: null
                                     contentVariants:
                                         -    
                                             type: category_page
                                             params:
                                                 title: "Lighting Products"
                                             isDefault: true
-                                            scopes:
-                                                -
-                                                    localization: null
-                                                    website: null
-                                                    webCatalog: "Default Web Catalog"
-                                                    customer: null
-                                                    customerGroup: null
                                     children: ~
                                 "Architectural Floodlighting":
                                     defaultTitle: "Architectural Floodlighting"
                                     defaultSlugPrototype: "architectural-floodlighting"
                                     parentScopeUsed: true
-                                    scopes:
-                                        -
-                                            localization: null
-                                            website: null
-                                            webCatalog: "Default Web Catalog"
-                                            customer: null
-                                            customerGroup: null
                                     contentVariants:
                                         -
                                             type: category_page
                                             params:
                                                 title: "Architectural Floodlighting"
                                             isDefault: true
-                                            scopes:
-                                                -
-                                                    localization: null
-                                                    website: null
-                                                    webCatalog: "Default Web Catalog"
-                                                    customer: null
-                                                    customerGroup: null
                                     children: ~
                         Medical:
                             defaultTitle: Medical
@@ -157,46 +80,18 @@
                                     params:
                                         title: "Haec quo modo conveniant"
                                     isDefault: true
-                                    scopes:
-                                        -
-                                            localization: null
-                                            website: null
-                                            webCatalog: "Default Web Catalog"
-                                            customer: null
-                                            customerGroup: null
                             parentScopeUsed: true
-                            scopes:
-                                -
-                                    localization: null
-                                    website: null
-                                    webCatalog: "Default Web Catalog"
-                                    customer: null
-                                    customerGroup: null
                             children:
                                 "Medical Apparel":
                                     defaultTitle: "Medical Apparel"
                                     defaultSlugPrototype: "medical-apparel"
                                     parentScopeUsed: true
-                                    scopes:
-                                        -
-                                            localization: null
-                                            website: null
-                                            webCatalog: "Default Web Catalog"
-                                            customer: null
-                                            customerGroup: null
                                     contentVariants:
                                         -
                                             type: category_page
                                             params:
                                                 title: "Medical Apparel"
                                             isDefault: true
-                                            scopes:
-                                                -
-                                                    localization: null
-                                                    website: null
-                                                    webCatalog: "Default Web Catalog"
-                                                    customer: null
-                                                    customerGroup: null
                                     children: ~
                 "By Brand":
                     defaultTitle: "By Brand"
@@ -207,71 +102,29 @@
                             params:
                                 title: "Ita fit cum gravior"
                             isDefault: true
-                            scopes:
-                                -
-                                    localization: null
-                                    website: null
-                                    webCatalog: "Default Web Catalog"
-                                    customer: null
-                                    customerGroup: null
                     parentScopeUsed: true
-                    scopes:
-                        -
-                            localization: null
-                            website: null
-                            webCatalog: "Default Web Catalog"
-                            customer: null
-                            customerGroup: null
                     children:
                         "Retail Supplies":
                             defaultTitle: "Retail Supplies"
                             defaultSlugPrototype: "retail-supplies"
                             parentScopeUsed: true
-                            scopes:
-                                -
-                                    localization: null
-                                    website: null
-                                    webCatalog: "Default Web Catalog"
-                                    customer: null
-                                    customerGroup: null
                             contentVariants:
                                 -
                                     type: category_page
                                     params:
                                         title: "Retail Supplies"
                                     isDefault: true
-                                    scopes:
-                                        -
-                                            localization: null
-                                            website: null
-                                            webCatalog: "Default Web Catalog"
-                                            customer: null
-                                            customerGroup: null
                             children: ~
                         "Office Furniture":
                             defaultTitle: "Office Furniture"
                             defaultSlugPrototype: "office-furniture"
                             parentScopeUsed: true
-                            scopes:
-                                -
-                                    localization: null
-                                    website: null
-                                    webCatalog: "Default Web Catalog"
-                                    customer: null
-                                    customerGroup: null
                             contentVariants:
                                 -
                                     type: category_page
                                     params:
-                                        title: "Medical Apparel"
+                                        title: "Office Furniture"
                                     isDefault: true
-                                    scopes:
-                                        -
-                                            localization: null
-                                            website: null
-                                            webCatalog: "Default Web Catalog"
-                                            customer: null
-                                            customerGroup: null
                             children: ~
                         Retail:
                             defaultTitle: Retail
@@ -282,21 +135,7 @@
                                     params:
                                         title: "Haec quo modo conveniant"
                                     isDefault: true
-                                    scopes:
-                                        -
-                                            localization: null
-                                            website: null
-                                            webCatalog: "Default Web Catalog"
-                                            customer: null
-                                            customerGroup: null
                             parentScopeUsed: true
-                            scopes:
-                                -
-                                    localization: null
-                                    website: null
-                                    webCatalog: "Default Web Catalog"
-                                    customer: null
-                                    customerGroup: null
                             children: ~
                 "By Item":
                     defaultTitle: "Clearance"
@@ -307,146 +146,62 @@
                             params:
                                 title: "Bonum negas esse divitias"
                             isDefault: true
-                            scopes:
-                                -
-                                    localization: null
-                                    website: null
-                                    webCatalog: "Default Web Catalog"
-                                    customer: null
-                                    customerGroup: null
                     parentScopeUsed: true
-                    scopes:
-                        -
-                            localization: null
-                            website: null
-                            webCatalog: "Default Web Catalog"
-                            customer: null
-                            customerGroup: null
                     children:
                         "Lighting Products":
                             defaultTitle: "Lighting  Products"
                             defaultSlugPrototype: "lighting-products"
                             parentScopeUsed: true
-                            scopes:
-                                -
-                                    localization: null
-                                    website: null
-                                    webCatalog: "Default Web Catalog"
-                                    customer: null
-                                    customerGroup: null
                             contentVariants:
                                 -
                                     type: category_page
                                     params:
                                         title: "Lighting Products"
                                     isDefault: true
-                                    scopes:
-                                        -
-                                            localization: null
-                                            website: null
-                                            webCatalog: "Default Web Catalog"
-                                            customer: null
-                                            customerGroup: null
                             children: ~
                         "Architectural Floodlighting":
                             defaultTitle: "Architectural Floodlighting"
                             defaultSlugPrototype: "architectural-floodlighting"
                             parentScopeUsed: true
-                            scopes:
-                                -
-                                    localization: null
-                                    website: null
-                                    webCatalog: "Default Web Catalog"
-                                    customer: null
-                                    customerGroup: null
                             contentVariants:
                                 -
                                     type: category_page
                                     params:
                                         title: "Architectural Floodlighting"
                                     isDefault: true
-                                    scopes:
-                                        -
-                                            localization: null
-                                            website: null
-                                            webCatalog: "Default Web Catalog"
-                                            customer: null
-                                            customerGroup: null
                             children: ~
                         "Medical Apparel":
                             defaultTitle: "Medical Apparel"
                             defaultSlugPrototype: "medical-apparel"
                             parentScopeUsed: true
-                            scopes:
-                                -
-                                    localization: null
-                                    website: null
-                                    webCatalog: "Default Web Catalog"
-                                    customer: null
-                                    customerGroup: null
                             contentVariants:
                                 -
                                     type: category_page
                                     params:
                                         title: "Medical Apparel"
                                     isDefault: true
-                                    scopes:
-                                        -
-                                            localization: null
-                                            website: null
-                                            webCatalog: "Default Web Catalog"
-                                            customer: null
-                                            customerGroup: null
                             children: ~
                         "Office Furniture":
                             defaultTitle: "Office Furniture"
                             defaultSlugPrototype: "office-furniture"
                             parentScopeUsed: true
-                            scopes:
-                                -
-                                    localization: null
-                                    website: null
-                                    webCatalog: "Default Web Catalog"
-                                    customer: null
-                                    customerGroup: null
                             contentVariants:
                                 -
                                     type: category_page
                                     params:
-                                        title: "Medical Apparel"
+                                        title: "Office Furniture"
                                     isDefault: true
-                                    scopes:
-                                        -
-                                            localization: null
-                                            website: null
-                                            webCatalog: "Default Web Catalog"
-                                            customer: null
-                                            customerGroup: null
                             children: ~
                         "Retail Supplies":
                             defaultTitle: "Retail Supplies"
                             defaultSlugPrototype: "retail-supplies"
                             parentScopeUsed: true
-                            scopes:
-                                -
-                                    localization: null
-                                    website: null
-                                    webCatalog: "Default Web Catalog"
-                                    customer: null
-                                    customerGroup: null
                             contentVariants:
                                 -
                                     type: category_page
                                     params:
                                         title: "Retail Supplies"
                                     isDefault: true
-                                    scopes:
-                                        -
-                                            localization: null
-                                            website: null
-                                            webCatalog: "Default Web Catalog"
-                                            customer: null
-                                            customerGroup: null
                             children: ~
         "New Arrivals":
             defaultTitle: "New Arrivals"
@@ -457,146 +212,62 @@
                     params:
                         title: "Bonum negas esse divitias"
                     isDefault: true
-                    scopes:
-                        -
-                            localization: null
-                            website: null
-                            webCatalog: "Default Web Catalog"
-                            customer: null
-                            customerGroup: null
             parentScopeUsed: true
-            scopes:
-                -
-                    localization: null
-                    website: null
-                    webCatalog: "Default Web Catalog"
-                    customer: null
-                    customerGroup: null
             children:
                 "Lighting Products":
                     defaultTitle: "Lighting  Products"
                     defaultSlugPrototype: "lighting-products"
                     parentScopeUsed: true
-                    scopes:
-                        -
-                            localization: null
-                            website: null
-                            webCatalog: "Default Web Catalog"
-                            customer: null
-                            customerGroup: null
                     contentVariants:
                         -
                             type: category_page
                             params:
                                 title: "Lighting Products"
                             isDefault: true
-                            scopes:
-                                -
-                                    localization: null
-                                    website: null
-                                    webCatalog: "Default Web Catalog"
-                                    customer: null
-                                    customerGroup: null
                     children: ~
                 "Architectural Floodlighting":
                     defaultTitle: "Architectural Floodlighting"
                     defaultSlugPrototype: "architectural-floodlighting"
                     parentScopeUsed: true
-                    scopes:
-                        -
-                            localization: null
-                            website: null
-                            webCatalog: "Default Web Catalog"
-                            customer: null
-                            customerGroup: null
                     contentVariants:
                         -
                             type: category_page
                             params:
                                 title: "Architectural Floodlighting"
                             isDefault: true
-                            scopes:
-                                -
-                                    localization: null
-                                    website: null
-                                    webCatalog: "Default Web Catalog"
-                                    customer: null
-                                    customerGroup: null
                     children: ~
                 "Medical Apparel":
                     defaultTitle: "Medical Apparel"
                     defaultSlugPrototype: "medical-apparel"
                     parentScopeUsed: true
-                    scopes:
-                        -
-                            localization: null
-                            website: null
-                            webCatalog: "Default Web Catalog"
-                            customer: null
-                            customerGroup: null
                     contentVariants:
                         -
                             type: category_page
                             params:
                                 title: "Medical Apparel"
                             isDefault: true
-                            scopes:
-                                -
-                                    localization: null
-                                    website: null
-                                    webCatalog: "Default Web Catalog"
-                                    customer: null
-                                    customerGroup: null
                     children: ~
                 "Office Furniture":
                     defaultTitle: "Office Furniture"
                     defaultSlugPrototype: "office-furniture"
                     parentScopeUsed: true
-                    scopes:
-                        -
-                            localization: null
-                            website: null
-                            webCatalog: "Default Web Catalog"
-                            customer: null
-                            customerGroup: null
                     contentVariants:
                         -
                             type: category_page
                             params:
-                                title: "Medical Apparel"
+                                title: "Office Furniture"
                             isDefault: true
-                            scopes:
-                                -
-                                    localization: null
-                                    website: null
-                                    webCatalog: "Default Web Catalog"
-                                    customer: null
-                                    customerGroup: null
                     children: ~
                 "Retail Supplies":
                     defaultTitle: "Retail Supplies"
                     defaultSlugPrototype: "retail-supplies"
                     parentScopeUsed: true
-                    scopes:
-                        -
-                            localization: null
-                            website: null
-                            webCatalog: "Default Web Catalog"
-                            customer: null
-                            customerGroup: null
                     contentVariants:
                         -
                             type: category_page
                             params:
                                 title: "Retail Supplies"
                             isDefault: true
-                            scopes:
-                                -
-                                    localization: null
-                                    website: null
-                                    webCatalog: "Default Web Catalog"
-                                    customer: null
-                                    customerGroup: null
                     children: ~
         "Clearance":
             defaultTitle: "Clearance"
@@ -607,144 +278,60 @@
                     params:
                         title: "Bonum negas esse divitias"
                     isDefault: true
-                    scopes:
-                        -
-                            localization: null
-                            website: null
-                            webCatalog: "Default Web Catalog"
-                            customer: null
-                            customerGroup: null
             parentScopeUsed: true
-            scopes:
-                -
-                    localization: null
-                    website: null
-                    webCatalog: "Default Web Catalog"
-                    customer: null
-                    customerGroup: null
             children:
                 "Lighting Products":
                     defaultTitle: "Lighting  Products"
                     defaultSlugPrototype: "lighting-products"
                     parentScopeUsed: true
-                    scopes:
-                        -
-                            localization: null
-                            website: null
-                            webCatalog: "Default Web Catalog"
-                            customer: null
-                            customerGroup: null
                     contentVariants:
                         -
                             type: category_page
                             params:
                                 title: "Lighting Products"
                             isDefault: true
-                            scopes:
-                                -
-                                    localization: null
-                                    website: null
-                                    webCatalog: "Default Web Catalog"
-                                    customer: null
-                                    customerGroup: null
                     children: ~
                 "Architectural Floodlighting":
                     defaultTitle: "Architectural Floodlighting"
                     defaultSlugPrototype: "architectural-floodlighting"
                     parentScopeUsed: true
-                    scopes:
-                        -
-                            localization: null
-                            website: null
-                            webCatalog: "Default Web Catalog"
-                            customer: null
-                            customerGroup: null
                     contentVariants:
                         -
                             type: category_page
                             params:
                                 title: "Architectural Floodlighting"
                             isDefault: true
-                            scopes:
-                                -
-                                    localization: null
-                                    website: null
-                                    webCatalog: "Default Web Catalog"
-                                    customer: null
-                                    customerGroup: null
                     children: ~
                 "Medical Apparel":
                     defaultTitle: "Medical Apparel"
                     defaultSlugPrototype: "medical-apparel"
                     parentScopeUsed: true
-                    scopes:
-                        -
-                            localization: null
-                            website: null
-                            webCatalog: "Default Web Catalog"
-                            customer: null
-                            customerGroup: null
                     contentVariants:
                         -
                             type: category_page
                             params:
                                 title: "Medical Apparel"
                             isDefault: true
-                            scopes:
-                                -
-                                    localization: null
-                                    website: null
-                                    webCatalog: "Default Web Catalog"
-                                    customer: null
-                                    customerGroup: null
                     children: ~
                 "Office Furniture":
                     defaultTitle: "Office Furniture"
                     defaultSlugPrototype: "office-furniture"
                     parentScopeUsed: true
-                    scopes:
-                        -
-                            localization: null
-                            website: null
-                            webCatalog: "Default Web Catalog"
-                            customer: null
-                            customerGroup: null
                     contentVariants:
                         -
                             type: category_page
                             params:
-                                title: "Medical Apparel"
+                                title: "Office Furniture"
                             isDefault: true
-                            scopes:
-                                -
-                                    localization: null
-                                    website: null
-                                    webCatalog: "Default Web Catalog"
-                                    customer: null
-                                    customerGroup: null
                     children: ~
                 "Retail Supplies":
                     defaultTitle: "Retail Supplies"
                     defaultSlugPrototype: "retail-supplies"
                     parentScopeUsed: true
-                    scopes:
-                        -
-                            localization: null
-                            website: null
-                            webCatalog: "Default Web Catalog"
-                            customer: null
-                            customerGroup: null
                     contentVariants:
                         -
                             type: category_page
                             params:
                                 title: "Retail Supplies"
                             isDefault: true
-                            scopes:
-                                -
-                                    localization: null
-                                    website: null
-                                    webCatalog: "Default Web Catalog"
-                                    customer: null
-                                    customerGroup: null
                     children: ~

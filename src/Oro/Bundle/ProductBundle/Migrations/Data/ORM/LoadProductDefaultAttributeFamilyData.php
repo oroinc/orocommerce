@@ -59,15 +59,6 @@ class LoadProductDefaultAttributeFamilyData extends AbstractFixture implements
             'attributes' => [
                 'inventory_status'
             ],
-            'groupVisibility' => true
-        ],
-        [
-            'groupLabel' => 'SEO',
-            'groupCode' => 'seo',
-            'attributes' => [
-                'metaKeywords',
-                'metaDescriptions'
-            ],
             'groupVisibility' => false
         ],
         [

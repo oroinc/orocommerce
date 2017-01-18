@@ -3,4 +3,5 @@ services:
         class: 'Oro\Bundle\FlatRateBundle\Builder\FlatRateMethodFromChannelBuilder'
         public: false
         arguments:
+            - '@oro_flat_rate.method.identifier_generator.method'
             - '@oro_locale.helper.localization'

@@ -65,8 +65,8 @@ class AjaxProductUnitControllerTest extends WebTestCase
     public function productUnitsDataProvider()
     {
         return [
-            'product.1' => [
-                'product.1',
+            'product-1' => [
+                'product-1',
                 [
                     'bottle' => 'bottle',
                     'liter' => 'liter',
@@ -74,8 +74,8 @@ class AjaxProductUnitControllerTest extends WebTestCase
                 ],
                 false
             ],
-            'product.2' => [
-                'product.2',
+            'product-2' => [
+                'product-2',
                 [
                     'bottle' => 'bottle',
                     'box' => 'box',
@@ -84,8 +84,8 @@ class AjaxProductUnitControllerTest extends WebTestCase
                 ],
                 false
             ],
-            'product.1 short label' => [
-                'product.1',
+            'product-1 short label' => [
+                'product-1',
                 [
                     'bottle' => 'bottle',
                     'liter' => 'liter',
@@ -93,8 +93,8 @@ class AjaxProductUnitControllerTest extends WebTestCase
                 ],
                 true
             ],
-            'product.2 short label' => [
-                'product.2',
+            'product-2 short label' => [
+                'product-2',
                 [
                     'bottle' => 'bottle',
                     'box' => 'box',
