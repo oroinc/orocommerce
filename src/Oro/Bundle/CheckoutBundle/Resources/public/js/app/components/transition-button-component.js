@@ -17,8 +17,9 @@ define(function(require) {
                 checkoutFlashNotifications: '[data-role="checkout-flash-notifications"]',
                 checkoutSidebar: '[data-role="checkout-sidebar"]',
                 checkoutContent: '[data-role="checkout-content"]',
+                checkoutRequire: '[data-role="checkout-require"]',
                 transitionTriggerContainer: '[data-role="transition-trigger-container"]',
-                transitionTrigger: '[data-role="transition-trigger"]'
+                transitionTrigger: '[data-role="transition-trigger"]',
             }
         },
 
@@ -39,7 +40,7 @@ define(function(require) {
             }
             this.onReady();
         },
-        
+
         onReady: function() {
             if (this.options.enabled) {
                 this.$el.prop('disabled', false);
@@ -128,6 +129,13 @@ define(function(require) {
 
         onFail: function() {
             this.inProgress = false;
+            this.$el.removeClass('btn--info');
+            this.$el.prop('disabled', true);
+            this.$el.closest(this.defaults.selectors.checkoutContent)
+                    .find(this.defaults.selectors.checkoutRequire)
+                    .addClass('hidden');
+
+            mediator.trigger('transition:failed');
             mediator.execute('hideLoading');
             mediator.execute('showFlashMessage', 'error', 'Could not perform transition');
         },
