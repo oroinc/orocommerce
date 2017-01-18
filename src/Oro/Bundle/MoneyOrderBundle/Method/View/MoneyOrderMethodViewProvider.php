@@ -2,79 +2,87 @@
 
 namespace Oro\Bundle\MoneyOrderBundle\Method\View;
 
-use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigInterface;
-use Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder;
-use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
+use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigProvider;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
 
 class MoneyOrderMethodViewProvider implements PaymentMethodViewProviderInterface
 {
-    /**
-     * @var  PaymentMethodViewInterface[]
-     */
-    protected $methodViews;
+    /** @var MoneyOrderView[] */
+    private $views;
+
+    /** @var MoneyOrderConfigProvider */
+    private $configProvider;
 
     /**
-     * @var MoneyOrderConfigInterface
+     * @param MoneyOrderConfigProvider $configProvider
      */
-    protected $config;
-
-    /**
-     * @param MoneyOrderConfigInterface $config
-     */
-    public function __construct(MoneyOrderConfigInterface $config)
+    public function __construct(MoneyOrderConfigProvider $configProvider)
     {
-        $this->config = $config;
+        $this->configProvider = $configProvider;
     }
 
     /**
      * @param array $paymentMethods
-     * @return PaymentMethodViewInterface[]
+     *
+     * @return MoneyOrderView[]
      */
     public function getPaymentMethodViews(array $paymentMethods)
     {
-        if ($this->methodViews === null) {
-            $this->collectPaymentMethodViews();
-        }
-        $matchedViews = [];
-        foreach ($paymentMethods as $paymentMethod) {
-            if ($this->hasPaymentMethodView($paymentMethod)) {
-                $matchedViews[$paymentMethod] = $this->getPaymentMethodView($paymentMethod);
+        $views = [];
+        foreach ($paymentMethods as $identifier) {
+            if ($this->hasPaymentMethodView($identifier)) {
+                $views[] = $this->getPaymentMethodView($identifier);
             }
         }
-        return $matchedViews;
+
+        return $views;
     }
 
     /**
      * @param string $identifier
-     * @return PaymentMethodViewInterface
+     *
+     * @return MoneyOrderView|null
      */
     public function getPaymentMethodView($identifier)
     {
-        if ($this->methodViews === null) {
-            $this->collectPaymentMethodViews();
+        if (!$this->hasPaymentMethodView($identifier)) {
+            return null;
         }
-        if ($this->hasPaymentMethodView($identifier)) {
-            return $this->methodViews[$identifier];
-        }
-        return null;
+
+        $views = $this->getAllPaymentMethodViews();
+
+        return $views[$identifier];
     }
 
     /**
      * @param string $identifier
+     *
      * @return bool
      */
     public function hasPaymentMethodView($identifier)
     {
-        if ($this->methodViews === null) {
+        $views = $this->getAllPaymentMethodViews();
+
+        return array_key_exists($identifier, $views);
+    }
+
+    /**
+     * @return MoneyOrderView[]
+     */
+    private function getAllPaymentMethodViews()
+    {
+        if (empty($this->views)) {
             $this->collectPaymentMethodViews();
         }
-        return array_key_exists($identifier, $this->methodViews);
+
+        return $this->views;
     }
-    
-    protected function collectPaymentMethodViews()
+
+    private function collectPaymentMethodViews()
     {
-        $methodView = new MoneyOrderView($this->config);
-        $this->methodViews = [MoneyOrder::TYPE => $methodView];
+        foreach ($this->configProvider->getPaymentConfigs() as $config) {
+            $view = new MoneyOrderView($config);
+            $this->views[$view->getPaymentMethodIdentifier()] = $view;
+        }
     }
 }
