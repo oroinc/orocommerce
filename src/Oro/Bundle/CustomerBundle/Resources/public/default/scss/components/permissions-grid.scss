@@ -59,6 +59,9 @@
     margin-right: 24px;
     padding: 0;
   }
+  .role-permissions-action-launcher {
+    white-space: nowrap;
+  }
 }
 .dropdown-menu__role-permissions-action {
   .grid .entity-row-action & {
