@@ -1,15 +1,6 @@
-{% block _main_menu_container_widget %}
-    {% set attr =  layout_attr_defaults(attr, {
-        '~class': ' main-menu-outer',
-    }) %}
-
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
 {% block _header_row_widget %}
     {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-module': 'orocommercemenu/js/app/components/header-row',
         '~class': ' header-row'
     }) %}
 
@@ -24,7 +15,18 @@
         <span class="custom-icon-menu__bar"></span>
         <span class="custom-icon-menu__bar"></span>
     </div>
-    <div class="header-row__toggle" data-header-row-toggle>
+    <div class="header-row__toggle">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _main_menu_container_widget %}
+    {% set attr =  layout_attr_defaults(attr, {
+        'data-header-row-toggle': '',
+        '~class': ' main-menu-outer',
+    }) %}
+
+    <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
@@ -46,7 +48,7 @@
             <li class="main-menu__item">
                 <a href="{{ app.request.getUriForPath(child.uri) }}" class="main-menu__link">
                     {% set label = child.extras.custom is defined and child.extras.custom == true ? child.label : child.label|trans %}
-                    <span>{{ label }}</span>
+                    <span class="main-menu__text">{{ label }}</span>
                 </a>
             </li>
             {% endif %}

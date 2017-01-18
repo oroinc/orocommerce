@@ -1,4 +1,4 @@
-// @theme: default;
+// @theme: blank;
 
 .main-menu-column {
     position: relative;
@@ -6,6 +6,8 @@
     min-width: 200px;
 
     font-size: $base-font-size;
+
+    box-sizing: border-box;
 
     &::before {
         position: absolute;
@@ -109,7 +111,7 @@
 
 @include breakpoint('tablet') {
     .main-menu-column {
-        margin: 0 -15px 15px -15px;
+        margin: $main-menu-column-tablet-offset;
         padding: 18px 34px 0 34px;
 
         border-top: 1px solid get-color('additional', 'light');

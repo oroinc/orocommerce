@@ -10,6 +10,7 @@
     {% if (max_size is not null ) %}
         {% set categories = categories[0:max_size] %}
     {%- endif %}
+    {% set screenType = screenType|default('tablet') %}
     {% set categoriesAttr = {
         'class': ' main-menu__item'
     } %}
@@ -22,7 +23,7 @@
                 'data-dropdown-trigger': true,
                 'data-page-component-module': 'oroui/js/app/components/viewport-component',
                 '~data-page-component-options': {
-                    screenType: 'tablet',
+                    screenType: screenType,
                     component: 'oroui/js/app/components/jquery-widget-component',
                     widgetModule: 'oroui/js/widget/collapse-widget',
                     trigger: '[data-collapse-trigger-second]',
@@ -158,9 +159,11 @@
         {% set hasSublist = category.children is not empty %}
         <a href="{{ app.request.uriForPath(category.url) }}"
            class="main-menu__link" data-collapse-trigger-second>
-            <span>{{ category.label }}</span>
+            <span class="main-menu__text">{{ category.label }}</span>
             {% if hasSublist %}
-                <i class="fa-angle-down"></i>
+                <span class="main-menu__taptick">
+                    <i class="fa-angle-down fa--no-offset"></i>        
+                </span>
             {% endif %}
         </a>
         {% if hasSublist %}
@@ -173,7 +176,7 @@
 {% endblock %}
 
 {% block _web_catalog_menu_main_menu_sub_block_simple %}
-    <div class="main-menu__sublist-container" data-collapse-container-second>
+    <div class="main-menu__sublist-container" data-header-row-toggle data-collapse-container-second>
         <div class="main-menu-columns main-menu-columns--single">
             <div class="main-menu-column">
                 <ul class="main-menu-column__inner">
@@ -186,7 +189,7 @@
 {% endblock  %}
 
 {% block _web_catalog_menu_main_menu_sub_block_head %}
-    <div class="main-menu__sublist-container" data-collapse-container-second>
+    <div class="main-menu__sublist-container" data-header-row-toggle data-collapse-container-second>
         <div class="main-menu-columns">
             {% do block|merge_context({'categories': category.children }) %}
             {{ block('container_widget') }}
@@ -195,8 +198,9 @@
 {% endblock  %}
 
 {% block _web_catalog_menu_second_level_column %}
+    {% set screenType = screenType|default('tablet') %}
     {% set collapseView =  layout_attr_defaults(attr, {
-        screenType: 'tablet',
+        screenType: screenType,
         component: 'oroui/js/app/components/jquery-widget-component',
         widgetModule: 'oroui/js/widget/collapse-widget',
         trigger: '[data-collapse-trigger-third]',
@@ -216,7 +220,7 @@
 {% endblock  %}
 
 {% block _web_catalog_menu_main_menu_sub_block_mega %}
-    <div class="main-menu__sublist-container" data-collapse-container-second>
+    <div class="main-menu__sublist-container" data-header-row-toggle data-collapse-container-second>
         <div class="main-menu-columns">
             {% do block|merge_context({'categories': category.children }) %}
             {{ block('container_widget') }}

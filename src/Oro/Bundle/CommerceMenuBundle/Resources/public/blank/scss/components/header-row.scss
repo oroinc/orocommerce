@@ -18,6 +18,7 @@
 
         background-color: get-color('additional', 'base');
         border: 0;
+        box-sizing: border-box;
     }
 
     &__toggle {
