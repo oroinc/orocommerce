@@ -85,5 +85,4 @@ class MoneyOrderMethodViewProvider implements PaymentMethodViewProviderInterface
             $this->views[$view->getPaymentMethodIdentifier()] = $view;
         }
     }
-
 }

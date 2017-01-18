@@ -10,7 +10,7 @@ use Oro\Bundle\MoneyOrderBundle\Method\View\MoneyOrderView;
 class MoneyOrderMethodViewProviderTest extends \PHPUnit_Framework_TestCase
 {
     /** @var MoneyOrderMethodViewProvider */
-    protected $provider;
+    private $provider;
 
     /** @var MoneyOrderConfig[]|\PHPUnit_Framework_MockObject_MockObject */
     private $configs;
