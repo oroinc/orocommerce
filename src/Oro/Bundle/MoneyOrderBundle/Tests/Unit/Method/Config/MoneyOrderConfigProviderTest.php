@@ -7,49 +7,59 @@ use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Entity\Repository\ChannelRepository;
 use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig;
 use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigProvider;
+use Oro\Bundle\MoneyOrderBundle\Method\Factory\MoneyOrderConfigFactoryInterface;
 
 class MoneyOrderConfigProviderTest extends \PHPUnit_Framework_TestCase
 {
     /** @internal */
-    const CHANNEL_ID1 = 1;
+    const CONFIG_ID1 = 5;
 
     /** @internal */
-    const CHANNEL_ID2 = 2;
+    const CONFIG_ID2 = 9;
 
     /** @var MoneyOrderConfigProvider */
     private $provider;
 
-    /** @var Channel[] */
-    private $channels;
+    /** @var MoneyOrderConfig[] */
+    private $configs;
 
     protected function setUp()
     {
-        $this->channels = [
-            $this->createChannelWithId(self::CHANNEL_ID1),
-            $this->createChannelWithId(self::CHANNEL_ID2),
+        $this->configs = [
+            $this->createConfigWithIdentifier(self::CONFIG_ID1),
+            $this->createConfigWithIdentifier(self::CONFIG_ID2),
         ];
 
         $channelRepository = $this->createMock(ChannelRepository::class);
         $channelRepository->expects(static::any())
             ->method('findBy')
-            ->willReturn($this->channels);
+            ->willReturn([
+                new Channel(),
+                new Channel(),
+            ]);
 
         $doctrineHelper = $this->createMock(DoctrineHelper::class);
         $doctrineHelper->expects(static::any())
             ->method('getEntityRepository')
             ->willReturn($channelRepository);
 
-        $this->provider = new MoneyOrderConfigProvider($doctrineHelper);
+        $configFactory = $this->createMock(MoneyOrderConfigFactoryInterface::class);
+        $configFactory->expects(static::at(0))
+            ->method('create')
+            ->willReturn($this->configs[0]);
+
+        $configFactory->expects(static::at(1))
+            ->method('create')
+            ->willReturn($this->configs[1]);
+
+        $this->provider = new MoneyOrderConfigProvider($doctrineHelper, $configFactory);
     }
 
     public function testGetPaymentConfigsReturnsCorrectObjects()
     {
-        $config1 = new MoneyOrderConfig($this->channels[0]);
-        $config2 = new MoneyOrderConfig($this->channels[1]);
-
         $expected = [
-            $config1->getPaymentMethodIdentifier() => $config1,
-            $config2->getPaymentMethodIdentifier() => $config2,
+            self::CONFIG_ID1 => $this->configs[0],
+            self::CONFIG_ID2 => $this->configs[1],
         ];
 
         static::assertEquals($expected, $this->provider->getPaymentConfigs());
@@ -57,9 +67,7 @@ class MoneyOrderConfigProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testHasPaymentConfigForRightIdentifier()
     {
-        $config1 = new MoneyOrderConfig($this->channels[0]);
-
-        static::assertTrue($this->provider->hasPaymentConfig($config1->getPaymentMethodIdentifier()));
+        static::assertTrue($this->provider->hasPaymentConfig(self::CONFIG_ID1));
     }
 
     public function testHasPaymentConfigForWrongIdentifier()
@@ -69,11 +77,9 @@ class MoneyOrderConfigProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetPaymentConfigReturnsCorrectObject()
     {
-        $config1 = new MoneyOrderConfig($this->channels[0]);
-
         static::assertEquals(
-            $config1,
-            $this->provider->getPaymentConfig($config1->getPaymentMethodIdentifier())
+            $this->configs[1],
+            $this->provider->getPaymentConfig(self::CONFIG_ID2)
         );
     }
 
@@ -83,17 +89,17 @@ class MoneyOrderConfigProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param int $id
+     * @param int $identifier
      *
-     * @return \PHPUnit_Framework_MockObject_MockObject|Channel
+     * @return MoneyOrderConfig|\PHPUnit_Framework_MockObject_MockObject
      */
-    private function createChannelWithId($id)
+    private function createConfigWithIdentifier($identifier)
     {
-        $channel = $this->createMock(Channel::class);
-        $channel->expects(static::any())
-            ->method('getId')
-            ->willReturn($id);
+        $config = $this->createMock(MoneyOrderConfig::class);
+        $config->expects(static::any())
+            ->method('getPaymentMethodIdentifier')
+            ->willReturn($identifier);
 
-        return $channel;
+        return $config;
     }
 }

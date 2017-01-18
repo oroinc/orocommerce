@@ -17,3 +17,4 @@ services:
         class: 'Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigProvider'
         arguments:
             - '@oro_entity.doctrine_helper'
+            - '@oro_money_order.factory.money_order_config'

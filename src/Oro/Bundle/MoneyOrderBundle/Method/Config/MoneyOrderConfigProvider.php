@@ -6,6 +6,7 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Entity\Repository\ChannelRepository;
 use Oro\Bundle\MoneyOrderBundle\Integration\MoneyOrderChannelType;
+use Oro\Bundle\MoneyOrderBundle\Method\Factory\MoneyOrderConfigFactoryInterface;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentConfigProviderInterface;
 
 class MoneyOrderConfigProvider implements PaymentConfigProviderInterface
@@ -13,12 +14,22 @@ class MoneyOrderConfigProvider implements PaymentConfigProviderInterface
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
+    /** @var MoneyOrderConfigFactoryInterface */
+    protected $configFactory;
+
+    /** @var MoneyOrderConfig[] */
+    protected $configs;
+
     /**
-     * @param DoctrineHelper $doctrineHelper
+     * @param DoctrineHelper                   $doctrineHelper
+     * @param MoneyOrderConfigFactoryInterface $configFactory
      */
-    public function __construct(DoctrineHelper $doctrineHelper)
-    {
+    public function __construct(
+        DoctrineHelper $doctrineHelper,
+        MoneyOrderConfigFactoryInterface $configFactory
+    ) {
         $this->doctrineHelper = $doctrineHelper;
+        $this->configFactory = $configFactory;
     }
 
     /**
@@ -26,16 +37,11 @@ class MoneyOrderConfigProvider implements PaymentConfigProviderInterface
      */
     public function getPaymentConfigs()
     {
-        $configs = [];
-
-        $channels = $this->getMoneyOrderChannels();
-        foreach ($channels as $channel) {
-            $config = new MoneyOrderConfig($channel);
-
-            $configs[$config->getPaymentMethodIdentifier()] = $config;
+        if (empty($this->configs)) {
+            $this->fillPaymentConfigs();
         }
 
-        return $configs;
+        return $this->configs;
     }
 
     /**
@@ -64,6 +70,16 @@ class MoneyOrderConfigProvider implements PaymentConfigProviderInterface
         $configs = $this->getPaymentConfigs();
 
         return $configs[$identifier];
+    }
+
+    protected function fillPaymentConfigs()
+    {
+        $channels = $this->getMoneyOrderChannels();
+        foreach ($channels as $channel) {
+            $config = $this->configFactory->create($channel);
+
+            $this->configs[$config->getPaymentMethodIdentifier()] = $config;
+        }
     }
 
     /**
