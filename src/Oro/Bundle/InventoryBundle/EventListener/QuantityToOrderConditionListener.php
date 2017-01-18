@@ -69,9 +69,9 @@ class QuantityToOrderConditionListener
             return;
         }
 
-        $shoppingList = $context->getResult()->get('shoppingList');
-
-        if (false == $this->validatorService->isLineItemListValid($shoppingList->getLineItems())) {
+        /** @var Checkout $checkout */
+        $checkout = $context->get('checkout');
+        if (false == $this->validatorService->isLineItemListValid($checkout->getLineItems())) {
             $event->addError(self::QUANTITY_CHECK_ERROR, $context);
         }
     }
@@ -142,11 +142,6 @@ class QuantityToOrderConditionListener
      */
     protected function isNotCorrectConditionContextForStart($context)
     {
-        return (!$context instanceof WorkflowItem
-            || !in_array($context->getWorkflowName(), self::$allowedWorkflows, true)
-            || !is_a($context->getDefinition()->getRelatedEntity(), Checkout::class, true)
-            // make sure checkout only done from shopping list
-            || !$context->getResult()->get('shoppingList') instanceof ShoppingList
-        );
+        return (!$context instanceof ActionData || !is_a($context->get('checkout'), Checkout::class, true));
     }
 }
