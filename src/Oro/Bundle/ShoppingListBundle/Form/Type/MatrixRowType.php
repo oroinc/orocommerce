@@ -8,6 +8,7 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Valid;
 
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionRow;
 
@@ -19,7 +20,8 @@ class MatrixRowType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->add('columns', CollectionType::class, [
-            'entry_type' => MatrixColumnType::class
+            'entry_type' => MatrixColumnType::class,
+            'constraints' => new Valid(),
         ]);
     }
 

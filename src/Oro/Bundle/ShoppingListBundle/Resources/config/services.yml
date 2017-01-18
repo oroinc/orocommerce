@@ -296,3 +296,9 @@ services:
             - '@validator'
         tags:
             - { name: layout.data_provider, alias: oro_line_item_errors }
+
+    oro_shopping_list.validator.matrix_collection:
+        class: 'Oro\Bundle\ShoppingListBundle\Validator\Constraints\MatrixCollectionColumnValidator'
+        public: true
+        tags:
+            - { name: validator.constraint_validator }

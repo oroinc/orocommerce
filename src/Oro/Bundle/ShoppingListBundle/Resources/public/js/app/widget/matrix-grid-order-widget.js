@@ -4,6 +4,8 @@ define(function(require) {
     var MatrixGridOrderWidget;
     var routing = require('routing');
     var DialogWidget = require('oro/dialog-widget');
+    var mediator = require('oroui/js/mediator');
+    var _ = require('underscore');
 
     MatrixGridOrderWidget = DialogWidget.extend({
         initialize: function(options) {
@@ -25,6 +27,15 @@ define(function(require) {
 
             MatrixGridOrderWidget.__super__.initialize.apply(this, arguments);
         },
+
+        _onContentLoad: function(content) {
+            if (_.has(content, 'redirectUrl')) {
+                mediator.execute('redirectTo', {url: content.redirectUrl}, {redirect: true});
+                return;
+            }
+
+            MatrixGridOrderWidget.__super__._onContentLoad.apply(this, arguments);
+        }
     });
 
     return MatrixGridOrderWidget;

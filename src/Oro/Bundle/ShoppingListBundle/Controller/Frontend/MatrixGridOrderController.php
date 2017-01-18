@@ -6,6 +6,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
@@ -28,7 +29,7 @@ class MatrixGridOrderController extends Controller
      *
      * @param Request $request
      * @param Product $product
-     * @return array
+     * @return array | JsonResponse
      */
     public function orderAction(Request $request, Product $product)
     {
@@ -46,6 +47,15 @@ class MatrixGridOrderController extends Controller
 
             foreach ($lineItems as $lineItem) {
                 $shoppingListManager->addLineItem($lineItem, $shoppingList, true, true);
+            }
+
+            if ($request->isXmlHttpRequest()) {
+                $url = $this->generateUrl(
+                    'oro_product_frontend_product_view',
+                    ['id' => $product->getId()]
+                );
+
+                return new JsonResponse(['redirectUrl' => $url]);
             }
         }
 

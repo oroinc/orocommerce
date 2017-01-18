@@ -3,6 +3,8 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
+use Symfony\Component\Validator\Validation;
 
 use Oro\Bundle\ShoppingListBundle\Form\Type\MatrixCollectionType;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn;
@@ -25,6 +27,12 @@ class MatrixCollectionTypeTest extends FormIntegrationTestCase
     protected function tearDown()
     {
         unset($this->type);
+    }
+
+    protected function getExtensions()
+    {
+
+        return array(new ValidatorExtension(Validation::createValidator()));
     }
 
     /**

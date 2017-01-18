@@ -4,3 +4,6 @@ oro:
 
         lineitem:
             already_exists: "Line Item with the same product and unit already exists"
+
+    matrixgrid:
+            product_unavailable: "This item is unavailable"

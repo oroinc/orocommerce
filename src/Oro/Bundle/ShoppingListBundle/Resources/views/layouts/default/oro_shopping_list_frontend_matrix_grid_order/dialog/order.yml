@@ -46,5 +46,4 @@ layout:
                     form_summary: ~
                     form_actions:
                         form_actions_create: ~
-                        form_actions_create_and_add: ~
                     form_end: ~

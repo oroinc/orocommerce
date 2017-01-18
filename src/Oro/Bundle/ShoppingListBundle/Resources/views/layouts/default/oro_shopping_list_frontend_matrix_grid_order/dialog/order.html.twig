@@ -4,3 +4,12 @@
         {{ 'oro.frontend.shoppinglist.matrix_grid_order.total'|trans }}: <span class="matrix-order-form-summary-total-price">{{ totalPrice }}</span>
     </div>
 {% endblock %}
+
+{% block _form_actions_widget %}
+    {% set attr = attr|merge({
+    class: attr.class|default('') ~ " widget-actions"
+    }) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
