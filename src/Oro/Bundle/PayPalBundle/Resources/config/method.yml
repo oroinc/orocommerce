@@ -39,13 +39,13 @@ services:
             - '%oro_paypal.method.type.paypal_payflow_gateway%'
 
     oro_paypal.method.config.factory.credit_card:
-        class: 'Oro\Bundle\PayPalBundle\Method\Config\Builder\Factory\PayPalCreditCardConfigFactory'
+        class: 'Oro\Bundle\PayPalBundle\Method\Config\Factory\PayPalCreditCardConfigFactory'
         arguments:
             - '@oro_security.encoder.mcrypt'
             - '@oro_locale.helper.localization'
 
     oro_paypal.method.config.factory.express_checkout:
-        class: 'Oro\Bundle\PayPalBundle\Method\Config\Builder\Factory\PayPalExpressCheckoutConfigFactory'
+        class: 'Oro\Bundle\PayPalBundle\Method\Config\Factory\PayPalExpressCheckoutConfigFactory'
         arguments:
             - '@oro_security.encoder.mcrypt'
             - '@oro_locale.helper.localization'
