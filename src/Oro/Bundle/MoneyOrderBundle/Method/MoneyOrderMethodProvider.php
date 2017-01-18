@@ -2,39 +2,62 @@
 
 namespace Oro\Bundle\MoneyOrderBundle\Method;
 
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigProvider;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodProviderInterface;
 
 class MoneyOrderMethodProvider implements PaymentMethodProviderInterface
 {
-     /**
-     * @return PaymentMethodInterface[]
+    /** @var MoneyOrderConfigProvider */
+    private $configProvider;
+
+    /**
+     * @param MoneyOrderConfigProvider $configProvider
+     */
+    public function __construct(MoneyOrderConfigProvider $configProvider)
+    {
+        $this->configProvider = $configProvider;
+    }
+
+    /**
+     * @return MoneyOrder[]
      */
     public function getPaymentMethods()
     {
-        $paymentMethod = new MoneyOrder();
-        return [$this->getType() => $paymentMethod];
+        $methods = [];
+        foreach ($this->configProvider->getPaymentConfigs() as $config) {
+            $method = new MoneyOrder($config);
+            $methods[$method->getIdentifier()] = $method;
+        }
+
+        return $methods;
     }
 
     /**
      * @param string $identifier
-     * @return PaymentMethodInterface
+     *
+     * @return MoneyOrder|null
      */
     public function getPaymentMethod($identifier)
     {
-        if ($this->hasPaymentMethod($identifier)) {
-            return $this->getPaymentMethods()[$identifier];
+        if (!$this->hasPaymentMethod($identifier)) {
+            return null;
         }
-        return null;
+
+        $methods = $this->getPaymentMethods();
+
+        return $methods[$identifier];
     }
 
     /**
      * @param string $identifier
+     *
      * @return bool
      */
     public function hasPaymentMethod($identifier)
     {
-        return $this->getType() === $identifier;
+        $methods = $this->getPaymentMethods();
+
+        return array_key_exists($identifier, $methods);
     }
 
     /**
