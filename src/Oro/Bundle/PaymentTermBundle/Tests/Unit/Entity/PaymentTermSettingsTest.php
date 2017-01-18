@@ -17,6 +17,7 @@ class PaymentTermSettingsTest extends \PHPUnit_Framework_TestCase
     {
         static::assertPropertyCollections(new PaymentTermSettings(), [
             ['labels', new LocalizedFallbackValue()],
+            ['shortLabels', new LocalizedFallbackValue()],
         ]);
     }
 

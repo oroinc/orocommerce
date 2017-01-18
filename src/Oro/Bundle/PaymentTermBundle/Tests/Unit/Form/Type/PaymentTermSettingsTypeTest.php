@@ -44,6 +44,7 @@ class PaymentTermSettingsTypeTest extends FormIntegrationTestCase
     {
         $submitData = [
             'labels' => [['string' => 'first label']],
+            'shortLabels' => [['string' => 'short label']],
         ];
 
         $settings = new PaymentTermSettings();
