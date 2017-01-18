@@ -141,6 +141,7 @@ class PaymentTermSettings extends Transport
         if (null === $this->settings) {
             $this->settings = new ParameterBag([
                 'labels' => $this->getLabels()->toArray(),
+                'short_labels' => $this->getShortLabels()->toArray()
             ]);
         }
 

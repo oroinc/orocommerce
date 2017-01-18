@@ -1,4 +1,5 @@
 <?php
+
 namespace Oro\Bundle\PaymentTermBundle\Migrations\Schema\v1_1;
 
 use Doctrine\DBAL\Schema\Schema;
