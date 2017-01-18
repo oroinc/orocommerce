@@ -1,0 +1,7 @@
+services:
+    oro_money_order.factory.money_order_config:
+        class: 'Oro\Bundle\MoneyOrderBundle\Method\Factory\MoneyOrderConfigFactory'
+        public: false
+        arguments:
+            - '@oro_locale.helper.localization'
+            - '@oro_money_order.generator.money_order_config_identifier'

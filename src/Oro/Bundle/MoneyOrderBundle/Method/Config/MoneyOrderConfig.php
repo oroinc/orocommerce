@@ -2,54 +2,95 @@
 
 namespace Oro\Bundle\MoneyOrderBundle\Method\Config;
 
-use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\MoneyOrderBundle\DependencyInjection\Configuration;
-use Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder;
-use Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentConfig;
-
-class MoneyOrderConfig extends AbstractPaymentConfig implements MoneyOrderConfigInterface
+class MoneyOrderConfig implements MoneyOrderConfigInterface
 {
+    /** @var string */
+    private $label;
+
+    /** @var string */
+    private $shortLabel;
+
+    /** @var string */
+    private $adminLabel;
+
+    /** @var string */
+    private $payTo;
+
+    /** @var string */
+    private $sendTo;
+
+    /** @var string */
+    private $identifier;
+
     /**
-     * @param Channel $channel
+     * @param string $label
+     * @param string $shortLabel
+     * @param string $adminLabel
+     * @param string $payTo
+     * @param string $sendTo
+     * @param string $identifier
      */
-    public function __construct(Channel $channel)
-    {
-        parent::__construct($channel);
+    public function __construct(
+        $label,
+        $shortLabel,
+        $adminLabel,
+        $payTo,
+        $sendTo,
+        $identifier
+    ) {
+        $this->label = $label;
+        $this->shortLabel = $shortLabel;
+        $this->adminLabel = $adminLabel;
+        $this->payTo = $payTo;
+        $this->sendTo = $sendTo;
+        $this->identifier = $identifier;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * @return string
+     */
     public function getLabel()
     {
-        return (string)$this->getConfigValue(Configuration::MONEY_ORDER_LABEL_KEY);
+        return $this->label;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * @return string
+     */
     public function getShortLabel()
     {
-        return (string)$this->getConfigValue(Configuration::MONEY_ORDER_SHORT_LABEL_KEY);
+        return $this->shortLabel;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * @return string
+     */
     public function getAdminLabel()
     {
-        return (string)$this->getLabel();
+        return $this->adminLabel;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * @return string
+     */
     public function getPayTo()
     {
-        return (string)$this->getConfigValue(Configuration::MONEY_ORDER_PAY_TO_KEY);
+        return $this->payTo;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * @return string
+     */
     public function getSendTo()
     {
-        return (string)$this->getConfigValue(Configuration::MONEY_ORDER_SEND_TO_KEY);
+        return $this->sendTo;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * @return string
+     */
     public function getPaymentMethodIdentifier()
     {
-        return (string)MoneyOrder::TYPE . '_' . $this->channel->getId();
+        return $this->identifier;
     }
 }

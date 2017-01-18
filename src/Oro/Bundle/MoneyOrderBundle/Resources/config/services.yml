@@ -1,0 +1,4 @@
+services:
+    oro_money_order.generator.money_order_config_identifier:
+        class: 'Oro\Bundle\MoneyOrderBundle\Method\Generator\MoneyOrderConfigIdentifierGenerator'
+        public: false
