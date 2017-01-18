@@ -83,6 +83,9 @@ action_groups:
             forceStartCheckout:
                 type: bool
                 default: false
+            showErrors:
+                type: bool
+                default: false
         actions:
             - '@assign_url':
                 attribute: $.editLink
@@ -102,9 +105,11 @@ action_groups:
                         edit_order_link: $.editLink
                         source_remove_label: $.sourceRemoveLabel
                     force: $.forceStartCheckout
+                    showErrors: $.showErrors
                 results:
                     redirectUrl: $.redirectUrl
                     checkout: $.checkout
+                    errors: $.errors
 
     start_checkout:
         parameters:
@@ -119,6 +124,9 @@ action_groups:
             settings:
                 type: array
                 default: []
+            showErrors:
+                type: bool
+                default: false
         actions:
             - '@run_action_group':
                 action_group: find_checkout
@@ -139,11 +147,16 @@ action_groups:
                         parameters_mapping:
                             entity: $.checkout
                             data: $.settings
-
-            - '@redirect':
-                route: oro_checkout_frontend_checkout
-                route_parameters:
-                    id: $.checkout.id
+            - '@tree':
+                conditions:
+                    '@extendable':
+                        events: [extendable_condition.start_checkout]
+                        showErrors: $.showErrors
+                actions:
+                    - '@redirect':
+                        route: oro_checkout_frontend_checkout
+                        route_parameters:
+                            id: $.checkout.id
 
     find_checkout:
         parameters:
