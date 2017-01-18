@@ -666,7 +666,7 @@ datagrids:
             query:
                 select:
                     - calendarDate.date as cDate
-                    - order1.createdAt as createdAt
+                    - orderAlias.createdAt as createdAt
                     - lineitem.productUnitCode as unitCode
                     - SUM (lineitem.quantity) as qtySold
                     - product.sku as sku
@@ -676,11 +676,11 @@ datagrids:
                     left:
                         -
                             join: %oro_order.entity.order.class%
-                            alias: order1
+                            alias: orderAlias
                             conditionType: WITH
-                            condition: CAST(calendarDate.date as DATE) = CAST(order1.createdAt as DATE)
+                            condition: CAST(calendarDate.date as DATE) = CAST(orderAlias.createdAt as DATE)
                         -
-                            join: order1.lineItems
+                            join: orderAlias.lineItems
                             alias: lineitem
                         -
                             join: lineitem.product
