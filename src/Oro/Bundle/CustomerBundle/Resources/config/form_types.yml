@@ -1,27 +1,27 @@
 services:
-    oro_customer_account.form.type.account:
-        class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountType'
+    oro_customer_customer.form.type.customer:
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\CustomerType'
         arguments:
           - '@event_dispatcher'
         calls:
-            - [setAddressClass, ['%oro_customer.entity.account_address.class%']]
+            - [setAddressClass, ['%oro_customer.entity.customer_address.class%']]
         tags:
-            - { name: form.type, alias: oro_account_type }
+            - { name: form.type, alias: oro_customer_type }
 
-    oro_customer.form.type.account_group:
-        class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountGroupType'
+    oro_customer.form.type.customer_group:
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\CustomerGroupType'
         calls:
-            - [setDataClass, ['%oro_customer.entity.account_group.class%']]
-            - [setAccountClass, ['%oro_customer.entity.account.class%']]
+            - [setDataClass, ['%oro_customer.entity.customer_group.class%']]
+            - [setCustomerClass, ['%oro_customer.entity.customer.class%']]
         tags:
-            - { name: form.type, alias: oro_account_group_type }
+            - { name: form.type, alias: oro_customer_group_type }
 
-    oro_customer_account.form.type.account_select:
-        class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountSelectType'
+    oro_customer_customer.form.type.customer_select:
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType'
         tags:
-            - { name: form.type, alias: oro_customer_account_select }
+            - { name: form.type, alias: oro_customer_customer_select }
 
-    oro_customer_account.form.type.frontend.owner_select:
+    oro_customer_customer.form.type.frontend.owner_select:
         class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendOwnerSelectType'
         arguments:
              - '@oro_security.acl_helper'
@@ -30,124 +30,124 @@ services:
         tags:
             - { name: form.type, alias: oro_customer_frontend_owner_select }
 
-    oro_customer.form.type.account_group_select:
-        class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountGroupSelectType'
+    oro_customer.form.type.customer_group_select:
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\CustomerGroupSelectType'
         tags:
-            - { name: form.type, alias: oro_customer_account_group_select }
+            - { name: form.type, alias: oro_customer_customer_group_select }
 
     oro_customer.form.type.parent_select:
-        class: 'Oro\Bundle\CustomerBundle\Form\Type\ParentAccountSelectType'
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\ParentCustomerSelectType'
         tags:
-            - { name: form.type, alias: oro_account_parent_select }
+            - { name: form.type, alias: oro_customer_parent_select }
 
-    oro_customer.form.type.account_user_select:
-        class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountUserSelectType'
+    oro_customer.form.type.customer_user_select:
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\CustomerUserSelectType'
         tags:
-            - { name: form.type, alias: oro_account_account_user_select }
+            - { name: form.type, alias: oro_customer_customer_user_select }
 
-    oro_customer.form.type.frontend.account_user_select:
-        class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserSelectType'
+    oro_customer.form.type.frontend.customer_user_select:
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendCustomerUserSelectType'
         arguments:
              - '@oro_security.acl_helper'
              - '@doctrine'
         tags:
-            - { name: form.type, alias: oro_account_frontend_account_user_select }
+            - { name: form.type, alias: oro_customer_frontend_customer_user_select }
 
-    oro_customer.form.type.account_user_multiselect_type:
-        class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountUserMultiSelectType'
+    oro_customer.form.type.customer_user_multiselect_type:
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\CustomerUserMultiSelectType'
         tags:
-            - { name: form.type, alias: oro_account_account_user_multiselect }
+            - { name: form.type, alias: oro_customer_customer_user_multiselect }
 
-    oro_customer.form.type.frontend.account_user_multiselect_type:
-        class: 'Oro\Bundle\CustomerBundle\Form\Type\Frontend\AccountUserMultiSelectType'
+    oro_customer.form.type.frontend.customer_user_multiselect_type:
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\Frontend\CustomerUserMultiSelectType'
         tags:
-            - { name: form.type, alias: oro_account_frontend_account_user_multiselect }
+            - { name: form.type, alias: oro_customer_frontend_customer_user_multiselect }
 
-    oro_customer.form.type.account_user:
-        class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountUserType'
+    oro_customer.form.type.customer_user:
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\CustomerUserType'
         arguments:
             - '@oro_security.security_facade'
         calls:
-            - [setDataClass, ['%oro_customer.entity.account_user.class%']]
-            - [setAddressClass, ['%oro_customer.entity.account_user_address.class%']]
+            - [setDataClass, ['%oro_customer.entity.customer_user.class%']]
+            - [setAddressClass, ['%oro_customer.entity.customer_user_address.class%']]
         tags:
-            - { name: form.type, alias: oro_account_account_user }
+            - { name: form.type, alias: oro_customer_customer_user }
 
-    oro_customer.form.type.account_user_role_select:
-        class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountUserRoleSelectType'
+    oro_customer.form.type.customer_user_role_select:
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\CustomerUserRoleSelectType'
         arguments:
             - '@translator'
         calls:
-            - [setRoleClass, ['%oro_customer.entity.account_user_role.class%']]
+            - [setRoleClass, ['%oro_customer.entity.customer_user_role.class%']]
         tags:
-            - { name: form.type, alias: oro_account_account_user_role_select }
+            - { name: form.type, alias: oro_customer_customer_user_role_select }
 
-    oro_customer.form.type.account_user_role:
-        class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountUserRoleType'
+    oro_customer.form.type.customer_user_role:
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\CustomerUserRoleType'
         calls:
-            - [setDataClass, ['%oro_customer.entity.account_user_role.class%']]
+            - [setDataClass, ['%oro_customer.entity.customer_user_role.class%']]
         tags:
-            - { name: form.type, alias: oro_account_account_user_role }
+            - { name: form.type, alias: oro_customer_customer_user_role }
 
-    oro_customer.form.type.frontend.account_user_role:
-        class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserRoleType'
+    oro_customer.form.type.frontend.customer_user_role:
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendCustomerUserRoleType'
         calls:
-            - [setDataClass, ['%oro_customer.entity.account_user_role.class%']]
+            - [setDataClass, ['%oro_customer.entity.customer_user_role.class%']]
         tags:
-            - { name: form.type, alias: oro_account_frontend_account_user_role }
+            - { name: form.type, alias: oro_customer_frontend_customer_user_role }
 
-    oro_customer.form.type.frontend.account_user_profile:
-        class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserProfileType'
+    oro_customer.form.type.frontend.customer_user_profile:
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendCustomerUserProfileType'
         calls:
-            - [setDataClass, ['%oro_customer.entity.account_user.class%']]
+            - [setDataClass, ['%oro_customer.entity.customer_user.class%']]
         tags:
-            - { name: form.type, alias: oro_account_frontend_account_user_profile }
+            - { name: form.type, alias: oro_customer_frontend_customer_user_profile }
 
-    oro_customer.form.type.frontend.account_user:
-        class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserType'
+    oro_customer.form.type.frontend.customer_user:
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendCustomerUserType'
         arguments:
             - '@oro_security.security_facade'
         calls:
-            - [setAccountUserClass, ['%oro_customer.entity.account_user.class%']]
+            - [setCustomerUserClass, ['%oro_customer.entity.customer_user.class%']]
         tags:
-            - { name: form.type, alias: oro_account_frontend_account_user }
+            - { name: form.type, alias: oro_customer_frontend_customer_user }
 
-    oro_customer.form.type.frontend.account_user_role_select:
-        class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserRoleSelectType'
+    oro_customer.form.type.frontend.customer_user_role_select:
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendCustomerUserRoleSelectType'
         arguments:
             - '@oro_security.security_facade'
             - '@doctrine'
             - '@oro_security.acl_helper'
         calls:
-            - [setRoleClass, ['%oro_customer.entity.account_user_role.class%']]
+            - [setRoleClass, ['%oro_customer.entity.customer_user_role.class%']]
         tags:
-            - { name: form.type, alias: oro_account_frontend_account_user_role_select }
+            - { name: form.type, alias: oro_customer_frontend_customer_user_role_select }
 
-    oro_customer.form.type.frontend.account_user.register:
-        class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserRegistrationType'
+    oro_customer.form.type.frontend.customer_user.register:
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendCustomerUserRegistrationType'
         arguments:
             - '@oro_config.manager'
             - '@oro_user.manager'
         calls:
-            - [setDataClass, ['%oro_customer.entity.account_user.class%']]
+            - [setDataClass, ['%oro_customer.entity.customer_user.class%']]
         tags:
-            - { name: form.type, alias: oro_account_frontend_account_user_register }
+            - { name: form.type, alias: oro_customer_frontend_customer_user_register }
 
-    oro_customer.form.type.frontend.account_user.password_request:
-        class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountUserPasswordRequestType'
+    oro_customer.form.type.frontend.customer_user.password_request:
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\CustomerUserPasswordRequestType'
         tags:
-            - { name: form.type, alias: oro_account_account_user_password_request }
+            - { name: form.type, alias: oro_customer_customer_user_password_request }
 
-    oro_customer.form.type.frontend.account_user.password_reset:
-        class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountUserPasswordResetType'
+    oro_customer.form.type.frontend.customer_user.password_reset:
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\CustomerUserPasswordResetType'
         calls:
-            - [setDataClass, ['%oro_customer.entity.account_user.class%']]
+            - [setDataClass, ['%oro_customer.entity.customer_user.class%']]
         tags:
-            - { name: form.type, alias: oro_account_account_user_password_reset }
+            - { name: form.type, alias: oro_customer_customer_user_password_reset }
 
-    oro_customer.form.handler.update_account_user_role:
+    oro_customer.form.handler.update_customer_user_role:
         parent: oro_user.form.handler.abstract.acl_role
-        class: 'Oro\Bundle\CustomerBundle\Form\Handler\AccountUserRoleUpdateHandler'
+        class: 'Oro\Bundle\CustomerBundle\Form\Handler\CustomerUserRoleUpdateHandler'
         scope: prototype
         calls:
             - [setRequestStack, ['@request_stack']]
@@ -157,59 +157,59 @@ services:
             - [addExtensionFilter, ['entity', 'commerce']]
             - [addExtensionFilter, ['action', 'commerce']]
 
-    oro_customer.form.handler.update_account_user_role_frontend:
-        parent: oro_customer.form.handler.update_account_user_role
-        class: 'Oro\Bundle\CustomerBundle\Form\Handler\AccountUserRoleUpdateFrontendHandler'
+    oro_customer.form.handler.update_customer_user_role_frontend:
+        parent: oro_customer.form.handler.update_customer_user_role
+        class: 'Oro\Bundle\CustomerBundle\Form\Handler\CustomerUserRoleUpdateFrontendHandler'
         scope: prototype
         calls:
             - [setTokenStorage, ['@security.token_storage']]
 
     oro_customer.form.type.typed_address:
-        class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountTypedAddressType'
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\CustomerTypedAddressType'
         calls:
-             - [setDataClass, ['%oro_customer.entity.account_address.class%']]
+             - [setDataClass, ['%oro_customer.entity.customer_address.class%']]
              - [setAddressTypeDataClass, ['%oro_address.address.type.entity.class%']]
         tags:
-             - { name: form.type, alias: oro_account_typed_address}
+             - { name: form.type, alias: oro_customer_typed_address}
 
     oro_customer.form.type.frontend.typed_address:
-        class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountTypedAddressType'
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendCustomerTypedAddressType'
         calls:
-             - [setDataClass, ['%oro_customer.entity.account_address.class%']]
+             - [setDataClass, ['%oro_customer.entity.customer_address.class%']]
              - [setAddressTypeDataClass, ['%oro_address.address.type.entity.class%']]
         tags:
-             - { name: form.type, alias: oro_account_frontend_typed_address}
+             - { name: form.type, alias: oro_customer_frontend_typed_address}
 
-    oro_customer.form.type.account_user_typed_address:
-        class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountUserTypedAddressType'
+    oro_customer.form.type.customer_user_typed_address:
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\CustomerUserTypedAddressType'
         calls:
-             - [setDataClass, ['%oro_customer.entity.account_user_address.class%']]
+             - [setDataClass, ['%oro_customer.entity.customer_user_address.class%']]
              - [setAddressTypeDataClass, ['%oro_address.address.type.entity.class%']]
         tags:
-             - { name: form.type, alias: oro_account_account_user_typed_address}
+             - { name: form.type, alias: oro_customer_customer_user_typed_address}
 
-    oro_customer.form.type.frontend.account_user_typed_address:
-        class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserTypedAddressType'
+    oro_customer.form.type.frontend.customer_user_typed_address:
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\FrontendCustomerUserTypedAddressType'
         calls:
-             - [setDataClass, ['%oro_customer.entity.account_user_address.class%']]
+             - [setDataClass, ['%oro_customer.entity.customer_user_address.class%']]
              - [setAddressTypeDataClass, ['%oro_address.address.type.entity.class%']]
         tags:
-             - { name: form.type, alias: oro_account_frontend_account_user_typed_address}
+             - { name: form.type, alias: oro_customer_frontend_customer_user_typed_address}
 
     oro_customer.form.type.typed_address_with_default:
-        class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountTypedAddressWithDefaultType'
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\CustomerTypedAddressWithDefaultType'
         arguments: ['@translator']
         calls:
              - [setRegistry, ['@doctrine']]
         tags:
-             - { name: form.type, alias: oro_account_typed_address_with_default}
+             - { name: form.type, alias: oro_customer_typed_address_with_default}
 
     oro_customer.form.type.acl_access_level_text:
-        class: 'Oro\Bundle\CustomerBundle\Form\Type\AccountAclAccessLevelTextType'
+        class: 'Oro\Bundle\CustomerBundle\Form\Type\CustomerAclAccessLevelTextType'
         arguments:
             - '@oro_customer.acl.resolver.role_translation_prefix'
         tags:
-             - { name: form.type, alias: oro_account_acl_access_level_text }
+             - { name: form.type, alias: oro_customer_acl_access_level_text }
 
     oro_customer.form.extension.acl_permission:
         class: 'Oro\Bundle\CustomerBundle\Form\Extension\AclAccessLevelSelectorExtension'
@@ -239,12 +239,12 @@ services:
         tags:
             - { name: form.type_extension, alias: "oro_address" }
 
-    oro_customer.form.extension.account_scope:
-        class: 'Oro\Bundle\CustomerBundle\Form\Extension\AccountScopeExtension'
+    oro_customer.form.extension.customer_scope:
+        class: 'Oro\Bundle\CustomerBundle\Form\Extension\CustomerScopeExtension'
         tags:
             - { name: form.type_extension, extended_type: Oro\Bundle\ScopeBundle\Form\Type\ScopeType }
 
-    oro_customer.form.extension.account_group_scope:
-        class: 'Oro\Bundle\CustomerBundle\Form\Extension\AccountGroupScopeExtension'
+    oro_customer.form.extension.customer_group_scope:
+        class: 'Oro\Bundle\CustomerBundle\Form\Extension\CustomerGroupScopeExtension'
         tags:
             - { name: form.type_extension, extended_type: Oro\Bundle\ScopeBundle\Form\Type\ScopeType }

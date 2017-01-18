@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\VisibilityBundle\Form\Type;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\FormBundle\Form\Type\EntityChangesetType;
 use Oro\Bundle\ScopeBundle\Form\FormScopeCriteriaResolver;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
@@ -21,11 +21,11 @@ class EntityVisibilityType extends AbstractType
 
     const VISIBILITY = 'visibility';
     const ALL_FIELD = 'all';
-    const ACCOUNT_FIELD = 'account';
-    const ACCOUNT_GROUP_FIELD = 'accountGroup';
+    const ACCOUNT_FIELD = 'customer';
+    const ACCOUNT_GROUP_FIELD = 'customerGroup';
     const ALL_CLASS = 'allClass';
-    const ACCOUNT_GROUP_CLASS = 'accountGroupClass';
-    const ACCOUNT_CLASS = 'accountClass';
+    const ACCOUNT_GROUP_CLASS = 'customerGroupClass';
+    const ACCOUNT_CLASS = 'customerClass';
 
     /**
      * @var VisibilityPostSetDataListener
@@ -109,18 +109,18 @@ class EntityVisibilityType extends AbstractType
                 self::ACCOUNT_FIELD,
                 EntityChangesetType::NAME,
                 [
-                    'class' => Account::class,
-                    'context' => ['account' => ScopeCriteria::IS_NOT_NULL],
-                    'constraints' => [new VisibilityChangeSet(['entityClass' => Account::class])],
+                    'class' => Customer::class,
+                    'context' => ['customer' => ScopeCriteria::IS_NOT_NULL],
+                    'constraints' => [new VisibilityChangeSet(['entityClass' => Customer::class])],
                 ]
             )
             ->add(
                 self::ACCOUNT_GROUP_FIELD,
                 EntityChangesetType::NAME,
                 [
-                    'class' => AccountGroup::class,
-                    'context' => ['accountGroup' => ScopeCriteria::IS_NOT_NULL],
-                    'constraints' => [new VisibilityChangeSet(['entityClass' => AccountGroup::class])],
+                    'class' => CustomerGroup::class,
+                    'context' => ['customerGroup' => ScopeCriteria::IS_NOT_NULL],
+                    'constraints' => [new VisibilityChangeSet(['entityClass' => CustomerGroup::class])],
                 ]
             );
 

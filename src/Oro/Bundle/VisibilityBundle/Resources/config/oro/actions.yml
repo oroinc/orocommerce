@@ -1,15 +1,15 @@
 operations:
     UPDATE:
         exclude_datagrids:
-            - account-category-visibility-grid
-            - account-group-product-visibility-grid
-            - account-product-visibility-grid
+            - customer-category-visibility-grid
+            - customer-group-product-visibility-grid
+            - customer-product-visibility-grid
     DELETE:
         exclude_entities:
-            - Oro\Bundle\CustomerBundle\Entity\AccountGroup
+            - Oro\Bundle\CustomerBundle\Entity\CustomerGroup
         exclude_datagrids:
-            - account-category-visibility-grid
-            - account-group-category-visibility-grid
-            - account-group-product-visibility-grid
-            - account-product-visibility-grid
+            - customer-category-visibility-grid
+            - customer-group-category-visibility-grid
+            - customer-group-product-visibility-grid
+            - customer-product-visibility-grid
 

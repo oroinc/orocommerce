@@ -1,5 +1,5 @@
 oro:
     paymentterm:
         autocomplete:
-            account: customer default
-            account_group: customer group default
+            customer: customer default
+            customer_group: customer group default

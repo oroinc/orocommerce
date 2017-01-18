@@ -6,8 +6,8 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\CustomerBundle\Entity\AddressPhoneAwareInterface;
 use Oro\Bundle\OrderBundle\Model\ExtendOrderAddress;
 
@@ -35,20 +35,20 @@ use Oro\Bundle\OrderBundle\Model\ExtendOrderAddress;
 class OrderAddress extends ExtendOrderAddress implements AddressPhoneAwareInterface
 {
     /**
-     * @var AccountAddress
+     * @var CustomerAddress
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountAddress")
-     * @ORM\JoinColumn(name="account_address_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerAddress")
+     * @ORM\JoinColumn(name="customer_address_id", referencedColumnName="id", onDelete="SET NULL")
      */
-    protected $accountAddress;
+    protected $customerAddress;
 
     /**
-     * @var AccountUserAddress
+     * @var CustomerUserAddress
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountUserAddress")
-     * @ORM\JoinColumn(name="account_user_address_id", referencedColumnName="id", onDelete="SET NULL")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress")
+     * @ORM\JoinColumn(name="customer_user_address_id", referencedColumnName="id", onDelete="SET NULL")
      */
-    protected $accountUserAddress;
+    protected $customerUserAddress;
 
     /**
      * @var bool
@@ -72,51 +72,51 @@ class OrderAddress extends ExtendOrderAddress implements AddressPhoneAwareInterf
     protected $phone;
 
     /**
-     * Set accountAddress
+     * Set customerAddress
      *
-     * @param AccountAddress|null $accountAddress
+     * @param CustomerAddress|null $customerAddress
      *
      * @return OrderAddress
      */
-    public function setAccountAddress(AccountAddress $accountAddress = null)
+    public function setCustomerAddress(CustomerAddress $customerAddress = null)
     {
-        $this->accountAddress = $accountAddress;
+        $this->customerAddress = $customerAddress;
 
         return $this;
     }
 
     /**
-     * Get accountUserAddress
+     * Get customerUserAddress
      *
-     * @return AccountAddress|null
+     * @return CustomerAddress|null
      */
-    public function getAccountAddress()
+    public function getCustomerAddress()
     {
-        return $this->accountAddress;
+        return $this->customerAddress;
     }
 
     /**
-     * Set accountUserAddress
+     * Set customerUserAddress
      *
-     * @param AccountUserAddress|null $accountUserAddress
+     * @param CustomerUserAddress|null $customerUserAddress
      *
      * @return OrderAddress
      */
-    public function setAccountUserAddress(AccountUserAddress $accountUserAddress = null)
+    public function setCustomerUserAddress(CustomerUserAddress $customerUserAddress = null)
     {
-        $this->accountUserAddress = $accountUserAddress;
+        $this->customerUserAddress = $customerUserAddress;
 
         return $this;
     }
 
     /**
-     * Get accountUserAddress
+     * Get customerUserAddress
      *
-     * @return AccountUserAddress|null
+     * @return CustomerUserAddress|null
      */
-    public function getAccountUserAddress()
+    public function getCustomerUserAddress()
     {
-        return $this->accountUserAddress;
+        return $this->customerUserAddress;
     }
 
     /**

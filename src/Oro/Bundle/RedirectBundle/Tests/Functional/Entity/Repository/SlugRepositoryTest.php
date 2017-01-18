@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Functional\Entity\Repository;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Tests\Functional\DataFixtures\LoadSlugScopesData;
@@ -32,7 +32,7 @@ class SlugRepositoryTest extends WebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
+            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
 
         $this->client->useHashNavigation(true);
@@ -45,7 +45,7 @@ class SlugRepositoryTest extends WebTestCase
             ->getRepository('OroOrganizationBundle:Organization')
             ->getFirst();
         $token = new UsernamePasswordOrganizationToken(
-            LoadAccountUserData::AUTH_USER,
+            LoadCustomerUserData::AUTH_USER,
             'admin',
             'key',
             $organization
@@ -69,10 +69,10 @@ class SlugRepositoryTest extends WebTestCase
 
     public function testGetSlugByUrlAndScopeCriteriaUser()
     {
-        /** @var AccountUser $account */
-        $account = $this->getReference(LoadAccounts::DEFAULT_ACCOUNT_NAME);
+        /** @var CustomerUser $customer */
+        $customer = $this->getReference(LoadCustomers::DEFAULT_ACCOUNT_NAME);
 
-        $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE, ['account' => $account]);
+        $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE, ['customer' => $customer]);
         $slug = $this->repository->getSlugByUrlAndScopeCriteria(LoadSlugsData::SLUG_URL_USER, $criteria);
         $expected = $this->getReference(LoadSlugsData::SLUG_URL_USER);
         $this->assertSame($expected, $slug);
@@ -95,10 +95,10 @@ class SlugRepositoryTest extends WebTestCase
 
     public function testGetSlugByUrlAndScopeCriteriaSlugWithoutScopesNotEmptyCriteria()
     {
-        /** @var AccountUser $account */
-        $account = $this->getReference(LoadAccounts::DEFAULT_ACCOUNT_NAME);
+        /** @var CustomerUser $customer */
+        $customer = $this->getReference(LoadCustomers::DEFAULT_ACCOUNT_NAME);
 
-        $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE, ['account' => $account]);
+        $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE, ['customer' => $customer]);
         $slug = $this->repository->getSlugByUrlAndScopeCriteria(LoadSlugsData::SLUG_URL_ANONYMOUS, $criteria);
         $expected = $this->getReference(LoadSlugsData::SLUG_URL_ANONYMOUS);
         $this->assertSame($expected, $slug);
@@ -106,10 +106,10 @@ class SlugRepositoryTest extends WebTestCase
 
     public function testGetSlugByUrlAndScopeCriteriaSlugWithScopesMatched()
     {
-        /** @var AccountUser $account */
-        $account = $this->getReference(LoadAccounts::DEFAULT_ACCOUNT_NAME);
+        /** @var CustomerUser $customer */
+        $customer = $this->getReference(LoadCustomers::DEFAULT_ACCOUNT_NAME);
 
-        $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE, ['account' => $account]);
+        $criteria = $this->scopeManager->getCriteria(ScopeManager::BASE_SCOPE, ['customer' => $customer]);
         $slug = $this->repository->getSlugByUrlAndScopeCriteria(LoadSlugsData::SLUG_TEST_DUPLICATE_URL, $criteria);
         $expected = $this->getReference(LoadSlugsData::SLUG_TEST_DUPLICATE_URL);
         $this->assertSame($expected, $slug);

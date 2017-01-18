@@ -17,8 +17,7 @@
                 unit: '[data-name="field__product-unit"]'
             }
         }|json_encode }}"
-        data-layout="separate"
-    >
+        data-layout="deferred-initialize">
         {{ form_widget(form) }}
         <div class="request-form-lineitem-unit--remove">
             <button type="button" class="removeRow item-remove button-icon gray fs18">
@@ -29,7 +28,7 @@
 {% endmacro %}
 
 {% block oro_rfp_request_widget %}
-    <div class="rfp-request-widget" data-page-component-module="orocustomer/js/app/components/account-selection-component">
+    <div class="rfp-request-widget" data-page-component-module="orocustomer/js/app/components/customer-selection-component">
         {{ form(form) }}
     </div>
 {% endblock %}
@@ -94,9 +93,9 @@
          data-page-component-options="{{ {
              view: 'ororfp/js/app/views/frontend-line-item-view',
          }|json_encode }}"
-         data-layout="separate"
          data-content=""
          data-role="line-item"
+         data-skip-input-widgets
          class="request-form-line-container row-oro"
         >
 
@@ -112,7 +111,7 @@
                         </li>
                         <li class="actions-row__item actions-row__item--separate">|</li>
                         <li class="actions-row__item actions-row__item--remove">
-                            <button class="actions-row__button removeRow" title="Delete">
+                            <button class="actions-row__button removeRow" title="Delete" data-role="remove">
                                 <i class="actions-row__icon fa-trash"></i>
                             </button>
                         </li>
@@ -127,8 +126,7 @@
              class="request-form-editline__inner"
              data-page-component-module="{{ form.vars.page_component }}"
              data-page-component-options="{{ page_component_options|json_encode }}"
-             data-layout="separate"
-            >
+             data-layout="deferred-initialize">
             {{ form_widget(form) }}
             {{ form_errors(form) }}
         </div>
@@ -379,7 +377,7 @@
 
 {% block _oro_rfp_frontend_request_requestProducts_entry_requestProductItems_entry_widget %}
     {% use "OroPricingBundle:layouts/default:layout.html.twig" %}
-    <div class="request-form-lineitem-unit request-form-lineitem-unit--size-s">
+    <div class="request-form-lineitem-unit request-form-lineitem-unit--size-m">
         {{ form_widget(form.quantity) }}
         {{ form_errors(form.quantity) }}
     </div>
@@ -399,9 +397,7 @@
                 pricesHintContent: '[data-name="prices-hint-content"]'
             },
             matchedPriceEnabled: false
-        }|json_encode }}"
-        data-layout="separate"
-    >
+        }|json_encode }}">
         {% set label = 'List prices' %}
         <script type="text/template" data-name="prices-hint-content">
             {{ block('product_price_hint_content_js_widget') }}
@@ -413,7 +409,7 @@
             '~class': 'request-form-lineitem-unit__input'
         }) %}
 
-        {{ 'oro.rfp.requestproductitem.price.label'|trans }}: {{ form_widget(form.price.value, {attr: input_price}) }}
+        <span class="request-form-lineitem-unit__label">{{ 'oro.rfp.requestproductitem.price.label'|trans }}:</span> {{ form_widget(form.price.value, {attr: input_price}) }}
         <div class="hidden">{{ form_widget(form.price.currency) }}</div>
         {{ form_errors(form.price) }}
     </div>

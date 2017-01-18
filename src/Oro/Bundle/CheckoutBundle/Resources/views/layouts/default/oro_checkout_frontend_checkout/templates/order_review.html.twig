@@ -13,10 +13,10 @@
             {{ 'oro.checkout.workflow.view_options.label'|trans }}
         </a>
         <div class="collapse-view__container ml1-md mmt5-md" data-collapse-container>
-            <fieldset class="checkout__form__row"
+            <fieldset class="grid__row grid__row--offset-none"
                       data-trigger-selector="#addShipDate"
                       data-page-component-module="orocheckout/js/app/components/clear-field-data-component">
-                <div class="checkout__form__col form__col_x12 mmb5-md mmb5-sm toggle-block">
+                <div class="grid__column grid__column--offset-y grid__column--12 mmb5-md mmb5-sm toggle-block">
                     <label for="addShipDate" class="custom-checkbox toggle-block__trigger {% if checkout.shipUntil is not empty %}checked{% endif %}" data-checkbox>
                         <input class="custom-checkbox__input" type="checkbox" name="addShipDate" id="addShipDate" {% if checkout.shipUntil is not empty %}checked="checked"{% endif %}/>
                         <span class="custom-checkbox__icon"></span>
@@ -38,10 +38,10 @@
                     </div>
                 </div>
             </fieldset>
-            <fieldset class="checkout__form__row"
+            <fieldset class="grid__row grid__row--offset-none"
                       data-trigger-selector="#addPoNumber"
                       data-page-component-module="orocheckout/js/app/components/clear-field-data-component">
-                <div class="checkout__form__col form__col_x6 mmb5-md mmb5-sm toggle-block">
+                <div class="grid__column grid__column--offset-y grid__column--6 mmb5-md mmb5-sm toggle-block">
                     <label for="addPoNumber" class="custom-checkbox toggle-block__trigger {% if checkout.poNumber is not empty %}checked{% endif %}" data-checkbox>
                         <input class="custom-checkbox__input" type="checkbox" name="addPoNumber" id="addPoNumber" {% if checkout.poNumber is not empty %}checked="checked"{% endif %}/>
                         <span class="custom-checkbox__icon"></span>
@@ -52,10 +52,10 @@
                     </div>
                 </div>
             </fieldset>
-            <fieldset class="checkout__form__row"
+            <fieldset class="grid__row grid__row--offset-none"
                       data-trigger-selector="#addNote"
                       data-page-component-module="orocheckout/js/app/components/clear-field-data-component">
-                <div class="checkout__form__col form__col_x6 mmb5-md mmb5-sm toggle-block">
+                <div class="grid__column grid__column--offset-y grid__column--6 mmb5-md mmb5-sm toggle-block">
                     <label for="addNote" class="custom-checkbox toggle-block__trigger {% if checkout.customerNotes is not empty %}checked{% endif %}" data-checkbox>
                         <input class="custom-checkbox__input" type="checkbox" name="addNote" id="addNote" {% if checkout.customerNotes is not empty %}checked="checked"{% endif %}/>
                         <span class="custom-checkbox__icon"></span>
@@ -73,8 +73,8 @@
                 {% if removeLabel %}
                     {% set removeElementOptions = removeElementOptions|merge({label: removeLabel}) %}
                 {% endif %}
-                <fieldset class="checkout__form__row">
-                    <div class="checkout__form__col form__col_x6 mmb5-md mmb5-sm">
+                <fieldset class="grid__row grid__row--offset-none">
+                    <div class="grid__column grid__column--offset-y grid__column--6 mmb5-md mmb5-sm">
                         {{ form_row(form.remove_source, removeElementOptions) }}
                     </div>
                 </fieldset>

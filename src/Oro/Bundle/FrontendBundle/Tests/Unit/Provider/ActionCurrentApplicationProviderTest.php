@@ -3,7 +3,7 @@
 namespace Oro\Bundle\FrontendBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\ActionBundle\Tests\Unit\Provider\CurrentApplicationProviderTest;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FrontendBundle\Provider\ActionCurrentApplicationProvider;
 use Oro\Bundle\UserBundle\Entity\User;
 
@@ -33,7 +33,7 @@ class ActionCurrentApplicationProviderTest extends CurrentApplicationProviderTes
                 'expectedResult' => 'default',
             ],
             'frontend user' => [
-                'token' => $this->createToken(new AccountUser()),
+                'token' => $this->createToken(new CustomerUser()),
                 'expectedResult' => 'commerce',
             ],
             'not supported user' => [
@@ -53,7 +53,7 @@ class ActionCurrentApplicationProviderTest extends CurrentApplicationProviderTes
     public function isApplicationsValidDataProvider()
     {
         $user = new User();
-        $accountUser = new AccountUser();
+        $customerUser = new CustomerUser();
         $otherUser = 'anon.';
 
         return [
@@ -64,7 +64,7 @@ class ActionCurrentApplicationProviderTest extends CurrentApplicationProviderTes
             ],
             [
                 'applications' => ['default', 'commerce'],
-                'token' => $this->createToken($accountUser),
+                'token' => $this->createToken($customerUser),
                 'expectedResult' => true
             ],
             [
@@ -74,7 +74,7 @@ class ActionCurrentApplicationProviderTest extends CurrentApplicationProviderTes
             ],
             [
                 'applications' => ['default'],
-                'token' => $this->createToken($accountUser),
+                'token' => $this->createToken($customerUser),
                 'expectedResult' => false
             ],
             [
@@ -84,7 +84,7 @@ class ActionCurrentApplicationProviderTest extends CurrentApplicationProviderTes
             ],
             [
                 'applications' => ['commerce'],
-                'token' => $this->createToken($accountUser),
+                'token' => $this->createToken($customerUser),
                 'expectedResult' => true
             ],
             [

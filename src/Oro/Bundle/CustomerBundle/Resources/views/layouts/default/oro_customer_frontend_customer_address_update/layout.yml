@@ -1,0 +1,12 @@
+layout:
+    imports:
+        -
+            id: oro_customer_address_form
+            namespace: customer_address_edit
+            root: page_content
+    actions:
+        - '@setOption':
+            id: page_title
+            optionName: defaultValue
+            optionValue:
+                label: oro.customer.frontend.address.page_title.edit

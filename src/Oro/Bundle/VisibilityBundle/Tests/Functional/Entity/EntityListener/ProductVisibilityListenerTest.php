@@ -4,15 +4,15 @@ namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\EntityListener;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Model\VisibilityMessageFactory;
 use Oro\Bundle\VisibilityBundle\Model\VisibilityMessageHandler;
@@ -33,11 +33,11 @@ class ProductVisibilityListenerTest extends WebTestCase
     /** @var  Registry */
     protected $registry;
 
-    /** @var  AccountGroup */
-    protected $accountGroup;
+    /** @var  CustomerGroup */
+    protected $customerGroup;
 
-    /** @var  Account */
-    protected $account;
+    /** @var  Customer */
+    protected $customer;
 
     /**
      * {@inheritdoc}
@@ -52,8 +52,8 @@ class ProductVisibilityListenerTest extends WebTestCase
 
         $this->registry = $this->client->getContainer()->get('doctrine');
         $this->product = $this->getReference(LoadProductData::PRODUCT_1);
-        $this->accountGroup = $this->getReference(LoadGroups::GROUP1);
-        $this->account = $this->getReference('account.level_1');
+        $this->customerGroup = $this->getReference(LoadGroups::GROUP1);
+        $this->customer = $this->getReference('customer.level_1');
 
         $this->cleanScheduledMessages();
     }
@@ -113,7 +113,7 @@ class ProductVisibilityListenerTest extends WebTestCase
     public function testChangeProductVisibilityToVisible()
     {
         // Already exists product visibility with `HIDDEN` value
-        $visibility = $this->getReference('product.4.visibility.all');
+        $visibility = $this->getReference('product-4.visibility.all');
 
         $visibility->setVisibility(ProductVisibility::VISIBLE);
 
@@ -138,7 +138,7 @@ class ProductVisibilityListenerTest extends WebTestCase
     public function testChangeProductVisibilityToConfig()
     {
         // Already exists product visibility with `VISIBLE` value
-        $visibility = $this->getReference('product.2.visibility.all');
+        $visibility = $this->getReference('product-2.visibility.all');
 
         $visibility->setVisibility(ProductVisibility::CONFIG);
 
@@ -187,19 +187,19 @@ class ProductVisibilityListenerTest extends WebTestCase
         );
     }
 
-    public function testChangeAccountGroupProductVisibilityToHidden()
+    public function testChangeCustomerGroupProductVisibilityToHidden()
     {
         $scope = $this->getScopeManager()->findOrCreate(
-            AccountGroupProductVisibility::VISIBILITY_TYPE,
-            ['accountGroup' => $this->accountGroup]
+            CustomerGroupProductVisibility::VISIBILITY_TYPE,
+            ['customerGroup' => $this->customerGroup]
         );
-        // Create new account group product visibility entity
-        $visibility = new AccountGroupProductVisibility();
+        // Create new customer group product visibility entity
+        $visibility = new CustomerGroupProductVisibility();
         $visibility->setScope($scope);
         $visibility->setProduct($this->getReference(LoadProductData::PRODUCT_4));
         $visibility->setVisibility(ProductVisibility::HIDDEN);
 
-        $entityManager = $this->getManagerForAccountGroupProductVisibility();
+        $entityManager = $this->getManagerForCustomerGroupProductVisibility();
         $entityManager->persist($visibility);
         $entityManager->flush();
 
@@ -209,7 +209,7 @@ class ProductVisibilityListenerTest extends WebTestCase
             'oro_visibility.visibility.resolve_product_visibility',
             [
                 VisibilityMessageFactory::ID => $visibility->getId(),
-                VisibilityMessageFactory::ENTITY_CLASS_NAME => AccountGroupProductVisibility::class,
+                VisibilityMessageFactory::ENTITY_CLASS_NAME => CustomerGroupProductVisibility::class,
                 VisibilityMessageFactory::TARGET_CLASS_NAME => Product::class,
                 VisibilityMessageFactory::TARGET_ID => $visibility->getProduct()->getId(),
                 VisibilityMessageFactory::SCOPE_ID => $visibility->getScope()->getId(),
@@ -217,13 +217,13 @@ class ProductVisibilityListenerTest extends WebTestCase
         );
     }
 
-    public function testChangeAccountGroupProductVisibilityToVisible()
+    public function testChangeCustomerGroupProductVisibilityToVisible()
     {
-        // Already exists account group product visibility with `HIDDEN` value
-        $visibility = $this->getReference('product.1.visibility.account_group.group1');
+        // Already exists customer group product visibility with `HIDDEN` value
+        $visibility = $this->getReference('product-1.visibility.customer_group.group1');
         $visibility->setVisibility(ProductVisibility::VISIBLE);
 
-        $entityManager = $this->getManagerForAccountGroupProductVisibility();
+        $entityManager = $this->getManagerForCustomerGroupProductVisibility();
         $entityManager->flush();
 
         $this->sendScheduledMessages();
@@ -232,7 +232,7 @@ class ProductVisibilityListenerTest extends WebTestCase
             'oro_visibility.visibility.resolve_product_visibility',
             [
                 VisibilityMessageFactory::ID => $visibility->getId(),
-                VisibilityMessageFactory::ENTITY_CLASS_NAME => AccountGroupProductVisibility::class,
+                VisibilityMessageFactory::ENTITY_CLASS_NAME => CustomerGroupProductVisibility::class,
                 VisibilityMessageFactory::TARGET_CLASS_NAME => Product::class,
                 VisibilityMessageFactory::TARGET_ID => $visibility->getProduct()->getId(),
                 VisibilityMessageFactory::SCOPE_ID => $visibility->getScope()->getId(),
@@ -240,13 +240,13 @@ class ProductVisibilityListenerTest extends WebTestCase
         );
     }
 
-    public function testChangeAccountGroupProductVisibilityToCategory()
+    public function testChangeCustomerGroupProductVisibilityToCategory()
     {
-        // Already exists account group product visibility with `VISIBLE` value
-        $visibility = $this->getReference('product.2.visibility.account_group.group1');
-        $visibility->setVisibility(AccountGroupProductVisibility::CATEGORY);
+        // Already exists customer group product visibility with `VISIBLE` value
+        $visibility = $this->getReference('product-2.visibility.customer_group.group1');
+        $visibility->setVisibility(CustomerGroupProductVisibility::CATEGORY);
 
-        $entityManager = $this->getManagerForAccountGroupProductVisibility();
+        $entityManager = $this->getManagerForCustomerGroupProductVisibility();
         $entityManager->flush();
 
         $this->sendScheduledMessages();
@@ -255,7 +255,7 @@ class ProductVisibilityListenerTest extends WebTestCase
             'oro_visibility.visibility.resolve_product_visibility',
             [
                 VisibilityMessageFactory::ID => $visibility->getId(),
-                VisibilityMessageFactory::ENTITY_CLASS_NAME => AccountGroupProductVisibility::class,
+                VisibilityMessageFactory::ENTITY_CLASS_NAME => CustomerGroupProductVisibility::class,
                 VisibilityMessageFactory::TARGET_CLASS_NAME => Product::class,
                 VisibilityMessageFactory::TARGET_ID => $visibility->getProduct()->getId(),
                 VisibilityMessageFactory::SCOPE_ID => $visibility->getScope()->getId(),
@@ -263,16 +263,16 @@ class ProductVisibilityListenerTest extends WebTestCase
         );
     }
 
-    public function testChangeAccountGroupProductVisibilityToCurrentProduct()
+    public function testChangeCustomerGroupProductVisibilityToCurrentProduct()
     {
-        // Already exists account group product visibility with `CATEGORY` value
-        $visibility = $this->getReference('product.7.visibility.account_group.group1');
-        $visibility->setVisibility(AccountGroupProductVisibility::CURRENT_PRODUCT);
+        // Already exists customer group product visibility with `CATEGORY` value
+        $visibility = $this->getReference('product-7.visibility.customer_group.group1');
+        $visibility->setVisibility(CustomerGroupProductVisibility::CURRENT_PRODUCT);
 
-        $entityManager = $this->getManagerForAccountGroupProductVisibility();
+        $entityManager = $this->getManagerForCustomerGroupProductVisibility();
         $expectedMessage = [
             VisibilityMessageFactory::ID => $visibility->getId(),
-            VisibilityMessageFactory::ENTITY_CLASS_NAME => AccountGroupProductVisibility::class,
+            VisibilityMessageFactory::ENTITY_CLASS_NAME => CustomerGroupProductVisibility::class,
             VisibilityMessageFactory::TARGET_CLASS_NAME => Product::class,
             VisibilityMessageFactory::TARGET_ID => $visibility->getProduct()->getId(),
             VisibilityMessageFactory::SCOPE_ID => $visibility->getScope()->getId(),
@@ -287,18 +287,18 @@ class ProductVisibilityListenerTest extends WebTestCase
         );
     }
 
-    public function testChangeAccountProductVisibilityToHidden()
+    public function testChangeCustomerProductVisibilityToHidden()
     {
-        $scope = $this->getScopeManager()->findOrCreate('account_product_visibility', ['account' => $this->account]);
-        $entityManager = $this->getManagerForAccountProductVisibility();
-        $visibility = $entityManager->getRepository(AccountProductVisibility::class)->findOneBy(
+        $scope = $this->getScopeManager()->findOrCreate('customer_product_visibility', ['customer' => $this->customer]);
+        $entityManager = $this->getManagerForCustomerProductVisibility();
+        $visibility = $entityManager->getRepository(CustomerProductVisibility::class)->findOneBy(
             ['product' => $this->product, 'scope' => $scope]
         );
         $entityManager->remove($visibility);
         $entityManager->flush();
         $this->cleanScheduledMessages();
 
-        $visibility = new AccountProductVisibility();
+        $visibility = new CustomerProductVisibility();
         $visibility->setScope($scope);
         $visibility->setProduct($this->product);
         $visibility->setVisibility(ProductVisibility::HIDDEN);
@@ -312,7 +312,7 @@ class ProductVisibilityListenerTest extends WebTestCase
             'oro_visibility.visibility.resolve_product_visibility',
             [
                 VisibilityMessageFactory::ID => $visibility->getId(),
-                VisibilityMessageFactory::ENTITY_CLASS_NAME => AccountProductVisibility::class,
+                VisibilityMessageFactory::ENTITY_CLASS_NAME => CustomerProductVisibility::class,
                 VisibilityMessageFactory::TARGET_CLASS_NAME => Product::class,
                 VisibilityMessageFactory::TARGET_ID => $visibility->getProduct()->getId(),
                 VisibilityMessageFactory::SCOPE_ID => $visibility->getScope()->getId(),
@@ -320,13 +320,13 @@ class ProductVisibilityListenerTest extends WebTestCase
         );
     }
 
-    public function testChangeAccountProductVisibilityToVisible()
+    public function testChangeCustomerProductVisibilityToVisible()
     {
-        // Already exists account group product visibility with `HIDDEN` value
-        $visibility = $this->getReference('product.2.visibility.account.level_1');
+        // Already exists customer group product visibility with `HIDDEN` value
+        $visibility = $this->getReference('product-2.visibility.customer.level_1');
         $visibility->setVisibility(ProductVisibility::VISIBLE);
 
-        $entityManager = $this->getManagerForAccountProductVisibility();
+        $entityManager = $this->getManagerForCustomerProductVisibility();
         $entityManager->flush();
 
         $this->sendScheduledMessages();
@@ -335,7 +335,7 @@ class ProductVisibilityListenerTest extends WebTestCase
             'oro_visibility.visibility.resolve_product_visibility',
             [
                 VisibilityMessageFactory::ID => $visibility->getId(),
-                VisibilityMessageFactory::ENTITY_CLASS_NAME => AccountProductVisibility::class,
+                VisibilityMessageFactory::ENTITY_CLASS_NAME => CustomerProductVisibility::class,
                 VisibilityMessageFactory::TARGET_CLASS_NAME => Product::class,
                 VisibilityMessageFactory::TARGET_ID => $visibility->getProduct()->getId(),
                 VisibilityMessageFactory::SCOPE_ID => $visibility->getScope()->getId(),
@@ -343,13 +343,13 @@ class ProductVisibilityListenerTest extends WebTestCase
         );
     }
 
-    public function testChangeAccountProductVisibilityToCategory()
+    public function testChangeCustomerProductVisibilityToCategory()
     {
-        // Already exists account group product visibility with `VISIBLE` value
-        $visibility = $this->getReference('product.5.visibility.account.level_1');
-        $visibility->setVisibility(AccountProductVisibility::CATEGORY);
+        // Already exists customer group product visibility with `VISIBLE` value
+        $visibility = $this->getReference('product-5.visibility.customer.level_1');
+        $visibility->setVisibility(CustomerProductVisibility::CATEGORY);
 
-        $entityManager = $this->getManagerForAccountProductVisibility();
+        $entityManager = $this->getManagerForCustomerProductVisibility();
         $entityManager->flush();
 
         $this->sendScheduledMessages();
@@ -358,7 +358,7 @@ class ProductVisibilityListenerTest extends WebTestCase
             'oro_visibility.visibility.resolve_product_visibility',
             [
                 VisibilityMessageFactory::ID => $visibility->getId(),
-                VisibilityMessageFactory::ENTITY_CLASS_NAME => AccountProductVisibility::class,
+                VisibilityMessageFactory::ENTITY_CLASS_NAME => CustomerProductVisibility::class,
                 VisibilityMessageFactory::TARGET_CLASS_NAME => Product::class,
                 VisibilityMessageFactory::TARGET_ID => $visibility->getProduct()->getId(),
                 VisibilityMessageFactory::SCOPE_ID => $visibility->getScope()->getId(),
@@ -366,18 +366,18 @@ class ProductVisibilityListenerTest extends WebTestCase
         );
     }
 
-    public function testChangeAccountProductVisibilityToAccountGroup()
+    public function testChangeCustomerProductVisibilityToCustomerGroup()
     {
         $this->cleanScheduledMessages();
-        // Already exists account group product visibility with `CATEGORY` value
-        $visibility = $this->getReference('product.2.visibility.account.level_1');
-        $visibility->setVisibility(AccountProductVisibility::ACCOUNT_GROUP);
+        // Already exists customer group product visibility with `CATEGORY` value
+        $visibility = $this->getReference('product-2.visibility.customer.level_1');
+        $visibility->setVisibility(CustomerProductVisibility::ACCOUNT_GROUP);
 
-        $entityManager = $this->getManagerForAccountProductVisibility();
+        $entityManager = $this->getManagerForCustomerProductVisibility();
 
         $expectedMessage = [
             VisibilityMessageFactory::ID => $visibility->getId(),
-            VisibilityMessageFactory::ENTITY_CLASS_NAME => AccountProductVisibility::class,
+            VisibilityMessageFactory::ENTITY_CLASS_NAME => CustomerProductVisibility::class,
             VisibilityMessageFactory::TARGET_CLASS_NAME => Product::class,
             VisibilityMessageFactory::TARGET_ID => $visibility->getProduct()->getId(),
             VisibilityMessageFactory::SCOPE_ID => $visibility->getScope()->getId(),
@@ -403,16 +403,16 @@ class ProductVisibilityListenerTest extends WebTestCase
     /**
      * @return EntityManager
      */
-    protected function getManagerForAccountGroupProductVisibility()
+    protected function getManagerForCustomerGroupProductVisibility()
     {
-        return $this->registry->getManagerForClass(AccountGroupProductVisibility::class);
+        return $this->registry->getManagerForClass(CustomerGroupProductVisibility::class);
     }
 
     /**
      * @return EntityManager
      */
-    protected function getManagerForAccountProductVisibility()
+    protected function getManagerForCustomerProductVisibility()
     {
-        return $this->registry->getManagerForClass(AccountProductVisibility::class);
+        return $this->registry->getManagerForClass(CustomerProductVisibility::class);
     }
 }

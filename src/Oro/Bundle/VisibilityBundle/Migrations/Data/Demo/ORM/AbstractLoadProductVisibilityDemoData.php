@@ -6,11 +6,11 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
-use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadScopeAccountGroupDemoData;
+use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadScopeCustomerGroupDemoData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -38,7 +38,7 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
     {
         return [
             LoadProductDemoData::class,
-            LoadScopeAccountGroupDemoData::class,
+            LoadScopeCustomerGroupDemoData::class,
             LoadCategoryVisibilityDemoData::class,
         ];
     }
@@ -58,7 +58,7 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
      * @param int $id
      * @return Scope
      */
-    protected function getScopeAccount(ObjectManager $manager, $id)
+    protected function getScopeCustomer(ObjectManager $manager, $id)
     {
         return $manager->getRepository('OroScopeBundle:Scope')->findOneBy(['id' => $id]);
     }
@@ -68,7 +68,7 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
      * @param int $id
      * @return Scope
      */
-    protected function getAccountGroup(ObjectManager $manager, $id)
+    protected function getCustomerGroup(ObjectManager $manager, $id)
     {
         return $manager->getRepository('OroScopeBundle:Scope')->findOneBy(['id' => $id]);
     }
@@ -156,16 +156,16 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
             $this->saveVisibility($manager, $productVisibility, $product, $visibility);
         }
 
-        if ($row['scopeAccount']) {
-            $accountVisibility = new AccountProductVisibility();
-            $accountVisibility->setScope($this->getScopeAccount($manager, $row['scopeAccount']));
-            $this->saveVisibility($manager, $accountVisibility, $product, $visibility);
+        if ($row['scopeCustomer']) {
+            $customerVisibility = new CustomerProductVisibility();
+            $customerVisibility->setScope($this->getScopeCustomer($manager, $row['scopeCustomer']));
+            $this->saveVisibility($manager, $customerVisibility, $product, $visibility);
         }
 
-        if ($row['scopeAccountGroup']) {
-            $accountGroupVisibility = new AccountGroupProductVisibility();
-            $accountGroupVisibility->setScope($this->getScopeAccountGroup($manager, $row['scopeAccountGroup']));
-            $this->saveVisibility($manager, $accountGroupVisibility, $product, $visibility);
+        if ($row['scopeCustomerGroup']) {
+            $customerGroupVisibility = new CustomerGroupProductVisibility();
+            $customerGroupVisibility->setScope($this->getScopeCustomerGroup($manager, $row['scopeCustomerGroup']));
+            $this->saveVisibility($manager, $customerGroupVisibility, $product, $visibility);
         }
     }
 }

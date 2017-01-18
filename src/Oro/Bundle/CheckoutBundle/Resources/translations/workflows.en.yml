@@ -69,6 +69,8 @@ oro:
                     label: 'Shipping method'
                 shipping_method_type:
                     label: 'Shipping method type'
+                checkout_finished:
+                    label: 'Flag indicates that checkout is finished'
             transition:
                 start_from_shoppinglist:
                     label: 'Create Order'

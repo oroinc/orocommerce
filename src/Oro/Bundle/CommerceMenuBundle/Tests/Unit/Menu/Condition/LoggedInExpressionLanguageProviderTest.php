@@ -5,7 +5,7 @@ namespace Oro\Bundle\CommerceMenuBundle\Tests\Unit\Menu\Condition;
 use Symfony\Component\ExpressionLanguage\ExpressionFunction;
 
 use Oro\Bundle\CommerceMenuBundle\Menu\Condition\LoggedInExpressionLanguageProvider;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 
 use Oro\Component\DependencyInjection\ServiceLink;
@@ -65,7 +65,7 @@ class LoggedInExpressionLanguageProviderTest extends \PHPUnit_Framework_TestCase
 
         $loggedUser = null;
         if ($isLoggedUser) {
-            $loggedUser = $this->createMock(AccountUser::class);
+            $loggedUser = $this->createMock(CustomerUser::class);
         }
 
         $this->securityFacade->expects($this->once())

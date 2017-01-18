@@ -17,7 +17,7 @@ use Oro\Bundle\LocaleBundle\Formatter\AddressFormatter;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Model\QuoteAddressManager;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\CustomerBundle\Entity\AbstractDefaultTypedAddress;
 
 class QuoteAddressType extends AbstractType
@@ -68,7 +68,7 @@ class QuoteAddressType extends AbstractType
         $isManualEditGranted = $this->quoteAddressSecurityProvider->isManualEditGranted($type);
         $addresses = $this->quoteAddressManager->getGroupedAddresses($quote, $type);
 
-        $accountAddressOptions = [
+        $customerAddressOptions = [
             'label' => false,
             'required' => false,
             'mapped' => false,
@@ -81,14 +81,14 @@ class QuoteAddressType extends AbstractType
         ];
 
         if ($isManualEditGranted) {
-            $accountAddressOptions['choices'] = array_merge(
-                $accountAddressOptions['choices'],
+            $customerAddressOptions['choices'] = array_merge(
+                $customerAddressOptions['choices'],
                 ['oro.sale.quote.form.address.manual']
             );
-            $accountAddressOptions['configs']['placeholder'] = 'oro.sale.quote.form.address.choose_or_create';
+            $customerAddressOptions['configs']['placeholder'] = 'oro.sale.quote.form.address.choose_or_create';
         }
 
-        $builder->add('accountAddress', 'genemu_jqueryselect2_choice', $accountAddressOptions);
+        $builder->add('customerAddress', 'genemu_jqueryselect2_choice', $customerAddressOptions);
         $builder->add('phone', 'text');
 
         $builder->addEventListener(
@@ -99,16 +99,16 @@ class QuoteAddressType extends AbstractType
                 }
 
                 $form = $event->getForm();
-                if (!$form->has('accountAddress')) {
+                if (!$form->has('customerAddress')) {
                     return;
                 }
 
-                $identifier = $form->get('accountAddress')->getData();
+                $identifier = $form->get('customerAddress')->getData();
                 if ($identifier === null) {
                     return;
                 }
 
-                //Enter manually or Account/AccountUser address
+                //Enter manually or Customer/CustomerUser address
                 $quoteAddress = $event->getData();
 
                 $address = null;
@@ -146,8 +146,8 @@ class QuoteAddressType extends AbstractType
             );
         }
 
-        if ($view->offsetExists('accountAddress')) {
-            $view->offsetGet('accountAddress')->vars['disabled'] = false;
+        if ($view->offsetExists('customerAddress')) {
+            $view->offsetGet('customerAddress')->vars['disabled'] = false;
         }
     }
 
@@ -230,15 +230,15 @@ class QuoteAddressType extends AbstractType
         }
 
         $addresses = call_user_func_array('array_merge', array_values($addresses));
-        $accountUser = $quote->getAccountUser();
+        $customerUser = $quote->getCustomerUser();
         $addressKey = null;
 
         /** @var AbstractDefaultTypedAddress $address */
         foreach ($addresses as $key => $address) {
             if ($address->hasDefault($type)) {
                 $addressKey = $key;
-                if ($address instanceof AccountUserAddress &&
-                    $address->getFrontendOwner()->getId() === $accountUser->getId()
+                if ($address instanceof CustomerUserAddress &&
+                    $address->getFrontendOwner()->getId() === $customerUser->getId()
                 ) {
                     break;
                 }

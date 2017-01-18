@@ -15,12 +15,11 @@
     }
 
     .line_item_form_fields__form__row {
-      width: 60%;
+      width: 50%;
 
       + .line_item_form_fields__form__row {
         width: calc(40% - 10px);
         margin-right: 10px;
-        max-width: 50px;
       }
     }
   }
@@ -35,6 +34,12 @@
 
     label {
       display: none;
+    }
+
+    .unit-label {
+      @extend .label;
+
+      line-height: 40px;
     }
   }
 

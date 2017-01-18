@@ -20,7 +20,7 @@ define(function(require) {
             tierPrices: null,
             tierPricesRoute: '',
             currency: null,
-            account: null
+            customer: null
         },
 
         /**
@@ -33,7 +33,7 @@ define(function(require) {
                 tierPrices: this.options.tierPrices,
                 tierPricesRoute: this.options.tierPricesRoute,
                 currency: this.options.currency,
-                account: this.options.account
+                customer: this.options.customer
             }));
 
             this.initLayout().done(_.bind(this.handleLayoutInit, this));

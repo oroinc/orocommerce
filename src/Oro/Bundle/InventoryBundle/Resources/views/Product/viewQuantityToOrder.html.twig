@@ -2,5 +2,5 @@
 
 {% set minimumQuantity = oro_entity_fallback_value(entity, 'minimumQuantityToOrder') %}
 {% set maximumQuantity = oro_entity_fallback_value(entity, 'maximumQuantityToOrder') %}
-{{ UI.renderHtmlProperty('oro.inventory.fields.product.minimum_quantity_to_order.label'|trans, minimumQuantity) }}
-{{ UI.renderHtmlProperty('oro.inventory.fields.product.maximum_quantity_to_order.label'|trans, maximumQuantity) }}
+{{ UI.renderProperty('oro.inventory.fields.product.minimum_quantity_to_order.label'|trans, minimumQuantity) }}
+{{ UI.renderProperty('oro.inventory.fields.product.maximum_quantity_to_order.label'|trans, maximumQuantity) }}

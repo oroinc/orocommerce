@@ -3,7 +3,6 @@
 namespace Oro\Bundle\OrderBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 class OrderRepository extends EntityRepository
@@ -20,7 +19,7 @@ class OrderRepository extends EntityRepository
     ) {
         $qb = $this->createQueryBuilder('orders');
         $qb
-            ->select('count(orders.id)')
+            ->select('COUNT(orders.id)')
             ->where($qb->expr()->in('orders.currency', $removingCurrencies));
         if ($organization instanceof Organization) {
             $qb->andWhere('orders.organization = :organization');

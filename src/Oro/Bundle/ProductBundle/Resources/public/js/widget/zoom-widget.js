@@ -2,7 +2,7 @@ define(function(require) {
     'use strict';
 
     var $ = require('jquery');
-    require('oroproduct/js/vendors/elevatezoom/jquery-elevatezoom');
+    require('jquery-elevatezoom');
 
     $.widget('oroproduct.zoomWidget', {
         options: {
@@ -16,6 +16,10 @@ define(function(require) {
             lensOpacity: 0.22
         },
 
+        _create: function () {
+            this._setActiveImage();
+        },
+
         _init: function() {
             this.element.elevateZoom(this.options);
             var self = this;
@@ -24,6 +28,16 @@ define(function(require) {
                 self._destroy();
                 self._init();
             });
+        },
+
+        _setActiveImage: function () {
+            var self = this;
+            var dependentSlider = this.options.dependentSlider;
+            if (dependentSlider) {
+                var activeImageIndex = $(dependentSlider).slick('slickCurrentSlide');
+                var activeImage = $(dependentSlider).find('.slick-slide[data-slick-index=' + activeImageIndex + '] img');
+                self.element.data('zoom-image', $(activeImage).attr('data-url-zoom'));
+            }
         },
 
         _destroy: function() {

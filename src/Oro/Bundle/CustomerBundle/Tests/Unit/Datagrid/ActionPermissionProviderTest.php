@@ -6,7 +6,7 @@ use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\CustomerBundle\Datagrid\ActionPermissionProvider;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -34,7 +34,7 @@ class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @var array
      */
-    protected $accountUserRoleActionList = [
+    protected $customerUserRoleActionList = [
         'view',
         'update'
     ];
@@ -93,7 +93,7 @@ class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
                     'update' => true,
                     'delete' => true
                 ],
-                'user' => new AccountUser()
+                'user' => new CustomerUser()
             ],
             'disabled record' => [
                 'isRecordEnabled' => false,
@@ -114,9 +114,9 @@ class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
      * @param boolean  $isGranted
      * @param array    $expected
      *
-     * @dataProvider getAccountUserRolePermissionProvider
+     * @dataProvider getCustomerUserRolePermissionProvider
      */
-    public function testGetAccountUserRolePermission($isRolePredefined, $isGranted, array $expected)
+    public function testGetCustomerUserRolePermission($isRolePredefined, $isGranted, array $expected)
     {
         $this->record->expects($this->any())
             ->method('getValue')
@@ -128,11 +128,11 @@ class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
             ->with($this->isType('string'))
             ->willReturn($isGranted);
 
-        $result = $this->actionPermissionProvider->getAccountUserRolePermission($this->record);
+        $result = $this->actionPermissionProvider->getCustomerUserRolePermission($this->record);
 
-        $this->assertCount(count($this->accountUserRoleActionList), $result);
+        $this->assertCount(count($this->customerUserRoleActionList), $result);
 
-        foreach ($this->accountUserRoleActionList as $action) {
+        foreach ($this->customerUserRoleActionList as $action) {
             $this->assertArrayHasKey($action, $result);
         }
 
@@ -142,7 +142,7 @@ class ActionPermissionProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @return array
      */
-    public function getAccountUserRolePermissionProvider()
+    public function getCustomerUserRolePermissionProvider()
     {
         return [
             'user have permission to create and role is predefined' => [

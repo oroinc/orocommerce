@@ -54,14 +54,16 @@
 {% endblock %}
 
 {% block __oro_checkout_sidebar__enter_billing_address_information_widget %}
+    {% from 'OroAddressBundle::macros.html.twig' import renderAddress %}
     {% if checkout.billingAddress %}
-        <div>{{ checkout.billingAddress|oro_format_address }}</div>
+        <div>{{ renderAddress(checkout.billingAddress) }}</div>
     {% endif %}
 {% endblock %}
 
 {% block __oro_checkout_sidebar__enter_shipping_address_information_widget %}
+    {% from 'OroAddressBundle::macros.html.twig' import renderAddress %}
     {% if checkout.shippingAddress %}
-        <div>{{ checkout.shippingAddress|oro_format_address }}</div>
+        <div>{{ renderAddress(checkout.shippingAddress) }}</div>
     {% endif %}
 {% endblock %}
 

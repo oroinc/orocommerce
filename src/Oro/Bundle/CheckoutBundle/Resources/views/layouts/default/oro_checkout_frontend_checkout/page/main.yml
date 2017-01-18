@@ -8,7 +8,7 @@ layout:
         - '@setOption':
             id: page_title
             optionName: defaultValue
-            optionValue: 'oro.checkout.entity_label'
+            optionValue: 'oro.checkout.open_order.label'
 
     imports:
         -

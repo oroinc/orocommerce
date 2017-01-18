@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
@@ -129,7 +129,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnResultAfterNoShoppingList()
     {
-        $user = new AccountUser();
+        $user = new CustomerUser();
 
         /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
@@ -143,7 +143,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $shoppingListRepository->expects($this->once())
-            ->method('findAvailableForAccountUser')
+            ->method('findAvailableForCustomerUser')
             ->with($this->aclHelper)
             ->willReturn(null);
         $this->registry->expects($this->once())
@@ -165,7 +165,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnResultAfterNoRecords()
     {
-        $user = new AccountUser();
+        $user = new CustomerUser();
 
         /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
@@ -177,7 +177,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $shoppingListRepository->expects($this->once())
-            ->method('findAvailableForAccountUser')
+            ->method('findAvailableForCustomerUser')
             ->with($this->aclHelper)
             ->willReturn(new ShoppingList());
         $this->registry->expects($this->once())
@@ -199,7 +199,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnResultAfter()
     {
-        $user = new AccountUser();
+        $user = new CustomerUser();
 
         /** @var DatagridInterface|\PHPUnit_Framework_MockObject_MockObject $datagrid */
         $datagrid = $this->createMock(DatagridInterface::class);
@@ -221,7 +221,7 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $shoppingListRepository->expects($this->once())
-            ->method('findAvailableForAccountUser')
+            ->method('findAvailableForCustomerUser')
             ->with($this->aclHelper)
             ->willReturn($shoppingList1);
 

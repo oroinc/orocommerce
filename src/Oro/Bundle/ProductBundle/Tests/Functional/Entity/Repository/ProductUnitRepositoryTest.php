@@ -94,14 +94,14 @@ class ProductUnitRepositoryTest extends WebTestCase
         return [
             [
                 'products' => [
-                    'product.1',
-                    'product.2',
-                    'product.3',
+                    'product-1',
+                    'product-2',
+                    'product-3',
                 ],
                 'expectedData' => [
-                    'product.1' => ['milliliter', 'bottle', 'liter'],
-                    'product.2' => ['milliliter', 'bottle', 'box', 'liter'],
-                    'product.3' => ['milliliter', 'liter']
+                    'product-1' => ['milliliter', 'bottle', 'liter'],
+                    'product-2' => ['milliliter', 'bottle', 'box', 'liter'],
+                    'product-3' => ['milliliter', 'liter']
                 ],
             ],
         ];
@@ -143,9 +143,9 @@ class ProductUnitRepositoryTest extends WebTestCase
             ],
             [
                 'products' => [
-                    'product.1',
-                    'product.2',
-                    'product.3',
+                    'product-1',
+                    'product-2',
+                    'product-3',
                 ],
                 'codes' => [
                     'bottle',
@@ -158,8 +158,8 @@ class ProductUnitRepositoryTest extends WebTestCase
             ],
             [
                 'products' => [
-                    'product.1',
-                    'product.3',
+                    'product-1',
+                    'product-3',
                 ],
                 'codes' => [
                     'box',
@@ -222,8 +222,8 @@ class ProductUnitRepositoryTest extends WebTestCase
     public function productUnitsDataProvider()
     {
         return [
-            ['product.1', ['product_unit.bottle', 'product_unit.liter', 'product_unit.milliliter']],
-            ['product.2', ['product_unit.bottle', 'product_unit.box', 'product_unit.liter', 'product_unit.milliliter']]
+            ['product-1', ['product_unit.bottle', 'product_unit.liter', 'product_unit.milliliter']],
+            ['product-2', ['product_unit.bottle', 'product_unit.box', 'product_unit.liter', 'product_unit.milliliter']]
         ];
     }
 

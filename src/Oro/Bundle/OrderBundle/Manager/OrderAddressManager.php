@@ -7,8 +7,8 @@ use Doctrine\Common\Util\ClassUtils;
 
 use Oro\Bundle\AddressBundle\Entity\AbstractAddress;
 use Oro\Bundle\CustomerBundle\Entity\AbstractAddressToAddressType;
-use Oro\Bundle\CustomerBundle\Entity\AccountAddress;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressProvider;
 
@@ -57,13 +57,13 @@ class OrderAddressManager extends AbstractAddressManager
             }
         }
 
-        $orderAddress->setAccountAddress(null);
-        $orderAddress->setAccountUserAddress(null);
+        $orderAddress->setCustomerAddress(null);
+        $orderAddress->setCustomerUserAddress(null);
 
-        if ($address instanceof AccountAddress) {
-            $orderAddress->setAccountAddress($address);
-        } elseif ($address instanceof AccountUserAddress) {
-            $orderAddress->setAccountUserAddress($address);
+        if ($address instanceof CustomerAddress) {
+            $orderAddress->setCustomerAddress($address);
+        } elseif ($address instanceof CustomerUserAddress) {
+            $orderAddress->setCustomerUserAddress($address);
         }
 
         return $orderAddress;

@@ -66,6 +66,8 @@ workflows:
                 type: entity
                 options:
                     class: Oro\Bundle\OrderBundle\Entity\Order
+            checkout_finished:
+                type: bool
         steps:
             enter_billing_address:
                 order: 10
@@ -374,6 +376,7 @@ workflows:
 
             __start___definition:
                 actions:
+                    - '@assign_value': [$shipping_method, null]
                     - '@assign_value': [$payment_save_for_later, true]
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
@@ -451,27 +454,27 @@ workflows:
                     - '@assign_value': [$shipping_method, null]
                     - '@call_method':
                         conditions:
-                            '@not_empty': $checkout.billingAddress.accountAddress
+                            '@not_empty': $checkout.billingAddress.customerAddress
                         parameters:
                             attribute: $billing_address_has_shipping
-                            object: $checkout.billingAddress.accountAddress
+                            object: $checkout.billingAddress.customerAddress
                             method: hasTypeWithName
                             method_parameters:
                                 - $.result.typeShippingName
                     - '@call_method':
                         conditions:
-                            '@not_empty': $checkout.billingAddress.accountUserAddress
+                            '@not_empty': $checkout.billingAddress.customerUserAddress
                         parameters:
                             attribute: $billing_address_has_shipping
-                            object: $checkout.billingAddress.accountUserAddress
+                            object: $checkout.billingAddress.customerUserAddress
                             method: hasTypeWithName
                             method_parameters:
                                 - $.result.typeShippingName
                     - '@assign_value':
                         conditions:
                             '@and':
-                                - '@empty': $checkout.billingAddress.accountAddress
-                                - '@empty': $checkout.billingAddress.accountUserAddress
+                                - '@empty': $checkout.billingAddress.customerAddress
+                                - '@empty': $checkout.billingAddress.customerUserAddress
                         parameters: [$billing_address_has_shipping, true]
                     - '@tree':
                         conditions:
@@ -489,8 +492,8 @@ workflows:
                                 attribute: $checkout.shippingAddress
                                 settings:
                                   - [[setNull], [propertyName, [id]]]
-                                  - [[keep], [propertyName, [accountAddress]]]
-                                  - [[keep], [propertyName, [accountUserAddress]]]
+                                  - [[keep], [propertyName, [customerAddress]]]
+                                  - [[keep], [propertyName, [customerUserAddress]]]
                                   - [[keep], [propertyName, [city]]]
                                   - [[keep], [propertyName, [country]]]
                                   - [[keep], [propertyName, [region]]]
@@ -571,8 +574,8 @@ workflows:
                                 attribute: $checkout.shippingAddress
                                 settings:
                                   - [[setNull], [propertyName, [id]]]
-                                  - [[keep], [propertyName, [accountAddress]]]
-                                  - [[keep], [propertyName, [accountUserAddress]]]
+                                  - [[keep], [propertyName, [customerAddress]]]
+                                  - [[keep], [propertyName, [customerUserAddress]]]
                                   - [[keep], [propertyName, [city]]]
                                   - [[keep], [propertyName, [country]]]
                                   - [[keep], [propertyName, [region]]]
@@ -628,8 +631,8 @@ workflows:
                             message: oro.checkout.workflow.condition.order_line_item_has_count.message
                             parameters:
                                 entity: $checkout
-                        - '@has_applicable_shipping_methods':
-                            shippingContext: $.result.shippingContext
+                        - '@checkout_has_applicable_shipping_methods':
+                            checkout: $checkout
                 conditions:
                     '@and':
                         - '@or':
@@ -791,6 +794,13 @@ workflows:
 
             place_order_definition:
                 preactions:
+                    - '@flash_message':
+                        conditions:
+                            '@and':
+                                - '@equal': [$payment_in_progress, true]
+                                - '@equal': [$checkout_finished, false]
+                        message: oro.checkout.workflow.condition.payment_has_not_been_processed.message
+                        type: 'warning'
                     - '@tree':
                         conditions:
                             '@not_empty': [$.id]
@@ -829,9 +839,7 @@ workflows:
                                 attribute: $.result.paymentContext
                 preconditions:
                     '@and':
-                        - '@not_equal':
-                            message: Payment process is running for this checkout
-                            parameters: [$payment_in_progress, true]
+                        - '@not_empty': $.result.paymentContext
                         - '@payment_method_applicable':
                             message: oro.checkout.workflow.condition.payment_method_is_not_applicable_please_return_to_payment_step.message
                             payment_method: $checkout.paymentMethod
@@ -865,8 +873,8 @@ workflows:
                         attribute: $.result.billingAddress
                         settings:
                           - [[setNull], [propertyName, [id]]]
-                          - [[keep], [propertyName, [accountAddress]]]
-                          - [[keep], [propertyName, [accountUserAddress]]]
+                          - [[keep], [propertyName, [customerAddress]]]
+                          - [[keep], [propertyName, [customerUserAddress]]]
                           - [[keep], [propertyName, [city]]]
                           - [[keep], [propertyName, [country]]]
                           - [[keep], [propertyName, [region]]]
@@ -878,8 +886,8 @@ workflows:
                         attribute: $.result.shippingAddress
                         settings:
                           - [[setNull], [propertyName, [id]]]
-                          - [[keep], [propertyName, [accountAddress]]]
-                          - [[keep], [propertyName, [accountUserAddress]]]
+                          - [[keep], [propertyName, [customerAddress]]]
+                          - [[keep], [propertyName, [customerUserAddress]]]
                           - [[keep], [propertyName, [city]]]
                           - [[keep], [propertyName, [country]]]
                           - [[keep], [propertyName, [region]]]
@@ -982,8 +990,8 @@ workflows:
                         conditions:
                             '@and':
                                 - '@equal': [$checkout.saveBillingAddress, true]
-                                - '@empty': $order.billingAddress.accountAddress
-                                - '@empty': $order.billingAddress.accountUserAddress
+                                - '@empty': $order.billingAddress.customerAddress
+                                - '@empty': $order.billingAddress.customerUserAddress
                                 - '@acl_granted': 'oro_order_address_billing_allow_manual'
                         actions:
                             - '@find_entity':
@@ -992,9 +1000,9 @@ workflows:
                                 identifier: $.result.typeBillingName
                             - '@create_entity':
                                 attribute: $.result.customerBillingAddress
-                                class: Oro\Bundle\CustomerBundle\Entity\AccountUserAddress
+                                class: Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress
                                 data:
-                                    frontendOwner: $checkout.accountUser
+                                    frontendOwner: $checkout.customerUser
                                     owner: $checkout.owner
                                     systemOrganization: $checkout.organization
                                     label: $order.billingAddress.label
@@ -1028,8 +1036,8 @@ workflows:
                         conditions:
                             '@and':
                                 - '@equal': [$checkout.saveShippingAddress, true]
-                                - '@empty': $order.shippingAddress.accountAddress
-                                - '@empty': $order.shippingAddress.accountUserAddress
+                                - '@empty': $order.shippingAddress.customerAddress
+                                - '@empty': $order.shippingAddress.customerUserAddress
                                 - '@acl_granted': 'oro_order_address_shipping_allow_manual'
                         actions:
                             - '@find_entity':
@@ -1042,9 +1050,9 @@ workflows:
                                 actions:
                                     - '@create_entity':
                                         attribute: $.result.customerShippingAddress
-                                        class: Oro\Bundle\CustomerBundle\Entity\AccountUserAddress
+                                        class: Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress
                                         data:
-                                            frontendOwner: $checkout.accountUser
+                                            frontendOwner: $checkout.customerUser
                                             owner: $checkout.owner
                                             systemOrganization: $checkout.organization
                                             label: $checkout.shippingAddress.label
@@ -1082,7 +1090,7 @@ workflows:
                     - '@send_email_template':
                         parameters:
                             from: $order.owner.email
-                            to: $order.accountUser.email
+                            to: $order.customerUser.email
                             template: 'order_confirmation_email'
                             entity: $order
                     - '@remove_entity':
@@ -1096,6 +1104,7 @@ workflows:
                     - '@remove_entity': $checkout.billingAddress
                     - '@remove_entity': $checkout.shippingAddress
                     - '@remove_entity': $checkout
+                    - '@assign_value': [$checkout_finished, true]
                     - '@redirect':
                         route: oro_order_frontend_success
                         route_parameters:

@@ -198,8 +198,8 @@ datagrids:
             query:
                 select:
                     - CONCAT(order_owner.firstName, ' ', order_owner.lastName) as owner
-                    - CONCAT(accountUser.firstName, ' ', accountUser.lastName) as accountUserName
-                    - account.name as accountName
+                    - CONCAT(customerUser.firstName, ' ', customerUser.lastName) as customerUserName
+                    - customer.name as customerName
                     - order1.sourceEntityClass
                     - order1.sourceEntityId
                     - order1.sourceEntityIdentifier
@@ -207,8 +207,8 @@ datagrids:
                 join:
                     left:
                         - { join: order1.owner, alias: order_owner }
-                        - { join: order1.accountUser, alias: accountUser }
-                        - { join: order1.account, alias: account }
+                        - { join: order1.customerUser, alias: customerUser }
+                        - { join: order1.customer, alias: customer }
         columns:
             identifier:
                 label:         oro.order.identifier.label
@@ -236,10 +236,10 @@ datagrids:
                 multicurrency_config:
                     base_currency_label: oro.order.total.base.label
                     currency_field: currency
-            accountName:
-                label:         oro.order.account.label
-            accountUserName:
-                label:         oro.order.account_user.label
+            customerName:
+                label:         oro.order.customer.label
+            customerUserName:
+                label:         oro.order.customer_user.label
             owner:
                 label:         oro.order.owner.label
             paymentStatus:
@@ -294,10 +294,10 @@ datagrids:
                     data_name: subtotal
                 total:
                     data_name: total
-                accountName:
-                    data_name: accountName
-                accountUserName:
-                    data_name: accountUserName
+                customerName:
+                    data_name: customerName
+                customerUserName:
+                    data_name: customerUserName
                 owner:
                     data_name: owner
                 poNumber:
@@ -336,12 +336,12 @@ datagrids:
                 total:
                     type:      currency
                     data_name: total
-                accountName:
+                customerName:
                     type:      string
-                    data_name: accountName
-                accountUserName:
+                    data_name: customerName
+                customerUserName:
                     type:      string
-                    data_name: accountUserName
+                    data_name: customerUserName
                 owner:
                     type:      string
                     data_name: owner
@@ -498,46 +498,46 @@ datagrids:
                 icon:          eye
                 rowAction:     true
 
-    account-user-orders-grid:
+    customer-user-orders-grid:
         extends: embed-orders-grid
         source:
             query:
                 join:
                     left:
-                        - { join: order1.accountUser, alias: accountUser }
+                        - { join: order1.customerUser, alias: customerUser }
                 where:
                     and:
-                        - order1.accountUser = :account_user_id
+                        - order1.customerUser = :customer_user_id
             bind_parameters:
-                - account_user_id
+                - customer_user_id
 
-    account-orders-grid:
+    customer-orders-grid:
         extends: embed-orders-grid
         source:
             query:
                 select:
-                    - CONCAT(accountUser.firstName, ' ', accountUser.lastName) as accountUserName
+                    - CONCAT(customerUser.firstName, ' ', customerUser.lastName) as customerUserName
                 join:
                     left:
-                        - { join: order1.account, alias: account }
-                        - { join: order1.accountUser, alias: accountUser }
+                        - { join: order1.customer, alias: customer }
+                        - { join: order1.customerUser, alias: customerUser }
                 where:
                     and:
-                        - order1.account = :account_id
+                        - order1.customer = :customer_id
             bind_parameters:
-                - account_id
+                - customer_id
         columns:
-            accountUserName:
-                label:         oro.order.account_user.label
+            customerUserName:
+                label:         oro.order.customer_user.label
         sorters:
             columns:
-                accountUserName:
-                    data_name: accountUserName
+                customerUserName:
+                    data_name: customerUserName
         filters:
             columns:
-                accountUserName:
+                customerUserName:
                     type:      string
-                    data_name: accountUserName
+                    data_name: customerUserName
 
     base-order-line-items-grid:
         extended_entity_name: %oro_order.entity.order_line_item.class%
@@ -604,6 +604,9 @@ datagrids:
                 template:      OroOrderBundle:Order:Datagrid/frontendProduct.html.twig
             quantity:
                 label: oro.order.orderlineitem.quantity.label
+                type:          twig
+                frontend_type: html
+                template:      OroOrderBundle:Order:Datagrid/frontendQuantity.html.twig
             price:
                 label:         oro.order.orderlineitem.price.label
                 type:          twig

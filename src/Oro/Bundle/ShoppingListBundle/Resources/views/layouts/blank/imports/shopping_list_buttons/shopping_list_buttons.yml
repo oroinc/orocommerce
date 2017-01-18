@@ -10,5 +10,5 @@ layout:
             prepend: true
             options:
                 visible: '=data["acl"].isGranted("oro_shopping_list_frontend_update")'
-                shoppingLists: '=data["oro_shopping_list_account_user_shopping_lists"].getShoppingLists()'
+                shoppingLists: '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingLists()'
     conditions: 'context["is_logged_in"]'

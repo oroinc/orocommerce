@@ -47,20 +47,20 @@ class ProductVisibilityIndexerTest extends \PHPUnit_Framework_TestCase
 
         $this->visibilityProvider
             ->expects($this->once())
-            ->method('getAccountVisibilitiesForProducts')
+            ->method('getCustomerVisibilitiesForProducts')
             ->with($entityIds, $websiteId)
             ->willReturn([
                 [
                     'productId' => 1,
-                    'accountId' => 1,
+                    'customerId' => 1,
                 ],
                 [
                     'productId' => 2,
-                    'accountId' => 3,
+                    'customerId' => 3,
                 ],
                 [
                     'productId' => 3,
-                    'accountId' => 2,
+                    'customerId' => 2,
                 ]
             ]);
 
@@ -99,7 +99,7 @@ class ProductVisibilityIndexerTest extends \PHPUnit_Framework_TestCase
                     ['value' => BaseVisibilityResolved::VISIBILITY_VISIBLE, 'all_text' => false],
                 'is_visible_by_default' =>
                     ['value' => BaseVisibilityResolved::VISIBILITY_VISIBLE, 'all_text' => false],
-                'visibility_account_ACCOUNT_ID' => [
+                'visibility_customer_ACCOUNT_ID' => [
                     ['value' => new PlaceholderValue(1, ['ACCOUNT_ID' => 1]), 'all_text' => false],
                 ]
             ],
@@ -110,7 +110,7 @@ class ProductVisibilityIndexerTest extends \PHPUnit_Framework_TestCase
                     ['value' => BaseVisibilityResolved::VISIBILITY_VISIBLE, 'all_text' => false],
                 'is_visible_by_default' =>
                     ['value' => BaseVisibilityResolved::VISIBILITY_HIDDEN, 'all_text' => false],
-                'visibility_account_ACCOUNT_ID' => [
+                'visibility_customer_ACCOUNT_ID' => [
                     ['value' => new PlaceholderValue(1, ['ACCOUNT_ID' => 3]), 'all_text' => false]
                 ]
             ],
@@ -121,7 +121,7 @@ class ProductVisibilityIndexerTest extends \PHPUnit_Framework_TestCase
                     ['value' => BaseVisibilityResolved::VISIBILITY_HIDDEN, 'all_text' => false],
                 'is_visible_by_default' =>
                     ['value' => BaseVisibilityResolved::VISIBILITY_VISIBLE, 'all_text' => false],
-                'visibility_account_ACCOUNT_ID' => [
+                'visibility_customer_ACCOUNT_ID' => [
                     ['value' => new PlaceholderValue(1, ['ACCOUNT_ID' => 2]), 'all_text' => false],
                 ]
             ]

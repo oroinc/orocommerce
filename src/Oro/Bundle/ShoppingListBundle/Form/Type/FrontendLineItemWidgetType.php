@@ -88,7 +88,7 @@ class FrontendLineItemWidgetType extends AbstractType
                             $this->shoppingListClass,
                             $criteria,
                             'EDIT',
-                            ['accountUser' => 'shoppingList.accountUser']
+                            ['customerUser' => 'shoppingList.customerUser']
                         );
                         $qb->addCriteria($criteria);
 

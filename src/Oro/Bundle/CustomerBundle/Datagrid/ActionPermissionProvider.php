@@ -4,7 +4,7 @@ namespace Oro\Bundle\CustomerBundle\Datagrid;
 
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class ActionPermissionProvider
 {
@@ -29,7 +29,7 @@ class ActionPermissionProvider
         $disabled = $enabled = $record->getValue('enabled');
         $user = $this->securityFacade->getLoggedUser();
         $delete = true;
-        if ($user instanceof AccountUser) {
+        if ($user instanceof CustomerUser) {
             $isCurrentUser = $user->getId() == $record->getValue('id');
             $disabled = $isCurrentUser ? false : $enabled;
             $delete = !$isCurrentUser;
@@ -49,11 +49,11 @@ class ActionPermissionProvider
      *
      * @return array
      */
-    public function getAccountUserRolePermission(ResultRecordInterface $record)
+    public function getCustomerUserRolePermission(ResultRecordInterface $record)
     {
         $isGranted = true;
         if ($record->getValue('isRolePredefined')) {
-            $isGranted = $this->securityFacade->isGranted('oro_account_frontend_account_user_role_create');
+            $isGranted = $this->securityFacade->isGranted('oro_customer_frontend_customer_user_role_create');
         }
 
         return [

@@ -25,7 +25,24 @@ class OroSaleExtension extends Extension
         $loader->load('form_types.yml');
         $loader->load('block_types.yml');
 
+        $this->registerShippingBundleDependencies($loader, $container);
+
         $container->prependExtensionConfig($this->getAlias(), array_intersect_key($config, array_flip(['settings'])));
+    }
+
+    /**
+     * @param Loader\YamlFileLoader $loader
+     * @param ContainerBuilder $container
+     */
+    private function registerShippingBundleDependencies(Loader\YamlFileLoader $loader, ContainerBuilder $container)
+    {
+        $bundles = $container->getParameter('kernel.bundles');
+
+        if (false === array_key_exists('OroShippingBundle', $bundles)) {
+            return;
+        }
+
+        $loader->load('shipping_services.yml');
     }
 
     /**

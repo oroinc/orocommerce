@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Layout\DataProvider;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
@@ -105,7 +105,7 @@ class CategoryProviderTest extends \PHPUnit_Framework_TestCase
         $rootCategory->setLevel(0);
         $rootCategory->addChildCategory($mainCategory);
 
-        $user = new AccountUser();
+        $user = new CustomerUser();
 
         $this->categoryRepository
             ->expects($this->once())
@@ -120,37 +120,5 @@ class CategoryProviderTest extends \PHPUnit_Framework_TestCase
         $actual = $this->categoryProvider->getCategoryTree($user);
 
         $this->assertEquals([$mainCategory], $actual);
-    }
-
-    public function testGetParentCategories()
-    {
-        $category = $this->createMock(Category::class);
-        $categoryId = 1;
-
-        $categoryParent = $this->createMock(Category::class);
-        $categoryParent2 = $this->createMock(Category::class);
-
-        $category->expects($this->once())
-            ->method('getParentCategory')
-            ->willReturn($categoryParent);
-
-        $categoryParent->expects($this->once())
-            ->method('getParentCategory')
-            ->willReturn($categoryParent2);
-
-        $this->requestProductHandler
-            ->expects($this->once())
-            ->method('getCategoryId')
-            ->willReturn($categoryId);
-
-        $this->categoryRepository
-            ->expects($this->once())
-            ->method('find')
-            ->with($categoryId)
-            ->willReturn($category);
-
-        $result = $this->categoryProvider->getParentCategories();
-        $this->assertCount(2, $result);
-        $this->assertSame([$categoryParent2, $categoryParent], $result);
     }
 }

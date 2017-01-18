@@ -60,7 +60,7 @@
 {% block oro_sale_quote_product_widget %}
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class : '') ~ ' quote-lineitem-widget control-group'}) %}
 
-    {% set commentAccount = form.vars.value.commentAccount|default(null) %}
+    {% set commentCustomer = form.vars.value.commentCustomer|default(null) %}
     {% set commentSeller = form.vars.value.comment|default(null) %}
     {% set quoteProductRequests = form.vars.value.quoteProductRequests|default([]) %}
     {% set isProductFreeForm = form.vars.value.isProductFreeForm()|default(false) %}
@@ -118,10 +118,10 @@
         {{ form_errors(form.quoteProductOffers) }}
     </td>
     <td class="quote-lineitem-notes">
-        {% if commentAccount %}
-            <div class="quote-lineitem-notes quote-lineitem-notes-account">
-                {{ form_label(form.commentAccount) }}
-                {{ form_widget(form.commentAccount) }}
+        {% if commentCustomer %}
+            <div class="quote-lineitem-notes quote-lineitem-notes-customer">
+                {{ form_label(form.commentCustomer) }}
+                {{ form_widget(form.commentCustomer) }}
             </div>
         {% endif %}
         <div class="quote-lineitem-notes-seller-active">
@@ -149,9 +149,13 @@
                         <td class="quote-lineitem-requested-quantity">
                             {{ child.quantity }}
                         </td>
+
                         <td class="quote-lineitem-requested-unit">
-                            {{ child.productUnit }}
+                            {% if oro_is_unit_code_visible(child.productUnit.code) %}
+                                {{ child.productUnit }}
+                            {% endif %}
                         </td>
+
                         <td class="quote-lineitem-requested-price">
                             {% if child.price is not empty %}
                                 {{ child.price|oro_format_price }}
@@ -265,11 +269,11 @@
 {% block oro_quote_address_type_widget %}
     {% if form.parent is not empty %}
         <div {{ block('widget_container_attributes') }}>
-            {{ form_row(form.accountAddress) }}
+            {{ form_row(form.customerAddress) }}
             {{ block('oro_address_rows') }}
         </div>
     {% else %}
-        {{ form_row(form.accountAddress) }}
+        {{ form_row(form.customerAddress) }}
         {{ block('oro_address_rows') }}
     {% endif %}
 {% endblock %}

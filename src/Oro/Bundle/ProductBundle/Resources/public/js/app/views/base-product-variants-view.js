@@ -14,7 +14,7 @@ define(function(require) {
         },
 
         elements: {
-            variantForm: '[data-name="form__oro-product-frontend-variant-field"]',
+            variantForm: '[data-name="form__oro-product-product-variant-frontend-variant-field"]',
             variantFields: ['variantForm', ':input[data-name]']
         },
 
@@ -31,6 +31,9 @@ define(function(require) {
         },
 
         initModel: function(options) {
+            if (!options.productModel) {
+                this.$el.trigger('options:set:productModel', options);
+            }
             if (options.productModel) {
                 this.model = options.productModel;
             }

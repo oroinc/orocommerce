@@ -128,7 +128,7 @@ and template:
                                 {% if productImage and isDesktopVersion() %}
                                     data-zoom-image="{{ Image.url(productImage, 'product_original') }}"
                                     {% set options = {
-                                    widgetModule: 'oroproduct/js/vendors/elevatezoom/jquery-elevatezoom',
+                                    widgetModule: 'jquery-elevatezoom',
                                     widgetName: 'elevateZoom',
                                     scrollZoom: true,
                                     zoomWindowWidth: 630,
@@ -199,7 +199,7 @@ and template:
 ### Simple product
 
 In our case simple product inherit all import properties. Create layout update that include **oro_product_view** import and has **conditions** to check if the current product has **simple** product type.
-Our simple product look like this:
+Our simple product looks like this:
 ![Simple Product example](./images/simple_product.png "Simple Product example")
 
 
@@ -219,7 +219,7 @@ layout:
 
 Create layout update that include **oro_product_view** import and has **conditions** to check if the current product has **configurable** product type.
 Add **product variants** block.
-Our configurable product look like this:
+Our configurable product looks like this:
 ![Configurable Product example](./images/configurable_product.png "Configurable Product example")
 
 ```yml
@@ -362,9 +362,9 @@ You can find there current layout **context** data and actual layout **tree**. P
 #### Example 1 (by category ID)
 
 We have a "Headlamps" category and we want to add some static html to all products in this category.
-Our condition will be look like **conditions: 'context["category_id"] == 4'**.
+The condition is: **conditions: 'context["category_id"] == 4'**.
 
-Our result will be look like this:
+and the result is:
 ![Change Product Page by Category example 1](./images/change_product_by_category_example_1.png "Change Product Page by Category example 1")
 
 ```yml
@@ -401,9 +401,9 @@ template:
 #### Example 2 (by parent category ID)
 
 Imagine that we want to add sale banner to all product in first level category and their children. For example we have category "Furniture" with **id = 6**.
-Our condition will be look like **conditions: '6 in context["category_ids"]'**.
+The condition is: **conditions: '6 in context["category_ids"]'**.
 
-Our result will be look like this:
+and the result is:
 ![Change Product Page by Category example 2](./images/change_product_by_category_example_2.png "Change Product Page by Category example 2")
 
 ```yml

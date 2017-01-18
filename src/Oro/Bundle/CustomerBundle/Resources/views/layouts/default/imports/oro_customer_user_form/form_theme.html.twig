@@ -1,0 +1,7 @@
+{%- block form_row -%}
+    <div class="field {{ parentClass|default('') }}">
+        {{- form_label(form) -}}
+        {{- form_widget(form) -}}
+        {{- form_errors(form) -}}
+    </div>
+{%- endblock form_row -%}

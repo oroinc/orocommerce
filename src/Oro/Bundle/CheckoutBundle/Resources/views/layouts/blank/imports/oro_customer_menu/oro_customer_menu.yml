@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@add':
-            id: __account_user_order
+            id: __customer_user_order
             parentId: __list
             blockType: link
             options:
@@ -9,10 +9,10 @@ layout:
                 route_name: oro_order_frontend_index
                 text: oro.order.order_history.label
         - '@add':
-            id: __account_user_open_orders
+            id: __customer_user_open_orders
             parentId: __list
             blockType: link
             options:
                 route_name: oro_checkout_frontend_open_orders
-                text: oro.checkout.entity_plural_label
+                text: oro.checkout.open_order.plural_label
                 visible: '=data["oro_checkout_separate_open_orders"].getOpenOrdersSeparatePageConfig()'

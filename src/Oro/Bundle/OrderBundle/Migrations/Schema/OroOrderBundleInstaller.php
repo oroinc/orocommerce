@@ -38,7 +38,7 @@ class OroOrderBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_9';
+        return 'v1_11';
     }
 
     /**
@@ -134,8 +134,8 @@ class OroOrderBundleInstaller implements
             'money',
             ['notnull' => false, 'precision' => 19, 'scale' => 4, 'comment' => '(DC2Type:money)']
         );
-        $table->addColumn('account_id', 'integer', ['notnull' => false]);
-        $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
+        $table->addColumn('customer_id', 'integer', ['notnull' => false]);
+        $table->addColumn('customer_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('source_entity_class', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('source_entity_id', 'integer', ['notnull' => false]);
         $table->addColumn('source_entity_identifier', 'string', ['notnull' => false, 'length' => 255]);
@@ -159,8 +159,8 @@ class OroOrderBundleInstaller implements
     {
         $table = $schema->createTable('oro_order_address');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('account_address_id', 'integer', ['notnull' => false]);
-        $table->addColumn('account_user_address_id', 'integer', ['notnull' => false]);
+        $table->addColumn('customer_address_id', 'integer', ['notnull' => false]);
+        $table->addColumn('customer_user_address_id', 'integer', ['notnull' => false]);
         $table->addColumn('region_code', 'string', ['notnull' => false, 'length' => 16]);
         $table->addColumn('country_code', 'string', ['notnull' => false, 'length' => 2]);
         $table->addColumn('label', 'string', ['notnull' => false, 'length' => 255]);
@@ -219,6 +219,7 @@ class OroOrderBundleInstaller implements
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_unit_id', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('product_id', 'integer', ['notnull' => false]);
+        $table->addColumn('parent_product_id', 'integer', ['notnull' => false]);
         $table->addColumn('order_id', 'integer', ['notnull' => false]);
         $table->addColumn('product_sku', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('free_form_product', 'string', ['notnull' => false, 'length' => 255]);
@@ -290,14 +291,14 @@ class OroOrderBundleInstaller implements
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account'),
-            ['account_id'],
+            $schema->getTable('oro_customer'),
+            ['customer_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account_user'),
-            ['account_user_id'],
+            $schema->getTable('oro_customer_user'),
+            ['customer_user_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
@@ -320,14 +321,14 @@ class OroOrderBundleInstaller implements
     {
         $table = $schema->getTable('oro_order_address');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account_address'),
-            ['account_address_id'],
+            $schema->getTable('oro_customer_address'),
+            ['customer_address_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account_user_address'),
-            ['account_user_address_id'],
+            $schema->getTable('oro_customer_user_address'),
+            ['customer_user_address_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
         );
@@ -366,6 +367,12 @@ class OroOrderBundleInstaller implements
             ['product_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product'),
+            ['parent_product_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_order'),

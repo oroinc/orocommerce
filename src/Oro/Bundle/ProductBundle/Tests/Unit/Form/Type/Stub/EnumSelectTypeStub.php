@@ -18,6 +18,13 @@ class EnumSelectTypeStub extends AbstractType
             'configs' => [],
             'enum_code' => null,
             'placeholder' => null,
+            'disabled_values' => [],
+            'excluded_values' => [],
+        ]);
+
+        $resolver->setAllowedTypes([
+            'disabled_values' => ['array', 'callable'],
+            'excluded_values' => ['array', 'callable'],
         ]);
     }
 

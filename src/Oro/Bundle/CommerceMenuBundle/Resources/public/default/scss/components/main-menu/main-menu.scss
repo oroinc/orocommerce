@@ -1,8 +1,10 @@
 .main-menu {
     flex-grow: 0;
 
+    &__item {
+        padding-right: 10px;
+    }
     &__link {
-        padding-right: 24px;
         padding-left: 24px;
 
         white-space: nowrap;
@@ -60,7 +62,7 @@
                 .fa-angle-down {
                     position: absolute;
                     top: 50%;
-                    left: 0;
+                    left: -2px;
 
                     margin: 0;
                     margin-top: -7px;

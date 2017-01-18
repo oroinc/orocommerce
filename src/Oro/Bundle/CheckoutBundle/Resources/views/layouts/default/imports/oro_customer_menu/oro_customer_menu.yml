@@ -1,0 +1,22 @@
+layout:
+    actions:
+        - '@add':
+            id: customer_sidebar_order
+            parentId: customer_sidebar
+            blockType: link
+            options:
+                visible: '=data["acl"].isGranted("oro_order_frontend_view")'
+                route_name: oro_order_frontend_index
+                text: oro.order.order_history.label
+            siblingId: customer_sidebar_sign_out
+            prepend: true
+        - '@add':
+            id: customer_sidebar_open_orders
+            parentId: customer_sidebar
+            blockType: link
+            options:
+                route_name: oro_checkout_frontend_open_orders
+                text: oro.checkout.open_order.plural_label
+                visible: '=data["oro_checkout_separate_open_orders"].getOpenOrdersSeparatePageConfig()'
+            siblingId: customer_sidebar_sign_out
+            prepend: true

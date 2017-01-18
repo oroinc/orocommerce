@@ -29,7 +29,7 @@ class PriceListRequestHandlerStub implements PriceListRequestHandlerInterface
     /**
      * @return CombinedPriceList
      */
-    public function getPriceListByAccount()
+    public function getPriceListByCustomer()
     {
         return new CombinedPriceList();
     }
