@@ -17,7 +17,6 @@ define(function(require) {
                 checkoutFlashNotifications: '[data-role="checkout-flash-notifications"]',
                 checkoutSidebar: '[data-role="checkout-sidebar"]',
                 checkoutContent: '[data-role="checkout-content"]',
-                checkoutRequire: '[data-role="checkout-require"]',
                 transitionTriggerContainer: '[data-role="transition-trigger-container"]',
                 transitionTrigger: '[data-role="transition-trigger"]'
             }

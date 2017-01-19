@@ -15,6 +15,7 @@ define(function(require) {
         initialize: function(options) {
             this.defaults.selectors.shippingForm = '[data-content="shipping_method_form"]';
             this.defaults.selectors.shippingMethodTypeSelector = '[name$="shippingMethodType"]';
+            this.defaults.selectors.checkoutRequire = '[data-role="checkout-require"]';
             this.defaults.selectors.shippingMethod = '[name$="[shipping_method]"]';
             this.defaults.selectors.shippingMethodType = '[name$="[shipping_method_type]"]';
 
