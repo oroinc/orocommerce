@@ -662,7 +662,7 @@ datagrids:
             entityHint: calendarDate
             export: true
         source:
-            type:         orm
+            type: orm
             query:
                 select:
                     - calendarDate.date as cDate
@@ -703,8 +703,8 @@ datagrids:
                 label:         oro.product.names.label
             qtySold:
                 label:         oro.product.qty_sold.label
-                type: twig
-                template: OroOrderBundle:Order:Datagrid/productQtySold.html.twig
+                type:          twig
+                template:      OroOrderBundle:Order:Datagrid/productQtySold.html.twig
                 frontend_type: html
         sorters:
             columns:
@@ -722,7 +722,7 @@ datagrids:
         filters:
             columns:
                 createdAt:
-                    label: oro.product.time_period.label
+                    label:     oro.product.time_period.label
                     type:      datetime
                     data_name: calendarDate.date
                 sku:

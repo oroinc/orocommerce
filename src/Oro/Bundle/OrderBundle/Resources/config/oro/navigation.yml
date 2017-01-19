@@ -34,7 +34,7 @@ navigation:
                 label:           'oro.order.menu.best_selling_list.label'
                 route:           'oro_report_view_grid'
                 route_parameters:
-                    gridName: 'best-selling-products'
+                    gridName:    'best-selling-products'
                 extras:
                     description: 'oro.order.menu.best_selling_list.description'
 
