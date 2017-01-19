@@ -2,6 +2,8 @@
 
 namespace Oro\Tests\Unit\Component\Action\Condition;
 
+use Oro\Bundle\ActionBundle\Model\ActionData;
+use Oro\Component\ConfigExpression\ContextAccessor;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Session\Flash\FlashBag;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -41,6 +43,7 @@ class ExtendableConditionTest extends \PHPUnit_Framework_TestCase
             $this->flashBag,
             $this->translator
         );
+        $this->extendableCondition->setContextAccessor(new ContextAccessor());
     }
 
     public function testIsConditionAllowedIsTrueIfNoEvents()
@@ -86,13 +89,13 @@ class ExtendableConditionTest extends \PHPUnit_Framework_TestCase
         $this->expectsDispatchWithErrors(['events' => ['aaa']]);
 
         $this->translator
-            ->expects($this->never())
+            ->expects($this->exactly(2))
             ->method('trans');
         $this->flashBag
             ->expects($this->never())
             ->method('add');
 
-        $this->assertFalse($this->extendableCondition->isConditionAllowed([]));
+        $this->assertFalse($this->extendableCondition->isConditionAllowed(new ActionData([])));
     }
 
     public function testIsConditionAllowedNotShowErrorsWhenShowErrorsIsTrue()

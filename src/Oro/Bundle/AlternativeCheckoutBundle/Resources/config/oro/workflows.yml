@@ -430,16 +430,13 @@ workflows:
                             identifier: $init_context.entityId
                             attribute: $.result.shoppingList
                 preconditions:
-                    '@and':
-                        - '@has_elements': $.result.shoppingList.lineItems
-                        - '@has_price_in_shopping_line_items': $.result.shoppingList.lineItems
-                        - '@extendable':
-                            events: [extendable_condition.start_checkout]
+                    '@has_elements': $.result.shoppingList.lineItems
                 actions:
                     - '@run_action_group':
                         action_group: start_shoppinglist_checkout
                         parameters_mapping:
                             shoppingList: $.result.shoppingList
+                            showErrors: true
                         results:
                             data.checkout: $.checkout
                             result.redirectUrl: $.redirectUrl
