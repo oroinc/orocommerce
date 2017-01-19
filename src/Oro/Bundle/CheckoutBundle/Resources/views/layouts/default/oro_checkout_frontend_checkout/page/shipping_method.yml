@@ -9,14 +9,13 @@ layout:
         - '@add':
             id: shipping_methods
             parentId: checkout_information
-            blockType: container
+            blockType: shipping_methods
             prepend: true
             options:
                 class_prefix: 'checkout'
-                vars:
-                    methods: '=data["checkout_shipping_methods"].getApplicableMethodsViews(data["checkout"]).toArray()'
-                    currentShippingMethod: '=data["checkout"].getShippingMethod()'
-                    currentShippingMethodType: '=data["checkout"].getShippingMethodType()'
+                methods: '=data["checkout_shipping_methods"].getApplicableMethodsViews(data["checkout"]).toArray()'
+                currentShippingMethod: '=data["checkout"].getShippingMethod()'
+                currentShippingMethodType: '=data["checkout"].getShippingMethodType()'
         - '@add':
             id: shipping_methods_template
             parentId: shipping_methods
