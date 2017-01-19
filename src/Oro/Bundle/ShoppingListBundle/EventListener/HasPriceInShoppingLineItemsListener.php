@@ -4,13 +4,13 @@ namespace Oro\Bundle\ShoppingListBundle\EventListener;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
+use Oro\Bundle\ActionBundle\Model\ActionData;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
 
 /**
@@ -54,16 +54,29 @@ class HasPriceInShoppingLineItemsListener
      */
     public function onStartCheckoutConditionCheck(ExtendableConditionEvent $conditionEvent)
     {
-        /** @var WorkflowItem $context */
+        /** @var ActionData $context */
         $context = $conditionEvent->getContext();
-        /** @var ShoppingList $shoppingList */
-        $shoppingList = $context->getResult()->get('shoppingList');
 
-        if (!$this->isThereAPricePresent($shoppingList->getLineItems())) {
+        if (!$this->isApplicable($context)) {
+            return;
+        }
+
+        /** @var Checkout $checkout */
+        $checkout = $context->get('checkout');
+        if (!$checkout->getLineItems()->count()) {
+            return;
+        }
+
+        if (!$this->isThereAPricePresent($checkout->getLineItems())) {
             $conditionEvent->addError(
                 'oro.frontend.shoppinglist.messages.cannot_create_order_no_line_item_with_price'
             );
         }
+    }
+
+    private function isApplicable($context)
+    {
+        return ($context instanceof ActionData && $context->get('checkout') instanceof Checkout);
     }
 
     /**

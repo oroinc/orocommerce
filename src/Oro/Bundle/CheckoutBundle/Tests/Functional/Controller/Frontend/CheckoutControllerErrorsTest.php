@@ -38,18 +38,13 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_3);
         $this->startCheckout($shoppingList);
-        $crawler = $this->client->request('GET', self::$checkoutUrl);
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $noProductsError = $translator->trans('oro.checkout.workflow.condition.order_line_item_has_count.message');
-        $this->assertContains($noProductsError, $crawler->html());
+        $this->assertNull(self::$checkoutUrl);
 
-        $form = $this->getTransitionForm($crawler);
-        $values = $this->explodeArrayPaths($form->getValues());
-        $data = $this->setFormData($values, self::BILLING_ADDRESS);
-        $this->client->request('POST', $form->getUri(), $data);
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 500);
+        $flashBag = $this->getContainer()->get('session.flash_bag');
+        $noItemsWithPriceError = $translator
+            ->trans('oro.frontend.shoppinglist.messages.cannot_create_order_no_line_item_with_price');
+        $this->assertTrue($flashBag->has('error'));
+        $this->assertContains($noItemsWithPriceError, $flashBag->get('error'));
     }
 
     public function testStartCheckoutSeveralProductsWithoutPrices()

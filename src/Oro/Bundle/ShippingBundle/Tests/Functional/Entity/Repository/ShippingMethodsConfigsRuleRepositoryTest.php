@@ -154,4 +154,20 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
             'postalCode' => $data['postalCode'],
         ]);
     }
+
+    public function testGetByCurrency()
+    {
+        $expectedRules = [
+            $this->getReference('shipping_rule.10'),
+            $this->getReference('shipping_rule.11'),
+            $this->getReference('shipping_rule.12')
+        ];
+
+        $this->assertEquals($expectedRules, $this->repository->getByCurrency('UAH'));
+    }
+
+    public function testGetByCurrencyWhenCurrencyNotExists()
+    {
+        $this->assertEquals([], $this->repository->getByCurrency('WON'));
+    }
 }
