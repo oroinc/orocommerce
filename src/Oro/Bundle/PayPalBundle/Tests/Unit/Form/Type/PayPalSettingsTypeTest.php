@@ -8,6 +8,7 @@ use Oro\Bundle\PayPalBundle\Entity\CreditCardType;
 use Oro\Bundle\PayPalBundle\Entity\ExpressCheckoutPaymentAction;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Form\Type\PayPalSettingsType;
+use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
@@ -24,13 +25,18 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
     /** @var PayPalSettingsType */
     private $formType;
 
+    /** @var SymmetricCrypterInterface|\PHPUnit_Framework_MockObject_MockObject $translator */
+    private $encoder;
+
     public function setUp()
     {
         parent::setUp();
 
         /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject $translator */
         $translator = $this->createMock(TranslatorInterface::class);
-        $this->formType = new PayPalSettingsType($translator);
+
+        $this->encoder = $this->createMock(SymmetricCrypterInterface::class);
+        $this->formType = new PayPalSettingsType($translator, $this->encoder);
     }
 
     /**
@@ -88,6 +94,12 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
             'proxyPort' => 'port',
             'enableSSLVerification' => false,
         ];
+
+        $this->encoder
+            ->expects($this->once())
+            ->method('encryptData')
+            ->with($submitData['password'])
+            ->willReturn($submitData['password']);
 
         $payPalSettings = new PayPalSettings();
 

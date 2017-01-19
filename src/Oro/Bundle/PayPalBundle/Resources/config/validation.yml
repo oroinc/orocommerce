@@ -19,3 +19,10 @@ Oro\Bundle\PayPalBundle\Entity\PayPalSettings:
         allowedCreditCardTypes:
             - NotBlank: ~
             - Valid: ~
+        user:
+            - NotBlank: ~
+            - Valid: ~
+        password:
+            - NotBlank: ~
+            - Length:
+                min: 7

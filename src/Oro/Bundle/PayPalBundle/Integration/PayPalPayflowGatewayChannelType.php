@@ -22,6 +22,6 @@ class PayPalPayflowGatewayChannelType implements ChannelInterface, IconAwareInte
      */
     public function getIcon()
     {
-        return 'bundles/oropaypal/img/payflow.png';
+        return 'bundles/oropaypal/img/paypal-logo.png';
     }
 }
