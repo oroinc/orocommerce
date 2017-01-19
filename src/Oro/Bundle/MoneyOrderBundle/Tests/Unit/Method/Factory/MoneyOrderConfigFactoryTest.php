@@ -3,7 +3,7 @@
 namespace Oro\Bundle\MoneyOrderBundle\Tests\Unit\Method\Factory;
 
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\IntegrationBundle\Generator\IntegrationMethodIdentifierGeneratorInterface;
+use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\MoneyOrderBundle\Entity\MoneyOrderSettings;
 use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig;
@@ -14,7 +14,7 @@ class MoneyOrderConfigFactoryTest extends \PHPUnit_Framework_TestCase
     /** @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject */
     private $localizationHelper;
 
-    /** @var IntegrationMethodIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var IntegrationIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject */
     private $identifierGenerator;
 
     /** @var MoneyOrderConfigFactory */
@@ -24,7 +24,7 @@ class MoneyOrderConfigFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);
         $this->identifierGenerator = $this->createMock(
-            IntegrationMethodIdentifierGeneratorInterface::class
+            IntegrationIdentifierGeneratorInterface::class
         );
 
         $this->factory = new MoneyOrderConfigFactory(
