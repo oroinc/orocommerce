@@ -78,7 +78,7 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
                                     ->doctrine
                                     ->getManagerForClass('OroDPDBundle:ShippingService')
                                     ->getRepository('OroDPDBundle:ShippingService')
-                                    ->findBy(['code' => $diff, 'country' => $this->getCountry()]);
+                                    ->findBy(['code' => $diff]);
 
                                 $this->addViolations($missingServices, $constraint->message);
                                 break;
@@ -163,23 +163,6 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
         return $id;
     }
 
-    /**
-     * @return Country|null
-     */
-    protected function getCountry()
-    {
-        $country = null;
-
-        $form = $this->getForm();
-        while ($form) {
-            if ($form->getData() instanceof DPDTransport) {
-                $country = $form->getData()->getCountry();
-                break;
-            }
-            $form = $form->getParent();
-        }
-        return $country;
-    }
 
     /**
      * @return FormInterface

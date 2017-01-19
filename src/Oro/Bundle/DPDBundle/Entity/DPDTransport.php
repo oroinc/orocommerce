@@ -5,8 +5,11 @@ namespace Oro\Bundle\DPDBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
@@ -14,11 +17,12 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  */
 class DPDTransport extends Transport
 {
-    const LABEL_SIZE_OPTION = 'label_size';
+    const FLAT_RATE_POLICY = 0;
+    const TABLE_RATE_POLICY = 1;
+
     const PDF_A4_LABEL_SIZE = 'PDF_A4';
     const PDF_A6_LABEL_SIZE = 'PDF_A6';
 
-    const LABEL_START_POSTITION_OPTION = 'label_start_position';
     const UPPERLEFT_LABEL_START_POSITION = 'UpperLeft';
     const UPPERRIGHT_LABEL_START_POSITION = 'UpperRight';
     const LOWERLEFT_LABEL_START_POSITION = 'LowerLeft';
@@ -58,11 +62,45 @@ class DPDTransport extends Transport
      *          @ORM\JoinColumn(name="transport_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
      *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="ship_service_id", referencedColumnName="id", onDelete="CASCADE")
+     *          @ORM\JoinColumn(name="ship_service_id", referencedColumnName="code", onDelete="CASCADE")
      *      }
      * )
      */
     protected $applicableShippingServices;
+
+    /**
+     * @var WeightUnit
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\ShippingBundle\Entity\WeightUnit")
+     * @ORM\JoinColumn(name="dpd_unit_of_weight_code", referencedColumnName="code")
+     */
+    protected $unitOfWeight;
+
+    /**
+     * @var integer
+     *
+     * @ORM\Column(name="dpd_rate_policy", type="smallint", nullable=false)
+     */
+    protected $ratePolicy;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="dpd_flat_rate_price_value", type="money", nullable=false)
+     */
+    protected $flatRatePriceValue;
+
+    /**
+     * @var Collection|Rate[]
+     *
+     * @ORM\OneToMany(targetEntity="Rate", mappedBy="transport", cascade={"persist", "remove"}, orphanRemoval=true)
+     */
+    protected $rates;
+
+    /**
+     * @var File
+     */
+    protected $ratesCsv;
 
     /**
      * @var string
@@ -113,6 +151,7 @@ class DPDTransport extends Transport
     public function __construct()
     {
         $this->applicableShippingServices = new ArrayCollection();
+        $this->rates = new ArrayCollection();
         $this->labels = new ArrayCollection();
     }
 
@@ -264,6 +303,128 @@ class DPDTransport extends Transport
     }
 
     /**
+     * @return WeightUnit
+     */
+    public function getUnitOfWeight()
+    {
+        return $this->unitOfWeight;
+    }
+
+    /**
+     * @param WeightUnit $unitOfWeight
+     * @return DPDTransport
+     */
+    public function setUnitOfWeight(WeightUnit $unitOfWeight)
+    {
+        $this->unitOfWeight = $unitOfWeight;
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getRatePolicy()
+    {
+        return $this->ratePolicy;
+    }
+
+    /**
+     * @param int $ratePolicy
+     * @return DPDTransport
+     */
+    public function setRatePolicy($ratePolicy)
+    {
+        $this->ratePolicy = $ratePolicy;
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getFlatRatePriceValue()
+    {
+        return $this->flatRatePriceValue;
+    }
+
+    /**
+     * @param string $flatRatePriceValue
+     * @return DPDTransport
+     */
+    public function setFlatRatePriceValue($flatRatePriceValue)
+    {
+        $this->flatRatePriceValue = $flatRatePriceValue;
+        return $this;
+    }
+
+    /**
+     * @return Rate[]
+     */
+    public function getRates()
+    {
+        return $this->rates->toArray();
+    }
+
+    /**
+     * @param Rate $rate
+     * @return DPDTransport
+     */
+    public function addRate(Rate $rate)
+    {
+        if (!$this->rates->contains($rate)) {
+            $this->rates->add($rate);
+            $rate->setTransport($this);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return DPDTransport
+     */
+    public function removeAllRates()
+    {
+        foreach ($this->rates as $rate) {
+            $this->removeRate($rate);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Rate $rate
+     * @return DPDTransport
+     */
+    public function removeRate(Rate $rate)
+    {
+        if ($this->rates->contains($rate)) {
+            $this->rates->removeElement($rate);
+            $rate->setTransport(null);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return File
+     */
+    public function getRatesCsv()
+    {
+        return $this->ratesCsv;
+    }
+
+    /**
+     * @param File $ratesCsv
+     * @return DPDTransport
+     */
+    public function setRatesCsv(File $ratesCsv)
+    {
+        $this->ratesCsv = $ratesCsv;
+        return $this;
+    }
+
+
+
+    /**
      * @return string
      */
     public function getLabelSize()
@@ -313,6 +474,10 @@ class DPDTransport extends Transport
                     'cloud_user_token' => $this->getCloudUserToken(),
                     'invalidate_cache_at' => $this->getInvalidateCacheAt(),
                     'applicable_shipping_services' => $this->getApplicableShippingServices()->toArray(),
+                    'unit_of_weight' => $this->getUnitOfWeight(),
+                    'rate_policy' => $this->getRatePolicy(),
+                    'flat_rate_price_value' => $this->getFlatRatePriceValue(),
+                    'rates' => $this->getRates(),
                     'label_size' => $this->getLabelSize(),
                     'label_start_position' => $this->getLabelStartPosition(),
                     'labels' => $this->getLabels()->toArray()

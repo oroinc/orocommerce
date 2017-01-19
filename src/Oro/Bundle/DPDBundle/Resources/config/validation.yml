@@ -8,6 +8,13 @@ Oro\Bundle\DPDBundle\Entity\DPDTransport:
             - NotBlank:
                 message: 'oro.dpd.transport.shipping_service.blank'
             - Oro\Bundle\DPDBundle\Validator\Constraints\RemoveUsedShippingService: ~
+        unitOfWeight:
+            - NotBlank: ~
+            - Valid: ~
+        rates:
+            - Valid: ~
+        ratesCsv:
+            - Oro\Bundle\DPDBundle\Validator\Constraints\RatesCsvFile: ~
         labelSize:
             - NotBlank: ~
         labelStartPosition:
@@ -15,3 +22,16 @@ Oro\Bundle\DPDBundle\Entity\DPDTransport:
         labels:
             - NotBlank: ~
             - Valid: ~
+
+Oro\Bundle\DPDBundle\Entity\Rate:
+    properties:
+        transport:
+            - NotBlank: ~
+        shippingService:
+            - NotBlank: ~
+        country:
+            - Valid: ~
+        region:
+            - Valid: ~
+        priceValue:
+            - NotBlank: ~

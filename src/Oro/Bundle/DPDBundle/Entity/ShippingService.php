@@ -6,26 +6,27 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Table(name="oro_dpd_shipping_service")
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Oro\Bundle\DPDBundle\Entity\Repository\ShippingServiceRepository")
  */
 class ShippingService
 {
     const CLASSIC_SERVICE_SUBSTR = 'Classic';
     const EXPRESS_SERVICE_SUBSTR = 'Express';
 
-    /**
-     * @var integer
-     *
-     * @ORM\Id
-     * @ORM\Column(name="id", type="integer")
-     * @ORM\GeneratedValue(strategy="AUTO")
-     */
-    protected $id;
+//    /**
+//     * @var integer
+//     *
+//     * @ORM\Id
+//     * @ORM\Column(name="id", type="integer")
+//     * @ORM\GeneratedValue(strategy="AUTO")
+//     */
+//    protected $id;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="code", type="string", length=10)
+     * @ORM\Id
+     * @ORM\Column(name="code", type="string", length=30)
      */
     protected $code;
 
@@ -36,12 +37,17 @@ class ShippingService
      */
     protected $description;
 
-    /**
-     * @return integer
-     */
-    public function getId()
+//    /**
+//     * @return integer
+//     */
+//    public function getId()
+//    {
+//        return $this->id;
+//    }
+
+    public function __construct($code)
     {
-        return $this->id;
+        $this->code = $code;
     }
 
     /**

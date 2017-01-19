@@ -22,6 +22,13 @@ services:
             - '@oro_shipping.provider.measure_units.conversion'
             - '@oro_locale.helper.localization'
 
+    oro_dpd.provider.rate_table_price:
+        class: 'Oro\Bundle\DPDBundle\Provider\RateTablePriceProvider'
+        public: false
+        arguments:
+            - '@doctrine'
+            - '@oro_shipping.provider.measure_units.conversion'
+
     oro_dpd.factory.dpd_request_factory:
         class: 'Oro\Bundle\DPDBundle\Factory\DPDRequestFactory'
         public: false
@@ -38,6 +45,7 @@ services:
             - '@oro_dpd.factory.dpd_request_factory'
             - '@oro_locale.helper.localization'
             - '@oro_dpd.provider.package'
+            - '@oro_dpd.provider.rate_table_price'
             - '@oro_dpd.zip_code_rules_cache'
             - '@oro_order.shipping_line_item.converter_basic'
         tags:
@@ -59,6 +67,7 @@ services:
         class: 'Oro\Bundle\DPDBundle\EventListener\DPDTransportEntityListener'
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\DPDBundle\Entity\DPDTransport', event: postUpdate }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\DPDBundle\Entity\DPDTransport', event: preFlush }
 
     oro_dpd.event_listener.shipping_method_config_data:
         class: 'Oro\Bundle\DPDBundle\EventListener\ShippingMethodConfigDataListener'
@@ -74,6 +83,13 @@ services:
             - "@oro_shipping.shipping_method.registry"
         tags:
             - { name: validator.constraint_validator, alias: oro_dpd_remove_used_shipping_service_validator }
+
+    oro_dpd.validator.rates_csv_file_validator:
+        class: 'Oro\Bundle\DPDBundle\Validator\Constraints\RatesCsvFileValidator'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_dpd_rates_csv_file_validator }
 
     oro_dpd.zip_code_rules_cache:
         class: 'Oro\Bundle\DPDBundle\Cache\ZipCodeRulesCache'
