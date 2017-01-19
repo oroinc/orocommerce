@@ -12,14 +12,14 @@ define(function(require) {
             this.$el.on('change', _.bind(this._handleChange, this));
         },
 
-        _handleEnterPress: function (event) {
+        _handleEnterPress: function(event) {
             if (event.which === 32) {
                 event.preventDefault();
                 this.$el.trigger('click');
             }
         },
 
-        _handleChange: function () {
+        _handleChange: function() {
             var $content = $('[data-checkbox-triggered-content]');
             if (this.$el.prop('checked')) {
                 this._on();
@@ -30,13 +30,13 @@ define(function(require) {
             }
         },
 
-        _on: function () {
+        _on: function() {
             this.$el.attr('checked', true);
             this.$el.prop('checked', 'checked');
             this.$el.parent().addClass('checked');
         },
 
-        _off: function () {
+        _off: function() {
             this.$el.attr('checked', false);
             this.$el.removeProp('checked');
             this.$el.parent().removeClass('checked');

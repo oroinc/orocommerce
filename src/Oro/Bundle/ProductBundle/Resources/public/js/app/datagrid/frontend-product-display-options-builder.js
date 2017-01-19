@@ -30,7 +30,7 @@ define(['jquery', 'underscore', 'orodatagrid/js/url-helper'], function($, _, Url
 
         _addDatagridStateTo: function() {
             var self = this;
-            $(this.displaySelector).find('a').each(function (index, aTagElement) {
+            $(this.displaySelector).find('a').each(function(index, aTagElement) {
                 var aTag = $(aTagElement);
                 var url = aTag.attr('href');
                 var key = self.datagrid.collection.stateHashKey();

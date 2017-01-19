@@ -77,7 +77,7 @@ define(function(require) {
         onValueInputChange: function(e) {
             var value = this.$valueInputElement.val();
 
-            if (this.$typeInputElement.val() == this.options.percentTypeValue) {
+            if (this.$typeInputElement.val() === this.options.percentTypeValue) {
                 this.$percentInputElement.val(value);
             } else {
                 this.$amountInputElement.val(value);
@@ -91,9 +91,7 @@ define(function(require) {
         },
 
         initValueValidation: function() {
-            var validation = null;
-
-            if (this.$typeInputElement.val() == this.options.percentTypeValue) {
+            if (this.$typeInputElement.val() === this.options.percentTypeValue) {
                 this.$valueInputElement.data('validation', this.$percentInputElement.data('validation'));
             } else {
                 this.$valueInputElement.data('validation', this.$amountInputElement.data('validation'));
@@ -143,8 +141,8 @@ define(function(require) {
             this.$amountInputElement.val(discountAmount);
             this.$percentInputElement.val(percent);
 
-            if (this.$typeInputElement.val() != this.options.percentTypeValue
-                && valueDataValidation && !_.isEmpty(valueDataValidation.Range)
+            if (this.$typeInputElement.val() !== this.options.percentTypeValue &&
+                valueDataValidation && !_.isEmpty(valueDataValidation.Range)
             ) {
                 valueDataValidation.Range.max = total;
             }

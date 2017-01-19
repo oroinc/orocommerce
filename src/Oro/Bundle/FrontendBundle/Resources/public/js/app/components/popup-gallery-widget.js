@@ -1,13 +1,13 @@
 define(function(require) {
 'use strict';
 
-    var PopupGalleryWidget;
-    var AbstractWidget = require('oroui/js/widget/abstract-widget');
-    var $ = require('jquery');
-    var _ = require('underscore');
-    require('slick');
+var PopupGalleryWidget;
+var AbstractWidget = require('oroui/js/widget/abstract-widget');
+var $ = require('jquery');
+var _ = require('underscore');
+require('slick');
 
-    PopupGalleryWidget = AbstractWidget.extend({
+PopupGalleryWidget = AbstractWidget.extend({
         /**
          * @property {Object}
          */
@@ -165,5 +165,5 @@ define(function(require) {
         }
     });
 
-    return PopupGalleryWidget;
+return PopupGalleryWidget;
 });
