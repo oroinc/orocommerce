@@ -33,17 +33,6 @@
     </div>
 {% endblock %}
 
-{% block _main_menu_extra_container_widget %}
-    {% set attr =  layout_attr_defaults(attr, {
-        'data-main-menu-extra-container': '',
-        'data-header-row-toggle': ''
-    }) %}
-
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
 {% block _main_menu_container_widget %}
     {% set attr =  layout_attr_defaults(attr, {
         '~class': ' main-menu-outer collapse-view',

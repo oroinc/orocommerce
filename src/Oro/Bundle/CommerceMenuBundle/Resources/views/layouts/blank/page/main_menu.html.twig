@@ -9,6 +9,17 @@
     </div>
 {% endblock %}
 
+{% block _main_menu_extra_container_widget %}
+    {% set attr =  layout_attr_defaults(attr, {
+    'data-main-menu-extra-container': '',
+    'data-header-row-toggle': ''
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block _header_row_main_menu_widget %}
     <div class="custom-icon-menu header-row__trigger hidden-on-desktop" data-toggle="dropdown">
         <span class="custom-icon-menu__bar"></span>
@@ -22,8 +33,17 @@
 
 {% block _main_menu_container_widget %}
     {% set attr =  layout_attr_defaults(attr, {
-        'data-header-row-toggle': '',
         '~class': ' main-menu-outer',
+        'data-page-component-module': "oroui/js/app/components/viewport-component",
+        'data-dom-relocation': '',
+        'data-dom-relocation-options': {
+            responsive: [
+                {
+                    screenType: 'tablet',
+                    moveTo: '[data-main-menu-extra-container]'
+                }
+            ]
+        }
     }) %}
 
     <div {{ block('block_attributes') }}>
