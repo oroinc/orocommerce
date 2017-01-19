@@ -67,7 +67,7 @@ abstract class AbstractPayPalConfigProvider
     /**
      * @return string
      */
-    protected function getType()
+    public function getType()
     {
         return $this->type;
     }
