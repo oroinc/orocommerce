@@ -63,7 +63,7 @@ class QuantityToOrderConditionListener
      */
     public function onStartCheckoutConditionCheck(ExtendableConditionEvent $event)
     {
-        /** @var WorkflowItem $context */
+        /** @var ActionData $context */
         $context = $event->getContext();
         if ($this->isNotCorrectConditionContextForStart($context)) {
             return;
