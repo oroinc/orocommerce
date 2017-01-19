@@ -2,39 +2,75 @@
 
 namespace Oro\Bundle\MoneyOrderBundle\Tests\Unit\Method;
 
+use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig;
+use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigProvider;
 use Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder;
 use Oro\Bundle\MoneyOrderBundle\Method\MoneyOrderMethodProvider;
 
 class MoneyOrderMethodProviderTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var MoneyOrderMethodProvider
-     */
-    protected $provider;
+    /** @var MoneyOrderMethodProvider */
+    private $provider;
+
+    /** @var MoneyOrderConfig[]|\PHPUnit_Framework_MockObject_MockObject[] */
+    private $configs;
 
     protected function setUp()
     {
-        $this->provider = new MoneyOrderMethodProvider();
+        $this->configs = [
+            $this->createMock(MoneyOrderConfig::class),
+            $this->createMock(MoneyOrderConfig::class),
+        ];
+
+        $configProvider = $this->createMock(MoneyOrderConfigProvider::class);
+        $configProvider->expects(static::any())
+            ->method('getPaymentConfigs')
+            ->willReturn($this->configs);
+
+        $this->provider = new MoneyOrderMethodProvider($configProvider);
     }
 
-    public function testGetPaymentMethods()
+    public function testGetPaymentMethodsReturnsCorrectObjects()
     {
-        static::assertEquals([MoneyOrder::TYPE => new MoneyOrder()], $this->provider->getPaymentMethods());
+        $method1 = new MoneyOrder($this->configs[0]);
+        $method2 = new MoneyOrder($this->configs[1]);
+        $expected = [
+            $method1->getIdentifier() => $method1,
+            $method2->getIdentifier() => $method2,
+        ];
+
+        static::assertEquals($expected, $this->provider->getPaymentMethods());
     }
 
-    public function testGetPaymentMethod()
+    public function testGetPaymentMethodReturnsCorrectObject()
     {
-        static::assertEquals(new MoneyOrder(), $this->provider->getPaymentMethod(MoneyOrder::TYPE));
+        $method = new MoneyOrder($this->configs[0]);
+
+        static::assertEquals(
+            $method,
+            $this->provider->getPaymentMethod($method->getIdentifier())
+        );
     }
 
-    public function testHasPaymentMethod()
+    public function testGetPaymentMethodForWrongIdentifier()
     {
-        static::assertTrue($this->provider->hasPaymentMethod(MoneyOrder::TYPE));
-        static::assertFalse($this->provider->hasPaymentMethod('not_existing'));
+        static::assertNull($this->provider->getPaymentMethod('wrong'));
+    }
+
+    public function testHasPaymentMethodForCorrectIdentifier()
+    {
+        $method = new MoneyOrder($this->configs[0]);
+
+        static::assertTrue($this->provider->hasPaymentMethod($method->getIdentifier()));
+    }
+
+    public function testHasPaymentMethodForWrongIdentifier()
+    {
+        static::assertFalse($this->provider->hasPaymentMethod('wrong'));
     }
 
     public function testGetType()
     {
-        static::assertEquals(MoneyOrder::TYPE, $this->provider->getType());
+        static::assertEquals('money_order', $this->provider->getType());
     }
 }
