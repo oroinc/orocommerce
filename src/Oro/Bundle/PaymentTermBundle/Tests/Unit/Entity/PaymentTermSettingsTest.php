@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTermSettings;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
@@ -15,10 +16,19 @@ class PaymentTermSettingsTest extends \PHPUnit_Framework_TestCase
 
     public function testAccessors()
     {
-        static::assertPropertyCollections(new PaymentTermSettings(), [
-            ['labels', new LocalizedFallbackValue()],
-            ['shortLabels', new LocalizedFallbackValue()],
-        ]);
+        static::assertPropertyCollections(
+            new PaymentTermSettings(),
+            [
+                ['labels', new LocalizedFallbackValue()],
+                ['shortLabels', new LocalizedFallbackValue()],
+            ]
+        );
+
+        static::assertPropertyGetterReturnsSetValue(
+            new PaymentTermSettings(),
+            'channel',
+            new Channel()
+        );
     }
 
     public function testGetSettingsBagReturnsParameterBag()

@@ -4,7 +4,6 @@ namespace Oro\Bundle\PaymentTermBundle\Method\View;
 
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
-use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface;
 use Oro\Bundle\PaymentTermBundle\Method\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -27,23 +26,15 @@ class PaymentTermMethodViewProvider implements PaymentMethodViewProviderInterfac
     protected $translator;
 
     /**
-     * @var PaymentTermConfigInterface
-     */
-    protected $config;
-
-    /**
      * @param PaymentTermProvider $paymentTermProvider
      * @param TranslatorInterface $translator
-     * @param PaymentTermConfigInterface $config
      */
     public function __construct(
         PaymentTermProvider $paymentTermProvider,
-        TranslatorInterface $translator,
-        PaymentTermConfigInterface $config
+        TranslatorInterface $translator
     ) {
         $this->paymentTermProvider = $paymentTermProvider;
         $this->translator = $translator;
-        $this->config = $config;
     }
 
     /**
@@ -93,6 +84,13 @@ class PaymentTermMethodViewProvider implements PaymentMethodViewProviderInterfac
 
     protected function collectPaymentMethodViews()
     {
+        /**
+         * @TODO: fix in BB-7058
+         */
+        $this->methodViews = [];
+
+        return;
+
         $methodView = new PaymentTermView($this->paymentTermProvider, $this->translator, $this->config);
         $this->methodViews = [PaymentTerm::TYPE => $methodView];
     }

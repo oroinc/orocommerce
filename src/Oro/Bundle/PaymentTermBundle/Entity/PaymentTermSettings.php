@@ -14,6 +14,9 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  */
 class PaymentTermSettings extends Transport
 {
+    const SETTINGS_FIELD_LABELS = 'labels';
+    const SETTINGS_FIELD_SHORT_LABELS = 'short_labels';
+
     /**
      * @var Collection|LocalizedFallbackValue[]
      *
@@ -53,9 +56,10 @@ class PaymentTermSettings extends Transport
      */
     private $shortLabels;
 
-    /** @var ParameterBag */
+    /**
+     * @var ParameterBag
+     */
     private $settings;
-
 
     public function __construct()
     {
@@ -140,8 +144,8 @@ class PaymentTermSettings extends Transport
     {
         if (null === $this->settings) {
             $this->settings = new ParameterBag([
-                'labels' => $this->getLabels()->toArray(),
-                'short_labels' => $this->getShortLabels()->toArray()
+                self::SETTINGS_FIELD_LABELS => $this->getLabels()->toArray(),
+                self::SETTINGS_FIELD_SHORT_LABELS => $this->getShortLabels()->toArray()
             ]);
         }
 

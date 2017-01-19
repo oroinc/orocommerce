@@ -23,6 +23,5 @@ services:
         arguments:
             - '@oro_payment_term.provider.payment_term'
             - '@translator'
-            - '@oro_payment_term.payment_method.payment_term.config'
         tags:
             - { name: oro_payment.payment_method_view_provider }
