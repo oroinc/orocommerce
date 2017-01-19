@@ -2,13 +2,10 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\Inventory;
 
-use Extend\Entity\EV_Prod_Inventory_Status;
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityExtendBundle\Entity\Repository\EnumValueRepository;
-use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
-use Oro\Bundle\InventoryBundle\Entity\Repository\InventoryLevelRepository;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryStatusHandler;
 use Oro\Bundle\InventoryBundle\Tests\Unit\Inventory\Stub\InventoryStatusStub;
 use Oro\Bundle\ProductBundle\Entity\Product;

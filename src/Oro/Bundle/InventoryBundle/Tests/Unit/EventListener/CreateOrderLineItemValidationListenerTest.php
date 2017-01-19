@@ -2,12 +2,18 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\EventListener;
 
-use Elasticsearch\Endpoints\Indices\Create;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\Translation\Translator;
+use Symfony\Component\Translation\TranslatorInterface;
+
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Entity\Repository\InventoryLevelRepository;
 use Oro\Bundle\InventoryBundle\EventListener\CreateOrderLineItemValidationListener;
 use Oro\Bundle\InventoryBundle\Exception\InventoryLevelNotFoundException;
+use Oro\Bundle\InventoryBundle\Inventory\InventoryQuantityManager;
 use Oro\Bundle\InventoryBundle\Tests\Unit\EventListener\Stub\CheckoutSourceStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -16,13 +22,6 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
-use Symfony\Component\Translation\Translator;
-use Symfony\Component\Translation\TranslatorInterface;
-
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\InventoryBundle\Inventory\InventoryQuantityManager;
 
 class CreateOrderLineItemValidationListenerTest extends \PHPUnit_Framework_TestCase
 {
