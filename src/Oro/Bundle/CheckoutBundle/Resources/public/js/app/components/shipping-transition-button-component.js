@@ -19,7 +19,15 @@ define(function(require) {
             this.defaults.selectors.shippingMethodType = '[name$="[shipping_method_type]"]';
 
             ShippingTransitionButtonComponent.__super__.initialize.call(this, options);
-            
+
+            this.getShippingMethodTypeSelector().on('change', $.proxy(this.onShippingMethodTypeChange, this));
+            this.initShippingMethod();
+
+            mediator.on('checkout:shipping-method:rendered', this.onShippingMethodRendered, this);
+        },
+
+        onShippingMethodRendered: function() {
+            delete this.$shippingMethodTypeSelector;
             this.getShippingMethodTypeSelector().on('change', $.proxy(this.onShippingMethodTypeChange, this));
             this.initShippingMethod();
         },
@@ -42,7 +50,6 @@ define(function(require) {
                 } else {
                     this.setElementsValue(null, null);
                 }
-
             }
         },
 
@@ -74,9 +81,9 @@ define(function(require) {
          */
         onShippingMethodTypeChange: function(event) {
             mediator.trigger('checkout:shipping-method:changed');
-            var method_type = $(event.target);
-            var method = method_type.data('shipping-method');
-            this.setElementsValue(method_type.val(), method);
+            var methodType = $(event.target);
+            var method = methodType.data('shipping-method');
+            this.setElementsValue(methodType.val(), method);
         },
 
         /**

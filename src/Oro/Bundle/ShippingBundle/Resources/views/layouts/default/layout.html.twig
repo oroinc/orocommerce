@@ -48,14 +48,14 @@
             <% _.each(method.types, function(type, key) { %>
                 <% if (type.price) { %>
                     <% var selected = currentShippingMethodType === type.identifier %>
-                    <div class="checkout__form__radio" data-item-container>
+                    <div class="{{ class_prefix }}__form__radio" data-item-container>
                         <label class="custom-radio custom-radio--large <%= selected ? 'checked' : '' %>" data-radio tabindex="0">
                             <input class="custom-radio__control"
                                    type="radio" name="shippingMethodType" value="<%= type.identifier %>"
-                                   <% if (selected) { %>checked="checked"<% } %>
                                    data-shipping-method="<%= method.identifier %>"
                                    data-shipping-price="<%= type.price.value %>"
                                    data-choice="<%= type.identifier %>"
+                                   <% if (selected) { %>checked="checked"<% } %>
                             />
                             <span class="custom-radio__text">
                                 <%= _.__('oro.shipping.method_type.backend.method_type_and_price.label', {

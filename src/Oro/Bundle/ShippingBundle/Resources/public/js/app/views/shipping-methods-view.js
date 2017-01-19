@@ -21,28 +21,23 @@ define(function(require) {
             this.options = _.defaults(options || {}, this.options);
             this.options.template = _.template(this.options.template);
 
-            mediator.on('transition:failed', this.onTransitionFailed, this);
+            mediator.on('transition:failed', this.render.bind(this, []));
         },
 
-        render: function() {
-            this.updateShippingMethods();
+        render: function(options) {
+            this.updateShippingMethods(options);
             mediator.trigger('layout:adjustHeight');
+            mediator.trigger('checkout:shipping-method:rendered');
         },
 
-        updateShippingMethods: function() {
+        updateShippingMethods: function(options) {
             var $el = $(this.options.template({
-                methods: this.options.data.methods,
+                methods: options || this.options.data.methods,
                 currentShippingMethod: this.options.data.currentShippingMethod,
                 currentShippingMethodType: this.options.data.currentShippingMethodType,
                 formatter: NumberFormatter
             }));
-
             this.$el.html($el);
-        },
-
-        onTransitionFailed: function() {
-            this.options.data.methods = [];
-            this.render();
         }
     });
 
