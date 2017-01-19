@@ -41,7 +41,8 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         $this->assertNull(self::$checkoutUrl);
 
         $flashBag = $this->getContainer()->get('session.flash_bag');
-        $noItemsWithPriceError = $translator->trans('oro.frontend.shoppinglist.messages.cannot_create_order_no_line_item_with_price');
+        $noItemsWithPriceError = $translator
+            ->trans('oro.frontend.shoppinglist.messages.cannot_create_order_no_line_item_with_price');
         $this->assertTrue($flashBag->has('error'));
         $this->assertContains($noItemsWithPriceError, $flashBag->get('error'));
     }
