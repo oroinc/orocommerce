@@ -3,22 +3,20 @@ services:
         class: 'Oro\Bundle\DPDBundle\Form\Type\DPDTransportSettingsType'
         arguments:
             - '@oro_dpd.provider.transport'
-            - '@oro_shipping.shipping_origin.provider'
             - '@oro_entity.doctrine_helper'
             - '@oro_security.encoder.mcrypt'
-        tags:
-            - { name: form.type, alias: oro_dpd_transport_settings_type }
-
-    oro_dpd.form.type.shipping_method_type_config_options:
-        class: Oro\Bundle\DPDBundle\Form\Type\DPDShippingMethodTypeOptionsType
-        arguments:
             - '@oro_currency.rounding.price_rounding_service'
         tags:
-            - { name: form.type }
+            - { name: form.type, alias: oro_dpd_transport_settings_type }
 
     oro_dpd.form.type.shipping_method_config_options:
         class: Oro\Bundle\DPDBundle\Form\Type\DPDShippingMethodOptionsType
         arguments:
             - '@oro_currency.rounding.price_rounding_service'
+        tags:
+            - { name: form.type }
+
+    oro_dpd.rates_csv_type:
+        class: Oro\Bundle\DPDBundle\Form\Type\RatesCsvType
         tags:
             - { name: form.type }

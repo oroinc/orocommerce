@@ -6,6 +6,7 @@ use Oro\Bundle\DPDBundle\Cache\ZipCodeRulesCache;
 use Oro\Bundle\DPDBundle\Factory\DPDRequestFactory;
 use Oro\Bundle\DPDBundle\Provider\ChannelType;
 use Oro\Bundle\DPDBundle\Provider\PackageProvider;
+use Oro\Bundle\DPDBundle\Provider\RateTablePriceProvider;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
@@ -42,6 +43,11 @@ class DPDShippingMethodProvider implements ShippingMethodProviderInterface
     protected $packageProvider;
 
     /**
+     * @var RateTablePriceProvider
+     */
+    protected $rateTablePriceProvider;
+
+    /**
      * @var ZipCodeRulesCache
      */
     protected $zipCodeRulesCache;
@@ -63,6 +69,7 @@ class DPDShippingMethodProvider implements ShippingMethodProviderInterface
      * @param DPDRequestFactory $dpdRequestFactory
      * @param LocalizationHelper $localizationHelper
      * @param PackageProvider $packageProvider
+     * @param RateTablePriceProvider $rateTablePriceProvider
      * @param ZipCodeRulesCache $zipCodeRulesCache
      * @param OrderShippingLineItemConverterInterface $shippingLineItemConverter
      */
@@ -72,6 +79,7 @@ class DPDShippingMethodProvider implements ShippingMethodProviderInterface
         DPDRequestFactory $dpdRequestFactory,
         LocalizationHelper $localizationHelper,
         PackageProvider $packageProvider,
+        RateTablePriceProvider $rateTablePriceProvider,
         ZipCodeRulesCache $zipCodeRulesCache,
         OrderShippingLineItemConverterInterface $shippingLineItemConverter
     ) {
@@ -80,6 +88,7 @@ class DPDShippingMethodProvider implements ShippingMethodProviderInterface
         $this->dpdRequestFactory = $dpdRequestFactory;
         $this->localizationHelper = $localizationHelper;
         $this->packageProvider = $packageProvider;
+        $this->rateTablePriceProvider = $rateTablePriceProvider;
         $this->zipCodeRulesCache = $zipCodeRulesCache;
         $this->shippingLineItemConverter = $shippingLineItemConverter;
     }
@@ -104,6 +113,7 @@ class DPDShippingMethodProvider implements ShippingMethodProviderInterface
                         $this->dpdRequestFactory,
                         $this->localizationHelper,
                         $this->packageProvider,
+                        $this->rateTablePriceProvider,
                         $this->zipCodeRulesCache,
                         $this->shippingLineItemConverter
                     );

@@ -11,6 +11,14 @@ oro:
             shipping_service:
                 label: 'Shipping Service'
                 plural_label: 'Shipping Services'
+            rate_policy:
+                label: 'Rate Policy'
+                flat_rate.label: 'Flat Rate'
+                table_rate.label: 'Table Rate'
+            flat_rate_price_value.label: 'Flat Rate Price'
+            rates_csv:
+              label: 'Table Rate (csv)'
+              download.label: 'Download Table Rate'
             label_size:
                 label: 'Label Size'
                 pdf_a4.label: 'PDF A4'
@@ -23,12 +31,6 @@ oro:
                 lowerright.label: 'Lower Right'
         form:
             shipping_method_config_options:
-                flat_price:
-                    label: 'Flat rate'
-                    tooltip: 'A flat price applied to the shipping if destination country is not defined on the table price'
-                table_price:
-                    label: 'Table rate'
-                    tooltip: 'Rules to define prices by destination country. Each line should be {country,price} tuples.'
                 handling_fee:
                     label: 'Handling fee'
                     tooltip: 'A fee applied to the shipping costs'

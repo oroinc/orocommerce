@@ -4,27 +4,23 @@ namespace Oro\Bundle\DPDBundle\Method;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\DPDBundle\Cache\ZipCodeRulesCache;
-use Oro\Bundle\DPDBundle\Context\DPDShippingContextInterface;
 use Oro\Bundle\DPDBundle\Entity\DPDTransport;
 use Oro\Bundle\DPDBundle\Entity\ShippingService;
 use Oro\Bundle\DPDBundle\Factory\DPDRequestFactory;
+use Oro\Bundle\DPDBundle\Form\Type\DPDShippingMethodOptionsType;
 use Oro\Bundle\DPDBundle\Model\SetOrderRequest;
 use Oro\Bundle\DPDBundle\Model\ZipCodeRulesResponse;
-use Oro\Bundle\DPDBundle\Model\PriceTable;
 use Oro\Bundle\DPDBundle\Model\SetOrderResponse;
 use Oro\Bundle\DPDBundle\Provider\DPDTransport as DPDTransportProvider;
 use Oro\Bundle\DPDBundle\Provider\PackageProvider;
+use Oro\Bundle\DPDBundle\Provider\RateTablePriceProvider;
 use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
-use Oro\Bundle\DPDBundle\Form\Type\DPDShippingMethodTypeOptionsType;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 
 class DPDShippingMethodType implements ShippingMethodTypeInterface
 {
-    const FLAT_PRICE_OPTION = 'flat_price';
-    const TABLE_PRICE_OPTION = 'table_price';
-
     /**
      * @var string
      */
@@ -51,6 +47,11 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
     protected $packageProvider;
 
     /**
+     * @var RateTablePriceProvider
+     */
+    protected $rateTablePriceProvider;
+
+    /**
      * @var  DPDRequestFactory
      */
     protected $dpdRequestFactory;
@@ -71,6 +72,7 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
      * @param DPDTransportProvider $transportProvider
      * @param ShippingService $shippingService
      * @param PackageProvider $packageProvider
+     * @param RateTablePriceProvider $rateTablePriceProvider
      * @param DPDRequestFactory $dpdRequestFactory
      * @param ZipCodeRulesCache $zipCodeRulesCache
      * @param OrderShippingLineItemConverterInterface $shippingLineItemConverter
@@ -81,6 +83,7 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
         DPDTransportProvider $transportProvider,
         ShippingService $shippingService,
         PackageProvider $packageProvider,
+        RateTablePriceProvider $rateTablePriceProvider,
         DPDRequestFactory $dpdRequestFactory,
         ZipCodeRulesCache $zipCodeRulesCache,
         OrderShippingLineItemConverterInterface $shippingLineItemConverter
@@ -90,6 +93,7 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
         $this->transportProvider = $transportProvider;
         $this->shippingService = $shippingService;
         $this->packageProvider = $packageProvider;
+        $this->rateTablePriceProvider = $rateTablePriceProvider;
         $this->dpdRequestFactory = $dpdRequestFactory;
         $this->zipCodeRulesCache = $zipCodeRulesCache;
         $this->shippingLineItemConverter = $shippingLineItemConverter;
@@ -124,7 +128,7 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
      */
     public function getOptionsConfigurationFormType()
     {
-        return DPDShippingMethodTypeOptionsType::class;
+        return DPDShippingMethodOptionsType::class;
     }
 
     /**
@@ -137,13 +141,23 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
             return null;
         }
 
-        $priceTable = new PriceTable();
-        $priceTableItems = explode("\n", $typeOptions[static::TABLE_PRICE_OPTION]);
-        $priceTable->fromArray($priceTableItems);
+        $price = null;
+        if ($this->transport->getRatePolicy() === DPDTransport::FLAT_RATE_POLICY) {
+            $price = $this->transport->getFlatRatePriceValue();
+        } elseif ($this->transport->getRatePolicy() === DPDTransport::TABLE_RATE_POLICY) {
+            $rate = $this->rateTablePriceProvider->getRateByServiceAndDestination(
+                $this->transport,
+                $this->shippingService,
+                $context->getShippingAddress()
+            );
+            if ($rate !== null) {
+                $price = $rate->getPriceValue();
+            }
+        }
 
-        $countryIso2 = $context->getShippingAddress()->getCountryIso2();
-
-        $price = $priceTable->get($countryIso2, $typeOptions[static::FLAT_PRICE_OPTION]);
+        if ($price === null) {
+            return null;
+        }
 
         $optionsDefaults = [
             DPDShippingMethod::HANDLING_FEE_OPTION => 0,
@@ -251,7 +265,8 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
     /**
      * @return ZipCodeRulesResponse
      */
-    public function fetchZipCodeRules() {
+    public function fetchZipCodeRules()
+    {
         $getZipCodeRulesRequest = $this->dpdRequestFactory->createZipCodeRulesRequest();
 
         $cacheKey = $this->zipCodeRulesCache->createKey($this->transport, $getZipCodeRulesRequest, $this->getIdentifier());

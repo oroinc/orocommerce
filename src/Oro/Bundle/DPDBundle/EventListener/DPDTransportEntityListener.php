@@ -3,14 +3,54 @@
 namespace Oro\Bundle\DPDBundle\EventListener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\PreFlushEventArgs;
 use Doctrine\ORM\PersistentCollection;
+use Oro\Bundle\DPDBundle\Entity\Rate;
 use Oro\Bundle\DPDBundle\Entity\ShippingService;
 use Oro\Bundle\DPDBundle\Entity\DPDTransport;
 use Oro\Bundle\DPDBundle\Method\DPDShippingMethod;
 use Oro\Bundle\DPDBundle\Provider\ChannelType;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class DPDTransportEntityListener
 {
+    /**
+     * @param DPDTransport $transport
+     * @param PreFlushEventArgs $args
+     */
+    public function preFlush(DPDTransport $transport, PreFlushEventArgs $args)
+    {
+        if ($transport->getRatesCsv() instanceof UploadedFile) {
+            $entityManager = $args->getEntityManager();
+
+            $transport->removeAllRates();
+
+            $handle = fopen($transport->getRatesCsv()->getRealPath(), 'r');
+            $rowCounter = 0;
+            while (($row = fgetcsv($handle)) !== false) {
+                $rowCounter++;
+                if ($rowCounter === 1) {
+                    continue;
+                }
+                list($shippingServiceCode, $countryCode, $regionCode, $weightValue, $priceValue) = $row;
+
+                $rate = new Rate();
+                $rate->setShippingService($entityManager->getReference('OroDPDBundle:ShippingService', $shippingServiceCode));
+                $rate->setCountry($entityManager->getReference('OroAddressBundle:Country', $countryCode));
+                if (!empty($regionCode)) {
+                    $rate->setRegion($entityManager->getReference('OroAddressBundle:Region', $regionCode));
+                }
+                if (!empty($weightValue)) {
+                    $rate->setWeightValue((float)$weightValue);
+                }
+                $rate->setPriceValue((float)$priceValue);
+                $transport->addRate($rate);
+            }
+            fclose($handle);
+        }
+    }
+
+
     /**
      * @param DPDTransport $transport
      * @param LifecycleEventArgs $args

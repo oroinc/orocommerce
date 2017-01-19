@@ -8,6 +8,7 @@ use Oro\Bundle\DPDBundle\Factory\DPDRequestFactory;
 use Oro\Bundle\DPDBundle\Form\Type\DPDShippingMethodOptionsType;
 use Oro\Bundle\DPDBundle\Model\SetOrderResponse;
 use Oro\Bundle\DPDBundle\Provider\PackageProvider;
+use Oro\Bundle\DPDBundle\Provider\RateTablePriceProvider;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
@@ -49,6 +50,11 @@ class DPDShippingMethod implements
     protected $packageProvider;
 
     /**
+     * @var RateTablePriceProvider
+     */
+    protected $rateTablePriceProvider;
+
+    /**
      * @var ZipCodeRulesCache
      */
     protected $zipCodeRulesCache;
@@ -65,6 +71,7 @@ class DPDShippingMethod implements
      * @param DPDRequestFactory $dpdRequestFactory
      * @param LocalizationHelper $localizationHelper
      * @param PackageProvider $packageProvider
+     * @param RateTablePriceProvider $rateTablePriceProvider
      * @param ZipCodeRulesCache $zipCodeRulesCache
      * @param OrderShippingLineItemConverterInterface $shippingLineItemConverter
      */
@@ -74,6 +81,7 @@ class DPDShippingMethod implements
         DPDRequestFactory $dpdRequestFactory,
         LocalizationHelper $localizationHelper,
         PackageProvider $packageProvider,
+        RateTablePriceProvider $rateTablePriceProvider,
         ZipCodeRulesCache $zipCodeRulesCache,
         OrderShippingLineItemConverterInterface $shippingLineItemConverter
     ) {
@@ -82,6 +90,7 @@ class DPDShippingMethod implements
         $this->dpdRequestFactory = $dpdRequestFactory;
         $this->localizationHelper = $localizationHelper;
         $this->packageProvider = $packageProvider;
+        $this->rateTablePriceProvider = $rateTablePriceProvider;
         $this->zipCodeRulesCache = $zipCodeRulesCache;
         $this->shippingLineItemConverter = $shippingLineItemConverter;
     }
@@ -131,6 +140,7 @@ class DPDShippingMethod implements
                     $this->transportProvider,
                     $shippingService,
                     $this->packageProvider,
+                    $this->rateTablePriceProvider,
                     $this->dpdRequestFactory,
                     $this->zipCodeRulesCache,
                     $this->shippingLineItemConverter
@@ -184,24 +194,15 @@ class DPDShippingMethod implements
     public function calculatePrices(ShippingContextInterface $context, array $methodOptions, array $optionsByTypes)
     {
         $prices = [];
-        foreach ($this->getTypes() as $type) {
-            $typeId = $type->getIdentifier();
-            $prices[$typeId] = $type->calculatePrice($context, $methodOptions, $optionsByTypes[$typeId]);
+
+        if (count($this->getTypes()) < 1) {
+            return $prices;
+        }
+
+        foreach ($optionsByTypes as $typeId => $typeOptions) {
+            $type = $this->getType($typeId);
+            $prices[$typeId] = $type->calculatePrice($context, $methodOptions, $typeOptions);
         }
         return $prices;
     }
-
-//    /**
-//     * @param Order $order
-//     * @param \DateTime $shipDate
-//     * @return null|SetOrderResponse
-//     */
-//    public function shipOrder(Order $order, \DateTime $shipDate)
-//    {
-//        $methodType = $this->getType($order->getShippingMethodType());
-//        if ($methodType) {
-//            return $methodType->shipOrder($order, $shipDate);
-//        }
-//        return null;
-//    }
 }
