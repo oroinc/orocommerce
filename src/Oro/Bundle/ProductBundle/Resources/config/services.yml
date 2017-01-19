@@ -703,3 +703,10 @@ services:
             - [addBlockTypeUsingMetadata, ['%oro_product.entity.product_image.class%', 'attribute_product_images']]
         tags:
             - { name: oro_entity_config.layout.attribute_block_type_mapper }
+
+    oro_product.event_listener.before_remove_field_listener:
+        class: 'Oro\Bundle\ProductBundle\EventListener\BeforeRemoveFieldListener'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: kernel.event_listener, event: oro.entity_config.field.before_remove, method: onBeforeRemoveField }
