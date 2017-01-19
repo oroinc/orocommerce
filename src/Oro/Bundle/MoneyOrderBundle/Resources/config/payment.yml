@@ -11,7 +11,7 @@ services:
         class: 'Oro\Bundle\MoneyOrderBundle\Method\View\MoneyOrderMethodViewProvider'
         public: false
         arguments:
-            - '@oro_money_order.payment_method.money_order.config'
+            - '@oro_money_order.payment_method.config.provider'
         tags:
             - { name: oro_payment.payment_method_view_provider }
 
