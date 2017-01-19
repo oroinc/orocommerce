@@ -74,7 +74,8 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
             $category = new Category();
             $category->addTitle($categoryTitle);
             if (!empty($images[$title])) {
-                $category->setSmallImage($this->getCategoryImage($manager, $images[$title]));
+                $category->setSmallImage($this->getCategoryImage($manager, $images[$title], false));
+                $category->setLargeImage($this->getCategoryImage($manager, $images[$title], true));
             }
 
             $manager->persist($category);
@@ -92,13 +93,17 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
      * @param               $sku
      * @return null
      */
-    protected function getCategoryImage(ObjectManager $manager, $sku)
+    protected function getCategoryImage(ObjectManager $manager, $sku, $large)
     {
         $image   = null;
         $locator = $this->container->get('file_locator');
 
         try {
-            $imagePath = $locator->locate(sprintf('@OroCatalogBundle/Migrations/Data/Demo/ORM/images/%s.jpg', $sku));
+            if ($large) {
+                $imagePath = $locator->locate(sprintf('@OroCatalogBundle/Migrations/Data/Demo/ORM/images/%s_large.jpg', $sku));
+            } else {
+                $imagePath = $locator->locate(sprintf('@OroCatalogBundle/Migrations/Data/Demo/ORM/images/%s.jpg', $sku));
+            }
 
             if (is_array($imagePath)) {
                 $imagePath = current($imagePath);

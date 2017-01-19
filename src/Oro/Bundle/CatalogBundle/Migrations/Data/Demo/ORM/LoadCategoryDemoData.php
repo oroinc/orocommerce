@@ -49,6 +49,7 @@ class LoadCategoryDemoData extends AbstractCategoryFixture
         'Office Furniture'            => '5',
         'Retail Supplies'             => '6',
         'POS Systems'                 => '7',
-        'Printers'                    => '8'
+        'Printers'                    => '8',
+        'Medical Apparel'             => '9'
     ];
 }
