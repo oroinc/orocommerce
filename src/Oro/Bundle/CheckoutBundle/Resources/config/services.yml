@@ -422,3 +422,6 @@ services:
         tags:
             - { name: oro_workflow.condition, alias: 'checkout_has_applicable_shipping_methods' }
             - { name: oro_action.condition, alias: 'checkout_has_applicable_shipping_methods' }
+
+    oro_checkout.datagrid.action_permission_provider:
+        class: 'Oro\Bundle\CheckoutBundle\Datagrid\ActionPermissionProvider'

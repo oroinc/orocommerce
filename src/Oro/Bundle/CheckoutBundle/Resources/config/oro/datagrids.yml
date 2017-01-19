@@ -19,6 +19,7 @@ datagrids:
                     - checkout.customerNotes
                     - checkout.shippingMethod
                     - checkout.shippingMethodType
+                    - checkout.completed
                 from:
                     - { table: '%oro_checkout.entity.checkout.class%', alias: checkout }
                 join:
@@ -80,6 +81,13 @@ datagrids:
                 frontend_type: html
                 template:      'OroOrderBundle:Order:Datagrid/shippingMethodFull.html.twig'
                 order: 100
+            completed:
+                label: oro.checkout.completed.label
+                type: twig
+                frontend_type: html
+                template: OroCheckoutBundle:Checkout:Datagrid/completed.html.twig
+                renderable: false
+                order: 110
         sorters:
             columns:
                 createdAt:
@@ -115,6 +123,12 @@ datagrids:
                 shipUntil:
                     type: date
                     data_name: checkout.shipUntil
+                completed:
+                    type: boolean
+                    data_name: checkout.completed
+            default:
+                completed:
+                    value: '2' #default values of boolean filter is '1': true, '2': false
         properties:
             id: ~
             view_link:
@@ -130,3 +144,4 @@ datagrids:
                 icon: shopping-cart
                 acl_resource: oro_checkout_frontend_checkout
                 rowAction: true
+        action_configuration: ['@oro_checkout.datagrid.action_permission_provider', "getPermissions"]
