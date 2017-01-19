@@ -34,6 +34,20 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
      * @param string $currency
      * @return array|ShippingMethodsConfigsRule[]
      */
+    public function getByCurrency($currency)
+    {
+        $queryBuilder = $this->getByCurrencyQuery($currency);
+
+        return $queryBuilder
+            ->orderBy($queryBuilder->expr()->asc('methodsConfigsRule.id'))
+            ->getQuery()
+            ->execute();
+    }
+
+    /**
+     * @param string $currency
+     * @return array|ShippingMethodsConfigsRule[]
+     */
     public function getByCurrencyWithoutDestination($currency)
     {
         return $this->getByCurrencyQuery($currency)

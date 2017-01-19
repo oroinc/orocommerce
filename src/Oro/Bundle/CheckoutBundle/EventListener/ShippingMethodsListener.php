@@ -9,12 +9,12 @@ use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressProvider;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
-use Oro\Bundle\ShippingBundle\Provider\ShippingMethodsConfigsRulesProvider;
+use Oro\Bundle\ShippingBundle\Provider\ShippingMethodsConfigsRulesProviderInterface;
 
 class ShippingMethodsListener extends AbstractMethodsListener
 {
     /**
-     * @var ShippingMethodsConfigsRulesProvider
+     * @var ShippingMethodsConfigsRulesProviderInterface
      */
     private $shippingProvider;
 
@@ -27,14 +27,14 @@ class ShippingMethodsListener extends AbstractMethodsListener
      * @param OrderAddressProvider $addressProvider
      * @param OrderAddressSecurityProvider $orderAddressSecurityProvider
      * @param OrderAddressManager $orderAddressManager
-     * @param ShippingMethodsConfigsRulesProvider $shippingProvider
+     * @param ShippingMethodsConfigsRulesProviderInterface $shippingProvider
      * @param CheckoutShippingContextFactory $contextFactory
      */
     public function __construct(
         OrderAddressProvider $addressProvider,
         OrderAddressSecurityProvider $orderAddressSecurityProvider,
         OrderAddressManager $orderAddressManager,
-        ShippingMethodsConfigsRulesProvider $shippingProvider,
+        ShippingMethodsConfigsRulesProviderInterface $shippingProvider,
         CheckoutShippingContextFactory $contextFactory
     ) {
         parent::__construct($addressProvider, $orderAddressSecurityProvider, $orderAddressManager);
@@ -50,7 +50,8 @@ class ShippingMethodsListener extends AbstractMethodsListener
     {
         $checkout->setShippingAddress($address);
         $shippingContext = $this->contextFactory->create($checkout);
-        $shippingMethodsConfigs = $this->shippingProvider->getAllFilteredShippingMethodsConfigs($shippingContext);
+        $shippingMethodsConfigs = $this->shippingProvider
+            ->getFilteredShippingMethodsConfigsRegardlessDestination($shippingContext);
         return (bool) count($shippingMethodsConfigs);
     }
 

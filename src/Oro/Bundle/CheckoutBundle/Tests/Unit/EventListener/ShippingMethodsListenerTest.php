@@ -12,7 +12,7 @@ use Oro\Bundle\OrderBundle\Provider\OrderAddressProvider;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
-use Oro\Bundle\ShippingBundle\Provider\ShippingMethodsConfigsRulesProvider;
+use Oro\Bundle\ShippingBundle\Provider\ShippingMethodsConfigsRulesProviderInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class ShippingMethodsListenerTest extends AbstractMethodsListenerTest
@@ -20,7 +20,7 @@ class ShippingMethodsListenerTest extends AbstractMethodsListenerTest
     use EntityTrait;
 
     /**
-     * @var ShippingMethodsConfigsRulesProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodsConfigsRulesProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $configsRuleProvider;
 
@@ -31,7 +31,7 @@ class ShippingMethodsListenerTest extends AbstractMethodsListenerTest
 
     protected function setUp()
     {
-        $this->configsRuleProvider = $this->getMockBuilder(ShippingMethodsConfigsRulesProvider::class)
+        $this->configsRuleProvider = $this->getMockBuilder(ShippingMethodsConfigsRulesProviderInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -81,7 +81,7 @@ class ShippingMethodsListenerTest extends AbstractMethodsListenerTest
 
         $this->configsRuleProvider
             ->expects($this->once())
-            ->method('getAllFilteredShippingMethodsConfigs')
+            ->method('getFilteredShippingMethodsConfigsRegardlessDestination')
             ->with($context)
             ->willReturn($willReturnConfigs);
     }
@@ -107,7 +107,7 @@ class ShippingMethodsListenerTest extends AbstractMethodsListenerTest
 
         $this->configsRuleProvider
             ->expects($this->exactly($expectedCalls))
-            ->method('getAllFilteredShippingMethodsConfigs')
+            ->method('getFilteredShippingMethodsConfigsRegardlessDestination')
             ->with($shippingContext)
             ->willReturnOnConsecutiveCalls(...$willReturnConfigsOnConsecutiveCalls);
     }
