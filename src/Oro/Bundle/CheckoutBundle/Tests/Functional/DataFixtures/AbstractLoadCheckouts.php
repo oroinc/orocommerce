@@ -6,6 +6,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
+use Oro\Bundle\CheckoutBundle\Model\CompletedCheckoutData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
@@ -90,6 +91,14 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
             );
             $checkout->setPaymentMethod($checkoutData['checkout']['payment_method']);
             $checkout->setSource($source);
+            $checkout->setCompleted(!empty($checkoutData['completed']));
+            if (!empty($checkoutData['completedData'])) {
+                $completedData = $checkout->getCompletedData();
+
+                foreach ($checkoutData['completedData'] as $key => $value) {
+                    $completedData->offsetSet($key, $value);
+                }
+            }
             $manager->persist($checkout);
             $this->setReference($name, $checkout);
         }

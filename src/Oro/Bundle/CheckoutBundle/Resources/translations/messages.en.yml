@@ -39,6 +39,7 @@ oro:
             label: Open Order
             plural_label: Open Orders
         deleted.label: Deleted
+        completed_data.label: Completed Data
 
         basecheckout:
             entity_label: Base Checkout
