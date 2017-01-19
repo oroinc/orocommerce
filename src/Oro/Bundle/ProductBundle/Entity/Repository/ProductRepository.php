@@ -20,7 +20,12 @@ class ProductRepository extends EntityRepository
      */
     public function findOneBySku($sku)
     {
-        return $this->findOneBy(['sku' => $sku]);
+        $queryBuilder = $this->createQueryBuilder('product');
+
+        $queryBuilder->andWhere('UPPER(product.sku) = :sku')
+            ->setParameter('sku', strtoupper($sku));
+
+        return $queryBuilder->getQuery()->getOneOrNullResult();
     }
 
     /**
@@ -248,8 +253,8 @@ class ProductRepository extends EntityRepository
         return $qb
             ->select('IDENTITY(productPrecision.unit)')
             ->innerJoin('product.primaryUnitPrecision', 'productPrecision')
-            ->where($qb->expr()->eq('product.sku', ':sku'))
-            ->setParameter('sku', $sku)
+            ->where($qb->expr()->eq('UPPER(product.sku)', ':sku'))
+            ->setParameter('sku', strtoupper($sku))
             ->getQuery()
             ->getOneOrNullResult(AbstractQuery::HYDRATE_SINGLE_SCALAR);
     }
