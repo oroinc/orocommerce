@@ -50,6 +50,9 @@ class DataGridThemeHelper
         $gridParams = $request->query->get($gridName);
         if (is_array($gridParams) && array_key_exists(self::GRID_THEME_PARAM_NAME, $gridParams)) {
             $viewName = $gridParams[self::GRID_THEME_PARAM_NAME];
+            if (!in_array($viewName, $this->getViewList())) {
+                $viewName = $this->getDefaultView();
+            }
             $this->session->set(self::SESSION_KEY, $viewName);
         } elseif ($this->session->has(self::SESSION_KEY)) {
             $viewName = $this->session->get(self::SESSION_KEY);
@@ -63,5 +66,14 @@ class DataGridThemeHelper
     protected function getDefaultView()
     {
         return self::VIEW_GRID;
+    }
+
+    protected function getViewList()
+    {
+        return [
+            self::VIEW_LIST,
+            self::VIEW_GRID,
+            self::VIEW_TILES,
+        ];
     }
 }
