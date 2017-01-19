@@ -77,10 +77,14 @@ class ShoppingListControllerTest extends WebTestCase
         $product = $lineItem->getProduct();
         $this->setProductLimits($product, $minLimit, $maxLimit);
 
-        $this->client->request(
+        $crawler = $this->client->request(
             'GET',
             $this->getUrl('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()])
         );
+
+        $this->assertContains('Create Order', $crawler->html());
+        $this->client->followRedirects(true);
+        $crawler->selectLink('Create Order')->link();
 
         if ($errorMessage) {
             $errorMessage = $this->translator->trans(
@@ -88,9 +92,6 @@ class ShoppingListControllerTest extends WebTestCase
                 ['%limit%' => $errorLimit, '%sku%' => $product->getSku(), '%product_name%' => $product->getName()]
             );
             $this->assertContains($errorMessage, $this->client->getResponse()->getContent());
-            $this->assertNotContains('Create Order', $this->client->getResponse()->getContent());
-        } else {
-            $this->assertContains('Create Order', $this->client->getResponse()->getContent());
         }
     }
 
