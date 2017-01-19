@@ -61,8 +61,12 @@ class HasPriceInShoppingLineItemsListener
             return;
         }
 
-        /** @var Checkout $shoppingList */
+        /** @var Checkout $checkout */
         $checkout = $context->get('checkout');
+        if (!$checkout->getLineItems()->count()) {
+            return;
+        }
+
         if (!$this->isThereAPricePresent($checkout->getLineItems())) {
             $conditionEvent->addError(
                 'oro.frontend.shoppinglist.messages.cannot_create_order_no_line_item_with_price'

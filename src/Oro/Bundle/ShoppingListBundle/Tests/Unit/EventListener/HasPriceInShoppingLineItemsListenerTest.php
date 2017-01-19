@@ -105,7 +105,7 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit_Framework_TestCas
 
         $checkoutSourceMock = $this->createMock(CheckoutSource::class);
         $checkoutSourceMock
-            ->expects($this->once())
+            ->expects($this->any())
             ->method('getEntity')
             ->willReturn($shoppingList);
 
@@ -169,7 +169,7 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit_Framework_TestCas
         $this->listener->onStartCheckoutConditionCheck($event);
     }
 
-    public function testOnStartCheckoutConditionCheckWhenShoppingListHasNoPrices()
+    public function testOnStartCheckoutConditionCheckWhenCheckoutHasNoPrices()
     {
         $event = $this->expectsPrepareLineItemsAndReturnPrices([]);
 
@@ -186,9 +186,27 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit_Framework_TestCas
         $this->assertEquals($expectedErrors, $event->getErrors());
     }
 
-    public function testOnStartCheckoutConditionCheckWhenShoppingListHasAtLeastOnePrice()
+    public function testOnStartCheckoutConditionCheckWhenCheckoutHasAtLeastOnePrice()
     {
         $event = $this->expectsPrepareLineItemsAndReturnPrices([$this->getEntity(Price::class)]);
+
+        $this->listener->onStartCheckoutConditionCheck($event);
+
+        $this->assertEmpty($event->getErrors());
+    }
+
+    public function testOnStartCheckoutConditionCheckWhenCheckoutHasNoItems()
+    {
+        $shoppingList = $this->getEntity(ShoppingList::class, []);
+        $checkoutSourceMock = $this->createMock(CheckoutSource::class);
+        $checkoutSourceMock
+            ->expects($this->once())
+            ->method('getEntity')
+            ->willReturn($shoppingList);
+        $checkout = $this->getEntity(Checkout::class, ['source' => $checkoutSourceMock]);
+
+        $context = new ActionData(['checkout' => $checkout]);
+        $event = new ExtendableConditionEvent($context);
 
         $this->listener->onStartCheckoutConditionCheck($event);
 
