@@ -26,7 +26,7 @@ config:
         'orofrontend/default/js/widgets/line-clamp-widget': 'bundles/orofrontend/default/js/widgets/line-clamp-widget.js'
         'orofrontend/default/js/app/views/footer-align-view': 'orofrontend/default/js/app/views/footer-align-view.js'
         'orofrontend/default/js/app/views/sticky-panel-view': 'orofrontend/default/js/app/views/sticky-panel-view.js'
-        'orofrontend/default/js/app/views/dom-relocation-view': 'orofrontend/default/js/app/views/dom-relocation-view.js'
+        'orofrontend/js/app/views/dom-relocation-view': 'orofrontend/js/app/views/dom-relocation-view.js'
         'orofrontend/default/js/app/modules/input-widgets': 'bundles/orofrontend/default/js/app/modules/input-widgets.js'
         'orofrontend/default/js/app/modules/button-manager': 'bundles/orofrontend/default/js/app/modules/button-manager.js'
         'orofrontend/default/js/app/modules/delete-action': 'bundles/orofrontend/default/js/app/modules/delete-action.js'

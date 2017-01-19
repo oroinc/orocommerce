@@ -110,7 +110,9 @@ define(function(require) {
          */
         getShippingMethodTypeSelector: function() {
             if (!this.hasOwnProperty('$shippingMethodTypeSelector')) {
-                this.$shippingMethodTypeSelector = this.getShippingForm().find(this.options.selectors.shippingMethodTypeSelector);
+                this.$shippingMethodTypeSelector = this.getShippingForm().find(
+                    this.options.selectors.shippingMethodTypeSelector
+                );
             }
 
             return this.$shippingMethodTypeSelector;

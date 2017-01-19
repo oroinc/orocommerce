@@ -1,7 +1,7 @@
 /*global define*/
 define([
     'underscore', 'oroform/js/validator/url'
-], function (_, urlConstraint) {
+], function(_, urlConstraint) {
     'use strict';
 
     var constraint = _.clone(urlConstraint);

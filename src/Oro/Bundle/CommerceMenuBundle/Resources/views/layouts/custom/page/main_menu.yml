@@ -27,11 +27,10 @@ layout:
             id: main_menu
             parentId: sidebar_main_menu_container
         - '@move':
-            id: categories_main_menu
-            parentId: sidebar_product_categories_container
-        - '@move':
             id: quick_access_menu
             parentId: sidebar_quick_access_menu_container
         - '@move':
             id: header_row
             parentId: quick_access_container
+        - '@remove':
+            id: main_menu_list

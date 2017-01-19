@@ -1,13 +1,13 @@
 /*jslint nomen:true*/
 /*global define*/
-define(function (require) {
+define(function(require) {
     'use strict';
 
-    var ProductPrimaryUnitLimitationsComponent,
-        $ = require('jquery'),
-        _ = require('underscore'),
-        BaseComponent = require('oroui/js/app/components/base/component'),
-        mediator = require('oroui/js/mediator');
+    var ProductPrimaryUnitLimitationsComponent;
+    var $ = require('jquery');
+    var _ = require('underscore');
+    var BaseComponent = require('oroui/js/app/components/base/component');
+    var mediator = require('oroui/js/mediator');
 
     ProductPrimaryUnitLimitationsComponent = BaseComponent.extend({
         /**
@@ -36,7 +36,7 @@ define(function (require) {
         /**
          * @inheritDoc
          */
-        initialize: function (options) {
+        initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
             this.$select = this.options._sourceElement.find(this.options.unitSelect);
 
@@ -49,23 +49,23 @@ define(function (require) {
         /**
          * Handle change select
          */
-        onChange: function () {
+        onChange: function() {
             this.$select.on('change', _.bind(this.onSelectChange, this));
             var option = this.$select.find('option:selected');
             var changes = {};
-            changes['removed'] = this.getData() || {};
+            changes.removed = this.getData() || {};
             this.saveData({});
             var storedData = this.getData();
 
-            if (option.val() != undefined) {
+            if (option.val() !== undefined) {
                 storedData[option.val()] = option.text();
             } else {
-                storedData = changes['removed'];
+                storedData = changes.removed;
             }
             this.saveData(storedData);
-            changes['added'] = storedData;
+            changes.added = storedData;
 
-            if(changes['added'] != changes['removed']){
+            if (changes.added !== changes.removed) {
                 this.triggerChangeEvent(changes);
             }
         },
@@ -75,7 +75,7 @@ define(function (require) {
          *
          * @param {jQuery.Event} e
          */
-        onSelectChange: function (e) {
+        onSelectChange: function(e) {
             var select = $(e.target);
             var option = select.find('option:selected');
             var value = this.options.precisions[option.val()];
@@ -85,24 +85,24 @@ define(function (require) {
         /**
          *  Handle changes in additional precisions
          */
-        onAdditionalPrecisionsChange: function (e) {
-            var additionalPrecisions =e;
+        onAdditionalPrecisionsChange: function(e) {
+            var additionalPrecisions = e;
             var precisions = this.getInitialOptions();
-            _.each(additionalPrecisions, function(val,key){
-                delete precisions[key]
+            _.each(additionalPrecisions, function(val, key) {
+                delete precisions[key];
             });
 
             var options = this.$select.find('option');
             var selected = this.$select.find('option:selected');
             delete precisions[selected.val()];
 
-            _.each(options, function(option){
-                if (option.value != selected.val()) {
+            _.each(options, function(option) {
+                if (option.value !== selected.val()) {
                     option.remove();
                 }
             });
             var self = this;
-            _.each(precisions, function(text,val){
+            _.each(precisions, function(text, val) {
                 self.$select.append($('<option></option>').val(val).text(text));
             });
             self.$select.find(selected.val()).selected(true).trigger('change');
@@ -113,8 +113,8 @@ define(function (require) {
          *
          * @returns {jQuery.Element}
          */
-        getData: function () {
-            return this.options._sourceElement.data(this.options.unitsAttribute) || {}
+        getData: function() {
+            return this.options._sourceElement.data(this.options.unitsAttribute) || {};
         },
 
         /**
@@ -122,7 +122,7 @@ define(function (require) {
          *
          * @returns {jQuery.Element}
          */
-        getInitialOptions: function () {
+        getInitialOptions: function() {
             return _.clone(this.options._sourceElement.data(this.options.allUnitsAttribute) || {});
         },
 
@@ -131,17 +131,17 @@ define(function (require) {
          *
          * @param {Object} data
          */
-        saveData: function (data) {
+        saveData: function(data) {
             this.options._sourceElement.data(this.options.unitsAttribute, data);
         },
 
         /**
          * Save initial full select options to data attribute
          */
-        saveInitialOptions: function () {
+        saveInitialOptions: function() {
             var options = this.$select.find('option');
             var allUnits = {};
-            _.each(options, function(option){
+            _.each(options, function(option) {
                 allUnits[option.value] = option.text;
             });
             this.options._sourceElement.data(this.options.allUnitsAttribute, allUnits);
@@ -152,11 +152,11 @@ define(function (require) {
          *
          * @param {Object} data
          */
-        triggerChangeEvent: function (data) {
+        triggerChangeEvent: function(data) {
             mediator.trigger('product:primary:precision:change', data);
         },
 
-        dispose: function () {
+        dispose: function() {
             if (this.disposed) {
                 return;
             }
