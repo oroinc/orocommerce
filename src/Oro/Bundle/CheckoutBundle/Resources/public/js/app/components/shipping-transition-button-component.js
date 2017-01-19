@@ -20,14 +20,10 @@ define(function(require) {
 
             ShippingTransitionButtonComponent.__super__.initialize.call(this, options);
 
-            this.getShippingMethodTypeSelector().on('change', $.proxy(this.onShippingMethodTypeChange, this));
-            this.initShippingMethod();
-
             mediator.on('checkout:shipping-method:rendered', this.onShippingMethodRendered, this);
         },
 
         onShippingMethodRendered: function() {
-            delete this.$shippingMethodTypeSelector;
             this.getShippingMethodTypeSelector().on('change', $.proxy(this.onShippingMethodTypeChange, this));
             this.initShippingMethod();
         },
