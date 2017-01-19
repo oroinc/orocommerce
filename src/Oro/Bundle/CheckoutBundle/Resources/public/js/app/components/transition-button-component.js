@@ -129,13 +129,6 @@ define(function(require) {
 
         onFail: function() {
             this.inProgress = false;
-            this.$el.removeClass('btn--info');
-            this.$el.prop('disabled', true);
-            this.$el.closest(this.defaults.selectors.checkoutContent)
-                    .find(this.defaults.selectors.checkoutRequire)
-                    .addClass('hidden');
-
-            mediator.trigger('transition:failed');
             mediator.execute('hideLoading');
             mediator.execute('showFlashMessage', 'error', 'Could not perform transition');
         },

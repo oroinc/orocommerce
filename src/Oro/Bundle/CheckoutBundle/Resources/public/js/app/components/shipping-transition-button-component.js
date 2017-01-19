@@ -71,7 +71,7 @@ define(function(require) {
          * @param {string} type
          * @param {string} method
          */
-        setElementsValue: function (type, method) {
+        setElementsValue: function(type, method) {
             this.getShippingMethodTypeElement().val(type);
             this.getShippingMethodElement().val(method);
         },
@@ -128,6 +128,17 @@ define(function(require) {
             }
 
             return this.$shippingMethodTypeElement;
+        },
+
+        onFail: function() {
+            this.$el.removeClass('btn--info');
+            this.$el.prop('disabled', true);
+            this.$el.closest(this.defaults.selectors.checkoutContent)
+                .find(this.defaults.selectors.checkoutRequire)
+                .addClass('hidden');
+
+            mediator.trigger('transition:failed');
+            ShippingTransitionButtonComponent.__super__.onFail.call(this);
         },
 
         /**
