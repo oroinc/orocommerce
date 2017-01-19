@@ -1,28 +1,41 @@
 {% block _web_catalog_menu_widget %}
-    {% set screenType = 'any' %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~data-page-component-options': {
+            screenType: 'any'
+        }
+    }) %}
+
+    {{ parent_block_widget(block, {attr: attr}) }}
+{% endblock %}
+
+{% block _web_catalog_menu_second_level_item_head_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~screenType': 'any'
+    }) %}
 
     {{ parent_block_widget(block) }}
 {% endblock %}
 
-{# Need refactoring #}
-{% block _web_catalog_menu_second_level_column %}
-    {% set screenType = screenType|default('any') %}
-    {% set collapseView =  layout_attr_defaults(attr, {
-        screenType: screenType,
-        component: 'oroui/js/app/components/jquery-widget-component',
-        widgetModule: 'oroui/js/widget/collapse-widget',
-        trigger: '[data-collapse-trigger-third]',
-        container: '[data-collapse-container-third]',
-        open: false
+{% block _web_catalog_menu_second_level_sale_head_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~screenType': 'any'
     }) %}
-    <div class="main-menu-column collapse-view {{ addClass|default('') }}"
-         data-page-component-module="oroui/js/app/components/viewport-component"
-         data-page-component-options="{{ collapseView|json_encode }}">
-        <div class="main-menu-column__title" data-collapse-trigger-third>
-            {{ label }} <i class="main-menu-column__icon fa-angle-down"></i>
-        </div>
-        <{{ contentTag|default('ul') }} class="main-menu-column__inner" data-collapse-container-third>
-            {{ content }}
-        </{{ contentTag|default('ul') }}>
-    </div>
-{% endblock  %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
+{% block _web_catalog_menu_second_level_sale_mega_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~screenType': 'any'
+    }) %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
+{% block _web_catalog_menu_second_level_item_mega_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~screenType': 'any'
+    }) %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}

@@ -10,10 +10,9 @@
     {% if (max_size is not null ) %}
         {% set categories = categories[0:max_size] %}
     {%- endif %}
-    {% set screenType = screenType|default('tablet') %}
-    {% set categoriesAttr = {
-        'class': ' main-menu__item'
-    } %}
+    {% set categoriesAttr = layout_attr_defaults(attr, {
+        '~class': ' main-menu__item'
+    }) %}
     {% for category in categories -%}
         {% set hasSublist = category.children is not empty %}
         {% set categoryAttr = categoriesAttr %}
@@ -23,7 +22,7 @@
                 'data-dropdown-trigger': true,
                 'data-page-component-module': 'oroui/js/app/components/viewport-component',
                 '~data-page-component-options': {
-                    screenType: screenType,
+                    screenType: 'tablet',
                     component: 'oroui/js/app/components/jquery-widget-component',
                     widgetModule: 'oroui/js/widget/collapse-widget',
                     trigger: '[data-collapse-trigger-second]',
@@ -198,9 +197,8 @@
 {% endblock  %}
 
 {% block _web_catalog_menu_second_level_column %}
-    {% set screenType = screenType|default('tablet') %}
     {% set collapseView =  layout_attr_defaults(attr, {
-        screenType: screenType,
+        screenType: 'tablet',
         component: 'oroui/js/app/components/jquery-widget-component',
         widgetModule: 'oroui/js/widget/collapse-widget',
         trigger: '[data-collapse-trigger-third]',
