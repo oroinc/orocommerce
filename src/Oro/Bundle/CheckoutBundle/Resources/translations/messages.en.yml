@@ -208,3 +208,5 @@ oro:
         frontend:
             quote:
                 submit_to_order: 'Accept and Submit to Order'
+            order:
+                view.label: 'View Order'
