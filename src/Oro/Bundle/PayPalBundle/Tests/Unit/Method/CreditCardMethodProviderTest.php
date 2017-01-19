@@ -67,7 +67,10 @@ class CreditCardMethodProviderTest extends \PHPUnit_Framework_TestCase
         $this->configProvider->expects(static::once())
             ->method('getType')
             ->willReturn($type);
-        static::assertEquals($type, $this->creditCardMethodProvider->getType());
+        static::assertEquals(
+            sprintf('%s_%s', $type, CreditCardMethodProvider::TYPE),
+            $this->creditCardMethodProvider->getType()
+        );
     }
 
     /**

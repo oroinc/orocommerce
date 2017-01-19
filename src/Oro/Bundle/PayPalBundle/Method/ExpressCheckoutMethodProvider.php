@@ -13,6 +13,8 @@ use Symfony\Component\Routing\RouterInterface;
 
 class ExpressCheckoutMethodProvider extends AbstractPaymentMethodProvider
 {
+    const TYPE = 'express_checkout';
+    
     /**
      * @var Gateway
      */
@@ -109,6 +111,6 @@ class ExpressCheckoutMethodProvider extends AbstractPaymentMethodProvider
      */
     public function getType()
     {
-        return $this->configProvider->getType();
+        return sprintf('%s_%s', $this->configProvider->getType(), self::TYPE);
     }
 }

@@ -10,6 +10,8 @@ use Symfony\Component\Routing\RouterInterface;
 
 class CreditCardMethodProvider extends AbstractPaymentMethodProvider
 {
+    const TYPE = 'credit_card';
+    
     /**
      * @var Gateway
      */
@@ -82,6 +84,6 @@ class CreditCardMethodProvider extends AbstractPaymentMethodProvider
      */
     public function getType()
     {
-        return $this->configProvider->getType();
+        return sprintf('%s_%s', $this->configProvider->getType(), self::TYPE);
     }
 }
