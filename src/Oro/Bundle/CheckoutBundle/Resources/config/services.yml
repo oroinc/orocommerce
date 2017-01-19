@@ -428,3 +428,14 @@ services:
             - '@oro_checkout.factory.shipping_context_factory'
         tags:
             - { name: kernel.event_listener, event: extendable_condition.start_checkout, method: onStartCheckout }
+
+    oro_checkout.event_listener.payment_methods:
+        class: Oro\Bundle\CheckoutBundle\EventListener\PaymentMethodsListener
+        arguments:
+            - '@oro_order.order.provider.order_address'
+            - '@oro_order.order.provider.order_address_security'
+            - '@oro_order.manager.order_address'
+            - '@oro_payment.enabled_payment_methods_configs.rules_provider_basic'
+            - '@oro_checkout.factory.payment_context_factory'
+        tags:
+            - { name: kernel.event_listener, event: extendable_condition.start_checkout, method: onStartCheckout }

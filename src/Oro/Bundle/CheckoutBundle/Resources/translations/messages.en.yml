@@ -201,3 +201,4 @@ oro:
                 submit_to_order: 'Accept and Submit to Order'
             checkout:
                 cannot_create_order_no_shipping_methods_available: 'Cannot create order because no shipping methods available'
+                cannot_create_order_no_payment_methods_available: 'Cannot create order because no payment methods available'
