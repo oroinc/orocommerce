@@ -81,13 +81,11 @@ class ShoppingListControllerTest extends WebTestCase
      * @param string $shoppingList
      * @param string $expectedLineItemPrice
      * @param bool $needToTestRequestQuote
-     * @param $expectedCreateOrderButtonVisible
      */
     public function testViewSelectedShoppingListWithLineItemPrice(
         $shoppingList,
         $expectedLineItemPrice,
-        $needToTestRequestQuote,
-        $expectedCreateOrderButtonVisible
+        $needToTestRequestQuote
     ) {
         // assert selected shopping list
         /** @var ShoppingList $shoppingList1 */
@@ -109,11 +107,7 @@ class ShoppingListControllerTest extends WebTestCase
 
         $this->assertEquals((strpos($crawler->html(), 'Request Quote') !== false), $needToTestRequestQuote);
 
-        if ($expectedCreateOrderButtonVisible) {
-            $this->assertContains('Create Order', $crawler->html());
-        } else {
-            $this->assertNotContains('Create Order', $crawler->html());
-        }
+        $this->assertContains('Create Order', $crawler->html());
 
         $this->assertLineItemPriceEquals($expectedLineItemPrice, $crawler);
     }
@@ -128,19 +122,16 @@ class ShoppingListControllerTest extends WebTestCase
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_1,
                 'expectedLineItemPrice' => '$13.10',
                 'needToTestRequestQuote' => true,
-                'expectedCreateOrderButtonVisible' => true
             ],
             'no price for selected quantity' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_3,
                 'expectedLineItemPrice' => 'N/A',
                 'needToTestRequestQuote' => false,
-                'expectedCreateOrderButtonVisible' => false
             ],
             'zero price' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_4,
                 'expectedLineItemPrice' => '$0.00',
                 'needToTestRequestQuote' => true,
-                'expectedCreateOrderButtonVisible' => true
             ],
             'no price for selected unit' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_5,
@@ -149,7 +140,6 @@ class ShoppingListControllerTest extends WebTestCase
                     '$0.00',
                 ],
                 'needToTestRequestQuote' => true,
-                'expectedCreateOrderButtonVisible' => true
             ],
         ];
     }
