@@ -199,3 +199,5 @@ oro:
         frontend:
             quote:
                 submit_to_order: 'Accept and Submit to Order'
+            checkout:
+                cannot_create_order_no_shipping_methods_available: 'Cannot create order because no shipping methods available'
