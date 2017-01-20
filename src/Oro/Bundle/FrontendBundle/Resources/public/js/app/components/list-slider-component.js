@@ -32,17 +32,31 @@ define(function(require) {
             this.$el = options._sourceElement;
 
             if (this.options.mobileEnabled) {
-                $(this.options._sourceElement).slick(this.options);
+                $(this.$el).slick(this.options);
             }
 
+            this.onCreate();
             this.onChange();
         },
 
-        onChange: function() {
-            this.$el.on('beforeChange', function(event, slick, currentSlide, nextSlide) {
-                var $activeImage = $(this).find('.slick-slide[data-slick-index=' + nextSlide + '] img');
-                $(this).find('.slick-slide img').trigger('slider:activeImage', $activeImage.get(0));
+        onCreate: function() {
+            var self = this;
+            this.$el.find('.slick-slide').on('zoom-widget:created', 'img', function() {
+                var nextSlide = $(self.$el).slick('slickCurrentSlide');
+                self.changeHandler(self.$el, nextSlide, 'slider:currentImage');
             });
+        },
+
+        onChange: function() {
+            var self = this;
+            this.$el.on('beforeChange', function(event, slick, currentSlide, nextSlide) {
+                self.changeHandler(this, nextSlide, 'slider:activeImage');
+            });
+        },
+
+        changeHandler: function(slick, nextSlide, eventName) {
+            var $activeImage = $(slick).find('.slick-slide[data-slick-index=' + nextSlide + '] img');
+            $(slick).find('.slick-slide img').trigger(eventName, $activeImage.get(0));
         }
     });
 
