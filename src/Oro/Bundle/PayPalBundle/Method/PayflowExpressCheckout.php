@@ -33,6 +33,8 @@ class PayflowExpressCheckout implements PaymentMethodInterface
     const PILOT_REDIRECT_URL = 'https://www.sandbox.paypal.com/webscr?cmd=_express-checkout&useraction=commit&token=%s';
     const PRODUCTION_REDIRECT_URL = 'https://www.paypal.com/webscr?cmd=_express-checkout&useraction=commit&token=%s';
 
+    const AMOUNT_PRECISION = 2;
+
     /** @var Gateway */
     protected $gateway;
 
@@ -301,7 +303,7 @@ class PayflowExpressCheckout implements PaymentMethodInterface
             [
                 ECOption\PaymentType::PAYMENTTYPE => ECOption\PaymentType::INSTANTONLY,
                 ECOption\ShippingAddressOverride::ADDROVERRIDE => ECOption\ShippingAddressOverride::TRUE,
-                Option\Amount::AMT => $paymentTransaction->getAmount(),
+                Option\Amount::AMT => round($paymentTransaction->getAmount(), self::AMOUNT_PRECISION),
                 Option\Currency::CURRENCY => $paymentTransaction->getCurrency(),
                 Option\ReturnUrl::RETURNURL => $this->router->generate(
                     'oro_payment_callback_return',
@@ -328,7 +330,7 @@ class PayflowExpressCheckout implements PaymentMethodInterface
     protected function getDoExpressCheckoutOptions(PaymentTransaction $paymentTransaction)
     {
         $options = [
-            Option\Amount::AMT => $paymentTransaction->getAmount(),
+            Option\Amount::AMT => round($paymentTransaction->getAmount(), self::AMOUNT_PRECISION),
             Option\Transaction::TRXTYPE => $this->getTransactionType($paymentTransaction),
             ECOption\Token::TOKEN => $paymentTransaction->getReference(),
         ];
@@ -351,7 +353,7 @@ class PayflowExpressCheckout implements PaymentMethodInterface
         $sourceTransaction = $paymentTransaction->getSourcePaymentTransaction();
 
         return [
-            Option\Amount::AMT => $paymentTransaction->getAmount(),
+            Option\Amount::AMT => round($paymentTransaction->getAmount(), self::AMOUNT_PRECISION),
             Option\OriginalTransaction::ORIGID => $sourceTransaction->getReference(),
         ];
     }
@@ -425,7 +427,9 @@ class PayflowExpressCheckout implements PaymentMethodInterface
                 Option\LineItems::NAME => $lineItemOption->getName(),
                 Option\LineItems::DESC => $lineItemOption->getDescription(),
                 Option\LineItems::COST => $lineItemOption->getCost(),
-                Option\LineItems::QTY => $lineItemOption->getQty(),
+                // PayPal accepts only integer qty.
+                // Float qty could be correctly converted to int in getLineItemPaymentOptions
+                Option\LineItems::QTY => (int)$lineItemOption->getQty(),
             ];
         }
 
