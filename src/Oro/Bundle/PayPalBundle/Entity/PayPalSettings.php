@@ -11,6 +11,11 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\PayPalBundle\Entity\Repository\PayPalSettingsRepository")
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class PayPalSettings extends Transport
 {
@@ -276,7 +281,7 @@ class PayPalSettings extends Transport
                     self::EXPRESS_CHECKOUT_SHORT_LABELS_KEY => $this->getExpressCheckoutShortLabels(),
                     self::CREDIT_CARD_PAYMENT_ACTION_KEY => $this->getCreditCardPaymentAction(),
                     self::EXPRESS_CHECKOUT_PAYMENT_ACTION_KEY => $this->getExpressCheckoutPaymentAction(),
-                    self::ALLOWED_CREDIT_CARD_TYPES_KEY => $this->getAllowedCreditCardTypes(),
+                    self::ALLOWED_CREDIT_CARD_TYPES_KEY => $this->getAllowedCreditCardTypes()->toArray(),
                     self::EXPRESS_CHECKOUT_NAME_KEY => $this->getExpressCheckoutName(),
                     self::PARTNER_KEY => $this->getPartner(),
                     self::VENDOR_KEY => $this->getVendor(),

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\MoneyOrderBundle\Method;
 
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProviderInterface;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 
 class MoneyOrderMethodProvider implements PaymentMethodProviderInterface
 {
@@ -13,7 +13,7 @@ class MoneyOrderMethodProvider implements PaymentMethodProviderInterface
     public function getPaymentMethods()
     {
         $paymentMethod = new MoneyOrder();
-        return [$this->getType() => $paymentMethod];
+        return [$paymentMethod->getIdentifier() => $paymentMethod];
     }
 
     /**
@@ -34,14 +34,8 @@ class MoneyOrderMethodProvider implements PaymentMethodProviderInterface
      */
     public function hasPaymentMethod($identifier)
     {
-        return $this->getType() === $identifier;
-    }
+        $paymentMethods = $this->getPaymentMethods();
 
-    /**
-     * @return string
-     */
-    public function getType()
-    {
-        return MoneyOrder::TYPE;
+        return isset($paymentMethods[$identifier]);
     }
 }

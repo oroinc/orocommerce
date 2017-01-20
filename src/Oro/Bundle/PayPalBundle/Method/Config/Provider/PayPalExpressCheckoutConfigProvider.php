@@ -2,7 +2,10 @@
 
 namespace Oro\Bundle\PayPalBundle\Method\Config\Provider;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\PayPalBundle\Method\Config\Factory\PayPalExpressCheckoutConfigFactoryInterface;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
+use Psr\Log\LoggerInterface;
 
 class PayPalExpressCheckoutConfigProvider extends AbstractPayPalConfigProvider implements
     PayPalExpressCheckoutConfigProviderInterface
@@ -11,6 +14,18 @@ class PayPalExpressCheckoutConfigProvider extends AbstractPayPalConfigProvider i
      * @var PayPalExpressCheckoutConfigInterface[]
      */
     protected $configs = [];
+
+    /**
+     * {@inheritdoc}
+     */
+    public function __construct(
+        ManagerRegistry $doctrine,
+        LoggerInterface $logger,
+        PayPalExpressCheckoutConfigFactoryInterface $factory,
+        $type
+    ) {
+        parent::__construct($doctrine, $logger, $factory, $type);
+    }
 
     /**
      * @return PayPalExpressCheckoutConfigInterface[]

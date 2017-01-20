@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PaymentBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
+use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
 use Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -23,7 +23,7 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
     const PAYMENT_METHOD_TYPE = 'payment_term';
 
     /**
-     * @var PaymentMethodProvidersRegistry
+     * @var PaymentMethodProvidersRegistryInterface
      */
     protected $registry;
 

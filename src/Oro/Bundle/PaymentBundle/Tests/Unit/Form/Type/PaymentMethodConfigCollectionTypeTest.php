@@ -7,7 +7,7 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Form\EventSubscriber\RuleMethodConfigCollectionSubscriber;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigCollectionType;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigType;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
+use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistry;
 use Oro\Bundle\PaymentBundle\Tests\Unit\Form\EventListener\Stub\RuleMethodConfigCollectionSubscriberStub;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -100,8 +100,8 @@ class PaymentMethodConfigCollectionTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        /** @var PaymentMethodProvidersRegistry|\PHPUnit_Framework_MockObject_MockObject $methodRegistry */
-        $methodRegistry = $this->createMock(PaymentMethodProvidersRegistry::class);
+        /** @var PaymentMethodProvidersRegistryInterface|\PHPUnit_Framework_MockObject_MockObject $methodRegistry */
+        $methodRegistry = $this->createMock(PaymentMethodProvidersRegistryInterface::class);
         /** @var PaymentMethodViewProvidersRegistry|\PHPUnit_Framework_MockObject_MockObject $methodViewRegistry */
         $methodViewRegistry = $this->createMock(PaymentMethodViewProvidersRegistry::class);
 

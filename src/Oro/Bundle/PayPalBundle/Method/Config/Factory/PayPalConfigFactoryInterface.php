@@ -8,8 +8,8 @@ use Oro\Bundle\PayPalBundle\Method\Config\PayPalConfigInterface;
 interface PayPalConfigFactoryInterface
 {
     /**
-     * @param PayPalSettings $entity
+     * @param PayPalSettings $settings
      * @return PayPalConfigInterface
      */
-    public function createConfig(PayPalSettings $entity);
+    public function createConfig(PayPalSettings $settings);
 }

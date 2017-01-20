@@ -2,7 +2,10 @@
 
 namespace Oro\Bundle\PayPalBundle\Method\Config\Provider;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\PayPalBundle\Method\Config\Factory\PayPalCreditCardConfigFactoryInterface;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
+use Psr\Log\LoggerInterface;
 
 class PayPalCreditCardConfigProvider extends AbstractPayPalConfigProvider implements
     PayPalCreditCardConfigProviderInterface
@@ -13,7 +16,19 @@ class PayPalCreditCardConfigProvider extends AbstractPayPalConfigProvider implem
     protected $configs;
 
     /**
-     * @return PayPalCreditCardConfigInterface[]
+     * {@inheritdoc}
+     */
+    public function __construct(
+        ManagerRegistry $doctrine,
+        LoggerInterface $logger,
+        PayPalCreditCardConfigFactoryInterface $factory,
+        $type
+    ) {
+        parent::__construct($doctrine, $logger, $factory, $type);
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getPaymentConfigs()
     {
@@ -25,8 +40,7 @@ class PayPalCreditCardConfigProvider extends AbstractPayPalConfigProvider implem
     }
 
     /**
-     * @param string $identifier
-     * @return PayPalCreditCardConfigInterface|null
+     * {@inheritdoc}
      */
     public function getPaymentConfig($identifier)
     {

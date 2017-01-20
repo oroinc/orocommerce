@@ -100,7 +100,7 @@ abstract class AbstractPayPalConfigProvider
             $config = $this->factory->createConfig($setting);
             $configs[$config->getPaymentMethodIdentifier()] = $config;
         }
-        
+
         return $configs;
     }
 }

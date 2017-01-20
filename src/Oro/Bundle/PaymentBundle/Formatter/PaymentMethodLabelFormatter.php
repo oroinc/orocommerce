@@ -2,19 +2,19 @@
 
 namespace Oro\Bundle\PaymentBundle\Formatter;
 
-use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistry;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistryInterface;
 
 class PaymentMethodLabelFormatter
 {
     /**
-     * @var PaymentMethodViewProvidersRegistry
+     * @var PaymentMethodViewProvidersRegistryInterface
      */
     protected $paymentMethodViewRegistry;
 
     /**
-     * @param PaymentMethodViewProvidersRegistry $paymentMethodViewRegistry
+     * @param PaymentMethodViewProvidersRegistryInterface $paymentMethodViewRegistry
      */
-    public function __construct(PaymentMethodViewProvidersRegistry $paymentMethodViewRegistry)
+    public function __construct(PaymentMethodViewProvidersRegistryInterface $paymentMethodViewRegistry)
     {
         $this->paymentMethodViewRegistry = $paymentMethodViewRegistry;
     }

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Method;
 
+use Monolog\Logger;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PaymentTermBundle\Method\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Method\PaymentTermMethodProvider;
@@ -27,6 +28,11 @@ class PaymentTermMethodProviderTest extends \PHPUnit_Framework_TestCase
     protected $doctrineHelper;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * @var PaymentTermMethodProvider
      */
     protected $provider;
@@ -47,20 +53,19 @@ class PaymentTermMethodProviderTest extends \PHPUnit_Framework_TestCase
         $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->logger = $this->createMock(LoggerInterface::class);
         $this->provider = new PaymentTermMethodProvider(
             $this->paymentTermProvider,
             $this->paymentTermAssociationProvider,
-            $this->doctrineHelper
+            $this->doctrineHelper,
+            $this->logger
         );
-        /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject $logger **/
-        $logger = $this->createMock(LoggerInterface::class);
-        $this->provider->setLogger($logger);
         $this->method = new PaymentTerm(
             $this->paymentTermProvider,
             $this->paymentTermAssociationProvider,
-            $this->doctrineHelper
+            $this->doctrineHelper,
+            $this->logger
         );
-        $this->method->setLogger($logger);
     }
 
     public function testGetPaymentMethods()
@@ -77,10 +82,5 @@ class PaymentTermMethodProviderTest extends \PHPUnit_Framework_TestCase
     {
         static::assertTrue($this->provider->hasPaymentMethod(PaymentTerm::TYPE));
         static::assertFalse($this->provider->hasPaymentMethod('not_existing'));
-    }
-
-    public function testGetType()
-    {
-        static::assertEquals(PaymentTerm::TYPE, $this->provider->getType());
     }
 }
