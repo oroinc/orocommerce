@@ -36,8 +36,8 @@ oro:
                     tooltip: 'A fee applied to the shipping costs'
         actions:
             ship_order:
-                flash.success: 'Order shipped successfully. Check attachments to get shipping labels.'
+                flash.success: 'DPD Shipping label request successful. Check attachments to get shipping labels.'
                 widgets.ship_order.label: 'Request DPD shipping label'
             reship_order:
-                flash.success: 'Order reshipped successfully. Check attachments to get shipping labels.'
-                widgets.reship_order.label: 'Retransmit request DPD shipping label'
+                flash.success: 'New DPD Shipping label request successful. Check attachments to get shipping labels.'
+                widgets.reship_order.label: 'Retransmit request for DPD shipping label'

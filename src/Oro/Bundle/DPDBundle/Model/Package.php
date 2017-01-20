@@ -31,6 +31,7 @@ class Package
     public function setWeight($weight)
     {
         $this->weight = $weight;
+
         return $this;
     }
 
@@ -49,8 +50,7 @@ class Package
     public function setContents($contents)
     {
         $this->contents = $contents;
+
         return $this;
     }
-
-
 }

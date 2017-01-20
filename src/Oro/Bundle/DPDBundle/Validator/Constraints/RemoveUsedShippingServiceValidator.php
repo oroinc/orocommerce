@@ -20,7 +20,7 @@ use Symfony\Component\Validator\ConstraintValidator;
 class RemoveUsedShippingServiceValidator extends ConstraintValidator
 {
     const ALIAS = 'oro_dpd_remove_used_shipping_service_validator';
-   
+
     /**
      * @var ManagerRegistry
      */
@@ -101,6 +101,7 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
         foreach ($value->toArray() as $dpdService) {
             $dpdTypesIds[] = $dpdService->getCode();
         }
+
         return $dpdTypesIds;
     }
 
@@ -117,9 +118,10 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
                 $enabledTypes[] = $confType->getType();
             }
         }
+
         return $enabledTypes;
     }
-    
+
     /**
      * @param array $missingServices
      * @param string $message
@@ -129,7 +131,7 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
         /** @var ShippingService $service */
         foreach ($missingServices as $service) {
             $this->context->addViolation($message, [
-                '{{ service }}' => $service->getDescription()
+                '{{ service }}' => $service->getDescription(),
             ]);
         }
     }
@@ -142,6 +144,7 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
         if (!$this->propertyAccessor) {
             $this->propertyAccessor = new PropertyAccessor();
         }
+
         return $this->propertyAccessor;
     }
 
@@ -160,6 +163,7 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
             }
             $form = $form->getParent();
         }
+
         return $id;
     }
 
@@ -180,6 +184,7 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
         $path = $this->context->getPropertyPath();
         $path = str_replace(['children', '.'], '', $path);
         $path = preg_replace('/\][^\]]*$/', ']', $path);
+
         return $path;
     }
 }

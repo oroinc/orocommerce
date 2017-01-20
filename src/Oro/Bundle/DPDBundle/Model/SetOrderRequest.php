@@ -8,7 +8,7 @@ class SetOrderRequest extends DPDRequest
     const START_ORDER_ACTION = 'startOrder';
     const CHECK_ORDER_ACTION = 'checkOrderData';
 
-    /** @var  string  */
+    /** @var  string */
     protected $orderAction;
 
     /** @var  \DateTime */
@@ -24,6 +24,9 @@ class SetOrderRequest extends DPDRequest
     protected $orderDataList;
 
 
+    /**
+     * SetOrderRequest constructor.
+     */
     public function __construct()
     {
         $this->orderDataList = [];
@@ -44,6 +47,7 @@ class SetOrderRequest extends DPDRequest
     public function setOrderAction($orderAction)
     {
         $this->orderAction = $orderAction;
+
         return $this;
     }
 
@@ -62,6 +66,7 @@ class SetOrderRequest extends DPDRequest
     public function setShipDate($shipDate)
     {
         $this->shipDate = $shipDate;
+
         return $this;
     }
 
@@ -80,6 +85,7 @@ class SetOrderRequest extends DPDRequest
     public function setLabelSize($labelSize)
     {
         $this->labelSize = $labelSize;
+
         return $this;
     }
 
@@ -98,6 +104,7 @@ class SetOrderRequest extends DPDRequest
     public function setLabelStartPosition($labelStartPosition)
     {
         $this->labelStartPosition = $labelStartPosition;
+
         return $this;
     }
 
@@ -117,6 +124,7 @@ class SetOrderRequest extends DPDRequest
     public function setOrderDataList($orderDataList)
     {
         $this->orderDataList = $orderDataList;
+
         return $this;
     }
 
@@ -126,11 +134,11 @@ class SetOrderRequest extends DPDRequest
     public function toArray()
     {
         $request = [
-            'OrderAction' => $this->orderAction,
+            'OrderAction'   => $this->orderAction,
             'OrderSettings' => [
-                'ShipDate' => $this->shipDate->format('Y-m-d'),
-                'LabelSize' => $this->labelSize,
-                'LabelStartPosition' => $this->labelStartPosition
+                'ShipDate'           => $this->shipDate->format('Y-m-d'),
+                'LabelSize'          => $this->labelSize,
+                'LabelStartPosition' => $this->labelStartPosition,
             ],
         ];
 

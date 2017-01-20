@@ -63,14 +63,16 @@ class SetOrderResponse extends DPDResponse
      * @param bool $decode
      * @return string
      */
-    public function getLabelPDF($decode = true) {
-        return $decode?base64_decode($this->labelPDF):$this->labelPDF;
+    public function getLabelPDF($decode = true)
+    {
+        return $decode ? base64_decode($this->labelPDF) : $this->labelPDF;
     }
 
     /**
      * @return array
      */
-    public function getParcelNumbers() {
+    public function getParcelNumbers()
+    {
         return $this->parcelNumbers;
     }
 }

@@ -31,29 +31,30 @@ class DPDController extends Controller
     public function ratesDownloadAction(DPDTransport $transport)
     {
         $response = new StreamedResponse();
-        $response->setCallback(function() use ($transport){
-            $handle = fopen('php://output', 'r+');
+        $response->setCallback(function() use ($transport) {
+            $handle = fopen('php://output', 'rb+');
 
             // Add BOM to fix UTF-8 in Excel
-            fputs($handle, $bom =( chr(0xEF) . chr(0xBB) . chr(0xBF) ));
+            fwrite($handle, $bom = (chr(0xEF) . chr(0xBB) . chr(0xBF)));
 
             // Add the header of the CSV file
+            // FIXME: Use translations in headers
             $header = [
                 'Shipping Service Code',
                 'Country Code (ISO 3166-1 alpha-2)',
                 'Region Code (ISO 3166-2)',
                 'Weight Value (' . $transport->getUnitOfWeight() . ')',
-                'Price Value'
+                'Price Value',
             ];
             fputcsv($handle, $header, self::CSV_DELIMITER);
 
             foreach ($transport->getRates() as $rate) {
                 $row = [
-                    $rate->getShippingService()?$rate->getShippingService()->getCode():null,
-                    $rate->getCountry()?$rate->getCountry()->getIso2Code():null,
-                    $rate->getRegion()?$rate->getRegion()->getCombinedCode():null,
+                    $rate->getShippingService() ? $rate->getShippingService()->getCode() : null,
+                    $rate->getCountry() ? $rate->getCountry()->getIso2Code() : null,
+                    $rate->getRegion() ? $rate->getRegion()->getCombinedCode() : null,
                     $rate->getWeightValue(),
-                    $rate->getPriceValue()
+                    $rate->getPriceValue(),
                 ];
                 fputcsv($handle, $row, self::CSV_DELIMITER);
             }

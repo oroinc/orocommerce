@@ -13,7 +13,7 @@ class ShippingServiceTest extends \PHPUnit_Framework_TestCase
     {
         static::assertPropertyAccessors(new ShippingService(), [
             ['code', 'some code'],
-            ['description', 'some description']
+            ['description', 'some description'],
         ]);
     }
 

@@ -32,16 +32,16 @@ class DPDShippingMethodOptionsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $priceOptions = [
-            'scale' => $this->roundingService->getPrecision(),
+            'scale'         => $this->roundingService->getPrecision(),
             'rounding_mode' => $this->roundingService->getRoundType(),
-            'attr' => ['data-scale' => $this->roundingService->getPrecision()],
+            'attr'          => ['data-scale' => $this->roundingService->getPrecision()],
         ];
 
         $builder
             ->add(DPDShippingMethod::HANDLING_FEE_OPTION, NumberType::class, array_merge([
-                'label' => 'oro.dpd.form.shipping_method_config_options.handling_fee.label',
-                'tooltip' => 'oro.dpd.form.shipping_method_config_options.handling_fee.tooltip',
-                'constraints' => [new Type(['type' => 'numeric'])]
+                'label'       => 'oro.dpd.form.shipping_method_config_options.handling_fee.label',
+                'tooltip'     => 'oro.dpd.form.shipping_method_config_options.handling_fee.tooltip',
+                'constraints' => [new Type(['type' => 'numeric'])],
             ], $priceOptions));
     }
 

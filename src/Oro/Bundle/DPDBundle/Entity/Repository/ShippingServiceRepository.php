@@ -10,5 +10,4 @@ class ShippingServiceRepository extends EntityRepository
     {
         return $this->createQueryBuilder('s', 's.code')->getQuery()->getResult();
     }
-
 }

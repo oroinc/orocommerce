@@ -2,31 +2,46 @@
 
 namespace Oro\Bundle\DPDBundle\Model;
 
-
+// FIXME: Cleanup/remove file
 class PriceTable
 {
     /** @var  array */
     protected $table;
 
+    /**
+     * PriceTable constructor.
+     */
     public function __construct()
     {
         $this->table = array();
     }
 
+    /**
+     * @param $key
+     * @return bool
+     */
     public function hasKey($key)
     {
         return array_key_exists($key, $this->table);
     }
 
+    /**
+     * @param $key
+     * @param null $default
+     * @return mixed|null
+     */
     public function get($key, $default = null)
     {
         if ($this->hasKey($key)) {
             return $this->table[$key];
         }
+
         return $default;
     }
 
-    //FIXME: very minimalistic implementation...
+    /**
+     * @param $data
+     */
     public function fromArray($data)
     {
         $this->table = array();

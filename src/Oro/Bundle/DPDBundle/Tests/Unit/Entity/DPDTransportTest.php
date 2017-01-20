@@ -35,14 +35,14 @@ class DPDTransportTest extends \PHPUnit_Framework_TestCase
         $entity = $this->getEntity(
             'Oro\Bundle\DPDBundle\Entity\DPDTransport',
             [
-                'liveMode' => false,
-                'cloudUserId' => 'some cloud user id',
-                'cloudUserToken' => 'some cloud user token',
-                'labelSize' => DPDTransport::PDF_A4_LABEL_SIZE,
-                'labelStartPosition' => DPDTransport::UPPERLEFT_LABEL_START_POSITION,
-                'invalidate_cache_at' => new \DateTime('2020-01-01'),
+                'liveMode'                   => false,
+                'cloudUserId'                => 'some cloud user id',
+                'cloudUserToken'             => 'some cloud user token',
+                'labelSize'                  => DPDTransport::PDF_A4_LABEL_SIZE,
+                'labelStartPosition'         => DPDTransport::UPPERLEFT_LABEL_START_POSITION,
+                'invalidate_cache_at'        => new \DateTime('2020-01-01'),
                 'applicableShippingServices' => [new ShippingService()],
-                'labels' => [(new LocalizedFallbackValue())->setString('DPD')],
+                'labels'                     => [(new LocalizedFallbackValue())->setString('DPD')],
             ]
         );
 

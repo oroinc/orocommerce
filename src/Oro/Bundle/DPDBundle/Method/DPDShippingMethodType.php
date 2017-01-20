@@ -203,7 +203,8 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
      * @param \DateTime $shipDate
      * @return bool
      */
-    public function isShipDatePickupDay(\DateTime $shipDate) {
+    public function isShipDatePickupDay(\DateTime $shipDate)
+    {
         return ($this->checkShipDate($shipDate) === 0);
     }
 
@@ -211,10 +212,12 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
      * @param \DateTime $shipDate
      * @return \DateTime
      */
-    public function getNextPickupDay(\DateTime $shipDate) {
+    public function getNextPickupDay(\DateTime $shipDate)
+    {
         while (($addHint = $this->checkShipDate($shipDate)) !== 0) {
             $shipDate->add(new \DateInterval('P' . $addHint . 'D'));
         }
+
         return $shipDate;
     }
 
@@ -224,20 +227,21 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
      * @param \DateTime $shipDate
      * @return int 0 if shipDate is valid pickup day or a number of days to increase shipDate for a possible valid date.
      */
-    public function checkShipDate(\DateTime $shipDate) {
+    public function checkShipDate(\DateTime $shipDate)
+    {
         $zipCodeRulesResponse = $this->fetchZipCodeRules();
 
         // check if cut-off shipping date is today
         $today = new \DateTime('today');
         $shipDateMidnight = clone $shipDate;
-        $shipDateMidnight->setTime(0,0,0);
+        $shipDateMidnight->setTime(0, 0, 0);
         $diff = $today->diff($shipDateMidnight);
-        $diffDays = (integer)$diff->format( "%R%a" );
+        $diffDays = (integer)$diff->format("%R%a");
         if ($diffDays === 0) {
             $cutOffDate = \DateTime::createFromFormat(
                 'H:i',
-                $this->shippingService->isClassicService()?
-                    $zipCodeRulesResponse->getClassicCutOff():
+                $this->shippingService->isClassicService() ?
+                    $zipCodeRulesResponse->getClassicCutOff() :
                     $zipCodeRulesResponse->getExpressCutOff()
             );
 
@@ -269,7 +273,8 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
     public function fetchZipCodeRules()
     {
         $getZipCodeRulesRequest = $this->dpdRequestFactory->createZipCodeRulesRequest();
-        $cacheKey = $this->zipCodeRulesCache->createKey($this->transport, $getZipCodeRulesRequest, $this->getIdentifier());
+        $cacheKey = $this->zipCodeRulesCache->createKey($this->transport, $getZipCodeRulesRequest,
+            $this->getIdentifier());
 
         if ($this->zipCodeRulesCache->containsZipCodeRules($cacheKey)) {
             return $this->zipCodeRulesCache->fetchZipCodeRules($cacheKey);

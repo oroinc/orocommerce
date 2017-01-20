@@ -11,6 +11,7 @@ class ZipCodeRulesRequest extends DPDRequest
     public function toArray()
     {
         $request = [];
+
         return $request;
     }
 }

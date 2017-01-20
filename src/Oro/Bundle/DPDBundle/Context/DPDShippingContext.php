@@ -4,6 +4,7 @@ namespace Oro\Bundle\DPDBundle\Context;
 
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 
+// FIXME: Talk with David regarding the missing DPDShippingContextInterface methods
 class DPDShippingContext implements DPDShippingContextInterface
 {
     /**

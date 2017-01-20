@@ -25,7 +25,7 @@ class DPDTransportEntityListener
 
             $transport->removeAllRates();
 
-            $handle = fopen($transport->getRatesCsv()->getRealPath(), 'r');
+            $handle = fopen($transport->getRatesCsv()->getRealPath(), 'rb');
             $rowCounter = 0;
             while (($row = fgetcsv($handle)) !== false) {
                 $rowCounter++;
@@ -35,7 +35,8 @@ class DPDTransportEntityListener
                 list($shippingServiceCode, $countryCode, $regionCode, $weightValue, $priceValue) = $row;
 
                 $rate = new Rate();
-                $rate->setShippingService($entityManager->getReference('OroDPDBundle:ShippingService', $shippingServiceCode));
+                $rate->setShippingService($entityManager->getReference('OroDPDBundle:ShippingService',
+                    $shippingServiceCode));
                 $rate->setCountry($entityManager->getReference('OroAddressBundle:Country', $countryCode));
                 if (!empty($regionCode)) {
                     $rate->setRegion($entityManager->getReference('OroAddressBundle:Region', $regionCode));
@@ -49,7 +50,6 @@ class DPDTransportEntityListener
             fclose($handle);
         }
     }
-
 
     /**
      * @param DPDTransport $transport
@@ -75,7 +75,7 @@ class DPDTransportEntityListener
                 $shippingMethodIdentifier = DPDShippingMethod::IDENTIFIER . '_' . $channel->getId();
                 $configuredMethods = $entityManager
                     ->getRepository('OroShippingBundle:ShippingMethodConfig')
-                    ->findBy(['method' => $shippingMethodIdentifier ]);
+                    ->findBy(['method' => $shippingMethodIdentifier]);
                 if (0 < count($configuredMethods)) {
                     $types = $entityManager
                         ->getRepository('OroShippingBundle:ShippingMethodTypeConfig')

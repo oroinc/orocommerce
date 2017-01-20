@@ -61,6 +61,7 @@ class DPDTransport extends AbstractRestTransport
         if ($parameterBag->get('live_mode', false)) {
             return static::BASE_URL_LIVE;
         }
+
         return static::BASE_URL_STAGE;
     }
 
@@ -95,7 +96,6 @@ class DPDTransport extends AbstractRestTransport
     {
         return 'Oro\Bundle\DPDBundle\Entity\DPDTransport';
     }
-
 
     /**
      * @param SetOrderRequest $setOrderRequest
@@ -149,17 +149,26 @@ class DPDTransport extends AbstractRestTransport
         return null;
     }
 
+    /**
+     * @param Transport $transportEntity
+     * @return array
+     */
     protected function getRequestHeaders(Transport $transportEntity)
     {
         $headers = [
-            'Version' =>  static::API_VERSION,
-            'Language' => static::API_DEFAULT_LANGUAGE
+            'Version'  => static::API_VERSION,
+            'Language' => static::API_DEFAULT_LANGUAGE,
         ];
         $headers += $this->getPartnerCredentialsHeaders($transportEntity->getSettingsBag());
         $headers += $this->getCloudUserCredentialsHeaders($transportEntity->getSettingsBag());
+
         return $headers;
     }
 
+    /**
+     * @param ParameterBag $parameterBag
+     * @return array
+     */
     protected function getPartnerCredentialsHeaders(ParameterBag $parameterBag)
     {
         if ($parameterBag->get('live_mode', false)) {
@@ -171,11 +180,15 @@ class DPDTransport extends AbstractRestTransport
         }
 
         return [
-            'PartnerCredentials-Name' => $partnerName,
-            'PartnerCredentials-Token' => $partnerToken
+            'PartnerCredentials-Name'  => $partnerName,
+            'PartnerCredentials-Token' => $partnerToken,
         ];
     }
 
+    /**
+     * @param ParameterBag $parameterBag
+     * @return array
+     */
     protected function getCloudUserCredentialsHeaders(ParameterBag $parameterBag)
     {
         $cloudUserId = $parameterBag->get('cloud_user_id');
@@ -183,7 +196,7 @@ class DPDTransport extends AbstractRestTransport
 
         return [
             'UserCredentials-cloudUserID' => $cloudUserId,
-            'UserCredentials-Token' => $decryptedCloudUserToken
+            'UserCredentials-Token'       => $decryptedCloudUserToken,
         ];
     }
 }

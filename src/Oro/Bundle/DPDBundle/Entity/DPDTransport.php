@@ -420,8 +420,6 @@ class DPDTransport extends Transport
         return $this;
     }
 
-
-
     /**
      * @return string
      */

@@ -51,8 +51,11 @@ class RatesCsvFileValidator extends ConstraintValidator
                 ->getQuery()
                 ->getResult();
 
-            $handle = fopen($value->getRealPath(), 'r');
+            $handle = fopen($value->getRealPath(), 'rb');
             $rowCounter = 0;
+
+            // FIXME: Use translations for error messages
+            // FIXME: Use error specific messages
             while (($row = fgetcsv($handle)) !== false) {
                 $rowCounter++;
                 if ($rowCounter === 1) {
@@ -63,24 +66,26 @@ class RatesCsvFileValidator extends ConstraintValidator
                     continue;
                 }
                 list($shippingServiceCode, $countryCode, $regionCode, $weightValue, $priceValue) = $row;
-                //shippingService not set or unknown
+
+                // shippingService not set or unknown
                 if (empty($shippingServiceCode) || !array_key_exists($shippingServiceCode, $shippingServiceCodes)) {
                     $this->context->addViolation($constraint->message, ['{{ row_count }}' => $rowCounter]);
                     continue;
                 }
-                //country not set or unknown
+                // country not set or unknown
                 if (empty($countryCode) || !array_key_exists($countryCode, $countries)) {
                     $this->context->addViolation($constraint->message, ['{{ row_count }}' => $rowCounter]);
                     continue;
                 }
-                //region unknown
+                // region unknown
                 if (!empty($regionCode)
                     && !$countries[$countryCode]->getRegions()->exists(
                         function ($key, $element) use ($regionCode) {
                             /** @var Region $element */
                             return $element->getCombinedCode() === $regionCode;
                         }
-                    )) {
+                    )
+                ) {
                     $this->context->addViolation($constraint->message, ['{{ row_count }}' => $rowCounter]);
                     continue;
                 }
@@ -88,7 +93,7 @@ class RatesCsvFileValidator extends ConstraintValidator
                     $this->context->addViolation($constraint->message, ['{{ row_count }}' => $rowCounter]);
                     continue;
                 }
-                //price value not set or not a number
+                // price value not set or not a number
                 if (empty($priceValue) || !is_numeric($priceValue)) {
                     $this->context->addViolation($constraint->message, ['{{ row_count }}' => $rowCounter]);
                     continue;
