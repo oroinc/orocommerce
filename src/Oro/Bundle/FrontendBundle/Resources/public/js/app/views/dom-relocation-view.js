@@ -60,7 +60,7 @@ define(function(require) {
          */
         render: function() {
             this.collectElements();
-            this.onViewportChange(viewportManager.getViewport())
+            this.onViewportChange(viewportManager.getViewport());
             return this;
         },
 

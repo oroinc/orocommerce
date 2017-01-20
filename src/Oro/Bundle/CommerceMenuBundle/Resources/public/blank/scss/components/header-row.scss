@@ -18,6 +18,7 @@
 
         background-color: get-color('additional', 'base');
         border: 0;
+        box-sizing: border-box;
     }
 
     &__toggle {
@@ -37,6 +38,20 @@
     }
 }
 
+@include only-desktop {
+    .header-row {
+        &__trigger {
+            &.active,
+            &:hover {
+                & + .header-row__toggle,
+                .header-row__toggle {
+                    display: block;
+                }
+            }
+        }
+    }
+}
+
 @include breakpoint('desktop') {
     %hidden-on-desktop {
         &.hidden-on-desktop {
@@ -49,14 +64,6 @@
             @extend %hidden-on-desktop;
 
             padding: 0;
-
-            &.active,
-            &:hover {
-                & + .header-row__toggle,
-                .header-row__toggle {
-                    display: block;
-                }
-            }
         }
 
         &__toggle {

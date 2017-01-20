@@ -7,6 +7,7 @@ define(function(require) {
     var $ = require('jquery');
     var routing = require('routing');
     var mediator = require('oroui/js/mediator');
+    var _ = require('underscore');
 
     ProductAddToRfqView = BaseView.extend(_.extend({}, ElementsHelper, {
         events: {

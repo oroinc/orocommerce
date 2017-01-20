@@ -1,11 +1,13 @@
+// @theme: blank
+
 .main-menu {
     display: flex;
 
     @include list-normalize();
-    flex-grow: 1;
+    flex-grow: 0;
 
     &__item {
-        flex-grow: 1;
+        flex-grow: 0;
     }
 
     &__link {
@@ -46,6 +48,70 @@
             }
         }
 
+        &__button-arrow {
+            display: none;
+        }
+
+        &__taptick {
+            display: inline-block;
+
+            .fa-angle-down {
+                display: block;
+            }
+        }
+    }
+}
+
+@include breakpoint('desktop') {
+    .main-menu {
+        .mobile-version & {
+            &__item {
+                display: flex;
+
+                &--ancestor {
+                    .main-menu__link {
+                        padding-right: $main-menu-ancestor-link-inner-offset;
+                    }
+                }
+
+                &.open {
+                    .main-menu__sublist-container {
+                        display: block;
+                    }
+                }
+
+                &:hover {
+                    .main-menu__button-arrow {
+                        color: $main-menu-link-color-hover;
+                    }
+                }
+            }
+
+            &__text {
+                vertical-align: middle;
+            }
+
+            &__button-arrow {
+                display: flex;
+
+                width: $main-menu-button-arrow-d-width;
+                
+                margin-left: $main-menu-button-arrow-d-offset-left;
+                padding: $main-menu-button-arrow-d-inner-offset;
+
+                color: $main-menu-link-color;
+                text-align: left;
+
+                border: none;
+                background: none;
+                outline: none;
+            }
+
+            &__taptick {
+                display: none;
+            }
+        }
+
         &__sublist-container {
             position: absolute;
             z-index: $main-menu-sublist-container-d-z-index;
@@ -55,6 +121,7 @@
 
             display: none;
 
+            border: $main-menu-sublist-container-d-border;
             background-color: $main-menu-sublist-container-d-bg-color;
         }
     }
@@ -74,6 +141,10 @@
             padding: $main-menu-link-t-inner-offset;
 
             text-align: left;
+        }
+
+        &__button-arrow {
+            display: none;
         }
     }
 }
