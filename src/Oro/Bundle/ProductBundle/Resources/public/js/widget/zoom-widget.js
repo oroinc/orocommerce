@@ -18,7 +18,7 @@ define(function(require) {
 
         _create: function() {
             var self = this;
-            this.element.on('slider:currentImage', function(e, activeImage) {
+            this.element.one('slider:currentImage', function(e, activeImage) {
                 self.element.data('zoom-image', $(activeImage).attr('data-url-zoom'));
             });
             this.element.trigger('zoom-widget:created');
