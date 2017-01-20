@@ -5,8 +5,8 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Converter;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -138,8 +138,8 @@ class ShippingContextToRuleValuesConverterTest extends \PHPUnit_Framework_TestCa
                     ShippingContext::FIELD_PAYMENT_METHOD => 'integration_payment_method',
                     ShippingContext::FIELD_CURRENCY => 'USD',
                     ShippingContext::FIELD_SUBTOTAL => Price::create(10.0, 'USD'),
-                    ShippingContext::FIELD_CUSTOMER => (new Account())->setName('Customer Name'),
-                    ShippingContext::FIELD_CUSTOMER_USER => (new AccountUser())->setFirstName('First Name'),
+                    ShippingContext::FIELD_CUSTOMER => (new Customer())->setName('Customer Name'),
+                    ShippingContext::FIELD_CUSTOMER_USER => (new CustomerUser())->setFirstName('First Name'),
                 ]),
             ],
         ];

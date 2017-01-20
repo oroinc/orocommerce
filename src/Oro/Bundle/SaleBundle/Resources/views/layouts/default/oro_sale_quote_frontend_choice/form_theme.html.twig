@@ -55,7 +55,11 @@
             </div>
             <div class="product__select inline va-m_md" style="margin-left: 10px">
                 {{ form_widget(form.unit) }}
-                <span data-role="unit-view">{{ defaultUnitCode }}</span>
+                <span data-role="unit-view">
+                    {% if oro_is_unit_code_visible(defaultUnitCode) %}
+                        {{ defaultUnitCode }}
+                    {% endif %}
+                </span>
             </div>
             {{ form_errors(form.quantity) }}
             {{ form_errors(form.unit) }}
@@ -64,15 +68,15 @@
             <span data-role="price-view">{{ defaultPriceValue }}</span>
         </td>
     </tr>
-    {% if (quoteProduct.commentAccount is not empty) %}
+    {% if (quoteProduct.commentCustomer is not empty) %}
         <tr class="borderless">
             <td colspan="4">
-                <div class="account-oq__order-item-more">
+                <div class="customer-oq__order-item-more">
                     <span class="expand-text"
                          data-page-component-module="oroui/js/app/components/jquery-widget-component"
                          data-page-component-options="{{ expandTextOptions }}"
                     >
-                         {{ 'oro.frontend.sale.quoteproduct.comment_account.label'|trans }}: {{ quoteProduct.commentAccount }}
+                         {{ 'oro.frontend.sale.quoteproduct.comment_customer.label'|trans }}: {{ quoteProduct.commentCustomer }}
                     </span>
                 </div>
             </td>
@@ -82,14 +86,14 @@
     {% if (quoteProduct.comment is not empty) %}
         <tr class="borderless">
             <td colspan="4">
-                <div class="account-oq__order-item-more">
+                <div class="customer-oq__order-item-more">
                     <span class="expand-text"
                                data-page-component-module="oroui/js/app/components/jquery-widget-component"
                                data-page-component-options="{{ expandTextOptions }}"
                     >
                         {{ 'oro.frontend.sale.quoteproduct.comment.label'|trans }}: {{ quoteProduct.comment }}
                     </span>
-                </>
+                </div>
             </td>
         </tr>
     {% endif %}
@@ -136,10 +140,14 @@
                 {% set offer = choice.data %}
                 <tr {% if loop.first %}class="t_paddingless"{% endif %}>
                     <td class="quote-product-offer-select-offer-choice " >
+                        {% set formattedUnitCode = '' %}
+                        {% if oro_is_unit_code_visible(offer.productUnit.code) %}
+                            {% set formattedUnitCode = offer.productUnit.code|oro_format_product_unit_label(true) %}
+                        {% endif %}
                         {{ form_widget(child, {'attr': {
                             'data-value': offer.id,
                             'data-unit': offer.productUnitCode,
-                            'data-formatted-unit': offer.productUnit.code|oro_format_product_unit_label(true),
+                            'data-formatted-unit': formattedUnitCode,
                             'data-quantity': offer.quantity,
                             'data-price': offer.price|oro_format_price
                         }}) }}

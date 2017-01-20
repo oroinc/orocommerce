@@ -146,6 +146,6 @@ class QuoteProductPriceProvider
      */
     protected function getPriceList(Quote $quote)
     {
-        return $this->treeHandler->getPriceList($quote->getAccount(), $quote->getWebsite());
+        return $this->treeHandler->getPriceList($quote->getCustomer(), $quote->getWebsite());
     }
 }

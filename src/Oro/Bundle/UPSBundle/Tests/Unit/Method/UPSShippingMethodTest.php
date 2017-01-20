@@ -31,6 +31,21 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
     use EntityTrait;
 
     /**
+     * @internal
+     */
+    const IDENTIFIER = 'ups_1';
+
+    /**
+     * @internal
+     */
+    const LABEL = 'ups_label';
+
+    /**
+     * @internal
+     */
+    const TYPE_IDENTIFIER = '59';
+
+    /**
      * @var UPSTransportProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $transportProvider;
@@ -39,11 +54,6 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
      * @var UPSTransport|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $transport;
-
-    /**
-     * @var Channel|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $channel;
 
     /**
      * @var PriceRequestFactory|\PHPUnit_Framework_MockObject_MockObject
@@ -56,20 +66,13 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
     protected $upsShippingMethod;
 
     /**
-     * @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $localizationHelper;
-
-    /**
      * @var ShippingPriceCache|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $cache;
 
     protected function setUp()
     {
-        $this->transportProvider = $this->getMockBuilder(UPSTransportProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->transportProvider = $this->createMock(UPSTransportProvider::class);
 
         $shippingService = $this->getEntity(
             ShippingService::class,
@@ -77,35 +80,26 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
         );
         
         /** @var PriceRequestFactory | \PHPUnit_Framework_MockObject_MockObject $priceRequestFactory */
-        $this->priceRequestFactory = $this->getMockBuilder(PriceRequestFactory::class)
-            ->disableOriginalConstructor()->getMock();
+        $this->priceRequestFactory = $this->createMock(PriceRequestFactory::class);
 
-        $this->transport = $this->getMockBuilder(UPSTransport::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->transport = $this->createMock(UPSTransport::class);
         $this->transport->expects(self::any())->method('getApplicableShippingServices')->willReturn([$shippingService]);
 
-        $this->channel = $this->getEntity(
-            Channel::class,
-            ['id' => 1, 'name' => 'ups_channel_1', 'transport' => $this->transport]
-        );
+        $this->cache = $this->createMock(ShippingPriceCache::class);
 
-        $this->localizationHelper = $this
-            ->getMockBuilder(LocalizationHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->cache = $this
-            ->getMockBuilder(ShippingPriceCache::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $type = $this->createMock(UPSShippingMethodType::class);
+        $type
+            ->method('getIdentifier')
+            ->willReturn(self::TYPE_IDENTIFIER);
 
         $this->upsShippingMethod =
             new UPSShippingMethod(
+                self::IDENTIFIER,
+                self::LABEL,
+                [$type],
+                $this->transport,
                 $this->transportProvider,
-                $this->channel,
                 $this->priceRequestFactory,
-                $this->localizationHelper,
                 $this->cache
             );
     }
@@ -117,19 +111,12 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
 
     public function testGetIdentifier()
     {
-        static::assertEquals('ups_1', $this->upsShippingMethod->getIdentifier());
+        static::assertEquals(self::IDENTIFIER, $this->upsShippingMethod->getIdentifier());
     }
 
     public function testGetLabel()
     {
-        $this->transport
-            ->expects(self::any())
-            ->method('getLabels')->willReturn(new ArrayCollection());
-
-        $this->localizationHelper
-            ->expects(self::once())
-            ->method('getLocalizedValue')->willReturn('ups_channel_1');
-        static::assertEquals('ups_channel_1', $this->upsShippingMethod->getLabel());
+        static::assertEquals(self::LABEL, $this->upsShippingMethod->getLabel());
     }
 
     public function testGetTypes()
@@ -137,16 +124,16 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
         $types = $this->upsShippingMethod->getTypes();
 
         static::assertCount(1, $types);
-        static::assertEquals('ups_identifier', $types[0]->getIdentifier());
+        static::assertEquals(self::TYPE_IDENTIFIER, $types[0]->getIdentifier());
     }
 
     public function testGetType()
     {
-        $identifier = 'ups_identifier';
+        $identifier = self::TYPE_IDENTIFIER;
         $type = $this->upsShippingMethod->getType($identifier);
 
         static::assertInstanceOf(UPSShippingMethodType::class, $type);
-        static::assertEquals('ups_identifier', $type->getIdentifier());
+        static::assertEquals(self::TYPE_IDENTIFIER, $type->getIdentifier());
     }
 
     public function testGetOptionsConfigurationFormType()
@@ -177,7 +164,7 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
         $methodOptions = ['surcharge' => $methodSurcharge];
         $optionsByTypes = ['01' => ['surcharge' => $typeSurcharge]];
 
-        $priceRequest = $this->getMockBuilder(PriceRequest::class)->disableOriginalConstructor()->getMock();
+        $priceRequest = $this->createMock(PriceRequest::class);
 
         $this->priceRequestFactory->expects(self::once())->method('create')->willReturn($priceRequest);
 
@@ -282,7 +269,7 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
             '04' => ['surcharge' => 50],
         ];
 
-        $priceRequest = $this->getMockBuilder(PriceRequest::class)->disableOriginalConstructor()->getMock();
+        $priceRequest = $this->createMock(PriceRequest::class);
 
         $this->priceRequestFactory->expects(self::once())->method('create')->willReturn($priceRequest);
 
@@ -324,7 +311,7 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
             ->with($cacheKey->setTypeId('04'))
             ->willReturn(false);
 
-        $priceResponse = $this->getMockBuilder(PriceResponse::class)->disableOriginalConstructor()->getMock();
+        $priceResponse = $this->createMock(PriceResponse::class);
         $priceResponse->expects(self::at(0))
             ->method('getPriceByService')
             ->with('03')
@@ -365,10 +352,10 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
         $methodOptions = ['surcharge' => 10];
         $optionsByTypes = [
             '01' => ['surcharge' => 20],
-            '02' => ['surcharge' => 30],
+            self::TYPE_IDENTIFIER => ['surcharge' => 30],
         ];
 
-        $priceRequest = $this->getMockBuilder(PriceRequest::class)->disableOriginalConstructor()->getMock();
+        $priceRequest = $this->createMock(PriceRequest::class);
 
         $this->priceRequestFactory->expects(self::once())->method('create')->willReturn($priceRequest);
 
@@ -392,39 +379,25 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
 
         $this->cache->expects(static::at(3))
             ->method('containsPrice')
-            ->with($cacheKey->setTypeId('02'))
+            ->with($cacheKey->setTypeId(self::TYPE_IDENTIFIER))
             ->willReturn(false);
 
-        $priceResponse = $this->getMockBuilder(PriceResponse::class)->disableOriginalConstructor()->getMock();
+        $priceResponse = $this->createMock(PriceResponse::class);
         $priceResponse->expects(self::at(0))
             ->method('getPriceByService')
-            ->with('02')
+            ->with(self::TYPE_IDENTIFIER)
             ->willReturn(Price::create(70, 'USD'));
 
-        $this->transport = $this->getMockBuilder(UPSTransport::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->transport->expects(static::exactly(2))
-            ->method('getApplicableShippingServices')
-            ->willReturn([
-                $this->getEntity(ShippingService::class, [
-                    'code' => '01'
-                ]),
-                $this->getEntity(ShippingService::class, [
-                    'code' => '02',
-                    'description' => 'Air',
-                ]),
-            ]);
-        $this->channel = $this->getEntity(
-            Channel::class,
-            ['id' => 1, 'transport' => $this->transport]
-        );
+        $this->transport = $this->createMock(UPSTransport::class);
+        $service = $this->getEntity(ShippingService::class, [
+            'code' => self::TYPE_IDENTIFIER,
+            'description' => 'Air',
+        ]);
 
         $priceRequest->expects(self::once())
             ->method('setServiceCode')
-            ->with('02')
+            ->with(self::TYPE_IDENTIFIER)
             ->willReturn($priceRequest);
-
         $priceRequest->expects(self::once())
             ->method('setServiceDescription')
             ->with('Air')
@@ -434,21 +407,29 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
 
         $this->cache->expects(static::at(4))
             ->method('savePrice')
-            ->with($cacheKey->setTypeId('02'))
+            ->with($cacheKey->setTypeId(self::TYPE_IDENTIFIER))
             ->willReturn(Price::create(70, 'USD'));
 
+        $type = $this->createMock(UPSShippingMethodType::class);
+        $type->method('getIdentifier')
+            ->willReturn(self::TYPE_IDENTIFIER);
+        $type->method('getShippingService')
+            ->willReturn($service);
+
         $this->upsShippingMethod = new UPSShippingMethod(
+            self::IDENTIFIER,
+            self::LABEL,
+            [$type],
+            $this->transport,
             $this->transportProvider,
-            $this->channel,
             $this->priceRequestFactory,
-            $this->localizationHelper,
             $this->cache
         );
         $prices = $this->upsShippingMethod->calculatePrices($context, $methodOptions, $optionsByTypes);
 
         static::assertEquals([
             '01' => Price::create(90, 'USD'),
-            '02' => Price::create(110, 'USD'),
+            self::TYPE_IDENTIFIER => Price::create(110, 'USD'),
         ], $prices);
     }
 }

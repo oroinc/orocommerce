@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Manager;
 
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -47,15 +47,15 @@ class ShoppingListOwnerManager
      */
     public function setOwner($ownerId, ShoppingList $shoppingList)
     {
-        $user = $this->registry->getRepository(AccountUser::class)->find($ownerId);
+        $user = $this->registry->getRepository(CustomerUser::class)->find($ownerId);
         if (null === $user) {
             throw new \InvalidArgumentException(sprintf("User with id=%s not exists", $ownerId));
         }
-        if ($user === $shoppingList->getAccountUser()) {
+        if ($user === $shoppingList->getCustomerUser()) {
             return;
         }
         if ($this->isUserAssignable($ownerId)) {
-            $shoppingList->setAccountUser($user);
+            $shoppingList->setCustomerUser($user);
             $this->registry->getManagerForClass(ShoppingList::class)->flush();
         } else {
             throw new AccessDeniedException();
@@ -69,7 +69,7 @@ class ShoppingListOwnerManager
     protected function isUserAssignable($id)
     {
         /** @var EntityRepository $repository */
-        $repository = $this->registry->getRepository(AccountUser::class);
+        $repository = $this->registry->getRepository(CustomerUser::class);
         $qb = $repository
             ->createQueryBuilder('user')
             ->where("user.id = :id")

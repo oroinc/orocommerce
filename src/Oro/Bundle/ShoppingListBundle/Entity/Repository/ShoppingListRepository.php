@@ -16,7 +16,7 @@ class ShoppingListRepository extends EntityRepository
      * @param bool $selectRelations
      * @return null|ShoppingList
      */
-    public function findAvailableForAccountUser(AclHelper $aclHelper, $selectRelations = false)
+    public function findAvailableForCustomerUser(AclHelper $aclHelper, $selectRelations = false)
     {
         /** @var ShoppingList $shoppingList */
         $qb = $this->getShoppingListQueryBuilder($selectRelations);

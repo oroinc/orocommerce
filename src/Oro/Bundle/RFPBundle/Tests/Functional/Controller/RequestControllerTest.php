@@ -99,7 +99,7 @@ class RequestControllerTest extends WebTestCase
         $form['oro_rfp_request[poNumber]'] = $updatedPoNumber;
 
         $form['oro_rfp_request[assignedUsers]'] = $this->getReference(LoadUserData::USER1)->getId();
-        $form['oro_rfp_request[assignedAccountUsers]'] = implode(',', [
+        $form['oro_rfp_request[assignedCustomerUsers]'] = implode(',', [
             $this->getReference(LoadUserData::ACCOUNT1_USER1)->getId(),
             $this->getReference(LoadUserData::ACCOUNT1_USER2)->getId()
         ]);

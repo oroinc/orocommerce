@@ -81,8 +81,6 @@
 
 @include breakpoint('desktop') {
     .topbar-navigation {
-        padding: $top-bar-offset-inner;
-
         &__item {
             &.last {
                 font-size: $base-font-size;

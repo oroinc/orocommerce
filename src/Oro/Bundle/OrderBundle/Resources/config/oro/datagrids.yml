@@ -198,8 +198,8 @@ datagrids:
             query:
                 select:
                     - CONCAT(order_owner.firstName, ' ', order_owner.lastName) as owner
-                    - CONCAT(accountUser.firstName, ' ', accountUser.lastName) as accountUserName
-                    - account.name as accountName
+                    - CONCAT(customerUser.firstName, ' ', customerUser.lastName) as customerUserName
+                    - customer.name as customerName
                     - order1.sourceEntityClass
                     - order1.sourceEntityId
                     - order1.sourceEntityIdentifier
@@ -207,8 +207,8 @@ datagrids:
                 join:
                     left:
                         - { join: order1.owner, alias: order_owner }
-                        - { join: order1.accountUser, alias: accountUser }
-                        - { join: order1.account, alias: account }
+                        - { join: order1.customerUser, alias: customerUser }
+                        - { join: order1.customer, alias: customer }
         columns:
             identifier:
                 label:         oro.order.identifier.label
@@ -236,10 +236,10 @@ datagrids:
                 multicurrency_config:
                     base_currency_label: oro.order.total.base.label
                     currency_field: currency
-            accountName:
-                label:         oro.order.account.label
-            accountUserName:
-                label:         oro.order.account_user.label
+            customerName:
+                label:         oro.order.customer.label
+            customerUserName:
+                label:         oro.order.customer_user.label
             owner:
                 label:         oro.order.owner.label
             paymentStatus:
@@ -294,10 +294,10 @@ datagrids:
                     data_name: subtotal
                 total:
                     data_name: total
-                accountName:
-                    data_name: accountName
-                accountUserName:
-                    data_name: accountUserName
+                customerName:
+                    data_name: customerName
+                customerUserName:
+                    data_name: customerUserName
                 owner:
                     data_name: owner
                 poNumber:
@@ -336,12 +336,12 @@ datagrids:
                 total:
                     type:      currency
                     data_name: total
-                accountName:
+                customerName:
                     type:      string
-                    data_name: accountName
-                accountUserName:
+                    data_name: customerName
+                customerUserName:
                     type:      string
-                    data_name: accountUserName
+                    data_name: customerUserName
                 owner:
                     type:      string
                     data_name: owner
@@ -498,46 +498,46 @@ datagrids:
                 icon:          eye
                 rowAction:     true
 
-    account-user-orders-grid:
+    customer-user-orders-grid:
         extends: embed-orders-grid
         source:
             query:
                 join:
                     left:
-                        - { join: order1.accountUser, alias: accountUser }
+                        - { join: order1.customerUser, alias: customerUser }
                 where:
                     and:
-                        - order1.accountUser = :account_user_id
+                        - order1.customerUser = :customer_user_id
             bind_parameters:
-                - account_user_id
+                - customer_user_id
 
-    account-orders-grid:
+    customer-orders-grid:
         extends: embed-orders-grid
         source:
             query:
                 select:
-                    - CONCAT(accountUser.firstName, ' ', accountUser.lastName) as accountUserName
+                    - CONCAT(customerUser.firstName, ' ', customerUser.lastName) as customerUserName
                 join:
                     left:
-                        - { join: order1.account, alias: account }
-                        - { join: order1.accountUser, alias: accountUser }
+                        - { join: order1.customer, alias: customer }
+                        - { join: order1.customerUser, alias: customerUser }
                 where:
                     and:
-                        - order1.account = :account_id
+                        - order1.customer = :customer_id
             bind_parameters:
-                - account_id
+                - customer_id
         columns:
-            accountUserName:
-                label:         oro.order.account_user.label
+            customerUserName:
+                label:         oro.order.customer_user.label
         sorters:
             columns:
-                accountUserName:
-                    data_name: accountUserName
+                customerUserName:
+                    data_name: customerUserName
         filters:
             columns:
-                accountUserName:
+                customerUserName:
                     type:      string
-                    data_name: accountUserName
+                    data_name: customerUserName
 
     base-order-line-items-grid:
         extended_entity_name: %oro_order.entity.order_line_item.class%
@@ -604,6 +604,9 @@ datagrids:
                 template:      OroOrderBundle:Order:Datagrid/frontendProduct.html.twig
             quantity:
                 label: oro.order.orderlineitem.quantity.label
+                type:          twig
+                frontend_type: html
+                template:      OroOrderBundle:Order:Datagrid/frontendQuantity.html.twig
             price:
                 label:         oro.order.orderlineitem.price.label
                 type:          twig
@@ -652,3 +655,97 @@ datagrids:
                 type: twig
                 template: OroOrderBundle:Order:Datagrid/shippingTrackingLink.html.twig
                 frontend_type: html
+
+    best-selling-products:
+        entity_name: %oro_report.calendar_date.entity.class%
+        options:
+            entityHint: calendarDate
+            export: true
+        source:
+            type: orm
+            query:
+                select:
+                    - calendarDate.date as cDate
+                    - orderAlias.createdAt as createdAt
+                    - lineitem.productUnitCode as unitCode
+                    - SUM (lineitem.quantity) as qtySold
+                    - product.sku as sku
+                from:
+                    - { table: %oro_report.calendar_date.entity.class%, alias: calendarDate }
+                join:
+                    left:
+                        -
+                            join: %oro_order.entity.order.class%
+                            alias: orderAlias
+                            conditionType: WITH
+                            condition: CAST(calendarDate.date as DATE) = CAST(orderAlias.createdAt as DATE)
+                        -
+                            join: orderAlias.lineItems
+                            alias: lineitem
+                        -
+                            join: lineitem.product
+                            alias: product
+                groupBy: product.id, unitCode
+        properties:
+            productName:
+                type: localized_value
+                data_name: product.names
+                allow_empty: true
+        columns:
+            cDate:
+                frontend_type: date
+                renderable: false
+            dateGrouping:
+                label:         oro.product.time_period.label
+            sku:
+                label:         oro.product.sku.label
+            productName:
+                label:         oro.product.names.label
+            qtySold:
+                label:         oro.product.qty_sold.label
+                type:          twig
+                template:      OroOrderBundle:Order:Datagrid/productQtySold.html.twig
+                frontend_type: html
+        sorters:
+            columns:
+                sku:
+                    data_name: product.sku
+                cDate:
+                    data_name: calendarDate.date
+                qtySold:
+                    data_name: qtySold
+                productName:
+                    data_name: productName
+            default:
+                cDate: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+                sku: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+        filters:
+            columns:
+                createdAt:
+                    label:     oro.product.time_period.label
+                    type:      datetime
+                    data_name: calendarDate.date
+                sku:
+                    type:      string
+                    data_name: product.sku
+                productName:
+                    type:      string
+                    data_name: productName
+                skip_empty_periods:
+                    type:      skip_empty_periods
+                    data_name: calendarDate.date
+                    label:     oro.product.skip_empty_periods.label
+                    not_nullable_field: product.id
+                grouping:
+                    type:      date_grouping
+                    data_name: calendarDate.date
+                    label:     oro.product.grouping.label
+                    column_name: dateGrouping
+                    calendar_entity: %oro_report.calendar_date.entity.class%
+                    target_entity: %oro_order.entity.order.class%
+                    not_nullable_field: product.id
+            default:
+                grouping:
+                    value: day
+                skip_empty_periods:
+                    value: true

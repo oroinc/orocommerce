@@ -49,7 +49,7 @@ class LoadPriceLists extends AbstractFixture
             'default' => false,
             'currencies' => ['GBP'],
             'active' => true,
-            'assignmentRule' => 'product.sku == "product.1"',
+            'assignmentRule' => 'product.sku == "product-1"',
         ],
         [
             'name' => 'priceList5',

@@ -9,7 +9,7 @@ use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
@@ -17,7 +17,8 @@ use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
 /**
- * Check if products have at least one price
+ * Check if shopping list has at least one price
+ * in the line items
  * Usage:
  * @has_price_in_shopping_line_items: items
  */
@@ -145,15 +146,15 @@ class HasPriceInShoppingLineItems extends AbstractCondition implements ContextAc
             );
         }
 
-        /** @var AccountUser $accountUser */
-        $accountUser = $this->securityFacade->getLoggedUser();
-        if (!$accountUser) {
+        /** @var CustomerUser $customerUser */
+        $customerUser = $this->securityFacade->getLoggedUser();
+        if (!$customerUser) {
             return false;
         }
 
         $prices = $this->productPriceProvider->getMatchedPrices(
             $productsPricesCriteria,
-            $this->priceListRequestHandler->getPriceListByAccount()
+            $this->priceListRequestHandler->getPriceListByCustomer()
         );
 
         return !empty(array_filter($prices));

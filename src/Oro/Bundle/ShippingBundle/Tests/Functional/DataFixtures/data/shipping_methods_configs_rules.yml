@@ -172,3 +172,12 @@ shipping_rule.12:
         -
             country: 'US'
             region: 'NY'
+shipping_rule_without_type_configs:
+    rule:
+        enabled: true
+        sortOrder: 0
+        expression: 'true'
+    currency: 'USD'
+    methodConfigs:
+         -
+            typeConfigs: []

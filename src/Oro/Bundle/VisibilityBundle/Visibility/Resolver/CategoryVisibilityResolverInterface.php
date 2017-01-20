@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\VisibilityBundle\Visibility\Resolver;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 
 interface CategoryVisibilityResolverInterface
@@ -26,39 +26,39 @@ interface CategoryVisibilityResolverInterface
 
     /**
      * @param Category $category
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $customerGroup
      * @return bool
      */
-    public function isCategoryVisibleForAccountGroup(Category $category, AccountGroup $accountGroup);
+    public function isCategoryVisibleForCustomerGroup(Category $category, CustomerGroup $customerGroup);
 
     /**
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $customerGroup
      * @return array
      */
-    public function getVisibleCategoryIdsForAccountGroup(AccountGroup $accountGroup);
+    public function getVisibleCategoryIdsForCustomerGroup(CustomerGroup $customerGroup);
 
     /**
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $customerGroup
      * @return array
      */
-    public function getHiddenCategoryIdsForAccountGroup(AccountGroup $accountGroup);
+    public function getHiddenCategoryIdsForCustomerGroup(CustomerGroup $customerGroup);
 
     /**
      * @param Category $category
-     * @param Account $account
+     * @param Customer $customer
      * @return bool
      */
-    public function isCategoryVisibleForAccount(Category $category, Account $account);
+    public function isCategoryVisibleForCustomer(Category $category, Customer $customer);
 
     /**
-     * @param Account $account
+     * @param Customer $customer
      * @return array
      */
-    public function getVisibleCategoryIdsForAccount(Account $account);
+    public function getVisibleCategoryIdsForCustomer(Customer $customer);
 
     /**
-     * @param Account $account
+     * @param Customer $customer
      * @return array
      */
-    public function getHiddenCategoryIdsForAccount(Account $account);
+    public function getHiddenCategoryIdsForCustomer(Customer $customer);
 }

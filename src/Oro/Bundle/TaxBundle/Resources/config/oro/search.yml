@@ -30,9 +30,9 @@ search:
                 target_type:            text
                 target_fields:          [description]
 
-    Oro\Bundle\TaxBundle\Entity\AccountTaxCode:
-        alias:            oro_account_tax_code
-        search_template:  OroTaxBundle:AccountTaxCode:searchResult.html.twig
+    Oro\Bundle\TaxBundle\Entity\CustomerTaxCode:
+        alias:            oro_customer_tax_code
+        search_template:  OroTaxBundle:CustomerTaxCode:searchResult.html.twig
         fields:
             -
                 name:                   code

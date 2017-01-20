@@ -2,40 +2,29 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\EventListener;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\DBAL\Connection;
-use Doctrine\ORM\Query;
-use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
-use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
-use Oro\Bundle\DataGridBundle\Event\OrmResultBeforeQuery;
+use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
+use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
-use Oro\Bundle\DataGridBundle\Event\OrmResultBefore;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
-use Oro\Component\TestUtils\ORM\Mocks\EntityManagerMock;
-use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\EventListener\VisibilityGridListener;
 use Oro\Bundle\VisibilityBundle\Provider\VisibilityChoicesProvider;
-use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Component\TestUtils\ORM\Mocks\EntityManagerMock;
 
 class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
 {
-    const ACCOUNT_CATEGORY_VISIBILITY_GRID = 'account-category-visibility-grid';
-    const ACCOUNT_GROUP_PRODUCT_VISIBILITY_GRID = 'account-group-product-visibility-grid';
-
-    const COLUMNS_PATH = '[columns][visibility]';
-    const FILTERS_PATH = '[filters][columns][visibility][options][field_options]';
-    const SELECTOR_PATH = '[options][cellSelection][selector]';
-    const SCOPE_PATH = '[scope]';
+    const CUSTOMER_CATEGORY_VISIBILITY_GRID = 'customer-category-visibility-grid';
+    const CUSTOMER_GROUP_PRODUCT_VISIBILITY_GRID = 'customer-group-product-visibility-grid';
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
@@ -87,20 +76,6 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
             $this->visibilityChoicesProvider,
             $this->scopeManager
         );
-
-        $this->listener->addSubscribedGridConfig(
-            self::ACCOUNT_CATEGORY_VISIBILITY_GRID,
-            'account',
-            AccountCategoryVisibility::class,
-            Category::class
-        );
-
-        $this->listener->addSubscribedGridConfig(
-            self::ACCOUNT_GROUP_PRODUCT_VISIBILITY_GRID,
-            'accountGroup',
-            AccountGroupProductVisibility::class,
-            Product::class
-        );
     }
 
     public function testOnPreBuild()
@@ -113,11 +88,13 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $config->method('getName')->willReturn(self::ACCOUNT_CATEGORY_VISIBILITY_GRID);
+        $config->method('getName')->willReturn(self::CUSTOMER_CATEGORY_VISIBILITY_GRID);
         $config->method('offsetGetByPath')
             ->willReturnMap(
                 [
-                    ['[options][cellSelection][selector]', null, '#account-category-visibility-changeset'],
+                    ['[options][cellSelection][selector]', null, '#customer-category-visibility-changeset'],
+                    ['[options][visibilityEntityClass]', null, CustomerCategoryVisibility::class],
+                    ['[options][targetEntityClass]', null, Category::class],
                     ['[scope]', null, 'scope'],
                     ['[columns][visibility]', null, []],
                     ['[filters][columns][visibility][options][field_options]', null, []],
@@ -128,7 +105,7 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
         $config->expects($this->exactly(4))
             ->method('offsetSetByPath')
             ->withConsecutive(
-                ['[options][cellSelection][selector]', '#account-category-visibility-changeset-2'],
+                ['[options][cellSelection][selector]', '#customer-category-visibility-changeset-2'],
                 ['[scope]', 'scope-2'],
                 ['[columns][visibility]', ['choices' => $this->choices]],
                 ['[filters][columns][visibility][options][field_options]', ['choices' => $this->choices]]
@@ -138,7 +115,7 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onPreBuild($event);
     }
 
-    public function testOnOrmResultBeforeQuery()
+    public function testOnDatagridBuildAfter()
     {
         $scope = new Scope();
         $repository = $this->createMock(ObjectRepository::class);
@@ -149,23 +126,37 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->scopeManager->expects($this->once())->method('getCriteriaByScope')
-            ->with($scope, 'account_category_visibility')
+            ->with($scope, 'customer_category_visibility')
             ->willReturn($scopeCriteria);
 
         $datagrid = $this->createMock(DatagridInterface::class);
         $datagrid->method('getParameters')->willReturn(new ParameterBag(['scope_id' => 1]));
-        $datagrid->method('getName')->willReturn(self::ACCOUNT_CATEGORY_VISIBILITY_GRID);
-        $qb = $this->getMockBuilder(QueryBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $scopeCriteria->expects($this->once())->method('applyToJoin')
-            ->with($qb, 'scope', ['account']);
+        $datagrid->method('getName')->willReturn(self::CUSTOMER_CATEGORY_VISIBILITY_GRID);
+        $ds = $this->getMockBuilder(OrmDatasource::class)->disableOriginalConstructor()->getMock();
+        $qb = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
+        $ds->method('getQueryBuilder')->willReturn($qb);
+        $datagrid->method('getDatasource')->willReturn($ds);
 
-        $event = new OrmResultBeforeQuery($datagrid, $qb);
-        $this->listener->onOrmResultBeforeQuery($event);
+        // assert that join with scope was applied properly
+        $scopeCriteria->expects($this->once())->method('applyToJoin')
+            ->with($qb, 'scope', ['customer']);
+
+        $config = $this->getMockBuilder(DatagridConfiguration::class)->disableOriginalConstructor()->getMock();
+        $config->method('getName')->willReturn(self::CUSTOMER_CATEGORY_VISIBILITY_GRID);
+        $config->method('offsetGetByPath')
+            ->willReturnMap(
+                [
+                    ['[options][scopeAttr]', null, 'customer'],
+                    ['[options][visibilityEntityClass]', null, CustomerCategoryVisibility::class],
+                ]
+            );
+        $datagrid->method('getConfig')->willReturn($config);
+
+        $event = new BuildAfter($datagrid, $qb);
+        $this->listener->onDatagridBuildAfter($event);
     }
 
-    public function testOnOrmResultBeforeQueryDefaultScope()
+    public function testOnDatagridBuildAfterDefaultScope()
     {
         $scope = new Scope();
         $this->scopeManager->method('findDefaultScope')->willReturn($scope);
@@ -173,145 +164,34 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->scopeManager->expects($this->once())->method('getCriteriaByScope')
-            ->with($scope, 'account_category_visibility')
+            ->with($scope, 'customer_category_visibility')
             ->willReturn($scopeCriteria);
 
         $datagrid = $this->createMock(DatagridInterface::class);
         $datagrid->method('getParameters')->willReturn(new ParameterBag([]));
-        $datagrid->method('getName')->willReturn(self::ACCOUNT_CATEGORY_VISIBILITY_GRID);
-        $qb = $this->getMockBuilder(QueryBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $datagrid->method('getName')->willReturn(self::CUSTOMER_CATEGORY_VISIBILITY_GRID);
+        $ds = $this->getMockBuilder(OrmDatasource::class)->disableOriginalConstructor()->getMock();
+        $qb = $this->getMockBuilder(QueryBuilder::class)->disableOriginalConstructor()->getMock();
+        $ds->method('getQueryBuilder')->willReturn($qb);
+        $datagrid->method('getDatasource')->willReturn($ds);
+
+        // assert that join with scope was applied properly
         $scopeCriteria->expects($this->once())->method('applyToJoin')
-            ->with($qb, 'scope', ['account']);
+            ->with($qb, 'scope', ['customer']);
 
-        $event = new OrmResultBeforeQuery($datagrid, $qb);
-        $this->listener->onOrmResultBeforeQuery($event);
-    }
-
-    public function testOnResultBefore()
-    {
-        $event = $this->getOrmResultBeforeEvent(
-            self::ACCOUNT_CATEGORY_VISIBILITY_GRID,
-            $this->getParameterBag(AccountCategoryVisibility::getDefault(new Category()))
-        );
-        $expected = (string)(new Expr())->orX(
-            (new Expr())->isNull(VisibilityGridListener::VISIBILITY_FIELD)
-        );
-
-        $this->listener->onResultBefore($event);
-        $this->assertStringEndsWith($expected, $event->getQuery()->getDQL());
-    }
-
-    public function testOnResultBeforeNotFilteredByDefault()
-    {
-        $event = $this->getOrmResultBeforeEvent(
-            self::ACCOUNT_CATEGORY_VISIBILITY_GRID,
-            $this->getParameterBag($this->getNotDefaultAccountCategoryVisibility())
-        );
-        $this->listener->onResultBefore($event);
-        $this->assertNull($event->getQuery()->getDQL());
-    }
-
-    public function testOnResultBeforeNoFilter()
-    {
-        $event = $this->getOrmResultBeforeEvent(
-            self::ACCOUNT_CATEGORY_VISIBILITY_GRID,
-            $this->getParameterBag()
-        );
-        $this->listener->onResultBefore($event);
-        $this->assertNull($event->getQuery()->getDQL());
-    }
-
-    /**
-     * @param string $gridName
-     * @param ParameterBag $bag
-     *
-     * @return OrmResultBefore
-     */
-    protected function getOrmResultBeforeEvent($gridName, ParameterBag $bag)
-    {
-        return new OrmResultBefore(
-            $this->getDatagrid($gridName, $bag),
-            new Query($this->getEntityManager())
-        );
-    }
-
-    /**
-     * @param string $gridName
-     * @param ParameterBag $bag
-     *
-     * @return \PHPUnit_Framework_MockObject_MockObject|DatagridInterface
-     */
-    protected function getDatagrid($gridName, ParameterBag $bag)
-    {
-        $qb = new QueryBuilder($this->getEntityManager());
-        $qb->where(sprintf("%s IN(1)", VisibilityGridListener::VISIBILITY_FIELD));
-
-        /** @var OrmDatasource|\PHPUnit_Framework_MockObject_MockObject $dataSource */
-        $dataSource = $this
-            ->getMockBuilder(OrmDatasource::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $dataSource->expects($this->any())
-            ->method('getQueryBuilder')
-            ->willReturn($qb);
-
-        $dataGrid = $this->createMock(DatagridInterface::class);
-        $dataGrid
-            ->expects($this->any())
-            ->method('getName')
-            ->willReturn($gridName);
-        $dataGrid
-            ->expects($this->any())
-            ->method('getParameters')
-            ->willReturn($bag);
-        $dataGrid->expects($this->any())
-            ->method('getDataSource')
-            ->willReturn($dataSource);
-
-        return $dataGrid;
-    }
-
-    /**
-     * @param string|null $visibilityFilterValue
-     *
-     * @return ParameterBag
-     */
-    protected function getParameterBag($visibilityFilterValue = null)
-    {
-        $bag = new ParameterBag();
-
-        if (!$visibilityFilterValue) {
-            return $bag;
-        }
-
-        $repository = $this->createMock(ObjectRepository::class);
-        $repository->expects($this->exactly(1))
-            ->method('find')
+        $config = $this->getMockBuilder(DatagridConfiguration::class)->disableOriginalConstructor()->getMock();
+        $config->method('getName')->willReturn(self::CUSTOMER_CATEGORY_VISIBILITY_GRID);
+        $config->method('offsetGetByPath')
             ->willReturnMap(
                 [
-                    [1, null, null, new Category()],
+                    ['[options][scopeAttr]', null, 'customer'],
+                    ['[options][visibilityEntityClass]', null, CustomerCategoryVisibility::class],
                 ]
             );
-        $this->registry->expects($this->exactly(1))
-            ->method('getRepository')
-            ->with(Category::class)
-            ->willReturn($repository);
+        $datagrid->method('getConfig')->willReturn($config);
 
-        $bag->set(
-            '_filter',
-            [
-                'visibility' => [
-                    'value' => [
-                        $visibilityFilterValue,
-                    ],
-                ],
-            ]
-        );
-        $bag->set('target_entity_id', 1);
-
-        return $bag;
+        $event = new BuildAfter($datagrid, $qb);
+        $this->listener->onDatagridBuildAfter($event);
     }
 
     /**
@@ -323,20 +203,5 @@ class VisibilityGridListenerTest extends \PHPUnit_Framework_TestCase
         $connection = $this->getMockBuilder(Connection::class)->disableOriginalConstructor()->getMock();
 
         return EntityManagerMock::create($connection);
-    }
-
-    /**
-     * @return string|null
-     */
-    protected function getNotDefaultAccountCategoryVisibility()
-    {
-        $category = new Category();
-        foreach (AccountCategoryVisibility::getVisibilityList($category) as $visibility) {
-            if (AccountCategoryVisibility::getDefault($category) != $visibility) {
-                return $visibility;
-            }
-        };
-
-        return null;
     }
 }

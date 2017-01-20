@@ -22,7 +22,7 @@ class DataAuditEntityMappingPass implements CompilerPassInterface
         $mapperDefinition->addMethodCall(
             'addAuditEntryClasses',
             [
-                $container->getParameter('oro_customer.entity.account_user.class'),
+                $container->getParameter('oro_customer.entity.customer_user.class'),
                 $container->getParameter('oro_customer.entity.audit.class'),
                 $container->getParameter('oro_dataaudit.loggable.entity_field.class'),
             ]

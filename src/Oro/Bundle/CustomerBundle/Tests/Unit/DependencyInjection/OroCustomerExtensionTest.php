@@ -18,8 +18,8 @@ class OroCustomerExtensionTest extends ExtensionTestCase
         $this->loadExtension($extension);
 
         $expectedParameters = [
-            'oro_customer.entity.account.class',
-            'oro_customer.entity.account_group.class'
+            'oro_customer.entity.customer.class',
+            'oro_customer.entity.customer_group.class'
         ];
 
         $this->assertParametersLoaded($expectedParameters);

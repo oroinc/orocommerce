@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 
+use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Provider\SystemDefaultProductUnitProvider;
@@ -9,66 +11,62 @@ use Oro\Bundle\ProductBundle\Provider\SystemDefaultProductUnitProvider;
 class SystemDefaultProductUnitProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
+     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $configManager;
+
+    /**
+     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $doctrineHelper;
+
+    /**
      * @var SystemDefaultProductUnitProvider
      */
     protected $defaultProductUnitProvider;
 
-    /**
-     * @var ProductUnitPrecision
-     */
-    protected $expectedUnitPrecision;
-
     public function setUp()
     {
-        $configManager = $this
-            ->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
+        $this->configManager = $this->getMockBuilder(ConfigManager::class)
             ->disableOriginalConstructor()
             ->getMock();
-        
-        $map = array(
-            array('oro_product.default_unit', false, false, null, 'kg'),
-            array('oro_product.default_unit_precision', false, false, null, '3')
+
+        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->defaultProductUnitProvider = new SystemDefaultProductUnitProvider(
+            $this->configManager,
+            $this->doctrineHelper
         );
-
-        $configManager->expects($this->any())
-            ->method('get')
-            ->will($this->returnValueMap($map));
-
-        $productUnitRepository = $this
-            ->getMockBuilder('Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $productUnit = new ProductUnit();
-        $productUnit->setCode('kg');
-        $productUnit->setDefaultPrecision('3');
-        
-        $productUnitRepository->expects($this->once())
-            ->method('findOneBy')
-            ->will($this->returnValue($productUnit));
-
-        $manager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
-        $manager->expects($this->once())
-            ->method('getRepository')
-            ->with('OroProductBundle:ProductUnit')
-            ->willReturn($productUnitRepository);
-
-        $managerRegistry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
-        $managerRegistry->expects($this->any())
-            ->method('getManagerForClass')
-            ->with('OroProductBundle:ProductUnit')
-            ->willReturn($manager);
-
-        $this->expectedUnitPrecision = new ProductUnitPrecision();
-        $this->expectedUnitPrecision->setUnit($productUnit)->setPrecision('3');
-
-        $this->defaultProductUnitProvider = new SystemDefaultProductUnitProvider($configManager, $managerRegistry);
     }
 
-    public function testGetDefaultProductUnit()
+    public function testGetDefaultProductUnitPrecision()
     {
+        $unitCode = 'each';
+        $precision = 10;
+
+        $this->configManager->expects(static::at(0))
+            ->method('get')
+            ->with('oro_product.default_unit')
+            ->willReturn($unitCode);
+
+        $this->configManager->expects(static::at(1))
+            ->method('get')
+            ->with('oro_product.default_unit_precision')
+            ->willReturn($precision);
+
+        $unit = $this->createMock(ProductUnit::class);
+        $this->doctrineHelper->expects(static::once())
+            ->method('getEntityReference')
+            ->with(ProductUnit::class, $unitCode)
+            ->willReturn($unit);
+
+        $expectedUnitPrecision = new ProductUnitPrecision();
+        $expectedUnitPrecision->setUnit($unit)->setPrecision($precision);
+
         $this->assertEquals(
-            $this->expectedUnitPrecision,
+            $expectedUnitPrecision,
             $this->defaultProductUnitProvider->getDefaultProductUnitPrecision()
         );
     }

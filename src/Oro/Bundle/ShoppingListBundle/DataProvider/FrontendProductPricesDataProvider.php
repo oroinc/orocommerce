@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\DataProvider;
 use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
@@ -58,9 +58,9 @@ class FrontendProductPricesDataProvider
      */
     public function getProductsMatchedPrice(array $lineItems)
     {
-        /** @var AccountUser $accountUser */
-        $accountUser = $this->securityFacade->getLoggedUser();
-        if (!$accountUser) {
+        /** @var CustomerUser $customerUser */
+        $customerUser = $this->securityFacade->getLoggedUser();
+        if (!$customerUser) {
             return null;
         }
 
@@ -68,7 +68,7 @@ class FrontendProductPricesDataProvider
 
         $prices = $this->productPriceProvider->getMatchedPrices(
             $productsPriceCriteria,
-            $this->priceListRequestHandler->getPriceListByAccount()
+            $this->priceListRequestHandler->getPriceListByCustomer()
         );
 
         $result = [];
@@ -87,14 +87,14 @@ class FrontendProductPricesDataProvider
      */
     public function getProductsAllPrices(array $lineItems)
     {
-        /** @var AccountUser $accountUser */
-        $accountUser = $this->securityFacade->getLoggedUser();
-        if (!$accountUser) {
+        /** @var CustomerUser $customerUser */
+        $customerUser = $this->securityFacade->getLoggedUser();
+        if (!$customerUser) {
             return null;
         }
 
         $prices = $this->productPriceProvider->getPriceByPriceListIdAndProductIds(
-            $this->priceListRequestHandler->getPriceListByAccount()->getId(),
+            $this->priceListRequestHandler->getPriceListByCustomer()->getId(),
             array_map(function (LineItem $lineItem) {
                 return $lineItem->getProduct()->getId();
             }, $lineItems),

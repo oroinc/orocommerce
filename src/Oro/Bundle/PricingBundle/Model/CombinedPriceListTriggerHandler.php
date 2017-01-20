@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Model;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
-use Oro\Bundle\PricingBundle\Entity\MinimalProductPrice;
+use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
@@ -91,9 +91,8 @@ class CombinedPriceListTriggerHandler
     {
         $websiteId = $website ? $website->getId() : null;
 
-        // use minimal product prices because of table size
-        $repository = $this->registry->getManagerForClass(MinimalProductPrice::class)
-            ->getRepository(MinimalProductPrice::class);
+        $repository = $this->registry->getManagerForClass(CombinedProductPrice::class)
+            ->getRepository(CombinedProductPrice::class);
         $productIds = $repository->getProductIdsByPriceLists($combinedPriceLists);
         $this->productsSchedule[$websiteId] = $productIds;
 
@@ -143,8 +142,8 @@ class CombinedPriceListTriggerHandler
     protected function dispatchByPriceLists(array $websiteIds, array $cplIds)
     {
         // use minimal product prices because of table size
-        $repository = $this->registry->getManagerForClass(MinimalProductPrice::class)
-            ->getRepository(MinimalProductPrice::class);
+        $repository = $this->registry->getManagerForClass(CombinedProductPrice::class)
+            ->getRepository(CombinedProductPrice::class);
         $productIds = $repository->getProductIdsByPriceLists($cplIds);
         if ($productIds) {
             $event = new ReindexationRequestEvent([Product::class], $websiteIds, $productIds);

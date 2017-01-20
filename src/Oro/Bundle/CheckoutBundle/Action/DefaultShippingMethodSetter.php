@@ -3,31 +3,21 @@
 namespace Oro\Bundle\CheckoutBundle\Action;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory;
-use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
+use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInterface;
 
 class DefaultShippingMethodSetter
 {
     /**
-     * @var CheckoutShippingContextFactory
+     * @var CheckoutShippingMethodsProviderInterface
      */
-    protected $contextProviderFactory;
+    private $checkoutShippingMethodsProvider;
 
     /**
-     * @var ShippingPriceProvider
+     * @param CheckoutShippingMethodsProviderInterface $checkoutShippingMethodsProvider
      */
-    protected $priceProvider;
-
-    /**
-     * @param CheckoutShippingContextFactory $contextProviderFactory
-     * @param ShippingPriceProvider          $priceProvider
-     */
-    public function __construct(
-        CheckoutShippingContextFactory $contextProviderFactory,
-        ShippingPriceProvider $priceProvider
-    ) {
-        $this->contextProviderFactory = $contextProviderFactory;
-        $this->priceProvider = $priceProvider;
+    public function __construct(CheckoutShippingMethodsProviderInterface $checkoutShippingMethodsProvider)
+    {
+        $this->checkoutShippingMethodsProvider = $checkoutShippingMethodsProvider;
     }
 
     /**
@@ -38,11 +28,14 @@ class DefaultShippingMethodSetter
         if ($checkout->getShippingMethod()) {
             return;
         }
-        $context = $this->contextProviderFactory->create($checkout);
-        $methodsData = $this->priceProvider->getApplicableMethodsWithTypesData($context);
-        if (count($methodsData) === 0) {
+
+        $methodsDataCollection = $this->checkoutShippingMethodsProvider->getApplicableMethodsViews($checkout);
+
+        if ($methodsDataCollection->isEmpty()) {
             return;
         }
+
+        $methodsData = $methodsDataCollection->toArray();
         $methodData = reset($methodsData);
         $typeData = reset($methodData['types']);
         $checkout->setShippingMethod($methodData['identifier']);

@@ -29,7 +29,9 @@
                 }
                 ) }}
             {% endset %}
-            {{ UI.renderHtmlProperty('oro.product.primary_unit_precision.label'|trans, primaryUnitPrecisionElement )}}
+            {% if oro_is_product_primary_unit_visible(product) %}
+                {{ UI.renderHtmlProperty('oro.product.primary_unit_precision.label'|trans, primaryUnitPrecisionElement )}}
+            {% endif %}
 
             {% set productUnitPrecisions = [] %}
 

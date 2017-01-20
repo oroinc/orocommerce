@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend\Api
 
 use Symfony\Component\HttpFoundation\Response;
 
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserACLData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserACLData;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListACLData;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
@@ -23,8 +23,8 @@ class LineItemControllerAclTest extends WebTestCase
         $this->initClient(
             [],
             $this->generateBasicAuthHeader(
-                LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
-                LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_LOCAL
+                LoadCustomerUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
+                LoadCustomerUserACLData::USER_ACCOUNT_1_ROLE_LOCAL
             )
         );
 

@@ -4,6 +4,7 @@ define(function(require) {
     var ProductQuickAddToShoppingListView;
     var ProductAddToShoppingListView = require('oroshoppinglist/js/app/views/product-add-to-shopping-list-view');
     var mediator = require('oroui/js/mediator');
+    var _ = require('underscore');
 
     ProductQuickAddToShoppingListView = ProductAddToShoppingListView.extend({
         initialize: function(options) {

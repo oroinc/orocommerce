@@ -2,12 +2,15 @@
 
 namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
 
+use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Oro\Bundle\LayoutBundle\Layout\DataProvider\AbstractFormProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Form\Type\FrontendVariantFiledType;
+use Oro\Bundle\ProductBundle\ProductVariant\Form\Type\FrontendVariantFiledType;
+use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
@@ -20,6 +23,24 @@ class ProductFormProvider extends AbstractFormProvider
     const PRODUCT_QUICK_ADD_COPY_PASTE_ROUTE_NAME   = 'oro_product_frontend_quick_add_copy_paste';
     const PRODUCT_QUICK_ADD_IMPORT_ROUTE_NAME       = 'oro_product_frontend_quick_add_import';
     const PRODUCT_VARIANTS_GET_AVAILABLE_VARIANTS   = 'oro_product_frontend_ajax_product_variant_get_available';
+
+    /**
+     * @var ProductVariantAvailabilityProvider
+     */
+    private $productVariantAvailabilityProvider;
+
+    /**
+     * {@inheritdoc}
+     * @param ProductVariantAvailabilityProvider $productVariantAvailabilityProvider
+     */
+    public function __construct(
+        FormFactoryInterface $formFactory,
+        UrlGeneratorInterface $router,
+        ProductVariantAvailabilityProvider $productVariantAvailabilityProvider
+    ) {
+        parent::__construct($formFactory, $router);
+        $this->productVariantAvailabilityProvider = $productVariantAvailabilityProvider;
+    }
 
     /**
      * @param null  $data
@@ -115,9 +136,10 @@ class ProductFormProvider extends AbstractFormProvider
      */
     public function getVariantFieldsForm(Product $product)
     {
+        $data = $this->getVariantFieldsFormData($product);
         $options = $this->getVariantFieldsFormOptions($product);
 
-        return $this->getForm(FrontendVariantFiledType::NAME, [], $options);
+        return $this->getForm(FrontendVariantFiledType::NAME, $data, $options);
     }
 
     /**
@@ -126,9 +148,10 @@ class ProductFormProvider extends AbstractFormProvider
      */
     public function getVariantFieldsFormView(Product $product)
     {
+        $data = $this->getVariantFieldsFormData($product);
         $options = $this->getVariantFieldsFormOptions($product);
 
-        return $this->getFormView(FrontendVariantFiledType::NAME, [], $options);
+        return $this->getFormView(FrontendVariantFiledType::NAME, $data, $options);
     }
 
     /**
@@ -145,6 +168,15 @@ class ProductFormProvider extends AbstractFormProvider
 
     /**
      * @param Product $product
+     * @return Product|null
+     */
+    private function getVariantFieldsFormData(Product $product)
+    {
+        return $this->productVariantAvailabilityProvider->getSimpleProductByVariantFields($product, [], false);
+    }
+
+    /**
+     * @param Product $product
      * @return array
      */
     private function getVariantFieldsFormOptions(Product $product)
@@ -154,7 +186,7 @@ class ProductFormProvider extends AbstractFormProvider
                 self::PRODUCT_VARIANTS_GET_AVAILABLE_VARIANTS,
                 ['id' => $product->getId()]
             ),
-            'product' => $product,
+            'parentProduct' => $product,
         ];
     }
 }

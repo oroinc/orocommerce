@@ -1,15 +1,15 @@
 /*jslint nomen:true*/
 /*global define*/
-define(function (require) {
+define(function(require) {
     'use strict';
 
-    var ProductUnitSelectionLimitationsComponent,
-        $ = require('jquery'),
-        _ = require('underscore'),
-        BaseComponent = require('oroui/js/app/components/base/component'),
-        DeleteConfirmation = require('oroui/js/delete-confirmation'),
-        __ = require('orotranslation/js/translator'),
-        mediator = require('oroui/js/mediator');
+    var ProductUnitSelectionLimitationsComponent;
+    var $ = require('jquery');
+    var _ = require('underscore');
+    var BaseComponent = require('oroui/js/app/components/base/component');
+    var DeleteConfirmation = require('oroui/js/delete-confirmation');
+    var __ = require('orotranslation/js/translator');
+    var mediator = require('oroui/js/mediator');
 
     ProductUnitSelectionLimitationsComponent = BaseComponent.extend({
         /**
@@ -27,7 +27,7 @@ define(function (require) {
             conversionRateInput: 'input[name$="[conversionRate]"]',
             hiddenUnitClass: 'hidden-unit',
             parentTableSelector: '',
-            pricesUnitsSelector: "select[name^='oro_product[prices]'][name$='[unit]']",
+            pricesUnitsSelector: 'select[name^="oro_product[prices]"][name$="[unit]"]',
             precisions: {}
         },
 
@@ -41,7 +41,7 @@ define(function (require) {
         /**
          * {@inheritDoc}
          */
-        initialize: function (options) {
+        initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
             this.options._sourceElement
@@ -57,7 +57,7 @@ define(function (require) {
          *
          * @returns {jQuery.Element}
          */
-        getAddButton: function () {
+        getAddButton: function() {
             return this.options._sourceElement.find(this.options.addButtonSelector);
         },
 
@@ -66,12 +66,14 @@ define(function (require) {
          *
          * @param {jQuery.Event} e
          */
-        onRemoveRow: function (e) {
+        onRemoveRow: function(e) {
             e.stopPropagation();
-            var option = $(e.target).closest(this.options.selectParent).find(this.options.unitSelect + ' option:selected');
-            var units_with_prices = this.getUnitsWithPrices();
+            var option = $(e.target).closest(this.options.selectParent).find(
+                this.options.unitSelect + ' option:selected'
+            );
+            var unitsWithPrices = this.getUnitsWithPrices();
             var val = option.val();
-            if (units_with_prices[val] != undefined) {
+            if (unitsWithPrices[val] !== undefined) {
                 this.showError();
             } else {
                 $(e.target).closest(this.options.dataContent).trigger('content:remove');
@@ -81,33 +83,33 @@ define(function (require) {
         /**
          * Handle change select
          */
-        onChange: function () {
-            var selects = this.options._sourceElement.find(this.options.unitSelect),
-                self = this;
+        onChange: function() {
+            var selects = this.options._sourceElement.find(this.options.unitSelect);
+            var self = this;
 
             self.toggleTableVisibility();
-            
-            selects.each(function (index) {
+
+            selects.each(function(index) {
                 var select = $(this);
 
-                selects.each(function (_index) {
+                selects.each(function(_index) {
 
                     var primary = null;
-                    _.each(self.getPrimaryData(), function(text,val){
+                    _.each(self.getPrimaryData(), function(text, val) {
                         primary = val;
                     });
 
-                    var primaryOption = $(this).find("option[value='" + primary + "']");
+                    var primaryOption = $(this).find('option[value="' + primary + '"]');
 
                     if (primaryOption) {
                         primaryOption.remove();
                     }
-                    
-                    if (index == _index) {
+
+                    if (index === _index) {
                         return;
                     }
 
-                    var option = $(this).find("option[value='" + select.val() + "']");
+                    var option = $(this).find('option[value="' + select.val() + '"]');
 
                     if (option) {
                         option.remove();
@@ -120,10 +122,10 @@ define(function (require) {
 
                 var option = select.find('option:selected');
 
-                if (option.val() != select.data('prevValue') && !select.hasClass(self.options.hiddenUnitClass)) {
+                if (option.val() !== select.data('prevValue') && !select.hasClass(self.options.hiddenUnitClass)) {
                     var value = self.options.precisions[option.val()];
 
-                    if (value != undefined) {
+                    if (value !== undefined) {
                         select.parents(self.options.selectParent).find('input[class="precision"]').val(value);
                     }
                 }
@@ -135,7 +137,7 @@ define(function (require) {
 
                 self.addData({value: option.val(), text: option.text()});
             });
-            _.each(self.getPrimaryData(),function(text, val){
+            _.each(self.getPrimaryData(), function(text, val) {
                 self.addConversionRateLabels(val);
             });
         },
@@ -143,20 +145,20 @@ define(function (require) {
         /**
          *  Handle changes in primary precision
          */
-        onPrimaryPrecisionChange: function (e) {
+        onPrimaryPrecisionChange: function(e) {
             var removed = e.removed;
             var added = e.added;
             var self = this;
             if (!_.isEmpty(removed)) {
-                _.each(removed,function(text, val){
-                    self.addOptionToAllSelects(val,text);
-                })
+                _.each(removed, function(text, val) {
+                    self.addOptionToAllSelects(val, text);
+                });
             }
             if (!_.isEmpty(added)) {
-                _.each(added,function(text, val){
+                _.each(added, function(text, val) {
                     self.addConversionRateLabels(val);
-                    self.removeOptionFromAllSelects(val,text);
-                })
+                    self.removeOptionFromAllSelects(val, text);
+                });
             }
         },
 
@@ -165,7 +167,7 @@ define(function (require) {
          *
          * @param {jQuery.Event} e
          */
-        onRemoveItem: function (e) {
+        onRemoveItem: function(e) {
             var option = $(e.target).find('select:enabled option:selected');
 
             if (option) {
@@ -182,7 +184,7 @@ define(function (require) {
          *
          * @param {jQuery.Event}  e
          */
-        onSelectChange: function (e) {
+        onSelectChange: function(e) {
             var select = $(e.target);
             this.removeData({value: select.data('prevValue'), text: select.data('prevText')});
             this.addOptionToAllSelects(select.data('prevValue'), select.data('prevText'));
@@ -195,11 +197,11 @@ define(function (require) {
          * @param {String} value
          * @param {String} text
          */
-        addOptionToAllSelects: function (value, text) {
-            this.options._sourceElement.find(this.options.unitSelect).each(function () {
+        addOptionToAllSelects: function(value, text) {
+            this.options._sourceElement.find(this.options.unitSelect).each(function() {
                 var select = $(this);
 
-                if (select.data('prevValue') != value) {
+                if (select.data('prevValue') !== value) {
                     select.append($('<option></option>').val(value).text(text));
                 }
             });
@@ -210,12 +212,14 @@ define(function (require) {
          *
          * @param {String} value
          */
-        addConversionRateLabels: function (value) {
-            this.options._sourceElement.find(this.options.conversionRateInput).each(function () {
+        addConversionRateLabels: function(value) {
+            this.options._sourceElement.find(this.options.conversionRateInput).each(function() {
                 var input = $(this);
                 var text = __('oro.product.product_unit.' + value + '.label.short_plural');
                 input.parent('td').find('span').remove();
-                input.parent('td').append($('<span></span>').html('<em>&nbsp;</em>'+text.toLowerCase()).addClass('conversion-rate-label'));
+                input.parent('td').append($('<span></span>').html('<em>&nbsp;</em>' + text.toLowerCase()).addClass(
+                    'conversion-rate-label'
+                ));
             });
         },
 
@@ -225,11 +229,11 @@ define(function (require) {
          * @param {String} value
          * @param {String} text
          */
-        removeOptionFromAllSelects: function (value, text) {
-            this.options._sourceElement.find(this.options.unitSelect).each(function () {
+        removeOptionFromAllSelects: function(value, text) {
+            this.options._sourceElement.find(this.options.unitSelect).each(function() {
                 var select = $(this);
-                var option = select.find('option[value="'+value+'"]');
-                if (option != undefined) {
+                var option = select.find('option[value="' + value + '"]');
+                if (option !== undefined) {
                     option.remove();
                 }
             });
@@ -240,7 +244,7 @@ define(function (require) {
          *
          * @param {jQuery.Event} e
          */
-        askConfirmation: function (e) {
+        askConfirmation: function(e) {
             if (!this.confirm) {
                 this.confirm = new DeleteConfirmation({
                     content: __(this.options.deleteMessage)
@@ -249,7 +253,7 @@ define(function (require) {
 
             this.confirm
                 .off('ok')
-                .on('ok', _.bind(function () {
+                .on('ok', _.bind(function() {
                     this.onRemoveItem(e);
                 }, this))
                 .open();
@@ -259,7 +263,7 @@ define(function (require) {
          * Show error
          *
          */
-        showError: function () {
+        showError: function() {
             if (!this.error) {
                 this.error = new DeleteConfirmation({
                     title: __(this.options.errorTitle),
@@ -277,7 +281,7 @@ define(function (require) {
         /**
          * @param {Object} data with structure {value: value, text: text}
          */
-        addData: function (data) {
+        addData: function(data) {
             var storedData = this.getData();
             var primaryData = this.getPrimaryData();
             if (storedData.hasOwnProperty(data.value) || primaryData.hasOwnProperty(data.value)) {
@@ -293,7 +297,7 @@ define(function (require) {
         /**
          * @param {Object} data with structure {value: value, text: text}
          */
-        removeData: function (data) {
+        removeData: function(data) {
             var storedData = this.getData();
             delete storedData[data.value];
 
@@ -306,23 +310,23 @@ define(function (require) {
          *
          * @returns {jQuery.Element}
          */
-        getData: function () {
-            return this.options._sourceElement.data(this.options.unitsAttribute) || {}
+        getData: function() {
+            return this.options._sourceElement.data(this.options.unitsAttribute) || {};
         },
-        
-        getPrimaryData: function () {
-           return $(':data(' + this.options.unitsAttribute + ')').data(this.options.unitsAttribute) || {};
+
+        getPrimaryData: function() {
+            return $(':data(' + this.options.unitsAttribute + ')').data(this.options.unitsAttribute) || {};
         },
-        
-        getUnitsWithPrices: function () {
+
+        getUnitsWithPrices: function() {
             var selects = $(this.options.pricesUnitsSelector);
-            var units_with_price = {};
-            _.each(selects, function (select) {
+            var unitsWithPrice = {};
+            _.each(selects, function(select) {
                 var selected = $(select).find('option:selected');
-                units_with_price[selected.val()] = selected.text();
+                unitsWithPrice[selected.val()] = selected.text();
             });
 
-            return units_with_price;
+            return unitsWithPrice;
         },
 
         /**
@@ -330,19 +334,22 @@ define(function (require) {
          *
          * @param {Object} data
          */
-        saveData: function (data) {
+        saveData: function(data) {
             this.options._sourceElement.data(this.options.unitsAttribute, data);
         },
 
         /**
          * Toggle Table visibility
          */
-        toggleTableVisibility: function(){
+        toggleTableVisibility: function() {
             var selects = this.options._sourceElement.find(this.options.unitSelect);
             var table = this.options._sourceElement.find('table');
 
             if (selects.length < 1) {
                 table.hide();
+                if (this.getAddButton().length === 0) {
+                    this.options._sourceElement.parents('.control-group:first').hide();
+                }
             } else {
                 table.show();
             }
@@ -353,7 +360,7 @@ define(function (require) {
          *
          * @param {Object} data
          */
-        triggerAddEvent: function (data) {
+        triggerAddEvent: function(data) {
             mediator.trigger('product:precision:add', data);
         },
 
@@ -362,11 +369,11 @@ define(function (require) {
          *
          * @param {Object} data
          */
-        triggerRemoveEvent: function (data) {
+        triggerRemoveEvent: function(data) {
             mediator.trigger('product:precision:remove', data);
         },
 
-        dispose: function () {
+        dispose: function() {
             if (this.disposed) {
                 return;
             }

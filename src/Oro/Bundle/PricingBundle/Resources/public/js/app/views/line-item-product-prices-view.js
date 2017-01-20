@@ -23,13 +23,13 @@ define(function(require) {
         /**
          * @inheritDoc
          */
-        initialize: function(options) {
-            LineItemProductPricesView.__super__.initialize.apply(this, arguments);
+        deferredInitialize: function(options) {
+            LineItemProductPricesView.__super__.deferredInitialize.apply(this, arguments);
 
             mediator.on('pricing:collect:line-items', this.collectLineItems, this);
             mediator.on('pricing:refresh:products-tier-prices', this.setTierPrices, this);
 
-            mediator.trigger('pricing:get:products-tier-prices', _.bind(function (tierPrices) {
+            mediator.trigger('pricing:get:products-tier-prices', _.bind(function(tierPrices) {
                 this.setTierPrices(tierPrices, true);
             }, this));
         },

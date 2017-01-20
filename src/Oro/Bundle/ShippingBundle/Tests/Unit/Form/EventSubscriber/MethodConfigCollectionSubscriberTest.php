@@ -14,14 +14,11 @@ use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
-use Oro\Bundle\ShippingBundle\Form\Type\FlatRateShippingMethodTypeOptionsType;
-use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleDestinationType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodConfigCollectionType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodConfigType;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleDestinationType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodTypeConfigCollectionType;
-use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
-use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroup;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroupValidator;
@@ -83,7 +80,7 @@ class MethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
         $form = $this->factory->create(ShippingMethodsConfigsRuleType::class);
         $shippingRule = new ShippingMethodsConfigsRule();
         $methodConfig = new ShippingMethodConfig();
-        $methodConfig->setMethod(FlatRateShippingMethod::IDENTIFIER);
+        $methodConfig->setMethod('flat_rate');
         $shippingRule->addMethodConfig($methodConfig);
         $form->setData($shippingRule);
         $this->assertCount(0, $form->get('methodConfigs'));
@@ -97,10 +94,10 @@ class MethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
         $form->submit([
             'methodConfigs' => [
                 [
-                    'method' => FlatRateShippingMethod::IDENTIFIER,
+                    'method' => 'flat_rate',
                     'typeConfigs' => [
                         [
-                            'type' => FlatRateShippingMethodType::IDENTIFIER,
+                            'type' => 'primary',
                         ]
                     ]
                 ]
@@ -160,8 +157,6 @@ class MethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
                 [
                     ShippingMethodsConfigsRuleType::class
                     => new ShippingMethodsConfigsRuleType($this->methodRegistry, $translator),
-                    FlatRateShippingMethodTypeOptionsType::class
-                    => new FlatRateShippingMethodTypeOptionsType($roundingService),
                     ShippingMethodConfigCollectionType::class
                     => new ShippingMethodConfigCollectionType($this->subscriber),
                     ShippingMethodConfigType::class

@@ -21,7 +21,7 @@ class AuthorizationRequest extends AbstractRequest
             ->addOption(new Option\Tender())
             ->addOption(new Option\Amount())
             ->addOption(new Option\Currency())
-            ->addOption(new GatewayOption\Account())
+            ->addOption(new GatewayOption\Customer())
             ->addOption(new GatewayOption\ExpirationDate())
             ->addOption(new GatewayOption\SecureToken())
             ->addOption(new Option\BillingAddress())
@@ -35,7 +35,8 @@ class AuthorizationRequest extends AbstractRequest
             ->addOption(new GatewayOption\TransparentRedirect())
             ->addOption(new GatewayOption\SecureTokenIdentifier())
             ->addOption(new GatewayOption\SilentPost())
-            ->addOption(new GatewayOption\CreateSecureToken());
+            ->addOption(new GatewayOption\CreateSecureToken())
+            ->addOption(new Option\ButtonSource());
 
         return $this;
     }

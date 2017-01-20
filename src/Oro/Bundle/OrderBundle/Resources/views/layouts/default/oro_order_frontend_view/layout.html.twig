@@ -1,12 +1,12 @@
 {% block _order_body_widget %}
-    <div class="account-oq-container">
+    <div class="customer-oq-container">
         {{ block_widget(block) }}
     </div>
 {% endblock %}
 
 {% block order_body_column_widget %}
-    <div class="account-oq__item">
-        <div class="account-oq__order-info">
+    <div class="customer-oq__item">
+        <div class="customer-oq__order-info">
             <table class="table borderless b_paddingless">
                 <tbody>
                     {{ block_widget(block) }}
@@ -18,7 +18,7 @@
 
 {% block order_body_column_element_widget %}
     <tr>
-        <td class="account-oq__order-info__title">{{ label|trans }}</td>
+        <td class="customer-oq__order-info__title">{{ label|trans }}</td>
         <td>{{ block_widget(block) }}</td>
     </tr>
 {% endblock %}
@@ -32,11 +32,8 @@
 {% endblock %}
 
 {% block address_widget %}
-    {% if address %}
-        {{ address|oro_format_address|escape|nl2br }}
-    {% else %}
-        {{ 'oro.ui.empty'|trans }}
-    {% endif %}
+    {% from 'OroAddressBundle::macros.html.twig' import renderAddress %}
+    {{ renderAddress(address) }}
 {% endblock %}
 
 {% block order_total_widget %}
@@ -65,35 +62,35 @@
 {% endblock %}
 
 {% block order_head_block_container_widget %}
-    <div class="account-oq__item__head">
+    <div class="customer-oq__item__head">
         {{ block_widget(block) }}
     </div>
 {% endblock %}
 
 {% block _order_information_head_widget %}
-    <div class="account-oq__item account-oq__item_full mb0-sm">
-        <h2 class="account-oq__item__title">
+    <div class="customer-oq__item customer-oq__item_full mb0-sm">
+        <h2 class="customer-oq__item__title">
             {{ block_widget(block) }}
         </h2>
     </div>
 {% endblock %}
 
 {% block order_body_block_container_widget %}
-    <div class="account-oq__item__body">
+    <div class="customer-oq__item__body">
         {{ block_widget(block) }}
     </div>
 {% endblock %}
 
 {% block _order_line_items_grid_container_widget %}
-    <div class="account-oq-container hidden-sm hidden-xs">
-        <div class="account-oq__item account-oq__item_full">
+    <div class="customer-oq-container hidden-sm hidden-xs">
+        <div class="customer-oq__item customer-oq__item_full">
             {{ block_widget(block) }}
         </div>
     </div>
 {% endblock %}
 
 {% block _order_line_items_grid_title_widget %}
-    <h2 class="account-oq__item__title">
+    <h2 class="customer-oq__item__title">
         {{ block_widget(block) }}
     </h2>
 {% endblock %}
@@ -170,12 +167,7 @@
 
 {% block _order_shipping_method_widget %}
 
-    {% set text =
-        'oro.frontend.order.method_type.view.label'|trans({
-            '%translatedMethodType%': get_shipping_method_type_label(shippingMethod, shippingMethodType)|trans,
-            '%translatedMethod%': get_shipping_method_label(shippingMethod)|trans
-        })|raw
-    %}
+    {% set text = oro_order_shipping_method_label(shippingMethod, shippingMethodType) %}
 
     {{ parent_block_widget(block) }}
 {% endblock %}

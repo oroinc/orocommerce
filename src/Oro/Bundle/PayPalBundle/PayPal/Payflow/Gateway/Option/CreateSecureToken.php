@@ -20,9 +20,9 @@ class CreateSecureToken extends AbstractBooleanOption
                 $this->getNormalizer(CreateSecureToken::YES, CreateSecureToken::NO)
             );
 
-        if ($resolver->isRequired(Account::ACCT)) {
-            $resolver->remove(Account::ACCT);
-            $resolver->addOption(new Account(false));
+        if ($resolver->isRequired(Customer::ACCT)) {
+            $resolver->remove(Customer::ACCT);
+            $resolver->addOption(new Customer(false));
         }
 
         $resolver

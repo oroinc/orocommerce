@@ -1,31 +1,31 @@
 datagrids:
-    account-category-visibility-grid:
+    customer-category-visibility-grid:
         source:
             type:              orm
             query:
                 select:
-                    - account.id
-                    - account.name
+                    - customer.id
+                    - customer.name
                     - visibilityAlias
                 from:
-                    - { table: %oro_customer.entity.account.class%, alias: account }
+                    - { table: %oro_customer.entity.customer.class%, alias: customer }
                 join:
                     left:
-                        - { join: %oro_scope.entity.scope.class%, alias: scope, conditionType: WITH, condition: 'scope.account = account' }
-                        - { join: %oro_visibility.entity.account_category_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.category = :target_entity_id and visibilityAlias.scope = scope' }
+                        - { join: %oro_scope.entity.scope.class%, alias: scope, conditionType: WITH, condition: 'scope.customer = customer' }
+                        - { join: %oro_visibility.entity.customer_category_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.category = :target_entity_id and visibilityAlias.scope = scope' }
             bind_parameters:
                 - target_entity_id
         columns:
             name:
-                label: oro.customer.account.name.label
+                label: oro.customer.customer.name.label
             visibility:
-                label: oro.visibility.accountcategoryvisibility.entity_label
+                label: oro.visibility.customercategoryvisibility.entity_label
                 frontend_type: select
                 editable: true
         sorters:
             columns:
                 name:
-                    data_name: account.name
+                    data_name: customer.name
                 visibility:
                     data_name: visibilityAlias.visibility
             default:
@@ -34,49 +34,54 @@ datagrids:
             columns:
                 name:
                     type:      string
-                    data_name: account.name
+                    data_name: customer.name
                 visibility:
-                    type: choice
+                    type: visibility_choice
+                    visibilityEntityClass: '%oro_visibility.entity.customer_category_visibility.class%'
+                    targetEntityClass: '%oro_catalog.entity.category.class%'
                     data_name: visibilityAlias.visibility
                     options:
                         field_options:
                             multiple: true
         options:
+            scopeAttr: 'customer'
+            visibilityEntityClass: '%oro_visibility.entity.customer_category_visibility.class%'
+            targetEntityClass: '%oro_catalog.entity.category.class%'
             cellSelection:
                 dataField: id
                 columnName:
                     - visibility
-                selector: '#account-category-visibility-changeset'
+                selector: '#customer-category-visibility-changeset'
         properties:
             id: ~
 
-    account-group-category-visibility-grid:
+    customer-group-category-visibility-grid:
         source:
             type:              orm
             query:
                 select:
-                    - accountGroup.id
-                    - accountGroup.name
+                    - customerGroup.id
+                    - customerGroup.name
                     - visibilityAlias
                 from:
-                    - { table: %oro_customer.entity.account_group.class%, alias: accountGroup }
+                    - { table: %oro_customer.entity.customer_group.class%, alias: customerGroup }
                 join:
                     left:
-                        - { join: %oro_scope.entity.scope.class%, alias: scope, conditionType: WITH, condition: 'scope.accountGroup = accountGroup' }
-                        - { join: %oro_visibility.entity.account_group_category_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.category = :target_entity_id and visibilityAlias.scope = scope' }
+                        - { join: %oro_scope.entity.scope.class%, alias: scope, conditionType: WITH, condition: 'scope.customerGroup = customerGroup' }
+                        - { join: %oro_visibility.entity.customer_group_category_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.category = :target_entity_id and visibilityAlias.scope = scope' }
             bind_parameters:
                 - target_entity_id
         columns:
             name:
-                label: oro.customer.account.name.label
+                label: oro.customer.customer.name.label
             visibility:
-                label: oro.visibility.accountgroupcategoryvisibility.entity_label
+                label: oro.visibility.customergroupcategoryvisibility.entity_label
                 frontend_type: select
                 editable: true
         sorters:
             columns:
                 name:
-                    data_name: accountGroup.name
+                    data_name: customerGroup.name
                 visibility:
                     data_name: visibilityAlias.visibility
             default:
@@ -85,50 +90,55 @@ datagrids:
             columns:
                 name:
                     type:      string
-                    data_name: accountGroup.name
+                    data_name: customerGroup.name
                 visibility:
-                    type: choice
+                    type: visibility_choice
+                    visibilityEntityClass: '%oro_visibility.entity.customer_group_category_visibility.class%'
+                    targetEntityClass: '%oro_catalog.entity.category.class%'
                     data_name: visibilityAlias.visibility
                     options:
                         field_options:
                             multiple: true
         options:
+            scopeAttr: 'customerGroup'
+            visibilityEntityClass: '%oro_visibility.entity.customer_group_category_visibility.class%'
+            targetEntityClass: '%oro_catalog.entity.category.class%'
             cellSelection:
                 dataField: id
                 columnName:
                     - visibility
-                selector: '#accountgroup-category-visibility-changeset'
+                selector: '#customergroup-category-visibility-changeset'
         properties:
             id: ~
 
-    account-product-visibility-grid:
+    customer-product-visibility-grid:
         scope: website
         source:
             type:              orm
             query:
                 select:
-                    - account.id
-                    - account.name
+                    - customer.id
+                    - customer.name
                     - visibilityAlias
                 from:
-                    - { table: %oro_customer.entity.account.class%, alias: account }
+                    - { table: %oro_customer.entity.customer.class%, alias: customer }
                 join:
                     left:
-                        - { join: %oro_scope.entity.scope.class%, alias: scope, conditionType: WITH, condition: 'scope.account = account' }
-                        - { join: %oro_visibility.entity.account_product_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.product = :target_entity_id and visibilityAlias.scope = scope' }
+                        - { join: %oro_scope.entity.scope.class%, alias: scope, conditionType: WITH, condition: 'scope.customer = customer' }
+                        - { join: %oro_visibility.entity.customer_product_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.product = :target_entity_id and visibilityAlias.scope = scope' }
             bind_parameters:
                 - target_entity_id
         columns:
             name:
-                label: oro.customer.account.name.label
+                label: oro.customer.customer.name.label
             visibility:
-                label: oro.visibility.accountproductvisibility.entity_label
+                label: oro.visibility.customerproductvisibility.entity_label
                 frontend_type: select
                 editable: true
         sorters:
             columns:
                 name:
-                    data_name: account.name
+                    data_name: customer.name
                 visibility:
                     data_name: visibilityAlias.visibility
             default:
@@ -137,49 +147,54 @@ datagrids:
             columns:
                 name:
                     type:      string
-                    data_name: account.name
+                    data_name: customer.name
                 visibility:
-                    type: choice
+                    type: visibility_choice
+                    visibilityEntityClass: '%oro_visibility.entity.customer_product_visibility.class%'
+                    targetEntityClass: '%oro_product.entity.product.class%'
                     data_name: visibilityAlias.visibility
                     options:
                         field_options:
                             multiple: true
         options:
+            scopeAttr: 'customer'
+            visibilityEntityClass: '%oro_visibility.entity.customer_product_visibility.class%'
+            targetEntityClass: '%oro_product.entity.product.class%'
             cellSelection:
                 dataField: id
                 columnName:
                     - visibility
-                selector: '#account-product-visibility-changeset'
+                selector: '#customer-product-visibility-changeset'
         properties:
             id: ~
 
-    account-group-product-visibility-grid:
+    customer-group-product-visibility-grid:
         scope: website
         source:
             type:              orm
             query:
                 select:
-                    - accountGroup.id
-                    - accountGroup.name
+                    - customerGroup.id
+                    - customerGroup.name
                 from:
-                    - { table: %oro_customer.entity.account_group.class%, alias: accountGroup }
+                    - { table: %oro_customer.entity.customer_group.class%, alias: customerGroup }
                 join:
                     left:
-                        - { join: %oro_scope.entity.scope.class%, alias: scope, conditionType: WITH, condition: 'scope.accountGroup = accountGroup' }
-                        - { join: %oro_visibility.entity.account_group_product_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.product = :target_entity_id and visibilityAlias.scope = scope' }
+                        - { join: %oro_scope.entity.scope.class%, alias: scope, conditionType: WITH, condition: 'scope.customerGroup = customerGroup' }
+                        - { join: %oro_visibility.entity.customer_group_product_visibility.class%, alias: visibilityAlias, conditionType: WITH, condition: 'visibilityAlias.product = :target_entity_id and visibilityAlias.scope = scope' }
             bind_parameters:
                 - target_entity_id
         columns:
             name:
-                label: oro.customer.account.name.label
+                label: oro.customer.customer.name.label
             visibility:
-                label: oro.visibility.accountgroupproductvisibility.entity_label
+                label: oro.visibility.customergroupproductvisibility.entity_label
                 frontend_type: select
                 editable: true
         sorters:
             columns:
                 name:
-                    data_name: accountGroup.name
+                    data_name: customerGroup.name
                 visibility:
                     data_name: visibilityAlias.visibility
             default:
@@ -188,18 +203,23 @@ datagrids:
             columns:
                 name:
                     type:      string
-                    data_name: accountGroup.name
+                    data_name: customerGroup.name
                 visibility:
-                    type: choice
+                    type: visibility_choice
                     data_name: visibilityAlias.visibility
+                    visibilityEntityClass: '%oro_visibility.entity.customer_group_product_visibility.class%'
+                    targetEntityClass: '%oro_product.entity.product.class%'
                     options:
                         field_options:
                             multiple: true
         options:
+            scopeAttr: 'customerGroup'
+            visibilityEntityClass: '%oro_visibility.entity.customer_group_product_visibility.class%'
+            targetEntityClass: '%oro_product.entity.product.class%'
             cellSelection:
                 dataField: id
                 columnName:
                     - visibility
-                selector: '#accountgroup-product-visibility-changeset'
+                selector: '#customergroup-product-visibility-changeset'
         properties:
             id: ~

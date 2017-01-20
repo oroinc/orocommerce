@@ -1,0 +1,67 @@
+acls:
+    oro_attribute_create:
+        type: action
+        label: oro.product.acl.attribute.create.label
+        group_name: ""
+        category: "catalog"
+        bindings:
+            - { class: Oro\Bundle\EntityConfigBundle\Controller\AttributeController, method: createAction }
+            - { class: Oro\Bundle\EntityConfigBundle\Controller\AttributeController, method: saveAction }
+
+    oro_attribute_update:
+        type: action
+        label: oro.product.acl.attribute.update.label
+        group_name: ""
+        category: "catalog"
+        bindings:
+            - { class: Oro\Bundle\EntityConfigBundle\Controller\AttributeController, method: updateAction }
+
+    oro_attribute_view:
+        type: action
+        label: oro.product.acl.attribute.view.label
+        group_name: ""
+        category: "catalog"
+        bindings:
+            - { class: Oro\Bundle\EntityConfigBundle\Controller\AttributeController, method: indexAction }
+
+    oro_attribute_remove:
+        type: action
+        label: oro.product.acl.attribute.remove.label
+        group_name: ""
+        category: "catalog"
+        bindings:
+            - { class: Oro\Bundle\EntityConfigBundle\Controller\AttributeController, method: removeAction }
+            - { class: Oro\Bundle\EntityConfigBundle\Controller\AttributeController, method: unremoveAction }
+
+    oro_attribute_family_create:
+        type: entity
+        class: Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily
+        permission: CREATE
+        category: "catalog"
+        bindings:
+            - { class: Oro\Bundle\EntityConfigBundle\Controller\AttributeFamilyController, method: createAction }
+
+    oro_attribute_family_update:
+        type: entity
+        class: Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily
+        permission: EDIT
+        category: "catalog"
+        bindings:
+            - { class: Oro\Bundle\EntityConfigBundle\Controller\AttributeFamilyController, method: updateAction }
+
+    oro_attribute_family_view:
+        type: entity
+        class: Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily
+        permission: VIEW
+        category: "catalog"
+        bindings:
+            - { class: Oro\Bundle\EntityConfigBundle\Controller\AttributeFamilyController, method: indexAction }
+            - { class: Oro\Bundle\EntityConfigBundle\Controller\AttributeFamilyController, method: viewAction }
+
+    oro_attribute_family_delete:
+        type: entity
+        class: Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily
+        permission: DELETE
+        category: "catalog"
+        bindings:
+            - { class: Oro\Bundle\EntityConfigBundle\Controller\AttributeFamilyController, method: deleteAction }

@@ -20,7 +20,7 @@ define(function(require) {
         options: {
             tierPrices: null,
             currency: null,
-            account: null,
+            customer: null,
             subtotalValidationSelector: '[data-ftid=oro_order_type_subtotalValidation]',
             totalValidationSelector: '[data-ftid=oro_order_type_totalValidation]',
             subtotalType: null
@@ -60,7 +60,7 @@ define(function(require) {
                 _sourceElement: this.$el,
                 tierPrices: this.options.tierPrices,
                 currency: this.options.currency,
-                account: this.options.account
+                customer: this.options.customer
             }));
         },
 
@@ -72,7 +72,7 @@ define(function(require) {
 
             var self = this;
             _.each(subtotals.subtotals, function(subtotal) {
-                if (subtotal.type == self.options.subtotalType) {
+                if (subtotal.type === self.options.subtotalType) {
                     subtotalAmount = subtotal.amount;
                 }
             });

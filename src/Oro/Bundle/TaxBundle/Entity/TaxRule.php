@@ -49,12 +49,12 @@ class TaxRule
     protected $productTaxCode;
 
     /**
-     * @var AccountTaxCode
+     * @var CustomerTaxCode
      *
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\TaxBundle\Entity\AccountTaxCode")
-     * @ORM\JoinColumn(name="account_tax_code_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\TaxBundle\Entity\CustomerTaxCode")
+     * @ORM\JoinColumn(name="customer_tax_code_id", referencedColumnName="id", onDelete="CASCADE")
      */
-    protected $accountTaxCode;
+    protected $customerTaxCode;
 
     /**
      * @var Tax
@@ -149,23 +149,23 @@ class TaxRule
     }
 
     /**
-     * @param AccountTaxCode $accountTaxCode
+     * @param CustomerTaxCode $customerTaxCode
      *
      * @return $this
      */
-    public function setAccountTaxCode(AccountTaxCode $accountTaxCode = null)
+    public function setCustomerTaxCode(CustomerTaxCode $customerTaxCode = null)
     {
-        $this->accountTaxCode = $accountTaxCode;
+        $this->customerTaxCode = $customerTaxCode;
 
         return $this;
     }
 
     /**
-     * @return AccountTaxCode
+     * @return CustomerTaxCode
      */
-    public function getAccountTaxCode()
+    public function getCustomerTaxCode()
     {
-        return $this->accountTaxCode;
+        return $this->customerTaxCode;
     }
 
     /**

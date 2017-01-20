@@ -24,7 +24,7 @@ define(function(require) {
         expressionInput: null,
 
         expressionLink: null,
-        fieldLink:null,
+        fieldLink: null,
 
         /**
          * @inheritDoc
@@ -76,11 +76,11 @@ define(function(require) {
             }
         },
 
-        resetSubmitCounter: function () {
+        resetSubmitCounter: function() {
             AbstractSwitcher.onSubmitCounter = 0;
         },
 
-        resetChildrenCounter: function () {
+        resetChildrenCounter: function() {
             AbstractSwitcher.childrenCounter = 0;
         },
 
@@ -98,7 +98,7 @@ define(function(require) {
             return $value;
         },
 
-        setMouseLeaveEvent: function ($expression) {
+        setMouseLeaveEvent: function($expression) {
             $expression.mouseleave(_.bind(function() {
                 this.destroyTooltip($expression);
             }, this));

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Placeholder;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\AbstractPlaceholder;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
@@ -45,13 +45,13 @@ class CPLIdPlaceholder extends AbstractPlaceholder
     public function getDefaultValue()
     {
         $token = $this->tokenStorage->getToken();
-        $account = null;
+        $customer = null;
 
-        if ($token && $token->getUser() instanceof AccountUser) {
-            $account = $token->getUser()->getAccount();
+        if ($token && $token->getUser() instanceof CustomerUser) {
+            $customer = $token->getUser()->getCustomer();
         }
 
-        $cpl = $this->priceListTreeHandler->getPriceList($account);
+        $cpl = $this->priceListTreeHandler->getPriceList($customer);
 
         if (!$cpl) {
             throw new \RuntimeException('Can\'t get current cpl');
