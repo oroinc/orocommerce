@@ -26,7 +26,7 @@ class RateTablePriceProvider
     public function __construct(
         ManagerRegistry $registry,
         MeasureUnitConversion $measureUnitConversion
-    ){
+    ) {
         $this->registry = $registry;
         $this->measureUnitConversion = $measureUnitConversion;
     }
@@ -48,6 +48,7 @@ class RateTablePriceProvider
         if (!empty($rates)) {
             return reset($rates);
         }
+
         return null;
     }
 }

@@ -58,6 +58,7 @@ class ZipCodeRulesCache
         if (!$this->containsZipCodeRulesByStringKey($stringKey)) {
             return false;
         }
+
         return $this->cache->fetch($stringKey);
     }
 
@@ -77,6 +78,7 @@ class ZipCodeRulesCache
             $interval = static::LIFETIME;
         }
         $this->cache->save($this->generateStringKey($key), $zipCodeRules, $interval);
+
         return $this;
     }
 

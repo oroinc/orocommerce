@@ -118,6 +118,7 @@ class DPDShippingMethod implements
     {
         /** @var DPDTransport $transport */
         $transport = $this->channel->getTransport();
+
         return (string)$this->localizationHelper->getLocalizedValue($transport->getLabels());
     }
 
@@ -163,6 +164,7 @@ class DPDShippingMethod implements
                 return $methodType;
             }
         }
+
         return null;
     }
 
@@ -203,6 +205,7 @@ class DPDShippingMethod implements
             $type = $this->getType($typeId);
             $prices[$typeId] = $type->calculatePrice($context, $methodOptions, $typeOptions);
         }
+
         return $prices;
     }
 }

@@ -25,7 +25,7 @@ class ShippedWithDPDTest extends \PHPUnit_Framework_TestCase
 
         $dpdShippingMethodProviderMap = [
             ['dpd', true],
-            ['no_dpd', false]
+            ['no_dpd', false],
         ];
 
         $dpdShippingMethodProvider->expects($this->any())
@@ -50,19 +50,22 @@ class ShippedWithDPDTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expectedResult, $this->condition->evaluate($context));
     }
 
+    /**
+     * @return array
+     */
     public function evaluateDataProvider()
     {
         return [
-            'dpd_shipping_method' => [
+            'dpd_shipping_method'    => [
                 'options'        => [new PropertyPath('foo')],
                 'context'        => ['foo' => 'dpd'],
-                'expectedResult' => true
+                'expectedResult' => true,
             ],
-            'no_dpd_shipping_method'   => [
+            'no_dpd_shipping_method' => [
                 'options'        => [new PropertyPath('foo')],
                 'context'        => ['foo' => 'no_dpd'],
-                'expectedResult' => false
-            ]
+                'expectedResult' => false,
+            ],
         ];
     }
 
@@ -108,6 +111,9 @@ class ShippedWithDPDTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $actual);
     }
 
+    /**
+     * @return array
+     */
     public function toArrayDataProvider()
     {
         return [
@@ -117,10 +123,10 @@ class ShippedWithDPDTest extends \PHPUnit_Framework_TestCase
                 'expected' => [
                     '@shipped_with_dpd' => [
                         'parameters' => [
-                            'value'
-                        ]
-                    ]
-                ]
+                            'value',
+                        ],
+                    ],
+                ],
             ],
             [
                 'options'  => ['value'],
@@ -129,11 +135,11 @@ class ShippedWithDPDTest extends \PHPUnit_Framework_TestCase
                     '@shipped_with_dpd' => [
                         'message'    => 'Test',
                         'parameters' => [
-                            'value'
-                        ]
-                    ]
-                ]
-            ]
+                            'value',
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -150,18 +156,21 @@ class ShippedWithDPDTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expected, $actual);
     }
 
+    /**
+     * @return array
+     */
     public function compileDataProvider()
     {
         return [
             [
                 'options'  => ['value'],
                 'message'  => null,
-                'expected' => '$factory->create(\'shipped_with_dpd\', [\'value\'])'
+                'expected' => '$factory->create(\'shipped_with_dpd\', [\'value\'])',
             ],
             [
                 'options'  => ['value'],
                 'message'  => 'Test',
-                'expected' => '$factory->create(\'shipped_with_dpd\', [\'value\'])->setMessage(\'Test\')'
+                'expected' => '$factory->create(\'shipped_with_dpd\', [\'value\'])->setMessage(\'Test\')',
             ],
             [
                 'options'  => [new PropertyPath('foo[bar].baz')],
@@ -169,8 +178,8 @@ class ShippedWithDPDTest extends \PHPUnit_Framework_TestCase
                 'expected' => '$factory->create(\'shipped_with_dpd\', ['
                     . 'new \Oro\Component\ConfigExpression\CompiledPropertyPath('
                     . '\'foo[bar].baz\', [\'foo\', \'bar\', \'baz\'], [false, true, false])'
-                    . '])'
-            ]
+                    . '])',
+            ],
         ];
     }
 }

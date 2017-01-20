@@ -31,7 +31,7 @@ class PackageProvider
         ManagerRegistry $registry,
         MeasureUnitConversion $measureUnitConversion,
         LocalizationHelper $localizationHelper
-    ){
+    ) {
         $this->registry = $registry;
         $this->measureUnitConversion = $measureUnitConversion;
         $this->localizationHelper = $localizationHelper;
@@ -60,7 +60,7 @@ class PackageProvider
                 if (($weight + $unit['weight']) > static::MAX_PACKAGE_WEIGHT_KGS) {
                     $packages[] = (new Package)
                         ->setWeight((string)$weight)
-                        ->setContents(implode(',',$contents));
+                        ->setContents(implode(',', $contents));
 
                     $weight = 0;
                     $contents = [];
@@ -73,7 +73,7 @@ class PackageProvider
             if ($weight > 0) {
                 $packages[] = (new Package)
                     ->setWeight((string)$weight)
-                    ->setContents(implode(',',$contents));
+                    ->setContents(implode(',', $contents));
             }
         }
 
@@ -89,13 +89,13 @@ class PackageProvider
     {
         $productsInfoByUnit = [];
 
-        $productsInfo =[];
+        $productsInfo = [];
         /** @var ShippingLineItemInterface $lineItem */
         foreach ($lineItems as $lineItem) {
             $productsInfo[$lineItem->getProduct()->getId()] = [
-                'product' => $lineItem->getProduct(),
+                'product'     => $lineItem->getProduct(),
                 'productUnit' => $lineItem->getProductUnit(),
-                'quantity' => $lineItem->getQuantity()
+                'quantity'    => $lineItem->getQuantity(),
             ];
         }
 
@@ -103,12 +103,13 @@ class PackageProvider
             ->getManagerForClass('OroShippingBundle:ProductShippingOptions')
             ->getRepository('OroShippingBundle:ProductShippingOptions')
             ->findBy([
-                'product' => array_column($productsInfo, 'product'),
-                'productUnit' => array_column($productsInfo, 'productUnit')
+                'product'     => array_column($productsInfo, 'product'),
+                'productUnit' => array_column($productsInfo, 'productUnit'),
             ]);
 
         if (!$allProductsShippingOptions ||
-            count(array_column($productsInfo, 'product')) !== count($allProductsShippingOptions)) {
+            count(array_column($productsInfo, 'product')) !== count($allProductsShippingOptions)
+        ) {
             return [];
         }
 
@@ -138,10 +139,10 @@ class PackageProvider
 
             for ($i = 0; $i < $productsInfo[$productId]['quantity']; $i++) {
                 $productsInfoByUnit[] = [
-                    'productId' => $productId,
+                    'productId'   => $productId,
                     'productName' => $productName,
-                    'weightUnit' => static::UNIT_OF_WEIGHT,
-                    'weight' => $lineItemWeight
+                    'weightUnit'  => static::UNIT_OF_WEIGHT,
+                    'weight'      => $lineItemWeight,
                 ];
             }
         }

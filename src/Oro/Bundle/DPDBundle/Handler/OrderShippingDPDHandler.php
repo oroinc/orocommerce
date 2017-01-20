@@ -92,6 +92,11 @@ class OrderShippingDPDHandler
         return $result;
     }
 
+    /**
+     * @param Order $order
+     * @param DPDTransaction $dpdTransaction
+     * @param string $labelComment
+     */
     public function linkLabelToOrder(Order $order, DPDTransaction $dpdTransaction, $labelComment = 'dpd label')
     {
         $attachment = new Attachment();
@@ -104,6 +109,10 @@ class OrderShippingDPDHandler
         $em->flush();
     }
 
+    /**
+     * @param Order $order
+     * @param DPDTransaction $dpdTransaction
+     */
     public function addTrackingNumbersToOrder(Order $order, DPDTransaction $dpdTransaction)
     {
         $em = $this->doctrine->getManagerForClass(OrderShippingTracking::class);
@@ -117,6 +126,10 @@ class OrderShippingDPDHandler
         $em->flush();
     }
 
+    /**
+     * @param Order $order
+     * @param DPDTransaction $dpdTransaction
+     */
     public function unlinkLabelFromOrder(Order $order, DPDTransaction $dpdTransaction)
     {
         $em = $this->doctrine->getManagerForClass(Attachment::class);
@@ -128,6 +141,10 @@ class OrderShippingDPDHandler
         }
     }
 
+    /**
+     * @param Order $order
+     * @param DPDTransaction $dpdTransaction
+     */
     public function removeTrackingNumbersFromOrder(Order $order, DPDTransaction $dpdTransaction)
     {
         $shippingTrackings = $order->getShippingTrackings();

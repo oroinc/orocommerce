@@ -92,33 +92,33 @@ class DPDTransportSettingsType extends AbstractType
             'labels',
             LocalizedFallbackValueCollectionType::class,
             [
-                'label' => 'oro.dpd.transport.labels.label',
+                'label'    => 'oro.dpd.transport.labels.label',
                 'required' => true,
-                'options' => ['constraints' => [new NotBlank()]],
+                'options'  => ['constraints' => [new NotBlank()]],
             ]
         );
         $builder->add(
             'liveMode',
             CheckboxType::class,
             [
-                'label' => 'oro.dpd.transport.live_mode.label',
-                'required' => false
+                'label'    => 'oro.dpd.transport.live_mode.label',
+                'required' => false,
             ]
         );
         $builder->add(
             'cloudUserId',
             TextType::class,
             [
-                'label' => 'oro.dpd.transport.cloud_user_id.label',
-                'required' => true
+                'label'    => 'oro.dpd.transport.cloud_user_id.label',
+                'required' => true,
             ]
         );
         $builder->add(
             'cloudUserToken',
             PasswordType::class,
             [
-                'label' => 'oro.dpd.transport.cloud_user_token.label',
-                'required' => true
+                'label'    => 'oro.dpd.transport.cloud_user_token.label',
+                'required' => true,
             ]
         );
         $builder->get('cloudUserToken')
@@ -134,10 +134,10 @@ class DPDTransportSettingsType extends AbstractType
             'applicableShippingServices',
             'entity',
             [
-                'label' => 'oro.dpd.transport.shipping_service.plural_label',
+                'label'    => 'oro.dpd.transport.shipping_service.plural_label',
                 'required' => true,
                 'multiple' => true,
-                'class' => 'Oro\Bundle\DPDBundle\Entity\ShippingService',
+                'class'    => 'Oro\Bundle\DPDBundle\Entity\ShippingService',
             ]
         );
         $builder->add(
@@ -145,7 +145,7 @@ class DPDTransportSettingsType extends AbstractType
             WeightUnitSelectType::NAME,
             [
                 'placeholder' => 'oro.shipping.form.placeholder.weight_unit.label',
-                'required' => true,
+                'required'    => true,
             ]
         );
         $builder->add(
@@ -153,35 +153,35 @@ class DPDTransportSettingsType extends AbstractType
             ChoiceType::class,
             [
                 'required' => true,
-                'choices' => [
+                'choices'  => [
                     DPDTransport::FLAT_RATE_POLICY
                     => 'oro.dpd.transport.rate_policy.flat_rate.label',
                     DPDTransport::TABLE_RATE_POLICY
                     => 'oro.dpd.transport.rate_policy.table_rate.label',
                 ],
-                'label' => 'oro.dpd.transport.rate_policy.label',
+                'label'    => 'oro.dpd.transport.rate_policy.label',
             ]
         );
         $builder->add(
             'flatRatePriceValue',
             NumberType::class,
             [
-                'label' => 'oro.dpd.transport.flat_rate_price_value.label',
-                'required' => false,
-                'scale' => $this->roundingService->getPrecision(),
+                'label'         => 'oro.dpd.transport.flat_rate_price_value.label',
+                'required'      => false,
+                'scale'         => $this->roundingService->getPrecision(),
                 'rounding_mode' => $this->roundingService->getRoundType(),
-                'attr' => [
+                'attr'          => [
                     'data-scale' => $this->roundingService->getPrecision(),
-                    'class' => 'method-options-surcharge'
-                ]
+                    'class'      => 'method-options-surcharge',
+                ],
             ]
         );
         $builder->add(
             'ratesCsv',
             RatesCsvType::class,
             [
-                'label' => 'oro.dpd.transport.rates_csv.label',
-                'required' => false
+                'label'    => 'oro.dpd.transport.rates_csv.label',
+                'required' => false,
             ]
         );
         $builder->add(
@@ -189,13 +189,13 @@ class DPDTransportSettingsType extends AbstractType
             ChoiceType::class,
             [
                 'required' => true,
-                'choices' => [
+                'choices'  => [
                     DPDTransport::PDF_A4_LABEL_SIZE
                     => 'oro.dpd.transport.label_size.pdf_a4.label',
                     DPDTransport::PDF_A6_LABEL_SIZE
                     => 'oro.dpd.transport.label_size.pdf_a6.label',
                 ],
-                'label' => 'oro.dpd.transport.label_size.label',
+                'label'    => 'oro.dpd.transport.label_size.label',
             ]
         );
         $builder->add(
@@ -203,7 +203,7 @@ class DPDTransportSettingsType extends AbstractType
             ChoiceType::class,
             [
                 'required' => true,
-                'choices' => [
+                'choices'  => [
                     DPDTransport::UPPERLEFT_LABEL_START_POSITION
                     => 'oro.dpd.transport.label_start_position.upperleft.label',
                     DPDTransport::UPPERRIGHT_LABEL_START_POSITION
@@ -213,7 +213,7 @@ class DPDTransportSettingsType extends AbstractType
                     DPDTransport::LOWERRIGHT_LABEL_START_POSITION
                     => 'oro.dpd.transport.label_start_position.lowerright.label',
                 ],
-                'label' => 'oro.dpd.transport.label_start_position.label',
+                'label'    => 'oro.dpd.transport.label_start_position.label',
             ]
         );
         //$builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
@@ -241,7 +241,6 @@ class DPDTransportSettingsType extends AbstractType
 //        }
 //    }
 
-
     /**
      * {@inheritdoc}
      * @throws AccessException
@@ -249,7 +248,7 @@ class DPDTransportSettingsType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => $this->dataClass ?: $this->transport->getSettingsEntityFQCN()
+            'data_class' => $this->dataClass ?: $this->transport->getSettingsEntityFQCN(),
         ]);
     }
 

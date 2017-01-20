@@ -57,7 +57,11 @@ class DPDRequestFactory
         return $setOrderRequest;
     }
 
-    public function createZipCodeRulesRequest() {
+    /**
+     * @return ZipCodeRulesRequest
+     */
+    public function createZipCodeRulesRequest()
+    {
         return (new ZipCodeRulesRequest());
     }
 }

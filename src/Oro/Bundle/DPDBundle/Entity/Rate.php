@@ -74,7 +74,6 @@ class Rate
      */
     protected $priceValue;
 
-
     /**
      * @return int
      */
@@ -100,7 +99,6 @@ class Rate
         $this->transport = $transport;
         return $this;
     }
-
 
     /**
      * @return ShippingService

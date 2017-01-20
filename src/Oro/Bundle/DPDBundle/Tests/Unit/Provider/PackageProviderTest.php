@@ -57,6 +57,7 @@ class PackageProviderTest extends \PHPUnit_Framework_TestCase
         $this->measureUnitConversion->expects(static::any())->method('convert')->willReturnCallback(
             function () {
                 $args = func_get_args();
+
                 return $args[0];
             }
         );
@@ -88,42 +89,43 @@ class PackageProviderTest extends \PHPUnit_Framework_TestCase
             $product = $this->getEntity(Product::class, ['id' => $i]);
 
             $lineItems[] = new ShippingLineItem([
-                ShippingLineItem::FIELD_PRODUCT => $product,
-                ShippingLineItem::FIELD_QUANTITY => 1,
-                ShippingLineItem::FIELD_PRODUCT_UNIT => $this->getEntity(
+                ShippingLineItem::FIELD_PRODUCT           => $product,
+                ShippingLineItem::FIELD_QUANTITY          => 1,
+                ShippingLineItem::FIELD_PRODUCT_UNIT      => $this->getEntity(
                     ProductUnit::class,
                     ['code' => 'test1']
                 ),
                 ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => 'test1',
                 ShippingLineItem::FIELD_ENTITY_IDENTIFIER => 1,
-                ShippingLineItem::FIELD_DIMENSIONS => Dimensions::create(7, 7, 7, (new LengthUnit())->setCode('inch')),
-                ShippingLineItem::FIELD_WEIGHT => Weight::create($productWeight, $this->getEntity(
+                ShippingLineItem::FIELD_DIMENSIONS        => Dimensions::create(7, 7, 7,
+                    (new LengthUnit())->setCode('inch')),
+                ShippingLineItem::FIELD_WEIGHT            => Weight::create($productWeight, $this->getEntity(
                     WeightUnit::class,
                     ['code' => 'lbs']
-                ))
+                )),
             ]);
 
             /** @var ProductShippingOptions $productShippingOptions */
             $allProductsShippingOptions[] = $this->getEntity(
                 ProductShippingOptions::class,
                 [
-                    'id' => 42,
-                    'product' => $product,
+                    'id'          => 42,
+                    'product'     => $product,
                     'productUnit' => $this->getEntity(
                         ProductUnit::class,
                         ['code' => 'test1']
                     ),
-                    'dimensions' => Dimensions::create(7, 7, 7, (new LengthUnit())->setCode('inch')),
-                    'weight' => Weight::create($productWeight, $this->getEntity(
+                    'dimensions'  => Dimensions::create(7, 7, 7, (new LengthUnit())->setCode('inch')),
+                    'weight'      => Weight::create($productWeight, $this->getEntity(
                         WeightUnit::class,
                         ['code' => 'kg']
-                    ))
+                    )),
                 ]
             );
         }
 
         $context = new ShippingContext([
-            ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection($lineItems)
+            ShippingContext::FIELD_LINE_ITEMS => new DoctrineShippingLineItemCollection($lineItems),
         ]);
 
         $repository = $this->getMockBuilder(ObjectRepository::class)->disableOriginalConstructor()->getMock();
@@ -145,30 +147,30 @@ class PackageProviderTest extends \PHPUnit_Framework_TestCase
     public function packagesDataProvider()
     {
         return [
-            'OnePackage' => [
-                'lineItemCnt' => 2,
-                'productWeight' => 15,
+            'OnePackage'  => [
+                'lineItemCnt'      => 2,
+                'productWeight'    => 15,
                 'expectedPackages' => [
-                    (new Package())->setWeight(30)->setContents('product name,product name')
-                ]
+                    (new Package())->setWeight(30)->setContents('product name,product name'),
+                ],
             ],
             'TwoPackages' => [
-                'lineItemCnt' => 2,
-                'productWeight' => 30,
+                'lineItemCnt'      => 2,
+                'productWeight'    => 30,
                 'expectedPackages' => [
                     (new Package())->setWeight(30)->setContents('product name'),
                     (new Package())->setWeight(30)->setContents('product name'),
-                ]
+                ],
             ],
             'TooBigToFit' => [
-                'lineItemCnt' => 2,
-                'productWeight' => PackageProvider::MAX_PACKAGE_WEIGHT_KGS+1,
-                'expectedPackages' => null
+                'lineItemCnt'      => 2,
+                'productWeight'    => PackageProvider::MAX_PACKAGE_WEIGHT_KGS + 1,
+                'expectedPackages' => null,
             ],
-            'NoPackages' => [
-                'lineItemCnt' => 0,
-                'productWeight' => 30,
-                'expectedPackages' => null
+            'NoPackages'  => [
+                'lineItemCnt'      => 0,
+                'productWeight'    => 30,
+                'expectedPackages' => null,
             ],
         ];
     }

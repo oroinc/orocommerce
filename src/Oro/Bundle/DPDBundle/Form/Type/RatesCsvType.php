@@ -36,9 +36,8 @@ class RatesCsvType extends AbstractType
         $resolver->setDefaults(
             [
                 'download_csv_label' => 'oro.dpd.transport.rates_csv.download.label',
-                'constraints' => []
+                'constraints'        => [],
             ]
-
         );
     }
 

@@ -14,4 +14,4 @@ oro:
                     confirmation:
                         title: 'Confirm DPD shipping label retransmission'
                         ok_text: 'Confirm'
-                        message: 'Retransmit order shipping information to DPD? This will remove current trackings and labels'
+                        message: 'Retransmit order shipping information to DPD? This will remove current tracking information and label'

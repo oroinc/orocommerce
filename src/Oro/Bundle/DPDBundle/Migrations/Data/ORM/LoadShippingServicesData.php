@@ -52,7 +52,7 @@ class LoadShippingServicesData extends AbstractFixture implements ContainerAware
             $filePath = current($filePath);
         }
 
-        $handler = fopen($filePath, 'r');
+        $handler = fopen($filePath, 'rb');
         $headers = fgetcsv($handler, 1000, ',');
 
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {

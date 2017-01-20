@@ -13,6 +13,10 @@ class DPDShippingContextFactory
      */
     protected $baseShippingContextFactory;
 
+    /**
+     * DPDShippingContextFactory constructor.
+     * @param OrderShippingContextFactory $baseShippingContextFactory
+     */
     public function __construct(
         OrderShippingContextFactory $baseShippingContextFactory
     ) {

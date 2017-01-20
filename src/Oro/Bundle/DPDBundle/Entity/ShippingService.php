@@ -13,15 +13,6 @@ class ShippingService
     const CLASSIC_SERVICE_SUBSTR = 'Classic';
     const EXPRESS_SERVICE_SUBSTR = 'Express';
 
-//    /**
-//     * @var integer
-//     *
-//     * @ORM\Id
-//     * @ORM\Column(name="id", type="integer")
-//     * @ORM\GeneratedValue(strategy="AUTO")
-//     */
-//    protected $id;
-
     /**
      * @var string
      *
@@ -37,14 +28,11 @@ class ShippingService
      */
     protected $description;
 
-//    /**
-//     * @return integer
-//     */
-//    public function getId()
-//    {
-//        return $this->id;
-//    }
 
+    /**
+     * ShippingService constructor.
+     * @param $code
+     */
     public function __construct($code)
     {
         $this->code = $code;
@@ -90,6 +78,7 @@ class ShippingService
      * @return boolean
      */
     public function isClassicService() {
+        // FIXME: Use 0 === strpos($this->code, static::CLASSIC_SERVICE_SUBSTR) instead?
         return (substr($this->code, 0, strlen(static::CLASSIC_SERVICE_SUBSTR)) === static::CLASSIC_SERVICE_SUBSTR);
     }
 
@@ -97,6 +86,7 @@ class ShippingService
      * @return boolean
      */
     public function isExpressService() {
+        // FIXME: Use 0 === strpos($this->code, static::CLASSIC_SERVICE_SUBSTR) instead?
         return (substr($this->code, 0, strlen(static::EXPRESS_SERVICE_SUBSTR)) === static::EXPRESS_SERVICE_SUBSTR);
     }
 

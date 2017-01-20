@@ -43,6 +43,7 @@ class RateRepository extends EntityRepository
             'countryIso2Code' =>  $shippingAddress->getCountryIso2(),
             'regionCode' => $shippingAddress->getRegionCode()
         ]);
+
         return $qb->getQuery();
     }
 
@@ -60,6 +61,7 @@ class RateRepository extends EntityRepository
         $results =
             $this->findRatesByServiceAndDestinationQuery($transport, $shippingService, $shippingAddress)
                 ->getResult();
+
         return $results;
     }
 }
