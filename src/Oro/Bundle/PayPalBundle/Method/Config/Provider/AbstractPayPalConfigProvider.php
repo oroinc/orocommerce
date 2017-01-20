@@ -3,11 +3,12 @@
 namespace Oro\Bundle\PayPalBundle\Method\Config\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
+use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
+use Oro\Bundle\PayPalBundle\Method\Config\Factory\PayPalConfigFactoryInterface;
+use Oro\Bundle\PayPalBundle\Method\Config\PayPalConfigInterface;
 use Psr\Log\LoggerInterface;
 
-abstract class PayPalConfigProvider
+abstract class AbstractPayPalConfigProvider
 {
     /**
      * @var string
@@ -20,9 +21,9 @@ abstract class PayPalConfigProvider
     protected $doctrine;
 
     /**
-     * @var SymmetricCrypterInterface
+     * @var PayPalConfigFactoryInterface
      */
-    protected $encoder;
+    protected $factory;
 
     /**
      * @var LoggerInterface
@@ -30,25 +31,25 @@ abstract class PayPalConfigProvider
     protected $logger;
 
     /**
-     * @return array
+     * @return PayPalConfigInterface[]
      */
     abstract public function getPaymentConfigs();
 
     /**
      * @param ManagerRegistry $doctrine
-     * @param SymmetricCrypterInterface $encoder
      * @param LoggerInterface $logger
+     * @param PayPalConfigFactoryInterface $factory
      * @param string $type
      */
     public function __construct(
         ManagerRegistry $doctrine,
-        SymmetricCrypterInterface $encoder,
         LoggerInterface $logger,
+        PayPalConfigFactoryInterface $factory,
         $type
     ) {
         $this->doctrine = $doctrine;
-        $this->encoder = $encoder;
         $this->logger = $logger;
+        $this->factory = $factory;
         $this->type = $type;
     }
 
@@ -72,18 +73,34 @@ abstract class PayPalConfigProvider
     }
 
     /**
-     * @return array|Channel[]
+     * @return array|PayPalSettings[]
      */
-    protected function getEnabledIntegrationChannels()
+    protected function getEnabledIntegrationSettings()
     {
         try {
-            return $this->doctrine->getManagerForClass('OroIntegrationBundle:Channel')
-                ->getRepository('OroIntegrationBundle:Channel')
-                ->findBy(['type' => $this->getType(), 'enabled' => true]);
+            return $this->doctrine->getManagerForClass('OroPayPalBundle:PayPalSettings')
+                ->getRepository('OroPayPalBundle:PayPalSettings')
+                ->getEnabledSettingsByType($this->getType());
         } catch (\UnexpectedValueException $e) {
             $this->logger->critical($e->getMessage());
 
             return [];
         }
+    }
+
+    /**
+     * @return array
+     */
+    protected function collectConfigs()
+    {
+        $configs = [];
+        $settings = $this->getEnabledIntegrationSettings();
+
+        foreach ($settings as $setting) {
+            $config = $this->factory->createConfig($setting);
+            $configs[$config->getPaymentMethodIdentifier()] = $config;
+        }
+
+        return $configs;
     }
 }

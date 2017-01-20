@@ -6,8 +6,8 @@ use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\PaymentBundle\Condition\RequirePaymentRedirect;
 use Oro\Bundle\PaymentBundle\Event\RequirePaymentRedirectEvent;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProviderInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
+use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -18,7 +18,7 @@ class RequirePaymentRedirectTest extends \PHPUnit_Framework_TestCase
     /** @var RequirePaymentRedirect */
     protected $condition;
 
-    /** @var PaymentMethodProvidersRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentMethodProvidersRegistryInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $paymentMethodProvidersRegistry;
 
     /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
@@ -26,7 +26,7 @@ class RequirePaymentRedirectTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->paymentMethodProvidersRegistry = $this->createMock(PaymentMethodProvidersRegistry::class);
+        $this->paymentMethodProvidersRegistry = $this->createMock(PaymentMethodProvidersRegistryInterface::class);
         $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->condition = new RequirePaymentRedirect($this->paymentMethodProvidersRegistry, $this->dispatcher);
     }

@@ -2,31 +2,45 @@
 
 namespace Oro\Bundle\PayPalBundle\Method\Config\Provider;
 
-use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfig;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\PayPalBundle\Method\Config\Factory\PayPalCreditCardConfigFactoryInterface;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
+use Psr\Log\LoggerInterface;
 
-class PayPalCreditCardConfigProvider extends PayPalConfigProvider implements PayPalCreditCardConfigProviderInterface
+class PayPalCreditCardConfigProvider extends AbstractPayPalConfigProvider implements
+    PayPalCreditCardConfigProviderInterface
 {
     /**
-     * @var array|PayPalCreditCardConfigInterface[]
+     * @var PayPalCreditCardConfigInterface[]
      */
     protected $configs = [];
 
     /**
-     * @return array|PayPalCreditCardConfigInterface[]
+     * {@inheritdoc}
+     */
+    public function __construct(
+        ManagerRegistry $doctrine,
+        LoggerInterface $logger,
+        PayPalCreditCardConfigFactoryInterface $factory,
+        $type
+    ) {
+        parent::__construct($doctrine, $logger, $factory, $type);
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getPaymentConfigs()
     {
-        if (empty($this->configs)) {
-            $this->fillConfigs();
+        if (0 === count($this->configs)) {
+            return $this->configs = $this->collectConfigs();
         }
 
         return $this->configs;
     }
 
     /**
-     * @param string $identifier
-     * @return PayPalCreditCardConfigInterface|null
+     * {@inheritdoc}
      */
     public function getPaymentConfig($identifier)
     {
@@ -37,15 +51,5 @@ class PayPalCreditCardConfigProvider extends PayPalConfigProvider implements Pay
         $configs = $this->getPaymentConfigs();
 
         return $configs[$identifier];
-    }
-
-    protected function fillConfigs()
-    {
-        $channels = $this->getEnabledIntegrationChannels();
-
-        foreach ($channels as $channel) {
-            $config = new PayPalCreditCardConfig($channel, $this->encoder);
-            $this->configs[$config->getPaymentMethodIdentifier()] = $config;
-        }
     }
 }

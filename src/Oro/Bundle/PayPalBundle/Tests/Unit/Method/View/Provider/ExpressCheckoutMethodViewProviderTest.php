@@ -2,9 +2,10 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method\View\Provider;
 
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalExpressCheckoutConfigProviderInterface;
-use Oro\Bundle\PayPalBundle\Method\View\PayPalExpressCheckoutPaymentMethodView;
+use Oro\Bundle\PayPalBundle\Method\View\Factory\PayPalExpressCheckoutPaymentMethodViewFactoryInterface;
 use Oro\Bundle\PayPalBundle\Method\View\Provider\ExpressCheckoutMethodViewProvider;
 
 class ExpressCheckoutMethodViewProviderTest extends \PHPUnit_Framework_TestCase
@@ -18,76 +19,141 @@ class ExpressCheckoutMethodViewProviderTest extends \PHPUnit_Framework_TestCase
     /** @internal */
     const WRONG_IDENTIFIER = 'wrong';
 
-    /** @var PayPalExpressCheckoutConfigProviderInterface */
+    /** @var PayPalExpressCheckoutConfigProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
     private $configProvider;
 
     /** @var ExpressCheckoutMethodViewProvider */
     private $provider;
 
-    /** @var array|PayPalExpressCheckoutConfigInterface[]|\PHPUnit_Framework_MockObject_MockObject[] */
-    private $paymentConfigs;
+    /** @var PayPalExpressCheckoutPaymentMethodViewFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
+    private $factory;
 
     public function setUp()
     {
-        $this->paymentConfigs = [
-            $this->buildPaymentConfig(self::IDENTIFIER1),
-            $this->buildPaymentConfig(self::IDENTIFIER2),
-        ];
+        $this->factory = $this->createMock(PayPalExpressCheckoutPaymentMethodViewFactoryInterface::class);
 
         $this->configProvider = $this->createMock(PayPalExpressCheckoutConfigProviderInterface::class);
-        $this->configProvider->expects(static::once())
-            ->method('getPaymentConfigs')
-            ->willReturn($this->paymentConfigs);
 
-        $this->provider = new ExpressCheckoutMethodViewProvider($this->configProvider);
+        $this->provider = new ExpressCheckoutMethodViewProvider($this->factory, $this->configProvider);
     }
 
     public function testHasPaymentMethodViewForCorrectIdentifier()
     {
+        $config = $this->buildPaymentConfig(self::IDENTIFIER1);
+
+        $this->configProvider->expects(static::once())
+            ->method('getPaymentConfigs')
+            ->willReturn([$config]);
+
+        $view = $this->createMock(PaymentMethodViewInterface::class);
+        $this->factory->expects($this->once())
+            ->method('create')
+            ->with($config)
+            ->willReturn($view);
+
         static::assertTrue($this->provider->hasPaymentMethodView(self::IDENTIFIER1));
     }
 
     public function testHasPaymentMethodViewForWrongIdentifier()
     {
+        $config = $this->buildPaymentConfig(self::IDENTIFIER1);
+
+        $this->configProvider->expects(static::once())
+            ->method('getPaymentConfigs')
+            ->willReturn([$config]);
+
+        $view = $this->createMock(PaymentMethodViewInterface::class);
+        $this->factory->expects($this->once())
+            ->method('create')
+            ->with($config)
+            ->willReturn($view);
+
         static::assertFalse($this->provider->hasPaymentMethodView(self::WRONG_IDENTIFIER));
     }
 
     public function testGetPaymentMethodViewReturnsCorrectObject()
     {
-        $expectedView = $this->buildExpressCheckoutMethodView($this->paymentConfigs[0]);
+        $config = $this->buildPaymentConfig(self::IDENTIFIER1);
+
+        $this->configProvider->expects(static::once())
+            ->method('getPaymentConfigs')
+            ->willReturn([$config]);
+
+        $view = $this->createMock(PaymentMethodViewInterface::class);
+        $this->factory->expects($this->once())
+            ->method('create')
+            ->with($config)
+            ->willReturn($view);
 
         static::assertEquals(
-            $expectedView,
+            $view,
             $this->provider->getPaymentMethodView(self::IDENTIFIER1)
         );
     }
 
     public function testGetPaymentMethodViewForWrongIdentifier()
     {
+        $config = $this->buildPaymentConfig(self::IDENTIFIER1);
+
+        $this->configProvider->expects(static::once())
+            ->method('getPaymentConfigs')
+            ->willReturn([$config]);
+
+        $view = $this->createMock(PaymentMethodViewInterface::class);
+        $this->factory->expects($this->once())
+            ->method('create')
+            ->with($config)
+            ->willReturn($view);
+
         static::assertNull($this->provider->getPaymentMethodView(self::WRONG_IDENTIFIER));
     }
 
     public function testGetPaymentMethodViewsReturnsCorrectObjects()
     {
-        $expectedViews = [
-            $this->buildExpressCheckoutMethodView($this->paymentConfigs[0]),
-            $this->buildExpressCheckoutMethodView($this->paymentConfigs[1]),
-        ];
+        $config1 = $this->buildPaymentConfig(self::IDENTIFIER1);
+        $config2 = $this->buildPaymentConfig(self::IDENTIFIER2);
+
+        $this->configProvider->expects(static::once())
+            ->method('getPaymentConfigs')
+            ->willReturn([$config1, $config2]);
+
+        $view1 = $this->createMock(PaymentMethodViewInterface::class);
+        $this->factory->expects($this->at(0))
+            ->method('create')
+            ->with($config1)
+            ->willReturn($view1);
+
+        $view2 = $this->createMock(PaymentMethodViewInterface::class);
+        $this->factory->expects($this->at(1))
+            ->method('create')
+            ->with($config2)
+            ->willReturn($view2);
 
         static::assertEquals(
-            $expectedViews,
+            [$view1, $view2],
             $this->provider->getPaymentMethodViews([self::IDENTIFIER1, self::IDENTIFIER2])
         );
     }
 
     public function testGetPaymentMethodViewsForWrongIdentifier()
     {
+        $config = $this->buildPaymentConfig(self::IDENTIFIER1);
+
+        $this->configProvider->expects(static::once())
+            ->method('getPaymentConfigs')
+            ->willReturn([$config]);
+
+        $view = $this->createMock(PaymentMethodViewInterface::class);
+        $this->factory->expects($this->once())
+            ->method('create')
+            ->with($config)
+            ->willReturn($view);
+
         static::assertEmpty($this->provider->getPaymentMethodViews([self::WRONG_IDENTIFIER]));
     }
 
     /**
      * @param string $identifier
-     *
      * @return \PHPUnit_Framework_MockObject_MockObject|PayPalExpressCheckoutConfigInterface
      */
     private function buildPaymentConfig($identifier)
@@ -98,15 +164,5 @@ class ExpressCheckoutMethodViewProviderTest extends \PHPUnit_Framework_TestCase
             ->willReturn($identifier);
 
         return $config;
-    }
-
-    /**
-     * @param PayPalExpressCheckoutConfigInterface $config
-     *
-     * @return PayPalExpressCheckoutPaymentMethodView
-     */
-    private function buildExpressCheckoutMethodView(PayPalExpressCheckoutConfigInterface $config)
-    {
-        return new PayPalExpressCheckoutPaymentMethodView($config);
     }
 }

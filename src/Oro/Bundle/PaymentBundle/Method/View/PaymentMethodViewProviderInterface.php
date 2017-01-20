@@ -8,11 +8,11 @@ interface PaymentMethodViewProviderInterface
      * @param array $identifiers
      * @return PaymentMethodViewInterface[]
      */
-    public function getPaymentMethodViews($identifiers);
+    public function getPaymentMethodViews(array $identifiers);
 
     /**
      * @param string $identifier
-     * @return PaymentMethodViewInterface|null
+     * @return PaymentMethodViewInterface
      */
     public function getPaymentMethodView($identifier);
 

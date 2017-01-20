@@ -6,15 +6,15 @@ use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProviderInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
+use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentMethodsConfigsRulesProviderInterface;
 
 class PaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var PaymentMethodProvidersRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentMethodProvidersRegistryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $paymentMethodProvidersRegistryMock;
 
@@ -30,9 +30,7 @@ class PaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->paymentMethodProvidersRegistryMock = $this->getMockBuilder(PaymentMethodProvidersRegistry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->paymentMethodProvidersRegistryMock = $this->createMock(PaymentMethodProvidersRegistryInterface::class);
 
         $this->paymentMethodsConfigsRulesProviderMock = $this
             ->getMockBuilder(PaymentMethodsConfigsRulesProviderInterface::class)

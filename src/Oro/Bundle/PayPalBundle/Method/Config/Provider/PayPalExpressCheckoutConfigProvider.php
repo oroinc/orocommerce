@@ -2,24 +2,38 @@
 
 namespace Oro\Bundle\PayPalBundle\Method\Config\Provider;
 
-use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfig;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\PayPalBundle\Method\Config\Factory\PayPalExpressCheckoutConfigFactoryInterface;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
+use Psr\Log\LoggerInterface;
 
-class PayPalExpressCheckoutConfigProvider extends PayPalConfigProvider implements
+class PayPalExpressCheckoutConfigProvider extends AbstractPayPalConfigProvider implements
     PayPalExpressCheckoutConfigProviderInterface
 {
     /**
-     * @var array|PayPalExpressCheckoutConfigInterface[]
+     * @var PayPalExpressCheckoutConfigInterface[]
      */
     protected $configs = [];
 
     /**
-     * @return array|PayPalExpressCheckoutConfigInterface[]
+     * {@inheritdoc}
+     */
+    public function __construct(
+        ManagerRegistry $doctrine,
+        LoggerInterface $logger,
+        PayPalExpressCheckoutConfigFactoryInterface $factory,
+        $type
+    ) {
+        parent::__construct($doctrine, $logger, $factory, $type);
+    }
+
+    /**
+     * @return PayPalExpressCheckoutConfigInterface[]
      */
     public function getPaymentConfigs()
     {
-        if (empty($this->configs)) {
-            $this->fillConfigs();
+        if (0 === count($this->configs)) {
+            return $this->configs = $this->collectConfigs();
         }
 
         return $this->configs;
@@ -38,15 +52,5 @@ class PayPalExpressCheckoutConfigProvider extends PayPalConfigProvider implement
         $configs = $this->getPaymentConfigs();
 
         return $configs[$identifier];
-    }
-
-    protected function fillConfigs()
-    {
-        $channels = $this->getEnabledIntegrationChannels();
-
-        foreach ($channels as $channel) {
-            $config = new PayPalExpressCheckoutConfig($channel, $this->encoder);
-            $this->configs[$config->getPaymentMethodIdentifier()] = $config;
-        }
     }
 }

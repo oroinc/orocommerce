@@ -20,9 +20,7 @@ abstract class AbstractPaymentMethodViewProvider implements PaymentMethodViewPro
     }
 
     /**
-     * @param string $identifier
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function hasPaymentMethodView($identifier)
     {
@@ -30,9 +28,7 @@ abstract class AbstractPaymentMethodViewProvider implements PaymentMethodViewPro
     }
 
     /**
-     * @param string $identifier
-     *
-     * @return PaymentMethodViewInterface|null
+     * {@inheritdoc}
      */
     public function getPaymentMethodView($identifier)
     {
@@ -44,11 +40,9 @@ abstract class AbstractPaymentMethodViewProvider implements PaymentMethodViewPro
     }
 
     /**
-     * @param array $identifiers
-     *
-     * @return array|PaymentMethodViewInterface[]
+     * {@inheritdoc}
      */
-    public function getPaymentMethodViews($identifiers)
+    public function getPaymentMethodViews(array $identifiers)
     {
         $views = [];
         foreach ($identifiers as $identifier) {

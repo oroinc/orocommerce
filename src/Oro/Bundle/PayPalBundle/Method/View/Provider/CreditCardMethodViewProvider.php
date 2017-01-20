@@ -3,35 +3,27 @@
 namespace Oro\Bundle\PayPalBundle\Method\View\Provider;
 
 use Oro\Bundle\PaymentBundle\Method\View\AbstractPaymentMethodViewProvider;
-use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalCreditCardConfigProviderInterface;
-use Oro\Bundle\PayPalBundle\Method\View\PayPalCreditCardPaymentMethodView;
-use Symfony\Component\Form\FormFactoryInterface;
+use Oro\Bundle\PayPalBundle\Method\View\Factory\PayPalCreditCardPaymentMethodViewFactoryInterface;
 
 class CreditCardMethodViewProvider extends AbstractPaymentMethodViewProvider
 {
-    /** @var FormFactoryInterface */
-    protected $formFactory;
-
-    /** @var PaymentTransactionProvider */
-    protected $transactionProvider;
+    /** @var PayPalCreditCardPaymentMethodViewFactoryInterface */
+    private $factory;
 
     /** @var PayPalCreditCardConfigProviderInterface */
-    protected $configProvider;
+    private $configProvider;
 
     /**
-     * @param FormFactoryInterface $formFactory
-     * @param PaymentTransactionProvider $transactionProvider
+     * @param PayPalCreditCardPaymentMethodViewFactoryInterface $factory
      * @param PayPalCreditCardConfigProviderInterface $configProvider
      */
     public function __construct(
-        FormFactoryInterface $formFactory,
-        PaymentTransactionProvider $transactionProvider,
+        PayPalCreditCardPaymentMethodViewFactoryInterface $factory,
         PayPalCreditCardConfigProviderInterface $configProvider
     ) {
-        $this->formFactory = $formFactory;
-        $this->transactionProvider = $transactionProvider;
+        $this->factory = $factory;
         $this->configProvider = $configProvider;
 
         parent::__construct();
@@ -52,21 +44,7 @@ class CreditCardMethodViewProvider extends AbstractPaymentMethodViewProvider
     {
         $this->addView(
             $config->getPaymentMethodIdentifier(),
-            $this->buildView($config)
-        );
-    }
-
-    /**
-     * @param PayPalCreditCardConfigInterface $config
-     *
-     * @return PayPalCreditCardPaymentMethodView
-     */
-    protected function buildView(PayPalCreditCardConfigInterface $config)
-    {
-        return new PayPalCreditCardPaymentMethodView(
-            $this->formFactory,
-            $config,
-            $this->transactionProvider
+            $this->factory->create($config)
         );
     }
 }

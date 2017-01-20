@@ -10,14 +10,14 @@ class ZeroAmountAuthorizationRedirectListener
     /**
      * @var PayPalCreditCardConfigProviderInterface
      */
-    private $config;
+    private $configProvider;
 
     /**
-     * @param PayPalCreditCardConfigProviderInterface $config
+     * @param PayPalCreditCardConfigProviderInterface $configProvider
      */
-    public function __construct(PayPalCreditCardConfigProviderInterface $config)
+    public function __construct(PayPalCreditCardConfigProviderInterface $configProvider)
     {
-        $this->config = $config;
+        $this->configProvider = $configProvider;
     }
 
     /**
@@ -25,7 +25,7 @@ class ZeroAmountAuthorizationRedirectListener
      */
     public function onRequirePaymentRedirect(RequirePaymentRedirectEvent $event)
     {
-        $paymentConfig = $this->config->getPaymentConfig($event->getPaymentMethod()->getIdentifier());
-        $event->setRedirectRequired(!$paymentConfig->isZeroAmountAuthorizationEnabled());
+        $config = $this->configProvider->getPaymentConfig($event->getPaymentMethod()->getIdentifier());
+        $event->setRedirectRequired(!$config->isZeroAmountAuthorizationEnabled());
     }
 }

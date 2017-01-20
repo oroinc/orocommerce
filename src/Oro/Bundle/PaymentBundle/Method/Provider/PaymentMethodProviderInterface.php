@@ -1,6 +1,8 @@
 <?php
 
-namespace Oro\Bundle\PaymentBundle\Method;
+namespace Oro\Bundle\PaymentBundle\Method\Provider;
+
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 interface PaymentMethodProviderInterface
 {
@@ -20,9 +22,4 @@ interface PaymentMethodProviderInterface
      * @return bool
      */
     public function hasPaymentMethod($identifier);
-
-    /**
-     * @return string
-     */
-    public function getType();
 }

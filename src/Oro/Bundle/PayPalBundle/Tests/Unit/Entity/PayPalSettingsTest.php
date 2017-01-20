@@ -91,7 +91,7 @@ class PayPalSettingsTest extends \PHPUnit_Framework_TestCase
 
         static::assertEquals(
             $result->get('allowed_credit_card_types'),
-            $entity->getAllowedCreditCardTypes()
+            $entity->getAllowedCreditCardTypes()->toArray()
         );
         static::assertEquals(
             $result->get('express_checkout_payment_action'),

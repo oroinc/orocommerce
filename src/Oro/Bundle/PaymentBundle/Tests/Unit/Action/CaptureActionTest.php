@@ -5,7 +5,7 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Action;
 use Oro\Bundle\PaymentBundle\Action\CaptureAction;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProviderInterface;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Symfony\Component\PropertyAccess\PropertyPath;
 
 class CaptureActionTest extends AbstractActionTest
