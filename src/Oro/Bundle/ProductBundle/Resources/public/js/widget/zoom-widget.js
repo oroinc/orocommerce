@@ -17,28 +17,21 @@ define(function(require) {
         },
 
         _create: function() {
-            this._setActiveImage();
+            var self = this;
+            this.element.on('slider:currentImage', function(e, activeImage) {
+                self.element.data('zoom-image', $(activeImage).attr('data-url-zoom'));
+            });
+            this.element.trigger('zoom-widget:created');
         },
 
         _init: function() {
-            this.element.elevateZoom(this.options);
             var self = this;
+            this.element.elevateZoom(this.options);
             this.element.on('slider:activeImage', function(e, activeImage) {
                 $(this).data('zoom-image', $(activeImage).attr('data-url-zoom'));
                 self._destroy();
                 self._init();
             });
-        },
-
-        _setActiveImage: function() {
-            var self = this;
-            var dependentSlider = this.options.dependentSlider;
-            if (dependentSlider) {
-                var activeImageIndex = $(dependentSlider).slick('slickCurrentSlide');
-                var activeImage = $(dependentSlider)
-                    .find('.slick-slide[data-slick-index=' + activeImageIndex + '] img');
-                self.element.data('zoom-image', $(activeImage).attr('data-url-zoom'));
-            }
         },
 
         _destroy: function() {
