@@ -11,11 +11,17 @@ class BeforeRemoveFieldListener
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
+    /**
+     * @param DoctrineHelper $doctrineHelper
+     */
     public function __construct(DoctrineHelper $doctrineHelper)
     {
         $this->doctrineHelper = $doctrineHelper;
     }
 
+    /**
+     * @param BeforeRemoveFieldEvent $event
+     */
     public function onBeforeRemoveField(BeforeRemoveFieldEvent $event)
     {
         if ($event->getClassName() !== Product::class && !is_subclass_of($event->getClassName(), Product::class)) {

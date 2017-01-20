@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 
 use Doctrine\ORM\EntityRepository;
+
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Event\BeforeRemoveFieldEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
