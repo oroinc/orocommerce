@@ -107,6 +107,8 @@ abstract class AbstractMethodsListener
     private function isApplicable(ExtendableConditionEvent $event)
     {
         $context = $event->getContext();
-        return $context instanceof ActionData && $context->get('checkout') instanceof Checkout;
+
+        return $context instanceof ActionData && $context->get('checkout') instanceof Checkout
+            && $context->get('validateOnStartCheckout');
     }
 }

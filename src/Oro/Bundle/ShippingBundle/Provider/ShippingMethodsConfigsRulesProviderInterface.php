@@ -19,4 +19,3 @@ interface ShippingMethodsConfigsRulesProviderInterface
      */
     public function getAllFilteredShippingMethodsConfigs(ShippingContextInterface $context);
 }
-
