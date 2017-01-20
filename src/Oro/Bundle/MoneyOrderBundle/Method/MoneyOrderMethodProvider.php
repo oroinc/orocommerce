@@ -13,7 +13,7 @@ class MoneyOrderMethodProvider implements PaymentMethodProviderInterface
     public function getPaymentMethods()
     {
         $paymentMethod = new MoneyOrder();
-        return [$this->getType() => $paymentMethod];
+        return [$paymentMethod->getIdentifier() => $paymentMethod];
     }
 
     /**
@@ -34,14 +34,8 @@ class MoneyOrderMethodProvider implements PaymentMethodProviderInterface
      */
     public function hasPaymentMethod($identifier)
     {
-        return $this->getType() === $identifier;
-    }
+        $paymentMethods = $this->getPaymentMethods();
 
-    /**
-     * @return string
-     */
-    public function getType()
-    {
-        return MoneyOrder::TYPE;
+        return isset($paymentMethods[$identifier]);
     }
 }

@@ -3,6 +3,7 @@
 namespace Oro\Bundle\AlternativeCheckoutBundle\Layout\DataProvider;
 
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodProviderInterface;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistry;
@@ -39,7 +40,10 @@ class PaymentTermViewProvider
     public function getView(PaymentContextInterface $context)
     {
         try {
-            $paymentMethodProvider = $this->paymentMethodRegistry->getPaymentMethodProvider(PaymentTerm::TYPE);
+            $paymentMethodProvider = $this->getPaymentTermProvider();
+            if (!$paymentMethodProvider) {
+                return null;
+            }
             $paymentMethods = [];
             foreach ($paymentMethodProvider->getPaymentMethods() as $paymentMethod) {
                 if ($paymentMethod->isApplicable($context)) {
@@ -60,6 +64,20 @@ class PaymentTermViewProvider
         }
 
         return $this->formatPaymentViews($views, $context);
+    }
+
+    /**
+     * @return null|PaymentMethodProviderInterface
+     */
+    private function getPaymentTermProvider()
+    {
+        $providers = $this->paymentMethodRegistry->getPaymentMethodProviders();
+        foreach ($providers as $provider) {
+            if ($provider->hasPaymentMethod(PaymentTerm::TYPE)) {
+                return $provider;
+            }
+        }
+        return null;
     }
 
     /**

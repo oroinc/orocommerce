@@ -1,53 +1,45 @@
 <?php
 
-namespace Oro\Bundle\PayPalBundle\Method;
+namespace Oro\Bundle\PayPalBundle\Method\Factory;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PaymentBundle\Method\AbstractPaymentMethodProvider;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Provider\ExtractOptionsProvider;
 use Oro\Bundle\PaymentBundle\Provider\SurchargeProvider;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
-use Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalExpressCheckoutConfigProviderInterface;
+use Oro\Bundle\PayPalBundle\Method\PayPalExpressCheckoutPaymentMethod;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
 use Symfony\Component\Routing\RouterInterface;
 
-class ExpressCheckoutMethodProvider extends AbstractPaymentMethodProvider
+class BasicPayPalExpressCheckoutPaymentMethodFactory implements PayPalExpressCheckoutPaymentMethodFactoryInterface
 {
-    const TYPE = 'express_checkout';
-    
     /**
      * @var Gateway
      */
-    protected $gateway;
+    private $gateway;
 
     /**
      * @var RouterInterface
      */
-    protected $router;
+    private $router;
 
     /**
      * @var DoctrineHelper
      */
-    protected $doctrineHelper;
-
-    /**
-     * @var PayPalExpressCheckoutConfigProviderInterface
-     */
-    protected $configProvider;
+    private $doctrineHelper;
 
     /**
      * @var ExtractOptionsProvider
      */
-    protected $optionsProvider;
+    private $optionsProvider;
 
     /**
      * @var SurchargeProvider
      */
-    protected $surchargeProvider;
+    private $surchargeProvider;
 
     /**
      * @param Gateway $gateway
-     * @param PayPalExpressCheckoutConfigProviderInterface $configProvider
      * @param RouterInterface $router
      * @param DoctrineHelper $doctrineHelper
      * @param ExtractOptionsProvider $optionsProvider
@@ -55,46 +47,23 @@ class ExpressCheckoutMethodProvider extends AbstractPaymentMethodProvider
      */
     public function __construct(
         Gateway $gateway,
-        PayPalExpressCheckoutConfigProviderInterface $configProvider,
         RouterInterface $router,
         DoctrineHelper $doctrineHelper,
         ExtractOptionsProvider $optionsProvider,
         SurchargeProvider $surchargeProvider
     ) {
-        parent::__construct();
         $this->gateway = $gateway;
-        $this->configProvider = $configProvider;
         $this->router = $router;
         $this->doctrineHelper = $doctrineHelper;
         $this->optionsProvider = $optionsProvider;
         $this->surchargeProvider = $surchargeProvider;
     }
 
-    protected function collectMethods()
-    {
-        $configs = $this->configProvider->getPaymentConfigs();
-        foreach ($configs as $config) {
-            $this->addCreditCardMethod($config);
-        }
-    }
-
     /**
      * @param PayPalExpressCheckoutConfigInterface $config
+     * @return PaymentMethodInterface
      */
-    protected function addCreditCardMethod(PayPalExpressCheckoutConfigInterface $config)
-    {
-        $this->addMethod(
-            $config->getPaymentMethodIdentifier(),
-            $this->buildMethod($config)
-        );
-    }
-
-    /**
-     * @param PayPalExpressCheckoutConfigInterface $config
-     *
-     * @return PayPalCreditCardPaymentMethod
-     */
-    protected function buildMethod(PayPalExpressCheckoutConfigInterface $config)
+    public function create(PayPalExpressCheckoutConfigInterface $config)
     {
         return new PayPalExpressCheckoutPaymentMethod(
             $this->gateway,
@@ -104,13 +73,5 @@ class ExpressCheckoutMethodProvider extends AbstractPaymentMethodProvider
             $this->optionsProvider,
             $this->surchargeProvider
         );
-    }
-
-    /**
-     * {inheritDocs}
-     */
-    public function getType()
-    {
-        return sprintf('%s_%s', $this->configProvider->getType(), self::TYPE);
     }
 }

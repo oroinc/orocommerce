@@ -1,8 +1,10 @@
 <?php
 
-namespace Oro\Bundle\PaymentBundle\Method;
+namespace Oro\Bundle\PaymentBundle\Method\Provider;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodProviderInterface;
 
 abstract class AbstractPaymentMethodProvider implements PaymentMethodProviderInterface
 {
@@ -12,7 +14,7 @@ abstract class AbstractPaymentMethodProvider implements PaymentMethodProviderInt
     protected $methods;
 
     /**
-     * @return ArrayCollection|PaymentMethodInterface[]
+     * Save methods to $methods property
      */
     abstract protected function collectMethods();
 

@@ -32,9 +32,4 @@ class MoneyOrderMethodProviderTest extends \PHPUnit_Framework_TestCase
         static::assertTrue($this->provider->hasPaymentMethod(MoneyOrder::TYPE));
         static::assertFalse($this->provider->hasPaymentMethod('not_existing'));
     }
-
-    public function testGetType()
-    {
-        static::assertEquals(MoneyOrder::TYPE, $this->provider->getType());
-    }
 }

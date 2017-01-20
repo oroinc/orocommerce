@@ -20,9 +20,4 @@ interface PaymentMethodProviderInterface
      * @return bool
      */
     public function hasPaymentMethod($identifier);
-
-    /**
-     * @return string
-     */
-    public function getType();
 }
