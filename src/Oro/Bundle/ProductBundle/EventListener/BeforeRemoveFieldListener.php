@@ -44,7 +44,5 @@ class BeforeRemoveFieldListener
                 implode(', ', array_unique($skuList))
             ));
         }
-
-
     }
 }
