@@ -3,7 +3,7 @@ oro:
         transport:
             shipping_service:
                 blank: 'At least one shipping service should be selected.'
-                used: 'Shipping Service "{{ service }}" used in Shipping Rules.Please disable it before removal.'
+                used: 'Shipping Service "{{ service }}" used in Shipping Rules. Please disable it before removal.'
             rates_csv:
                 missing_fields: 'Row "{{ row_count }}" should have at least "{{ field_number }}" fields'
                 unknown_country_code: 'Row "{{ row_count }}" has an invalid country code: "{{ country_code }}"'

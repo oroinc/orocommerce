@@ -34,7 +34,6 @@ class OrderData
     /** @var  string */
     protected $reference2;
 
-
     /**
      * @return OrderAddress
      */

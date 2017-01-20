@@ -173,8 +173,6 @@ class DPDTransport extends Transport
         return $this;
     }
 
-
-
     /**
      * @return string
      */
@@ -459,7 +457,6 @@ class DPDTransport extends Transport
         $this->labelStartPosition = $labelStartPosition;
         return $this;
     }
-
 
     /**
      * {@inheritdoc}

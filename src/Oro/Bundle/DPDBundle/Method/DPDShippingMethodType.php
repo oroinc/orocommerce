@@ -195,6 +195,7 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
         );
 
         $setOrderResponse = $this->transportProvider->getSetOrderResponse($setOrderRequest, $this->transport);
+
         return $setOrderResponse;
     }
 
@@ -226,7 +227,7 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
     public function checkShipDate(\DateTime $shipDate) {
         $zipCodeRulesResponse = $this->fetchZipCodeRules();
 
-        //check cutOff if shipdate is today
+        // check if cut-off shipping date is today
         $today = new \DateTime('today');
         $shipDateMidnight = clone $shipDate;
         $shipDateMidnight->setTime(0,0,0);
@@ -245,7 +246,7 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
             }
         }
 
-        //check if shipDate is saturday or sunday
+        // check if shipDate is saturday or sunday
         $shipDateWeekDay = (integer)$shipDate->format('N');
         switch ($shipDateWeekDay) {
             case 6://saturday
@@ -254,7 +255,7 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
                 return 1;
         }
 
-        //check if shipDate inside noPickupDays
+        // check if shipDate inside noPickupDays
         if ($zipCodeRulesResponse->isNoPickupDay($shipDate)) {
             return 1;
         }
@@ -268,8 +269,8 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
     public function fetchZipCodeRules()
     {
         $getZipCodeRulesRequest = $this->dpdRequestFactory->createZipCodeRulesRequest();
-
         $cacheKey = $this->zipCodeRulesCache->createKey($this->transport, $getZipCodeRulesRequest, $this->getIdentifier());
+
         if ($this->zipCodeRulesCache->containsZipCodeRules($cacheKey)) {
             return $this->zipCodeRulesCache->fetchZipCodeRules($cacheKey);
         }
@@ -278,6 +279,7 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
             $getZipCodeRulesRequest,
             $this->transport
         );
+
         return $getZipCodeRulesResponse;
     }
 }
