@@ -174,7 +174,7 @@ define(function(require) {
             this.validateIfMonthAndYearNotBlank();
         },
 
-        validateIfMonthAndYearNotBlank: function () {
+        validateIfMonthAndYearNotBlank: function() {
             this.validate(this.options.selectors.expirationDate);
         },
 
@@ -228,7 +228,7 @@ define(function(require) {
                     var parentWithValidation = $el.parents(self.options.selectors.validation);
 
                     $el.addClass('error');
-                    
+
                     if (parentWithValidation.length) {
                         error.appendTo(parentWithValidation.first());
                     } else {
@@ -242,7 +242,6 @@ define(function(require) {
                 //http://stackoverflow.com/questions/742810/clone-isnt-cloning-select-values
                 $(item).val(self.$form.find('select').eq(index).val());
             });
-
 
             // Add validator to form
             $.data(virtualForm, 'validator', validator);

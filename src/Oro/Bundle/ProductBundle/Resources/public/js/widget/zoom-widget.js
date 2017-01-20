@@ -16,7 +16,7 @@ define(function(require) {
             lensOpacity: 0.22
         },
 
-        _create: function () {
+        _create: function() {
             this._setActiveImage();
         },
 
@@ -30,12 +30,13 @@ define(function(require) {
             });
         },
 
-        _setActiveImage: function () {
+        _setActiveImage: function() {
             var self = this;
             var dependentSlider = this.options.dependentSlider;
             if (dependentSlider) {
                 var activeImageIndex = $(dependentSlider).slick('slickCurrentSlide');
-                var activeImage = $(dependentSlider).find('.slick-slide[data-slick-index=' + activeImageIndex + '] img');
+                var activeImage = $(dependentSlider)
+                    .find('.slick-slide[data-slick-index=' + activeImageIndex + '] img');
                 self.element.data('zoom-image', $(activeImage).attr('data-url-zoom'));
             }
         },
