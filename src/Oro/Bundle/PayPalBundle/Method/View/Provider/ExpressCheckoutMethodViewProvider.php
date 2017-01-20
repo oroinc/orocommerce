@@ -5,18 +5,25 @@ namespace Oro\Bundle\PayPalBundle\Method\View\Provider;
 use Oro\Bundle\PaymentBundle\Method\View\AbstractPaymentMethodViewProvider;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalExpressCheckoutConfigProviderInterface;
-use Oro\Bundle\PayPalBundle\Method\View\PayPalExpressCheckoutPaymentMethodView;
+use Oro\Bundle\PayPalBundle\Method\View\Factory\PayPalExpressCheckoutPaymentMethodViewFactoryInterface;
 
 class ExpressCheckoutMethodViewProvider extends AbstractPaymentMethodViewProvider
 {
+    /** @var PayPalExpressCheckoutPaymentMethodViewFactoryInterface */
+    private $factory;
+
     /** @var PayPalExpressCheckoutConfigProviderInterface */
-    protected $configProvider;
+    private $configProvider;
 
     /**
+     * @param PayPalExpressCheckoutPaymentMethodViewFactoryInterface $factory
      * @param PayPalExpressCheckoutConfigProviderInterface $configProvider
      */
-    public function __construct(PayPalExpressCheckoutConfigProviderInterface $configProvider)
-    {
+    public function __construct(
+        PayPalExpressCheckoutPaymentMethodViewFactoryInterface $factory,
+        PayPalExpressCheckoutConfigProviderInterface $configProvider
+    ) {
+        $this->factory = $factory;
         $this->configProvider = $configProvider;
 
         parent::__construct();
@@ -37,17 +44,7 @@ class ExpressCheckoutMethodViewProvider extends AbstractPaymentMethodViewProvide
     {
         $this->addView(
             $config->getPaymentMethodIdentifier(),
-            $this->buildView($config)
+            $this->factory->create($config)
         );
-    }
-
-    /**
-     * @param PayPalExpressCheckoutConfigInterface $config
-     *
-     * @return PayPalExpressCheckoutPaymentMethodView
-     */
-    protected function buildView(PayPalExpressCheckoutConfigInterface $config)
-    {
-        return new PayPalExpressCheckoutPaymentMethodView($config);
     }
 }

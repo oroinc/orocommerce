@@ -13,7 +13,7 @@ class PayPalCreditCardConfigProvider extends AbstractPayPalConfigProvider implem
     /**
      * @var PayPalCreditCardConfigInterface[]
      */
-    protected $configs;
+    protected $configs = [];
 
     /**
      * {@inheritdoc}
