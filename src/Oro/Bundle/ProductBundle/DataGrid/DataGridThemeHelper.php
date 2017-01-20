@@ -68,6 +68,9 @@ class DataGridThemeHelper
         return self::VIEW_GRID;
     }
 
+    /**
+     * @return array
+     */
     protected function getViewList()
     {
         return [
