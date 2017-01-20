@@ -6,7 +6,9 @@ use Oro\Bundle\AddressBundle\Entity\Address;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentMethodsConfigsRuleRepository;
+use Oro\Bundle\PaymentBundle\Tests\Functional\Entity\DataFixtures\LoadPaymentMethodsConfigsRuleDestinationData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\PaymentBundle\Tests\Functional\Entity\DataFixtures\LoadPaymentMethodsConfigsRuleData;
 
 /**
  * @dbIsolation
@@ -25,11 +27,10 @@ class PaymentMethodsConfigsRuleRepositoryTest extends WebTestCase
             ->get('doctrine')
             ->getRepository('OroPaymentBundle:PaymentMethodsConfigsRule');
 
-        $currentBundleDataFixturesNameSpace = 'Oro\Bundle\PaymentBundle\Tests\Functional\Entity\DataFixtures';
         $this->loadFixtures(
             [
-                $currentBundleDataFixturesNameSpace.'\LoadPaymentMethodsConfigsRuleData',
-                $currentBundleDataFixturesNameSpace.'\LoadPaymentMethodsConfigsRuleDestinationData',
+                LoadPaymentMethodsConfigsRuleData::class,
+                LoadPaymentMethodsConfigsRuleDestinationData::class
             ]
         );
     }
@@ -161,6 +162,27 @@ class PaymentMethodsConfigsRuleRepositoryTest extends WebTestCase
         sort($configsRules);
 
         $this->assertEquals($expectedConfigsRules, $configsRules);
+    }
+
+    public function testGetByCurrency()
+    {
+        $expectedConfigsRules = $this->getConfigsRulesByReferences([
+            'payment.payment_methods_configs_rule.1',
+            'payment.payment_methods_configs_rule.3',
+            'payment.payment_methods_configs_rule.5',
+            'payment.payment_methods_configs_rule.6',
+        ]);
+
+        $configsRules = $this->repository->getByCurrency('USD');
+
+        $this->assertEquals($expectedConfigsRules, $configsRules);
+    }
+
+    public function testGetByCurrencyWhenCurrencyNotExists()
+    {
+        $configsRules = $this->repository->getByCurrency('WON');
+
+        $this->assertEquals([], $configsRules);
     }
 
     /**

@@ -50,7 +50,8 @@ class PaymentMethodsListener extends AbstractMethodsListener
     {
         $checkout->setBillingAddress($address);
         $paymentContext = $this->contextFactory->create($checkout);
-        $paymentMethodsConfigs = $this->paymentProvider->getFilteredPaymentMethodsConfigs($paymentContext);
+        $paymentMethodsConfigs = $this->paymentProvider
+            ->getFilteredPaymentMethodsConfigsRegardlessDestination($paymentContext);
         return (bool) count($paymentMethodsConfigs);
     }
 

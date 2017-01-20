@@ -81,7 +81,7 @@ class PaymentMethodsListenerTest extends AbstractMethodsListenerTest
 
         $this->configsRuleProvider
             ->expects($this->once())
-            ->method('getFilteredPaymentMethodsConfigs')
+            ->method('getFilteredPaymentMethodsConfigsRegardlessDestination')
             ->with($context)
             ->willReturn($willReturnConfigs);
     }
@@ -107,7 +107,7 @@ class PaymentMethodsListenerTest extends AbstractMethodsListenerTest
 
         $this->configsRuleProvider
             ->expects($this->exactly($expectedCalls))
-            ->method('getFilteredPaymentMethodsConfigs')
+            ->method('getFilteredPaymentMethodsConfigsRegardlessDestination')
             ->with($paymentContext)
             ->willReturnOnConsecutiveCalls(...$willReturnConfigsOnConsecutiveCalls);
     }

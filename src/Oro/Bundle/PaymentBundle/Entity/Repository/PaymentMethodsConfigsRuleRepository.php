@@ -30,7 +30,6 @@ class PaymentMethodsConfigsRuleRepository extends EntityRepository
             ->getQuery()->getResult();
     }
 
-
     /**
      * @param string $currency
      *
@@ -42,6 +41,20 @@ class PaymentMethodsConfigsRuleRepository extends EntityRepository
             ->leftJoin('methodsConfigsRule.methodConfigs', 'methodConfigs')
             ->where('methodsConfigsRule.currency = :currency')
             ->setParameter('currency', $currency);
+    }
+
+    /**
+     * @param string $currency
+     * @return PaymentMethodsConfigsRule[]
+     */
+    public function getByCurrency($currency)
+    {
+        $queryBuilder = $this->getByCurrencyQuery($currency);
+
+        return $queryBuilder
+            ->orderBy($queryBuilder->expr()->asc('methodsConfigsRule.id'))
+            ->getQuery()
+            ->getResult();
     }
 
     /**
