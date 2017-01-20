@@ -3,10 +3,10 @@
 namespace Oro\Bundle\MoneyOrderBundle\Method\Generator;
 
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
+use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder;
-use Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGeneratorInterface;
 
-class MoneyOrderConfigIdentifierGenerator implements IntegrationMethodIdentifierGeneratorInterface
+class MoneyOrderConfigIdentifierGenerator implements IntegrationIdentifierGeneratorInterface
 {
     /**
      * @param Channel $channel

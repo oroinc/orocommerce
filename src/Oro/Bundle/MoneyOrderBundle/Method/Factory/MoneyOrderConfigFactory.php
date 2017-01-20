@@ -3,26 +3,26 @@
 namespace Oro\Bundle\MoneyOrderBundle\Method\Factory;
 
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
+use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\MoneyOrderBundle\Entity\MoneyOrderSettings;
 use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig;
-use Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGeneratorInterface;
 
 class MoneyOrderConfigFactory implements MoneyOrderConfigFactoryInterface
 {
     /** @var LocalizationHelper */
     private $localizationHelper;
 
-    /** @var IntegrationMethodIdentifierGeneratorInterface */
+    /** @var IntegrationIdentifierGeneratorInterface */
     private $identifierGenerator;
 
     /**
      * @param LocalizationHelper $localizationHelper
-     * @param IntegrationMethodIdentifierGeneratorInterface $identifierGenerator
+     * @param IntegrationIdentifierGeneratorInterface $identifierGenerator
      */
     public function __construct(
         LocalizationHelper $localizationHelper,
-        IntegrationMethodIdentifierGeneratorInterface $identifierGenerator
+        IntegrationIdentifierGeneratorInterface $identifierGenerator
     ) {
         $this->localizationHelper = $localizationHelper;
         $this->identifierGenerator = $identifierGenerator;
