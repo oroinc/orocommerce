@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional;
 
+use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as LoadBaseCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\FrontendActionTestCase;
@@ -26,6 +27,7 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
             [
                 LoadShoppingListLineItems::class,
                 LoadCombinedProductPrices::class,
+                LoadPaymentMethodsConfigsRuleData::class
             ]
         );
     }
