@@ -28,16 +28,15 @@ class MoneyOrderMethodViewProvider implements PaymentMethodViewProviderInterface
     }
 
     /**
-     * @param array $paymentMethods
-     * @return PaymentMethodViewInterface[]
+     * {@inheritdoc}
      */
-    public function getPaymentMethodViews(array $paymentMethods)
+    public function getPaymentMethodViews(array $identifiers)
     {
         if ($this->methodViews === null) {
             $this->collectPaymentMethodViews();
         }
         $matchedViews = [];
-        foreach ($paymentMethods as $paymentMethod) {
+        foreach ($identifiers as $paymentMethod) {
             if ($this->hasPaymentMethodView($paymentMethod)) {
                 $matchedViews[$paymentMethod] = $this->getPaymentMethodView($paymentMethod);
             }
@@ -46,8 +45,7 @@ class MoneyOrderMethodViewProvider implements PaymentMethodViewProviderInterface
     }
 
     /**
-     * @param string $identifier
-     * @return PaymentMethodViewInterface
+     * {@inheritdoc}
      */
     public function getPaymentMethodView($identifier)
     {
@@ -61,8 +59,7 @@ class MoneyOrderMethodViewProvider implements PaymentMethodViewProviderInterface
     }
 
     /**
-     * @param string $identifier
-     * @return bool
+     * {@inheritdoc}
      */
     public function hasPaymentMethodView($identifier)
     {

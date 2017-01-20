@@ -2,11 +2,7 @@
 
 namespace Oro\Bundle\PayPalBundle\Method\Config;
 
-use Oro\Bundle\PaymentBundle\Method\Config\PaymentConfigInterface;
-
-interface PayPalCreditCardConfigInterface extends
-    PaymentConfigInterface,
-    PayPalConfigInterface
+interface PayPalCreditCardConfigInterface extends PayPalConfigInterface
 {
     /**
      * @return bool
