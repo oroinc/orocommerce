@@ -6,4 +6,6 @@ oro:
             already_exists: "Line Item with the same product and unit already exists"
 
     matrixgrid:
+        validate:
             product_unavailable: "This item is unavailable"
+            non_valid_precision: "This value should be decimal with valid precision ({{ precision }})"

@@ -11,6 +11,9 @@ use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionRow;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollection;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
+use Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager\Stub\ProductWithSizeAndColor;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
 class MatrixCollectionTypeTest extends FormIntegrationTestCase
 {
@@ -31,7 +34,6 @@ class MatrixCollectionTypeTest extends FormIntegrationTestCase
 
     protected function getExtensions()
     {
-
         return array(new ValidatorExtension(Validation::createValidator()));
     }
 
@@ -65,6 +67,12 @@ class MatrixCollectionTypeTest extends FormIntegrationTestCase
                                 [
                                     'quantity' => 3,
                                 ],
+                                [],
+                            ]
+                        ],
+                        [
+                            'columns' => [
+                                [],
                                 [
                                     'quantity' => 5,
                                 ],
@@ -106,16 +114,37 @@ class MatrixCollectionTypeTest extends FormIntegrationTestCase
      */
     private function createCollection($withQuantities = false)
     {
-        $row = new MatrixCollectionRow();
-        $row->columns = [new MatrixCollectionColumn(), new MatrixCollectionColumn()];
+        $simpleProductSmallRed = (new ProductWithSizeAndColor())->setSize('s')->setColor('red');
+        $simpleProductMediumGreen = (new ProductWithSizeAndColor())->setSize('m')->setColor('green');
 
-        $collection = new MatrixCollection();
-        $collection->rows = [$row];
+        $columnSmallRed = new MatrixCollectionColumn();
+        $columnSmallGreen = new MatrixCollectionColumn();
+        $columnMediumRed = new MatrixCollectionColumn();
+        $columnMediumGreen = new MatrixCollectionColumn();
+
+        $columnSmallRed->product = $simpleProductSmallRed;
+        $columnMediumGreen->product = $simpleProductMediumGreen;
 
         if ($withQuantities) {
-            $row->columns[0]->quantity = 3;
-            $row->columns[1]->quantity = 5;
+            $columnSmallRed->quantity = 3;
+            $columnMediumGreen->quantity = 5;
         }
+
+        $rowSmall = new MatrixCollectionRow();
+        $rowSmall->label = 'Small';
+        $rowSmall->columns = [$columnSmallRed, $columnSmallGreen];
+
+        $rowMedium = new MatrixCollectionRow();
+        $rowMedium->label = 'Medium';
+        $rowMedium->columns = [$columnMediumRed, $columnMediumGreen];
+
+        $collection = new MatrixCollection();
+
+        $unit = new ProductUnit();
+        $unit->setCode('item');
+
+        $collection->unit = $unit;
+        $collection->rows = [$rowSmall, $rowMedium];
 
         return $collection;
     }

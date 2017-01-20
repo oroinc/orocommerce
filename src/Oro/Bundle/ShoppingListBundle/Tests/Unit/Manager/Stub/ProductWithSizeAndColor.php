@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager\Stub;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 class ProductWithSizeAndColor extends Product
 {
@@ -15,6 +16,11 @@ class ProductWithSizeAndColor extends Product
      * @var string
      */
     private $color;
+
+    /**
+     * @var ProductUnitPrecision
+     */
+    private $precision;
 
     /**
      * @return string
@@ -50,6 +56,26 @@ class ProductWithSizeAndColor extends Product
     public function setColor($color)
     {
         $this->color = $color;
+
+        return $this;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getUnitPrecision($unitCode)
+    {
+        return $this->precision;
+    }
+
+    /**
+     * @param ProductUnitPrecision $precision
+     *
+     * @return ProductWithSizeAndColor
+     */
+    public function setUnitPrecision($precision)
+    {
+        $this->precision = $precision;
 
         return $this;
     }
