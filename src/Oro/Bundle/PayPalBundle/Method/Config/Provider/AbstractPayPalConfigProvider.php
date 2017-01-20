@@ -67,7 +67,7 @@ abstract class AbstractPayPalConfigProvider
     /**
      * @return string
      */
-    public function getType()
+    protected function getType()
     {
         return $this->type;
     }
@@ -100,7 +100,7 @@ abstract class AbstractPayPalConfigProvider
             $config = $this->factory->createConfig($setting);
             $configs[$config->getPaymentMethodIdentifier()] = $config;
         }
-        
+
         return $configs;
     }
 }

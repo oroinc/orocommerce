@@ -22,9 +22,4 @@ interface PayPalExpressCheckoutConfigProviderInterface
      * @return bool
      */
     public function hasPaymentConfig($identifier);
-
-    /**
-     * @return string
-     */
-    public function getType();
 }

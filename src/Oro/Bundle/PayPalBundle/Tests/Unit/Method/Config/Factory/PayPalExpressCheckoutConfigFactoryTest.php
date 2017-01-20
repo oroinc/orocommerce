@@ -4,15 +4,17 @@ namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method\Config\Factory;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
+use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\PayPalBundle\Entity\CreditCardType;
+use Oro\Bundle\PayPalBundle\Entity\ExpressCheckoutPaymentAction;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Method\Config\Factory\PayPalExpressCheckoutConfigFactory;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfig;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\HttpFoundation\ParameterBag;
 
 class PayPalExpressCheckoutConfigFactoryTest extends \PHPUnit_Framework_TestCase
 {
@@ -29,6 +31,11 @@ class PayPalExpressCheckoutConfigFactoryTest extends \PHPUnit_Framework_TestCase
     protected $localizationHelper;
 
     /**
+     * @var IntegrationIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $identifierGenerator;
+
+    /**
      * @var PayPalExpressCheckoutConfigFactory
      */
     protected $payPalExpressCheckoutConfigFactory;
@@ -36,12 +43,12 @@ class PayPalExpressCheckoutConfigFactoryTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->encoder = $this->createMock(SymmetricCrypterInterface::class);
-        $this->localizationHelper = $this->getMockBuilder(LocalizationHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->localizationHelper = $this->createMock(LocalizationHelper::class);
+        $this->identifierGenerator = $this->createMock(IntegrationIdentifierGeneratorInterface::class);
         $this->payPalExpressCheckoutConfigFactory = new PayPalExpressCheckoutConfigFactory(
             $this->encoder,
-            $this->localizationHelper
+            $this->localizationHelper,
+            $this->identifierGenerator
         );
     }
 
@@ -55,52 +62,52 @@ class PayPalExpressCheckoutConfigFactoryTest extends \PHPUnit_Framework_TestCase
         $short_labels = new ArrayCollection();
         $short_labels->add($short_label);
 
-        $this->localizationHelper->expects(static::exactly(2))
-            ->method('getLocalizedValue')
-            ->willReturnMap(
-                [
-                    [$labels, null, 'test label'],
-                    [$short_labels, null, 'test short label']
-                ]
-            );
-
         $this->encoder->expects(static::once())
             ->method('decryptData')
             ->with('string')
             ->willReturn('string');
 
-        $bag = [
-            PayPalSettings::EXPRESS_CHECKOUT_LABELS_KEY => $labels,
-            PayPalSettings::EXPRESS_CHECKOUT_SHORT_LABELS_KEY => $short_labels,
-            PayPalSettings::EXPRESS_CHECKOUT_NAME_KEY => 'Express Checkout Name',
-            PayPalSettings::PROXY_PORT_KEY => '8099',
-            PayPalSettings::PROXY_HOST_KEY => 'proxy host',
-            PayPalSettings::USE_PROXY_KEY => true,
-            PayPalSettings::TEST_MODE_KEY => true,
-            PayPalSettings::REQUIRE_CVV_ENTRY_KEY => true,
-            PayPalSettings::ENABLE_SSL_VERIFICATION_KEY => true,
-            PayPalSettings::DEBUG_MODE_KEY => true,
-            PayPalSettings::AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY => true,
-            PayPalSettings::ZERO_AMOUNT_AUTHORIZATION_KEY => true,
-            PayPalSettings::ALLOWED_CREDIT_CARD_TYPES_KEY => ['Master Card', 'Visa'],
-            PayPalSettings::EXPRESS_CHECKOUT_PAYMENT_ACTION_KEY => 'string',
-            PayPalSettings::VENDOR_KEY => 'string',
-            PayPalSettings::USER_KEY => 'string',
-            PayPalSettings::PASSWORD_KEY => 'string',
-            PayPalSettings::PARTNER_KEY => 'string',
-        ];
-        $settingsBag = new ParameterBag($bag);
-
-        /** @var PayPalSettings|\PHPUnit_Framework_MockObject_MockObject $paypalSettings */
-        $paypalSettings = $this->createMock(PayPalSettings::class);
-        $paypalSettings->expects(static::any())->method('getSettingsBag')->willReturn($settingsBag);
-
         /** @var Channel $channel */
         $channel = $this->getEntity(
             Channel::class,
-            ['id' => 1, 'name' => 'PayFlow Gateway', 'type' => 'paypal_payflow_gateway', 'transport' => $paypalSettings]
+            ['id' => 1]
         );
-        $paypalSettings->expects(static::once())->method('getChannel')->willReturn($channel);
+
+        $bag = [
+            'channel' => $channel,
+            'expressCheckoutLabels' => [new LocalizedFallbackValue()],
+            'expressCheckoutShortLabels' => [new LocalizedFallbackValue()],
+            'expressCheckoutName' => 'Express Checkout Name',
+            'proxyPort' => '8099',
+            'proxyHost' => 'proxy host',
+            'useProxy' => true,
+            'testMode' => true,
+            'requireCvvEntry' => true,
+            'enableSslVerification' => true,
+            'debugMode' => true,
+            'authorizationForRequiredAmount' => true,
+            'zeroAmountAuthorization' => true,
+            'allowedCreditCardTypes' => [$this->createMock(CreditCardType::class)],
+            'expressCheckoutPaymentAction' => $this->createMock(ExpressCheckoutPaymentAction::class),
+            'vendor' => 'string',
+            'user' => 'string',
+            'password' => 'string',
+            'partner' => 'string',
+        ];
+        /** @var PayPalSettings $paypalSettings */
+        $paypalSettings = $this->getEntity(PayPalSettings::class, $bag);
+
+        $this->localizationHelper->expects(static::exactly(2))
+            ->method('getLocalizedValue')
+            ->willReturnMap([
+                [$paypalSettings->getExpressCheckoutLabels(), null, 'test label'],
+                [$paypalSettings->getExpressCheckoutShortLabels(), null, 'test short label'],
+            ]);
+
+        $this->identifierGenerator->expects($this->once())
+            ->method('generateIdentifier')
+            ->with($channel)
+            ->willReturn('paypal_payflow_gateway_express_checkout_1');
 
         $config = $this->payPalExpressCheckoutConfigFactory->createConfig($paypalSettings);
         $expectedConfig = $this->getExpectedConfig();
@@ -113,17 +120,17 @@ class PayPalExpressCheckoutConfigFactoryTest extends \PHPUnit_Framework_TestCase
     protected function getExpectedConfig()
     {
         $params = [
-            PayPalExpressCheckoutConfig::LABEL_KEY => 'test label',
-            PayPalExpressCheckoutConfig::SHORT_LABEL_KEY => 'test short label',
-            PayPalExpressCheckoutConfig::ADMIN_LABEL_KEY => 'Express Checkout Name',
-            PayPalExpressCheckoutConfig::PAYMENT_METHOD_IDENTIFIER_KEY => 'paypal_payflow_gateway_express_checkout_1',
-            PayPalExpressCheckoutConfig::TEST_MODE_KEY => true,
-            PayPalExpressCheckoutConfig::PURCHASE_ACTION_KEY => 'string',
-            PayPalExpressCheckoutConfig::CREDENTIALS_KEY => [
+            'label' => 'test label',
+            'short_label' => 'test short label',
+            'admin_label' => 'Express Checkout Name',
+            'payment_method_identifier' => 'paypal_payflow_gateway_express_checkout_1',
+            'test_mode' => true,
+            'purchase_action' => $this->createMock(ExpressCheckoutPaymentAction::class),
+            'credentials' => [
                 Option\Vendor::VENDOR => 'string',
                 Option\User::USER => 'string',
                 Option\Password::PASSWORD => 'string',
-                Option\Partner::PARTNER => 'string'
+                Option\Partner::PARTNER => 'string',
             ],
         ];
 

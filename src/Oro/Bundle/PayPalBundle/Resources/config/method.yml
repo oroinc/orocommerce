@@ -1,54 +1,99 @@
 parameters:
-    oro_paypal.method.type.paypal_payments_pro: 'paypal_payments_pro'
-    oro_paypal.method.type.paypal_payflow_gateway: 'paypal_payflow_gateway'
+    oro_paypal.method.paypal_payments_pro: 'paypal_payments_pro'
+    oro_paypal.method.paypal_payflow_gateway: 'paypal_payflow_gateway'
+    oro_paypal.method.identifier_prefix.payflow_gateway.credit_card: 'paypal_payflow_gateway_credit_card'
+    oro_paypal.method.identifier_prefix.payflow_gateway.express_checkout: 'paypal_payflow_gateway_express_checkout'
+    oro_paypal.method.identifier_prefix.payments_pro.credit_card: 'paypal_payments_pro_credit_card'
+    oro_paypal.method.identifier_prefix.payments_pro.express_checkout: 'paypal_payments_pro_express_checkout'
 
 services:
-    oro_paypal.method.config.provider:
-        abstract: true
+    oro_paypal.method.config.provider.payments_pro_credit_card:
+        class: 'Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalCreditCardConfigProvider'
         public: false
         arguments:
             - '@doctrine'
             - '@logger'
-
-    oro_paypal.method.config.provider.payments_pro_credit_card:
-        class: 'Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalCreditCardConfigProvider'
-        parent: oro_paypal.method.config.provider
-        arguments:
-            - '@oro_paypal.method.config.factory.credit_card'
-            - '%oro_paypal.method.type.paypal_payments_pro%'
+            - '@oro_paypal.method.config.factory.payments_pro.credit_card'
+            - '%oro_paypal.method.paypal_payments_pro%'
 
     oro_paypal.method.config.provider.payments_pro_express_checkout:
         class: 'Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalExpressCheckoutConfigProvider'
-        parent: oro_paypal.method.config.provider
+        public: false
         arguments:
-            - '@oro_paypal.method.config.factory.express_checkout'
-            - '%oro_paypal.method.type.paypal_payments_pro%'
+            - '@doctrine'
+            - '@logger'
+            - '@oro_paypal.method.config.factory.payments_pro.express_checkout'
+            - '%oro_paypal.method.paypal_payments_pro%'
 
     oro_paypal.method.config.provider.payflow_gateway_credit_card:
         class: 'Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalCreditCardConfigProvider'
-        parent: oro_paypal.method.config.provider
+        public: false
         arguments:
-            - '@oro_paypal.method.config.factory.credit_card'
-            - '%oro_paypal.method.type.paypal_payflow_gateway%'
+            - '@doctrine'
+            - '@logger'
+            - '@oro_paypal.method.config.factory.payflow_gateway.credit_card'
+            - '%oro_paypal.method.paypal_payflow_gateway%'
 
     oro_paypal.method.config.provider.payflow_gateway_express_checkout:
         class: 'Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalExpressCheckoutConfigProvider'
-        parent: oro_paypal.method.config.provider
+        public: false
         arguments:
-            - '@oro_paypal.method.config.factory.express_checkout'
-            - '%oro_paypal.method.type.paypal_payflow_gateway%'
+            - '@doctrine'
+            - '@logger'
+            - '@oro_paypal.method.config.factory.payflow_gateway.express_checkout'
+            - '%oro_paypal.method.paypal_payflow_gateway%'
 
-    oro_paypal.method.config.factory.credit_card:
+    oro_paypal.method.config.factory.payflow_gateway.credit_card:
         class: 'Oro\Bundle\PayPalBundle\Method\Config\Factory\PayPalCreditCardConfigFactory'
+        public: false
         arguments:
             - '@oro_security.encoder.mcrypt'
             - '@oro_locale.helper.localization'
+            - '@oro_paypal.method.generator.identifier.payflow_gateway.credit_card'
 
-    oro_paypal.method.config.factory.express_checkout:
+    oro_paypal.method.config.factory.payflow_gateway.express_checkout:
         class: 'Oro\Bundle\PayPalBundle\Method\Config\Factory\PayPalExpressCheckoutConfigFactory'
+        public: false
         arguments:
             - '@oro_security.encoder.mcrypt'
             - '@oro_locale.helper.localization'
+            - '@oro_paypal.method.generator.identifier.payflow_gateway.express_checkout'
+
+    oro_paypal.method.config.factory.payments_pro.credit_card:
+        class: 'Oro\Bundle\PayPalBundle\Method\Config\Factory\PayPalCreditCardConfigFactory'
+        public: false
+        arguments:
+            - '@oro_security.encoder.mcrypt'
+            - '@oro_locale.helper.localization'
+            - '@oro_paypal.method.generator.identifier.payments_pro.credit_card'
+
+    oro_paypal.method.config.factory.payments_pro.express_checkout:
+        class: 'Oro\Bundle\PayPalBundle\Method\Config\Factory\PayPalExpressCheckoutConfigFactory'
+        public: false
+        arguments:
+            - '@oro_security.encoder.mcrypt'
+            - '@oro_locale.helper.localization'
+            - '@oro_paypal.method.generator.identifier.payments_pro.express_checkout'
+
+    oro_paypal.method.generator.identifier.payflow_gateway.credit_card:
+        parent: oro_integration.generator.prefixed_identifier_generator
+        arguments:
+            - '%oro_paypal.method.identifier_prefix.payflow_gateway.credit_card%'
+
+    oro_paypal.method.generator.identifier.payflow_gateway.express_checkout:
+        parent: oro_integration.generator.prefixed_identifier_generator
+        arguments:
+            - '%oro_paypal.method.identifier_prefix.payflow_gateway.express_checkout%'
+
+    oro_paypal.method.generator.identifier.payments_pro.credit_card:
+        parent: oro_integration.generator.prefixed_identifier_generator
+        arguments:
+            - '%oro_paypal.method.identifier_prefix.payments_pro.credit_card%'
+
+    oro_paypal.method.generator.identifier.payments_pro.express_checkout:
+        parent: oro_integration.generator.prefixed_identifier_generator
+        arguments:
+            - '%oro_paypal.method.identifier_prefix.payments_pro.express_checkout%'
 
     oro_paypal.method.provider.payflow_gateway:
         class: 'Oro\Bundle\PayPalBundle\Method\CreditCardMethodProvider'

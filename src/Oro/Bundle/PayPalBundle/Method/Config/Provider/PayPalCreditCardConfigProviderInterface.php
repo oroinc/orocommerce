@@ -7,7 +7,7 @@ use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
 interface PayPalCreditCardConfigProviderInterface
 {
     /**
-     * @return array|PayPalCreditCardConfigInterface[]
+     * @return PayPalCreditCardConfigInterface[]
      */
     public function getPaymentConfigs();
 
@@ -22,9 +22,4 @@ interface PayPalCreditCardConfigProviderInterface
      * @return bool
      */
     public function hasPaymentConfig($identifier);
-
-    /**
-     * @return string
-     */
-    public function getType();
 }

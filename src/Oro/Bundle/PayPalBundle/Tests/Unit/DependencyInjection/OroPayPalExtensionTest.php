@@ -21,8 +21,14 @@ class OroPayPalExtensionTest extends ExtensionTestCase
             'oro_paypal.method.config.provider.payments_pro_express_checkout',
             'oro_paypal.method.config.provider.payflow_gateway_credit_card',
             'oro_paypal.method.config.provider.payflow_gateway_express_checkout',
-            'oro_paypal.method.config.factory.credit_card',
-            'oro_paypal.method.config.factory.express_checkout'
+            'oro_paypal.method.config.factory.payments_pro.credit_card',
+            'oro_paypal.method.config.factory.payments_pro.express_checkout',
+            'oro_paypal.method.config.factory.payflow_gateway.credit_card',
+            'oro_paypal.method.config.factory.payflow_gateway.express_checkout',
+            'oro_paypal.method.generator.identifier.payments_pro.credit_card',
+            'oro_paypal.method.generator.identifier.payments_pro.express_checkout',
+            'oro_paypal.method.generator.identifier.payflow_gateway.credit_card',
+            'oro_paypal.method.generator.identifier.payflow_gateway.express_checkout',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }
