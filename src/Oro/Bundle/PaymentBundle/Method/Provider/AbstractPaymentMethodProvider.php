@@ -4,7 +4,6 @@ namespace Oro\Bundle\PaymentBundle\Method\Provider;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProviderInterface;
 
 abstract class AbstractPaymentMethodProvider implements PaymentMethodProviderInterface
 {
@@ -24,9 +23,7 @@ abstract class AbstractPaymentMethodProvider implements PaymentMethodProviderInt
     }
 
     /**
-     * @param string $identifier
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function hasPaymentMethod($identifier)
     {
@@ -34,9 +31,7 @@ abstract class AbstractPaymentMethodProvider implements PaymentMethodProviderInt
     }
 
     /**
-     * @param string $identifier
-     *
-     * @return PaymentMethodInterface|null
+     * {@inheritdoc}
      */
     public function getPaymentMethod($identifier)
     {
@@ -48,7 +43,7 @@ abstract class AbstractPaymentMethodProvider implements PaymentMethodProviderInt
     }
 
     /**
-     * @return array|PaymentMethodInterface[]
+     * {@inheritdoc}
      */
     public function getPaymentMethods()
     {

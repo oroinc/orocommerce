@@ -4,8 +4,8 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Condition;
 
 use Oro\Bundle\PaymentBundle\Condition\PaymentMethodSupports;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProviderInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
+use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
 
 class PaymentMethodSupportsTest extends \PHPUnit_Framework_TestCase
 {
@@ -27,12 +27,12 @@ class PaymentMethodSupportsTest extends \PHPUnit_Framework_TestCase
     /** @var PaymentMethodSupports */
     protected $condition;
 
-    /** @var PaymentMethodProvidersRegistry | \PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentMethodProvidersRegistryInterface | \PHPUnit_Framework_MockObject_MockObject */
     protected $paymentMethodProvidersRegistry;
 
     public function setUp()
     {
-        $this->paymentMethodProvidersRegistry = $this->createMock(PaymentMethodProvidersRegistry::class);
+        $this->paymentMethodProvidersRegistry = $this->createMock(PaymentMethodProvidersRegistryInterface::class);
         $this->condition = new PaymentMethodSupports($this->paymentMethodProvidersRegistry);
     }
 

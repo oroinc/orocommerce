@@ -6,13 +6,13 @@ use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
+use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentMethodsConfigsRulesProviderInterface;
 
 class PaymentMethodProvider
 {
     /**
-     * @var PaymentMethodProvidersRegistry
+     * @var PaymentMethodProvidersRegistryInterface
      */
     private $paymentMethodRegistry;
 
@@ -22,11 +22,11 @@ class PaymentMethodProvider
     private $paymentMethodsConfigsRulesProvider;
 
     /**
-     * @param PaymentMethodProvidersRegistry $paymentMethodRegistry
+     * @param PaymentMethodProvidersRegistryInterface $paymentMethodRegistry
      * @param PaymentMethodsConfigsRulesProviderInterface $paymentMethodsConfigsRulesProvider
      */
     public function __construct(
-        PaymentMethodProvidersRegistry $paymentMethodRegistry,
+        PaymentMethodProvidersRegistryInterface $paymentMethodRegistry,
         PaymentMethodsConfigsRulesProviderInterface $paymentMethodsConfigsRulesProvider
     ) {
         $this->paymentMethodRegistry = $paymentMethodRegistry;

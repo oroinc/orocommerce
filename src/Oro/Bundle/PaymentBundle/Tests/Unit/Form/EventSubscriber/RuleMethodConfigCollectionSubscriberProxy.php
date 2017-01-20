@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Form\EventSubscriber;
 
 use Oro\Bundle\PaymentBundle\Form\EventSubscriber\RuleMethodConfigCollectionSubscriber;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
+use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 
 class RuleMethodConfigCollectionSubscriberProxy extends RuleMethodConfigCollectionSubscriber
@@ -14,7 +14,7 @@ class RuleMethodConfigCollectionSubscriberProxy extends RuleMethodConfigCollecti
     protected $factory;
 
     /**
-     * @var PaymentMethodProvidersRegistry
+     * @var PaymentMethodProvidersRegistryInterface
      */
     protected $methodRegistry;
 
@@ -36,10 +36,10 @@ class RuleMethodConfigCollectionSubscriberProxy extends RuleMethodConfigCollecti
     }
 
     /**
-     * @param PaymentMethodProvidersRegistry $methodRegistry
+     * @param PaymentMethodProvidersRegistryInterface $methodRegistry
      * @return $this
      */
-    public function setMethodRegistry(PaymentMethodProvidersRegistry $methodRegistry)
+    public function setMethodRegistry(PaymentMethodProvidersRegistryInterface $methodRegistry)
     {
         $this->methodRegistry = $methodRegistry;
         return $this;

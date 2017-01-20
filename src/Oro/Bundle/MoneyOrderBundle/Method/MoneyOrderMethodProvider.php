@@ -3,7 +3,7 @@
 namespace Oro\Bundle\MoneyOrderBundle\Method;
 
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProviderInterface;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 
 class MoneyOrderMethodProvider implements PaymentMethodProviderInterface
 {

@@ -4,7 +4,7 @@ namespace Oro\Bundle\PaymentTermBundle\Method;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProviderInterface;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 use Psr\Log\LoggerInterface;

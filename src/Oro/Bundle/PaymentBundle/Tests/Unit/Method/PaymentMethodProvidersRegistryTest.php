@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Method\Provider;
 
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProviderInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
+use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
 
 class PaymentMethodProvidersRegistryTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var PaymentMethodProvidersRegistry
+     * @var PaymentMethodProvidersRegistryInterface
      */
     private $providerRegistry;
 
@@ -22,7 +22,7 @@ class PaymentMethodProvidersRegistryTest extends \PHPUnit_Framework_TestCase
     {
         $this->paymentMethodProvider = $this->getMockBuilder(PaymentMethodProviderInterface::class)->getMock();
 
-        $this->providerRegistry = new PaymentMethodProvidersRegistry();
+        $this->providerRegistry = new PaymentMethodProvidersRegistryInterface();
         $this->providerRegistry->addProvider($this->paymentMethodProvider);
     }
 

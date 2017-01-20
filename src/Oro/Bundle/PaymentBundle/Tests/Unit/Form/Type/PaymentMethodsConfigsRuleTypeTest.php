@@ -22,8 +22,8 @@ use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigType;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationType;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleType;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProviderInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
+use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistry;
 use Oro\Bundle\RuleBundle\Entity\Rule;
@@ -47,7 +47,7 @@ class PaymentMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
     protected $formType;
 
     /**
-     * @var PaymentMethodProvidersRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentMethodProvidersRegistryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $paymentMethodProvidersRegistry;
 
@@ -220,7 +220,7 @@ class PaymentMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
             ->getMockBuilder(PaymentMethodViewProvidersRegistry::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->paymentMethodProvidersRegistry = $this->getMockBuilder(PaymentMethodProvidersRegistry::class)
+        $this->paymentMethodProvidersRegistry = $this->getMockBuilder(PaymentMethodProvidersRegistryInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 

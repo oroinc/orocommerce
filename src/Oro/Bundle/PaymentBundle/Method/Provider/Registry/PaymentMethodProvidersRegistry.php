@@ -1,8 +1,10 @@
 <?php
 
-namespace Oro\Bundle\PaymentBundle\Method;
+namespace Oro\Bundle\PaymentBundle\Method\Provider\Registry;
 
-class PaymentMethodProvidersRegistry
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
+
+class PaymentMethodProvidersRegistry implements PaymentMethodProvidersRegistryInterface
 {
     /**
      * @var PaymentMethodProviderInterface[]
@@ -18,7 +20,7 @@ class PaymentMethodProvidersRegistry
     }
 
     /**
-     * @return PaymentMethodProviderInterface[]
+     * {@inheritdoc}
      */
     public function getPaymentMethodProviders()
     {

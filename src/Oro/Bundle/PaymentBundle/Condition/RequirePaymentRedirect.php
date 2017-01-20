@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\PaymentBundle\Condition;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
+use Oro\Bundle\PaymentBundle\Event\RequirePaymentRedirectEvent;
+use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
-use Oro\Bundle\PaymentBundle\Event\RequirePaymentRedirectEvent;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Check that the payment method requires method verification after page refresh
@@ -23,7 +22,7 @@ class RequirePaymentRedirect extends AbstractCondition implements ContextAccesso
     const NAME = 'require_payment_redirect';
 
     /**
-     * @var PaymentMethodProvidersRegistry
+     * @var PaymentMethodProvidersRegistryInterface
      */
     private $paymentMethodRegistry;
 
@@ -38,11 +37,11 @@ class RequirePaymentRedirect extends AbstractCondition implements ContextAccesso
     private $eventDispatcher;
 
     /**
-     * @param PaymentMethodProvidersRegistry $paymentMethodRegistry
+     * @param PaymentMethodProvidersRegistryInterface $paymentMethodRegistry
      * @param EventDispatcherInterface $eventDispatcher
      */
     public function __construct(
-        PaymentMethodProvidersRegistry $paymentMethodRegistry,
+        PaymentMethodProvidersRegistryInterface $paymentMethodRegistry,
         EventDispatcherInterface $eventDispatcher
     ) {
         $this->paymentMethodRegistry = $paymentMethodRegistry;
