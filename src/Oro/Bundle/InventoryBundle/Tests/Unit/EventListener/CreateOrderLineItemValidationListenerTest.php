@@ -50,6 +50,9 @@ class CreateOrderLineItemValidationListenerTest extends \PHPUnit_Framework_TestC
      */
     protected $createOrderLineItemValidationListener;
 
+    /**
+     * @inheritdoc
+     */
     protected function setUp()
     {
         $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
@@ -76,14 +79,10 @@ class CreateOrderLineItemValidationListenerTest extends \PHPUnit_Framework_TestC
     {
         $event = $this->prepareEvent();
 
-        $itemsInStock = 10;
         $inventoryLevel = $this->createMock(InventoryLevel::class);
         $inventoryLevelRepository = $this->getMockBuilder(InventoryLevelRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $inventoryLevel->expects($this->any())
-            ->method('getQuantity')
-            ->willReturn($itemsInStock);
         $inventoryLevelRepository->expects($this->once())
             ->method('getLevelByProductAndProductUnit')
             ->willReturn($inventoryLevel);

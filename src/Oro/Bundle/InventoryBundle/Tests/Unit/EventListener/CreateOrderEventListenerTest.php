@@ -50,6 +50,9 @@ class CreateOrderEventListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected $createOrderEventListener;
 
+    /**
+     * @inheritdoc
+     */
     protected function setUp()
     {
         $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
@@ -75,30 +78,26 @@ class CreateOrderEventListenerTest extends \PHPUnit_Framework_TestCase
     {
         $event = $this->prepareEvent();
 
-        $itemsInStock = 10;
-        $product = $this->createMock(Product::class);
         $inventoryLevel = $this->createMock(InventoryLevel::class);
+
         $inventoryLevelRepository = $this->getMockBuilder(InventoryLevelRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $inventoryLevel->expects($this->any())
-            ->method('getQuantity')
-            ->willReturn($itemsInStock);
-        $inventoryLevel->expects($this->any())
-            ->method('getProduct')
-            ->willReturn($product);
         $inventoryLevelRepository->expects($this->once())
             ->method('getLevelByProductAndProductUnit')
             ->willReturn($inventoryLevel);
+
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
             ->with(InventoryLevel::class)
             ->willReturn($inventoryLevelRepository);
+
         $this->quantityManager->expects($this->once())
             ->method('canDecrementInventory')
             ->willReturn(true);
         $this->quantityManager->expects($this->once())
             ->method('decrementInventory');
+
         $this->statusHandler->expects($this->once())
             ->method('changeInventoryStatusWhenDecrement');
 
@@ -123,30 +122,26 @@ class CreateOrderEventListenerTest extends \PHPUnit_Framework_TestCase
     public function testCannotDecrement()
     {
         $event = $this->prepareEvent();
-        $itemsInStock = 10;
-        $product = $this->createMock(Product::class);
+
         $inventoryLevel = $this->createMock(InventoryLevel::class);
         $inventoryLevelRepository = $this->getMockBuilder(InventoryLevelRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $inventoryLevel->expects($this->any())
-            ->method('getQuantity')
-            ->willReturn($itemsInStock);
-        $inventoryLevel->expects($this->any())
-            ->method('getProduct')
-            ->willReturn($product);
         $inventoryLevelRepository->expects($this->once())
             ->method('getLevelByProductAndProductUnit')
             ->willReturn($inventoryLevel);
+
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
             ->with(InventoryLevel::class)
             ->willReturn($inventoryLevelRepository);
+
         $this->quantityManager->expects($this->once())
             ->method('canDecrementInventory')
             ->willReturn(false);
         $this->quantityManager->expects($this->never())
             ->method('decrementInventory');
+
         $this->statusHandler->expects($this->never())
             ->method('changeInventoryStatusWhenDecrement');
 
@@ -176,24 +171,23 @@ class CreateOrderEventListenerTest extends \PHPUnit_Framework_TestCase
     {
         $event = $this->prepareConditionEvent();
 
-        $itemsInStock = 10;
         $inventoryLevel = $this->createMock(InventoryLevel::class);
         $inventoryLevelRepository = $this->getMockBuilder(InventoryLevelRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $inventoryLevel->expects($this->any())
-            ->method('getQuantity')
-            ->willReturn($itemsInStock);
         $inventoryLevelRepository->expects($this->once())
             ->method('getLevelByProductAndProductUnit')
             ->willReturn($inventoryLevel);
+
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepository')
             ->with(InventoryLevel::class)
             ->willReturn($inventoryLevelRepository);
+
         $this->quantityManager->expects($this->once())
             ->method('hasEnoughQuantity')
             ->willReturn(true);
+
         $event->expects($this->never())
             ->method('addError');
 
@@ -204,14 +198,10 @@ class CreateOrderEventListenerTest extends \PHPUnit_Framework_TestCase
     {
         $event = $this->prepareConditionEvent();
 
-        $itemsInStock = 10;
         $inventoryLevel = $this->createMock(InventoryLevel::class);
         $inventoryLevelRepository = $this->getMockBuilder(InventoryLevelRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $inventoryLevel->expects($this->any())
-            ->method('getQuantity')
-            ->willReturn($itemsInStock);
         $inventoryLevelRepository->expects($this->once())
             ->method('getLevelByProductAndProductUnit')
             ->willReturn($inventoryLevel);
