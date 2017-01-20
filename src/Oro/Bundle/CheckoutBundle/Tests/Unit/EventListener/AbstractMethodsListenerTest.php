@@ -93,6 +93,21 @@ abstract class AbstractMethodsListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener->onStartCheckout($event);
     }
 
+    public function testOnStartCheckoutWhenValidateOnStartCheckoutIsFalse()
+    {
+        $context = new ActionData([
+            'checkout' => $this->getEntity(Checkout::class),
+            'validateOnStartCheckout' => false
+        ]);
+        $event = new ExtendableConditionEvent($context);
+
+        $this->orderAddressSecurityProvider
+            ->expects($this->never())
+            ->method('isManualEditGranted');
+
+        $this->listener->onStartCheckout($event);
+    }
+
     /**
      * @param array $willReturnConfigs
      */
@@ -138,7 +153,7 @@ abstract class AbstractMethodsListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testOnStartCheckoutWhenIsManualEditGranted($hasErrors, array $methodConfigs)
     {
-        $context = new ActionData(['checkout' => $this->getEntity(Checkout::class)]);
+        $context = new ActionData(['checkout' => $this->getEntity(Checkout::class), 'validateOnStartCheckout' => true]);
         $event = new ExtendableConditionEvent($context);
 
         $this->orderAddressSecurityProvider
@@ -204,10 +219,13 @@ abstract class AbstractMethodsListenerTest extends \PHPUnit_Framework_TestCase
     ) {
         $customer = $this->getEntity(Customer::class);
         $customerUser = $this->getEntity(CustomerUser::class);
-        $context = new ActionData(['checkout' => $this->getEntity(Checkout::class, [
-            'customer' => $customer,
-            'customerUser' => $customerUser
-        ])]);
+        $context = new ActionData([
+            'checkout' => $this->getEntity(Checkout::class, [
+                'customer' => $customer,
+                'customerUser' => $customerUser,
+            ]),
+            'validateOnStartCheckout' => true
+        ]);
 
         $event = new ExtendableConditionEvent($context);
 

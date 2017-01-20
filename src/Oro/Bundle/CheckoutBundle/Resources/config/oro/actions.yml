@@ -86,6 +86,9 @@ action_groups:
             showErrors:
                 type: bool
                 default: false
+            validateOnStartCheckout:
+                type: bool
+                default: true
         actions:
             - '@assign_url':
                 attribute: $.editLink
@@ -106,6 +109,7 @@ action_groups:
                         source_remove_label: $.sourceRemoveLabel
                     force: $.forceStartCheckout
                     showErrors: $.showErrors
+                    validateOnStartCheckout: $.validateOnStartCheckout
                 results:
                     redirectUrl: $.redirectUrl
                     checkout: $.checkout
