@@ -43,6 +43,7 @@ class ShippingMethodsConfigsRuleDestinationType extends AbstractType
         $builder->add('country', CountryType::class, [
             'required' => true,
             'label' => 'oro.address.country.label',
+            //Used to show validation error for empty countries while creating rules
             'constraints' => new NotBlank(),
         ])
             ->add('region', RegionType::class, ['required' => false, 'label' => 'oro.address.region.label'])
