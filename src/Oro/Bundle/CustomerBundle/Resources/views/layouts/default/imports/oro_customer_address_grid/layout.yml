@@ -48,7 +48,7 @@ layout:
 
         - '@add':
             id: __addresses_create_button
-            parentId: __addresses_datagrid_toolbar_button_container
+            parentId: __addresses_head
             blockType: link
             options:
                 visible: '=data["acl"].isGranted("oro_customer_frontend_customer_address_create") && data["acl"].isGranted("oro_customer_frontend_customer_address_view")'

@@ -1,6 +1,6 @@
 {% block __oro_customer_address_grid__addresses_head_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " grid__row"
+        '~class': " grid__row text-right"
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -9,7 +9,7 @@
 
 {% block __oro_customer_address_grid__addresses_head_title_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " grid__column grid__column-half"
+        '~class': " grid__column grid__column-half text-left"
     }) %}
     <div {{ block('block_attributes') }}>
         <h2 class="user-page-title">
@@ -23,7 +23,7 @@
 
 {% block __oro_customer_address_grid__addresses_create_button_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " btn btn--action btn--size-s"
+        '~class': " btn btn--size-s btn--create"
     }) %}
     {{ block_widget(block, {
         attr: attr

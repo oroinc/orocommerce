@@ -171,6 +171,8 @@ operations:
         routes:
            - oro_customer_frontend_customer_user_index
         acl_resource: [CREATE, entity:commerce@Oro\Bundle\CustomerBundle\Entity\CustomerUser]
+        button_options:
+            class: btn btn--size-s btn--create
         order: 10
         actions:
            - '@redirect':
@@ -183,6 +185,8 @@ operations:
         routes:
             - oro_customer_frontend_customer_user_role_index
         acl_resource: [CREATE, entity:commerce@Oro\Bundle\CustomerBundle\Entity\CustomerUserRole]
+        button_options:
+            class: btn btn--size-s btn--create
         order: 10
         actions:
             - '@redirect':
