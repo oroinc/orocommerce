@@ -162,8 +162,8 @@ class ShoppingListManager
         $this->ensureProductTypeAllowed($lineItem);
         $em = $this->managerRegistry->getManagerForClass('OroShoppingListBundle:LineItem');
         $lineItem->setShoppingList($shoppingList);
-        if ($shoppingList && $shoppingList->getAccountUser() && null === $lineItem->getAccountUser()) {
-            $lineItem->setAccountUser($shoppingList->getAccountUser());
+        if ($shoppingList && $shoppingList->getCustomerUser() && null === $lineItem->getCustomerUser()) {
+            $lineItem->setCustomerUser($shoppingList->getCustomerUser());
         }
         if ($shoppingList && $shoppingList->getOrganization() && null === $lineItem->getOrganization()) {
             $lineItem->setOrganization($shoppingList->getOrganization());

@@ -140,7 +140,7 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         $lineItem = new LineItem();
         $this->manager->addLineItem($lineItem, $shoppingList);
         $this->assertEquals(1, $shoppingList->getLineItems()->count());
-        $this->assertEquals(null, $lineItem->getAccountUser());
+        $this->assertEquals(null, $lineItem->getCustomerUser());
         $this->assertEquals(null, $lineItem->getOrganization());
 
     }
@@ -150,14 +150,14 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         $shoppingList = new ShoppingList();
         $userName = 'Bob';
         $organizationName = 'Organization';
-        $accountUser = (new AccountUser())->setFirstName($userName);
-        $shoppingList->setAccountUser($accountUser);
+        $accountUser = (new CustomerUser())->setFirstName($userName);
+        $shoppingList->setCustomerUser($accountUser);
         $organization = (new Organization())->setName($organizationName);
         $shoppingList->setOrganization($organization);
 
         $lineItem = new LineItem();
         $this->manager->addLineItem($lineItem, $shoppingList);
-        $this->assertEquals($userName, $lineItem->getAccountUser()->getFirstName());
+        $this->assertEquals($userName, $lineItem->getCustomerUser()->getFirstName());
         $this->assertEquals($organizationName, $lineItem->getOrganization()->getName());
     }
 

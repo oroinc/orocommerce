@@ -145,7 +145,7 @@ services:
             - { name: layout.data_provider, alias: oro_shopping_list_product_unit_code_visibility }
 
     oro_shopping_list.layout.data_provider.customer_user_shopping_lists:
-        class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\AccountUserShoppingListsProvider'
+        class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\CustomerUserShoppingListsProvider'
         arguments:
             - '@request_stack'
             - '@oro_shopping_list.manager.shopping_list_total'

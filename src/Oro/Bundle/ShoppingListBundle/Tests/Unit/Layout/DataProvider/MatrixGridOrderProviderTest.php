@@ -70,7 +70,7 @@ class MatrixGridOrderProviderTest extends \PHPUnit_Framework_TestCase
         $simpleProduct = $this->getEntity(Product::class, ['primaryUnitPrecision' => $unitPrecision]);
 
         $this->productVariantAvailability->expects($this->once())
-            ->method('getVariantFieldsWithAvailability')
+            ->method('getVariantFieldsAvailability')
             ->with($product)
             ->willReturn([[1]]);
 
@@ -88,7 +88,7 @@ class MatrixGridOrderProviderTest extends \PHPUnit_Framework_TestCase
         $product = $this->getEntity(Product::class);
 
         $this->productVariantAvailability->expects($this->once())
-            ->method('getVariantFieldsWithAvailability')
+            ->method('getVariantFieldsAvailability')
             ->with($product)
             ->willThrowException(new \InvalidArgumentException());
 
@@ -101,7 +101,7 @@ class MatrixGridOrderProviderTest extends \PHPUnit_Framework_TestCase
         $product = $this->getEntity(Product::class);
 
         $this->productVariantAvailability->expects($this->once())
-            ->method('getVariantFieldsWithAvailability')
+            ->method('getVariantFieldsAvailability')
             ->with($product)
             ->willReturn([[], [], []]);
 
@@ -114,7 +114,7 @@ class MatrixGridOrderProviderTest extends \PHPUnit_Framework_TestCase
         $product = $this->getEntity(Product::class);
 
         $this->productVariantAvailability->expects($this->once())
-            ->method('getVariantFieldsWithAvailability')
+            ->method('getVariantFieldsAvailability')
             ->with($product)
             ->willReturn([[1, 2, 3, 4, 5, 6, 7]]);
 
@@ -136,7 +136,7 @@ class MatrixGridOrderProviderTest extends \PHPUnit_Framework_TestCase
         $simpleProduct = $this->getEntity(Product::class, ['primaryUnitPrecision' => $simpleProductUnitPrecision]);
 
         $this->productVariantAvailability->expects($this->once())
-            ->method('getVariantFieldsWithAvailability')
+            ->method('getVariantFieldsAvailability')
             ->with($product)
             ->willReturn([[1]]);
 

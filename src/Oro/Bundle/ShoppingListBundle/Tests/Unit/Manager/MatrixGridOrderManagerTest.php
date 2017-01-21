@@ -46,7 +46,7 @@ class MatrixGridOrderManagerTest extends \PHPUnit_Framework_TestCase
         $product->setPrimaryUnitPrecision($productUnitPrecision);
 
         $this->variantAvailability->expects($this->at(0))
-            ->method('getVariantFieldsWithAvailability')
+            ->method('getVariantFieldsAvailability')
             ->with($product)
             ->willReturn([
                 'size' => [
@@ -60,12 +60,12 @@ class MatrixGridOrderManagerTest extends \PHPUnit_Framework_TestCase
             ]);
 
         $this->variantAvailability->expects($this->at(1))
-            ->method('getAllVariantsByVariantFieldName')
+            ->method('getVariantFieldValues')
             ->with('size')
             ->willReturn(['s' => 'Small', 'm' => 'Medium']);
 
         $this->variantAvailability->expects($this->at(2))
-            ->method('getAllVariantsByVariantFieldName')
+            ->method('getVariantFieldValues')
             ->with('color')
             ->willReturn(['red' => 'Red', 'green' => 'Green']);
 
@@ -82,22 +82,22 @@ class MatrixGridOrderManagerTest extends \PHPUnit_Framework_TestCase
             ->willReturn([$simpleProductSmallRed, $simpleProductMediumGreen, $simpleProductMediumRed]);
 
         $this->variantAvailability->expects($this->at(4))
-            ->method('getVariantFieldValue')
+            ->method('getVariantFieldScalarValue')
             ->with($simpleProductSmallRed, 'size')
             ->willReturn('s');
 
         $this->variantAvailability->expects($this->at(5))
-            ->method('getVariantFieldValue')
+            ->method('getVariantFieldScalarValue')
             ->with($simpleProductSmallRed, 'color')
             ->willReturn('red');
 
         $this->variantAvailability->expects($this->at(6))
-            ->method('getVariantFieldValue')
+            ->method('getVariantFieldScalarValue')
             ->with($simpleProductMediumGreen, 'size')
             ->willReturn('m');
 
         $this->variantAvailability->expects($this->at(7))
-            ->method('getVariantFieldValue')
+            ->method('getVariantFieldScalarValue')
             ->with($simpleProductMediumGreen, 'color')
             ->willReturn('green');
 
