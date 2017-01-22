@@ -24,6 +24,16 @@ class PaymentMethodsListener extends AbstractMethodsListener
     private $contextFactory;
 
     /**
+     * @var OrderAddressProvider
+     */
+    private $addressProvider;
+
+    /**
+     * @var OrderAddressSecurityProvider
+     */
+    private $orderAddressSecurityProvider;
+
+    /**
      * @param OrderAddressProvider $addressProvider
      * @param OrderAddressSecurityProvider $orderAddressSecurityProvider
      * @param OrderAddressManager $orderAddressManager
@@ -37,8 +47,10 @@ class PaymentMethodsListener extends AbstractMethodsListener
         PaymentMethodsConfigsRulesProviderInterface $paymentProvider,
         CheckoutPaymentContextFactory $contextFactory
     ) {
-        parent::__construct($addressProvider, $orderAddressSecurityProvider, $orderAddressManager);
+        parent::__construct($orderAddressManager);
 
+        $this->addressProvider = $addressProvider;
+        $this->orderAddressSecurityProvider = $orderAddressSecurityProvider;
         $this->paymentProvider = $paymentProvider;
         $this->contextFactory = $contextFactory;
     }
@@ -58,16 +70,27 @@ class PaymentMethodsListener extends AbstractMethodsListener
     /**
      * {@inheritdoc}
      */
-    protected function getAddressType()
+    protected function getError()
     {
-        return AddressType::TYPE_BILLING;
+        return 'oro.payment.methods.no_method';
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function getError()
+    protected function isManualEditGranted()
     {
-        return 'oro.checkout.frontend.checkout.cannot_create_order_no_payment_methods_available';
+        return $this->orderAddressSecurityProvider->isManualEditGranted(AddressType::TYPE_BILLING);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getApplicableAddresses(Checkout $checkout)
+    {
+        return array_merge(
+            $this->addressProvider->getCustomerAddresses($checkout->getCustomer(), AddressType::TYPE_BILLING),
+            $this->addressProvider->getCustomerUserAddresses($checkout->getCustomerUser(), AddressType::TYPE_BILLING)
+        );
     }
 }
