@@ -188,9 +188,8 @@ class PaymentMethodsListenerTest extends AbstractMethodsListenerTest
         $billingCustomerUserAddress = $this->getEntity(OrderAddress::class, ['id' => 4]);
 
         return [
-            'no configs for customer addresses in provider' => [
+            'error because no configs for customer addresses in provider' => [
                 'checkout' => $checkout,
-                'hasErrors' => true,
                 'customerAddressesMap' => [
                     [$customer, AddressType::TYPE_BILLING, [$billingCustomerAddress]]
                 ],
@@ -204,9 +203,8 @@ class PaymentMethodsListenerTest extends AbstractMethodsListenerTest
                 'expectedCalls' => 2,
                 'onConsecutiveMethodConfigs' => [[], []]
             ],
-            'has configs for customer addresses in provider' => [
+            'no error because has configs for customer addresses in provider' => [
                 'checkout' => $checkout,
-                'hasErrors' => false,
                 'customerAddressesMap' => [
                     [$customer, AddressType::TYPE_BILLING, [$billingCustomerAddress]]
                 ],
@@ -226,7 +224,6 @@ class PaymentMethodsListenerTest extends AbstractMethodsListenerTest
      * @dataProvider notManualEditDataProvider
      *
      * @param Checkout $checkout
-     * @param bool $hasErrors
      * @param array $customerAddressesMap
      * @param array $customerUserAddressesMap
      * @param array $consecutiveAddresses
@@ -235,7 +232,6 @@ class PaymentMethodsListenerTest extends AbstractMethodsListenerTest
      */
     public function testOnStartCheckoutWhenIsManualEditNotGranted(
         $checkout,
-        $hasErrors,
         array $customerAddressesMap,
         array $customerUserAddressesMap,
         array $consecutiveAddresses,
@@ -276,6 +272,6 @@ class PaymentMethodsListenerTest extends AbstractMethodsListenerTest
 
         $this->listener->onStartCheckout($event);
 
-        $this->assertEquals($hasErrors, !$event->getErrors()->isEmpty());
+        $this->assertEquals(!empty(array_filter($onConsecutiveMethodConfigs)), $event->getErrors()->isEmpty());
     }
 }

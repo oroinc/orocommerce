@@ -200,9 +200,8 @@ class ShippingMethodsListenerTest extends AbstractMethodsListenerTest
         $billingCustomerUserAddress = $this->getEntity(OrderAddress::class, ['id' => 4]);
 
         return [
-            'no configs for customer addresses in provider' => [
+            'has error because no configs for customer addresses in provider' => [
                 'checkout' => $checkout,
-                'hasErrors' => true,
                 'customerAddressesMap' => [
                     [$customer, AddressType::TYPE_SHIPPING, [$shippingCustomerAddress]],
                     [$customer, AddressType::TYPE_BILLING, [$billingCustomerAddress]]
@@ -220,9 +219,8 @@ class ShippingMethodsListenerTest extends AbstractMethodsListenerTest
                 'expectedCalls' => 4,
                 'onConsecutiveMethodConfigs' => [[], [], [], []]
             ],
-            'has configs for customer addresses in provider' => [
+            'no error because has configs for customer addresses in provider' => [
                 'checkout' => $checkout,
-                'hasErrors' => false,
                 'customerAddressesMap' => [
                     [$customer, AddressType::TYPE_SHIPPING, []],
                     [$customer, AddressType::TYPE_BILLING, [$billingCustomerAddress]]
@@ -245,7 +243,6 @@ class ShippingMethodsListenerTest extends AbstractMethodsListenerTest
      * @dataProvider notManualEditDataProvider
      *
      * @param Checkout $checkout
-     * @param bool $hasErrors
      * @param array $customerAddressesMap
      * @param array $customerUserAddressesMap
      * @param array $consecutiveAddresses
@@ -254,7 +251,6 @@ class ShippingMethodsListenerTest extends AbstractMethodsListenerTest
      */
     public function testOnStartCheckoutWhenIsManualEditNotGranted(
         $checkout,
-        $hasErrors,
         array $customerAddressesMap,
         array $customerUserAddressesMap,
         array $consecutiveAddresses,
@@ -295,6 +291,6 @@ class ShippingMethodsListenerTest extends AbstractMethodsListenerTest
 
         $this->listener->onStartCheckout($event);
 
-        $this->assertEquals($hasErrors, !$event->getErrors()->isEmpty());
+        $this->assertEquals(!empty(array_filter($onConsecutiveMethodConfigs)), $event->getErrors()->isEmpty());
     }
 }
