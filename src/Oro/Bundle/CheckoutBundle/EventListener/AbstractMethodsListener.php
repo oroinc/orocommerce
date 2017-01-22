@@ -6,51 +6,32 @@ use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Manager\OrderAddressManager;
-use Oro\Bundle\OrderBundle\Provider\OrderAddressProvider;
-use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
 
 abstract class AbstractMethodsListener
 {
-    /**
-     * @var OrderAddressProvider
-     */
-    private $addressProvider;
-
-    /**
-     * @var OrderAddressSecurityProvider
-     */
-    private $orderAddressSecurityProvider;
-
     /**
      * @var OrderAddressManager
      */
     private $orderAddressManager;
 
     /**
-     * @param OrderAddressProvider $addressProvider
-     * @param OrderAddressSecurityProvider $orderAddressSecurityProvider
      * @param OrderAddressManager $orderAddressManager
      */
-    public function __construct(
-        OrderAddressProvider $addressProvider,
-        OrderAddressSecurityProvider $orderAddressSecurityProvider,
-        OrderAddressManager $orderAddressManager
-    ) {
-        $this->addressProvider = $addressProvider;
-        $this->orderAddressSecurityProvider = $orderAddressSecurityProvider;
+    public function __construct(OrderAddressManager $orderAddressManager)
+    {
         $this->orderAddressManager = $orderAddressManager;
     }
 
     /**
      * @return string
      */
-    abstract protected function getAddressType();
+    abstract protected function getError();
 
     /**
-     * @return string
+     * @return bool
      */
-    abstract protected function getError();
+    abstract protected function isManualEditGranted();
 
     /**
      * @param Checkout $checkout
@@ -60,9 +41,15 @@ abstract class AbstractMethodsListener
     abstract protected function hasMethodsConfigsForAddress(Checkout $checkout, OrderAddress $address = null);
 
     /**
+     * @param Checkout $checkout
+     * @return array
+     */
+    abstract protected function getApplicableAddresses(Checkout $checkout);
+
+    /**
      * @param ExtendableConditionEvent $event
      */
-    public function onStartCheckout(ExtendableConditionEvent $event)
+    final public function onStartCheckout(ExtendableConditionEvent $event)
     {
         if (!$this->isApplicable($event)) {
             return;
@@ -72,19 +59,13 @@ abstract class AbstractMethodsListener
         /** @var Checkout $checkout */
         $checkout = clone $context['checkout'];
 
-        $isManualEditGranted = $this->orderAddressSecurityProvider->isManualEditGranted($this->getAddressType());
+        $isManualEditGranted = $this->isManualEditGranted();
 
         $hasMethodsConfigs = false;
         if ($isManualEditGranted) {
             $hasMethodsConfigs = $this->hasMethodsConfigsForAddress($checkout);
         } else {
-            $availableAddresses = array_merge(
-                $this->addressProvider->getCustomerAddresses($checkout->getCustomer(), $this->getAddressType()),
-                $this->addressProvider->getCustomerUserAddresses(
-                    $checkout->getCustomerUser(),
-                    $this->getAddressType()
-                )
-            );
+            $availableAddresses = $this->getApplicableAddresses($checkout);
 
             foreach ($availableAddresses as $address) {
                 $orderAddress = $this->orderAddressManager->updateFromAbstract($address);

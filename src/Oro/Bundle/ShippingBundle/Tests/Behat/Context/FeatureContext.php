@@ -136,6 +136,23 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
+     * @Then Flash message appears that there is no shipping methods available
+     */
+    public function flashMessageAppearsThatThereIsNoShippingMethodsAvailable()
+    {
+        $flashMessages = $this->createElement('CreateOrderFlashMessage');
+
+        self::assertTrue(
+            $flashMessages->isValid(),
+            'Flash message is not found, or found more then one'
+        );
+        self::assertEquals(
+            'No shipping methods are available, please contact us to complete the order submission.',
+            $flashMessages->getText()
+        );
+    }
+
+    /**
      * @Then There is no shipping method available for this order
      */
     public function noShippingMethodsAvailable()
@@ -238,6 +255,15 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $this->waitForAjax();
         $this->getSession('second_session')->stop();
         $this->getMink()->setDefaultSessionName('first_session');
+    }
+
+    /**
+     * @When Buyer is on view shopping list :shoppingListName page and clicks create order button
+     * @param string $shoppingListName
+     */
+    public function buyerIsOnViewShoppingListPageAndClicksCreateOrderButton($shoppingListName)
+    {
+        $this->createOrderFromShoppingList($shoppingListName);
     }
 
     /**
