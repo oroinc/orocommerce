@@ -24,6 +24,16 @@ class ShippingMethodsListener extends AbstractMethodsListener
     private $contextFactory;
 
     /**
+     * @var OrderAddressProvider
+     */
+    private $addressProvider;
+
+    /**
+     * @var OrderAddressSecurityProvider
+     */
+    private $orderAddressSecurityProvider;
+
+    /**
      * @param OrderAddressProvider $addressProvider
      * @param OrderAddressSecurityProvider $orderAddressSecurityProvider
      * @param OrderAddressManager $orderAddressManager
@@ -37,8 +47,10 @@ class ShippingMethodsListener extends AbstractMethodsListener
         ShippingMethodsConfigsRulesProviderInterface $shippingProvider,
         CheckoutShippingContextFactory $contextFactory
     ) {
-        parent::__construct($addressProvider, $orderAddressSecurityProvider, $orderAddressManager);
+        parent::__construct($orderAddressManager);
 
+        $this->addressProvider = $addressProvider;
+        $this->orderAddressSecurityProvider = $orderAddressSecurityProvider;
         $this->shippingProvider = $shippingProvider;
         $this->contextFactory = $contextFactory;
     }
@@ -58,16 +70,32 @@ class ShippingMethodsListener extends AbstractMethodsListener
     /**
      * {@inheritdoc}
      */
-    protected function getAddressType()
+    protected function getError()
     {
-        return AddressType::TYPE_SHIPPING;
+        return 'oro.shipping.methods.no_method';
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function getError()
+    protected function isManualEditGranted()
     {
-        return 'oro.checkout.frontend.checkout.cannot_create_order_no_shipping_methods_available';
+        // User can ship to billing address so we have to count manual edit on billing address too.
+        return $this->orderAddressSecurityProvider->isManualEditGranted(AddressType::TYPE_SHIPPING)
+            || $this->orderAddressSecurityProvider->isManualEditGranted(AddressType::TYPE_BILLING);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getApplicableAddresses(Checkout $checkout)
+    {
+        // User can ship to billing address so we have to count billing addresses too.
+        return array_merge(
+            $this->addressProvider->getCustomerAddresses($checkout->getCustomer(), AddressType::TYPE_SHIPPING),
+            $this->addressProvider->getCustomerUserAddresses($checkout->getCustomerUser(), AddressType::TYPE_SHIPPING),
+            $this->addressProvider->getCustomerAddresses($checkout->getCustomer(), AddressType::TYPE_BILLING),
+            $this->addressProvider->getCustomerUserAddresses($checkout->getCustomerUser(), AddressType::TYPE_BILLING)
+        );
     }
 }
