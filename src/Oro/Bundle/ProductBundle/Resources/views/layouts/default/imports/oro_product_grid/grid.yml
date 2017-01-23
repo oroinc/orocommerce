@@ -23,7 +23,7 @@ layout:
         - '@setOption':
             id: product_datagrid
             optionName: grid_name
-            optionValue: '=context["grid_config"]["name"]'
+            optionValue: frontend-product-search-grid
 
         - '@setOption':
             id: product_datagrid

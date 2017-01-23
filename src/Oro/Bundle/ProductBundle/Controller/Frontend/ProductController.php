@@ -26,12 +26,11 @@ class ProductController extends Controller
      */
     public function indexAction()
     {
-        $gridName = 'frontend-product-search-grid';
-        $gridConfig = $this->get('oro_datagrid.datagrid.manager')->getConfigurationForGrid($gridName);
-
         return [
             'entity_class' => $this->container->getParameter('oro_product.entity.product.class'),
-            'grid_config' => $gridConfig->toArray(),
+            'grid_config' => [
+                'frontend-product-search-grid'
+            ],
         ];
     }
 
