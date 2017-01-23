@@ -139,7 +139,10 @@ class PaymentMethodsListenerTest extends \PHPUnit_Framework_TestCase
             ],
             'manual edit granted and method configs returned' => [
                 'billingManualEdit' => true,
-                'methodConfigs' => [$this->getMethodConfig(['id' => 1]), $this->getMethodConfig(['id' => 2])]
+                'methodConfigs' => [
+                    $this->getEntity(PaymentMethodsConfigsRule::class, ['id' => 1]),
+                    $this->getEntity(PaymentMethodsConfigsRule::class, ['id' => 2])
+                ]
             ],
         ];
     }
@@ -208,14 +211,6 @@ class PaymentMethodsListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * {@inheritdoc}
-     */
-    protected function getMethodConfig(array $params)
-    {
-        return $this->getEntity(PaymentMethodsConfigsRule::class, $params);
-    }
-
-    /**
      * @return array
      */
     public function notManualEditDataProvider()
@@ -257,7 +252,7 @@ class PaymentMethodsListenerTest extends \PHPUnit_Framework_TestCase
                 'consecutiveAddresses' => [[$billingCustomerAddress]],
                 'expectedCalls' => 1,
                 'onConsecutiveMethodConfigs' => [
-                    [$this->getMethodConfig(['id' => 1])]
+                    [$this->getEntity(PaymentMethodsConfigsRule::class, ['id' => 1])]
                 ]
             ],
         ];

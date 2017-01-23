@@ -35,6 +35,17 @@ class PaymentMethodsConfigsRuleRepositoryTest extends WebTestCase
         );
     }
 
+    /**
+     * @param array $entities
+     * @return array
+     */
+    private function getEntitiesIds(array $entities)
+    {
+        return array_map(function ($entity) {
+            return $entity->getId();
+        }, $entities);
+    }
+
     public function testFindAll()
     {
         $allConfigsRules = $this->repository->findAll();
@@ -73,10 +84,7 @@ class PaymentMethodsConfigsRuleRepositoryTest extends WebTestCase
         $expectedConfigsRules = $this->getConfigsRulesByReferences($data['expectedEntityReferences']);
         $configsRules = $this->repository->getByDestinationAndCurrency($billingAddress, $currency);
 
-        sort($expectedConfigsRules);
-        sort($configsRules);
-
-        $this->assertEquals($expectedConfigsRules, $configsRules);
+        $this->assertEquals($this->getEntitiesIds($expectedConfigsRules), $this->getEntitiesIds($configsRules));
     }
 
     /**
@@ -92,8 +100,8 @@ class PaymentMethodsConfigsRuleRepositoryTest extends WebTestCase
                     'postalCode' => '12345',
                     'currency' => 'EUR',
                     'expectedEntityReferences' => [
-                        'payment.payment_methods_configs_rule.4',
                         'payment.payment_methods_configs_rule.2',
+                        'payment.payment_methods_configs_rule.4'
                     ]
                 ],
             ],
@@ -156,12 +164,10 @@ class PaymentMethodsConfigsRuleRepositoryTest extends WebTestCase
             'payment.payment_methods_configs_rule.5',
             'payment.payment_methods_configs_rule.6',
         ]);
+
         $configsRules = $this->repository->getByCurrencyWithoutDestination('USD');
 
-        sort($expectedConfigsRules);
-        sort($configsRules);
-
-        $this->assertEquals($expectedConfigsRules, $configsRules);
+        $this->assertEquals($this->getEntitiesIds($expectedConfigsRules), $this->getEntitiesIds($configsRules));
     }
 
     public function testGetByCurrency()
@@ -175,7 +181,7 @@ class PaymentMethodsConfigsRuleRepositoryTest extends WebTestCase
 
         $configsRules = $this->repository->getByCurrency('USD');
 
-        $this->assertEquals($expectedConfigsRules, $configsRules);
+        $this->assertEquals($this->getEntitiesIds($expectedConfigsRules), $this->getEntitiesIds($configsRules));
     }
 
     public function testGetByCurrencyWhenCurrencyNotExists()

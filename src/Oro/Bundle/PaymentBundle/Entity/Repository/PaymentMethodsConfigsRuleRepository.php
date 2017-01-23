@@ -37,9 +37,12 @@ class PaymentMethodsConfigsRuleRepository extends EntityRepository
      */
     private function getByCurrencyQuery($currency)
     {
-        return $this->createQueryBuilder('methodsConfigsRule')
+        $queryBuilder = $this->createQueryBuilder('methodsConfigsRule');
+
+        return $queryBuilder
             ->leftJoin('methodsConfigsRule.methodConfigs', 'methodConfigs')
             ->where('methodsConfigsRule.currency = :currency')
+            ->orderBy($queryBuilder->expr()->asc('methodsConfigsRule.id'))
             ->setParameter('currency', $currency);
     }
 
@@ -49,10 +52,7 @@ class PaymentMethodsConfigsRuleRepository extends EntityRepository
      */
     public function getByCurrency($currency)
     {
-        $queryBuilder = $this->getByCurrencyQuery($currency);
-
-        return $queryBuilder
-            ->orderBy($queryBuilder->expr()->asc('methodsConfigsRule.id'))
+        return $this->getByCurrencyQuery($currency)
             ->getQuery()
             ->getResult();
     }
