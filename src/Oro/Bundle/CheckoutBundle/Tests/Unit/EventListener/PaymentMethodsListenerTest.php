@@ -5,6 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Unit\EventListener;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\EventListener\AbstractMethodsListener;
 use Oro\Bundle\CheckoutBundle\EventListener\PaymentMethodsListener;
 use Oro\Bundle\CheckoutBundle\Factory\CheckoutPaymentContextFactory;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
@@ -19,14 +20,23 @@ use Oro\Bundle\PaymentBundle\Provider\PaymentMethodsConfigsRulesProviderInterfac
 use Oro\Component\Action\Event\ExtendableConditionEvent;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-class PaymentMethodsListenerTest extends AbstractMethodsListenerTest
+class PaymentMethodsListenerTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
-    /** @var OrderAddressSecurityProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /**
+     * @var OrderAddressSecurityProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
     private $orderAddressSecurityProvider;
 
-    /** @var OrderAddressProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /**
+     * @var OrderAddressManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $orderAddressManager;
+
+    /**
+     * @var OrderAddressProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
     private $addressProvider;
 
     /**
@@ -39,9 +49,18 @@ class PaymentMethodsListenerTest extends AbstractMethodsListenerTest
      */
     private $contextFactory;
 
+    /**
+     * @var AbstractMethodsListener
+     */
+    private $listener;
+
     protected function setUp()
     {
         $this->orderAddressSecurityProvider = $this->getMockBuilder(OrderAddressSecurityProvider::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->orderAddressManager = $this->getMockBuilder(OrderAddressManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -57,18 +76,10 @@ class PaymentMethodsListenerTest extends AbstractMethodsListenerTest
             ->disableOriginalConstructor()
             ->getMock();
 
-        parent::setUp();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getListener(OrderAddressManager $orderAddressManager)
-    {
-        return new PaymentMethodsListener(
+        $this->listener = new PaymentMethodsListener(
             $this->addressProvider,
             $this->orderAddressSecurityProvider,
-            $orderAddressManager,
+            $this->orderAddressManager,
             $this->configsRuleProvider,
             $this->contextFactory
         );
@@ -77,11 +88,43 @@ class PaymentMethodsListenerTest extends AbstractMethodsListenerTest
     /**
      * {@inheritdoc}
      */
-    protected function expectsNoInvocationOfManualEditGranted()
+    private function expectsNoInvocationOfManualEditGranted()
     {
         $this->orderAddressSecurityProvider
             ->expects($this->never())
             ->method('isManualEditGranted');
+    }
+
+    public function testOnStartCheckoutWhenContextIsNotOfActionDataType()
+    {
+        $event = new ExtendableConditionEvent(new \stdClass());
+
+        $this->expectsNoInvocationOfManualEditGranted();
+
+        $this->listener->onStartCheckout($event);
+    }
+
+    public function testOnStartCheckoutWhenCheckoutParameterIsNotOfCheckoutType()
+    {
+        $context = new ActionData(['checkout' => new \stdClass()]);
+        $event = new ExtendableConditionEvent($context);
+
+        $this->expectsNoInvocationOfManualEditGranted();
+
+        $this->listener->onStartCheckout($event);
+    }
+
+    public function testOnStartCheckoutWhenValidateOnStartCheckoutIsFalse()
+    {
+        $context = new ActionData([
+            'checkout' => $this->getEntity(Checkout::class),
+            'validateOnStartCheckout' => false
+        ]);
+        $event = new ExtendableConditionEvent($context);
+
+        $this->expectsNoInvocationOfManualEditGranted();
+
+        $this->listener->onStartCheckout($event);
     }
 
     /**

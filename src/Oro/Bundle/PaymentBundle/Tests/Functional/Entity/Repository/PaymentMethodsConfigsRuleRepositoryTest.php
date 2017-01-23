@@ -182,7 +182,7 @@ class PaymentMethodsConfigsRuleRepositoryTest extends WebTestCase
     {
         $configsRules = $this->repository->getByCurrency('WON');
 
-        $this->assertEquals([], $configsRules);
+        $this->assertEmpty($configsRules);
     }
 
     /**
