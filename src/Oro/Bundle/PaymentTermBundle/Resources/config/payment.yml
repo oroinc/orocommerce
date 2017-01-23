@@ -1,12 +1,10 @@
 services:
     oro_payment_term.payment_method_provider.payment_term:
-        class: 'Oro\Bundle\PaymentTermBundle\Method\PaymentTermMethodProvider'
+        class: 'Oro\Bundle\PaymentTermBundle\Method\Provider\PaymentTermMethodProvider'
         public: false
         arguments:
-            - '@oro_payment_term.provider.payment_term'
-            - '@oro_payment_term.provider.payment_term_association'
-            - '@oro_entity.doctrine_helper'
-            - '@logger'
+            - '@oro_payment_term.config.provider'
+            - '@oro_payment_term.method.factory.payment_term'
         tags:
             - { name: oro_payment.payment_method_provider }
 
@@ -19,3 +17,12 @@ services:
             - '@oro_payment_term.config.provider'
         tags:
             - { name: oro_payment.payment_method_view_provider }
+
+    oro_payment_term.method.factory.payment_term:
+        class: 'Oro\Bundle\PaymentTermBundle\Method\Factory\PaymentTermPaymentMethodFactory'
+        public: false
+        arguments:
+            - '@oro_payment_term.provider.payment_term'
+            - '@oro_payment_term.provider.payment_term_association'
+            - '@oro_entity.doctrine_helper'
+            - '@logger'

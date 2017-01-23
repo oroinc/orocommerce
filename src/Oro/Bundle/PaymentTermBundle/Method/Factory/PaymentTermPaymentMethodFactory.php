@@ -1,15 +1,16 @@
 <?php
 
-namespace Oro\Bundle\PaymentTermBundle\Method;
+namespace Oro\Bundle\PaymentTermBundle\Method\Factory;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
+use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface;
+use Oro\Bundle\PaymentTermBundle\Method\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 
-class PaymentTermMethodProvider implements PaymentMethodProviderInterface
+class PaymentTermPaymentMethodFactory implements PaymentTermPaymentMethodFactoryInterface
 {
     use LoggerAwareTrait;
 
@@ -32,51 +33,33 @@ class PaymentTermMethodProvider implements PaymentMethodProviderInterface
      * @param PaymentTermProvider $paymentTermProvider
      * @param PaymentTermAssociationProvider $paymentTermAssociationProvider
      * @param DoctrineHelper $doctrineHelper
+     * @param LoggerInterface $logger
      */
     public function __construct(
         PaymentTermProvider $paymentTermProvider,
         PaymentTermAssociationProvider $paymentTermAssociationProvider,
-        DoctrineHelper $doctrineHelper
+        DoctrineHelper $doctrineHelper,
+        LoggerInterface $logger
     ) {
         $this->paymentTermProvider = $paymentTermProvider;
         $this->paymentTermAssociationProvider = $paymentTermAssociationProvider;
         $this->doctrineHelper = $doctrineHelper;
+        $this->logger = $logger;
     }
 
     /**
-     * @return PaymentMethodInterface[]
+     * {@inheritdoc}
      */
-    public function getPaymentMethods()
+    public function create(PaymentTermConfigInterface $config)
     {
         $paymentMethod = new PaymentTerm(
             $this->paymentTermProvider,
             $this->paymentTermAssociationProvider,
-            $this->doctrineHelper
+            $this->doctrineHelper,
+            $config
         );
         $paymentMethod->setLogger($this->logger);
-        return [$paymentMethod->getIdentifier() => $paymentMethod];
-    }
 
-    /**
-     * @param string $identifier
-     * @return PaymentMethodInterface
-     */
-    public function getPaymentMethod($identifier)
-    {
-        if ($this->hasPaymentMethod($identifier)) {
-            return $this->getPaymentMethods()[$identifier];
-        }
-        return null;
-    }
-
-    /**
-     * @param string $identifier
-     * @return bool
-     */
-    public function hasPaymentMethod($identifier)
-    {
-        $paymentMethods = $this->getPaymentMethods();
-
-        return isset($paymentMethods[$identifier]);
+        return $paymentMethod;
     }
 }

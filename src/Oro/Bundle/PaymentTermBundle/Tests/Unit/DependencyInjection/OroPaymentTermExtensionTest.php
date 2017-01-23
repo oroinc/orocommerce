@@ -27,7 +27,9 @@ class OroPaymentTermExtensionTest extends ExtensionTestCase
             'oro_payment_term.config.provider',
             'oro_payment_term.config.provider_basic',
             'oro_payment_term.config.provider_basic_memory_cached',
-            'oro_payment_term.config.integration_method_identifier_generator'
+            'oro_payment_term.config.integration_method_identifier_generator',
+            'oro_payment_term.payment_method_provider.payment_term',
+            'oro_payment_term.method.factory.payment_term',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }
