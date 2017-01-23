@@ -168,6 +168,6 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
 
     public function testGetByCurrencyWhenCurrencyNotExists()
     {
-        $this->assertEquals([], $this->repository->getByCurrency('WON'));
+        $this->assertEmpty($this->repository->getByCurrency('WON'));
     }
 }

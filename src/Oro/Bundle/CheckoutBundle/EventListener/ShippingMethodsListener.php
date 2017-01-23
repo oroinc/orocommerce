@@ -64,7 +64,7 @@ class ShippingMethodsListener extends AbstractMethodsListener
         $shippingContext = $this->contextFactory->create($checkout);
         $shippingMethodsConfigs = $this->shippingProvider
             ->getFilteredShippingMethodsConfigsRegardlessDestination($shippingContext);
-        return (bool) count($shippingMethodsConfigs);
+        return count($shippingMethodsConfigs) > 0;
     }
 
     /**
