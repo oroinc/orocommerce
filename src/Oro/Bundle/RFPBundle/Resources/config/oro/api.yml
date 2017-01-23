@@ -1,0 +1,11 @@
+api:
+    entities:
+        Oro\Bundle\RFPBundle\Entity\Request: ~
+        Oro\Bundle\RFPBundle\Entity\RequestProduct: ~
+        Oro\Bundle\RFPBundle\Entity\RequestProductItem: ~
+
+        Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote:
+            actions:
+                create: false
+                update: false
+                delete: false
