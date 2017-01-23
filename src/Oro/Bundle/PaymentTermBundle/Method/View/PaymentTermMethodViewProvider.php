@@ -38,16 +38,15 @@ class PaymentTermMethodViewProvider implements PaymentMethodViewProviderInterfac
     }
 
     /**
-     * @param array $paymentMethods
-     * @return PaymentMethodViewInterface[]
+     * {@inheritdoc}
      */
-    public function getPaymentMethodViews(array $paymentMethods)
+    public function getPaymentMethodViews(array $identifiers)
     {
         if ($this->methodViews === null) {
             $this->collectPaymentMethodViews();
         }
         $matchedViews = [];
-        foreach ($paymentMethods as $paymentMethod) {
+        foreach ($identifiers as $paymentMethod) {
             if ($this->hasPaymentMethodView($paymentMethod)) {
                 $matchedViews[$paymentMethod] = $this->getPaymentMethodView($paymentMethod);
             }
@@ -56,8 +55,7 @@ class PaymentTermMethodViewProvider implements PaymentMethodViewProviderInterfac
     }
 
     /**
-     * @param string $identifier
-     * @return PaymentMethodViewInterface|null
+     * {@inheritdoc}
      */
     public function getPaymentMethodView($identifier)
     {
@@ -71,8 +69,7 @@ class PaymentTermMethodViewProvider implements PaymentMethodViewProviderInterfac
     }
 
     /**
-     * @param string $identifier
-     * @return bool
+     * {@inheritdoc}
      */
     public function hasPaymentMethodView($identifier)
     {

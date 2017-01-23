@@ -4,9 +4,8 @@ namespace Oro\Bundle\PaymentBundle\Form\EventSubscriber;
 
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
-use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigType;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
+use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -14,14 +13,14 @@ use Symfony\Component\Form\FormEvents;
 class RuleMethodConfigCollectionSubscriber implements EventSubscriberInterface
 {
     /**
-     * @var PaymentMethodProvidersRegistry
+     * @var PaymentMethodProvidersRegistryInterface
      */
     protected $methodRegistry;
 
     /**
-     * @param PaymentMethodProvidersRegistry $methodRegistry
+     * @param PaymentMethodProvidersRegistryInterface $methodRegistry
      */
-    public function __construct(PaymentMethodProvidersRegistry $methodRegistry)
+    public function __construct(PaymentMethodProvidersRegistryInterface $methodRegistry)
     {
         $this->methodRegistry = $methodRegistry;
     }

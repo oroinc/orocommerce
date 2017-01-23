@@ -69,10 +69,9 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
             $this->paymentTermProvider,
             $this->paymentTermAssociationProvider,
             $this->doctrineHelper,
+            $this->logger,
             $this->paymentConfig
         );
-
-        $this->method->setLogger($this->logger);
     }
 
     public function testExecuteNoEntity()

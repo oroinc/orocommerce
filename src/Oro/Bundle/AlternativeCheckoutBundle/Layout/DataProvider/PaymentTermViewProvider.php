@@ -3,33 +3,32 @@
 namespace Oro\Bundle\AlternativeCheckoutBundle\Layout\DataProvider;
 
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
-use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistry;
-use Oro\Bundle\PaymentTermBundle\Method\PaymentTerm;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistryInterface;
 
 class PaymentTermViewProvider
 {
     /**
-     * @var PaymentMethodViewProvidersRegistry
+     * @var PaymentMethodViewProvidersRegistryInterface
      */
     protected $paymentMethodViewRegistry;
 
     /**
-     * @var PaymentMethodProvidersRegistry
+     * @var PaymentMethodProviderInterface
      */
-    private $paymentMethodRegistry;
+    private $paymentMethodProvider;
 
     /**
-     * @param PaymentMethodViewProvidersRegistry $paymentMethodViewRegistry
-     * @param PaymentMethodProvidersRegistry $paymentMethodRegistry
+     * @param PaymentMethodViewProvidersRegistryInterface $paymentMethodViewRegistry
+     * @param PaymentMethodProviderInterface $paymentMethodProvider
      */
     public function __construct(
-        PaymentMethodViewProvidersRegistry $paymentMethodViewRegistry,
-        PaymentMethodProvidersRegistry $paymentMethodRegistry
+        PaymentMethodViewProvidersRegistryInterface $paymentMethodViewRegistry,
+        PaymentMethodProviderInterface $paymentMethodProvider
     ) {
         $this->paymentMethodViewRegistry = $paymentMethodViewRegistry;
-        $this->paymentMethodRegistry = $paymentMethodRegistry;
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
@@ -39,9 +38,8 @@ class PaymentTermViewProvider
     public function getView(PaymentContextInterface $context)
     {
         try {
-            $paymentMethodProvider = $this->paymentMethodRegistry->getPaymentMethodProvider(PaymentTerm::TYPE);
             $paymentMethods = [];
-            foreach ($paymentMethodProvider->getPaymentMethods() as $paymentMethod) {
+            foreach ($this->paymentMethodProvider->getPaymentMethods() as $paymentMethod) {
                 if ($paymentMethod->isApplicable($context)) {
                     $paymentMethods[] = $paymentMethod->getIdentifier();
                 }

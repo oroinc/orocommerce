@@ -10,10 +10,42 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Oro\Bundle\PayPalBundle\Entity\Repository\PayPalSettingsRepository")
+ * @SuppressWarnings(PHPMD.TooManyFields)
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class PayPalSettings extends Transport
 {
+    const CREDIT_CARD_LABELS_KEY = 'credit_card_labels';
+    const CREDIT_CARD_SHORT_LABELS_KEY = 'credit_card_short_labels';
+    const CREDIT_CARD_PAYMENT_ACTION_KEY = 'credit_card_payment_action';
+
+    const EXPRESS_CHECKOUT_NAME_KEY = 'express_checkout_name';
+    const EXPRESS_CHECKOUT_LABELS_KEY = 'express_checkout_labels';
+    const EXPRESS_CHECKOUT_SHORT_LABELS_KEY = 'express_checkout_short_labels';
+    const EXPRESS_CHECKOUT_PAYMENT_ACTION_KEY = 'express_checkout_payment_action';
+    
+    const ALLOWED_CREDIT_CARD_TYPES_KEY = 'allowed_credit_card_types';
+    const PARTNER_KEY = 'partner';
+    const VENDOR_KEY = 'vendor';
+    const USER_KEY = 'user';
+    const PASSWORD_KEY = 'password';
+    
+    const TEST_MODE_KEY = 'test_mode';
+    const DEBUG_MODE_KEY = 'debug_mode';
+    
+    const USE_PROXY_KEY = 'use_proxy';
+    const PROXY_HOST_KEY = 'proxy_host';
+    const PROXY_PORT_KEY = 'proxy_port';
+
+    const ENABLE_SSL_VERIFICATION_KEY = 'enable_ssl_verification';
+    const REQUIRE_CVV_ENTRY_KEY = 'require_cvv_entry';
+    const ZERO_AMOUNT_AUTHORIZATION_KEY = 'zero_amount_authorization';
+    const AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY = 'authorization_for_required_amount';
+    
     /**
      * @var ParameterBag
      */
@@ -243,27 +275,27 @@ class PayPalSettings extends Transport
         if (null === $this->settings) {
             $this->settings = new ParameterBag(
                 [
-                    'credit_card_labels' => $this->getCreditCardLabels(),
-                    'credit_card_short_labels' => $this->getCreditCardShortLabels(),
-                    'express_checkout_labels' => $this->getExpressCheckoutLabels(),
-                    'express_checkout_short_labels' => $this->getExpressCheckoutShortLabels(),
-                    'credit_card_payment_action' => $this->getCreditCardPaymentAction(),
-                    'express_checkout_payment_action' => $this->getExpressCheckoutPaymentAction(),
-                    'allowed_credit_card_types' => $this->getAllowedCreditCardTypes(),
-                    'express_checkout_name' => $this->getExpressCheckoutName(),
-                    'partner' => $this->getPartner(),
-                    'vendor' => $this->getVendor(),
-                    'user' => $this->getUser(),
-                    'password' => $this->getPassword(),
-                    'test_mode' => $this->getTestMode(),
-                    'debug_mode' => $this->getDebugMode(),
-                    'require_cvv_entry' => $this->getRequireCVVEntry(),
-                    'zero_amount_authorization' => $this->getZeroAmountAuthorization(),
-                    'authorization_for_required_amount' => $this->getAuthorizationForRequiredAmount(),
-                    'use_proxy' => $this->getUseProxy(),
-                    'proxy_host' => $this->getProxyHost(),
-                    'proxy_port' => $this->getProxyPort(),
-                    'enable_ssl_verification' => $this->getEnableSSLVerification(),
+                    self::CREDIT_CARD_LABELS_KEY => $this->getCreditCardLabels(),
+                    self::CREDIT_CARD_SHORT_LABELS_KEY => $this->getCreditCardShortLabels(),
+                    self::EXPRESS_CHECKOUT_LABELS_KEY => $this->getExpressCheckoutLabels(),
+                    self::EXPRESS_CHECKOUT_SHORT_LABELS_KEY => $this->getExpressCheckoutShortLabels(),
+                    self::CREDIT_CARD_PAYMENT_ACTION_KEY => $this->getCreditCardPaymentAction(),
+                    self::EXPRESS_CHECKOUT_PAYMENT_ACTION_KEY => $this->getExpressCheckoutPaymentAction(),
+                    self::ALLOWED_CREDIT_CARD_TYPES_KEY => $this->getAllowedCreditCardTypes()->toArray(),
+                    self::EXPRESS_CHECKOUT_NAME_KEY => $this->getExpressCheckoutName(),
+                    self::PARTNER_KEY => $this->getPartner(),
+                    self::VENDOR_KEY => $this->getVendor(),
+                    self::USER_KEY => $this->getUser(),
+                    self::PASSWORD_KEY => $this->getPassword(),
+                    self::TEST_MODE_KEY => $this->getTestMode(),
+                    self::DEBUG_MODE_KEY => $this->getDebugMode(),
+                    self::REQUIRE_CVV_ENTRY_KEY => $this->getRequireCVVEntry(),
+                    self::ZERO_AMOUNT_AUTHORIZATION_KEY => $this->getZeroAmountAuthorization(),
+                    self::AUTHORIZATION_FOR_REQUIRED_AMOUNT_KEY => $this->getAuthorizationForRequiredAmount(),
+                    self::USE_PROXY_KEY => $this->getUseProxy(),
+                    self::PROXY_HOST_KEY => $this->getProxyHost(),
+                    self::PROXY_PORT_KEY => $this->getProxyPort(),
+                    self::ENABLE_SSL_VERIFICATION_KEY => $this->getEnableSSLVerification(),
                 ]
             );
         }

@@ -2,15 +2,13 @@
 
 namespace Oro\Bundle\PayPalBundle\EventListener\Callback;
 
-use Psr\Log\LoggerAwareTrait;
-
-use Symfony\Component\HttpFoundation\Session\Session;
-
+use Oro\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
+use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
 use Oro\Bundle\PayPalBundle\Method\PayflowGateway;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseStatusMap;
-use Oro\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
+use Psr\Log\LoggerAwareTrait;
+use Symfony\Component\HttpFoundation\Session\Session;
 
 class PayflowListener
 {
@@ -19,14 +17,14 @@ class PayflowListener
     /** @var Session */
     protected $session;
 
-    /** @var PaymentMethodProvidersRegistry */
+    /** @var PaymentMethodProvidersRegistryInterface */
     protected $paymentMethodRegistry;
 
     /**
      * @param Session $session
-     * @param PaymentMethodProvidersRegistry $paymentMethodRegistry
+     * @param PaymentMethodProvidersRegistryInterface $paymentMethodRegistry
      */
-    public function __construct(Session $session, PaymentMethodProvidersRegistry $paymentMethodRegistry)
+    public function __construct(Session $session, PaymentMethodProvidersRegistryInterface $paymentMethodRegistry)
     {
         $this->session = $session;
         $this->paymentMethodRegistry = $paymentMethodRegistry;

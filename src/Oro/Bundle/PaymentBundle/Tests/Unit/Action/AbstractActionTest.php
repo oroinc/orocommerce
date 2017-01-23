@@ -3,11 +3,9 @@
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Action;
 
 use Oro\Bundle\PaymentBundle\Action\AbstractPaymentMethodAction;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
-
+use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Component\ConfigExpression\ContextAccessor;
-
 use Psr\Log\LoggerInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Routing\RouterInterface;
@@ -17,7 +15,7 @@ abstract class AbstractActionTest extends \PHPUnit_Framework_TestCase
     /** @var ContextAccessor|\PHPUnit_Framework_MockObject_MockObject */
     protected $contextAccessor;
 
-    /** @var PaymentMethodProvidersRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentMethodProvidersRegistryInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $paymentMethodProvidersRegistry;
 
     /** @var PaymentTransactionProvider|\PHPUnit_Framework_MockObject_MockObject */
@@ -39,7 +37,7 @@ abstract class AbstractActionTest extends \PHPUnit_Framework_TestCase
     {
         $this->contextAccessor = $this->createMock('Oro\Component\ConfigExpression\ContextAccessor');
 
-        $this->paymentMethodProvidersRegistry = $this->createMock(PaymentMethodProvidersRegistry::class);
+        $this->paymentMethodProvidersRegistry = $this->createMock(PaymentMethodProvidersRegistryInterface::class);
 
         $this->paymentTransactionProvider = $this
             ->getMockBuilder('Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider')

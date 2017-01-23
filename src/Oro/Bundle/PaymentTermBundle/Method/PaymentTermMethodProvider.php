@@ -4,15 +4,13 @@ namespace Oro\Bundle\PaymentTermBundle\Method;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProviderInterface;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
-use Psr\Log\LoggerAwareTrait;
+use Psr\Log\LoggerInterface;
 
 class PaymentTermMethodProvider implements PaymentMethodProviderInterface
 {
-    use LoggerAwareTrait;
-    
     /**
      * @var PaymentTermProvider
      */
@@ -29,18 +27,26 @@ class PaymentTermMethodProvider implements PaymentMethodProviderInterface
     protected $doctrineHelper;
 
     /**
+     * @var LoggerInterface
+     */
+    private $logger;
+
+    /**
      * @param PaymentTermProvider $paymentTermProvider
      * @param PaymentTermAssociationProvider $paymentTermAssociationProvider
      * @param DoctrineHelper $doctrineHelper
+     * @param LoggerInterface $logger
      */
     public function __construct(
         PaymentTermProvider $paymentTermProvider,
         PaymentTermAssociationProvider $paymentTermAssociationProvider,
-        DoctrineHelper $doctrineHelper
+        DoctrineHelper $doctrineHelper,
+        LoggerInterface $logger
     ) {
         $this->paymentTermProvider = $paymentTermProvider;
         $this->paymentTermAssociationProvider = $paymentTermAssociationProvider;
         $this->doctrineHelper = $doctrineHelper;
+        $this->logger = $logger;
     }
 
     /**
@@ -51,10 +57,10 @@ class PaymentTermMethodProvider implements PaymentMethodProviderInterface
         $paymentMethod = new PaymentTerm(
             $this->paymentTermProvider,
             $this->paymentTermAssociationProvider,
-            $this->doctrineHelper
+            $this->doctrineHelper,
+            $this->logger
         );
-        $paymentMethod->setLogger($this->logger);
-        return [$this->getType() => $paymentMethod];
+        return [$paymentMethod->getIdentifier() => $paymentMethod];
     }
 
     /**
@@ -66,6 +72,7 @@ class PaymentTermMethodProvider implements PaymentMethodProviderInterface
         if ($this->hasPaymentMethod($identifier)) {
             return $this->getPaymentMethods()[$identifier];
         }
+        return null;
     }
 
     /**
@@ -74,14 +81,8 @@ class PaymentTermMethodProvider implements PaymentMethodProviderInterface
      */
     public function hasPaymentMethod($identifier)
     {
-        return $this->getType() === $identifier;
-    }
+        $paymentMethods = $this->getPaymentMethods();
 
-    /**
-     * @return string
-     */
-    public function getType()
-    {
-        return PaymentTerm::TYPE;
+        return isset($paymentMethods[$identifier]);
     }
 }
