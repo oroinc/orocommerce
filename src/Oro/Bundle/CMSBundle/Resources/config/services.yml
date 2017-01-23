@@ -32,5 +32,16 @@ services:
 
     oro_cms.provider.routing_information_provider:
         class: Oro\Bundle\CMSBundle\Provider\PageRoutingInformationProvider
+        arguments:
+            - '@oro_config.global'
         tags:
-            - { name: oro_redirect.routing_information_provider }
+            - { name: oro_redirect.routing_information_provider, alias: '%oro_cms.entity.page.class%' }
+
+    oro_cms.config.event_listener.direct_url_prefix_change:
+        class: Oro\Bundle\RedirectBundle\EventListener\ConfigRegenerateDirectUrlListener
+        arguments:
+            - '@oro_message_queue.client.message_producer'
+            - 'oro_cms.landing_page_direct_url_prefix'
+            - '%oro_cms.entity.page.class%'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.update_after, method: onUpdateAfter }

@@ -91,6 +91,41 @@ services:
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 
+    oro_redirect.async.direct_url_processor.job_runner:
+        class: Oro\Bundle\RedirectBundle\Async\DelayedJobRunnerDecoratingProcessor
+        arguments:
+            - '@oro_message_queue.job.runner'
+            - '@oro_redirect.async.direct_url_processor'
+        tags:
+            - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.redirect.job.generate_direct_url.entity' }
+
+    oro_redirect.async.sluggable_entities_processor:
+        class: Oro\Bundle\RedirectBundle\Async\SluggableEntitiesProcessor
+        arguments:
+           - '@doctrine'
+           - '@oro_message_queue.job.runner'
+           - '@oro_message_queue.client.message_producer'
+           - '@monolog.logger'
+           - '@oro_redirect.direct_url_message_factory'
+        tags:
+            - { name: 'oro_message_queue.client.message_processor' }
+
+    oro_redirect.async.direct_url_remove:
+        class: Oro\Bundle\RedirectBundle\Async\DirectUrlRemoveProcessor
+        arguments:
+           - '@doctrine'
+           - '@monolog.logger'
+        tags:
+            - { name: 'oro_message_queue.client.message_processor' }
+
+    oro_redirect.config.event_listener.enable_direct_url_change:
+        class: Oro\Bundle\RedirectBundle\EventListener\ConfigEnableDirectUrlListener
+        arguments:
+            - '@oro_message_queue.client.message_producer'
+            - '@oro_redirect.provider.routing_information_provider'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.update_after, method: onUpdateAfter }
+
     oro_redirect.layout.data_provider.canonical_data:
         class: Oro\Bundle\RedirectBundle\DataProvider\CanonicalDataProvider
         arguments:

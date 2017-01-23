@@ -1,13 +1,10 @@
 system_configuration:
-    groups:
-        catalog:
-            title: oro.catalog.system_configuration.groups.catalog.title
     fields:
-        oro_catalog.category_direct_url_prefix:
+        oro_cms.landing_page_direct_url_prefix:
             data_type: string
             type: text
             options:
-                label: oro.catalog.system_configuration.fields.category_direct_url_prefix.label
+                label: oro.cms.system_configuration.fields.landing_page_direct_url_prefix.label
                 required: false
                 constraints:
                     - Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe: ~
@@ -22,8 +19,4 @@ system_configuration:
                                 children:
                                     oro_redirect_direct_urls:
                                         children:
-                                            - oro_catalog.category_direct_url_prefix
-            commerce:
-                children:
-                    catalog:
-                        priority: 900
+                                            - oro_cms.landing_page_direct_url_prefix

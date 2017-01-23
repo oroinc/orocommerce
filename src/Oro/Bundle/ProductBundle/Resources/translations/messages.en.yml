@@ -207,6 +207,7 @@ oro:
                     bottomleft.label: 'Bottom Left'
                     bottom.label: 'Bottom'
                     bottomright.label: 'Bottom Right'
+                product_direct_url_prefix.label: 'Product URL prefix'
             notice:
                 product_image_watermark: >
                    The updated product image watermark settings will be used for the newly uploaded images only.

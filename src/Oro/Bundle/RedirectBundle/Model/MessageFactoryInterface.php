@@ -12,10 +12,17 @@ interface MessageFactoryInterface
     public function createMessage(SluggableInterface $entity);
 
     /**
-     * @param array $data
-     * @return object|SluggableInterface
+     * @param string $entityClass
+     * @param array|int $id
+     * @return array
      */
-    public function getEntityFromMessage($data);
+    public function createMassMessage($entityClass, $id);
+
+    /**
+     * @param array $data
+     * @return array|SluggableInterface[]
+     */
+    public function getEntitiesFromMessage($data);
 
     /**
      * @param array $data

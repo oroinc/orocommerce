@@ -77,8 +77,10 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
             $em = $this->registry->getManagerForClass($className);
             $em->beginTransaction();
 
-            $entity = $this->messageFactory->getEntityFromMessage($messageData);
-            $this->generator->generate($entity);
+            $entities = $this->messageFactory->getEntitiesFromMessage($messageData);
+            foreach ($entities as $entity) {
+                $this->generator->generate($entity);
+            }
             $em->flush();
 
             $em->commit();
@@ -120,7 +122,7 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
     public static function getSubscribedTopics()
     {
         return [
-            Topics::GENERATE_DIRECT_URL_FOR_ENTITY
+            Topics::GENERATE_DIRECT_URL_FOR_ENTITIES
         ];
     }
 }

@@ -4,6 +4,8 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Mapping\ClassMetadata;
 use Oro\Bundle\RedirectBundle\Model\DirectUrlMessageFactory;
 use Oro\Bundle\RedirectBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Entity\SluggableEntityStub;
@@ -37,6 +39,14 @@ class DirectUrlMessageFactoryTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testCreateMassMessage()
+    {
+        $this->assertEquals(
+            ['class' => SluggableEntityStub::class, 'id' => [1, 2, 3]],
+            $this->factory->createMassMessage(SluggableEntityStub::class, [1, 2, 3])
+        );
+    }
+
     public function testGetEntityClassFromMessage()
     {
         $message = ['class' => SluggableEntityStub::class, 'id' => 42];
@@ -47,11 +57,11 @@ class DirectUrlMessageFactoryTest extends \PHPUnit_Framework_TestCase
      * @dataProvider invalidMessagesDataProvider
      * @param array $message
      */
-    public function testGetEntityFromMessageInvalidMessage(array $message)
+    public function testGetEntitiesFromMessageInvalidMessage(array $message)
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $this->factory->getEntityFromMessage($message);
+        $this->factory->getEntitiesFromMessage($message);
     }
 
     /**
@@ -69,7 +79,7 @@ class DirectUrlMessageFactoryTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-    public function testGetEntityFromMessage()
+    public function testGetEntitiesFromMessage()
     {
         $message = [
             'id' => 1,
@@ -78,16 +88,39 @@ class DirectUrlMessageFactoryTest extends \PHPUnit_Framework_TestCase
         $entity = new SluggableEntityStub();
         $entity->setId(1);
 
+        /** @var ClassMetadata|\PHPUnit_Framework_MockObject_MockObject $metadata */
+        $metadata = $this->getMockBuilder(ClassMetadata::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $metadata->expects($this->once())
+            ->method('getSingleIdentifierFieldName')
+            ->willReturn('id');
+
+        /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
+        $repository = $this->getMockBuilder(EntityRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $repository->expects($this->once())
+            ->method('findBy')
+            ->with(['id' => 1])
+            ->willReturn([$entity]);
+
+        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
         $em = $this->createMock(EntityManagerInterface::class);
         $em->expects($this->once())
-            ->method('find')
-            ->with(SluggableEntityStub::class, 1)
-            ->willReturn($entity);
+            ->method('getRepository')
+            ->with(SluggableEntityStub::class)
+            ->willReturn($repository);
+        $em->expects($this->once())
+            ->method('getClassMetadata')
+            ->with(SluggableEntityStub::class)
+            ->willReturn($metadata);
         $this->registry->expects($this->once())
             ->method('getManagerForClass')
             ->with(SluggableEntityStub::class)
             ->willReturn($em);
 
-        $this->assertEquals($entity, $this->factory->getEntityFromMessage($message));
+
+        $this->assertEquals([$entity], $this->factory->getEntitiesFromMessage($message));
     }
 }

@@ -136,7 +136,7 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('rollback');
 
         $this->messageFactory->expects($this->once())
-            ->method('getEntityFromMessage')
+            ->method('getEntitiesFromMessage')
             ->with($messageData)
             ->willThrowException($exception);
 
@@ -218,7 +218,7 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('rollback');
 
         $this->messageFactory->expects($this->once())
-            ->method('getEntityFromMessage')
+            ->method('getEntitiesFromMessage')
             ->with($messageData)
             ->willThrowException($exception);
 
@@ -248,6 +248,7 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('getBody')
             ->willReturn($messageBody);
 
+        /** @var AbstractDriverException|\PHPUnit_Framework_MockObject_MockObject $exception */
         $exception = $this->getMockBuilder(AbstractDriverException::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -269,7 +270,7 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('rollback');
 
         $this->messageFactory->expects($this->once())
-            ->method('getEntityFromMessage')
+            ->method('getEntitiesFromMessage')
             ->with($messageData)
             ->willThrowException($exception);
 
@@ -303,6 +304,7 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('getBody')
             ->willReturn($messageBody);
 
+        /** @var AbstractDriverException|\PHPUnit_Framework_MockObject_MockObject $exception */
         $exception = $this->getMockBuilder(AbstractDriverException::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -324,7 +326,7 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('rollback');
 
         $this->messageFactory->expects($this->once())
-            ->method('getEntityFromMessage')
+            ->method('getEntitiesFromMessage')
             ->with($messageData)
             ->willThrowException($exception);
 
@@ -378,9 +380,9 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
         /** @var SluggableInterface $entity */
         $entity = $this->createMock(SluggableInterface::class);
         $this->messageFactory->expects($this->once())
-            ->method('getEntityFromMessage')
+            ->method('getEntitiesFromMessage')
             ->with($messageData)
-            ->willReturn($entity);
+            ->willReturn([$entity]);
 
         $this->generator->expects($this->once())
             ->method('generate')
@@ -391,6 +393,6 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testGetSubscribedTopics()
     {
-        $this->assertEquals([Topics::GENERATE_DIRECT_URL_FOR_ENTITY], $this->processor->getSubscribedTopics());
+        $this->assertEquals([Topics::GENERATE_DIRECT_URL_FOR_ENTITIES], $this->processor->getSubscribedTopics());
     }
 }

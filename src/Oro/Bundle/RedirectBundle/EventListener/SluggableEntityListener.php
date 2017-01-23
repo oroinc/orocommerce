@@ -128,7 +128,7 @@ class SluggableEntityListener
     {
         if ($this->configManager->get('oro_redirect.enable_direct_url')) {
             $message = $this->messageFactory->createMessage($entity);
-            $this->messageProducer->send(Topics::GENERATE_DIRECT_URL_FOR_ENTITY, $message);
+            $this->messageProducer->send(Topics::GENERATE_DIRECT_URL_FOR_ENTITIES, $message);
         }
     }
 }

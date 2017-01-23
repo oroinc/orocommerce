@@ -58,21 +58,20 @@ class SlugEntityGeneratorTest extends \PHPUnit_Framework_TestCase
     {
         $localizationOne = $this->getEntity(Localization::class, ['id' => 1]);
         $localizationTwo = $this->getEntity(Localization::class, ['id' => 2]);
-
         $valueOne = new LocalizedFallbackValue();
         $valueOne->setString('test1');
-
         $valueTwo = new LocalizedFallbackValue();
         $valueTwo->setString('test2');
         $valueTwo->setLocalization($localizationOne);
-
         $valueThree = new LocalizedFallbackValue();
         $valueThree->setString('test3');
         $valueThree->setLocalization($localizationOne);
-
         $valueFour = new LocalizedFallbackValue();
         $valueFour->setString('test4');
         $valueFour->setLocalization($localizationTwo);
+        $valueFive = new LocalizedFallbackValue();
+        $valueFive->setString('');
+        $valueFive->setLocalization($localizationTwo);
 
         $defaultSlug = (new Slug())
             ->setUrl('/test/test1')
@@ -118,11 +117,13 @@ class SlugEntityGeneratorTest extends \PHPUnit_Framework_TestCase
                     ->addSlugPrototype($valueOne)
                     ->addSlugPrototype($valueTwo)
                     ->addSlugPrototype($valueFour)
+                    ->addSlugPrototype($valueFive)
                     ->addSlug($defaultSlug),
                 (new SluggableEntityStub())
                     ->addSlugPrototype($valueOne)
                     ->addSlugPrototype($valueTwo)
                     ->addSlugPrototype($valueFour)
+                    ->addSlugPrototype($valueFive)
                     ->addSlug($defaultSlug)
                     ->addSlug($slugTwo)
                     ->addSlug(

@@ -25,6 +25,8 @@ oro:
             localization.label: Localization
 
         system_configuration:
+            groups:
+                direct_urls.label: 'Direct URLs'
             fields:
                 enable_direct_url.label: 'Enable Direct URLs'
                 canonical_url_type:

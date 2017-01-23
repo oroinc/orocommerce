@@ -66,7 +66,8 @@ class SlugEntityGenerator
         $slugPrototypes = $entity->getSlugPrototypes();
         $filledSlugPrototypes = [];
         foreach ($slugPrototypes as $slugPrototype) {
-            if (!$slugPrototype->getFallback()) {
+            $url = trim($slugPrototype->getString());
+            if (!$slugPrototype->getFallback() && null !== $url && '' !== $url) {
                 $filledSlugPrototypes[] = new SlugUrl(
                     $slugPrototype->getString(),
                     $slugPrototype->getLocalization()
@@ -119,7 +120,14 @@ class SlugEntityGenerator
      */
     protected function getUrl(SluggableInterface $entity, $slugPrototype)
     {
-        return $this->routingInformationProvider->getUrlPrefix($entity) . Slug::DELIMITER . $slugPrototype;
+        $prefix = trim($this->routingInformationProvider->getUrlPrefix($entity), Slug::DELIMITER);
+
+        $url = Slug::DELIMITER  . $slugPrototype;
+        if ($prefix) {
+            $url = Slug::DELIMITER . $prefix . $url;
+        }
+
+        return $url;
     }
 
     /**

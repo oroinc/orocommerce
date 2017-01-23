@@ -4,6 +4,7 @@ namespace Oro\Bundle\RedirectBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
+use Doctrine\ORM\EntityManager;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Model\Exception\InvalidArgumentException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -45,13 +46,29 @@ class DirectUrlMessageFactory implements MessageFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function getEntityFromMessage($data)
+    public function createMassMessage($entityClass, $id)
+    {
+        return [
+            self::ID => $id,
+            self::ENTITY_CLASS_NAME => $entityClass
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getEntitiesFromMessage($data)
     {
         $data = $this->getResolvedData($data);
+        $className = $data[self::ENTITY_CLASS_NAME];
 
-        return $this->registry
-            ->getManagerForClass($data[self::ENTITY_CLASS_NAME])
-            ->find($data[self::ENTITY_CLASS_NAME], $data[self::ID]);
+        /** @var EntityManager $em */
+        $em = $this->registry->getManagerForClass($className);
+        $metadata = $em->getClassMetadata($className);
+        $idFieldName = $metadata->getSingleIdentifierFieldName();
+
+        return $em->getRepository($className)
+            ->findBy([$idFieldName => $data[self::ID]]);
     }
 
     /**
@@ -78,7 +95,7 @@ class DirectUrlMessageFactory implements MessageFactoryInterface
                 ]
             );
 
-            $resolver->setAllowedTypes(self::ID, 'int');
+            $resolver->setAllowedTypes(self::ID, ['int', 'array']);
             $resolver->setAllowedTypes(self::ENTITY_CLASS_NAME, 'string');
             $resolver->setAllowedValues(
                 self::ENTITY_CLASS_NAME,

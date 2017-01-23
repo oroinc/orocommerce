@@ -1,4 +1,8 @@
 system_configuration:
+    groups:
+        oro_redirect_direct_urls:
+            title: oro.redirect.system_configuration.groups.direct_urls.label
+
     fields:
         oro_redirect.enable_direct_url:
             data_type: boolean
@@ -28,5 +32,8 @@ system_configuration:
                                 children:
                                     websites_routing_general:
                                         children:
-                                            - oro_redirect.enable_direct_url
+
                                             - oro_redirect.canonical_url_type
+                                    oro_redirect_direct_urls:
+                                        children:
+                                            - oro_redirect.enable_direct_url
