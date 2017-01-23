@@ -2,93 +2,94 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Method\View;
 
-use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
-use Oro\Bundle\PaymentTermBundle\Method\PaymentTerm;
+use Oro\Bundle\PaymentTermBundle\Method\Config\Provider\PaymentTermConfigProviderInterface;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class PaymentTermMethodViewProvider implements PaymentMethodViewProviderInterface
 {
-    /**
-     * @var  PaymentMethodViewInterface[]
-     */
-    protected $methodViews;
-    
-    /**
-     * @var PaymentTermProvider
-     */
+   /** @var PaymentTermView[] */
+    private $views;
+
+    /** @var PaymentTermProvider */
     protected $paymentTermProvider;
 
-    /**
-     *  @var TranslatorInterface
-     */
+    /** @var TranslatorInterface */
     protected $translator;
+
+    /** @var PaymentTermConfigProviderInterface */
+    private $configProvider;
 
     /**
      * @param PaymentTermProvider $paymentTermProvider
      * @param TranslatorInterface $translator
+     * @param PaymentTermConfigProviderInterface $configProvider
      */
     public function __construct(
         PaymentTermProvider $paymentTermProvider,
-        TranslatorInterface $translator
+        TranslatorInterface $translator,
+        PaymentTermConfigProviderInterface $configProvider
     ) {
         $this->paymentTermProvider = $paymentTermProvider;
         $this->translator = $translator;
+        $this->configProvider = $configProvider;
     }
 
     /**
-     * {@inheritdoc}
+     * @param array $identifiers
+     * @return PaymentTermView[]
      */
     public function getPaymentMethodViews(array $identifiers)
     {
-        if ($this->methodViews === null) {
-            $this->collectPaymentMethodViews();
-        }
-        $matchedViews = [];
+        $views = [];
         foreach ($identifiers as $paymentMethod) {
             if ($this->hasPaymentMethodView($paymentMethod)) {
-                $matchedViews[$paymentMethod] = $this->getPaymentMethodView($paymentMethod);
+                $views[] = $this->getPaymentMethodView($paymentMethod);
             }
         }
-        return $matchedViews;
+        return $views;
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $identifier
+     * @return PaymentTermView|null
      */
     public function getPaymentMethodView($identifier)
     {
-        if ($this->methodViews === null) {
-            $this->collectPaymentMethodViews();
+        if (!$this->hasPaymentMethodView($identifier)) {
+            return null;
         }
-        if ($this->hasPaymentMethodView($identifier)) {
-            return $this->methodViews[$identifier];
-        }
-        return null;
+        $views = $this->getAllPaymentMethodViews();
+        return $views[$identifier];
     }
 
     /**
-     * {@inheritdoc}
+     * @param string $identifier
+     * @return bool
      */
     public function hasPaymentMethodView($identifier)
     {
-        if ($this->methodViews === null) {
-            $this->collectPaymentMethodViews();
-        }
-        return array_key_exists($identifier, $this->methodViews);
+        $views = $this->getAllPaymentMethodViews();
+        return array_key_exists($identifier, $views);
     }
 
-    protected function collectPaymentMethodViews()
+    /**
+     * @return PaymentTermView[]
+     */
+    private function getAllPaymentMethodViews()
     {
-        /**
-         * @TODO: fix in BB-7058
-         */
-        $this->methodViews = [];
+        if (empty($this->views)) {
+            $this->collectPaymentMethodViews();
+        }
+        return $this->views;
+    }
 
-        return;
-
-        $methodView = new PaymentTermView($this->paymentTermProvider, $this->translator, $this->config);
-        $this->methodViews = [PaymentTerm::TYPE => $methodView];
+    private function collectPaymentMethodViews()
+    {
+        foreach ($this->configProvider->getPaymentConfigs() as $config) {
+            $view = new PaymentTermView($this->paymentTermProvider, $this->translator, $config);
+            $this->views[$view->getPaymentMethodIdentifier()] = $view;
+        }
     }
 }
