@@ -44,19 +44,24 @@ class CategoriesProductsProvider
     {
         $countByCategories = [];
 
-        foreach ($categoriesIds as $categoryId) {
-            $countByCategories[$categoryId] = 0;
+        $qb = $this->categoryRepository->getCategoriesProductsCountQueryBuilder($categoriesIds);
+        $this->productManager->restrictQueryBuilder($qb, []);
+        $result = $qb->getQuery()->getResult();
 
-            $category = $this->categoryRepository->find($categoryId);
-            $categoriesWithChild =
-                $this->categoryRepository->getChildrenWithTitles($category, false, 'left', 'ASC', true);
+        /** @var Category[] $categories */
+        $categories = $this->categoryRepository->findBy(['id' => $categoriesIds]);
+        foreach ($categories as $category) {
+            $childrenIds = $this->categoryRepository->getChildrenIds($category);
 
-            $qb = $this->categoryRepository->getCategoriesProductsCountQueryBuilder($categoriesWithChild);
-            $this->productManager->restrictQueryBuilder($qb, []);
-            $categoriesProducts = $qb->getQuery()->getResult();
+            $count = 0;
+            foreach ($result as $data) {
+                if (in_array($data['id'], $childrenIds) || $data['id'] === $category->getId()) {
+                    $count += (int) $data['products_count'];
+                }
+            }
 
-            foreach ($categoriesProducts as $categoriesProduct) {
-                $countByCategories[$categoryId] += $categoriesProduct['products_count'];
+            if ($count > 0) {
+                $countByCategories[$category->getId()] = $count;
             }
         }
 
