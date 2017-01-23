@@ -45,6 +45,17 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
     }
 
     /**
+     * @param array $entities
+     * @return array
+     */
+    private function getEntitiesIds(array $entities)
+    {
+        return array_map(function ($entity) {
+            return $entity->getId();
+        }, $entities);
+    }
+
+    /**
      * @dataProvider getByDestinationAndCurrencyDataProvider
      * @param array $shippingAddressData
      * @param string $currency
@@ -52,18 +63,13 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
      */
     public function testGetByDestinationAndCurrency(array $shippingAddressData, $currency, array $expectedRules)
     {
-        $expectedRules = $this->getEntitiesByReferences($expectedRules);
+        $expectedRulesIds = $this->getEntitiesIds($this->getEntitiesByReferences($expectedRules));
         $actualRules = $this->repository->getByDestinationAndCurrency(
             $this->createShippingAddress($shippingAddressData),
             $currency
         );
 
-        static::assertEquals(count($expectedRules), count($actualRules));
-        static::assertTrue(in_array($expectedRules[0], $actualRules, true));
-        static::assertTrue(in_array($expectedRules[1], $actualRules, true));
-        static::assertTrue(in_array($expectedRules[2], $actualRules, true));
-        static::assertTrue(in_array($expectedRules[3], $actualRules, true));
-        static::assertTrue(in_array($expectedRules[4], $actualRules, true));
+        $this->assertEquals($expectedRulesIds, $this->getEntitiesIds($actualRules));
     }
 
     /**
@@ -82,7 +88,7 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
                     'postalCode' => '12345',
                 ],
                 'currency' => 'EUR',
-                'expectedRules' => [
+                'expectedRulesIds' => [
                     'shipping_rule.1',
                     'shipping_rule.2',
                     'shipping_rule.3',
@@ -98,14 +104,12 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
         $currency = 'UAH';
         $expectedRules = $this->getEntitiesByReferences([
             'shipping_rule.10',
-            'shipping_rule.11',
+            'shipping_rule.11'
         ]);
 
         $actualRules = $this->repository->getByCurrencyWithoutDestination($currency);
 
-        static::assertEquals(count($expectedRules), count($actualRules));
-        static::assertTrue(in_array($expectedRules[0], $actualRules, true));
-        static::assertTrue(in_array($expectedRules[1], $actualRules, true));
+        $this->assertEquals($this->getEntitiesIds($expectedRules), $this->getEntitiesIds($actualRules));
     }
 
     public function testGetRulesWithoutShippingMethods()
@@ -157,13 +161,16 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
 
     public function testGetByCurrency()
     {
-        $expectedRules = [
-            $this->getReference('shipping_rule.10'),
-            $this->getReference('shipping_rule.11'),
-            $this->getReference('shipping_rule.12')
-        ];
+        $expectedRules = $this->getEntitiesByReferences([
+            'shipping_rule.10',
+            'shipping_rule.11',
+            'shipping_rule.12'
+        ]);
 
-        $this->assertEquals($expectedRules, $this->repository->getByCurrency('UAH'));
+        $this->assertEquals(
+            $this->getEntitiesIds($expectedRules),
+            $this->getEntitiesIds($this->repository->getByCurrency('UAH'))
+        );
     }
 
     public function testGetByCurrencyWhenCurrencyNotExists()

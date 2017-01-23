@@ -36,10 +36,7 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
      */
     public function getByCurrency($currency)
     {
-        $queryBuilder = $this->getByCurrencyQuery($currency);
-
-        return $queryBuilder
-            ->orderBy($queryBuilder->expr()->asc('methodsConfigsRule.id'))
+        return $this->getByCurrencyQuery($currency)
             ->getQuery()
             ->execute();
     }
@@ -98,12 +95,15 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
      */
     private function getByCurrencyQuery($currency)
     {
-        return $this->createQueryBuilder('methodsConfigsRule')
+        $queryBuilder = $this->createQueryBuilder('methodsConfigsRule');
+
+        return $queryBuilder
             ->addSelect('methodConfigs', 'typeConfigs')
             ->leftJoin('methodsConfigsRule.methodConfigs', 'methodConfigs')
             ->leftJoin('methodConfigs.typeConfigs', 'typeConfigs')
             ->where('methodsConfigsRule.currency = :currency')
             ->setParameter('currency', $currency)
+            ->orderBy($queryBuilder->expr()->asc('methodsConfigsRule.id'))
         ;
     }
 }
