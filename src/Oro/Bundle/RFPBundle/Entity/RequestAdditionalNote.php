@@ -4,6 +4,7 @@ namespace Oro\Bundle\RFPBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
@@ -11,7 +12,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  * @ORM\Table(name="oro_rfp_request_add_note")
  * @ORM\Entity
  */
-class RequestAdditionalNote
+class RequestAdditionalNote implements DatesAwareInterface
 {
     use DatesAwareTrait;
 
@@ -62,15 +63,6 @@ class RequestAdditionalNote
      * @ORM\Column(name="text", type="text")
      */
     protected $text;
-
-    /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
-    }
 
     /**
      * @return array

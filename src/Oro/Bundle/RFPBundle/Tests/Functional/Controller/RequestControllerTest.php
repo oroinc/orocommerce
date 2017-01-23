@@ -23,7 +23,7 @@ class RequestControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData'
+                LoadRequestData::class
             ]
         );
     }
