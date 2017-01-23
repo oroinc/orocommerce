@@ -15,6 +15,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
 class ShippingMethodsConfigsRuleDestinationType extends AbstractType
 {
@@ -39,7 +40,12 @@ class ShippingMethodsConfigsRuleDestinationType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder->addEventSubscriber($this->subscriber);
-        $builder->add('country', CountryType::class, ['required' => true, 'label' => 'oro.address.country.label'])
+        $builder->add('country', CountryType::class, [
+            'required' => true,
+            'label' => 'oro.address.country.label',
+            //Used to show validation error for empty countries while creating rules
+            'constraints' => new NotBlank(),
+        ])
             ->add('region', RegionType::class, ['required' => false, 'label' => 'oro.address.region.label'])
             ->add(
                 'region_text',
