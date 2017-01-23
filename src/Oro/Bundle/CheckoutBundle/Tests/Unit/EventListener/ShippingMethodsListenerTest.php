@@ -138,12 +138,15 @@ class ShippingMethodsListenerTest extends \PHPUnit_Framework_TestCase
             'billing manual edit granted and method configs returned' => [
                 'shippingManualEdit' => false,
                 'billingManualEdit' => true,
-                'methodConfigs' => [$this->getMethodConfig(['id' => 1]), $this->getMethodConfig(['id' => 2])]
+                'methodConfigs' => [
+                    $this->getEntity(ShippingMethodsConfigsRule::class, ['id' => 1]),
+                    $this->getEntity(ShippingMethodsConfigsRule::class, ['id' => 2])
+                ]
             ],
             'shipping and billing manual edit granted and method config returned' => [
                 'shippingManualEdit' => true,
                 'billingManualEdit' => true,
-                'methodConfigs' => [$this->getMethodConfig(['id' => 1])]
+                'methodConfigs' => [$this->getEntity(ShippingMethodsConfigsRule::class, ['id' => 1])]
             ],
         ];
     }
@@ -215,14 +218,6 @@ class ShippingMethodsListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * {@inheritdoc}
-     */
-    private function getMethodConfig(array $params)
-    {
-        return $this->getEntity(ShippingMethodsConfigsRule::class, $params);
-    }
-
-    /**
      * @return array
      */
     public function notManualEditDataProvider()
@@ -275,7 +270,7 @@ class ShippingMethodsListenerTest extends \PHPUnit_Framework_TestCase
                 'expectedCalls' => 2,
                 'onConsecutiveMethodConfigs' => [
                     [],
-                    [$this->getMethodConfig(['id' => 1])]
+                    [$this->getEntity(ShippingMethodsConfigsRule::class, ['id' => 1])]
                 ]
             ],
         ];
