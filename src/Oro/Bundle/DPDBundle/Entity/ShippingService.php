@@ -28,16 +28,6 @@ class ShippingService
      */
     protected $description;
 
-
-    /**
-     * ShippingService constructor.
-     * @param $code
-     */
-    public function __construct($code)
-    {
-        $this->code = $code;
-    }
-
     /**
      * @return string
      */
