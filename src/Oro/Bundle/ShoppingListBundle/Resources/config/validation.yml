@@ -33,4 +33,3 @@ Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn:
         quantity:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
             - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
-                value: 0

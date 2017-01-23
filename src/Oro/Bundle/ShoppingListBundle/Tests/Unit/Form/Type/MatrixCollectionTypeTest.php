@@ -32,11 +32,6 @@ class MatrixCollectionTypeTest extends FormIntegrationTestCase
         unset($this->type);
     }
 
-    protected function getExtensions()
-    {
-        return array(new ValidatorExtension(Validation::createValidator()));
-    }
-
     /**
      * @dataProvider submitProvider
      *

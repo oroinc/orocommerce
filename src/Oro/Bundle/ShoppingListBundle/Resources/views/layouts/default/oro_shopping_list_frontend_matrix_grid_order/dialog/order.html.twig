@@ -6,8 +6,8 @@
 {% endblock %}
 
 {% block _form_actions_widget %}
-    {% set attr = attr|merge({
-    class: attr.class|default('') ~ " widget-actions"
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " widget-actions"
     }) %}
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
