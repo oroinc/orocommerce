@@ -27,7 +27,7 @@ class WarehouseInventoryLevelControllerNoProductUnitsTest extends WebTestCase
     public function testNoUnitsOfQuantityReasonMessage()
     {
         /** @var Product $product */
-        $product = $this->getReference('product.1');
+        $product = $this->getReference('product-1');
 
         //remove product units
         foreach ($product->getUnitPrecisions() as $unit) {

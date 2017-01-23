@@ -29,9 +29,9 @@ class ProductContentVariantProviderTest extends WebTestCase
     public function testItReturnsProperProductIds()
     {
         /** @var Product $testProduct1 */
-        $testProduct1 = $this->getReference('product.1');
+        $testProduct1 = $this->getReference('product-1');
         /** @var Product $testProduct2 */
-        $testProduct2 = $this->getReference('product.2');
+        $testProduct2 = $this->getReference('product-2');
 
         /** @var TestContentVariant $testContentVariant1 */
         $testContentVariant1 = $this->getReference('test_product_variant.1');

@@ -1,12 +1,16 @@
 // @theme: default
 
 .shopping-list-widget {
-  &:hover > .header-row__toggle {
-    display: block !important;
-  }
-
   @include breakpoint('desktop') {
     position: relative;
+
+    > .header-row__toggle {
+      display: none;
+    }
+
+    &.open > .header-row__toggle {
+      display: block;
+    }
 
     &__container {
       max-height: 450px;
@@ -50,15 +54,15 @@
     border-top: .1rem solid get-color('additional', 'light');
 
     background: get-color('additional', 'light');
-    color: get-color('additional', 'dark');
+    color: get-color('ui', 'normal');
     text-align: center;
     text-decoration: none;
 
     &:hover, &:focus {
       outline: 0;
 
-      text-decoration: none;
-      color: get-color('additional', 'dark');
+      text-decoration: underline;
+      color: get-color('ui', 'normal');
     }
 
     [class^="fa-"] {
@@ -68,6 +72,14 @@
         font-size: 18px;
         color: get-color('ui', 'normal');
       }
+    }
+  }
+}
+
+@include only-desktop {
+  .shopping-list-widget {
+    &:hover > .header-row__toggle {
+      display: block;
     }
   }
 }

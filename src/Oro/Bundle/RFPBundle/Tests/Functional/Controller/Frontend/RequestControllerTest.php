@@ -684,19 +684,19 @@ class RequestControllerTest extends WebTestCase
         return [
             [
                 'productLineItems' => [
-                    'product.1' => [
+                    'product-1' => [
                         ['unit' => 'liter', 'quantity' => 10]
                     ],
-                    'product.2' => [
+                    'product-2' => [
                         ['unit' => 'bottle', 'quantity' => 20],
                         ['unit' => 'box', 'quantity' => 2],
                     ],
                 ],
                 'expectedData' => [
-                    'product.1' => [
+                    'product-1' => [
                         ['unit' => 'liter', 'quantity' => 10]
                     ],
-                    'product.2' => [
+                    'product-2' => [
                         ['unit' => 'bottle', 'quantity' => 20],
                         ['unit' => 'box', 'quantity' => 2],
                     ],
@@ -704,16 +704,16 @@ class RequestControllerTest extends WebTestCase
             ],
             [
                 'productLineItems' => [
-                    'product.1' => [
+                    'product-1' => [
                         ['unit' => 'no_unit', 'quantity' => 10],
                         ['unit' => 'liter', 'quantity' => 10],
                     ],
-                    'product.2' => [
+                    'product-2' => [
                         ['unit' => 'bottle'],
                     ],
                 ],
                 'expectedData' => [
-                    'product.1' => [
+                    'product-1' => [
                         ['unit' => 'liter', 'quantity' => 10]
                     ],
                 ]

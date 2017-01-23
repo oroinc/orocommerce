@@ -8,7 +8,17 @@
         product: product
     }) %}
 
-    {{ block_widget(block) }}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-module': 'oroui/js/app/components/view-component',
+        '~data-page-component-options': {
+            view: 'oroproduct/js/app/views/base-product-view',
+            modelAttr: product|default({})
+        },
+        'data-layout': 'separate'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block('container_widget') }}
+    </div>
 {% endblock %}
 
 {% block __oro_product_grid__product_image_holder_widget %}
@@ -32,10 +42,12 @@
 
     <h3 {{ block('block_attributes') }}>
         <a href="{{ product.view_link }}"
-           data-page-component-module="oroui/js/app/components/jquery-widget-component"
-           data-page-component-options="{{ {
-               widgetModule: 'orofrontend/default/js/widgets/line-clamp-widget',
-           }|json_encode }}"
+           {% if 'gallery-view' in class_prefix %}
+               data-page-component-module="oroui/js/app/components/jquery-widget-component"
+               data-page-component-options="{{ {
+                   widgetModule: 'orofrontend/default/js/widgets/line-clamp-widget',
+               }|json_encode }}"
+           {% endif %}
            class="view-product"
         >
             {{ block('container_widget') }}

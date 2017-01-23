@@ -219,6 +219,7 @@ class OroOrderBundleInstaller implements
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_unit_id', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('product_id', 'integer', ['notnull' => false]);
+        $table->addColumn('parent_product_id', 'integer', ['notnull' => false]);
         $table->addColumn('order_id', 'integer', ['notnull' => false]);
         $table->addColumn('product_sku', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('free_form_product', 'string', ['notnull' => false, 'length' => 255]);
@@ -366,6 +367,12 @@ class OroOrderBundleInstaller implements
             ['product_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_product'),
+            ['parent_product_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_order'),

@@ -84,7 +84,7 @@ class NormalizeInventoryLevelRequestDataTest extends \PHPUnit_Framework_TestCase
         $data = [
             'data' => [
                 'relationships' => [
-                    'product' => ['data' => ['id' => 'product.1', 'type' => ProductUnit::class]],
+                    'product' => ['data' => ['id' => 'product-1', 'type' => ProductUnit::class]],
                 ]
             ]
         ];
@@ -99,7 +99,7 @@ class NormalizeInventoryLevelRequestDataTest extends \PHPUnit_Framework_TestCase
         $productRepository
             ->expects($this->once())
             ->method('getProductsIdsBySku')
-            ->with($this->equalTo(['product.1']))
+            ->with($this->equalTo(['product-1']))
             ->willReturn([null]);
         $context->expects($this->never())->method('setRequestData');
 
@@ -115,7 +115,7 @@ class NormalizeInventoryLevelRequestDataTest extends \PHPUnit_Framework_TestCase
         $data = [
             'data' => [
                 'relationships' => [
-                    'product' => ['data' => ['id' => 'product.1', 'type' => ProductUnit::class]],
+                    'product' => ['data' => ['id' => 'product-1', 'type' => ProductUnit::class]],
                 ]
             ]
         ];
@@ -130,7 +130,7 @@ class NormalizeInventoryLevelRequestDataTest extends \PHPUnit_Framework_TestCase
         $productRepository
             ->expects($this->once())
             ->method('getProductsIdsBySku')
-            ->with($this->equalTo(['product.1']))
+            ->with($this->equalTo(['product-1']))
             ->willReturn([1]);
         $this
             ->doctrineHelper
@@ -153,7 +153,7 @@ class NormalizeInventoryLevelRequestDataTest extends \PHPUnit_Framework_TestCase
         $data = [
             'data' => [
                 'relationships' => [
-                    'product' => ['data' => ['id' => 'product.1', 'type' => ProductUnit::class]],
+                    'product' => ['data' => ['id' => 'product-1', 'type' => ProductUnit::class]],
                 ]
             ]
         ];
@@ -175,7 +175,7 @@ class NormalizeInventoryLevelRequestDataTest extends \PHPUnit_Framework_TestCase
         $productRepository
             ->expects($this->once())
             ->method('getProductsIdsBySku')
-            ->with($this->equalTo(['product.1']))
+            ->with($this->equalTo(['product-1']))
             ->willReturn([1]);
         $this
             ->doctrineHelper
@@ -201,7 +201,7 @@ class NormalizeInventoryLevelRequestDataTest extends \PHPUnit_Framework_TestCase
         $data = [
             'data' => [
                 'relationships' => [
-                    'product' => ['data' => ['id' => 'product.1', 'type' => Product::class]],
+                    'product' => ['data' => ['id' => 'product-1', 'type' => Product::class]],
                     'unit' => ['data' => ['id' => 'liter', 'type' => ProductUnit::class]],
                 ]
             ]
@@ -224,7 +224,7 @@ class NormalizeInventoryLevelRequestDataTest extends \PHPUnit_Framework_TestCase
         $productRepository
             ->expects($this->once())
             ->method('getProductsIdsBySku')
-            ->with($this->equalTo(['product.1']))
+            ->with($this->equalTo(['product-1']))
             ->willReturn([1]);
         $this
             ->doctrineHelper
@@ -254,7 +254,7 @@ class NormalizeInventoryLevelRequestDataTest extends \PHPUnit_Framework_TestCase
         $data = [
             'data' => [
                 'relationships' => [
-                    'product' => ['data' => ['id' => 'product.1', 'type' => Product::class]],
+                    'product' => ['data' => ['id' => 'product-1', 'type' => Product::class]],
                     'unit' => ['data' => ['id' => 'liter', 'type' => ProductUnit::class]],
                 ]
             ]
@@ -270,7 +270,7 @@ class NormalizeInventoryLevelRequestDataTest extends \PHPUnit_Framework_TestCase
         $productRepository
             ->expects($this->once())
             ->method('getProductsIdsBySku')
-            ->with($this->equalTo(['product.1']))
+            ->with($this->equalTo(['product-1']))
             ->willReturn([1]);
         $this
             ->doctrineHelper

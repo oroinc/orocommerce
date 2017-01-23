@@ -28,9 +28,6 @@ services:
         arguments:
             - "@doctrine"
 
-    oro_redirect.slug.generator:
-        class: 'Oro\Bundle\RedirectBundle\Generator\SlugGenerator'
-
     oro_redirect.slug.manager.api:
         class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
         parent: oro_soap.manager.entity_manager.abstract

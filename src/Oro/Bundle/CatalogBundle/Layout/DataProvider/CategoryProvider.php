@@ -81,21 +81,15 @@ class CategoryProvider
      */
     public function getParentCategories()
     {
-        $parentCategories = [];
+        // we don't need current category in the path, so let's start from parent category
+        $parent = $this->getCurrentCategory()->getParentCategory();
 
-        $category = $this->getCurrentCategory();
-
-        $currentCategory = $category->getParentCategory();
-
-        while ($currentCategory) {
-            $parentCategories[] = $currentCategory;
-
-            $currentCategory = $currentCategory->getParentCategory();
+        if ($parent !== null) {
+            $parents = $this->categoryRepository->getPath($parent);
+            return is_array($parents) ? $parents : [];
+        } else {
+            return [];
         }
-
-        $parentCategories = array_reverse($parentCategories);
-
-        return $parentCategories;
     }
 
     /**

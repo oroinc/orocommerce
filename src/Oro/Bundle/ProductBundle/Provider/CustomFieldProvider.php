@@ -52,9 +52,10 @@ class CustomFieldProvider
             $entityConfig = $this->entityConfigProvider
                 ->getConfigById($configId);
 
+            $fieldName = $configId->getFieldName();
 
-            $customFields[$configId->getFieldName()] = [
-                'name' => $configId->getFieldName(),
+            $customFields[$fieldName] = [
+                'name' => $fieldName,
                 'type' => $configId->getFieldType(),
                 'label' => $entityConfig->get('label'),
                 'is_serialized' => $extendConfig->get('is_serialized', false, false)

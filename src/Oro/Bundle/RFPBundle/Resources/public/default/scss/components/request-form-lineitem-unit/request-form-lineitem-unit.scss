@@ -7,7 +7,7 @@
     }
 
     &__input {
-        width: 90px;
+        max-width: 90px;
 
         text-align: right;
 
@@ -34,5 +34,17 @@
     &--remove {
         @extend .request-form-lineitem-unit;
         text-align: right;
+    }
+}
+
+@include breakpoint('mobile') {
+    .request-form-lineitem-unit {
+        &__label {
+            display: none;
+        }
+
+        &__input {
+            width: calc(100% - 27px);
+        }
     }
 }

@@ -113,7 +113,7 @@ class ProductVisibilityListenerTest extends WebTestCase
     public function testChangeProductVisibilityToVisible()
     {
         // Already exists product visibility with `HIDDEN` value
-        $visibility = $this->getReference('product.4.visibility.all');
+        $visibility = $this->getReference('product-4.visibility.all');
 
         $visibility->setVisibility(ProductVisibility::VISIBLE);
 
@@ -138,7 +138,7 @@ class ProductVisibilityListenerTest extends WebTestCase
     public function testChangeProductVisibilityToConfig()
     {
         // Already exists product visibility with `VISIBLE` value
-        $visibility = $this->getReference('product.2.visibility.all');
+        $visibility = $this->getReference('product-2.visibility.all');
 
         $visibility->setVisibility(ProductVisibility::CONFIG);
 
@@ -220,7 +220,7 @@ class ProductVisibilityListenerTest extends WebTestCase
     public function testChangeCustomerGroupProductVisibilityToVisible()
     {
         // Already exists customer group product visibility with `HIDDEN` value
-        $visibility = $this->getReference('product.1.visibility.customer_group.group1');
+        $visibility = $this->getReference('product-1.visibility.customer_group.group1');
         $visibility->setVisibility(ProductVisibility::VISIBLE);
 
         $entityManager = $this->getManagerForCustomerGroupProductVisibility();
@@ -243,7 +243,7 @@ class ProductVisibilityListenerTest extends WebTestCase
     public function testChangeCustomerGroupProductVisibilityToCategory()
     {
         // Already exists customer group product visibility with `VISIBLE` value
-        $visibility = $this->getReference('product.2.visibility.customer_group.group1');
+        $visibility = $this->getReference('product-2.visibility.customer_group.group1');
         $visibility->setVisibility(CustomerGroupProductVisibility::CATEGORY);
 
         $entityManager = $this->getManagerForCustomerGroupProductVisibility();
@@ -266,7 +266,7 @@ class ProductVisibilityListenerTest extends WebTestCase
     public function testChangeCustomerGroupProductVisibilityToCurrentProduct()
     {
         // Already exists customer group product visibility with `CATEGORY` value
-        $visibility = $this->getReference('product.7.visibility.customer_group.group1');
+        $visibility = $this->getReference('product-7.visibility.customer_group.group1');
         $visibility->setVisibility(CustomerGroupProductVisibility::CURRENT_PRODUCT);
 
         $entityManager = $this->getManagerForCustomerGroupProductVisibility();
@@ -323,7 +323,7 @@ class ProductVisibilityListenerTest extends WebTestCase
     public function testChangeCustomerProductVisibilityToVisible()
     {
         // Already exists customer group product visibility with `HIDDEN` value
-        $visibility = $this->getReference('product.2.visibility.customer.level_1');
+        $visibility = $this->getReference('product-2.visibility.customer.level_1');
         $visibility->setVisibility(ProductVisibility::VISIBLE);
 
         $entityManager = $this->getManagerForCustomerProductVisibility();
@@ -346,7 +346,7 @@ class ProductVisibilityListenerTest extends WebTestCase
     public function testChangeCustomerProductVisibilityToCategory()
     {
         // Already exists customer group product visibility with `VISIBLE` value
-        $visibility = $this->getReference('product.5.visibility.customer.level_1');
+        $visibility = $this->getReference('product-5.visibility.customer.level_1');
         $visibility->setVisibility(CustomerProductVisibility::CATEGORY);
 
         $entityManager = $this->getManagerForCustomerProductVisibility();
@@ -370,7 +370,7 @@ class ProductVisibilityListenerTest extends WebTestCase
     {
         $this->cleanScheduledMessages();
         // Already exists customer group product visibility with `CATEGORY` value
-        $visibility = $this->getReference('product.2.visibility.customer.level_1');
+        $visibility = $this->getReference('product-2.visibility.customer.level_1');
         $visibility->setVisibility(CustomerProductVisibility::ACCOUNT_GROUP);
 
         $entityManager = $this->getManagerForCustomerProductVisibility();

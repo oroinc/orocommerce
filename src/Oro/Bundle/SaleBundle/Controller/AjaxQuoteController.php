@@ -77,7 +77,6 @@ class AjaxQuoteController extends Controller
     {
         if (!$quote) {
             $quote = new Quote();
-            $quote->setWebsite($this->get('oro_website.manager')->getDefaultWebsite());
         }
 
         $form = $this->createForm($this->getQuoteFormTypeName(), $quote);

@@ -23,6 +23,16 @@ class UPSShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
     use EntityTrait;
 
     /**
+     * @internal
+     */
+    const IDENTIFIER = '02';
+
+    /**
+     * @internal
+     */
+    const LABEL = 'service_code_label';
+
+    /**
      * @var string
      */
     protected $methodId = 'shipping_method';
@@ -75,24 +85,22 @@ class UPSShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $this->transportProvider = $this->getMockBuilder(UPSTransportProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->transportProvider = $this->createMock(UPSTransportProvider::class);
 
         $this->shippingService = $this->createMock(ShippingService::class);
 
         /** @var PriceRequestFactory | \PHPUnit_Framework_MockObject_MockObject $priceRequestFactory */
-        $this->priceRequestFactory = $this->getMockBuilder(PriceRequestFactory::class)
-            ->disableOriginalConstructor()->getMock();
+        $this->priceRequestFactory = $this->createMock(PriceRequestFactory::class);
 
-        $this->cache = $this->getMockBuilder(ShippingPriceCache::class)
-            ->disableOriginalConstructor()->getMock();
+        $this->cache = $this->createMock(ShippingPriceCache::class);
 
         $this->upsShippingMethodType = new UPSShippingMethodType(
+            self::IDENTIFIER,
+            self::LABEL,
             $this->methodId,
+            $this->shippingService,
             $this->transport,
             $this->transportProvider,
-            $this->shippingService,
             $this->priceRequestFactory,
             $this->cache
         );
@@ -124,17 +132,17 @@ class UPSShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
         $context = $this->createMock(ShippingContextInterface::class);
 
         $methodOptions = ['surcharge' => $methodSurcharge];
-        $this->shippingService->expects(self::any())->method('getCode')->willReturn('02');
+        $this->shippingService->expects(self::any())->method('getCode')->willReturn(self::IDENTIFIER);
         $typeOptions = ['surcharge' => $typeSurcharge];
 
-        $priceRequest = $this->getMockBuilder(PriceRequest::class)->disableOriginalConstructor()->getMock();
+        $priceRequest = $this->createMock(PriceRequest::class);
         $priceRequest->expects(self::once())->method('getPackages')->willReturn([new Package(), new Package()]);
 
         $this->priceRequestFactory->expects(self::once())->method('create')->willReturn($priceRequest);
 
         $responsePrice = Price::create(50, 'USD');
 
-        $priceResponse = $this->getMockBuilder(PriceResponse::class)->disableOriginalConstructor()->getMock();
+        $priceResponse = $this->createMock(PriceResponse::class);
         $priceResponse->expects(self::once())->method('getPriceByService')->willReturn($responsePrice);
 
         $this->transportProvider->expects(self::once())->method('getPriceResponse')->willReturn($priceResponse);
@@ -199,7 +207,7 @@ class UPSShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
         $this->shippingService->expects(self::any())->method('getCode')->willReturn('02');
         $typeOptions = ['surcharge' => 15];
 
-        $priceRequest = $this->getMockBuilder(PriceRequest::class)->disableOriginalConstructor()->getMock();
+        $priceRequest = $this->createMock(PriceRequest::class);
         $priceRequest->expects(self::once())->method('getPackages')->willReturn([new Package(), new Package()]);
 
         $this->priceRequestFactory->expects(self::once())->method('create')->willReturn($priceRequest);

@@ -66,5 +66,6 @@ class PaymentStatusManager
         $paymentStatusEntity->setPaymentStatus($status);
         $em = $this->doctrineHelper->getEntityManager(PaymentStatus::class);
         $em->persist($paymentStatusEntity);
+        $em->flush($paymentStatusEntity);
     }
 }

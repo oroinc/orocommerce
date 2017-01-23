@@ -21,7 +21,15 @@ trait FlatRateIntegrationTrait
     {
         $channel = $this->getChannelReference();
 
-        return 'flat_rate' . $channel->getId();
+        return 'flat_rate_' . $channel->getId();
+    }
+
+    /**
+     * @return string
+     */
+    protected function getFlatRatePrimaryIdentifier()
+    {
+        return 'primary';
     }
 
     /**

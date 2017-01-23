@@ -42,7 +42,7 @@ oro:
                     shipping_and_returns.label: 'Shipping & Returns'
                     secure_shopping.label: 'Secure Shopping'
                     international_shipping.label: 'International Shipping'
-                    my_customer.label: 'My Customer'
+                    my_customer.label: 'My Account'
                     sign_out.label: 'Sign Out'
                     view_cart.label: 'View Cart'
                     my_wishlist.label: 'My Wishlist'

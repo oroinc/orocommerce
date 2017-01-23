@@ -70,7 +70,7 @@ class FrontendOwnerSelectTypeTest extends FormIntegrationTestCase
 
         $config->expects($this->any())
             ->method('get')
-            ->will($this->returnValue('FRONTEND_ACCOUNT'));
+            ->will($this->returnValue('FRONTEND_CUSTOMER'));
 
         $this->configProvider->expects($this->any())
             ->method('getConfig')

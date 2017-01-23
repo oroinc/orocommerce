@@ -1,0 +1,9 @@
+// @theme: default
+
+$product-view-attributes-tabs-bg: get-color('additional', 'base');
+$product-view-attributes-tabs-border-color: get-color('additional', 'light');
+$product-view-attributes-tabs-border-radius: 5px;
+$product-view-attributes-tab-link-offset-inner: $offset-y;
+$product-view-attributes-tab-link-color: get-color('additional', 'dark');
+$product-view-attributes-tab-content-offset-inner: 40px;
+$product-view-attributes-tab-content-attribute-offset-bottom: 1rem;

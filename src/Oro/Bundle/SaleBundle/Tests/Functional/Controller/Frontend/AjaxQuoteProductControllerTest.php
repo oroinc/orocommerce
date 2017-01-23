@@ -84,7 +84,7 @@ class AjaxQuoteProductControllerTest extends WebTestCase
         return [
             'valid' => [
                 LoadQuoteData::PRODUCT1,
-                'sale.quote.1.product.1.offer.2',
+                'sale.quote.1.product-1.offer.2',
                 'bottle',
                 2,
                 [
@@ -93,8 +93,8 @@ class AjaxQuoteProductControllerTest extends WebTestCase
                     'price' => '$2.00',
                 ],
             ],
-            'empty unit' => [LoadQuoteData::PRODUCT1, 'sale.quote.1.product.1.offer.2', null, 2],
-            'empty quantity' => [LoadQuoteData::PRODUCT1, 'sale.quote.1.product.1.offer.2', 'bottle', null],
+            'empty unit' => [LoadQuoteData::PRODUCT1, 'sale.quote.1.product-1.offer.2', null, 2],
+            'empty quantity' => [LoadQuoteData::PRODUCT1, 'sale.quote.1.product-1.offer.2', 'bottle', null],
         ];
     }
 

@@ -274,7 +274,7 @@ operations:
             - oro_customer_frontend_customer_user_role_update
         datagrids:
             - frontend-customer-customer-user-roles-grid
-        acl_resource: [FRONTEND_ACCOUNT_ROLE_DELETE, $.data]
+        acl_resource: [FRONTEND_CUSTOMER_ROLE_DELETE, $.data]
         order: 30
         button_options:
             icon: fa-trash-o
