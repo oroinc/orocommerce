@@ -35,7 +35,7 @@ abstract class AbstractMethodsListener
 
     /**
      * @param Checkout $checkout
-     * @param mixed|null $address
+     * @param OrderAddress|null $address
      * @return bool
      */
     abstract protected function hasMethodsConfigsForAddress(Checkout $checkout, OrderAddress $address = null);
@@ -85,7 +85,7 @@ abstract class AbstractMethodsListener
      * @param ExtendableConditionEvent $event
      * @return bool
      */
-    private function isApplicable(ExtendableConditionEvent $event)
+    protected function isApplicable(ExtendableConditionEvent $event)
     {
         $context = $event->getContext();
 
