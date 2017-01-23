@@ -2,8 +2,11 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller\Frontend;
 
+use Doctrine\ORM\EntityManager;
 use Symfony\Component\DomCrawler\Field\InputFormField;
 
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\RFPBundle\Entity\Request;
@@ -179,6 +182,29 @@ class RequestControllerTest extends WebTestCase
             $buttonEdit = $crawler->filter('.oro-customer-user-role__controls-list')->html();
             static::assertNotContains('edit', $buttonEdit);
         }
+    }
+
+    public function testViewDeleted()
+    {
+        /* @var $request Request */
+        $request = $this->getReference(LoadRequestData::REQUEST2);
+        $id = $request->getId();
+
+        $this->initClient(
+            [],
+            $this->generateBasicAuthHeader(LoadUserData::ACCOUNT1_USER1, LoadUserData::ACCOUNT1_USER1)
+        );
+
+        $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_view', ['id' => $id]));
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+
+        $request->setInternalStatus(
+            $this->getEnumEntity(Request::INTERNAL_STATUS_CODE, Request::INTERNAL_STATUS_DELETED)
+        );
+        $this->getManager(Request::class)->flush($request);
+
+        $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_view', ['id' => $id]));
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 404);
     }
 
     /**
@@ -731,6 +757,27 @@ class RequestControllerTest extends WebTestCase
                 $this->getReference(LoadUserData::ACCOUNT1_USER2)->getFullName()
             ]
         );
+    }
+
+    /**
+     * @param string $enumField
+     * @param string $enumCode
+     * @return AbstractEnumValue
+     */
+    protected function getEnumEntity($enumField, $enumCode)
+    {
+        $className = ExtendHelper::buildEnumValueClassName($enumField);
+
+        return $this->getManager($className)->getReference($className, $enumCode);
+    }
+
+    /**
+     * @param string $className
+     * @return EntityManager
+     */
+    protected function getManager($className)
+    {
+        return $this->getContainer()->get('doctrine')->getManagerForClass($className);
     }
 
     /**

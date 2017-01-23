@@ -132,7 +132,7 @@ class LoadRequestWorkflowDemoData extends AbstractFixture implements
     private function getNote()
     {
         return 'Aliquam quis turpis eget elit sodales scelerisque.' .
-        'Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.' .
-        'Sed ante. Vivamus tortor. Duis mattis egestas metus.';
+            'Mauris sit amet eros. Suspendisse accumsan tortor quis turpis.' .
+            'Sed ante. Vivamus tortor. Duis mattis egestas metus.';
     }
 }
