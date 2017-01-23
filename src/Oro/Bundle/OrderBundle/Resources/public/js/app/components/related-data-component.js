@@ -2,7 +2,6 @@ define(function(require) {
     'use strict';
 
     var RelatedDataComponent;
-    var _ = require('underscore');
     var $ = require('jquery');
     var mediator = require('oroui/js/mediator');
     var BaseComponent = require('oroui/js/app/components/base/component');

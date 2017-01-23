@@ -1,6 +1,6 @@
 /*global define*/
 define(['underscore', 'orotranslation/js/translator', 'jquery'
-], function (_, __, $) {
+], function(_, __, $) {
     'use strict';
 
     var defaultParam = {
@@ -39,7 +39,7 @@ define(['underscore', 'orotranslation/js/translator', 'jquery'
      * @returns {Object}
      */
     function findDuplication(prices, search) {
-        return _.find(prices, function (obj) {
+        return _.find(prices, function(obj) {
             return obj.priceList === search.priceList &&
                 parseFloat(obj.quantity) === parseFloat(search.quantity) &&
                 obj.unit === search.unit &&
@@ -52,11 +52,11 @@ define(['underscore', 'orotranslation/js/translator', 'jquery'
      */
     return [
         'Oro\\Bundle\\PricingBundle\\Validator\\Constraints\\UniqueProductPrices',
-        function (value, element) {
-            var noDuplicationFound = true,
-                processedPrices = [];
+        function(value, element) {
+            var noDuplicationFound = true;
+            var processedPrices = [];
 
-            _.each(getRealElement(element).find('.oro-multiselect-holder'), function (price) {
+            _.each(getRealElement(element).find('.oro-multiselect-holder'), function(price) {
                 var data = getPriceValues(price);
 
                 if (_.isEmpty(data.priceList.trim()) ||
@@ -76,7 +76,7 @@ define(['underscore', 'orotranslation/js/translator', 'jquery'
 
             return noDuplicationFound;
         },
-        function (param) {
+        function(param) {
             param = _.extend({}, defaultParam, param);
 
             return __(param.message, {});

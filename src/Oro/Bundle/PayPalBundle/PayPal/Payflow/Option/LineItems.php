@@ -10,14 +10,27 @@ class LineItems extends AbstractOption implements OptionsDependentInterface
     const QTY = 'L_QTY%d';
     const TAXAMT = 'L_TAXAMT%d';
 
+    const PAYPAL_NAME_LIMIT = 36;
+    const PAYPAL_DESC_LIMIT = 35;
+
     /**
      * {@inheritdoc}
      */
     public function configureDependentOption(OptionsResolver $resolver, array $options)
     {
         for ($i = 1; $i <= $this->getLineItemCount($options); ++$i) {
-            $this->configureResolver($resolver, sprintf(self::NAME, $i), ['string'], $this->getLengthNormalizer(36));
-            $this->configureResolver($resolver, sprintf(self::DESC, $i), ['string'], $this->getLengthNormalizer(35));
+            $this->configureResolver(
+                $resolver,
+                sprintf(self::NAME, $i),
+                ['string'],
+                $this->getLengthNormalizer(self::PAYPAL_NAME_LIMIT)
+            );
+            $this->configureResolver(
+                $resolver,
+                sprintf(self::DESC, $i),
+                ['string'],
+                $this->getLengthNormalizer(self::PAYPAL_DESC_LIMIT)
+            );
             $this->configureResolver(
                 $resolver,
                 sprintf(self::COST, $i),

@@ -53,13 +53,13 @@ define(function(require) {
                 }
 
                 filterState = datagrid.collection.state.filters[filterName];
-
-                datagrid.metadata.filters.forEach(function (filterDefinition) {
+                // jshint loopfunc: true
+                datagrid.metadata.filters.forEach(function(filterDefinition) {
                     if (filterDefinition.name === filterName && filterDefinition.visible) {
                         var choiceTypeName;
 
-                        filterDefinition.choices.forEach(function (choiceDefinition) {
-                            if (choiceDefinition.value == filterState.type) {
+                        filterDefinition.choices.forEach(function(choiceDefinition) {
+                            if (choiceDefinition.value === filterState.type) {
                                 choiceTypeName = choiceDefinition.label;
                             }
                         });
