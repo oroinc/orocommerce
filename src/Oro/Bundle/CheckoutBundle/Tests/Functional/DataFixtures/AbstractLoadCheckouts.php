@@ -6,7 +6,9 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Oro\Bundle\CheckoutBundle\Model\CompletedCheckoutData;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
@@ -15,8 +17,6 @@ use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderAddressData;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
 
 abstract class AbstractLoadCheckouts extends AbstractFixture implements
     DependentFixtureInterface,
