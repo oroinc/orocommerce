@@ -56,7 +56,7 @@ class RatesCsvFileValidator extends ConstraintValidator
 
             // FIXME: Use translations for error messages
             // FIXME: Use error specific messages
-            while (($row = fgetcsv($handle)) !== false) {
+            while (($row = fgetcsv($handle, 1000)) !== false) {
                 $rowCounter++;
                 if ($rowCounter === 1) {
                     continue;

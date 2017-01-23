@@ -1,2 +1,2 @@
 bundles:
-    - Oro\Bundle\DPDBundle\OroDPDBundle
+    - { name: Oro\Bundle\DPDBundle\OroDPDBundle, priority: 220 }
