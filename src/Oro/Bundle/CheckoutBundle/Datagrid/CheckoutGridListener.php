@@ -4,17 +4,26 @@ namespace Oro\Bundle\CheckoutBundle\Datagrid;
 
 use Doctrine\Common\Cache\Cache;
 
-use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
-use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
-use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
-use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
-use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
+use Oro\Bundle\CheckoutBundle\Model\CompletedCheckoutData;
+
+use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
+use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
+use Oro\Bundle\DataGridBundle\Event\BuildBefore;
+use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
+
+use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
+
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
+
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+
+use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 /**
  * Add total and subtotal fields to grid where root entity is checkout
@@ -120,98 +129,98 @@ class CheckoutGridListener
         /** @var ResultRecord[] $records */
         $records = $event->getRecords();
 
-        $this->buildItemsCountColumn($records);
-        $this->buildStartedFromColumn($records);
-        $this->buildTotalColumn($records);
+        $this->buildColumns($records);
     }
 
     /**
      * @param ResultRecord[] $records
      */
-    protected function buildItemsCountColumn($records)
+    protected function buildColumns(array $records)
     {
-        $ids = [];
-
-        foreach ($records as $record) {
-            $ids[] = $record->getValue('id');
-        }
+        $ids = array_map(
+            function (ResultRecord $record) {
+                return $record->getValue('id');
+            },
+            $records
+        );
 
         $counts = $this->checkoutRepository->countItemsPerCheckout($ids);
-
-        foreach ($records as $record) {
-            if (isset($counts[$record->getValue('id')])) {
-                $record->addData(['itemsCount' => $counts[$record->getValue('id')]]);
-            }
-        }
-    }
-
-    /**
-     * @param ResultRecord[] $records
-     */
-    protected function buildStartedFromColumn($records)
-    {
-        $ids = [];
-
-        foreach ($records as $record) {
-            $ids[] = $record->getValue('id');
-        }
-
         $sources = $this->checkoutRepository->getSourcePerCheckout($ids);
 
         foreach ($records as $record) {
             $id = $record->getValue('id');
-            if (!isset($sources[$id])) {
+
+            /** @var Checkout $ch */
+            $ch = $this->checkoutRepository->find($id);
+            $data = $ch->getCompletedData();
+
+            if (isset($sources[$id])) {
+                $record->addData(['startedFrom' => $this->getStartedFrom($sources[$id])]);
+            }
+
+            if ($record->getValue('completed')) {
+                if (!$record->getValue('startedFrom')) {
+                    $this->addCompletedCheckoutData($record, $data, ['startedFrom']);
+                }
+
+                $this->addCompletedCheckoutData($record, $data, ['itemsCount', 'total', 'subtotal', 'currency']);
                 continue;
             }
 
-            $source = $sources[$id];
-
-            if ($source instanceof QuoteDemand) {
-                $source = $source->getQuote();
+            if (isset($counts[$id])) {
+                $record->addData(['itemsCount' => $counts[$id]]);
             }
 
-            $type = null;
-            // simplify type checking in twig
-            if ($source instanceof ShoppingList) {
-                $type = 'shopping_list';
+            if (isset($sources[$id]) && !$record->getValue('total')) {
+                $record->addData(['total' => $this->totalProcessor->getTotal($sources[$id])->getAmount()]);
             }
-            if ($source instanceof Quote) {
-                $type = 'quote';
-            }
-
-            $name = $this->entityNameResolver->getName($source);
-            $data = [
-                'entity' => $source,
-                'type'   => $type,
-                'label'  => $name,
-                'id'     => $source->getId()
-            ];
-
-            $record->addData(['startedFrom' => $data]);
         }
     }
 
     /**
-     * @param ResultRecord[] $records
+     * @param CheckoutSourceEntityInterface $source
+     * @return array
      */
-    protected function buildTotalColumn($records)
+    protected function getStartedFrom(CheckoutSourceEntityInterface $source)
     {
-        $em = $this->checkoutRepository;
+        if ($source instanceof QuoteDemand) {
+            $source = $source->getQuote();
+        }
 
-        // todo: Reduce db queries count
-        foreach ($records as $record) {
-            if (!$record->getValue('total')) {
-                $id = $record->getValue('id');
-                $ch = $em->find($id);
+        $type = null;
+        // simplify type checking in twig
+        if ($source instanceof ShoppingList) {
+            $type = 'shopping_list';
+        }
+        if ($source instanceof Quote) {
+            $type = 'quote';
+        }
 
-                $sourceEntity = $ch->getSourceEntity();
-                $record->addData(
-                    [
-                        'total' => $this->totalProcessor
-                            ->getTotal($sourceEntity)
-                            ->getAmount()
-                    ]
-                );
+        return [
+            'entity' => $source,
+            'type' => $type,
+            'label' => $this->entityNameResolver->getName($source),
+            'id' => $source->getId()
+        ];
+    }
+
+    /**
+     * @param ResultRecord $record
+     * @param CompletedCheckoutData $data
+     * @param array $keys
+     */
+    protected function addCompletedCheckoutData(ResultRecord $record, CompletedCheckoutData $data, array $keys)
+    {
+        foreach ($keys as $key) {
+            if ($record->getValue($key)) {
+                continue;
+            }
+
+            $method = 'get' . ucfirst($key);
+            $value = $data->$method();
+
+            if ($value) {
+                $record->addData([$key => $value]);
             }
         }
     }
