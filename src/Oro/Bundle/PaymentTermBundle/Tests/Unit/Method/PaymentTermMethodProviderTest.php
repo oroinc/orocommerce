@@ -57,15 +57,16 @@ class PaymentTermMethodProviderTest extends \PHPUnit_Framework_TestCase
         $this->provider = new PaymentTermMethodProvider(
             $this->paymentTermProvider,
             $this->paymentTermAssociationProvider,
-            $this->doctrineHelper,
-            $this->logger
+            $this->doctrineHelper
         );
+        $this->provider->setLogger($this->logger);
+
         $this->method = new PaymentTerm(
             $this->paymentTermProvider,
             $this->paymentTermAssociationProvider,
-            $this->doctrineHelper,
-            $this->logger
+            $this->doctrineHelper
         );
+        $this->method->setLogger($this->logger);
     }
 
     public function testGetPaymentMethods()
