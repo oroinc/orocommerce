@@ -219,3 +219,13 @@ services:
         class: 'Oro\Bundle\RFPBundle\EventListener\RFPDatagridColumnListener'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before, method: onBuildBefore }
+
+    oro_rfp.api.update_request_entity.processor:
+        class: 'Oro\Bundle\RFPBundle\Api\Processor\UpdateRequestEntityProcessor'
+        tags:
+            - { name: oro.api.processor, action: update, group: load_data, priority: -50, class: '%oro_rfp.entity.request.class%' }
+
+    oro_rfp.api.update_request_product_item.processor:
+        class: 'Oro\Bundle\RFPBundle\Api\Processor\UpdateRequestProductItemProcessor'
+        tags:
+            - { name: oro.api.processor, action: update, group: load_data, priority: -50, class: '%oro_rfp.entity.request_product_item.class%' }

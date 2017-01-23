@@ -2,7 +2,14 @@ api:
     entities:
         Oro\Bundle\RFPBundle\Entity\Request: ~
         Oro\Bundle\RFPBundle\Entity\RequestProduct: ~
-        Oro\Bundle\RFPBundle\Entity\RequestProductItem: ~
+        Oro\Bundle\RFPBundle\Entity\RequestProductItem:
+            fields:
+                value:
+                    form_options:
+                        mapped: false
+                currency:
+                    form_options:
+                        mapped: false
 
         Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote:
             actions:
