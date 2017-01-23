@@ -4,8 +4,8 @@ namespace Oro\Bundle\ShippingBundle\Tests\Unit\Context;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
@@ -13,12 +13,12 @@ use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 class ShippingContextTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var Account|\PHPUnit_Framework_MockObject_MockObject
+     * @var Customer|\PHPUnit_Framework_MockObject_MockObject
      */
     private $customerMock;
 
     /**
-     * @var AccountUser|\PHPUnit_Framework_MockObject_MockObject
+     * @var CustomerUser|\PHPUnit_Framework_MockObject_MockObject
      */
     private $customerUserMock;
 
@@ -54,10 +54,10 @@ class ShippingContextTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->customerMock = $this->getMockBuilder(Account::class)
+        $this->customerMock = $this->getMockBuilder(Customer::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->customerUserMock = $this->getMockBuilder(AccountUser::class)
+        $this->customerUserMock = $this->getMockBuilder(CustomerUser::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->lineItemsCollectionMock = $this->createMock(ShippingLineItemCollectionInterface::class);

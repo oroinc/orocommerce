@@ -48,7 +48,7 @@ class CustomerUserAddress extends ExtendCustomerUserAddress implements AddressPh
 {
     /**
      * @ORM\ManyToOne(
-     *      targetEntity="Oro\Bundle\CustomerBundle\Entity\AccountUser",
+     *      targetEntity="Oro\Bundle\CustomerBundle\Entity\CustomerUser",
      *      inversedBy="addresses",
      *      cascade={"persist"}
      * )

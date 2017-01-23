@@ -6,9 +6,9 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserManager;
-use Oro\Bundle\CustomerBundle\Entity\AccountUserRole;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 use Oro\Bundle\SecurityBundle\Acl\Extension\EntityAclExtension;
 use Oro\Bundle\UserBundle\Entity\Role;
@@ -33,27 +33,27 @@ abstract class AbstractLoadACLData extends AbstractFixture implements
     const ROLE_DEEP_VIEW_ONLY = 'ROLE_DEEP_VIEW_ONLY';
     const ROLE_DEEP = 'ROLE_DEEP';
 
-    // account.level_1.1
-    const USER_ACCOUNT_1_ROLE_LOCAL = 'account1-role-local@example.com';
-    const USER_ACCOUNT_1_ROLE_BASIC = 'account1-role-basic@example.com';
-    const USER_ACCOUNT_1_ROLE_DEEP = 'account1-role-deep@example.com';
-    const USER_ACCOUNT_1_ROLE_LOCAL_VIEW_ONLY = 'account1-role-local-view-only@example.com';
-    const USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY = 'account1-role-deep-view-only@example.com';
+    // customer.level_1.1
+    const USER_ACCOUNT_1_ROLE_LOCAL = 'customer1-role-local@example.com';
+    const USER_ACCOUNT_1_ROLE_BASIC = 'customer1-role-basic@example.com';
+    const USER_ACCOUNT_1_ROLE_DEEP = 'customer1-role-deep@example.com';
+    const USER_ACCOUNT_1_ROLE_LOCAL_VIEW_ONLY = 'customer1-role-local-view-only@example.com';
+    const USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY = 'customer1-role-deep-view-only@example.com';
 
-    // account.level_1.1.1
-    const USER_ACCOUNT_1_1_ROLE_LOCAL = 'account1-1-role-local@example.com';
-    const USER_ACCOUNT_1_1_ROLE_BASIC = 'account1-1-role-basic@example.com';
-    const USER_ACCOUNT_1_1_ROLE_DEEP = 'account1-1-role-deep@example.com';
+    // customer.level_1.1.1
+    const USER_ACCOUNT_1_1_ROLE_LOCAL = 'customer1-1-role-local@example.com';
+    const USER_ACCOUNT_1_1_ROLE_BASIC = 'customer1-1-role-basic@example.com';
+    const USER_ACCOUNT_1_1_ROLE_DEEP = 'customer1-1-role-deep@example.com';
 
-    // account.level_1.1.2
-    const USER_ACCOUNT_1_2_ROLE_LOCAL = 'account1-2-role-local@example.com';
-    const USER_ACCOUNT_1_2_ROLE_BASIC = 'account1-2-role-basic@example.com';
-    const USER_ACCOUNT_1_2_ROLE_DEEP = 'account1-2-role-deep@example.com';
+    // customer.level_1.1.2
+    const USER_ACCOUNT_1_2_ROLE_LOCAL = 'customer1-2-role-local@example.com';
+    const USER_ACCOUNT_1_2_ROLE_BASIC = 'customer1-2-role-basic@example.com';
+    const USER_ACCOUNT_1_2_ROLE_DEEP = 'customer1-2-role-deep@example.com';
 
-    // account.level_1.2
-    const USER_ACCOUNT_2_ROLE_LOCAL = 'account2-role-local@example.com';
-    const USER_ACCOUNT_2_ROLE_BASIC = 'account2-role-basic@example.com';
-    const USER_ACCOUNT_2_ROLE_DEEP = 'account2-role-deep@example.com';
+    // customer.level_1.2
+    const USER_ACCOUNT_2_ROLE_LOCAL = 'customer2-role-local@example.com';
+    const USER_ACCOUNT_2_ROLE_BASIC = 'customer2-role-basic@example.com';
+    const USER_ACCOUNT_2_ROLE_DEEP = 'customer2-role-deep@example.com';
 
     /**
      * @var ContainerInterface
@@ -68,77 +68,77 @@ abstract class AbstractLoadACLData extends AbstractFixture implements
     /**
      * @return array
      */
-    public static function getAccountUsers()
+    public static function getCustomerUsers()
     {
         return [
             [
                 'email' => static::USER_ACCOUNT_1_ROLE_BASIC,
-                'account' => 'account.level_1.1',
+                'customer' => 'customer.level_1.1',
                 'role' => static::ROLE_BASIC,
             ],
             [
                 'email' => static::USER_ACCOUNT_1_ROLE_LOCAL,
-                'account' => 'account.level_1.1',
+                'customer' => 'customer.level_1.1',
                 'role' => static::ROLE_LOCAL,
             ],
             [
                 'email' => static::USER_ACCOUNT_1_ROLE_DEEP,
-                'account' => 'account.level_1.1',
+                'customer' => 'customer.level_1.1',
                 'role' => static::ROLE_DEEP,
             ],
             [
                 'email' => static::USER_ACCOUNT_1_ROLE_LOCAL_VIEW_ONLY,
-                'account' => 'account.level_1.1',
+                'customer' => 'customer.level_1.1',
                 'role' => static::ROLE_LOCAL_VIEW_ONLY,
             ],
             [
                 'email' => static::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY,
-                'account' => 'account.level_1.1',
+                'customer' => 'customer.level_1.1',
                 'role' => static::ROLE_DEEP_VIEW_ONLY,
             ],
             [
                 'email' => static::USER_ACCOUNT_1_1_ROLE_BASIC,
-                'account' => 'account.level_1.1.1',
+                'customer' => 'customer.level_1.1.1',
                 'role' => static::ROLE_BASIC,
             ],
             [
                 'email' => static::USER_ACCOUNT_1_1_ROLE_LOCAL,
-                'account' => 'account.level_1.1.1',
+                'customer' => 'customer.level_1.1.1',
                 'role' => static::ROLE_LOCAL,
             ],
             [
                 'email' => static::USER_ACCOUNT_1_1_ROLE_DEEP,
-                'account' => 'account.level_1.1.1',
+                'customer' => 'customer.level_1.1.1',
                 'role' => static::ROLE_DEEP,
             ],
             [
                 'email' => static::USER_ACCOUNT_1_2_ROLE_BASIC,
-                'account' => 'account.level_1.1.2',
+                'customer' => 'customer.level_1.1.2',
                 'role' => static::ROLE_BASIC,
             ],
             [
                 'email' => static::USER_ACCOUNT_1_2_ROLE_LOCAL,
-                'account' => 'account.level_1.1.2',
+                'customer' => 'customer.level_1.1.2',
                 'role' => static::ROLE_LOCAL,
             ],
             [
                 'email' => static::USER_ACCOUNT_1_2_ROLE_DEEP,
-                'account' => 'account.level_1.1.2',
+                'customer' => 'customer.level_1.1.2',
                 'role' => static::ROLE_DEEP,
             ],
             [
                 'email' => static::USER_ACCOUNT_2_ROLE_BASIC,
-                'account' => 'account.level_1.2',
+                'customer' => 'customer.level_1.2',
                 'role' => static::ROLE_BASIC,
             ],
             [
                 'email' => static::USER_ACCOUNT_2_ROLE_LOCAL,
-                'account' => 'account.level_1.2',
+                'customer' => 'customer.level_1.2',
                 'role' => static::ROLE_LOCAL,
             ],
             [
                 'email' => static::USER_ACCOUNT_2_ROLE_DEEP,
-                'account' => 'account.level_1.2',
+                'customer' => 'customer.level_1.2',
                 'role' => static::ROLE_DEEP,
             ],
         ];
@@ -149,7 +149,7 @@ abstract class AbstractLoadACLData extends AbstractFixture implements
     public function getDependencies()
     {
         return [
-            LoadAccounts::class,
+            LoadCustomers::class,
         ];
     }
 
@@ -169,7 +169,7 @@ abstract class AbstractLoadACLData extends AbstractFixture implements
     public function load(ObjectManager $manager)
     {
         $this->loadRoles($manager);
-        $this->loadAccountUsers($manager);
+        $this->loadCustomerUsers($manager);
     }
 
     /**
@@ -183,28 +183,28 @@ abstract class AbstractLoadACLData extends AbstractFixture implements
     /**
      * @param ObjectManager $manager
      */
-    protected function loadAccountUsers(ObjectManager $manager)
+    protected function loadCustomerUsers(ObjectManager $manager)
     {
         /* @var $userManager CustomerUserManager */
-        $userManager = $this->container->get('oro_account_user.manager');
+        $userManager = $this->container->get('oro_customer_user.manager');
 
         $defaultUser = $this->getAdminUser($manager);
         $organization = $defaultUser->getOrganization();
 
         $supportedRoles = $this->getSupportedRoles();
-        foreach (static::getAccountUsers() as $item) {
+        foreach (static::getCustomerUsers() as $item) {
             if (!in_array($item['role'], $supportedRoles)) {
                 continue;
             }
-            $accountUser = null;
+            $customerUser = null;
             if ($this->hasReference($item['email'])) {
-                $accountUser = $this->getReference($item['email']);
+                $customerUser = $this->getReference($item['email']);
             } else {
-                /* @var $accountUser AccountUser */
-                $accountUser = $userManager->createUser();
-                $accountUser
+                /* @var $customerUser CustomerUser */
+                $customerUser = $userManager->createUser();
+                $customerUser
                     ->setEmail($item['email'])
-                    ->setAccount($this->getReference($item['account']))
+                    ->setCustomer($this->getReference($item['customer']))
                     ->setOwner($defaultUser)
                     ->setFirstName($item['email'])
                     ->setLastName($item['email'])
@@ -212,16 +212,16 @@ abstract class AbstractLoadACLData extends AbstractFixture implements
                     ->addOrganization($organization)
                     ->setOrganization($organization)
                     ->setPlainPassword($item['email']);
-                $this->setReference($item['email'], $accountUser);
+                $this->setReference($item['email'], $customerUser);
             }
             /** @var RoleInterface $role */
             $role = $this->getReference($item['role']);
-            $accountUser
+            $customerUser
                 ->addRole($role)
                 ->setEnabled(true)
                 ->setSalt('');
 
-            $userManager->updateUser($accountUser);
+            $userManager->updateUser($customerUser);
         }
     }
 
@@ -231,7 +231,7 @@ abstract class AbstractLoadACLData extends AbstractFixture implements
     protected function loadRoles(ObjectManager $manager)
     {
         $user = $this->getAdminUser($manager);
-        $repository = $manager->getRepository('OroCustomerBundle:AccountUserRole');
+        $repository = $manager->getRepository('OroCustomerBundle:CustomerUserRole');
         $this->setReference(self::ROLE_FRONTEND_BUYER, $repository->findOneBy(['role' => 'ROLE_FRONTEND_BUYER']));
         $this->setReference(
             self::ROLE_FRONTEND_ADMINISTRATOR,
@@ -250,7 +250,7 @@ abstract class AbstractLoadACLData extends AbstractFixture implements
             if (!in_array($key, $this->getSupportedRoles())) {
                 continue;
             }
-            $role = new AccountUserRole(AccountUserRole::PREFIX_ROLE.$key);
+            $role = new CustomerUserRole(CustomerUserRole::PREFIX_ROLE.$key);
             $role->setLabel($key)
                 ->setSelfManaged(true)
                 ->setOrganization($user->getOrganization());
@@ -264,11 +264,11 @@ abstract class AbstractLoadACLData extends AbstractFixture implements
     }
 
     /**
-     * @param AccountUserRole $role
+     * @param CustomerUserRole $role
      * @param string $className
      * @param array $allowedACL
      */
-    protected function setRolePermissions(AccountUserRole $role, $className, array $allowedACL)
+    protected function setRolePermissions(CustomerUserRole $role, $className, array $allowedACL)
     {
         $chainMetadataProvider = $this->container->get('oro_security.owner.metadata_provider.chain');
         $aclManager = $this->container->get('oro_security.acl.manager');

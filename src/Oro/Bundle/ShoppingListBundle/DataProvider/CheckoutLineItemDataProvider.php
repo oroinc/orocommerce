@@ -58,7 +58,7 @@ class CheckoutLineItemDataProvider extends AbstractCheckoutProvider
             if (isset($shoppingListPrices[$lineItem->getProduct()->getId()][$unitCode])) {
                 $price = $shoppingListPrices[$lineItem->getProduct()->getId()][$unitCode];
             }
-            $data[] = [
+            $tempData = [
                 'product' => $lineItem->getProduct(),
                 'productSku' => $lineItem->getProductSku(),
                 'quantity' => $lineItem->getQuantity(),
@@ -66,6 +66,10 @@ class CheckoutLineItemDataProvider extends AbstractCheckoutProvider
                 'productUnitCode' => $unitCode,
                 'price' => $price,
             ];
+            if ($lineItem->getParentProduct()) {
+                $tempData['parentProduct'] = $lineItem->getParentProduct();
+            }
+            $data[] = $tempData;
         }
 
         return $data;

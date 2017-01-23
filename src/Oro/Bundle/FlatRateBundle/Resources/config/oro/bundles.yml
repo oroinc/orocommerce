@@ -1,0 +1,2 @@
+bundles:
+    - { name: Oro\Bundle\FlatRateBundle\OroFlatRateBundle, priority: 210 }

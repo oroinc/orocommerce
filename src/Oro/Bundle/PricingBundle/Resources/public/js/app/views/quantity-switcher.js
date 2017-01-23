@@ -37,7 +37,7 @@ define(function(require) {
             this.field.append($('<span></span>').addClass('validation-failed').text(this.options.errorMessage));
         },
 
-        initSwitcher: function () {
+        initSwitcher: function() {
             this.fieldInput = this.field.find('input');
             this.changeQuantityField();
             this.expressionInput.mouseenter(_.bind(function() {
@@ -59,7 +59,7 @@ define(function(require) {
             }, this));
         },
 
-        changeQuantityField: function () {
+        changeQuantityField: function() {
             if (this.field.hasClass(this.visibleClass) && (isNaN(this.fieldInput.val()))) {
                 this.changeVisibility(this.field, this.expression);
             } else if (this.expression.hasClass(this.visibleClass)) {
@@ -71,7 +71,7 @@ define(function(require) {
             }
         },
 
-        changeVisibility: function ($field1, $field2) {
+        changeVisibility: function($field1, $field2) {
             var $input1 = $field1.find('input');
             var $input2 = $field2.find('input');
             if (!!$input1.val()) {
@@ -82,7 +82,7 @@ define(function(require) {
             $field1.removeClass(this.visibleClass).hide();
         },
 
-        isValid: function () {
+        isValid: function() {
             return !!(this.getValue(this.field) || this.getValue(this.expression));
         },
 

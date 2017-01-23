@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\Entity\Repository;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -54,8 +54,8 @@ class WebCatalogRepositoryTest extends WebTestCase
     {
         /** @var WebCatalog $webCatalog */
         $webCatalog = $this->getReference(LoadWebCatalogData::CATALOG_1);
-        /** @var Account $account */
-        $account = $this->getReference(LoadAccounts::DEFAULT_ACCOUNT_NAME);
+        /** @var Customer $customer */
+        $customer = $this->getReference(LoadCustomers::DEFAULT_ACCOUNT_NAME);
         /** @var Scope $scope1 */
         $scope1 = $this->getReference(LoadWebCatalogScopes::SCOPE1);
         /** @var Scope $scope2 */
@@ -65,7 +65,7 @@ class WebCatalogRepositoryTest extends WebTestCase
         $scopeManager = $this->getContainer()->get('oro_scope.scope_manager');
         $scopeCriteria = $scopeManager->getCriteria(
             'web_content',
-            ['webCatalog' => $webCatalog, 'account' => $account]
+            ['webCatalog' => $webCatalog, 'customer' => $customer]
         );
 
         $scopes = $this->repository->getMatchingScopes($webCatalog, $scopeCriteria);

@@ -209,7 +209,7 @@ class ImportExportTest extends WebTestCase
         $this->assertErrors(
             $strategy,
             '@OroPricingBundle/Tests/Functional/ImportExport/data/invalid_product_unit.csv',
-            'Error in row #1. Unit Code: Unit "box" is not allowed for product "product.1".'
+            'Error in row #1. Unit Code: Unit "box" is not allowed for product "product-1".'
         );
     }
 

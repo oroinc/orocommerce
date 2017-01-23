@@ -9,7 +9,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
-use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountDemoData;
+use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerDemoData;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowDefinition;
 
 class UpdateAlternativeCheckoutWorkflowStatus extends AbstractFixture implements
@@ -23,7 +23,7 @@ class UpdateAlternativeCheckoutWorkflowStatus extends AbstractFixture implements
      */
     public function getDependencies()
     {
-        return [LoadAccountDemoData::class];
+        return [LoadCustomerDemoData::class];
     }
 
     /**

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Filter;
 
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\DataGridBundle\Extension\Sorter\AbstractSorterExtension;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberRangeFilterType;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
@@ -21,7 +21,7 @@ class FrontendProductPriceFilterTest extends FrontendWebTestCase
         $this->loadFixtures(
             [
                 LoadCombinedProductPrices::class,
-                LoadAccountUserData::class,
+                LoadCustomerUserData::class,
             ]
         );
     }
@@ -58,12 +58,12 @@ class FrontendProductPriceFilterTest extends FrontendWebTestCase
         return [
             'sort by price' => [
                 'expected' => [
-                    'product.7',
-                    'product.3',
-                    'product.1',
-                    'product.2',
-                    'product.6',
-                    'product.8',
+                    'product-7',
+                    'product-3',
+                    'product-1',
+                    'product-2',
+                    'product-6',
+                    'product-8',
                 ],
                 'filter' => [
                     $sort.'[minimal_price_sort]' => AbstractSorterExtension::DIRECTION_ASC,
@@ -71,8 +71,8 @@ class FrontendProductPriceFilterTest extends FrontendWebTestCase
             ],
             'filter by price sort by sku' => [
                 'expected' => [
-                    'product.3',
-                    'product.1',
+                    'product-3',
+                    'product-1',
                 ],
                 'filter' => [
                     $filter.'[minimal_price][value]' => 12,
@@ -83,8 +83,8 @@ class FrontendProductPriceFilterTest extends FrontendWebTestCase
             ],
             'filter and sort by price' => [
                 'expected' => [
-                    'product.2',
-                    'product.1',
+                    'product-2',
+                    'product-1',
                 ],
                 'filter' => [
                     $filter.'[minimal_price][value]' => 8,

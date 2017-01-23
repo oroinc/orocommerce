@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserAddressRepository;
 
@@ -27,7 +27,7 @@ class CustomerUserAddressRepositoryTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserAddresses'
+                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserAddresses'
             ]
         );
     }
@@ -40,7 +40,7 @@ class CustomerUserAddressRepositoryTest extends WebTestCase
      */
     public function testGetAddressesByType($userReference, $type, array $expectedAddressReferences)
     {
-        /** @var AccountUser $user */
+        /** @var CustomerUser $user */
         $user = $this->getReference($userReference);
 
         /** @var CustomerUserAddress[] $actual */
@@ -87,14 +87,14 @@ class CustomerUserAddressRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider defaultAddressDataProvider
-     * @param string $accountUserReference
+     * @param string $customerUserReference
      * @param string $type
      * @param string $expectedAddressReference
      */
-    public function testGetDefaultAddressesByType($accountUserReference, $type, $expectedAddressReference)
+    public function testGetDefaultAddressesByType($customerUserReference, $type, $expectedAddressReference)
     {
-        /** @var AccountUser $user */
-        $user = $this->getReference($accountUserReference);
+        /** @var CustomerUser $user */
+        $user = $this->getReference($customerUserReference);
 
         /** @var CustomerUserAddress[] $actual */
         $actual = $this->repository->getDefaultAddressesByType(

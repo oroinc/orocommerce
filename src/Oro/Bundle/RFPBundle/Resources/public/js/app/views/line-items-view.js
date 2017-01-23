@@ -5,14 +5,16 @@ define(function(require) {
     var $ = require('jquery');
     var _ = require('underscore');
     var BaseView = require('oroui/js/app/views/base/view');
+    var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var ProductsPricesComponent = require('oropricing/js/app/components/products-prices-component');
+    var mediator = require('oroui/js/mediator');
 
     /**
      * @export ororfp/js/app/views/line-items-view
      * @extends oroui.app.views.base.View
      * @class ororfp.app.views.LineItemsView
      */
-    LineItemsView = BaseView.extend({
+    LineItemsView = BaseView.extend(_.extend({}, ElementsHelper, {
         /**
          * @property {Object}
          */
@@ -34,19 +36,16 @@ define(function(require) {
                 tierPricesRoute: this.options.tierPricesRoute
             }));
 
-            this._deferredRender();
-            this.initLayout({
-                prices: this.options.tierPrices
-            }).done(_.bind(this.handleLayoutInit, this));
+            this.initializeSubviews();
         },
 
-        /**
-         * Doing something after loading child components
-         */
         handleLayoutInit: function() {
             this.$el.find('.add-lineitem').mousedown(function(e) {
                 $(this).click();
             });
+
+            mediator.trigger('line-items:show:before');
+
             this.$el.find('.view-loading').remove();
             this.$el.find('.request-form__content').show();
             this._resolveDeferredRender();
@@ -99,7 +98,7 @@ define(function(require) {
 
             LineItemsView.__super__.dispose.call(this);
         }
-    });
+    }));
 
     return LineItemsView;
 });

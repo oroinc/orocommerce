@@ -1,0 +1,25 @@
+services:
+    oro_flat_rate.integration.channel:
+        class: 'Oro\Bundle\FlatRateBundle\Integration\FlatRateChannelType'
+        public: false
+        tags:
+            - { name: oro_integration.channel, type: flat_rate }
+
+    oro_flat_rate.integration.transport:
+        class: 'Oro\Bundle\FlatRateBundle\Integration\FlatRateTransport'
+        public: false
+        tags:
+            - { name: oro_integration.transport, type: flat_rate, channel_type: flat_rate }
+
+    oro_flat_rate.method.provider:
+        class: 'Oro\Bundle\FlatRateBundle\Method\FlatRateMethodProvider'
+        public: false
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_flat_rate.builder.flat_rate_method_from_channel'
+        tags:
+            - { name: oro_shipping_method_provider }
+
+    oro_flat_rate.method.identifier_generator.method:
+        class: 'Oro\Bundle\FlatRateBundle\Method\Identifier\FlatRateMethodIdentifierGenerator'
+        public: false

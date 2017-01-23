@@ -9,7 +9,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Form\Type\AbstractOrderAddressType;
@@ -45,9 +45,9 @@ class CheckoutAddressType extends AbstractOrderAddressType
      */
     private function clearCustomFields($data)
     {
-        if (isset($data['accountAddress']) && $data['accountAddress']) {
+        if (isset($data['customerAddress']) && $data['customerAddress']) {
             return [
-                'accountAddress' => $data['accountAddress']
+                'customerAddress' => $data['customerAddress']
             ];
         }
 
@@ -58,10 +58,10 @@ class CheckoutAddressType extends AbstractOrderAddressType
      * @param Checkout $entity
      * {@inheritdoc}
      */
-    protected function initAccountAddressField(
+    protected function initCustomerAddressField(
         FormBuilderInterface $builder,
         $type,
-        AccountOwnerAwareInterface $entity,
+        CustomerOwnerAwareInterface $entity,
         $isManualEditGranted,
         $isEditEnabled
     ) {
@@ -75,7 +75,7 @@ class CheckoutAddressType extends AbstractOrderAddressType
 
             $action = count($addresses) ? 'select' : 'enter';
 
-            $accountAddressOptions = [
+            $customerAddressOptions = [
                 'label' => sprintf('oro.checkout.form.address.%s.%s.label', $action, $type),
                 'required' => true,
                 'mapped' => false,
@@ -89,13 +89,13 @@ class CheckoutAddressType extends AbstractOrderAddressType
             ];
 
             if ($isManualEditGranted) {
-                $accountAddressOptions['choices'] = array_merge(
-                    $accountAddressOptions['choices'],
+                $customerAddressOptions['choices'] = array_merge(
+                    $customerAddressOptions['choices'],
                     [self::ENTER_MANUALLY => 'oro.checkout.form.address.manual']
                 );
             }
             $builder
-                ->add('accountAddress', 'choice', $accountAddressOptions)
+                ->add('customerAddress', 'choice', $customerAddressOptions)
                 ->add('country', 'oro_frontend_country', ['label' => 'oro.address.country.label'])
                 ->add('region', 'oro_frontend_region', ['required' => false, 'label' => 'oro.address.region.label']);
 
@@ -156,10 +156,10 @@ class CheckoutAddressType extends AbstractOrderAddressType
         $selectedKey = null;
         if ($checkoutAddress) {
             $selectedKey = self::ENTER_MANUALLY;
-            if ($checkoutAddress->getAccountAddress()) {
-                $selectedKey = $this->orderAddressManager->getIdentifier($checkoutAddress->getAccountAddress());
-            } elseif ($checkoutAddress->getAccountUserAddress()) {
-                $selectedKey = $this->orderAddressManager->getIdentifier($checkoutAddress->getAccountUserAddress());
+            if ($checkoutAddress->getCustomerAddress()) {
+                $selectedKey = $this->orderAddressManager->getIdentifier($checkoutAddress->getCustomerAddress());
+            } elseif ($checkoutAddress->getCustomerUserAddress()) {
+                $selectedKey = $this->orderAddressManager->getIdentifier($checkoutAddress->getCustomerUserAddress());
             }
         }
 

@@ -8,8 +8,8 @@ use Symfony\Component\Form\FormView;
 
 use Oro\Bundle\SecurityBundle\Form\Type\AclAccessLevelSelectorType;
 use Oro\Bundle\CustomerBundle\Acl\Resolver\RoleTranslationPrefixResolver;
-use Oro\Bundle\CustomerBundle\Form\Type\FrontendAccountUserRoleType;
-use Oro\Bundle\CustomerBundle\Form\Type\AccountUserRoleType;
+use Oro\Bundle\CustomerBundle\Form\Type\FrontendCustomerUserRoleType;
+use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserRoleType;
 
 class AclAccessLevelSelectorExtension extends AbstractTypeExtension
 {
@@ -66,7 +66,7 @@ class AclAccessLevelSelectorExtension extends AbstractTypeExtension
 
         if (in_array(
             $roleForm->getConfig()->getType()->getName(),
-            [AccountUserRoleType::NAME, FrontendAccountUserRoleType::NAME]
+            [CustomerUserRoleType::NAME, FrontendCustomerUserRoleType::NAME]
         )) {
             //uses on edit page for rendering preloaded string (role permission name)
             $view->vars['translation_prefix'] = $this->roleTranslationPrefixResolver->getPrefix();

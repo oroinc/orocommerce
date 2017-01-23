@@ -11,10 +11,10 @@ use Oro\Bundle\CatalogBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupProductVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\AccountProductVisibilityRepository;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\CustomerProductVisibilityRepository;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\CacheBuilder;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
@@ -103,8 +103,8 @@ class CategoryProcessor implements MessageProcessorInterface
                 $this->cacheBuilder->categoryPositionChanged($category);
             } else {
                 $this->setToDefaultProductVisibilityWithoutCategory();
-                $this->setToDefaultAccountGroupProductVisibilityWithoutCategory();
-                $this->setToDefaultAccountProductVisibilityWithoutCategory();
+                $this->setToDefaultCustomerGroupProductVisibilityWithoutCategory();
+                $this->setToDefaultCustomerProductVisibilityWithoutCategory();
             }
             $em->commit();
         } catch (InvalidArgumentException $e) {
@@ -145,18 +145,18 @@ class CategoryProcessor implements MessageProcessorInterface
         }
     }
 
-    protected function setToDefaultAccountGroupProductVisibilityWithoutCategory()
+    protected function setToDefaultCustomerGroupProductVisibilityWithoutCategory()
     {
-        /** @var AccountProductVisibilityRepository $repository */
-        $repository = $this->registry->getManagerForClass(AccountGroupProductVisibility::class)
-            ->getRepository(AccountGroupProductVisibility::class);
+        /** @var CustomerProductVisibilityRepository $repository */
+        $repository = $this->registry->getManagerForClass(CustomerGroupProductVisibility::class)
+            ->getRepository(CustomerGroupProductVisibility::class);
         $repository->setToDefaultWithoutCategory();
     }
 
-    protected function setToDefaultAccountProductVisibilityWithoutCategory()
+    protected function setToDefaultCustomerProductVisibilityWithoutCategory()
     {
-        $this->registry->getManagerForClass(AccountProductVisibility::class)
-            ->getRepository(AccountProductVisibility::class)
+        $this->registry->getManagerForClass(CustomerProductVisibility::class)
+            ->getRepository(CustomerProductVisibility::class)
             ->setToDefaultWithoutCategory();
     }
 }

@@ -25,8 +25,8 @@ oro:
         identifier.label: Order Number
         identifier.short_label: 'Order #'
         owner.label: Owner
-        account.label: Account
-        account_user.label: Customer User
+        customer.label: Customer
+        customer_user.label: Customer User
         organization.label: Organization
         currency.label: Currency
         website.label: Website
@@ -112,8 +112,8 @@ oro:
             entity_label: Order Address
             entity_plural_label: Order Addresses
             id.label: ID
-            account_address.label: Customer address
-            account_user_address.label: Customer user address
+            customer_address.label: Customer address
+            customer_user_address.label: Customer user address
             label.label: Label
             first_name.label: First Name
             middle_name.label: Middle Name
@@ -163,7 +163,7 @@ oro:
             select:
                 product: Select product
                 free_form: Free-form entry
-
+            parent_product.label: 'Parent Product'
             column:
                 product: 'Product'
 
@@ -186,7 +186,8 @@ oro:
             shortcut_new_order.label: Create new order
             shortcut_new_order.description: Create new order item
             shortcut_order_list.description: Show list of existing orders
-
+            best_selling_list.label: Best Selling Products
+            best_selling_list.description: List of best selling products
         widgets:
             order_information: Order Information
             shipping_tracking: Shipping Tracking
@@ -205,15 +206,15 @@ oro:
 
         security:
             permission:
-                address_shipping_account_use_any: Use any shipping address from the customer address book
-                address_shipping_account_user_use_default: Use the default shipping address from the customer user's address book
-                address_shipping_account_user_use_any: Use any shipping address from the customer user's address book
+                address_shipping_customer_use_any: Use any shipping address from the customer address book
+                address_shipping_customer_user_use_default: Use the default shipping address from the customer user's address book
+                address_shipping_customer_user_use_any: Use any shipping address from the customer user's address book
                 address_shipping_allow_manual: Enter the shipping address manually
-                address_billing_account_use_any: Use any billing address from the customer address book
-                address_billing_account_user_use_default: Use the default billing address from the customer user's address book
-                address_billing_account_user_use_any: Use any billing address from the customer user's address book
+                address_billing_customer_use_any: Use any billing address from the customer address book
+                address_billing_customer_user_use_default: Use the default billing address from the customer user's address book
+                address_billing_customer_user_use_any: Use any billing address from the customer user's address book
                 address_billing_allow_manual: Enter the billing address manually
-                payment_term_account_can_override: Override customer payment term
+                payment_term_customer_can_override: Override customer payment term
 
         form:
             address:
@@ -221,8 +222,8 @@ oro:
                 choose_or_create: Select an existing address or enter a new address below
                 manual: Enter other address
                 group_label:
-                    account: Customer Address Book
-                    account_user: Customer User Address Book
+                    customer: Customer Address Book
+                    customer_user: Customer User Address Book
             shipping_options.label: Shipping Options
             override_shipping_cost.label: Override Shipping Cost
 
@@ -261,8 +262,8 @@ oro:
             create.label: 'Create Order'
             form:
                 group_label:
-                    account: Global Address Book
-                    account_user: My Address Book
+                    customer: Global Address Book
+                    customer_user: My Address Book
             past_orders.label: Past Orders
             method_type:
                 view:

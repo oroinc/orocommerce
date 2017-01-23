@@ -3,7 +3,7 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerAddressRepository;
 
@@ -27,25 +27,25 @@ class CustomerAddressRepositoryTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountAddresses'
+                'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses'
             ]
         );
     }
 
     /**
      * @dataProvider addressesDataProvider
-     * @param string $accountReference
+     * @param string $customerReference
      * @param string $type
      * @param array $expectedAddressReferences
      */
-    public function testGetAddressesByType($accountReference, $type, array $expectedAddressReferences)
+    public function testGetAddressesByType($customerReference, $type, array $expectedAddressReferences)
     {
-        /** @var Account $account */
-        $account = $this->getReference($accountReference);
+        /** @var Customer $customer */
+        $customer = $this->getReference($customerReference);
 
         /** @var CustomerAddress[] $actual */
         $actual = $this->repository->getAddressesByType(
-            $account,
+            $customer,
             $type,
             $this->getContainer()->get('oro_security.acl_helper')
         );
@@ -66,20 +66,20 @@ class CustomerAddressRepositoryTest extends WebTestCase
     {
         return [
             [
-                'account.level_1',
+                'customer.level_1',
                 'billing',
                 [
-                    'account.level_1.address_1',
-                    'account.level_1.address_2',
-                    'account.level_1.address_3'
+                    'customer.level_1.address_1',
+                    'customer.level_1.address_2',
+                    'customer.level_1.address_3'
                 ]
             ],
             [
-                'account.level_1',
+                'customer.level_1',
                 'shipping',
                 [
-                    'account.level_1.address_1',
-                    'account.level_1.address_3'
+                    'customer.level_1.address_1',
+                    'customer.level_1.address_3'
                 ]
             ]
         ];
@@ -87,18 +87,18 @@ class CustomerAddressRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider defaultAddressDataProvider
-     * @param string $accountReference
+     * @param string $customerReference
      * @param string $type
      * @param string $expectedAddressReference
      */
-    public function testGetDefaultAddressesByType($accountReference, $type, $expectedAddressReference)
+    public function testGetDefaultAddressesByType($customerReference, $type, $expectedAddressReference)
     {
-        /** @var Account $account */
-        $account = $this->getReference($accountReference);
+        /** @var Customer $customer */
+        $customer = $this->getReference($customerReference);
 
         /** @var CustomerAddress[] $actual */
         $actual = $this->repository->getDefaultAddressesByType(
-            $account,
+            $customer,
             $type,
             $this->getContainer()->get('oro_security.acl_helper')
         );
@@ -113,14 +113,14 @@ class CustomerAddressRepositoryTest extends WebTestCase
     {
         return [
             [
-                'account.level_1',
+                'customer.level_1',
                 'billing',
-                'account.level_1.address_2'
+                'customer.level_1.address_2'
             ],
             [
-                'account.level_1',
+                'customer.level_1',
                 'shipping',
-                'account.level_1.address_1'
+                'customer.level_1.address_1'
             ]
         ];
     }

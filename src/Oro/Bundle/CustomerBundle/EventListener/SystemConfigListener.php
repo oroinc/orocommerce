@@ -10,7 +10,7 @@ use Oro\Bundle\CustomerBundle\DependencyInjection\OroCustomerExtension;
 
 class SystemConfigListener
 {
-    const SETTING = 'default_account_owner';
+    const SETTING = 'default_customer_owner';
 
     /**
      * @var ManagerRegistry

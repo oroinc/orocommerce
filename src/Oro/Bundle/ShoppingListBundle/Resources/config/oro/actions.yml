@@ -118,7 +118,6 @@ operations:
         acl_resource: [CREATE, entity:Oro\Bundle\ShoppingListBundle\Entity\LineItem]
         button_options:
             icon: fa-plus
-            page_component_module: oroproduct/js/app/components/product-unit-component
         frontend_options:
             options:
                 modal: false
@@ -128,12 +127,13 @@ operations:
                 allowMinimize: true
                 dblclick: maximize
                 maximizedHeightDecreaseBy: minimize-bar
+                form_page_component_module: oroproduct/js/app/components/product-unit-component
         form_init:
             - '@create_object':
                 class: Oro\Bundle\ShoppingListBundle\Entity\LineItem
                 attribute: $.lineItem
             - '@assign_value': [$.lineItem.shoppingList, $.data]
-            - '@assign_value': [$.lineItem.accountUser, $.data.accountUser]
+            - '@assign_value': [$.lineItem.customerUser, $.data.customerUser]
             - '@assign_value': [$.lineItem.organization, $.data.organization]
         actions:
             - '@run_action_group':

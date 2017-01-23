@@ -6,11 +6,11 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
-use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccount;
-use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccountGroup;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer;
+use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -26,10 +26,10 @@ class LoadCombinedPriceLists extends AbstractFixture implements DependentFixture
         [
             'name' => '1t_2t_3t',
             'enabled' => true,
-            'priceListsToAccounts' => [],
-            'priceListsToAccountGroups' => [
+            'priceListsToCustomers' => [],
+            'priceListsToCustomerGroups' => [
                 [
-                    'group' => 'account_group.group1',
+                    'group' => 'customer_group.group1',
                     'website' => LoadWebsiteData::WEBSITE1,
                 ],
             ],
@@ -52,13 +52,13 @@ class LoadCombinedPriceLists extends AbstractFixture implements DependentFixture
         [
             'name' => '2t_3f_1t',
             'enabled' => true,
-            'priceListsToAccounts' => [
+            'priceListsToCustomers' => [
                 [
-                    'account' => 'account.level_1.2',
+                    'customer' => 'customer.level_1.2',
                     'website' => LoadWebsiteData::WEBSITE1,
                 ]
             ],
-            'priceListsToAccountGroups' => [],
+            'priceListsToCustomerGroups' => [],
             'websites' => [],
             'priceListRelations' => [
                 [
@@ -78,13 +78,13 @@ class LoadCombinedPriceLists extends AbstractFixture implements DependentFixture
         [
             'name' => '2f_1t_3t',
             'enabled' => true,
-            'priceListsToAccounts' => [
+            'priceListsToCustomers' => [
                 [
-                    'account' => 'account.level_1.2',
+                    'customer' => 'customer.level_1.2',
                     'website' => LoadWebsiteData::WEBSITE2,
                 ]
             ],
-            'priceListsToAccountGroups' => [],
+            'priceListsToCustomerGroups' => [],
             'websites' => [],
             'priceListRelations' => [
                 [
@@ -104,8 +104,8 @@ class LoadCombinedPriceLists extends AbstractFixture implements DependentFixture
         [
             'name' => '1f',
             'enabled' => true,
-            'priceListsToAccounts' => [],
-            'priceListsToAccountGroups' => [],
+            'priceListsToCustomers' => [],
+            'priceListsToCustomerGroups' => [],
             'websites' => ['default'],
             'priceListRelations' => [
                 [
@@ -117,8 +117,8 @@ class LoadCombinedPriceLists extends AbstractFixture implements DependentFixture
         [
             'name' => '2f',
             'enabled' => true,
-            'priceListsToAccounts' => [],
-            'priceListsToAccountGroups' => [],
+            'priceListsToCustomers' => [],
+            'priceListsToCustomerGroups' => [],
             'websites' => [LoadWebsiteData::WEBSITE2],
             'priceListRelations' => [
                 [
@@ -146,8 +146,8 @@ class LoadCombinedPriceLists extends AbstractFixture implements DependentFixture
                 ->setEnabled($priceListData['enabled']);
 
             $this->loadCombinedPriceListToPriceList($manager, $priceListData, $combinedPriceList);
-            $this->loadCombinedPriceListToAccount($manager, $priceListData, $combinedPriceList);
-            $this->loadCombinedPriceListToAccountGroup($manager, $priceListData, $combinedPriceList);
+            $this->loadCombinedPriceListToCustomer($manager, $priceListData, $combinedPriceList);
+            $this->loadCombinedPriceListToCustomerGroup($manager, $priceListData, $combinedPriceList);
             $this->loadCombinedPriceListToWebsite($manager, $priceListData, $combinedPriceList);
 
             $manager->persist($combinedPriceList);
@@ -165,7 +165,7 @@ class LoadCombinedPriceLists extends AbstractFixture implements DependentFixture
         return [
             'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists',
             'Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData',
-            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts',
+            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers',
             'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups',
         ];
     }
@@ -205,22 +205,22 @@ class LoadCombinedPriceLists extends AbstractFixture implements DependentFixture
      * @param array $priceListData
      * @param CombinedPriceList $combinedPriceList
      */
-    protected function loadCombinedPriceListToAccount(
+    protected function loadCombinedPriceListToCustomer(
         ObjectManager $manager,
         array $priceListData,
         CombinedPriceList $combinedPriceList
     ) {
-        foreach ($priceListData['priceListsToAccounts'] as $priceListsToAccount) {
-            /** @var Account $account */
-            $account = $this->getReference($priceListsToAccount['account']);
+        foreach ($priceListData['priceListsToCustomers'] as $priceListsToCustomer) {
+            /** @var Customer $customer */
+            $customer = $this->getReference($priceListsToCustomer['customer']);
             /** @var Website $website */
-            $website = $this->getReference($priceListsToAccount['website']);
+            $website = $this->getReference($priceListsToCustomer['website']);
 
-            $priceListToAccount = new CombinedPriceListToAccount();
-            $priceListToAccount->setAccount($account);
-            $priceListToAccount->setWebsite($website);
-            $priceListToAccount->setPriceList($combinedPriceList);
-            $manager->persist($priceListToAccount);
+            $priceListToCustomer = new CombinedPriceListToCustomer();
+            $priceListToCustomer->setCustomer($customer);
+            $priceListToCustomer->setWebsite($website);
+            $priceListToCustomer->setPriceList($combinedPriceList);
+            $manager->persist($priceListToCustomer);
         }
     }
 
@@ -229,22 +229,22 @@ class LoadCombinedPriceLists extends AbstractFixture implements DependentFixture
      * @param array $priceListData
      * @param CombinedPriceList $combinedPriceList
      */
-    protected function loadCombinedPriceListToAccountGroup(
+    protected function loadCombinedPriceListToCustomerGroup(
         ObjectManager $manager,
         array $priceListData,
         CombinedPriceList $combinedPriceList
     ) {
-        foreach ($priceListData['priceListsToAccountGroups'] as $priceListsToAccountGroup) {
-            /** @var AccountGroup $accountGroup */
-            $accountGroup = $this->getReference($priceListsToAccountGroup['group']);
+        foreach ($priceListData['priceListsToCustomerGroups'] as $priceListsToCustomerGroup) {
+            /** @var CustomerGroup $customerGroup */
+            $customerGroup = $this->getReference($priceListsToCustomerGroup['group']);
             /** @var Website $website */
-            $website = $this->getReference($priceListsToAccountGroup['website']);
+            $website = $this->getReference($priceListsToCustomerGroup['website']);
 
-            $priceListToAccountGroup = new CombinedPriceListToAccountGroup();
-            $priceListToAccountGroup->setAccountGroup($accountGroup);
-            $priceListToAccountGroup->setWebsite($website);
-            $priceListToAccountGroup->setPriceList($combinedPriceList);
-            $manager->persist($priceListToAccountGroup);
+            $priceListToCustomerGroup = new CombinedPriceListToCustomerGroup();
+            $priceListToCustomerGroup->setCustomerGroup($customerGroup);
+            $priceListToCustomerGroup->setWebsite($website);
+            $priceListToCustomerGroup->setPriceList($combinedPriceList);
+            $manager->persist($priceListToCustomerGroup);
         }
     }
 

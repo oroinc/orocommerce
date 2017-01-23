@@ -19,6 +19,7 @@ class OroSaleBundleStage2 implements Migration, OrderedMigrationInterface
     public function up(Schema $schema, QueryBag $queries)
     {
         $this->addForeignKeyConstraint($schema);
+        $this->updateAccountRelation($schema);
     }
 
     /**
@@ -39,6 +40,47 @@ class OroSaleBundleStage2 implements Migration, OrderedMigrationInterface
             ['customer_user_address_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    private function updateAccountRelation(Schema $schema)
+    {
+        $table = $schema->getTable('oro_sale_quote');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_customer_user'),
+            ['customer_user_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_customer'),
+            ['customer_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+
+        $table = $schema->getTable('oro_quote_demand');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_customer_user'),
+            ['customer_user_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_customer'),
+            ['customer_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table = $schema->getTable('oro_quote_assigned_cus_users');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_customer_user'),
+            ['customer_user_id'],
+            ['id'],
+            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 

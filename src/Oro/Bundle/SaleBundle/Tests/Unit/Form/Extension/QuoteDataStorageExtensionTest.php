@@ -5,8 +5,8 @@ namespace Oro\Bundle\SaleBundle\Tests\Unit\Form\Extension;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -48,6 +48,8 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         );
         $this->extension->setDataClass('Oro\Bundle\SaleBundle\Entity\Quote');
 
+        $this->setUpLoggerMock($this->extension);
+
         $this->initEntityMetadata([
             'Oro\Bundle\ProductBundle\Entity\ProductUnit' => [
                 'identifier' => ['code'],
@@ -57,11 +59,11 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
                     'request' => [
                         'targetEntity' => 'Oro\Bundle\RFPBundle\Entity\Request',
                     ],
-                    'account' => [
-                        'targetEntity' => 'Oro\Bundle\CustomerBundle\Entity\Account',
+                    'customer' => [
+                        'targetEntity' => 'Oro\Bundle\CustomerBundle\Entity\Customer',
                     ],
-                    'accountUser' => [
-                        'targetEntity' => 'Oro\Bundle\CustomerBundle\Entity\AccountUser',
+                    'customerUser' => [
+                        'targetEntity' => 'Oro\Bundle\CustomerBundle\Entity\CustomerUser',
                     ],
                 ],
             ],
@@ -104,22 +106,22 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
         /* @var $product Product */
         $product = $this->getProductEntity($inputData['productSku'], $productUnit);
 
-        /* @var $account Account */
-        $account = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', $inputData['accountId']);
-        /* @var $accountUser AccountUser */
-        $accountUser = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', $inputData['accountUserId']);
+        /* @var $customer Customer */
+        $customer = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Customer', $inputData['customerId']);
+        /* @var $customerUser CustomerUser */
+        $customerUser = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\CustomerUser', $inputData['customerUserId']);
 
         $data = [
             ProductDataStorage::ENTITY_DATA_KEY => [
                 'request' => $request->getId(),
-                'account' => $account->getId(),
-                'accountUser' => $accountUser->getId(),
+                'customer' => $customer->getId(),
+                'customerUser' => $customerUser->getId(),
             ],
             ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                 [
                     ProductDataStorage::PRODUCT_SKU_KEY => $inputData['productSku'],
                     ProductDataStorage::PRODUCT_QUANTITY_KEY => null,
-                    'commentAccount' => $inputData['commentAccount'],
+                    'commentCustomer' => $inputData['commentCustomer'],
                     'requestProductItems' => [
                         [
                             'price' => $inputData['price'],
@@ -141,8 +143,8 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
 
         $this->extension->buildForm($this->getBuilderMock(true), []);
 
-        $this->assertEquals($account, $this->entity->getAccount());
-        $this->assertEquals($accountUser, $this->entity->getAccountUser());
+        $this->assertEquals($customer, $this->entity->getCustomer());
+        $this->assertEquals($customerUser, $this->entity->getCustomerUser());
 
         $this->assertCount(1, $this->entity->getQuoteProducts());
 
@@ -151,7 +153,7 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
 
         $this->assertEquals($product, $quoteProduct->getProduct());
         $this->assertEquals($product->getSku(), $quoteProduct->getProductSku());
-        $this->assertEquals($inputData['commentAccount'], $quoteProduct->getCommentAccount());
+        $this->assertEquals($inputData['commentCustomer'], $quoteProduct->getCommentCustomer());
 
         $this->assertCount(1, $quoteProduct->getQuoteProductRequests());
         $this->assertCount(1, $quoteProduct->getQuoteProductOffers());
@@ -187,11 +189,11 @@ class QuoteDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
                     'requestProductItemId' => 2,
                     'productUnitCode' => 'item',
                     'productSku' => 'TEST SKU',
-                    'accountId' => 3,
-                    'accountUserId' => 4,
+                    'customerId' => 3,
+                    'customerUserId' => 4,
                     'price' => Price::create(5, 'USD'),
                     'quantity' => 6,
-                    'commentAccount' => 'comment 7',
+                    'commentCustomer' => 'comment 7',
                 ],
             ],
         ];

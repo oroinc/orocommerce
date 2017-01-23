@@ -35,7 +35,7 @@ class LoadProductShippingOptions extends AbstractFixture implements DependentFix
      */
     protected $data = [
         self::PRODUCT_SHIPPING_OPTIONS_1 => [
-            'product' => 'product.1',
+            'product' => 'product-1',
             'productUnit' => 'product_unit.liter',
             'weightValue' => 42,
             'weightUnit' => 'weight_unit.kilo',
@@ -46,7 +46,7 @@ class LoadProductShippingOptions extends AbstractFixture implements DependentFix
             'freightClass' => 'freight_class.pcl',
         ],
         self::PRODUCT_SHIPPING_OPTIONS_2 => [
-            'product' => 'product.1',
+            'product' => 'product-1',
             'productUnit' => 'product_unit.bottle',
             'weightValue' => 5,
             'weightUnit' => 'weight_unit.pound',

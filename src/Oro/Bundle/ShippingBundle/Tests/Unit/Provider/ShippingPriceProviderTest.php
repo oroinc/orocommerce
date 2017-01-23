@@ -10,6 +10,7 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewFactory;
 use Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 use Oro\Bundle\ShippingBundle\Provider\ShippingMethodsConfigsRulesProvider;
@@ -85,10 +86,13 @@ class ShippingPricgetApplicableShippingMethodsConfigsRuleseProviderTest extends 
         $this->priceCache = $this->getMockBuilder(ShippingPriceCache::class)
             ->disableOriginalConstructor()->getMock();
 
+        $viewFactory = new ShippingMethodViewFactory($this->registry);
+
         $this->shippingPriceProvider = new ShippingPriceProvider(
             $this->shippingRulesProvider,
             $this->registry,
-            $this->priceCache
+            $this->priceCache,
+            $viewFactory
         );
     }
 
@@ -98,7 +102,7 @@ class ShippingPricgetApplicableShippingMethodsConfigsRuleseProviderTest extends 
      * @param array $shippingRules
      * @param array $expectedData
      */
-    public function testGetApplicableMethodsWithTypesData(array $shippingRules, array $expectedData)
+    public function testGetApplicableMethodsViews(array $shippingRules, array $expectedData)
     {
         $shippingLineItems = [new ShippingLineItem([])];
 
@@ -112,7 +116,12 @@ class ShippingPricgetApplicableShippingMethodsConfigsRuleseProviderTest extends 
             ->with($context)
             ->willReturn($shippingRules);
 
-        $this->assertEquals($expectedData, $this->shippingPriceProvider->getApplicableMethodsWithTypesData($context));
+        $this->assertEquals(
+            $expectedData,
+            $this->shippingPriceProvider
+                ->getApplicableMethodsViews($context)
+                ->toArray()
+        );
     }
 
     /**
@@ -175,9 +184,7 @@ class ShippingPricgetApplicableShippingMethodsConfigsRuleseProviderTest extends 
                                 'identifier' => 'primary',
                                 'label' => 'primary.label',
                                 'sortOrder' => 1,
-                                'price' => Price::create(12, 'USD'),
-                                'options' => ['price' => Price::create(12, 'USD')],
-                                'methodOptions' => [],
+                                'price' => Price::create(12, 'USD')
                             ]
                         ]
                     ]
@@ -265,8 +272,6 @@ class ShippingPricgetApplicableShippingMethodsConfigsRuleseProviderTest extends 
                                 'label' => 'primary.label',
                                 'sortOrder' => 1,
                                 'price' => Price::create(1, 'USD'),
-                                'options' => ['price' => Price::create(1, 'USD')],
-                                'methodOptions' => [],
                             ]
                         ]
                     ],
@@ -281,16 +286,12 @@ class ShippingPricgetApplicableShippingMethodsConfigsRuleseProviderTest extends 
                                 'label' => 'ground.label',
                                 'sortOrder' => 1,
                                 'price' => Price::create(2, 'USD'),
-                                'options' => ['aware_price' => Price::create(2, 'USD')],
-                                'methodOptions' => [],
                             ],
                             'air' => [
                                 'identifier' => 'air',
                                 'label' => 'air.label',
                                 'sortOrder' => 2,
                                 'price' => Price::create(4, 'USD'),
-                                'options' => ['aware_price' => Price::create(4, 'USD')],
-                                'methodOptions' => [],
                             ]
                         ]
                     ]
@@ -299,7 +300,7 @@ class ShippingPricgetApplicableShippingMethodsConfigsRuleseProviderTest extends 
         ];
     }
 
-    public function testGetApplicableMethodsWithTypesDataCache()
+    public function testGetApplicableMethodsViewsCache()
     {
         $shippingLineItems = [new ShippingLineItem([])];
 
@@ -342,9 +343,7 @@ class ShippingPricgetApplicableShippingMethodsConfigsRuleseProviderTest extends 
                         'identifier' => 'primary',
                         'label' => 'primary.label',
                         'sortOrder' => 1,
-                        'price' => $price,
-                        'options' => ['price' => Price::create(1, 'USD')],
-                        'methodOptions' => [],
+                        'price' => $price
                     ]
                 ]
             ]
@@ -370,9 +369,15 @@ class ShippingPricgetApplicableShippingMethodsConfigsRuleseProviderTest extends 
             ->with($context, 'flat_rate', 'primary')
             ->willReturn(Price::create(2, 'USD'));
 
-        $this->assertEquals($expectedData, $this->shippingPriceProvider->getApplicableMethodsWithTypesData($context));
+        $this->assertEquals(
+            $expectedData,
+            $this->shippingPriceProvider->getApplicableMethodsViews($context)->toArray()
+        );
         $price->setValue(2);
-        $this->assertEquals($expectedData, $this->shippingPriceProvider->getApplicableMethodsWithTypesData($context));
+        $this->assertEquals(
+            $expectedData,
+            $this->shippingPriceProvider->getApplicableMethodsViews($context)->toArray()
+        );
     }
 
     /**

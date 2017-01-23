@@ -5,7 +5,7 @@ Oro\Bundle\InvoiceBundle\Entity\Invoice:
     properties:
         owner:
             - NotBlank: ~
-        account:
+        customer:
             - NotBlank: ~
         poNumber:
             - Length:

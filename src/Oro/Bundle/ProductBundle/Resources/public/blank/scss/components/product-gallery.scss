@@ -59,7 +59,6 @@
 
         visibility: hidden;
 
-
         &.slick-initialized {
             opacity: 1;
 
@@ -73,6 +72,11 @@
 
             img {
                 border: 1px solid get-color('additional', 'light');
+                transition: border-color .5s;
+            }
+
+            &.slick-current img {
+                border-color: rgba(get-color('secondary', 'base'), .5);
             }
         }
 

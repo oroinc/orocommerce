@@ -33,8 +33,8 @@ class TaxRuleType extends AbstractType
                 'label' => 'oro.tax.taxrule.description.label',
                 'required' => false
             ])
-            ->add('accountTaxCode', AccountTaxCodeAutocompleteType::NAME, [
-                'label' => 'oro.tax.taxrule.account_tax_code.label',
+            ->add('customerTaxCode', CustomerTaxCodeAutocompleteType::NAME, [
+                'label' => 'oro.tax.taxrule.customer_tax_code.label',
                 'required' => true
             ])
             ->add('productTaxCode', ProductTaxCodeAutocompleteType::NAME, [

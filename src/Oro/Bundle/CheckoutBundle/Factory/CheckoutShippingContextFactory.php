@@ -93,9 +93,9 @@ class CheckoutShippingContextFactory
             $shippingContextBuilder->setLineItems($convertedLineItems);
         }
 
-        if (null !== $checkout->getAccount()) {
-            $shippingContextBuilder->setCustomer($checkout->getAccount());
-            $shippingContextBuilder->setCustomerUser($checkout->getAccountUser());
+        if (null !== $checkout->getCustomer()) {
+            $shippingContextBuilder->setCustomer($checkout->getCustomer());
+            $shippingContextBuilder->setCustomerUser($checkout->getCustomerUser());
         }
 
         return $shippingContextBuilder->getResult();

@@ -93,9 +93,9 @@ class CheckoutPaymentContextFactory
             $paymentContextBuilder->setLineItems($convertedLineItems);
         }
 
-        if (null !== $checkout->getAccount()) {
-            $paymentContextBuilder->setCustomer($checkout->getAccount());
-            $paymentContextBuilder->setCustomerUser($checkout->getAccountUser());
+        if (null !== $checkout->getCustomer()) {
+            $paymentContextBuilder->setCustomer($checkout->getCustomer());
+            $paymentContextBuilder->setCustomerUser($checkout->getCustomerUser());
         }
 
         return $paymentContextBuilder->getResult();

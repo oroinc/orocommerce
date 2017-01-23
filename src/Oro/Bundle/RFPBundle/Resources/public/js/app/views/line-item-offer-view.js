@@ -3,11 +3,14 @@ define(function(require) {
 
     var LineItemOfferView;
     var BaseProductView = require('oroproduct/js/app/views/base-product-view');
-    var _ = require('underscore');
 
     LineItemOfferView = BaseProductView.extend({
         initialize: function(options) {
             this.$el.trigger('options:set:lineItemModel', options);
+            this.deferredInitializeCheck(options, ['lineItemModel']);
+        },
+
+        deferredInitialize: function(options) {
             this.lineItemModel = options.lineItemModel;
             this.lineItemModel.on('change', this.updateModel, this);
             this.updateModel();

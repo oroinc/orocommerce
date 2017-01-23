@@ -6,7 +6,7 @@ oro_shopping_list:
 oro_shopping_list_frontend:
     resource: "@OroShoppingListBundle/Controller/Frontend/ShoppingListController.php"
     type:     annotation
-    prefix:   /account/shoppinglist
+    prefix:   /customer/shoppinglist
     options:
         frontend: true
 
@@ -22,6 +22,6 @@ oro_shopping_list_bundle_api:
 oro_shopping_list_line_item_frontend:
     resource: "@OroShoppingListBundle/Controller/Frontend/AjaxLineItemController.php"
     type:     annotation
-    prefix:   /account/shoppinglist/lineitem/ajax
+    prefix:   /customer/shoppinglist/lineitem/ajax
     options:
         frontend: true

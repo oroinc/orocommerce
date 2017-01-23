@@ -4,7 +4,7 @@ configuration: {}
 databaseBefore:
     'Oro\Bundle\OrderBundle\Entity\Order':
         empty_order:
-            poNumber: { property_value: empty_order }
-            account: { class: 'Oro\Bundle\CustomerBundle\Entity\Account', query: {} }
-            currency: 'USD'
+            poNumber: empty_order
+            customer: { class: 'Oro\Bundle\CustomerBundle\Entity\Customer', query: {} }
+            currency: USD
 expectedResult: []

@@ -1,8 +1,10 @@
+// @theme: default
+
 .popover-trigger {
     display: inline-block;
     vertical-align: middle;
 
-    padding: 15px 8px;
+    padding: 16px 8px;
 
     border: 1px solid get-color('additional', 'light');
     border-left-color: transparent;

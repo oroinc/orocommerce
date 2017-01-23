@@ -53,7 +53,7 @@ define(function(require) {
             self.$el.find(this.elements.shoppingListTitle).each(function() {
                 var $title = $(this);
                 var shoppingListId = $title.data('shopping-list-id');
-                $title.html(self.shoppingListCollection.get(shoppingListId).get('label'));
+                $title.html(_.escape(self.shoppingListCollection.get(shoppingListId).get('label')));
             });
         },
 

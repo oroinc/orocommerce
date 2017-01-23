@@ -7,6 +7,7 @@ use Doctrine\DBAL\Connection;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\AttachmentBundle\Entity\Attachment;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\FileManager;
@@ -19,9 +20,12 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
+use Oro\Bundle\RedirectBundle\Entity\Slug;
 
 class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     const PRODUCT_SKU = 'SKU-1';
     const PRODUCT_COPY_SKU = 'SKU-2';
     const PRODUCT_STATUS = Product::STATUS_DISABLED;
@@ -122,6 +126,9 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
         $this->duplicator->setSkuIncrementor($this->skuIncrementor);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testDuplicate()
     {
         $image = new File();
@@ -131,6 +138,10 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
         $productImage->setImage($image);
         $productImageCopy = new StubProductImage();
         $productImageCopy->setImage($imageCopy);
+
+        $productSlug = new Slug();
+        $productSlug->setUrl('/url');
+        $productSlug->setRouteName('route_name');
 
         $attachmentFile1 = new File();
         $attachmentFileCopy1 = new File();
@@ -142,8 +153,9 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
         $attachment2 = (new Attachment())
             ->setFile($attachmentFile2);
 
-        $product = (new Product())
-            ->setSku(self::PRODUCT_SKU)
+        /** @var Product $product */
+        $product = $this->getEntity(Product::class, ['id' => 42]);
+        $product->setSku(self::PRODUCT_SKU)
             ->setPrimaryUnitPrecision($this->prepareUnitPrecision(
                 self::UNIT_PRECISION_CODE_1,
                 self::UNIT_PRECISION_DEFAULT_PRECISION_1
@@ -152,6 +164,7 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
                 self::UNIT_PRECISION_CODE_2,
                 self::UNIT_PRECISION_DEFAULT_PRECISION_2
             ))
+            ->addSlug($productSlug)
             ->addName($this->prepareLocalizedValue(self::NAME_DEFAULT_LOCALE))
             ->addName($this->prepareLocalizedValue(self::NAME_CUSTOM_LOCALE))
             ->addDescription($this->prepareLocalizedValue(null, self::DESCRIPTION_DEFAULT_LOCALE))
@@ -190,6 +203,9 @@ class ProductDuplicatorTest extends \PHPUnit_Framework_TestCase
 
         $productCopy = $this->duplicator->duplicate($product);
         $productCopyUnitPrecisions = $productCopy->getUnitPrecisions();
+
+        $this->assertEmpty($productCopy->getSlugPrototypes());
+        $this->assertEmpty($productCopy->getSlugs());
 
         $this->assertEquals(self::PRODUCT_COPY_SKU, $productCopy->getSku());
         $this->assertEquals(self::PRODUCT_STATUS, $productCopy->getStatus());

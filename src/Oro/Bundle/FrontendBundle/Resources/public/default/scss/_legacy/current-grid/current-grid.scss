@@ -16,16 +16,6 @@
     justify-content: space-between;
   }
 
-  //Grid Toolbar tools
-  .grid-toolbar-tools {
-    order: 3;
-
-    text-align: right;
-
-    @media (max-width: $screen-md) {
-      order: 5;
-    }
-  }
 
   .page-size {
     flex-grow: 0;
@@ -91,13 +81,11 @@
     display: inline-block;
     vertical-align: middle;
     margin: 0;
-    order: 4;
 
     font-size: 0;
 
     @media (max-width: $screen-md) {
-      margin: 0 5px 10px 0;
-      order: 2;
+      margin: 0 0 10px;
     }
 
     .action {
@@ -123,7 +111,7 @@
 
 
       &.pressed {
-        box-shadow: inset 0 3px 5px 0 rgba(0, 0, 0, .35);
+        box-shadow: inset 0 3px 5px 0 rgba(0,0,0,.35);
       }
 
       i, [class^="fa-"] {
@@ -143,24 +131,27 @@
 
   //Columns manager
   .column-manager {
-    .column-manager-filter {
-      .column-manager-search {
-        input {
-          @include base-ui-element(
-                  $use-base-style: true,
-                  $padding: 5px 9px,
-                  $line-height: 1.43
-          );
+    .dropdown-menu {
+      right: calc(100% + 5px);
+      z-index: z('dropdown') * 10;
+    }
 
-          @include element-state('hover') {
-            border-color: $input-border-color-hover-state;
-            box-shadow: $input-box-shadow-hover-state;
-          }
+    .column-manager-search {
+      input {
+        @include base-ui-element(
+                $use-base-style: true,
+                $padding: 5px 9px,
+                $line-height: 1.43
+        );
 
-          @include element-state('focus') {
-            border-color: $input-border-color-focus-state;
-            box-shadow: $input-box-shadow-focus-state;
-          }
+        @include element-state('hover') {
+          border-color: $input-border-color-hover-state;
+          box-shadow: $input-box-shadow-hover-state;
+        }
+
+        @include element-state('focus') {
+          border-color: $input-border-color-focus-state;
+          box-shadow: $input-box-shadow-focus-state;
         }
       }
     }
@@ -205,38 +196,52 @@
       display: inline-block;
     }
 
+    .renderable td {
+      background: get-color('additional', 'base');
+    }
+
     td {
       padding: 5px;
       vertical-align: middle;
 
-      &:first-child {
-        padding-right: 10px;
-      }
+      white-space: nowrap;
+    }
 
+    .title-cell {
       label {
+        display: block;
         max-width: 95%;
 
         @include ellipsis();
       }
+    }
 
-      &.sort-cell {
-        > span {
-          position: relative;
+    .sort-cell {
+      > span {
+        position: relative;
 
-          display: block;
-          width: 20px;
+        display: inline-block;
+        width: 20px;
 
-          color: get-color('additional', 'dark');
+        text-align: center;
 
-          cursor: move;
-        }
+        color: get-color('additional', 'dark');
 
-        .btn {
-          padding: 0;
-          background: none;
-          border: 0;
-          line-height: normal;
-        }
+        cursor: move;
+      }
+
+      .btn {
+        padding: 0;
+
+        line-height: normal;
+
+        border: 0;
+        background: none;
+        box-shadow: none;
+      }
+
+      .handle {
+        margin-right: 0;
       }
     }
   }
@@ -275,13 +280,6 @@
   border: 0;
 
   background: get-color('additional', 'base');
-
-
-  &.filter-box_mobile {
-    padding: 0;
-
-    background: transparent;
-  }
 
   .filter-list {
     @media (max-width: $screen-md) {
@@ -615,6 +613,36 @@
           vertical-align: middle;
         }
       }
+
+      @media (max-width: $screen-md) {
+        .number-range-filter {
+          .filter-start {
+            input[type=text] {
+              width: 50px !important;
+            }
+          }
+          .filter-end {
+            input[type=text] {
+              width: 50px !important;
+            }
+          }
+          .value-field-frame {
+            padding-right: 0 !important;
+          }
+          .filter-value {
+            white-space: nowrap;
+          }
+          .product-price-filter {
+            display: inline-block;
+          }
+        }
+      }
+    }
+
+    @media (max-width: $screen-md) {
+      .filter-criteria {
+        min-width: 0 !important;
+      }
     }
   }
 
@@ -639,7 +667,13 @@
   }
 }
 
+.mobile-version .filter-box {
+  padding: 7px 11px;
+}
+
 .filter-container {
+  padding: 0 15px;
+
   .filter-items {
     display: flex;
     flex-wrap: wrap;
@@ -954,7 +988,7 @@
             border-radius: 0;
 
             text-align: left;
-            
+
             background: get-color('additional', 'base');
 
             > a,
@@ -1027,7 +1061,7 @@
 }
 
 //Remove code below, when grid styles will be free of platform styles
-//'.grid__row--has-child-grid' is used in account bundle on the address book page for addresses datagrid
+//'.grid__row--has-child-grid' is used in customer bundle on the address book page for addresses datagrid
 //It should remove this class too
 .grid__row--has-child-grid {
   .oro-datagrid {

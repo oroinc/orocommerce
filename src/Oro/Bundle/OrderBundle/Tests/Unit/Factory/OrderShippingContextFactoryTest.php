@@ -4,8 +4,8 @@ namespace Oro\Bundle\OrderBundle\Bundle\Tests\Unit\Factory;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
@@ -93,8 +93,8 @@ class OrderShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
         $currency = 'USD';
         $paymentMethod = 'SomePaymentMethod';
         $amount = 100;
-        $customer = $this->createMock(Account::class);
-        $customerUser = $this->createMock(AccountUser::class);
+        $customer = $this->createMock(Customer::class);
+        $customerUser = $this->createMock(CustomerUser::class);
 
         $this->paymentTransactionMock
             ->expects(static::once())
@@ -150,8 +150,8 @@ class OrderShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
             ->setLineItems($orderLineItemsCollection)
             ->setSubtotal($amount)
             ->setCurrency($currency)
-            ->setAccount($customer)
-            ->setAccountUser($customerUser);
+            ->setCustomer($customer)
+            ->setCustomerUser($customerUser);
 
         $this->contextBuilder
             ->method('setShippingAddress')
@@ -202,8 +202,8 @@ class OrderShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
         $currency = 'USD';
         $paymentMethod = 'SomePaymentMethod';
         $amount = 100;
-        $customer = $this->createMock(Account::class);
-        $customerUser = $this->createMock(AccountUser::class);
+        $customer = $this->createMock(Customer::class);
+        $customerUser = $this->createMock(CustomerUser::class);
 
         $this->paymentTransactionMock
             ->expects(static::once())
@@ -245,8 +245,8 @@ class OrderShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
             ->setLineItems($orderLineItemsCollection)
             ->setSubtotal($amount)
             ->setCurrency($currency)
-            ->setAccount($customer)
-            ->setAccountUser($customerUser);
+            ->setCustomer($customer)
+            ->setCustomerUser($customerUser);
 
         $this->contextBuilder
             ->method('setShippingAddress')

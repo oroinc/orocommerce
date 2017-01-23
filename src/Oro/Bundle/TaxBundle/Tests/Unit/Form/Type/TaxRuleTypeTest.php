@@ -9,7 +9,7 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Bundle\TaxBundle\Form\Type\TaxRuleType;
 use Oro\Bundle\TaxBundle\Form\Type\TaxType;
-use Oro\Bundle\TaxBundle\Form\Type\AccountTaxCodeAutocompleteType;
+use Oro\Bundle\TaxBundle\Form\Type\CustomerTaxCodeAutocompleteType;
 use Oro\Bundle\TaxBundle\Form\Type\ProductTaxCodeAutocompleteType;
 use Oro\Bundle\TaxBundle\Form\Type\TaxSelectType;
 use Oro\Bundle\TaxBundle\Form\Type\TaxJurisdictionSelectType;
@@ -38,12 +38,12 @@ class TaxRuleTypeTest extends FormIntegrationTestCase
             ProductTaxCodeAutocompleteType::NAME
         );
 
-        $accountTaxCodeAutocomplete = new EntityType(
+        $customerTaxCodeAutocomplete = new EntityType(
             [
-                1 => $this->getEntity('Oro\Bundle\TaxBundle\Entity\AccountTaxCode', ['id' => 1]),
-                2 => $this->getEntity('\Oro\Bundle\TaxBundle\Entity\AccountTaxCode', ['id' => 2])
+                1 => $this->getEntity('Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', ['id' => 1]),
+                2 => $this->getEntity('\Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', ['id' => 2])
             ],
-            AccountTaxCodeAutocompleteType::NAME
+            CustomerTaxCodeAutocompleteType::NAME
         );
 
         $taxSelect = new EntityType(
@@ -65,7 +65,7 @@ class TaxRuleTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    AccountTaxCodeAutocompleteType::NAME => $accountTaxCodeAutocomplete,
+                    CustomerTaxCodeAutocompleteType::NAME => $customerTaxCodeAutocomplete,
                     ProductTaxCodeAutocompleteType::NAME => $productTaxCodeAutocomplete,
                     TaxSelectType::NAME => $taxSelect,
                     TaxJurisdictionSelectType::NAME => $taxJurisdictionSelect
@@ -107,7 +107,7 @@ class TaxRuleTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create($this->formType);
 
         $this->assertTrue($form->has('description'));
-        $this->assertTrue($form->has('accountTaxCode'));
+        $this->assertTrue($form->has('customerTaxCode'));
         $this->assertTrue($form->has('productTaxCode'));
         $this->assertTrue($form->has('tax'));
     }
@@ -151,20 +151,20 @@ class TaxRuleTypeTest extends FormIntegrationTestCase
     public function submitDataProvider()
     {
         return [
-            'set account tax code' => [
+            'set customer tax code' => [
                 'options' => [],
                 'defaultData' => null,
                 'viewData' => null,
                 'submittedData' => [
                     'description' => 'description',
-                    'accountTaxCode' => 1,
+                    'customerTaxCode' => 1,
                     'productTaxCode' => null,
                     'tax' => 1,
                     'taxJurisdiction' => 1
                 ],
                 'expectedData' => [
                     'description' => 'description',
-                    'accountTaxCode' => $this->getEntity('Oro\Bundle\TaxBundle\Entity\AccountTaxCode', ['id' => 1]),
+                    'customerTaxCode' => $this->getEntity('Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', ['id' => 1]),
                     'productTaxCode' => null,
                     'tax' => $this->getEntity('Oro\Bundle\TaxBundle\Entity\Tax', ['id' => 1]),
                     'taxJurisdiction' =>
@@ -177,14 +177,14 @@ class TaxRuleTypeTest extends FormIntegrationTestCase
                 'viewData' => null,
                 'submittedData' => [
                     'description' => 'description product tax code',
-                    'accountTaxCode' => null,
+                    'customerTaxCode' => null,
                     'productTaxCode' => 1,
                     'tax' => 2,
                     'taxJurisdiction' => 2
                 ],
                 'expectedData' => [
                     'description' => 'description product tax code',
-                    'accountTaxCode' => null,
+                    'customerTaxCode' => null,
                     'productTaxCode' => $this->getEntity('Oro\Bundle\TaxBundle\Entity\ProductTaxCode', ['id' => 1]),
                     'tax' => $this->getEntity('Oro\Bundle\TaxBundle\Entity\Tax', ['id' => 2]),
                     'taxJurisdiction' =>

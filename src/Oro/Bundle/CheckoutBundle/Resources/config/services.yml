@@ -149,9 +149,9 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.frontend-checkouts-grid, method: onResultAfter }
 
     oro_checkout.datagrid.checkout_grid_column_filter:
-        class: 'Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridAccountUserNameListener'
+        class: 'Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridCustomerUserNameListener'
         arguments:
-            - '@oro_customer.security.account_user_provider'
+            - '@oro_customer.security.customer_user_provider'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-checkouts-grid, method: onBuildBefore }
 
@@ -253,8 +253,7 @@ services:
     oro_checkout.workflow_state.mapper.shipping_method_diff:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\ShippingMethodDiffMapper'
         arguments:
-            - '@oro_shipping.shipping_price.provider'
-            - '@oro_checkout.factory.shipping_context_factory'
+            - '@oro_checkout.shipping_method.provider_main'
         public: false
         tags:
             - { name: checkout.workflow_state.mapper }
@@ -262,7 +261,7 @@ services:
     oro_checkout.workflow_state.mapper.shipping_method_enabled:
         class: 'Oro\Bundle\CheckoutBundle\WorkflowState\Mapper\ShippingMethodEnabledMapper'
         arguments:
-            - '@oro_shipping.shipping_price.provider'
+            - '@oro_checkout.shipping_method.provider_main'
             - '@oro_checkout.factory.shipping_context_factory'
         public: false
         tags:
@@ -336,8 +335,14 @@ services:
     oro_checkout.action.default_shipping_method_setter:
         class: 'Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetter'
         arguments:
-            - '@oro_checkout.factory.shipping_context_factory'
-            - '@oro_shipping.shipping_price.provider'
+            - '@oro_checkout.shipping_method.provider_main'
+
+    oro_checkout.action.default_shipping_method_setter_decorator:
+        class: 'Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetterDecorator'
+        decorates: oro_checkout.action.default_shipping_method_setter
+        public: false
+        arguments:
+            - '@oro_checkout.action.default_shipping_method_setter_decorator.inner'
 
     oro_checkout.factory.shipping_context_factory:
         class: 'Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory'
@@ -393,3 +398,22 @@ services:
             - [setContainer, ["@service_container"]]
         tags:
             - { name: security.voter }
+
+    oro_checkout.shipping_method.provider_main:
+        parent: oro_checkout.shipping_method.price_provider_chain_element
+        tags:
+            - { name: layout.data_provider, alias: 'checkout_shipping_methods' }
+
+    oro_checkout.shipping_method.price_provider_chain_element:
+        class: 'Oro\Bundle\CheckoutBundle\Shipping\Method\Chain\Member\Price\PriceCheckoutShippingMethodsProviderChainElement'
+        arguments:
+            - '@oro_shipping.shipping_price.provider'
+            - '@oro_checkout.factory.shipping_context_factory'
+
+    oro_checkout.condition.checkout_has_applicable_shipping_methods:
+        class: 'Oro\Bundle\CheckoutBundle\Condition\CheckoutHasApplicableShippingMethods'
+        arguments:
+            - '@oro_checkout.shipping_method.provider_main'
+        tags:
+            - { name: oro_workflow.condition, alias: 'checkout_has_applicable_shipping_methods' }
+            - { name: oro_action.condition, alias: 'checkout_has_applicable_shipping_methods' }

@@ -5,7 +5,7 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\EventListener\Order;
 use Symfony\Component\Form\FormInterface;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
@@ -54,7 +54,7 @@ class TierPriceEventListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnOrderEvent()
     {
-        $account = new Account();
+        $customer = new Customer();
         $website = new Website();
 
         /** @var Product $product */
@@ -69,7 +69,7 @@ class TierPriceEventListenerTest extends \PHPUnit_Framework_TestCase
         $order = new Order();
         $order
             ->setCurrency('EUR')
-            ->setAccount($account)
+            ->setCustomer($customer)
             ->setWebsite($website)
             ->addLineItem($lineItem)
             ->addLineItem($lineItem2);
@@ -80,7 +80,7 @@ class TierPriceEventListenerTest extends \PHPUnit_Framework_TestCase
         $this->priceListTreeHandler
             ->expects($this->once())
             ->method('getPriceList')
-            ->with($account, $website)
+            ->with($customer, $website)
             ->willReturn($priceList);
 
         $prices = ['prices'];

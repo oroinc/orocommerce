@@ -64,19 +64,19 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param PaymentTerm $paymentTerm
-     * @param bool $account
+     * @param bool $customer
      * @param bool $group
      * @dataProvider getDeleteMessageTextDataProvider
      */
-    public function testGetDeleteMessageText(PaymentTerm $paymentTerm, $account, $group)
+    public function testGetDeleteMessageText(PaymentTerm $paymentTerm, $customer, $group)
     {
         $this->paymentTermManager->expects($this->exactly(2))->method('hasAssignedPaymentTerm')
-            ->willReturnOnConsecutiveCalls($account, $group);
+            ->willReturnOnConsecutiveCalls($customer, $group);
         $message = $this->extension->getDeleteMessageText($paymentTerm);
         $this->assertDeleteMessage(
             $message,
             $paymentTerm->getId(),
-            $account,
+            $customer,
             $group
         );
     }
@@ -111,38 +111,38 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit_Framework_TestCase
     /**
      * @param string $message
      * @param int $paymentTermId
-     * @param int $accountGroupCount
-     * @param int $accountCount
+     * @param int $customerGroupCount
+     * @param int $customerCount
      */
-    public function assertDeleteMessage($message, $paymentTermId, $accountGroupCount, $accountCount)
+    public function assertDeleteMessage($message, $paymentTermId, $customerGroupCount, $customerCount)
     {
         $message = unserialize($message);
 
-        $this->assertArrayHasKey('accountGroupFilterUrl', $message);
-        $this->assertArrayHasKey('accountFilterUrl', $message);
+        $this->assertArrayHasKey('customerGroupFilterUrl', $message);
+        $this->assertArrayHasKey('customerFilterUrl', $message);
 
-        if ($accountGroupCount) {
-            $accountGroupFilterUrl = unserialize($message['accountGroupFilterUrl']);
+        if ($customerGroupCount) {
+            $customerGroupFilterUrl = unserialize($message['customerGroupFilterUrl']);
             $this->assertDataFromDeleteMessage(
                 $paymentTermId,
-                $accountGroupFilterUrl,
+                $customerGroupFilterUrl,
                 DeleteMessageTextGenerator::ACCOUNT_GROUP_GRID_NAME,
-                'oro.customer.accountgroup.entity_label'
+                'oro.customer.customergroup.entity_label'
             );
         } else {
-            $this->assertNull($message['accountGroupFilterUrl']);
+            $this->assertNull($message['customerGroupFilterUrl']);
         }
 
-        if ($accountCount) {
-            $accountFilterUrl = unserialize($message['accountFilterUrl']);
+        if ($customerCount) {
+            $customerFilterUrl = unserialize($message['customerFilterUrl']);
             $this->assertDataFromDeleteMessage(
                 $paymentTermId,
-                $accountFilterUrl,
+                $customerFilterUrl,
                 DeleteMessageTextGenerator::ACCOUNT_GRID_NAME,
-                'oro.customer.account.entity_label'
+                'oro.customer.customer.entity_label'
             );
         } else {
-            $this->assertNull($message['accountFilterUrl']);
+            $this->assertNull($message['customerFilterUrl']);
         }
     }
 
@@ -152,24 +152,24 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit_Framework_TestCase
     public function getDeleteMessageTextDataProvider()
     {
         return [
-            'payment with account and account group' => [
+            'payment with customer and customer group' => [
                 'paymentTerm' => $this->getEntity(PaymentTerm::class, ['id' => 1]),
-                'account' => true,
+                'customer' => true,
                 'group' => true,
             ],
-            'payment only with account' => [
+            'payment only with customer' => [
                 'paymentTerm' => $this->getEntity(PaymentTerm::class, ['id' => 1]),
-                'account' => true,
+                'customer' => true,
                 'group' => false,
             ],
-            'payment only with account group' => [
+            'payment only with customer group' => [
                 'paymentTerm' => $this->getEntity(PaymentTerm::class, ['id' => 1]),
-                'account' => false,
+                'customer' => false,
                 'group' => true,
             ],
             'empty' => [
                 'paymentTerm' => $this->getEntity(PaymentTerm::class, ['id' => 1]),
-                'account' => false,
+                'customer' => false,
                 'group' => false,
             ],
         ];
@@ -199,13 +199,13 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param int $paymentTermId
-     * @param string $accountFilterUrl
+     * @param string $customerFilterUrl
      * @param string $gridName
      * @param string $label
      */
-    private function assertDataFromDeleteMessage($paymentTermId, $accountFilterUrl, $gridName, $label)
+    private function assertDataFromDeleteMessage($paymentTermId, $customerFilterUrl, $gridName, $label)
     {
-        $urlParameters = unserialize($accountFilterUrl['urlPath']);
+        $urlParameters = unserialize($customerFilterUrl['urlPath']);
 
         $this->assertEquals(
             $this->generateUrlParameters(
@@ -215,6 +215,6 @@ class DeleteMessageTextGeneratorTest extends \PHPUnit_Framework_TestCase
             $urlParameters
         );
 
-        $this->assertEquals($label, $accountFilterUrl['label']);
+        $this->assertEquals($label, $customerFilterUrl['label']);
     }
 }

@@ -5,7 +5,7 @@ namespace Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerCategoryVisibilityResolved;
 
 trait CategoryVisibilityResolvedTermTrait
 {
@@ -32,13 +32,13 @@ trait CategoryVisibilityResolvedTermTrait
      * @param int
      * @return string
      */
-    protected function getAccountGroupCategoryVisibilityResolvedTerm(
+    protected function getCustomerGroupCategoryVisibilityResolvedTerm(
         QueryBuilder $qb,
         Scope $scope,
         $configValue
     ) {
         $qb->leftJoin(
-            'Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountGroupCategoryVisibilityResolved',
+            'Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupCategoryVisibilityResolved',
             'agcvr',
             Join::WITH,
             $qb->expr()->andX(
@@ -51,7 +51,7 @@ trait CategoryVisibilityResolvedTermTrait
 
         return sprintf(
             'COALESCE(CASE WHEN agcvr.visibility = %s THEN %s ELSE agcvr.visibility END, 0) * 10',
-            AccountCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
+            CustomerCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
             $configValue
         );
     }
@@ -62,23 +62,23 @@ trait CategoryVisibilityResolvedTermTrait
      * @param int $configValue
      * @return string
      */
-    protected function getAccountCategoryVisibilityResolvedTerm(QueryBuilder $qb, Scope $scope, $configValue)
+    protected function getCustomerCategoryVisibilityResolvedTerm(QueryBuilder $qb, Scope $scope, $configValue)
     {
         $qb->leftJoin(
-            'Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountCategoryVisibilityResolved',
+            'Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerCategoryVisibilityResolved',
             'acvr',
             Join::WITH,
             $qb->expr()->andX(
                 $qb->expr()->eq($this->getRootAlias($qb), 'acvr.category'),
-                $qb->expr()->eq('acvr.scope', ':accountScope')
+                $qb->expr()->eq('acvr.scope', ':customerScope')
             )
         );
 
-        $qb->setParameter('accountScope', $scope);
+        $qb->setParameter('customerScope', $scope);
 
         return sprintf(
             'COALESCE(CASE WHEN acvr.visibility = %s THEN %s ELSE acvr.visibility END, 0) * 100',
-            AccountCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
+            CustomerCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
             $configValue
         );
     }
@@ -107,7 +107,7 @@ trait CategoryVisibilityResolvedTermTrait
         return sprintf(
             'CASE WHEN %1$s IS NOT NULL AND %1$s != %2$s THEN %1$s ELSE %3$s END',
             $select,
-            AccountCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
+            CustomerCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
             $configValue
         );
     }

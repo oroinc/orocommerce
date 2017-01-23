@@ -11,15 +11,15 @@ interface PriceListRequestHandlerInterface
     const WEBSITE_KEY = 'websiteId';
     const PRICE_LIST_CURRENCY_KEY = 'priceCurrencies';
     const PRICE_LIST_KEY = 'priceListId';
-    const ACCOUNT_ID_KEY = 'account_id';
+    const ACCOUNT_ID_KEY = 'customer_id';
 
     /**
      * On frontend returns PriceList for logged in user
-     * On backend returns PriceList for account specified in request
+     * On backend returns PriceList for customer specified in request
      *
      * @return BasePriceList
      */
-    public function getPriceListByAccount();
+    public function getPriceListByCustomer();
 
     /**
      * Return PriceLists by data from request or default

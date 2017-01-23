@@ -14,22 +14,22 @@ datagrids:
                     - invoice.updatedAt
                     - invoice.poNumber
                     - CONCAT(invoice_owner.firstName, ' ', invoice_owner.lastName) as owner
-                    - CONCAT(accountUser.firstName, ' ', accountUser.lastName) as accountUserName
-                    - account.name as accountName
+                    - CONCAT(customerUser.firstName, ' ', customerUser.lastName) as customerUserName
+                    - customer.name as customerName
                 from:
                     - { table: %oro_invoice.entity.invoice.class%, alias: invoice }
                 join:
                     left:
                         - { join: invoice.owner, alias: invoice_owner }
-                        - { join: invoice.accountUser, alias: accountUser }
-                        - { join: invoice.account, alias: account }
+                        - { join: invoice.customerUser, alias: customerUser }
+                        - { join: invoice.customer, alias: customer }
         columns:
             invoiceNumber:
                 label:         oro.invoice.invoice_number.label
-            accountName:
-                label:         oro.invoice.account.label
-            accountUserName:
-                label:         oro.invoice.account_user.label
+            customerName:
+                label:         oro.invoice.customer.label
+            customerUserName:
+                label:         oro.invoice.customer_user.label
             invoiceDate:
                 label:         oro.invoice.invoice_date.label
                 frontend_type: date
@@ -52,10 +52,10 @@ datagrids:
             columns:
                 invoiceNumber:
                     data_name: invoice.invoiceNumber
-                accountName:
-                    data_name: invoice.account
-                accountUserName:
-                    data_name: accountUserName
+                customerName:
+                    data_name: invoice.customer
+                customerUserName:
+                    data_name: customerUserName
                 owner:
                     data_name: invoice.owner
                 invoiceDate:
@@ -75,12 +75,12 @@ datagrids:
                 invoiceNumber:
                     type:      string
                     data_name: invoice.invoiceNumber
-                accountName:
+                customerName:
                     type:      string
-                    data_name: accountName
-                accountUserName:
+                    data_name: customerName
+                customerUserName:
                     type:      string
-                    data_name: accountUserName
+                    data_name: customerUserName
                 owner:
                     type:      string
                     data_name: invoice.owner

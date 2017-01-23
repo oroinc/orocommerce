@@ -16,6 +16,7 @@
 .container-fluid {
   max-width: $site-width;
   margin: 0 auto;
+  padding: 0 $offset-x-m;
 }
 
 //Links

@@ -88,7 +88,7 @@ class PayPalCreditCardPaymentMethodView implements PaymentMethodViewInterface
     {
         $response = new Response($paymentTransaction->getResponse());
 
-        $acct = $response->getOffset(GatewayOption\Account::ACCT);
+        $acct = $response->getOffset(GatewayOption\Customer::ACCT);
 
         return substr($acct, -4);
     }
