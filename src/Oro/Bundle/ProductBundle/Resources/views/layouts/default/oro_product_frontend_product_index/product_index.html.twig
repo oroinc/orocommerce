@@ -1,3 +1,40 @@
+{% block _category_picture_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' category-picture'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _category_picture_widget %}
+    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
+
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' category-picture__image',
+        alt: currentCategory.defaultTitle
+    }) %}
+
+    {% if currentCategory.largeImage %}
+        {% set attr = layout_attr_defaults(attr, {
+            src: Image.url(currentCategory.largeImage, 'product_original')
+        }) %}
+
+        <img {{ block('block_attributes') }}>
+    {% endif %}
+{% endblock %}
+
+{% block _category_title_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' category-title'
+    }) %}
+
+    <h1 {{ block('block_attributes') }}>
+        {{ currentCategory.defaultTitle }}
+    </h1>
+{% endblock %}
+
 {% block _product_grid_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'oroui/js/app/components/view-component',
@@ -15,8 +52,8 @@
 {% endblock %}
 
 {% block _product_search_navigation_widget %}
-    <div class="catalog-navigation-bar" data-page-component-module="oroproduct/js/app/components/breadcrumbs-navigation-block">
-        <span class="path-info">
+    <div class="breadcrumbs catalog-navigation-bar" data-page-component-module="oroproduct/js/app/components/breadcrumbs-navigation-block">
+        <span class="breadcrumbs__item path-info">
             {{ block('container_widget') }}
         </span>
         <span class="filters-info"></span>
