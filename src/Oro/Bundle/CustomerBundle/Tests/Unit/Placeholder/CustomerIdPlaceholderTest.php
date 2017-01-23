@@ -1,9 +1,9 @@
 <?php
 
-namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Placeholder;
+namespace Oro\Bundle\CustomerBundle\Tests\Unit\Placeholder;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\WebsiteSearchBundle\Placeholder\CustomerIdPlaceholder;
+use Oro\Bundle\CustomerBundle\Placeholder\CustomerIdPlaceholder;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
@@ -33,7 +33,7 @@ class CustomerIdPlaceholderTest extends \PHPUnit_Framework_TestCase
     public function testGetPlaceholder()
     {
         $this->assertInternalType('string', $this->placeholder->getPlaceholder());
-        $this->assertEquals('ACCOUNT_ID', $this->placeholder->getPlaceholder());
+        $this->assertEquals('CUSTOMER_ID', $this->placeholder->getPlaceholder());
     }
 
     public function testGetValueWhenTokenIsNull()
@@ -91,7 +91,7 @@ class CustomerIdPlaceholderTest extends \PHPUnit_Framework_TestCase
     {
         $this->assertEquals(
             'visibility_customer_1',
-            $this->placeholder->replace('visibility_customer_ACCOUNT_ID', [CustomerIdPlaceholder::NAME => 1])
+            $this->placeholder->replace('visibility_customer_CUSTOMER_ID', [CustomerIdPlaceholder::NAME => 1])
         );
     }
 }

@@ -1,14 +1,15 @@
 <?php
 
-namespace Oro\Bundle\WebsiteSearchBundle\Placeholder;
+namespace Oro\Bundle\CustomerBundle\Placeholder;
 
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
+use Oro\Bundle\WebsiteSearchBundle\Placeholder\AbstractPlaceholder;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class CustomerIdPlaceholder extends AbstractPlaceholder
 {
-    const NAME = 'ACCOUNT_ID';
+    const NAME = 'CUSTOMER_ID';
 
     /**
      * @var TokenStorageInterface

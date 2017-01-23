@@ -671,3 +671,11 @@ services:
             - '@security.token_storage'
             - '@logger'
             - '@security.authentication.manager'
+
+    oro_customer.customer_id.placeholder:
+        class: 'Oro\Bundle\CustomerBundle\Placeholder\CustomerIdPlaceholder'
+        public: false
+        arguments:
+            - '@security.token_storage'
+        tags:
+            - { name: website_search.placeholder }
