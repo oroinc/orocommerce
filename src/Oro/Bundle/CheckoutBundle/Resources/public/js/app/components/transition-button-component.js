@@ -39,7 +39,7 @@ define(function(require) {
             }
             this.onReady();
         },
-        
+
         onReady: function() {
             if (this.options.enabled) {
                 this.$el.prop('disabled', false);

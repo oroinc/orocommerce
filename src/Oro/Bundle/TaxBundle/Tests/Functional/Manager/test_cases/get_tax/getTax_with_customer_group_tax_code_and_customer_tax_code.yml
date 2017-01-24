@@ -2,65 +2,66 @@ method: getTax
 reference: simple_order
 configuration: { use_as_base_by_default: destination }
 databaseBefore:
+    'Oro\Bundle\OrderBundle\Entity\OrderAddress':
+        us_ca_billing_address:
+            country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+            region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-CA' } }
     'Oro\Bundle\CustomerBundle\Entity\Customer':
         customer.with_group:
-            name: { property_value: customer.with_group }
-            group: { reference: customer_group.group1 }
+            name: customer.with_group
+            group: { class: 'Oro\Bundle\CustomerBundle\Entity\CustomerGroup', query: { name: 'customer_group.group1' } }
     'Oro\Bundle\OrderBundle\Entity\Order':
         simple_order:
-            poNumber: { property_value: simple_order }
-            customer: { reference: customer.with_group }
-            currency: 'USD'
-            billingAddress:
-                class: 'Oro\Bundle\OrderBundle\Entity\OrderAddress'
-                property_value:
-                    country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
-                    region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-CA' } }
-            shippingAddress:
-                class: 'Oro\Bundle\OrderBundle\Entity\OrderAddress'
-                property_value:
-                    country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
-                    region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-CA' } }
+            poNumber: simple_order
+            customer: '@customer.with_group'
+            currency: USD
+            billingAddress: '@us_ca_billing_address'
+            shippingAddress: '@us_ca_billing_address'
+    'Oro\Bundle\CurrencyBundle\Entity\Price':
+        usd_price_15.99:
+            value: 15.99
+            currency: USD
+        usd_price_5.55:
+            value: 5.55
+            currency: USD
     'Oro\Bundle\OrderBundle\Entity\OrderLineItem':
         order_line_item_1:
-            productSku: { property_value: order_line_item_1 }
-            order: { reference: simple_order }
-            quantity: { property_value: 5 }
-            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '15.99', currency: USD } }
+            productSku: order_line_item_1
+            order: '@simple_order'
+            quantity: 5
+            price: '@usd_price_15.99'
             product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-1' } }
         order_line_item_2:
-            productSku: { property_value: order_line_item_2 }
-            order: { reference: simple_order }
-            quantity: { property_value: 6 }
-            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '5.55', currency: USD } }
+            productSku: order_line_item_2
+            order: '@simple_order'
+            quantity: 6
+            price: '@usd_price_5.55'
             product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-2' } }
     'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode':
         customer_tax_code.group_tax_code:
-            code: { property_value: 'customer_tax_code.group_tax_code' }
+            code: customer_tax_code.group_tax_code
             customerGroups:
-                property_value:
-                    - { reference: customer_group.group1 }
+                - { class: 'Oro\Bundle\CustomerBundle\Entity\CustomerGroup', query: { name: 'customer_group.group1' } }
         customer_tax_code.customer_tax_code:
-            code: { property_value: 'customer_tax_code.customer_tax_code' }
+            code: customer_tax_code.customer_tax_code
             customers:
-                property_value:
-                    - { reference: customer.with_group }
+                - '@customer.with_group'
     'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction':
         new_jurisdiction:
-            code: { property_value: new_jurisdiction }
+            code: new_jurisdiction
             country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
             region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-CA' } }
     'Oro\Bundle\TaxBundle\Entity\TaxRule':
         tax_rule.with_group:
             tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX2' } }
-            taxJurisdiction: { reference: new_jurisdiction }
+            taxJurisdiction: '@new_jurisdiction'
             productTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode', query: { code: 'TAX1' } }
-            customerTaxCode: { reference: customer_tax_code.group_tax_code }
+            customerTaxCode: '@customer_tax_code.group_tax_code'
         tax_rule.wit_customer:
             tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }
-            taxJurisdiction: { reference: new_jurisdiction }
+            taxJurisdiction: '@new_jurisdiction'
             productTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode', query: { code: 'TAX1' } }
-            customerTaxCode: { reference: customer_tax_code.customer_tax_code }
+            customerTaxCode: '@customer_tax_code.customer_tax_code'
 expectedResult:
     total:
         includingTax: '124.57' # 87.945 + 36.63 + -0.005

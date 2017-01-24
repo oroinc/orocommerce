@@ -26,7 +26,7 @@ define(function(require) {
                 'click',
                 this.options.defaultSelector,
                 _.bind(
-                    function (e) {
+                    function(e) {
                         this.onDefaultChange($(e.target));
                     },
                     this
@@ -52,7 +52,7 @@ define(function(require) {
                 this.checkDefaultVariant();
             }
         },
-        
+
         checkDefaultVariant: function() {
             var $default = this.$el.find(this.options.defaultSelector + ':not(:checked)').first();
             $default.prop('checked', true).trigger('change');
@@ -60,7 +60,7 @@ define(function(require) {
             this.onDefaultChange($default);
         },
 
-        onDefaultChange: function ($default) {
+        onDefaultChange: function($default) {
             this.$el.find('.' + this.options.defaultItemClass).removeClass(this.options.defaultItemClass);
             $default.closest(this.options.itemSelector).addClass(this.options.defaultItemClass);
         }

@@ -4,51 +4,50 @@ configuration: { use_as_base_by_default: destination }
 databaseBefore:
     'Oro\Bundle\CustomerBundle\Entity\Customer':
         customer.TAX3:
-            name: { property_value: customer.TAX3 }
+            name: customer.TAX3
+    'Oro\Bundle\OrderBundle\Entity\OrderAddress':
+        us_ca_billing_address:
+            country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+            region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-CA' } }
     'Oro\Bundle\OrderBundle\Entity\Order':
         simple_order:
-            poNumber: { property_value: simple_order }
-            customer: { reference: customer.TAX3 }
-            currency: 'USD'
-            billingAddress:
-                class: 'Oro\Bundle\OrderBundle\Entity\OrderAddress'
-                property_value:
-                    country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
-                    region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-CA' } }
-            shippingAddress:
-                class: 'Oro\Bundle\OrderBundle\Entity\OrderAddress'
-                property_value:
-                    country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
-                    region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-CA' } }
+            poNumber: simple_order
+            customer: '@customer.TAX3'
+            currency: USD
+            billingAddress: '@us_ca_billing_address'
+            shippingAddress: '@us_ca_billing_address'
+    'Oro\Bundle\CurrencyBundle\Entity\Price':
+        usd_price_20.00:
+            value: 20.00
+            currency: USD
     'Oro\Bundle\OrderBundle\Entity\OrderLineItem':
         order_line_item_1:
-            productSku: { property_value: order_line_item_1 }
-            order: { reference: simple_order }
-            quantity: { property_value: 5 }
-            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '20.00', currency: USD } }
+            productSku: order_line_item_1
+            order: '@simple_order'
+            quantity: 5
+            price: '@usd_price_20.00'
             product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-1' } }
     'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction':
         us_any_state_jurisdiction_code:
-            code: { property_value: us_any_state_jurisdiction_code }
+            code: us_any_state_jurisdiction_code
             country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
             region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-CA' } }
     'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode':
         customer_tax_code.TAX3:
-            code: { property_value: 'TAX3' }
-            description: { property_value: 'TAX3 customer tax code description' }
+            code: TAX3
+            description: 'TAX3 customer tax code description'
             customers:
-                property_value:
-                    - { reference: customer.TAX3 }
+                - '@customer.TAX3'
     'Oro\Bundle\TaxBundle\Entity\TaxRule':
         tax_rule.TAX3:
             tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }
-            taxJurisdiction: { reference: us_any_state_jurisdiction_code }
-            productTaxCode: { reference: product_tax_code.TAX1 }
-            customerTaxCode: { reference: customer_tax_code.TAX3 }
+            taxJurisdiction: '@us_any_state_jurisdiction_code'
+            productTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode', query: { code: 'TAX1' } }
+            customerTaxCode: '@customer_tax_code.TAX3'
         tax_rule.TAX4:
             tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX2' } }
-            taxJurisdiction: { reference: us_any_state_jurisdiction_code }
-            productTaxCode: { reference: product_tax_code.TAX1 }
+            taxJurisdiction: '@us_any_state_jurisdiction_code'
+            productTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode', query: { code: 'TAX1' } }
 expectedResult:
     total:
         includingTax: '110'

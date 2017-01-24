@@ -136,7 +136,8 @@ class PaymentStatusManagerTest extends \PHPUnit_Framework_TestCase
             ->with(PaymentStatus::class)
             ->willReturn($emMock);
 
-        $emMock->expects($this->once())->method('persist');
+        $emMock->expects($this->once())->method('persist')->with($this->isInstanceOf(PaymentStatus::class));
+        $emMock->expects($this->once())->method('flush')->with($this->isInstanceOf(PaymentStatus::class));
 
         return $repositoryMock;
     }

@@ -5,14 +5,15 @@ namespace Oro\Bundle\VisibilityBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadScopeCustomerGroupDemoData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductDemoData;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -20,9 +21,11 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
     DependentFixtureInterface,
     ContainerAwareInterface
 {
-    /** @var ContainerInterface */
+    /**
+     * @var ContainerInterface
+     */
     protected $container;
-    
+
     /**
      * {@inheritdoc}
      */
@@ -30,7 +33,7 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
     {
         $this->container = $container;
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -44,63 +47,24 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
     }
 
     /**
-     * @param ObjectManager $manager
-     * @param string $sku
-     * @return Product
+     * {@inheritdoc}
      */
-    protected function getProduct(ObjectManager $manager, $sku)
+    public function load(ObjectManager $manager)
     {
-        return $manager->getRepository('OroProductBundle:Product')->findOneBySku($sku);
-    }
+        $this->resetVisibilities($manager);
 
-    /**
-     * @param ObjectManager $manager
-     * @param int $id
-     * @return Scope
-     */
-    protected function getScopeCustomer(ObjectManager $manager, $id)
-    {
-        return $manager->getRepository('OroScopeBundle:Scope')->findOneBy(['id' => $id]);
-    }
+        $locator = $this->container->get('file_locator');
+        $filePath = $locator->locate($this->getDataFile());
+        $handler = fopen($filePath, 'r');
+        $headers = fgetcsv($handler, 1000, ',');
 
-    /**
-     * @param ObjectManager $manager
-     * @param int $id
-     * @return Scope
-     */
-    protected function getCustomerGroup(ObjectManager $manager, $id)
-    {
-        return $manager->getRepository('OroScopeBundle:Scope')->findOneBy(['id' => $id]);
-    }
+        while (($data = fgetcsv($handler, 1000, ',')) !== false) {
+            $row = array_combine($headers, array_values($data));
+            $this->setProductVisibility($manager, $row);
+        }
 
-    /**
-     * @param ObjectManager $manager
-     * @param string $class
-     * @param array $criteria
-     * @return object
-     */
-    protected function findVisibilityEntity(ObjectManager $manager, $class, array $criteria)
-    {
-        return $manager->getRepository($class)->findOneBy($criteria);
-    }
-
-    /**
-     * @param ObjectManager $manager
-     * @param VisibilityInterface $visibility
-     * @param Product $product
-     * @param string $visibilityValue
-     */
-    protected function saveVisibility(
-        ObjectManager $manager,
-        VisibilityInterface $visibility,
-        Product $product,
-        $visibilityValue
-    ) {
-        $visibility->setTargetEntity($product)->setVisibility($visibilityValue);
-        $scopeManager = $this->container->get('oro_scope.manager.scope_manager');
-        $visibility->setScope($scopeManager->findOrCreate('visibility', $visibility));
-
-        $manager->persist($visibility);
+        fclose($handler);
+        $manager->flush();
     }
 
     /**
@@ -139,33 +103,49 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
     /**
      * @param ObjectManager $manager
      * @param array $row
-     * @param Product $product
-     * @param string $visibility
+     * @throws \Exception
      */
-    protected function setProductVisibility(ObjectManager $manager, $row, $product, $visibility)
+    protected function setProductVisibility(ObjectManager $manager, array $row)
     {
+        $scopeProvider = $this->container->get('oro_visibility.provider.visibility_scope_provider');
+        $product = $manager->getRepository('OroProductBundle:Product')->findOneBySku($row['product']);
+        $website = $this->getWebsite($manager, $row);
+
         if ($row['all']) {
-            $productVisibility = $this->findVisibilityEntity(
-                $manager,
-                'Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility',
-                ['product' => $product]
-            );
-            if (!$productVisibility) {
-                $productVisibility = new ProductVisibility();
+            $visibility = $manager->getRepository(ProductVisibility::class)->findOneBy(['product' => $product]);
+            if (!$visibility) {
+                $visibility = new ProductVisibility();
             }
-            $this->saveVisibility($manager, $productVisibility, $product, $visibility);
+            $visibility->setScope($scopeProvider->getProductVisibilityScope($website));
+        } elseif ($row['customer']) {
+            $visibility = new CustomerProductVisibility();
+            $customer = $manager->getRepository(Customer::class)->findOneByName($row['customer']);
+            $scope = $scopeProvider->getCustomerProductVisibilityScope($customer, $website);
+            $visibility->setScope($scope);
+        } elseif ($row['customerGroup']) {
+            $visibility = new CustomerGroupProductVisibility();
+            $customerGroup = $manager->getRepository(CustomerGroup::class)->findOneByName($row['customerGroup']);
+            $scope = $scopeProvider->getCustomerGroupProductVisibilityScope($customerGroup, $website);
+            $visibility->setScope($scope);
+        } else {
+            throw new \Exception("Visibility type undefined");
         }
 
-        if ($row['scopeCustomer']) {
-            $customerVisibility = new CustomerProductVisibility();
-            $customerVisibility->setScope($this->getScopeCustomer($manager, $row['scopeCustomer']));
-            $this->saveVisibility($manager, $customerVisibility, $product, $visibility);
-        }
+        $visibility->setVisibility($row['visibility'])
+            ->setProduct($product);
 
-        if ($row['scopeCustomerGroup']) {
-            $customerGroupVisibility = new CustomerGroupProductVisibility();
-            $customerGroupVisibility->setScope($this->getScopeCustomerGroup($manager, $row['scopeCustomerGroup']));
-            $this->saveVisibility($manager, $customerGroupVisibility, $product, $visibility);
-        }
+        $manager->persist($visibility);
     }
+
+    /**
+     * @param ObjectManager $manager
+     * @param array $row
+     * @return Website
+     */
+    abstract protected function getWebsite(ObjectManager $manager, array $row);
+
+    /**
+     * @return string
+     */
+    abstract protected function getDataFile();
 }

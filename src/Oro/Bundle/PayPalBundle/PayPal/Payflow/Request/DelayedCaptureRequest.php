@@ -20,7 +20,8 @@ class DelayedCaptureRequest extends AbstractRequest
             ->addOption(new Option\Amount(false))
             ->addOption(new Option\CaptureComplete())
             ->addOption(new Option\OriginalTransaction())
-            ->addOption(new Option\Verbosity());
+            ->addOption(new Option\Verbosity())
+            ->addOption(new Option\ButtonSource());
 
         return $this;
     }

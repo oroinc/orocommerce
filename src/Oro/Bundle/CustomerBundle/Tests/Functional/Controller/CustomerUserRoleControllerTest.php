@@ -163,7 +163,12 @@ class CustomerUserRoleControllerTest extends WebTestCase
             $this->getUrl('oro_customer_customer_user_role_view', ['id' => $id])
         );
 
-        $this->assertResponseStatusCodeEquals($this->client->getResponse(), 200);
+        $response = $this->client->getResponse();
+        $this->assertResponseStatusCodeEquals($response, 200);
+
+        $this->assertEquals(4, substr_count($response->getContent(), '[Quote]'));
+        $this->assertContains('Audit history for Customer User', $response->getContent());
+        $this->assertNotContains('Access system information', $response->getContent());
 
         // Check datagrid
         $response = $this->client->requestGrid(

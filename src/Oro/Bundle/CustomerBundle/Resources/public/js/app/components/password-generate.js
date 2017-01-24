@@ -1,15 +1,15 @@
 /*jslint nomen:true*/
 /*global define*/
-define(function (require) {
+define(function(require) {
     'use strict';
 
-    var PasswordGenerateComponent,
-        BaseComponent = require('oroui/js/app/components/base/component'),
-        $ = require('jquery'),
-        _ = require('underscore');
+    var PasswordGenerateComponent;
+    var BaseComponent = require('oroui/js/app/components/base/component');
+    var $ = require('jquery');
+    var _ = require('underscore');
 
     PasswordGenerateComponent = BaseComponent.extend({
-        initialize: function (options) {
+        initialize: function(options) {
             this.$el = $('.' + options.class);
             this.passwordInput = $('.' + options.targetClass + ' input');
 
@@ -18,8 +18,7 @@ define(function (require) {
             this.$el.click(_.bind(this.togglePassword, this));
         },
 
-        togglePassword: function()
-        {
+        togglePassword: function() {
             if (this.$el.is(':checked')) {
                 this.passwordInput.attr('disabled', true);
             } else {

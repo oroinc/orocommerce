@@ -33,11 +33,11 @@ define(function(require) {
          *
          * @param {jQuery.Event} e
          */
-        toggleTableVisibility: function(e){
+        toggleTableVisibility: function(e) {
             var table = this.$el.find('table');
             var elements = this.$el.find('table tr[data-content*="shippingTrackings"]');
 
-            if (elements.length < 1 || (elements.length == 1 && e.type == 'content:remove')) {
+            if (elements.length < 1 || (elements.length === 1 && e.type === 'content:remove')) {
                 table.hide();
             } else {
                 table.show();
