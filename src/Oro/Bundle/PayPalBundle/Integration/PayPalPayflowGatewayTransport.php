@@ -33,7 +33,7 @@ class PayPalPayflowGatewayTransport implements TransportInterface
       */
     public function getSettingsEntityFQCN()
     {
-            return PayPalSettings::class;
+        return PayPalSettings::class;
     }
 
      /**

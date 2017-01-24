@@ -3,9 +3,9 @@
 namespace Oro\Bundle\PaymentBundle\Form\Type;
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProviderInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
-use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistry;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
+use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistryInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -18,22 +18,22 @@ class PaymentMethodConfigType extends AbstractType
     const NAME = 'oro_payment_method_config';
 
     /**
-     * @var PaymentMethodProvidersRegistry
+     * @var PaymentMethodProvidersRegistryInterface
      */
     protected $methodRegistry;
 
     /**
-     * @var PaymentMethodViewProvidersRegistry
+     * @var PaymentMethodViewProvidersRegistryInterface
      */
     protected $methodViewRegistry;
 
     /**
-     * @param PaymentMethodProvidersRegistry $methodRegistry
-     * @param PaymentMethodViewProvidersRegistry $methodViewRegistry
+     * @param PaymentMethodProvidersRegistryInterface $methodRegistry
+     * @param PaymentMethodViewProvidersRegistryInterface $methodViewRegistry
      */
     public function __construct(
-        PaymentMethodProvidersRegistry $methodRegistry,
-        PaymentMethodViewProvidersRegistry $methodViewRegistry
+        PaymentMethodProvidersRegistryInterface $methodRegistry,
+        PaymentMethodViewProvidersRegistryInterface $methodViewRegistry
     ) {
         $this->methodRegistry = $methodRegistry;
         $this->methodViewRegistry = $methodViewRegistry;

@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\PaymentBundle\Condition;
 
+use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
 
 /**
  * Check payment method supports action
@@ -20,7 +20,7 @@ class PaymentMethodSupports extends AbstractCondition implements ContextAccessor
 
     const NAME = 'payment_method_supports';
 
-    /** @var PaymentMethodProvidersRegistry */
+    /** @var PaymentMethodProvidersRegistryInterface */
     protected $paymentMethodRegistry;
 
     /** @var string */
@@ -30,9 +30,9 @@ class PaymentMethodSupports extends AbstractCondition implements ContextAccessor
     protected $actionName;
 
     /**
-     * @param PaymentMethodProvidersRegistry $paymentMethodRegistry
+     * @param PaymentMethodProvidersRegistryInterface $paymentMethodRegistry
      */
-    public function __construct(PaymentMethodProvidersRegistry $paymentMethodRegistry)
+    public function __construct(PaymentMethodProvidersRegistryInterface $paymentMethodRegistry)
     {
         $this->paymentMethodRegistry = $paymentMethodRegistry;
     }

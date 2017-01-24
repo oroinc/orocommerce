@@ -5,8 +5,8 @@ namespace Oro\Bundle\AlternativeBundle\Tests\Unit\Layout\DataProvider;
 use Oro\Bundle\AlternativeCheckoutBundle\Layout\DataProvider\PaymentTermViewProvider;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProviderInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
+use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistry;
 use Oro\Bundle\PaymentTermBundle\Method\PaymentTerm;
@@ -24,7 +24,7 @@ class PaymentTermViewProviderTest extends \PHPUnit_Framework_TestCase
     protected $paymentMethodViewRegistry;
 
     /**
-     * @var PaymentMethodProvidersRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentMethodProvidersRegistryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $paymentMethodRegistry;
 
@@ -37,7 +37,7 @@ class PaymentTermViewProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->paymentMethodViewRegistry = $this->createMock(PaymentMethodViewProvidersRegistry::class);
 
-        $this->paymentMethodRegistry = $this->createMock(PaymentMethodProvidersRegistry::class);
+        $this->paymentMethodRegistry = $this->createMock(PaymentMethodProvidersRegistryInterface::class);
 
         $this->provider = new PaymentTermViewProvider(
             $this->paymentMethodViewRegistry,

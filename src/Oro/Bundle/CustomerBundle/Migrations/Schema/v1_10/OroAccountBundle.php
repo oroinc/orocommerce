@@ -171,34 +171,69 @@ class OroAccountBundle implements
                 $query->setFieldName($relation);
                 $queries->addPostQuery($query);
             }
+
+            $this->migrateConfig(
+                $configManager,
+                'Oro\Bundle\NoteBundle\Entity\Note',
+                'Oro\Bundle\CustomerBundle\Entity\Customer',
+                $relation,
+                'customer_71cbb705',
+                RelationType::MANY_TO_MANY
+            );
         }
 
         $possibleTableNames = [
             'oro_rel_c3990ba6b28b6f382b5af2',
             'oro_rel_c3990ba6b28b6f383f1392',
         ];
-        foreach ($possibleTableNames as $tableName) {
-            if ($schema->hasTable($tableName)) {
-                $table = $schema->getTable($tableName);
-                $table->removeForeignKey($this->getConstraintName($table, "account_id"));
-                foreach ($table->getIndexes() as $index) {
-                    if ($index->getColumns() === ['account_id']) {
-                        $table->dropIndex($index->getName());
+        if ($schema->hasTable('oro_rel_c3990ba6784fec5f6e321b')) {
+            foreach ($possibleTableNames as $tableName) {
+                if ($schema->hasTable($tableName)) {
+                    $schema->dropTable($tableName);
+                }
+            }
+            $table = $schema->getTable('oro_rel_c3990ba6784fec5f6e321b');
+            $table->removeForeignKey($this->getConstraintName($table, "account_id"));
+            foreach ($table->getIndexes() as $index) {
+                if ($index->getColumns() === ['account_id']) {
+                    $table->dropIndex($index->getName());
+                }
+            }
+            $this->renameExtension->renameColumn(
+                $schema,
+                $queries,
+                $table,
+                'account_id',
+                'customer_id'
+            );
+        } else {
+            foreach ($possibleTableNames as $tableName) {
+                if ($schema->hasTable($tableName)) {
+                    if (!$schema->hasTable('oro_rel_c3990ba6784fec5f6e321b')) {
+                        $schema->dropTable($tableName);
+                    } else {
+                        $table = $schema->getTable($tableName);
+                        $table->removeForeignKey($this->getConstraintName($table, "account_id"));
+                        foreach ($table->getIndexes() as $index) {
+                            if ($index->getColumns() === ['account_id']) {
+                                $table->dropIndex($index->getName());
+                            }
+                        }
+                        $this->renameExtension->renameColumn(
+                            $schema,
+                            $queries,
+                            $table,
+                            'account_id',
+                            'customer_id'
+                        );
+                        $this->renameExtension->renameTable(
+                            $schema,
+                            $queries,
+                            $tableName,
+                            'oro_rel_c3990ba6784fec5f6e321b'
+                        );
                     }
                 }
-                $this->renameExtension->renameColumn(
-                    $schema,
-                    $queries,
-                    $table,
-                    'account_id',
-                    'customer_id'
-                );
-                $this->renameExtension->renameTable(
-                    $schema,
-                    $queries,
-                    $tableName,
-                    'oro_rel_c3990ba6784fec5f6e321b'
-                );
             }
         }
         if ($schema->hasTable('oro_rel_6f8f552ab28b6f38cd148c')) {
@@ -281,6 +316,8 @@ class OroAccountBundle implements
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     *
      * @param Schema $schema
      * @param QueryBag $queries
      */
@@ -323,29 +360,66 @@ class OroAccountBundle implements
             'oro_rel_c3990ba69df6f4d8894a76',
             'oro_rel_c3990ba69df6f4d84415b1',
         ];
-        foreach ($possibleTableNames as $tableName) {
-            if ($schema->hasTable($tableName)) {
-                $table = $schema->getTable($tableName);
-                $table->removeForeignKey($this->getConstraintName($table, "accountuserrole_id"));
-                foreach ($table->getIndexes() as $index) {
-                    if ($index->getColumns() === ['accountuserrole_id']) {
-                        $table->dropIndex($index->getName());
-                    }
+        if ($schema->hasTable('oro_rel_c3990ba6d7fa01cd30d950')) {
+            foreach ($possibleTableNames as $tableName) {
+                if ($schema->hasTable($tableName)) {
+                    $schema->dropTable($tableName);
                 }
-                $this->renameExtension->renameColumn(
-                    $schema,
-                    $queries,
-                    $table,
-                    'accountuserrole_id',
-                    'customeruserrole_id'
-                );
-                $this->renameExtension->renameTable(
-                    $schema,
-                    $queries,
-                    $tableName,
-                    'oro_rel_c3990ba6d7fa01cd30d950'
-                );
             }
+            $table = $schema->getTable('oro_rel_c3990ba6d7fa01cd30d950');
+            $table->removeForeignKey($this->getConstraintName($table, "accountuserrole_id"));
+            foreach ($table->getIndexes() as $index) {
+                if ($index->getColumns() === ['accountuserrole_id']) {
+                    $table->dropIndex($index->getName());
+                }
+            }
+            $this->renameExtension->renameColumn(
+                $schema,
+                $queries,
+                $table,
+                'accountuserrole_id',
+                'customeruserrole_id'
+            );
+        } else {
+            $renamed = false;
+            foreach ($possibleTableNames as $tableName) {
+                if ($schema->hasTable($tableName)) {
+                    if ($renamed) {
+                        $schema->dropTable($tableName);
+                        continue;
+                    }
+                    $table = $schema->getTable($tableName);
+                    $table->removeForeignKey($this->getConstraintName($table, "accountuserrole_id"));
+                    foreach ($table->getIndexes() as $index) {
+                        if ($index->getColumns() === ['accountuserrole_id']) {
+                            $table->dropIndex($index->getName());
+                        }
+                    }
+                    $this->renameExtension->renameColumn(
+                        $schema,
+                        $queries,
+                        $table,
+                        'accountuserrole_id',
+                        'customeruserrole_id'
+                    );
+                    $this->renameExtension->renameTable(
+                        $schema,
+                        $queries,
+                        $tableName,
+                        'oro_rel_c3990ba6d7fa01cd30d950'
+                    );
+                    $renamed = true;
+                }
+            }
+        }
+        if ($schema->hasTable('oro_rel_6f8f552a9df6f4d81e2432') && $schema->getTable('oro_rel_6f8f552a9df6f4d81e2432')
+                ->hasColumn('accountuserrole_id')
+        ) {
+            $table = $schema->getTable('oro_rel_6f8f552a9df6f4d81e2432');
+            $fk = $this->getConstraintName($table, 'accountuserrole_id');
+            $table->removeForeignKey($fk);
+            $this->renameExtension
+                ->renameColumn($schema, $queries, $table, 'accountuserrole_id', 'customeruserrole_id');
         }
 
         $possibleActivityRelations = [
@@ -537,6 +611,9 @@ class OroAccountBundle implements
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     *
      * @param Schema $schema
      * @param QueryBag $queries
      */
@@ -577,6 +654,14 @@ class OroAccountBundle implements
             }
             $this->migrateConfig(
                 $configManager,
+                'Oro\Bundle\NoteBundle\Entity\Note',
+                'Oro\Bundle\CustomerBundle\Entity\CustomerGroup',
+                $relation,
+                'customer_group_4f9aa384',
+                RelationType::MANY_TO_MANY
+            );
+            $this->migrateConfig(
+                $configManager,
                 'Oro\Bundle\ActivityListBundle\Entity\ActivityList',
                 'Oro\Bundle\CustomerBundle\Entity\CustomerGroup',
                 $relation,
@@ -589,20 +674,39 @@ class OroAccountBundle implements
             'oro_rel_c3990ba665864788b74044',
             'oro_rel_c3990ba6658647885abb70',
         ];
-        foreach ($tables as $tableName) {
-            if ($schema->hasTable($tableName)) {
-                $table = $schema->getTable($tableName);
-                $fk = $this->getConstraintName($table, 'accountgroup_id');
-                $table->removeForeignKey($fk);
-                $extension->renameColumn($schema, $queries, $table, 'accountgroup_id', 'customergroup_id');
-                $extension->renameTable(
-                    $schema,
-                    $queries,
-                    $tableName,
-                    'oro_rel_c3990ba616cbf45899499b'
-                );
+        if ($schema->hasTable('oro_rel_c3990ba616cbf45899499b')) {
+            foreach ($tables as $tableName) {
+                if ($schema->hasTable($tableName)) {
+                    $schema->dropTable($tableName);
+                }
+            }
+            $table = $schema->getTable('oro_rel_c3990ba616cbf45899499b');
+            $fk = $this->getConstraintName($table, 'accountgroup_id');
+            $table->removeForeignKey($fk);
+            $extension->renameColumn($schema, $queries, $table, 'accountgroup_id', 'customergroup_id');
+        } else {
+            $renamed = false;
+            foreach ($tables as $tableName) {
+                if ($schema->hasTable($tableName)) {
+                    if ($renamed) {
+                        $schema->dropTable($tableName);
+                    } else {
+                        $table = $schema->getTable($tableName);
+                        $fk = $this->getConstraintName($table, 'accountgroup_id');
+                        $table->removeForeignKey($fk);
+                        $extension->renameColumn($schema, $queries, $table, 'accountgroup_id', 'customergroup_id');
+                        $extension->renameTable(
+                            $schema,
+                            $queries,
+                            $tableName,
+                            'oro_rel_c3990ba616cbf45899499b'
+                        );
+                        $renamed = true;
+                    }
+                }
             }
         }
+
         if ($schema->hasTable('oro_rel_6f8f552a65864788eebf8a')) {
             $table = $schema->getTable('oro_rel_6f8f552a65864788eebf8a');
             $fk = $this->getConstraintName($table, 'accountgroup_id');
@@ -804,6 +908,23 @@ class OroAccountBundle implements
                 'customer_user_18bc0561',
                 RelationType::MANY_TO_MANY
             );
+        }
+
+        if ($schema->hasTable('oro_rel_46a29d19a6adb604aeb863') && $schema->getTable('oro_rel_46a29d19a6adb604aeb863')
+                ->hasColumn('accountuser_id')
+        ) {
+            $table = $schema->getTable('oro_rel_46a29d19a6adb604aeb863');
+            $fk = $this->getConstraintName($table, 'accountuser_id');
+            $table->removeForeignKey($fk);
+            $extension->renameColumn($schema, $queries, $table, 'accountuser_id', 'customeruser_id');
+        }
+        if ($schema->hasTable('oro_rel_c3990ba6a6adb604193652') && $schema->getTable('oro_rel_c3990ba6a6adb604193652')
+            ->hasColumn('accountuser_id')
+        ) {
+            $table = $schema->getTable('oro_rel_c3990ba6a6adb604193652');
+            $fk = $this->getConstraintName($table, 'accountuser_id');
+            $table->removeForeignKey($fk);
+            $extension->renameColumn($schema, $queries, $table, 'accountuser_id', 'customeruser_id');
         }
 
         $this->renameRelationTable(

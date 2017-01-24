@@ -88,7 +88,7 @@ class VisibilityFormFieldDataProviderTest extends \PHPUnit_Framework_TestCase
         $this->formScopeCriteriaResolver->expects($this->once())
             ->method('resolve')
             ->with($allForm, ProductVisibility::VISIBILITY_TYPE)
-            ->willReturn(new ScopeCriteria([]));
+            ->willReturn(new ScopeCriteria([], []));
 
         // configure database queries results
         $visibility = $this->getEntity(
@@ -136,7 +136,7 @@ class VisibilityFormFieldDataProviderTest extends \PHPUnit_Framework_TestCase
         $this->formScopeCriteriaResolver->expects($this->once())
             ->method('resolve')
             ->with($customerGroupForm, CustomerGroupProductVisibility::VISIBILITY_TYPE)
-            ->willReturn(new ScopeCriteria([]));
+            ->willReturn(new ScopeCriteria([], []));
 
         // configure database queries results
         $visibility1 = $this->getEntity(
@@ -197,7 +197,7 @@ class VisibilityFormFieldDataProviderTest extends \PHPUnit_Framework_TestCase
         $this->formScopeCriteriaResolver->expects($this->once())
             ->method('resolve')
             ->with($customerForm, CustomerProductVisibility::VISIBILITY_TYPE)
-            ->willReturn(new ScopeCriteria([]));
+            ->willReturn(new ScopeCriteria([], []));
 
         // configure database queries results
         $visibility1 = $this->getEntity(
@@ -253,7 +253,7 @@ class VisibilityFormFieldDataProviderTest extends \PHPUnit_Framework_TestCase
         $this->scopeManager->expects($this->once())
             ->method('getCriteriaByScope')
             ->with($rootScope, 'customer_product_visibility')
-            ->willReturn(new ScopeCriteria(['customer' => $this->getEntity(Customer::class, ['id' => 3])]));
+            ->willReturn(new ScopeCriteria(['customer' => $this->getEntity(Customer::class, ['id' => 3])], []));
 
         $fieldData = new Customer();
         $scope = new Scope();

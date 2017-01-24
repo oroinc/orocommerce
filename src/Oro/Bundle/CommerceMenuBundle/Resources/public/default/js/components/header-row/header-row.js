@@ -44,7 +44,7 @@ define(function(require) {
         addScroll: function() {
             var windowHeight = $(window).innerHeight();
             var headerRowHeight = this.$el.height();
-            var middleBarHeight = this.$el.prev().outerHeight();
+            var middleBarHeight = this.$el.closest('.page-container').find('.middlebar').outerHeight();
             var menuHeight = windowHeight - headerRowHeight;
             var isSticky = this.$el.hasClass('header-row--fixed');
             var $dropdowns = this.$el.find('.header-row__dropdown');

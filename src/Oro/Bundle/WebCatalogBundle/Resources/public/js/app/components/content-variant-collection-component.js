@@ -69,6 +69,5 @@ define(function(require) {
         }
     });
 
-
     return ContentVariantCollectionComponent;
 });

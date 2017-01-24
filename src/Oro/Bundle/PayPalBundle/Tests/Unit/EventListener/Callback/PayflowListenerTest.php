@@ -3,11 +3,11 @@
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\EventListener\Callback;
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
-
 use Oro\Bundle\PaymentBundle\Event\CallbackNotifyEvent;
 use Oro\Bundle\PaymentBundle\Event\CallbackReturnEvent;
-
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
+use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
 use Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowListener;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseStatusMap;
 use Psr\Log\LoggerInterface;
@@ -22,7 +22,7 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
     /** @var Session|\PHPUnit_Framework_MockObject_MockObject */
     protected $session;
 
-    /** @var PaymentMethodProvidersRegistry|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var PaymentMethodProvidersRegistryInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $paymentMethodRegistry;
 
     /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject $dispatcher */
@@ -34,7 +34,7 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->paymentMethodRegistry = $this->getMockBuilder(PaymentMethodProvidersRegistry::class)
+        $this->paymentMethodRegistry = $this->getMockBuilder(PaymentMethodProvidersRegistryInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -57,15 +57,24 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
             ->setPaymentMethod('payment_method')
             ->setResponse(['existing' => 'response']);
 
-        $paymentMethod = $this->createMock('Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface');
-        $paymentMethod->expects($this->once())
+        $paymentMethod = $this->createMock(PaymentMethodInterface::class);
+        $paymentMethod->expects(static::once())
             ->method('execute')
             ->with('complete', $paymentTransaction);
 
-        $this->paymentMethodRegistry->expects($this->once())
+        $paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
+        $paymentMethodProvider->expects(static::any())
+            ->method('hasPaymentMethod')
+            ->with('payment_method')
+            ->willReturn(true);
+        $paymentMethodProvider->expects(static::any())
             ->method('getPaymentMethod')
-            ->with($paymentTransaction->getPaymentMethod())
+            ->with('payment_method')
             ->willReturn($paymentMethod);
+
+        $this->paymentMethodRegistry->expects(static::once())
+            ->method('getPaymentMethodProviders')
+            ->willReturn([$paymentMethodProvider]);
 
         $event = new CallbackNotifyEvent(['RESULT' => ResponseStatusMap::APPROVED]);
         $event->setPaymentTransaction($paymentTransaction);
@@ -93,10 +102,19 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
             ->method('execute')
             ->willThrowException(new \InvalidArgumentException());
 
-        $this->paymentMethodRegistry->expects($this->once())
+        $paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
+        $paymentMethodProvider->expects(static::any())
+            ->method('hasPaymentMethod')
+            ->with('payment_method')
+            ->willReturn(true);
+        $paymentMethodProvider->expects(static::any())
             ->method('getPaymentMethod')
-            ->with($paymentTransaction->getPaymentMethod())
+            ->with('payment_method')
             ->willReturn($paymentMethod);
+
+        $this->paymentMethodRegistry->expects(static::once())
+            ->method('getPaymentMethodProviders')
+            ->willReturn([$paymentMethodProvider]);
 
         $event = new CallbackNotifyEvent(['RESULT' => ResponseStatusMap::APPROVED]);
         $event->setPaymentTransaction($paymentTransaction);

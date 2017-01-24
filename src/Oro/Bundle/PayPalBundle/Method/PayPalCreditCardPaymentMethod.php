@@ -23,6 +23,10 @@ class PayPalCreditCardPaymentMethod implements PaymentMethodInterface
     const COMPLETE = 'complete';
 
     const ZERO_AMOUNT = 0;
+    const AMOUNT_PRECISION = 2;
+
+    // PayPal BN code
+    const BUTTON_SOURCE = 'OroCommerce_SP';
 
     /** @var Gateway */
     protected $gateway;
@@ -256,7 +260,7 @@ class PayPalCreditCardPaymentMethod implements PaymentMethodInterface
     protected function getPaymentOptions(PaymentTransaction $paymentTransaction)
     {
         $options = [
-            Option\Amount::AMT => round($paymentTransaction->getAmount(), 2),
+            Option\Amount::AMT => round($paymentTransaction->getAmount(), self::AMOUNT_PRECISION),
             Option\Tender::TENDER => Option\Tender::CREDIT_CARD,
             Option\Currency::CURRENCY => $paymentTransaction->getCurrency(),
         ];
@@ -372,8 +376,19 @@ class PayPalCreditCardPaymentMethod implements PaymentMethodInterface
     {
         return array_replace(
             $this->config->getCredentials(),
+            $this->getAdditionalOptions(),
             $options,
             $this->getVerbosityOption()
         );
+    }
+
+    /**
+     * @return array
+     */
+    protected function getAdditionalOptions()
+    {
+        return [
+            Option\ButtonSource::BUTTONSOURCE => self::BUTTON_SOURCE
+        ];
     }
 }

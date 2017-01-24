@@ -14,11 +14,13 @@ use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
+use Oro\Bundle\WebCatalogBundle\Async\Topics;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\SystemPageContentVariantType;
 use Oro\Bundle\WebCatalogBundle\DependencyInjection\OroWebCatalogExtension;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
+use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\Yaml\Yaml;
@@ -58,6 +60,7 @@ class LoadWebCatalogDemoData extends AbstractFixture implements ContainerAwareIn
     {
         $webCatalog = $this->loadWebCatalogData($manager);
         $this->enableWebCatalog($webCatalog);
+        $this->scheduleCacheCalculation($webCatalog);
     }
 
     /**
@@ -132,29 +135,25 @@ class LoadWebCatalogDemoData extends AbstractFixture implements ContainerAwareIn
             $slug->setString($contentNode['defaultSlugPrototype']);
             $node->setDefaultSlugPrototype($slug);
 
-            $node->setParentScopeUsed($contentNode['parentScopeUsed']);
+            $isParentScopeUsed = !empty($contentNode['parentScopeUsed']);
+            $node->setParentScopeUsed($isParentScopeUsed);
 
-            foreach ($contentNode['scopes'] as $scope) {
-                $scope = $this->getScope($scope, $webCatalog);
-                $node->addScope($scope);
-            }
-
-            foreach ($contentNode['contentVariants'] as $contentVariant) {
-                $variant = $this->getContentVariant($contentVariant['type'], $contentVariant['params']);
-                $variant->setDefault($contentVariant['isDefault']);
-                foreach ($contentVariant['scopes'] as $scope) {
+            if (!$isParentScopeUsed) {
+                foreach ($contentNode['scopes'] as $scope) {
                     $scope = $this->getScope($scope, $webCatalog);
-                    $variant->addScope($scope);
+                    $node->addScope($scope);
                 }
-                $node->addContentVariant($variant);
             }
+            $this->addContentVariants($webCatalog, $contentNode['contentVariants'], $node);
 
             if ($parent) {
                 $node->setParentNode($parent);
             }
 
-            $this->generateSlugs($node);
             $manager->persist($node);
+            $manager->flush($node);
+            $this->generateSlugs($node);
+            $this->resolveScopes($node);
 
             if ($contentNode['children']) {
                 $this->loadContentNodes($manager, $webCatalog, $contentNode['children'], $node);
@@ -194,12 +193,12 @@ class LoadWebCatalogDemoData extends AbstractFixture implements ContainerAwareIn
 
         $variant->setType($type);
 
-        if ($type === CategoryPageContentVariantType::TYPE) {
+        if ($type === CategoryPageContentVariantType::TYPE && method_exists($variant, 'setCategoryPageCategory')) {
             $category = $this->container->get('doctrine')
                 ->getRepository(Category::class)
                 ->findOneByDefaultTitle($params['title']);
             $variant->setCategoryPageCategory($category);
-        } elseif ($type === CmsPageContentVariantType::TYPE) {
+        } elseif ($type === CmsPageContentVariantType::TYPE && method_exists($variant, 'setCmsPage')) {
             $page = $this->container->get('doctrine')
                 ->getRepository(Page::class)
                 ->findOneByTitle($params['title']);
@@ -219,5 +218,48 @@ class LoadWebCatalogDemoData extends AbstractFixture implements ContainerAwareIn
         $fileName = __DIR__ . '/data/web_catalog_data.yml';
 
         return Yaml::parse(file_get_contents($fileName));
+    }
+
+    /**
+     * Site is available without web catalog cache, but it's performance is lower.
+     * Schedule cache calculation in background by async message processor.
+     *
+     * @param WebCatalog $webCatalog
+     */
+    protected function scheduleCacheCalculation(WebCatalog $webCatalog)
+    {
+        /** @var MessageProducerInterface $messageProducer */
+        $messageProducer = $this->container->get('oro_message_queue.client.message_producer');
+        $messageProducer->send(Topics::CALCULATE_WEB_CATALOG_CACHE, $webCatalog->getId());
+    }
+
+    /**
+     * @param ContentNode $contentNode
+     */
+    protected function resolveScopes(ContentNode $contentNode)
+    {
+        $this->container->get('oro_web_catalog.resolver.default_variant_scope')
+            ->resolve($contentNode);
+    }
+
+    /**
+     * @param WebCatalog $webCatalog
+     * @param array $contentVariantsData
+     * @param ContentNode $node
+     */
+    protected function addContentVariants(WebCatalog $webCatalog, array $contentVariantsData, ContentNode $node)
+    {
+        foreach ($contentVariantsData as $contentVariant) {
+            $variant = $this->getContentVariant($contentVariant['type'], $contentVariant['params']);
+            $isDefault = !empty($contentVariant['isDefault']);
+            $variant->setDefault($isDefault);
+            if (!$isDefault) {
+                foreach ($contentVariant['scopes'] as $scope) {
+                    $scope = $this->getScope($scope, $webCatalog);
+                    $variant->addScope($scope);
+                }
+            }
+            $node->addContentVariant($variant);
+        }
     }
 }

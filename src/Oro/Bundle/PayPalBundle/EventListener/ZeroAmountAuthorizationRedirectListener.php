@@ -2,22 +2,22 @@
 
 namespace Oro\Bundle\PayPalBundle\EventListener;
 
-use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
 use Oro\Bundle\PaymentBundle\Event\RequirePaymentRedirectEvent;
+use Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalCreditCardConfigProviderInterface;
 
 class ZeroAmountAuthorizationRedirectListener
 {
     /**
-     * @var PayPalCreditCardConfigInterface
+     * @var PayPalCreditCardConfigProviderInterface
      */
-    private $config;
+    private $configProvider;
 
     /**
-     * @param PayPalCreditCardConfigInterface $config
+     * @param PayPalCreditCardConfigProviderInterface $configProvider
      */
-    public function __construct(PayPalCreditCardConfigInterface $config)
+    public function __construct(PayPalCreditCardConfigProviderInterface $configProvider)
     {
-        $this->config = $config;
+        $this->configProvider = $configProvider;
     }
 
     /**
@@ -25,6 +25,7 @@ class ZeroAmountAuthorizationRedirectListener
      */
     public function onRequirePaymentRedirect(RequirePaymentRedirectEvent $event)
     {
-        $event->setRedirectRequired(!$this->config->isZeroAmountAuthorizationEnabled());
+        $config = $this->configProvider->getPaymentConfig($event->getPaymentMethod()->getIdentifier());
+        $event->setRedirectRequired(!$config->isZeroAmountAuthorizationEnabled());
     }
 }

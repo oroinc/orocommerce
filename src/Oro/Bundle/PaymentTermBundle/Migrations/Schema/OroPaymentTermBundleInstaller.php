@@ -67,7 +67,7 @@ class OroPaymentTermBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_0';
+        return 'v1_1';
     }
 
     /**
@@ -125,6 +125,8 @@ class OroPaymentTermBundleInstaller implements
     {
         $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_customer');
         $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_customer_group');
+        
+        $this->migrateRelations($schema, $queries);
 
         $associationTableName = $this->activityExtension->getAssociationTableName('oro_note', self::TABLE_NAME);
         if (!$schema->hasTable($associationTableName)) {
@@ -144,33 +146,36 @@ class OroPaymentTermBundleInstaller implements
     }
 
     /**
+     * @param Schema $schema
      * @param QueryBag $queries
      */
-    protected function migrateRelations(QueryBag $queries)
+    protected function migrateRelations(Schema $schema, QueryBag $queries)
     {
         if ($this->platform instanceof MySqlPlatform) {
             $queryAccount = <<<QUERY
 UPDATE oro_customer a
-JOIN oro_payment_term_to_account pta ON pta.customer_id = a.id
-SET a.payment_term_7c4f1e8e_id = pta.payment_term_id;
+JOIN oro_payment_term_to_account pta ON pta.account_id = a.id
+SET a.payment_term_7c4f1e8e_id = pta.payment_term_id
+WHERE a.payment_term_7c4f1e8e_id IS NULL;
 QUERY;
             $queryGroup = <<<QUERY
 UPDATE oro_customer_group ag
-JOIN oro_payment_term_to_acc_grp ptag ON ptag.customer_group_id = ag.id
+JOIN oro_payment_term_to_acc_grp ptag ON ptag.account_group_id = ag.id
 SET ag.payment_term_7c4f1e8e_id = ptag.payment_term_id;
+WHERE ag.payment_term_7c4f1e8e_id IS NULL;
 QUERY;
         } elseif ($this->platform instanceof PostgreSqlPlatform) {
             $queryAccount = <<<QUERY
 UPDATE oro_customer a
 SET payment_term_7c4f1e8e_id = pta.payment_term_id
 FROM oro_payment_term_to_account pta
-WHERE pta.customer_id = a.id;
+WHERE pta.account_id = a.id AND a.payment_term_7c4f1e8e_id IS NULL;
 QUERY;
             $queryGroup = <<<QUERY
 UPDATE oro_customer_group ag
 SET payment_term_7c4f1e8e_id = ptag.payment_term_id
 FROM oro_payment_term_to_acc_grp ptag
-WHERE ptag.customer_group_id = ag.id;
+WHERE ptag.account_group_id = ag.id AND ag.payment_term_7c4f1e8e_id IS NULL;
 QUERY;
         } else {
             throw new \RuntimeException('Unsupported platform ');
@@ -184,10 +189,15 @@ QUERY;
             new RemoveFieldQuery('Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm', 'accountGroups')
         );
 
-        $queries->addPostQuery($queryAccount);
-        $queries->addPostQuery($queryGroup);
-        $queries->addPostQuery('DROP TABLE oro_payment_term_to_account;');
-        $queries->addPostQuery('DROP TABLE oro_payment_term_to_acc_grp;');
+        if ($schema->hasTable('oro_payment_term_to_account')) {
+            $queries->addPostQuery($queryAccount);
+            $queries->addPostQuery('DROP TABLE oro_payment_term_to_account;');
+        }
+
+        if ($schema->hasTable('oro_payment_term_to_acc_grp')) {
+            $queries->addPostQuery($queryGroup);
+            $queries->addPostQuery('DROP TABLE oro_payment_term_to_acc_grp;');
+        }
     }
 
     /**

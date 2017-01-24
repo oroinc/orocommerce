@@ -69,10 +69,6 @@ search:
         search_template: OroCustomerBundle:CustomerUserRole:searchResult.html.twig
         fields:
             -
-                name: role
-                target_type: text
-                target_fields: [role]
-            -
                 name: label
                 target_type: text
                 target_fields: [label]

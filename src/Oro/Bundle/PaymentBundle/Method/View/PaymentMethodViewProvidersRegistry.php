@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PaymentBundle\Method\View;
 
-class PaymentMethodViewProvidersRegistry
+class PaymentMethodViewProvidersRegistry implements PaymentMethodViewProvidersRegistryInterface
 {
     /** @var PaymentMethodViewProviderInterface[] */
     protected $providers = [];
@@ -17,29 +17,29 @@ class PaymentMethodViewProvidersRegistry
     }
 
     /**
-     * @param array $methodTypes
+     * @param array $methodIdentifiers
      * @return PaymentMethodViewInterface[]
      */
-    public function getPaymentMethodViews(array $methodTypes)
+    public function getPaymentMethodViews(array $methodIdentifiers)
     {
         $result = [];
         foreach ($this->providers as $provider) {
-            $result = array_merge($result, $provider->getPaymentMethodViews($methodTypes));
+            $result = array_merge($result, $provider->getPaymentMethodViews($methodIdentifiers));
         }
         return $result;
     }
 
     /**
-     * @param string $paymentMethod
+     * @param string $methodIdentifier
      * @return PaymentMethodViewInterface
      */
-    public function getPaymentMethodView($paymentMethod)
+    public function getPaymentMethodView($methodIdentifier)
     {
         foreach ($this->providers as $provider) {
-            if ($provider->hasPaymentMethodView($paymentMethod)) {
-                return $provider->getPaymentMethodView($paymentMethod);
+            if ($provider->hasPaymentMethodView($methodIdentifier)) {
+                return $provider->getPaymentMethodView($methodIdentifier);
             }
         }
-        throw new \InvalidArgumentException('There is no payment method view for "'.$paymentMethod.'"');
+        throw new \InvalidArgumentException('There is no payment method view for "'.$methodIdentifier.'"');
     }
 }

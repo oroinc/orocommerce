@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PaymentBundle\Action;
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
+use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Component\Action\Action\AbstractAction;
 use Oro\Component\ConfigExpression\ContextAccessor;
@@ -16,7 +16,7 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
 {
     use LoggerAwareTrait;
 
-    /** @var PaymentMethodProvidersRegistry */
+    /** @var PaymentMethodProvidersRegistryInterface */
     protected $paymentMethodRegistry;
 
     /** @var PaymentTransactionProvider */
@@ -39,13 +39,13 @@ abstract class AbstractPaymentMethodAction extends AbstractAction
 
     /**
      * @param ContextAccessor $contextAccessor
-     * @param PaymentMethodProvidersRegistry $paymentMethodRegistry
+     * @param PaymentMethodProvidersRegistryInterface $paymentMethodRegistry
      * @param PaymentTransactionProvider $paymentTransactionProvider
      * @param RouterInterface $router
      */
     public function __construct(
         ContextAccessor $contextAccessor,
-        PaymentMethodProvidersRegistry $paymentMethodRegistry,
+        PaymentMethodProvidersRegistryInterface $paymentMethodRegistry,
         PaymentTransactionProvider $paymentTransactionProvider,
         RouterInterface $router
     ) {

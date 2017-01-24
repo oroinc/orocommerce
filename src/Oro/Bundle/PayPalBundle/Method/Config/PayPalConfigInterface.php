@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\PayPalBundle\Method\Config;
 
-interface PayPalConfigInterface
+use Oro\Bundle\PaymentBundle\Method\Config\PaymentConfigInterface;
+
+interface PayPalConfigInterface extends PaymentConfigInterface
 {
     /**
      * @return string

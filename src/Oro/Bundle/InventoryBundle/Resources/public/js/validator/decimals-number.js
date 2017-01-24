@@ -1,12 +1,12 @@
 /*global define*/
 define([
     'underscore', 'orotranslation/js/translator', 'orolocale/js/locale-settings'
-], function (_, __, localeSettings) {
+], function(_, __, localeSettings) {
     'use strict';
 
-    var options = localeSettings.getNumberFormats('decimal'),
-        decimalSeparator = options.decimal_separator_symbol,
-        defaultParam = {
+    var options = localeSettings.getNumberFormats('decimal');
+    var decimalSeparator = options.decimal_separator_symbol;
+    var defaultParam = {
             message: 'This value should have {{ limit }} or less decimal digits.'
         };
 
@@ -26,7 +26,7 @@ define([
 
             return isNaN(decimals) || decimals.length <= param.decimals;
         },
-        function (param, element) {
+        function(param, element) {
             var value = this.elementValue(element);
             var placeholders = {};
             param = _.extend({}, defaultParam, param);

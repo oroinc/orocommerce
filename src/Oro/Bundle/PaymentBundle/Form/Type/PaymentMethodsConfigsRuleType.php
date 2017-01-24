@@ -4,9 +4,9 @@ namespace Oro\Bundle\PaymentBundle\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProviderInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry;
-use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistry;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
+use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistryInterface;
 use Oro\Bundle\RuleBundle\Form\Type\RuleType;
 use Oro\Bundle\PaymentBundle\Form\EventSubscriber\DestinationCollectionTypeSubscriber;
 use Symfony\Component\Form\AbstractType;
@@ -21,22 +21,22 @@ class PaymentMethodsConfigsRuleType extends AbstractType
     const BLOCK_PREFIX = 'oro_payment_methods_configs_rule';
 
     /**
-     * @var PaymentMethodProvidersRegistry
+     * @var PaymentMethodProvidersRegistryInterface
      */
     protected $methodRegistry;
 
     /**
-     * @var PaymentMethodViewProvidersRegistry
+     * @var PaymentMethodViewProvidersRegistryInterface
      */
     protected $methodViewRegistry;
 
     /**
-     * @param PaymentMethodProvidersRegistry $methodRegistry
-     * @param PaymentMethodViewProvidersRegistry $methodViewRegistry
+     * @param PaymentMethodProvidersRegistryInterface $methodRegistry
+     * @param PaymentMethodViewProvidersRegistryInterface $methodViewRegistry
      */
     public function __construct(
-        PaymentMethodProvidersRegistry $methodRegistry,
-        PaymentMethodViewProvidersRegistry $methodViewRegistry
+        PaymentMethodProvidersRegistryInterface $methodRegistry,
+        PaymentMethodViewProvidersRegistryInterface $methodViewRegistry
     ) {
         $this->methodRegistry = $methodRegistry;
         $this->methodViewRegistry = $methodViewRegistry;
