@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\DPDBundle\Entity;
 
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\EntityBundle\EntityProperty\CreatedAtAwareTrait;
@@ -32,7 +31,6 @@ class DPDTransaction
      * @ORM\Column(name="parcel_numbers", type="array")
      */
     protected $parcelNumbers = [];
-
 
     /**
      * @var Order
@@ -109,11 +107,13 @@ class DPDTransaction
 
     /**
      * @param Order $order
+     *
      * @return DPDTransaction
      */
     public function setOrder(Order $order)
     {
         $this->order = $order;
+
         return $this;
     }
 
@@ -127,11 +127,13 @@ class DPDTransaction
 
     /**
      * @param File $labelFile
+     *
      * @return DPDTransaction
      */
     public function setLabelFile(File $labelFile = null)
     {
         $this->labelFile = $labelFile;
+
         return $this;
     }
 }

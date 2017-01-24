@@ -16,7 +16,7 @@ class OroDPDBundleInstaller implements Installation, ContainerAwareInterface
     private $container;
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function setContainer(ContainerInterface $container = null)
     {
@@ -33,21 +33,22 @@ class OroDPDBundleInstaller implements Installation, ContainerAwareInterface
 
     /**
      * {@inheritdoc}
+     *
      * @throws \Doctrine\DBAL\Schema\SchemaException
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        /** update tables */
+        /* update tables */
         $this->updateOroIntegrationTransportTable($schema);
 
-        /** Tables generation **/
+        /* Tables generation **/
         $this->createOroDpdRateTable($schema);
         $this->createOroDpdShippingServiceTable($schema);
         $this->createOroDpdShippingTransactionTable($schema);
         $this->createOroDpdTransportLabelTable($schema);
         $this->createOroDpdTransportShipServiceTable($schema);
 
-        /** Foreign keys generation **/
+        /* Foreign keys generation **/
         $this->addOroDpdRateForeignKeys($schema);
         $this->addOroDpdShippingTransactionForeignKeys($schema);
         $this->addOroDpdTransportLabelForeignKeys($schema);
@@ -82,7 +83,7 @@ class OroDPDBundleInstaller implements Installation, ContainerAwareInterface
     }
 
     /**
-     * Create oro_dpd_rate table
+     * Create oro_dpd_rate table.
      *
      * @param Schema $schema
      */
@@ -105,7 +106,7 @@ class OroDPDBundleInstaller implements Installation, ContainerAwareInterface
     }
 
     /**
-     * Create oro_dpd_shipping_service table
+     * Create oro_dpd_shipping_service table.
      *
      * @param Schema $schema
      */
@@ -118,7 +119,7 @@ class OroDPDBundleInstaller implements Installation, ContainerAwareInterface
     }
 
     /**
-     * Create oro_dpd_shipping_transaction table
+     * Create oro_dpd_shipping_transaction table.
      *
      * @param Schema $schema
      */
@@ -136,7 +137,7 @@ class OroDPDBundleInstaller implements Installation, ContainerAwareInterface
     }
 
     /**
-     * Create oro_dpd_transport_label table
+     * Create oro_dpd_transport_label table.
      *
      * @param Schema $schema
      */
@@ -151,7 +152,7 @@ class OroDPDBundleInstaller implements Installation, ContainerAwareInterface
     }
 
     /**
-     * Create oro_dpd_transport_ship_service table
+     * Create oro_dpd_transport_ship_service table.
      *
      * @param Schema $schema
      */
@@ -164,7 +165,6 @@ class OroDPDBundleInstaller implements Installation, ContainerAwareInterface
         $table->addIndex(['transport_id'], 'IDX_269F87B9909C13F', []);
         $table->addIndex(['ship_service_id'], 'IDX_269F87B37CA9B1D', []);
     }
-
 
     /**
      * Add oro_dpd_rate foreign keys.
@@ -281,5 +281,4 @@ class OroDPDBundleInstaller implements Installation, ContainerAwareInterface
             ['onDelete' => null, 'onUpdate' => null]
         );
     }
-
 }

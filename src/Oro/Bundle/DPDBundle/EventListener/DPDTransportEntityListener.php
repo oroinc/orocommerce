@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 class DPDTransportEntityListener
 {
     /**
-     * @param DPDTransport $transport
+     * @param DPDTransport      $transport
      * @param PreFlushEventArgs $args
      */
     public function preFlush(DPDTransport $transport, PreFlushEventArgs $args)
@@ -28,7 +28,7 @@ class DPDTransportEntityListener
             $handle = fopen($transport->getRatesCsv()->getRealPath(), 'rb');
             $rowCounter = 0;
             while (($row = fgetcsv($handle)) !== false) {
-                $rowCounter++;
+                ++$rowCounter;
                 if ($rowCounter === 1) {
                     continue;
                 }
@@ -42,9 +42,9 @@ class DPDTransportEntityListener
                     $rate->setRegion($entityManager->getReference('OroAddressBundle:Region', $regionCode));
                 }
                 if (!empty($weightValue)) {
-                    $rate->setWeightValue((float)$weightValue);
+                    $rate->setWeightValue((float) $weightValue);
                 }
-                $rate->setPriceValue((float)$priceValue);
+                $rate->setPriceValue((float) $priceValue);
                 $transport->addRate($rate);
             }
             fclose($handle);
@@ -52,7 +52,7 @@ class DPDTransportEntityListener
     }
 
     /**
-     * @param DPDTransport $transport
+     * @param DPDTransport       $transport
      * @param LifecycleEventArgs $args
      */
     public function postUpdate(DPDTransport $transport, LifecycleEventArgs $args)
@@ -72,7 +72,7 @@ class DPDTransportEntityListener
                 ->findOneBy(['type' => ChannelType::TYPE, 'transport' => $transport->getId()]);
 
             if (null !== $channel) {
-                $shippingMethodIdentifier = DPDShippingMethod::IDENTIFIER . '_' . $channel->getId();
+                $shippingMethodIdentifier = DPDShippingMethod::IDENTIFIER.'_'.$channel->getId();
                 $configuredMethods = $entityManager
                     ->getRepository('OroShippingBundle:ShippingMethodConfig')
                     ->findBy(['method' => $shippingMethodIdentifier]);

@@ -42,7 +42,7 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
     protected $shippingService;
 
     /**
-     * @var  PackageProvider
+     * @var PackageProvider
      */
     protected $packageProvider;
 
@@ -52,7 +52,7 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
     protected $rateTablePriceProvider;
 
     /**
-     * @var  DPDRequestFactory
+     * @var DPDRequestFactory
      */
     protected $dpdRequestFactory;
 
@@ -67,14 +67,14 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
     protected $shippingLineItemConverter;
 
     /**
-     * @param string $methodId
-     * @param DPDTransport $transport
-     * @param DPDTransportProvider $transportProvider
-     * @param ShippingService $shippingService
-     * @param PackageProvider $packageProvider
-     * @param RateTablePriceProvider $rateTablePriceProvider
-     * @param DPDRequestFactory $dpdRequestFactory
-     * @param ZipCodeRulesCache $zipCodeRulesCache
+     * @param string                                  $methodId
+     * @param DPDTransport                            $transport
+     * @param DPDTransportProvider                    $transportProvider
+     * @param ShippingService                         $shippingService
+     * @param PackageProvider                         $packageProvider
+     * @param RateTablePriceProvider                  $rateTablePriceProvider
+     * @param DPDRequestFactory                       $dpdRequestFactory
+     * @param ZipCodeRulesCache                       $zipCodeRulesCache
      * @param OrderShippingLineItemConverterInterface $shippingLineItemConverter
      */
     public function __construct(
@@ -167,12 +167,13 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
 
         $handlingFee = $methodOptions[DPDShippingMethod::HANDLING_FEE_OPTION] + $typeOptions[DPDShippingMethod::HANDLING_FEE_OPTION];
 
-        return Price::create((float)$price + (float)$handlingFee, $context->getCurrency());
+        return Price::create((float) $price + (float) $handlingFee, $context->getCurrency());
     }
 
     /**
-     * @param Order $order
+     * @param Order     $order
      * @param \DateTime $shipDate
+     *
      * @return null|SetOrderResponse
      */
     public function shipOrder(Order $order, \DateTime $shipDate)
@@ -201,31 +202,34 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
 
     /**
      * @param \DateTime $shipDate
+     *
      * @return bool
      */
     public function isShipDatePickupDay(\DateTime $shipDate)
     {
-        return ($this->checkShipDate($shipDate) === 0);
+        return $this->checkShipDate($shipDate) === 0;
     }
 
     /**
      * @param \DateTime $shipDate
+     *
      * @return \DateTime
      */
     public function getNextPickupDay(\DateTime $shipDate)
     {
         while (($addHint = $this->checkShipDate($shipDate)) !== 0) {
-            $shipDate->add(new \DateInterval('P' . $addHint . 'D'));
+            $shipDate->add(new \DateInterval('P'.$addHint.'D'));
         }
 
         return $shipDate;
     }
 
     /**
-     * Check if shipDate is a valid pickup day
+     * Check if shipDate is a valid pickup day.
      *
      * @param \DateTime $shipDate
-     * @return int 0 if shipDate is valid pickup day or a number of days to increase shipDate for a possible valid date.
+     *
+     * @return int 0 if shipDate is valid pickup day or a number of days to increase shipDate for a possible valid date
      */
     public function checkShipDate(\DateTime $shipDate)
     {
@@ -236,7 +240,7 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
         $shipDateMidnight = clone $shipDate;
         $shipDateMidnight->setTime(0, 0, 0);
         $diff = $today->diff($shipDateMidnight);
-        $diffDays = (integer)$diff->format("%R%a");
+        $diffDays = (int) $diff->format('%R%a');
         if ($diffDays === 0) {
             $cutOffDate = \DateTime::createFromFormat(
                 'H:i',
@@ -251,7 +255,7 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
         }
 
         // check if shipDate is saturday or sunday
-        $shipDateWeekDay = (integer)$shipDate->format('N');
+        $shipDateWeekDay = (int) $shipDate->format('N');
         switch ($shipDateWeekDay) {
             case 6://saturday
                 return 2;
@@ -272,19 +276,22 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
      */
     public function fetchZipCodeRules()
     {
-        $getZipCodeRulesRequest = $this->dpdRequestFactory->createZipCodeRulesRequest();
-        $cacheKey = $this->zipCodeRulesCache->createKey($this->transport, $getZipCodeRulesRequest,
+        $zipCodeRulesRequest = $this->dpdRequestFactory->createZipCodeRulesRequest();
+        $cacheKey = $this->zipCodeRulesCache->createKey($this->transport, $zipCodeRulesRequest,
             $this->getIdentifier());
 
         if ($this->zipCodeRulesCache->containsZipCodeRules($cacheKey)) {
             return $this->zipCodeRulesCache->fetchZipCodeRules($cacheKey);
         }
 
-        $getZipCodeRulesResponse = $this->transportProvider->getZipCodeRulesResponse(
-            $getZipCodeRulesRequest,
+        $zipCodeRulesResponse = $this->transportProvider->getZipCodeRulesResponse(
+            $zipCodeRulesRequest,
             $this->transport
         );
+        if ($zipCodeRulesResponse) {
+            $this->zipCodeRulesCache->saveZipCodeRules($cacheKey, $zipCodeRulesResponse);
+        }
 
-        return $getZipCodeRulesResponse;
+        return $zipCodeRulesResponse;
     }
 }

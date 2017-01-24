@@ -7,7 +7,6 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\DPDBundle\Model\Package;
 use Oro\Bundle\DPDBundle\Provider\PackageProvider;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -42,13 +41,13 @@ class PackageProviderTest extends \PHPUnit_Framework_TestCase
     protected $localizationHelper;
 
     /**
-     * @var  PackageProvider
+     * @var PackageProvider
      */
     protected $packageProvider;
 
     protected function setUp()
     {
-        /** @var ManagerRegistry | \PHPUnit_Framework_MockObject_MockObject $doctrine */
+        /* @var ManagerRegistry | \PHPUnit_Framework_MockObject_MockObject $doctrine */
         $this->registry = $this->getMockBuilder(ManagerRegistry::class)
             ->disableOriginalConstructor()->getMock();
 
@@ -70,8 +69,8 @@ class PackageProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param int $lineItemCnt
-     * @param int $productWeight
+     * @param int            $lineItemCnt
+     * @param int            $productWeight
      * @param Package[]|null $expectedPackages
      *
      * @dataProvider packagesDataProvider
@@ -84,39 +83,39 @@ class PackageProviderTest extends \PHPUnit_Framework_TestCase
 
         $lineItems = [];
         $allProductsShippingOptions = [];
-        for ($i = 1; $i <= $lineItemCnt; $i++) {
+        for ($i = 1; $i <= $lineItemCnt; ++$i) {
             /** @var Product $product */
             $product = $this->getEntity(Product::class, ['id' => $i]);
 
             $lineItems[] = new ShippingLineItem([
-                ShippingLineItem::FIELD_PRODUCT           => $product,
-                ShippingLineItem::FIELD_QUANTITY          => 1,
-                ShippingLineItem::FIELD_PRODUCT_UNIT      => $this->getEntity(
+                ShippingLineItem::FIELD_PRODUCT => $product,
+                ShippingLineItem::FIELD_QUANTITY => 1,
+                ShippingLineItem::FIELD_PRODUCT_UNIT => $this->getEntity(
                     ProductUnit::class,
                     ['code' => 'test1']
                 ),
                 ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => 'test1',
                 ShippingLineItem::FIELD_ENTITY_IDENTIFIER => 1,
-                ShippingLineItem::FIELD_DIMENSIONS        => Dimensions::create(7, 7, 7,
+                ShippingLineItem::FIELD_DIMENSIONS => Dimensions::create(7, 7, 7,
                     (new LengthUnit())->setCode('inch')),
-                ShippingLineItem::FIELD_WEIGHT            => Weight::create($productWeight, $this->getEntity(
+                ShippingLineItem::FIELD_WEIGHT => Weight::create($productWeight, $this->getEntity(
                     WeightUnit::class,
                     ['code' => 'lbs']
                 )),
             ]);
 
-            /** @var ProductShippingOptions $productShippingOptions */
+            /* @var ProductShippingOptions $productShippingOptions */
             $allProductsShippingOptions[] = $this->getEntity(
                 ProductShippingOptions::class,
                 [
-                    'id'          => 42,
-                    'product'     => $product,
+                    'id' => 42,
+                    'product' => $product,
                     'productUnit' => $this->getEntity(
                         ProductUnit::class,
                         ['code' => 'test1']
                     ),
-                    'dimensions'  => Dimensions::create(7, 7, 7, (new LengthUnit())->setCode('inch')),
-                    'weight'      => Weight::create($productWeight, $this->getEntity(
+                    'dimensions' => Dimensions::create(7, 7, 7, (new LengthUnit())->setCode('inch')),
+                    'weight' => Weight::create($productWeight, $this->getEntity(
                         WeightUnit::class,
                         ['code' => 'kg']
                     )),
@@ -147,29 +146,29 @@ class PackageProviderTest extends \PHPUnit_Framework_TestCase
     public function packagesDataProvider()
     {
         return [
-            'OnePackage'  => [
-                'lineItemCnt'      => 2,
-                'productWeight'    => 15,
+            'OnePackage' => [
+                'lineItemCnt' => 2,
+                'productWeight' => 15,
                 'expectedPackages' => [
                     (new Package())->setWeight(30)->setContents('product name,product name'),
                 ],
             ],
             'TwoPackages' => [
-                'lineItemCnt'      => 2,
-                'productWeight'    => 30,
+                'lineItemCnt' => 2,
+                'productWeight' => 30,
                 'expectedPackages' => [
                     (new Package())->setWeight(30)->setContents('product name'),
                     (new Package())->setWeight(30)->setContents('product name'),
                 ],
             ],
             'TooBigToFit' => [
-                'lineItemCnt'      => 2,
-                'productWeight'    => PackageProvider::MAX_PACKAGE_WEIGHT_KGS + 1,
+                'lineItemCnt' => 2,
+                'productWeight' => PackageProvider::MAX_PACKAGE_WEIGHT_KGS + 1,
                 'expectedPackages' => null,
             ],
-            'NoPackages'  => [
-                'lineItemCnt'      => 0,
-                'productWeight'    => 30,
+            'NoPackages' => [
+                'lineItemCnt' => 0,
+                'productWeight' => 30,
                 'expectedPackages' => null,
             ],
         ];

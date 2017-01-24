@@ -12,7 +12,7 @@ class RatesCsvFile extends Constraint
     public $message = 'oro.dpd.transport.rates_csv.invalid';
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function validatedBy()
     {

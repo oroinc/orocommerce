@@ -32,29 +32,33 @@ class ZipCodeRulesCacheKey
 
     /**
      * @param DPDTransport $transport
+     *
      * @return $this
      */
-    public function setTransport($transport)
+    public function setTransport(DPDTransport $transport)
     {
         $this->transport = $transport;
+
         return $this;
     }
 
     /**
      * @return ZipCodeRulesRequest
      */
-    public function geZipCodeRulesRequest()
+    public function getZipCodeRulesRequest()
     {
         return $this->zipCodeRulesRequest;
     }
 
     /**
      * @param ZipCodeRulesRequest $request
+     *
      * @return $this
      */
-    public function setZipCodeRulesRequest($request)
+    public function setZipCodeRulesRequest(ZipCodeRulesRequest $request)
     {
         $this->zipCodeRulesRequest = $request;
+
         return $this;
     }
 
@@ -68,11 +72,13 @@ class ZipCodeRulesCacheKey
 
     /**
      * @param string $methodId
+     *
      * @return $this
      */
     public function setMethodId($methodId)
     {
         $this->methodId = $methodId;
+
         return $this;
     }
 

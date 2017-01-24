@@ -21,7 +21,7 @@ class ShippingServiceTest extends \PHPUnit_Framework_TestCase
     {
         $entity = new ShippingService();
         $entity->setCode('Classic')->setDescription('DPD Classic');
-        static::assertEquals('DPD Classic', (string)$entity);
+        static::assertEquals('DPD Classic', (string) $entity);
     }
 
     public function testIsClassic()

@@ -38,7 +38,7 @@ class DPDShippingMethodProvider implements ShippingMethodProviderInterface
     protected $localizationHelper;
 
     /**
-     * @var  PackageProvider
+     * @var PackageProvider
      */
     protected $packageProvider;
 
@@ -64,13 +64,14 @@ class DPDShippingMethodProvider implements ShippingMethodProviderInterface
 
     /**
      * DPDShippingMethodProvider constructor.
-     * @param ManagerRegistry $doctrine
-     * @param DPDTransport $transportProvider
-     * @param DPDRequestFactory $dpdRequestFactory
-     * @param LocalizationHelper $localizationHelper
-     * @param PackageProvider $packageProvider
-     * @param RateTablePriceProvider $rateTablePriceProvider
-     * @param ZipCodeRulesCache $zipCodeRulesCache
+     *
+     * @param ManagerRegistry                         $doctrine
+     * @param DPDTransport                            $transportProvider
+     * @param DPDRequestFactory                       $dpdRequestFactory
+     * @param LocalizationHelper                      $localizationHelper
+     * @param PackageProvider                         $packageProvider
+     * @param RateTablePriceProvider                  $rateTablePriceProvider
+     * @param ZipCodeRulesCache                       $zipCodeRulesCache
      * @param OrderShippingLineItemConverterInterface $shippingLineItemConverter
      */
     public function __construct(

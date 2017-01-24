@@ -4,13 +4,11 @@ namespace Oro\Bundle\DPDBundle\Validator\Constraints;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Oro\Bundle\DPDBundle\Entity\ShippingService;
-use Oro\Bundle\DPDBundle\Entity\DPDTransport;
 use Oro\Bundle\DPDBundle\Method\DPDShippingMethod;
 use Oro\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Form\FormInterface;
@@ -37,7 +35,7 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
     protected $propertyAccessor;
 
     /**
-     * @param ManagerRegistry $doctrine
+     * @param ManagerRegistry        $doctrine
      * @param ShippingMethodRegistry $registry
      */
     public function __construct(ManagerRegistry $doctrine, ShippingMethodRegistry $registry)
@@ -47,8 +45,9 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
     }
 
     /**
-     * @param Collection $value
+     * @param Collection                           $value
      * @param Constraint|RemoveUsedShippingService $constraint
+     *
      * @throws \UnexpectedValueException
      * @throws \InvalidArgumentException
      */
@@ -59,7 +58,7 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
 
             $channelId = $this->getChannelId();
             if (null !== $channelId) {
-                $methodIdentifier = DPDShippingMethod::IDENTIFIER . '_' . $channelId;
+                $methodIdentifier = DPDShippingMethod::IDENTIFIER.'_'.$channelId;
                 $shippingMethod = $this->registry->getShippingMethod($methodIdentifier);
                 if (null !== $shippingMethod) {
                     $configuredMethods = $this
@@ -92,6 +91,7 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
 
     /**
      * @param Collection $value
+     *
      * @return array
      */
     protected function getDpdTypesIds($value)
@@ -107,6 +107,7 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
 
     /**
      * @param array $configuredTypes
+     *
      * @return array
      */
     protected function getEnabledTypes($configuredTypes)
@@ -123,7 +124,7 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
     }
 
     /**
-     * @param array $missingServices
+     * @param array  $missingServices
      * @param string $message
      */
     protected function addViolations($missingServices, $message)
@@ -166,7 +167,6 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
 
         return $id;
     }
-
 
     /**
      * @return FormInterface

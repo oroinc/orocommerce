@@ -12,7 +12,7 @@ class RemoveUsedShippingService extends Constraint
     public $message = 'oro.dpd.transport.shipping_service.used';
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function validatedBy()
     {

@@ -38,11 +38,13 @@ class ShippingService
 
     /**
      * @param string $code
+     *
      * @return $this
      */
     public function setCode($code)
     {
         $this->code = $code;
+
         return $this;
     }
 
@@ -56,28 +58,32 @@ class ShippingService
 
     /**
      * @param string $description
+     *
      * @return $this
      */
     public function setDescription($description)
     {
         $this->description = $description;
+
         return $this;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
-    public function isClassicService() {
+    public function isClassicService()
+    {
         // FIXME: Use 0 === strpos($this->code, static::CLASSIC_SERVICE_SUBSTR) instead?
-        return (substr($this->code, 0, strlen(static::CLASSIC_SERVICE_SUBSTR)) === static::CLASSIC_SERVICE_SUBSTR);
+        return substr($this->code, 0, strlen(static::CLASSIC_SERVICE_SUBSTR)) === static::CLASSIC_SERVICE_SUBSTR;
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
-    public function isExpressService() {
+    public function isExpressService()
+    {
         // FIXME: Use 0 === strpos($this->code, static::CLASSIC_SERVICE_SUBSTR) instead?
-        return (substr($this->code, 0, strlen(static::EXPRESS_SERVICE_SUBSTR)) === static::EXPRESS_SERVICE_SUBSTR);
+        return substr($this->code, 0, strlen(static::EXPRESS_SERVICE_SUBSTR)) === static::EXPRESS_SERVICE_SUBSTR;
     }
 
     /**
@@ -85,6 +91,6 @@ class ShippingService
      */
     public function __toString()
     {
-        return (string)$this->getDescription();
+        return (string) $this->getDescription();
     }
 }

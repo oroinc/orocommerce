@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\DPDBundle\Model;
 
-
 class ZipCodeRulesRequest extends DPDRequest
 {
     /**

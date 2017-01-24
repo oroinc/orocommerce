@@ -6,8 +6,6 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\DPDBundle\Model\Package;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\ShippingLineItemCollectionInterface;
-use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
-use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions;
 use Oro\Bundle\ShippingBundle\Model\Weight;
@@ -24,7 +22,7 @@ class PackageProvider
     /** @var MeasureUnitConversion */
     protected $measureUnitConversion;
 
-    /** @var  LocalizationHelper */
+    /** @var LocalizationHelper */
     protected $localizationHelper;
 
     public function __construct(
@@ -39,6 +37,7 @@ class PackageProvider
 
     /**
      * @param ShippingLineItemCollectionInterface $lineItems
+     *
      * @return null|\Oro\Bundle\DPDBundle\Model\Package[]
      */
     public function createPackages(ShippingLineItemCollectionInterface $lineItems)
@@ -58,8 +57,8 @@ class PackageProvider
                     return null;
                 }
                 if (($weight + $unit['weight']) > static::MAX_PACKAGE_WEIGHT_KGS) {
-                    $packages[] = (new Package)
-                        ->setWeight((string)$weight)
+                    $packages[] = (new Package())
+                        ->setWeight($weight)
                         ->setContents(implode(',', $contents));
 
                     $weight = 0;
@@ -71,8 +70,8 @@ class PackageProvider
             }
 
             if ($weight > 0) {
-                $packages[] = (new Package)
-                    ->setWeight((string)$weight)
+                $packages[] = (new Package())
+                    ->setWeight($weight)
                     ->setContents(implode(',', $contents));
             }
         }
@@ -82,7 +81,9 @@ class PackageProvider
 
     /**
      * @param ShippingLineItemCollectionInterface $lineItems
+     *
      * @return array
+     *
      * @throws \UnexpectedValueException
      */
     protected function getProductInfoByUnit(ShippingLineItemCollectionInterface $lineItems)
@@ -93,9 +94,9 @@ class PackageProvider
         /** @var ShippingLineItemInterface $lineItem */
         foreach ($lineItems as $lineItem) {
             $productsInfo[$lineItem->getProduct()->getId()] = [
-                'product'     => $lineItem->getProduct(),
+                'product' => $lineItem->getProduct(),
                 'productUnit' => $lineItem->getProductUnit(),
-                'quantity'    => $lineItem->getQuantity(),
+                'quantity' => $lineItem->getQuantity(),
             ];
         }
 
@@ -103,7 +104,7 @@ class PackageProvider
             ->getManagerForClass('OroShippingBundle:ProductShippingOptions')
             ->getRepository('OroShippingBundle:ProductShippingOptions')
             ->findBy([
-                'product'     => array_column($productsInfo, 'product'),
+                'product' => array_column($productsInfo, 'product'),
                 'productUnit' => array_column($productsInfo, 'productUnit'),
             ]);
 
@@ -117,7 +118,7 @@ class PackageProvider
         foreach ($allProductsShippingOptions as $productShippingOptions) {
             $productId = $productShippingOptions->getProduct()->getId();
             //$productDefaultName = $productShippingOptions->getProduct()->getDefaultName()->getString();
-            $productName = (string)$this->localizationHelper
+            $productName = (string) $this->localizationHelper
                 ->getLocalizedValue($productShippingOptions->getProduct()->getNames());
 
             $lineItemWeight = null;
@@ -137,12 +138,12 @@ class PackageProvider
                 return [];
             }
 
-            for ($i = 0; $i < $productsInfo[$productId]['quantity']; $i++) {
+            for ($i = 0; $i < $productsInfo[$productId]['quantity']; ++$i) {
                 $productsInfoByUnit[] = [
-                    'productId'   => $productId,
+                    'productId' => $productId,
                     'productName' => $productName,
-                    'weightUnit'  => static::UNIT_OF_WEIGHT,
-                    'weight'      => $lineItemWeight,
+                    'weightUnit' => static::UNIT_OF_WEIGHT,
+                    'weight' => $lineItemWeight,
                 ];
             }
         }

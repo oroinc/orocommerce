@@ -7,13 +7,10 @@ use Oro\Bundle\AttachmentBundle\Entity\Attachment;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Manager\FileManager;
 use Oro\Bundle\DPDBundle\Entity\DPDTransaction;
-use Oro\Bundle\DPDBundle\Factory\OrderDPDShippingContextFactory;
 use Oro\Bundle\DPDBundle\Method\DPDShippingMethod;
 use Oro\Bundle\DPDBundle\Method\DPDShippingMethodProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\AttachmentBundle\Entity\File as AttachmentFile;
 use Oro\Bundle\OrderBundle\Entity\OrderShippingTracking;
-
 
 class OrderShippingDPDHandler
 {
@@ -32,10 +29,9 @@ class OrderShippingDPDHandler
      */
     protected $shippingMethodProvider;
 
-
     /**
-     * @param ManagerRegistry $doctrine
-     * @param FileManager $fileManager
+     * @param ManagerRegistry           $doctrine
+     * @param FileManager               $fileManager
      * @param DPDShippingMethodProvider $shippingMethodProvider
      */
     public function __construct(
@@ -50,6 +46,7 @@ class OrderShippingDPDHandler
 
     /**
      * @param Order $order
+     *
      * @return array
      */
     public function shipOrder(Order $order)
@@ -65,14 +62,14 @@ class OrderShippingDPDHandler
             return null;
         }
 
-        $shipDate = $shippingMethodType->getNextPickupDay(new \DateTime('now'));//TODO: pass shipDate from UI?
+        $shipDate = $shippingMethodType->getNextPickupDay(new \DateTime('now')); //TODO: pass shipDate from UI?
 
         $response = $shippingMethodType->shipOrder($order, $shipDate);
         if ($response && $response->isSuccessful()) {
             $tmpFile = $this->fileManager->writeToTemporaryFile($response->getLabelPDF());
             $labelFile = new File();
             $labelFile->setFile($tmpFile);
-            $labelFile->setOriginalFilename('label.pdf');//FIXME: better name?
+            $labelFile->setOriginalFilename('label.pdf'); //FIXME: better name?
 
             $dpdTransaction = (new DPDTransaction())
                 ->setOrder($order)
@@ -93,9 +90,9 @@ class OrderShippingDPDHandler
     }
 
     /**
-     * @param Order $order
+     * @param Order          $order
      * @param DPDTransaction $dpdTransaction
-     * @param string $labelComment
+     * @param string         $labelComment
      */
     public function linkLabelToOrder(Order $order, DPDTransaction $dpdTransaction, $labelComment = 'dpd label')
     {
@@ -110,7 +107,7 @@ class OrderShippingDPDHandler
     }
 
     /**
-     * @param Order $order
+     * @param Order          $order
      * @param DPDTransaction $dpdTransaction
      */
     public function addTrackingNumbersToOrder(Order $order, DPDTransaction $dpdTransaction)
@@ -127,7 +124,7 @@ class OrderShippingDPDHandler
     }
 
     /**
-     * @param Order $order
+     * @param Order          $order
      * @param DPDTransaction $dpdTransaction
      */
     public function unlinkLabelFromOrder(Order $order, DPDTransaction $dpdTransaction)
@@ -142,7 +139,7 @@ class OrderShippingDPDHandler
     }
 
     /**
-     * @param Order $order
+     * @param Order          $order
      * @param DPDTransaction $dpdTransaction
      */
     public function removeTrackingNumbersFromOrder(Order $order, DPDTransaction $dpdTransaction)

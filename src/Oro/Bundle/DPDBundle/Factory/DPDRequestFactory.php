@@ -13,13 +13,14 @@ use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 class DPDRequestFactory
 {
     /**
-     * @param DPDTransport $transport
+     * @param DPDTransport    $transport
      * @param ShippingService $shippingService
-     * @param string $requestAction
-     * @param \DateTime $shipDate
-     * @param OrderAddress $orderAddress
+     * @param string          $requestAction
+     * @param \DateTime       $shipDate
+     * @param OrderAddress    $orderAddress
      * @param $orderEmail
      * @param array $packages
+     *
      * @return SetOrderRequest
      */
     public function createSetOrderRequest(
@@ -62,6 +63,6 @@ class DPDRequestFactory
      */
     public function createZipCodeRulesRequest()
     {
-        return (new ZipCodeRulesRequest());
+        return new ZipCodeRulesRequest();
     }
 }
