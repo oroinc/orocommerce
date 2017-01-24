@@ -5,3 +5,7 @@ services:
         arguments:
             - '@oro_locale.helper.localization'
             - '@oro_money_order.generator.money_order_config_identifier'
+
+    oro_money_order.factory.method.money_order:
+        class: 'Oro\Bundle\MoneyOrderBundle\Method\Factory\MoneyOrderPaymentMethodFactory'
+        public: false
