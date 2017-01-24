@@ -68,9 +68,7 @@ class PaymentMethodsListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->configsRuleProvider = $this->getMockBuilder(PaymentMethodsConfigsRulesProviderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->configsRuleProvider = $this->createMock(PaymentMethodsConfigsRulesProviderInterface::class);
 
         $this->contextFactory = $this->getMockBuilder(CheckoutPaymentContextFactory::class)
             ->disableOriginalConstructor()
