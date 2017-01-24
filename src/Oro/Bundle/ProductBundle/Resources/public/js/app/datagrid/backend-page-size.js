@@ -2,7 +2,6 @@ define(function(require) {
     'use strict';
 
     var BackendPageSize;
-    var $ = require('jquery');
     var _ = require('underscore');
     var PageSize = require('orodatagrid/js/datagrid/page-size');
 
@@ -32,7 +31,7 @@ define(function(require) {
             $select
                 .find('option')
                 .removeAttr('selected', false)
-                .filter('[value=' + currentSizeLabel[0] +']')
+                .filter('[value=' + currentSizeLabel[0] + ']')
                 .attr('selected', true);
 
             $select.inputWidget('val', currentSizeLabel[0]);

@@ -112,8 +112,7 @@
         {% set zoomOptions = {
             screenType: 'desktop',
             component: 'oroui/js/app/components/jquery-widget-component',
-            widgetModule: 'oroproduct/js/widget/zoom-widget',
-            dependentSlider: '.product-view-media__gallery'
+            widgetModule: 'oroproduct/js/widget/zoom-widget'
         } %}
 
         {% set imageListOptions = {
@@ -123,7 +122,7 @@
             arrows: false,
             asNavFor: '.product-gallery__nav',
             lazyLoad: 'ondemand',
-            infinite: false,
+            infinite: false
         } %}
 
         {% set navListOptions = {
@@ -158,8 +157,7 @@
                  data-page-component-module="orofrontend/js/app/components/list-slider-component"
                  data-page-component-options="{{ imageListOptions|json_encode }}">
                 {% for productImage in product.imagesByType('additional') %}
-                    <div class="product-gallery__image-item"
-                         data-trigger-gallery-open>
+                    <div class="product-gallery__image-item" data-trigger-gallery-open>
                         <img class="product-gallery__image"
                              data-url-zoom="{{ Image.url(productImage.image, 'product_original') }}"
                                 {% if loop.first %}

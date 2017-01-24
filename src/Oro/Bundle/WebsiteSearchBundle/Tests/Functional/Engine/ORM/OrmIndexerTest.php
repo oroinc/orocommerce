@@ -228,6 +228,35 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $this->assertEntityCount(1, IndexDecimal::class);
     }
 
+    public function testDeleteWhenProductEntitiesForSpecificWebsiteRemovedWithABatch()
+    {
+        $this->loadFixtures([LoadItemData::class]);
+        $this->mappingProviderMock
+            ->expects($this->any())
+            ->method('isClassSupported')
+            ->with(TestProduct::class)
+            ->willReturn(true);
+        $this->setEntityAliasExpectation();
+
+        $product1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
+        $product2 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT2);
+        $this->assertItemsCount(8);
+        $this->indexer->setBatchSize(1);
+        $this->indexer->delete(
+            [
+                $product1,
+                $product2,
+            ],
+            [AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()]
+        );
+
+        $this->assertItemsCount(6);
+        $this->assertEntityCount(1, IndexInteger::class);
+        $this->assertEntityCount(5, IndexText::class);
+        $this->assertEntityCount(1, IndexDatetime::class);
+        $this->assertEntityCount(1, IndexDecimal::class);
+    }
+
     public function testDeleteForSpecificWebsiteAndEntitiesWithoutMappingConfigurationOrNotManageable()
     {
         $this->loadFixtures([LoadItemData::class]);

@@ -1,6 +1,6 @@
 /*jslint nomen:true*/
 /*global define*/
-define(function (require) {
+define(function(require) {
     'use strict';
 
     var DeleteItemComponent;
@@ -41,15 +41,15 @@ define(function (require) {
             };
 
             if (this.okButtonClass) {
-                options = _.extend(options, {'okButtonClass' : this.okButtonClass})
+                options = _.extend(options, {'okButtonClass': this.okButtonClass});
             }
 
             if (this.cancelButtonClass) {
-                options = _.extend(options, {'cancelButtonClass' : this.cancelButtonClass})
+                options = _.extend(options, {'cancelButtonClass': this.cancelButtonClass});
             }
 
             var confirm = new DeleteConfirmation(options);
-            confirm.on('ok',_.bind(this.deleteWithoutConfirmation, this));
+            confirm.on('ok', _.bind(this.deleteWithoutConfirmation, this));
             confirm.open();
         },
 
@@ -74,7 +74,7 @@ define(function (require) {
                     mediator.execute('hideLoading');
                     mediator.execute('showMessage', 'error', message);
                 }
-            })
+            });
         },
 
         deleteWithRedirect: function(e) {

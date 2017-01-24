@@ -109,6 +109,11 @@ class DataGridThemeHelperTest extends \PHPUnit_Framework_TestCase
                 'sessionValue' => null,
                 'expectedValue' => DataGridThemeHelper::VIEW_GRID,
             ],
+            [
+                'requestValue' => 'unexpected_value',
+                'sessionValue' => null,
+                'expectedValue' => DataGridThemeHelper::VIEW_GRID,
+            ],
         ];
     }
 }
