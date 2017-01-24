@@ -32,6 +32,16 @@ class MatrixColumnType extends AbstractType
             ];
             if ($column->product === null) {
                 $quantityConfig['disabled'] = true;
+            } else {
+                $productUnit = $event->getForm()->getRoot()->getData()->unit;
+                $scale = $column->product->getUnitPrecision($productUnit->getCode());
+                $precision = $scale ? $scale->getPrecision() : 0;
+
+                $quantityConfig['attr']['data-validation'] = [
+                    'matrix-precision' => [
+                        'message' => 'oro.matrixgrid.non_valid_precision',
+                        'precision' => $precision,
+                ]];
             }
             $event->getForm()->add('quantity', NumberType::class, $quantityConfig);
         });
