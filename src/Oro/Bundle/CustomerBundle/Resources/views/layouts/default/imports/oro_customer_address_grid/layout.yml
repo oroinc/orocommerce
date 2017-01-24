@@ -24,6 +24,17 @@ layout:
                     __addresses_head:
                         __addresses_head_title: ~
 
+        - '@add':
+            id: __addresses_create_button
+            parentId: __addresses_head
+            blockType: link
+            options:
+                visible: '=data["acl"].isGranted("oro_customer_frontend_customer_address_create") && data["acl"].isGranted("oro_customer_frontend_customer_address_view")'
+                route_name: oro_customer_frontend_customer_address_create
+                route_parameters:
+                    entityId: '=data["entity"].getCustomer().getId()'
+                text: 'oro.customer.frontend.customer_user_address_book.create.label'
+
         - '@move':
             id: __addresses_datagrid
             siblingId: __addresses_head
@@ -45,17 +56,6 @@ layout:
               id: __addresses_datagrid_toolbar_button_container
               optionName: visible
               optionValue: true
-
-        - '@add':
-            id: __addresses_create_button
-            parentId: __addresses_head
-            blockType: link
-            options:
-                visible: '=data["acl"].isGranted("oro_customer_frontend_customer_address_create") && data["acl"].isGranted("oro_customer_frontend_customer_address_view")'
-                route_name: oro_customer_frontend_customer_address_create
-                route_parameters:
-                    entityId: '=data["entity"].getCustomer().getId()'
-                text: 'oro.customer.frontend.customer_user_address_book.create.label'
 
         - '@setOption':
             id: __addresses_datagrid_toolbar_sorting

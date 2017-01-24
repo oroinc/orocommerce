@@ -24,6 +24,17 @@ layout:
                     __user_addresses_head:
                         __user_addresses_head_title: ~
 
+        - '@add':
+            id: __user_addresses_create_button
+            parentId: __user_addresses_head
+            blockType: link
+            options:
+                visible: '=data["acl"].isGranted("oro_customer_frontend_customer_user_address_create")'
+                route_name: oro_customer_frontend_customer_user_address_create
+                route_parameters:
+                    entityId: '=data["entity"].getId()'
+                text: 'oro.customer.address.add'
+
         - '@move':
             id: __user_addresses_datagrid
             siblingId: __user_addresses_head
@@ -51,17 +62,6 @@ layout:
               id: __user_addresses_datagrid_toolbar_button_container
               optionName: visible
               optionValue: true
-
-        - '@add':
-            id: __user_addresses_create_button
-            parentId: __user_addresses_head
-            blockType: link
-            options:
-                visible: '=data["acl"].isGranted("oro_customer_frontend_customer_user_address_create")'
-                route_name: oro_customer_frontend_customer_user_address_create
-                route_parameters:
-                    entityId: '=data["entity"].getId()'
-                text: 'oro.customer.address.add'
 
         - '@setOption':
             id: __user_addresses_datagrid_toolbar_sorting
@@ -95,6 +95,11 @@ layout:
 
         - '@move':
             id: __user_addresses_datagrid_toolbar_page_size
+            parentId: __user_addresses_datagrid_toolbar
+            siblingId: __user_addresses_datagrid_toolbar_pagination
+
+        - '@move':
+            id: __user_addresses_datagrid_toolbar_items_counter
             parentId: __user_addresses_datagrid_toolbar
             siblingId: __user_addresses_datagrid_toolbar_pagination
 

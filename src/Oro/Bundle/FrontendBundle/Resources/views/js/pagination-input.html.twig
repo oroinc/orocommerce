@@ -1,26 +1,32 @@
 <script type="text/html" id="template-datagrid-toolbar-pagination-input">
-    <span class="oro-pagination__label"><%= _.__('oro.datagrid.pagination.label') %>:</span>
     <div class="oro-pagination__pager">
         <% _.each(handles, function (handle) { %>
             <% if (handle.type == "input") { %>
-                <input
-                        type="text"
-                        class="oro-pagination__input"
-                        value="<%= state.firstPage == 0 ? state.currentPage + 1 : state.currentPage  %>"
-                        data-grid-pagination-trigger-input
+                <input type="text"
+                       id="oro-pagination__input"
+                       class="oro-pagination__input"
+                       value="<%= state.firstPage == 0 ? state.currentPage + 1 : state.currentPage  %>"
+                       data-grid-pagination-trigger-input
                 <% if (disabled) { %>disabled="disabled"<% } %>/>
             <% } else { %>
+                <% if (handle.direction == 'next') { %>
+                    <span class="oro-pagination__total">
+                        <%= _.__('oro.datagrid.pagination.totalPages', {totalPages: state.totalPages || 1}) %>
+                    </span>
+                <% } %>
                 <button class="oro-pagination__<%= handle.direction %><% if (handle.className) { %> <%= handle.className %><% } %>"
                         data-grid-pagination-trigger data-grid-pagination-direction="<%= handle.direction %>"
                         <% if (disabled) { %> disabled<% } %>
                         <% if (handle.className) { %> <%= handle.className %><% } %>>
-                    <i class="fa-angle-<%= handle.arrow %> fa--base-line"></i>
+                        <% if (handle.direction == 'next') { %>
+                            <span><%= handle.direction %></span>
+                            <i class="fa-angle-<%= handle.arrow %> fa--base-line"></i>
+                        <% } else { %>
+                            <i class="fa-angle-<%= handle.arrow %> fa--base-line"></i>
+                            <span><%= handle.direction %></span>
+                        <% } %>
                 </button>
             <% } %>
         <% }); %>
     </div>
-    <span class="oro-pagination__total">
-        <%= _.__('oro.datagrid.pagination.totalPages', {totalPages: state.totalPages || 1}) %>&nbsp;|
-        <%= _.__('oro.datagrid.pagination.totalRecords', {totalRecords: state.totalRecords}) %>
-    </span>
 </script>
