@@ -1,0 +1,13 @@
+.breadcrumbs {
+    margin-top: 10px;
+
+    font-size: 12px;
+
+    color: get-color('additional', 'dark');;
+
+    &__item,
+    a,
+    a:hover {
+        color: get-color('additional', 'dark');;
+    }
+}
