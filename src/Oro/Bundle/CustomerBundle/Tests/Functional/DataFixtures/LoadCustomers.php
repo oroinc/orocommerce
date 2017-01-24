@@ -22,7 +22,7 @@ class LoadCustomers extends AbstractFixture implements DependentFixtureInterface
      */
     public function getDependencies()
     {
-        return [__NAMESPACE__ . '\LoadGroups'];
+        return [LoadGroups::class];
     }
 
     /**

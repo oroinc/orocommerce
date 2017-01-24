@@ -27,7 +27,7 @@ class WebsiteEntityListenerTest extends WebTestCase
         $em->persist($website);
         $em->flush();
 
-        $criteria = new ScopeCriteria(['website' => $website]);
+        $criteria = new ScopeCriteria(['website' => $website], []);
         /** @var ScopeRepository $repository */
         $repository = $em->getRepository(Scope::class);
 
