@@ -68,9 +68,7 @@ class ShippingMethodsListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->configsRuleProvider = $this->getMockBuilder(ShippingMethodsConfigsRulesProviderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->configsRuleProvider = $this->createMock(ShippingMethodsConfigsRulesProviderInterface::class);
 
         $this->contextFactory = $this->getMockBuilder(CheckoutShippingContextFactory::class)
             ->disableOriginalConstructor()
