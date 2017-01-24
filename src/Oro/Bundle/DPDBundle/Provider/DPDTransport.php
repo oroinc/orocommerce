@@ -40,7 +40,7 @@ class DPDTransport extends AbstractRestTransport
     protected $symmetricCrypter;
 
     /**
-     * @param LoggerInterface $logger
+     * @param LoggerInterface           $logger
      * @param SymmetricCrypterInterface $symmetricCrypter
      */
     public function __construct(
@@ -53,7 +53,9 @@ class DPDTransport extends AbstractRestTransport
 
     /**
      * @param ParameterBag $parameterBag
+     *
      * @throws \InvalidArgumentException
+     *
      * @return string
      */
     protected function getClientBaseUrl(ParameterBag $parameterBag)
@@ -99,7 +101,8 @@ class DPDTransport extends AbstractRestTransport
 
     /**
      * @param SetOrderRequest $setOrderRequest
-     * @param Transport $transportEntity
+     * @param Transport       $transportEntity
+     *
      * @return null|SetOrderResponse
      */
     public function getSetOrderResponse(SetOrderRequest $setOrderRequest, Transport $transportEntity)
@@ -109,7 +112,7 @@ class DPDTransport extends AbstractRestTransport
             $headers = $this->getRequestHeaders($transportEntity);
             $data = $this->client->post(static::API_SET_ORDER, $setOrderRequest->toArray(), $headers)->json();
 
-            return (new SetOrderResponse($data));
+            return new SetOrderResponse($data);
         } catch (RestException $restException) {
             $this->logger->error(
                 sprintf(
@@ -125,7 +128,8 @@ class DPDTransport extends AbstractRestTransport
 
     /**
      * @param ZipCodeRulesRequest $zipCodeRulesRequest
-     * @param Transport $transportEntity
+     * @param Transport           $transportEntity
+     *
      * @return null|ZipCodeRulesResponse
      */
     public function getZipCodeRulesResponse(ZipCodeRulesRequest $zipCodeRulesRequest, Transport $transportEntity)
@@ -135,7 +139,7 @@ class DPDTransport extends AbstractRestTransport
             $headers = $this->getRequestHeaders($transportEntity);
             $data = $this->client->get(static::API_GET_ZIPCODE_RULES, [], $headers)->json();
 
-            return (new ZipCodeRulesResponse($data));
+            return new ZipCodeRulesResponse($data);
         } catch (RestException $restException) {
             $this->logger->error(
                 sprintf(
@@ -151,12 +155,13 @@ class DPDTransport extends AbstractRestTransport
 
     /**
      * @param Transport $transportEntity
+     *
      * @return array
      */
     protected function getRequestHeaders(Transport $transportEntity)
     {
         $headers = [
-            'Version'  => static::API_VERSION,
+            'Version' => static::API_VERSION,
             'Language' => static::API_DEFAULT_LANGUAGE,
         ];
         $headers += $this->getPartnerCredentialsHeaders($transportEntity->getSettingsBag());
@@ -167,6 +172,7 @@ class DPDTransport extends AbstractRestTransport
 
     /**
      * @param ParameterBag $parameterBag
+     *
      * @return array
      */
     protected function getPartnerCredentialsHeaders(ParameterBag $parameterBag)
@@ -180,13 +186,14 @@ class DPDTransport extends AbstractRestTransport
         }
 
         return [
-            'PartnerCredentials-Name'  => $partnerName,
+            'PartnerCredentials-Name' => $partnerName,
             'PartnerCredentials-Token' => $partnerToken,
         ];
     }
 
     /**
      * @param ParameterBag $parameterBag
+     *
      * @return array
      */
     protected function getCloudUserCredentialsHeaders(ParameterBag $parameterBag)
@@ -196,7 +203,7 @@ class DPDTransport extends AbstractRestTransport
 
         return [
             'UserCredentials-cloudUserID' => $cloudUserId,
-            'UserCredentials-Token'       => $decryptedCloudUserToken,
+            'UserCredentials-Token' => $decryptedCloudUserToken,
         ];
     }
 }

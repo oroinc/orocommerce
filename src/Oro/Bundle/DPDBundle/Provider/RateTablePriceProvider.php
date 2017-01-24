@@ -20,7 +20,8 @@ class RateTablePriceProvider
 
     /**
      * RateTablePriceProvider constructor.
-     * @param ManagerRegistry $registry
+     *
+     * @param ManagerRegistry       $registry
      * @param MeasureUnitConversion $measureUnitConversion
      */
     public function __construct(
@@ -33,8 +34,9 @@ class RateTablePriceProvider
 
     /**
      * @param DPDTransportEntity $transport
-     * @param ShippingService $shippingService
-     * @param AddressInterface $shippingAddress
+     * @param ShippingService    $shippingService
+     * @param AddressInterface   $shippingAddress
+     *
      * @return Rate|null
      */
     public function getRateByServiceAndDestination(

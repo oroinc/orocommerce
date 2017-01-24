@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\DPDBundle\Condition;
 
-
 use Oro\Bundle\DPDBundle\Method\DPDShippingMethodProvider;
 use Oro\Component\Action\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
@@ -39,6 +38,7 @@ class ShippedWithDPD extends AbstractCondition implements ContextAccessorAwareIn
     protected function isConditionAllowed($context)
     {
         $shippingMethod = $this->resolveValue($context, $this->value);
+
         return $this->shippingProvider->hasShippingMethod($shippingMethod);
     }
 
@@ -72,7 +72,7 @@ class ShippedWithDPD extends AbstractCondition implements ContextAccessorAwareIn
     protected function getMessageParameters($context)
     {
         return [
-            '{{ value }}' => $this->resolveValue($context, $this->value)
+            '{{ value }}' => $this->resolveValue($context, $this->value),
         ];
     }
 
@@ -91,5 +91,4 @@ class ShippedWithDPD extends AbstractCondition implements ContextAccessorAwareIn
 
         return $this;
     }
-
 }

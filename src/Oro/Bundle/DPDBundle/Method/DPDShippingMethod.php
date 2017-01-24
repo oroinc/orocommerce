@@ -6,13 +6,11 @@ use Oro\Bundle\DPDBundle\Cache\ZipCodeRulesCache;
 use Oro\Bundle\DPDBundle\Entity\DPDTransport;
 use Oro\Bundle\DPDBundle\Factory\DPDRequestFactory;
 use Oro\Bundle\DPDBundle\Form\Type\DPDShippingMethodOptionsType;
-use Oro\Bundle\DPDBundle\Model\SetOrderResponse;
 use Oro\Bundle\DPDBundle\Provider\PackageProvider;
 use Oro\Bundle\DPDBundle\Provider\RateTablePriceProvider;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
-use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\PricesAwareShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
@@ -31,22 +29,22 @@ class DPDShippingMethod implements
 
     const HANDLING_FEE_OPTION = 'handling_fee';
 
-    /** @var  DPDTransportProvider */
+    /** @var DPDTransportProvider */
     protected $transportProvider;
 
     /** @var Channel */
     protected $channel;
 
-    /** @var  DPDRequestFactory */
+    /** @var DPDRequestFactory */
     protected $dpdRequestFactory;
 
     /** @var LocalizationHelper */
     protected $localizationHelper;
 
-    /** @var  ShippingMethodTypeInterface[] */
+    /** @var ShippingMethodTypeInterface[] */
     protected $types;
 
-    /** @var  PackageProvider */
+    /** @var PackageProvider */
     protected $packageProvider;
 
     /**
@@ -65,14 +63,15 @@ class DPDShippingMethod implements
     protected $shippingLineItemConverter;
 
     /**
-     * Construct
-     * @param DPDTransportProvider $transportProvider
-     * @param Channel $channel
-     * @param DPDRequestFactory $dpdRequestFactory
-     * @param LocalizationHelper $localizationHelper
-     * @param PackageProvider $packageProvider
-     * @param RateTablePriceProvider $rateTablePriceProvider
-     * @param ZipCodeRulesCache $zipCodeRulesCache
+     * Construct.
+     *
+     * @param DPDTransportProvider                    $transportProvider
+     * @param Channel                                 $channel
+     * @param DPDRequestFactory                       $dpdRequestFactory
+     * @param LocalizationHelper                      $localizationHelper
+     * @param PackageProvider                         $packageProvider
+     * @param RateTablePriceProvider                  $rateTablePriceProvider
+     * @param ZipCodeRulesCache                       $zipCodeRulesCache
      * @param OrderShippingLineItemConverterInterface $shippingLineItemConverter
      */
     public function __construct(
@@ -100,7 +99,7 @@ class DPDShippingMethod implements
      */
     public function getIdentifier()
     {
-        return static::IDENTIFIER . '_' . $this->channel->getId();
+        return static::IDENTIFIER.'_'.$this->channel->getId();
     }
 
     /**
@@ -119,7 +118,7 @@ class DPDShippingMethod implements
         /** @var DPDTransport $transport */
         $transport = $this->channel->getTransport();
 
-        return (string)$this->localizationHelper->getLocalizedValue($transport->getLabels());
+        return (string) $this->localizationHelper->getLocalizedValue($transport->getLabels());
     }
 
     /**
@@ -154,13 +153,14 @@ class DPDShippingMethod implements
 
     /**
      * @param string $identifier
+     *
      * @return DPDShippingMethodType|null
      */
     public function getType($identifier)
     {
         $methodTypes = $this->getTypes();
         foreach ($methodTypes as $methodType) {
-            if ($methodType->getIdentifier() === (string)$identifier) {
+            if ($methodType->getIdentifier() === (string) $identifier) {
                 return $methodType;
             }
         }
@@ -187,7 +187,7 @@ class DPDShippingMethod implements
     public function getTrackingLink($number)
     {
         //FIXME: get current locale to localize url
-        return self::TRACKING_URL . $number;
+        return self::TRACKING_URL.$number;
     }
 
     /**

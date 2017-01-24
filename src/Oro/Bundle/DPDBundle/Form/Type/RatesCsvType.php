@@ -2,10 +2,8 @@
 
 namespace Oro\Bundle\DPDBundle\Form\Type;
 
-
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -19,9 +17,9 @@ class RatesCsvType extends AbstractType
     }
 
     /**
-     * @param FormView $view
+     * @param FormView      $view
      * @param FormInterface $form
-     * @param array $options
+     * @param array         $options
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
@@ -36,7 +34,7 @@ class RatesCsvType extends AbstractType
         $resolver->setDefaults(
             [
                 'download_csv_label' => 'oro.dpd.transport.rates_csv.download.label',
-                'constraints'        => [],
+                'constraints' => [],
             ]
         );
     }

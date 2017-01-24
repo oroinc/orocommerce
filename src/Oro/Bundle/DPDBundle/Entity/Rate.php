@@ -14,7 +14,7 @@ use Oro\Bundle\AddressBundle\Entity\Region;
 class Rate
 {
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Id
      * @ORM\Column(name="id", type="integer")
@@ -92,11 +92,13 @@ class Rate
 
     /**
      * @param DPDTransport $transport
+     *
      * @return Rate
      */
     public function setTransport(DPDTransport $transport = null)
     {
         $this->transport = $transport;
+
         return $this;
     }
 
@@ -110,11 +112,13 @@ class Rate
 
     /**
      * @param ShippingService $shippingService
+     *
      * @return Rate
      */
-    public function setShippingService($shippingService)
+    public function setShippingService(ShippingService $shippingService)
     {
         $this->shippingService = $shippingService;
+
         return $this;
     }
 
@@ -128,11 +132,13 @@ class Rate
 
     /**
      * @param Country $country
+     *
      * @return Rate
      */
-    public function setCountry(Country $country = null)
+    public function setCountry(Country $country)
     {
         $this->country = $country;
+
         return $this;
     }
 
@@ -146,11 +152,13 @@ class Rate
 
     /**
      * @param Region $region
+     *
      * @return Rate
      */
     public function setRegion(Region $region = null)
     {
         $this->region = $region;
+
         return $this;
     }
 
@@ -164,16 +172,18 @@ class Rate
 
     /**
      * @param string $regionText
+     *
      * @return Rate
      */
     public function setRegionText($regionText)
     {
         $this->regionText = $regionText;
+
         return $this;
     }
 
     /**
-     * Get name of region
+     * Get name of region.
      *
      * @return string
      */
@@ -192,11 +202,13 @@ class Rate
 
     /**
      * @param float $weightValue
+     *
      * @return Rate
      */
     public function setWeightValue($weightValue)
     {
         $this->weightValue = $weightValue;
+
         return $this;
     }
 
@@ -210,11 +222,13 @@ class Rate
 
     /**
      * @param string $priceValue
+     *
      * @return Rate
      */
     public function setPriceValue($priceValue)
     {
         $this->priceValue = $priceValue;
+
         return $this;
     }
 
@@ -224,11 +238,11 @@ class Rate
     public function __toString()
     {
         return sprintf(
-            '%s, %s, %s, %f => %s',
+            '%s, %s, %s, %s => %s',
             $this->getShippingService()->getCode(),
-            $this->getCountry()?$this->getCountry():'*',
-            $this->getRegionName()?$this->getRegionName():'*',
-            $this->getWeightValue()?$this->getWeightValue():'*',
+            $this->getCountry()->getName(),
+            $this->getRegionName() ? $this->getRegionName() : '*',
+            $this->getWeightValue() ? number_format($this->getWeightValue(), 2) : '*',
             $this->getPriceValue()
         );
     }

@@ -18,7 +18,7 @@ class DPDTransactionTest extends \PHPUnit_Framework_TestCase
         static::assertPropertyAccessors(new DPDTransaction(), [
             ['order', new Order()],
             ['labelFile', new File()],
-            ['parcelNumbers', array()]
+            ['parcelNumbers', array()],
         ]);
     }
 }

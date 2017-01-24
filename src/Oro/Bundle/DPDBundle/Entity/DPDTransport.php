@@ -5,7 +5,6 @@ namespace Oro\Bundle\DPDBundle\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use Oro\Bundle\CurrencyBundle\Entity\CurrencyAwareInterface;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ShippingBundle\Entity\WeightUnit;
@@ -29,7 +28,7 @@ class DPDTransport extends Transport
     const LOWERRIGHT_LABEL_START_POSITION = 'LowerRight';
 
     /**
-     * @var boolean
+     * @var bool
      *
      * @ORM\Column(name="dpd_live_mode", type="boolean", nullable=false)
      */
@@ -77,7 +76,7 @@ class DPDTransport extends Transport
     protected $unitOfWeight;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(name="dpd_rate_policy", type="smallint", nullable=false)
      */
@@ -137,7 +136,7 @@ class DPDTransport extends Transport
     protected $labels;
 
     /**
-     * @var \DateTime $invalidateCacheAt
+     * @var \DateTime
      *
      * @ORM\Column(name="dpd_invalidate_cache_at", type="datetime", nullable=true)
      */
@@ -156,7 +155,7 @@ class DPDTransport extends Transport
     }
 
     /**
-     * @return boolean
+     * @return bool
      */
     public function getLiveMode()
     {
@@ -164,12 +163,14 @@ class DPDTransport extends Transport
     }
 
     /**
-     * @param boolean $liveMode
+     * @param bool $liveMode
+     *
      * @return DPDTransport
      */
     public function setLiveMode($liveMode)
     {
         $this->liveMode = $liveMode;
+
         return $this;
     }
 
@@ -183,11 +184,13 @@ class DPDTransport extends Transport
 
     /**
      * @param string $cloudUserId
+     *
      * @return DPDTransport
      */
     public function setCloudUserId($cloudUserId)
     {
         $this->cloudUserId = $cloudUserId;
+
         return $this;
     }
 
@@ -201,11 +204,13 @@ class DPDTransport extends Transport
 
     /**
      * @param string $cloudUserToken
+     *
      * @return DPDTransport
      */
     public function setCloudUserToken($cloudUserToken)
     {
         $this->cloudUserToken = $cloudUserToken;
+
         return $this;
     }
 
@@ -310,11 +315,13 @@ class DPDTransport extends Transport
 
     /**
      * @param WeightUnit $unitOfWeight
+     *
      * @return DPDTransport
      */
     public function setUnitOfWeight(WeightUnit $unitOfWeight)
     {
         $this->unitOfWeight = $unitOfWeight;
+
         return $this;
     }
 
@@ -328,11 +335,13 @@ class DPDTransport extends Transport
 
     /**
      * @param int $ratePolicy
+     *
      * @return DPDTransport
      */
     public function setRatePolicy($ratePolicy)
     {
         $this->ratePolicy = $ratePolicy;
+
         return $this;
     }
 
@@ -346,24 +355,27 @@ class DPDTransport extends Transport
 
     /**
      * @param string $flatRatePriceValue
+     *
      * @return DPDTransport
      */
     public function setFlatRatePriceValue($flatRatePriceValue)
     {
         $this->flatRatePriceValue = $flatRatePriceValue;
+
         return $this;
     }
 
     /**
-     * @return Rate[]
+     * @return Collection|Rate[]
      */
     public function getRates()
     {
-        return $this->rates->toArray();
+        return $this->rates;
     }
 
     /**
      * @param Rate $rate
+     *
      * @return DPDTransport
      */
     public function addRate(Rate $rate)
@@ -390,6 +402,7 @@ class DPDTransport extends Transport
 
     /**
      * @param Rate $rate
+     *
      * @return DPDTransport
      */
     public function removeRate(Rate $rate)
@@ -412,11 +425,13 @@ class DPDTransport extends Transport
 
     /**
      * @param File $ratesCsv
+     *
      * @return DPDTransport
      */
     public function setRatesCsv(File $ratesCsv)
     {
         $this->ratesCsv = $ratesCsv;
+
         return $this;
     }
 
@@ -430,11 +445,13 @@ class DPDTransport extends Transport
 
     /**
      * @param string $labelSize
+     *
      * @return DPDTransport
      */
     public function setLabelSize($labelSize)
     {
         $this->labelSize = $labelSize;
+
         return $this;
     }
 
@@ -448,11 +465,13 @@ class DPDTransport extends Transport
 
     /**
      * @param string $labelStartPosition
+     *
      * @return DPDTransport
      */
     public function setLabelStartPosition($labelStartPosition)
     {
         $this->labelStartPosition = $labelStartPosition;
+
         return $this;
     }
 
@@ -472,10 +491,10 @@ class DPDTransport extends Transport
                     'unit_of_weight' => $this->getUnitOfWeight(),
                     'rate_policy' => $this->getRatePolicy(),
                     'flat_rate_price_value' => $this->getFlatRatePriceValue(),
-                    'rates' => $this->getRates(),
+                    'rates' => $this->getRates()->toArray(),
                     'label_size' => $this->getLabelSize(),
                     'label_start_position' => $this->getLabelStartPosition(),
-                    'labels' => $this->getLabels()->toArray()
+                    'labels' => $this->getLabels()->toArray(),
                 ]
             );
         }
@@ -484,7 +503,7 @@ class DPDTransport extends Transport
     }
 
     /**
-     * Set invalidateCacheAt
+     * Set invalidateCacheAt.
      *
      * @param \DateTime $invalidateCacheAt
      *
@@ -498,7 +517,7 @@ class DPDTransport extends Transport
     }
 
     /**
-     * Get invalidateCacheAt
+     * Get invalidateCacheAt.
      *
      * @return \DateTime
      */

@@ -56,14 +56,14 @@ class ShippedWithDPDTest extends \PHPUnit_Framework_TestCase
     public function evaluateDataProvider()
     {
         return [
-            'dpd_shipping_method'    => [
-                'options'        => [new PropertyPath('foo')],
-                'context'        => ['foo' => 'dpd'],
+            'dpd_shipping_method' => [
+                'options' => [new PropertyPath('foo')],
+                'context' => ['foo' => 'dpd'],
                 'expectedResult' => true,
             ],
             'no_dpd_shipping_method' => [
-                'options'        => [new PropertyPath('foo')],
-                'context'        => ['foo' => 'no_dpd'],
+                'options' => [new PropertyPath('foo')],
+                'context' => ['foo' => 'no_dpd'],
                 'expectedResult' => false,
             ],
         ];
@@ -118,8 +118,8 @@ class ShippedWithDPDTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
-                'options'  => ['value'],
-                'message'  => null,
+                'options' => ['value'],
+                'message' => null,
                 'expected' => [
                     '@shipped_with_dpd' => [
                         'parameters' => [
@@ -129,11 +129,11 @@ class ShippedWithDPDTest extends \PHPUnit_Framework_TestCase
                 ],
             ],
             [
-                'options'  => ['value'],
-                'message'  => 'Test',
+                'options' => ['value'],
+                'message' => 'Test',
                 'expected' => [
                     '@shipped_with_dpd' => [
-                        'message'    => 'Test',
+                        'message' => 'Test',
                         'parameters' => [
                             'value',
                         ],
@@ -163,22 +163,22 @@ class ShippedWithDPDTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
-                'options'  => ['value'],
-                'message'  => null,
+                'options' => ['value'],
+                'message' => null,
                 'expected' => '$factory->create(\'shipped_with_dpd\', [\'value\'])',
             ],
             [
-                'options'  => ['value'],
-                'message'  => 'Test',
+                'options' => ['value'],
+                'message' => 'Test',
                 'expected' => '$factory->create(\'shipped_with_dpd\', [\'value\'])->setMessage(\'Test\')',
             ],
             [
-                'options'  => [new PropertyPath('foo[bar].baz')],
-                'message'  => null,
+                'options' => [new PropertyPath('foo[bar].baz')],
+                'message' => null,
                 'expected' => '$factory->create(\'shipped_with_dpd\', ['
-                    . 'new \Oro\Component\ConfigExpression\CompiledPropertyPath('
-                    . '\'foo[bar].baz\', [\'foo\', \'bar\', \'baz\'], [false, true, false])'
-                    . '])',
+                    .'new \Oro\Component\ConfigExpression\CompiledPropertyPath('
+                    .'\'foo[bar].baz\', [\'foo\', \'bar\', \'baz\'], [false, true, false])'
+                    .'])',
             ],
         ];
     }

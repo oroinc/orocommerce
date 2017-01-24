@@ -5,8 +5,9 @@ namespace Oro\Bundle\DPDBundle\Model;
 class Package
 {
     /**
-     * Weight in kg
-     * @var string
+     * Weight in kg.
+     *
+     * @var float
      */
     protected $weight;
 
@@ -15,9 +16,8 @@ class Package
      */
     protected $contents;
 
-
     /**
-     * @return string
+     * @return float
      */
     public function getWeight()
     {
@@ -25,7 +25,8 @@ class Package
     }
 
     /**
-     * @param string $weight
+     * @param float $weight
+     *
      * @return Package
      */
     public function setWeight($weight)
@@ -45,6 +46,7 @@ class Package
 
     /**
      * @param string $contents
+     *
      * @return Package
      */
     public function setContents($contents)

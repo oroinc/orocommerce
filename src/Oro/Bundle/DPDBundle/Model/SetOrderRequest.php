@@ -2,27 +2,25 @@
 
 namespace Oro\Bundle\DPDBundle\Model;
 
-
 class SetOrderRequest extends DPDRequest
 {
     const START_ORDER_ACTION = 'startOrder';
     const CHECK_ORDER_ACTION = 'checkOrderData';
 
-    /** @var  string */
+    /** @var string */
     protected $orderAction;
 
-    /** @var  \DateTime */
+    /** @var \DateTime */
     protected $shipDate;
 
-    /** @var  string */
+    /** @var string */
     protected $labelSize;
 
-    /** @var  string */
+    /** @var string */
     protected $labelStartPosition;
 
-    /** @var  OrderData[] */
+    /** @var OrderData[] */
     protected $orderDataList;
-
 
     /**
      * SetOrderRequest constructor.
@@ -42,6 +40,7 @@ class SetOrderRequest extends DPDRequest
 
     /**
      * @param string $orderAction
+     *
      * @return SetOrderRequest
      */
     public function setOrderAction($orderAction)
@@ -61,9 +60,10 @@ class SetOrderRequest extends DPDRequest
 
     /**
      * @param \DateTime $shipDate
+     *
      * @return SetOrderRequest
      */
-    public function setShipDate($shipDate)
+    public function setShipDate(\DateTime $shipDate)
     {
         $this->shipDate = $shipDate;
 
@@ -80,6 +80,7 @@ class SetOrderRequest extends DPDRequest
 
     /**
      * @param string $labelSize
+     *
      * @return SetOrderRequest
      */
     public function setLabelSize($labelSize)
@@ -99,6 +100,7 @@ class SetOrderRequest extends DPDRequest
 
     /**
      * @param string $labelStartPosition
+     *
      * @return SetOrderRequest
      */
     public function setLabelStartPosition($labelStartPosition)
@@ -107,7 +109,6 @@ class SetOrderRequest extends DPDRequest
 
         return $this;
     }
-
 
     /**
      * @return OrderData[]
@@ -119,9 +120,10 @@ class SetOrderRequest extends DPDRequest
 
     /**
      * @param OrderData[] $orderDataList
+     *
      * @return SetOrderRequest
      */
-    public function setOrderDataList($orderDataList)
+    public function setOrderDataList(array $orderDataList)
     {
         $this->orderDataList = $orderDataList;
 
@@ -134,10 +136,10 @@ class SetOrderRequest extends DPDRequest
     public function toArray()
     {
         $request = [
-            'OrderAction'   => $this->orderAction,
+            'OrderAction' => $this->orderAction,
             'OrderSettings' => [
-                'ShipDate'           => $this->shipDate->format('Y-m-d'),
-                'LabelSize'          => $this->labelSize,
+                'ShipDate' => $this->shipDate->format('Y-m-d'),
+                'LabelSize' => $this->labelSize,
                 'LabelStartPosition' => $this->labelStartPosition,
             ],
         ];

@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\DPDBundle\Cache;
 
-
 use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\DPDBundle\Entity\DPDTransport;
 use Oro\Bundle\DPDBundle\Model\ZipCodeRulesRequest;
@@ -11,7 +10,7 @@ use Oro\Bundle\DPDBundle\Model\ZipCodeRulesResponse;
 class ZipCodeRulesCache
 {
     /**
-     * 24 hours, 60 * 60 * 24
+     * 24 hours, 60 * 60 * 24.
      */
     const LIFETIME = 86400;
 
@@ -32,6 +31,7 @@ class ZipCodeRulesCache
 
     /**
      * @param ZipCodeRulesCacheKey $key
+     *
      * @return bool
      */
     public function containsZipCodeRules(ZipCodeRulesCacheKey $key)
@@ -41,6 +41,7 @@ class ZipCodeRulesCache
 
     /**
      * @param string $stringKey
+     *
      * @return bool
      */
     protected function containsZipCodeRulesByStringKey($stringKey)
@@ -50,6 +51,7 @@ class ZipCodeRulesCache
 
     /**
      * @param ZipCodeRulesCacheKey $key
+     *
      * @return bool|ZipCodeRulesResponse
      */
     public function fetchZipCodeRules(ZipCodeRulesCacheKey $key)
@@ -65,9 +67,10 @@ class ZipCodeRulesCache
     /**
      * @param ZipCodeRulesCacheKey $key
      * @param ZipCodeRulesResponse $zipCodeRules
+     *
      * @return $this
      */
-    public function savePrice(ZipCodeRulesCacheKey $key, ZipCodeRulesResponse $zipCodeRules)
+    public function saveZipCodeRules(ZipCodeRulesCacheKey $key, ZipCodeRulesResponse $zipCodeRules)
     {
         $interval = 0;
         $invalidateCacheAt = $key->getTransport()->getInvalidateCacheAt();
@@ -83,7 +86,7 @@ class ZipCodeRulesCache
     }
 
     /**
-     * @param integer $transportId
+     * @param int $transportId
      */
     public function deleteAll($transportId)
     {
@@ -92,9 +95,10 @@ class ZipCodeRulesCache
     }
 
     /**
-     * @param DPDTransport $transport
+     * @param DPDTransport        $transport
      * @param ZipCodeRulesRequest $zipCodeRulesRequest
-     * @param string $methodId
+     * @param string              $methodId
+     *
      * @return ZipCodeRulesCacheKey
      */
     public function createKey(
@@ -109,6 +113,7 @@ class ZipCodeRulesCache
 
     /**
      * @param ZipCodeRulesCacheKey $key
+     *
      * @return string
      */
     protected function generateStringKey(ZipCodeRulesCacheKey $key)
@@ -118,17 +123,18 @@ class ZipCodeRulesCache
         if ($key->getTransport() && $key->getTransport()->getInvalidateCacheAt()) {
             $invalidateAt = $key->getTransport()->getInvalidateCacheAt()->getTimestamp();
         }
+
         return implode('_', [
             $key->generateKey(),
-            $invalidateAt
+            $invalidateAt,
         ]);
     }
 
     /**
-     * @param integer $id
+     * @param int $id
      */
     protected function setNamespace($id)
     {
-        $this->cache->setNamespace(self::NAME_SPACE . '_' . $id);
+        $this->cache->setNamespace(self::NAME_SPACE.'_'.$id);
     }
 }

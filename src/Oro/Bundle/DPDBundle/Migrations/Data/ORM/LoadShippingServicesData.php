@@ -3,9 +3,7 @@
 namespace Oro\Bundle\DPDBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\DPDBundle\Entity\ShippingService;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -32,6 +30,7 @@ class LoadShippingServicesData extends AbstractFixture implements ContainerAware
 
     /**
      * {@inheritdoc}
+     *
      * @throws \InvalidArgumentException
      */
     public function load(ObjectManager $manager)
@@ -41,6 +40,7 @@ class LoadShippingServicesData extends AbstractFixture implements ContainerAware
 
     /**
      * @param ObjectManager $manager
+     *
      * @throws \InvalidArgumentException
      */
     public function loadServices(ObjectManager $manager)

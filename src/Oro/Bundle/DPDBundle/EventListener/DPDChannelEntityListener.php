@@ -9,14 +9,14 @@ use Oro\Bundle\DPDBundle\Method\DPDShippingMethod;
 class DPDChannelEntityListener
 {
     /**
-     * @param Channel $channel
+     * @param Channel            $channel
      * @param LifecycleEventArgs $args
      */
     public function preRemove(Channel $channel, LifecycleEventArgs $args)
     {
         if ('dpd' === $channel->getType()) {
             $entityManager = $args->getEntityManager();
-            $shippingMethodIdentifier = DPDShippingMethod::IDENTIFIER . '_' . $channel->getId();
+            $shippingMethodIdentifier = DPDShippingMethod::IDENTIFIER.'_'.$channel->getId();
             $configuredMethods = $entityManager
                 ->getRepository('OroShippingBundle:ShippingMethodConfig')
                 ->findBy(['method' => $shippingMethodIdentifier]);

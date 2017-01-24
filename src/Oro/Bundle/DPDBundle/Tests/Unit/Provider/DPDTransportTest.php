@@ -114,9 +114,7 @@ class DPDTransportTest extends \PHPUnit_Framework_TestCase
 
         $setOrderResponse = $this->transport->getSetOrderResponse($setOrderRequest, $transportEntity);
         static::assertInstanceOf('Oro\Bundle\DPDBundle\Model\SetOrderResponse', $setOrderResponse);
-
     }
-
 
     public function testGetSetOrderResponseRestException()
     {
@@ -187,9 +185,7 @@ class DPDTransportTest extends \PHPUnit_Framework_TestCase
 
         $zipCodeRulesResponse = $this->transport->getZipCodeRulesResponse($zipCodeRulesRequest, $transportEntity);
         static::assertInstanceOf('Oro\Bundle\DPDBundle\Model\ZipCodeRulesResponse', $zipCodeRulesResponse);
-
     }
-
 
     public function testGetZipCodeRulesResponseRestException()
     {

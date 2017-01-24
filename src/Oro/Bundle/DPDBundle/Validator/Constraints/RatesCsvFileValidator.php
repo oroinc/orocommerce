@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\DPDBundle\Validator\Constraints;
 
-
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
@@ -34,7 +33,7 @@ class RatesCsvFileValidator extends ConstraintValidator
     }
 
     /**
-     * @inheritdoc
+     * {@inheritdoc}
      */
     public function validate($value, Constraint $constraint)
     {
@@ -57,7 +56,7 @@ class RatesCsvFileValidator extends ConstraintValidator
             // FIXME: Use translations for error messages
             // FIXME: Use error specific messages
             while (($row = fgetcsv($handle, 1000)) !== false) {
-                $rowCounter++;
+                ++$rowCounter;
                 if ($rowCounter === 1) {
                     continue;
                 }
@@ -81,7 +80,7 @@ class RatesCsvFileValidator extends ConstraintValidator
                 if (!empty($regionCode)
                     && !$countries[$countryCode]->getRegions()->exists(
                         function ($key, $element) use ($regionCode) {
-                            /** @var Region $element */
+                            /* @var Region $element */
                             return $element->getCombinedCode() === $regionCode;
                         }
                     )
@@ -100,7 +99,6 @@ class RatesCsvFileValidator extends ConstraintValidator
                 }
             }
             fclose($handle);
-
         }
     }
 }

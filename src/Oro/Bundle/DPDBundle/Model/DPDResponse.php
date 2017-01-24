@@ -18,7 +18,7 @@ class DPDResponse
     protected $values;
 
     /**
-     * @var boolean
+     * @var bool
      */
     protected $ack;
 
@@ -34,6 +34,7 @@ class DPDResponse
 
     /**
      * @param array $values
+     *
      * @throws \InvalidArgumentException
      */
     public function __construct(array $values = [])
@@ -62,7 +63,8 @@ class DPDResponse
     /**
      * @return bool
      */
-    public function isSuccessful() {
+    public function isSuccessful()
+    {
         return $this->ack;
     }
 
@@ -77,25 +79,30 @@ class DPDResponse
     /**
      * @return array
      */
-    public function getErrors() {
+    public function getErrors()
+    {
         return $this->errors;
     }
 
-    public function getErrorMessagesLong() {
+    public function getErrorMessagesLong()
+    {
         $errMsgs = [];
         foreach ($this->getErrors() as $error) {
             $errMsgs[] =
-                $error[self::DPD_ERROR_DATA_MSG_LONG_KEY] . ' (ErrorID=' . $error[self::DPD_ERROR_DATA_ID_KEY] . ')';
+                $error[self::DPD_ERROR_DATA_MSG_LONG_KEY].' (ErrorID='.$error[self::DPD_ERROR_DATA_ID_KEY].')';
         }
+
         return $errMsgs;
     }
 
-    public function getErrorMessagesShort() {
+    public function getErrorMessagesShort()
+    {
         $errMsgs = [];
         foreach ($this->getErrors() as $error) {
             $errMsgs[] =
-                $error[self::DPD_ERROR_DATA_MSG_SHORT_KEY] . ' (ErrorID=' . $error[self::DPD_ERROR_DATA_ID_KEY] . ')';
+                $error[self::DPD_ERROR_DATA_MSG_SHORT_KEY].' (ErrorID='.$error[self::DPD_ERROR_DATA_ID_KEY].')';
         }
+
         return $errMsgs;
     }
 }

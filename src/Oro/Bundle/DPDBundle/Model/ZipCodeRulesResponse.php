@@ -14,12 +14,12 @@ class ZipCodeRulesResponse extends DPDResponse
     const DPD_ZIP_CODE_RULES_STATE_KEY = 'State';
 
     /**
-     * @var string|null
+     * @var string
      */
     protected $country;
 
     /**
-     * @var string|null
+     * @var string
      */
     protected $zipCode;
 
@@ -29,27 +29,28 @@ class ZipCodeRulesResponse extends DPDResponse
     protected $noPickupDays;
 
     /**
-     * @var string|null
+     * @var string
      */
     protected $expressCutOff;
 
     /**
-     * @var string|null
+     * @var string
      */
     protected $classicCutOff;
 
     /**
-     * @var string|null
+     * @var string
      */
     protected $pickupDepot;
 
     /**
-     * @var string|null
+     * @var string
      */
     protected $state;
 
     /**
      * @param array $values
+     *
      * @throws \InvalidArgumentException
      */
     public function __construct(array $values = [])
@@ -101,7 +102,7 @@ class ZipCodeRulesResponse extends DPDResponse
     }
 
     /**
-     * @return null|string
+     * @return string
      */
     public function getCountry()
     {
@@ -109,7 +110,7 @@ class ZipCodeRulesResponse extends DPDResponse
     }
 
     /**
-     * @return null|string
+     * @return string
      */
     public function getZipCode()
     {
@@ -125,7 +126,9 @@ class ZipCodeRulesResponse extends DPDResponse
     }
 
     /**
-     * @return array
+     * @param \DateTime $date
+     *
+     * @return bool
      */
     public function isNoPickupDay(\DateTime $date)
     {
@@ -133,7 +136,7 @@ class ZipCodeRulesResponse extends DPDResponse
     }
 
     /**
-     * @return null|string
+     * @return string
      */
     public function getExpressCutOff()
     {
@@ -141,7 +144,7 @@ class ZipCodeRulesResponse extends DPDResponse
     }
 
     /**
-     * @return null|string
+     * @return string
      */
     public function getClassicCutOff()
     {
@@ -149,7 +152,7 @@ class ZipCodeRulesResponse extends DPDResponse
     }
 
     /**
-     * @return null|string
+     * @return string
      */
     public function getPickupDepot()
     {
@@ -157,7 +160,7 @@ class ZipCodeRulesResponse extends DPDResponse
     }
 
     /**
-     * @return null|string
+     * @return string
      */
     public function getState()
     {

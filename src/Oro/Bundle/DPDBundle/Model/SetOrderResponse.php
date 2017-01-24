@@ -22,6 +22,7 @@ class SetOrderResponse extends DPDResponse
 
     /**
      * @param array $values
+     *
      * @throws \InvalidArgumentException
      */
     public function __construct(array $values = [])
@@ -54,13 +55,12 @@ class SetOrderResponse extends DPDResponse
                 $yourInternalId = $labelData[self::DPD_LABEL_DATA_YOUR_INTERNAL_ID_KEY];
                 $this->parcelNumbers[$yourInternalId] = $parcelNumber;
             }
-
-
         }
     }
 
     /**
      * @param bool $decode
+     *
      * @return string
      */
     public function getLabelPDF($decode = true)

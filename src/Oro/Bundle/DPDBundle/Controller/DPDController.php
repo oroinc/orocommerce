@@ -7,11 +7,8 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpFoundation\StreamedResponse;
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-
 
 /**
  * @Route("/dpd")
@@ -31,11 +28,11 @@ class DPDController extends Controller
     public function ratesDownloadAction(DPDTransport $transport)
     {
         $response = new StreamedResponse();
-        $response->setCallback(function() use ($transport) {
+        $response->setCallback(function () use ($transport) {
             $handle = fopen('php://output', 'rb+');
 
             // Add BOM to fix UTF-8 in Excel
-            fwrite($handle, $bom = (chr(0xEF) . chr(0xBB) . chr(0xBF)));
+            fwrite($handle, $bom = (chr(0xEF).chr(0xBB).chr(0xBF)));
 
             // Add the header of the CSV file
             // FIXME: Use translations in headers
@@ -43,7 +40,7 @@ class DPDController extends Controller
                 'Shipping Service Code',
                 'Country Code (ISO 3166-1 alpha-2)',
                 'Region Code (ISO 3166-2)',
-                'Weight Value (' . $transport->getUnitOfWeight() . ')',
+                'Weight Value ('.$transport->getUnitOfWeight().')',
                 'Price Value',
             ];
             fputcsv($handle, $header, self::CSV_DELIMITER);
@@ -62,7 +59,7 @@ class DPDController extends Controller
             fclose($handle);
         });
 
-        $exportFileName = 'dpd_rates_' . date('Ymd_His') . '.csv';
+        $exportFileName = 'dpd_rates_'.date('Ymd_His').'.csv';
 
         $response->setStatusCode(200);
         $disposition = $response->headers->makeDisposition(
