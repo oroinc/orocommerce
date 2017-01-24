@@ -2,15 +2,19 @@
 
 namespace Oro\Bundle\MoneyOrderBundle\Method\View;
 
-use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigProvider;
+use Oro\Bundle\MoneyOrderBundle\Method\Config\Provider\MoneyOrderConfigProvider;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
 
 class MoneyOrderMethodViewProvider implements PaymentMethodViewProviderInterface
 {
-    /** @var MoneyOrderView[] */
+    /**
+     * @var MoneyOrderView[]
+     */
     private $views;
 
-    /** @var MoneyOrderConfigProvider */
+    /**
+     * @var MoneyOrderConfigProvider
+     */
     private $configProvider;
 
     /**
@@ -71,7 +75,7 @@ class MoneyOrderMethodViewProvider implements PaymentMethodViewProviderInterface
      */
     private function getAllPaymentMethodViews()
     {
-        if (empty($this->views)) {
+        if (0 === count($this->views)) {
             $this->collectPaymentMethodViews();
         }
 

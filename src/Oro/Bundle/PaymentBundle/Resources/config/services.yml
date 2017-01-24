@@ -197,7 +197,7 @@ services:
             - { name: oro_action.condition, alias: 'require_payment_redirect' }
 
     oro_payment.payment_method_provider.registry:
-        class: 'Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry'
+        class: 'Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistry'
         public: false
 
     oro_payment.payment_method_view_provider.registry:

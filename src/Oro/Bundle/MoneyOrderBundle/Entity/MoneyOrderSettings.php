@@ -10,7 +10,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Oro\Bundle\MoneyOrderBundle\Entity\Repository\MoneyOrderSettingsRepository")
  */
 class MoneyOrderSettings extends Transport
 {

@@ -1,4 +1,14 @@
+parameters:
+    oro_money_order.method.identifier_prefix.money_order: 'money_order'
+
 services:
     oro_money_order.generator.money_order_config_identifier:
-        class: 'Oro\Bundle\MoneyOrderBundle\Method\Generator\MoneyOrderConfigIdentifierGenerator'
-        public: false
+        parent: oro_integration.generator.prefixed_identifier_generator
+        arguments:
+            - '%oro_money_order.method.identifier_prefix.money_order%'
+
+    oro_money_order.repository.money_order_settings:
+        class: 'Oro\Bundle\MoneyOrderBundle\Entity\Repository\MoneyOrderSettingsRepository'
+        parent: oro_entity.abstract_repository
+        arguments:
+            - 'Oro\Bundle\MoneyOrderBundle\Entity\MoneyOrderSettings'

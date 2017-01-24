@@ -2,72 +2,51 @@
 
 namespace Oro\Bundle\MoneyOrderBundle\Method\Config;
 
-class MoneyOrderConfig implements MoneyOrderConfigInterface
+use Symfony\Component\HttpFoundation\ParameterBag;
+
+class MoneyOrderConfig extends ParameterBag implements MoneyOrderConfigInterface
 {
-    /** @var string */
-    private $label;
-
-    /** @var string */
-    private $shortLabel;
-
-    /** @var string */
-    private $adminLabel;
-
-    /** @var string */
-    private $payTo;
-
-    /** @var string */
-    private $sendTo;
-
-    /** @var string */
-    private $identifier;
+    const LABEL_KEY = 'label';
+    const SHORT_LABEL_KEY = 'short_label';
+    const ADMIN_LABEL_KEY = 'admin_label';
+    const PAYMENT_METHOD_IDENTIFIER_KEY = 'payment_method_identifier';
+    const PAY_TO_KEY = 'pay_to';
+    const SEND_TO_KEY = 'send_to';
 
     /**
-     * @param string $label
-     * @param string $shortLabel
-     * @param string $adminLabel
-     * @param string $payTo
-     * @param string $sendTo
-     * @param string $identifier
+     * {@inheritDoc}
      */
-    public function __construct(
-        $label,
-        $shortLabel,
-        $adminLabel,
-        $payTo,
-        $sendTo,
-        $identifier
-    ) {
-        $this->label = $label;
-        $this->shortLabel = $shortLabel;
-        $this->adminLabel = $adminLabel;
-        $this->payTo = $payTo;
-        $this->sendTo = $sendTo;
-        $this->identifier = $identifier;
+    public function __construct(array $parameters)
+    {
+        parent::__construct($parameters);
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getLabel()
     {
-        return $this->label;
+        return (string)$this->get(self::LABEL_KEY);
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getShortLabel()
     {
-        return $this->shortLabel;
+        return (string)$this->get(self::SHORT_LABEL_KEY);
     }
 
-    /**
-     * @return string
-     */
+    /** {@inheritdoc} */
     public function getAdminLabel()
     {
-        return $this->adminLabel;
+        return (string)$this->get(self::ADMIN_LABEL_KEY);
+    }
+
+    /** {@inheritdoc} */
+    public function getPaymentMethodIdentifier()
+    {
+        return (string)$this->get(self::PAYMENT_METHOD_IDENTIFIER_KEY);
     }
 
     /**
@@ -75,7 +54,7 @@ class MoneyOrderConfig implements MoneyOrderConfigInterface
      */
     public function getPayTo()
     {
-        return $this->payTo;
+        return (string)$this->get(self::PAY_TO_KEY);
     }
 
     /**
@@ -83,14 +62,6 @@ class MoneyOrderConfig implements MoneyOrderConfigInterface
      */
     public function getSendTo()
     {
-        return $this->sendTo;
-    }
-
-    /**
-     * @return string
-     */
-    public function getPaymentMethodIdentifier()
-    {
-        return $this->identifier;
+        return (string)$this->get(self::SEND_TO_KEY);
     }
 }

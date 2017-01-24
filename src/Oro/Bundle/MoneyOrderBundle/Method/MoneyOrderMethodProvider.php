@@ -2,12 +2,14 @@
 
 namespace Oro\Bundle\MoneyOrderBundle\Method;
 
-use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigProvider;
+use Oro\Bundle\MoneyOrderBundle\Method\Config\Provider\MoneyOrderConfigProvider;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 
 class MoneyOrderMethodProvider implements PaymentMethodProviderInterface
 {
-    /** @var MoneyOrderConfigProvider */
+    /**
+     * @var MoneyOrderConfigProvider
+     */
     private $configProvider;
 
     /**

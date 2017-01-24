@@ -16,7 +16,7 @@ services:
             - { name: oro_payment.payment_method_view_provider }
 
     oro_money_order.payment_method.config.provider:
-        class: 'Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigProvider'
+        class: 'Oro\Bundle\MoneyOrderBundle\Method\Config\Provider\MoneyOrderConfigProvider'
         arguments:
-            - '@oro_entity.doctrine_helper'
+            - '@oro_money_order.repository.money_order_settings'
             - '@oro_money_order.factory.money_order_config'

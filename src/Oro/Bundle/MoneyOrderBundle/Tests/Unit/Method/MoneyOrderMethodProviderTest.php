@@ -3,16 +3,20 @@
 namespace Oro\Bundle\MoneyOrderBundle\Tests\Unit\Method;
 
 use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig;
-use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigProvider;
+use Oro\Bundle\MoneyOrderBundle\Method\Config\Provider\MoneyOrderConfigProvider;
 use Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder;
 use Oro\Bundle\MoneyOrderBundle\Method\MoneyOrderMethodProvider;
 
 class MoneyOrderMethodProviderTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var MoneyOrderMethodProvider */
+    /**
+     * @var MoneyOrderMethodProvider
+     */
     private $provider;
 
-    /** @var MoneyOrderConfig[]|\PHPUnit_Framework_MockObject_MockObject[] */
+    /**
+     * @var MoneyOrderConfig[]|\PHPUnit_Framework_MockObject_MockObject[]
+     */
     private $configs;
 
     protected function setUp()

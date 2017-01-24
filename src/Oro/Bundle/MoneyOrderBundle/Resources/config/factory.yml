@@ -1,6 +1,6 @@
 services:
     oro_money_order.factory.money_order_config:
-        class: 'Oro\Bundle\MoneyOrderBundle\Method\Factory\MoneyOrderConfigFactory'
+        class: 'Oro\Bundle\MoneyOrderBundle\Method\Config\Factory\MoneyOrderConfigFactory'
         public: false
         arguments:
             - '@oro_locale.helper.localization'
