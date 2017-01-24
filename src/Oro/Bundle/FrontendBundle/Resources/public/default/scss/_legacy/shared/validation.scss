@@ -36,6 +36,15 @@
   }
 }
 
+.controls.validation-error{
+  background: get-color('ui', 'error');
+  color: get-color('ui', 'error-dark');
+
+  &:before {
+    display: none;
+  }
+}
+
 .validation-passed {
   background-color: get-color('ui', 'success');
   color: get-color('ui', 'success-dark');
