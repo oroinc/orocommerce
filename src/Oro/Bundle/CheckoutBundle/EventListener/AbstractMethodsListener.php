@@ -57,7 +57,7 @@ abstract class AbstractMethodsListener
 
         $context = $event->getContext();
         /** @var Checkout $checkout */
-        $checkout = clone $context['checkout'];
+        $checkout = clone $context->get('checkout');
 
         $isManualEditGranted = $this->isManualEditGranted();
 
