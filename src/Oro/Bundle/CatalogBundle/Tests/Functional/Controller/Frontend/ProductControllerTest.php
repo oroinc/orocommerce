@@ -155,7 +155,7 @@ class ProductControllerTest extends WebTestCase
 
         $crawler = $this->client->request('GET', $url);
 
-        $navigationBarNode = $crawler->filter('div.catalog-navigation-bar')->first()->getNode(0);
+        $navigationBarNode = $crawler->filter('div.breadcrumbs')->first()->getNode(0);
         $text = $navigationBarNode->textContent;
 
         $foundParts = [];
