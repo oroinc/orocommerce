@@ -9,8 +9,6 @@ layout:
             items:
                 product_index_page:
                     blockType: container
-                category_picture_container:
-                    blockType: container
                 category_picture:
                     blockType: category_data
                     options:
@@ -26,8 +24,7 @@ layout:
             tree:
                 page_content:
                     product_index_page:
-                        category_picture_container:
-                            category_picture: ~
+                        category_picture: ~
                         product_search_navigation: ~
                         category_title: ~
                         product_grid_container:
