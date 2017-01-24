@@ -2,12 +2,12 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Api\Processor;
 
-use Oro\Bundle\ApiBundle\Processor\Update\UpdateContext;
-use Oro\Bundle\RFPBundle\Api\Processor\UpdateRequestEntityProcessor;
+use Oro\Bundle\ApiBundle\Processor\FormContext;
+use Oro\Bundle\RFPBundle\Api\Processor\RequestEntityProcessor;
 
-class UpdateRequestEntityProcessorTest extends \PHPUnit_Framework_TestCase
+class RequestEntityProcessorTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var UpdateRequestEntityProcessor */
+    /** @var RequestEntityProcessor */
     protected $processor;
 
     /**
@@ -15,7 +15,7 @@ class UpdateRequestEntityProcessorTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->processor = new UpdateRequestEntityProcessor();
+        $this->processor = new RequestEntityProcessor();
     }
 
     public function testProcess()
@@ -32,7 +32,7 @@ class UpdateRequestEntityProcessorTest extends \PHPUnit_Framework_TestCase
             'firstName' => 'testName'
         ];
 
-        $context = $this->createMock(UpdateContext::class);
+        $context = $this->createMock(FormContext::class);
         $context->expects($this->any())->method('getRequestData')->willReturn($requestData);
 
         $context->expects($this->once())->method('setRequestData')

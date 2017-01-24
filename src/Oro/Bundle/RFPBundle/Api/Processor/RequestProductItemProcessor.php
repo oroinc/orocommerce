@@ -8,7 +8,7 @@ use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
-class UpdateRequestProductItemProcessor implements ProcessorInterface
+class RequestProductItemProcessor implements ProcessorInterface
 {
     /**
      * {@inheritdoc}
@@ -36,19 +36,21 @@ class UpdateRequestProductItemProcessor implements ProcessorInterface
      */
     protected function processRequestData(RequestProductItem $productItem, array &$requestData)
     {
-        $currency = $productItem->getPrice()->getCurrency();
-        $value = $productItem->getPrice()->getValue();
+        $currency = $productItem->getPrice() ? $productItem->getPrice()->getCurrency() : null;
+        $value =  $productItem->getPrice() ? $productItem->getPrice()->getValue() : null;
 
         if (array_key_exists('currency', $requestData)) {
             $currency = $requestData['currency'];
-            unset($requestData['currency']);
         }
 
         if (array_key_exists('value', $requestData)) {
             $value = $requestData['value'];
-            unset($requestData['value']);
         }
 
-        $productItem->setPrice(Price::create($value, $currency));
+        if (null !== $currency && null !== $value) {
+            $productItem->setPrice(Price::create($value, $currency));
+            $requestData['currency'] = $currency;
+            $requestData['value'] = $value;
+        }
     }
 }

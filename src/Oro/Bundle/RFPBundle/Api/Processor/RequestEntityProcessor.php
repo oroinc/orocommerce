@@ -2,18 +2,18 @@
 
 namespace Oro\Bundle\RFPBundle\Api\Processor;
 
-use Oro\Bundle\ApiBundle\Processor\Update\UpdateContext;
+use Oro\Bundle\ApiBundle\Processor\FormContext;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
-class UpdateRequestEntityProcessor implements ProcessorInterface
+class RequestEntityProcessor implements ProcessorInterface
 {
     /**
      * {@inheritdoc}
      */
     public function process(ContextInterface $context)
     {
-        if (!$context instanceof UpdateContext) {
+        if (!$context instanceof FormContext) {
             return;
         }
 
