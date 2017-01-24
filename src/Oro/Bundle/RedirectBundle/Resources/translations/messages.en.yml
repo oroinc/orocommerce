@@ -34,3 +34,9 @@ oro:
                     choice:
                         system.label: 'System URL'
                         direct.label: 'Direct URL'
+                redirect_generation_strategy:
+                    label: 'Create Redirects'
+                    choice:
+                        ask.label: 'Ask'
+                        always.label: 'Always'
+                        never.label: 'Never'

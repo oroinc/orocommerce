@@ -22,6 +22,17 @@ system_configuration:
                     system: oro.redirect.system_configuration.fields.canonical_url_type.choice.system.label
                     direct: oro.redirect.system_configuration.fields.canonical_url_type.choice.direct.label
 
+        oro_redirect.redirect_generation_strategy:
+            data_type: string
+            type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType'
+            priority: 200
+            options:
+                label: oro.redirect.system_configuration.fields.redirect_generation_strategy.label
+                choices:
+                    ask: oro.redirect.system_configuration.fields.redirect_generation_strategy.choice.ask.label
+                    always: oro.redirect.system_configuration.fields.redirect_generation_strategy.choice.always.label
+                    never: oro.redirect.system_configuration.fields.redirect_generation_strategy.choice.never.label
+
     tree:
         system_configuration:
             platform:
@@ -32,8 +43,8 @@ system_configuration:
                                 children:
                                     websites_routing_general:
                                         children:
-
                                             - oro_redirect.canonical_url_type
+                                            - oro_redirect.redirect_generation_strategy
                                     oro_redirect_direct_urls:
                                         children:
                                             - oro_redirect.enable_direct_url

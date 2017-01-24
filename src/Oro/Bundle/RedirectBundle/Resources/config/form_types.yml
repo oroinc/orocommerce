@@ -2,9 +2,10 @@ services:
     oro_redirect.form.type.localized_slug:
         class: 'Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType'
         arguments:
-            - '@doctrine'
+            - '@oro_config.manager'
         tags:
             - { name: form.type, alias: oro_redirect_localized_slug }
+
     oro_redirect.form.type.slug:
         class: 'Oro\Bundle\RedirectBundle\Form\Type\SlugType'
         tags:

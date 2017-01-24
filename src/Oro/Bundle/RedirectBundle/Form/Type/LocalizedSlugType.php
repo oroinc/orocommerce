@@ -3,8 +3,10 @@
 namespace Oro\Bundle\RedirectBundle\Form\Type;
 
 use Doctrine\Common\Collections\Collection;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\EntityProperty\UpdatedAtAwareInterface;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -18,6 +20,19 @@ class LocalizedSlugType extends AbstractType
 {
     const NAME = 'oro_redirect_localized_slug';
     const CREATE_REDIRECT_OPTION_NAME = 'createRedirect';
+
+    /**
+     * @var ConfigManager
+     */
+    private $configManager;
+
+    /**
+     * @param ConfigManager $configManager
+     */
+    public function __construct(ConfigManager $configManager)
+    {
+        $this->configManager = $configManager;
+    }
 
     /**
      * {@inheritDoc}
@@ -70,8 +85,8 @@ class LocalizedSlugType extends AbstractType
      */
     public function preSetData(FormEvent $event)
     {
-        if ($event->getForm()->getConfig()->getOption('create_redirect_enabled')
-            && $event->getData() instanceof Collection && $event->getData()->count()
+        if ($this->isRedirectConfirmationEnabled($event->getForm()->getConfig()->getOptions())
+            && $this->isNotEmptyCollection($event->getData())
         ) {
             $event->getForm()->add(
                 self::CREATE_REDIRECT_OPTION_NAME,
@@ -103,23 +118,49 @@ class LocalizedSlugType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        if ($options['slug_suggestion_enabled'] && isset($options['source_field'])) {
+        if ($options['slug_suggestion_enabled']
+            && isset($options['source_field'])
+            && !empty($view->parent->vars['full_name'])
+        ) {
+            $sourceFieldName = sprintf('%s[%s]', $view->parent->vars['full_name'], $options['source_field']);
+            $targetFieldName = $view->vars['full_name'];
+
             $view->vars['localized_slug_component'] = $options['localized_slug_component'];
             $view->vars['localized_slug_component_options']['slugify_component_options'] = [
-                'source' => '[name^="'.$view->parent->vars['full_name'].'['.$options['source_field'].']'.'[values]"]',
-                'target' => '[name^="'.$view->vars['full_name'].'[values]"]',
+                'source' => sprintf('[name^="%s[values]"]', $sourceFieldName),
+                'target' => sprintf('[name^="%s[values]"]', $targetFieldName),
                 'slugify_route' => $options['slugify_route'],
             ];
         }
-        if ($options['create_redirect_enabled']
-            && $form->getData() instanceof Collection && $form->getData()->count()
-        ) {
+
+        if ($this->isRedirectConfirmationEnabled($options) && $this->isNotEmptyCollection($form->getData())) {
+            $fullName = $view->vars['full_name'];
+            $valuesField = sprintf('[name^="%s[values]"]', $fullName);
+
             $view->vars['localized_slug_component'] = $options['localized_slug_component'];
             $view->vars['localized_slug_component_options']['confirmation_component_options'] = [
-                'slugFields' => '[name^="'.$view->vars['full_name'].'[values]"]',
-                'createRedirectCheckbox' =>
-                    '[name^="'.$view->vars['full_name'].'['.self::CREATE_REDIRECT_OPTION_NAME.']"]',
+                'slugFields' => $valuesField,
+                'createRedirectCheckbox' => sprintf('[name^="%s[%s]"]', $fullName, self::CREATE_REDIRECT_OPTION_NAME)
             ];
         }
+    }
+
+    /**
+     * @param mixed $data
+     * @return bool
+     */
+    protected function isNotEmptyCollection($data)
+    {
+        return $data instanceof Collection && !$data->isEmpty();
+    }
+
+    /**
+     * @param array|\ArrayAccess $options
+     * @return bool
+     */
+    protected function isRedirectConfirmationEnabled($options)
+    {
+        return $options['create_redirect_enabled']
+            && $this->configManager->get('oro_redirect.redirect_generation_strategy') === Configuration::STRATEGY_ASK;
     }
 }
