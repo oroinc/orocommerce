@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShoppingListBundle\EventListener;
+namespace Oro\Bundle\CheckoutBundle\EventListener;
 
 use Doctrine\Common\Collections\ArrayCollection;
 

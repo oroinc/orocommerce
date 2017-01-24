@@ -267,12 +267,3 @@ services:
             - '@validator'
         tags:
             - { name: layout.data_provider, alias: oro_line_item_errors }
-
-    oro_shopping_list.event_listener.has_price_in_shopping_line_items:
-        class: 'Oro\Bundle\ShoppingListBundle\EventListener\HasPriceInShoppingLineItemsListener'
-        arguments:
-            - '@oro_pricing.provider.combined_product_price'
-            - '@oro_pricing.user_currency_manager'
-            - '@oro_pricing.model.price_list_request_handler'
-        tags:
-            - { name: kernel.event_listener, event: extendable_condition.start_checkout, method: onStartCheckoutConditionCheck }

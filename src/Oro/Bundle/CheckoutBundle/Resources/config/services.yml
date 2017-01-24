@@ -439,3 +439,12 @@ services:
             - '@oro_checkout.factory.payment_context_factory'
         tags:
             - { name: kernel.event_listener, event: extendable_condition.start_checkout, method: onStartCheckout }
+
+    oro_checkout.event_listener.has_price_in_shopping_line_items:
+        class: 'Oro\Bundle\CheckoutBundle\EventListener\HasPriceInShoppingLineItemsListener'
+        arguments:
+            - '@oro_pricing.provider.combined_product_price'
+            - '@oro_pricing.user_currency_manager'
+            - '@oro_pricing.model.price_list_request_handler'
+        tags:
+            - { name: kernel.event_listener, event: extendable_condition.start_checkout, method: onStartCheckoutConditionCheck }

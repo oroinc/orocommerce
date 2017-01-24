@@ -151,16 +151,15 @@ action_groups:
                         parameters_mapping:
                             entity: $.checkout
                             data: $.settings
-            - '@tree':
+            - '@redirect':
                 conditions:
                     '@extendable':
                         events: [extendable_condition.start_checkout]
                         showErrors: $.showErrors
-                actions:
-                    - '@redirect':
-                        route: oro_checkout_frontend_checkout
-                        route_parameters:
-                            id: $.checkout.id
+                parameters:
+                    route: oro_checkout_frontend_checkout
+                    route_parameters:
+                        id: $.checkout.id
 
     find_checkout:
         parameters:
