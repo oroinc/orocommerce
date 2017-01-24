@@ -2,52 +2,10 @@
 
 {%- block form_label -%}
     {% set label_attr = layout_attr_defaults(label_attr, {
-    '~class': ' label label--full'
+        '~class': ' label label--full'
     }) %}
 
-    {% spaceless %}
-        {% if label is not sameas(false) %}
-            {% if not compound %}
-                {% set label_attr = label_attr|merge({'for': id}) %}
-            {% endif %}
-            {% if required %}
-                {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' required')|trim}) %}
-            {% endif %}
-            {% if errors|length > 0 %}
-                {% set label_attr = label_attr|merge({'class': (label_attr.class|default('') ~ ' validation-error')|trim}) %}
-            {% endif %}
-            {% if label is empty %}
-                {% if label_format is not empty -%}
-                    {% set label = label_format|replace({'%name%': name, '%id%': id}) %}
-                {% else %}
-                    {% set label = name|humanize %}
-                {% endif %}
-            {% endif %}
-            {% set isRadioLabel = form.parent.vars.expanded|default(false) and checked is defined %}
-            {% if tooltip is defined and tooltip %}
-                {% import 'OroUIBundle::macros.html.twig' as ui %}
-                {{ ui.tooltip(
-                tooltip,
-                tooltip_parameters|default({}),
-                tooltip_placement|default(null),
-                tooltip_details_enabled|default(false),
-                tooltip_details_link|default(null),
-                tooltip_details_anchor|default(null)
-                ) }}
-            {%- endif -%}
-
-            <label{% for attrname, attrvalue in label_attr %} {{ attrname }}="{{ attrvalue }}"{% endfor %}>
-            {%- if translatable_label is defined and not translatable_label -%}
-                {{ label }}
-            {%- elseif raw_label is defined and raw_label -%}
-                {{ label|raw }}
-            {%- else -%}
-                {{ label|trans({}, translation_domain) }}
-            {%- endif -%}
-            <em>{% if required and not isRadioLabel %}*{% else %}&nbsp;{% endif %}</em>
-            </label>
-        {%- endif -%}
-    {% endspaceless %}
+    {{ parent() }}
 {%- endblock form_label -%}
 
 {% block form_widget_simple %}
