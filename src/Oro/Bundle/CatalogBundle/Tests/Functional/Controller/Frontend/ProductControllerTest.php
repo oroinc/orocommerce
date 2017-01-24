@@ -167,7 +167,7 @@ class ProductControllerTest extends WebTestCase
         }
 
         $this->assertSame($foundParts, $expectedParts);
-        $breadCrumbsNodes = $crawler->filter('span.path-info a');
+        $breadCrumbsNodes = $crawler->filter('span.breadcrumbs__item a');
 
         foreach ($breadCrumbsNodes as $key => $node) {
             $this->assertNotNull($node->getAttribute('href'));
