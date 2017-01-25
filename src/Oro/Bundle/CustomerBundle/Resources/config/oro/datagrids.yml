@@ -1053,7 +1053,7 @@ datagrids:
         actions:
             show_map:
                 type:          map
-                icon:          map-marker
+                icon:          map-o
 
     frontend-customer-customer-address-grid:
         acl_resource: oro_customer_frontend_customer_address_view
@@ -1082,7 +1082,7 @@ datagrids:
             delete:
                 type:          delete
                 link:          delete_link
-                icon:          trash-o
+                icon:          trash
                 acl_resource:  oro_customer_frontend_customer_address_remove
 
     frontend-customer-customer-user-address-grid:

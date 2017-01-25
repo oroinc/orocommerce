@@ -1076,7 +1076,7 @@
 
       .launcher-item {
         float:none;
-        padding: 0 0 0 10px;
+        padding: 0 5px;
         display: inline-block;
         border-left: 1px solid get-color('additional', 'light');
 
@@ -1087,11 +1087,16 @@
         a.action{
           min-width: 12px;
           min-height: 18px;
+          text-align: center;
 
           color: get-color('additional', 'light');
 
           &:hover, &:focus, &:active, &:visited {
             background: transparent;
+          }
+
+          [class^="cf-"], [class*=" cf-"], [class^="fa-"], [class*=" fa-"] {
+            margin: 0;
           }
         }
       }
