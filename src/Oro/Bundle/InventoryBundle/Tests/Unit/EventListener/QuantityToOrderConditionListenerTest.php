@@ -190,7 +190,7 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit_Framework_TestCase
 
         $event->expects($this->once())
             ->method('addError')
-            ->with('oro.inventory.frontend.messages.quantity_limits_error');
+            ->with(QuantityToOrderConditionListener::QUANTITY_CHECK_ERROR);
 
         $this->quantityToOrderConditionListener->onCheckoutConditionCheck($event);
     }
