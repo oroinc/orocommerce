@@ -3,6 +3,7 @@
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Api;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Tests\Functional\Api\ApiResponseContentTrait;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -58,6 +59,23 @@ abstract class AbstractRequestApiTest extends RestJsonApiTestCase
             );
             $this->assertIsContained($expectedContent, $content['data']);
         }
+    }
+
+    public function testGetEntity()
+    {
+        $entity = $this->getDoctrineHelper()->getEntityRepository($this->getEntityClass())->findOneBy([]);
+
+        $entityType = $this->getEntityType($this->getEntityClass());
+        $id = $this->getDoctrineHelper()->getSingleEntityIdentifier($entity);
+
+        $response = $this->request(
+            'GET',
+            $this->getUrl('oro_rest_api_get', ['entity' => $entityType, 'id' => $id])
+        );
+
+        $this->assertApiResponseStatusCodeEquals($response, Response::HTTP_OK, $entityType, 'get single');
+        $content = json_decode($response->getContent(), true);
+        $this->assertNotEmpty($content['data']);
     }
 
     /**
@@ -120,5 +138,13 @@ abstract class AbstractRequestApiTest extends RestJsonApiTestCase
         }
 
         return $relationships;
+    }
+
+    /**
+     * @return object|DoctrineHelper
+     */
+    protected function getDoctrineHelper()
+    {
+        return $this->getContainer()->get('oro_entity.doctrine_helper');
     }
 }
