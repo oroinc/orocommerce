@@ -71,7 +71,7 @@ class RequestControllerTest extends WebTestCase
     public function testIndex(array $inputData, array $expectedData, $activateFrontoffice = false)
     {
         if (!$activateFrontoffice) {
-            $this->manager->deactivateWorkflow('rfq_frontoffice_default');
+            $this->manager->deactivateWorkflow('b2b_rfq_frontoffice_default');
         }
 
         $authParams = $inputData['login']
