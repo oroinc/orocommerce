@@ -1,6 +1,27 @@
+{% block _matrix_order_wrapper_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " matrix-order-widget"
+    }) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block matrix_order_form_summary_widget %}
-    <div class="matrix-order-form-summary">
-        {{ 'oro.frontend.shoppinglist.matrix_grid_order.total_qty'|trans }}: <span class="matrix-order-form-summary-total-quantity">{{ totalQuantity }}</span>
-        {{ 'oro.frontend.shoppinglist.matrix_grid_order.total'|trans }}: <span class="matrix-order-form-summary-total-price">{{ totalPrice }}</span>
+    <div class="matrix-order-widget__summary">
+        <div class="matrix-order-widget__summary-wrapper">
+            <div class="matrix-order-widget__total-quantity">
+                <span class="matrix-order-widget__summary-label">
+                    {{ 'oro.frontend.shoppinglist.matrix_grid_order.total_qty'|trans }}
+                </span>
+                <span class="matrix-order-widget__total-quantity-value">{{ totalQuantity }}</span>
+            </div>
+            <div class="matrix-order-widget__total-price">
+                <span class="matrix-order-widget__summary-label">
+                    {{ 'oro.frontend.shoppinglist.matrix_grid_order.total'|trans }}
+                </span>
+                <span class="matrix-order-widget__total-price-value">{{ totalPrice }}</span>
+            </div>
+        </div>
     </div>
 {% endblock %}

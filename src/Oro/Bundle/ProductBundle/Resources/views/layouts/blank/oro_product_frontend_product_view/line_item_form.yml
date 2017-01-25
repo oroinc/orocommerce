@@ -1,4 +1,8 @@
 layout:
+    imports:
+        -
+            id: line_item_buttons
+            root: line_item_buttons_container
     actions:
         - '@setBlockTheme':
             themes: 'line_item_form.html.twig'
@@ -27,15 +31,15 @@ layout:
                     blockType: form_end
                     options:
                         form: '=data["oro_product_form"].getLineItemFormView(data["oro_product_variant"].getProductVariantOrProduct(data))'
-                line_item_buttons:
+                line_item_buttons_container:
                     blockType: container
             tree:
                 product_view_line_item_container:
                     line_item_form_update:
                         line_item_form:
+                            line_item_buttons_container: ~
                             line_item_form_start: ~
                             line_item_form_fields: ~
-                            line_item_buttons: ~
                             line_item_form_end: ~
 
     conditions: 'context["is_logged_in"]'

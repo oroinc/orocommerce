@@ -28,37 +28,14 @@
     {% endif %}
 {% endblock %}
 
-{% block _line_item_buttons_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+{% block _line_item_buttons_container_widget %}
     {% if block.children is not empty %}
         {% set attr = layout_attr_defaults(attr, {
             '~class': " form__col"
         }) %}
 
         <div {{ block('block_attributes') }}>
-            {{ UI.pinnedDropdownButton({
-                'html': block_widget(block),
-                'mobileEnabled': true,
-                'dataAttributes': {
-                    'layout': 'deferred-initialize'
-                },
-                'options': {
-                    'widgetModule': 'oroproduct/js/content-processor/product-add-to-dropdown-button',
-                    'widgetName': 'productAddToDropdownButtonProcessor',
-                    'truncateLength': 15,
-                    'groupContainer': '<div class="btn-group full"></div>',
-                    'decoreClass': 'btn--info'
-                }
-            }) }}
+            {{ block_widget(block) }}
         </div>
     {% endif %}
-{% endblock %}
-
-{% block _line_item_form_shopping_lists_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': " form__col"
-    }) %}
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
 {% endblock %}
