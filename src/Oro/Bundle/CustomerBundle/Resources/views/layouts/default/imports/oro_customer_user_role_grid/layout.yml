@@ -19,8 +19,8 @@ layout:
             optionValue: true
 
         - '@add':
-            id: __datagrid_toolbar_button_container_create_customer_user_role
-            parentId: __datagrid_toolbar_button_container
+            id: __button_container_create_customer_user_role
+            parentId: page_title_container
             blockType: combined_buttons
             options:
                 buttons: '=data["buttons"].getAll()'
