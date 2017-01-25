@@ -1,6 +1,6 @@
 {% block _header_row_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'data-page-component-module': 'orocommercemenu/default/js/components/header-row',
+        'data-page-component-module': 'orocommercemenu/js/app/components/header-row',
         '~data-sticky': {
             isSticky: true,
             autoWidth: true,
@@ -25,7 +25,7 @@
                 <span class="fa-navicon fa--gray fa--no-offset"></span>
             </span>
         </button>
-        <div class="header-row__toggle" data-header-row-toggle>
+        <div class="header-row__toggle">
             <div class="header-row__dropdown" data-main-menu-container>
                 {{ block_widget(block) }}
             </div>
@@ -33,23 +33,24 @@
     </div>
 {% endblock %}
 
-{% block _main_menu_extra_container_widget %}
-    {% set attr =  layout_attr_defaults(attr, {
-        'data-main-menu-extra-container': ''
-    }) %}
-
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
 {% block _main_menu_container_widget %}
     {% set attr =  layout_attr_defaults(attr, {
         '~class': ' main-menu-outer collapse-view',
-        'data-page-component-module': "oroui/js/app/components/jquery-widget-component",
+        'data-page-component-module': "oroui/js/app/components/viewport-component",
         '~data-page-component-options': {
+            screenType: 'tablet',
+            component: 'oroui/js/app/components/jquery-widget-component',
             widgetModule: 'oroui/js/widget/collapse-widget',
             open: false
+        },
+        'data-dom-relocation': '',
+        'data-dom-relocation-options': {
+            responsive: [
+                {
+                    screenType: 'tablet',
+                    moveTo: '[data-main-menu-extra-container]'
+                }
+            ]
         }
     }) %}
 
@@ -74,7 +75,7 @@
                 <li class="main-menu__item">
                     <a href="{{ app.request.getUriForPath(child.uri) }}" class="main-menu__link">
                         {% set label = child.extras.custom is defined and child.extras.custom == true ? child.label : child.label|trans %}
-                        <span>{{ label }}</span>
+                        <span class="main-menu__text">{{ label }}</span>
                     </a>
                 </li>
             {% endif %}

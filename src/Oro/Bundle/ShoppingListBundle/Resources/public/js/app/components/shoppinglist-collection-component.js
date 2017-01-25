@@ -15,12 +15,12 @@ define(function(require) {
             var collection = new BaseCollection(options.shoppingLists);
             collection.comparator = this.comparator;
 
-            collection.on('update', function (collection, options) {
+            collection.on('update', function(collection, options) {
                 if (options.add) {
                     mediator.trigger('shopping-list:refresh');
                 }
             });
-            collection.on('change', function (options) {
+            collection.on('change', function(options) {
                 if (options && options.refresh) {
                     mediator.trigger('shopping-list:refresh');
                 }

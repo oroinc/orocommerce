@@ -4,6 +4,8 @@ namespace Oro\Bundle\CatalogBundle\Layout\DataProvider;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Provider\CategoryTreeProvider as CategoriesProvider;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class FeaturedCategoriesProvider
 {
@@ -18,11 +20,18 @@ class FeaturedCategoriesProvider
     protected $categoryTreeProvider;
 
     /**
-     * @param CategoriesProvider $categoryTreeProvider
+     * @var TokenStorageInterface
      */
-    public function __construct(CategoriesProvider $categoryTreeProvider)
+    protected $tokenStorage;
+
+    /**
+     * @param CategoriesProvider $categoryTreeProvider
+     * @param TokenStorageInterface $tokenStorage
+     */
+    public function __construct(CategoriesProvider $categoryTreeProvider, TokenStorageInterface $tokenStorage)
     {
         $this->categoryTreeProvider = $categoryTreeProvider;
+        $this->tokenStorage = $tokenStorage;
     }
 
     /**
@@ -38,7 +47,6 @@ class FeaturedCategoriesProvider
 
     /**
      * @param array $categoryIds
-     * @return Category[]
      */
     protected function setCategories(array $categoryIds = [])
     {
@@ -46,12 +54,29 @@ class FeaturedCategoriesProvider
             return;
         }
 
-        $categories = $this->categoryTreeProvider->getCategories(null);
-        $this->categories = array_filter($categories, function (Category $category) use ($categoryIds) {
-            if ($categoryIds && !in_array($category->getId(), $categoryIds, true)) {
-                return false;
+        $categories = $this->categoryTreeProvider->getCategories($this->getCurrentUser());
+        $this->categories = array_filter(
+            $categories,
+            function (Category $category) use ($categoryIds) {
+                if ($categoryIds && !in_array($category->getId(), $categoryIds, true)) {
+                    return false;
+                }
+
+                return $category->getLevel() !== 0;
             }
-            return $category->getLevel() !== 0;
-        });
+        );
+    }
+
+    /**
+     * @return CustomerUser|null
+     */
+    protected function getCurrentUser()
+    {
+        $token = $this->tokenStorage->getToken();
+        if ($token && $token->getUser() instanceof CustomerUser) {
+            return $token->getUser();
+        }
+
+        return null;
     }
 }

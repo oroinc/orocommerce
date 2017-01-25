@@ -289,8 +289,10 @@ services:
 
     oro_order.event_listener.extract_line_item_options:
         class: 'Oro\Bundle\OrderBundle\EventListener\ExtractLineItemPaymentOptionsListener'
+        calls:
+            - [setHtmlTagHelper, ['@oro_ui.html_tag_helper']]
         tags:
-            - { name: kernel.event_listener, event: oro_payment.event.extract_line_item_options, method: onExtractLineItemPaymentOptions }
+            - { name: kernel.event_listener, event: oro_payment.event.extract_line_item_options, priority: 0, method: onExtractLineItemPaymentOptions }
 
     oro_order.event_listener.extract_address_options.orderaddress:
         class: 'Oro\Bundle\OrderBundle\EventListener\ExtractAddressOptionsListener'

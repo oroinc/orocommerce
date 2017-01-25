@@ -10,9 +10,9 @@
     {% if (max_size is not null ) %}
         {% set categories = categories[0:max_size] %}
     {%- endif %}
-    {% set categoriesAttr = {
-        'class': ' main-menu__item'
-    } %}
+    {% set categoriesAttr = layout_attr_defaults(attr, {
+        '~class': ' main-menu__item'
+    }) %}
     {% for category in categories -%}
         {% set hasSublist = category.children is not empty %}
         {% set categoryAttr = categoriesAttr %}
@@ -158,7 +158,12 @@
         {% set hasSublist = category.children is not empty %}
         <a href="{{ app.request.uriForPath(category.url) }}"
            class="main-menu__link" data-collapse-trigger-second>
-            <span>{{ category.label }}</span>
+            <span class="main-menu__text">{{ category.label }}</span>
+            {% if hasSublist %}
+                <span class="main-menu__taptick">
+                    <i class="fa-angle-down fa--no-offset"></i>        
+                </span>
+            {% endif %}
         </a>
         {% if hasSublist %}
             <button data-toggle="dropdown" aria-haspopup="true" class="main-menu__button-arrow">
@@ -170,7 +175,7 @@
 {% endblock %}
 
 {% block _web_catalog_menu_main_menu_sub_block_simple %}
-    <div class="main-menu__sublist-container" data-collapse-container-second>
+    <div class="main-menu__sublist-container" data-header-row-toggle data-collapse-container-second>
         <div class="main-menu-columns main-menu-columns--single">
             <div class="main-menu-column">
                 <ul class="main-menu-column__inner">
@@ -183,7 +188,7 @@
 {% endblock  %}
 
 {% block _web_catalog_menu_main_menu_sub_block_head %}
-    <div class="main-menu__sublist-container" data-collapse-container-second>
+    <div class="main-menu__sublist-container" data-header-row-toggle data-collapse-container-second>
         <div class="main-menu-columns">
             {% do block|merge_context({'categories': category.children }) %}
             {{ block('container_widget') }}
@@ -213,7 +218,7 @@
 {% endblock  %}
 
 {% block _web_catalog_menu_main_menu_sub_block_mega %}
-    <div class="main-menu__sublist-container" data-collapse-container-second>
+    <div class="main-menu__sublist-container" data-header-row-toggle data-collapse-container-second>
         <div class="main-menu-columns">
             {% do block|merge_context({'categories': category.children }) %}
             {{ block('container_widget') }}

@@ -18,6 +18,8 @@
 
 
   .page-size {
+    font-size: $base-font-size - 2px;
+
     flex-grow: 0;
   }
 
@@ -983,7 +985,7 @@
         tr {
           th {
             vertical-align: middle;
-            padding: 10px 12px;
+            padding: 12px;
             border-bottom: 0;
             border-radius: 0;
 
@@ -995,7 +997,7 @@
             > span {
               font-size: $base-font-size;
               line-height: 1;
-              font-weight: 400;
+              font-weight: 600;
               text-transform: none;
 
               &:hover, &:focus, &:active {
@@ -1010,7 +1012,7 @@
         tr {
           td {
             vertical-align: middle;
-            padding: 15px 12px;
+            padding: 16px 12px;
           }
         }
       }

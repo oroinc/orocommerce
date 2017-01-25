@@ -11,10 +11,10 @@ define(function(require) {
          */
         initialize: function(options) {
             var $el = options._sourceElement;
-            $el.find('input[type="hidden"]').on('change', function(e){
+            $el.find('input[type="hidden"]').on('change', function(e) {
                 $(this).closest('td').find('.validation-failed').remove();
                 $(this).closest('.error').removeClass('error');
-            })
+            });
         }
     });
 

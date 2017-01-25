@@ -6,7 +6,7 @@
     display: inline-block;
     vertical-align: middle;
 
-    font-size: $base-font-size;
+    font-size: $base-font-size - 1px;
   }
 
   &__label {

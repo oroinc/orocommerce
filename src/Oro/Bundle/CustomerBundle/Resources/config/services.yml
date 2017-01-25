@@ -671,3 +671,19 @@ services:
             - '@security.token_storage'
             - '@logger'
             - '@security.authentication.manager'
+
+    oro_user.provider.role_privilege_capability_provider_commerce:
+        class: %oro_user.provider.role_privilege_capability_provider.class%
+        arguments:
+            - '@translator'
+            - '@oro_user.provider.role_privilege_category_provider'
+            - '@oro_customer.form.handler.acl_role.commerce='
+
+    oro_customer.provider.role_privilege_capability_provider.decorator:
+        class: %oro_user.provider.role_privilege_capability_provider.class%
+        decorates: oro_user.provider.role_privilege_capability_provider
+        arguments:
+            - '@translator'
+            - '@oro_user.provider.role_privilege_category_provider'
+            - '@oro_customer.form.handler.acl_role.backend='
+        public: false

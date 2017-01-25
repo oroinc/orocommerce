@@ -87,30 +87,16 @@
     </script>
 {% endblock %}
 
-{% block _wrapper_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' wrapper'
-    }) %}
-
-    <div{{ block('block_attributes') }}>
-        <div data-page-component-module="oroui/js/app/components/view-component"
-             data-page-component-options="{{ {
-                 view: 'orofrontend/default/js/app/views/dom-relocation-view'
-             }|json_encode }}"></div>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
 {% block _page_title_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' page-title-wrapper' ~ (class_prefix ? ' {{ class_prefix }}-page-title-wrapper')
+        '~class': ' page-title-wrapper grid__row text-right' ~ (class_prefix ? ' {{ class_prefix }}-page-title-wrapper')
     }) %}
     <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
 
 {% block _page_title_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' page-title' ~ (class_prefix ? ' {{ class_prefix }}-page-title')
+        '~class': ' page-title grid__column grid__column-half text-left' ~ (class_prefix ? ' {{ class_prefix }}-page-title')
     }) %}
     {% set content = block_widget(block)|trim %}
     {% if content|length %}
