@@ -38,6 +38,9 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
     const REQUEST11 = 'rfp.request.11';
     const REQUEST12 = 'rfp.request.12';
     const REQUEST13 = 'rfp.request.13';
+    const NUM_REQUESTS = 13;
+    const NUM_LINE_ITEMS = 5;
+    const NUM_PRODUCTS = 5;
 
     /**
      * @var array
@@ -196,6 +199,7 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
     /**
      * @param string $requestFieldName
      * @param string $requestFieldValue
+     *
      * @return array
      */
     public static function getRequestsFor($requestFieldName, $requestFieldValue)
@@ -281,18 +285,15 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             LoadProductData::PRODUCT_5,
         ];
 
-        $numLineItems = rand(1, 10);
+        $numLineItems = self::NUM_LINE_ITEMS;
         for ($i = 0; $i < $numLineItems; $i++) {
-            /** @var Product $product */
-            $product = $this->getReference($products[array_rand($products)]);
-
-            $requestProduct = new RequestProduct();
-            $requestProduct->setProduct($product);
-            $requestProduct->setComment(sprintf('Notes %s', $i));
-            $productUnitPrecisions = $product->getUnitPrecisions();
-            $productUnit = $productUnitPrecisions[rand(0, count($productUnitPrecisions) - 1)]->getUnit();
-            $numProductItems = rand(1, 10);
-            for ($j = 0; $j < $numProductItems; $j++) {
+            foreach ($products as $productRef) {
+                $product = $this->getReference($productRef);
+                $requestProduct = new RequestProduct();
+                $requestProduct->setProduct($product);
+                $requestProduct->setComment(sprintf('Notes %s', $i));
+                $productUnitPrecisions = $product->getUnitPrecisions();
+                $productUnit = $productUnitPrecisions[rand(0, count($productUnitPrecisions) - 1)]->getUnit();
                 $currency = $currencies[rand(0, count($currencies) - 1)];
                 $requestProductItem = new RequestProductItem();
                 $requestProductItem
@@ -300,8 +301,8 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
                     ->setQuantity(rand(1, 100))
                     ->setProductUnit($productUnit);
                 $requestProduct->addRequestProductItem($requestProductItem);
+                $request->addRequestProduct($requestProduct);
             }
-            $request->addRequestProduct($requestProduct);
         }
     }
 
