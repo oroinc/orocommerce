@@ -1,5 +1,10 @@
 .oro-pagination {
   white-space: nowrap;
+  text-align: center;
+
+  &.grid__tool {
+    flex-grow: 2 !important;
+  }
 
   &__label,
   &__total {
@@ -46,7 +51,6 @@
   &__prev,
   &__next {
     display: inline-block;
-    width: 23px;
     vertical-align: middle;
     text-align: center;
     padding: 0;
