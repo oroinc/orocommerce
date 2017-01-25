@@ -46,7 +46,7 @@ class CreateOrderLineItemValidationListener
     protected static $allowedValidationSteps = ['order_review'];
 
     /**
-     * @param InventoryQuantityManager $orderValidator
+     * @param InventoryQuantityManager $inventoryQuantityManager
      * @param DoctrineHelper $doctrineHelper
      * @param TranslatorInterface $translator
      * @param RequestStack $requestStack

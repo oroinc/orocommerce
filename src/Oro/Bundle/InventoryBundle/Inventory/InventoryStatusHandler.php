@@ -48,8 +48,8 @@ class InventoryStatusHandler
     protected function setInventoryStatusForDecrement(Product $product)
     {
         $inventoryStatusEntityName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
-        $status = $this->doctrineHelper->getEntityRepository($inventoryStatusEntityName)->findOneById(
-            Product::INVENTORY_STATUS_OUT_OF_STOCK
+        $status = $this->doctrineHelper->getEntityRepository($inventoryStatusEntityName)->findOneBy(
+            ['id' => Product::INVENTORY_STATUS_OUT_OF_STOCK]
         );
         $product->setInventoryStatus($status);
     }
