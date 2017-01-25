@@ -4,7 +4,6 @@ define(function(require) {
     var QuickAddImportWidget;
     var DialogWidget = require('oro/dialog-widget');
     var _ = require('underscore');
-    var __ = require('orotranslation/js/translator');
     var mediator = require('oroui/js/mediator');
 
     QuickAddImportWidget = DialogWidget.extend({

@@ -52,9 +52,9 @@ abstract class QuickAddControllerTest extends WebTestCase
     {
         $example = [
             "10, 5",
-            LoadProductData::PRODUCT_1 . ", 1",
-            strtoupper(LoadProductData::PRODUCT_2) . ",     2",
-            strtolower(LoadProductData::PRODUCT_3) . "\t3",
+            ucfirst(LoadProductData::PRODUCT_1) . ", 1",
+            ucwords(LoadProductData::PRODUCT_2) . ",     2",
+            strtoupper(LoadProductData::PRODUCT_3) . "\t3",
             "not-existing-product\t  4",
         ];
 

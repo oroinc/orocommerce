@@ -2,6 +2,13 @@
 
 // Base styles
 $main-menu-item-height: 49px;
+$main-menu-link-inner-offset: 14px 25px;
+$main-menu-ancestor-link-inner-offset: 35px;
 $main-menu-link-color: get-color('additional', 'dark');
 $main-menu-link-color-hover: get-color('additional', 'dark');
 $main-menu-sublist-item-inner-offset: 0;
+
+// Desktop styles
+$main-menu-button-arrow-d-width: 35px;
+$main-menu-button-arrow-d-offset-left: -35px;
+$main-menu-sublist-container-d-border: 1px solid transparent;

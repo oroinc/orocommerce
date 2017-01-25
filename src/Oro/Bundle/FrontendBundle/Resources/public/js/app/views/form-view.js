@@ -1,6 +1,6 @@
 /*jslint nomen:true*/
 /*global define*/
-define(function (require) {
+define(function(require) {
     'use strict';
 
     var FormView;
@@ -18,9 +18,9 @@ define(function (require) {
         /**
          * @inheritDoc
          */
-        initialize: function (options) {
+        initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
-            _.each(this.options.selectors, function (selector, key) {
+            _.each(this.options.selectors, function(selector, key) {
                 var $root = this.options._sourceElement || this.$el;
                 this.fields[key] = $root.find(selector);
             }, this);
@@ -28,22 +28,20 @@ define(function (require) {
             this._setChangeListeners();
         },
 
-        _setChangeListeners: function () {
-            _.each(this.fields, function ($field, key) {
-                $field.on('change', function () {
+        _setChangeListeners: function() {
+            _.each(this.fields, function($field, key) {
+                $field.on('change', function() {
                     mediator.trigger('update:' + key, $field.val());
                 });
-            })
+            });
         },
 
-
-
-        dispose: function () {
+        dispose: function() {
             if (this.disposed) {
                 return;
             }
 
-            _.each(this.fields, function ($field) {
+            _.each(this.fields, function($field) {
                 $field.off();
             });
         }

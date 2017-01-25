@@ -3,12 +3,12 @@
 define(function(require) {
     'use strict';
 
-    var CustomerAddressBook,
-        BaseComponent = require('oroui/js/app/components/base/component'),
-        _ = require('underscore'),
-        routing = require('routing'),
-        AddressBook = require('oroaddress/js/address-book'),
-        widgetManager = require('oroui/js/widget-manager');
+    var CustomerAddressBook;
+    var BaseComponent = require('oroui/js/app/components/base/component');
+    var _ = require('underscore');
+    var routing = require('routing');
+    var AddressBook = require('oroaddress/js/address-book');
+    var widgetManager = require('oroui/js/widget-manager');
 
     CustomerAddressBook = BaseComponent.extend({
         initialize: function(options) {

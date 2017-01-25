@@ -5,7 +5,6 @@ define(function(require) {
     var _ = require('underscore');
     var PaginationInput = require('orodatagrid/js/datagrid/pagination-input');
 
-
     BackendPaginationInput =  PaginationInput.extend({
         themeOptions: {
             optionPrefix: 'backendpagination',
@@ -16,7 +15,7 @@ define(function(require) {
             handles = BackendPaginationInput.__super__.makeHandles.apply(this, arguments);
 
             _.each(handles, function(index) {
-                var $arrow = this.$el.find('[data-grid-pagination-direction=' + index.direction +']');
+                var $arrow = this.$el.find('[data-grid-pagination-direction=' + index.direction + ']');
 
                 if ($arrow.length) {
                     if (index.className || !this.enabled) {
@@ -52,8 +51,6 @@ define(function(require) {
             if (this.hidden) {
                 this.$el.hide();
             }
-
-
 
             return this;
         }

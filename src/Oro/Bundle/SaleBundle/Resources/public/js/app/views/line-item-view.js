@@ -229,8 +229,7 @@ define(function(require) {
             this.$addItemButton.toggle(enabled);
         },
 
-        removeOfferRow: function()
-        {
+        removeOfferRow: function() {
             mediator.trigger('entry-point:quote:trigger');
         },
 
@@ -246,7 +245,7 @@ define(function(require) {
          */
         entryPointTriggers: function(fields) {
             _.each(fields, function(fields) {
-                _.each(fields, function(field){
+                _.each(fields, function(field) {
                     $(field).attr('data-entry-point-trigger', true);
                 });
             });
