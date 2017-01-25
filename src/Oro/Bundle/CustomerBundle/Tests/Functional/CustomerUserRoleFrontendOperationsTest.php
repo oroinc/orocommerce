@@ -3,6 +3,9 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Functional;
 
 use Doctrine\Common\Persistence\ObjectRepository;
+
+use Symfony\Component\HttpFoundation\Response;
+
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserRoleACLData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -35,7 +38,7 @@ class CustomerUserRoleFrontendOperationsTest extends WebTestCase
         $this->executeOperation($predefinedRole, 'oro_customer_frontend_delete_role');
 
         $result = $this->client->getResponse();
-        $this->assertJsonResponseStatusCodeEquals($result, 404);
+        $this->assertJsonResponseStatusCodeEquals($result, Response::HTTP_FORBIDDEN);
 
         $this->assertNotNull($this->getReference(LoadCustomerUserRoleACLData::ROLE_WITHOUT_ACCOUNT_1_USER_LOCAL));
     }
@@ -59,7 +62,7 @@ class CustomerUserRoleFrontendOperationsTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertResponseStatusCodeEquals($result, $status);
-        if ($status === 200) {
+        if ($status === Response::HTTP_OK) {
             /** @var CustomerUserRole $role */
             $role = $this->getRepository()->findOneBy(['label' => $resource]);
             $this->assertNull($role);
@@ -75,37 +78,37 @@ class CustomerUserRoleFrontendOperationsTest extends WebTestCase
             'anonymous user' => [
                 'login' => '',
                 'resource' => LoadCustomerUserRoleACLData::ROLE_WITH_ACCOUNT_1_USER_LOCAL,
-                'status' => 404,
+                'status' => Response::HTTP_FORBIDDEN,
             ],
             'sibling user: LOCAL_VIEW_ONLY' => [
                 'login' => LoadCustomerUserRoleACLData::USER_ACCOUNT_1_ROLE_LOCAL_VIEW_ONLY,
                 'resource' => LoadCustomerUserRoleACLData::ROLE_WITH_ACCOUNT_1_USER_LOCAL,
-                'status' => 404,
+                'status' => Response::HTTP_FORBIDDEN,
             ],
             'parent customer: LOCAL' => [
                 'login' => LoadCustomerUserRoleACLData::USER_ACCOUNT_1_ROLE_LOCAL,
                 'resource' => LoadCustomerUserRoleACLData::ROLE_WITH_ACCOUNT_1_2_USER_LOCAL,
-                'status' => 404,
+                'status' => Response::HTTP_FORBIDDEN,
             ],
             'parent customer: DEEP_VIEW_ONLY' => [
                 'login' => LoadCustomerUserRoleACLData::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY,
                 'resource' => LoadCustomerUserRoleACLData::ROLE_WITH_ACCOUNT_1_2_USER_LOCAL,
-                'status' => 404,
+                'status' => Response::HTTP_FORBIDDEN,
             ],
             'different customer: DEEP' => [
                 'login' => LoadCustomerUserRoleACLData::USER_ACCOUNT_2_ROLE_DEEP,
                 'resource' => LoadCustomerUserRoleACLData::ROLE_WITH_ACCOUNT_1_2_USER_LOCAL,
-                'status' => 404,
+                'status' => Response::HTTP_FORBIDDEN,
             ],
             'same customer: LOCAL' => [
                 'login' => LoadCustomerUserRoleACLData::USER_ACCOUNT_1_ROLE_LOCAL,
                 'resource' => LoadCustomerUserRoleACLData::ROLE_WITH_ACCOUNT_1_USER_DEEP,
-                'status' => 200,
+                'status' => Response::HTTP_OK,
             ],
             'parent customer: DEEP' => [
                 'login' => LoadCustomerUserRoleACLData::USER_ACCOUNT_1_ROLE_DEEP,
                 'resource' => LoadCustomerUserRoleACLData::ROLE_WITH_ACCOUNT_1_2_USER_LOCAL,
-                'status' => 200,
+                'status' => Response::HTTP_OK,
             ],
         ];
     }

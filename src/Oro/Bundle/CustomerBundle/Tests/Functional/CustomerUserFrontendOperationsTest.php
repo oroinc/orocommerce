@@ -3,6 +3,9 @@
 namespace Oro\Bundle\CustomerBundle\Tests\Functional;
 
 use Doctrine\ORM\EntityManagerInterface;
+
+use Symfony\Component\HttpFoundation\Response;
+
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserACLData;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -42,7 +45,7 @@ class CustomerUserFrontendOperationsTest extends WebTestCase
         $this->executeOperation($user, 'oro_customer_customeruser_sendconfirmation');
 
         $result = $this->client->getResponse();
-        $this->assertJsonResponseStatusCodeEquals($result, 200);
+        $this->assertJsonResponseStatusCodeEquals($result, Response::HTTP_OK);
 
         /** @var \Swift_Plugins_MessageLogger $emailLogging */
         $emailLogger = $this->getContainer()->get('swiftmailer.plugin.messagelogger');
@@ -103,7 +106,7 @@ class CustomerUserFrontendOperationsTest extends WebTestCase
         $this->getObjectManager()->flush();
 
         $this->executeOperation($user, 'oro_customer_customeruser_confirm');
-        $this->assertSame(200, $this->client->getResponse()->getStatusCode());
+        $this->assertSame(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
 
         $user = $this->getUserRepository()->findOneBy(['email' => $resource]);
         $this->assertTrue($user->isConfirmed());
@@ -174,17 +177,16 @@ class CustomerUserFrontendOperationsTest extends WebTestCase
         $this->assertTrue($user->isEnabled());
 
         $this->executeOperation($user, 'oro_customer_frontend_customeruser_disable');
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
 
         $user = $this->getUserRepository()->findOneBy(['email' => $resource]);
         $this->assertFalse($user->isEnabled());
 
         $this->executeOperation($user, 'oro_customer_frontend_customeruser_enable');
-        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $this->assertEquals(Response::HTTP_OK, $this->client->getResponse()->getStatusCode());
 
         $user = $this->getUserRepository()->findOneBy(['email' => $resource]);
         $this->assertTrue($user->isEnabled());
-
 
         $user = $this->getUserRepository()->findOneBy(['email' => $resource]);
         $user->setConfirmed(true);
@@ -243,22 +245,22 @@ class CustomerUserFrontendOperationsTest extends WebTestCase
             'anonymous user' => [
                 'login' => '',
                 'resource' => LoadCustomerUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL,
-                'status' => 404,
+                'status' => Response::HTTP_FORBIDDEN,
             ],
             'same customer: LOCAL_VIEW_ONLY' => [
                 'login' => LoadCustomerUserACLData::USER_ACCOUNT_1_ROLE_LOCAL_VIEW_ONLY,
                 'resource' => LoadCustomerUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
-                'status' => 404,
+                'status' => Response::HTTP_FORBIDDEN,
             ],
             'parent customer: LOCAL' => [
                 'login' => LoadCustomerUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
                 'resource' => LoadCustomerUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL,
-                'status' => 404,
+                'status' => Response::HTTP_FORBIDDEN,
             ],
             'parent customer: DEEP_VIEW_ONLY' => [
                 'login' => LoadCustomerUserACLData::USER_ACCOUNT_1_ROLE_DEEP_VIEW_ONLY,
                 'resource' => LoadCustomerUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL,
-                'status' => 404,
+                'status' => Response::HTTP_FORBIDDEN,
             ],
         ];
     }

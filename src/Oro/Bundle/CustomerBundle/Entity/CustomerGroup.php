@@ -125,6 +125,7 @@ class CustomerGroup extends ExtendCustomerGroup
     public function addCustomer(Customer $customer)
     {
         if (!$this->customers->contains($customer)) {
+            $customer->setGroup($this);
             $this->customers->add($customer);
         }
 
