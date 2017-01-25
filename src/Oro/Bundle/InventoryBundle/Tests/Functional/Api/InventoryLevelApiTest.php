@@ -9,7 +9,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Tests\Functional\Api\ApiResponseContentTrait;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
-use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadInventoryLevels;
 use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadInventoryLevelWithPrimaryUnit;
 
 /**

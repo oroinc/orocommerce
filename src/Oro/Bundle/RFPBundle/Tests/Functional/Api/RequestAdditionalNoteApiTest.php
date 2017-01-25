@@ -3,6 +3,7 @@
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Api;
 
 use Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote;
+use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestAdditionalNoteData;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
 /**
@@ -17,7 +18,7 @@ class RequestAdditionalNoteApiTest extends AbstractRequestApiTest
     {
         parent::setUp();
         $this->client->useHashNavigation(true);
-        $this->loadFixtures([LoadRequestData::class]);
+        $this->loadFixtures([LoadRequestAdditionalNoteData::class]);
     }
 
     /**
@@ -33,10 +34,14 @@ class RequestAdditionalNoteApiTest extends AbstractRequestApiTest
      */
     public function cgetParamsAndExpectation()
     {
+        $maxCount = LoadRequestData::NUM_REQUESTS * (
+                LoadRequestAdditionalNoteData::NUM_CUSTOMER_NOTES + LoadRequestAdditionalNoteData::NUM_SELLER_NOTES
+            );
+
         return [
             [
                 'filters' => [],
-                'expectedCount' => 64,
+                'expectedCount' => $maxCount,
                 'params' => [],
                 'expectedContent' => null,
             ],

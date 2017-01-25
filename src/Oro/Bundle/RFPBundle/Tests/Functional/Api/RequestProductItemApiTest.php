@@ -3,7 +3,7 @@
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Api;
 
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
-use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestProductItemsData;
+use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
 /**
  * @dbIsolation
@@ -17,7 +17,7 @@ class RequestProductItemApiTest extends AbstractRequestApiTest
     {
         parent::setUp();
         $this->client->useHashNavigation(true);
-        $this->loadFixtures([LoadRequestProductItemsData::class]);
+        $this->loadFixtures([LoadRequestData::class]);
     }
 
     /**
@@ -33,10 +33,12 @@ class RequestProductItemApiTest extends AbstractRequestApiTest
      */
     public function cgetParamsAndExpectation()
     {
+        $maxCount = LoadRequestData::NUM_REQUESTS * LoadRequestData::NUM_LINE_ITEMS * LoadRequestData::NUM_PRODUCTS;
+
         return [
             [
                 'filters' => [],
-                'expectedCount' => 64,
+                'expectedCount' => $maxCount,
                 'params' => [],
                 'expectedContent' => null,
             ],

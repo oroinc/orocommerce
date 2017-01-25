@@ -7,7 +7,6 @@ use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\RFPBundle\Entity\Request;
