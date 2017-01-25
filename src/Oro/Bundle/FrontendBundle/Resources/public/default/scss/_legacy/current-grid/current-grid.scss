@@ -278,7 +278,7 @@
   position: relative;
 
   margin: 10px 0;
-  padding: 7px 11px 0;
+  padding: 10px 10px 5px;
   border: 0;
 
   background: get-color('additional', 'base');
@@ -309,6 +309,9 @@
   }
 
   .filter-item {
+    margin: 0 5px 0 0;
+    padding: 0 0 5px 0;
+    
     &.open-filter {
       &:before, &:after {
         display: none;
@@ -320,7 +323,6 @@
     position: relative;
 
     flex-basis: 225px;
-    margin: 0 10px 5px 0;
 
     > .btn {
       position: relative;
@@ -674,8 +676,6 @@
 }
 
 .filter-container {
-  padding: 0 15px;
-
   .filter-items {
     display: flex;
     flex-wrap: wrap;

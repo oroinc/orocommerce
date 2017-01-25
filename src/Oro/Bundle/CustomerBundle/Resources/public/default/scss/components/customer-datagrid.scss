@@ -1,0 +1,15 @@
+// @theme: default
+
+.customer-datagrid {
+    border-top: $customer-datagrid-border-top;
+
+    &__filter {
+        display: none;
+
+        margin: $customer-datagrid-filter-offset;
+
+        &:not(:empty) {
+            display: block;
+        }
+    }
+}

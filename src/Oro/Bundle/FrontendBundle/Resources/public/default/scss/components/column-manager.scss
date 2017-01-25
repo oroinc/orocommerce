@@ -1,0 +1,125 @@
+// @theme: default
+
+.column-manager {
+    .dropdown-menu {
+        right: calc(100% + 5px);
+        z-index: z('dropdown') * 10;
+    }
+
+    .column-manager-search {
+        input {
+            @include base-ui-element(
+                            $use-base-style: true,
+                            $padding: 5px 9px,
+                            $line-height: 1.43
+            );
+
+            @include element-state('hover') {
+                border-color: $input-border-color-hover-state;
+                box-shadow: $input-box-shadow-hover-state;
+            }
+
+            @include element-state('focus') {
+                border-color: $input-border-color-focus-state;
+                box-shadow: $input-box-shadow-focus-state;
+            }
+        }
+    }
+
+    .column-manager-table {
+        position: relative;
+
+        margin-top: 10px;
+
+        &:before {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+
+            content: "";
+            display: block;
+            width: calc(100% - 17px);
+            height: 1px;
+
+            background: get-color('additional', 'light');
+        }
+
+        &:after {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            z-index: 1;
+
+            content: "";
+            display: block;
+            width: calc(100% - 17px);
+            height: 1px;
+
+            background: get-color('additional', 'light');
+        }
+
+        .table-header-wrapper {
+            display: none !important;
+        }
+
+        .table-wrapper {
+            thead {
+                display: none;
+            }
+        }
+    }
+
+    &.dropdown {
+        display: inline-block;
+    }
+
+    .renderable td {
+        background: get-color('additional', 'base');
+    }
+
+    td {
+        padding: 5px;
+        vertical-align: middle;
+
+        white-space: nowrap;
+    }
+
+    .title-cell {
+        label {
+            display: block;
+            max-width: 95%;
+
+            @include ellipsis();
+        }
+    }
+
+    .sort-cell {
+        > span {
+            position: relative;
+
+            display: inline-block;
+            width: 20px;
+
+            text-align: center;
+
+            color: get-color('additional', 'dark');
+
+            cursor: move;
+        }
+
+        .btn {
+            padding: 0;
+
+            line-height: normal;
+
+            border: 0;
+            background: none;
+            box-shadow: none;
+        }
+
+        .handle {
+            margin-right: 0;
+        }
+    }
+}

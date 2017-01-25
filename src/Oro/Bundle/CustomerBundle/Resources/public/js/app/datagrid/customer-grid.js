@@ -10,6 +10,15 @@ define(function(require) {
     var ResetCollectionAction = require('oro/datagrid/action/reset-collection-action');
 
     CustomerGrid = Grid.extend({
+        /** @property {String} */
+        className: 'oro-datagrid customer-datagrid',
+
+        /** @property */
+        template: require('tpl!orocustomer/templates/datagrid/grid.html'),
+
+        /**
+         * Initialize grid
+         */
         initialize: function(options) {
             _.extend(options.toolbarOptions, {
                 actionsPanel: {
