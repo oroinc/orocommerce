@@ -1,0 +1,38 @@
+api:
+    entities:
+        Oro\Bundle\CustomerBundle\Entity\Customer: ~
+        Oro\Bundle\CustomerBundle\Entity\CustomerGroup: ~
+        Oro\Bundle\CustomerBundle\Entity\CustomerUserRole: ~
+        Oro\Bundle\CustomerBundle\Entity\CustomerUser:
+            fields:
+                salt:
+                    exclude: true
+                password:
+                    exclude: true
+                plainPassword:
+                    exclude: true
+                confirmationToken:
+                    exclude: true
+            actions:
+                delete:
+                    exclude: false # set manually because this entity is marked as a dictionary
+                delete_list:
+                    exclude: false # set manually because this entity is marked as a dictionary
+                create:
+                    exclude: false # set manually because this entity is marked as a dictionary
+                    fields:
+                        createdAt:
+                            exclude: true
+                        updatedAt:
+                            exclude: true
+                        passwordChangedAt:
+                            exclude: true
+                        passwordRequestedAt:
+                            exclude: true
+                        password:
+                            exclude: false # set manually because this field is excluded globally
+                            form_options:
+                                property_path: plainPassword
+                                constraints:
+                                    - NotNull: ~
+                                    - NotBlank: ~
