@@ -9,10 +9,11 @@ services:
             - { name: oro_payment.payment_method_provider }
 
     oro_money_order.payment_method_view_provider.money_order:
-        class: 'Oro\Bundle\MoneyOrderBundle\Method\View\MoneyOrderMethodViewProvider'
+        class: 'Oro\Bundle\MoneyOrderBundle\Method\View\Provider\MoneyOrderMethodViewProvider'
         public: false
         arguments:
             - '@oro_money_order.payment_method.config.provider'
+            - '@oro_money_order.factory.method_view.money_order'
         tags:
             - { name: oro_payment.payment_method_view_provider }
 

@@ -9,3 +9,7 @@ services:
     oro_money_order.factory.method.money_order:
         class: 'Oro\Bundle\MoneyOrderBundle\Method\Factory\MoneyOrderPaymentMethodFactory'
         public: false
+
+    oro_money_order.factory.method_view.money_order:
+        class: 'Oro\Bundle\MoneyOrderBundle\Method\View\Factory\MoneyOrderPaymentMethodViewFactory'
+        public: false
