@@ -186,7 +186,8 @@ oro:
             shortcut_new_order.label: Create new order
             shortcut_new_order.description: Create new order item
             shortcut_order_list.description: Show list of existing orders
-
+            best_selling_list.label: Best Selling Products
+            best_selling_list.description: List of best selling products
         widgets:
             order_information: Order Information
             shipping_tracking: Shipping Tracking

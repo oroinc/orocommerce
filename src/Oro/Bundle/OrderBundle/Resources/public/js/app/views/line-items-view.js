@@ -72,7 +72,7 @@ define(function(require) {
 
             var self = this;
             _.each(subtotals.subtotals, function(subtotal) {
-                if (subtotal.type == self.options.subtotalType) {
+                if (subtotal.type === self.options.subtotalType) {
                     subtotalAmount = subtotal.amount;
                 }
             });

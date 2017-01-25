@@ -38,9 +38,17 @@ define(function(require) {
         initialize: function(options) {
             FrontendLineItemView.__super__.initialize.apply(this, arguments);
             this.initializeElements(options);
+            this.onInit();
             this.template = _.template(this.getElement('template').text());
 
             this.listenTo(mediator, 'line-items:show:before', this.onShowBefore);
+        },
+
+        onInit: function() {
+            if (!_.isEmpty(this.formState)) {
+                return;
+            }
+            this.getElement('decline').text(_.__('oro.rfp.request.btn.delete.label'));
         },
 
         onShowBefore: function() {
@@ -58,6 +66,7 @@ define(function(require) {
             if (key === 'enable') {
                 this.getElement('viewView').addClass('hidden');
                 this.getElement('editView').removeClass('hidden');
+                this.getElement('decline').text(_.__('oro.rfp.request.btn.cancel.label'));
             } else {
                 this.getElement('editView').addClass('hidden');
                 this.getElement('viewView').removeClass('hidden');
@@ -85,7 +94,7 @@ define(function(require) {
 
         decline: function(e) {
             e.preventDefault();
-            if (_.isEmpty(this.getProduct())) {
+            if (_.isEmpty(this.formState)) {
                 this.remove();
             } else {
                 this.revertChanges();

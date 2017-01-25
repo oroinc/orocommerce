@@ -1,10 +1,10 @@
-define(function (require) {
+define(function(require) {
     'use strict';
 
-    var SelectSwitchInputComponent,
-        $ = require('jquery'),
-        _ = require('underscore'),
-        BaseComponent = require('oroui/js/app/components/base/component');
+    var SelectSwitchInputComponent;
+    var $ = require('jquery');
+    var _ = require('underscore');
+    var BaseComponent = require('oroui/js/app/components/base/component');
 
     SelectSwitchInputComponent = BaseComponent.extend({
 
@@ -51,11 +51,11 @@ define(function (require) {
                 .attr('name', name);
             this.$el.find('.input-container').prepend(this.$input);
             this.$el.find('.input-container').attr('data-validation', validation);
-            if (this.$mode == this.MODE_SELECT) {
+            if (this.$mode === this.MODE_SELECT) {
                 this._onInputToSelect();
-            }else if (this.$mode == this.MODE_INPUT) {
+            }else if (this.$mode === this.MODE_INPUT) {
                 this._onSelectToInput();
-                this.$el.find('input').val(options.value)
+                this.$el.find('input').val(options.value);
             }
             this.$el.find(this.$select_to_input_btn).on('click', _.bind(this._onSelectToInput, this));
             this.$el.find(this.$input_to_select_btn).on('click', _.bind(this._onInputToSelect, this));
@@ -95,7 +95,7 @@ define(function (require) {
             this.$el.find(this.$select_to_input_btn).show();
         },
 
-        dispose: function () {
+        dispose: function() {
             if (this.disposed) {
                 return;
             }
@@ -106,7 +106,6 @@ define(function (require) {
             SelectSwitchInputComponent.__super__.dispose.call(this);
         }
     });
-
 
     return SelectSwitchInputComponent;
 });
