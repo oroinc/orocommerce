@@ -1,0 +1,71 @@
+@import "oroui/css/less/mixins";
+
+.oro-content-variant-collection {
+  .content-variant-item {
+    position: relative;
+    padding: 10px 10px 10px 40px;
+    margin-bottom: 20px;
+    border: 1px solid #e6e6e6;
+    background: #f8f8f8;
+    .border-radius(4px);
+  }
+
+  .content-variant-item-default-label {
+    display: none;
+  }
+
+  .content-variant-item-default {
+    .content-variant-item-default-label {
+      display: inline-block !important;
+    }
+  }
+
+  .content-variant-item-title {
+    input[type="radio"] {
+      margin-top: -2px;
+      margin-right: 7px;
+    }
+
+    .content-variant-item-default-label {
+      margin-left: 7px;
+    }
+  }
+
+  .content-variant-add-btn-container {
+    margin-bottom: 20px;
+  }
+
+  .removeVariantBtn {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    text-indent: -999px;
+    font-size:0;
+    line-height:0;
+    margin: 0 0 0 5px;
+    &:after {
+      display:inline-block;
+      font:14px/1em 'FontAwesome';
+      color:#ddd;
+      content: "\f00d";
+      text-indent:0;
+    }
+    &:hover:after {
+      color:#888;
+    }
+  }
+
+  .scope-collection {
+    .oro-item-collection {
+      display: block !important;
+
+      .row-oro {
+        background: white !important;
+      }
+    }
+  }
+}
+
+.scope-elements {
+  display: none;
+}
