@@ -3,10 +3,6 @@
 .btn-group {
     @extend %base-transition;
 
-    .btn-group {
-        width: 100%;
-    }
-
     &.full {
         $btn-group-dropdown-toggle-width: 48px;
 

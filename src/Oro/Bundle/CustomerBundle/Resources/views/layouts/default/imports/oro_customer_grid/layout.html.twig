@@ -1,0 +1,6 @@
+{% block __oro_customer_user_grid__datagrid_widget %}
+    {% set grid_render_parameters = layout_attr_defaults(grid_render_parameters, {
+        'datagridComponent': 'orocustomer/js/app/datagrid/customer-datagrid-component'
+    }) %}
+    {{ parent_block_widget(block) }}
+{% endblock %}

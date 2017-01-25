@@ -1,3 +1,12 @@
+{% block __datagrid_toolbar__datagrid_toolbar_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' grid__toolbar grid__toolbar--extended'
+    }) %}
+    <script type="text/html" id="template-datagrid-toolbar">
+        <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+    </script>
+{% endblock %}
+
 {% block __datagrid_toolbar__datagrid_toolbar_sorting_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " sorting pull-left form-horizontal",
