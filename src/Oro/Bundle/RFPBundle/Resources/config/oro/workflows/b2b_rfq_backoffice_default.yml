@@ -1,5 +1,5 @@
 workflows:
-    rfq_backoffice_default:
+    b2b_rfq_backoffice_default:
         entity: Oro\Bundle\RFPBundle\Entity\Request
         entity_attribute: request
 
@@ -18,6 +18,7 @@ workflows:
                     - process_transition
                     - request_more_information_transition
                     - decline_transition
+                    - cancel_transition
                     - delete_transition
             processed:
                 order: 20
@@ -26,20 +27,31 @@ workflows:
             more_info_requested:
                 order: 30
                 allowed_transitions:
+                    - cancel_transition
                     - delete_transition
                     - info_provided_transition
             declined:
                 order: 40
                 allowed_transitions:
+                    - cancel_transition
+                    - delete_transition
+                    - reprocess_transition
+            cancelled:
+                order: 50
+                allowed_transitions:
                     - delete_transition
                     - reprocess_transition
             deleted:
-                order: 50
+                order: 60
                 allowed_transitions:
-                    - undelete_transition
+                    - undelete_to_cancelled_transition
+                    - undelete_to_open_transition
+                    - undelete_to_more_information_requested_transition
 
         attributes:
             notes:
+                type: string
+            internal_status_before_deletion:
                 type: string
 
         transitions:
@@ -77,6 +89,16 @@ workflows:
                 transition_definition: decline_transition_definition
                 frontend_options:
                     icon: 'fa-minus-square'
+            cancel_transition:
+                step_to: cancelled
+                transition_definition: cancel_transition_definition
+                is_hidden: true
+                triggers:
+                    -
+                        entity_class: 'Oro\Bundle\RFPBundle\Entity\Request'
+                        event: update
+                        field: internal_status
+                        require: "entity.getInternalStatus().getId() === 'cancelled_by_customer'"
             delete_transition:
                 step_to: deleted
                 frontend_options:
@@ -95,18 +117,26 @@ workflows:
             reprocess_transition:
                 step_to: open
                 transition_definition: reprocess_transition_definition
-                is_hidden: true
-                triggers:
-                    -
-                        entity_class: 'Oro\Bundle\RFPBundle\Entity\Request'
-                        event: update
-                        field: internal_status
-                        require: "entity.getInternalStatus().getId() === 'open'"
-            undelete_transition:
+                frontend_options:
+                    icon: 'fa-external-link'
+            undelete_to_cancelled_transition:
+                is_unavailable_hidden: true
+                step_to: cancelled
+                frontend_options:
+                    icon: 'fa-undo'
+                transition_definition: undelete_to_cancelled_transition_definition
+            undelete_to_open_transition:
+                is_unavailable_hidden: true
                 step_to: open
                 frontend_options:
                     icon: 'fa-undo'
-                transition_definition: undelete_transition_definition
+                transition_definition: undelete_to_open_transition_definition
+            undelete_to_more_information_requested_transition:
+                is_unavailable_hidden: true
+                step_to: more_info_requested
+                frontend_options:
+                    icon: 'fa-undo'
+                transition_definition: undelete_to_more_information_requested_transition_definition
 
         transition_definitions:
             __start___definition:
@@ -138,6 +168,7 @@ workflows:
                     - '@unset_value': [$notes] # unset temporary property
             delete_transition_definition:
                 actions:
+                    - '@assign_value': [$internal_status_before_deletion, $request.internalStatus.id]
                     - '@request_enum_entity':
                         enum_code: 'rfp_internal_status'
                         attribute: $request.internalStatus
@@ -152,28 +183,53 @@ workflows:
                         enum_code: 'rfp_customer_status'
                         attribute: $request.customerStatus
                         identifier: 'cancelled'
-            undelete_transition_definition:
+            cancel_transition_definition: ~
+            undelete_to_cancelled_transition_definition:
+                preconditions:
+                    '@equal': ['cancelled_by_customer', $internal_status_before_deletion]
                 actions:
                     - '@request_enum_entity':
-                        conditions:
-                            '@equal': ['cancelled', $request.customerStatus.id]
-                        parameters:
-                            enum_code: 'rfp_internal_status'
-                            attribute: $request.internalStatus
-                            identifier: 'cancelled_by_customer'
+                        enum_code: 'rfp_internal_status'
+                        attribute: $request.internalStatus
+                        identifier: $internal_status_before_deletion
+                    - '@unset_value': [$internal_status_before_deletion]
+            undelete_to_open_transition_definition:
+                preconditions:
+                    '@and':
+                        - '@not_equal': ['cancelled_by_customer', $internal_status_before_deletion]
+                        - '@or':
+                            - '@equal': ['submitted', $request.customerStatus.id]
+                            - '@equal': ['cancelled', $request.customerStatus.id]
+                actions:
                     - '@request_enum_entity':
-                        conditions:
-                            '@not_equal': ['cancelled', $request.customerStatus.id]
-                        parameters:
-                            enum_code: 'rfp_internal_status'
-                            attribute: $request.internalStatus
-                            identifier: 'open'
+                        enum_code: 'rfp_internal_status'
+                        attribute: $request.internalStatus
+                        identifier: 'open'
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_customer_status'
+                        attribute: $request.customerStatus
+                        identifier: 'submitted'
+                    - '@unset_value': [$internal_status_before_deletion]
+            undelete_to_more_information_requested_transition_definition:
+                preconditions:
+                    '@and':
+                        - '@not_equal': ['cancelled_by_customer', $internal_status_before_deletion]
+                        - '@equal': ['requires_attention', $request.customerStatus.id]
+                actions:
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_internal_status'
+                        attribute: $request.internalStatus
+                        identifier: 'more_info_requested'
+                    - '@unset_value': [$internal_status_before_deletion]
             process_transition_definition: ~
             info_provided_transition_definition: ~
             reprocess_transition_definition:
                 actions:
                     - '@request_enum_entity':
+                        enum_code: 'rfp_internal_status'
+                        identifier: 'open'
+                        attribute: $request.internalStatus
+                    - '@request_enum_entity':
                         enum_code: 'rfp_customer_status'
                         identifier: 'submitted'
                         attribute: $request.customerStatus
-            stub_transition_definition: ~

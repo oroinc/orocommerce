@@ -1,5 +1,5 @@
 workflows:
-    rfq_frontoffice_default:
+    b2b_rfq_frontoffice_default:
         entity: Oro\Bundle\RFPBundle\Entity\Request
         entity_attribute: request
 
@@ -15,10 +15,13 @@ workflows:
                 order: 10
                 allowed_transitions:
                     - cancel_transition
+                    - decline_transition
                     - more_information_requested_transition
             requires_attention:
                 order: 20
                 allowed_transitions:
+                    - cancel_transition
+                    - decline_transition
                     - provide_more_information_transition
             cancelled:
                 order: 30
@@ -69,6 +72,16 @@ workflows:
                 transition_definition: cancel_transition_definition
                 frontend_options:
                     icon: fa-times
+            decline_transition:
+                step_to: cancelled
+                transition_definition: decline_transition_definition
+                is_hidden: true
+                triggers:
+                    -
+                        entity_class: 'Oro\Bundle\RFPBundle\Entity\Request'
+                        event: update
+                        field: customer_status
+                        require: "entity.getCustomerStatus().getId() === 'cancelled'"
             resubmit_transition:
                 step_to: cancelled
                 transition_definition: resubmit_transition_definition
@@ -111,6 +124,7 @@ workflows:
                         enum_code: 'rfp_customer_status'
                         attribute: $request.customerStatus
                         identifier: 'cancelled'
+            decline_transition_definition: ~
             resubmit_transition_definition:
                 actions:
                     - '@run_action_group':
@@ -158,4 +172,3 @@ workflows:
                             note_type: $.result.note_type
                             notes: $notes
                     - '@unset_value': [$notes] # unset temporary property
-            stub_transition_definition: ~

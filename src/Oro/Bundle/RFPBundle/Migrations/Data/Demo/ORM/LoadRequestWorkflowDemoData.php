@@ -24,8 +24,8 @@ class LoadRequestWorkflowDemoData extends AbstractFixture implements
 {
     use ContainerAwareTrait;
 
-    const WORKFLOW_FRONTOFFICE = 'rfq_frontoffice_default';
-    const WORKFLOW_BACKOFFICE = 'rfq_backoffice_default';
+    const WORKFLOW_FRONTOFFICE = 'b2b_rfq_frontoffice_default';
+    const WORKFLOW_BACKOFFICE = 'b2b_rfq_backoffice_default';
 
     /** @var array */
     protected $transitionsWithNotes = ['provide_more_information_transition', 'request_more_information_transition'];

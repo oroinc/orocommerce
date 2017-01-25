@@ -2,16 +2,23 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Workflow;
 
+use Doctrine\Common\Persistence\ObjectManager;
+
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\HttpFoundation\Request as HttpRequest;
 
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
+use Oro\Bundle\WorkflowBundle\Model\TransitionManager;
+use Oro\Bundle\WorkflowBundle\Model\Workflow;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
 /**
  * @dbIsolation
+ *
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class RfqBackofficeDefaultWorkflowTest extends WebTestCase
 {
@@ -26,14 +33,12 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
     ];
 
     /** @var WorkflowManager */
-    protected $manager;
+    private $manager;
 
     /** @var WorkflowManager */
-    protected $systemManager;
+    private $systemManager;
 
-    /**
-     * @var Request
-     */
+    /** @var Request */
     private $request;
 
     /**
@@ -41,13 +46,10 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
      */
     protected function setUp()
     {
-        $this->initClient([], static::generateBasicAuthHeader());
+        parent::setUp();
 
-        $this->loadFixtures(
-            [
-                LoadRequestData::class,
-            ]
-        );
+        $this->initClient([], static::generateBasicAuthHeader());
+        $this->loadFixtures([LoadRequestData::class]);
 
         $this->updateUserSecurityToken(self::AUTH_USER);
         $this->getContainer()->get('request_stack')->push(new HttpRequest());
@@ -55,32 +57,147 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
         $this->manager = $this->getContainer()->get('oro_workflow.manager');
         $this->systemManager = $this->getContainer()->get('oro_workflow.manager.system');
         $this->request = $this->getReference(LoadRequestData::REQUEST1);
+        $this->manager = $this->getContainer()->get('oro_workflow.manager');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function tearDown()
+    {
+        unset($this->request);
+
+        parent::tearDown();
     }
 
     public function testApplicableWorkflows()
     {
         $this->assertEquals(
             [
-                'rfq_backoffice_default',
+                'b2b_rfq_backoffice_default',
             ],
             array_keys($this->manager->getApplicableWorkflows(Request::class))
         );
     }
 
     /**
-     * @expectedException Oro\Bundle\WorkflowBundle\Exception\WorkflowNotFoundException
-     * @expectedExceptionMessage Workflow "rfq_frontoffice_default" not found
+     * @expectedException \Oro\Bundle\WorkflowBundle\Exception\WorkflowNotFoundException
+     * @expectedExceptionMessage Workflow "b2b_rfq_frontoffice_default" not found
      */
     public function testTransitFrontofficeTransition()
     {
-        $frontoffice = $this->systemManager->getWorkflow('rfq_frontoffice_default');
+        $frontoffice = $this->systemManager->getWorkflow('b2b_rfq_frontoffice_default');
         $item = $frontoffice->getWorkflowItemByEntityId($this->request->getId());
 
         $this->manager->transit($item, 'provide_more_information_transition');
     }
 
-    public function testMoreInfoRequest()
+    public function testIsWorkflowStarted()
     {
+        $this->assertNotNull($this->manager->getWorkflowItem($this->request, 'b2b_rfq_backoffice_default'));
+    }
+
+    public function testWorkflowTransitions()
+    {
+        /** @var Workflow $workflow */
+        $workflow = $this->manager->getWorkflow('b2b_rfq_backoffice_default');
+
+        /** @var TransitionManager $transitionManager */
+        $transitionManager = $workflow->getTransitionManager();
+
+        $this->assertEquals(
+            $this->getExpectedTransitions(),
+            array_keys($transitionManager->getTransitions()->toArray())
+        );
+    }
+
+    public function testDeleteFromOpenStep()
+    {
+        $this->assertStatuses('open', 'submitted');
+        $this->assertBackofficeTransition('Delete', 'deleted', 'submitted', ['Undelete']);
+    }
+
+    /**
+     * @depends testDeleteFromOpenStep
+     */
+    public function testUndeleteToOpenStep()
+    {
+        $this->assertStatuses('deleted', 'submitted');
+        $this->assertBackofficeTransition(
+            'Undelete',
+            'open',
+            'submitted',
+            ['Request More Information', 'Decline', 'Delete']
+        );
+    }
+
+    /**
+     * @depends testUndeleteToOpenStep
+     */
+    public function testDeclineFromOpenStep()
+    {
+        $this->assertStatuses('open', 'submitted');
+        $this->assertBackofficeTransition('Decline', 'declined', 'cancelled', ['Delete', 'Reprocess']);
+    }
+
+    /**
+     * @depends testDeclineFromOpenStep
+     */
+    public function testReprocessToOpenStep()
+    {
+        $this->assertStatuses('declined', 'cancelled');
+        $this->assertBackofficeTransition(
+            'Reprocess',
+            'open',
+            'submitted',
+            ['Request More Information', 'Decline', 'Delete']
+        );
+    }
+
+    /**
+     * @depends testReprocessToOpenStep
+     */
+    public function testDeleteFromCancelled()
+    {
+        $this->assertStatuses('open', 'submitted');
+
+        //set valid customer status that should be setted by external workflow
+        $this->transitSystem($this->request, 'b2b_rfq_frontoffice_default', 'cancel_transition');
+
+        $this->assertStatuses('cancelled_by_customer', 'cancelled');
+
+        $this->assertBackofficeTransition('Delete', 'deleted', 'cancelled', ['Undelete']);
+    }
+
+    /**
+     * @depends testDeleteFromCancelled
+     */
+    public function testUndeleteToCancelled()
+    {
+        $this->assertStatuses('deleted', 'cancelled');
+        $this->assertBackofficeTransition('Undelete', 'cancelled_by_customer', 'cancelled', ['Delete', 'Reprocess']);
+    }
+
+    /**
+     * @depends testUndeleteToCancelled
+     */
+    public function testReprocessFromCancelled()
+    {
+        $this->assertStatuses('cancelled_by_customer', 'cancelled');
+        $this->assertBackofficeTransition(
+            'Reprocess',
+            'open',
+            'submitted',
+            ['Request More Information', 'Decline', 'Delete']
+        );
+    }
+
+    /**
+     * @depends testReprocessFromCancelled
+     */
+    public function testMoreInfoRequestFromOpenStep()
+    {
+        $this->assertStatuses('open', 'submitted');
         $this->assertButtonsAvailable($this->request, ['Request More Information', 'Decline', 'Delete']);
         $crawler = $this->openRequestWorkflowWidget($this->request);
 
@@ -98,33 +215,74 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
         $this->assertContains('transitionSuccess = true', $this->client->getResponse()->getContent());
 
         // check that notes added and status changed
+        $this->assertBackofficeTransition(null, 'more_info_requested', 'submitted', ['Delete']);
+        $this->assertContains('test notes', $this->openRequestPage($this->request)->html());
+    }
+
+    /**
+     * @depends testMoreInfoRequestFromOpenStep
+     */
+    public function testDeleteFromMoreInfoRequestedStep()
+    {
+        //set valid customer status that should be setted by external workflow
+        $this->transitSystem($this->request, 'b2b_rfq_frontoffice_default', 'reopen_transition');
+        $this->transitSystem($this->request, 'b2b_rfq_frontoffice_default', 'more_information_requested_transition');
+
+        $this->assertBackofficeTransition('Delete', 'deleted', 'requires_attention', ['Undelete']);
+    }
+
+    /**
+     * @depends testDeleteFromMoreInfoRequestedStep
+     */
+    public function testUndeleteToMoreInfoRequestedStep()
+    {
+        $this->assertBackofficeTransition('Undelete', 'more_info_requested', 'requires_attention', ['Delete']);
+    }
+
+    /**
+     * @return array
+     */
+    protected function getExpectedTransitions()
+    {
+        return [
+            '__start__',
+            'process_transition',
+            'request_more_information_transition',
+            'decline_transition',
+            'cancel_transition',
+            'delete_transition',
+            'info_provided_transition',
+            'reprocess_transition',
+            'undelete_to_cancelled_transition',
+            'undelete_to_open_transition',
+            'undelete_to_more_information_requested_transition'
+        ];
+    }
+
+    /**
+     * @param string $internalStatus
+     * @param string $customerStatus
+     */
+    protected function assertStatuses($internalStatus, $customerStatus)
+    {
         $this->request = $this->refreshRequestEntity($this->request);
-        $crawler = $this->openRequestPage($this->request);
-        $this->assertEquals('more_info_requested', $this->request->getInternalStatus()->getId());
-        $this->assertContains('test notes', $crawler->html());
-        $this->assertButtonsAvailable($this->request, ['Delete']);
+        $this->assertEquals($internalStatus, $this->request->getInternalStatus()->getId());
+        $this->assertEquals($customerStatus, $this->request->getCustomerStatus()->getId());
     }
 
-    public function testDelete()
+    /**
+     * @param string $button
+     * @param string $internalStatus
+     * @param string $customerStatus
+     * @param array $availableButtons
+     */
+    protected function assertBackofficeTransition($button, $internalStatus, $customerStatus, array $availableButtons)
     {
-        $this->transit($this->request, 'Delete');
-        $this->assertEquals('deleted', $this->request->getInternalStatus()->getId());
-        $this->assertButtonsAvailable($this->request, ['Undelete']);
-    }
-
-    public function testUndelete()
-    {
-        $this->transit($this->request, 'Undelete');
-        $this->assertEquals('open', $this->request->getInternalStatus()->getId());
-        $this->assertButtonsAvailable($this->request, ['Request More Information', 'Decline', 'Delete']);
-    }
-
-    public function testDecline()
-    {
-        $this->transit($this->request, 'Decline');
-        $this->assertEquals('declined', $this->request->getInternalStatus()->getId());
-        $this->assertEquals('cancelled', $this->request->getCustomerStatus()->getId());
-        $this->assertButtonsAvailable($this->request, ['Delete']);
+        if ($button) {
+            $this->transit($this->request, $button);
+        }
+        $this->assertStatuses($internalStatus, $customerStatus);
+        $this->assertButtonsAvailable($this->request, $availableButtons);
     }
 
     /**
@@ -224,8 +382,31 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
      */
     private function refreshRequestEntity(Request $request)
     {
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass(Request::class);
+        return $this->getEntityManager(Request::class)->find(Request::class, $request->getId());
+    }
 
-        return $em->find(Request::class, $request->getId());
+    /**
+     * @param string $className
+     * @return ObjectManager
+     */
+    private function getEntityManager($className)
+    {
+        return $this->getContainer()->get('doctrine')->getManagerForClass($className);
+    }
+
+    /**
+     * @param object $entity
+     * @param string $workflowName
+     * @param string $transitionName
+     * @param array $transitionData
+     */
+    protected function transitSystem($entity, $workflowName, $transitionName, $transitionData = [])
+    {
+        /** @var $wi WorkflowItem */
+        $wi = $this->manager->getWorkflowItem($entity, $workflowName);
+        $this->assertNotNull($wi);
+
+        $wi->getData()->add($transitionData);
+        $this->systemManager->transit($wi, $transitionName);
     }
 }

@@ -42,12 +42,7 @@ class RfqFrontofficeDefaultWorkflowTestCase extends FrontendWebTestCase
         parent::setUp();
 
         $this->initClient([], $this->getBasicAuthHeader());
-
-        $this->loadFixtures(
-            [
-                LoadRequestData::class,
-            ]
-        );
+        $this->loadFixtures([LoadRequestData::class]);
 
         $this->updateCustomerUserSecurityToken(LoadUserData::ACCOUNT1_USER1);
         $this->getContainer()->get('request_stack')->push(new HttpRequest());
@@ -60,7 +55,6 @@ class RfqFrontofficeDefaultWorkflowTestCase extends FrontendWebTestCase
         }
 
         $this->workflow = $this->manager->getWorkflow($this->getWorkflowName());
-
         $this->request = $this->getReference(LoadRequestData::REQUEST2);
     }
 
@@ -78,14 +72,14 @@ class RfqFrontofficeDefaultWorkflowTestCase extends FrontendWebTestCase
     {
         $this->assertEquals(
             [
-                'rfq_frontoffice_default',
+                'b2b_rfq_frontoffice_default',
             ],
             array_keys($this->manager->getApplicableWorkflows(Request::class))
         );
     }
 
     /**
-     * @expectedException Oro\Bundle\WorkflowBundle\Exception\WorkflowNotFoundException
+     * @expectedException \Oro\Bundle\WorkflowBundle\Exception\WorkflowNotFoundException
      * @expectedExceptionMessage Workflow "rfq_backoffice_default" not found
      */
     public function testTransitBackofficeTransition()
@@ -99,7 +93,7 @@ class RfqFrontofficeDefaultWorkflowTestCase extends FrontendWebTestCase
     public function testApiStartBackoffice()
     {
         $this->client->request('GET', $this->getUrl('oro_api_frontend_workflow_start', [
-            'workflowName' => 'rfq_backoffice_default',
+            'workflowName' => 'b2b_rfq_backoffice_default',
             'transitionName' => '__start__',
         ]));
 
@@ -108,7 +102,7 @@ class RfqFrontofficeDefaultWorkflowTestCase extends FrontendWebTestCase
 
     public function testApiTransitBackofficeTransition()
     {
-        $backoffice = $this->systemManager->getWorkflow('rfq_backoffice_default');
+        $backoffice = $this->systemManager->getWorkflow('b2b_rfq_backoffice_default');
         $item = $backoffice->getWorkflowItemByEntityId($this->request->getId());
 
         $this->client->request('GET', $this->getUrl('oro_api_frontend_workflow_transit', [
@@ -191,7 +185,7 @@ class RfqFrontofficeDefaultWorkflowTestCase extends FrontendWebTestCase
 
         $this->transitSystem(
             $this->request,
-            'rfq_backoffice_default',
+            'b2b_rfq_backoffice_default',
             'request_more_information_transition',
             ['notes' => 'admin notes ']
         );
@@ -290,7 +284,7 @@ class RfqFrontofficeDefaultWorkflowTestCase extends FrontendWebTestCase
      */
     protected function getWorkflowName()
     {
-        return 'rfq_frontoffice_default';
+        return 'b2b_rfq_frontoffice_default';
     }
 
     /**
@@ -312,9 +306,7 @@ class RfqFrontofficeDefaultWorkflowTestCase extends FrontendWebTestCase
      */
     protected function getTransitionLink(Crawler $crawler, $transitionLinkId)
     {
-        $result = $crawler->filter(sprintf('a#%s', $transitionLinkId));
-
-        return $result;
+        return $crawler->filter(sprintf('a#%s', $transitionLinkId));
     }
 
     /**
@@ -343,6 +335,7 @@ class RfqFrontofficeDefaultWorkflowTestCase extends FrontendWebTestCase
             'more_information_requested_transition',
             'provide_more_information_transition',
             'cancel_transition',
+            'decline_transition',
             'resubmit_transition',
             'reopen_transition',
         ];
