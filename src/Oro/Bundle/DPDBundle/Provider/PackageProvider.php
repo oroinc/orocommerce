@@ -93,6 +93,10 @@ class PackageProvider
         $productsInfo = [];
         /** @var ShippingLineItemInterface $lineItem */
         foreach ($lineItems as $lineItem) {
+            if (null === $lineItem->getProduct()) {
+                return [];
+            }
+
             $productsInfo[$lineItem->getProduct()->getId()] = [
                 'product' => $lineItem->getProduct(),
                 'productUnit' => $lineItem->getProductUnit(),

@@ -1,4 +1,77 @@
 operations:
+    oro_dpd_integration_invalidate_cache:
+        label: oro.dpd.form.invalidate_cache.label
+        routes:
+            - oro_integration_update
+        acl_resource: [UPDATE, entity:Oro\Bundle\IntegrationBundle\Entity\Channel]
+        button_options:
+            icon: fa-clock-o
+        frontend_options:
+            template: OroDPDBundle:Action:invalidateCache.html.twig
+            title: oro.dpd.form.invalidate_cache.title
+            options:
+                width: 505
+                modal: false
+                stateEnabled: false
+                incrementalPosition: false
+                allowMaximize: false
+                allowMinimize: false
+                maximizedHeightDecreaseBy: minimize-bar
+        attributes:
+            invalidateType:
+                label: oro.dpd.form.invalidate_cache.label
+                type: string
+            invalidateCacheAt:
+                label: oro.dpd.form.invalidate_cache_at.label
+                type: entity
+                property_path: data.transport.invalidateCacheAt
+                options:
+                    class: Oro\Bundle\IntegrationBundle\Entity\Channel
+            invalidateNow:
+                label: 'invalidate_cache.action.invalidate_now'
+                type: entity
+                property_path: data.transport.invalidateCacheAt
+                options:
+                    class: Oro\Bundle\IntegrationBundle\Entity\Channel
+        form_options:
+            attribute_fields:
+                invalidateType:
+                    form_type: choice
+                    options:
+                        placeholder: false
+                        choices:
+                            scheduled: oro.dpd.form.invalidate_cache.type.scheduled
+                            immediate: oro.dpd.form.invalidate_cache.type.immediate
+                invalidateCacheAt:
+                    form_type: Oro\Bundle\FormBundle\Form\Type\OroDateTimeType
+                invalidateNow:
+                    form_type: hidden
+            attribute_default_values:
+                invalidateCacheAt: $.data.transport.invalidateCacheAt
+        form_init:
+            - '@assign_value': [$.invalidateCacheAt, $.data.transport.invalidateCacheAt]
+        preactions:
+            - '@assign_constant_value':
+                attribute: $.dpdtype
+                value: Oro\Bundle\DPDBundle\Provider\ChannelType::TYPE
+        actions:
+            - '@call_service_method':
+                service: oro_dpd.handler.invalidate_cache_at
+                method: process
+                method_parameters: [$.data, $.form]
+            - '@flash_message':
+                conditions:
+                    '@not_empty': $.invalidateNow
+                message: oro.dpd.form.invalidate_cache.flash.invalidate_success
+                type: 'success'
+            - '@flash_message':
+                conditions:
+                    '@empty': $.invalidateNow
+                message: oro.dpd.form.invalidate_cache.flash.save_success
+                type: 'success'
+        preconditions:
+            '@equal': [$type, $.dpdtype]
+
     oro_dpd_ship_order:
         label: oro.dpd.actions.ship_order.widgets.ship_order.label
         routes:

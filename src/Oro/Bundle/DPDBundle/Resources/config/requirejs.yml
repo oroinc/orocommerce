@@ -1,0 +1,4 @@
+config:
+    paths:
+        'orodpd/js/app/components/dpd-transport-settings-component': 'bundles/orodpd/js/app/components/dpd-transport-settings-component.js'
+        'orodpd/js/app/components/invalidate-cache-button-component': 'bundles/orodpd/js/app/components/invalidate-cache-button-component.js'

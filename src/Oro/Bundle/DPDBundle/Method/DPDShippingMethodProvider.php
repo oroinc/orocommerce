@@ -2,96 +2,43 @@
 
 namespace Oro\Bundle\DPDBundle\Method;
 
-use Oro\Bundle\DPDBundle\Cache\ZipCodeRulesCache;
-use Oro\Bundle\DPDBundle\Factory\DPDRequestFactory;
 use Oro\Bundle\DPDBundle\Provider\ChannelType;
-use Oro\Bundle\DPDBundle\Provider\PackageProvider;
-use Oro\Bundle\DPDBundle\Provider\RateTablePriceProvider;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
-use Oro\Bundle\DPDBundle\Provider\DPDTransport;
-use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\IntegrationBundle\Entity\Repository\ChannelRepository;
+use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 
 class DPDShippingMethodProvider implements ShippingMethodProviderInterface
 {
     /**
-     * @var ManagerRegistry
+     * @var DoctrineHelper
      */
-    protected $doctrine;
+    private $doctrineHelper;
 
     /**
-     * @var DPDTransport
+     * @var IntegrationShippingMethodFactoryInterface
      */
-    protected $transportProvider;
-
-    /**
-     * @var DPDRequestFactory
-     */
-    protected $dpdRequestFactory;
-
-    /**
-     * @var LocalizationHelper
-     */
-    protected $localizationHelper;
-
-    /**
-     * @var PackageProvider
-     */
-    protected $packageProvider;
-
-    /**
-     * @var RateTablePriceProvider
-     */
-    protected $rateTablePriceProvider;
-
-    /**
-     * @var ZipCodeRulesCache
-     */
-    protected $zipCodeRulesCache;
-
-    /**
-     * @var OrderShippingLineItemConverterInterface
-     */
-    protected $shippingLineItemConverter;
+    private $methodFactory;
 
     /**
      * @var ShippingMethodInterface[]
      */
-    protected $methods;
+    private $methods;
 
     /**
      * DPDShippingMethodProvider constructor.
      *
-     * @param ManagerRegistry                         $doctrine
-     * @param DPDTransport                            $transportProvider
-     * @param DPDRequestFactory                       $dpdRequestFactory
-     * @param LocalizationHelper                      $localizationHelper
-     * @param PackageProvider                         $packageProvider
-     * @param RateTablePriceProvider                  $rateTablePriceProvider
-     * @param ZipCodeRulesCache                       $zipCodeRulesCache
-     * @param OrderShippingLineItemConverterInterface $shippingLineItemConverter
+     * @param DoctrineHelper                            $doctrineHelper
+     * @param IntegrationShippingMethodFactoryInterface $methodFactory
      */
     public function __construct(
-        ManagerRegistry $doctrine,
-        DPDTransport $transportProvider,
-        DPDRequestFactory $dpdRequestFactory,
-        LocalizationHelper $localizationHelper,
-        PackageProvider $packageProvider,
-        RateTablePriceProvider $rateTablePriceProvider,
-        ZipCodeRulesCache $zipCodeRulesCache,
-        OrderShippingLineItemConverterInterface $shippingLineItemConverter
+        DoctrineHelper $doctrineHelper,
+        IntegrationShippingMethodFactoryInterface $methodFactory
     ) {
-        $this->doctrine = $doctrine;
-        $this->transportProvider = $transportProvider;
-        $this->dpdRequestFactory = $dpdRequestFactory;
-        $this->localizationHelper = $localizationHelper;
-        $this->packageProvider = $packageProvider;
-        $this->rateTablePriceProvider = $rateTablePriceProvider;
-        $this->zipCodeRulesCache = $zipCodeRulesCache;
-        $this->shippingLineItemConverter = $shippingLineItemConverter;
+        $this->doctrineHelper = $doctrineHelper;
+        $this->methodFactory = $methodFactory;
     }
 
     /**
@@ -100,24 +47,12 @@ class DPDShippingMethodProvider implements ShippingMethodProviderInterface
     public function getShippingMethods()
     {
         if (!$this->methods) {
-            $channels = $this->doctrine->getManagerForClass('OroIntegrationBundle:Channel')
-                ->getRepository('OroIntegrationBundle:Channel')->findBy([
-                    'type' => ChannelType::TYPE,
-                ]);
+            $channels = $this->getRepository()->findByType(ChannelType::TYPE);
             $this->methods = [];
             /** @var Channel $channel */
             foreach ($channels as $channel) {
                 if ($channel->isEnabled()) {
-                    $method = new DPDShippingMethod(
-                        $this->transportProvider,
-                        $channel,
-                        $this->dpdRequestFactory,
-                        $this->localizationHelper,
-                        $this->packageProvider,
-                        $this->rateTablePriceProvider,
-                        $this->zipCodeRulesCache,
-                        $this->shippingLineItemConverter
-                    );
+                    $method = $this->methodFactory->create($channel);
                     $this->methods[$method->getIdentifier()] = $method;
                 }
             }
@@ -144,5 +79,13 @@ class DPDShippingMethodProvider implements ShippingMethodProviderInterface
     public function hasShippingMethod($name)
     {
         return array_key_exists($name, $this->getShippingMethods());
+    }
+
+    /**
+     * @return ChannelRepository|\Doctrine\ORM\EntityRepository
+     */
+    private function getRepository()
+    {
+        return $this->doctrineHelper->getEntityRepository('OroIntegrationBundle:Channel');
     }
 }

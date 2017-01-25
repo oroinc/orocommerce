@@ -1,15 +1,19 @@
 {% block oro_dpd_rates_csv_widget %}
     {% spaceless %}
-        <div class="control-group" style="margin-bottom: 0">
-            {{ form_widget(form) }}
-        </div>
+        {{ form_widget(form) }}
         {% set transportId = form.parent.vars.value.id %}
         {% if transportId is not null %}
-        <div class="well well-small oro_attachment_file">
-            <a href="{{ path('oro_dpd_rates_download', {id: transportId}) }}" class="no-hash filename" title="{{ form.vars.download_csv_label|trans }}">
+        <div class="oro_attachment_file">
+            <a href="{{ path('oro_dpd_rates_download', {id: transportId}) }}" class="no-hash filename" download>
                 {{ form.vars.download_csv_label|trans }}
             </a>
         </div>
         {% endif %}
     {% endspaceless %}
+{% endblock %}
+
+{% block oro_dpd_transport_settings_widget %}
+    <div data-page-component-module="orodpd/js/app/components/dpd-transport-settings-component">
+        {{ form_widget(form) }}
+    </div>
 {% endblock %}

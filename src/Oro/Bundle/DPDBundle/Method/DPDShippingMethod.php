@@ -2,21 +2,13 @@
 
 namespace Oro\Bundle\DPDBundle\Method;
 
-use Oro\Bundle\DPDBundle\Cache\ZipCodeRulesCache;
-use Oro\Bundle\DPDBundle\Entity\DPDTransport;
-use Oro\Bundle\DPDBundle\Factory\DPDRequestFactory;
 use Oro\Bundle\DPDBundle\Form\Type\DPDShippingMethodOptionsType;
-use Oro\Bundle\DPDBundle\Provider\PackageProvider;
-use Oro\Bundle\DPDBundle\Provider\RateTablePriceProvider;
-use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
-use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\PricesAwareShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingTrackingAwareInterface;
-use Oro\Bundle\DPDBundle\Entity\ShippingService;
+use Oro\Bundle\DPDBundle\Entity\DPDTransport as DPDSettings;
 use Oro\Bundle\DPDBundle\Provider\DPDTransport as DPDTransportProvider;
 
 class DPDShippingMethod implements
@@ -29,69 +21,42 @@ class DPDShippingMethod implements
 
     const HANDLING_FEE_OPTION = 'handling_fee';
 
-    /** @var DPDTransportProvider */
-    protected $transportProvider;
+    /** @var string */
+    protected $identifier;
 
-    /** @var Channel */
-    protected $channel;
-
-    /** @var DPDRequestFactory */
-    protected $dpdRequestFactory;
-
-    /** @var LocalizationHelper */
-    protected $localizationHelper;
+    /** @var string */
+    protected $label;
 
     /** @var ShippingMethodTypeInterface[] */
     protected $types;
 
-    /** @var PackageProvider */
-    protected $packageProvider;
+    /** @var DPDSettings */
+    protected $transport;
 
-    /**
-     * @var RateTablePriceProvider
-     */
-    protected $rateTablePriceProvider;
-
-    /**
-     * @var ZipCodeRulesCache
-     */
-    protected $zipCodeRulesCache;
-
-    /**
-     * @var OrderShippingLineItemConverterInterface
-     */
-    protected $shippingLineItemConverter;
+    /** @var DPDTransportProvider */
+    protected $transportProvider;
 
     /**
      * Construct.
      *
-     * @param DPDTransportProvider                    $transportProvider
-     * @param Channel                                 $channel
-     * @param DPDRequestFactory                       $dpdRequestFactory
-     * @param LocalizationHelper                      $localizationHelper
-     * @param PackageProvider                         $packageProvider
-     * @param RateTablePriceProvider                  $rateTablePriceProvider
-     * @param ZipCodeRulesCache                       $zipCodeRulesCache
-     * @param OrderShippingLineItemConverterInterface $shippingLineItemConverter
+     * @param $identifier
+     * @param $label
+     * @param array                $types
+     * @param DPDSettings          $transport
+     * @param DPDTransportProvider $transportProvider
      */
     public function __construct(
-        DPDTransportProvider $transportProvider,
-        Channel $channel,
-        DPDRequestFactory $dpdRequestFactory,
-        LocalizationHelper $localizationHelper,
-        PackageProvider $packageProvider,
-        RateTablePriceProvider $rateTablePriceProvider,
-        ZipCodeRulesCache $zipCodeRulesCache,
-        OrderShippingLineItemConverterInterface $shippingLineItemConverter
+        $identifier,
+        $label,
+        array $types,
+        DPDSettings $transport,
+        DPDTransportProvider $transportProvider
     ) {
+        $this->identifier = $identifier;
+        $this->label = $label;
+        $this->types = $types;
+        $this->transport = $transport;
         $this->transportProvider = $transportProvider;
-        $this->channel = $channel;
-        $this->dpdRequestFactory = $dpdRequestFactory;
-        $this->localizationHelper = $localizationHelper;
-        $this->packageProvider = $packageProvider;
-        $this->rateTablePriceProvider = $rateTablePriceProvider;
-        $this->zipCodeRulesCache = $zipCodeRulesCache;
-        $this->shippingLineItemConverter = $shippingLineItemConverter;
     }
 
     /**
@@ -99,7 +64,7 @@ class DPDShippingMethod implements
      */
     public function getIdentifier()
     {
-        return static::IDENTIFIER.'_'.$this->channel->getId();
+        return $this->identifier;
     }
 
     /**
@@ -115,10 +80,7 @@ class DPDShippingMethod implements
      */
     public function getLabel()
     {
-        /** @var DPDTransport $transport */
-        $transport = $this->channel->getTransport();
-
-        return (string) $this->localizationHelper->getLocalizedValue($transport->getLabels());
+        return $this->label;
     }
 
     /**
@@ -126,28 +88,6 @@ class DPDShippingMethod implements
      */
     public function getTypes()
     {
-        if (!$this->types) {
-            $this->types = [];
-
-            /** @var DPDTransport $transport */
-            $transport = $this->channel->getTransport();
-            /** @var ShippingService $shippingServicesCodes */
-            $shippingServices = $transport->getApplicableShippingServices();
-            foreach ($shippingServices as $shippingService) {
-                $this->types[] = new DPDShippingMethodType(
-                    $this->getIdentifier(),
-                    $transport,
-                    $this->transportProvider,
-                    $shippingService,
-                    $this->packageProvider,
-                    $this->rateTablePriceProvider,
-                    $this->dpdRequestFactory,
-                    $this->zipCodeRulesCache,
-                    $this->shippingLineItemConverter
-                );
-            }
-        }
-
         return $this->types;
     }
 
@@ -159,9 +99,11 @@ class DPDShippingMethod implements
     public function getType($identifier)
     {
         $methodTypes = $this->getTypes();
-        foreach ($methodTypes as $methodType) {
-            if ($methodType->getIdentifier() === (string) $identifier) {
-                return $methodType;
+        if ($methodTypes !== null) {
+            foreach ($methodTypes as $methodType) {
+                if ($methodType->getIdentifier() === (string) $identifier) {
+                    return $methodType;
+                }
             }
         }
 

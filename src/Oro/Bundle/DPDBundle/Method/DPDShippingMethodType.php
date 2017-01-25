@@ -4,7 +4,7 @@ namespace Oro\Bundle\DPDBundle\Method;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\DPDBundle\Cache\ZipCodeRulesCache;
-use Oro\Bundle\DPDBundle\Entity\DPDTransport;
+use Oro\Bundle\DPDBundle\Entity\DPDTransport as DPDSettings;
 use Oro\Bundle\DPDBundle\Entity\ShippingService;
 use Oro\Bundle\DPDBundle\Factory\DPDRequestFactory;
 use Oro\Bundle\DPDBundle\Form\Type\DPDShippingMethodOptionsType;
@@ -21,13 +21,19 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 
 class DPDShippingMethodType implements ShippingMethodTypeInterface
 {
+    /** @var string */
+    protected $identifier;
+
+    /** @var string */
+    protected $label;
+
     /**
      * @var string
      */
     protected $methodId;
 
     /**
-     * @var DPDTransport
+     * @var DPDSettings
      */
     protected $transport;
 
@@ -67,10 +73,12 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
     protected $shippingLineItemConverter;
 
     /**
+     * @param $identifier
+     * @param $label
      * @param string                                  $methodId
-     * @param DPDTransport                            $transport
-     * @param DPDTransportProvider                    $transportProvider
      * @param ShippingService                         $shippingService
+     * @param DPDSettings                             $transport
+     * @param DPDTransportProvider                    $transportProvider
      * @param PackageProvider                         $packageProvider
      * @param RateTablePriceProvider                  $rateTablePriceProvider
      * @param DPDRequestFactory                       $dpdRequestFactory
@@ -78,20 +86,24 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
      * @param OrderShippingLineItemConverterInterface $shippingLineItemConverter
      */
     public function __construct(
+        $identifier,
+        $label,
         $methodId,
-        DPDTransport $transport,
-        DPDTransportProvider $transportProvider,
         ShippingService $shippingService,
+        DPDSettings $transport,
+        DPDTransportProvider $transportProvider,
         PackageProvider $packageProvider,
         RateTablePriceProvider $rateTablePriceProvider,
         DPDRequestFactory $dpdRequestFactory,
         ZipCodeRulesCache $zipCodeRulesCache,
         OrderShippingLineItemConverterInterface $shippingLineItemConverter
     ) {
+        $this->identifier = $identifier;
+        $this->label = $label;
         $this->methodId = $methodId;
+        $this->shippingService = $shippingService;
         $this->transport = $transport;
         $this->transportProvider = $transportProvider;
-        $this->shippingService = $shippingService;
         $this->packageProvider = $packageProvider;
         $this->rateTablePriceProvider = $rateTablePriceProvider;
         $this->dpdRequestFactory = $dpdRequestFactory;
@@ -104,7 +116,7 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
      */
     public function getIdentifier()
     {
-        return $this->shippingService->getCode();
+        return $this->identifier;
     }
 
     /**
@@ -112,7 +124,7 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
      */
     public function getLabel()
     {
-        return $this->shippingService->getDescription();
+        return $this->label;
     }
 
     /**
@@ -142,9 +154,9 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
         }
 
         $price = null;
-        if ($this->transport->getRatePolicy() === DPDTransport::FLAT_RATE_POLICY) {
+        if ($this->transport->getRatePolicy() === DPDSettings::FLAT_RATE_POLICY) {
             $price = $this->transport->getFlatRatePriceValue();
-        } elseif ($this->transport->getRatePolicy() === DPDTransport::TABLE_RATE_POLICY) {
+        } elseif ($this->transport->getRatePolicy() === DPDSettings::TABLE_RATE_POLICY) {
             $rate = $this->rateTablePriceProvider->getRateByServiceAndDestination(
                 $this->transport,
                 $this->shippingService,
@@ -165,7 +177,9 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
         $methodOptions = array_merge($optionsDefaults, $methodOptions);
         $typeOptions = array_merge($optionsDefaults, $typeOptions);
 
-        $handlingFee = $methodOptions[DPDShippingMethod::HANDLING_FEE_OPTION] + $typeOptions[DPDShippingMethod::HANDLING_FEE_OPTION];
+        $handlingFee =
+            $methodOptions[DPDShippingMethod::HANDLING_FEE_OPTION] +
+            $typeOptions[DPDShippingMethod::HANDLING_FEE_OPTION];
 
         return Price::create((float) $price + (float) $handlingFee, $context->getCurrency());
     }
@@ -195,7 +209,8 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
             $packageList
         );
 
-        $setOrderResponse = $this->transportProvider->getSetOrderResponse($setOrderRequest, $this->transport);
+        $setOrderResponse =
+            $this->transportProvider->getSetOrderResponse($setOrderRequest, $this->transport);
 
         return $setOrderResponse;
     }
