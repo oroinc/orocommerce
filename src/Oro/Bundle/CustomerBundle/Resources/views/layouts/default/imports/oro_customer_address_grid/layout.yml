@@ -57,17 +57,6 @@ layout:
               optionName: visible
               optionValue: true
 
-        - '@add':
-            id: __addresses_create_button
-            parentId: __addresses_head
-            blockType: link
-            options:
-                visible: '=data["acl"].isGranted("oro_customer_frontend_customer_address_create") && data["acl"].isGranted("oro_customer_frontend_customer_address_view")'
-                route_name: oro_customer_frontend_customer_address_create
-                route_parameters:
-                    entityId: '=data["entity"].getCustomer().getId()'
-                text: 'oro.customer.frontend.customer_user_address_book.create.label'
-
         - '@setOption':
             id: __addresses_datagrid_toolbar_sorting
             optionName: visible
