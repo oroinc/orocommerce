@@ -3,10 +3,12 @@
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Workflow;
 
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\HttpFoundation\Request as HttpRequest;
 
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
 /**
  * @dbIsolation
@@ -22,6 +24,12 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
         'Reprocess',
         'Undelete',
     ];
+
+    /** @var WorkflowManager */
+    protected $manager;
+
+    /** @var WorkflowManager */
+    protected $systemManager;
 
     /**
      * @var Request
@@ -41,7 +49,34 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
             ]
         );
 
+        $this->updateUserSecurityToken(self::AUTH_USER);
+        $this->getContainer()->get('request_stack')->push(new HttpRequest());
+
+        $this->manager = $this->getContainer()->get('oro_workflow.manager');
+        $this->systemManager = $this->getContainer()->get('oro_workflow.manager.system');
         $this->request = $this->getReference(LoadRequestData::REQUEST1);
+    }
+
+    public function testApplicableWorkflows()
+    {
+        $this->assertEquals(
+            [
+                'rfq_backoffice_default',
+            ],
+            array_keys($this->manager->getApplicableWorkflows(Request::class))
+        );
+    }
+
+    /**
+     * @expectedException Oro\Bundle\WorkflowBundle\Exception\WorkflowNotFoundException
+     * @expectedExceptionMessage Workflow "rfq_frontoffice_default" not found
+     */
+    public function testTransitFrontofficeTransition()
+    {
+        $frontoffice = $this->systemManager->getWorkflow('rfq_frontoffice_default');
+        $item = $frontoffice->getWorkflowItemByEntityId($this->request->getId());
+
+        $this->manager->transit($item, 'provide_more_information_transition');
     }
 
     public function testMoreInfoRequest()

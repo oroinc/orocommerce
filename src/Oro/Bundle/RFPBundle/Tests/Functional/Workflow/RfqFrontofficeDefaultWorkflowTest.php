@@ -3,11 +3,12 @@
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Workflow;
 
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\HttpFoundation\Request as HttpRequest;
 
+use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Model\TransitionManager;
 use Oro\Bundle\WorkflowBundle\Model\Workflow;
@@ -16,7 +17,7 @@ use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 /**
  * @dbIsolation
  */
-class RfqFrontofficeDefaultWorkflowTestCase extends WebTestCase
+class RfqFrontofficeDefaultWorkflowTestCase extends FrontendWebTestCase
 {
     /** @var Request */
     protected $request;
@@ -26,6 +27,9 @@ class RfqFrontofficeDefaultWorkflowTestCase extends WebTestCase
 
     /** @var WorkflowManager */
     protected $manager;
+
+    /** @var WorkflowManager */
+    protected $systemManager;
 
     /** @var Workflow */
     protected $workflow;
@@ -39,19 +43,23 @@ class RfqFrontofficeDefaultWorkflowTestCase extends WebTestCase
 
         $this->initClient([], $this->getBasicAuthHeader());
 
+        $this->loadFixtures(
+            [
+                LoadRequestData::class,
+            ]
+        );
+
+        $this->updateCustomerUserSecurityToken(LoadUserData::ACCOUNT1_USER1);
+        $this->getContainer()->get('request_stack')->push(new HttpRequest());
+
         $this->manager = $this->getContainer()->get('oro_workflow.manager');
+        $this->systemManager = $this->getContainer()->get('oro_workflow.manager.system');
 
         if (!$this->manager->isActiveWorkflow($this->getWorkflowName())) {
             $this->markTestSkipped(sprintf('The Workflow "%s" is inactive', $this->getWorkflowName()));
         }
 
         $this->workflow = $this->manager->getWorkflow($this->getWorkflowName());
-
-        $this->loadFixtures(
-            [
-                LoadRequestData::class,
-            ]
-        );
 
         $this->request = $this->getReference(LoadRequestData::REQUEST2);
     }
@@ -64,6 +72,51 @@ class RfqFrontofficeDefaultWorkflowTestCase extends WebTestCase
         unset($this->request);
 
         parent::tearDown();
+    }
+
+    public function testApplicableWorkflows()
+    {
+        $this->assertEquals(
+            [
+                'rfq_frontoffice_default',
+            ],
+            array_keys($this->manager->getApplicableWorkflows(Request::class))
+        );
+    }
+
+    /**
+     * @expectedException Oro\Bundle\WorkflowBundle\Exception\WorkflowNotFoundException
+     * @expectedExceptionMessage Workflow "rfq_backoffice_default" not found
+     */
+    public function testTransitBackofficeTransition()
+    {
+        $backoffice = $this->systemManager->getWorkflow('rfq_backoffice_default');
+        $item = $backoffice->getWorkflowItemByEntityId($this->request->getId());
+
+        $this->manager->transit($item, 'process_transition');
+    }
+
+    public function testApiStartBackoffice()
+    {
+        $this->client->request('GET', $this->getUrl('oro_api_frontend_workflow_start', [
+            'workflowName' => 'rfq_backoffice_default',
+            'transitionName' => '__start__',
+        ]));
+
+        $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 404);
+    }
+
+    public function testApiTransitBackofficeTransition()
+    {
+        $backoffice = $this->systemManager->getWorkflow('rfq_backoffice_default');
+        $item = $backoffice->getWorkflowItemByEntityId($this->request->getId());
+
+        $this->client->request('GET', $this->getUrl('oro_api_frontend_workflow_transit', [
+            'workflowItemId' => $item->getId(),
+            'transitionName' => 'process_transition',
+        ]));
+
+        $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 404);
     }
 
     public function testIsWorkflowStarted()
@@ -177,10 +230,10 @@ class RfqFrontofficeDefaultWorkflowTestCase extends WebTestCase
     protected function transitSystem($entity, $workflowName, $transitionName, $transitionData = [])
     {
         /* @var $wi WorkflowItem */
-        $wi = $this->manager->getWorkflowItem($entity, $workflowName);
+        $wi = $this->systemManager->getWorkflowItem($entity, $workflowName);
         $this->assertNotNull($wi);
         $wi->getData()->add($transitionData);
-        $this->manager->transit($wi, $transitionName);
+        $this->systemManager->transit($wi, $transitionName);
     }
 
     /**

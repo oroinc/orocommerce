@@ -65,7 +65,7 @@ class LoadRequestWorkflowDemoData extends AbstractFixture implements
     {
         static $workflowManager;
         if (!$workflowManager) {
-            $workflowManager = $this->container->get('oro_workflow.manager');
+            $workflowManager = $this->container->get('oro_workflow.manager.system');
         }
 
         return $workflowManager;

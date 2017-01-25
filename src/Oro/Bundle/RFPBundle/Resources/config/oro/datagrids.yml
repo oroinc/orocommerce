@@ -9,7 +9,7 @@ datagrids:
             type:         orm
             query:
                 select:
-                    - distinct request.id
+                    - request.id
                     - request.poNumber
                     - request.shipUntil
                     - request.createdAt

@@ -246,6 +246,7 @@ class RequestControllerTest extends WebTestCase
                         'createdAt',
                         'update_link',
                         'view_link',
+                        'workflowStepLabel',
                         'action_configuration',
                         'customerStatusName',
                     ],
