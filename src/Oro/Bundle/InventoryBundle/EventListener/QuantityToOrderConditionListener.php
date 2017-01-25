@@ -72,7 +72,7 @@ class QuantityToOrderConditionListener
         /** @var Checkout $checkout */
         $checkout = $context->get('checkout');
         if (false == $this->validatorService->isLineItemListValid($checkout->getLineItems())) {
-            $event->addError(self::QUANTITY_CHECK_ERROR, $context);
+            $event->addError('oro.inventory.frontend.messages.quantity_limits_error');
         }
     }
 
