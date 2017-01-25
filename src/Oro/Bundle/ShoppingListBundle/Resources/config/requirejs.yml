@@ -17,6 +17,6 @@ config:
         'oroshoppinglist/js/app/components/shoppinglist-collection-component': 'bundles/oroshoppinglist/js/app/components/shoppinglist-collection-component.js'
         'oroshoppinglist/js/shoppinglist-collection-service': 'bundles/oroshoppinglist/js/shoppinglist-collection-service.js'
         'oroshoppinglist/js/app/components/shoppinglist-owner-inline-editable-view-component': 'bundles/oroshoppinglist/js/app/components/shoppinglist-owner-inline-editable-view-component.js'
-        'oroshoppinglist/js/validator/matrix-precision': 'bundles/oroshoppinglist/js/app/validator/matrix-precision.js'
+        'oroshoppinglist/js/validator/decimal-precision': 'bundles/oroshoppinglist/js/app/validator/decimal-precision.js'
     appmodules:
         - oroshoppinglist/js/app/modules/validator-constraints-module

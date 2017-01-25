@@ -8,7 +8,7 @@ define([
         decimalSeparator = options.decimal_separator_symbol;
 
     return [
-        'matrix-precision',
+        'decimal-precision',
         function(value, element, param) {
             if (!_.include(value, decimalSeparator)) {
                 return true;

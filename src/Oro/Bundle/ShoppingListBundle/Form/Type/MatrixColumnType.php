@@ -38,8 +38,8 @@ class MatrixColumnType extends AbstractType
                 $precision = $scale ? $scale->getPrecision() : 0;
 
                 $quantityConfig['attr']['data-validation'] = [
-                    'matrix-precision' => [
-                        'message' => 'oro.matrixgrid.non_valid_precision',
+                    'decimal-precision' => [
+                        'message' => 'oro.non_valid_precision',
                         'precision' => $precision,
                 ]];
             }

@@ -9,8 +9,8 @@ class MatrixCollectionColumn extends Constraint
     /**
      * @var string
      */
-    public $messageOnProductUnavailable = 'oro.matrixgrid.product_unavailable';
-    public $messageOnNonValidPrecision = 'oro.matrixgrid.non_valid_precision';
+    public $messageOnProductUnavailable = 'oro.product_unavailable';
+    public $messageOnNonValidPrecision  = 'oro.non_valid_precision';
 
     /**
      * {@inheritDoc}

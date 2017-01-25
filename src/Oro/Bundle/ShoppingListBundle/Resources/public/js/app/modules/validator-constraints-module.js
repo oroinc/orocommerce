@@ -11,7 +11,7 @@ require([
         'jquery', 'jquery.validate'
     ], function ($) {
         var constraints = [
-            'oroshoppinglist/js/validator/matrix-precision'
+            'oroshoppinglist/js/validator/decimal-precision'
         ];
 
         $.validator.loadMethod(constraints);
