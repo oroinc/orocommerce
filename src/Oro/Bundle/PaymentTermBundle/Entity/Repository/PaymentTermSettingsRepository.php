@@ -16,7 +16,8 @@ class PaymentTermSettingsRepository extends EntityRepository
 
         $qb
             ->join('pts.channel', 'ch')
-            ->where('ch.enabled = 1');
+            ->where('ch.enabled = true')
+            ->orderBy('pts.id');
 
         return $qb->getQuery()->getResult();
     }

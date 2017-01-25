@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Method\Config\ParameterBag\Factory\Settings;
 
+// @codingStandardsIgnoreStart
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
@@ -9,11 +10,10 @@ use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTermSettings;
 use Oro\Bundle\PaymentTermBundle\Method\Config\ParameterBag\Factory\Settings\ParameterBagPaymentTermConfigBySettingsFactory;
 use Oro\Bundle\PaymentTermBundle\Method\Config\ParameterBag\ParameterBagPaymentTermConfig;
+// @codingStandardsIgnoreEnd
 
 class ParameterBagPaymentTermConfigBySettingsFactoryTest extends \PHPUnit_Framework_TestCase
 {
-    const payment_term_type = 'payment_term';
-
     /**
      * @var ParameterBagPaymentTermConfigBySettingsFactory
      */
