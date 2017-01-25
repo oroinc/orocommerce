@@ -73,7 +73,7 @@ layout:
             parentId: product_index_page
             blockType: container
 
-    conditions: 'context["category_id"] in [8]' # affected categories 
+    conditions: 'context["category_id"] in [8]' # affected categories
 ```
 
 and template:
@@ -252,7 +252,7 @@ layout:
                         product_search_navigation: ~
                         product_grid_container: ~
 
-    conditions: 'context["category_id"] not in [8, 9]' # affected categories 
+    conditions: 'context["category_id"] not in [8, 9]' # affected categories
 ```
 
 and template:
@@ -278,7 +278,7 @@ and template:
 {% endblock %}
 
 {% block _product_search_navigation_widget %}
-    <div class="catalog-navigation-bar" data-page-component-module="oroproduct/js/app/components/breadcrumbs-navigation-block">
+    <div class="breadcrumbs" data-page-component-module="oroproduct/js/app/components/breadcrumbs-navigation-block">
         <span class="path-info">
             {{ block('container_widget') }}
         </span>

@@ -91,6 +91,7 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
     /**
      * @param ObjectManager $manager
      * @param               $sku
+     * @param               $large
      * @return null
      */
     protected function getCategoryImage(ObjectManager $manager, $sku, $large)

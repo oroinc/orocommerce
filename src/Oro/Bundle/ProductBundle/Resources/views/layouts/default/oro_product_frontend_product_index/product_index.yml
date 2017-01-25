@@ -9,13 +9,22 @@ layout:
             items:
                 product_index_page:
                     blockType: container
+                category_picture:
+                    blockType: category_data
+                    options:
+                        currentCategory: '=data["category"].getCurrentCategory()'
                 product_search_navigation:
                     blockType: container
+                category_title:
+                    blockType: category_data
+                    options:
+                        currentCategory: '=data["category"].getCurrentCategory()'
                 product_grid_container:
                     blockType: container
             tree:
                 page_content:
                     product_index_page:
+                        category_picture: ~
                         product_search_navigation: ~
+                        category_title: ~
                         product_grid_container:
-
