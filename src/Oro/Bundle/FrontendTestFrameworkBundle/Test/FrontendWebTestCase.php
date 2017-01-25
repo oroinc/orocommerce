@@ -8,7 +8,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\Stub\WebsiteManagerStub;
 
-class FrontendWebTestCase extends WebTestCase
+abstract class FrontendWebTestCase extends WebTestCase
 {
     /**
      * @var WebsiteManager

@@ -196,29 +196,6 @@ class RequestControllerTest extends WebTestCase
         }
     }
 
-    public function testViewDeleted()
-    {
-        /* @var $request Request */
-        $request = $this->getReference(LoadRequestData::REQUEST2);
-        $id = $request->getId();
-
-        $this->initClient(
-            [],
-            $this->generateBasicAuthHeader(LoadUserData::ACCOUNT1_USER1, LoadUserData::ACCOUNT1_USER1)
-        );
-
-        $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_view', ['id' => $id]));
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-
-        $request->setInternalStatus(
-            $this->getEnumEntity(Request::INTERNAL_STATUS_CODE, Request::INTERNAL_STATUS_DELETED)
-        );
-        $this->getManager(Request::class)->flush($request);
-
-        $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_view', ['id' => $id]));
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 404);
-    }
-
     /**
      * @return array
      *
@@ -795,6 +772,30 @@ class RequestControllerTest extends WebTestCase
                 $this->getReference(LoadUserData::ACCOUNT1_USER2)->getFullName()
             ]
         );
+    }
+
+    public function testViewDeleted()
+    {
+        $this->loginUser(LoadUserData::ACCOUNT1_USER1);
+
+        /* @var $request Request */
+        $request = $this->getReference(LoadRequestData::REQUEST2);
+        $id = $request->getId();
+
+        $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_view', ['id' => $id]));
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+
+        $em = $this->getManager(Request::class);
+        $request = $em->find(Request::class, $id);
+
+        $request->setInternalStatus(
+            $this->getEnumEntity(Request::INTERNAL_STATUS_CODE, Request::INTERNAL_STATUS_DELETED)
+        );
+
+        $em->flush($request);
+
+        $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_view', ['id' => $id]));
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 404);
     }
 
     /**
