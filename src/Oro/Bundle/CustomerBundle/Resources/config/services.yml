@@ -687,3 +687,11 @@ services:
             - '@oro_user.provider.role_privilege_category_provider'
             - '@oro_customer.form.handler.acl_role.backend='
         public: false
+
+    oro_customer.customer_id.placeholder:
+        class: 'Oro\Bundle\CustomerBundle\Placeholder\CustomerIdPlaceholder'
+        public: false
+        arguments:
+            - '@security.token_storage'
+        tags:
+            - { name: website_search.placeholder }
