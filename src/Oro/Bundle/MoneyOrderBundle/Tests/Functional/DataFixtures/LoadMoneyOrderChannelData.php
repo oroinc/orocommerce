@@ -28,9 +28,16 @@ class LoadMoneyOrderChannelData extends AbstractFixture implements DependentFixt
         [
             'name' => 'MoneyOrder2',
             'type' => 'money_order',
-            'enabled' => false,
+            'enabled' => true,
             'transport' => 'money_order:transport_2',
             'reference' => 'money_order:channel_2',
+        ],
+        [
+            'name' => 'MoneyOrder3',
+            'type' => 'money_order',
+            'enabled' => false,
+            'transport' => 'money_order:transport_3',
+            'reference' => 'money_order:channel_3',
         ],
     ];
 

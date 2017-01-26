@@ -34,9 +34,10 @@ class MoneyOrderSettingsRepositoryTest extends WebTestCase
         $settingsByEnabledChannel = $this->repository->findWithEnabledChannel();
 
         $fixtureSettingsByEnabledChannel = [
-            $this->getReference('money_order:transport_1')
+            $this->getReference('money_order:transport_1'),
+            $this->getReference('money_order:transport_2')
         ];
-        static::assertCount(1, $settingsByEnabledChannel);
+        static::assertCount(count($fixtureSettingsByEnabledChannel), $settingsByEnabledChannel);
         static::assertEquals($fixtureSettingsByEnabledChannel, $settingsByEnabledChannel);
     }
 }

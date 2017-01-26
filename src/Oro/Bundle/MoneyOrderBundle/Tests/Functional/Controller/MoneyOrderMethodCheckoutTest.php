@@ -3,13 +3,11 @@
 namespace Oro\Bundle\MoneyOrderBundle\Tests\Functional\Controller;
 
 use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend\CheckoutControllerTestCase;
-use Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder;
+use Oro\Bundle\MoneyOrderBundle\Tests\Functional\DataFixtures\LoadMoneyOrderSettingsData;
 use Oro\Bundle\MoneyOrderBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
-
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 
@@ -18,10 +16,6 @@ use Symfony\Component\DomCrawler\Form;
  */
 class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
 {
-    const MONEY_ORDER_LABEL = 'Check/Money Order';
-    const MONEY_ORDER_PAY_TO_VALUE = 'Johnson Brothers LLC.';
-    const MONEY_ORDER_SEND_TO_VALUE = '1234 Main St. Smallville, CA 90048';
-
     /**
      * {@inheritdoc}
      */
@@ -39,13 +33,14 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
 
         $crawler = $this->client->request('GET', self::$checkoutUrl);
 
-        $this->assertContains(self::MONEY_ORDER_LABEL, $crawler->html());
-        $this->assertContains(self::MONEY_ORDER_PAY_TO_VALUE, $crawler->html());
-        $this->assertContains(self::MONEY_ORDER_SEND_TO_VALUE, $crawler->html());
+        static::assertContains(LoadMoneyOrderSettingsData::MONEY_ORDER_LABEL, $crawler->html());
+        static::assertContains(LoadMoneyOrderSettingsData::MONEY_ORDER_PAY_TO_VALUE, $crawler->html());
+        static::assertContains(LoadMoneyOrderSettingsData::MONEY_ORDER_SEND_TO_VALUE, $crawler->html());
 
         $form = $this->getTransitionForm($crawler);
         $values = $this->explodeArrayPaths($form->getValues());
-        $values[self::ORO_WORKFLOW_TRANSITION]['payment_method'] = MoneyOrder::TYPE;
+        $values[self::ORO_WORKFLOW_TRANSITION]['payment_method'] =
+            LoadPaymentMethodsConfigsRuleData::getPaymentMethodIdentifier($this->getReference('money_order:channel_1'));
         $values['_widgetContainer'] = 'ajax';
         $values['_wid'] = 'ajax_checkout';
 
@@ -57,7 +52,7 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
             ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
 
-        $this->assertContains(self::MONEY_ORDER_LABEL, $crawler->html());
+        static::assertContains(LoadMoneyOrderSettingsData::MONEY_ORDER_LABEL, $crawler->html());
 
         return $crawler;
     }
@@ -74,7 +69,7 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
             ->getRepository('OroCheckoutBundle:CheckoutSource')
             ->findBy(['shoppingList' => $sourceEntity]);
 
-        $this->assertCount(1, $checkoutSources);
+        static::assertCount(1, $checkoutSources);
         $form = $crawler->selectButton('Submit Order')->form();
         $this->client->request(
             $form->getMethod(),
@@ -88,9 +83,9 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
         $this->client->followRedirects();
         $crawler = $this->client->request('GET', $data['responseData']['returnUrl']);
 
-        $this->assertContains(self::FINISH_SIGN, $crawler->html());
-        $this->assertCount(0, $this->registry->getRepository('OroCheckoutBundle:CheckoutSource')->findAll());
-        $this->assertNull(
+        static::assertContains(self::FINISH_SIGN, $crawler->html());
+        static::assertCount(0, $this->registry->getRepository('OroCheckoutBundle:CheckoutSource')->findAll());
+        static::assertNull(
             $this->registry->getRepository('OroShoppingListBundle:ShoppingList')->find($sourceEntityId)
         );
 
@@ -101,12 +96,16 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
         ;
 
         $paymentTransactions = $objectManager
-            ->findBy(['paymentMethod' => MoneyOrder::TYPE])
+            ->findBy([
+                'paymentMethod' => LoadPaymentMethodsConfigsRuleData::getPaymentMethodIdentifier(
+                    $this->getReference('money_order:channel_1')
+                )
+            ])
         ;
 
-        $this->assertNotEmpty($paymentTransactions);
-        $this->assertCount(1, $paymentTransactions);
-        $this->assertInstanceOf('Oro\Bundle\PaymentBundle\Entity\PaymentTransaction', $paymentTransactions[0]);
+        static::assertNotEmpty($paymentTransactions);
+        static::assertCount(1, $paymentTransactions);
+        static::assertInstanceOf('Oro\Bundle\PaymentBundle\Entity\PaymentTransaction', $paymentTransactions[0]);
     }
 
     private function moveToPaymentPage()
@@ -146,7 +145,7 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
             ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
 
-        $this->assertContains(self::PAYMENT_METHOD_SIGN, $crawler->html());
+        static::assertContains(self::PAYMENT_METHOD_SIGN, $crawler->html());
 
         $crawler = $this->client->request('GET', self::$checkoutUrl);
         $form = $this->getFakeForm($crawler);

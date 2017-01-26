@@ -16,7 +16,8 @@ class MoneyOrderSettingsRepository extends EntityRepository
 
         $qb
             ->join('mos.channel', 'ch')
-            ->where('ch.enabled = true');
+            ->where('ch.enabled = true')
+            ->orderBy('mos.id');
 
         return $qb->getQuery()->getResult();
     }
