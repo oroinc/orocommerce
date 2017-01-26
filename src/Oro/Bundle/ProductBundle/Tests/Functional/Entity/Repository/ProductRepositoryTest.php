@@ -38,7 +38,7 @@ class ProductRepositoryTest extends WebTestCase
         $this->assertNull($this->getRepository()->findOneBySku(uniqid('_fake_sku_', true)));
 
         $product = $this->getProduct(ProductFixture::PRODUCT_1);
-        $expectedProduct = $this->getRepository()->findOneBySku(ProductFixture::PRODUCT_1);
+        $expectedProduct = $this->getRepository()->findOneBySku(ucfirst(ProductFixture::PRODUCT_1));
 
         $this->assertEquals($product->getSku(), $expectedProduct->getSku());
     }
@@ -304,7 +304,7 @@ class ProductRepositoryTest extends WebTestCase
         /** @var Product $product */
         $product = $this->getRepository()->findOneBy(['sku' => ProductFixture::PRODUCT_1]);
 
-        $result = $this->repository->getPrimaryUnitPrecisionCode($product->getSku());
+        $result = $this->repository->getPrimaryUnitPrecisionCode(ucfirst($product->getSku()));
         $this->assertEquals($product->getPrimaryUnitPrecision()->getProductUnitCode(), $result);
     }
 

@@ -25,7 +25,7 @@ define(function(require) {
 
             if (data.parent === '#') {
                 this.rollback(data);
-                messenger.notificationFlashMessage('warning', __("oro.catalog.jstree.add_new_root_warning"));
+                messenger.notificationFlashMessage('warning', __('oro.catalog.jstree.add_new_root_warning'));
                 return;
             }
 

@@ -11,7 +11,7 @@ class PayflowGatewayTest extends AbstractPayflowGatewayTest
      */
     protected function getMethod()
     {
-        return  new PayflowGateway($this->gateway, $this->paymentConfig, $this->router);
+        return new PayflowGateway($this->gateway, $this->paymentConfig, $this->router);
     }
 
     public function testGetType()

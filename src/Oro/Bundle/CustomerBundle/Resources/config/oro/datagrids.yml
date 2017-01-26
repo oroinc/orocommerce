@@ -93,6 +93,11 @@ datagrids:
                     data_name: internal_rating_id
                     enum_code: acc_internal_rating
 
+    customer-customers-context-select-grid:
+        extends: customer-customers-select-grid
+        inline_editing:
+            enable: false
+
     customer-customers-grid:
         extends: customer-customers-select-grid
         options:

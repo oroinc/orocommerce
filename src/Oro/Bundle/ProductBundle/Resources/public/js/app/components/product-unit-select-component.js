@@ -5,7 +5,6 @@ define(function(require) {
 
     var ProductUnitSelectComponent;
     var BaseComponent = require('oroui/js/app/components/base/component');
-    var $ = require('jquery');
     var _ = require('underscore');
 
     ProductUnitSelectComponent = BaseComponent.extend({

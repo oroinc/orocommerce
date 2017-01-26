@@ -4,9 +4,11 @@ namespace Oro\Bundle\WebCatalogBundle\JsTree;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\WebCatalogBundle\Async\Topics;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
+use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\Tree\Handler\AbstractTreeHandler;
 
 /**
@@ -20,15 +22,26 @@ class ContentNodeTreeHandler extends AbstractTreeHandler
     protected $localizationHelper;
 
     /**
+     * @var MessageProducerInterface
+     */
+    protected $messageProducer;
+
+    /**
      * @param string $entityClass
      * @param ManagerRegistry $managerRegistry
      * @param LocalizationHelper $localizationHelper
+     * @param MessageProducerInterface $messageProducer
      */
-    public function __construct($entityClass, ManagerRegistry $managerRegistry, LocalizationHelper $localizationHelper)
-    {
+    public function __construct(
+        $entityClass,
+        ManagerRegistry $managerRegistry,
+        LocalizationHelper $localizationHelper,
+        MessageProducerInterface $messageProducer
+    ) {
         parent::__construct($entityClass, $managerRegistry);
 
         $this->localizationHelper = $localizationHelper;
+        $this->messageProducer = $messageProducer;
     }
 
     /**
@@ -78,6 +91,9 @@ class ContentNodeTreeHandler extends AbstractTreeHandler
                 $entityRepository->persistAsFirstChildOf($node, $parentNode);
             }
         }
+
+        // Schedule slugs reorganization after node move
+        $this->messageProducer->send(Topics::RESOLVE_NODE_SLUGS, $node->getId());
     }
 
     /**

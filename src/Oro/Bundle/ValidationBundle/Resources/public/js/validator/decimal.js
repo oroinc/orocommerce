@@ -1,12 +1,12 @@
 /*global define*/
 define([
     'underscore', 'oroform/js/validator/regex', 'orolocale/js/locale-settings'
-], function (_, regexConstraint, localeSettings) {
+], function(_, regexConstraint, localeSettings) {
     'use strict';
 
-    var options = localeSettings.getNumberFormats('decimal'),
-        groupingSeparator = options.grouping_separator_symbol,
-        decimalSeparator = options.decimal_separator_symbol;
+    var options = localeSettings.getNumberFormats('decimal');
+    var groupingSeparator = options.grouping_separator_symbol;
+    var decimalSeparator = options.decimal_separator_symbol;
 
     return [
         'Oro\\Bundle\\ValidationBundle\\Validator\\Constraints\\Decimal',
