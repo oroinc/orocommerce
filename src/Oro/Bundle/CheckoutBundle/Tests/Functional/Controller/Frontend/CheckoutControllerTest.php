@@ -182,7 +182,6 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $form = $this->getTransitionForm($crawler);
 
         $values = $this->explodeArrayPaths($form->getValues());
-        $values = $this->setShippingFormData($crawler, $values);
 
         $crawler = $this->client->request(
             'POST',

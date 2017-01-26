@@ -29,13 +29,7 @@
     }
 
     &__trigger {
-        &.active,
-        &:hover {
-            & + .header-row__toggle,
-            .header-row__toggle {
-                display: block;
-            }
-        }
+        border-right: 1px solid get-color('additional', 'ultra');
     }
 
     &--from-left .main-menu-outer {

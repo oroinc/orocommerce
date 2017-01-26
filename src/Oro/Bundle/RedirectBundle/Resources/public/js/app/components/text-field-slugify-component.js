@@ -1,4 +1,4 @@
-define(function (require) {
+define(function(require) {
     'use strict';
 
     var TextFieldSlugifyComponent;
@@ -9,7 +9,7 @@ define(function (require) {
         /**
          * @inheritDoc
          */
-        syncField: function (event) {
+        syncField: function(event) {
             var $source = $(event.target);
 
             if (!this.doSync) {

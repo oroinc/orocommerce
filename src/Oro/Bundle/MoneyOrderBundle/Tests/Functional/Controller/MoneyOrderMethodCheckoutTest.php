@@ -4,8 +4,8 @@ namespace Oro\Bundle\MoneyOrderBundle\Tests\Functional\Controller;
 
 use Doctrine\ORM\EntityRepository;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend\CheckoutControllerTestCase;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\MoneyOrderBundle\DependencyInjection\Configuration;
 use Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder;
 use Oro\Bundle\MoneyOrderBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
@@ -161,7 +161,6 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
         $form = $this->getTransitionForm($crawler);
 
         $values = $this->explodeArrayPaths($form->getValues());
-        $values = $this->setShippingFormData($crawler, $values);
 
         $crawler = $this->client->request(
             'POST',

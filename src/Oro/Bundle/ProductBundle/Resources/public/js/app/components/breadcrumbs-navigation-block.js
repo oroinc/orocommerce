@@ -53,22 +53,22 @@ define(function(require) {
                 }
 
                 filterState = datagrid.collection.state.filters[filterName];
-
-                datagrid.metadata.filters.forEach(function (filterDefinition) {
+                // jshint loopfunc: true
+                datagrid.metadata.filters.forEach(function(filterDefinition) {
                     if (filterDefinition.name === filterName && filterDefinition.visible) {
                         var choiceTypeName;
 
-                        filterDefinition.choices.forEach(function (choiceDefinition) {
-                            if (choiceDefinition.value == filterState.type) {
+                        filterDefinition.choices.forEach(function(choiceDefinition) {
+                            if (choiceDefinition.value === filterState.type) {
                                 choiceTypeName = choiceDefinition.label;
                             }
                         });
 
+                        var hint = datagrid.filterManager.filters[filterDefinition.name].getState().hint;
+                        
                         currentFilters.push({
-                            name: filterDefinition.name,
-                            label: filterDefinition.label,
-                            value: filterState.value,
-                            type: choiceTypeName
+                            hint: hint,
+                            label: filterDefinition.label
                         });
                     }
                 });
@@ -81,7 +81,7 @@ define(function(require) {
             }
 
             var buildFilterString = function(filter) {
-                return filter.label + ' ' + filter.type + ' ' + filter.value;
+                return filter.label + " " + filter.hint;
             };
 
             var filtersStrings = [];
