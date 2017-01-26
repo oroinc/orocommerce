@@ -3,6 +3,10 @@
     width: 54%;
     padding-left: 0;
     margin-right: 5px;
+
+    @include breakpoint('mobile-landscape') {
+        width: 100%;
+    }
 }
 
 .address-list {

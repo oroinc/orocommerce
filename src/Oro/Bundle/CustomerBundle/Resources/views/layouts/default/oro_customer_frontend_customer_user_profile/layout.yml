@@ -3,6 +3,9 @@ layout:
         -
             id: oro_customer_user_view
             root: page_content
+        -
+            id: oro_customer_user_address_list
+            root: customer_user_address_book
     actions:
         - '@setOption':
             id: page_title

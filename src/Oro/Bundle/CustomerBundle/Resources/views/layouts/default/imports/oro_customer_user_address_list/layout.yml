@@ -1,0 +1,62 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
+        - '@addTree':
+            items:
+                __user_addresses_head:
+                    blockType: container
+                __user_addresses_head_title:
+                    blockType: text
+                    options:
+                        text: 'oro.customer.frontend.sections.customer_user.address_book'
+                __user_addresses_create_button:
+                    blockType: link
+                    options:
+                        visible: '=data["acl"].isGranted("oro_customer_frontend_customer_user_address_create")'
+                        route_name: oro_customer_frontend_customer_user_address_create
+                        route_parameters:
+                            entityId: '=data["entity"].getId()'
+                        text: 'oro.customer.address.add'
+                        icon: plus-circle
+                __user_addresses_list:
+                    blockType: address_book
+                    options:
+                        entity: '=data["entity"]'
+                        componentOptions: '=data["customer_user_address_provider"].getComponentOptions(data["entity"])'
+                __user_addresses_list_template:
+                        blockType: container
+                        options:
+                            visible: '=data["acl"].isGranted("oro_customer_frontend_customer_user_address_view")'
+                __user_addresses_list_template_item:
+                    blockType: container
+                __user_addresses_list_template_item_address:
+                    blockType: block
+                __user_addresses_list_template_item_label:
+                    blockType: block
+                __user_addresses_list_template_item_type:
+                    blockType: block
+                __user_addresses_list_template_item_actions:
+                    blockType: container
+                __user_addresses_list_template_item_actions_edit:
+                    blockType: block
+                    options:
+                        visible: '=data["acl"].isGranted("oro_customer_frontend_customer_user_address_update")'
+                __user_addresses_list_template_item_actions_remove:
+                    blockType: block
+                    options:
+                        visible: '=data["acl"].isGranted("oro_customer_frontend_customer_user_address_remove")'
+            tree:
+                __root:
+                    __user_addresses_head:
+                        __user_addresses_head_title: ~
+                        __user_addresses_create_button: ~
+                    __user_addresses_list_template:
+                        __user_addresses_list_template_item:
+                            __user_addresses_list_template_item_address: ~
+                            __user_addresses_list_template_item_label: ~
+                            __user_addresses_list_template_item_type: ~
+                            __user_addresses_list_template_item_actions:
+                                __user_addresses_list_template_item_actions_edit: ~
+                                __user_addresses_list_template_item_actions_remove: ~
+                    __user_addresses_list: ~
