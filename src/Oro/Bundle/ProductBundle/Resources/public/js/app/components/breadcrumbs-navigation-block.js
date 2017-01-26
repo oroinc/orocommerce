@@ -64,11 +64,11 @@ define(function(require) {
                             }
                         });
 
+                        var hint = datagrid.filterManager.filters[filterDefinition.name].getState().hint;
+                        
                         currentFilters.push({
-                            name: filterDefinition.name,
-                            label: filterDefinition.label,
-                            value: filterState.value,
-                            type: choiceTypeName
+                            hint: hint,
+                            label: filterDefinition.label
                         });
                     }
                 });
@@ -81,7 +81,7 @@ define(function(require) {
             }
 
             var buildFilterString = function(filter) {
-                return filter.label + ' ' + filter.type + ' ' + filter.value;
+                return filter.label + " " + filter.hint;
             };
 
             var filtersStrings = [];
