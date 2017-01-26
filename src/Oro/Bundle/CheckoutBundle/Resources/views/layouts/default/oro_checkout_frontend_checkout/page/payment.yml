@@ -1,11 +1,12 @@
 layout:
+    imports:
+        - 'payment_methods'
+        - 'payment_method_options'
+        - 'payment_additional_data'
     actions:
         - '@setBlockTheme':
             themes:
-                - 'OroPaymentBundle:layouts:default/oro_payment_methods/layout.html.twig'
-                - 'OroPaymentBundle:layouts:default/templates/additional_information.html.twig'
-                - 'OroPaymentTermBundle:layouts:default/templates/payment.html.twig'
-                - 'OroCheckoutBundle:layouts:default/oro_checkout_frontend_checkout/templates/payment.html.twig'
+                - '../templates/payment.html.twig'
         - '@setOption':
             id: checkout_information
             optionName: stepOrder
