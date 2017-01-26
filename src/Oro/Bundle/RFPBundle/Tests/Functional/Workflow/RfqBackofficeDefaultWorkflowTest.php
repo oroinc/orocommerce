@@ -30,6 +30,7 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
         'Decline',
         'Reprocess',
         'Undelete',
+        'Mark as Processed'
     ];
 
     /** @var WorkflowManager */
@@ -127,7 +128,7 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
             'Undelete',
             'open',
             'submitted',
-            ['Request More Information', 'Decline', 'Delete']
+            ['Request More Information', 'Decline', 'Delete', 'Mark as Processed']
         );
     }
 
@@ -150,7 +151,7 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
             'Reprocess',
             'open',
             'submitted',
-            ['Request More Information', 'Decline', 'Delete']
+            ['Request More Information', 'Decline', 'Delete', 'Mark as Processed']
         );
     }
 
@@ -188,7 +189,7 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
             'Reprocess',
             'open',
             'submitted',
-            ['Request More Information', 'Decline', 'Delete']
+            ['Request More Information', 'Decline', 'Delete', 'Mark as Processed']
         );
     }
 
@@ -198,7 +199,10 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
     public function testMoreInfoRequestFromOpenStep()
     {
         $this->assertStatuses('open', 'submitted');
-        $this->assertButtonsAvailable($this->request, ['Request More Information', 'Decline', 'Delete']);
+        $this->assertButtonsAvailable(
+            $this->request,
+            ['Request More Information', 'Decline', 'Delete', 'Mark as Processed']
+        );
         $crawler = $this->openRequestWorkflowWidget($this->request);
 
         $link = $crawler->selectLink('Request More Information');
@@ -237,6 +241,22 @@ class RfqBackofficeDefaultWorkflowTest extends WebTestCase
     public function testUndeleteToMoreInfoRequestedStep()
     {
         $this->assertBackofficeTransition('Undelete', 'more_info_requested', 'requires_attention', ['Delete']);
+    }
+
+    /**
+     * @depends testUndeleteToMoreInfoRequestedStep
+     */
+    public function testToProcessedStep()
+    {
+        $this->transitSystem(
+            $this->request,
+            'b2b_rfq_frontoffice_default',
+            'provide_more_information_transition',
+            ['notes' => 'customer notes']
+        );
+        $this->transitSystem($this->request, 'b2b_rfq_backoffice_default', 'info_provided_transition');
+
+        $this->assertBackofficeTransition('Mark as Processed', 'processed', 'submitted', ['Delete']);
     }
 
     /**
