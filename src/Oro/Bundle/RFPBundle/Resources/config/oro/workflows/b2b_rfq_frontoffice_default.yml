@@ -60,7 +60,7 @@ workflows:
                 form_options:
                     attribute_fields:
                         notes:
-                            form_type: oro_rich_text
+                            form_type: textarea
                             options:
                                 required: true
                                 constraints:

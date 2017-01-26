@@ -24,7 +24,7 @@ oro:
                 __start__:
                     label: 'Open'
                 process_transition:
-                    label: 'Process'
+                    label: 'Mark as Processed'
                 request_more_information_transition:
                     label: 'Request More Information'
                 decline_transition:
