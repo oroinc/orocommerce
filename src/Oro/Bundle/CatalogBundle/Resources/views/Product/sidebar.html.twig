@@ -1,0 +1,17 @@
+{% import 'OroUIBundle::macros.html.twig' as UI %}
+
+{% set treeOptions = {
+    'data' : oro_category_list(),
+    'defaultCategoryId': defaultCategoryId
+} %}
+
+{{ UI.renderJsTree(
+    {
+        'module': 'orocatalog/js/app/components/product-sidebar-component',
+        'label': 'oro.catalog.category.entity_plural_label'|trans,
+        'treeOptions': treeOptions
+    },
+    ['expand', 'collapse']
+) }}
+
+<div class="sidebar-item include-sub-categories-choice">{{ form_row(includeSubcategoriesForm) }}</div>
