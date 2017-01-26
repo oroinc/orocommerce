@@ -181,7 +181,7 @@ define(function(require) {
             }
             if (this.$elements) {
                 var elementEventNamespace = this.elementEventNamespace + this.cid;
-                _.each(this.$elements, function ($element) {
+                _.each(this.$elements, function($element) {
                     $element.off(elementEventNamespace);
                 });
             }

@@ -39,27 +39,27 @@ define(function(require) {
             var selected = this.$elem.find(this.options.shippingServicesSelector).val();
             var self = this;
 
-            if (country != '') {
+            if (country !== '') {
                 $.ajax({
                     url: routing.generate(this.options.route, {'code': country}),
                     type: 'GET',
-                    beforeSend: function () {
+                    beforeSend: function() {
                         self.loadingMaskView.show();
                     },
-                    success: function (json) {
+                    success: function(json) {
                         $(self.options.shippingServicesSelector)
                             .closest(self.options.container)
                             .show();
                         $(self.options.shippingServicesSelector)
                             .find('option')
                             .remove();
-                        $(json).each(function (index, data) {
+                        $(json).each(function(index, data) {
                             $(self.options.shippingServicesSelector)
                                 .append('<option value="' + data.id + '">' + data.description + '</option>')
                                 .val(selected);
                         });
                     },
-                    complete: function () {
+                    complete: function() {
                         self.loadingMaskView.hide();
                     }
                 });

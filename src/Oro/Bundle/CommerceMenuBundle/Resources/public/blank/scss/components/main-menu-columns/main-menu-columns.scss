@@ -1,0 +1,19 @@
+// @theme: blank;
+
+.main-menu-columns {
+    display: flex;
+
+    padding: 30px 40px;
+
+    &--single {
+        padding: 14px 24px;
+    }
+}
+
+@include breakpoint('tablet') {
+    .main-menu-columns {
+        display: block;
+
+        padding: 0;
+    }
+}
