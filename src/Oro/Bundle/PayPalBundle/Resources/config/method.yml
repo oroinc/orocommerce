@@ -147,6 +147,7 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@oro_payment.provider.extract_options'
             - '@oro_payment.provider.surcharge'
+            - '@property_accessor'
 
     oro_paypal.method.view.provider.payments_pro.credit_card:
         class: 'Oro\Bundle\PayPalBundle\Method\View\Provider\CreditCardMethodViewProvider'

@@ -4,7 +4,7 @@ namespace Oro\Bundle\PayPalBundle\Form\Type;
 
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\PayPalBundle\Entity\CreditCardPaymentAction;
-use Oro\Bundle\PayPalBundle\Entity\CreditCardType;
+use Oro\Bundle\PayPalBundle\Entity\CreditCardType as CreditCardTypeEntity;
 use Oro\Bundle\PayPalBundle\Entity\ExpressCheckoutPaymentAction;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
@@ -104,8 +104,8 @@ class PayPalSettingsType extends AbstractType
                 'required' => true,
             ])
             ->add('allowedCreditCardTypes', 'entity', [
-                'class'   => CreditCardType::class,
-                'choice_label' => function (CreditCardType $entity) {
+                'class'   => CreditCardTypeEntity::class,
+                'choice_label' => function (CreditCardTypeEntity $entity) {
                     return $this->translator->trans(
                         sprintf('oro.paypal.settings.allowed_cc_types.%s', $entity->getLabel())
                     );

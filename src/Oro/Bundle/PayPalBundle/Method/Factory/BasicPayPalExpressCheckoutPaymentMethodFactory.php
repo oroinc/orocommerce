@@ -9,6 +9,7 @@ use Oro\Bundle\PaymentBundle\Provider\SurchargeProvider;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\PayPalExpressCheckoutPaymentMethod;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Routing\RouterInterface;
 
 class BasicPayPalExpressCheckoutPaymentMethodFactory implements PayPalExpressCheckoutPaymentMethodFactoryInterface
@@ -39,24 +40,32 @@ class BasicPayPalExpressCheckoutPaymentMethodFactory implements PayPalExpressChe
     private $surchargeProvider;
 
     /**
+     * @var PropertyAccessor $propertyAccessor
+     */
+    private $propertyAccessor;
+
+    /**
      * @param Gateway $gateway
      * @param RouterInterface $router
      * @param DoctrineHelper $doctrineHelper
      * @param ExtractOptionsProvider $optionsProvider
      * @param SurchargeProvider $surchargeProvider
+     * @param PropertyAccessor $propertyAccessor
      */
     public function __construct(
         Gateway $gateway,
         RouterInterface $router,
         DoctrineHelper $doctrineHelper,
         ExtractOptionsProvider $optionsProvider,
-        SurchargeProvider $surchargeProvider
+        SurchargeProvider $surchargeProvider,
+        PropertyAccessor $propertyAccessor
     ) {
         $this->gateway = $gateway;
         $this->router = $router;
         $this->doctrineHelper = $doctrineHelper;
         $this->optionsProvider = $optionsProvider;
         $this->surchargeProvider = $surchargeProvider;
+        $this->propertyAccessor = $propertyAccessor;
     }
 
     /**
@@ -71,7 +80,8 @@ class BasicPayPalExpressCheckoutPaymentMethodFactory implements PayPalExpressChe
             $this->router,
             $this->doctrineHelper,
             $this->optionsProvider,
-            $this->surchargeProvider
+            $this->surchargeProvider,
+            $this->propertyAccessor
         );
     }
 }

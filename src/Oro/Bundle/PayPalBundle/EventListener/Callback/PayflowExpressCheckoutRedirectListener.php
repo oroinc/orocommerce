@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PayPalBundle\EventListener\Callback;
 
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Session\Session;
 
@@ -14,11 +15,18 @@ class PayflowExpressCheckoutRedirectListener
     private $session;
 
     /**
-     * @param Session $session
+     * @var PaymentMethodProviderInterface
      */
-    public function __construct(Session $session)
+    protected $paymentMethodProvider;
+
+    /**
+     * @param Session $session
+     * @param PaymentMethodProviderInterface $paymentMethodProvider
+     */
+    public function __construct(Session $session, PaymentMethodProviderInterface $paymentMethodProvider)
     {
         $this->session = $session;
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
@@ -29,6 +37,10 @@ class PayflowExpressCheckoutRedirectListener
         $paymentTransaction = $event->getPaymentTransaction();
 
         if (!$paymentTransaction) {
+            return;
+        }
+
+        if (false === $this->paymentMethodProvider->hasPaymentMethod($paymentTransaction->getPaymentMethod())) {
             return;
         }
 

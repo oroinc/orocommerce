@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PayPalBundle\EventListener\Callback;
 
 use Oro\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
-use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PayPalBundle\Method\PayPalCreditCardPaymentMethod;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\Response;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseStatusMap;
@@ -13,21 +13,23 @@ use Symfony\Component\HttpFoundation\Session\Session;
 class PayflowListener
 {
     use LoggerAwareTrait;
-    
+
     /** @var Session */
     protected $session;
 
-    /** @var PaymentMethodProvidersRegistryInterface */
-    protected $paymentMethodRegistry;
+    /**
+     * @var PaymentMethodProviderInterface
+     */
+    protected $paymentMethodProvider;
 
     /**
      * @param Session $session
-     * @param PaymentMethodProvidersRegistryInterface $paymentMethodRegistry
+     * @param PaymentMethodProviderInterface $paymentMethodProvider
      */
-    public function __construct(Session $session, PaymentMethodProvidersRegistryInterface $paymentMethodRegistry)
+    public function __construct(Session $session, PaymentMethodProviderInterface $paymentMethodProvider)
     {
         $this->session = $session;
-        $this->paymentMethodRegistry = $paymentMethodRegistry;
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
@@ -35,8 +37,17 @@ class PayflowListener
      */
     public function onError(AbstractCallbackEvent $event)
     {
-        $eventData = $event->getData();
-        $response = new Response($eventData);
+        $paymentTransaction = $event->getPaymentTransaction();
+
+        if (!$paymentTransaction) {
+            return;
+        }
+
+        if (false === $this->paymentMethodProvider->hasPaymentMethod($paymentTransaction->getPaymentMethod())) {
+            return;
+        }
+
+        $response = new Response($event->getData());
 
         if (in_array($response->getResult(), [ResponseStatusMap::SECURE_TOKEN_EXPIRED], true)) {
             $this->session->getFlashBag()->set('warning', 'oro.paypal.result.token_expired');
@@ -54,19 +65,20 @@ class PayflowListener
             return;
         }
 
-        $data = $event->getData();
+        $paymentMethodId = $paymentTransaction->getPaymentMethod();
 
-        $paymentTransaction
-            ->setResponse(array_replace($paymentTransaction->getResponse(), $data));
+        if (false === $this->paymentMethodProvider->hasPaymentMethod($paymentMethodId)) {
+            return;
+        }
+
+        $responseDataFilledWithEventData = array_replace($paymentTransaction->getResponse(), $event->getData());
+        $paymentTransaction->setResponse($responseDataFilledWithEventData);
 
         try {
-            foreach ($this->paymentMethodRegistry->getPaymentMethodProviders() as $paymentMethodProvider) {
-                if ($paymentMethodProvider->hasPaymentMethod($paymentTransaction->getPaymentMethod())) {
-                    $paymentMethod = $paymentMethodProvider->getPaymentMethod($paymentTransaction->getPaymentMethod());
-                    $paymentMethod->execute(PayPalCreditCardPaymentMethod::COMPLETE, $paymentTransaction);
-                    $event->markSuccessful();
-                }
-            }
+            $paymentMethod = $this->paymentMethodProvider->getPaymentMethod($paymentMethodId);
+            $paymentMethod->execute(PayPalCreditCardPaymentMethod::COMPLETE, $paymentTransaction);
+
+            $event->markSuccessful();
         } catch (\InvalidArgumentException $e) {
             if ($this->logger) {
                 // do not expose sensitive data in context

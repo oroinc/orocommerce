@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PayPalBundle\EventListener\Callback;
 
 use Oro\Bundle\PaymentBundle\Event\AbstractCallbackEvent;
-use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PayPalBundle\Method\PayPalExpressCheckoutPaymentMethod;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway\Option as GatewayOption;
 use Psr\Log\LoggerAwareTrait;
@@ -12,15 +12,17 @@ class PayflowExpressCheckoutListener
 {
     use LoggerAwareTrait;
 
-    /** @var PaymentMethodProvidersRegistryInterface */
-    protected $paymentMethodRegistry;
+    /**
+     * @var PaymentMethodProviderInterface
+     */
+    protected $paymentMethodProvider;
 
     /**
-     * @param PaymentMethodProvidersRegistryInterface $paymentMethodRegistry
+     * @param PaymentMethodProviderInterface $paymentMethodProvider
      */
-    public function __construct(PaymentMethodProvidersRegistryInterface $paymentMethodRegistry)
+    public function __construct(PaymentMethodProviderInterface $paymentMethodProvider)
     {
-        $this->paymentMethodRegistry = $paymentMethodRegistry;
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
@@ -31,6 +33,10 @@ class PayflowExpressCheckoutListener
         $paymentTransaction = $event->getPaymentTransaction();
 
         if (!$paymentTransaction) {
+            return;
+        }
+
+        if (false === $this->paymentMethodProvider->hasPaymentMethod($paymentTransaction->getPaymentMethod())) {
             return;
         }
 
@@ -45,26 +51,34 @@ class PayflowExpressCheckoutListener
     public function onReturn(AbstractCallbackEvent $event)
     {
         $paymentTransaction = $event->getPaymentTransaction();
-        $data = $event->getData();
+
+        if (!$paymentTransaction) {
+            return;
+        }
+
+        $paymentMethodId = $paymentTransaction->getPaymentMethod();
+
+        if (false === $this->paymentMethodProvider->hasPaymentMethod($paymentMethodId)) {
+            return;
+        }
+
+        $eventData = $event->getData();
 
         // TODO: BB-3693 Will use typed Response
-        if (!$paymentTransaction || !isset($data['PayerID'], $data['token']) ||
-            $data['token'] !== $paymentTransaction->getReference()
+        if (!$paymentTransaction || !isset($eventData['PayerID'], $eventData['token']) ||
+            $eventData['token'] !== $paymentTransaction->getReference()
         ) {
             return;
         }
 
-        $paymentTransaction
-            ->setResponse(array_replace($paymentTransaction->getResponse(), $data));
+        $responseDataFilledWithEventData = array_replace($paymentTransaction->getResponse(), $eventData);
+        $paymentTransaction->setResponse($responseDataFilledWithEventData);
 
         try {
-            foreach ($this->paymentMethodRegistry->getPaymentMethodProviders() as $paymentMethodProvider) {
-                if ($paymentMethodProvider->hasPaymentMethod($paymentTransaction->getPaymentMethod())) {
-                    $paymentMethod = $paymentMethodProvider->getPaymentMethod($paymentTransaction->getPaymentMethod());
-                    $paymentMethod->execute(PayPalExpressCheckoutPaymentMethod::COMPLETE, $paymentTransaction);
-                    $event->markSuccessful();
-                }
-            }
+            $paymentMethod = $this->paymentMethodProvider->getPaymentMethod($paymentMethodId);
+            $paymentMethod->execute(PayPalExpressCheckoutPaymentMethod::COMPLETE, $paymentTransaction);
+
+            $event->markSuccessful();
         } catch (\InvalidArgumentException $e) {
             if ($this->logger) {
                 // do not expose sensitive data in context
