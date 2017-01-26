@@ -1,7 +1,6 @@
 layout:
     imports:
         - 'payment_method_execution'
-        - 'payment_additional_data'
     actions:
         - '@setBlockTheme':
             themes:
