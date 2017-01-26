@@ -3,7 +3,7 @@
 .grid-header-cell {
     &.sortable {
         .caret {
-            display: inline-block;
+            display: none;
             margin: $grid-header-cell-caret-offset;
             
             border-top: $grid-header-cell-caret-size solid $grid-header-cell-caret-color;
@@ -12,6 +12,13 @@
             vertical-align: middle;
 
             transition: all .2s;
+        }
+    }
+
+    &.descending,
+    &.ascending {
+        .caret {
+            display: inline-block;
         }
     }
     

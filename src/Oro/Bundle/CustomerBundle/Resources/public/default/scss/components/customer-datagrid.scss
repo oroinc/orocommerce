@@ -6,10 +6,31 @@
     &__filter {
         display: none;
 
-        margin: $customer-datagrid-filter-offset;
-
         &:not(:empty) {
             display: block;
+        }
+
+        .select2-container {
+            display: none;
+        }
+
+        .filter-box {
+            box-shadow: none;
+
+            &:before {
+                content: '';
+
+                position: absolute;
+                right: 10px;
+                bottom: 100%;
+
+                display: block;
+                border-left: 8px solid transparent;
+                border-right: 8px solid transparent;
+                border-bottom: 8px solid get-color('additional', 'base');
+
+                box-shadow: none;
+            }
         }
     }
 }

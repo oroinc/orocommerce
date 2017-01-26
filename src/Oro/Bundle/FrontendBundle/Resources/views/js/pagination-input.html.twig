@@ -5,7 +5,7 @@
                 <% if (handle.type == "input") { %>
                     <input type="text"
                            id="oro-pagination__input"
-                           class="oro-pagination__input"
+                           class="input input--size-s oro-pagination__input"
                            value="<%= state.firstPage == 0 ? state.currentPage + 1 : state.currentPage  %>"
                            data-grid-pagination-trigger-input
                     <% if (disabled) { %>disabled="disabled"<% } %>/>
@@ -15,7 +15,7 @@
                             <%= _.__('oro.datagrid.pagination.totalPages', {totalPages: state.totalPages || 1}) %>
                         </span>
                     <% } %>
-                    <button class="oro-pagination__<%= handle.direction %><% if (handle.className) { %> <%= handle.className %><% } %>"
+                    <button class="btn btn--size-s btn--default oro-pagination__<%= handle.direction %><% if (handle.className) { %> <%= handle.className %><% } %>"
                             data-grid-pagination-trigger data-grid-pagination-direction="<%= handle.direction %>"
                             <% if (disabled) { %> disabled<% } %>
                             <% if (handle.className) { %> <%= handle.className %><% } %>>

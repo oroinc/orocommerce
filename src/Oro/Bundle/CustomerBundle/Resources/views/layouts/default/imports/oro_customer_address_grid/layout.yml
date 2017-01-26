@@ -72,31 +72,6 @@ layout:
             optionName: visible
             optionValue: '=false'
 
-        - '@move':
-            id: __addresses_datagrid_toolbar_mass_actions
-            parentId: __addresses_datagrid_toolbar
-            siblingId: __addresses_datagrid_toolbar_sorting
-
-        - '@move':
-            id: __addresses_datagrid_toolbar_extra_actions
-            parentId: __addresses_datagrid_toolbar
-            siblingId: __addresses_datagrid_toolbar_mass_actions
-
-        - '@move':
-            id: __addresses_datagrid_toolbar_pagination
-            parentId: __addresses_datagrid_toolbar
-            siblingId: __addresses_datagrid_toolbar_extra_actions
-
-        - '@move':
-            id: __addresses_datagrid_toolbar_page_size
-            parentId: __addresses_datagrid_toolbar
-            siblingId: __addresses_datagrid_toolbar_pagination
-
-        - '@move':
-            id: __addresses_datagrid_toolbar_actions
-            parentId: __addresses_datagrid_toolbar
-            siblingId: __addresses_datagrid_toolbar_page_size
-
         - '@remove':
             id: __addresses_datagrid_toolbar_actions_container
 
