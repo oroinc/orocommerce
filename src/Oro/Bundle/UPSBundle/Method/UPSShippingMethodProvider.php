@@ -2,67 +2,41 @@
 
 namespace Oro\Bundle\UPSBundle\Method;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
+use Oro\Bundle\IntegrationBundle\Entity\Repository\ChannelRepository;
+use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
-use Oro\Bundle\UPSBundle\Cache\ShippingPriceCache;
-use Oro\Bundle\UPSBundle\Factory\PriceRequestFactory;
 use Oro\Bundle\UPSBundle\Provider\ChannelType;
-use Oro\Bundle\UPSBundle\Provider\UPSTransport;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class UPSShippingMethodProvider implements ShippingMethodProviderInterface
 {
     /**
-     * @var UPSTransport
+     * @var DoctrineHelper
      */
-    protected $transportProvider;
+    private $doctrineHelper;
 
     /**
-     * @var ManagerRegistry
+     * @var IntegrationShippingMethodFactoryInterface
      */
-    protected $doctrine;
+    private $methodFactory;
 
     /**
      * @var ShippingMethodInterface[]
      */
-    protected $methods;
+    private $methods;
 
     /**
-     * @var PriceRequestFactory
-     */
-    protected $priceRequestFactory;
-
-    /**
-     * @var LocalizationHelper
-     */
-    protected $localizationHelper;
-
-    /**
-     * @var ShippingPriceCache
-     */
-    protected $shippingPriceCache;
-
-    /**
-     * @param UPSTransport $transportProvider
-     * @param ManagerRegistry $doctrine
-     * @param PriceRequestFactory $priceRequestFactory
-     * @param LocalizationHelper $localizationHelper
-     * @param ShippingPriceCache $shippingPriceCache
+     * @param DoctrineHelper $doctrineHelper
+     * @param IntegrationShippingMethodFactoryInterface $methodFactory
      */
     public function __construct(
-        UPSTransport $transportProvider,
-        ManagerRegistry $doctrine,
-        PriceRequestFactory $priceRequestFactory,
-        LocalizationHelper $localizationHelper,
-        ShippingPriceCache $shippingPriceCache
+        DoctrineHelper $doctrineHelper,
+        IntegrationShippingMethodFactoryInterface $methodFactory
     ) {
-        $this->transportProvider = $transportProvider;
-        $this->doctrine = $doctrine;
-        $this->priceRequestFactory = $priceRequestFactory;
-        $this->localizationHelper = $localizationHelper;
-        $this->shippingPriceCache = $shippingPriceCache;
+        $this->doctrineHelper = $doctrineHelper;
+        $this->methodFactory = $methodFactory;
     }
 
     /**
@@ -71,21 +45,12 @@ class UPSShippingMethodProvider implements ShippingMethodProviderInterface
     public function getShippingMethods()
     {
         if (!$this->methods) {
-            $channels = $this->doctrine->getManagerForClass('OroIntegrationBundle:Channel')
-                ->getRepository('OroIntegrationBundle:Channel')->findBy([
-                    'type' => ChannelType::TYPE,
-                ]);
+            $channels = $this->getRepository()->findByType(ChannelType::TYPE);
             $this->methods = [];
             /** @var Channel $channel */
             foreach ($channels as $channel) {
                 if ($channel->isEnabled()) {
-                    $method = new UPSShippingMethod(
-                        $this->transportProvider,
-                        $channel,
-                        $this->priceRequestFactory,
-                        $this->localizationHelper,
-                        $this->shippingPriceCache
-                    );
+                    $method = $this->methodFactory->create($channel);
                     $this->methods[$method->getIdentifier()] = $method;
                 }
             }
@@ -112,5 +77,13 @@ class UPSShippingMethodProvider implements ShippingMethodProviderInterface
     public function hasShippingMethod($name)
     {
         return array_key_exists($name, $this->getShippingMethods());
+    }
+
+    /**
+     * @return ChannelRepository|\Doctrine\ORM\EntityRepository
+     */
+    private function getRepository()
+    {
+        return $this->doctrineHelper->getEntityRepository('OroIntegrationBundle:Channel');
     }
 }

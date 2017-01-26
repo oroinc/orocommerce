@@ -1,0 +1,7 @@
+layout:
+    actions:
+        - '@setOption':
+            id: __datagrid_toolbar_pagination_container
+            optionName: visible
+            optionValue: false
+

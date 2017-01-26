@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 
 use Symfony\Component\HttpFoundation\Response;
 
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserACLData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserACLData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -30,8 +30,8 @@ class AjaxLineItemControllerAclTest extends WebTestCase
         $this->initClient(
             [],
             $this->generateBasicAuthHeader(
-                LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
-                LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_LOCAL
+                LoadCustomerUserACLData::USER_ACCOUNT_1_ROLE_LOCAL,
+                LoadCustomerUserACLData::USER_ACCOUNT_1_ROLE_LOCAL
             )
         );
 
@@ -92,7 +92,7 @@ class AjaxLineItemControllerAclTest extends WebTestCase
                     'actionName' => 'oro_shoppinglist_frontend_addlineitemlist' . $this->shoppingList->getId(),
                     'shoppingList' => $this->shoppingList->getId(),
                     'inset' => 1,
-                    'values' => $this->getReference('product.1')->getId(),
+                    'values' => $this->getReference('product-1')->getId(),
                 ]
             )
         );

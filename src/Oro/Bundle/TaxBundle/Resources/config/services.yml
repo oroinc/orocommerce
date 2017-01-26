@@ -1,7 +1,7 @@
 parameters:
     oro_tax.entity.abstract_tax_code.class: Oro\Bundle\TaxBundle\Entity\AbstractTaxCode
     oro_tax.entity.product_tax_code.class: Oro\Bundle\TaxBundle\Entity\ProductTaxCode
-    oro_tax.entity.account_tax_code.class: Oro\Bundle\TaxBundle\Entity\AccountTaxCode
+    oro_tax.entity.customer_tax_code.class: Oro\Bundle\TaxBundle\Entity\CustomerTaxCode
     oro_tax.entity.tax_jurisdiction.class: Oro\Bundle\TaxBundle\Entity\TaxJurisdiction
     oro_tax.entity.tax.class: Oro\Bundle\TaxBundle\Entity\Tax
     oro_tax.entity.tax_rule.class: Oro\Bundle\TaxBundle\Entity\TaxRule
@@ -23,14 +23,14 @@ services:
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_product_tax_code }
 
-    oro_tax.form.autocomplete.account_tax_code.search_handler:
+    oro_tax.form.autocomplete.customer_tax_code.search_handler:
         public: false
         parent: oro_form.autocomplete.search_handler
         arguments:
-            - '%oro_tax.entity.account_tax_code.class%'
+            - '%oro_tax.entity.customer_tax_code.class%'
             - ["code"]
         tags:
-            - { name: oro_form.autocomplete.search_handler, alias: oro_account_tax_code }
+            - { name: oro_form.autocomplete.search_handler, alias: oro_customer_tax_code }
 
     oro_tax.event_listener.abstract_form_view:
         public: false
@@ -39,27 +39,27 @@ services:
             - "@oro_entity.doctrine_helper"
             - "@request_stack"
 
-    oro_tax.event_listener.account_form_view:
-        class: 'Oro\Bundle\TaxBundle\EventListener\AccountFormViewListener'
+    oro_tax.event_listener.customer_form_view:
+        class: 'Oro\Bundle\TaxBundle\EventListener\CustomerFormViewListener'
         arguments:
             - "@oro_entity.doctrine_helper"
             - "@request_stack"
-            - '%oro_tax.entity.account_tax_code.class%'
-            - '%oro_customer.entity.account.class%'
+            - '%oro_tax.entity.customer_tax_code.class%'
+            - '%oro_customer.entity.customer.class%'
         tags:
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-view, method: onView }
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-edit, method: onEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-view, method: onView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-edit, method: onEdit }
 
-    oro_tax.event_listener.account_group_form_view:
-        class: 'Oro\Bundle\TaxBundle\EventListener\AccountGroupFormViewListener'
+    oro_tax.event_listener.customer_group_form_view:
+        class: 'Oro\Bundle\TaxBundle\EventListener\CustomerGroupFormViewListener'
         arguments:
             - "@oro_entity.doctrine_helper"
             - "@request_stack"
-            - '%oro_tax.entity.account_tax_code.class%'
-            - '%oro_customer.entity.account_group.class%'
+            - '%oro_tax.entity.customer_tax_code.class%'
+            - '%oro_customer.entity.customer_group.class%'
         tags:
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-view, method: onView }
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-edit, method: onEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-group-view, method: onView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-group-edit, method: onEdit }
 
     oro_tax.event_listener.product_form_view:
         class: 'Oro\Bundle\TaxBundle\EventListener\ProductFormViewListener'
@@ -105,32 +105,32 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_tax_zip_code_fields }
 
-    oro_tax.event_listener.account_grid:
+    oro_tax.event_listener.customer_grid:
         class: 'Oro\Bundle\TaxBundle\EventListener\TaxCodeGridListener'
         arguments:
             - "@oro_entity.doctrine_helper"
-            - '%oro_tax.entity.account_tax_code.class%'
-            - '%oro_customer.entity.account.class%'
+            - '%oro_tax.entity.customer_tax_code.class%'
+            - '%oro_customer.entity.customer.class%'
         tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-accounts-select-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-customers-select-grid, method: onBuildBefore }
 
-    oro_tax.event_listener.account_grid_groups:
-        class: 'Oro\Bundle\TaxBundle\EventListener\AccountTaxCodeGridListener'
+    oro_tax.event_listener.customer_grid_groups:
+        class: 'Oro\Bundle\TaxBundle\EventListener\CustomerTaxCodeGridListener'
         arguments:
             - "@oro_entity.doctrine_helper"
-            - '%oro_tax.entity.account_tax_code.class%'
-            - '%oro_customer.entity.account_group.class%'
+            - '%oro_tax.entity.customer_tax_code.class%'
+            - '%oro_customer.entity.customer_group.class%'
         tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-accounts-select-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-customers-select-grid, method: onBuildBefore }
 
-    oro_tax.event_listener.account_group_grid:
+    oro_tax.event_listener.customer_group_grid:
         class: 'Oro\Bundle\TaxBundle\EventListener\TaxCodeGridListener'
         arguments:
             - "@oro_entity.doctrine_helper"
-            - '%oro_tax.entity.account_tax_code.class%'
-            - '%oro_customer.entity.account_group.class%'
+            - '%oro_tax.entity.customer_tax_code.class%'
+            - '%oro_customer.entity.customer_group.class%'
         tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-groups-select-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-groups-select-grid, method: onBuildBefore }
 
     oro_tax.event_listener.product_grid:
         class: 'Oro\Bundle\TaxBundle\EventListener\TaxCodeGridListener'
@@ -288,7 +288,7 @@ services:
             - "@oro_tax.provider.taxation_address_provider"
             - "@oro_entity.doctrine_helper"
             - '%oro_tax.entity.product_tax_code.class%'
-            - '%oro_tax.entity.account_tax_code.class%'
+            - '%oro_tax.entity.customer_tax_code.class%'
             - '%oro_order.entity.order_line_item.class%'
         tags:
             - { name: kernel.event_listener, event: oro_tax.mapper.context, method: onContextEvent }

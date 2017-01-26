@@ -1,19 +1,15 @@
 <?php
 
-namespace Oro\Bundle\UPSBundle\Tests\Unit\Method\FlatRate;
+namespace Oro\Bundle\UPSBundle\Tests\Unit\Method;
 
-use Doctrine\ORM\EntityManager;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Entity\Repository\ChannelRepository;
-use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
-use Oro\Bundle\UPSBundle\Cache\ShippingPriceCache;
-use Oro\Bundle\UPSBundle\Factory\PriceRequestFactory;
+use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
 use Oro\Bundle\UPSBundle\Method\UPSShippingMethod;
 use Oro\Bundle\UPSBundle\Method\UPSShippingMethodProvider;
 use Oro\Bundle\UPSBundle\Provider\ChannelType;
-use Oro\Bundle\UPSBundle\Provider\UPSTransport;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class UPSShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -22,36 +18,33 @@ class UPSShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @var UPSShippingMethodProvider
      */
-    protected $provider;
+    private $provider;
 
+    /**
+     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $doctrineHelper;
+
+    /**
+     * @var IntegrationShippingMethodFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $methodFactory;
+
+    /**
+     * @var UPSShippingMethod
+     */
+    private $method;
 
     public function setUp()
     {
-        /** @var UPSTransport | \PHPUnit_Framework_MockObject_MockObject $transportProvider */
-        $transportProvider = $this->getMockBuilder(UPSTransport::class)
-            ->disableOriginalConstructor()->getMock();
-        /** @var ManagerRegistry | \PHPUnit_Framework_MockObject_MockObject $doctrine */
-        $doctrine = $this->getMockBuilder(ManagerRegistry::class)
-            ->disableOriginalConstructor()->getMock();
-        /** @var PriceRequestFactory | \PHPUnit_Framework_MockObject_MockObject $priceRequestFactory */
-        $priceRequestFactory = $this->getMockBuilder(PriceRequestFactory::class)
-            ->disableOriginalConstructor()->getMock();
+        $repository = $this->createMock(ChannelRepository::class);
 
-        $repository = $this->getMockBuilder(ChannelRepository::class)
-            ->disableOriginalConstructor()->getMock();
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
 
-        $manager = $this->getMockBuilder(EntityManager::class)
-            ->disableOriginalConstructor()->getMock();
-
-        $manager->expects(static::once())
-            ->method('getRepository')
+        $this->doctrineHelper->expects(static::once())
+            ->method('getEntityRepository')
             ->with('OroIntegrationBundle:Channel')
             ->willReturn($repository);
-
-        $doctrine->expects(static::once())
-            ->method('getManagerForClass')
-            ->with('OroIntegrationBundle:Channel')
-            ->willReturn($manager);
 
         $channel = $this->getEntity(Channel::class, [
             'id' => 10,
@@ -59,47 +52,42 @@ class UPSShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
         ]);
 
         $repository->expects(static::once())
-            ->method('findBy')
-            ->with([
-                'type' => ChannelType::TYPE,
-            ])
+            ->method('findByType')
+            ->with(ChannelType::TYPE)
             ->willReturn([$channel]);
 
-        $localizationHelper = $this
-            ->getMockBuilder(LocalizationHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->method = $this->createMock(UPSShippingMethod::class);
+        $this->method
+            ->method('getIdentifier')
+            ->willReturn('ups_10');
 
-        $cache = $this->getMockBuilder(ShippingPriceCache::class)
-            ->disableOriginalConstructor()->getMock();
+        $this->methodFactory = $this->createMock(IntegrationShippingMethodFactoryInterface::class);
 
-        $this->provider = new UPSShippingMethodProvider(
-            $transportProvider,
-            $doctrine,
-            $priceRequestFactory,
-            $localizationHelper,
-            $cache
-        );
+        $this->methodFactory->expects($this->once())
+            ->method('create')
+            ->with($channel)
+            ->willReturn($this->method);
+
+        $this->provider = new UPSShippingMethodProvider($this->doctrineHelper, $this->methodFactory);
     }
 
     public function testGetShippingMethods()
     {
         $methods = $this->provider->getShippingMethods();
         static::assertCount(1, $methods);
-        $method = reset($methods);
-        static::assertInstanceOf(UPSShippingMethod::class, $method);
-        static::assertEquals(['ups_10'], array_keys($methods));
+        $actualMethod = reset($methods);
+        static::assertSame($this->method, $actualMethod);
     }
 
     public function testGetShippingMethod()
     {
-        $method = $this->provider->getShippingMethod('ups_10');
+        $method = $this->provider->getShippingMethod($this->method->getIdentifier());
         static::assertInstanceOf(UPSShippingMethod::class, $method);
     }
 
     public function testHasShippingMethod()
     {
-        static::assertTrue($this->provider->hasShippingMethod('ups_10'));
+        static::assertTrue($this->provider->hasShippingMethod($this->method->getIdentifier()));
     }
 
     public function testHasShippingMethodFalse()

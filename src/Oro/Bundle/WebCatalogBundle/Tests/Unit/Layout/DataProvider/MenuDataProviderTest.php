@@ -96,7 +96,7 @@ class MenuDataProviderTest extends \PHPUnit_Framework_TestCase
         $request = Request::create('/', Request::METHOD_GET);
         $request->attributes = new ParameterBag(['_web_content_scope' => $scope]);
         $this->requestStack->expects($this->once())
-            ->method('getMasterRequest')
+            ->method('getCurrentRequest')
             ->willReturn($request);
 
         $this->webCatalogProvider->expects($this->once())

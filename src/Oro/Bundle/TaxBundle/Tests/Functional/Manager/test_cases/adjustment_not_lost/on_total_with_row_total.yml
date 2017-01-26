@@ -7,23 +7,27 @@ configuration:
     start_calculation_with: row_total
     product_prices_include_tax: false
 databaseBefore:
+    'Oro\Bundle\OrderBundle\Entity\OrderAddress':
+        us_billing_address:
+            country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+            region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
     'Oro\Bundle\OrderBundle\Entity\Order':
         simple_order:
-            poNumber: { property_value: simple_order }
-            account: { class: 'Oro\Bundle\CustomerBundle\Entity\Account', query: { name: 'account.orphan' } }
-            currency: 'USD'
-            shippingAddress:
-                class: 'Oro\Bundle\OrderBundle\Entity\OrderAddress'
-                property_value:
-                    country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
-                    region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+            poNumber: simple_order
+            customer: { class: 'Oro\Bundle\CustomerBundle\Entity\Customer', query: { name: 'customer.orphan' } }
+            currency: USD
+            shippingAddress: '@us_billing_address'
+    'Oro\Bundle\CurrencyBundle\Entity\Price':
+        usd_price_22.226:
+            value: 22.226
+            currency: USD
     'Oro\Bundle\OrderBundle\Entity\OrderLineItem':
         order_line_item_1:
-            productSku: { property_value: order_line_item_1 }
-            order: { reference: simple_order }
-            quantity: { property_value: 2 }
-            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '22.226', currency: USD } }
-            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.1' } }
+            productSku: order_line_item_1
+            order: '@simple_order'
+            quantity: 2
+            price: '@usd_price_22.226'
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-1' } }
 expectedResult:
     total:
         includingTax: '48.89'  # 44.452 + 4.4452 + -0.005 = 48.8922

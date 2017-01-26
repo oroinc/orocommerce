@@ -1,0 +1,172 @@
+<?php
+
+namespace Oro\Bundle\CustomerBundle\Tests\Unit\Layout\DataProvider;
+
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\Form\Test\FormInterface;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
+
+use Oro\Component\Testing\Unit\EntityTrait;
+
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress;
+use Oro\Bundle\CustomerBundle\Form\Type\FrontendCustomerUserTypedAddressType;
+use Oro\Bundle\CustomerBundle\Layout\DataProvider\FrontendCustomerUserAddressFormProvider;
+
+class FrontendCustomerUserAddressFormProviderTest extends \PHPUnit_Framework_TestCase
+{
+    use EntityTrait;
+
+    /** @var FrontendCustomerUserAddressFormProvider */
+    protected $provider;
+
+    /** @var FormFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $mockFormFactory;
+
+    /** @var UrlGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $router;
+
+    protected function setUp()
+    {
+        $this->mockFormFactory = $this->getMockBuilder('Symfony\Component\Form\FormFactoryInterface')->getMock();
+        $this->router = $this->createMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
+
+        $this->provider = new FrontendCustomerUserAddressFormProvider($this->mockFormFactory, $this->router);
+    }
+
+    public function testGetAddressFormViewWhileUpdate()
+    {
+        $action = 'form_action';
+
+        $customerUser = $this->getEntity(CustomerUser::class, ['id' => 1]);
+        $customerUserAddress = $this->getEntity(CustomerUserAddress::class, ['id' => 2]);
+
+        $formView = $this->createMock(FormView::class);
+
+        $form = $this->createMock(FormInterface::class);
+        $form->expects($this->once())
+            ->method('createView')
+            ->willReturn($formView);
+
+        $this->mockFormFactory
+            ->expects($this->once())
+            ->method('create')
+            ->with(FrontendCustomerUserTypedAddressType::NAME, $customerUserAddress, ['action' => $action])
+            ->willReturn($form);
+
+        $this->router
+            ->expects($this->exactly(2))
+            ->method('generate')
+            ->with(
+                FrontendCustomerUserAddressFormProvider::ACCOUNT_USER_ADDRESS_UPDATE_ROUTE_NAME,
+                ['id' => 2, 'entityId' => 1]
+            )
+            ->willReturn($action);
+
+        $result = $this->provider->getAddressFormView($customerUserAddress, $customerUser);
+
+        $this->assertInstanceOf(FormView::class, $result);
+
+        $resultSecondCall =  $this->provider->getAddressFormView($customerUserAddress, $customerUser);
+        $this->assertSame($result, $resultSecondCall);
+    }
+
+    public function testGetAddressFormWhileUpdate()
+    {
+        $action = 'form_action';
+
+        $customerUser = $this->getEntity(CustomerUser::class, ['id' => 1]);
+        $customerUserAddress = $this->getEntity(CustomerUserAddress::class, ['id' => 2]);
+
+        $form = $this->createMock(FormInterface::class);
+
+        $this->mockFormFactory
+            ->expects($this->once())
+            ->method('create')
+            ->with(FrontendCustomerUserTypedAddressType::NAME, $customerUserAddress, ['action' => $action])
+            ->willReturn($form);
+
+        $this->router
+            ->expects($this->exactly(2))
+            ->method('generate')
+            ->with(
+                FrontendCustomerUserAddressFormProvider::ACCOUNT_USER_ADDRESS_UPDATE_ROUTE_NAME,
+                ['id' => 2, 'entityId' => 1]
+            )
+            ->willReturn($action);
+
+        $result = $this->provider->getAddressForm($customerUserAddress, $customerUser);
+
+        $this->assertInstanceOf(FormInterface::class, $result);
+
+        $resultSecondCall =  $this->provider->getAddressForm($customerUserAddress, $customerUser);
+        $this->assertSame($result, $resultSecondCall);
+    }
+
+    public function testGetAddressFormViewWhileCreate()
+    {
+        $action = 'form_action';
+
+        $customerUser = $this->getEntity(CustomerUser::class, ['id' => 1]);
+        $customerUserAddress = $this->getEntity(CustomerUserAddress::class);
+
+        $formView = $this->createMock(FormView::class);
+
+        $form = $this->createMock(FormInterface::class);
+        $form->expects($this->once())
+            ->method('createView')
+            ->willReturn($formView);
+
+        $this->mockFormFactory
+            ->expects($this->once())
+            ->method('create')
+            ->with(FrontendCustomerUserTypedAddressType::NAME, $customerUserAddress, ['action' => $action])
+            ->willReturn($form);
+
+        $this->router
+            ->expects($this->exactly(2))
+            ->method('generate')
+            ->with(
+                FrontendCustomerUserAddressFormProvider::ACCOUNT_USER_ADDRESS_CREATE_ROUTE_NAME,
+                ['entityId' => 1]
+            )
+            ->willReturn($action);
+
+        $result = $this->provider->getAddressFormView($customerUserAddress, $customerUser);
+
+        $this->assertInstanceOf(FormView::class, $result);
+
+        $resultSecondCall =  $this->provider->getAddressFormView($customerUserAddress, $customerUser);
+        $this->assertSame($result, $resultSecondCall);
+    }
+
+    public function testGetAddressFormWhileCreate()
+    {
+        $action = 'form_action';
+
+        $customerUser = $this->getEntity(CustomerUser::class, ['id' => 1]);
+        $customerUserAddress = $this->getEntity(CustomerUserAddress::class);
+
+        $form = $this->createMock(FormInterface::class);
+
+        $this->mockFormFactory
+            ->expects($this->once())
+            ->method('create')
+            ->with(FrontendCustomerUserTypedAddressType::NAME, $customerUserAddress, ['action' => $action])
+            ->willReturn($form);
+
+        $this->router
+            ->expects($this->exactly(2))
+            ->method('generate')
+            ->with(FrontendCustomerUserAddressFormProvider::ACCOUNT_USER_ADDRESS_CREATE_ROUTE_NAME, ['entityId' => 1])
+            ->willReturn($action);
+
+        $result = $this->provider->getAddressForm($customerUserAddress, $customerUser);
+
+        $this->assertInstanceOf(FormInterface::class, $result);
+
+        $resultSecondCall =  $this->provider->getAddressForm($customerUserAddress, $customerUser);
+        $this->assertSame($result, $resultSecondCall);
+    }
+}

@@ -1,0 +1,14 @@
+layout:
+    imports:
+        -
+            id: oro_customer_address_form
+            root: __root
+    actions:
+        - '@setOption':
+            id: __form_errors
+            optionName: form
+            optionValue: '=data["oro_customer_frontend_customer_user_address_form"].getAddressFormView(data["entity"], data["customerUser"])'
+        - '@setOption':
+            id: __form
+            optionName: form
+            optionValue: '=data["oro_customer_frontend_customer_user_address_form"].getAddressFormView(data["entity"], data["customerUser"])'

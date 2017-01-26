@@ -7,70 +7,82 @@ configuration:
     start_calculation_with: unit_price
     product_prices_include_tax: false
 databaseBefore:
+    'Oro\Bundle\OrderBundle\Entity\OrderAddress':
+        us_ca_billing_address:
+            country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+            region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-CA' } }
     'Oro\Bundle\OrderBundle\Entity\Order':
         simple_order:
-            poNumber: { property_value: simple_order }
-            account: { class: 'Oro\Bundle\CustomerBundle\Entity\Account', query: { name: 'account.orphan' } }
-            currency: 'USD'
-            shippingAddress:
-                class: 'Oro\Bundle\OrderBundle\Entity\OrderAddress'
-                property_value:
-                    country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
-                    region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-CA' } }
+            poNumber: simple_order
+            customer: { class: 'Oro\Bundle\CustomerBundle\Entity\Customer', query: { name: 'customer.orphan' } }
+            currency: USD
+            shippingAddress: '@us_ca_billing_address'
     'Oro\Bundle\ProductBundle\Entity\Product':
         product_1:
-            sku: { property_value: product_1 }
+            sku: product_1
         product_2:
-            sku: { property_value: product_2 }
+            sku: product_2
         product_3:
-            sku: { property_value: product_3 }
+            sku: product_3
         product_4:
-            sku: { property_value: product_4 }
+            sku: product_4
+    'Oro\Bundle\CurrencyBundle\Entity\Price':
+        usd_price_3.42:
+            value: 3.42
+            currency: USD
+        usd_price_8.55:
+            value: 8.55
+            currency: USD
+        usd_price_18.05:
+            value: 18.05
+            currency: USD
+        usd_price_24.80:
+            value: 24.80
+            currency: USD
     'Oro\Bundle\OrderBundle\Entity\OrderLineItem':
         order_line_item_1:
-            productSku: { property_value: order_line_item_1 }
-            order: { reference: simple_order }
-            quantity: { property_value: 41 }
-            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '3.42', currency: USD } }
-            product: { reference: product_1 }
+            productSku: order_line_item_1
+            order: '@simple_order'
+            quantity: 41
+            price: '@usd_price_3.42'
+            product: '@product_1'
         order_line_item_2:
-            productSku: { property_value: order_line_item_2 }
-            order: { reference: simple_order }
-            quantity: { property_value: 15 }
-            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '8.55', currency: USD } }
-            product: { reference: product_2 }
+            productSku: order_line_item_2
+            order: '@simple_order'
+            quantity: 15
+            price: '@usd_price_8.55'
+            product: '@product_2'
         order_line_item_3:
-            productSku: { property_value: order_line_item_3 }
-            order: { reference: simple_order }
-            quantity: { property_value: 13 }
-            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '18.05', currency: USD } }
-            product: { reference: product_3 }
+            productSku: order_line_item_3
+            order: '@simple_order'
+            quantity: 13
+            price: '@usd_price_18.05'
+            product: '@product_3'
         order_line_item_4:
-            productSku: { property_value: order_line_item_4 }
-            order: { reference: simple_order }
-            quantity: { property_value: 35 }
-            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '24.80', currency: USD } }
-            product: { reference: product_4 }
+            productSku: order_line_item_4
+            order: '@simple_order'
+            quantity: 35
+            price: '@usd_price_24.80'
+            product: '@product_4'
     'Oro\Bundle\TaxBundle\Entity\ProductTaxCode':
         product_tax_code:
             code: product_tax_code
             products:
-                property_value:
-                    - { reference: product_1 }
-                    - { reference: product_2 }
-                    - { reference: product_3 }
-                    - { reference: product_4 }
+                - '@product_1'
+                - '@product_2'
+                - '@product_3'
+                - '@product_4'
     'Oro\Bundle\TaxBundle\Entity\TaxRule':
         tax_rule_1:
             tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX1' } }
             taxJurisdiction: { class: 'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction', query: { code: 'TAX3' } }
-            productTaxCode: { reference: product_tax_code }
-            accountTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\AccountTaxCode', query: { code: 'TAX1' } }
+            productTaxCode: '@product_tax_code'
+            customerTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', query: { code: 'TAX1' } }
         tax_rule_2:
             tax: { class: 'Oro\Bundle\TaxBundle\Entity\Tax', query: { code: 'TAX3' } }
             taxJurisdiction: { class: 'Oro\Bundle\TaxBundle\Entity\TaxJurisdiction', query: { code: 'TAX3' } }
-            productTaxCode: { reference: product_tax_code }
-            accountTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\AccountTaxCode', query: { code: 'TAX1' } }
+            productTaxCode: '@product_tax_code'
+            customerTaxCode: { class: 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode', query: { code: 'TAX1' } }
 expectedResult:
     total:
         includingTax: '1611.06' # 164.76 + 150.69 + 275.71 + 1019.9

@@ -30,6 +30,7 @@ services:
         public: true
         arguments:
             - "@oro_catalog.provider.category_tree_provider"
+            - "@security.token_storage"
         tags:
             - { name: layout.data_provider, alias: featured_categories }
 

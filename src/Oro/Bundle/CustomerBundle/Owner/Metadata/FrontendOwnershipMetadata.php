@@ -6,19 +6,19 @@ use Oro\Bundle\SecurityBundle\Acl\AccessLevel;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\OwnershipMetadata;
 
 /**
- * This class represents the entity ownership metadata for AccountUser
+ * This class represents the entity ownership metadata for CustomerUser
  */
 class FrontendOwnershipMetadata extends OwnershipMetadata
 {
     const OWNER_TYPE_FRONTEND_USER = 4;
-    const OWNER_TYPE_FRONTEND_ACCOUNT = 5;
+    const OWNER_TYPE_FRONTEND_CUSTOMER = 5;
 
     /**
      * {@inheritdoc}
      */
     public function isLocalLevelOwned($deep = false)
     {
-        return $this->ownerType === self::OWNER_TYPE_FRONTEND_ACCOUNT;
+        return $this->ownerType === self::OWNER_TYPE_FRONTEND_CUSTOMER;
     }
 
     /**

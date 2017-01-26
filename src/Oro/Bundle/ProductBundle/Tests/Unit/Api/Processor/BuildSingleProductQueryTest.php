@@ -80,7 +80,7 @@ class BuildSingleProductQueryTest extends GetProcessorOrmRelatedTestCase
     
     public function testProcessBuildsQuery()
     {
-        $this->context->setRequestData(['sku' => 'product.1']);
+        $this->context->setRequestData(['sku' => 'product-1']);
 
         $resolver = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\EntityClassResolver')
             ->disableOriginalConstructor()
@@ -96,6 +96,6 @@ class BuildSingleProductQueryTest extends GetProcessorOrmRelatedTestCase
         $this->processor->process($this->context);
 
         $this->assertTrue($this->context->hasQuery());
-        $this->assertEquals($this->context->getQuery()->getParameter('sku')->getValue(), 'product.1');
+        $this->assertEquals($this->context->getQuery()->getParameter('sku')->getValue(), 'product-1');
     }
 }

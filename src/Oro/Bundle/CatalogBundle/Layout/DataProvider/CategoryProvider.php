@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Layout\DataProvider;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
@@ -57,11 +57,11 @@ class CategoryProvider
     }
 
     /**
-     * @param AccountUser|null $user
+     * @param CustomerUser|null $user
      *
      * @return Category[]
      */
-    public function getCategoryTree(AccountUser $user = null)
+    public function getCategoryTree(CustomerUser $user = null)
     {
         $userId = $user ? $user->getId() : 0;
         if (!array_key_exists($userId, $this->tree)) {
@@ -81,21 +81,15 @@ class CategoryProvider
      */
     public function getParentCategories()
     {
-        $parentCategories = [];
+        // we don't need current category in the path, so let's start from parent category
+        $parent = $this->getCurrentCategory()->getParentCategory();
 
-        $category = $this->getCurrentCategory();
-
-        $currentCategory = $category->getParentCategory();
-
-        while ($currentCategory) {
-            $parentCategories[] = $currentCategory;
-
-            $currentCategory = $currentCategory->getParentCategory();
+        if ($parent !== null) {
+            $parents = $this->categoryRepository->getPath($parent);
+            return is_array($parents) ? $parents : [];
+        } else {
+            return [];
         }
-
-        $parentCategories = array_reverse($parentCategories);
-
-        return $parentCategories;
     }
 
     /**

@@ -27,7 +27,7 @@ class QuoteProductTest extends AbstractTest
             ['productReplacementSku', 'sku-replacement'],
             ['type', QuoteProduct::TYPE_OFFER],
             ['comment', 'Seller notes'],
-            ['commentAccount', 'Account notes'],
+            ['commentCustomer', 'Customer notes'],
         ];
 
         static::assertPropertyAccessors(new QuoteProduct(), $properties);

@@ -5,33 +5,33 @@ namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibilityResolved;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountCategoryRepository;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\AccountGroupCategoryRepository;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerCategoryRepository;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerGroupCategoryRepository;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CategoryRepository;
 
 class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategorySubtreeCacheBuilder
 {
     /**
-     * @var AccountCategoryRepository
+     * @var CustomerCategoryRepository
      */
-    protected $accountCategoryRepository;
+    protected $customerCategoryRepository;
 
     /**
-     * @var AccountGroupCategoryRepository
+     * @var CustomerGroupCategoryRepository
      */
-    protected $accountGroupCategoryRepository;
+    protected $customerGroupCategoryRepository;
 
     /** @var array */
-    protected $accountGroupIdsWithInverseVisibility = [];
+    protected $customerGroupIdsWithInverseVisibility = [];
 
     /** @var array */
-    protected $accountIdsWithInverseVisibility = [];
+    protected $customerIdsWithInverseVisibility = [];
 
     /** @var array */
-    protected $accountGroupIdsWithConfigVisibility = [];
+    protected $customerGroupIdsWithConfigVisibility = [];
 
     /** @var array */
-    protected $accountIdsWithConfigVisibility = [];
+    protected $customerIdsWithConfigVisibility = [];
 
     /**
      * @param Category $category
@@ -63,10 +63,10 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
     {
         parent::clearChangedEntities();
 
-        $this->accountGroupIdsWithInverseVisibility = [];
-        $this->accountGroupIdsWithConfigVisibility = [];
-        $this->accountIdsWithInverseVisibility = [];
-        $this->accountIdsWithConfigVisibility = [];
+        $this->customerGroupIdsWithInverseVisibility = [];
+        $this->customerGroupIdsWithConfigVisibility = [];
+        $this->customerIdsWithInverseVisibility = [];
+        $this->customerIdsWithConfigVisibility = [];
     }
 
     /**
@@ -75,14 +75,14 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
      */
     protected function updateAppropriateVisibilityRelatedEntities(Category $category, $visibility)
     {
-        $this->updateAccountGroupsAppropriateVisibility($category, $visibility);
-        $this->updateAccountsAppropriateVisibility($category, $visibility);
+        $this->updateCustomerGroupsAppropriateVisibility($category, $visibility);
+        $this->updateCustomersAppropriateVisibility($category, $visibility);
 
         $this->updateProductVisibilitiesForCategoryRelatedEntities(
             $category,
             $visibility,
-            $this->accountGroupIdsWithChangedVisibility[$category->getId()],
-            $this->accountIdsWithChangedVisibility[$category->getId()]
+            $this->customerGroupIdsWithChangedVisibility[$category->getId()],
+            $this->customerIdsWithChangedVisibility[$category->getId()]
         );
     }
 
@@ -90,86 +90,86 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
      * @param Category $category
      * @param int $visibility
      */
-    protected function updateAccountGroupsAppropriateVisibility(Category $category, $visibility)
+    protected function updateCustomerGroupsAppropriateVisibility(Category $category, $visibility)
     {
-        $accountGroupIdsForUpdate = $this->getAccountGroupIdsFirstLevel($category);
+        $customerGroupIdsForUpdate = $this->getCustomerGroupIdsFirstLevel($category);
 
-        $accountGroupIdsWithFallbackToParent = $this
-            ->getCategoryAccountGroupIdsWithVisibilityFallbackToParent($category);
+        $customerGroupIdsWithFallbackToParent = $this
+            ->getCategoryCustomerGroupIdsWithVisibilityFallbackToParent($category);
 
-        $accountGroupIdsWithInverseVisibility = [];
-        $accountGroupIdsWithConfigVisibility = [];
+        $customerGroupIdsWithInverseVisibility = [];
+        $customerGroupIdsWithConfigVisibility = [];
 
-        $parentAccountGroupsVisibilities = $this->getAccountGroupCategoryRepository()
-            ->getVisibilitiesForAccountGroups(
+        $parentCustomerGroupsVisibilities = $this->getCustomerGroupCategoryRepository()
+            ->getVisibilitiesForCustomerGroups(
                 $this->scopeManager,
                 $category->getParentCategory(),
-                $accountGroupIdsWithFallbackToParent
+                $customerGroupIdsWithFallbackToParent
             );
 
-        foreach ($parentAccountGroupsVisibilities as $accountGroupId => $accountGroupVisibility) {
-            if ($accountGroupVisibility === $visibility) {
-                $accountGroupIdsForUpdate[] = $accountGroupId;
-            } elseif ($accountGroupVisibility === BaseCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG) {
-                $accountGroupIdsWithConfigVisibility[] = $accountGroupId;
+        foreach ($parentCustomerGroupsVisibilities as $customerGroupId => $customerGroupVisibility) {
+            if ($customerGroupVisibility === $visibility) {
+                $customerGroupIdsForUpdate[] = $customerGroupId;
+            } elseif ($customerGroupVisibility === BaseCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG) {
+                $customerGroupIdsWithConfigVisibility[] = $customerGroupId;
             } else {
-                $accountGroupIdsWithInverseVisibility[] = $accountGroupId;
+                $customerGroupIdsWithInverseVisibility[] = $customerGroupId;
             }
         }
 
-        $this->updateAccountGroupsCategoryVisibility(
+        $this->updateCustomerGroupsCategoryVisibility(
             $category,
-            $accountGroupIdsForUpdate,
+            $customerGroupIdsForUpdate,
             $visibility
         );
 
-        $this->updateAccountGroupsProductVisibility(
+        $this->updateCustomerGroupsProductVisibility(
             $category,
-            $accountGroupIdsForUpdate,
+            $customerGroupIdsForUpdate,
             $visibility
         );
 
-        $this->accountGroupIdsWithChangedVisibility[$category->getId()] = $accountGroupIdsForUpdate;
-        $this->accountGroupIdsWithInverseVisibility = $accountGroupIdsWithInverseVisibility;
-        $this->accountGroupIdsWithConfigVisibility = $accountGroupIdsWithConfigVisibility;
+        $this->customerGroupIdsWithChangedVisibility[$category->getId()] = $customerGroupIdsForUpdate;
+        $this->customerGroupIdsWithInverseVisibility = $customerGroupIdsWithInverseVisibility;
+        $this->customerGroupIdsWithConfigVisibility = $customerGroupIdsWithConfigVisibility;
     }
 
     /**
      * @param Category $category
      * @param int $visibility
      */
-    protected function updateAccountsAppropriateVisibility(Category $category, $visibility)
+    protected function updateCustomersAppropriateVisibility(Category $category, $visibility)
     {
-        $accountIdsForUpdate = $this->getAccountIdsFirstLevel($category);
-        $accountIdsWithFallbackToParent = $this->getAccountIdsWithFallbackToParent($category);
+        $customerIdsForUpdate = $this->getCustomerIdsFirstLevel($category);
+        $customerIdsWithFallbackToParent = $this->getCustomerIdsWithFallbackToParent($category);
 
-        $accountIdsWithInverseVisibility = [];
-        $accountIdsWithConfigVisibility = [];
+        $customerIdsWithInverseVisibility = [];
+        $customerIdsWithConfigVisibility = [];
 
-        $parentAccountsVisibilities = $this->getAccountCategoryRepository()
-            ->getVisibilitiesForAccounts(
+        $parentCustomersVisibilities = $this->getCustomerCategoryRepository()
+            ->getVisibilitiesForCustomers(
                 $this->scopeManager,
                 $category->getParentCategory(),
-                $accountIdsWithFallbackToParent
+                $customerIdsWithFallbackToParent
             );
 
-        foreach ($parentAccountsVisibilities as $accountId => $accountVisibility) {
-            if ($accountVisibility === $visibility) {
-                $accountIdsForUpdate[] = $accountId;
-            } elseif ($accountVisibility === BaseCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG) {
-                $accountIdsWithConfigVisibility[] = $accountId;
+        foreach ($parentCustomersVisibilities as $customerId => $customerVisibility) {
+            if ($customerVisibility === $visibility) {
+                $customerIdsForUpdate[] = $customerId;
+            } elseif ($customerVisibility === BaseCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG) {
+                $customerIdsWithConfigVisibility[] = $customerId;
             } else {
-                $accountIdsWithInverseVisibility[] = $accountId;
+                $customerIdsWithInverseVisibility[] = $customerId;
             }
         }
 
-        $this->updateAccountsCategoryVisibility($category, $accountIdsForUpdate, $visibility);
+        $this->updateCustomersCategoryVisibility($category, $customerIdsForUpdate, $visibility);
 
-        $this->updateAccountsProductVisibility($category, $accountIdsForUpdate, $visibility);
+        $this->updateCustomersProductVisibility($category, $customerIdsForUpdate, $visibility);
 
-        $this->accountIdsWithChangedVisibility[$category->getId()] = $accountIdsForUpdate;
-        $this->accountIdsWithInverseVisibility = $accountIdsWithInverseVisibility;
-        $this->accountIdsWithConfigVisibility = $accountIdsWithConfigVisibility;
+        $this->customerIdsWithChangedVisibility[$category->getId()] = $customerIdsForUpdate;
+        $this->customerIdsWithInverseVisibility = $customerIdsWithInverseVisibility;
+        $this->customerIdsWithConfigVisibility = $customerIdsWithConfigVisibility;
     }
 
     /**
@@ -180,35 +180,35 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
     {
         $invertedVisibility = $visibility * -1;
 
-        $this->updateAccountGroupsCategoryVisibility(
+        $this->updateCustomerGroupsCategoryVisibility(
             $category,
-            $this->accountGroupIdsWithInverseVisibility,
+            $this->customerGroupIdsWithInverseVisibility,
             $visibility
         );
 
-        $this->updateAccountsCategoryVisibility(
+        $this->updateCustomersCategoryVisibility(
             $category,
-            $this->accountIdsWithInverseVisibility,
+            $this->customerIdsWithInverseVisibility,
             $invertedVisibility
         );
 
-        $this->updateAccountGroupsProductVisibility(
+        $this->updateCustomerGroupsProductVisibility(
             $category,
-            $this->accountGroupIdsWithInverseVisibility,
+            $this->customerGroupIdsWithInverseVisibility,
             $invertedVisibility
         );
 
-        $this->updateAccountsProductVisibility(
+        $this->updateCustomersProductVisibility(
             $category,
-            $this->accountIdsWithInverseVisibility,
+            $this->customerIdsWithInverseVisibility,
             $invertedVisibility
         );
 
         $this->updateProductVisibilitiesForCategoryRelatedEntities(
             $category,
             $invertedVisibility,
-            $this->accountGroupIdsWithInverseVisibility,
-            $this->accountIdsWithInverseVisibility
+            $this->customerGroupIdsWithInverseVisibility,
+            $this->customerIdsWithInverseVisibility
         );
     }
 
@@ -217,67 +217,67 @@ class PositionChangeCategorySubtreeCacheBuilder extends VisibilityChangeCategory
      */
     protected function updateConfigVisibilityRelatedEntities(Category $category)
     {
-        $this->updateAccountGroupsCategoryVisibility(
+        $this->updateCustomerGroupsCategoryVisibility(
             $category,
-            $this->accountGroupIdsWithInverseVisibility,
+            $this->customerGroupIdsWithInverseVisibility,
             BaseCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG
         );
 
-        $this->updateAccountsCategoryVisibility(
+        $this->updateCustomersCategoryVisibility(
             $category,
-            $this->accountIdsWithInverseVisibility,
+            $this->customerIdsWithInverseVisibility,
             BaseCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG
         );
 
-        $this->updateAccountGroupsProductVisibility(
+        $this->updateCustomerGroupsProductVisibility(
             $category,
-            $this->accountGroupIdsWithConfigVisibility,
+            $this->customerGroupIdsWithConfigVisibility,
             BaseCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG
         );
 
-        $this->updateAccountsProductVisibility(
+        $this->updateCustomersProductVisibility(
             $category,
-            $this->accountIdsWithConfigVisibility,
+            $this->customerIdsWithConfigVisibility,
             BaseCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG
         );
 
         $this->updateProductVisibilitiesForCategoryRelatedEntities(
             $category,
             BaseCategoryVisibilityResolved::VISIBILITY_FALLBACK_TO_CONFIG,
-            $this->accountGroupIdsWithConfigVisibility,
-            $this->accountIdsWithInverseVisibility
+            $this->customerGroupIdsWithConfigVisibility,
+            $this->customerIdsWithInverseVisibility
         );
     }
 
     /**
      * @param EntityRepository $repositoryHolder
      */
-    public function setAccountCategoryRepository(EntityRepository $repositoryHolder)
+    public function setCustomerCategoryRepository(EntityRepository $repositoryHolder)
     {
-        $this->accountCategoryRepository = $repositoryHolder;
+        $this->customerCategoryRepository = $repositoryHolder;
     }
 
     /**
-     * @return AccountCategoryRepository
+     * @return CustomerCategoryRepository
      */
-    protected function getAccountCategoryRepository()
+    protected function getCustomerCategoryRepository()
     {
-        return $this->accountCategoryRepository;
+        return $this->customerCategoryRepository;
     }
 
     /**
-     * @return AccountGroupCategoryRepository
+     * @return CustomerGroupCategoryRepository
      */
-    public function getAccountGroupCategoryRepository()
+    public function getCustomerGroupCategoryRepository()
     {
-        return $this->accountGroupCategoryRepository;
+        return $this->customerGroupCategoryRepository;
     }
 
     /**
-     * @param AccountGroupCategoryRepository $accountGroupCategoryRepository
+     * @param CustomerGroupCategoryRepository $customerGroupCategoryRepository
      */
-    public function setAccountGroupCategoryRepository($accountGroupCategoryRepository)
+    public function setCustomerGroupCategoryRepository($customerGroupCategoryRepository)
     {
-        $this->accountGroupCategoryRepository = $accountGroupCategoryRepository;
+        $this->customerGroupCategoryRepository = $customerGroupCategoryRepository;
     }
 }

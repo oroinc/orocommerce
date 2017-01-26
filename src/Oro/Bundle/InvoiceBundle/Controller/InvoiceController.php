@@ -175,7 +175,7 @@ class InvoiceController extends Controller
         if ($productIds) {
             $tierPrices = $this->get('oro_pricing.provider.combined_product_price')
                 ->getPriceByPriceListIdAndProductIds(
-                    $this->get('oro_pricing.model.price_list_request_handler')->getPriceListByAccount()->getId(),
+                    $this->get('oro_pricing.model.price_list_request_handler')->getPriceListByCustomer()->getId(),
                     $productIds->toArray(),
                     $invoice->getCurrency()
                 );
@@ -210,7 +210,7 @@ class InvoiceController extends Controller
         if ($productsPriceCriteria) {
             $matchedPrices = $this->get('oro_pricing.provider.combined_product_price')->getMatchedPrices(
                 $productsPriceCriteria->toArray(),
-                $this->get('oro_pricing.model.price_list_request_handler')->getPriceListByAccount()
+                $this->get('oro_pricing.model.price_list_request_handler')->getPriceListByCustomer()
             );
         }
 

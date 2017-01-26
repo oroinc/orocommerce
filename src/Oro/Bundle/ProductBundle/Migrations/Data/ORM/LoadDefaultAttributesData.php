@@ -12,21 +12,20 @@ use Oro\Bundle\LocaleBundle\Migrations\Data\ORM\LoadLocalizationData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 
 class LoadDefaultAttributesData extends AbstractFixture implements
     ContainerAwareInterface,
     DependentFixtureInterface
 {
-    use ContainerAwareTrait;
+    use MakeProductAttributesTrait;
 
     /**
      * @var array
      */
     private $fields = [
-        'metaKeywords',
-        'metaDescriptions',
-        'inventory_status'
+        'inventory_status' => [
+            'visible' => false
+        ]
     ];
 
     public function getDependencies()
@@ -41,7 +40,7 @@ class LoadDefaultAttributesData extends AbstractFixture implements
      */
     public function load(ObjectManager $manager)
     {
-        $this->addAttributes();
+        $this->makeProductAttributes($this->fields);
         $this->addPricesAttribute();
     }
 
@@ -64,6 +63,7 @@ class LoadDefaultAttributesData extends AbstractFixture implements
                 'filterable' => false,
                 'sortable' => false,
                 'enabled' => true,
+                'visible' => true
             ],
             'extend' => [
                 'is_extend' => false,
@@ -86,30 +86,5 @@ class LoadDefaultAttributesData extends AbstractFixture implements
         $translationHelper->saveTranslations([
             'oro.product.product_price_attributes_prices.label' => 'Product prices'
         ]);
-    }
-
-    private function addAttributes()
-    {
-        $configManager = $this->container->get('oro_entity_config.config_manager');
-        $configHelper = $this->container->get('oro_entity_config.config.config_helper');
-        $entityManager = $configManager->getEntityManager();
-
-        foreach ($this->fields as $field) {
-            $fieldConfigModel = $configManager->getConfigFieldModel(Product::class, $field);
-
-            $options = [
-                'attribute' => [
-                    'is_attribute' => true
-                ],
-                'extend' => [
-                    'owner' => ExtendScope::ORIGIN_SYSTEM
-                ]
-            ];
-
-            $configHelper->updateFieldConfigs($fieldConfigModel, $options);
-            $entityManager->persist($fieldConfigModel);
-        }
-
-        $entityManager->flush();
     }
 }

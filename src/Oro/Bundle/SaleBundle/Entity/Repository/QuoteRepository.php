@@ -49,7 +49,7 @@ class QuoteRepository extends EntityRepository
     ) {
         $qb = $this->createQueryBuilder('q');
         $qb
-            ->select('count(q.id)')
+            ->select('COUNT(q.id)')
             ->leftJoin('q.quoteProducts', 'quoteProducts')
             ->leftJoin('quoteProducts.quoteProductOffers', 'quoteProductOffers')
             ->where($qb->expr()->in('quoteProductOffers.currency', $removingCurrencies));

@@ -61,6 +61,14 @@
         </div>
         <a class="btn add-method" href="javascript: void(0);"><i class="fa-plus"></i>{{ form.vars.add_label|default('oro.form.collection.add')|trans }}</a>
     </div>
+
+    {% if form.vars.methods|length == 0 %}
+        <div class="no-data">
+            <span>
+                {{ 'oro.shipping.sections.shippingrule_configurations.no_methods.message'|trans }}
+            </span>
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block content_data %}
@@ -103,7 +111,7 @@
             ]
         },
         {
-            'title': 'oro.shipping.sections.shippingrule_configurations'|trans,
+            'title': 'oro.shipping.sections.shippingrule_configurations.label'|trans,
             'subblocks': [
                 {
                     'data': [

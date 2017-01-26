@@ -60,12 +60,12 @@ class QuoteControllerTest extends WebTestCase
     /**
      * @var string
      */
-    public static $shippingEstimateAmount = '999.9900';
+    public static $overriddenShippingCostAmount = '999.9900';
 
     /**
      * @var string
      */
-    public static $shippingEstimateCurrency = 'USD';
+    public static $overriddenShippingCostCurrency = 'USD';
 
     /**
      * {@inheritdoc}
@@ -175,7 +175,7 @@ class QuoteControllerTest extends WebTestCase
         $form[sprintf('oro_sale_quote[%s]', $paymentTermProperty)] = $paymentTerm->getId();
 
         $form['oro_sale_quote[assignedUsers]'] = $this->getReference(LoadUserData::USER1)->getId();
-        $form['oro_sale_quote[assignedAccountUsers]'] = implode(',', [
+        $form['oro_sale_quote[assignedCustomerUsers]'] = implode(',', [
             $this->getReference(LoadUserData::ACCOUNT1_USER1)->getId(),
             $this->getReference(LoadUserData::ACCOUNT1_USER2)->getId()
         ]);
@@ -213,21 +213,27 @@ class QuoteControllerTest extends WebTestCase
      * @depends testUpdate
      * @param int $id
      */
-    public function testUpdateShippingEstimate($id)
+    public function testUpdateOverriddenShippingCost($id)
     {
         $crawler    = $this->client->request('GET', $this->getUrl('oro_sale_quote_update', ['id' => $id]));
 
         /* @var $form Form */
         $form = $crawler->selectButton('Save')->form();
-        $form['oro_sale_quote[shippingEstimate][value]']  = self::$shippingEstimateAmount;
-        $form['oro_sale_quote[shippingEstimate][currency]']  = self::$shippingEstimateCurrency;
+        $form['oro_sale_quote[overriddenShippingCostAmount][value]']  = self::$overriddenShippingCostAmount;
+        $form['oro_sale_quote[overriddenShippingCostAmount][currency]']  = self::$overriddenShippingCostCurrency;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
         $form = $crawler->selectButton('Save')->form();
         $fields = $form->get('oro_sale_quote');
-        $this->assertEquals(self::$shippingEstimateAmount, $fields['shippingEstimate']['value']->getValue());
-        $this->assertEquals(self::$shippingEstimateCurrency, $fields['shippingEstimate']['currency']->getValue());
+        $this->assertEquals(
+            self::$overriddenShippingCostAmount,
+            $fields['overriddenShippingCostAmount']['value']->getValue()
+        );
+        $this->assertEquals(
+            self::$overriddenShippingCostCurrency,
+            $fields['overriddenShippingCostAmount']['currency']->getValue()
+        );
 
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);

@@ -1,14 +1,14 @@
 {% block oro_order_address_type_widget %}
     {% if form.parent is not empty %}
         <div {{ block('widget_container_attributes') }}>
-            {% if form.accountAddress is defined %}
-                {{ form_row(form.accountAddress) }}
+            {% if form.customerAddress is defined %}
+                {{ form_row(form.customerAddress) }}
             {% endif %}
             {{ block('oro_address_rows') }}
         </div>
     {% else %}
-        {% if form.accountAddress is defined %}
-            {{ form_row(form.accountAddress) }}
+        {% if form.customerAddress is defined %}
+            {{ form_row(form.customerAddress) }}
         {% endif %}
         {{ block('oro_address_rows') }}
     {% endif %}

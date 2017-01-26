@@ -7,21 +7,18 @@ use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
 use Oro\Bundle\EntityBundle\ORM\Registry;
-use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestDepartment;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestEmployee;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
-use Oro\Bundle\WebsiteSearchBundle\Engine\IndexDataProvider;
 use Oro\Bundle\WebsiteSearchBundle\Engine\ORM\OrmIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDatetime;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDecimal;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexInteger;
-use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexText;
-use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
+use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
-use Oro\Bundle\WebsiteSearchBundle\Resolver\EntityDependenciesResolver;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\AbstractSearchWebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadItemData;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadProductsToIndex;
@@ -43,6 +40,13 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
      */
     protected $doctrine;
 
+    public static function checkSearchEngine(WebTestCase $webTestCase)
+    {
+        if ($webTestCase->getContainer()->getParameter('oro_website_search.engine') !== 'orm') {
+            $webTestCase->markTestSkipped('Should be tested only with ORM engine');
+        }
+    }
+    
     protected function preSetUp()
     {
         $this->checkEngine();
@@ -52,12 +56,10 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
     {
         $this->checkEngine();
     }
-
+    
     protected function checkEngine()
     {
-        if ($this->getContainer()->getParameter('oro_website_search.engine') !== 'orm') {
-            $this->markTestSkipped('Should be tested only with ORM engine');
-        }
+        self::checkSearchEngine($this);
     }
 
     /**
@@ -122,7 +124,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
     private function makeCountQuery(EntityRepository $repository)
     {
         return $repository->createQueryBuilder('t')
-            ->select('count(t)')
+            ->select('COUNT(t)')
             ->getQuery()
             ->getSingleScalarResult();
     }
@@ -211,6 +213,35 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $product2 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT2);
         $this->assertItemsCount(8);
 
+        $this->indexer->delete(
+            [
+                $product1,
+                $product2,
+            ],
+            [AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()]
+        );
+
+        $this->assertItemsCount(6);
+        $this->assertEntityCount(1, IndexInteger::class);
+        $this->assertEntityCount(5, IndexText::class);
+        $this->assertEntityCount(1, IndexDatetime::class);
+        $this->assertEntityCount(1, IndexDecimal::class);
+    }
+
+    public function testDeleteWhenProductEntitiesForSpecificWebsiteRemovedWithABatch()
+    {
+        $this->loadFixtures([LoadItemData::class]);
+        $this->mappingProviderMock
+            ->expects($this->any())
+            ->method('isClassSupported')
+            ->with(TestProduct::class)
+            ->willReturn(true);
+        $this->setEntityAliasExpectation();
+
+        $product1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
+        $product2 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT2);
+        $this->assertItemsCount(8);
+        $this->indexer->setBatchSize(1);
         $this->indexer->delete(
             [
                 $product1,

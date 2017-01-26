@@ -5,7 +5,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Datagrid\Extension\MassAction
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
 
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction\AddProductsMassAction;
 use Oro\Bundle\ShoppingListBundle\Datagrid\Extension\MassAction\AddProductsMassActionHandler;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -118,8 +118,8 @@ class AddProductsMassActionHandlerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(1);
 
         $shoppingList->expects($this->any())
-            ->method('getAccountUser')
-            ->willReturn(new AccountUser());
+            ->method('getCustomerUser')
+            ->willReturn(new CustomerUser());
 
         $shoppingListItemHandler = $this
             ->getMockBuilder('Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler')

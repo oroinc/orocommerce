@@ -1,0 +1,16 @@
+layout:
+    imports:
+        -
+            id: oro_customer_user_view
+            root: page_content
+    actions:
+        - '@setOption':
+            id: page_title
+            optionName: text
+            optionValue:
+                label: 'oro.customer.frontend.title.customer_user.profile'
+
+        - '@setOption':
+            id: customer_user_view_information_title
+            optionName: text
+            optionValue: 'oro.customer.frontend.sections.customer_user.my_profile'

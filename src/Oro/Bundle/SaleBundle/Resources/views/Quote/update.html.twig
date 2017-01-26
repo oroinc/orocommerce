@@ -1,5 +1,6 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
 {% form_theme form with ['OroFormBundle:Form:fields.html.twig'] %}
+{% import 'OroOrderBundle:Order:macros.html.twig' as SM %}
 
 {% oro_title_set({params : {'%entityName%' : 'oro.sale.quote.entity_label'|trans, '%id%': entity.qid} }) %}
 
@@ -31,15 +32,34 @@
     {{ UI.dropdownSaveButton({'html': html}) }}
 {% endblock navButtons %}
 
+{% set quoteEntryPointEvents = {
+    before: 'entry-point:quote:load:before',
+    load: 'entry-point:quote:load',
+    after: 'entry-point:quote:load:after',
+    trigger: 'entry-point:quote:trigger',
+    init: 'entry-point:quote:init',
+    listenersOff: 'entry-point:listeners:off',
+    listenersOn: 'entry-point:listeners:on',
+} %}
+
+{% set pageComponent = {
+    module: 'oroorder/js/app/components/entry-point-component',
+    options: {
+        route: 'oro_quote_entry_point',
+        routeParams: {id: entity.id|default(0)},
+        events: quoteEntryPointEvents
+    },
+} %}
+
 {% block content_data %}
     {% set id = 'quote-edit' %}
 
     {% set ownerSelectors %}
         <div data-page-component-module="orosale/js/app/components/related-data-component"
              data-page-component-options="{{ {formName: form.vars.name}|json_encode }}">
-            <div data-page-component-module="orocustomer/js/app/components/account-selection-component">
-                {{ form_row(form.account) }}
-                {{ form_row(form.accountUser) }}
+            <div data-page-component-module="orocustomer/js/app/components/customer-selection-component">
+                {{ form_row(form.customer) }}
+                {{ form_row(form.customerUser) }}
             </div>
         </div>
     {% endset %}
@@ -50,12 +70,17 @@
              data-page-component-options="{{ {
                  view: 'orosale/js/app/views/line-items-view',
                  tierPrices: tierPrices|default({}),
-                 tierPricesRoute: 'oro_pricing_price_by_account'
+                 tierPricesRoute: 'oro_pricing_price_by_customer'
              }|json_encode }}"
              data-layout="separate">
             {{ form_widget(form.quoteProducts) }}
             {{ form_errors(form.quoteProducts) }}
         </div>
+
+        {% set entityDataOptions = {entityData: quoteData, events: quoteEntryPointEvents} %}
+        <div
+                data-page-component-module="oroorder/js/app/components/data-load-component"
+                data-page-component-options="{{ entityDataOptions|json_encode }}"></div>
     {% endset %}
 
     {% set generalFields %}
@@ -64,7 +89,7 @@
             data-page-component-options="{{ {
                 'view': 'orofrontend/js/app/views/form-view',
                  selectors: {
-                     account: 'input[name$="[account]"]'
+                     customer: 'input[name$="[customer]"]'
                  }
              }|json_encode }}"
         >
@@ -75,7 +100,7 @@
             {{ form_row(form.poNumber) }}
             {{ form_row(form.shipUntil) }}
             {{ form_row(form.assignedUsers) }}
-            {{ form_row(form.assignedAccountUsers) }}
+            {{ form_row(form.assignedCustomerUsers) }}
         </div>
     {% endset %}
     {% set dataBlocks = [
@@ -108,7 +133,7 @@
                     view: 'orosale/js/app/views/address-view',
                     type: 'shipping',
                     selectors: {
-                        address: '#' ~ form.shippingAddress.accountAddress.vars.id,
+                        address: '#' ~ form.shippingAddress.customerAddress.vars.id,
                         subtotalsFields: [
                         '#' ~ form.shippingAddress.country.vars.id,
                         '#' ~ form.shippingAddress.street.vars.id,
@@ -130,11 +155,41 @@
         }]) %}
     {% endif %}
 
+    {% set shippingInformation %}
+
+        {% if entity.shippingMethod and entity.shippingMethodType and entity.estimatedShippingCost %}
+            {% set methodLabel = get_shipping_method_label(entity.shippingMethod) ? get_shipping_method_label(entity.shippingMethod)|trans ~ ', ' : '' %}
+
+            {{ UI.renderAttribute('oro.sale.quote.shipping_method.label'|trans,
+                '<div class="control-label selected-shipping-method">' ~
+                methodLabel ~
+                get_shipping_method_type_label(entity.shippingMethod, entity.shippingMethodType)|trans ~
+                ': ' ~ entity.estimatedShippingCost|oro_format_price() ~ '</div>'
+            ) }}
+        {% endif %}
+
+        {{ UI.renderAttribute('oro.sale.quote.form.shipping_options.label'|trans,
+            SM.renderPossibleShippingMethods(form, quoteEntryPointEvents)
+        ) }}
+
+        {%  set options = {
+            view: 'oroorder/js/app/views/shipping-cost-view'
+        } %}
+
+        <div data-page-component-module="oroui/js/app/components/view-component"
+             data-page-component-options="{{ options|json_encode }}">
+            {{ form_row(form.overriddenShippingCostAmount) }}
+        </div>
+
+        {{ form_row(form.shippingMethodLocked) }}
+        {{ form_row(form.allowUnlistedShippingMethod) }}
+    {% endset %}
+
     {% set dataBlocks = dataBlocks|merge([{
         'title': 'oro.sale.quote.sections.shipping_information'|trans,
         'subblocks': [{
             'title': '',
-            'data': [form_row(form.shippingEstimate)]
+            'data': [shippingInformation]
         }]
     }]) %}
 

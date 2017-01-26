@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\Entity;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddressToAddressType;
 
@@ -13,7 +13,7 @@ class CustomerAddressTest extends AbstractAddressTest
         parent::testProperties();
 
         static::assertPropertyAccessors($this->address, [
-            ['frontendOwner', new Account()],
+            ['frontendOwner', new Customer()],
         ]);
     }
 

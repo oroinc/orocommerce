@@ -8,21 +8,25 @@ layout:
                     blockType: layout_subtree_update
                     options:
                         reloadEvents: ['layout-subtree:update:product']
-                        visible: '=data["product"].isSimple() || data["oro_product_variant"].hasProductAnyAvailableVariant(data["product"])'
+                        visible: '=data["oro_product_variant"].getProductVariantOrProduct(data).isSimple()'
                 line_item_form:
                     blockType: container
                 line_item_form_start:
                     blockType: form_start
                     options:
-                        form: '=data["oro_product_form"].getLineItemFormView(data.offsetExists("product")?data["product"])'
+                        form: '=data["oro_product_form"].getLineItemFormView(data["oro_product_variant"].getProductVariantOrProduct(data))'
                 line_item_form_fields:
                     blockType: form_fields
                     options:
-                        form: '=data["oro_product_form"].getLineItemFormView(data.offsetExists("product")?data["product"])'
+                        vars:
+                            form: '=data["oro_product_form"].getLineItemFormView(data["oro_product_variant"].getProductVariantOrProduct(data))'
+                            isProductUnitSelectionVisible: '=data.offsetExists("product")?data["oro_product_unit_fields_settings"].isProductUnitSelectionVisible(data["oro_product_variant"].getProductVariantOrProduct(data))'
+                            isUnitVisible: '=data.offsetExists("product")?data["oro_unit_visibility"].isUnitCodeVisible(data["oro_product_variant"].getProductVariantOrProduct(data).getPrimaryUnitPrecision().getUnit().getCode())'
+                            product: '=data["oro_product_variant"].getProductVariantOrProduct(data)'
                 line_item_form_end:
                     blockType: form_end
                     options:
-                        form: '=data["oro_product_form"].getLineItemFormView(data.offsetExists("product")?data["product"])'
+                        form: '=data["oro_product_form"].getLineItemFormView(data["oro_product_variant"].getProductVariantOrProduct(data))'
                 line_item_buttons:
                     blockType: container
             tree:
@@ -35,4 +39,3 @@ layout:
                             line_item_form_end: ~
 
     conditions: 'context["is_logged_in"]'
-

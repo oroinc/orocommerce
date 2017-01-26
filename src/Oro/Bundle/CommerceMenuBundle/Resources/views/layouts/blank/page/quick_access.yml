@@ -11,7 +11,7 @@ layout:
                 quick_access_menu:
                     blockType: menu
                     options:
-                        item: '=data["menu"].getMenu("commerce_quick_access")'
+                        item: '=data["menu"].getMenu("commerce_quick_access", {"check_access": true})'
             tree:
                 page_header:
                     quick_access_container:

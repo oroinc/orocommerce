@@ -21,7 +21,7 @@ class ScopeWithCustomerGroupAndCustomerValidator extends ConstraintValidator
 
         foreach ($value->getValues() as $index => $scope) {
             /** @noinspection PhpUndefinedMethodInspection - field added through entity extend */
-            if ($scope->getAccount() && $scope->getAccountGroup()) {
+            if ($scope->getCustomer() && $scope->getCustomerGroup()) {
                 $this->context->buildViolation($constraint->message)
                     ->atPath("[$index]")
                     ->addViolation();

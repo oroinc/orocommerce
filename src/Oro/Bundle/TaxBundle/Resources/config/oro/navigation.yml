@@ -16,13 +16,13 @@ navigation:
                     routes:      ['oro_tax_product_tax_code_index', 'oro_tax_product_tax_code_view', 'oro_tax_product_tax_code_update', 'oro_tax_product_tax_code_create']
                     description: 'oro.tax.producttaxcode.description'
 
-            account_tax_code_list:
-                label:           'oro.tax.accounttaxcode.entity_plural_label'
-                route:           'oro_tax_account_tax_code_index'
+            customer_tax_code_list:
+                label:           'oro.tax.customertaxcode.entity_plural_label'
+                route:           'oro_tax_customer_tax_code_index'
                 extras:
                     position:    100
-                    routes:      ['oro_tax_account_tax_code_index', 'oro_tax_account_tax_code_view', 'oro_tax_account_tax_code_update', 'oro_tax_account_tax_code_create']
-                    description: 'oro.tax.accounttaxcode.description'
+                    routes:      ['oro_tax_customer_tax_code_index', 'oro_tax_customer_tax_code_view', 'oro_tax_customer_tax_code_update', 'oro_tax_customer_tax_code_create']
+                    description: 'oro.tax.customertaxcode.description'
 
             tax_list:
                 label:           'oro.tax.entity_plural_label'
@@ -54,7 +54,7 @@ navigation:
                     taxes_tab:
                         children:
                             product_tax_code_list: ~
-                            account_tax_code_list: ~
+                            customer_tax_code_list: ~
                             tax_list: ~
                             tax_rule_list: ~
                             tax_jurisdiction: ~
@@ -65,10 +65,10 @@ navigation:
         oro_tax_product_tax_code_update: '%%taxCode%% - oro.ui.edit'
         oro_tax_product_tax_code_create: 'oro.ui.create_entity'
 
-        oro_tax_account_tax_code_index: ~
-        oro_tax_account_tax_code_view:   '%%taxCode%% - oro.ui.view'
-        oro_tax_account_tax_code_update: '%%taxCode%% - oro.ui.edit'
-        oro_tax_account_tax_code_create: 'oro.ui.create_entity'
+        oro_tax_customer_tax_code_index: ~
+        oro_tax_customer_tax_code_view:   '%%taxCode%% - oro.ui.view'
+        oro_tax_customer_tax_code_update: '%%taxCode%% - oro.ui.edit'
+        oro_tax_customer_tax_code_create: 'oro.ui.create_entity'
 
         oro_tax_index: ~
         oro_tax_view:   '%%taxCode%% - oro.ui.view'

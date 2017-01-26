@@ -9,15 +9,15 @@ use Doctrine\Common\Collections\Expr\Value;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Authentication\Token\TokenInterface;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\VisibilityBundle\Indexer\ProductVisibilityIndexer;
 use Oro\Bundle\VisibilityBundle\Model\ProductVisibilitySearchQueryModifier;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Criteria\Comparison as SearchComparison;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
-use Oro\Bundle\WebsiteSearchBundle\Placeholder\AccountIdPlaceholder;
+use Oro\Bundle\CustomerBundle\Placeholder\CustomerIdPlaceholder;
 use Oro\Bundle\WebsiteSearchBundle\Provider\PlaceholderProvider;
 
 class ProductVisibilitySearchQueryModifierTest extends \PHPUnit_Framework_TestCase
@@ -63,18 +63,18 @@ class ProductVisibilitySearchQueryModifierTest extends \PHPUnit_Framework_TestCa
                 Product::class,
                 ProductVisibilityIndexer::FIELD_VISIBILITY_ACCOUNT,
                 [
-                    AccountIdPlaceholder::NAME => 1
+                    CustomerIdPlaceholder::NAME => 1
                 ]
             )
-            ->willReturn('visibility_account_1');
+            ->willReturn('visibility_customer_1');
 
-        $account = new Account();
-        $reflection = new \ReflectionProperty(Account::class, 'id');
+        $customer = new Customer();
+        $reflection = new \ReflectionProperty(Customer::class, 'id');
         $reflection->setAccessible(true);
-        $reflection->setValue($account, 1);
+        $reflection->setValue($customer, 1);
 
-        $accountUser = new AccountUser();
-        $accountUser->setAccount($account);
+        $customerUser = new CustomerUser();
+        $customerUser->setCustomer($customer);
 
         $token = $this
             ->getMockBuilder(TokenInterface::class)
@@ -82,7 +82,7 @@ class ProductVisibilitySearchQueryModifierTest extends \PHPUnit_Framework_TestCa
 
         $token->expects($this->once())
             ->method('getUser')
-            ->willReturn($accountUser);
+            ->willReturn($customerUser);
 
         $this->tokenStorage->expects($this->once())
             ->method('getToken')
@@ -102,7 +102,7 @@ class ProductVisibilitySearchQueryModifierTest extends \PHPUnit_Framework_TestCa
                     [
                         new Comparison('integer.is_visible_by_default', Comparison::EQ, new Value($visible)),
                         new SearchComparison(
-                            'integer.visibility_account_1',
+                            'integer.visibility_customer_1',
                             SearchComparison::NOT_EXISTS,
                             new Value(null)
                         ),
@@ -112,7 +112,7 @@ class ProductVisibilitySearchQueryModifierTest extends \PHPUnit_Framework_TestCa
                     CompositeExpression::TYPE_AND,
                     [
                         new Comparison('integer.is_visible_by_default', Comparison::EQ, new Value($hidden)),
-                        new Comparison('integer.visibility_account_1', Comparison::EQ, new Value($visible)),
+                        new Comparison('integer.visibility_customer_1', Comparison::EQ, new Value($visible)),
                     ]
                 ),
             ]
@@ -124,7 +124,7 @@ class ProductVisibilitySearchQueryModifierTest extends \PHPUnit_Framework_TestCa
     /**
      * @return array
      */
-    public function wrongAccountUserProvider()
+    public function wrongCustomerUserProvider()
     {
         return [
             [null],
@@ -133,11 +133,11 @@ class ProductVisibilitySearchQueryModifierTest extends \PHPUnit_Framework_TestCa
     }
 
     /**
-     * @dataProvider wrongAccountUserProvider
+     * @dataProvider wrongCustomerUserProvider
      *
-     * @param mixed $accountUser
+     * @param mixed $customerUser
      */
-    public function testModifyForAnonymous($accountUser)
+    public function testModifyForAnonymous($customerUser)
     {
         $this->placeholderProvider
             ->expects($this->never())
@@ -149,7 +149,7 @@ class ProductVisibilitySearchQueryModifierTest extends \PHPUnit_Framework_TestCa
 
         $token->expects($this->once())
             ->method('getUser')
-            ->willReturn($accountUser);
+            ->willReturn($customerUser);
 
         $this->tokenStorage->expects($this->once())
             ->method('getToken')

@@ -126,7 +126,7 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
 
         $this->priceListTreeHandler->expects($this->exactly($entity->getLineItems()->count()))
             ->method('getPriceList')
-            ->with($entity->getAccount(), $entity->getWebsite())
+            ->with($entity->getCustomer(), $entity->getWebsite())
             ->willReturn($priceList);
 
         $subtotal = $this->provider->getSubtotal($entity);

@@ -8,8 +8,8 @@ oro:
             label: Label
             edit.tooltip: Edit Shoppping List Label
         notes.label: Notes
-        account.label: Account
-        account_user.label: Customer User
+        customer.label: Customer
+        customer_user.label: Customer User
         organization.label: Organization
         owner.label: Owner
         line_items.label: Line Items
@@ -81,11 +81,12 @@ oro:
                 enter: Enter a QTY
                 placeholder: 'QTY #'
             product.label: Product
+            parent_product.label: Parent Product
             shopping_list.label: Shopping List
             unit.label: Unit
             organization.label: Organization
             owner.label: Owner
-            account_user.label: Customer User
+            customer_user.label: Customer User
             add_line_item: Add Line Item
             edit_line_item: Edit Line Item
             create_new_shopping_list: Create New Shopping List

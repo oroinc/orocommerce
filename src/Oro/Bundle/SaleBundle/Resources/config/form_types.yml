@@ -1,16 +1,21 @@
+parameters:
+    oro_sale.form.type.quote_product.class: 'Oro\Bundle\SaleBundle\Form\Type\QuoteProductType'
+    oro_sale.form.type.quote_product_demand_offer_choice.class: 'Oro\Bundle\SaleBundle\Form\Type\QuoteProductDemandOfferChoiceType'
+
 services:
     # Quote form types
     oro_sale.form.type.quote:
         class: 'Oro\Bundle\SaleBundle\Form\Type\QuoteType'
         arguments:
             - "@oro_sale.provider.quote_address_security"
+            - '@oro_config.global'
         calls:
             - [setDataClass, ['%oro_sale.entity.quote.class%']]
         tags:
             - { name: form.type, alias: oro_sale_quote }
 
     oro_sale.form.type.quote_product:
-        class: 'Oro\Bundle\SaleBundle\Form\Type\QuoteProductType'
+        class: '%oro_sale.form.type.quote_product.class%'
         arguments:
             - "@translator"
             - "@oro_product.formatter.product_unit_label"
@@ -92,9 +97,10 @@ services:
             - { name: form.type, alias: oro_sale_quote_product_demand_collection }
 
     oro_sale.form.type.quote_product_demand_offer_choice:
-        class: 'Oro\Bundle\SaleBundle\Form\Type\QuoteProductDemandOfferChoiceType'
+        class: '%oro_sale.form.type.quote_product_demand_offer_choice.class%'
         arguments:
             - '@oro_product.formatter.product_unit_value'
             - '@translator'
+            - '@oro_product.visibility.unit'
         tags:
             - { name: form.type, alias: oro_sale_quote_product_demand_offer_choice }

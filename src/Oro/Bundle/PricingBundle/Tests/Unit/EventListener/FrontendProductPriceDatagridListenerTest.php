@@ -76,7 +76,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
     {
         $this->priceListRequestHandler
             ->expects($this->any())
-            ->method('getPriceListByAccount')
+            ->method('getPriceListByCustomer')
             ->willReturn(
                 $this->getEntity(CombinedPriceList::class, ['id' => $priceListId])
             );
@@ -169,7 +169,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
         $this->currencyManager->expects($this->never())
             ->method($this->anything());
         $this->priceListRequestHandler->expects($this->once())
-            ->method('getPriceListByAccount');
+            ->method('getPriceListByCustomer');
 
         /** @var SearchQueryInterface $query */
         $query = $this->getMockBuilder(SearchQueryInterface::class)->getMock();
@@ -192,7 +192,7 @@ class FrontendProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCa
             ->will($this->returnValue($combinedProductPrices));
 
         $this->priceListRequestHandler->expects($this->once())
-            ->method('getPriceListByAccount')
+            ->method('getPriceListByCustomer')
             ->will($this->returnValue(new CombinedPriceList()));
 
         /** @var SearchQueryInterface $query */

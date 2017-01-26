@@ -88,7 +88,7 @@ class PaymentTermExtensionTest extends \PHPUnit_Framework_TestCase
         $this->extension->buildForm($builder, []);
     }
 
-    public function testBuildParentDataNotAccountOwnerAwareInterface()
+    public function testBuildParentDataNotCustomerOwnerAwareInterface()
     {
         $parent = $this->createMock(FormInterface::class);
         $form = $this->createMock(FormInterface::class);
@@ -104,19 +104,19 @@ class PaymentTermExtensionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @dataProvider parentDataProvider
-     * @param PaymentTerm $accountPaymentTerm
-     * @param PaymentTerm $accountGroupPaymentTerm
+     * @param PaymentTerm $customerPaymentTerm
+     * @param PaymentTerm $customerGroupPaymentTerm
      * @param array $expected
      */
     public function testBuildParentDataReplacePaymentTermAttributes(
-        $accountPaymentTerm,
-        $accountGroupPaymentTerm,
+        $customerPaymentTerm,
+        $customerGroupPaymentTerm,
         $expected
     ) {
-        $this->paymentTermProvider->expects($this->once())->method('getAccountPaymentTermByOwner')
-            ->willReturn($accountPaymentTerm);
-        $this->paymentTermProvider->expects($this->once())->method('getAccountGroupPaymentTermByOwner')
-            ->willReturn($accountGroupPaymentTerm);
+        $this->paymentTermProvider->expects($this->once())->method('getCustomerPaymentTermByOwner')
+            ->willReturn($customerPaymentTerm);
+        $this->paymentTermProvider->expects($this->once())->method('getCustomerGroupPaymentTermByOwner')
+            ->willReturn($customerGroupPaymentTerm);
 
         $parent = $this->createMock(FormInterface::class);
         $parent->expects($this->once())->method('getData')->willReturn(new PaymentTermAwareStub());
@@ -164,33 +164,33 @@ class PaymentTermExtensionTest extends \PHPUnit_Framework_TestCase
     public function parentDataProvider()
     {
         return [
-            'empty account group payment term' => [
-                'accountPaymentTerm' => $this->getEntity(PaymentTerm::class, ['id' => 2]),
-                'accountGroupPaymentTerm' => null,
+            'empty customer group payment term' => [
+                'customerPaymentTerm' => $this->getEntity(PaymentTerm::class, ['id' => 2]),
+                'customerGroupPaymentTerm' => null,
                 'expected' => [
                     'attr' => [
-                        'data-account-payment-term' => 2,
-                        'data-account-group-payment-term' => null,
+                        'data-customer-payment-term' => 2,
+                        'data-customer-group-payment-term' => null,
                     ],
                 ],
             ],
-            'empty account payment term' => [
-                'accountPaymentTerm' => null,
-                'accountGroupPaymentTerm' => $this->getEntity(PaymentTerm::class, ['id' => 2]),
+            'empty customer payment term' => [
+                'customerPaymentTerm' => null,
+                'customerGroupPaymentTerm' => $this->getEntity(PaymentTerm::class, ['id' => 2]),
                 'expected' => [
                     'attr' => [
-                        'data-account-payment-term' => null,
-                        'data-account-group-payment-term' => 2,
+                        'data-customer-payment-term' => null,
+                        'data-customer-group-payment-term' => 2,
                     ],
                 ],
             ],
             'all payment terms available' => [
-                'accountPaymentTerm' => $this->getEntity(PaymentTerm::class, ['id' => 5]),
-                'accountGroupPaymentTerm' => $this->getEntity(PaymentTerm::class, ['id' => 2]),
+                'customerPaymentTerm' => $this->getEntity(PaymentTerm::class, ['id' => 5]),
+                'customerGroupPaymentTerm' => $this->getEntity(PaymentTerm::class, ['id' => 2]),
                 'expected' => [
                     'attr' => [
-                        'data-account-payment-term' => 5,
-                        'data-account-group-payment-term' => 2,
+                        'data-customer-payment-term' => 5,
+                        'data-customer-group-payment-term' => 2,
                     ],
                 ],
             ],

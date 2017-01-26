@@ -49,9 +49,6 @@
 
 @include breakpoint('tablet') {
     .nav-trigger {
-        &__count {
-        }
-
         &__text {
             display: none;
         }
@@ -81,10 +78,9 @@
         & .cart-widget__text strong {
             position: absolute;
             top: -3px;
-            left: -3px;
+            right: 25px;
 
-            width: 16px;
-            padding: 3px 4px 3px 1px;
+            padding: 3px 5px 3px 1px;
 
             font-size: 10px;
             line-height: 1;
@@ -92,7 +88,7 @@
             text-align: left;
 
             color: get-color('additional', 'ultra');
-            border-radius: 50%;
+            border-radius: 16px;
             background-color: #707070;
         }
     }

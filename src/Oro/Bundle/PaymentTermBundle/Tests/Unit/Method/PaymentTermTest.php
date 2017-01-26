@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Method;
 
 use Doctrine\ORM\EntityManager;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
@@ -231,7 +231,7 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
 
     public function testIsApplicable()
     {
-        $customer = $this->createMock(Account::class);
+        $customer = $this->createMock(Customer::class);
 
         /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
@@ -249,7 +249,7 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
 
     public function testIsApplicableFalse()
     {
-        $customer = $this->createMock(Account::class);
+        $customer = $this->createMock(Customer::class);
 
         /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);

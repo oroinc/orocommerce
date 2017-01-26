@@ -3,15 +3,13 @@
 namespace Oro\Bundle\UPSBundle\Method;
 
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\PricesAwareShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingTrackingAwareInterface;
 use Oro\Bundle\UPSBundle\Cache\ShippingPriceCache;
-use Oro\Bundle\UPSBundle\Entity\ShippingService;
-use Oro\Bundle\UPSBundle\Entity\UPSTransport;
+use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSSettings;
 use Oro\Bundle\UPSBundle\Factory\PriceRequestFactory;
 use Oro\Bundle\UPSBundle\Form\Type\UPSShippingMethodOptionsType;
 use Oro\Bundle\UPSBundle\Provider\UPSTransport as UPSTransportProvider;
@@ -41,30 +39,45 @@ class UPSShippingMethod implements
     /** @var PriceRequestFactory */
     protected $priceRequestFactory;
 
-    /** @var LocalizationHelper */
-    protected $localizationHelper;
-
     /** @var ShippingPriceCache */
     protected $cache;
 
+    /** @var string */
+    private $identifier;
+
+    /** @var string */
+    private $label;
+
+    /** @var array */
+    private $types;
+
+    /** @var UPSSettings */
+    private $transport;
+
     /**
+     * @param string $identifier
+     * @param string $label
+     * @param array $types
+     * @param UPSSettings $transport
      * @param UPSTransportProvider $transportProvider
-     * @param Channel $channel
      * @param PriceRequestFactory $priceRequestFactory
-     * @param LocalizationHelper $localizationHelper
      * @param ShippingPriceCache $cache
      */
     public function __construct(
+        $identifier,
+        $label,
+        array $types,
+        UPSSettings $transport,
         UPSTransportProvider $transportProvider,
-        Channel $channel,
         PriceRequestFactory $priceRequestFactory,
-        LocalizationHelper $localizationHelper,
         ShippingPriceCache $cache
     ) {
+        $this->identifier = $identifier;
+        $this->label = $label;
+        $this->types = $types;
+        $this->transport = $transport;
         $this->transportProvider = $transportProvider;
-        $this->channel = $channel;
         $this->priceRequestFactory = $priceRequestFactory;
-        $this->localizationHelper = $localizationHelper;
         $this->cache = $cache;
     }
 
@@ -81,7 +94,7 @@ class UPSShippingMethod implements
      */
     public function getIdentifier()
     {
-        return static::IDENTIFIER . '_' . $this->channel->getId();
+        return $this->identifier;
     }
 
     /**
@@ -89,9 +102,7 @@ class UPSShippingMethod implements
      */
     public function getLabel()
     {
-        /** @var UPSTransport $transport */
-        $transport = $this->channel->getTransport();
-        return (string)$this->localizationHelper->getLocalizedValue($transport->getLabels());
+        return $this->label;
     }
 
     /**
@@ -99,24 +110,7 @@ class UPSShippingMethod implements
      */
     public function getTypes()
     {
-        $types = [];
-
-        /** @var UPSTransport $transport */
-        $transport = $this->channel->getTransport();
-        /** @var ShippingService[] $shippingServices */
-        $shippingServices = $transport->getApplicableShippingServices();
-        foreach ($shippingServices as $shippingService) {
-            $types[] = new UPSShippingMethodType(
-                $this->getIdentifier(),
-                $transport,
-                $this->transportProvider,
-                $shippingService,
-                $this->priceRequestFactory,
-                $this->cache
-            );
-        }
-
-        return $types;
+        return $this->types;
     }
 
     /**
@@ -198,12 +192,11 @@ class UPSShippingMethod implements
      * @param array $types
      * @return array
      */
-    public function fetchPrices(ShippingContextInterface $context, array $types)
+    private function fetchPrices(ShippingContextInterface $context, array $types)
     {
         $prices = [];
 
-        /** @var UPSTransport $transport */
-        $transport = $this->channel->getTransport();
+        $transport = $this->transport;
         $priceRequest = $this->priceRequestFactory->create($transport, $context, self::REQUEST_OPTION);
         if (!$priceRequest) {
             return $prices;

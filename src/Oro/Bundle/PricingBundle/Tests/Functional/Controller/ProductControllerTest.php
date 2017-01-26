@@ -346,7 +346,7 @@ class ProductControllerTest extends WebTestCase
                     'products-grid[_filter][price_column_usd][unit]'  => 'liter'
                 ],
                 'priceListReference' => 'price_list_1',
-                'expected' => ['product.1']
+                'expected' => ['product-1']
             ],
             'greater equal 10 USD per liter' => [
                 'filter' => [
@@ -355,7 +355,7 @@ class ProductControllerTest extends WebTestCase
                     'products-grid[_filter][price_column_usd][unit]'  => 'liter'
                 ],
                 'priceListReference' => 'price_list_1',
-                'expected' => ['product.1', 'product.2']
+                'expected' => ['product-1', 'product-2']
             ],
             'less 10 USD per liter' => [
                 'filter' => [
@@ -364,7 +364,7 @@ class ProductControllerTest extends WebTestCase
                     'products-grid[_filter][price_column_usd][unit]'  => 'liter'
                 ],
                 'priceListReference' => 'price_list_1',
-                'expected' => ['product.3']
+                'expected' => ['product-3']
             ],
             'greater 10 USD per liter AND less 20 EUR per bottle' => [
                 'filter' => [
@@ -376,7 +376,7 @@ class ProductControllerTest extends WebTestCase
                     'products-grid[_filter][price_column_eur][unit]'  => 'bottle'
                 ],
                 'priceListReference' => 'price_list_1',
-                'expected' => ['product.1']
+                'expected' => ['product-1']
             ],
         ];
     }

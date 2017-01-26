@@ -114,3 +114,11 @@ services:
             - '@request_stack'
         tags:
             - { name: kernel.event_listener, event: line_item.validate, method: onLineItemValidate, priority: 10 }
+
+    oro_inventory.event_listener.unit_visibility.datagrid:
+        parent: oro_product.event_listener.unit_visibility.datagrid_basic
+        arguments:
+            index_0: 'unit'
+            index_2: 'OroProductBundle:ProductUnit:Datagrid/decimalQuantity.html.twig'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.inventory-grid, method: onBuildBefore }

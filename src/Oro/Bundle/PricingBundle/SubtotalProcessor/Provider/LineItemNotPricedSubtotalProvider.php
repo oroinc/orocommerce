@@ -6,7 +6,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 use Doctrine\ORM\EntityManager;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountOwnerAwareInterface;
+use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
@@ -94,7 +94,7 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
     /**
      * Get line items subtotal for current user currency
      *
-     * @param LineItemsNotPricedAwareInterface|AccountOwnerAwareInterface|WebsiteAwareInterface $entity
+     * @param LineItemsNotPricedAwareInterface|CustomerOwnerAwareInterface|WebsiteAwareInterface $entity
      *
      * @return Subtotal
      */
@@ -104,7 +104,7 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
     }
 
     /**
-     * @param LineItemsNotPricedAwareInterface|AccountOwnerAwareInterface|WebsiteAwareInterface $entity
+     * @param LineItemsNotPricedAwareInterface|CustomerOwnerAwareInterface|WebsiteAwareInterface $entity
      * @param string $currency
      * @return Subtotal
      */
@@ -118,7 +118,7 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
 
         $productsPriceCriterias = $this->prepareProductsPriceCriterias($entity, $currency);
         if ($productsPriceCriterias) {
-            $priceList = $this->priceListTreeHandler->getPriceList($entity->getAccount(), $entity->getWebsite());
+            $priceList = $this->priceListTreeHandler->getPriceList($entity->getCustomer(), $entity->getWebsite());
             $prices = $this->productPriceProvider->getMatchedPrices($productsPriceCriterias, $priceList);
             foreach ($prices as $identifier => $price) {
                 if ($price) {
@@ -135,7 +135,7 @@ class LineItemNotPricedSubtotalProvider extends AbstractSubtotalProvider impleme
     }
 
     /**
-     * @param LineItemsNotPricedAwareInterface|AccountOwnerAwareInterface|WebsiteAwareInterface $entity
+     * @param LineItemsNotPricedAwareInterface|CustomerOwnerAwareInterface|WebsiteAwareInterface $entity
      * @param string $currency
      * @return ProductPriceCriteria[]
      */

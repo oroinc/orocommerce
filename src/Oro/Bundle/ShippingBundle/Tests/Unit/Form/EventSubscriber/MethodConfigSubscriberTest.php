@@ -15,16 +15,13 @@ use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
-use Oro\Bundle\ShippingBundle\Form\Type\FlatRateShippingMethodTypeOptionsType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodConfigCollectionType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodConfigType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleDestinationType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodTypeConfigCollectionType;
-use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
-use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodProvider;
-use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodProviderStub;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroup;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroupValidator;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
@@ -83,20 +80,19 @@ class MethodConfigSubscriberTest extends FormIntegrationTestCase
 
     public function testPreSet()
     {
-        $flatRate = new FlatRateShippingMethodProvider();
-        $this->methodRegistry->addProvider($flatRate);
+        $this->methodRegistry->addProvider(new ShippingMethodProviderStub());
+
         $form = $this->factory->create(ShippingMethodsConfigsRuleType::class);
         $shippingRule = new ShippingMethodsConfigsRule();
         $methodConfig = new ShippingMethodConfig();
-        $methodConfig->setMethod(FlatRateShippingMethod::IDENTIFIER);
+        $methodConfig->setMethod(ShippingMethodProviderStub::METHOD_IDENTIFIER);
         $shippingRule->addMethodConfig($methodConfig);
         $form->setData($shippingRule);
         $this->assertCount(1, $shippingRule->getMethodConfigs());
         $this->assertCount(1, $methodConfig->getTypeConfigs());
         $typeConfig = $methodConfig->getTypeConfigs()->first();
-        $this->assertEquals(FlatRateShippingMethodType::IDENTIFIER, $typeConfig->getType());
         $this->assertEquals(
-            FlatRateShippingMethodType::IDENTIFIER,
+            ShippingMethodProviderStub::METHOD_TYPE_IDENTIFIER,
             $typeConfig->getType()
         );
         $children = $form->get('methodConfigs')->get(0)->get('typeConfigs')->all();
@@ -111,23 +107,27 @@ class MethodConfigSubscriberTest extends FormIntegrationTestCase
 
     public function testPreSetWithData()
     {
-        $flatRate = new FlatRateShippingMethodProvider();
-        $this->methodRegistry->addProvider($flatRate);
+        $this->methodRegistry->addProvider(new ShippingMethodProviderStub());
+
         $form = $this->factory->create(ShippingMethodsConfigsRuleType::class);
         $shippingRule = new ShippingMethodsConfigsRule();
         $methodConfig = new ShippingMethodConfig();
-        $methodConfig->setMethod(FlatRateShippingMethod::IDENTIFIER);
+        $methodConfig->setMethod(ShippingMethodProviderStub::METHOD_IDENTIFIER);
         $typeConfig = new ShippingMethodTypeConfig();
-        $typeConfig->setType(FlatRateShippingMethodType::IDENTIFIER);
+        $typeConfig->setType(ShippingMethodProviderStub::METHOD_TYPE_IDENTIFIER);
         $methodConfig->addTypeConfig($typeConfig);
         $shippingRule->addMethodConfig($methodConfig);
         $form->setData($shippingRule);
         $this->assertCount(1, $shippingRule->getMethodConfigs());
         $this->assertCount(1, $methodConfig->getTypeConfigs());
-        $this->assertEquals(FlatRateShippingMethodType::IDENTIFIER, $typeConfig->getType());
+        $this->assertEquals(
+            ShippingMethodProviderStub::METHOD_TYPE_IDENTIFIER,
+            $typeConfig->getType()
+        );
         $children = $form->get('methodConfigs')->get(0)->get('typeConfigs')->all();
         $this->assertCount(1, $children);
         $configsForm = reset($children);
+
         /** @var ShippingMethodTypeConfig $actualConfig */
         $actualConfig = $configsForm->getData();
         $this->assertEquals($typeConfig, $actualConfig);
@@ -137,8 +137,8 @@ class MethodConfigSubscriberTest extends FormIntegrationTestCase
 
     public function testPreSubmitWithData()
     {
-        $flatRate = new FlatRateShippingMethodProvider();
-        $this->methodRegistry->addProvider($flatRate);
+        $this->methodRegistry->addProvider(new ShippingMethodProviderStub());
+
         $form = $this->factory->create(ShippingMethodsConfigsRuleType::class);
         $shippingRule = new ShippingMethodsConfigsRule();
 
@@ -146,10 +146,10 @@ class MethodConfigSubscriberTest extends FormIntegrationTestCase
         $form->submit([
             'methodConfigs' => [
                 [
-                    'method' => FlatRateShippingMethod::IDENTIFIER,
+                    'method' => ShippingMethodProviderStub::METHOD_IDENTIFIER,
                     'typeConfigs' => [
                         [
-                            'type' => FlatRateShippingMethodType::IDENTIFIER,
+                            'type' => ShippingMethodProviderStub::METHOD_TYPE_IDENTIFIER,
                         ]
                     ]
                 ]
@@ -161,7 +161,10 @@ class MethodConfigSubscriberTest extends FormIntegrationTestCase
         $methodConfig = $shippingRule->getMethodConfigs()->first();
         $this->assertCount(1, $methodConfig->getTypeConfigs());
         $typeConfig = $methodConfig->getTypeConfigs()->first();
-        $this->assertEquals(FlatRateShippingMethodType::IDENTIFIER, $typeConfig->getType());
+        $this->assertEquals(
+            ShippingMethodProviderStub::METHOD_TYPE_IDENTIFIER,
+            $typeConfig->getType()
+        );
         $children = $form->get('methodConfigs')->get(0)->get('typeConfigs')->all();
         $this->assertCount(1, $children);
         $configsForm = reset($children);
@@ -221,8 +224,6 @@ class MethodConfigSubscriberTest extends FormIntegrationTestCase
                 [
                     ShippingMethodsConfigsRuleType::class
                     => new ShippingMethodsConfigsRuleType($this->methodRegistry, $translator),
-                    FlatRateShippingMethodTypeOptionsType::class
-                    => new FlatRateShippingMethodTypeOptionsType($roundingService),
                     ShippingMethodConfigCollectionType::class
                     => new ShippingMethodConfigCollectionType($this->methodConfigCollectionSubscriber),
                     ShippingMethodConfigType::class

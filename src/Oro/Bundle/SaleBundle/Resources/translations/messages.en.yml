@@ -5,7 +5,7 @@ oro:
         quote:
             entity_label: 'Quote'
             entity_plural_label: 'Quotes'
-
+            demands.label: 'Quote Demands'
             id.label: 'Numeric ID'
             qid.label: 'Quote #'
             owner.label: 'Owner'
@@ -13,10 +13,12 @@ oro:
             valid_until.label: 'Valid Until'
             quote_products.label: 'Quote Products'
             request.label: 'Request'
-            account.label: 'Customer'
+            customer.label: 'Customer'
             website.label: 'Website'
-            account_user.label: 'Customer User'
+            customer_user.label: 'Customer User'
             locked.label: 'Locked'
+            shipping_method_locked.label: 'Shipping Method Locked'
+            allow_unlisted_shipping_method.label: 'Allow Unlisted Shipping Method'
             not_locked.label: 'Not Locked'
             expired.label: 'Expired'
             not_expired.label: 'Not Expired'
@@ -25,11 +27,21 @@ oro:
             price_list.label: 'Price List'
             expired.label: 'Expired'
             assigned_users.label: 'Assigned To'
-            assigned_account_users.label: 'Assigned Customers'
-            shipping_estimate.label: 'Shipping Estimate'
+            assigned_customer_users.label: 'Assigned Customer Users'
             shipping_estimate_amount.label: 'Shipping Estimate Ammount'
             shipping_estimate_currency.label: 'Shipping Estimate Currency'
+            shipping_cost.label: 'Shipping Cost'
+            estimated_shipping_cost.label: 'Estimated Shipping Cost'
+            overridden_shipping_cost.label: 'Overridden Shipping Cost'
+            estimated_shipping_cost_amount.label: 'Estimated Shipping Cost Amount'
+            overridden_shipping_cost_amount.label: 'Overridden Shipping Cost Amount'
+            shipping_cost_amount.label: 'Shipping Cost Amount'
+            shipping_method.label: 'Shipping Method'
+            shipping_method_type.label: 'Shipping Method Type'
+            currency.label: 'Currency'
             shipping_address.label: 'Shipping Address'
+            customer_status.label: 'Customer Status'
+            internal_status.label: 'Internal Status'
 
             sections:
                 general: 'General'
@@ -76,10 +88,11 @@ oro:
                     choose: Select an address
                     choose_or_create: Select an existing address or enter a new address below
                     manual: Enter other address
+                shipping_options.label: 'Shipping Options'
 
             datagrid:
-                account.label: 'Quotes'
-                account_user.label: 'Quotes'
+                customer.label: 'Quotes'
+                customer_user.label: 'Quotes'
 
         system_configuration:
             fields:
@@ -102,6 +115,7 @@ oro:
             quote_product_requests.label: 'Quote Product Requests'
             request_product_item.label: 'Requested Item'
             comment.label: 'Seller Notes'
+            comment_customer.label: 'Customer Notes'
             comment_account.label: 'Customer Notes'
             product.removed: '{title} - removed'
             product_replacement.removed: '{title} - removed'
@@ -166,8 +180,8 @@ oro:
             entity_label: Quote Address
             entity_plural_label: Quote Addresses
             id.label: ID
-            account_address.label: Customer address
-            account_user_address.label: Customer user address
+            customer_address.label: Customer address
+            customer_user_address.label: Customer user address
             label.label: Label
             first_name.label: First Name
             middle_name.label: Middle Name
@@ -194,8 +208,8 @@ oro:
             total.label: 'Total'
             subtotal.label: 'Subtotal'
             total_currency.label: 'Total Currency'
-            account.label: 'Customer'
-            account_user.label: 'Customer User'
+            customer.label: 'Customer'
+            customer_user.label: 'Customer User'
 
         controller:
             quote:
@@ -214,11 +228,11 @@ oro:
 
         security:
             permission:
-                address_shipping_account_use_any: "[Quote] Use any shipping address from the customer address book"
-                address_shipping_account_user_use_default: "[Quote] Use the default shipping address from the customer user's address book"
-                address_shipping_account_user_use_any: "[Quote] Use any shipping address from the customer user's address book"
+                address_shipping_customer_use_any: "[Quote] Use any shipping address from the customer address book"
+                address_shipping_customer_user_use_default: "[Quote] Use the default shipping address from the customer user's address book"
+                address_shipping_customer_user_use_any: "[Quote] Use any shipping address from the customer user's address book"
                 address_shipping_allow_manual: "[Quote] Enter the shipping address manually"
-                payment_term_account_can_override: "[Quote] Override customer payment term"
+                payment_term_customer_can_override: "[Quote] Override customer payment term"
 
     frontend:
         sale:
@@ -227,12 +241,12 @@ oro:
             quote:
                 entity_plural_label: Quotes
                 qid.label: 'Quote #'
-                account_user.label: 'Owner'
+                customer_user.label: 'Owner'
                 valid_until.label: 'Valid Until'
                 po_number.label: 'PO Number'
                 ship_until.label: 'Do Not Ship Later Than'
                 ship_estimate.label: 'Shipping Estimate'
-                assigned_account_users.label: 'Assigned To'
+                assigned_customer_users.label: 'Assigned To'
                 title.label: 'Quote #%id%'
                 shipping_address.label: 'Shipping Address'
                 sections:
@@ -254,7 +268,7 @@ oro:
                 product_sku.label: 'SKU #:'
                 product_name.label: 'Product'
                 comment.label: 'Seller Notes'
-                comment_account.label: 'My Notes'
+                comment_customer.label: 'My Notes'
                 product_replacement.label: 'Suggested Replacement:'
                 column:
                     product: 'Product'

@@ -5,8 +5,8 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\Traits;
 use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\CustomerBundle\Entity\AbstractDefaultTypedAddress;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 
 trait AddressEntityTestTrait
 {
@@ -14,8 +14,8 @@ trait AddressEntityTestTrait
 
     public function testAddressesCollection()
     {
-        $account = $this->createTestedEntity();
-        static::assertPropertyCollections($account, [['addresses', $this->createAddressEntity()]]);
+        $customer = $this->createTestedEntity();
+        static::assertPropertyCollections($customer, [['addresses', $this->createAddressEntity()]]);
     }
 
     /**
@@ -26,12 +26,12 @@ trait AddressEntityTestTrait
      */
     public function testGetAddressByTypeName($addresses, $searchName, $expectedAddress)
     {
-        $account = $this->createTestedEntity();
+        $customer = $this->createTestedEntity();
         foreach ($addresses as $address) {
-            $account->addAddress($address);
+            $customer->addAddress($address);
         }
 
-        $actualAddress = $account->getAddressByTypeName($searchName);
+        $actualAddress = $customer->getAddressByTypeName($searchName);
         \PHPUnit_Framework_Assert::assertEquals($expectedAddress, $actualAddress);
     }
 
@@ -84,12 +84,12 @@ trait AddressEntityTestTrait
      */
     public function testGetPrimaryAddress($addresses, $expectedAddress)
     {
-        $account = $this->createTestedEntity();
+        $customer = $this->createTestedEntity();
         foreach ($addresses as $address) {
-            $account->addAddress($address);
+            $customer->addAddress($address);
         }
 
-        \PHPUnit_Framework_Assert::assertEquals($expectedAddress, $account->getPrimaryAddress());
+        \PHPUnit_Framework_Assert::assertEquals($expectedAddress, $customer->getPrimaryAddress());
     }
 
     public function getPrimaryAddressProvider()
@@ -118,7 +118,7 @@ trait AddressEntityTestTrait
     /**
      * Return tested entity
      *
-     * @return AccountUser|Account
+     * @return CustomerUser|Customer
      */
     abstract protected function createTestedEntity();
 

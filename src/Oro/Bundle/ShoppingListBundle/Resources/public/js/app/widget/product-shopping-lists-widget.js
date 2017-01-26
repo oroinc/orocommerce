@@ -25,7 +25,10 @@ define(function(require) {
             update_api_accessor: {
                 http_method: 'PUT',
                 route: 'oro_api_shopping_list_frontend_put_line_item'
-            }
+            },
+            singleUnitMode: false,
+            singleUnitModeCodeVisible: false,
+            configDefaultUnit: ''
         }),
 
         messages: {
@@ -64,7 +67,12 @@ define(function(require) {
 
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, _.pick(options, [
-                'dialogOptions', 'template', 'quantityComponentOptions'
+                'dialogOptions',
+                'template',
+                'quantityComponentOptions',
+                'singleUnitMode',
+                'singleUnitModeCodeVisible',
+                'configDefaultUnit'
             ]));
 
             this.initModel(options);
@@ -138,17 +146,29 @@ define(function(require) {
             this.setElement($(this.options.template({
                 shoppingLists: shoppingLists,
                 shoppingListsCollection: this.shoppingListCollection,
-                productUnits: this.model.get('product_units')
+                productUnits: this.model.get('product_units'),
+                unit: this.model.get('unit'),
+                singleUnitMode: this.options.singleUnitMode,
+                singleUnitModeCodeVisible: this.options.singleUnitModeCodeVisible,
+                isProductApplySingleUnitMode: _.bind(this.isProductApplySingleUnitMode, this)
             })));
 
             return ProductShoppingListsWidget.__super__.render.apply(this, arguments);
+        },
+
+        isProductApplySingleUnitMode: function(productUnits) {
+            if (this.options.singleUnitMode && productUnits.length === 1) {
+                return productUnits[0] === this.options.configDefaultUnit;
+            }
+
+            return false;
         },
 
         onLineItemDelete: function(deleteData) {
             var shoppingLists = this.model.get('shopping_lists');
             shoppingLists = _.filter(shoppingLists, function(shoppingList, key) {
                 shoppingList.line_items = _.filter(shoppingList.line_items, function(lineItem) {
-                    return lineItem.id != deleteData.lineItemId;
+                    return lineItem.id !== deleteData.lineItemId;
                 });
                 return !_.isEmpty(shoppingList.line_items);
             }, this);

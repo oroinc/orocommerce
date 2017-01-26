@@ -6,7 +6,7 @@ oro_order:
 oro_order_frontend:
     resource:     "@OroOrderBundle/Controller/Frontend/OrderController.php"
     type:         annotation
-    prefix:       /account/order
+    prefix:       /customer/order
     options:
         frontend: true
 

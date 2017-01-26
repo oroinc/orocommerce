@@ -5,12 +5,9 @@ namespace Oro\Bundle\PaymentTermBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-
+use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
-
-use Oro\Bundle\CustomerBundle\Entity\Repository\AccountGroupRepository;
-use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 
 class LoadPaymentTermToAccountGroupDemoData extends AbstractFixture implements
     DependentFixtureInterface,
@@ -28,7 +25,7 @@ class LoadPaymentTermToAccountGroupDemoData extends AbstractFixture implements
     {
         return [
             'Oro\Bundle\PaymentTermBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData',
-            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadAccountGroupDemoData',
+            'Oro\Bundle\CustomerBundle\Migrations\Data\Demo\ORM\LoadCustomerGroupDemoData',
         ];
     }
 
@@ -48,12 +45,10 @@ class LoadPaymentTermToAccountGroupDemoData extends AbstractFixture implements
         $doctrine = $this->container->get('doctrine');
         $accessor = $this->container->get('oro_payment_term.provider.payment_term_association');
 
-        $accountGroupRepository = $doctrine->getRepository('OroCustomerBundle:AccountGroup');
-
         $paymentTermsAll = $this->getLoadedPaymentTerms();
-        $accountGroupsIterator = $accountGroupRepository->getBatchIterator();
+        $accountGroups = $doctrine->getRepository('OroCustomerBundle:CustomerGroup')->findAll();
 
-        foreach ($accountGroupsIterator as $accountGroup) {
+        foreach ($accountGroups as $accountGroup) {
             /** @var PaymentTerm $paymentTerm */
             $paymentTerm = $paymentTermsAll[array_rand($paymentTermsAll)];
             $accessor->setPaymentTerm($accountGroup, $paymentTerm);

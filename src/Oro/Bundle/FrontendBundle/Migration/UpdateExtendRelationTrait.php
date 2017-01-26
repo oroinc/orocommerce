@@ -26,6 +26,9 @@ trait UpdateExtendRelationTrait
         $configManager->clearCache();
 
         $entityConfigModel = $configManager->getConfigEntityModel($entityFrom);
+        if (!$entityConfigModel) {
+            return;
+        }
         $data = $entityConfigModel->toArray('extend');
 
         $fullRelationFrom = implode(

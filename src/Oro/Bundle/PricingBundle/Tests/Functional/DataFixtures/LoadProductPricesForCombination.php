@@ -10,7 +10,7 @@ class LoadProductPricesForCombination extends LoadProductPrices
     protected $data = [
         [
             'priceList' => 'price_list_1',
-            'product' => 'product.1',
+            'product' => 'product-1',
             'price' => 1,
             'currency' => 'USD',
             'qty' => 1,
@@ -19,7 +19,7 @@ class LoadProductPricesForCombination extends LoadProductPrices
         ],
         [
             'priceList' => 'price_list_1',
-            'product' => 'product.1',
+            'product' => 'product-1',
             'price' => 10,
             'currency' => 'USD',
             'qty' => 9,
@@ -28,7 +28,7 @@ class LoadProductPricesForCombination extends LoadProductPrices
         ],
         [
             'priceList' => 'price_list_1',
-            'product' => 'product.2',
+            'product' => 'product-2',
             'price' => 1,
             'currency' => 'USD',
             'qty' => 1,
@@ -37,7 +37,7 @@ class LoadProductPricesForCombination extends LoadProductPrices
         ],
         [
             'priceList' => 'price_list_2',
-            'product' => 'product.1',
+            'product' => 'product-1',
             'price' => 2,
             'currency' => 'USD',
             'qty' => 1,
@@ -46,7 +46,7 @@ class LoadProductPricesForCombination extends LoadProductPrices
         ],
         [
             'priceList' => 'price_list_2',
-            'product' => 'product.1',
+            'product' => 'product-1',
             'price' => 3,
             'currency' => 'USD',
             'qty' => 1,
@@ -55,7 +55,7 @@ class LoadProductPricesForCombination extends LoadProductPrices
         ],
         [
             'priceList' => 'price_list_3',
-            'product' => 'product.1',
+            'product' => 'product-1',
             'price' => 15,
             'currency' => 'USD',
             'qty' => 10,
@@ -64,7 +64,7 @@ class LoadProductPricesForCombination extends LoadProductPrices
         ],
         [
             'priceList' => 'price_list_3',
-            'product' => 'product.2',
+            'product' => 'product-2',
             'price' => 10,
             'currency' => 'USD',
             'qty' => 10,
@@ -73,7 +73,7 @@ class LoadProductPricesForCombination extends LoadProductPrices
         ],
         [
             'priceList' => 'price_list_2',
-            'product' => 'product.1',
+            'product' => 'product-1',
             'price' => 2,
             'currency' => 'EUR',
             'qty' => 1,

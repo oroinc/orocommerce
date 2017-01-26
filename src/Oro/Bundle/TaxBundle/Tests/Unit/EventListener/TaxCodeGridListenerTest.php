@@ -11,8 +11,8 @@ class TaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
 {
     public function testOnBuildBefore()
     {
-        $gridConfig = DatagridConfiguration::create(['name' => 'accounts-grid']);
-        $gridConfig->offsetSetByPath('[source][query][from]', [['alias' => 'account']]);
+        $gridConfig = DatagridConfiguration::create(['name' => 'customers-grid']);
+        $gridConfig->offsetSetByPath('[source][query][from]', [['alias' => 'customer']]);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|DatagridInterface $dataGrid */
         $dataGrid = $this->createMock('Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface');
@@ -25,7 +25,7 @@ class TaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
             ->with('Oro\Bundle\TaxBundle\Entity\AbstractTaxCode')->willReturn($metadata);
 
         $metadata->expects($this->once())->method('getAssociationsByTargetClass')->with('\stdClass')
-            ->willReturn(['stdClass' => ['fieldName' => 'accounts']]);
+            ->willReturn(['stdClass' => ['fieldName' => 'customers']]);
 
         $this->listener->onBuildBefore($event);
 
@@ -40,17 +40,17 @@ class TaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
                                     'join' => 'Oro\Bundle\TaxBundle\Entity\AbstractTaxCode',
                                     'alias' => 'taxCodes',
                                     'conditionType' => 'WITH',
-                                    'condition' => 'account MEMBER OF taxCodes.accounts',
+                                    'condition' => 'customer MEMBER OF taxCodes.customers',
                                 ],
                             ],
                         ],
-                        'from' => [['alias' => 'account']],
+                        'from' => [['alias' => 'customer']],
                     ],
                 ],
                 'columns' => ['taxCode' => ['label' => 'oro.tax.taxcode.label']],
                 'sorters' => ['columns' => ['taxCode' => ['data_name' => 'taxCode']]],
                 'filters' => ['columns' => ['taxCode' => ['data_name' => 'taxCode', 'type' => 'string']]],
-                'name' => 'accounts-grid',
+                'name' => 'customers-grid',
             ],
             $gridConfig->toArray()
         );
@@ -58,7 +58,7 @@ class TaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
 
     /**
      * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage [source][query][from] is missing for grid "std-grid"
+     * @expectedExceptionMessage A root entity is missing for grid "std-grid"
      */
     public function testOnBuildBeforeWithoutFromPart()
     {

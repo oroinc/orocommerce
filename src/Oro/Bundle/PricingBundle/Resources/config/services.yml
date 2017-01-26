@@ -4,22 +4,21 @@ parameters:
     oro_pricing.entity.price_list_schedule.class: Oro\Bundle\PricingBundle\Entity\PriceListSchedule
     oro_pricing.entity.combined_price_list.class: Oro\Bundle\PricingBundle\Entity\CombinedPriceList
 
-    oro_pricing.entity.price_list_to_account.class: Oro\Bundle\PricingBundle\Entity\PriceListToAccount
-    oro_pricing.entity.price_list_to_account_group.class: Oro\Bundle\PricingBundle\Entity\PriceListToAccountGroup
+    oro_pricing.entity.price_list_to_customer.class: Oro\Bundle\PricingBundle\Entity\PriceListToCustomer
+    oro_pricing.entity.price_list_to_customer_group.class: Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup
     oro_pricing.entity.price_list_to_website.class: Oro\Bundle\PricingBundle\Entity\PriceListToWebsite
 
-    oro_pricing.entity.price_list_account_fallback.class: Oro\Bundle\PricingBundle\Entity\PriceListAccountFallback
-    oro_pricing.entity.price_list_account_group_fallback.class: Oro\Bundle\PricingBundle\Entity\PriceListAccountGroupFallback
+    oro_pricing.entity.price_list_customer_fallback.class: Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback
+    oro_pricing.entity.price_list_customer_group_fallback.class: Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback
     oro_pricing.entity.price_list_website_fallback.class: Oro\Bundle\PricingBundle\Entity\PriceListWebsiteFallback
 
-    oro_pricing.entity.combined_price_list_to_account.class: Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccount
-    oro_pricing.entity.combined_price_list_to_account_group.class: Oro\Bundle\PricingBundle\Entity\CombinedPriceListToAccountGroup
+    oro_pricing.entity.combined_price_list_to_customer.class: Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer
+    oro_pricing.entity.combined_price_list_to_customer_group.class: Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomerGroup
     oro_pricing.entity.combined_price_list_to_website.class: Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite
 
     oro_pricing.entity.product_price.class: Oro\Bundle\PricingBundle\Entity\ProductPrice
     oro_pricing.entity.combined_product_price.class: Oro\Bundle\PricingBundle\Entity\CombinedProductPrice
     oro_pricing.entity.price_list_currency.class: Oro\Bundle\PricingBundle\Entity\PriceListCurrency
-    oro_pricing.entity.minimal_product_price.class: Oro\Bundle\PricingBundle\Entity\MinimalProductPrice
     oro_pricing.entity.price_attribute_price_list.class: Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList
     oro_pricing.entity.price_attribute_currency.class: Oro\Bundle\PricingBundle\Entity\PriceAttributeCurrency
     oro_pricing.entity.price_attribute_product_price.class: Oro\Bundle\PricingBundle\Entity\PriceAttributeProductPrice
@@ -71,7 +70,7 @@ services:
             - '@security.token_storage'
             - '@oro_currency.config.currency'
             - '@oro_website.manager'
-            - '@oro_account_user.manager'
+            - '@oro_customer_user.manager'
 
     oro_pricing.provider.abstract_product_price:
         class: 'Oro\Bundle\PricingBundle\Provider\ProductPriceProvider'
@@ -128,8 +127,8 @@ services:
             - '@oro_config.global'
             - '@oro_pricing.model.combined_price_list_trigger_handler'
         calls:
-            - [addRelationClass, ['%oro_pricing.entity.combined_price_list_to_account.class%']]
-            - [addRelationClass, ['%oro_pricing.entity.combined_price_list_to_account_group.class%']]
+            - [addRelationClass, ['%oro_pricing.entity.combined_price_list_to_customer.class%']]
+            - [addRelationClass, ['%oro_pricing.entity.combined_price_list_to_customer_group.class%']]
             - [addRelationClass, ['%oro_pricing.entity.combined_price_list_to_website.class%']]
 
     oro_pricing.builder.combined_price_list_garbage_collector:
@@ -157,29 +156,29 @@ services:
         calls:
             - [setCombinedPriceListClassName, ['%oro_pricing.entity.combined_price_list.class%']]
 
-    oro_pricing.builder.account_combined_price_list_builder:
-        class: 'Oro\Bundle\PricingBundle\Builder\AccountCombinedPriceListsBuilder'
+    oro_pricing.builder.customer_combined_price_list_builder:
+        class: 'Oro\Bundle\PricingBundle\Builder\CustomerCombinedPriceListsBuilder'
 
         parent: oro_pricing.builder.abstract_combined_price_list_builder
         calls:
-            - [setPriceListToEntityClassName, ['%oro_pricing.entity.price_list_to_account.class%']]
-            - [setCombinedPriceListToEntityClassName, ['%oro_pricing.entity.combined_price_list_to_account.class%']]
-            - [setFallbackClassName, ['%oro_pricing.entity.price_list_account_fallback.class%']]
+            - [setPriceListToEntityClassName, ['%oro_pricing.entity.price_list_to_customer.class%']]
+            - [setCombinedPriceListToEntityClassName, ['%oro_pricing.entity.combined_price_list_to_customer.class%']]
+            - [setFallbackClassName, ['%oro_pricing.entity.price_list_customer_fallback.class%']]
 
-    oro_pricing.builder.account_group_combined_price_list_builder:
-        class: 'Oro\Bundle\PricingBundle\Builder\AccountGroupCombinedPriceListsBuilder'
+    oro_pricing.builder.customer_group_combined_price_list_builder:
+        class: 'Oro\Bundle\PricingBundle\Builder\CustomerGroupCombinedPriceListsBuilder'
         parent: oro_pricing.builder.abstract_combined_price_list_builder
         calls:
-            - [setAccountCombinedPriceListsBuilder,  ['@oro_pricing.builder.account_combined_price_list_builder']]
-            - [setPriceListToEntityClassName, ['%oro_pricing.entity.price_list_to_account_group.class%']]
-            - [setCombinedPriceListToEntityClassName, ['%oro_pricing.entity.combined_price_list_to_account_group.class%']]
-            - [setFallbackClassName, ['%oro_pricing.entity.price_list_account_group_fallback.class%']]
+            - [setCustomerCombinedPriceListsBuilder,  ['@oro_pricing.builder.customer_combined_price_list_builder']]
+            - [setPriceListToEntityClassName, ['%oro_pricing.entity.price_list_to_customer_group.class%']]
+            - [setCombinedPriceListToEntityClassName, ['%oro_pricing.entity.combined_price_list_to_customer_group.class%']]
+            - [setFallbackClassName, ['%oro_pricing.entity.price_list_customer_group_fallback.class%']]
 
     oro_pricing.builder.website_combined_price_list_builder:
         class: 'Oro\Bundle\PricingBundle\Builder\WebsiteCombinedPriceListsBuilder'
         parent: oro_pricing.builder.abstract_combined_price_list_builder
         calls:
-            - [setAccountGroupCombinedPriceListsBuilder,  ['@oro_pricing.builder.account_group_combined_price_list_builder']]
+            - [setCustomerGroupCombinedPriceListsBuilder,  ['@oro_pricing.builder.customer_group_combined_price_list_builder']]
             - [setPriceListToEntityClassName, ['%oro_pricing.entity.price_list_to_website.class%']]
             - [setCombinedPriceListToEntityClassName, ['%oro_pricing.entity.combined_price_list_to_website.class%']]
             - [setFallbackClassName, ['%oro_pricing.entity.price_list_website_fallback.class%']]
@@ -225,35 +224,35 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-edit, method: onProductEdit }
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-create-step-two, method: onProductEdit }
 
-    oro_pricing.event_listener.account_form_view:
-        class: 'Oro\Bundle\PricingBundle\EventListener\AccountFormViewListener'
+    oro_pricing.event_listener.customer_form_view:
+        class: 'Oro\Bundle\PricingBundle\EventListener\CustomerFormViewListener'
         arguments:
             - '@request_stack'
             - '@translator'
             - '@oro_entity.doctrine_helper'
             - '@oro_website.website.provider'
         tags:
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-view, method: onAccountView }
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-edit, method: onEntityEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-view, method: onCustomerView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-edit, method: onEntityEdit }
 
-    oro_pricing.event_listener.account_group_form_view:
-        class: 'Oro\Bundle\PricingBundle\EventListener\AccountGroupFormViewListener'
+    oro_pricing.event_listener.customer_group_form_view:
+        class: 'Oro\Bundle\PricingBundle\EventListener\CustomerGroupFormViewListener'
         arguments:
             - '@request_stack'
             - '@translator'
             - '@oro_entity.doctrine_helper'
             - '@oro_website.website.provider'
         tags:
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-view, method: onAccountGroupView }
-            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.account-group-edit, method: onEntityEdit }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-group-view, method: onCustomerGroupView }
+            - { name: kernel.event_listener, event: oro_ui.scroll_data.before.customer-group-edit, method: onEntityEdit }
 
 
     oro_pricing.event_listener.datagrid:
         class: 'Oro\Bundle\PricingBundle\EventListener\DatagridListener'
         tags:
 # TODO: BB-3826 add correct grid columns
-#            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-accounts-grid, method: onBuildBeforeAccounts }
-#            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-groups-grid, method: onBuildBeforeAccountGroups }
+#            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-customers-grid, method: onBuildBeforeCustomers }
+#            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-groups-grid, method: onBuildBeforeCustomerGroups }
 
     oro_pricing.price_list_change_trigger_factory:
         class: 'Oro\Bundle\PricingBundle\Model\PriceListRelationTriggerFactory'
@@ -314,19 +313,19 @@ services:
         arguments:
             - '@doctrine'
 
-    oro_pricing.event_listener.account_accounts_grid:
-        class: 'Oro\Bundle\PricingBundle\EventListener\AccountDataGridListener'
+    oro_pricing.event_listener.customer_customers_grid:
+        class: 'Oro\Bundle\PricingBundle\EventListener\CustomerDataGridListener'
         parent: oro_pricing.event_listener.abstract_price_list_relation_data_grid_listener
         tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-accounts-grid, method: onBuildBefore }
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.account-accounts-grid, method: onResultAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-customers-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.customer-customers-grid, method: onResultAfter }
 
-    oro_pricing.event_listener.account_groups_grid:
-        class: 'Oro\Bundle\PricingBundle\EventListener\AccountGroupDataGridListener'
+    oro_pricing.event_listener.customer_groups_grid:
+        class: 'Oro\Bundle\PricingBundle\EventListener\CustomerGroupDataGridListener'
         parent: oro_pricing.event_listener.abstract_price_list_relation_data_grid_listener
         tags:
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.account-groups-grid, method: onBuildBefore }
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.account-groups-grid, method: onResultAfter }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-groups-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.customer-groups-grid, method: onResultAfter }
 
     oro_pricing.event_listener.price_list_datagrid:
         class: 'Oro\Bundle\PricingBundle\EventListener\PriceListDatagridListener'
@@ -380,7 +379,7 @@ services:
             - '@oro_security.security_facade'
             - '@oro_pricing.model.price_list_tree_handler'
             - '@doctrine'
-            - '@oro_customer.provider.account_user_relations_provider'
+            - '@oro_customer.provider.customer_user_relations_provider'
             - '@oro_website.manager'
 
     oro_pricing.model.price_list_tree_handler:
@@ -681,25 +680,25 @@ services:
             - '@oro_entity.doctrine_helper'
             - '@property_accessor'
 
-    oro_pricing.entity_listener.account_group:
-        class: 'Oro\Bundle\PricingBundle\EventListener\AccountGroupListener'
+    oro_pricing.entity_listener.customer_group:
+        class: 'Oro\Bundle\PricingBundle\EventListener\CustomerGroupListener'
         arguments:
             - '@oro_pricing.price_list_with_priority_collection.handler'
             - '@oro_entity.doctrine_helper'
             - '@oro_pricing.price_list_relation_trigger_handler'
         tags:
-            - { name: kernel.event_listener, event: oro_customer.account_group.before_flush, method: onPostSubmit }
-            - { name: kernel.event_listener, event: oro_customer.account_group.pre_remove, method: onGroupRemove }
+            - { name: kernel.event_listener, event: oro_customer.customer_group.before_flush, method: onPostSubmit }
+            - { name: kernel.event_listener, event: oro_customer.customer_group.pre_remove, method: onGroupRemove }
 
-    oro_pricing.entity_listener.account:
-        class: 'Oro\Bundle\PricingBundle\EventListener\AccountListener'
+    oro_pricing.entity_listener.customer:
+        class: 'Oro\Bundle\PricingBundle\EventListener\CustomerListener'
         arguments:
             - '@oro_pricing.price_list_with_priority_collection.handler'
             - '@oro_entity.doctrine_helper'
             - '@oro_pricing.price_list_relation_trigger_handler'
         tags:
-            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_account_type, method: onPostSubmit }
-            - { name: kernel.event_listener, event: oro_customer.account.on_account_group_change, method: onAccountGroupChange }
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_entity_flush.oro_customer_type, method: onPostSubmit }
+            - { name: kernel.event_listener, event: oro_customer.customer.on_customer_group_change, method: onCustomerGroupChange }
 
     oro_pricing.subtotal_processor.handler.request_handler:
         class: 'Oro\Bundle\PricingBundle\SubtotalProcessor\Handler\RequestHandler'
@@ -859,8 +858,8 @@ services:
         arguments:
             - '@oro_pricing.builder.combined_price_list_builder'
             - '@oro_pricing.builder.website_combined_price_list_builder'
-            - '@oro_pricing.builder.account_group_combined_price_list_builder'
-            - '@oro_pricing.builder.account_combined_price_list_builder'
+            - '@oro_pricing.builder.customer_group_combined_price_list_builder'
+            - '@oro_pricing.builder.customer_combined_price_list_builder'
             - '@event_dispatcher'
             - '@logger'
             - '@oro_pricing.price_list_change_trigger_factory'
@@ -938,3 +937,12 @@ services:
         arguments:
             - '@doctrine'
             - '@event_dispatcher'
+
+    oro_pricing.layout.attribute_block_type_mapper:
+        class: 'Oro\Bundle\PricingBundle\Layout\Mapper\AttributeBlockTypeMapper'
+        arguments:
+            - '@doctrine'
+        calls:
+            - [addBlockTypeByFieldName, ['productPriceAttributesPrices', 'attribute_prices']]
+        tags:
+            - { name: oro_entity_config.layout.attribute_block_type_mapper }

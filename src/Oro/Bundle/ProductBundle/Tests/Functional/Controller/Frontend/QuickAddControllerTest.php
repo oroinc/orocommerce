@@ -8,7 +8,7 @@ use Symfony\Component\DomCrawler\Form;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadFrontendProductVisibilityData;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -21,14 +21,14 @@ abstract class QuickAddControllerTest extends WebTestCase
     const VALIDATION_ERRORS          = 'Errors';
     const VALIDATION_RESULT_SELECTOR = 'div.validation-info table tbody tr';
     const VALIDATION_ERRORS_SELECTOR = 'div.import-errors ol li';
-    const VALIDATION_ERROR_NOT_FOUND = 'Item number %s does not found.';
+    const VALIDATION_ERROR_NOT_FOUND = 'Item number %s not found.';
     const VALIDATION_ERROR_MALFORMED = 'Row #%d has invalid format.';
 
     protected function setUp()
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
+            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
 
         $this->loadFixtures(
@@ -51,17 +51,19 @@ abstract class QuickAddControllerTest extends WebTestCase
     public function testCopyPasteAction($processorName, $routerName, array $routerParams, $expectedMessage)
     {
         $example = [
-            LoadProductData::PRODUCT_1 . ", 1",
-            LoadProductData::PRODUCT_2 . ",     2",
-            LoadProductData::PRODUCT_3 . "\t3",
+            "10, 5",
+            ucfirst(LoadProductData::PRODUCT_1) . ", 1",
+            ucwords(LoadProductData::PRODUCT_2) . ",     2",
+            strtoupper(LoadProductData::PRODUCT_3) . "\t3",
             "not-existing-product\t  4",
         ];
 
         $expectedValidationResult = [
-            self::VALIDATION_TOTAL_ROWS => 4,
+            self::VALIDATION_TOTAL_ROWS => 5,
             self::VALIDATION_VALID_ROWS => 3,
-            self::VALIDATION_ERROR_ROWS => 1,
+            self::VALIDATION_ERROR_ROWS => 2,
             self::VALIDATION_ERRORS     => [
+                sprintf(self::VALIDATION_ERROR_NOT_FOUND, '10'),
                 sprintf(self::VALIDATION_ERROR_NOT_FOUND, 'not-existing-product'),
             ]
         ];

@@ -1,13 +1,13 @@
 define(function(require) {
 'use strict';
 
-    var PopupGalleryWidget;
-    var BaseComponent = require('oroui/js/app/components/base/component');
-    var $ = require('jquery');
-    var _ = require('underscore');
-    require('slick');
+var PopupGalleryWidget;
+var AbstractWidget = require('oroui/js/widget/abstract-widget');
+var $ = require('jquery');
+var _ = require('underscore');
+require('slick');
 
-    PopupGalleryWidget = BaseComponent.extend({
+PopupGalleryWidget = AbstractWidget.extend({
         /**
          * @property {Object}
          */
@@ -30,6 +30,7 @@ define(function(require) {
                 asNavFor: null,
                 centerMode: true,
                 focusOnSelect: true,
+                lazyLoad: 'progressive',
                 arrows: true,
                 dots: false,
                 variableWidth: true,
@@ -69,13 +70,13 @@ define(function(require) {
                 self.renderThumbnails();
                 self.setDependentSlide();
                 $('body').addClass('gallery-popup-opened');
-                self.$el.addClass('show-gallery-popup');
+                self.$el.addClass('popup-gallery-widget--opened');
 
                 self.onOpen();
             });
             $('[data-trigger-gallery-close]').on('click', function() {
                 $('body').removeClass('gallery-popup-opened');
-                self.$el.removeClass('show-gallery-popup');
+                self.$el.removeClass('popup-gallery-widget--opened');
 
                 setTimeout(function() {
                     self.setDependentSlide();
@@ -164,5 +165,5 @@ define(function(require) {
         }
     });
 
-    return PopupGalleryWidget;
+return PopupGalleryWidget;
 });

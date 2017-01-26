@@ -5,7 +5,6 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
@@ -13,10 +12,11 @@ use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
@@ -76,13 +76,13 @@ class ProductPriceRepositoryTest extends WebTestCase
         return [
             [
                 LoadPriceLists::PRICE_LIST_1,
-                'product.1',
+                'product-1',
                 null,
                 ['liter', 'bottle']
             ],
             [
                 LoadPriceLists::PRICE_LIST_1,
-                'product.1',
+                'product-1',
                 'EUR',
                 ['bottle']
             ]
@@ -129,28 +129,28 @@ class ProductPriceRepositoryTest extends WebTestCase
             [
                 'priceList' => LoadPriceLists::PRICE_LIST_1,
                 'products' => [
-                    'product.1',
-                    'product.2',
-                    'product.3'
+                    'product-1',
+                    'product-2',
+                    'product-3'
                 ],
                 'currency' => 'USD',
                 'expected' => [
-                    'product.1' => ['liter'],
-                    'product.2' => ['liter'],
-                    'product.3' => ['liter'],
+                    'product-1' => ['liter'],
+                    'product-2' => ['liter'],
+                    'product-3' => ['liter'],
                 ]
             ],
             [
                 'priceList' => LoadPriceLists::PRICE_LIST_1,
                 'products' => [
-                    'product.1',
-                    'product.2',
-                    'product.3'
+                    'product-1',
+                    'product-2',
+                    'product-3'
                 ],
                 'currency' => 'EUR',
                 'expected' => [
-                    'product.1' => ['bottle'],
-                    'product.2' => ['liter']
+                    'product-1' => ['bottle'],
+                    'product-2' => ['liter']
                 ]
             ]
         ];
@@ -184,7 +184,7 @@ class ProductPriceRepositoryTest extends WebTestCase
     {
         return [
             'first product' => [
-                'productReference' => 'product.1',
+                'productReference' => 'product-1',
                 'priceReferences' => [
                     'product_price.10',
                     'product_price.2',
@@ -194,7 +194,7 @@ class ProductPriceRepositoryTest extends WebTestCase
                 ],
             ],
             'second product' => [
-                'productReference' => 'product.2',
+                'productReference' => 'product-2',
                 'priceReferences' => [
                     'product_price.13',
                     'product_price.11',
@@ -281,53 +281,53 @@ class ProductPriceRepositoryTest extends WebTestCase
             ],
             'not existing price list' => [
                 'priceList' => null,
-                'products' => ['product.1'],
+                'products' => ['product-1'],
                 'expectedPrices' => [],
             ],
             'not existing price list without tier prices' => [
                 'priceList' => null,
-                'products' => ['product.1'],
+                'products' => ['product-1'],
                 'expectedPrices' => [],
             ],
             'first valid set' => [
                 'priceList' => LoadPriceLists::PRICE_LIST_1,
-                'products' => ['product.1'],
+                'products' => ['product-1'],
                 'expectedPrices' => ['product_price.10', 'product_price.2', 'product_price.7', 'product_price.1'],
             ],
             'first valid set without tier prices' => [
                 'priceList' => LoadPriceLists::PRICE_LIST_1,
-                'products' => ['product.1'],
+                'products' => ['product-1'],
                 'expectedPrices' => ['product_price.10', 'product_price.7'],
                 'getTierPrices' => false
             ],
             'first valid set without tier prices with currency' => [
                 'priceList' => LoadPriceLists::PRICE_LIST_1,
-                'products' => ['product.1'],
+                'products' => ['product-1'],
                 'expectedPrices' => ['product_price.10'],
                 'getTierPrices' => false,
                 'currency' => 'EUR'
             ],
             'second valid set' => [
                 'priceList' => LoadPriceLists::PRICE_LIST_2,
-                'products' => ['product.1', 'product.2'],
+                'products' => ['product-1', 'product-2'],
                 'expectedPrices' => ['product_price.5', 'product_price.12', 'product_price.4', 'product_price.6'],
             ],
             'second valid set without tier prices' => [
                 'priceList' => LoadPriceLists::PRICE_LIST_2,
-                'products' => ['product.1', 'product.2'],
+                'products' => ['product-1', 'product-2'],
                 'expectedPrices' => [],
                 'getTierPrices' => false
             ],
             'second valid set with currency' => [
                 'priceList' => LoadPriceLists::PRICE_LIST_2,
-                'products' => ['product.1', 'product.2'],
+                'products' => ['product-1', 'product-2'],
                 'expectedPrices' => ['product_price.5', 'product_price.4', 'product_price.6'],
                 'getTierPrices' => true,
                 'currency' => 'USD'
             ],
             'first valid set with order by currency, unit and quantity' => [
                 'priceList' => LoadPriceLists::PRICE_LIST_2,
-                'products' => ['product.1', 'product.2'],
+                'products' => ['product-1', 'product-2'],
                 'expectedPrices' => ['product_price.5', 'product_price.4', 'product_price.6', 'product_price.12'],
                 'getTierPrices' => true,
                 'currency' => null,
@@ -411,7 +411,7 @@ class ProductPriceRepositoryTest extends WebTestCase
             ],
             'first valid set' => [
                 'priceList' => LoadPriceLists::PRICE_LIST_1,
-                'products' => ['product.1', 'product.2'],
+                'products' => ['product-1', 'product-2'],
                 'productUnits' => ['product_unit.liter'],
                 'expectedPrices' => [
                     'product_price.7',
@@ -423,20 +423,20 @@ class ProductPriceRepositoryTest extends WebTestCase
             ],
             'first valid set with currency' => [
                 'priceList' => LoadPriceLists::PRICE_LIST_1,
-                'products' => ['product.1', 'product.2'],
+                'products' => ['product-1', 'product-2'],
                 'productUnits' => ['product_unit.liter'],
                 'expectedPrices' => ['product_price.11'],
                 'currencies' => ['EUR']
             ],
             'second valid set' => [
                 'priceList' => LoadPriceLists::PRICE_LIST_2,
-                'products' => ['product.2'],
+                'products' => ['product-2'],
                 'productUnits' => ['product_unit.bottle'],
                 'expectedPrices' => ['product_price.5', 'product_price.12'],
             ],
             'second valid set with currency' => [
                 'priceList' => LoadPriceLists::PRICE_LIST_2,
-                'products' => ['product.2'],
+                'products' => ['product-2'],
                 'productUnits' => ['product_unit.bottle'],
                 'expectedPrices' => ['product_price.5'],
                 'currencies' => ['USD']
@@ -447,9 +447,9 @@ class ProductPriceRepositoryTest extends WebTestCase
     public function testDeleteByProductUnit()
     {
         /** @var Product $product */
-        $product = $this->getReference('product.1');
+        $product = $this->getReference('product-1');
         /** @var Product $notRemovedProduct */
-        $notRemovedProduct = $this->getReference('product.2');
+        $notRemovedProduct = $this->getReference('product-2');
         /** @var ProductUnit $unit */
         $unit = $this->getReference('product_unit.liter');
         /** @var ProductUnit $unit */
@@ -499,7 +499,7 @@ class ProductPriceRepositoryTest extends WebTestCase
         $price->setCurrency('UAH');
 
         /** @var Product $product */
-        $product = $this->getReference('product.1');
+        $product = $this->getReference('product-1');
 
         /** @var ProductUnit $unit */
         $unit = $this->getReference('product_unit.liter');
@@ -700,7 +700,7 @@ class ProductPriceRepositoryTest extends WebTestCase
             ->get('doctrine')
             ->getRepository('OroPricingBundle:ProductPrice');
         return (int)$repository->createQueryBuilder('pp')
-            ->select('count(pp.id)')
+            ->select('COUNT(pp.id)')
             ->getQuery()
             ->getSingleScalarResult();
     }

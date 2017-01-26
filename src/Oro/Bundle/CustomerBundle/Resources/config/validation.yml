@@ -1,4 +1,4 @@
-Oro\Bundle\CustomerBundle\Entity\Account:
+Oro\Bundle\CustomerBundle\Entity\Customer:
     properties:
         name:
             - NotBlank: ~
@@ -22,12 +22,12 @@ Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
         - Callback:
             methods: [isRegionValid]
 
-Oro\Bundle\CustomerBundle\Entity\AccountGroup:
+Oro\Bundle\CustomerBundle\Entity\CustomerGroup:
     properties:
         name:
             - NotBlank: ~
 
-Oro\Bundle\CustomerBundle\Entity\AccountUser:
+Oro\Bundle\CustomerBundle\Entity\CustomerUser:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: username
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: email
@@ -47,9 +47,9 @@ Oro\Bundle\CustomerBundle\Entity\AccountUser:
                 min: 6
                 max: 255
         plainPassword:
-            - NotBlank: { groups: [create] }
-            - Length:
-                min: 2
+            - NotBlank:
+                groups: [create]
+            - Oro\Bundle\UserBundle\Validator\Constraints\PasswordComplexity: ~
         username:
             - NotBlank: ~
             - Length:
@@ -61,9 +61,7 @@ Oro\Bundle\CustomerBundle\Entity\AccountUser:
                 minMessage: "You must select at least {{ limit }} role"
         birthday:
             - Date: ~
-        account:
-            - NotBlank: ~
-        organization:
+        customer:
             - NotBlank: ~
         addresses:
             - Oro\Bundle\FormBundle\Validator\Constraints\ContainsPrimary:
@@ -85,10 +83,10 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddress:
         - Callback:
             methods: [isRegionValid]
 
-Oro\Bundle\CustomerBundle\Entity\AccountUserRole:
+Oro\Bundle\CustomerBundle\Entity\CustomerUserRole:
     constraints:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
-            fields: [label, account]
+            fields: [label, customer]
             message: "Role with this name already exists"
             ignoreNull: false
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: role
