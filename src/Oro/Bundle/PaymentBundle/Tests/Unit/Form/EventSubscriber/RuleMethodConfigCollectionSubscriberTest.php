@@ -18,6 +18,7 @@ use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigCollectionType;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigType;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationType;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleType;
+use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistry;
 use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistry;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
@@ -42,7 +43,7 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
 
     public function setUp()
     {
-        $this->methodRegistry = new PaymentMethodProvidersRegistryInterface();
+        $this->methodRegistry = new PaymentMethodProvidersRegistry();
         $this->subscriber = new RuleMethodConfigCollectionSubscriberProxy();
         parent::setUp();
         $this->subscriber->setFactory($this->factory)->setMethodRegistry($this->methodRegistry);

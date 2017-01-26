@@ -46,6 +46,11 @@ class MoneyOrderConfigTest extends AbstractPaymentSystemConfigTestCase
         $this->assertSame($returnValue, $this->config->getSendTo());
     }
 
+    public function testGetPaymentMethodIdentifier()
+    {
+        $this->assertSame('money_order', $this->config->getPaymentMethodIdentifier());
+    }
+
     /**
      * {@inheritdoc}
      */

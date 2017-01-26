@@ -46,14 +46,25 @@ abstract class AbstractPaymentSystemConfigTestCase extends \PHPUnit_Framework_Te
     public function testGetLabel()
     {
         $returnValue = 'test label';
+        $this->setConfig($this->once(), $this->getConfigPrefix() . 'label', $returnValue);
         $this->assertSame($returnValue, $this->config->getLabel());
     }
 
     public function testGetShortLabel()
     {
         $returnValue = 'test short label';
+        $this->setConfig($this->once(), $this->getConfigPrefix() . 'short_label', $returnValue);
         $this->assertSame($returnValue, $this->config->getShortLabel());
     }
+
+    public function testGetAdminLabel()
+    {
+        $returnValue = 'test label';
+        $this->setConfig($this->once(), $this->getConfigPrefix() . 'label', $returnValue);
+        $this->assertSame($returnValue, $this->config->getLabel());
+    }
+
+    abstract function testGetPaymentMethodIdentifier();
 
     /**
      * {@inheritdoc}

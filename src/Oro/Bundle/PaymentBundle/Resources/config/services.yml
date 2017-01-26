@@ -147,13 +147,6 @@ services:
         arguments:
             - '@property_accessor'
 
-    oro_payment.provider.payment_context:
-        class: 'Oro\Bundle\PaymentBundle\Provider\PaymentContextProvider'
-        public: false
-        arguments:
-            - '@oro_payment.provider.address_extractor'
-            - '@oro_pricing.user_currency_manager'
-
     oro_payment.condition.payment_method_supports:
         class: 'Oro\Bundle\PaymentBundle\Condition\PaymentMethodSupports'
         arguments:
@@ -197,7 +190,7 @@ services:
             - { name: oro_action.condition, alias: 'require_payment_redirect' }
 
     oro_payment.payment_method_provider.registry:
-        class: 'Oro\Bundle\PaymentBundle\Method\PaymentMethodProvidersRegistry'
+        class: 'Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistry'
         public: false
 
     oro_payment.payment_method_view_provider.registry:
