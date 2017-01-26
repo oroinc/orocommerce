@@ -20,8 +20,6 @@ use Oro\Bundle\ProductBundle\Model\ExtendProduct;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
 
-use Oro\Component\Layout\ContextItemInterface;
-
 /**
  * @ORM\Table(
  *      name="oro_product",
@@ -109,8 +107,7 @@ class Product extends ExtendProduct implements
     \JsonSerializable,
     AttributeFamilyAwareInterface,
     SluggableInterface,
-    DatesAwareInterface,
-    ContextItemInterface
+    DatesAwareInterface
 {
     use SluggableTrait;
 
@@ -1227,15 +1224,5 @@ class Product extends ExtendProduct implements
     public function getAttributeFamily()
     {
         return $this->attributeFamily;
-    }
-
-    public function toString()
-    {
-        return 'productId:' . $this->id;
-    }
-
-    public function getHash()
-    {
-        return $this->toString();
     }
 }
