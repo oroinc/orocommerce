@@ -2,14 +2,20 @@
 
 namespace Oro\Bundle\CatalogBundle\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Form\Handler\CategoryHandler;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use Oro\Bundle\UIBundle\Form\Type\TreeMoveType;
+use Oro\Bundle\UIBundle\Model\TreeCollection;
+use Oro\Bundle\UIBundle\Utils\TreeUtils;
 
 class CategoryController extends Controller
 {
@@ -70,6 +76,50 @@ class CategoryController extends Controller
     }
 
     /**
+     * @Route("/move", name="oro_catalog_category_move_form")
+     * @Template
+     * @Acl(
+     *      id="oro_catalog_category_update",
+     *      type="entity",
+     *      class="OroCatalogBundle:Category",
+     *      permission="EDIT"
+     * )
+     *
+     * @param Request $request
+     *
+     * @return array
+     */
+    public function moveAction(Request $request)
+    {
+        $handler = $this->get('oro_catalog.category_tree_handler');
+
+        $choices = $handler->getTreeItemList($this->getMasterRootCategory(), false);
+
+        $collection = new TreeCollection();
+        $form = $this->createForm(TreeMoveType::class, $collection, [
+            'source_config' => [
+                'choices' => $choices,
+            ],
+            'target_config' => [
+                'choices' => $choices,
+            ],
+        ]);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            foreach ($collection->source as $source) {
+                $handler->moveNode($source->getKey(), $collection->target->getKey(), 0);
+            }
+
+            return $this->redirectToRoute('oro_catalog_category_index');
+        }
+
+        return [
+            'form' => $form->createView()
+        ];
+    }
+
+    /**
      * @param Category $category
      * @return array|RedirectResponse
      */
@@ -87,15 +137,15 @@ class CategoryController extends Controller
             $category,
             $form,
             function (Category $category) {
-                return array(
+                return [
                     'route' => 'oro_catalog_category_update',
-                    'parameters' => array('id' => $category->getId())
-                );
+                    'parameters' => ['id' => $category->getId()]
+                ];
             },
             function () {
-                return array(
+                return [
                     'route' => 'oro_catalog_category_index',
-                );
+                ];
             },
             $this->get('translator')->trans('oro.catalog.controller.category.saved.message'),
             $handler
