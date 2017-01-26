@@ -32,7 +32,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
      */
     public function getMigrationVersion()
     {
-        return 'v1_6';
+        return 'v1_7';
     }
 
     /**
@@ -242,6 +242,15 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
                 'currency'
             ],
             'oro_combined_price_uidx'
+        );
+        $table->addUniqueIndex(
+            [
+                'product_id',
+                'combined_price_list_id',
+                'quantity',
+                'unit_code'
+            ],
+            'oro_combined_price_2_uidx'
         );
     }
 
