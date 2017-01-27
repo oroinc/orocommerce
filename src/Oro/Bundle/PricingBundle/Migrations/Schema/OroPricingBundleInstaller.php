@@ -235,21 +235,17 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(
             [
-                'product_id',
                 'combined_price_list_id',
-                'quantity',
+                'product_id',
                 'unit_code',
+                'quantity',
                 'currency'
             ],
             'oro_combined_price_uidx'
         );
         $table->addIndex(
-            ['combined_price_list_id', 'product_id', 'unit_code', 'quantity'],
-            'oro_combined_price_idx_2'
-        );
-        $table->addIndex(
             ['combined_price_list_id', 'product_id', 'merge_allowed'],
-            'oro_combined_price_idx_3'
+            'idx_oro_cmb_price_mrg'
         );
     }
 
