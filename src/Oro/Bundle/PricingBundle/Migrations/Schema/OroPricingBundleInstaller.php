@@ -245,11 +245,11 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         );
         $table->addIndex(
             ['combined_price_list_id', 'product_id', 'unit_code', 'quantity'],
-            'oro_combined_price_2_uidx'
+            'oro_combined_price_idx_2'
         );
         $table->addIndex(
             ['combined_price_list_id', 'product_id', 'merge_allowed'],
-            'oro_combined_price_3_uidx'
+            'oro_combined_price_idx_3'
         );
     }
 
