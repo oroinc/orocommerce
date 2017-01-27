@@ -236,7 +236,11 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
 
         $this->assertNotContains(self::ORDER_REVIEW_SIGN, $crawler->html());
         $this->assertContains(self::PAYMENT_METHOD_SIGN, $crawler->html());
-        $this->assertContains('There was a change to the contents of your order.', $crawler->html());
+        $this->assertContains('The selected shipping method is not available.', $crawler->html());
+        $this->assertContains(
+            'Please return to the shipping method selection step and select a different one.',
+            $crawler->html()
+        );
 
         $this->enableShippingRules($modifiedRules);
 

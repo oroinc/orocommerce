@@ -49,7 +49,7 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         $data = $this->setFormData($values, self::BILLING_ADDRESS);
         $this->client->request('POST', $form->getUri(), $data);
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 500);
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
     }
 
     public function testStartCheckoutSeveralProductsWithoutPrices()
