@@ -92,7 +92,8 @@ class CategoryController extends Controller
     {
         $handler = $this->get('oro_catalog.category_tree_handler');
 
-        $choices = $handler->getTreeItemList($this->getMasterRootCategory(), false);
+        $root = $this->getMasterRootCategory();
+        $choices = $handler->getTreeItemList($root, true);
 
         $selected = $request->get('selected', []);
 
@@ -115,11 +116,18 @@ class CategoryController extends Controller
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            $changed = [];
             foreach ($collection->source as $source) {
                 $handler->moveNode($source->getKey(), $collection->target->getKey(), 0);
+                $changed[] = [
+                    'id' => $source->getKey(),
+                    'parent' => $collection->target->getKey(),
+                    'position' => 0
+                ];
             }
 
             $responseData['saved'] = true;
+            $responseData['changed'] = $changed;
         }
 
         $responseData['form'] = $form->createView();
