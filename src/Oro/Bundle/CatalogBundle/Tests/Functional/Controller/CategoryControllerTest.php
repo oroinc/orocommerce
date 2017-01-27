@@ -7,6 +7,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -51,6 +52,7 @@ class CategoryControllerTest extends WebTestCase
         $this->client->useHashNavigation(true);
         $this->loadFixtures([
             'Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData',
+            'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
             'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData'
         ]);
         $this->localizations = $this->getContainer()
@@ -240,6 +242,49 @@ class CategoryControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         self::assertResponseStatusCodeEquals($result, 500);
+    }
+
+    public function testMove()
+    {
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('oro_catalog_category_move_form'),
+            [
+                'selected' => [
+                    $this->getReference(LoadCategoryData::THIRD_LEVEL1)->getId()
+                ],
+                '_widgetContainer' => 'dialog',
+            ],
+            [],
+            $this->generateWsseAuthHeader()
+        );
+
+        $form = $crawler->selectButton('Save')->form();
+        $values = $form->getValues();
+
+        $this->assertEquals(
+            [$this->getReference(LoadCategoryData::THIRD_LEVEL1)->getId()],
+            $values['tree_move[source]']
+        );
+
+        $form['tree_move[source]'] = [$this->getReference(LoadCategoryData::FOURTH_LEVEL2)->getId()];
+        $form['tree_move[target]'] = $this->getReference(LoadCategoryData::FIRST_LEVEL)->getId();
+
+        $this->client->followRedirects(true);
+
+        /** TODO Change after BAP-1813 */
+        $form->getFormNode()->setAttribute(
+            'action',
+            $form->getFormNode()->getAttribute('action') . '?_widgetContainer=dialog'
+        );
+
+        $crawler = $this->client->submit($form);
+        $result = $this->client->getResponse();
+
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $html = $crawler->html();
+        $this->assertContains('oro.ui.jstree.move_success', $html);
     }
 
     /**
