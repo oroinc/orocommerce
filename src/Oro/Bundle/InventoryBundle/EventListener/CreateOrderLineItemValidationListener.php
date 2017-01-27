@@ -9,6 +9,7 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
+use Oro\Bundle\InventoryBundle\Entity\Repository\InventoryLevelRepository;
 use Oro\Bundle\InventoryBundle\Exception\InventoryLevelNotFoundException;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryQuantityManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -90,7 +91,6 @@ class CreateOrderLineItemValidationListener
         }
     }
 
-
     /**
      * @param mixed $context
      * @return bool
@@ -113,7 +113,9 @@ class CreateOrderLineItemValidationListener
      */
     protected function getInventoryLevel(Product $product, ProductUnit $productUnit)
     {
-        return $this->doctrineHelper->getEntityRepository(InventoryLevel::class)->getLevelByProductAndProductUnit(
+        /** @var InventoryLevelRepository $repository */
+        $repository = $this->doctrineHelper->getEntityRepository(InventoryLevel::class);
+        return $repository->getLevelByProductAndProductUnit(
             $product,
             $productUnit
         );
