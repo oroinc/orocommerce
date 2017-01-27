@@ -19,6 +19,12 @@ Oro\Bundle\PayPalBundle\Entity\PayPalSettings:
         allowedCreditCardTypes:
             - NotBlank: ~
             - Valid: ~
+        partner:
+            - NotBlank: ~
+            - Valid: ~
+        vendor:
+            - NotBlank: ~
+            - Valid: ~
         user:
             - NotBlank: ~
             - Valid: ~

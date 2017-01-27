@@ -64,7 +64,7 @@ abstract class AbstractPaymentSystemConfigTestCase extends \PHPUnit_Framework_Te
         $this->assertSame($returnValue, $this->config->getLabel());
     }
 
-    abstract function testGetPaymentMethodIdentifier();
+    abstract public function testGetPaymentMethodIdentifier();
 
     /**
      * {@inheritdoc}

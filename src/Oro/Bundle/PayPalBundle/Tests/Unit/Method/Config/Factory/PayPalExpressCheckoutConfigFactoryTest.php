@@ -62,10 +62,13 @@ class PayPalExpressCheckoutConfigFactoryTest extends \PHPUnit_Framework_TestCase
         $short_labels = new ArrayCollection();
         $short_labels->add($short_label);
 
-        $this->encoder->expects(static::once())
+        $this->encoder->expects(static::any())
             ->method('decryptData')
-            ->with('string')
-            ->willReturn('string');
+            ->willReturnMap([
+                ['string', 'string'],
+                ['proxy host', 'proxy host'],
+                ['8099', '8099']
+            ]);
 
         /** @var Channel $channel */
         $channel = $this->getEntity(
@@ -104,7 +107,7 @@ class PayPalExpressCheckoutConfigFactoryTest extends \PHPUnit_Framework_TestCase
                 [$paypalSettings->getExpressCheckoutShortLabels(), null, 'test short label'],
             ]);
 
-        $this->identifierGenerator->expects($this->once())
+        $this->identifierGenerator->expects(static::once())
             ->method('generateIdentifier')
             ->with($channel)
             ->willReturn('paypal_payflow_gateway_express_checkout_1');

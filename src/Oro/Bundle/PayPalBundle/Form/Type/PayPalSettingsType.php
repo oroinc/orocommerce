@@ -24,6 +24,7 @@ use Symfony\Component\Validator\Exception\MissingOptionsException;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
  */
 class PayPalSettingsType extends AbstractType
 {
@@ -55,6 +56,7 @@ class PayPalSettingsType extends AbstractType
      * @throws ConstraintDefinitionException
      * @throws InvalidOptionsException
      * @throws MissingOptionsException
+     * @throws \InvalidArgumentException
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -132,7 +134,7 @@ class PayPalSettingsType extends AbstractType
             ])
             ->add('testMode', CheckboxType::class, [
                 'label'    => 'oro.paypal.settings.test_mode.label',
-                'required' => true,
+                'required' => false,
             ])
             ->add('debugMode', CheckboxType::class, [
                 'label'    => 'oro.paypal.settings.debug_mode.label',
@@ -156,25 +158,23 @@ class PayPalSettingsType extends AbstractType
             ])
             ->add('proxyHost', TextType::class, [
                 'label'    => 'oro.paypal.settings.proxy_host.label',
-                'required' => true,
+                'required' => false,
             ])
             ->add('proxyPort', TextType::class, [
                 'label'    => 'oro.paypal.settings.proxy_port.label',
-                'required' => true,
+                'required' => false,
             ])
             ->add('enableSSLVerification', CheckboxType::class, [
                 'label'    => 'oro.paypal.settings.enable_ssl_verification.label',
                 'required' => false,
             ])
         ;
-        $builder->get('password')->addModelTransformer(new CallbackTransformer(
-            function ($password) {
-                return $password;
-            },
-            function ($password) {
-                return $this->encoder->encryptData($password);
-            }
-        ));
+        $this->transformWithEncodedValue($builder, 'vendor');
+        $this->transformWithEncodedValue($builder, 'partner');
+        $this->transformWithEncodedValue($builder, 'user');
+        $this->transformWithEncodedValue($builder, 'password');
+        $this->transformWithEncodedValue($builder, 'proxyHost');
+        $this->transformWithEncodedValue($builder, 'proxyPort');
     }
 
     /**
@@ -195,5 +195,22 @@ class PayPalSettingsType extends AbstractType
     public function getBlockPrefix()
     {
         return self::BLOCK_PREFIX;
+    }
+
+    /**
+     * @param FormBuilderInterface $builder
+     * @param string $field
+     * @throws \InvalidArgumentException
+     */
+    protected function transformWithEncodedValue(FormBuilderInterface $builder, $field)
+    {
+        $builder->get($field)->addModelTransformer(new CallbackTransformer(
+            function ($value) {
+                return $value;
+            },
+            function ($value) {
+                return $this->encoder->encryptData($value);
+            }
+        ));
     }
 }
