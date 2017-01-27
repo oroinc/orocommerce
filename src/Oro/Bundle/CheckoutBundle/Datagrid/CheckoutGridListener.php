@@ -212,10 +212,6 @@ class CheckoutGridListener
     protected function addCompletedCheckoutData(ResultRecord $record, CompletedCheckoutData $data, array $keys)
     {
         foreach ($keys as $key) {
-            if ($record->getValue($key)) {
-                continue;
-            }
-
             $method = 'get' . ucfirst($key);
             $value = $data->$method();
 
