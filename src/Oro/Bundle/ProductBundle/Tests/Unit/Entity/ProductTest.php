@@ -2,18 +2,18 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\UserBundle\Entity\User;
-use Oro\Component\Testing\Unit\EntityTestCaseTrait;
-
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\ProductVariantLink;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -36,7 +36,8 @@ class ProductTest extends \PHPUnit_Framework_TestCase
             ['createdAt', $now, false],
             ['updatedAt', $now, false],
             ['status', Product::STATUS_ENABLED, Product::STATUS_DISABLED],
-            ['type', Product::TYPE_CONFIGURABLE, Product::TYPE_SIMPLE]
+            ['type', Product::TYPE_CONFIGURABLE, Product::TYPE_SIMPLE],
+            ['attributeFamily', new AttributeFamily()],
         ];
 
         $this->assertPropertyAccessors(new Product(), $properties);
@@ -235,6 +236,8 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $product->addVariantLink(new ProductVariantLink(new Product(), new Product()));
         $product->setVariantFields(['field']);
         $product->addImage(new ProductImage());
+        $product->addSlugPrototype(new LocalizedFallbackValue());
+        $product->addSlug(new Slug());
 
         $refProduct = new \ReflectionObject($product);
         $refId = $refProduct->getProperty('id');
@@ -249,17 +252,21 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, $product->getImages());
         $this->assertCount(1, $product->getVariantLinks());
         $this->assertCount(1, $product->getVariantFields());
+        $this->assertCount(1, $product->getSlugPrototypes());
+        $this->assertCount(1, $product->getSlugs());
 
         $productCopy = clone $product;
 
         $this->assertNull($productCopy->getId());
-        $this->assertCount(0, $productCopy->getUnitPrecisions());
-        $this->assertCount(0, $productCopy->getNames());
-        $this->assertCount(0, $productCopy->getDescriptions());
-        $this->assertCount(0, $productCopy->getShortDescriptions());
-        $this->assertCount(0, $productCopy->getImages());
-        $this->assertCount(0, $productCopy->getVariantLinks());
-        $this->assertCount(0, $productCopy->getVariantFields());
+        $this->assertEmpty($productCopy->getUnitPrecisions());
+        $this->assertEmpty($productCopy->getNames());
+        $this->assertEmpty($productCopy->getDescriptions());
+        $this->assertEmpty($productCopy->getShortDescriptions());
+        $this->assertEmpty($productCopy->getImages());
+        $this->assertEmpty($productCopy->getVariantLinks());
+        $this->assertEmpty($productCopy->getVariantFields());
+        $this->assertEmpty($productCopy->getSlugPrototypes());
+        $this->assertEmpty($productCopy->getSlugs());
     }
 
     public function testGetDefaultName()
@@ -422,5 +429,21 @@ class ProductTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFalse($simpleProduct->isConfigurable());
         $this->assertTrue($configurableProduct->isConfigurable());
+    }
+
+    public function testIsSimple()
+    {
+        $simpleProduct = new Product();
+
+        $configurableProduct = new Product();
+        $configurableProduct->setType(Product::TYPE_CONFIGURABLE);
+
+        $this->assertFalse($configurableProduct->isSimple());
+        $this->assertTrue($simpleProduct->isSimple());
+    }
+
+    public function testGetTypes()
+    {
+        $this->assertEquals([Product::TYPE_SIMPLE, Product::TYPE_CONFIGURABLE], Product::getTypes());
     }
 }

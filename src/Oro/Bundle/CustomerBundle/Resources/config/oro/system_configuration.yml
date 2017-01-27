@@ -1,22 +1,22 @@
 system_configuration:
     groups:
-        account:
-            title: oro.customer.system_configuration.groups.account.title
-        account_users:
-            title: oro.customer.system_configuration.groups.account_users.title
+        customer:
+            title: oro.customer.system_configuration.groups.customer.title
+        customer_users:
+            title: oro.customer.system_configuration.groups.customer_users.title
             icon: 'fa-user'
-        account_users_registration:
-            title: oro.customer.system_configuration.groups.account_users_registration.title
+        customer_users_registration:
+            title: oro.customer.system_configuration.groups.customer_users_registration.title
             icon: 'fa-user-plus'
     fields:
-        oro_customer.default_account_owner:
+        oro_customer.default_customer_owner:
             ui_only: true
             data_type: string
             type: oro_user_select
             priority: 110
             options:
-                label: oro.customer.system_configuration.fields.default_account_owner.label
-                tooltip: oro.customer.system_configuration.fields.default_account_owner.tooltip
+                label: oro.customer.system_configuration.fields.default_customer_owner.label
+                tooltip: oro.customer.system_configuration.fields.default_customer_owner.tooltip
                 required: true
         oro_customer.registration_allowed:
             data_type: boolean
@@ -46,15 +46,15 @@ system_configuration:
         system_configuration:
             commerce:
                 children:
-                    account:
+                    customer:
                         priority: 1000
                         children:
-                            account_users:
+                            customer_users:
                                 priority: 100
                                 children:
-                                    account_users_registration:
+                                    customer_users_registration:
                                         children:
-                                            - oro_customer.default_account_owner
+                                            - oro_customer.default_customer_owner
                                             - oro_customer.registration_allowed
                                             - oro_customer.confirmation_required
                                             - oro_customer.send_password_in_welcome_email

@@ -2,7 +2,6 @@ define(function(require) {
     'use strict';
 
     var BackendToolbar;
-    var $ = require('jquery');
     var _ = require('underscore');
     var Toolbar = require('orodatagrid/js/datagrid/toolbar');
     var BackendPagination = require('oroproduct/js/app/datagrid/backend-pagination-input');
@@ -41,7 +40,10 @@ define(function(require) {
 
             var optionsPagination = _.defaults({collection: this.collection}, options.pagination);
             var optionsPageSize = _.defaults({collection: this.collection}, options.pageSize);
-            var optionsSorting =  _.defaults({collection: this.collection, columns: options.columns}, options.sortingDropdown);
+            var optionsSorting =  _.defaults(
+                {collection: this.collection, columns: options.columns},
+                options.sortingDropdown
+            );
 
             options.columns.trigger('configureInitializeOptions', this.pagination, optionsPagination, this);
             options.columns.trigger('configureInitializeOptions', this.pageSize, optionsPageSize, this);

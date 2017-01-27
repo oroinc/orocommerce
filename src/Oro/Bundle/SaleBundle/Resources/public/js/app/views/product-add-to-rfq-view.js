@@ -3,11 +3,13 @@ define(function(require) {
 
     var ProductAddToRfqView;
     var BaseView = require('oroui/js/app/views/base/view');
+    var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var $ = require('jquery');
     var routing = require('routing');
     var mediator = require('oroui/js/mediator');
+    var _ = require('underscore');
 
-    ProductAddToRfqView = BaseView.extend({
+    ProductAddToRfqView = BaseView.extend(_.extend({}, ElementsHelper, {
         events: {
             'click': 'onClick'
         },
@@ -16,7 +18,10 @@ define(function(require) {
 
         initialize: function(options) {
             ProductAddToRfqView.__super__.initialize.apply(this, arguments);
+            this.deferredInitializeCheck(options, ['productModel', 'dropdownWidget']);
+        },
 
+        deferredInitialize: function(options) {
             this.dropdownWidget = options.dropdownWidget;
             if (options.productModel) {
                 this.model = options.productModel;
@@ -46,7 +51,7 @@ define(function(require) {
             mediator.execute('showLoading');
             mediator.execute('redirectTo', {url: url}, {redirect: true});
         }
-    });
+    }));
 
     return ProductAddToRfqView;
 });

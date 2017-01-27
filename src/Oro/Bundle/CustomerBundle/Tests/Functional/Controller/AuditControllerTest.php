@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
@@ -15,7 +15,7 @@ class AuditControllerTest extends WebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
+            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
         $this->client->useHashNavigation(true);
     }
@@ -28,7 +28,7 @@ class AuditControllerTest extends WebTestCase
             $this->getUrl(
                 'oro_customer_frontend_dataaudit_history',
                 [
-                    'entity' => 'Oro_Bundle_CustomerBundle_Entity_AccountUser',
+                    'entity' => 'Oro_Bundle_CustomerBundle_Entity_CustomerUser',
                     'id' => $user->getId(),
                 ]
             )
@@ -37,14 +37,14 @@ class AuditControllerTest extends WebTestCase
     }
 
     /**
-     * @return AccountUser
+     * @return CustomerUser
      */
     protected function getCurrentUser()
     {
         return $this->getContainer()
             ->get('doctrine')
-            ->getManagerForClass('OroCustomerBundle:AccountUser')
-            ->getRepository('OroCustomerBundle:AccountUser')
-            ->findOneBy(['username' => LoadAccountUserData::AUTH_USER]);
+            ->getManagerForClass('OroCustomerBundle:CustomerUser')
+            ->getRepository('OroCustomerBundle:CustomerUser')
+            ->findOneBy(['username' => LoadCustomerUserData::AUTH_USER]);
     }
 }

@@ -60,8 +60,11 @@ class AddressACLTest extends AbstractAddressACLTest
      */
     public function testCheckShippingAddresses(array $permissions, array $capabilities, array $expected)
     {
-        $this->setRolePermissions($permissions['accountEntityPermissions'], $this->getAccountAddressIdentity());
-        $this->setRolePermissions($permissions['accountUserEntityPermissions'], $this->getAccountAddressUserIdentity());
+        $this->setRolePermissions($permissions['customerEntityPermissions'], $this->getCustomerAddressIdentity());
+        $this->setRolePermissions(
+            $permissions['customerUserEntityPermissions'],
+            $this->getCustomerAddressUserIdentity()
+        );
 
         foreach ($capabilities as $capabilityId => $value) {
             $this->setActionPermissions($capabilityId, $value);
@@ -93,20 +96,20 @@ class AddressACLTest extends AbstractAddressACLTest
         return [
             [
                 'permissions' => [
-                    'accountEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
-                    'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'oro_quote_address_shipping_account_use_any_backend' => true,
-                    'oro_quote_address_shipping_account_user_use_any_backend' => true,
-                    'oro_quote_address_shipping_account_user_use_default_backend' => true,
+                    'oro_quote_address_shipping_customer_use_any_backend' => true,
+                    'oro_quote_address_shipping_customer_user_use_any_backend' => true,
+                    'oro_quote_address_shipping_customer_user_use_default_backend' => true,
                     'oro_quote_address_shipping_allow_manual_backend' => true
                 ],
                 'expected' => [
-                    'account' => [
+                    'customer' => [
                         self::COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING,
                     ],
-                    'accountUser' => [
+                    'customerUser' => [
                         self::USER_BILLING_SHIPPING_DEFAULT_SHIPPING,
                     ],
                     'manually' => true
@@ -114,101 +117,101 @@ class AddressACLTest extends AbstractAddressACLTest
             ],
             [
                 'permissions' => [
-                    'accountEntityPermissions' => AccessLevel::NONE_LEVEL,
-                    'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerEntityPermissions' => AccessLevel::NONE_LEVEL,
+                    'customerUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'oro_quote_address_shipping_account_use_any_backend' => false,
-                    'oro_quote_address_shipping_account_user_use_any_backend' => false,
-                    'oro_quote_address_shipping_account_user_use_default_backend' => false,
+                    'oro_quote_address_shipping_customer_use_any_backend' => false,
+                    'oro_quote_address_shipping_customer_user_use_any_backend' => false,
+                    'oro_quote_address_shipping_customer_user_use_default_backend' => false,
                     'oro_quote_address_shipping_allow_manual_backend' => false,
                 ],
                 'expected' => []
             ],
             [
                 'permissions' => [
-                    'accountEntityPermissions' => AccessLevel::NONE_LEVEL,
-                    'accountUserEntityPermissions' => AccessLevel::NONE_LEVEL,
+                    'customerEntityPermissions' => AccessLevel::NONE_LEVEL,
+                    'customerUserEntityPermissions' => AccessLevel::NONE_LEVEL,
                 ],
                 'capabilities' => [
-                    'oro_quote_address_shipping_account_use_any_backend' => false,
-                    'oro_quote_address_shipping_account_user_use_any_backend' => false,
-                    'oro_quote_address_shipping_account_user_use_default_backend' => false,
+                    'oro_quote_address_shipping_customer_use_any_backend' => false,
+                    'oro_quote_address_shipping_customer_user_use_any_backend' => false,
+                    'oro_quote_address_shipping_customer_user_use_default_backend' => false,
                     'oro_quote_address_shipping_allow_manual_backend' => false,
                 ],
                 'expected' => []
             ],
             [
                 'permissions' => [
-                    'accountEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
-                    'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'oro_quote_address_shipping_account_use_any_backend' => false,
-                    'oro_quote_address_shipping_account_user_use_any_backend' => false,
-                    'oro_quote_address_shipping_account_user_use_default_backend' => false,
+                    'oro_quote_address_shipping_customer_use_any_backend' => false,
+                    'oro_quote_address_shipping_customer_user_use_any_backend' => false,
+                    'oro_quote_address_shipping_customer_user_use_default_backend' => false,
                     'oro_quote_address_shipping_allow_manual_backend' => true
                 ],
                 'expected' => [
-                    'account' => [
+                    'customer' => [
                         self::COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING
                     ],
-                    'accountUser' => [],
+                    'customerUser' => [],
                     'manually' => true
                 ],
             ],
             [
                 'permissions' => [
-                    'accountEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
-                    'accountUserEntityPermissions' => AccessLevel::NONE_LEVEL,
+                    'customerEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerUserEntityPermissions' => AccessLevel::NONE_LEVEL,
                 ],
                 'capabilities' => [
-                    'oro_quote_address_shipping_account_use_any_backend' => false,
-                    'oro_quote_address_shipping_account_user_use_any_backend' => false,
-                    'oro_quote_address_shipping_account_user_use_default_backend' => false,
+                    'oro_quote_address_shipping_customer_use_any_backend' => false,
+                    'oro_quote_address_shipping_customer_user_use_any_backend' => false,
+                    'oro_quote_address_shipping_customer_user_use_default_backend' => false,
                     'oro_quote_address_shipping_allow_manual_backend' => true
                 ],
                 'expected' => [
-                    'account' => [
+                    'customer' => [
                         self::COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING
                     ],
-                    'accountUser' => [],
+                    'customerUser' => [],
                     'manually' => true
                 ],
             ],
             [
                 'permissions' => [
-                    'accountEntityPermissions' => AccessLevel::NONE_LEVEL,
-                    'accountUserEntityPermissions' => AccessLevel::NONE_LEVEL,
+                    'customerEntityPermissions' => AccessLevel::NONE_LEVEL,
+                    'customerUserEntityPermissions' => AccessLevel::NONE_LEVEL,
                 ],
                 'capabilities' => [
-                    'oro_quote_address_shipping_account_use_any_backend' => false,
-                    'oro_quote_address_shipping_account_user_use_any_backend' => false,
-                    'oro_quote_address_shipping_account_user_use_default_backend' => false,
+                    'oro_quote_address_shipping_customer_use_any_backend' => false,
+                    'oro_quote_address_shipping_customer_user_use_any_backend' => false,
+                    'oro_quote_address_shipping_customer_user_use_default_backend' => false,
                     'oro_quote_address_shipping_allow_manual_backend' => true
                 ],
                 'expected' => [
-                    'account' => [],
-                    'accountUser' => [],
+                    'customer' => [],
+                    'customerUser' => [],
                     'manually' => true
                 ]
             ],
             [
                 'permissions' => [
-                    'accountEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
-                    'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'oro_quote_address_shipping_account_use_any_backend' => false,
-                    'oro_quote_address_shipping_account_user_use_any_backend' => true,
-                    'oro_quote_address_shipping_account_user_use_default_backend' => false,
+                    'oro_quote_address_shipping_customer_use_any_backend' => false,
+                    'oro_quote_address_shipping_customer_user_use_any_backend' => true,
+                    'oro_quote_address_shipping_customer_user_use_default_backend' => false,
                     'oro_quote_address_shipping_allow_manual_backend' => false
                 ],
                 'expected' => [
-                    'account' => [
+                    'customer' => [
                         self::COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING
                     ],
-                    'accountUser' => [
+                    'customerUser' => [
                         self::USER_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::USER_BILLING_SHIPPING_ADDRESS
                     ],
@@ -217,18 +220,18 @@ class AddressACLTest extends AbstractAddressACLTest
             ],
             [
                 'permissions' => [
-                    'accountEntityPermissions' => AccessLevel::NONE_LEVEL,
-                    'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerEntityPermissions' => AccessLevel::NONE_LEVEL,
+                    'customerUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'oro_quote_address_shipping_account_use_any_backend' => false,
-                    'oro_quote_address_shipping_account_user_use_any_backend' => true,
-                    'oro_quote_address_shipping_account_user_use_default_backend' => false,
+                    'oro_quote_address_shipping_customer_use_any_backend' => false,
+                    'oro_quote_address_shipping_customer_user_use_any_backend' => true,
+                    'oro_quote_address_shipping_customer_user_use_default_backend' => false,
                     'oro_quote_address_shipping_allow_manual_backend' => false
                 ],
                 'expected' => [
-                    'account' => [],
-                    'accountUser' => [
+                    'customer' => [],
+                    'customerUser' => [
                         self::USER_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::USER_BILLING_SHIPPING_ADDRESS
                     ],
@@ -237,52 +240,52 @@ class AddressACLTest extends AbstractAddressACLTest
             ],
             [
                 'permissions' => [
-                    'accountEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
-                    'accountUserEntityPermissions' => AccessLevel::NONE_LEVEL,
+                    'customerEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerUserEntityPermissions' => AccessLevel::NONE_LEVEL,
                 ],
                 'capabilities' => [
-                    'oro_quote_address_shipping_account_use_any_backend' => false,
-                    'oro_quote_address_shipping_account_user_use_any_backend' => true,
-                    'oro_quote_address_shipping_account_user_use_default_backend' => false,
+                    'oro_quote_address_shipping_customer_use_any_backend' => false,
+                    'oro_quote_address_shipping_customer_user_use_any_backend' => true,
+                    'oro_quote_address_shipping_customer_user_use_default_backend' => false,
                     'oro_quote_address_shipping_allow_manual_backend' => false
                 ],
                 'expected' => [
-                    'account' => [
+                    'customer' => [
                         self::COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING
                     ],
-                    'accountUser' => [],
+                    'customerUser' => [],
                     'manually' => false
                 ]
             ],
             [
                 'permissions' => [
-                    'accountEntityPermissions' => AccessLevel::NONE_LEVEL,
-                    'accountUserEntityPermissions' => AccessLevel::NONE_LEVEL,
+                    'customerEntityPermissions' => AccessLevel::NONE_LEVEL,
+                    'customerUserEntityPermissions' => AccessLevel::NONE_LEVEL,
                 ],
                 'capabilities' => [
-                    'oro_quote_address_shipping_account_use_any_backend' => false,
-                    'oro_quote_address_shipping_account_user_use_any_backend' => true,
-                    'oro_quote_address_shipping_account_user_use_default_backend' => false,
+                    'oro_quote_address_shipping_customer_use_any_backend' => false,
+                    'oro_quote_address_shipping_customer_user_use_any_backend' => true,
+                    'oro_quote_address_shipping_customer_user_use_default_backend' => false,
                     'oro_quote_address_shipping_allow_manual_backend' => false
                 ],
                 'expected' => []
             ],
             [
                 'permissions' => [
-                    'accountEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
-                    'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'oro_quote_address_shipping_account_use_any_backend' => false,
-                    'oro_quote_address_shipping_account_user_use_any_backend' => true,
-                    'oro_quote_address_shipping_account_user_use_default_backend' => false,
+                    'oro_quote_address_shipping_customer_use_any_backend' => false,
+                    'oro_quote_address_shipping_customer_user_use_any_backend' => true,
+                    'oro_quote_address_shipping_customer_user_use_default_backend' => false,
                     'oro_quote_address_shipping_allow_manual_backend' => true
                 ],
                 'expected' => [
-                    'account' => [
+                    'customer' => [
                         self::COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING
                     ],
-                    'accountUser' => [
+                    'customerUser' => [
                         self::USER_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::USER_BILLING_SHIPPING_ADDRESS
                     ],
@@ -291,20 +294,20 @@ class AddressACLTest extends AbstractAddressACLTest
             ],
             [
                 'permissions' => [
-                    'accountEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
-                    'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'oro_quote_address_shipping_account_use_any_backend' => false,
-                    'oro_quote_address_shipping_account_user_use_any_backend' => false,
-                    'oro_quote_address_shipping_account_user_use_default_backend' => true,
+                    'oro_quote_address_shipping_customer_use_any_backend' => false,
+                    'oro_quote_address_shipping_customer_user_use_any_backend' => false,
+                    'oro_quote_address_shipping_customer_user_use_default_backend' => true,
                     'oro_quote_address_shipping_allow_manual_backend' => false
                 ],
                 'expected' => [
-                    'account' => [
+                    'customer' => [
                         self::COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING
                     ],
-                    'accountUser' => [
+                    'customerUser' => [
                         self::USER_BILLING_SHIPPING_DEFAULT_SHIPPING
                     ],
                     'manually' => false
@@ -312,20 +315,20 @@ class AddressACLTest extends AbstractAddressACLTest
             ],
             [
                 'permissions' => [
-                    'accountEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
-                    'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'oro_quote_address_shipping_account_use_any_backend' => false,
-                    'oro_quote_address_shipping_account_user_use_any_backend' => false,
-                    'oro_quote_address_shipping_account_user_use_default_backend' => true,
+                    'oro_quote_address_shipping_customer_use_any_backend' => false,
+                    'oro_quote_address_shipping_customer_user_use_any_backend' => false,
+                    'oro_quote_address_shipping_customer_user_use_default_backend' => true,
                     'oro_quote_address_shipping_allow_manual_backend' => true
                 ],
                 'expected' => [
-                    'account' => [
+                    'customer' => [
                         self::COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING
                     ],
-                    'accountUser' => [
+                    'customerUser' => [
                         self::USER_BILLING_SHIPPING_DEFAULT_SHIPPING
                     ],
                     'manually' => true
@@ -333,20 +336,20 @@ class AddressACLTest extends AbstractAddressACLTest
             ],
             [
                 'permissions' => [
-                    'accountEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
-                    'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'oro_quote_address_shipping_account_use_any_backend' => false,
-                    'oro_quote_address_shipping_account_user_use_any_backend' => true,
-                    'oro_quote_address_shipping_account_user_use_default_backend' => true,
+                    'oro_quote_address_shipping_customer_use_any_backend' => false,
+                    'oro_quote_address_shipping_customer_user_use_any_backend' => true,
+                    'oro_quote_address_shipping_customer_user_use_default_backend' => true,
                     'oro_quote_address_shipping_allow_manual_backend' => false
                 ],
                 'expected' => [
-                    'account' => [
+                    'customer' => [
                         self::COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING
                     ],
-                    'accountUser' => [
+                    'customerUser' => [
                         self::USER_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::USER_BILLING_SHIPPING_ADDRESS
                     ],
@@ -355,20 +358,20 @@ class AddressACLTest extends AbstractAddressACLTest
             ],
             [
                 'permissions' => [
-                    'accountEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
-                    'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'oro_quote_address_shipping_account_use_any_backend' => false,
-                    'oro_quote_address_shipping_account_user_use_any_backend' => true,
-                    'oro_quote_address_shipping_account_user_use_default_backend' => true,
+                    'oro_quote_address_shipping_customer_use_any_backend' => false,
+                    'oro_quote_address_shipping_customer_user_use_any_backend' => true,
+                    'oro_quote_address_shipping_customer_user_use_default_backend' => true,
                     'oro_quote_address_shipping_allow_manual_backend' => true
                 ],
                 'expected' => [
-                    'account' => [
+                    'customer' => [
                         self::COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING
                     ],
-                    'accountUser' => [
+                    'customerUser' => [
                         self::USER_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::USER_BILLING_SHIPPING_ADDRESS
                     ],
@@ -377,61 +380,61 @@ class AddressACLTest extends AbstractAddressACLTest
             ],
             [
                 'permissions' => [
-                    'accountEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
-                    'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'oro_quote_address_shipping_account_use_any_backend' => true,
-                    'oro_quote_address_shipping_account_user_use_any_backend' => false,
-                    'oro_quote_address_shipping_account_user_use_default_backend' => false,
+                    'oro_quote_address_shipping_customer_use_any_backend' => true,
+                    'oro_quote_address_shipping_customer_user_use_any_backend' => false,
+                    'oro_quote_address_shipping_customer_user_use_default_backend' => false,
                     'oro_quote_address_shipping_allow_manual_backend' => false
                 ],
                 'expected' => [
-                    'account' => [
+                    'customer' => [
                         self::COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::COMPANY_BILLING_SHIPPING_ADDRESS
                     ],
-                    'accountUser' => [],
+                    'customerUser' => [],
                     'manually' => false
                 ]
             ],
             [
                 'permissions' => [
-                    'accountEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
-                    'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'oro_quote_address_shipping_account_use_any_backend' => true,
-                    'oro_quote_address_shipping_account_user_use_any_backend' => false,
-                    'oro_quote_address_shipping_account_user_use_default_backend' => false,
+                    'oro_quote_address_shipping_customer_use_any_backend' => true,
+                    'oro_quote_address_shipping_customer_user_use_any_backend' => false,
+                    'oro_quote_address_shipping_customer_user_use_default_backend' => false,
                     'oro_quote_address_shipping_allow_manual_backend' => true
                 ],
                 'expected' => [
-                    'account' => [
+                    'customer' => [
                         self::COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::COMPANY_BILLING_SHIPPING_ADDRESS
                     ],
-                    'accountUser' => [],
+                    'customerUser' => [],
                     'manually' => true
                 ]
             ],
             [
                 'permissions' => [
-                    'accountEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
-                    'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'oro_quote_address_shipping_account_use_any_backend' => true,
-                    'oro_quote_address_shipping_account_user_use_any_backend' => true,
-                    'oro_quote_address_shipping_account_user_use_default_backend' => false,
+                    'oro_quote_address_shipping_customer_use_any_backend' => true,
+                    'oro_quote_address_shipping_customer_user_use_any_backend' => true,
+                    'oro_quote_address_shipping_customer_user_use_default_backend' => false,
                     'oro_quote_address_shipping_allow_manual_backend' => false
                 ],
                 'expected' => [
-                    'account' => [
+                    'customer' => [
                         self::COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::COMPANY_BILLING_SHIPPING_ADDRESS
                     ],
-                    'accountUser' => [
+                    'customerUser' => [
                         self::USER_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::USER_BILLING_SHIPPING_ADDRESS
                     ],
@@ -440,21 +443,21 @@ class AddressACLTest extends AbstractAddressACLTest
             ],
             [
                 'permissions' => [
-                    'accountEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
-                    'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'oro_quote_address_shipping_account_use_any_backend' => true,
-                    'oro_quote_address_shipping_account_user_use_any_backend' => true,
-                    'oro_quote_address_shipping_account_user_use_default_backend' => false,
+                    'oro_quote_address_shipping_customer_use_any_backend' => true,
+                    'oro_quote_address_shipping_customer_user_use_any_backend' => true,
+                    'oro_quote_address_shipping_customer_user_use_default_backend' => false,
                     'oro_quote_address_shipping_allow_manual_backend' => true
                 ],
                 'expected' => [
-                    'account' => [
+                    'customer' => [
                         self::COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::COMPANY_BILLING_SHIPPING_ADDRESS
                     ],
-                    'accountUser' => [
+                    'customerUser' => [
                         self::USER_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::USER_BILLING_SHIPPING_ADDRESS
                     ],
@@ -463,21 +466,21 @@ class AddressACLTest extends AbstractAddressACLTest
             ],
             [
                 'permissions' => [
-                    'accountEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
-                    'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'oro_quote_address_shipping_account_use_any_backend' => true,
-                    'oro_quote_address_shipping_account_user_use_any_backend' => false,
-                    'oro_quote_address_shipping_account_user_use_default_backend' => true,
+                    'oro_quote_address_shipping_customer_use_any_backend' => true,
+                    'oro_quote_address_shipping_customer_user_use_any_backend' => false,
+                    'oro_quote_address_shipping_customer_user_use_default_backend' => true,
                     'oro_quote_address_shipping_allow_manual_backend' => false
                 ],
                 'expected' => [
-                    'account' => [
+                    'customer' => [
                         self::COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::COMPANY_BILLING_SHIPPING_ADDRESS
                     ],
-                    'accountUser' => [
+                    'customerUser' => [
                         self::USER_BILLING_SHIPPING_DEFAULT_SHIPPING
                     ],
                     'manually' => false
@@ -485,21 +488,21 @@ class AddressACLTest extends AbstractAddressACLTest
             ],
             [
                 'permissions' => [
-                    'accountEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
-                    'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'oro_quote_address_shipping_account_use_any_backend' => true,
-                    'oro_quote_address_shipping_account_user_use_any_backend' => false,
-                    'oro_quote_address_shipping_account_user_use_default_backend' => true,
+                    'oro_quote_address_shipping_customer_use_any_backend' => true,
+                    'oro_quote_address_shipping_customer_user_use_any_backend' => false,
+                    'oro_quote_address_shipping_customer_user_use_default_backend' => true,
                     'oro_quote_address_shipping_allow_manual_backend' => true
                 ],
                 'expected' => [
-                    'account' => [
+                    'customer' => [
                         self::COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::COMPANY_BILLING_SHIPPING_ADDRESS
                     ],
-                    'accountUser' => [
+                    'customerUser' => [
                         self::USER_BILLING_SHIPPING_DEFAULT_SHIPPING
                     ],
                     'manually' => true
@@ -507,21 +510,21 @@ class AddressACLTest extends AbstractAddressACLTest
             ],
             [
                 'permissions' => [
-                    'accountEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
-                    'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'oro_quote_address_shipping_account_use_any_backend' => true,
-                    'oro_quote_address_shipping_account_user_use_any_backend' => true,
-                    'oro_quote_address_shipping_account_user_use_default_backend' => true,
+                    'oro_quote_address_shipping_customer_use_any_backend' => true,
+                    'oro_quote_address_shipping_customer_user_use_any_backend' => true,
+                    'oro_quote_address_shipping_customer_user_use_default_backend' => true,
                     'oro_quote_address_shipping_allow_manual_backend' => false
                 ],
                 'expected' => [
-                    'account' => [
+                    'customer' => [
                         self::COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::COMPANY_BILLING_SHIPPING_ADDRESS
                     ],
-                    'accountUser' => [
+                    'customerUser' => [
                         self::USER_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::USER_BILLING_SHIPPING_ADDRESS
                     ],
@@ -530,21 +533,21 @@ class AddressACLTest extends AbstractAddressACLTest
             ],
             [
                 'permissions' => [
-                    'accountEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
-                    'accountUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
+                    'customerUserEntityPermissions' => AccessLevel::SYSTEM_LEVEL,
                 ],
                 'capabilities' => [
-                    'oro_quote_address_shipping_account_use_any_backend' => true,
-                    'oro_quote_address_shipping_account_user_use_any_backend' => true,
-                    'oro_quote_address_shipping_account_user_use_default_backend' => true,
+                    'oro_quote_address_shipping_customer_use_any_backend' => true,
+                    'oro_quote_address_shipping_customer_user_use_any_backend' => true,
+                    'oro_quote_address_shipping_customer_user_use_default_backend' => true,
                     'oro_quote_address_shipping_allow_manual_backend' => true
                 ],
                 'expected' => [
-                    'account' => [
+                    'customer' => [
                         self::COMPANY_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::COMPANY_BILLING_SHIPPING_ADDRESS
                     ],
-                    'accountUser' => [
+                    'customerUser' => [
                         self::USER_BILLING_SHIPPING_DEFAULT_SHIPPING,
                         self::USER_BILLING_SHIPPING_ADDRESS
                     ],

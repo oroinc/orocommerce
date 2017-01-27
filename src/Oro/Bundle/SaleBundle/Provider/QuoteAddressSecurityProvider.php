@@ -3,8 +3,8 @@
 namespace Oro\Bundle\SaleBundle\Provider;
 
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 
 class QuoteAddressSecurityProvider
@@ -18,27 +18,27 @@ class QuoteAddressSecurityProvider
     protected $QuoteAddressProvider;
 
     /** @var string */
-    protected $accountAddressClass;
+    protected $customerAddressClass;
 
     /** @var string */
-    protected $accountUserAddressClass;
+    protected $customerUserAddressClass;
 
     /**
      * @param SecurityFacade $securityFacade
      * @param QuoteAddressProvider $quoteAddressProvider
-     * @param string $accountAddressClass
-     * @param string $accountUserAddressClass
+     * @param string $customerAddressClass
+     * @param string $customerUserAddressClass
      */
     public function __construct(
         SecurityFacade $securityFacade,
         QuoteAddressProvider $quoteAddressProvider,
-        $accountAddressClass,
-        $accountUserAddressClass
+        $customerAddressClass,
+        $customerUserAddressClass
     ) {
         $this->securityFacade = $securityFacade;
         $this->QuoteAddressProvider = $quoteAddressProvider;
-        $this->accountAddressClass = $accountAddressClass;
-        $this->accountUserAddressClass = $accountUserAddressClass;
+        $this->customerAddressClass = $customerAddressClass;
+        $this->customerUserAddressClass = $customerUserAddressClass;
     }
 
     /**
@@ -49,62 +49,62 @@ class QuoteAddressSecurityProvider
      */
     public function isAddressGranted(Quote $quote, $type)
     {
-        return $this->isAccountAddressGranted($type, $quote->getAccount()) ||
-            $this->isAccountUserAddressGranted($type, $quote->getAccountUser());
+        return $this->isCustomerAddressGranted($type, $quote->getCustomer()) ||
+            $this->isCustomerUserAddressGranted($type, $quote->getCustomerUser());
     }
 
     /**
      * @param string $type
-     * @param Account $account
+     * @param Customer $customer
      *
      * @return bool
      */
-    public function isAccountAddressGranted($type, Account $account = null)
+    public function isCustomerAddressGranted($type, Customer $customer = null)
     {
         if ($this->isManualEditGranted($type)) {
             return true;
         }
 
         $hasPermissions = $this->securityFacade->isGranted(
-            $this->getClassPermission('VIEW', $this->accountAddressClass)
+            $this->getClassPermission('VIEW', $this->customerAddressClass)
         );
 
         if (!$hasPermissions) {
             return false;
         }
 
-        if (!$account) {
+        if (!$customer) {
             return false;
         }
 
-        return (bool)$this->QuoteAddressProvider->getAccountAddresses($account, $type);
+        return (bool)$this->QuoteAddressProvider->getCustomerAddresses($customer, $type);
     }
 
     /**
      * @param string $type
-     * @param AccountUser $accountUser
+     * @param CustomerUser $customerUser
      *
      * @return bool
      */
-    public function isAccountUserAddressGranted($type, AccountUser $accountUser = null)
+    public function isCustomerUserAddressGranted($type, CustomerUser $customerUser = null)
     {
         if ($this->isManualEditGranted($type)) {
             return true;
         }
 
         $hasPermissions = $this->securityFacade
-                ->isGranted($this->getClassPermission('VIEW', $this->accountUserAddressClass))
+                ->isGranted($this->getClassPermission('VIEW', $this->customerUserAddressClass))
             && $this->securityFacade->isGranted($this->getTypedPermission($type));
 
         if (!$hasPermissions) {
             return false;
         }
 
-        if (!$accountUser) {
+        if (!$customerUser) {
             return false;
         }
 
-        return (bool)$this->QuoteAddressProvider->getAccountUserAddresses($accountUser, $type);
+        return (bool)$this->QuoteAddressProvider->getCustomerUserAddresses($customerUser, $type);
     }
 
     /**
@@ -137,7 +137,7 @@ class QuoteAddressSecurityProvider
      */
     protected function getPermission($permission)
     {
-        if (!$this->securityFacade->getLoggedUser() instanceof AccountUser) {
+        if (!$this->securityFacade->getLoggedUser() instanceof CustomerUser) {
             $permission .= QuoteAddressProvider::ADMIN_ACL_POSTFIX;
         }
 

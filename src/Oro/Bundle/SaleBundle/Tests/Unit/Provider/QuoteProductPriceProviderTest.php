@@ -3,7 +3,7 @@
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CustomerBundle\Entity\Account;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
@@ -45,7 +45,7 @@ class QuoteProductPriceProviderTest extends \PHPUnit_Framework_TestCase
         $this->treeHandler = $this->getMockBuilder(
             'Oro\Bundle\PricingBundle\Model\PriceListTreeHandler'
         )
-            ->setMethods(['getPriceList', 'getPriceListByAccount'])
+            ->setMethods(['getPriceList', 'getPriceListByCustomer'])
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -71,16 +71,16 @@ class QuoteProductPriceProviderTest extends \PHPUnit_Framework_TestCase
     {
         $quote = new Quote();
         $website = new Website();
-        $account = new Account();
+        $customer = new Customer();
         $quote->setWebsite($website)
-            ->setAccount($account);
+            ->setCustomer($customer);
         foreach ($quoteProducts as $quoteProduct) {
             $quote->addQuoteProduct($quoteProduct);
         }
 
         $this->treeHandler->expects($this->once())
             ->method('getPriceList')
-            ->with($account, $website)
+            ->with($customer, $website)
             ->willReturn($quotePriceList);
 
         if ($productPriceProviderArgs) {
@@ -144,16 +144,16 @@ class QuoteProductPriceProviderTest extends \PHPUnit_Framework_TestCase
     {
         $quote = new Quote();
         $website = new Website();
-        $account = new Account();
+        $customer = new Customer();
         $quote->setWebsite($website)
-            ->setAccount($account);
+            ->setCustomer($customer);
         foreach ($quoteProducts as $quoteProduct) {
             $quote->addQuoteProduct($quoteProduct);
         }
 
         $this->treeHandler->expects($this->once())
             ->method('getPriceList')
-            ->with($account, $website)
+            ->with($customer, $website)
             ->willReturn($quotePriceList);
 
         if ($productPriceProviderArgs) {

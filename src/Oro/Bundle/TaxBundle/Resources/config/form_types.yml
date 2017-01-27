@@ -6,12 +6,12 @@ services:
         tags:
             - { name: form.type, alias: oro_tax_product_tax_code_type }
 
-    oro_tax.form.type.account_tax_code:
-        class: 'Oro\Bundle\TaxBundle\Form\Type\AccountTaxCodeType'
+    oro_tax.form.type.customer_tax_code:
+        class: 'Oro\Bundle\TaxBundle\Form\Type\CustomerTaxCodeType'
         calls:
-            - [setDataClass, ['%oro_tax.entity.account_tax_code.class%']]
+            - [setDataClass, ['%oro_tax.entity.customer_tax_code.class%']]
         tags:
-            - { name: form.type, alias: oro_tax_account_tax_code_type }
+            - { name: form.type, alias: oro_tax_customer_tax_code_type }
 
     oro_tax.form.type.product_tax_code_autocomplete:
         class: 'Oro\Bundle\TaxBundle\Form\Type\ProductTaxCodeAutocompleteType'
@@ -23,10 +23,10 @@ services:
         tags:
             - { name: form.type, alias: oro_tax_product_tax_code_multiselect }
 
-    oro_tax.form.type.account_tax_code_autocomplete:
-        class: 'Oro\Bundle\TaxBundle\Form\Type\AccountTaxCodeAutocompleteType'
+    oro_tax.form.type.customer_tax_code_autocomplete:
+        class: 'Oro\Bundle\TaxBundle\Form\Type\CustomerTaxCodeAutocompleteType'
         tags:
-            - { name: form.type, alias: oro_account_tax_code_autocomplete }
+            - { name: form.type, alias: oro_customer_tax_code_autocomplete }
 
     oro_tax.form.extension.product_tax:
         class: 'Oro\Bundle\TaxBundle\Form\Extension\ProductTaxExtension'
@@ -36,21 +36,21 @@ services:
         tags:
             - { name: form.type_extension, alias: oro_product }
 
-    oro_tax.form.extension.account_tax:
-        class: 'Oro\Bundle\TaxBundle\Form\Extension\AccountTaxExtension'
+    oro_tax.form.extension.customer_tax:
+        class: 'Oro\Bundle\TaxBundle\Form\Extension\CustomerTaxExtension'
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '%oro_tax.entity.account_tax_code.class%'
+            - '%oro_tax.entity.customer_tax_code.class%'
         tags:
-            - { name: form.type_extension, alias: oro_account_type }
+            - { name: form.type_extension, alias: oro_customer_type }
 
-    oro_tax.form.extension.account_group_tax:
-        class: 'Oro\Bundle\TaxBundle\Form\Extension\AccountGroupTaxExtension'
+    oro_tax.form.extension.customer_group_tax:
+        class: 'Oro\Bundle\TaxBundle\Form\Extension\CustomerGroupTaxExtension'
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '%oro_tax.entity.account_tax_code.class%'
+            - '%oro_tax.entity.customer_tax_code.class%'
         tags:
-            - { name: form.type_extension, alias: oro_account_group_type }
+            - { name: form.type_extension, alias: oro_customer_group_type }
 
     oro_tax.form.extension.order_line_item:
         class: 'Oro\Bundle\TaxBundle\Form\Extension\OrderLineItemTypeExtension'

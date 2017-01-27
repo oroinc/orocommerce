@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional;
 
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as LoadBaseAccountUserData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as LoadBaseCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\FrontendActionTestCase;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -19,7 +19,7 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadBaseAccountUserData::AUTH_USER, LoadBaseAccountUserData::AUTH_PW)
+            $this->generateBasicAuthHeader(LoadBaseCustomerUserData::AUTH_USER, LoadBaseCustomerUserData::AUTH_PW)
         );
 
         $this->loadFixtures(
@@ -48,7 +48,7 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
     public function testCreateOrdersFromSingleShoppingList()
     {
         // start checkout from first user
-        $this->authUser(LoadAccountUserData::LEVEL_1_1_EMAIL, LoadAccountUserData::LEVEL_1_1_PASSWORD);
+        $this->authUser(LoadCustomerUserData::LEVEL_1_1_EMAIL, LoadCustomerUserData::LEVEL_1_1_PASSWORD);
         $firstData = $this->startCheckout($this->getReference(LoadShoppingLists::SHOPPING_LIST_7));
         // continue checkout from first user
         $secondData = $this->startCheckout($this->getReference(LoadShoppingLists::SHOPPING_LIST_7));
@@ -56,7 +56,7 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
         $this->assertEquals($firstData['workflowItem']['id'], $secondData['workflowItem']['id']);
 
         // start checkout from second user
-        $this->authUser(LoadAccountUserData::LEVEL_1_EMAIL, LoadAccountUserData::LEVEL_1_PASSWORD);
+        $this->authUser(LoadCustomerUserData::LEVEL_1_EMAIL, LoadCustomerUserData::LEVEL_1_PASSWORD);
         $startData = $this->startCheckout($this->getReference(LoadShoppingLists::SHOPPING_LIST_7));
 
         $this->assertNotEquals($firstData['workflowItem']['id'], $startData['workflowItem']['id']);

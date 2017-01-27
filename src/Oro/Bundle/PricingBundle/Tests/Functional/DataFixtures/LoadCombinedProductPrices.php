@@ -26,7 +26,7 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
      */
     protected static $data = [
         [
-            'product' => 'product.1',
+            'product' => 'product-1',
             'priceList' => '1f',
             'qty' => 10,
             'unit' => 'product_unit.liter',
@@ -35,7 +35,7 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
             'reference' => 'product_price.1'
         ],
         [
-            'product' => 'product.1',
+            'product' => 'product-1',
             'priceList' => '1f',
             'qty' => 11,
             'unit' => 'product_unit.bottle',
@@ -44,7 +44,7 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
             'reference' => 'product_price.2'
         ],
         [
-            'product' => 'product.2',
+            'product' => 'product-2',
             'priceList' => '1f',
             'qty' => 12,
             'unit' => 'product_unit.liter',
@@ -53,7 +53,7 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
             'reference' => 'product_price.3'
         ],
         [
-            'product' => 'product.2',
+            'product' => 'product-2',
             'priceList' => '2f',
             'qty' => 13,
             'unit' => 'product_unit.liter',
@@ -62,7 +62,7 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
             'reference' => 'product_price.4'
         ],
         [
-            'product' => 'product.2',
+            'product' => 'product-2',
             'priceList' => '2f',
             'qty' => 14,
             'unit' => 'product_unit.bottle',
@@ -71,7 +71,7 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
             'reference' => 'product_price.5'
         ],
         [
-            'product' => 'product.1',
+            'product' => 'product-1',
             'priceList' => '2f',
             'qty' => 15,
             'unit' => 'product_unit.liter',
@@ -80,7 +80,7 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
             'reference' => 'product_price.6'
         ],
         [
-            'product' => 'product.1',
+            'product' => 'product-1',
             'priceList' => '1f',
             'qty' => 1,
             'unit' => 'product_unit.liter',
@@ -89,7 +89,7 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
             'reference' => 'product_price.7'
         ],
         [
-            'product' => 'product.2',
+            'product' => 'product-2',
             'priceList' => '1f',
             'qty' => 1,
             'unit' => 'product_unit.liter',
@@ -98,7 +98,7 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
             'reference' => 'product_price.8'
         ],
         [
-            'product' => 'product.3',
+            'product' => 'product-3',
             'priceList' => '1f',
             'qty' => 1,
             'unit' => 'product_unit.liter',
@@ -107,7 +107,7 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
             'reference' => 'product_price.9'
         ],
         [
-            'product' => 'product.1',
+            'product' => 'product-1',
             'priceList' => '1f',
             'qty' => 1,
             'unit' => 'product_unit.bottle',
@@ -116,7 +116,7 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
             'reference' => 'product_price.10'
         ],
         [
-            'product' => 'product.2',
+            'product' => 'product-2',
             'priceList' => '1f',
             'qty' => 14,
             'unit' => 'product_unit.liter',
@@ -125,7 +125,7 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
             'reference' => 'product_price.11'
         ],
         [
-            'product' => 'product.2',
+            'product' => 'product-2',
             'priceList' => '2f',
             'qty' => 24,
             'unit' => 'product_unit.bottle',
@@ -134,7 +134,7 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
             'reference' => 'product_price.12'
         ],
         [
-            'product' => 'product.1',
+            'product' => 'product-1',
             'priceList' => '1t_2t_3t',
             'qty' => 1,
             'unit' => 'product_unit.bottle',
@@ -143,7 +143,7 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
             'reference' => 'product_price.13'
         ],
         [
-            'product' => 'product.1',
+            'product' => 'product-1',
             'priceList' => '1t_2t_3t',
             'qty' => 10,
             'unit' => 'product_unit.liter',
@@ -152,7 +152,7 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
             'reference' => 'product_price.14'
         ],
         [
-            'product' => 'product.4',
+            'product' => 'product-4',
             'priceList' => '1f',
             'qty' => 10,
             'unit' => 'product_unit.bottle',
@@ -161,7 +161,7 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
             'reference' => 'product_price.15'
         ],
         [
-            'product' => 'product.5',
+            'product' => 'product-5',
             'priceList' => '1f',
             'qty' => 1,
             'unit' => 'product_unit.bottle',
@@ -170,7 +170,7 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
             'reference' => 'product_price.16'
         ],
         [
-            'product' => 'product.1',
+            'product' => 'product-1',
             'priceList' => '1f',
             'qty' => 1,
             'unit' => 'product_unit.bottle',
@@ -179,7 +179,7 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
             'reference' => 'product_price.17'
         ],
         [
-            'product' => 'product.6',
+            'product' => 'product-6',
             'priceList' => '1f',
             'qty' => 10,
             'unit' => 'product_unit.bottle',
@@ -188,7 +188,7 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
             'reference' => 'product_price.18'
         ],
         [
-            'product' => 'product.7',
+            'product' => 'product-7',
             'priceList' => '1f',
             'qty' => 1,
             'unit' => 'product_unit.bottle',
@@ -197,7 +197,7 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
             'reference' => 'product_price.19'
         ],
         [
-            'product' => 'product.1',
+            'product' => 'product-1',
             'priceList' => '1f',
             'qty' => 1,
             'unit' => 'product_unit.milliliter',
@@ -206,7 +206,7 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
             'reference' => 'product_price.20'
         ],
         [
-            'product' => 'product.2',
+            'product' => 'product-2',
             'priceList' => '1f',
             'qty' => 1,
             'unit' => 'product_unit.milliliter',
@@ -215,7 +215,7 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
             'reference' => 'product_price.21'
         ],
         [
-            'product' => 'product.3',
+            'product' => 'product-3',
             'priceList' => '1f',
             'qty' => 1,
             'unit' => 'product_unit.milliliter',
@@ -224,7 +224,7 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
             'reference' => 'product_price.22'
         ],
         [
-            'product' => 'product.4',
+            'product' => 'product-4',
             'priceList' => '1f',
             'qty' => 1,
             'unit' => 'product_unit.milliliter',
@@ -233,7 +233,7 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
             'reference' => 'product_price.23'
         ],
         [
-            'product' => 'product.5',
+            'product' => 'product-5',
             'priceList' => '1f',
             'qty' => 1,
             'unit' => 'product_unit.milliliter',

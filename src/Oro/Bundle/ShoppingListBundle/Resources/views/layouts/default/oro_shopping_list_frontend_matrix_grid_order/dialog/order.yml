@@ -1,4 +1,8 @@
 layout:
+    imports:
+        -
+            id: line_item_buttons
+            root: form_actions
     actions:
         - '@setBlockTheme':
             themes: 'order.html.twig'
@@ -6,6 +10,8 @@ layout:
             themes: 'order_form.html.twig'
         - '@addTree':
             items:
+                matrix_order_wrapper:
+                    blockType: container
                 form_start:
                     blockType: form_start
                     options:
@@ -27,23 +33,13 @@ layout:
                         totalPrice: '=data["oro_shopping_list_matrix_grid_order"].getTotalPriceFormatted(data["product"])'
                 form_actions:
                     blockType: container
-                form_actions_create:
-                    blockType: button
-                    options:
-                        action: submit
-                        text: oro.shoppinglist.create_new_form.create.label
-                        style: auto
-                form_actions_create_and_add:
-                    blockType: button
-                    options:
-                        action: submit
-                        text: oro.shoppinglist.create_new_form.create_and_add.label
-                        style: auto
+                form_buttons:
+                    blockType: container
             tree:
                 widget_content:
-                    form_start: ~
-                    form_fields: ~
-                    form_summary: ~
-                    form_actions:
-                        form_actions_create: ~
-                    form_end: ~
+                    matrix_order_wrapper:
+                        form_start: ~
+                        form_fields: ~
+                        form_summary: ~
+                        form_actions: ~
+                        form_end: ~

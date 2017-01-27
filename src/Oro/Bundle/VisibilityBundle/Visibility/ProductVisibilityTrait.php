@@ -5,11 +5,11 @@ namespace Oro\Bundle\VisibilityBundle\Visibility;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\Query\Expr\Join;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\VisibilityBundle\Provider\VisibilityScopeProvider;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
-use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\AccountProductVisibilityResolved;
+use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -43,94 +43,94 @@ trait ProductVisibilityTrait
 
     /**
      * @param QueryBuilder $queryBuilder
-     * @param AccountGroup $accountGroup
+     * @param CustomerGroup $customerGroup
      * @param Website $website
      * @return string
      */
-    private function getAccountGroupProductVisibilityResolvedTermByWebsite(
+    private function getCustomerGroupProductVisibilityResolvedTermByWebsite(
         QueryBuilder $queryBuilder,
-        AccountGroup $accountGroup,
+        CustomerGroup $customerGroup,
         Website $website
     ) {
         $queryBuilder->leftJoin(
-            'OroVisibilityBundle:VisibilityResolved\AccountGroupProductVisibilityResolved',
-            'account_group_product_visibility_resolved',
+            'OroVisibilityBundle:VisibilityResolved\CustomerGroupProductVisibilityResolved',
+            'customer_group_product_visibility_resolved',
             Join::WITH,
             $queryBuilder->expr()->andX(
                 $queryBuilder->expr()->eq(
                     $this->getRootAlias($queryBuilder),
-                    'account_group_product_visibility_resolved.product'
+                    'customer_group_product_visibility_resolved.product'
                 ),
                 $queryBuilder->expr()->eq(
-                    'account_group_product_visibility_resolved.scope',
-                    ':accountGroupScope'
+                    'customer_group_product_visibility_resolved.scope',
+                    ':customerGroupScope'
                 )
             )
         );
 
-        $scope = $this->getVisibilityScopeProvider()->getAccountGroupProductVisibilityScope($accountGroup, $website);
+        $scope = $this->getVisibilityScopeProvider()->getCustomerGroupProductVisibilityScope($customerGroup, $website);
 
-        $queryBuilder->setParameter('accountGroupScope', $scope);
+        $queryBuilder->setParameter('customerGroupScope', $scope);
 
         return sprintf(
             'COALESCE(%s, 0) * 10',
-            $this->addCategoryConfigFallback('account_group_product_visibility_resolved.visibility')
+            $this->addCategoryConfigFallback('customer_group_product_visibility_resolved.visibility')
         );
     }
 
     /**
      * @param QueryBuilder $queryBuilder
-     * @param Account $account
+     * @param Customer $customer
      * @param Website $website
      * @return string
      */
-    private function getAccountProductVisibilityResolvedTermByWebsite(
+    private function getCustomerProductVisibilityResolvedTermByWebsite(
         QueryBuilder $queryBuilder,
-        Account $account,
+        Customer $customer,
         Website $website
     ) {
         $queryBuilder->leftJoin(
-            'OroVisibilityBundle:VisibilityResolved\AccountProductVisibilityResolved',
-            'account_product_visibility_resolved',
+            'OroVisibilityBundle:VisibilityResolved\CustomerProductVisibilityResolved',
+            'customer_product_visibility_resolved',
             Join::WITH,
             $queryBuilder->expr()->andX(
                 $queryBuilder->expr()->eq(
                     $this->getRootAlias($queryBuilder),
-                    'account_product_visibility_resolved.product'
+                    'customer_product_visibility_resolved.product'
                 ),
-                $queryBuilder->expr()->eq('account_product_visibility_resolved.scope', ':accountScope')
+                $queryBuilder->expr()->eq('customer_product_visibility_resolved.scope', ':customerScope')
             )
         );
 
-        $scope = $this->getVisibilityScopeProvider()->getAccountProductVisibilityScope($account, $website);
+        $scope = $this->getVisibilityScopeProvider()->getCustomerProductVisibilityScope($customer, $website);
 
-        $queryBuilder->setParameter('accountScope', $scope);
+        $queryBuilder->setParameter('customerScope', $scope);
 
         $productFallback = $this->addCategoryConfigFallback('product_visibility_resolved.visibility');
-        $accountFallback = $this->addCategoryConfigFallback('account_product_visibility_resolved.visibility');
+        $customerFallback = $this->addCategoryConfigFallback('customer_product_visibility_resolved.visibility');
 
-        return $this->getAccountProductVisibilityResolvedVisibilityTerm($productFallback, $accountFallback);
+        return $this->getCustomerProductVisibilityResolvedVisibilityTerm($productFallback, $customerFallback);
     }
 
     /**
      * @param string $productFallback
-     * @param string $accountFallback
+     * @param string $customerFallback
      * @return string
      */
-    private function getAccountProductVisibilityResolvedVisibilityTerm($productFallback, $accountFallback)
+    private function getCustomerProductVisibilityResolvedVisibilityTerm($productFallback, $customerFallback)
     {
         $term = <<<TERM
-CASE WHEN account_product_visibility_resolved.visibility = %s
+CASE WHEN customer_product_visibility_resolved.visibility = %s
     THEN (COALESCE(%s, %s) * 100)
 ELSE (COALESCE(%s, 0) * 100)
 END
 TERM;
         return sprintf(
             $term,
-            AccountProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL,
+            CustomerProductVisibilityResolved::VISIBILITY_FALLBACK_TO_ALL,
             $productFallback,
             $this->getProductConfigValue(),
-            $accountFallback
+            $customerFallback
         );
     }
 

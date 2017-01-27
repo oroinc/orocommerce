@@ -21,7 +21,7 @@ class SaleRequest extends AbstractRequest
             ->addOption(new Option\Tender())
             ->addOption(new Option\Amount())
             ->addOption(new Option\Currency())
-            ->addOption(new GatewayOption\Account())
+            ->addOption(new GatewayOption\Customer())
             ->addOption(new GatewayOption\ExpirationDate())
             ->addOption(new Option\BillingAddress())
             ->addOption(new Option\ShippingAddress())
@@ -36,7 +36,8 @@ class SaleRequest extends AbstractRequest
             ->addOption(new GatewayOption\TransparentRedirect())
             ->addOption(new GatewayOption\SecureTokenIdentifier())
             ->addOption(new GatewayOption\CreateSecureToken())
-            ->addOption(new GatewayOption\SilentPost());
+            ->addOption(new GatewayOption\SilentPost())
+            ->addOption(new Option\ButtonSource());
 
         return $this;
     }

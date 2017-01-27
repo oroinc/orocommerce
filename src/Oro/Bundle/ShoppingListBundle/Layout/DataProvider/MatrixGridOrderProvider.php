@@ -60,7 +60,7 @@ class MatrixGridOrderProvider
     public function isAvailable(Product $product)
     {
         try {
-            $variants = $this->productVariantAvailability->getVariantFieldsWithAvailability($product);
+            $variants = $this->productVariantAvailability->getVariantFieldsAvailability($product);
         } catch (\InvalidArgumentException $e) {
             return false;
         }

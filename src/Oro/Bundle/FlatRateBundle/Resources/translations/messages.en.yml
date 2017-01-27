@@ -1,0 +1,18 @@
+oro:
+    flat_rate:
+        settings:
+            label: Flat Rate Transport Settings
+            labels.label: Label
+
+        channel_type:
+            label: Flat Rate Shipping
+        form:
+            oro_flat_rate_options_type:
+                label: Flat Rate
+        method:
+            price.label: Price
+            handling_fee.label: Handling Fee
+            processing_type:
+                label: Type
+                per_item.label: Per Item
+                per_order.label: Per Order

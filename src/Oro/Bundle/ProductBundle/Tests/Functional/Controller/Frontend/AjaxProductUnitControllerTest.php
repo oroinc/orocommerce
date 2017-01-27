@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
@@ -19,7 +19,7 @@ class AjaxProductUnitControllerTest extends WebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
+            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
 
         $this->loadFixtures(['Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions']);
@@ -59,8 +59,8 @@ class AjaxProductUnitControllerTest extends WebTestCase
     public function productUnitsDataProvider()
     {
         return [
-            'product.1 full' => [
-                'product.1',
+            'product-1 full' => [
+                'product-1',
                 [
                     'bottle' => 'bottle',
                     'liter' => 'liter',
@@ -68,8 +68,8 @@ class AjaxProductUnitControllerTest extends WebTestCase
                 ],
                 false
             ],
-            'product.2 full' => [
-                'product.2',
+            'product-2 full' => [
+                'product-2',
                 [
                     'bottle' => 'bottle',
                     'box' => 'box',
@@ -78,8 +78,8 @@ class AjaxProductUnitControllerTest extends WebTestCase
                 ],
                 false
             ],
-            'product.1 short' => [
-                'product.1',
+            'product-1 short' => [
+                'product-1',
                 [
                     'bottle' => 'bottle',
                     'liter' => 'liter',
@@ -87,8 +87,8 @@ class AjaxProductUnitControllerTest extends WebTestCase
                 ],
                 true
             ],
-            'product.2 short' => [
-                'product.2',
+            'product-2 short' => [
+                'product-2',
                 [
                     'bottle' => 'bottle',
                     'box' => 'box',

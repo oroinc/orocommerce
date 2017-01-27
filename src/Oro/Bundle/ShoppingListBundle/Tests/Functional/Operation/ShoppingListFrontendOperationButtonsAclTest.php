@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional;
 
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserACLData;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserACLData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\FrontendActionTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -27,7 +27,7 @@ class ShoppingListFrontendOperationButtonsAclTest extends FrontendActionTestCase
             LoadProductData::class,
         ]);
 
-        $user = $this->getAccountUser();
+        $user = $this->getCustomerUser();
 
         $token = new UsernamePasswordOrganizationToken($user, false, 'k', $user->getOrganization(), $user->getRoles());
         $this->client->getContainer()->get('security.token_storage')->setToken($token);
@@ -72,13 +72,13 @@ class ShoppingListFrontendOperationButtonsAclTest extends FrontendActionTestCase
     }
 
     /**
-     * @return AccountUser
+     * @return CustomerUser
      */
-    public function getAccountUser()
+    public function getCustomerUser()
     {
         return $this->getContainer()
             ->get('doctrine')
-            ->getRepository(AccountUser::class)
-            ->findOneBy(['email' => LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_LOCAL]);
+            ->getRepository(CustomerUser::class)
+            ->findOneBy(['email' => LoadCustomerUserACLData::USER_ACCOUNT_1_ROLE_LOCAL]);
     }
 }

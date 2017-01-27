@@ -1,3 +1,6 @@
-@import './components/main_menu';
-@import './components/quick_access';
-@import './components/header-row';
+// @theme: custom
+
+@import 'components/main_menu';
+@import 'components/main-menu-column/main-menu-column';
+@import 'components/quick_access';
+@import 'components/header-row';

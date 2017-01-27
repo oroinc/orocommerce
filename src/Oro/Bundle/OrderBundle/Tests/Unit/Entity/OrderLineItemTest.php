@@ -20,6 +20,7 @@ class OrderLineItemTest extends \PHPUnit_Framework_TestCase
             ['id', '123'],
             ['order', new Order()],
             ['product', new Product()],
+            ['parentProduct', new Product()],
             ['productSku', '1234'],
             ['freeFormProduct', 'Services'],
             ['quantity', 42],

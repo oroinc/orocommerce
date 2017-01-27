@@ -15,22 +15,22 @@ use Symfony\Component\PropertyAccess\PropertyAccessor;
 class ProductVariantAvailabilityProvider
 {
     /** @var DoctrineHelper */
-    protected $doctrineHelper;
+    private $doctrineHelper;
 
     /** @var EnumValueProvider */
-    protected $enumValueProvider;
+    private $enumValueProvider;
 
     /** @var CustomFieldProvider */
-    protected $customFieldProvider;
+    private $customFieldProvider;
 
     /** @var PropertyAccessor */
-    protected $propertyAccessor;
+    private $propertyAccessor;
 
     /** @var EventDispatcherInterface */
-    protected $eventDispatcher;
+    private $eventDispatcher;
 
     /** @var array */
-    protected $fieldTypeCache = [];
+    private $customFieldsByEntity = [];
 
     /**
      * @param DoctrineHelper $doctrineHelper
@@ -54,115 +54,53 @@ class ProductVariantAvailabilityProvider
     }
 
     /**
+     * Get variant fields availability with condition
+     *
+     * Example of result:
+     *  [
+     *     'size' => ['m' => false, 'l' => true],
+     *     'color' => ['red' => true],
+     *     'slim_fit' => true
+     * ]
+     *
      * @param Product $configurableProduct
-     * @param array $variantParameters
+     * @param array $variantParameters Variant field conditions
      * @return array
      */
-    public function getVariantFieldsWithAvailability(Product $configurableProduct, array $variantParameters = [])
+    public function getVariantFieldsAvailability(Product $configurableProduct, array $variantParameters = [])
     {
         $this->ensureProductTypeIsConfigurable($configurableProduct);
-
-        $availableVariants = $this->getVariantFields($configurableProduct);
-
-        foreach ($variantParameters as $variantField => $variantValue) {
-            $this->filterVariants($availableVariants, $configurableProduct, $variantParameters, $variantField);
-        }
-
-        return $availableVariants;
-    }
-
-    /**
-     * @param array $availableVariants
-     * @param Product $configurableProduct
-     * @param array $variantParameters
-     * @param string $currentField
-     */
-    protected function filterVariants(
-        &$availableVariants,
-        Product $configurableProduct,
-        $variantParameters,
-        $currentField
-    ) {
-        $currentVariants = $this->getVariantFields(
-            $configurableProduct,
-            [
-                $currentField => $variantParameters[$currentField]
-            ]
-        );
-
-        foreach ($availableVariants as $variantField => &$variantValues) {
-            if ($variantField === $currentField) {
-                continue;
-            }
-
-            array_walk(
-                $variantValues,
-                function (&$item, $key, $currentValues) {
-                    $item = $item && $currentValues[$key];
-                },
-                $currentVariants[$variantField]
-            );
-        }
-    }
-
-    /**
-     * @param Product $configurableProduct
-     * @param array $variantParameters
-     * @return array
-     */
-    protected function getVariantFields(Product $configurableProduct, $variantParameters = [])
-    {
-        $variantFields = $configurableProduct->getVariantFields();
 
         $availableSimpleProducts = $this->getSimpleProductsByVariantFields(
             $configurableProduct,
             $variantParameters
         );
 
-        $allVariants = [];
-        foreach ($variantFields as $variantField) {
-            // get array of all variants
-            $allVariants[$variantField] = array_fill_keys(
-                array_keys($this->getAllVariantsByVariantFieldName($variantField)),
-                false
-            );
+        $variantsAvailability = [];
+        foreach ($configurableProduct->getVariantFields() as $variantField) {
+            $fieldValues = $this->getVariantFieldValues($variantField);
+
+            // All fields are not available by default
+            $variantsAvailability[$variantField] = array_fill_keys(array_keys($fieldValues), false);
 
             foreach ($availableSimpleProducts as $simpleProduct) {
-                $variantValue = $this->getVariantFieldValue($simpleProduct, $variantField);
-                $allVariants[$variantField][$variantValue] = true;
+                $variantFieldValue = $this->getVariantFieldScalarValue($simpleProduct, $variantField);
+                $variantsAvailability[$variantField][$variantFieldValue] = true;
             }
         }
 
-        return $allVariants;
+        return $variantsAvailability;
     }
 
     /**
-     * @param Product $simpleProduct
-     * @param $variantFieldName
-     * @return string|null
-     */
-    public function getVariantFieldValue(Product $simpleProduct, $variantFieldName)
-    {
-        $fieldType = $this->getFieldType($variantFieldName);
-        $variantValue = $this->propertyAccessor->getValue($simpleProduct, $variantFieldName);
-
-        switch ($fieldType) {
-            case 'enum':
-                return $this->doctrineHelper->getSingleEntityIdentifier($variantValue);
-            case 'boolean':
-                return $variantValue;
-        }
-
-        return null;
-    }
-
-    /**
+     * Returns all values for specified variant field
+     *
      * @param string $variantFieldName
      * @return array
      */
-    public function getAllVariantsByVariantFieldName($variantFieldName)
+    public function getVariantFieldValues($variantFieldName)
     {
-        $type = $this->getFieldType($variantFieldName);
+        $type = $this->getCustomFieldType($variantFieldName);
 
         $variants = [];
         switch ($type) {
@@ -173,27 +111,29 @@ class ProductVariantAvailabilityProvider
 
             case 'boolean':
                 // TODO: Is it possible to have this choice variants in one place?
-                $variants = ['No', 'Yes'];
+                $variants = [0 => 'No', 1 => 'Yes'];
                 break;
+
+            case null:
+                throw new \InvalidArgumentException(
+                    sprintf('Custom field "%s" not found', $variantFieldName)
+                );
         }
 
         return $variants;
     }
 
     /**
-     * @param string $fieldName
-     * @return string|null
+     * Returns type of custom field
+     *
+     * @param string $fieldName Custom field name
+     * @return string|null Type of custom field, null in case of custom field with specified name doesn't exist
      */
-    protected function getFieldType($fieldName)
+    public function getCustomFieldType($fieldName)
     {
-        if (!array_key_exists($fieldName, $this->fieldTypeCache)) {
-            $customFields = $this->customFieldProvider->getEntityCustomFields(Product::class);
+        $customFields = $this->getCustomFieldsByEntity(Product::class);
 
-            $this->fieldTypeCache[$fieldName] = array_key_exists($fieldName, $customFields) ?
-                $customFields[$fieldName]['type'] : null;
-        }
-
-        return $this->fieldTypeCache[$fieldName];
+        return array_key_exists($fieldName, $customFields) ? $customFields[$fieldName]['type'] : null;
     }
 
     /**
@@ -228,19 +168,74 @@ class ProductVariantAvailabilityProvider
     /**
      * @param Product $configurableProduct
      * @param array $variantParameters
-     * @return Product
+     * @param bool $throwException
+     * @return null|Product
      * @throws \InvalidArgumentException
      */
-    public function getSimpleProductByVariantFields(Product $configurableProduct, array $variantParameters = [])
-    {
+    public function getSimpleProductByVariantFields(
+        Product $configurableProduct,
+        array $variantParameters = [],
+        $throwException = true
+    ) {
         $this->ensureProductTypeIsConfigurable($configurableProduct);
         $simpleProducts = $this->getSimpleProductsByVariantFields($configurableProduct, $variantParameters);
 
-        if (count($simpleProducts) !== 1) {
+        if ($throwException && count($simpleProducts) !== 1) {
             throw new \InvalidArgumentException('Variant values provided don\'t match exactly one simple product');
         }
 
-        return $simpleProducts[0];
+        return $simpleProducts ? reset($simpleProducts) : null;
+    }
+
+    /**
+     * @param Product $configurableProduct
+     * @param Product $variantProduct
+     * @return array
+     */
+    public function getVariantFieldsValuesForVariant(Product $configurableProduct, Product $variantProduct)
+    {
+        $this->ensureProductTypeIsConfigurable($configurableProduct);
+
+        $variantFieldsForVariant = [];
+        foreach ($configurableProduct->getVariantFields() as $variantField) {
+            $variantFieldsForVariant[$variantField] = $this->getVariantFieldScalarValue($variantProduct, $variantField);
+        }
+
+        return $variantFieldsForVariant;
+    }
+
+    /**
+     * Get value of variant field from product
+     *
+     * @param Product $product
+     * @param string $variantField
+     * @return mixed
+     * @throws \InvalidArgumentException
+     */
+    public function getVariantFieldScalarValue(Product $product, $variantField)
+    {
+        $variantValue = $this->propertyAccessor->getValue($product, $variantField);
+        $fieldType = $this->getCustomFieldType($variantField);
+
+        switch ($fieldType) {
+            case 'enum':
+                $result = $this->doctrineHelper->getSingleEntityIdentifier($variantValue);
+                break;
+
+            case 'boolean':
+                $result = (bool) $variantValue;
+                break;
+            default:
+                throw new \InvalidArgumentException(
+                    sprintf(
+                        'Can not get value of "%s" field from product (ID: %d)',
+                        $variantField,
+                        $product->getId()
+                    )
+                );
+        }
+
+        return $result;
     }
 
     /**
@@ -254,5 +249,18 @@ class ProductVariantAvailabilityProvider
                 sprintf('Product with type "%s" expected, "%s" given', Product::TYPE_CONFIGURABLE, $product->getType())
             );
         }
+    }
+
+    /**
+     * @param string $entityName
+     * @return array
+     */
+    private function getCustomFieldsByEntity($entityName)
+    {
+        if (!array_key_exists($entityName, $this->customFieldsByEntity)) {
+            $this->customFieldsByEntity[$entityName] = $this->customFieldProvider->getEntityCustomFields($entityName);
+        }
+
+        return $this->customFieldsByEntity[$entityName];
     }
 }

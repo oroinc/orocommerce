@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Security;
 
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
@@ -23,12 +23,12 @@ class ProductVisibilityTest extends WebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadAccountUserData::EMAIL, LoadAccountUserData::PASSWORD)
+            $this->generateBasicAuthHeader(LoadCustomerUserData::EMAIL, LoadCustomerUserData::PASSWORD)
         );
         $this->loadFixtures(
             [
                 LoadProductVisibilityData::class,
-                LoadAccountUserData::class,
+                LoadCustomerUserData::class,
             ]
         );
         $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
@@ -44,7 +44,7 @@ class ProductVisibilityTest extends WebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadAccountUserData::EMAIL, LoadAccountUserData::PASSWORD)
+            $this->generateBasicAuthHeader(LoadCustomerUserData::EMAIL, LoadCustomerUserData::PASSWORD)
         );
         $configManager = $this->getClientInstance()->getContainer()->get('oro_config.global');
         $configManager->set(self::VISIBILITY_SYSTEM_CONFIGURATION_PATH, $configValue);
@@ -56,7 +56,7 @@ class ProductVisibilityTest extends WebTestCase
                 $this->getUrl('oro_product_frontend_product_view', ['id' => $product->getId()]),
                 [],
                 [],
-                $this->generateBasicAuthHeader(LoadAccountUserData::EMAIL, LoadAccountUserData::PASSWORD)
+                $this->generateBasicAuthHeader(LoadCustomerUserData::EMAIL, LoadCustomerUserData::PASSWORD)
             );
             $response = $this->client->getResponse();
             $this->assertSame($response->getStatusCode(), $resultCode, $productSKU);

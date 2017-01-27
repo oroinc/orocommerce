@@ -10,7 +10,7 @@ define(function(require) {
         /**
          * @property {Object}
          */
-        options: { 
+        options: {
             $: {
                 product: ''
             }

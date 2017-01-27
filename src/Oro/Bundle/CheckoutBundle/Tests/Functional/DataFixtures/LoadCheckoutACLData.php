@@ -8,8 +8,8 @@ use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserACLData;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserACLData;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
@@ -18,32 +18,32 @@ class LoadCheckoutACLData extends AbstractFixture implements
     FixtureInterface,
     DependentFixtureInterface
 {
-    const CHECKOUT_ACC_1_USER_LOCAL = 'checkout_account1_user_local';
-    const CHECKOUT_ACC_1_USER_BASIC = 'checkout_account1_user_basic';
-    const CHECKOUT_ACC_1_USER_DEEP = 'checkout_account1_user_deep';
+    const CHECKOUT_ACC_1_USER_LOCAL = 'checkout_customer1_user_local';
+    const CHECKOUT_ACC_1_USER_BASIC = 'checkout_customer1_user_basic';
+    const CHECKOUT_ACC_1_USER_DEEP = 'checkout_customer1_user_deep';
 
-    const CHECKOUT_ACC_1_1_USER_LOCAL = 'checkout_account1.1_user_local';
+    const CHECKOUT_ACC_1_1_USER_LOCAL = 'checkout_customer1.1_user_local';
 
-    const CHECKOUT_ACC_2_USER_LOCAL = 'checkout_account2_user_local';
+    const CHECKOUT_ACC_2_USER_LOCAL = 'checkout_customer2_user_local';
 
     /**
      * @var array
      */
     protected static $checkouts = [
         self::CHECKOUT_ACC_1_USER_LOCAL => [
-            'accountUser' => LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_LOCAL
+            'customerUser' => LoadCustomerUserACLData::USER_ACCOUNT_1_ROLE_LOCAL
         ],
         self::CHECKOUT_ACC_1_USER_BASIC => [
-            'accountUser' => LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_BASIC
+            'customerUser' => LoadCustomerUserACLData::USER_ACCOUNT_1_ROLE_BASIC
         ],
         self::CHECKOUT_ACC_1_USER_DEEP => [
-            'accountUser' => LoadAccountUserACLData::USER_ACCOUNT_1_ROLE_DEEP
+            'customerUser' => LoadCustomerUserACLData::USER_ACCOUNT_1_ROLE_DEEP
         ],
         self::CHECKOUT_ACC_1_1_USER_LOCAL => [
-            'accountUser' => LoadAccountUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL
+            'customerUser' => LoadCustomerUserACLData::USER_ACCOUNT_1_1_ROLE_LOCAL
         ],
         self::CHECKOUT_ACC_2_USER_LOCAL => [
-            'accountUser' => LoadAccountUserACLData::USER_ACCOUNT_2_ROLE_LOCAL
+            'customerUser' => LoadCustomerUserACLData::USER_ACCOUNT_2_ROLE_LOCAL
         ],
     ];
 
@@ -80,12 +80,12 @@ class LoadCheckoutACLData extends AbstractFixture implements
      */
     protected function createOrder(ObjectManager $manager, $name, array $checkoutData)
     {
-        /** @var AccountUser $accountUser */
-        $accountUser = $this->getReference($checkoutData['accountUser']);
+        /** @var CustomerUser $customerUser */
+        $customerUser = $this->getReference($checkoutData['customerUser']);
         $shoppingList = new ShoppingList();
-        $shoppingList->setOrganization($accountUser->getOrganization())
-            ->setAccount($accountUser->getAccount())
-            ->setAccountUser($accountUser)
+        $shoppingList->setOrganization($customerUser->getOrganization())
+            ->setCustomer($customerUser->getCustomer())
+            ->setCustomerUser($customerUser)
             ->setLabel('test');
         $manager->persist($shoppingList);
 
@@ -98,9 +98,9 @@ class LoadCheckoutACLData extends AbstractFixture implements
         $checkout
             ->setSource($source)
             ->setWebsite($website)
-            ->setOrganization($accountUser->getOrganization())
-            ->setAccount($accountUser->getAccount())
-            ->setAccountUser($accountUser);
+            ->setOrganization($customerUser->getOrganization())
+            ->setCustomer($customerUser->getCustomer())
+            ->setCustomerUser($customerUser);
         $manager->persist($checkout);
         $this->addReference($name, $checkout);
     }

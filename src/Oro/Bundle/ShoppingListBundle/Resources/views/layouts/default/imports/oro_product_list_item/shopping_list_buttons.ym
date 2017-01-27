@@ -1,0 +1,7 @@
+layout:
+    imports:
+        -
+            id: shopping_list_buttons
+            root: __product_line_item_buttons
+            namespace: product
+    actions: []

@@ -57,9 +57,6 @@
     <a href="{{ path('oro_product_frontend_product_index', {'categoryId': category.id, 'includeSubcategories': true}) }}"
        class="main-menu__link" data-collapse-trigger-second>
         <span>{{ category.titles|localized_value }} </span>
-        {% if hasSublist %}
-            <i class="fa-angle-down"></i>
-        {% endif %}
     </a>
     {% if hasSublist %}
     <!-- START TOP NAVIGATION SUBLIST -->

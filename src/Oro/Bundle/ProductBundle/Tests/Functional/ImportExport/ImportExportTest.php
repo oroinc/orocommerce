@@ -588,6 +588,6 @@ class ImportExportTest extends AbstractImportExportTest
      */
     private function createSessionInterfaceMock()
     {
-        return $this->getMock(SessionInterface::class);
+        return $this->getMockBuilder(SessionInterface::class)->getMock();
     }
 }

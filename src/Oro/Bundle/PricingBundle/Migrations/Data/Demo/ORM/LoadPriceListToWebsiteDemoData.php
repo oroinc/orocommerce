@@ -30,12 +30,12 @@ class LoadPriceListToWebsiteDemoData extends LoadBasePriceListRelationDemoData
             $row = array_combine($headers, array_values($data));
             $priceList = $this->getPriceListByName($manager, $row['priceList']);
 
-            $priceListToAccount = new PriceListToWebsite();
-            $priceListToAccount->setWebsite($website)
+            $priceListToCustomer = new PriceListToWebsite();
+            $priceListToCustomer->setWebsite($website)
                 ->setPriceList($priceList)
                 ->setPriority($row['priority'])
                 ->setMergeAllowed((boolean)$row['mergeAllowed']);
-            $manager->persist($priceListToAccount);
+            $manager->persist($priceListToCustomer);
         }
 
         fclose($handler);

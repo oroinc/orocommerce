@@ -3,8 +3,8 @@
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Storage;
 
 use Oro\Component\Testing\Unit\EntityTrait;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
@@ -39,14 +39,18 @@ class RequestToQuoteDataStorageTest extends \PHPUnit_Framework_TestCase
 
     public function testSaveToStorage()
     {
-        $accountId = 10;
-        $accountUserId = 42;
-        $productSku = 'testSku';
-        $quantity = 100;
-        $comment = 'Test Comment';
-        $unitCode = 'kg';
+        $rfpRequestData = [
+            'customerId' => 10,
+            'customerUserId' => 42,
+            'productSku' => 'testSku',
+            'quantity' => 100,
+            'comment' => 'Test Comment',
+            'unitCode' => 'kg',
+            'assignedUsers' => [1, 3, 7],
+            'assignedCustomerUsers' => [2, 5],
+        ];
 
-        $rfpRequest = $this->createRFPRequest($accountId, $accountUserId, $productSku, $unitCode, $quantity, $comment);
+        $rfpRequest = $this->createRFPRequest($rfpRequestData);
 
         /** @var RequestProduct $requestProduct */
         $requestProduct = $rfpRequest->getRequestProducts()->first();
@@ -58,23 +62,25 @@ class RequestToQuoteDataStorageTest extends \PHPUnit_Framework_TestCase
             ->method('set')
             ->with([
                 ProductDataStorage::ENTITY_DATA_KEY => [
-                    'account' => $accountId,
-                    'accountUser' => $accountUserId,
+                    'customer' => $rfpRequestData['customerId'],
+                    'customerUser' => $rfpRequestData['customerUserId'],
                     'request' => null,
                     'poNumber' => null,
-                    'shipUntil' => null
+                    'shipUntil' => null,
+                    'assignedUsers' => [1, 3, 7],
+                    'assignedCustomerUsers' => [2, 5],
                 ],
                 ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
                     [
-                        ProductDataStorage::PRODUCT_SKU_KEY => $productSku,
+                        ProductDataStorage::PRODUCT_SKU_KEY => $rfpRequestData['productSku'],
                         ProductDataStorage::PRODUCT_QUANTITY_KEY => null,
-                        'commentAccount' => $comment,
+                        'commentCustomer' => $rfpRequestData['comment'],
                         'requestProductItems' => [
                             [
-                                'productUnit' => $unitCode,
-                                'productUnitCode' => $unitCode,
+                                'productUnit' => $rfpRequestData['unitCode'],
+                                'productUnitCode' => $rfpRequestData['unitCode'],
                                 'requestProductItem' => $requestProductItem->getId(),
-                                'quantity' => $quantity,
+                                'quantity' => $rfpRequestData['quantity'],
                                 'price' => null,
                             ],
                         ]
@@ -86,34 +92,35 @@ class RequestToQuoteDataStorageTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param int $accountId
-     * @param int $accountUserId
-     * @param string $productSku
-     * @param string $unitCode
-     * @param float $quantity
-     * @param string $comment
+     * @param array $rfpRequestData
      * @return RFPRequest
      */
-    protected function createRFPRequest($accountId, $accountUserId, $productSku, $unitCode, $quantity, $comment)
+    protected function createRFPRequest($rfpRequestData)
     {
-        /** @var Account $account */
-        $account = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\Account', ['id' => $accountId]);
+        /** @var Customer $customer */
+        $customer = $this->getEntity(
+            'Oro\Bundle\CustomerBundle\Entity\Customer',
+            ['id' => $rfpRequestData['customerId']]
+        );
 
-        /** @var AccountUser $accountUser */
-        $accountUser = $this->getEntity('Oro\Bundle\CustomerBundle\Entity\AccountUser', ['id' => $accountUserId]);
+        /** @var CustomerUser $customerUser */
+        $customerUser = $this->getEntity(
+            'Oro\Bundle\CustomerBundle\Entity\CustomerUser',
+            ['id' => $rfpRequestData['customerUserId']]
+        );
 
         $product = new Product();
-        $product->setSku($productSku);
+        $product->setSku($rfpRequestData['productSku']);
 
         $productUnit = new ProductUnit();
-        $productUnit->setCode($unitCode);
+        $productUnit->setCode($rfpRequestData['unitCode']);
 
         /** @var RequestProductItem $requestProductItem */
         $requestProductItem = $this->getEntity(
             'Oro\Bundle\RFPBundle\Entity\RequestProductItem',
             [
                 'id' => rand(1, 1000),
-                'quantity' => $quantity,
+                'quantity' => $rfpRequestData['quantity'],
                 'productUnit' => $productUnit
             ]
         );
@@ -121,14 +128,32 @@ class RequestToQuoteDataStorageTest extends \PHPUnit_Framework_TestCase
         $requestProduct = new RequestProduct();
         $requestProduct
             ->setProduct($product)
-            ->setComment($comment)
+            ->setComment($rfpRequestData['comment'])
             ->addRequestProductItem($requestProductItem);
 
         $rfpRequest = new RFPRequest();
         $rfpRequest
-            ->setAccount($account)
-            ->setAccountUser($accountUser)
+            ->setCustomer($customer)
+            ->setCustomerUser($customerUser)
             ->addRequestProduct($requestProduct);
+
+        foreach ($rfpRequestData['assignedUsers'] as $assignedUserId) {
+            /** @var \Oro\Bundle\UserBundle\Entity\User $assignedUser */
+            $assignedUser = $this->getEntity(
+                'Oro\Bundle\UserBundle\Entity\User',
+                ['id' => $assignedUserId]
+            );
+            $rfpRequest->addAssignedUser($assignedUser);
+        }
+
+        foreach ($rfpRequestData['assignedCustomerUsers'] as $assignedCustomerUserId) {
+            /** @var \Oro\Bundle\CustomerBundle\Entity\CustomerUser $assignedCustomerUser */
+            $assignedCustomerUser = $this->getEntity(
+                'Oro\Bundle\CustomerBundle\Entity\CustomerUser',
+                ['id' => $assignedCustomerUserId]
+            );
+            $rfpRequest->addAssignedCustomerUser($assignedCustomerUser);
+        }
 
         return $rfpRequest;
     }

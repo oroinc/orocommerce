@@ -9,37 +9,33 @@
     </div>
 {% endblock %}
 
-{% block _line_item_buttons_widget %}
-    {% import 'OroUIBundle::macros.html.twig' as UI %}
+{% block _line_item_form_fields_widget %}
+    {% if not isProductUnitSelectionVisible %}
+        <div class="form__col">
+            {{ form_label(form.quantity) }}
+            {{ form_widget(form.quantity, {'attr' : {'class': 'input--short'}}) }}
+
+            {% if isUnitVisible %}
+                <span class="label">
+                    {{ product.primaryUnitPrecision.unit.code|oro_format_product_unit_label }}
+                </span>
+            {% endif %}
+            {{ form_errors(form.quantity) }}
+        </div>
+    {% else %}
+        {{ form_row(form.unit) }}
+        {{ form_row(form.quantity) }}
+    {% endif %}
+{% endblock %}
+
+{% block _line_item_buttons_container_widget %}
     {% if block.children is not empty %}
         {% set attr = layout_attr_defaults(attr, {
             '~class': " form__col"
         }) %}
 
         <div {{ block('block_attributes') }}>
-            {{ UI.pinnedDropdownButton({
-                'html': block_widget(block),
-                'mobileEnabled': true,
-                'dataAttributes': {
-                    'layout': 'separate'
-                },
-                'options': {
-                    'widgetModule': 'oroproduct/js/content-processor/product-add-to-dropdown-button',
-                    'widgetName': 'productAddToDropdownButtonProcessor',
-                    'truncateLength': 15,
-                    'groupContainer': '<div class="btn-group full"></div>',
-                    'decoreClass': 'btn--info'
-                }
-            }) }}
+            {{ block_widget(block) }}
         </div>
     {% endif %}
-{% endblock %}
-
-{% block _line_item_form_shopping_lists_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': " form__col"
-    }) %}
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
 {% endblock %}

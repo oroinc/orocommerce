@@ -98,9 +98,9 @@ class MatrixGridOrderManager
     {
         $variantFields = [];
 
-        $fieldNames = array_keys($this->variantAvailability->getVariantFieldsWithAvailability($product));
+        $fieldNames = array_keys($this->variantAvailability->getVariantFieldsAvailability($product));
         foreach ($fieldNames as $fieldName) {
-            $values = $this->variantAvailability->getAllVariantsByVariantFieldName($fieldName);
+            $values = $this->variantAvailability->getVariantFieldValues($fieldName);
 
             $formattedValues = [];
             foreach ($values as $value => $label) {
@@ -138,7 +138,7 @@ class MatrixGridOrderManager
 
             $values = [];
             foreach ($variantFields as $field) {
-                $values[] = '['.$this->variantAvailability->getVariantFieldValue($variant, $field['name']).']';
+                $values[] = '['.$this->variantAvailability->getVariantFieldScalarValue($variant, $field['name']).']';
             }
             $values[] = '[_product]';
 

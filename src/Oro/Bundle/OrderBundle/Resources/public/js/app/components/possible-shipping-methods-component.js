@@ -1,14 +1,14 @@
 define(function(require) {
     'use strict';
 
-    var PossibleShippingMethodsComponent,
-        $ = require('jquery'),
-        _ = require('underscore'),
-        mediator = require('oroui/js/mediator'),
-        __ = require('orotranslation/js/translator'),
-        BaseComponent = require('oroui/js/app/components/base/component'),
-        LoadingMaskView = require('oroui/js/app/views/loading-mask-view'),
-        StandardConfirmation = require('oroui/js/standart-confirmation');
+    var PossibleShippingMethodsComponent;
+    var $ = require('jquery');
+    var _ = require('underscore');
+    var mediator = require('oroui/js/mediator');
+    var __ = require('orotranslation/js/translator');
+    var BaseComponent = require('oroui/js/app/components/base/component');
+    var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
+    var StandardConfirmation = require('oroui/js/standart-confirmation');
 
     PossibleShippingMethodsComponent = BaseComponent.extend({
         selectors: {
@@ -23,18 +23,32 @@ define(function(require) {
         },
 
         /**
+         * @property {Object}
+         */
+        options: {
+            events: {
+                before: 'entry-point:order:load:before',
+                load: 'entry-point:order:load',
+                after: 'entry-point:order:load:after',
+                trigger: 'entry-point:order:trigger'
+            }
+        },
+
+        /**
          * @constructor
          * @param {Object} options
          */
         initialize: function(options) {
-            this.$el = options._sourceElement;
+            this.options = $.extend(true, {}, this.options, options || {});
+
+            this.$el = this.options._sourceElement;
             this.loadingMaskView = new LoadingMaskView({container: this.$el});
             this.orderHasChanged = false;
             var self = this;
             this.getPossibleShippingMethodForm().hide();
             this.getToggleButton().on('click', function() {
                 self.getCalculateShippingElement().val(true);
-                mediator.trigger('entry-point:order:trigger');
+                mediator.trigger(self.options.events.trigger);
             });
             this.getPossibleShippingMethodForm().on(
                 'change',
@@ -50,9 +64,9 @@ define(function(require) {
             if ($(document).find('.selected-shipping-method').length > 0) {
                 this.savedShippingMethod = $(document).find('.selected-shipping-method').text();
             }
-            mediator.on('entry-point:order:load:before', this.showLoadingMask, this);
-            mediator.on('entry-point:order:load', this.onOrderChange, this);
-            mediator.on('entry-point:order:load:after', this.hideLoadingMask, this);
+            mediator.on(this.options.events.before, this.showLoadingMask, this);
+            mediator.on(this.options.events.load, this.onOrderChange, this);
+            mediator.on(this.options.events.after, this.hideLoadingMask, this);
 
             this.$el.closest('form').on('submit', _.bind(this.onSaveForm, this));
         },
@@ -60,7 +74,7 @@ define(function(require) {
         /**
          * Show error
          */
-        onSaveForm: function (e) {
+        onSaveForm: function(e) {
             var form = $(e.target);
             form.find(this.selectors.calculateShipping).val(true);
             form.validate();
@@ -107,15 +121,18 @@ define(function(require) {
         },
 
         onOrderChange: function(e) {
-            this.$totals = e.totals;
-            if (e.possibleShippingMethods != undefined ) {
+            if (e.totals) {
+                this.$totals = e.totals;
+            }
+
+            if (e.possibleShippingMethods !== undefined) {
                 this.getCalculateShippingElement().val(null);
                 this.getToggleButton().parent('div').hide();
                 this.$data = e.possibleShippingMethods;
                 this.updatePossibleShippingMethods(e.possibleShippingMethods);
                 this.getPossibleShippingMethodForm().show();
                 this.orderHasChanged = false;
-            } else if (this.isOverriddenTrigger == true) {
+            } else if (this.isOverriddenTrigger === true) {
                 this.orderHasChanged = false;
                 this.isOverriddenTrigger = false;
             } else {
@@ -124,7 +141,7 @@ define(function(require) {
                 this.orderHasChanged = true;
             }
         },
-        
+
         onOverriddenShippingCostChange: function() {
             this.isOverriddenTrigger = true;
         },
@@ -145,12 +162,12 @@ define(function(require) {
                 $.each(methods, function(name, method) {
                     if ($(method.types).length > 0) {
                         str = str + '<div class="method_title">';
-                        if (method.isGrouped == true) {
+                        if (method.isGrouped === true) {
                             str = str + '<span>' + __(method.label) + '</span>';
                         }
                         str = str + '</div>';
                         $.each(method.types, function(key, type) {
-                            if (type.price.value != null) {
+                            if (type.price.value !== null) {
                                 str = str + '<div><label>';
                                 var checked = '';
                                 if (method.identifier === selectedMethod && type.identifier === selectedType) {
@@ -159,11 +176,25 @@ define(function(require) {
                                     if (parseFloat(selectedCost) === parseFloat(type.price.value)) {
                                         priceMatched = true;
                                     }
-                                    self.updateElementsValue(selectedType, selectedMethod, type.price.value, priceMatched);
+                                    self.updateElementsValue(
+                                        selectedType,
+                                        selectedMethod,
+                                        type.price.value,
+                                        priceMatched
+                                    );
                                 }
-                                str = str + '<input type="radio" ' + checked + ' name="possibleShippingMethodType" value="' + type.identifier +
-                                    '" data-shipping-method="' + method.identifier + '" data-shipping-price="' + type.price.value + '" data-choice="' + type.identifier + '" />';
-                                str = str + '<span class="radio_button_label">' + __('oro.shipping.method_type.backend.method_type_and_price.label', {translatedMethodType: __(type.label), price: '<strong>' + type.price.currency + ' ' + type.price.value + '</strong>'}) + '</span>';
+                                str = str + '<input type="radio" ' + checked +
+                                    ' name="possibleShippingMethodType" value="' + type.identifier +
+                                    '" data-shipping-method="' + method.identifier + '" data-shipping-price="' +
+                                    type.price.value + '" data-choice="' + type.identifier + '" />';
+                                str = str + '<span class="radio_button_label">' +
+                                    __(
+                                    'oro.shipping.method_type.backend.method_type_and_price.label',
+                                    {
+                                        translatedMethodType: __(type.label),
+                                        price: '<strong>' + type.price.currency + ' ' + type.price.value + '</strong>'
+                                    }) +
+                                    '</span>';
                                 str = str + '</label></div>';
                             }
                         });
@@ -186,6 +217,8 @@ define(function(require) {
                     '</span>';
                 this.getPossibleShippingMethodForm().html(str);
             }
+
+            this.allowUnlistedAndLockFlags();
         },
 
         /**
@@ -206,20 +239,20 @@ define(function(require) {
          * @param {boolean} matched
          */
         updateSelectedShippingMethod: function(type, method, cost, matched) {
-            if (type !== null && method != null) {
-                var methodLabel = (this.$data[method].isGrouped == true) ? __(this.$data[method].label) : '';
+            if (type !== null && method !== null) {
+                var methodLabel = (this.$data[method].isGrouped === true) ? __(this.$data[method].label) : '';
                 var typeLabel = __(this.$data[method].types[type].label);
                 var currency = this.$data[method].types[type].price.currency;
-                var translation = (this.$data[method].isGrouped == true) ?
+                var translation = (this.$data[method].isGrouped === true) ?
                     'oro.shipping.method_type.backend.method_with_type_and_price.label'
                     : 'oro.shipping.method_type.backend.method_type_and_price.label';
                 var selectedShippingMethod = __(translation, {
                         translatedMethod: methodLabel,
                         translatedMethodType: __(typeLabel),
-                        price: currency+ ' ' + parseFloat(cost).toFixed(2)
+                        price: currency + ' ' + parseFloat(cost).toFixed(2)
                     });
 
-                var $div = $("<div>", {"class": "control-group"});
+                var $div = $('<div>', {'class': 'control-group'});
                 $div.append('<label class="control-label">' + __('oro.order.shipping_method.label') + '</label>');
                 $div.append('<div class="controls"><div class="control-label selected-shipping-method">' +
                     selectedShippingMethod + '</div>');
@@ -227,11 +260,16 @@ define(function(require) {
                 if ($(document).find('.selected-shipping-method').length > 0) {
                     $(document).find('.previously-selected-shipping-method').closest('.control-group').remove();
                     $(document).find('.selected-shipping-method').closest('.control-group').remove();
-                    if (!matched && this.savedShippingMethod && selectedShippingMethod != this.savedShippingMethod) {
-                        var $prevDiv = $("<div>", {"class": "control-group"});
-                        $prevDiv.append('<label class="control-label">' + __('oro.order.previous_shipping_method.label') + '</label>');
-                        $prevDiv.append('<div class="controls"><div class="control-label previously-selected-shipping-method">' +
-                            this.savedShippingMethod + '</div>');
+                    if (!matched && this.savedShippingMethod && selectedShippingMethod !== this.savedShippingMethod) {
+                        var $prevDiv = $('<div>', {'class': 'control-group'});
+                        $prevDiv.append(
+                            '<label class="control-label">' +
+                            __('oro.order.previous_shipping_method.label') + '</label>'
+                        );
+                        $prevDiv.append(
+                            '<div class="controls"><div class="control-label previously-selected-shipping-method">' +
+                            this.savedShippingMethod + '</div>'
+                        );
 
                         this.$el.closest('.responsive-cell').prepend($prevDiv);
                     }
@@ -240,17 +278,31 @@ define(function(require) {
             }
         },
 
+        allowUnlistedAndLockFlags: function() {
+            var $shippingMethodLockedFlag = $('[name$="[shippingMethodLocked]"]');
+            var $allowUnlistedShippingMethodFlag = $('[name$="[allowUnlistedShippingMethod]"]');
+
+            if ($shippingMethodLockedFlag.length <= 0 || $allowUnlistedShippingMethodFlag.length <= 0) {
+                return;
+            }
+
+            var disableFlags = $('[name$="[estimatedShippingCostAmount]"]').val() <= 0;
+
+            $shippingMethodLockedFlag.prop('disabled', disableFlags);
+            $allowUnlistedShippingMethodFlag.prop('disabled', disableFlags);
+        },
+
         /**
          * @param {string|null} type
          * @param {string|null} method
-         * @param {number|null} estimated_cost
+         * @param {number|null} estimatedCost
          * @param {boolean} matched
          */
-        updateElementsValue: function(type, method, estimated_cost, matched) {
-            var overridden_cost = this.getOverriddenShippingCostElement().val();
-            var cost = (isNaN(parseFloat(overridden_cost))) ? estimated_cost : parseFloat(overridden_cost);
-            this.setElementsValue(type, method, estimated_cost);
-            this.updateSelectedShippingMethod(type, method, estimated_cost, matched);
+        updateElementsValue: function(type, method, estimatedCost, matched) {
+            var overriddenCost = this.getOverriddenShippingCostElement().val();
+            var cost = (isNaN(parseFloat(overriddenCost))) ? estimatedCost : parseFloat(overriddenCost);
+            this.setElementsValue(type, method, estimatedCost);
+            this.updateSelectedShippingMethod(type, method, estimatedCost, matched);
             this.updateTotals(cost);
         },
 
@@ -258,7 +310,7 @@ define(function(require) {
          * @param {number} cost
          */
         updateTotals: function(cost) {
-            if (cost !== null) {
+            if (this.$totals && cost !== null) {
                 var totals = _.clone(this.$totals);
                 var newTotalAmount = 0;
                 $.each(totals.subtotals, function(key, subtotal) {
@@ -281,10 +333,11 @@ define(function(require) {
          * @param {Event} event
          */
         onShippingMethodTypeChange: function(event) {
-            var method_type = $(event.target);
-            var method = method_type.data('shipping-method');
-            var estimated_cost = method_type.data('shipping-price');
-            this.updateElementsValue(method_type.val(), method, estimated_cost, false);
+            var methodType = $(event.target);
+            var method = methodType.data('shipping-method');
+            var estimatedCost = methodType.data('shipping-price');
+            this.updateElementsValue(methodType.val(), method, estimatedCost, false);
+            this.allowUnlistedAndLockFlags();
         },
 
         /**
@@ -385,9 +438,9 @@ define(function(require) {
             this.getToggleButton().off('click');
             this.getPossibleShippingMethodType().off('change');
 
-            mediator.off('entry-point:order:load:before', this.showLoadingMask, this);
-            mediator.off('entry-point:order:load', this.onOrderChange, this);
-            mediator.off('entry-point:order:load:after', this.hideLoadingMask, this);
+            mediator.off(this.options.events.before, this.showLoadingMask, this);
+            mediator.off(this.options.events.load, this.onOrderChange, this);
+            mediator.off(this.options.events.after, this.hideLoadingMask, this);
 
             PossibleShippingMethodsComponent.__super__.dispose.call(this);
         }

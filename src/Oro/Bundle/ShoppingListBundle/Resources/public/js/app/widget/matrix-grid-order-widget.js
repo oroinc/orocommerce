@@ -19,10 +19,11 @@ define(function(require) {
 
             options.dialogOptions = {
                 'modal': true,
+                'title': null,
                 'resizable': false,
                 'width': '480',
                 'autoResize': true,
-                'dialogClass': 'matrix-grid-order-dialog'
+                'dialogClass': 'matrix-order-widget--dialog'
             };
 
             MatrixGridOrderWidget.__super__.initialize.apply(this, arguments);

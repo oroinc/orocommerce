@@ -13,8 +13,7 @@
 
     <div {{ block('block_attributes') }}>
         <ul class="shopping-list"
-            data-page-component-module="oroshoppinglist/js/app/views/shoppinglist-widget-view"
-            data-page-component-options="{{ {'currentClass': currentClass}|json_encode }}">
+            data-page-component-module="oroshoppinglist/js/app/views/shoppinglist-widget-view">
             {% for shoppingList in shoppingLists  %}
                 {% do block|merge_context({
                     shoppingList: shoppingList,
@@ -30,8 +29,7 @@
 {% block _shopping_lists_menu_item_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' shopping-list__item ' ~ (shoppingList.id == selectedShoppingList.id ? currentClass),
-        'data-shopping-list-id': shoppingList.id,
-        'data-role': 'shopping-list-current-label'
+        'data-shopping-list-id': shoppingList.id
     }) %}
     <li {{ block('block_attributes') }}>
         <a href="{{ path('oro_shopping_list_frontend_view', {'id' : shoppingList.id}) }}"

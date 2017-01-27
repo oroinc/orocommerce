@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
@@ -16,7 +16,7 @@ class AjaxProductControllerTest extends WebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadAccountUserData::AUTH_USER, LoadAccountUserData::AUTH_PW)
+            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
 
         $this->loadFixtures([
@@ -55,9 +55,9 @@ class AjaxProductControllerTest extends WebTestCase
                     LoadProductData::PRODUCT_4,
                 ],
                 'expectedData' => [
-                    LoadProductData::PRODUCT_1 => ['name' => 'product.1.names.default'],
-                    LoadProductData::PRODUCT_2 => ['name' => 'product.2.names.default'],
-                    LoadProductData::PRODUCT_3 => ['name' => 'product.3.names.default'],
+                    LoadProductData::PRODUCT_1 => ['name' => 'product-1.names.default'],
+                    LoadProductData::PRODUCT_2 => ['name' => 'product-2.names.default'],
+                    LoadProductData::PRODUCT_3 => ['name' => 'product-3.names.default'],
                 ],
             ],
             'allowed'    => [
@@ -67,8 +67,8 @@ class AjaxProductControllerTest extends WebTestCase
                     LoadProductData::PRODUCT_2,
                 ],
                 'expectedData' => [
-                    LoadProductData::PRODUCT_1 => ['name' => 'product.1.names.default'],
-                    LoadProductData::PRODUCT_2 => ['name' => 'product.2.names.default'],
+                    LoadProductData::PRODUCT_1 => ['name' => 'product-1.names.default'],
+                    LoadProductData::PRODUCT_2 => ['name' => 'product-2.names.default'],
                 ],
             ],
         ];
