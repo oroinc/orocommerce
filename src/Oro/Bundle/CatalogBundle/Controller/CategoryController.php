@@ -15,7 +15,6 @@ use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\UIBundle\Form\Type\TreeMoveType;
 use Oro\Bundle\UIBundle\Model\TreeCollection;
-use Oro\Bundle\UIBundle\Utils\TreeUtils;
 
 class CategoryController extends Controller
 {
@@ -95,7 +94,14 @@ class CategoryController extends Controller
 
         $choices = $handler->getTreeItemList($this->getMasterRootCategory(), false);
 
+        $selected = $request->get('selected', []);
+
         $collection = new TreeCollection();
+        foreach ($choices as $choice) {
+            if (in_array($choice->getKey(), $selected)) {
+                $collection->source[$choice->getKey()] = $choice;
+            }
+        }
         $form = $this->createForm(TreeMoveType::class, $collection, [
             'source_config' => [
                 'choices' => $choices,
@@ -105,18 +111,38 @@ class CategoryController extends Controller
             ],
         ]);
 
+        $responseData = [];
+
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             foreach ($collection->source as $source) {
                 $handler->moveNode($source->getKey(), $collection->target->getKey(), 0);
             }
 
-            return $this->redirectToRoute('oro_catalog_category_index');
+            $responseData['saved'] = true;
         }
 
-        return [
-            'form' => $form->createView()
-        ];
+        $responseData['form'] = $form->createView();
+        $responseData['formAction'] = $this->generateUrl('oro_catalog_category_move_form');
+
+        return $responseData;
+    }
+
+    /**
+     * @Route("/widget/tree", name="oro_catalog_category_tree_widget")
+     * @Template
+     * @Acl(
+     *      id="oro_catalog_category_view",
+     *      type="entity",
+     *      class="OroCatalogBundle:Category",
+     *      permission="VIEW"
+     * )
+     *
+     * @return array
+     */
+    public function treeWidgetAction()
+    {
+
     }
 
     /**
