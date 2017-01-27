@@ -92,7 +92,6 @@ class LoadCustomerUserDemoData extends AbstractFixture implements ContainerAware
                 ->setOwner($customer->getOwner())
                 ->setEnabled(true)
                 ->setOrganization($organization)
-                ->addOrganization($organization)
                 ->setLoginCount(0)
                 ->addRole($role);
 
