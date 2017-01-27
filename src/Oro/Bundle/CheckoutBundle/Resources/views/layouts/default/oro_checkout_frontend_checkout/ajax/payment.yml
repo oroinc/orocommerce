@@ -1,6 +1,6 @@
 layout:
     imports:
-        - 'payment_method_options'
+        - 'oro_payment_method_options'
     actions:
         - '@setBlockTheme':
             themes:
