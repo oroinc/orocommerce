@@ -4,12 +4,15 @@ namespace Oro\Bundle\WebCatalogBundle\Controller;
 
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Oro\Bundle\UIBundle\Form\Type\TreeMoveType;
+use Oro\Bundle\UIBundle\Model\TreeCollection;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Form\Type\WebCatalogType;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 class WebCatalogController extends Controller
 {
@@ -82,6 +85,68 @@ class WebCatalogController extends Controller
     public function updateAction(WebCatalog $webCatalog)
     {
         return $this->update($webCatalog);
+    }
+
+    /**
+     * @Route("/move/{id}", name="oro_web_catalog_move")
+     * @Template
+     * @Acl(
+     *      id="oro_web_catalog_update",
+     *      type="entity",
+     *      class="OroWebCatalogBundle:WebCatalog",
+     *      permission="EDIT"
+     * )
+     *
+     * @param Request $request
+     * @param WebCatalog $webCatalog
+     * @return array
+     */
+    public function moveAction(Request $request, WebCatalog $webCatalog)
+    {
+        $handler = $this->get('oro_web_catalog.content_node_tree_handler');
+
+        $root = $handler->getTreeRootByWebCatalog($webCatalog);
+        $choices = $handler->getTreeItemList($root, true);
+
+        $selected = $request->get('selected', []);
+
+        $collection = new TreeCollection();
+        foreach ($choices as $choice) {
+            if (in_array($choice->getKey(), $selected)) {
+                $collection->source[$choice->getKey()] = $choice;
+            }
+        }
+        $form = $this->createForm(TreeMoveType::class, $collection, [
+            'source_config' => [
+                'choices' => $choices,
+            ],
+            'target_config' => [
+                'choices' => $choices,
+            ],
+        ]);
+
+        $responseData = [];
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $changed = [];
+            foreach ($collection->source as $source) {
+                $handler->moveNode($source->getKey(), $collection->target->getKey(), 0);
+                $changed[] = [
+                    'id' => $source->getKey(),
+                    'parent' => $collection->target->getKey(),
+                    'position' => 0
+                ];
+            }
+
+            $responseData['saved'] = true;
+            $responseData['changed'] = $changed;
+        }
+
+        $responseData['form'] = $form->createView();
+        $responseData['formAction'] = $this->generateUrl('oro_web_catalog_move', ['id' => $webCatalog->getId()]);
+
+        return $responseData;
     }
 
     /**
