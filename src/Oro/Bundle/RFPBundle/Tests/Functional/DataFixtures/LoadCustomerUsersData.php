@@ -130,7 +130,6 @@ class LoadCustomerUsersData extends AbstractFixture implements DependentFixtureI
                 ->setSalt('')
                 ->setPlainPassword($user['password'])
                 ->setOrganization($organization)
-                ->addOrganization($organization)
                 ->addRole($role)
             ;
 

@@ -31,7 +31,6 @@ class OwnerTreeListenerPass implements CompilerPassInterface
             [
                 $container->getParameter('oro_customer.entity.customer_user.class'),
                 ['customer', 'organization'],
-                ['organizations']
             ]
         );
     }
