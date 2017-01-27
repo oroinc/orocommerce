@@ -70,7 +70,6 @@ class LoadCustomerUserData extends AbstractFixture implements ContainerAwareInte
             ->setSalt('')
             ->setPlainPassword(self::AUTH_PW)
             ->setOrganization($organization)
-            ->addOrganization($organization)
             ->addRole($role);
 
         $userManager->updateUser($entity);
