@@ -1,33 +1,52 @@
-{% block _main_menu_container_widget %}
-    {% set attr =  layout_attr_defaults(attr, {
-        '~class': ' main-menu-outer',
-    }) %}
-
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
 {% block _header_row_widget %}
     {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-module': 'orocommercemenu/js/app/components/header-row',
         '~class': ' header-row'
     }) %}
 
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
-    <input type="radio" id="header-row-overlay" class="header-row-helper" name="dropdowns" checked="checked" hidden="hidden">
-    <label class="header-row-overlay hidden-on-desktop" for="header-row-overlay"></label>
+{% endblock %}
+
+{% block _main_menu_extra_container_widget %}
+    {% set attr =  layout_attr_defaults(attr, {
+    'data-main-menu-extra-container': '',
+    'data-header-row-toggle': ''
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
 {% endblock %}
 
 {% block _header_row_main_menu_widget %}
-    <input type="radio" id="main-menu-show-categories" class="header-row-helper" name="dropdowns" hidden="hidden">
-    <label class="custom-icon-menu header-row__trigger hidden-on-desktop" for="main-menu-show-categories">
+    <div class="custom-icon-menu header-row__trigger hidden-on-desktop" data-toggle="dropdown">
         <span class="custom-icon-menu__bar"></span>
         <span class="custom-icon-menu__bar"></span>
         <span class="custom-icon-menu__bar"></span>
-    </label>
+    </div>
     <div class="header-row__toggle">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _main_menu_container_widget %}
+    {% set attr =  layout_attr_defaults(attr, {
+        '~class': ' main-menu-outer',
+        'data-page-component-module': "oroui/js/app/components/viewport-component",
+        'data-dom-relocation': '',
+        'data-dom-relocation-options': {
+            responsive: [
+                {
+                    screenType: 'tablet',
+                    moveTo: '[data-main-menu-extra-container]'
+                }
+            ]
+        }
+    }) %}
+
+    <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
@@ -49,7 +68,7 @@
             <li class="main-menu__item">
                 <a href="{{ app.request.getUriForPath(child.uri) }}" class="main-menu__link">
                     {% set label = child.extras.custom is defined and child.extras.custom == true ? child.label : child.label|trans %}
-                    <span>{{ label }}</span>
+                    <span class="main-menu__text">{{ label }}</span>
                 </a>
             </li>
             {% endif %}

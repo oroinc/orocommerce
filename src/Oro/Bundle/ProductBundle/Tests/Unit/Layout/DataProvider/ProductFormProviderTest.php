@@ -8,32 +8,46 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Form\Type\FrontendVariantFiledType;
+use Oro\Bundle\ProductBundle\ProductVariant\Form\Type\FrontendVariantFiledType;
+use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddCopyPasteType;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddImportFromFileType;
 use Oro\Bundle\ProductBundle\Form\Type\QuickAddType;
 use Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
 {
+    const PRODUCT_VARIANTS_GET_AVAILABLE_VARIANTS = 'product_variants_get_available_variants_url';
+
     /** @var ProductFormProvider */
     protected $provider;
 
     /** @var FormFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $formFactory;
 
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|UrlGeneratorInterface
-     */
+    /** @var UrlGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $router;
+
+    /** @var ProductVariantAvailabilityProvider|\PHPUnit_Framework_MockObject_MockObject */
+    protected $productVariantAvailabilityProvider;
 
     protected function setUp()
     {
         $this->formFactory = $this->createMock(FormFactoryInterface::class);
-        $this->router = $this->createMock('Symfony\Component\Routing\Generator\UrlGeneratorInterface');
+        $this->router = $this->createMock(UrlGeneratorInterface::class);
+        $this->productVariantAvailabilityProvider = $this->getMockBuilder(ProductVariantAvailabilityProvider::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->provider = new ProductFormProvider($this->formFactory, $this->router);
+        $this->provider = new ProductFormProvider(
+            $this->formFactory,
+            $this->router,
+            $this->productVariantAvailabilityProvider
+        );
     }
 
     public function testGetQuickAddFormView()
@@ -237,22 +251,67 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(FormView::class, $data);
     }
 
-    public function testgetVariantFieldsFormView()
+    public function testGetVariantFieldsFormView()
     {
-        $product = new Product();
         $formView = $this->createMock(FormView::class);
 
-        $expectedForm = $this->createMock(FormInterface::class);
-        $expectedForm->expects($this->once())
+        $product = new Product();
+        $productVariant = new Product();
+
+        $this->productVariantAvailabilityProvider->expects($this->once())
+            ->method('getSimpleProductByVariantFields')
+            ->with($product, [], false)
+            ->willReturn($productVariant);
+
+        $form = $this->createMock(FormInterface::class);
+        $form->expects($this->once())
             ->method('createView')
             ->willReturn($formView);
 
         $this->formFactory->expects($this->once())
             ->method('create')
-            ->with(FrontendVariantFiledType::NAME)
-            ->willReturn($expectedForm);
+            ->with(FrontendVariantFiledType::NAME, $productVariant, $this->getProductVariantExpectedOptions($product))
+            ->willReturn($form);
 
         $data = $this->provider->getVariantFieldsFormView($product);
         $this->assertInstanceOf(FormView::class, $data);
+    }
+
+    public function testGetVariantFieldsForm()
+    {
+        $product = new Product();
+        $productVariant = new Product();
+
+        $this->productVariantAvailabilityProvider->expects($this->once())
+            ->method('getSimpleProductByVariantFields')
+            ->with($product, [], false)
+            ->willReturn($productVariant);
+
+        $form = $this->createMock(FormInterface::class);
+
+        $this->formFactory->expects($this->once())
+            ->method('create')
+            ->with(FrontendVariantFiledType::NAME, $productVariant, $this->getProductVariantExpectedOptions($product))
+            ->willReturn($form);
+
+        $data = $this->provider->getVariantFieldsForm($product);
+        $this->assertInstanceOf(FormInterface::class, $data);
+    }
+
+    /**
+     * @param Product $product
+     * @return array
+     */
+    private function getProductVariantExpectedOptions(Product $product)
+    {
+        $this->router->expects($this->once())
+            ->method('generate')
+            ->with('oro_product_frontend_ajax_product_variant_get_available', ['id' => $product->getId()])
+            ->willReturn('product_variants_get_available_variants_url');
+
+        return [
+            'action' => 'product_variants_get_available_variants_url',
+            'parentProduct' => $product,
+        ];
     }
 }

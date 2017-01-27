@@ -1,0 +1,61 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+
+{% oro_title_set({params : {"%taxCode%": entity.code } }) %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity': entity,
+        'indexPath': path('oro_tax_customer_tax_code_index'),
+        'indexLabel': 'oro.tax.customertaxcode.entity_plural_label'|trans,
+        'entityTitle': entity.code|default('N/A'|trans)
+    } %}
+
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% set customerTaxCodeInfo %}
+        {{ UI.renderProperty('oro.tax.customertaxcode.code.label'|trans, entity.code) }}
+        {{ UI.renderProperty('oro.tax.customertaxcode.description.label'|trans, entity.description) }}
+    {% endset %}
+
+    {% set dataBlocks = [{
+        'title': 'oro.tax.sections.general'|trans,
+        'class': 'active',
+        'subblocks': [
+            {'data' : [customerTaxCodeInfo]},
+        ]
+    }] %}
+
+    {% set customerGrid %}
+        {{ dataGrid.renderGrid('tax-customer-grid', { customer_tax_code_id: entity.id }, { cssClass: 'inner-grid' }) }}
+    {% endset %}
+
+    {% set customerGroupGrid %}
+        {{ dataGrid.renderGrid('tax-customer-group-grid', { customer_tax_code_id: entity.id }, { cssClass: 'inner-grid' }) }}
+    {% endset %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+            'title': 'oro.tax.customertaxcode.customers.label'|trans,
+            'subblocks': [{
+                'title': '',
+                'useSpan': false,
+                'data' : [customerGrid]
+            }]
+    }] ) %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+        'title': 'oro.tax.customertaxcode.customer_groups.label'|trans,
+        'subblocks': [{
+        'title': '',
+        'useSpan': false,
+        'data' : [customerGroupGrid]
+        }]
+    }] ) %}
+
+    {% set id = 'tax-customer-tax-code-view' %}
+    {% set data = {'dataBlocks': dataBlocks} %}
+
+    {{ parent() }}
+{% endblock content_data %}

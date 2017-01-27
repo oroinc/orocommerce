@@ -81,7 +81,7 @@ define(function(require) {
             this.useDefaultAddress = true;
             this.$fields = this.$el.find(':input[data-ftid]').filter(':not(' + this.options.selectors.address + ')');
             this.fieldsByName = {};
-            this.$fields.each(function () {
+            this.$fields.each(function() {
                 var $field = $(this);
                 if ($field.val().length > 0) {
                     self.useDefaultAddress = false;
@@ -101,7 +101,7 @@ define(function(require) {
             if (this.options.selectors.address) {
                 this.setAddress(this.$el.find(this.options.selectors.address));
 
-                this.accountAddressChange();
+                this.customerAddressChange();
             } else {
                 this._setReadOnlyMode(true);
             }
@@ -135,14 +135,14 @@ define(function(require) {
             var self = this;
             this.$address.change(function(e) {
                 self.useDefaultAddress = false;
-                self.accountAddressChange(e);
+                self.customerAddressChange(e);
             });
         },
 
         /**
-         * Implement account address change logic
+         * Implement customer address change logic
          */
-        accountAddressChange: function(e) {
+        customerAddressChange: function(e) {
             if (this.$address.val() !== this.options.enterManuallyValue) {
                 this._setReadOnlyMode(true);
 
@@ -189,7 +189,7 @@ define(function(require) {
         },
 
         /**
-         * Set account address choices from order related data
+         * Set customer address choices from order related data
          *
          * @param {Object} response
          */

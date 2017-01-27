@@ -3,32 +3,32 @@
 namespace Oro\Bundle\CustomerBundle\Entity\Repository;
 
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class CustomerUserAddressRepository extends AbstractDefaultTypedAddressRepository
 {
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $customerUser
      * @param string $type
      * @param AclHelper $aclHelper
      * @return array
      */
-    public function getAddressesByType(AccountUser $accountUser, $type, AclHelper $aclHelper)
+    public function getAddressesByType(CustomerUser $customerUser, $type, AclHelper $aclHelper)
     {
-        $query = $aclHelper->apply($this->getAddressesByTypeQueryBuilder($accountUser, $type));
+        $query = $aclHelper->apply($this->getAddressesByTypeQueryBuilder($customerUser, $type));
 
         return $query->getResult();
     }
 
     /**
-     * @param AccountUser $accountUser
+     * @param CustomerUser $customerUser
      * @param string $type
      * @param AclHelper $aclHelper
      * @return array
      */
-    public function getDefaultAddressesByType(AccountUser $accountUser, $type, AclHelper $aclHelper)
+    public function getDefaultAddressesByType(CustomerUser $customerUser, $type, AclHelper $aclHelper)
     {
-        $query = $aclHelper->apply($this->getDefaultAddressesQueryBuilder($accountUser, $type));
+        $query = $aclHelper->apply($this->getDefaultAddressesQueryBuilder($customerUser, $type));
 
         return $query->getResult();
     }

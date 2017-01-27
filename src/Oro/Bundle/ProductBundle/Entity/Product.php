@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
@@ -80,7 +81,8 @@ use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"=""
+ *              "group_name"="",
+ *              "category"="catalog"
  *          },
  *          "form"={
  *              "form_type"="oro_product_select",
@@ -104,7 +106,8 @@ class Product extends ExtendProduct implements
     OrganizationAwareInterface,
     \JsonSerializable,
     AttributeFamilyAwareInterface,
-    SluggableInterface
+    SluggableInterface,
+    DatesAwareInterface
 {
     use SluggableTrait;
 
@@ -221,6 +224,11 @@ class Product extends ExtendProduct implements
      * )
      */
     protected $updatedAt;
+
+    /**
+     * @var bool
+     */
+    protected $updatedAtSet;
 
     /**
      * @var BusinessUnit
@@ -620,7 +628,7 @@ class Product extends ExtendProduct implements
      * @param \DateTime $createdAt
      * @return Product
      */
-    public function setCreatedAt($createdAt)
+    public function setCreatedAt(\DateTime $createdAt = null)
     {
         $this->createdAt = $createdAt;
 
@@ -639,11 +647,19 @@ class Product extends ExtendProduct implements
      * @param \DateTime $updatedAt
      * @return Product
      */
-    public function setUpdatedAt($updatedAt)
+    public function setUpdatedAt(\DateTime $updatedAt = null)
     {
         $this->updatedAt = $updatedAt;
 
         return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isUpdatedAtSet()
+    {
+        return $this->updatedAtSet;
     }
 
     /**
@@ -1092,6 +1108,8 @@ class Product extends ExtendProduct implements
             $this->images = new ArrayCollection();
             $this->variantLinks = new ArrayCollection();
             $this->parentVariantLinks = new ArrayCollection();
+            $this->slugPrototypes = new ArrayCollection();
+            $this->slugs = new ArrayCollection();
             $this->variantFields = [];
         }
     }

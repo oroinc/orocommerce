@@ -5,8 +5,8 @@ namespace Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
-use Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CategoryRepository;
 
@@ -37,100 +37,100 @@ class VisibilityChangeCategorySubtreeCacheBuilder extends AbstractRelatedEntitie
     /**
      * {@inheritdoc}
      */
-    protected function updateAccountGroupsFirstLevel(Category $category, $visibility)
+    protected function updateCustomerGroupsFirstLevel(Category $category, $visibility)
     {
-        $accountGroupIds = $this->getAccountGroupIdsFirstLevel($category);
-        if ($accountGroupIds === null) {
+        $customerGroupIds = $this->getCustomerGroupIdsFirstLevel($category);
+        if ($customerGroupIds === null) {
             return [];
         }
 
-        $this->updateAccountGroupsProductVisibility($category, $accountGroupIds, $visibility);
-        $this->updateAccountGroupsCategoryVisibility($category, $accountGroupIds, $visibility);
+        $this->updateCustomerGroupsProductVisibility($category, $customerGroupIds, $visibility);
+        $this->updateCustomerGroupsCategoryVisibility($category, $customerGroupIds, $visibility);
 
-        return $accountGroupIds;
+        return $customerGroupIds;
     }
 
     /**
-     * Get accounts groups with account visibility fallback to 'Visibility To All' for current category
+     * Get customers groups with customer visibility fallback to 'Visibility To All' for current category
      *
      * @param Category $category
      * @return array
      */
-    protected function getAccountGroupIdsFirstLevel(Category $category)
+    protected function getCustomerGroupIdsFirstLevel(Category $category)
     {
-        return $this->getAccountGroupIdsWithFallbackToAll($category);
+        return $this->getCustomerGroupIdsWithFallbackToAll($category);
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function updateAccountsFirstLevel(Category $category, $visibility)
+    protected function updateCustomersFirstLevel(Category $category, $visibility)
     {
-        $accountIdsForUpdate = $this->getAccountIdsFirstLevel($category);
+        $customerIdsForUpdate = $this->getCustomerIdsFirstLevel($category);
 
-        if ($accountIdsForUpdate === null) {
+        if ($customerIdsForUpdate === null) {
             return [];
         }
 
         /**
-         * Cache updated account for current category into appropriate section
+         * Cache updated customer for current category into appropriate section
          */
-        $this->accountIdsWithChangedVisibility[$category->getId()] = $accountIdsForUpdate;
+        $this->customerIdsWithChangedVisibility[$category->getId()] = $customerIdsForUpdate;
 
-        $this->updateAccountsProductVisibility($category, $accountIdsForUpdate, $visibility);
-        $this->updateAccountsCategoryVisibility($category, $accountIdsForUpdate, $visibility);
+        $this->updateCustomersProductVisibility($category, $customerIdsForUpdate, $visibility);
+        $this->updateCustomersCategoryVisibility($category, $customerIdsForUpdate, $visibility);
 
-        return $accountIdsForUpdate;
+        return $customerIdsForUpdate;
     }
 
     /**
-     * Get accounts with account group visibility fallback to 'Visibility To All' for current category
+     * Get customers with customer group visibility fallback to 'Visibility To All' for current category
      *
      * @param Category $category
      * @return array
      */
-    protected function getAccountIdsFirstLevel(Category $category)
+    protected function getCustomerIdsFirstLevel(Category $category)
     {
-        $accountIdsForUpdate = $this->getAccountIdsWithFallbackToAll($category);
-        $accountGroupIdsForUpdate = $this->accountGroupIdsWithChangedVisibility[$category->getId()];
-        if (!empty($accountGroupIdsForUpdate)) {
-            $accountIdsForUpdate = array_merge(
-                $accountIdsForUpdate,
+        $customerIdsForUpdate = $this->getCustomerIdsWithFallbackToAll($category);
+        $customerGroupIdsForUpdate = $this->customerGroupIdsWithChangedVisibility[$category->getId()];
+        if (!empty($customerGroupIdsForUpdate)) {
+            $customerIdsForUpdate = array_merge(
+                $customerIdsForUpdate,
                 /**
-                 * Get accounts with account visibility fallback to 'Account Group'
-                 * for account groups with fallback 'Visibility To All'
+                 * Get customers with customer visibility fallback to 'Customer Group'
+                 * for customer groups with fallback 'Visibility To All'
                  * for current category
                  */
-                $this->getAccountIdsForUpdate($category, $accountGroupIdsForUpdate)
+                $this->getCustomerIdsForUpdate($category, $customerGroupIdsForUpdate)
             );
         }
 
-        return $accountIdsForUpdate;
+        return $customerIdsForUpdate;
     }
 
     /**
      * @param Category $category
      * @return array
      */
-    protected function getAccountGroupIdsWithFallbackToAll(Category $category)
+    protected function getCustomerGroupIdsWithFallbackToAll(Category $category)
     {
         /** @var QueryBuilder $qb */
         $qb = $this->registry
-            ->getManagerForClass('OroCustomerBundle:AccountGroup')
+            ->getManagerForClass('OroCustomerBundle:CustomerGroup')
             ->createQueryBuilder();
 
         /** @var QueryBuilder $subQb */
         $subQb = $this->registry
-            ->getManagerForClass(AccountGroupCategoryVisibility::class)
+            ->getManagerForClass(CustomerGroupCategoryVisibility::class)
             ->createQueryBuilder();
         $subQb->select('1')
-            ->from(AccountGroupCategoryVisibility::class, 'accountGroupCategoryVisibility')
-            ->join('accountGroupCategoryVisibility.scope', 'scope')
-            ->where($qb->expr()->eq('accountGroupCategoryVisibility.category', ':category'))
-            ->andWhere('scope.accountGroup = accountGroup.id');
+            ->from(CustomerGroupCategoryVisibility::class, 'customerGroupCategoryVisibility')
+            ->join('customerGroupCategoryVisibility.scope', 'scope')
+            ->where($qb->expr()->eq('customerGroupCategoryVisibility.category', ':category'))
+            ->andWhere('scope.customerGroup = customerGroup.id');
 
-        $qb->select('accountGroup.id')
-            ->from('OroCustomerBundle:AccountGroup', 'accountGroup')
+        $qb->select('customerGroup.id')
+            ->from('OroCustomerBundle:CustomerGroup', 'customerGroup')
             ->where($qb->expr()->not($qb->expr()->exists($subQb->getQuery()->getDQL())))
             ->setParameter('category', $category);
 

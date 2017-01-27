@@ -11,13 +11,13 @@ oro_sale_quote_ajax:
 oro_sale_frontend_quote:
     resource: "@OroSaleBundle/Controller/Frontend/QuoteController.php"
     type: annotation
-    prefix: /account/quote
+    prefix: /customer/quote
     options:
         frontend: true
 
 oro_sale_frontend_quote_product_ajax:
     resource: "@OroSaleBundle/Controller/Frontend/AjaxQuoteProductController.php"
     type: annotation
-    prefix: /account/quoteproduct
+    prefix: /customer/quoteproduct
     options:
         frontend: true

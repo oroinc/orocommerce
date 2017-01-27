@@ -4,6 +4,8 @@
     margin: 0 0 0 15px;
     border-left: 2px solid get-color('additional', 'light');
 
+    word-wrap: break-word;
+
     &__step {
         position: relative;
 

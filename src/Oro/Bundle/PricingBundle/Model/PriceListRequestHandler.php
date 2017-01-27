@@ -4,8 +4,8 @@ namespace Oro\Bundle\PricingBundle\Model;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Provider\AccountUserRelationsProvider;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Provider\CustomerUserRelationsProvider;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
@@ -53,7 +53,7 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
     protected $priceListRepository;
 
     /**
-     * @var AccountUserRelationsProvider
+     * @var CustomerUserRelationsProvider
      */
     protected $relationsProvider;
 
@@ -67,7 +67,7 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
      * @param SecurityFacade $securityFacade
      * @param PriceListTreeHandler $priceListTreeHandler
      * @param ManagerRegistry $registry
-     * @param AccountUserRelationsProvider $relationsProvider
+     * @param CustomerUserRelationsProvider $relationsProvider
      * @param WebsiteManager $websiteManager
      */
     public function __construct(
@@ -75,7 +75,7 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
         SecurityFacade $securityFacade,
         PriceListTreeHandler $priceListTreeHandler,
         ManagerRegistry $registry,
-        AccountUserRelationsProvider $relationsProvider,
+        CustomerUserRelationsProvider $relationsProvider,
         WebsiteManager $websiteManager
     ) {
         $this->requestStack = $requestStack;
@@ -89,11 +89,11 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
     /**
      * {@inheritdoc}
      */
-    public function getPriceListByAccount()
+    public function getPriceListByCustomer()
     {
         $website = $this->getWebsite();
-        $account = $this->getAccount();
-        $priceList = $this->priceListTreeHandler->getPriceList($account, $website);
+        $customer = $this->getCustomer();
+        $priceList = $this->priceListTreeHandler->getPriceList($customer, $website);
 
         if (!$priceList) {
             throw new \RuntimeException('PriceList not found');
@@ -170,22 +170,22 @@ class PriceListRequestHandler implements PriceListRequestHandlerInterface
     }
 
     /**
-     * @return null|Account
+     * @return null|Customer
      */
-    protected function getAccount()
+    protected function getCustomer()
     {
         $user = $this->securityFacade->getLoggedUser();
 
         if ($user instanceof User) {
             $request = $this->getRequest();
-            if ($request && $accountId = $request->get(self::ACCOUNT_ID_KEY)) {
+            if ($request && $customerId = $request->get(self::ACCOUNT_ID_KEY)) {
                 return $this->registry
-                    ->getManagerForClass(Account::class)
-                    ->getRepository(Account::class)
-                    ->find($accountId);
+                    ->getManagerForClass(Customer::class)
+                    ->getRepository(Customer::class)
+                    ->find($customerId);
             }
         } else {
-            return $this->relationsProvider->getAccountIncludingEmpty($user);
+            return $this->relationsProvider->getCustomerIncludingEmpty($user);
         }
 
         return null;

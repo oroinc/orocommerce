@@ -13,22 +13,19 @@ use Oro\Bundle\FormBundle\Form\Extension\AdditionalAttrExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\LocaleBundle\Model\LocaleSettings;
 use Oro\Bundle\RuleBundle\Entity\Rule;
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
-use Oro\Bundle\ShippingBundle\Form\Type\FlatRateShippingMethodTypeOptionsType;
-use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleDestinationType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodConfigCollectionType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodConfigType;
-use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodTypeConfigCollectionType;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleDestinationType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleType;
-use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethod;
-use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodProvider;
-use Oro\Bundle\ShippingBundle\Method\FlatRate\FlatRateShippingMethodType;
+use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodTypeConfigCollectionType;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber\MethodConfigCollectionSubscriberProxy;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber\MethodConfigSubscriberProxy;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber\MethodTypeConfigCollectionSubscriberProxy;
+use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodProviderStub;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroup;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroupValidator;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
@@ -67,8 +64,7 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
     protected function setUp()
     {
         $this->methodRegistry = new ShippingMethodRegistry();
-        $flatRate = new FlatRateShippingMethodProvider();
-        $this->methodRegistry->addProvider($flatRate);
+        $this->methodRegistry->addProvider(new ShippingMethodProviderStub());
         $this->methodTypeConfigCollectionSubscriber = new MethodTypeConfigCollectionSubscriberProxy();
         $this->methodConfigSubscriber = new MethodConfigSubscriberProxy();
         $this->methodConfigCollectionSubscriber = new MethodConfigCollectionSubscriberProxy();
@@ -113,15 +109,15 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
             'currency' => 'USD',
             'methodConfigs' => [
                 [
-                    'method' => FlatRateShippingMethod::IDENTIFIER,
+                    'method' => ShippingMethodProviderStub::METHOD_IDENTIFIER,
                     'options' => [],
                     'typeConfigs' => [
                         [
-                            'enabled' => '1',
-                            'type' => FlatRateShippingMethodType::IDENTIFIER,
+                            'enabled' => true,
+                            'type' => ShippingMethodProviderStub::METHOD_TYPE_IDENTIFIER,
                             'options' => [
                                 'price' => 12,
-                                'type' => FlatRateShippingMethodType::PER_ITEM_TYPE,
+                                'type' => 'per_item',
                             ],
                         ]
                     ]
@@ -139,16 +135,15 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
             ->setCurrency('USD')
             ->addMethodConfig(
                 (new ShippingMethodConfig())
-                    ->setMethod(FlatRateShippingMethod::IDENTIFIER)
+                    ->setMethod(ShippingMethodProviderStub::METHOD_IDENTIFIER)
                     ->setOptions([])
                     ->addTypeConfig(
                         (new ShippingMethodTypeConfig())
                             ->setEnabled(true)
-                            ->setType(FlatRateShippingMethodType::IDENTIFIER)
+                            ->setType(ShippingMethodProviderStub::METHOD_TYPE_IDENTIFIER)
                             ->setOptions([
                                 'price' => 12,
-                                'handling_fee' => null,
-                                'type' => FlatRateShippingMethodType::PER_ITEM_TYPE,
+                                'type' => 'per_item',
                             ])
                     )
             );
@@ -216,8 +211,6 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
         return [
             new PreloadedExtension(
                 [
-                    FlatRateShippingMethodTypeOptionsType::class
-                    => new FlatRateShippingMethodTypeOptionsType($roundingService),
                     ShippingMethodConfigCollectionType::class
                     => new ShippingMethodConfigCollectionType($this->methodConfigCollectionSubscriber),
                     ShippingMethodConfigType::class

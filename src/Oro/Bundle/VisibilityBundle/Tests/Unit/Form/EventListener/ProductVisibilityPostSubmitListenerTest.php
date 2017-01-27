@@ -45,13 +45,13 @@ class ProductVisibilityPostSubmitListenerTest extends \PHPUnit_Framework_TestCas
         $form->method('getData')->willReturn($product);
 
         $allForm = $this->createMock(FormInterface::class);
-        $accountForm = $this->createMock(FormInterface::class);
-        $accountGroupForm = $this->createMock(FormInterface::class);
+        $customerForm = $this->createMock(FormInterface::class);
+        $customerGroupForm = $this->createMock(FormInterface::class);
 
         $form->method('all')->willReturn([
             $allForm,
-            $accountForm,
-            $accountGroupForm
+            $customerForm,
+            $customerGroupForm
         ]);
 
         $em = $this->createMock(EntityManagerInterface::class);
@@ -62,8 +62,8 @@ class ProductVisibilityPostSubmitListenerTest extends \PHPUnit_Framework_TestCas
             ->method('saveForm')
             ->withConsecutive(
                 [$allForm, $product],
-                [$accountForm, $product],
-                [$accountGroupForm, $product]
+                [$customerForm, $product],
+                [$customerGroupForm, $product]
             );
 
         $event = new AfterFormProcessEvent($form, $product);

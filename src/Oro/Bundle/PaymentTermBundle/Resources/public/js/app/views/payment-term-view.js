@@ -4,7 +4,6 @@ define(function(require) {
     var PaymentTermView;
     var $ = require('jquery');
     var _ = require('underscore');
-    var mediator = require('oroui/js/mediator');
     var BaseView = require('oroui/js/app/views/base/view');
 
     /**
@@ -33,12 +32,12 @@ define(function(require) {
         /**
          * @property {number|null}
          */
-        accountPaymentTerm: null,
+        customerPaymentTerm: null,
 
         /**
          * @property {number|null}
          */
-        accountGroupPaymentTerm: null,
+        customerGroupPaymentTerm: null,
 
         /**
          * @inheritDoc
@@ -46,7 +45,7 @@ define(function(require) {
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
 
-            this.$input = this.$el.find('input[data-account-payment-term]');
+            this.$input = this.$el.find('input[data-customer-payment-term]');
             this.selectionTemplate = _.template(this.options.selectionTemplate);
 
             this.configureInput();
@@ -68,8 +67,8 @@ define(function(require) {
         configureInput: function() {
             var self = this;
 
-            this.accountPaymentTerm = this.parseInt(this.$input.data('account-payment-term'));
-            this.accountGroupPaymentTerm = this.parseInt(this.$input.data('account-group-payment-term'));
+            this.customerPaymentTerm = this.parseInt(this.$input.data('customer-payment-term'));
+            this.customerGroupPaymentTerm = this.parseInt(this.$input.data('customer-group-payment-term'));
 
             if (!this.$input.data('pageComponentOptions')) {
                 return;
@@ -77,8 +76,8 @@ define(function(require) {
 
             var configs = this.$input.data('pageComponentOptions').configs;
             configs.selection_template = configs.result_template = function(data) {
-                data.isAccountDefault = data.id === self.accountPaymentTerm;
-                data.isAccountGroupDefault = data.id === self.accountGroupPaymentTerm;
+                data.isCustomerDefault = data.id === self.customerPaymentTerm;
+                data.isCustomerGroupDefault = data.id === self.customerGroupPaymentTerm;
 
                 return self.selectionTemplate(data);
             };
@@ -95,10 +94,10 @@ define(function(require) {
          */
         loadedRelatedData: function(response) {
 
-            this.accountPaymentTerm = this.parseInt(response.accountPaymentTerm || null);
-            this.accountGroupPaymentTerm = this.parseInt(response.accountGroupPaymentTerm || null);
+            this.customerPaymentTerm = this.parseInt(response.customerPaymentTerm || null);
+            this.customerGroupPaymentTerm = this.parseInt(response.customerGroupPaymentTerm || null);
 
-            var paymentTermKeys = ['accountPaymentTerm', 'accountGroupPaymentTerm'];
+            var paymentTermKeys = ['customerPaymentTerm', 'customerGroupPaymentTerm'];
             var paymentTerm;
             for (var i = 0, iMax = paymentTermKeys.length; i < iMax; i++) {
                 paymentTerm = response[paymentTermKeys[i]] || null;

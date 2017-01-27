@@ -6,8 +6,8 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccounts;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductDemand;
@@ -29,8 +29,8 @@ class LoadQuoteProductDemandData extends AbstractFixture implements FixtureInter
             'quoteDemandReference' => self::QUOTE_DEMAND_1,
             'quote' => LoadQuoteData::QUOTE1,
             'offer' => LoadQuoteProductOfferData::QUOTE_PRODUCT_OFFER_1,
-            'account' => 'account.level_1',
-            'accountUser' => LoadAccountUserData::EMAIL,
+            'customer' => 'customer.level_1',
+            'customerUser' => LoadCustomerUserData::EMAIL,
             'quantity' => 10,
             'subtotal' => 122,
             'total' => 122,
@@ -40,8 +40,8 @@ class LoadQuoteProductDemandData extends AbstractFixture implements FixtureInter
             'quoteDemandReference' => self::QUOTE_DEMAND_2,
             'quote' => LoadQuoteData::QUOTE1,
             'offer' => LoadQuoteProductOfferData::QUOTE_PRODUCT_OFFER_2,
-            'account' => 'account.level_1',
-            'accountUser' => LoadAccountUserData::LEVEL_1_EMAIL,
+            'customer' => 'customer.level_1',
+            'customerUser' => LoadCustomerUserData::LEVEL_1_EMAIL,
             'quantity' => 10,
             'subtotal' => 321,
             'total' => 321,
@@ -55,8 +55,8 @@ class LoadQuoteProductDemandData extends AbstractFixture implements FixtureInter
     public function getDependencies()
     {
         return [
-            LoadAccountUserData::class,
-            LoadAccounts::class,
+            LoadCustomerUserData::class,
+            LoadCustomers::class,
             LoadQuoteProductOfferData::class,
         ];
     }
@@ -73,8 +73,8 @@ class LoadQuoteProductDemandData extends AbstractFixture implements FixtureInter
             $quote = $this->getReference($item['quote']);
             $quoteDemand = new QuoteDemand();
             $quoteDemand->setQuote($quote)
-                ->setAccount($this->getReference($item['account']))
-                ->setAccountUser($this->getReference($item['accountUser']))
+                ->setCustomer($this->getReference($item['customer']))
+                ->setCustomerUser($this->getReference($item['customerUser']))
                 ->setSubtotal($item['subtotal'])
                 ->setTotal($item['total'])
                 ->setTotalCurrency($item['currency']);

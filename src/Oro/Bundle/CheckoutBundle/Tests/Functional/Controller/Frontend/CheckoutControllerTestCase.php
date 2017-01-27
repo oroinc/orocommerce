@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountAddresses;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
 use Oro\Bundle\ActionBundle\Model\ActionData;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData as TestAccountUserData;
+use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as TestCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
@@ -34,8 +34,8 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
 
     const ORO_WORKFLOW_TRANSITION = 'oro_workflow_transition';
 
-    const ANOTHER_ACCOUNT_ADDRESS = 'account.level_1.address_1';
-    const DEFAULT_BILLING_ADDRESS = 'account.level_1.address_2';
+    const ANOTHER_ACCOUNT_ADDRESS = 'customer.level_1.address_1';
+    const DEFAULT_BILLING_ADDRESS = 'customer.level_1.address_2';
 
     const SHIPPING_ADDRESS_SIGN = 'SELECT SHIPPING ADDRESS';
     const BILLING_ADDRESS_SIGN = 'SELECT BILLING ADDRESS';
@@ -62,12 +62,12 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(TestAccountUserData::AUTH_USER, TestAccountUserData::AUTH_PW)
+            $this->generateBasicAuthHeader(TestCustomerUserData::AUTH_USER, TestCustomerUserData::AUTH_PW)
         );
         $paymentFixtures = (array)$this->getPaymentFixtures();
         $this->loadFixtures(array_merge([
-            LoadAccountUserData::class,
-            LoadAccountAddresses::class,
+            LoadCustomerUserData::class,
+            LoadCustomerAddresses::class,
             LoadProductUnitPrecisions::class,
             LoadShoppingListLineItems::class,
             LoadCombinedProductPrices::class,
@@ -95,9 +95,9 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
     {
         $this->setCurrentWebsite('default');
         $user = $this->registry
-            ->getRepository('OroCustomerBundle:AccountUser')
-            ->findOneBy(['username' => TestAccountUserData::AUTH_USER]);
-        $user->setAccount($this->getReference('account.level_1'));
+            ->getRepository('OroCustomerBundle:CustomerUser')
+            ->findOneBy(['username' => TestCustomerUserData::AUTH_USER]);
+        $user->setCustomer($this->getReference('customer.level_1'));
         $token = new UsernamePasswordToken($user, false, 'key', $user->getRoles());
         $this->client->getContainer()->get('security.token_storage')->setToken($token);
         $data = $this->getCheckoutData($shoppingList);
@@ -135,7 +135,11 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
     protected function getSelectedAddressId(Crawler $crawler, $type)
     {
         $select = $crawler->filter(
-            sprintf('select[name="%s[%s][accountAddress]"]', CheckoutControllerTestCase::ORO_WORKFLOW_TRANSITION, $type)
+            sprintf(
+                'select[name="%s[%s][customerAddress]"]',
+                CheckoutControllerTestCase::ORO_WORKFLOW_TRANSITION,
+                $type
+            )
         );
         if ($select->filter('option')->count() === 1) {
             return null;
@@ -154,7 +158,7 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
     protected function setFormData(array $values, $type)
     {
         $address = [
-            'accountAddress' => CheckoutControllerTestCase::MANUAL_ADDRESS,
+            'customerAddress' => CheckoutControllerTestCase::MANUAL_ADDRESS,
             'firstName' => CheckoutControllerTestCase::FIRST_NAME,
             'lastName' => CheckoutControllerTestCase::LAST_NAME,
             'street' => CheckoutControllerTestCase::STREET,
@@ -167,24 +171,6 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
             $values[CheckoutControllerTestCase::ORO_WORKFLOW_TRANSITION][$type],
             $address
         );
-
-        return $values;
-    }
-
-    /**
-     * @param Crawler $crawler
-     * @param array $values
-     * @return array
-     */
-    protected function setShippingFormData(Crawler $crawler, array $values)
-    {
-        $input = $crawler->filter('input[name="shippingMethodType"]');
-        $method = $input->extract('data-shipping-method');
-        $values[self::ORO_WORKFLOW_TRANSITION]['shipping_method'] = reset($method);
-        $type = $input->extract('value');
-        $values[self::ORO_WORKFLOW_TRANSITION]['shipping_method_type'] = reset($type);
-        $values['_widgetContainer'] = 'ajax';
-        $values['_wid'] = 'ajax_checkout';
 
         return $values;
     }

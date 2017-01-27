@@ -8,8 +8,6 @@ define(function(require) {
     var $ = require('jquery');
     var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
-    var mediator = require('oroui/js/mediator');
-    var layout = require('oroui/js/layout');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     var routing = require('routing');
     var messenger = require('oroui/js/messenger');
@@ -108,10 +106,9 @@ define(function(require) {
                 options.lineItemModel = this.model;
             }, this));
 
-            this._deferredRender();
-            this.initLayout({
+            this.initializeSubviews({
                 lineItemModel: this.model
-            }).done(_.bind(this.handleLayoutInit, this));
+            });
         },
 
         initModel: function(options) {
@@ -179,7 +176,7 @@ define(function(require) {
                 var routeParams = {'id': productId};
 
                 if (this.options.compactUnits) {
-                    routeParams['short'] = true;
+                    routeParams.short = true;
                 }
 
                 $.ajax({

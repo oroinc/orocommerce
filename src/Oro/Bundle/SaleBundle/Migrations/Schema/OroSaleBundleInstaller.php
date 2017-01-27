@@ -3,7 +3,6 @@
 namespace Oro\Bundle\SaleBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
@@ -12,10 +11,14 @@ use Oro\Bundle\EntityBundle\EntityConfig\DatagridScope;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\PaymentTermBundle\Migration\Extension\PaymentTermExtensionAwareInterface;
 use Oro\Bundle\PaymentTermBundle\Migration\Extension\PaymentTermExtensionAwareTrait;
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Migrations\Data\ORM\LoadQuoteCustomerStatuses;
+use Oro\Bundle\SaleBundle\Migrations\Data\ORM\LoadQuoteInternalStatuses;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -61,7 +64,7 @@ class OroSaleBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_12';
+        return 'v1_14';
     }
 
     /**
@@ -97,24 +100,39 @@ class OroSaleBundleInstaller implements
 
         $this->addQuoteCheckoutSource($schema);
 
+        $this->addQuoteCustomerStatusField($schema);
+        $this->addQuoteInternalStatusField($schema);
+
         $this->paymentTermExtension->addPaymentTermAssociation(
             $schema,
             'oro_sale_quote',
             ['datagrid' => ['is_visible' => DatagridScope::IS_VISIBLE_HIDDEN]]
         );
+
+        $this->addAllowUnlistedAndLockMethodFlagsToQuoteTable($schema);
     }
 
     /**
-     * Create oro_quote_assigned_acc_users table
+     * @param Schema $schema
+     */
+    protected function addAllowUnlistedAndLockMethodFlagsToQuoteTable(Schema $schema)
+    {
+        $table = $schema->getTable('oro_sale_quote');
+        $table->addColumn('shipping_method_locked', 'boolean', ['default' => false]);
+        $table->addColumn('allow_unlisted_shipping_method', 'boolean', ['default' => false]);
+    }
+
+    /**
+     * Create oro_quote_assigned_cus_users table
      *
      * @param Schema $schema
      */
     protected function createOroQuoteAssignedAccUsersTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_quote_assigned_acc_users');
+        $table = $schema->createTable('oro_quote_assigned_cus_users');
         $table->addColumn('quote_id', 'integer', []);
-        $table->addColumn('account_user_id', 'integer', []);
-        $table->setPrimaryKey(['quote_id', 'account_user_id']);
+        $table->addColumn('customer_user_id', 'integer', []);
+        $table->setPrimaryKey(['quote_id', 'customer_user_id']);
     }
 
     /**
@@ -139,10 +157,10 @@ class OroSaleBundleInstaller implements
     {
         $table = $schema->createTable('oro_sale_quote');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
+        $table->addColumn('customer_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->addColumn('request_id', 'integer', ['notnull' => false]);
-        $table->addColumn('account_id', 'integer', ['notnull' => false]);
+        $table->addColumn('customer_id', 'integer', ['notnull' => false]);
         $table->addColumn('shipping_address_id', 'integer', ['notnull' => false]);
         $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
         $table->addColumn('qid', 'string', ['notnull' => false, 'length' => 255]);
@@ -154,13 +172,21 @@ class OroSaleBundleInstaller implements
         $table->addColumn('locked', 'boolean');
         $table->addColumn('expired', 'boolean', ['default' => false]);
         $table->addColumn('website_id', 'integer', ['notnull' => false]);
-        $table->addColumn('shipping_estimate_amount', 'money', [
+        $table->addColumn('shipping_method', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('shipping_method_type', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('estimated_shipping_cost_amount', 'money', [
             'notnull' => false,
             'precision' => 19,
             'scale' => 4,
             'comment' => '(DC2Type:money)'
         ]);
-        $table->addColumn('shipping_estimate_currency', 'string', ['notnull' => false, 'length' => 3]);
+        $table->addColumn('override_shipping_cost_amount', 'money', [
+            'notnull' => false,
+            'precision' => 19,
+            'scale' => 4,
+            'comment' => '(DC2Type:money)'
+        ]);
+        $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['shipping_address_id'], 'UNIQ_4F66B6F64D4CFF2B');
     }
@@ -263,21 +289,21 @@ class OroSaleBundleInstaller implements
         $table->addColumn('free_form_product', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('free_form_product_replacement', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('comment', 'text', ['notnull' => false]);
-        $table->addColumn('comment_account', 'text', ['notnull' => false]);
+        $table->addColumn('comment_customer', 'text', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
     }
 
     /**
-     * Add oro_quote_assigned_acc_users foreign keys.
+     * Add oro_quote_assigned_cus_users foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroQuoteAssignedAccUsersForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('oro_quote_assigned_acc_users');
+        $table = $schema->getTable('oro_quote_assigned_cus_users');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account_user'),
-            ['account_user_id'],
+            $schema->getTable('oro_customer_user'),
+            ['customer_user_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
@@ -320,8 +346,8 @@ class OroSaleBundleInstaller implements
     {
         $table = $schema->getTable('oro_sale_quote');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account_user'),
-            ['account_user_id'],
+            $schema->getTable('oro_customer_user'),
+            ['customer_user_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
@@ -338,8 +364,8 @@ class OroSaleBundleInstaller implements
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account'),
-            ['account_id'],
+            $schema->getTable('oro_customer'),
+            ['customer_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
@@ -545,6 +571,46 @@ class OroSaleBundleInstaller implements
     }
 
     /**
+     * @param Schema $schema
+     */
+    protected function addQuoteCustomerStatusField(Schema $schema)
+    {
+        $customerStatusOptions = new OroOptions();
+        $customerStatusOptions->set('enum', 'immutable_codes', LoadQuoteCustomerStatuses::getDataKeys());
+
+        $customerStatusEnumTable = $this->extendExtension->addEnumField(
+            $schema,
+            'oro_sale_quote',
+            'customer_status',
+            Quote::CUSTOMER_STATUS_CODE,
+            false,
+            false,
+            ['dataaudit' => ['auditable' => true]]
+        );
+        $customerStatusEnumTable->addOption(OroOptions::KEY, $customerStatusOptions);
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    protected function addQuoteInternalStatusField(Schema $schema)
+    {
+        $internalStatusOptions = new OroOptions();
+        $internalStatusOptions->set('enum', 'immutable_codes', LoadQuoteInternalStatuses::getDataKeys());
+
+        $internalStatusEnumTable = $this->extendExtension->addEnumField(
+            $schema,
+            'oro_sale_quote',
+            'internal_status',
+            Quote::INTERNAL_STATUS_CODE,
+            false,
+            false,
+            ['dataaudit' => ['auditable' => true]]
+        );
+        $internalStatusEnumTable->addOption(OroOptions::KEY, $internalStatusOptions);
+    }
+
+    /**
      * Create oro_quote_demand table
      *
      * @param Schema $schema
@@ -553,8 +619,8 @@ class OroSaleBundleInstaller implements
     {
         $table = $schema->createTable('oro_quote_demand');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
-        $table->addColumn('account_id', 'integer', ['notnull' => false]);
-        $table->addColumn('account_user_id', 'integer', ['notnull' => false]);
+        $table->addColumn('customer_id', 'integer', ['notnull' => false]);
+        $table->addColumn('customer_user_id', 'integer', ['notnull' => false]);
         $table->addColumn('quote_id', 'integer', ['notnull' => false]);
         $table->addColumn(
             'subtotal',
@@ -616,14 +682,14 @@ class OroSaleBundleInstaller implements
     {
         $table = $schema->getTable('oro_quote_demand');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account'),
-            ['account_id'],
+            $schema->getTable('oro_customer'),
+            ['customer_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_account_user'),
-            ['account_user_id'],
+            $schema->getTable('oro_customer_user'),
+            ['customer_user_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );

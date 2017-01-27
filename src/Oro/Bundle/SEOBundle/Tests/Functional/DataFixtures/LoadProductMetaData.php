@@ -7,6 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\SEOBundle\Migrations\Schema\OroSEOBundleInstaller;
 
 class LoadProductMetaData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -20,8 +21,8 @@ class LoadProductMetaData extends AbstractFixture implements DependentFixtureInt
      */
     public static $metadata = [
         LoadProductData::PRODUCT_1 => [
-            self::META_DESCRIPTIONS => self::META_DESCRIPTIONS,
-            self::META_KEYWORDS => self::META_KEYWORDS,
+            OroSEOBundleInstaller::METAINFORMATION_DESCRIPTIONS => self::META_DESCRIPTIONS,
+            OroSEOBundleInstaller::METAINFORMATION_KEYWORDS => self::META_KEYWORDS,
         ]
     ];
 

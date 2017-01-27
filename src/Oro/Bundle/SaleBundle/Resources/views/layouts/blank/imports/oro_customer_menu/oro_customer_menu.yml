@@ -1,7 +1,7 @@
 layout:
     actions:
         - '@add':
-            id: __account_user_quote
+            id: __customer_user_quote
             parentId: __list
             blockType: link
             options:

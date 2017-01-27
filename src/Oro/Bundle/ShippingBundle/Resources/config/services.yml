@@ -213,6 +213,7 @@ services:
             - '@oro_shipping.methods_configs_rules.provider'
             - '@oro_shipping.shipping_method.registry'
             - '@oro_shipping.shipping_price.provider.cache'
+            - '@oro_shipping.method.view_factory'
 
     oro_shipping.methods_configs_rules.provider:
         class: 'Oro\Bundle\ShippingBundle\Provider\ShippingMethodsConfigsRulesProvider'
@@ -336,3 +337,34 @@ services:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig', event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig', event: postUpdate }
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig', event: postRemove }
+
+    oro_shipping.method.view_factory:
+        class: 'Oro\Bundle\ShippingBundle\Method\ShippingMethodViewFactory'
+        public: false
+        arguments:
+            - '@oro_shipping.shipping_method.registry'
+
+    oro_shipping.method.composed_configuration_builder_factory:
+        class: 'Oro\Bundle\ShippingBundle\Method\Configuration\Composed\ComposedShippingMethodConfigurationBuilderFactory'
+        public: false
+
+    oro_shipping.method.event.dispatcher.method_removal:
+        class: 'Oro\Bundle\ShippingBundle\Method\Event\BasicMethodRemovalEventDispatcher'
+        public: false
+        arguments:
+            - '@event_dispatcher'
+
+    oro_shipping.method.event.dispatcher.type_removal:
+        class: 'Oro\Bundle\ShippingBundle\Method\Event\BasicMethodTypeRemovalEventDispatcher'
+        public: false
+        arguments:
+            - '@event_dispatcher'
+
+    oro_shipping.method.event_listener.type_removal:
+        class: 'Oro\Bundle\ShippingBundle\Method\EventListener\MethodAndTypeRemovalListener'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@logger'
+        tags:
+            - { name: kernel.event_listener, event: oro_shipping.method_removal, method: onMethodRemove }
+            - { name: kernel.event_listener, event: oro_shipping.method_type_removal, method: onMethodTypeRemove }

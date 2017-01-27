@@ -41,6 +41,7 @@ class OroPaymentBundle implements Migration, RenameExtensionAwareInterface
 
     /**
      * @param Schema $schema
+     * @param QueryBag $queries
      */
     protected function addConstraintsToPaymentTransactionTable(Schema $schema, QueryBag $queries)
     {
@@ -56,7 +57,7 @@ class OroPaymentBundle implements Migration, RenameExtensionAwareInterface
             $schema,
             $queries,
             'orob2b_payment_transaction',
-            'oro_account_user',
+            'oro_customer_user',
             ['frontend_owner_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'SET NULL']

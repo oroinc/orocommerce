@@ -2,7 +2,6 @@ config:
     paths:
         'oroproduct/js/app/components/product-primary-unit-limitations-component': 'bundles/oroproduct/js/app/components/product-primary-unit-limitations-component.js'
         'oroproduct/js/app/components/product-unit-selection-limitations-component': 'bundles/oroproduct/js/app/components/product-unit-selection-limitations-component.js'
-        'oroproduct/js/app/components/grid-sidebar-component': 'bundles/oroproduct/js/app/components/grid-sidebar-component.js'
         'oroproduct/js/app/components/product-unit-component': 'bundles/oroproduct/js/app/components/product-unit-component.js'
         'oroproduct/js/app/components/product-unit-select-component': 'bundles/oroproduct/js/app/components/product-unit-select-component.js'
         'oroproduct/js/app/components/quick-add-component': 'bundles/oroproduct/js/app/components/quick-add-component.js'

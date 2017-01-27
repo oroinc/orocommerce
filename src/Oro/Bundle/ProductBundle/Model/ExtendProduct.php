@@ -12,6 +12,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
  * @method Product setInventoryStatus(AbstractEnumValue $enumId)
  * @method LocalizedFallbackValue getName(Localization $localization = null)
  * @method LocalizedFallbackValue getDefaultName()
+ * @method LocalizedFallbackValue getDefaultSlugPrototype()
  * @method LocalizedFallbackValue getDescription(Localization $localization = null)
  * @method LocalizedFallbackValue getDefaultDescription()
  * @method LocalizedFallbackValue getShortDescription(Localization $localization = null)

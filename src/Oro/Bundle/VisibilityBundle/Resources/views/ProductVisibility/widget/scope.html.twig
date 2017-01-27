@@ -5,14 +5,14 @@
     <div id="product-visibility-all">
         {{ form_row(form.all) }}
     </div>
-    <h5 class="widget-subtitle indented">{{ 'oro.visibility.accountgroupproductvisibility.entity_label'|trans }}</h5>
-    <div id="product-visibility-account-group">
-        {{ form_row(form.accountGroup, {'id': 'accountgroup-product-visibility-changeset'~'-'~scope.id}) }}
-        {{ dataGrid.renderGrid('account-group-product-visibility-grid', {target_entity_id: entity.id, scope_id: scope.id}) }}
+    <h5 class="widget-subtitle indented">{{ 'oro.visibility.customergroupproductvisibility.entity_label'|trans }}</h5>
+    <div id="product-visibility-customer-group">
+        {{ form_row(form.customerGroup, {'id': 'customergroup-product-visibility-changeset'~'-'~scope.id}) }}
+        {{ dataGrid.renderGrid('customer-group-product-visibility-grid', {target_entity_id: entity.id, scope_id: scope.id}) }}
     </div>
-    <h5 class="widget-subtitle indented">{{ 'oro.visibility.accountproductvisibility.entity_label'|trans }}</h5>
-    <div id="product-visibility-account">
-        {{ form_row(form.account, {'id': 'account-product-visibility-changeset'~'-'~scope.id}) }}
-        {{ dataGrid.renderGrid('account-product-visibility-grid', {target_entity_id: entity.id, scope_id: scope.id}) }}
+    <h5 class="widget-subtitle indented">{{ 'oro.visibility.customerproductvisibility.entity_label'|trans }}</h5>
+    <div id="product-visibility-customer">
+        {{ form_row(form.customer, {'id': 'customer-product-visibility-changeset'~'-'~scope.id}) }}
+        {{ dataGrid.renderGrid('customer-product-visibility-grid', {target_entity_id: entity.id, scope_id: scope.id}) }}
     </div>
 </div>

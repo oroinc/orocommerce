@@ -10,7 +10,7 @@ use Oro\Bundle\PayPalBundle\Method\PayflowGateway;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 
 class LoadPaymentTransactionData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -22,7 +22,7 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
     /** {@inheritdoc} */
     public function getDependencies()
     {
-        return ['Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadAccountUserData'];
+        return ['Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData'];
     }
 
     /**
@@ -36,7 +36,7 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
             'entityIdentifier' => 1,
             'paymentMethod' => PayflowGateway::TYPE,
             'entityClass' => '\stdClass',
-            'frontendOwner' => LoadAccountUserData::EMAIL,
+            'frontendOwner' => LoadCustomerUserData::EMAIL,
             'response' => [
                 'SECURETOKEN' => 'SECURETOKEN',
                 'SECURETOKENID' => 'SECURETOKENID',
@@ -49,7 +49,7 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
             'entityIdentifier' => 1,
             'paymentMethod' => PayflowGateway::TYPE,
             'entityClass' => '\stdClass',
-            'frontendOwner' => LoadAccountUserData::EMAIL,
+            'frontendOwner' => LoadCustomerUserData::EMAIL,
             'response' => [
                 'SECURETOKEN' => 'SECURETOKEN',
                 'SECURETOKENID' => 'SECURETOKENID',

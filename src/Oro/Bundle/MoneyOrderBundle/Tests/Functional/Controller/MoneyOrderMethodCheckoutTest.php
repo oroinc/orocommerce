@@ -4,8 +4,8 @@ namespace Oro\Bundle\MoneyOrderBundle\Tests\Functional\Controller;
 
 use Doctrine\ORM\EntityRepository;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend\CheckoutControllerTestCase;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\MoneyOrderBundle\DependencyInjection\Configuration;
 use Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder;
 use Oro\Bundle\MoneyOrderBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
@@ -145,7 +145,7 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
 
         $crawler = $this->client->request('GET', self::$checkoutUrl);
         $form = $this->getTransitionForm($crawler);
-        $this->setAccountAddress(
+        $this->setCustomerAddress(
             $this->getReference(self::ANOTHER_ACCOUNT_ADDRESS)->getId(),
             $form,
             self::BILLING_ADDRESS
@@ -153,7 +153,7 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
         $crawler = $this->client->submit($form);
 
         $form = $this->getTransitionForm($crawler);
-        $this->setAccountAddress(
+        $this->setCustomerAddress(
             $this->getReference(self::ANOTHER_ACCOUNT_ADDRESS)->getId(),
             $form,
             self::SHIPPING_ADDRESS
@@ -163,7 +163,6 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
         $form = $this->getTransitionForm($crawler);
 
         $values = $this->explodeArrayPaths($form->getValues());
-        $values = $this->setShippingFormData($crawler, $values);
 
         $crawler = $this->client->request(
             'POST',
@@ -202,11 +201,11 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
      * @param Form $form
      * @param string $addressType
      */
-    protected function setAccountAddress($addressId, Form $form, $addressType)
+    protected function setCustomerAddress($addressId, Form $form, $addressType)
     {
         $addressId = $addressId === 0 ?: 'a_' . $addressId;
 
-        $addressTypePath = sprintf('%s[%s][accountAddress]', self::ORO_WORKFLOW_TRANSITION, $addressType);
+        $addressTypePath = sprintf('%s[%s][customerAddress]', self::ORO_WORKFLOW_TRANSITION, $addressType);
         $form->setValues([$addressTypePath => $addressId]);
     }
 }

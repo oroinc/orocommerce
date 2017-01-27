@@ -10,5 +10,5 @@ Oro\Bundle\ProductBundle\Entity\Product:
             name: visibility_new
             type: integer
         -
-            name: visibility_account_ACCOUNT_ID
+            name: visibility_customer_CUSTOMER_ID
             type: integer

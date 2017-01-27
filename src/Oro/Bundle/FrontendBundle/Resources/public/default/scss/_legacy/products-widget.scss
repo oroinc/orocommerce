@@ -600,6 +600,8 @@
       font-size: 0;
 
       input[type="text"] {
+        height: 40px;
+
         text-align: center;
       }
     }
@@ -621,15 +623,6 @@
     }
 
     &_no-image-view {
-      .shopping-lists {
-        float: right;
-        width: 94%;
-
-        @media (max-width: $screen-sm) {
-          width: 100%;
-        }
-      }
-
       .btn {
         margin-top: 0;
       }

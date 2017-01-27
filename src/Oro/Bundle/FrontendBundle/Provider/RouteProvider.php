@@ -4,7 +4,7 @@ namespace Oro\Bundle\FrontendBundle\Provider;
 
 use Oro\Bundle\ActionBundle\Provider\RouteProviderInterface;
 use Oro\Bundle\ActionBundle\Provider\RouteProviderTrait;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 class RouteProvider implements RouteProviderInterface
@@ -80,6 +80,6 @@ class RouteProvider implements RouteProviderInterface
     {
         $token = $this->tokenStorage->getToken();
 
-        return $token && $token->getUser() instanceof AccountUser;
+        return $token && $token->getUser() instanceof CustomerUser;
     }
 }

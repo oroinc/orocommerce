@@ -3,6 +3,7 @@ define(function(require) {
 
     var ProductAddToShoppingListView;
     var BaseView = require('oroui/js/app/views/base/view');
+    var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var ShoppingListCreateWidget = require('oro/shopping-list-create-widget');
     var ApiAccessor = require('oroui/js/tools/api-accessor');
     var routing = require('routing');
@@ -11,7 +12,7 @@ define(function(require) {
     var _ = require('underscore');
     var ShoppingListCollectionService = require('oroshoppinglist/js/shoppinglist-collection-service');
 
-    ProductAddToShoppingListView = BaseView.extend({
+    ProductAddToShoppingListView = BaseView.extend(_.extend({}, ElementsHelper, {
         options: {
             buttonTemplate: '',
             createNewButtonTemplate: '',
@@ -40,6 +41,10 @@ define(function(require) {
 
         initialize: function(options) {
             ProductAddToShoppingListView.__super__.initialize.apply(this, arguments);
+            this.deferredInitializeCheck(options, ['productModel', 'dropdownWidget']);
+        },
+
+        deferredInitialize: function(options) {
             this.options = $.extend(true, {}, this.options, _.pick(options, _.keys(this.options)));
 
             this.dropdownWidget = options.dropdownWidget;
@@ -74,9 +79,10 @@ define(function(require) {
         },
 
         initModel: function(options) {
-            var modelAttr = options.modelAttr || {};
+            var modelAttr = _.each(options.modelAttr, function(value, attribute) {
+                options.modelAttr[attribute] = value === 'undefined' ? undefined : value;
+            }) || {};
             this.modelAttr = $.extend(true, {}, this.modelAttr, modelAttr);
-            this.$el.trigger('options:set:productModel', options);
             if (options.productModel) {
                 this.model = options.productModel;
             }
@@ -86,10 +92,14 @@ define(function(require) {
             }
 
             _.each(this.modelAttr, function(value, attribute) {
-                if (!this.model.has(attribute) || modelAttr[attribute] !== undefined ) {
+                if (!this.model.has(attribute) || modelAttr[attribute] !== undefined) {
                     this.model.set(attribute, value);
                 }
             }, this);
+
+            if (this.model.get('shopping_lists') === undefined) {
+                this.model.set('shopping_lists', []);
+            }
         },
 
         render: function() {
@@ -233,6 +243,9 @@ define(function(require) {
 
             if (this.model) {
                 urlOptions.productId = this.model.get('id');
+                if (this.model.has('parentProduct')) {
+                    urlOptions.parentProductId = this.model.get('parentProduct');
+                }
             }
 
             if (intention === 'new') {
@@ -403,7 +416,7 @@ define(function(require) {
 
             ProductAddToShoppingListView.__super__.dispose.apply(this, arguments);
         }
-    });
+    }));
 
     return ProductAddToShoppingListView;
 });

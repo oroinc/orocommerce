@@ -3,9 +3,9 @@ oro_entity:
         Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility:
             alias:        category_visibility
             plural_alias: category_visibilities
-        Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountCategoryVisibility:
-            alias:        account_category_visibility
-            plural_alias: account_category_visibilities
-        Oro\Bundle\VisibilityBundle\Entity\Visibility\AccountGroupCategoryVisibility:
-            alias:        account_group_category_visibility
-            plural_alias: account_group_category_visibilities
+        Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility:
+            alias:        customer_category_visibility
+            plural_alias: customer_category_visibilities
+        Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibility:
+            alias:        customer_group_category_visibility
+            plural_alias: customer_group_category_visibilities

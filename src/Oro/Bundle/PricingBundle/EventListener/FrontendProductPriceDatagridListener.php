@@ -151,7 +151,7 @@ class FrontendProductPriceDatagridListener
     private function getPriceList()
     {
         if (!$this->priceList) {
-            $this->priceList = $this->priceListRequestHandler->getPriceListByAccount();
+            $this->priceList = $this->priceListRequestHandler->getPriceListByCustomer();
         }
 
         return $this->priceList;

@@ -1,5 +1,3 @@
-{% extends 'OroFrontendBundle:layouts/default:form_theme.html.twig' %}
-
 {% block oro_frontend_country_widget %}
     <div>
         {{ form_widget(form, {'class_prefix': 'checkout'}) }}
@@ -7,30 +5,13 @@
 {% endblock %}
 
 {% block oro_frontend_region_widget %}
-    {% set regionView = 'orocheckout/js/region/view' %}
-
-    <div>
-        {{ block('oro_region_widget') }}
-    </div>
+    {{ block('oro_region_widget') }}
 {% endblock %}
 
-{%- block form_label -%}
-    {% set label_attr = layout_attr_defaults(label_attr, {
-        '~class': ' label label--full'
-    }) %}
-
-    {{ parent() }}
-{%- endblock form_label -%}
-
 {%- block form_row -%}
-    <div class="checkout__form__col {{ parentClass|default('form__col_x6') }}">
+    <div class="grid__column grid__column--offset-y {{ parentClass|default('grid__column--6') }}">
         {{- form_label(form, null, {'class_prefix': 'checkout'}) -}}
         {{- form_widget(form, {'class_prefix': 'checkout'}) -}}
         {{- form_errors(form, {'class_prefix': 'checkout'}) -}}
     </div>
 {%- endblock form_row -%}
-
-{% block checkbox_row %}
-    {{- form_widget(form) -}}
-    {{- form_errors(form) -}}
-{% endblock %}

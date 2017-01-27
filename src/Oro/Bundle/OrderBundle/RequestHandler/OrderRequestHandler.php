@@ -6,8 +6,8 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountUser;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\Form\Type\OrderType;
 
 class OrderRequestHandler
@@ -19,51 +19,55 @@ class OrderRequestHandler
     protected $registry;
 
     /** @var string */
-    protected $accountClass;
+    protected $customerClass;
 
     /** @var string */
-    protected $accountUserClass;
+    protected $customerUserClass;
 
     /**
      * @param ManagerRegistry $registry
      * @param RequestStack $requestStack
-     * @param string $accountClass
-     * @param string $accountUserClass
+     * @param string $customerClass
+     * @param string $customerUserClass
      */
-    public function __construct(ManagerRegistry $registry, RequestStack $requestStack, $accountClass, $accountUserClass)
-    {
+    public function __construct(
+        ManagerRegistry $registry,
+        RequestStack $requestStack,
+        $customerClass,
+        $customerUserClass
+    ) {
         $this->registry = $registry;
-        $this->accountClass = $accountClass;
-        $this->accountUserClass = $accountUserClass;
+        $this->customerClass = $customerClass;
+        $this->customerUserClass = $customerUserClass;
         $this->requestStack = $requestStack;
     }
 
     /**
-     * @return Account|null
+     * @return Customer|null
      */
-    public function getAccount()
+    public function getCustomer()
     {
-        $accountId = $this->getFromRequest('account');
-        $account = null;
-        if ($accountId) {
-            $account = $this->findEntity($this->accountClass, $accountId);
+        $customerId = $this->getFromRequest('customer');
+        $customer = null;
+        if ($customerId) {
+            $customer = $this->findEntity($this->customerClass, $customerId);
         }
 
-        return $account;
+        return $customer;
     }
 
     /**
-     * @return AccountUser|null
+     * @return CustomerUser|null
      */
-    public function getAccountUser()
+    public function getCustomerUser()
     {
-        $accountUserId = $this->getFromRequest('accountUser');
-        $accountUser = null;
-        if ($accountUserId) {
-            $accountUser = $this->findEntity($this->accountUserClass, $accountUserId);
+        $customerUserId = $this->getFromRequest('customerUser');
+        $customerUser = null;
+        if ($customerUserId) {
+            $customerUser = $this->findEntity($this->customerUserClass, $customerUserId);
         }
 
-        return $accountUser;
+        return $customerUser;
     }
 
     /**

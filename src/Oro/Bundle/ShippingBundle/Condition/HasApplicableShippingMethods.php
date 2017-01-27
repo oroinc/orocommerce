@@ -79,7 +79,7 @@ class HasApplicableShippingMethods extends AbstractCondition implements ContextA
 
         $methodsData = [];
         if (null !== $shippingContext) {
-            $methodsData = $this->shippingPriceProvider->getApplicableMethodsWithTypesData($shippingContext);
+            $methodsData = $this->shippingPriceProvider->getApplicableMethodsViews($shippingContext);
         }
 
         return count($methodsData) !== 0;

@@ -9,6 +9,25 @@
     </div>
 {% endblock %}
 
+{% block _line_item_form_fields_widget %}
+    {% if not isProductUnitSelectionVisible %}
+        <div class="form__col">
+            {{ form_label(form.quantity) }}
+            {{ form_widget(form.quantity, {'attr' : {'class': 'input--short'}}) }}
+
+            {% if isUnitVisible %}
+                <span class="label">
+                    {{ product.primaryUnitPrecision.unit.code|oro_format_product_unit_label }}
+                </span>
+            {% endif %}
+            {{ form_errors(form.quantity) }}
+        </div>
+    {% else %}
+        {{ form_row(form.unit) }}
+        {{ form_row(form.quantity) }}
+    {% endif %}
+{% endblock %}
+
 {% block _line_item_buttons_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% if block.children is not empty %}
@@ -21,7 +40,7 @@
                 'html': block_widget(block),
                 'mobileEnabled': true,
                 'dataAttributes': {
-                    'layout': 'separate'
+                    'layout': 'deferred-initialize'
                 },
                 'options': {
                     'widgetModule': 'oroproduct/js/content-processor/product-add-to-dropdown-button',

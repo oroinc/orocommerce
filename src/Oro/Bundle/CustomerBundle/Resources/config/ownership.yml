@@ -1,7 +1,7 @@
 parameters:
     oro_customer.entity.owners:
-        local_level: '%oro_customer.entity.account.class%'
-        basic_level: '%oro_customer.entity.account_user.class%'
+        local_level: '%oro_customer.entity.customer.class%'
+        basic_level: '%oro_customer.entity.customer_user.class%'
 
 services:
     oro_customer.owner.frontend_ownership_metadata_provider:

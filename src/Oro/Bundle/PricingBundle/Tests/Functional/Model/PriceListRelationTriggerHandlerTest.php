@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Model;
 
-use Oro\Bundle\CustomerBundle\Entity\Account;
-use Oro\Bundle\CustomerBundle\Entity\AccountGroup;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\PricingBundle\Async\Topics;
@@ -61,22 +61,22 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
         );
     }
 
-    public function testHandleAccountChange()
+    public function testHandleCustomerChange()
     {
         /** @var Website $website */
         $website = $this->getReference(LoadWebsiteData::WEBSITE1);
-        /** @var Account $account */
-        $account = $this->getReference('account.level_1');
+        /** @var Customer $customer */
+        $customer = $this->getReference('customer.level_1');
 
-        $this->handler->handleAccountChange($account, $website);
+        $this->handler->handleCustomerChange($customer, $website);
         $this->handler->sendScheduledTriggers();
 
         self::assertMessageSent(
             Topics::REBUILD_COMBINED_PRICE_LISTS,
             [
                 PriceListRelationTrigger::WEBSITE => $website->getId(),
-                PriceListRelationTrigger::ACCOUNT => $account->getId(),
-                PriceListRelationTrigger::ACCOUNT_GROUP => $account->getGroup()->getId(),
+                PriceListRelationTrigger::ACCOUNT => $customer->getId(),
+                PriceListRelationTrigger::ACCOUNT_GROUP => $customer->getGroup()->getId(),
                 PriceListRelationTrigger::FORCE => false,
             ]
         );
@@ -98,13 +98,13 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
         );
     }
 
-    public function testHandleAccountGroupChange()
+    public function testHandleCustomerGroupChange()
     {
         /** @var Website $website */
         $website = $this->getReference(LoadWebsiteData::WEBSITE1);
-        /** @var AccountGroup $accountGroup */
-        $accountGroup = $this->getReference(LoadGroups::GROUP1);
-        $this->handler->handleAccountGroupChange($accountGroup, $website);
+        /** @var CustomerGroup $customerGroup */
+        $customerGroup = $this->getReference(LoadGroups::GROUP1);
+        $this->handler->handleCustomerGroupChange($customerGroup, $website);
         $this->handler->sendScheduledTriggers();
 
         self::assertMessageSent(
@@ -112,7 +112,7 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
             [
                 PriceListRelationTrigger::WEBSITE => $website->getId(),
                 PriceListRelationTrigger::ACCOUNT => null,
-                PriceListRelationTrigger::ACCOUNT_GROUP => $accountGroup->getId(),
+                PriceListRelationTrigger::ACCOUNT_GROUP => $customerGroup->getId(),
                 PriceListRelationTrigger::FORCE => false,
             ]
         );
@@ -130,7 +130,7 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
             [
                 [
                     PriceListRelationTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
-                    PriceListRelationTrigger::ACCOUNT =>  $this->getReference('account.level_1.3')->getId(),
+                    PriceListRelationTrigger::ACCOUNT =>  $this->getReference('customer.level_1.3')->getId(),
                     PriceListRelationTrigger::ACCOUNT_GROUP => $this->getReference(LoadGroups::GROUP1)->getId(),
                 ],
                 [
@@ -160,18 +160,18 @@ class PriceListRelationTriggerHandlerTest extends WebTestCase
         );
     }
 
-    public function testHandleAccountGroupRemove()
+    public function testHandleCustomerGroupRemove()
     {
-        /** @var AccountGroup $accountGroup */
-        $accountGroup = $this->getReference(LoadGroups::GROUP1);
-        $this->handler->handleAccountGroupRemove($accountGroup);
+        /** @var CustomerGroup $customerGroup */
+        $customerGroup = $this->getReference(LoadGroups::GROUP1);
+        $this->handler->handleCustomerGroupRemove($customerGroup);
         $this->handler->sendScheduledTriggers();
 
         self::assertMessageSent(
             Topics::REBUILD_COMBINED_PRICE_LISTS,
             [
                 PriceListRelationTrigger::WEBSITE => $this->getReference(LoadWebsiteData::WEBSITE1)->getId(),
-                PriceListRelationTrigger::ACCOUNT => $this->getReference('account.level_1.3')->getId(),
+                PriceListRelationTrigger::ACCOUNT => $this->getReference('customer.level_1.3')->getId(),
             ]
         );
     }

@@ -6,13 +6,10 @@ define(function(require) {
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var layout = require('oroui/js/layout');
     var BaseModel = require('oroui/js/app/models/base/model');
-    var NumberFormatter = require('orolocale/js/formatter/number');
     var _ = require('underscore');
     var $ = require('jquery');
 
     BaseProductPricesView = BaseView.extend(_.extend({}, ElementsHelper, {
-        autoRender: true,
-
         options: {
             defaultQuantity: 1
         },
@@ -44,16 +41,23 @@ define(function(require) {
 
         changeQuantity: false,
 
+        rendered: false,
+
         initialize: function(options) {
             BaseProductPricesView.__super__.initialize.apply(this, arguments);
 
             $.extend(this, _.pick(options, ['changeQuantity']));
 
+            this.deferredInitializeCheck(options, ['productModel']);
+        },
+
+        deferredInitialize: function(options) {
             this.initModel(options);
             if (!this.model) {
                 return;
             }
             this.initializeElements(options);
+            this.render();
         },
 
         dispose: function() {
@@ -70,6 +74,9 @@ define(function(require) {
 
         initModel: function(options) {
             this.modelAttr = $.extend(true, {}, this.modelAttr, options.modelAttr || {});
+            if (!options.productModel) {
+                this.$el.trigger('options:set:productModel', options);
+            }
             if (options.productModel) {
                 this.model = options.productModel;
             }
@@ -128,7 +135,12 @@ define(function(require) {
                 this.prices[unit] = unitPrices;
             }, this);
 
-            this.setFoundPrice();
+            if (!this.rendered) {
+                this.rendered = true;
+                this.setFoundPrice(true);
+            } else {
+                this.setFoundPrice();
+            }
         },
 
         onQuantityChange: function(options) {

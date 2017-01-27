@@ -1,7 +1,7 @@
 /*global define*/
 define([
     'underscore', 'oroform/js/validator/regex'
-], function (_, regexConstraint) {
+], function(_, regexConstraint) {
     'use strict';
 
     var constraint = _.clone(regexConstraint);
