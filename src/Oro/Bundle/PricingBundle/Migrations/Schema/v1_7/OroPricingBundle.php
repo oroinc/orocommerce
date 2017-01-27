@@ -24,7 +24,6 @@ class OroPricingBundle implements Migration
               'quantity',
               'unit_code',
               'currency'],
-            'oro_price_product_combined',
             'oro_combined_price_uidx'
         );
         $table->addIndex(
