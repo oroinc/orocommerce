@@ -34,6 +34,10 @@ layout:
             id: __datagrid_toolbar_actions
             parentId: __datagrid_toolbar
             siblingId: __datagrid_toolbar_page_size
+        - '@move':
+            id: __datagrid_items_counter
+            parentId: __datagrid_toolbar
+            siblingId: __datagrid_toolbar_sorting
         - '@remove':
             id: __datagrid_toolbar_actions_container
         - '@remove':

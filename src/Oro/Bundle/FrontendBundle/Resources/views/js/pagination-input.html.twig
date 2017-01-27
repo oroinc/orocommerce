@@ -20,11 +20,11 @@
                             <% if (disabled) { %> disabled<% } %>
                             <% if (handle.className) { %> <%= handle.className %><% } %>>
                             <% if (handle.direction == 'next') { %>
-                                <span><%= handle.direction %></span>
+                                <span><%= _.__('oro.datagrid.pagination.next') %></span>
                                 <i class="fa-angle-<%= handle.arrow %> fa--base-line"></i>
                             <% } else { %>
                                 <i class="fa-angle-<%= handle.arrow %> fa--base-line"></i>
-                                <span><%= handle.direction %></span>
+                                <span><%= _.__('oro.datagrid.pagination.prev') %></span>
                             <% } %>
                     </button>
                 <% } %>
