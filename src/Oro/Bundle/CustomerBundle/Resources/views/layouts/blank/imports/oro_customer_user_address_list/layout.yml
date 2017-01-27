@@ -46,6 +46,12 @@ layout:
                     blockType: block
                     options:
                         visible: '=data["acl"].isGranted("oro_customer_frontend_customer_user_address_remove")'
+                __user_addresses_list_template__manage_addresses_link:
+                    blockType: link
+                    options:
+                        route_name: 'oro_customer_frontend_customer_user_address_index'
+                        text: 'oro.customer.address.manage'
+                        visible: '=data["acl"].isGranted("oro_customer_frontend_customer_view") or data["acl"].isGranted("oro_customer_frontend_customer_user_view")'
             tree:
                 __root:
                     __user_addresses_head:
@@ -59,3 +65,4 @@ layout:
                             __user_addresses_list_template_item_actions:
                                 __user_addresses_list_template_item_actions_edit: ~
                                 __user_addresses_list_template_item_actions_remove: ~
+                    __user_addresses_list_template__manage_addresses_link: ~

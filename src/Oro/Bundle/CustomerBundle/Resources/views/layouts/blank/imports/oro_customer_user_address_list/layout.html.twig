@@ -26,7 +26,8 @@
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'orocustomer/js/app/components/frontend-customer-address-book-component',
         'data-page-component-options': componentOptions|merge({
-            template: '#customer-address-book-addresses-list-template'
+            template: '#customer-address-book-addresses-list-template',
+            manageAddressesLink: '[data-role="manage-adresses-link"]'
         }),
         '~class': ' address-list'
     }) %}
@@ -90,9 +91,18 @@
 
 {% block __oro_customer_user_address_list__user_addresses_list_template_item_actions_remove_widget %}
     {% set attr = layout_attr_defaults(attr, {'~class': " address-list__button item-remove-button"}) %}
-    <% if (!primary) { %>
-        <button {{ block('block_attributes') }}>
-            <i class="fa-trash-o"></i>
-        </button>
-    <% } %>
+    <button {{ block('block_attributes') }}>
+        <i class="fa-trash-o"></i>
+    </button>
+{% endblock %}
+
+{% block __oro_customer_user_address_list__user_addresses_list_template__manage_addresses_link_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " address-list__manage hidden",
+        'data-role': "manage-adresses-link"
+    }) %}
+
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
 {% endblock %}
