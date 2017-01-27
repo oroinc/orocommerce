@@ -8,9 +8,8 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\PricingBundle\DependencyInjection\Configuration;
 use Oro\Bundle\PricingBundle\Entity\BaseCombinedPriceListRelation;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
-use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
-use Oro\Bundle\PricingBundle\Entity\MinimalProductPrice;
-use Oro\Bundle\PricingBundle\Entity\Repository\MinimalProductPriceRepository;
+use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
+use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\PricingBundle\Resolver\CombinedPriceListScheduleResolver;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener\MessageQueueTrait;
@@ -30,7 +29,7 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
     protected $resolver;
 
     /**
-     * @var MinimalProductPriceRepository
+     * @var CombinedProductPriceRepository
      */
     protected $priceRepository;
 
@@ -72,8 +71,8 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
         $this->resolver = $this->getContainer()->get('oro_pricing.resolver.combined_product_schedule_resolver');
         $this->configManager = $this->getContainer()->get('oro_config.global');
         $this->priceRepository = $this->getContainer()->get('doctrine')
-            ->getManagerForClass(MinimalProductPrice::class)
-            ->getRepository(MinimalProductPrice::class);
+            ->getManagerForClass(CombinedProductPrice::class)
+            ->getRepository(CombinedProductPrice::class);
 
         $this->saveDefaultConfigValue();
     }
@@ -104,13 +103,8 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
         $collector->clear();
         $this->resolver->updateRelations($now);
         //if price list is empty there is no need to send messages
-        $products = $this->priceRepository->getProductIdsByPriceLists([$currentCPL]);
         $messages = $collector->getTopicSentMessages(AsyncIndexer::TOPIC_REINDEX);
-        if ($products) {
-            $this->assertNotEmpty($messages);
-        } else {
-            $this->assertEmpty($messages);
-        }
+        $this->assertNotEmpty($messages);
 
         $relations = $this->getInvalidRelations(
             'OroPricingBundle:CombinedPriceListToCustomer',
@@ -262,8 +256,8 @@ class CombinedPriceListScheduleResolverTest extends WebTestCase
         if ($cplConfig['expectedFullCpl']) {
             $expectedFullCpl = $this->getReference($cplConfig['expectedFullCpl'])->getId();
         }
-        $this->assertSame($expectedActualCpl, $this->configManager->get($actualCPLConfigKey));
-        $this->assertSame($expectedFullCpl, $this->configManager->get($fullCPLConfigKey));
+        $this->assertEquals($expectedActualCpl, $this->configManager->get($actualCPLConfigKey));
+        $this->assertEquals($expectedFullCpl, $this->configManager->get($fullCPLConfigKey));
     }
 
     protected function saveDefaultConfigValue()

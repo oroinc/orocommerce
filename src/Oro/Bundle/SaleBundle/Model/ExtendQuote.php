@@ -2,6 +2,12 @@
 
 namespace Oro\Bundle\SaleBundle\Model;
 
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+
+/**
+ * @method AbstractEnumValue getInternalStatus()
+ * @method AbstractEnumValue getCustomerStatus()
+ */
 class ExtendQuote
 {
     /**

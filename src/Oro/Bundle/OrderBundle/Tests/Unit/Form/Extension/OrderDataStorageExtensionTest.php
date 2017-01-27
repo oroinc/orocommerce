@@ -33,6 +33,7 @@ class OrderDataStorageExtensionTest extends AbstractProductDataStorageExtensionT
             $this->productClass
         );
         $this->extension->setDataClass('Oro\Bundle\OrderBundle\Entity\Order');
+        $this->setUpLoggerMock($this->extension);
     }
 
     public function testBuild()

@@ -9,16 +9,46 @@
     border-width: 1px 0;
 
     &__trigger {
+        width: 100%;
+
         display: block;
 
         margin: 0;
         padding: 7px 20px;
 
         background-color: get-color('additional', 'base');
+        border: 0;
+        box-sizing: border-box;
     }
 
     &__toggle {
         background-color: get-color('additionl', 'ultra');
+    }
+
+    &.open {
+        .header-row__trigger {
+            background: get-color('additional', 'ultra');
+
+            z-index: auto;
+        }
+
+        .header-row__toggle {
+            display: block;
+        }
+    }
+}
+
+@include only-desktop {
+    .header-row {
+        &__trigger {
+            &.active,
+            &:hover {
+                & + .header-row__toggle,
+                .header-row__toggle {
+                    display: block;
+                }
+            }
+        }
     }
 }
 
@@ -34,14 +64,6 @@
             @extend %hidden-on-desktop;
 
             padding: 0;
-
-            &.active,
-            &:hover {
-                & + .header-row__toggle,
-                .header-row__toggle {
-                    display: block;
-                }
-            }
         }
 
         &__toggle {

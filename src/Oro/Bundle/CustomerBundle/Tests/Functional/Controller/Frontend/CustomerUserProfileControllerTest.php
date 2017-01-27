@@ -10,6 +10,21 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserD
  */
 class CustomerUserProfileControllerTest extends WebTestCase
 {
+    /**
+     * @var array
+     */
+    public static $labels = [
+        'Name Prefix',
+        'First Name',
+        'Middle Name',
+        'Last Name',
+        'Name Suffix',
+        'Birthday',
+        'Email Address',
+        'Company Name',
+        'Roles'
+    ];
+
     protected function setUp()
     {
         $this->initClient(
@@ -24,6 +39,14 @@ class CustomerUserProfileControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_customer_frontend_customer_user_profile'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $positions = $crawler->filter('div.customer-oq__item__body div.control-group label.control-label');
+
+        /**
+         * @var \DOMElement $position
+         */
+        foreach ($positions as $key => $position) {
+            $this->assertEquals(self::$labels[$key], $position->textContent);
+        }
 
         $this->assertContains(LoadCustomerUserData::AUTH_USER, $crawler->filter('.user-page')->html());
     }

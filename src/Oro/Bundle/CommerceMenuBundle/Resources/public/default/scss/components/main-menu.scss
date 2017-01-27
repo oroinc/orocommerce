@@ -1,10 +1,18 @@
+// @theme: default
+
 .main-menu {
-    vertical-align: middle;
+    &__link {
+        padding-left: 24px;
 
-    .container-fluid {
-        position: relative;
+        white-space: nowrap;
+        text-transform: uppercase;
+
+        &:hover,
+        &:focus {
+            text-decoration: none;
+        }
     }
-
+    
     &__list {
         display: flex;
 
@@ -19,34 +27,6 @@
     }
 
     &__item {
-        display: block;
-
-        min-height: 49px;
-
-        flex-grow: 1;
-
-        @include breakpoint('desktop') {
-            &--ancestor {
-                &:hover {
-                    .main-menu__link {
-                        background: get-color('additional', 'base');
-                    }
-                }
-            }
-
-            &[data-dropdown-trigger] {
-                &:hover {
-                    .main-menu__sublist-container {
-                        display: block !important;
-                    }
-
-                    .messages-widget__dropdown-mode {
-                        display: block;
-                    }
-                }
-            }
-        }
-
         .messages-widget {
             &__trigger {
                 margin-top: 9px;
@@ -71,6 +51,12 @@
 
             background: get-color('additional', 'base');
         }
+
+        &.open {
+            .messages-widget__dropdown-mode {
+                display: block;
+            }
+        }
     }
 
     &__item--floated-dropdown,
@@ -92,46 +78,88 @@
 
         background: get-color('additional', 'ultra');
         box-shadow: 0 2px 5px 0 rgba(0, 0, 0, .2);
-
-        @include breakpoint('desktop') {
-            position: absolute;
-            z-index: z('base') + 10;
-            top: 100%;
-            right: 0;
-            left: 0;
-
-            border-top: 1px solid transparent;
-        }
     }
 
     &__sublist {
         display: none;
     }
+
+    &__button-arrow {
+        padding: 8px 12px 8px 8px;
+
+        font-size: inherit;
+
+        background: none;
+        border: 0;
+
+        cursor: pointer;
+    }
 }
 
-@include breakpoint('desktop') {
+@include only-desktop() {
     .main-menu {
-        max-height: 49px;
-
         &__item {
-            min-height: 49px;
+            &:hover {
+                background: get-color('additional', 'base');
+            }
 
-            &--ancestor {
-                .main-menu__link {
-                    text-indent: 4px;
+            &[data-dropdown-trigger] {
+                &:hover {
+                    .messages-widget__dropdown-mode {
+                        display: block;
+                    }
                 }
             }
-        }
-
-        &__link {
-            min-height: 49px;
         }
     }
 }
 
+@include breakpoint('desktop') {
+    .main-menu {
+        max-height: $main-menu-item-height;
+
+        display: flex;
+
+        &__view-parent {
+            display: none;
+        }
+
+        &__item {
+            min-height: $main-menu-item-height;
+        }
+
+        &__link {
+            min-height: $main-menu-item-height;
+
+            display: inline-block;
+        }
+
+        .mobile-version & {
+            &__item {
+                &.open {
+                    background: get-color('additional', 'base');
+                }
+            }
+        }
+    }    
+}
+
 @include breakpoint('tablet') {
     .main-menu {
+        font-weight: bold;
+
+        &__categories {
+            display: none;
+
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+
         &__item {
+            position: relative;
+
+            min-height: inherit;
+            
             .messages-widget {
                 &__title {
                     font-size: 13px;
@@ -144,8 +172,36 @@
             }
         }
 
+        &__item.expanded {
+            .main-menu__link {
+                position: relative;
+
+                .fa-angle-down {
+                    position: absolute;
+                    top: 50%;
+                    left: -2px;
+
+                    margin: 0;
+                    margin-top: -7px;
+
+                    transform: rotate(90deg);
+                }
+            }
+        }
+
+        &__link {
+            padding: 8px 0 7px 8px;
+
+            font-size: 14px;
+            font-weight: bold;
+        }
+
         &__sublist-container {
             box-shadow: none;
+        }
+
+        &__button-arrow {
+            display: none;
         }
     }
 }

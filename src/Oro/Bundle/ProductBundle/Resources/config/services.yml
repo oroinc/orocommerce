@@ -456,8 +456,9 @@ services:
     oro_product.layout.data_provider.product_form:
         class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\ProductFormProvider'
         arguments:
-            - "@form.factory"
+            - '@form.factory'
             - '@router'
+            - '@oro_product.provider.product_variant_availability_provider'
         tags:
             - { name: layout.data_provider, alias: oro_product_form }
 
@@ -629,6 +630,23 @@ services:
             - '@property_accessor'
             - '@event_dispatcher'
 
+    oro_product.product_variant.registry.product_variant_type_handler_factory:
+        class: 'Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantTypeHandlerRegistry'
+        calls:
+            - [addHandler,  ['@oro_product.product_variant.type_handler.enum_type_handler']]
+            - [addHandler,  ['@oro_product.product_variant.type_handler.boolean_type_handler']]
+
+    oro_product.product_variant.type_handler.enum_type_handler:
+        class: 'Oro\Bundle\ProductBundle\ProductVariant\TypeHandler\EnumTypeHandler'
+        arguments:
+            - '@form.factory'
+            - '%oro_product.entity.product.class%'
+
+    oro_product.product_variant.type_handler.boolean_type_handler:
+        class: 'Oro\Bundle\ProductBundle\ProductVariant\TypeHandler\BooleanTypeHandler'
+        arguments:
+            - '@form.factory'
+
     oro_product.visibility.product_unit_fields_settings:
         class: 'Oro\Bundle\ProductBundle\Visibility\BasicProductUnitFieldsSettings'
         public: false
@@ -667,3 +685,24 @@ services:
             - 'OroProductBundle:ProductUnit:Datagrid/quantity.html.twig'
             - {isShortUnitCode: true}
             - '@oro_product.service.single_unit_mode'
+
+    oro_product.provider.privilege_category_provider:
+        class: 'Oro\Bundle\ProductBundle\Provider\PrivilegeCategoryProvider'
+        tags:
+            - { name: oro_user.privilege_category }
+
+    oro_product.layout.data_provider.configurable_products:
+        class: 'Oro\Bundle\ProductBundle\Provider\ConfigurableProductProvider'
+        arguments:
+            - '@oro_product.provider.custom_field_provider'
+            - '@oro_product.provider.product_variant_availability_provider'
+            - '@property_accessor'
+        tags:
+            - { name: layout.data_provider, alias: oro_product_configurable_products }
+
+    oro_product.layout.attribute_block_type_mapper:
+        parent: oro_entity_config.block_type.abstract_attribute_block_type_mapper
+        calls:
+            - [addBlockTypeUsingMetadata, ['%oro_product.entity.product_image.class%', 'attribute_product_images']]
+        tags:
+            - { name: oro_entity_config.layout.attribute_block_type_mapper }

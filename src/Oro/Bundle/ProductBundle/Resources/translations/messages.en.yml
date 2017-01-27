@@ -5,6 +5,9 @@ oro:
         entity_description: Represents product information
         id.label: Id
         sku.label: SKU
+        grouping.label: "Grouping"
+        qty_sold.label: "Qty Sold"
+        skip_empty_periods.label: "Exclude Empty Periods"
         item_number.label: "Item #"
         sku.placeholder: "Enter Item Number"
         quantity.label: Qty
@@ -30,6 +33,7 @@ oro:
         images.label: Images
         anything.label: Any Text
         featured_products.label: Featured Products
+        time_period.label: Time Period
         slugs:
             label:              'Slugs'
             singular_label:     'Slug'
@@ -53,6 +57,10 @@ oro:
         type:
             simple: Simple Product
             configurable: Configurable Product
+
+        variant_fields:
+            yes.label: Yes
+            no.label: No
 
         visibility:
             visible.label: Yes
@@ -130,6 +138,11 @@ oro:
 
         acl:
             view_products.label: View products
+            attribute:
+                create.label: '[Product Attribute] Create attribute'
+                update.label: '[Product Attribute] Edit attribute'
+                view.label: '[Product Attribute] View attributes'
+                remove.label: '[Product Attribute] Remove attribute'
 
         rounding:
             type:
@@ -245,6 +258,14 @@ oro:
 
         export:
             inventory_status_only: "Inventory statuses only"
+
+        variant_field:
+            default.tooltip: "Enable the fields to be able to group products by these fields"
+            priority.tooltip: "Click and drag to reorder"
+
+        privilege:
+            category:
+                catalog.label: Catalog
 
     product_unit.each:
         label:

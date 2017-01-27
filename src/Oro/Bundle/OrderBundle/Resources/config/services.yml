@@ -289,8 +289,10 @@ services:
 
     oro_order.event_listener.extract_line_item_options:
         class: 'Oro\Bundle\OrderBundle\EventListener\ExtractLineItemPaymentOptionsListener'
+        calls:
+            - [setHtmlTagHelper, ['@oro_ui.html_tag_helper']]
         tags:
-            - { name: kernel.event_listener, event: oro_payment.event.extract_line_item_options, method: onExtractLineItemPaymentOptions }
+            - { name: kernel.event_listener, event: oro_payment.event.extract_line_item_options, priority: 0, method: onExtractLineItemPaymentOptions }
 
     oro_order.event_listener.extract_address_options.orderaddress:
         class: 'Oro\Bundle\OrderBundle\EventListener\ExtractAddressOptionsListener'
@@ -348,3 +350,10 @@ services:
 
     oro_order.converter.shipping_prices:
         class: 'Oro\Bundle\OrderBundle\Converter\ShippingPricesConverter'
+
+    oro_order.event_listener.order_line_items_frontend_datagrid:
+        class: 'Oro\Bundle\OrderBundle\EventListener\LineItemsFrontendDatagridListener'
+        arguments:
+            - '@oro_product.layout.data_provider.configurable_products'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.order-line-items-grid-frontend, method: onResultAfter }

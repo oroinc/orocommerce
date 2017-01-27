@@ -337,6 +337,13 @@ services:
         arguments:
             - '@oro_checkout.shipping_method.provider_main'
 
+    oro_checkout.action.default_shipping_method_setter_decorator:
+        class: 'Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetterDecorator'
+        decorates: oro_checkout.action.default_shipping_method_setter
+        public: false
+        arguments:
+            - '@oro_checkout.action.default_shipping_method_setter_decorator.inner'
+
     oro_checkout.factory.shipping_context_factory:
         class: 'Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory'
         arguments:

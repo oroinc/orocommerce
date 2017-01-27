@@ -3,28 +3,41 @@
 namespace Oro\Bundle\ShippingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 
 class ShippingMethodTypeConfigRepository extends EntityRepository
 {
     /**
-     * @param ShippingMethodConfig $methodConfig
+     * @param string $method
      * @param string $type
+     * @return array
      */
-    public function deleteByMethodAndType(ShippingMethodConfig $methodConfig, $type)
+    public function findIdsByMethodAndType($method, $type)
     {
         $qb = $this->createQueryBuilder('methodTypeConfig');
 
-        $qb->delete()
+        $qb->select('methodTypeConfig.id')
+            ->join('methodTypeConfig.methodConfig', 'methodConfig')
             ->where(
                 $qb->expr()->andX(
-                    $qb->expr()->eq('methodTypeConfig.methodConfig', ':methodConfig'),
+                    $qb->expr()->eq('methodConfig.method', ':method'),
                     $qb->expr()->eq('methodTypeConfig.type', ':type')
                 )
             )
-            ->setParameter('methodConfig', $methodConfig)
+            ->setParameter('method', $method)
             ->setParameter('type', $type);
 
-        $qb->getQuery()->execute();
+        return array_column($qb->getQuery()->execute(), 'id');
+    }
+
+    /**
+     * @param array $ids
+     */
+    public function deleteByIds(array $ids)
+    {
+        $qb = $this->createQueryBuilder('methodTypeConfig');
+        $qb->delete()
+            ->where($qb->expr()->in('methodTypeConfig.id', ':ids'))
+            ->setParameter('ids', $ids)
+            ->getQuery()->execute();
     }
 }

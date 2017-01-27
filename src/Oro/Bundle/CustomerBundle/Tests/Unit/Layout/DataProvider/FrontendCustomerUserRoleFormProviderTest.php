@@ -72,6 +72,30 @@ class FrontendCustomerUserRoleFormProviderTest extends \PHPUnit_Framework_TestCa
     }
 
     /**
+     * @dataProvider getDataProvider
+     *
+     * @param CustomerUserRole $role
+     * @param string $route
+     * @param array $routeParameters
+     */
+    public function testGetRoleForm(CustomerUserRole $role, $route, array $routeParameters = [])
+    {
+        $form = $this->assertCustomerUserRoleFormHandlerCalled($role);
+
+        $this->router->expects($this->exactly(2))
+            ->method('generate')
+            ->with($route, $routeParameters);
+
+        $actual = $this->provider->getRoleForm($role);
+
+        $this->assertInstanceOf(FormInterface::class, $actual);
+        $this->assertSame($form, $actual);
+
+        /** test local cache */
+        $this->assertSame($actual, $this->provider->getRoleForm($role));
+    }
+
+    /**
      * @return array
      */
     public function getDataProvider()

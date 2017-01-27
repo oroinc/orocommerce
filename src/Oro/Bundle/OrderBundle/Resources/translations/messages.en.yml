@@ -85,7 +85,7 @@ oro:
         discountitem.add_label: Add Discount
         order_history.label: Order History
         top_selling_items.label: Top Selling Items
-        frontend_index_title: Order History - My Customer - Home page
+        frontend_index_title: Order History - My Account - Home page
 
         shipping_tracking:
             entity_label: Shipping Tracking
@@ -163,7 +163,7 @@ oro:
             select:
                 product: Select product
                 free_form: Free-form entry
-
+            parent_product.label: 'Parent Product'
             column:
                 product: 'Product'
 
@@ -186,7 +186,8 @@ oro:
             shortcut_new_order.label: Create new order
             shortcut_new_order.description: Create new order item
             shortcut_order_list.description: Show list of existing orders
-
+            best_selling_list.label: Best Selling Products
+            best_selling_list.description: List of best selling products
         widgets:
             order_information: Order Information
             shipping_tracking: Shipping Tracking

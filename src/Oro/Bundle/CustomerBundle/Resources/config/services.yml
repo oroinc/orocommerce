@@ -535,11 +535,18 @@ services:
     oro_customer.provider.fronted_customer_user_role_tabs_options:
         class: 'Oro\Bundle\CustomerBundle\Layout\DataProvider\FrontendCustomerUserRoleOptionsProvider'
         arguments:
-            - '@oro_user.provider.role_privilege_capability_provider'
+            - '@oro_customer.provider.role_privilege_capability_provider'
             - '@oro_user.provider.role_privilege_category_provider'
             - '@translator'
         tags:
             - { name: layout.data_provider, alias: oro_customer_fronted_customer_user_role_options }
+
+    oro_customer.provider.role_privilege_capability_provider:
+        class: %oro_user.provider.role_privilege_capability_provider.class%
+        arguments:
+            - '@translator'
+            - '@oro_user.provider.role_privilege_category_provider'
+            - '@oro_customer.form.handler.update_customer_user_role_frontend='
 
     oro_customer.datagrid.datasource.customer_role_frontend_permission_datasource:
         class: 'Oro\Bundle\CustomerBundle\Datagrid\RolePermissionDatasource'
@@ -664,3 +671,27 @@ services:
             - '@security.token_storage'
             - '@logger'
             - '@security.authentication.manager'
+
+    oro_user.provider.role_privilege_capability_provider_commerce:
+        class: %oro_user.provider.role_privilege_capability_provider.class%
+        arguments:
+            - '@translator'
+            - '@oro_user.provider.role_privilege_category_provider'
+            - '@oro_customer.form.handler.acl_role.commerce='
+
+    oro_customer.provider.role_privilege_capability_provider.decorator:
+        class: %oro_user.provider.role_privilege_capability_provider.class%
+        decorates: oro_user.provider.role_privilege_capability_provider
+        arguments:
+            - '@translator'
+            - '@oro_user.provider.role_privilege_category_provider'
+            - '@oro_customer.form.handler.acl_role.backend='
+        public: false
+
+    oro_customer.customer_id.placeholder:
+        class: 'Oro\Bundle\CustomerBundle\Placeholder\CustomerIdPlaceholder'
+        public: false
+        arguments:
+            - '@security.token_storage'
+        tags:
+            - { name: website_search.placeholder }

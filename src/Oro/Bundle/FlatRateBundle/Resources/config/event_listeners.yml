@@ -1,7 +1,0 @@
-services:
-    oro_flat_rate.event_listener.shipping_method_config_data:
-        class: 'Oro\Bundle\FlatRateBundle\EventListener\ShippingMethodConfigDataListener'
-        arguments:
-            - '@oro_flat_rate.method.provider'
-        tags:
-            - { name: kernel.event_listener, event: oro_shipping_method.config_data, method: onGetConfigData }

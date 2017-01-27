@@ -2,34 +2,37 @@ method: getTax
 reference: order_line_item_1
 configuration: { use_as_base_by_default: destination }
 databaseBefore:
+    'Oro\Bundle\OrderBundle\Entity\OrderAddress':
+        us_al_billing_address:
+            country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
+            region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
     'Oro\Bundle\OrderBundle\Entity\Order':
         simple_order:
-            poNumber: { property_value: simple_order }
+            poNumber: simple_order
             customer: { class: 'Oro\Bundle\CustomerBundle\Entity\Customer', query: { name: 'customer.orphan' } }
-            currency: 'USD'
-            billingAddress:
-                class: 'Oro\Bundle\OrderBundle\Entity\OrderAddress'
-                property_value:
-                    country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
-                    region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
-            shippingAddress:
-                class: 'Oro\Bundle\OrderBundle\Entity\OrderAddress'
-                property_value:
-                    country: { class: 'Oro\Bundle\AddressBundle\Entity\Country', query: { iso2Code: 'US' } }
-                    region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-AL' } }
+            currency: USD
+            billingAddress: '@us_al_billing_address'
+            shippingAddress: '@us_al_billing_address'
+    'Oro\Bundle\CurrencyBundle\Entity\Price':
+        usd_price_15.99:
+            value: 15.99
+            currency: USD
+        usd_price_5.55:
+            value: 5.55
+            currency: USD
     'Oro\Bundle\OrderBundle\Entity\OrderLineItem':
         order_line_item_1:
-            productSku: { property_value: order_line_item_1 }
-            order: { reference: simple_order }
-            quantity: { property_value: 6 }
-            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '15.99', currency: USD } }
-            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.1' } }
+            productSku:  order_line_item_1
+            order: '@simple_order'
+            quantity: 6
+            price: '@usd_price_15.99'
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-1' } }
         order_line_item_2:
-            productSku: { property_value: order_line_item_2 }
-            order: { reference: simple_order }
-            quantity: { property_value: 6 }
-            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '5.55', currency: USD } }
-            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product.2' } }
+            productSku: order_line_item_2
+            order: '@simple_order'
+            quantity: 6
+            price: '@usd_price_5.55'
+            product: { class: 'Oro\Bundle\ProductBundle\Entity\Product', query: { sku: 'product-2' } }
 expectedResult: # loaded from fixtures, values from simple_order_item_1 used to check database overrid
     row:
         includingTax: '105.53' # 17.589 * 6 = 105.534 (105.54 if count bi items)

@@ -34,7 +34,6 @@ class OroCustomerBundleInstaller implements
     const ORO_CUSTOMER_TABLE_NAME = 'oro_customer';
     const ORO_CUSTOMER_USER_TABLE_NAME = 'oro_customer_user';
     const ORO_CUSTOMER_GROUP_TABLE_NAME = 'oro_customer_group';
-    const ORO_CUSTOMER_USER_ORG_TABLE_NAME = 'oro_customer_user_org';
     const ORO_CUSTOMER_ROLE_TO_WEBSITE_TABLE_NAME = 'oro_customer_role_to_website';
     const ORO_WEBSITE_TABLE_NAME = 'oro_website';
     const ORO_ORGANIZATION_TABLE_NAME = 'oro_organization';
@@ -75,7 +74,7 @@ class OroCustomerBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_11';
+        return 'v1_12';
     }
 
     /**
@@ -94,13 +93,12 @@ class OroCustomerBundleInstaller implements
     public function up(Schema $schema, QueryBag $queries)
     {
         /** Tables generation **/
-        $this->createOroAccountUserTable($schema);
-        $this->createOroAccountUserOrganizationTable($schema);
+        $this->createOroCustomerUserTable($schema);
         $this->createOroCustomerUserRoleTable($schema);
-        $this->createOroAccountUserAccessCustomerUserRoleTable($schema);
+        $this->createOroCustomerUserAccessCustomerUserRoleTable($schema);
         $this->createOroCustomerUserRoleToWebsiteTable($schema);
-        $this->createOroAccountTable($schema);
-        $this->createOroAccountGroupTable($schema);
+        $this->createOroCustomerTable($schema);
+        $this->createOroCustomerGroupTable($schema);
         $this->createOroCustomerAddressTable($schema);
         $this->createOroCustomerAdrAdrTypeTable($schema);
         $this->updateOroAuditTable($schema);
@@ -109,39 +107,38 @@ class OroCustomerBundleInstaller implements
         $this->createOroNavigationHistoryTable($schema);
         $this->createOroNavigationItemTable($schema);
         $this->createOroNavigationItemPinbarTable($schema);
-        $this->createOroAccountUserSdbarStTable($schema);
-        $this->createOroAccountUserSdbarWdgTable($schema);
+        $this->createOroCustomerUserSdbarStTable($schema);
+        $this->createOroCustomerUserSdbarWdgTable($schema);
         $this->createOroAccNavigationPagestateTable($schema);
         $this->createOroCustomerUserSettingsTable($schema);
 
-        $this->createOroAccountWindowsStateTable($schema);
+        $this->createOroCustomerWindowsStateTable($schema);
 
-        $this->createOroAccountSalesRepresentativesTable($schema);
-        $this->createOroAccountUserSalesRepresentativesTable($schema);
+        $this->createOroCustomerSalesRepresentativesTable($schema);
+        $this->createOroCustomerUserSalesRepresentativesTable($schema);
 
         /** Foreign keys generation **/
-        $this->addOroAccountUserForeignKeys($schema);
-        $this->addOroAccountUserAccessCustomerUserRoleForeignKeys($schema);
-        $this->addOroAccountUserOrganizationForeignKeys($schema);
+        $this->addOroCustomerUserForeignKeys($schema);
+        $this->addOroCustomerUserAccessCustomerUserRoleForeignKeys($schema);
         $this->addOroCustomerUserRoleForeignKeys($schema);
         $this->addOroCustomerUserRoleToWebsiteForeignKeys($schema);
-        $this->addOroAccountForeignKeys($schema);
+        $this->addOroCustomerForeignKeys($schema);
         $this->addOroCustomerAddressForeignKeys($schema);
         $this->addOroCustomerAdrAdrTypeForeignKeys($schema);
-        $this->addOroAccountUserAddressForeignKeys($schema);
+        $this->addOroCustomerUserAddressForeignKeys($schema);
         $this->addOroCusUsrAdrToAdrTypeForeignKeys($schema);
         $this->addOroNavigationHistoryForeignKeys($schema);
         $this->addOroNavigationItemForeignKeys($schema);
         $this->addOroNavigationItemPinbarForeignKeys($schema);
-        $this->addOroAccountUserSdbarStForeignKeys($schema);
-        $this->addOroAccountUserSdbarWdgForeignKeys($schema);
+        $this->addOroCustomerUserSdbarStForeignKeys($schema);
+        $this->addOroCustomerUserSdbarWdgForeignKeys($schema);
         $this->addOroAccNavigationPagestateForeignKeys($schema);
         $this->addOroCustomerUserSettingsForeignKeys($schema);
 
-        $this->addOroAccountWindowsStateForeignKeys($schema);
+        $this->addOroCustomerWindowsStateForeignKeys($schema);
 
-        $this->addOroAccountSalesRepresentativesForeignKeys($schema);
-        $this->addOroAccountUserSalesRepresentativesForeignKeys($schema);
+        $this->addOroCustomerSalesRepresentativesForeignKeys($schema);
+        $this->addOroCustomerUserSalesRepresentativesForeignKeys($schema);
 
         $this->addRelationsToScope($schema);
     }
@@ -151,7 +148,7 @@ class OroCustomerBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function createOroAccountUserTable(Schema $schema)
+    protected function createOroCustomerUserTable(Schema $schema)
     {
         $table = $schema->createTable(static::ORO_CUSTOMER_USER_TABLE_NAME);
 
@@ -220,7 +217,7 @@ class OroCustomerBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function createOroAccountTable(Schema $schema)
+    protected function createOroCustomerTable(Schema $schema)
     {
         $table = $schema->createTable(static::ORO_CUSTOMER_TABLE_NAME);
 
@@ -273,7 +270,7 @@ class OroCustomerBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function createOroAccountUserAccessCustomerUserRoleTable(Schema $schema)
+    protected function createOroCustomerUserAccessCustomerUserRoleTable(Schema $schema)
     {
         $table = $schema->createTable('oro_cus_user_access_role');
 
@@ -288,7 +285,7 @@ class OroCustomerBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function createOroAccountGroupTable(Schema $schema)
+    protected function createOroCustomerGroupTable(Schema $schema)
     {
         $table = $schema->createTable(static::ORO_CUSTOMER_GROUP_TABLE_NAME);
 
@@ -323,21 +320,6 @@ class OroCustomerBundleInstaller implements
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
-    }
-
-    /**
-     * Create oro_customer_user_organization table
-     *
-     * @param Schema $schema
-     */
-    protected function createOroAccountUserOrganizationTable(Schema $schema)
-    {
-        $table = $schema->createTable(static::ORO_CUSTOMER_USER_ORG_TABLE_NAME);
-
-        $table->addColumn('customer_user_id', 'integer', []);
-        $table->addColumn('organization_id', 'integer', []);
-
-        $table->setPrimaryKey(['customer_user_id', 'organization_id']);
     }
 
     /**
@@ -448,8 +430,8 @@ class OroCustomerBundleInstaller implements
         $table->addColumn('route_parameters', 'array', ['comment' => '(DC2Type:array)']);
         $table->addColumn('entity_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['route'], 'oro_acc_nav_history_route_idx');
-        $table->addIndex(['entity_id'], 'oro_acc_nav_history_entity_id_idx');
+        $table->addIndex(['route'], 'oro_cus_nav_history_route_idx');
+        $table->addIndex(['entity_id'], 'oro_cus_nav_history_entity_id_idx');
     }
 
     /**
@@ -474,13 +456,13 @@ class OroCustomerBundleInstaller implements
     }
 
     /**
-     * Create oro_acc_nav_item_pinbar table
+     * Create oro_cus_nav_item_pinbar table
      *
      * @param Schema $schema
      */
     protected function createOroNavigationItemPinbarTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_acc_nav_item_pinbar');
+        $table = $schema->createTable('oro_cus_nav_item_pinbar');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('item_id', 'integer', []);
         $table->addColumn('maximized', 'datetime', ['notnull' => false]);
@@ -493,7 +475,7 @@ class OroCustomerBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function createOroAccountUserSdbarStTable(Schema $schema)
+    protected function createOroCustomerUserSdbarStTable(Schema $schema)
     {
         $table = $schema->createTable('oro_customer_user_sdbar_st');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -509,7 +491,7 @@ class OroCustomerBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function createOroAccountUserSdbarWdgTable(Schema $schema)
+    protected function createOroCustomerUserSdbarWdgTable(Schema $schema)
     {
         $table = $schema->createTable('oro_customer_user_sdbar_wdg');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
@@ -526,7 +508,7 @@ class OroCustomerBundleInstaller implements
     }
 
     /**
-     * Create oro_acc_pagestate table
+     * Create oro_cus_pagestate table
      *
      * @param Schema $schema
      */
@@ -549,7 +531,7 @@ class OroCustomerBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function createOroAccountSalesRepresentativesTable(Schema $schema)
+    protected function createOroCustomerSalesRepresentativesTable(Schema $schema)
     {
         $table = $schema->createTable(self::ORO_CUSTOMER_SALES_REPRESENTATIVES_TABLE_NAME);
         $table->addColumn('customer_id', 'integer');
@@ -562,7 +544,7 @@ class OroCustomerBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function createOroAccountUserSalesRepresentativesTable(Schema $schema)
+    protected function createOroCustomerUserSalesRepresentativesTable(Schema $schema)
     {
         $table = $schema->createTable('oro_customer_user_sales_reps');
         $table->addColumn('customer_user_id', 'integer');
@@ -591,7 +573,7 @@ class OroCustomerBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function addOroAccountUserForeignKeys(Schema $schema)
+    protected function addOroCustomerUserForeignKeys(Schema $schema)
     {
         $table = $schema->getTable(static::ORO_CUSTOMER_USER_TABLE_NAME);
         $table->addForeignKeyConstraint(
@@ -625,7 +607,7 @@ class OroCustomerBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function addOroAccountUserAccessCustomerUserRoleForeignKeys(Schema $schema)
+    protected function addOroCustomerUserAccessCustomerUserRoleForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_cus_user_access_role');
         $table->addForeignKeyConstraint(
@@ -647,7 +629,7 @@ class OroCustomerBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function addOroAccountForeignKeys(Schema $schema)
+    protected function addOroCustomerForeignKeys(Schema $schema)
     {
         $table = $schema->getTable(static::ORO_CUSTOMER_TABLE_NAME);
         $table->addForeignKeyConstraint(
@@ -673,28 +655,6 @@ class OroCustomerBundleInstaller implements
             ['organization_id'],
             ['id'],
             ['onDelete' => 'SET NULL', 'onUpdate' => null]
-        );
-    }
-
-    /**
-     * Add oro_customer_user_organization foreign keys.
-     *
-     * @param Schema $schema
-     */
-    protected function addOroAccountUserOrganizationForeignKeys(Schema $schema)
-    {
-        $table = $schema->getTable(static::ORO_CUSTOMER_USER_ORG_TABLE_NAME);
-        $table->addForeignKeyConstraint(
-            $schema->getTable(static::ORO_CUSTOMER_USER_TABLE_NAME),
-            ['customer_user_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable(static::ORO_ORGANIZATION_TABLE_NAME),
-            ['organization_id'],
-            ['id'],
-            ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
     }
 
@@ -842,7 +802,7 @@ class OroCustomerBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function addOroAccountUserAddressForeignKeys(Schema $schema)
+    protected function addOroCustomerUserAddressForeignKeys(Schema $schema)
     {
         $table = $schema->getTable(static::ORO_CUSTOMER_USER_ADDRESS_TABLE_NAME);
         $table->addForeignKeyConstraint(
@@ -960,13 +920,13 @@ class OroCustomerBundleInstaller implements
     }
 
     /**
-     * Add oro_acc_nav_item_pinbar foreign keys.
+     * Add oro_cus_nav_item_pinbar foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroNavigationItemPinbarForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('oro_acc_nav_item_pinbar');
+        $table = $schema->getTable('oro_cus_nav_item_pinbar');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_cus_navigation_item'),
             ['item_id'],
@@ -980,7 +940,7 @@ class OroCustomerBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function addOroAccountUserSdbarStForeignKeys(Schema $schema)
+    protected function addOroCustomerUserSdbarStForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_customer_user_sdbar_st');
         $table->addForeignKeyConstraint(
@@ -996,7 +956,7 @@ class OroCustomerBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function addOroAccountUserSdbarWdgForeignKeys(Schema $schema)
+    protected function addOroCustomerUserSdbarWdgForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_customer_user_sdbar_wdg');
         $table->addForeignKeyConstraint(
@@ -1014,7 +974,7 @@ class OroCustomerBundleInstaller implements
     }
 
     /**
-     * Add oro_acc_navigation_pagestate foreign keys.
+     * Add oro_cus_navigation_pagestate foreign keys.
      *
      * @param Schema $schema
      */
@@ -1030,30 +990,30 @@ class OroCustomerBundleInstaller implements
     }
 
     /**
-     * Create oro_acc_windows_state table
+     * Create oro_cus_windows_state table
      *
      * @param Schema $schema
      */
-    protected function createOroAccountWindowsStateTable(Schema $schema)
+    protected function createOroCustomerWindowsStateTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_acc_windows_state');
+        $table = $schema->createTable('oro_cus_windows_state');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('customer_user_id', 'integer', []);
         $table->addColumn('data', Type::JSON_ARRAY, ['comment' => '(DC2Type:json_array)']);
         $table->addColumn('created_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
-        $table->addIndex(['customer_user_id'], 'oro_acc_windows_state_acu_idx', []);
+        $table->addIndex(['customer_user_id'], 'oro_cus_windows_state_acu_idx', []);
         $table->setPrimaryKey(['id']);
     }
 
     /**
-     * Add oro_acc_windows_state foreign keys.
+     * Add oro_cus_windows_state foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOroAccountWindowsStateForeignKeys(Schema $schema)
+    protected function addOroCustomerWindowsStateForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('oro_acc_windows_state');
+        $table = $schema->getTable('oro_cus_windows_state');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_customer_user'),
             ['customer_user_id'],
@@ -1067,7 +1027,7 @@ class OroCustomerBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function addOroAccountSalesRepresentativesForeignKeys(Schema $schema)
+    protected function addOroCustomerSalesRepresentativesForeignKeys(Schema $schema)
     {
         $table = $schema->getTable(self::ORO_CUSTOMER_SALES_REPRESENTATIVES_TABLE_NAME);
         $table->addForeignKeyConstraint(
@@ -1089,7 +1049,7 @@ class OroCustomerBundleInstaller implements
      *
      * @param Schema $schema
      */
-    protected function addOroAccountUserSalesRepresentativesForeignKeys(Schema $schema)
+    protected function addOroCustomerUserSalesRepresentativesForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_customer_user_sales_reps');
         $table->addForeignKeyConstraint(

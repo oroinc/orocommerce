@@ -81,7 +81,8 @@ use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
  *          },
  *          "security"={
  *              "type"="ACL",
- *              "group_name"=""
+ *              "group_name"="",
+ *              "category"="catalog"
  *          },
  *          "form"={
  *              "form_type"="oro_product_select",

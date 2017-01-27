@@ -58,12 +58,12 @@ class FrontendProductPriceFilterTest extends FrontendWebTestCase
         return [
             'sort by price' => [
                 'expected' => [
-                    'product.7',
-                    'product.3',
-                    'product.1',
-                    'product.2',
-                    'product.6',
-                    'product.8',
+                    'product-7',
+                    'product-3',
+                    'product-1',
+                    'product-2',
+                    'product-6',
+                    'product-8',
                 ],
                 'filter' => [
                     $sort.'[minimal_price_sort]' => AbstractSorterExtension::DIRECTION_ASC,
@@ -71,8 +71,8 @@ class FrontendProductPriceFilterTest extends FrontendWebTestCase
             ],
             'filter by price sort by sku' => [
                 'expected' => [
-                    'product.3',
-                    'product.1',
+                    'product-3',
+                    'product-1',
                 ],
                 'filter' => [
                     $filter.'[minimal_price][value]' => 12,
@@ -83,8 +83,8 @@ class FrontendProductPriceFilterTest extends FrontendWebTestCase
             ],
             'filter and sort by price' => [
                 'expected' => [
-                    'product.2',
-                    'product.1',
+                    'product-2',
+                    'product-1',
                 ],
                 'filter' => [
                     $filter.'[minimal_price][value]' => 8,

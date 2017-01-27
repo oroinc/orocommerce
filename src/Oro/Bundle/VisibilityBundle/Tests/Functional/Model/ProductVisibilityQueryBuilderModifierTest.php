@@ -110,73 +110,73 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
                 'configValue' => ProductVisibility::VISIBLE,
                 'user' => CustomerLoadCustomerUserData::EMAIL,
                 'expectedData' => [
-                    'product.1',
-                    'product.5',
-                    'product.6',
-                    'product.7',
+                    'product-1',
+                    'product-5',
+                    'product-6',
+                    'product-7',
                 ]
             ],
             'config hidden' => [
                 'configValue' => ProductVisibility::HIDDEN,
                 'user' => CustomerLoadCustomerUserData::EMAIL,
                 'expectedData' => [
-                    'product.1',
-                    'product.7',
+                    'product-1',
+                    'product-7',
                 ]
             ],
             'anonymous config visible' => [
                 'configValue' => ProductVisibility::VISIBLE,
                 'user' => null,
                 'expectedData' => [
-                    'product.1',
-                    'product.2',
-                    'product.3',
-                    'product.5',
-                    'product.6',
-                    'product.7',
-                    'product.8',
+                    'product-1',
+                    'product-2',
+                    'product-3',
+                    'product-5',
+                    'product-6',
+                    'product-7',
+                    'product-8',
                 ]
             ],
             'anonymous config hidden' => [
                 'configValue' => ProductVisibility::HIDDEN,
                 'user' => null,
                 'expectedData' => [
-                    'product.2',
-                    'product.3',
+                    'product-2',
+                    'product-3',
                 ]
             ],
             'group config visible' => [
                 'configValue' => ProductVisibility::VISIBLE,
                 'user' => CustomerLoadCustomerUserData::GROUP2_EMAIL,
                 'expectedData' => [
-                    'product.1',
-                    'product.3',
-                    'product.6',
-                    'product.7',
-                    'product.8',
+                    'product-1',
+                    'product-3',
+                    'product-6',
+                    'product-7',
+                    'product-8',
                 ]
             ],
             'customer without group and config visible' => [
                 'configValue' => ProductVisibility::VISIBLE,
                 'user' => CustomerLoadCustomerUserData::ORPHAN_EMAIL,
                 'expectedData' => [
-                    'product.1',
-                    'product.2',
-                    'product.3',
-                    'product.4',
-                    'product.5',
-                    'product.6',
-                    'product.7',
-                    'product.8',
+                    'product-1',
+                    'product-2',
+                    'product-3',
+                    'product-4',
+                    'product-5',
+                    'product-6',
+                    'product-7',
+                    'product-8',
                 ]
             ],
             'customer without group and config hidden' => [
                 'configValue' => ProductVisibility::HIDDEN,
                 'user' => CustomerLoadCustomerUserData::ORPHAN_EMAIL,
                 'expectedData' => [
-                    'product.2',
-                    'product.3',
-                    'product.4',
+                    'product-2',
+                    'product-3',
+                    'product-4',
                 ]
             ],
         ];

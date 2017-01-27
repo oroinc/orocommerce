@@ -7,7 +7,7 @@ layout:
                 __variant_field_form:
                     blockType: container
                     options:
-                        visible: '=data["product"].isSimple() || data["oro_product_variant"].hasProductAnyAvailableVariant(data["product"])'
+                        visible: '=data["oro_product_variant"].hasProductAnyAvailableVariant(data["product"])'
                 __variant_field_form_start:
                     blockType: form_start
                     options:
@@ -26,3 +26,5 @@ layout:
                         __variant_field_form_start: ~
                         __variant_field_form_fields: ~
                         __variant_field_form_end: ~
+
+    conditions: 'context["product_type"] === "configurable"'

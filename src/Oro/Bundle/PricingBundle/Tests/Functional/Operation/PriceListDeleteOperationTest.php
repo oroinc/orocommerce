@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Operation;
 
+use Symfony\Component\HttpFoundation\Response;
+
 use Oro\Bundle\ActionBundle\Tests\Functional\ActionTestCase;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
@@ -29,6 +31,11 @@ class PriceListDeleteOperationTest extends ActionTestCase
             'oro_pricing.entity.price_list.class',
             'oro_pricing_price_list_index'
         );
+
+        $crawler = $this->client->request('GET', $this->getUrl('oro_pricing_price_list_index'));
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, Response::HTTP_OK);
+        $this->assertContains('Price List deleted', $crawler->html());
     }
 
     public function testDeleteDefault()
@@ -44,13 +51,13 @@ class PriceListDeleteOperationTest extends ActionTestCase
             $this->getContainer()->getParameter('oro_pricing.entity.price_list.class'),
             [],
             ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest'],
-            404
+            Response::HTTP_FORBIDDEN
         );
 
         $this->assertEquals(
             [
                 'success' => false,
-                'message' => 'Operation with name "DELETE" not found',
+                'message' => '',
                 'messages' => [],
                 'refreshGrid' => null,
                 'flashMessages' => []

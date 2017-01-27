@@ -96,9 +96,8 @@ class FrontendOwnerTreeProvider extends AbstractOwnerTreeProvider
             $this
                 ->getRepository($customerUserClass)
                 ->createQueryBuilder('au')
-                ->innerJoin('au.organizations', 'organizations')
                 ->select(
-                    'au.id as userId, organizations.id as orgId, IDENTITY(au.customer) as customerId'
+                    'au.id as userId, IDENTITY(au.organization) as orgId, IDENTITY(au.customer) as customerId'
                 )
                 ->addOrderBy('orgId')
                 ->getQuery()

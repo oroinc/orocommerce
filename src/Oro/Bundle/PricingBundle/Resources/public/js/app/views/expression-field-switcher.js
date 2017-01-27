@@ -38,8 +38,7 @@ define(function(require) {
                 .addClass('validation-failed').text(this.options.errorMessage).show());
         },
 
-        initSwitcher: function()
-        {
+        initSwitcher: function() {
             var $expressionIdentifier = this.options.selectors.expressionType;
             this.expressionLink.click(_.bind(function() {
                 this.changeFieldVisibility(this.field, this.expression);
@@ -60,8 +59,7 @@ define(function(require) {
             this.bindTooltipEvents(this.expressionInput);
         },
 
-        bindTooltipEvents: function($expressionInput)
-        {
+        bindTooltipEvents: function($expressionInput) {
             $expressionInput.mouseenter(_.bind(function() {
                 if ($expressionInput.val().length > unitAndCurrencyVisibleLength) {
                     this.showTooltip($expressionInput);
@@ -76,7 +74,7 @@ define(function(require) {
             $show.addClass(this.visibleClass).show();
         },
 
-        isValid: function () {
+        isValid: function() {
             return !!(
                 (
                     this.getValue(this.field) && this.field.hasClass(this.visibleClass)

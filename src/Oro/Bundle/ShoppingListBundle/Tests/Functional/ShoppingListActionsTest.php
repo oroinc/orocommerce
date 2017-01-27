@@ -66,7 +66,7 @@ class ShoppingListActionsTest extends ActionTestCase
         /* @var $unit ProductUnit */
         $unit = $this->getReference('product_unit.bottle');
         /* @var $product2 Product */
-        $product = $this->getReference('product.2');
+        $product = $this->getReference('product-2');
 
         $crawler = $this->assertOperationForm(
             'oro_shoppinglist_addlineitem',
