@@ -31,4 +31,16 @@ interface LocalizedSlugPrototypeAwareInterface
      * @return bool
      */
     public function hasSlugPrototype(LocalizedFallbackValue $slugPrototype);
+
+    /**
+     * @return SlugPrototypesWithRedirect
+     */
+    public function getSlugPrototypesWithRedirect();
+
+    /**
+     * @param SlugPrototypesWithRedirect $slugPrototypesWithRedirect
+     *
+     * @return $this
+     */
+    public function setSlugPrototypesWithRedirect(SlugPrototypesWithRedirect $slugPrototypesWithRedirect);
 }

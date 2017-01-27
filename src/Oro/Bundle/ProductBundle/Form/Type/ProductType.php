@@ -11,8 +11,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
-use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
+use Oro\Bundle\RedirectBundle\Form\Type\SlugPrototypesWithRedirectType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
@@ -150,12 +149,11 @@ class ProductType extends AbstractType
             )
             ->add('type', HiddenType::class)
             ->add(
-                'slugPrototypes',
-                LocalizedSlugType::NAME,
+                'slugPrototypesWithRedirect',
+                SlugPrototypesWithRedirectType::NAME,
                 [
                     'label'    => 'oro.product.slug_prototypes.label',
                     'required' => false,
-                    'options'  => ['constraints' => [new UrlSafe()]],
                     'source_field' => 'names',
                 ]
             )

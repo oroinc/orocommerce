@@ -34,3 +34,10 @@
         {{ form_widget(form) }}
     </div>
 {% endblock %}
+
+{% block oro_redirect_slug_prototypes_with_redirect_widget %}
+    {{ form_widget(form.slugPrototypes) }}
+    {% if form.createRedirect is defined %}
+        {{ form_widget(form.createRedirect) }}
+    {% endif %}
+{% endblock %}
