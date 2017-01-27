@@ -426,14 +426,6 @@ class RestCustomerUserTest extends RestJsonApiTestCase
                 "salesRepresentatives" => [
                     "data" => []
                 ],
-                "organizations" => [
-                    "data" => [
-                        [
-                            "type" => "organizations",
-                            "id" => (string)$customerUser->getOrganization()->getId()
-                        ]
-                    ]
-                ],
                 "organization" => [
                     "data" => [
                         "type" => "organizations",
