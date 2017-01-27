@@ -9,13 +9,3 @@ layout:
             blockType: customer_user_awere_block
             options:
                 customerUser: '=data["entity"]'
-
-        - '@add':
-            id: __customer_user_address_book_content
-            parentId: __customer_user_address_book
-            blockType: address_book
-            options:
-                entity: '=data["entity"]'
-                addressCreateAclResource: 'oro_customer_frontend_customer_user_address_create'
-                addressUpdateAclResource: 'oro_customer_frontend_customer_user_address_update'
-                componentOptions: '=data["customer_user_address_provider"].getComponentOptions(data["entity"])'

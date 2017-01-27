@@ -48,9 +48,9 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': " address-list__item"
     }) %}
-    <li {{ block('block_attributes_underscore') }}>
+    <div {{ block('block_attributes_underscore') }}>
         {{ block_widget(block) }}
-    </li>
+    </div>
 {% endblock %}
 
 {% block __oro_customer_user_address_list__user_addresses_list_template_item_address_widget %}
@@ -63,7 +63,7 @@
 {% block __oro_customer_user_address_list__user_addresses_list_template_item_label_widget %}
     {% set attr = layout_attr_defaults(attr, {'~class': " address-list__label"}) %}
     <% if (primary) { %>
-    <div {{ block('block_attributes') }}><%= _.escape(label) %></div>
+    <div {{ block('block_attributes') }}><%= _.__('oro.customer.address.primary') %></div>
     <% } %>
 {% endblock %}
 
@@ -90,7 +90,9 @@
 
 {% block __oro_customer_user_address_list__user_addresses_list_template_item_actions_remove_widget %}
     {% set attr = layout_attr_defaults(attr, {'~class': " address-list__button item-remove-button"}) %}
-    <button {{ block('block_attributes') }}>
-        <i class="fa-trash-o"></i>
-    </button>
+    <% if (!primary) { %>
+        <button {{ block('block_attributes') }}>
+            <i class="fa-trash-o"></i>
+        </button>
+    <% } %>
 {% endblock %}

@@ -50,7 +50,7 @@ layout:
                 __root:
                     __user_addresses_head:
                         __user_addresses_head_title: ~
-                        __user_addresses_create_button: ~
+                    __user_addresses_list: ~
                     __user_addresses_list_template:
                         __user_addresses_list_template_item:
                             __user_addresses_list_template_item_address: ~
@@ -59,4 +59,3 @@ layout:
                             __user_addresses_list_template_item_actions:
                                 __user_addresses_list_template_item_actions_edit: ~
                                 __user_addresses_list_template_item_actions_remove: ~
-                    __user_addresses_list: ~

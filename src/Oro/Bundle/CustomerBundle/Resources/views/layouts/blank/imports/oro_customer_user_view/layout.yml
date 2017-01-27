@@ -1,4 +1,9 @@
 layout:
+    imports:
+        -
+            id: oro_customer_user_address_list
+            root: __customer_user_address_book
+
     actions:
         - '@setBlockTheme':
             themes: 'layout.html.twig'
@@ -12,6 +17,15 @@ layout:
             id: customer_user_view_information_title
             optionName: text
             optionValue: 'oro.customer.frontend.sections.customer_user.my_profile'
+
+        - '@add':
+            id: __customer_user_address_book_manage_addresses_link
+            parentId: __user_addresses_list_template
+            blockType: link
+            options:
+                route_name: 'oro_customer_frontend_customer_user_address_index'
+                text: 'oro.customer.address.manage'
+                visible: '=data["acl"].isGranted("oro_customer_frontend_customer_view") or data["acl"].isGranted("oro_customer_frontend_customer_user_view")'
 
         - '@addTree':
             items:
@@ -32,28 +46,10 @@ layout:
                         text: 'oro.customer.frontend.sections.customer_user.user_profile'
                 __customer_user_address_book:
                     blockType: container
-                __customer_user_address_book_head:
-                    blockType: container
-                __customer_user_address_book_title:
-                    blockType: text
-                    options:
-                        text: 'oro.customer.frontend.sections.customer_user.address_book'
-                __customer_user_address_add_link:
-                    blockType: link
-                    options:
-                        visible: '=data["acl"].isGranted("oro_customer_frontend_customer_user_address_create")'
-                        route_name: oro_customer_frontend_customer_user_address_create
-                        route_parameters:
-                            entityId: '=data["entity"].getId()'
-                        text: 'oro.customer.address.add'
-                        icon: plus-circle
             tree:
                 __root:
                     __customer_user_view_page:
                         __customer_user_top_actions: ~
                         __customer_user_view_information:
                             __customer_user_view_information_title: ~
-                        __customer_user_address_book:
-                            __customer_user_address_book_head:
-                                __customer_user_address_book_title: ~
-                                __customer_user_address_add_link: ~
+                        __customer_user_address_book: ~

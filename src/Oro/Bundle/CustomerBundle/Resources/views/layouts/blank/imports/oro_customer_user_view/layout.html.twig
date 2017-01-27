@@ -34,24 +34,11 @@
     </div>
 {% endblock %}
 
-{% block _customer_user_address_book_head_widget %}
-    <div class="customer-oq__item customer-oq__item_full mb0-sm">
+{% block _customer_user_address_book_manage_addresses_link_widget %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ "" }) %}
+    <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
-{% endblock %}
-
-{% block _customer_user_address_book_title_widget %}
-    <h2 class="customer-oq__item__title">
-        {{ block_widget(block) }}
-    </h2>
-{% endblock %}
-
-{% block _customer_user_address_add_link_widget %}
-    {% if block.vars.visible %}
-        <div class="oro-customer-user-address__add-link pull-right">
-            {{ block_widget(block) }}
-        </div>
-    {% endif %}
 {% endblock %}
 
 {% block _customer_user_list_link_widget %}

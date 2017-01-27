@@ -61,6 +61,7 @@ oro.customer:
         add: 'Add Address'
         cancel: 'Cancel'
         save: 'Save'
+        manage: 'Manage Addresses'
 
     customergroup:
         entity_label: 'Customer Group'
