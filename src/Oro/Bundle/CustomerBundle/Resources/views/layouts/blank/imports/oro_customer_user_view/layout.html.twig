@@ -1,0 +1,61 @@
+{% block _customer_user_view_page_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " {{ class_prefix }} {{ class_prefix }}_full"
+    }) %}
+    <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+{% endblock %}
+
+{% block _customer_user_top_actions_widget %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " oro-order__controls-list oro-customer__controls-list" }) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _customer_user_view_information_widget %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " oro-customer__block" }) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _customer_user_view_information_title_widget %}
+    <div class="customer-oq__item customer-oq__item_full mb0-sm">
+        <h2 class="customer-oq__item__title">
+            {{ block_widget(block) }}
+        </h2>
+    </div>
+{% endblock %}
+
+{% block _customer_user_address_book_widget %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " oro-customer__block" }) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _customer_user_address_book_head_widget %}
+    <div class="customer-oq__item customer-oq__item_full mb0-sm">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _customer_user_address_book_title_widget %}
+    <h2 class="customer-oq__item__title">
+        {{ block_widget(block) }}
+    </h2>
+{% endblock %}
+
+{% block _customer_user_address_add_link_widget %}
+    {% if block.vars.visible %}
+        <div class="oro-customer-user-address__add-link pull-right">
+            {{ block_widget(block) }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _customer_user_list_link_widget %}
+    <div class="">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}

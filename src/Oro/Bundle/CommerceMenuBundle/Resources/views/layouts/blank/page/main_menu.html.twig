@@ -33,17 +33,7 @@
 
 {% block _main_menu_container_widget %}
     {% set attr =  layout_attr_defaults(attr, {
-        '~class': ' main-menu-outer',
-        'data-page-component-module': "oroui/js/app/components/viewport-component",
-        'data-dom-relocation': '',
-        'data-dom-relocation-options': {
-            responsive: [
-                {
-                    screenType: 'tablet',
-                    moveTo: '[data-main-menu-extra-container]'
-                }
-            ]
-        }
+        '~class': ' main-menu-outer'
     }) %}
 
     <div {{ block('block_attributes') }}>

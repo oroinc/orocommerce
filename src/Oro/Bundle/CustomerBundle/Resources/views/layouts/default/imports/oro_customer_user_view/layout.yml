@@ -2,34 +2,20 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'layout.html.twig'
-        - '@addTree':
-            items:
-                __customer_user_view_page:
-                    blockType: container
-                    options:
-                        class_prefix: 'user-page'
-                __customer_user_top_actions:
-                    blockType: line_buttons
-                    options:
-                        visible: '=data["entity"]!=null'
-                        buttons: '=data["buttons"].getAll(data["entity"])'
-                __customer_user_view_information:
-                    blockType: container
-                __customer_user_view_information_title:
-                    blockType: text
-                    options:
-                        text: 'oro.customer.frontend.sections.customer_user.user_profile'
-                __customer_user_view_information_content:
-                    blockType: customer_user_awere_block
-                    options:
-                        customerUser: '=data["entity"]'
-                __customer_user_address_book:
-                    blockType: container
-            tree:
-                __root:
-                    __customer_user_view_page:
-                        __customer_user_top_actions: ~
-                        __customer_user_view_information:
-                            __customer_user_view_information_title: ~
-                            __customer_user_view_information_content: ~
-                        __customer_user_address_book: ~
+
+        - '@add':
+            id: __customer_user_view_information_content
+            parentId: __customer_user_view_information
+            blockType: customer_user_awere_block
+            options:
+                customerUser: '=data["entity"]'
+
+        - '@add':
+            id: __customer_user_address_book_content
+            parentId: __customer_user_address_book
+            blockType: address_book
+            options:
+                entity: '=data["entity"]'
+                addressCreateAclResource: 'oro_customer_frontend_customer_user_address_create'
+                addressUpdateAclResource: 'oro_customer_frontend_customer_user_address_update'
+                componentOptions: '=data["customer_user_address_provider"].getComponentOptions(data["entity"])'
