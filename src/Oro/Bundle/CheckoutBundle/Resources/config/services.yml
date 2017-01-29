@@ -389,6 +389,11 @@ services:
         tags:
             - { name: oro_workflow.changes.listener, event: oro.workflow.deactivated, method: onDeactivationWorkflowDefinition }
 
+    oro_checkout.listener.checkout:
+        class: 'Oro\Bundle\CheckoutBundle\EventListener\CheckoutListener'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%oro_checkout.entity.checkout.class%', event: postUpdate }
+
     oro_checkout.acl.voter.checkout:
         class: 'Oro\Bundle\CheckoutBundle\Acl\Voter\CheckoutVoter'
         public: false
@@ -417,6 +422,9 @@ services:
         tags:
             - { name: oro_workflow.condition, alias: 'checkout_has_applicable_shipping_methods' }
             - { name: oro_action.condition, alias: 'checkout_has_applicable_shipping_methods' }
+
+    oro_checkout.datagrid.action_permission_provider:
+        class: 'Oro\Bundle\CheckoutBundle\Datagrid\ActionPermissionProvider'
 
     oro_checkout.event_listener.shipping_methods:
         class: Oro\Bundle\CheckoutBundle\EventListener\ShippingMethodsListener

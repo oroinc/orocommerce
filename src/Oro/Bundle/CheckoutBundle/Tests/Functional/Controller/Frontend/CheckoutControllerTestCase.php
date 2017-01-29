@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
-use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as TestCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
@@ -172,24 +172,6 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
             $values[CheckoutControllerTestCase::ORO_WORKFLOW_TRANSITION][$type],
             $address
         );
-
-        return $values;
-    }
-
-    /**
-     * @param Crawler $crawler
-     * @param array $values
-     * @return array
-     */
-    protected function setShippingFormData(Crawler $crawler, array $values)
-    {
-        $input = $crawler->filter('input[name="shippingMethodType"]');
-        $method = $input->extract('data-shipping-method');
-        $values[self::ORO_WORKFLOW_TRANSITION]['shipping_method'] = reset($method);
-        $type = $input->extract('value');
-        $values[self::ORO_WORKFLOW_TRANSITION]['shipping_method_type'] = reset($type);
-        $values['_widgetContainer'] = 'ajax';
-        $values['_wid'] = 'ajax_checkout';
 
         return $values;
     }

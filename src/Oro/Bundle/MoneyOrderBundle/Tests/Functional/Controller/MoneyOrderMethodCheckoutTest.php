@@ -4,8 +4,8 @@ namespace Oro\Bundle\MoneyOrderBundle\Tests\Functional\Controller;
 
 use Doctrine\ORM\EntityRepository;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend\CheckoutControllerTestCase;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\MoneyOrderBundle\DependencyInjection\Configuration;
 use Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder;
 use Oro\Bundle\MoneyOrderBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
@@ -116,10 +116,8 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
         $crawler = $this->client->request('GET', $data['responseData']['returnUrl']);
 
         $this->assertContains(self::FINISH_SIGN, $crawler->html());
-        $this->assertCount(0, $this->registry->getRepository('OroCheckoutBundle:CheckoutSource')->findAll());
-        $this->assertNull(
-            $this->registry->getRepository('OroShoppingListBundle:ShoppingList')->find($sourceEntityId)
-        );
+        $this->assertCount(1, $this->registry->getRepository('OroCheckoutBundle:CheckoutSource')->findAll());
+        $this->assertNull($this->registry->getRepository('OroShoppingListBundle:ShoppingList')->find($sourceEntityId));
 
         /** @var EntityRepository $objectManager */
         $objectManager = $this->getContainer()
@@ -163,7 +161,6 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
         $form = $this->getTransitionForm($crawler);
 
         $values = $this->explodeArrayPaths($form->getValues());
-        $values = $this->setShippingFormData($crawler, $values);
 
         $crawler = $this->client->request(
             'POST',

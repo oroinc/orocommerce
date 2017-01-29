@@ -39,6 +39,8 @@ oro:
             label: Open Order
             plural_label: Open Orders
         deleted.label: Deleted
+        completed.label: Completed
+        completed_data.label: Completed Data
 
         basecheckout:
             entity_label: Base Checkout
@@ -105,6 +107,14 @@ oro:
         workflow:
             view_options.label: View Options for this Order
             unavailable_transition.message: 'This action is not available, reason:'
+
+            success:
+                thank_you.label: 'Thank You For Your Purchase!'
+                order_number.label: 'Your order number is'
+                click_to_review.label: 'click here to review'
+                receive_email.label: 'You will receive a confirmation email with your order details.'
+                done.label: 'Done'
+
             b2b_flow_checkout:
                 label: Checkout
 
@@ -199,5 +209,7 @@ oro:
         frontend:
             quote:
                 submit_to_order: 'Accept and Submit to Order'
+            order:
+                view.label: 'View Order'
             checkout:
                 cannot_create_order_no_payment_methods_available: 'Cannot create order because no payment methods available'
