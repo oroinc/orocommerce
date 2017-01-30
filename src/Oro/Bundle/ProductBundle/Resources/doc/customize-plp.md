@@ -38,14 +38,11 @@ layout:
             items:
                 product_index_page:
                     blockType: container
-                product_search_navigation:
-                    blockType: container
                 embedded_example_1:
                     blockType: block
             tree:
                 page_content:
                     product_index_page:
-                        product_search_navigation: ~
                         embedded_example_1: ~
 
         - '@setOption':
@@ -80,13 +77,6 @@ and template:
 
 ```twig
 {# src/Acme/Bundle/ProductBundle/Resources/views/layouts/default/oro_product_frontend_product_index/static_block.html.twig #}
-
-{% block _product_search_navigation_widget %}
-    <div>
-        {{ block_widget(block) }}
-    </div>
-    <br>
-{% endblock %}
 
 {% block _featured_products_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
@@ -173,8 +163,6 @@ layout:
             items:
                 product_index_page:
                     blockType: container
-                product_search_navigation:
-                    blockType: container
                 embedded_example_2:
                     blockType: block
                 product_grid_container:
@@ -182,7 +170,6 @@ layout:
             tree:
                 page_content:
                     product_index_page:
-                        product_search_navigation: ~
                         embedded_example_2: ~
                         product_grid_container: ~
 
@@ -242,14 +229,11 @@ layout:
             items:
                 product_index_page:
                     blockType: container
-                product_search_navigation:
-                    blockType: container
                 product_grid_container:
                     blockType: container
             tree:
                 page_content:
                     product_index_page:
-                        product_search_navigation: ~
                         product_grid_container: ~
 
     conditions: 'context["category_id"] not in [8, 9]' # affected categories
@@ -274,15 +258,6 @@ and template:
 
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
-{% block _product_search_navigation_widget %}
-    <div class="breadcrumbs" data-page-component-module="oroproduct/js/app/components/breadcrumbs-navigation-block">
-        <span class="path-info">
-            {{ block('container_widget') }}
-        </span>
-        <span class="filters-info"></span>
     </div>
 {% endblock %}
 ```
