@@ -55,7 +55,14 @@ class CheckoutController extends Controller
     {
         $workflowItem = $this->getWorkflowItem($checkout);
 
-        $this->handleTransition($workflowItem, $request);
+        if ($request->isMethod(Request::METHOD_POST) &&
+            $this->isCheckoutRestartRequired($workflowItem)
+        ) {
+            $this->restartCheckout($workflowItem);
+            $workflowItem = $this->getWorkflowItem($checkout);
+        } else {
+            $this->handleTransition($workflowItem, $request);
+        }
 
         $currentStep = $this->validateStep($workflowItem);
         if ($checkout->getId()) {
@@ -184,11 +191,6 @@ class CheckoutController extends Controller
      */
     protected function handlePostTransition(WorkflowItem $workflowItem, Request $request)
     {
-        if ($this->isCheckoutRestartRequired($workflowItem)) {
-            $this->restartCheckout($workflowItem);
-            return;
-        }
-
         $transitionProvider = $this->get('oro_checkout.layout.data_provider.transition');
 
         $continueTransition = $transitionProvider->getContinueTransition($workflowItem);
