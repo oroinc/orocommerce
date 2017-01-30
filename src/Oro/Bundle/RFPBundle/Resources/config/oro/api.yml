@@ -1,6 +1,14 @@
 api:
     entities:
-        Oro\Bundle\RFPBundle\Entity\Request: ~
+        Oro\Bundle\RFPBundle\Entity\Request:
+            fields:
+                createdAt:
+                    form_options:
+                        mapped: false
+                updatedAt:
+                    form_options:
+                        mapped: false
+
         Oro\Bundle\RFPBundle\Entity\RequestProduct:
             fields:
                 productSku:

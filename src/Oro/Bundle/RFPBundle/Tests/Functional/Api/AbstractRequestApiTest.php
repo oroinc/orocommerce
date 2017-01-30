@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Api;
 
-use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\ProductBundle\Tests\Functional\Api\ApiResponseContentTrait;
 use Symfony\Component\HttpFoundation\Response;
+
+use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
+use Oro\Bundle\ProductBundle\Tests\Functional\Api\ApiResponseContentTrait;
 
 abstract class AbstractRequestApiTest extends RestJsonApiTestCase
 {
@@ -63,10 +63,10 @@ abstract class AbstractRequestApiTest extends RestJsonApiTestCase
 
     public function testGetEntity()
     {
-        $entity = $this->getDoctrineHelper()->getEntityRepository($this->getEntityClass())->findOneBy([]);
+        $entity = $this->doctrineHelper->getEntityRepository($this->getEntityClass())->findOneBy([]);
 
         $entityType = $this->getEntityType($this->getEntityClass());
-        $id = $this->getDoctrineHelper()->getSingleEntityIdentifier($entity);
+        $id = $this->doctrineHelper->getSingleEntityIdentifier($entity);
 
         $response = $this->request(
             'GET',
@@ -141,10 +141,14 @@ abstract class AbstractRequestApiTest extends RestJsonApiTestCase
     }
 
     /**
-     * @return object|DoctrineHelper
+     * @param Response $response
+     * @param $entityId
      */
-    protected function getDoctrineHelper()
+    protected function assertDeletedEntity(Response $response, $entityId)
     {
-        return $this->getContainer()->get('oro_entity.doctrine_helper');
+        $this->assertResponseStatusCodeEquals($response, Response::HTTP_NO_CONTENT);
+        $this->assertNull(
+            $this->doctrineHelper->getEntity($this->getEntityClass(), $entityId)
+        );
     }
 }

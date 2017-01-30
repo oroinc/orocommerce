@@ -13,6 +13,9 @@ class LoadRequestAdditionalNoteData extends AbstractFixture implements Dependent
     const NUM_CUSTOMER_NOTES = 5;
     const NUM_SELLER_NOTES = 5;
 
+    const CUSTOMER_NOTE = 'request.1.additional_note.1.customer_note';
+    const SELLER_NOTE =' request.1.additional_note.1.seller_note';
+
     /**
      * {@inheritdoc}
      */
@@ -41,6 +44,11 @@ class LoadRequestAdditionalNoteData extends AbstractFixture implements Dependent
                     ->setType(RequestAdditionalNote::TYPE_CUSTOMER_NOTE);
 
                 $request->addRequestAdditionalNote($note);
+
+                $this->addReference(
+                    sprintf('request.%s.additional_note.%s.%s', $i, $j, RequestAdditionalNote::TYPE_CUSTOMER_NOTE),
+                    $note
+                );
             }
 
             for ($j = 0; $j < self::NUM_SELLER_NOTES; $j++) {
@@ -52,6 +60,11 @@ class LoadRequestAdditionalNoteData extends AbstractFixture implements Dependent
                     ->setType(RequestAdditionalNote::TYPE_SELLER_NOTE);
 
                 $request->addRequestAdditionalNote($note);
+
+                $this->addReference(
+                    sprintf('request.%s.additional_note.%s.%s', $i, $j, RequestAdditionalNote::TYPE_SELLER_NOTE),
+                    $note
+                );
             }
         }
 
