@@ -54,12 +54,12 @@ define(function(require) {
                     return true;
                 },
                 updater: function(item) {
-                    var valueHolder = '[]',
-                        hasEllipsis = item.indexOf('&hellip;') !== -1,
-                        clearItem = item.replace('&hellip;', ''),
-                        hasDataSource = component.getDataSource(clearItem),
-                        newItem = (hasDataSource ? clearItem + valueHolder : clearItem) + (hasEllipsis ? '.' : ' '),
-                        newPos = hasDataSource ? _position.start + newItem.length - 1 - valueHolder.length / 2 : null;
+                    var valueHolder = '[]';
+                    var hasEllipsis = item.indexOf('&hellip;') !== -1;
+                    var clearItem = item.replace('&hellip;', '');
+                    var hasDataSource = component.getDataSource(clearItem);
+                    var newItem = (hasDataSource ? clearItem + valueHolder : clearItem) + (hasEllipsis ? '.' : ' ');
+                    var newPos = hasDataSource ? _position.start + newItem.length - 1 - valueHolder.length / 2 : null;
 
                     return component.setUpdatedValue(this.query, newItem, _position, newPos);
                 },
@@ -74,7 +74,8 @@ define(function(require) {
                 lookup: function() {
                     this.query = $el.val() || '';
 
-                    var items = $.isFunction(this.source) ? this.source(this.query, $.proxy(this.process, this)) : this.source;
+                    var isFunction = $.isFunction(this.source);
+                    var items = isFunction ? this.source(this.query, $.proxy(this.process, this)) : this.source;
 
                     return items ? this.process(items) : this;
                 }

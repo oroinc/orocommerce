@@ -21,7 +21,8 @@ define(function(require) {
                 compare: ['>', '<', '<=', '>=', 'like'],
                 inclusion: ['in', 'not in']
             },
-            allowedOperations: ['math', 'bool', 'equality', 'compare', 'inclusion']
+            allowedOperations: ['math', 'bool', 'equality', 'compare', 'inclusion'],
+            termLevelLimit: 3
         },
 
         /**
@@ -43,7 +44,9 @@ define(function(require) {
 
             var entities = this.options.entities;
 
-            this.isEntities = this.options.entities && !_.isEmpty(entities.fields_data) && !_.isEmpty(entities.root_entities);
+            this.isEntities = this.options.entities &&
+                !_.isEmpty(entities.fields_data) &&
+                !_.isEmpty(entities.root_entities);
 
             if (this.isEntities) {
                 this.fields = entities.fields_data;
@@ -70,7 +73,7 @@ define(function(require) {
             return RuleEditorComponent.__super__.initialize.apply(this, arguments);
         },
 
-        _initializeView: function() {
+        _initializeView: function(options, View) {
             RuleEditorComponent.__super__._initializeView.apply(this, arguments);
             this.initHelper(this.view.$el);
         },
@@ -85,8 +88,8 @@ define(function(require) {
          * @returns {String}
          */
         setUpdatedValue: function(query, item, position, newCaretPosition) {
-            var $el = this.view.$el,
-                update = this._getUpdatedData(query, item, position);
+            var $el = this.view.$el;
+            var update = this._getUpdatedData(query, item, position);
 
             this._setCaretPosition($el, newCaretPosition || update.position || $el[0].selectionStart);
 
@@ -99,7 +102,23 @@ define(function(require) {
          * @param $viewEl {jQuery}
          */
         initHelper: function($viewEl) {
-            var _this = this;
+            /**
+             * Adds selected value from helper to main input and sets correct cursor position
+             *
+             * @param $helperEl {jQuery}
+             */
+            var setValue = _.bind(function($helperEl) {
+                var $queryEl = this.view.$el;
+                var query = $queryEl.val();
+                var caretPosition = $queryEl[0].selectionStart;
+                var wordPosition = this._getWordPosition(query, caretPosition);
+                var termParts = this._getTermPartUnderCaret(this._getWordUnderCaret(query, wordPosition).current, caretPosition - wordPosition.start);
+                var changedPart = termParts.current + '[' + $helperEl.val() + ']';
+
+                $helperEl.hide();
+
+                $queryEl.val(this.setUpdatedValue(query, changedPart + termParts.tail, wordPosition, wordPosition.start + changedPart.length));
+            }, this);
 
             _.each(this.options.dataSource, function(source, key) {
                 if (_.isString(source)) {
@@ -112,28 +131,11 @@ define(function(require) {
                     });
                     $el.hide().insertAfter($viewEl);
 
-                    _this.options.dataSource[key] = source;
+                    this.options.dataSource[key] = source;
                 }
-            });
+            }, this);
+
             $viewEl.trigger('content:changed');
-
-            /**
-             * Adds selected value from helper to main input and sets correct cursor position
-             *
-             * @param $helperEl {jQuery}
-             */
-            function setValue($helperEl) {
-                var $queryEl = _this.view.$el,
-                    query = $queryEl.val(),
-                    caretPosition = $queryEl[0].selectionStart,
-                    wordPosition = _this._getWordPosition(query, caretPosition),
-                    termParts = _this._getTermPartUnderCaret(_this._getWordUnderCaret(query, wordPosition).current, caretPosition - wordPosition.start),
-                    changedPart = termParts.current + '[' + $helperEl.val() + ']';
-
-                $helperEl.hide();
-
-                $queryEl.val(_this.setUpdatedValue(query, changedPart + termParts.tail, wordPosition, wordPosition.start + changedPart.length));
-            }
         },
 
         /**
@@ -151,8 +153,6 @@ define(function(require) {
                 return false;
             }
 
-            var _this = this;
-
             var normalized = this._getNormalized(value);
             var words = this._splitString(normalized.string, ' ');
             var groups = this._getGroups(words);
@@ -162,12 +162,12 @@ define(function(require) {
             }
 
             var logicIsValid = _.last(groups.bool) !== _.last(words) && _.every(groups.bool, function(item) {
-                    return _this._contains(_this.options.operations.bool, item);
-                });
+                    return this._contains(this.options.operations.bool, item);
+                }, this);
 
             var dataWordsAreValid = _.every(groups.expr, function(item) {
-                return _this._checkWord(item).isValid;
-            });
+                return this._checkWord(item).isValid;
+            }, this);
 
             return logicIsValid && dataWordsAreValid;
         },
@@ -182,26 +182,31 @@ define(function(require) {
          * @private
          */
         _getWordUnderCaret: function(string, position, re) {
-            var _this = this,
-                wordPosition = _.isObject(position) ? position : this._getWordPosition(string, position, re),
-                currentWord = this._getStringPart(string, wordPosition.start, wordPosition.end),
-                prevWord = getPrevWord(1);
+            /**
+             * Returns previous word
+             *
+             * @param _position {Object}
+             * @param offset {Number}
+             * @returns {*|String}
+             */
+            var getPrevWord = _.bind(function(_position, offset) {
+                var prevPos = _position.spaces[_position.index - offset - 1];
+
+                return !_.isUndefined(prevPos) ? this._getStringPart(string, prevPos, _position.spaces[_position.index - offset]).trim() : undefined;
+            }, this);
+
+            var wordPosition = _.isObject(position) ? position : this._getWordPosition(string, position, re);
+            var currentWord = this._getStringPart(string, wordPosition.start, wordPosition.end);
+            var prevWord = getPrevWord(wordPosition, 1);
 
             if (!prevWord) {
-                prevWord = getPrevWord(2);
+                prevWord = getPrevWord(wordPosition, 2);
             }
 
             return {
                 current: currentWord ? currentWord.trim() : currentWord,
                 previous: prevWord
             };
-
-            function getPrevWord(offset) {
-                var prevPos = wordPosition.spaces[wordPosition.index - offset - 1];
-
-                return !_.isUndefined(prevPos) ?
-                    _this._getStringPart(string, prevPos, wordPosition.spaces[wordPosition.index - offset]).trim() : undefined;
-            }
         },
 
         /**
@@ -212,10 +217,10 @@ define(function(require) {
          * @private
          */
         _validBrackets: function(value) {
-            var breakLoop = false,
-                expected = [],
-                emptyBrackets = value.match(/(\[\])|(\(\))|(\{\})/gi),
-                bracketsOnly = value.replace(/[^\[\](){}]/g, '');
+            var breakLoop = false;
+            var expected = [];
+            var emptyBrackets = value.match(/(\[\])|(\(\))|(\{\})/gi);
+            var bracketsOnly = value.replace(/[^\[\](){}]/g, '');
 
             _.each(bracketsOnly, function(char) {
                 if (!breakLoop) {
@@ -269,10 +274,10 @@ define(function(require) {
          * @private
          */
         _getUpdatedData: function(query, item, position) {
-            var cutBefore = _.isNull(position.start) ? position.spaces[position.index] : position.start,
-                cutAfter = _.isNull(position.end) ? position.spaces[position.index] : position.end,
-                stringBefore = this._getStringPart(query, 0, cutBefore),
-                stringAfter = this._getStringPart(query, cutAfter);
+            var cutBefore = _.isNull(position.start) ? position.spaces[position.index] : position.start;
+            var cutAfter = _.isNull(position.end) ? position.spaces[position.index] : position.end;
+            var stringBefore = this._getStringPart(query, 0, cutBefore);
+            var stringAfter = this._getStringPart(query, cutAfter);
 
             return {
                 value: stringBefore + item + stringAfter,
@@ -296,8 +301,8 @@ define(function(require) {
             };
 
             function scrollOffset($el) {
-                var offset = 0,
-                    stopProcess = false;
+                var offset = 0;
+                var stopProcess = false;
 
                 $el.parents().each(function(i, el) {
                     if (el !== document.body && el !== document.html && !stopProcess) {
@@ -355,8 +360,8 @@ define(function(require) {
          * @private
          */
         _getTermPartUnderCaret: function(term, position) {
-            var path = '',
-                loopBreak = false;
+            var path = '';
+            var loopBreak = false;
 
             _.each(term.split('.'), function(part) {
                 if (!loopBreak) {
@@ -378,12 +383,9 @@ define(function(require) {
          * @param $returnEl {jQuery}
          */
         showHelper: function(source, $returnEl) {
-            var elPosition, $el;
-
             if (source.$el && source.$el.length) {
-                elPosition = _.extend({position: 'absolute'}, this._getPosition($returnEl));
-
-                $el = source.$holder || source.$el;
+                var elPosition = _.extend({position: 'absolute'}, this._getPosition($returnEl));
+                var $el = source.$holder || source.$el;
 
                 $el.css(elPosition);
                 $el.show();
@@ -398,10 +400,7 @@ define(function(require) {
          * @returns {{list: Array, position: ({start: Number, end: Number})}}
          */
         getSuggestData: function(value, caretPosition) {
-            var rootData = this.entities || this.options.data,
-                charUnderCaret = value[caretPosition - 1],
-                isSpaceUnderCaret = charUnderCaret === ' ',
-                isDotUnderCaret = charUnderCaret === '.';
+            var rootData = this.entities || this.options.data;
 
             if (_.isEmpty(value.trim()) || caretPosition === 0) {
                 return {
@@ -410,25 +409,28 @@ define(function(require) {
                 };
             }
 
-            var ops = this.options.operations,
-                normalized = this._getNormalized(value, caretPosition),
-                normWordPosition = this._getWordPosition(normalized.string, normalized.position),
-                wordUnderCaret = this._getWordUnderCaret(normalized.string, normWordPosition),
+            var normalized = this._getNormalized(value, caretPosition);
+            var normWordPosition = this._getWordPosition(normalized.string, normalized.position);
 
-                inWordSepRegex = _.assign({space:/\\s/gi}, this.opsRegEx),
-                termUnderCaretPosition = this._getWordPosition(normalized.string, normalized.position, inWordSepRegex),
-                termUnderCaret = this._getWordUnderCaret(normalized.string, termUnderCaretPosition),
+            var underCaret = {
+                space: value[caretPosition - 1] === ' ',
+                dot: value[caretPosition - 1] === '.',
+                word: this._getWordUnderCaret(normalized.string, normWordPosition),
+                term: this._getWordPosition(normalized.string, normalized.position, _.assign({space: /\\s/gi}, this.opsRegEx))
+            };
 
-                splitWord = this._splitTermAndExpr(wordUnderCaret.current),
+            var splitWordTerm = this._splitTermAndExpr(underCaret.word.current).term;
 
-                isWordsTerm = termUnderCaretPosition.start === normWordPosition.start,
-                prevWordIsWord = wordUnderCaret.previous && !this._contains(ops.bool, wordUnderCaret.previous) && !this._contains(ops.bool, wordUnderCaret.current),
-                term = isWordsTerm ? splitWord.term : termUnderCaret.current,
-                inWordPosition = normalized.position - (isWordsTerm ? normWordPosition.start : termUnderCaretPosition.start);
+            var isWordsTerm = underCaret.term.start === normWordPosition.start;
+            var prevNotBool = underCaret.word.previous &&
+                !this._contains(this.options.operations.bool, underCaret.word.previous) &&
+                !this._contains(this.options.operations.bool, underCaret.word.current);
+            var term = isWordsTerm ? splitWordTerm : this._getWordUnderCaret(normalized.string, underCaret.term).current;
+            var inWordPosition = normalized.position - (isWordsTerm ? normWordPosition.start : underCaret.term.start);
 
             var dataSource = this.getDataSource(term, inWordPosition);
 
-            if (!_.isEmpty(dataSource) && !isDotUnderCaret && !isSpaceUnderCaret) {
+            if (!_.isEmpty(dataSource) && !underCaret.dot && !underCaret.space) {
                 this.showHelper(dataSource, this.view.$el);
 
                 return {
@@ -437,46 +439,51 @@ define(function(require) {
                 };
             }
 
-            var cases = [],
-                termPart = this._getStringPart(term, 0, inWordPosition),
-                pathValue = this._getValueByPath(termPart, rootData),
-                termParts = !isSpaceUnderCaret ? /^(.*)\.(.*)\W?/g.exec(termPart) : null,
-                word = (pathValue || this._contains(this.cases.bool, wordUnderCaret.current)) && !prevWordIsWord ? wordUnderCaret.current : wordUnderCaret.previous,
-                wordIs = this._getWordData(word),
-                searchPart = termParts ? (_.isUndefined(termParts[2]) ? termParts[1] : termParts[2]) : termPart,
-                isFullWord = wordIs && (wordIs.isInclusion || wordIs.isCompare),
-                isTermUnderCaret = /[a-z.]/gi.test(term);
+            var cases = [];
+            var termPart = this._getStringPart(term, 0, inWordPosition);
 
-            if (!prevWordIsWord && isTermUnderCaret && pathValue && !_.isString(pathValue.type) && !isSpaceUnderCaret) {
+            if (!this._checkTermDepth(termPart)) {
+                return {
+                    list: [],
+                    position: {start: caretPosition, end: caretPosition}
+                };
+            }
+
+            var pathValue = this._getValueByPath(termPart, rootData);
+            var word = (pathValue || this._contains(this.cases.bool, underCaret.word.current)) && !prevNotBool ? underCaret.word.current : underCaret.word.previous;
+            var wordIs = this._getWordData(word);
+            var isFullExpression = wordIs.isInclusion || wordIs.isCompare;
+            var exprOnly = !this.allowed.compare && !this.allowed.inclusion && !this.allowed.equality;
+
+            if (!prevNotBool && /[a-z.]/gi.test(term) && pathValue && !_.isString(pathValue.type) && !underCaret.space) {
                 if (!wordIs.notOps) {
-                    cases = this._getMarkedRelationItemsKeys(this._getCasesByType(this._getValueByPath(splitWord.term, rootData), pathValue));
+                    cases = this._getMarkedRelationItemsKeys(this._getCasesByType(this._getValueByPath(splitWordTerm, rootData), pathValue), termPart);
                 } else {
-                    cases = this._getMarkedRelationItemsKeys(pathValue || rootData);
+                    cases = this._getMarkedRelationItemsKeys(pathValue || rootData, termPart);
                 }
             } else if (wordIs) {
-                if (isFullWord) {
-                    cases = ops.bool;
-                } else if (wordIs.isInclusion || wordIs.isCompare || (pathValue && pathValue.type === 'standalone' && wordIs.notOps)) {
-                    cases = _.union(cases, ops.bool, this.allowed.math ? ops.math : []);
+                if (pathValue && pathValue.type === 'standalone') {
+                    cases = this.options.operations.bool;
+                } else if (isFullExpression) {
+                    cases = _.union(cases, this.options.operations.bool, this.allowed.math ? this.options.operations.math : []);
                 } else if (wordIs.isBool) {
                     cases = this._getMarkedRelationItemsKeys(rootData);
-                } else if (wordIs.hasTerm && !wordIs.hasValue) {
-                    cases = _.union(cases, wordIs.notOps ? this._getOpsByType(pathValue.type) : this._getMarkedRelationItemsKeys(rootData));
+                } else if (wordIs.hasTerm && (!wordIs.hasValue || exprOnly)) {
+                    cases = _.union(cases, pathValue.type ? this._getOpsByType(pathValue.type) : this._getMarkedRelationItemsKeys(rootData));
                 } else if (wordIs.notOps) {
-                    cases = this._getMarkedRelationItemsKeys(pathValue || rootData);
+                    cases = this._getMarkedRelationItemsKeys(pathValue || rootData, pathValue ? termPart : '');
                 } else if (pathValue && !_.isString(pathValue.type)) {
-                    cases = this._getMarkedRelationItemsKeys(pathValue);
+                    cases = this._getMarkedRelationItemsKeys(pathValue, termPart);
                 }
             }
 
-            cases = _.union(this._getPresetCases(splitWord.term, !wordIs.notOps && !wordIs.hasValue? this._getValueByPath(splitWord.term, rootData) : []), cases);
+            cases = _.union(this._getPresetCases(splitWordTerm, !wordIs.notOps && !wordIs.hasValue ? this._getValueByPath(splitWordTerm, rootData) : []), cases);
 
-            if (isSpaceUnderCaret) {
-                searchPart = '';
-            }
+            var termParts = !underCaret.space ? /^(.*)\.(.*)\W?/g.exec(termPart) : null;
+            var searchPart = underCaret.space ? '' : (termParts ? (_.isUndefined(termParts[2]) ? termParts[1] : termParts[2]) : termPart);
 
             return {
-                list: this._getSuggestList(cases, searchPart, isSpaceUnderCaret, isDotUnderCaret),
+                list: this._getSuggestList(cases, searchPart, underCaret.space, underCaret.dot),
                 position: {
                     start: caretPosition - searchPart.length,
                     end: caretPosition
@@ -493,7 +500,7 @@ define(function(require) {
          * @private
          */
         _getPresetCases: function(name, data) {
-            if (!data){
+            if (!data) {
                 return [];
             }
 
@@ -509,13 +516,16 @@ define(function(require) {
          * Adds '&hellip;' to key name if type is 'relation'
          *
          * @param obj {Object}
+         * @param [currentPath] {String}
          * @returns {Object}
          * @private
          */
-        _getMarkedRelationItemsKeys: function(obj) {
-            return  _.reduce(obj, function(result, item, key) {
-                return _.union(result, [this._markRelationItem(key, item.type)]);
-            }, [], this);
+        _getMarkedRelationItemsKeys: function(obj, currentPath) {
+            var showRelations = this._checkTermDepth(currentPath, -1);
+
+            return _.compact(_.reduce(obj, function(result, item, key) {
+                return _.union(result, [this._markRelationItem(key, item.type, showRelations)]);
+            }, [], this));
         },
 
         /**
@@ -523,11 +533,12 @@ define(function(require) {
          *
          * @param key {String}
          * @param type {String}
+         * @param isAllowedDepth {Boolean}
          * @returns {string}
          * @private
          */
-        _markRelationItem: function(key, type) {
-            return key + (type === 'relation' ? '&hellip;' : '');
+        _markRelationItem: function(key, type, isAllowedDepth) {
+            return isAllowedDepth || type !== 'relation' ? key + (type === 'relation' ? '&hellip;' : '') : '';
         },
 
         /**
@@ -544,7 +555,6 @@ define(function(require) {
             }
 
             var allowedTypes = this._getAllowedTypes(termData.type);
-
 
             if (!_.isArray(allowedTypes)) {
                 return [];
@@ -582,11 +592,11 @@ define(function(require) {
 
                 /*
                  case 'enum':
-                     break;
+                 break;
                  case 'datetime':
-                     break;
+                 break;
                  case 'collection':
-                     break;
+                 break;
                  */
             }
         },
@@ -603,19 +613,20 @@ define(function(require) {
                 return [];
             }
 
-            var equality = this.allowed.equality ? this.options.operations.equality : [],
-                compare = this.allowed.compare ? this.options.operations.compare : [],
-                inclusion = this.allowed.inclusion ? this.options.operations.inclusion : [];
+            var equality = this.allowed.equality ? this.options.operations.equality : [];
+            var compare = this.allowed.compare ? this.options.operations.compare : [];
+            var inclusion = this.allowed.inclusion ? this.options.operations.inclusion : [];
+            var math = this.allowed.math ? this.options.operations.math : [];
 
             switch (type) {
                 case 'string':
                 case 'enum':
                 case 'boolean':
-                    return equality;
+                    return _.union(equality, inclusion);
                 case 'integer':
                 case 'float':
                 case 'datetime':
-                    return _.union(equality, compare);
+                    return _.union(equality, compare, inclusion, math);
                 case 'collection':
                     return inclusion;
                 case 'standalone':
@@ -634,10 +645,9 @@ define(function(require) {
          */
         _getWordPosition: function(value, position, re) {
             var _matches = _.compact(_.uniq(re ? _.flatten(_.map(re, function(regex) {
-                        return value.match(regex);
-                    })) : value.match(/\s+|\(|\)/g))),
-                sepPos = _.union([0], getMatchIndex(value, _matches), [value.length]);
-
+                    return value.match(regex);
+                })) : value.match(/\s+|\(|\)/g)));
+            var sepPos = _.union([0], getMatchIndex(value, _matches), [value.length]);
             var index = _.reduce(sepPos, function(memo, item) {
                 return item < position ? ++memo : memo;
             }, 0);
@@ -664,12 +674,12 @@ define(function(require) {
                 }
 
                 _.each(matches, function(item) {
-                    var indexOf = string.indexOf(item),
-                        startPos = 0;
+                    var indexOf = string.indexOf(item);
+                    var startPos = 0;
 
                     while (indexOf !== -1) {
-                        var currPos = indexOf + startPos,
-                            nextPos = currPos + item.length;
+                        var currPos = indexOf + startPos;
+                        var nextPos = currPos + item.length;
 
                         arr.push(currPos, nextPos);
 
@@ -694,7 +704,18 @@ define(function(require) {
          * @private
          */
         _getSuggestList: function(pathKeys, searchPart, isSpace, isDot) {
-            var _this = this;
+            /**
+             * Getting list of cases from all subcases.
+             *
+             * @param word {String}
+             * @returns {Array}
+             */
+            var getCases = _.bind(function(word) {
+                var base = Array.prototype.slice.call(arguments, 1);
+                var cases = _.union(_.flatten(!_.isEmpty(base) ? base : _.values(this.cases)));
+
+                return this._getFilteredSuggests(cases, word);
+            }, this);
 
             if (_.isEmpty(pathKeys)) {
                 return [];
@@ -710,18 +731,6 @@ define(function(require) {
 
             return [];
 
-            /**
-             * Getting list of cases from all subcases.
-             *
-             * @param word {String}
-             * @returns {Array}
-             */
-            function getCases(word) {
-                var base = Array.prototype.slice.call(arguments, 1),
-                    cases = _.union(_.flatten(!_.isEmpty(base) ? base : _.values(_this.cases)));
-
-                return _this._getFilteredSuggests(cases, word);
-            }
         },
 
         /**
@@ -736,10 +745,10 @@ define(function(require) {
                 return {};
             }
 
-            var operations = this.options.operations,
-                checkIt = this._checkWord(word),
-                lastChar = word[word.length - 1],
-                splitWord = this._splitTermAndExpr(word);
+            var operations = this.options.operations;
+            var checkIt = this._checkWord(word);
+            var lastChar = word[word.length - 1];
+            var splitWord = this._splitTermAndExpr(word);
 
             return {
                 hasCompare: checkIt.hasCompare,
@@ -764,20 +773,25 @@ define(function(require) {
          * @private
          */
         _checkWord: function(string) {
-            var isCompare, isInclusion, isExpression,
-                operationType = this._getOperationType(string),
-                hasCompare = operationType.compare || operationType.equality,
-                pathData = this._getValueByPath(string);
+            var isCompare;
+            var isInclusion;
+            var isExpression;
+
+            var noOpsAllowed = _.isEmpty(this.allowed);
+            var operationType = this._getOperationType(string);
+            var hasCompare = operationType.compare || operationType.equality;
+            var pathData = this._getValueByPath(string);
+            var isTerm = this._checkTerm(string);
 
             if (hasCompare) {
                 isCompare = this._checkCompare(string, operationType.match);
             } else if (operationType.inclusion) {
                 isInclusion = this._checkInclusion(string, operationType.match);
             } else if (operationType.math) {
-                isExpression = this._checkExpression(string, operationType.match);
+                isExpression = this._checkExpression(string, pathData.type);
             }
 
-            var isValid = isCompare || isInclusion || isExpression || (pathData && pathData.type === 'standalone');
+            var isValid = noOpsAllowed ? isTerm : (isCompare || isInclusion || isExpression || (pathData && pathData.type === 'standalone'));
 
             if (isValid) {
                 this.error = {};
@@ -805,10 +819,11 @@ define(function(require) {
                 return false;
             }
 
-            var term = this._replaceWraps(string, '[]', 'wipe'),
-                hasData = !_.isEmpty(this._getValueByPath(term).type);
+            var term = this._replaceWraps(string, '[]', 'wipe');
+            var dataType = this._getValueByPath(term).type;
+            var hasEndType = !_.isEmpty(dataType) && _.isString(dataType) && dataType !== 'relation';
 
-            if (!hasData) {
+            if (!hasEndType) {
                 this.error.term = 'Part \'' + term + '\'' + ' is wrong';
                 return false;
             }
@@ -817,7 +832,7 @@ define(function(require) {
                 delete this.error.term;
             }
 
-            return true;
+            return this._checkTermDepth(string);
         },
 
         /**
@@ -831,7 +846,7 @@ define(function(require) {
         _checkCompare: function(string, match) {
             var matchSplit = this._splitTermAndExpr(string, match);
 
-            return this._checkTerm(matchSplit.term) && this._checkExpression(matchSplit.expr, this._getValueByPath(matchSplit.term));
+            return this._checkTerm(matchSplit.term) && this._checkExpression(matchSplit.expr, this._getValueByPath(matchSplit.term).type);
         },
 
         /**
@@ -843,8 +858,8 @@ define(function(require) {
          * @private
          */
         _checkInclusion: function(string, match) {
-            var matchSplit = this._splitTermAndExpr(string, match),
-                expr = this._replaceWraps(matchSplit.expr, '[]', 'trim');
+            var matchSplit = this._splitTermAndExpr(string, match);
+            var expr = this._replaceWraps(matchSplit.expr, '[]', 'trim');
 
             return this._checkTerm(matchSplit.term) && !_.isEmpty(matchSplit.expr) && (this._checkArray(matchSplit.expr) || this._checkTerm(expr));
         },
@@ -853,28 +868,11 @@ define(function(require) {
          * Returns boolean whether string is a array, non empty array, and has valid values.
          *
          * @param array {Array|String}
-         * @param [data] {Object}
+         * @param [type] {String}
          * @returns {Boolean}
          * @private
          */
-        _checkArray: function(array, data) {
-            var _this = this;
-
-            if (_.isArray(array)) {
-                return checkValues(array, data);
-            } else {
-                var arrayMatch = getMatches(array, /^(\[(.*?)\])$/g);
-
-                if (!_.isEmpty(arrayMatch)) {
-                    if (arrayMatch.length > 1) {
-                        this.error.array = 'Array \'' + array + '\' is wrong';
-                        return false;
-                    } else {
-                        return checkValues((arrayMatch[0] || '').split(','), data);
-                    }
-                }
-            }
-
+        _checkArray: function(array, type) {
             /**
              * Getting array of string matches.
              *
@@ -882,7 +880,7 @@ define(function(require) {
              * @param re {RegExp}
              * @returns {Array}
              */
-            function getMatches(string, re) {
+            var getMatches = function(string, re) {
                 var match,
                     matches = [];
 
@@ -891,24 +889,39 @@ define(function(require) {
                 }
 
                 return matches;
-            }
+            };
 
             /**
              * Returns boolean whether several values are valid.
              *
              * @param array {Array}
-             * @param data {Object}
+             * @param type {String}
              * @returns {Boolean}
              */
-            function checkValues(array, data) {
+            var checkValues = _.bind(function(array, type) {
                 return _.every(array, function(value) {
                     if (_.isEmpty(value)) {
-                        _this.error.array = 'One of \'' + array + '\' array items is empty';
+                        this.error.array = 'One of \'' + array + '\' array items is empty';
                         return false;
                     }
 
-                    return _this._checkValue(value, data);
-                });
+                    return this._checkValue(value, type);
+                }, this);
+            }, this);
+
+            if (_.isArray(array)) {
+                return checkValues(array, type);
+            } else {
+                var arrayMatch = getMatches(array, /^(\[(.*?)\])$/g);
+
+                if (!_.isEmpty(arrayMatch)) {
+                    if (arrayMatch.length > 1) {
+                        this.error.array = 'Array \'' + array + '\' is wrong';
+                        return false;
+                    } else {
+                        return checkValues((arrayMatch[0] || '').split(','), type);
+                    }
+                }
             }
         },
 
@@ -916,16 +929,29 @@ define(function(require) {
          * Returns boolean whether value is valid: is number, is not NaN, or is a term.
          *
          * @param value {String}
-         * @param data {Object}
+         * @param type {String}
          * @returns {Boolean}
          * @private
          */
-        _checkValue: function(value, data) {
+        _checkValue: function(value, type) {
             if (_.isEmpty(value)) {
                 return false;
             }
 
-            return this._hasValidType(value, data.type) || this._checkTerm(value);
+            return this._hasValidType(value, type) || this._checkTerm(value);
+        },
+
+        /**
+         * Returns result of validation of term's depth
+         *
+         * @param string {String}
+         * @param [offset] {Number}
+         * @returns {Boolean}
+         * @private
+         */
+        _checkTermDepth: function(string, offset) {
+            offset = _.isUndefined(offset) ? 0 : offset;
+            return (string || '').split('.').length <= this.options.termLevelLimit + offset;
         },
 
         /**
@@ -937,16 +963,22 @@ define(function(require) {
          * @private
          */
         _hasValidType: function(value, type) {
-            if (_.isEmpty(value) && type !== 'standalone') {
+            if (_.isArray(type)) {
+                return _.some(type, function(item) {
+                    return this._hasValidType(value, item);
+                }, this);
+            }
+
+            if (!_.isString(type) || (_.isEmpty(value) && type !== 'standalone')) {
                 return false;
             }
 
-            var quotesMatch = value.match(/(\'|\")/g),
-                quotesLength = quotesMatch ? quotesMatch.length : 0,
-                wrongQuotesMatch = value.match(/(\'|\"){2,}/g);
+            var quotesMatch = value.match(/(\'|\")/g);
+            var quotesLength = quotesMatch ? quotesMatch.length : 0;
+            var wrongQuotesMatch = value.match(/(\'|\"){2,}/g);
 
-            var number = Number(value),
-                isNumber = _.isNumber(number) && _.isFinite(number);
+            var number = Number(value);
+            var isNumber = _.isNumber(number) && _.isFinite(number);
 
             switch (type) {
                 case 'boolean':
@@ -960,7 +992,7 @@ define(function(require) {
                 default:
                     return _.isString(value) && !_.isNumber(value) && quotesLength % 2 === 0 && !wrongQuotesMatch;
 
-// TODO add helpers for: enum, datetime, collection
+                // TODO add helpers for: enum, datetime, collection
                 /*
                  case 'string':
                  return _.isString(value) && !_.isNumber(value) && quotesLength % 2 === 0 && !wrongQuotesMatch;
@@ -983,9 +1015,8 @@ define(function(require) {
          * @private
          */
         _splitTermAndExpr: function(string, splitter) {
-            var matchSplit,
-                _this = this,
-                breakLoop = false;
+            var matchSplit;
+            var breakLoop = false;
 
             if (_.isEmpty(string)) {
                 return string;
@@ -999,12 +1030,12 @@ define(function(require) {
                         var match = string.match(regex);
 
                         if (match && match.length) {
-                            matchSplit = _this._splitString(string, match[0]);
+                            matchSplit = this._splitString(string, match[0]);
                             splitter = match[0];
                             breakLoop = !!matchSplit[2];
                         }
                     }
-                });
+                }, this);
             }
 
             return {
@@ -1018,24 +1049,24 @@ define(function(require) {
          * Returns boolean whether expression is: valid value, or valid array, or belongs to keyData array.
          *
          * @param expr {String}
-         * @param [keyData] {Array}
+         * @param [type] {Array}
          * @returns {Boolean}
          * @private
          */
-        _checkExpression: function(expr, keyData) {
+        _checkExpression: function(expr, type) {
             if (!expr) {
                 return false;
             }
 
-            if (this._checkValue(expr, keyData)) {
+            if (this._checkValue(expr, type)) {
                 return true;
             }
 
-            if (this._checkArray(expr, keyData)) {
+            if (this._checkArray(expr, type)) {
                 return true;
             }
 
-            if (this._contains(keyData, expr)) {
+            if (this._contains(type, expr)) {
                 return true;
             }
 
@@ -1044,7 +1075,7 @@ define(function(require) {
             if (mathMatch) {
                 return this._checkArray(_.reduce(mathMatch, function(values, match) {
                     return values.replace(match, ' ');
-                }, expr).split(' '), keyData);
+                }, expr).split(' '), this._getAllowedTypes('float'));
             }
         },
 
@@ -1056,22 +1087,17 @@ define(function(require) {
          * @private
          */
         _getOperationType: function(string) {
-            var compareMatch = string.match(this.opsRegEx.compare),
-                equalityMatch = string.match(this.opsRegEx.equality),
-                inclusionMatch = string.match(this.opsRegEx.inclusion),
-                mathMatch = string.match(this.opsRegEx.math),
-                doEquality = equalityMatch && equalityMatch.length === 1 && this.allowed.equality,
-                doCompare = compareMatch && compareMatch.length === 1 && this.allowed.compare,
-                doInclusion = inclusionMatch && inclusionMatch.length === 1 && this.allowed.inclusion,
-                doMath = this.allowed.math && !this.allowed.compare && !this.allowed.inclusion,
-                match = equalityMatch || compareMatch || inclusionMatch || mathMatch;
+            var compareMatch = string.match(this.opsRegEx.compare);
+            var equalityMatch = string.match(this.opsRegEx.equality);
+            var inclusionMatch = string.match(this.opsRegEx.inclusion);
+            var mathMatch = string.match(this.opsRegEx.math);
 
             return {
-                equality: Boolean(doEquality),
-                compare: Boolean(doCompare),
-                inclusion: Boolean(doInclusion),
-                math: Boolean(doMath),
-                match: match
+                equality: Boolean(equalityMatch && equalityMatch.length === 1 && this.allowed.equality),
+                compare: Boolean(compareMatch && compareMatch.length === 1 && this.allowed.compare),
+                inclusion: Boolean(inclusionMatch && inclusionMatch.length === 1 && this.allowed.inclusion),
+                math: Boolean(this.allowed.math && !this.allowed.compare && !this.allowed.inclusion),
+                match: equalityMatch || compareMatch || inclusionMatch || mathMatch
             };
         },
 
@@ -1088,21 +1114,17 @@ define(function(require) {
                 return null;
             }
 
-            var reString,
-                escapedOps = array.map(function(item) {
-                    if (!item.match(/\s|\w/gi)) {
-                        return '\\' + item.split('').join('\\');
-                    } else {
-                        return item.replace(/\s+/gi, '\\s?');
-                    }
-                });
+            var reString;
+            var escapedOps = array.map(function(item) {
+                return !item.match(/\s|\w/gi) ? '\\' + item.split('').join('\\') : item.replace(/\s+/gi, '\\s?');
+            });
 
             switch (name) {
                 case 'bool':
                     reString = '(\\s+(' + escapedOps.join('|') + ')\\s+)';
                     break;
                 case 'inclusion':
-                    reString = '((\\s+|\\~)(' + escapedOps.join('|') + ')(\\~|\\s+))';
+                    reString = '((\\s+|\\~)(' + escapedOps.join('|') + ')(\\~|\\s+|$))';
                     break;
                 default:
                     reString = '((\\s*|\\~)(' + escapedOps.join('|') + ')(\\~|\\s*))';
@@ -1197,8 +1219,8 @@ define(function(require) {
             }
 
             var arr = _.filter(list, function(item) {
-                var lowercaseItem = item.toLowerCase(),
-                    lowercaseWord = word.toLowerCase();
+                var lowercaseItem = item.toLowerCase();
+                var lowercaseWord = word.toLowerCase();
 
                 return lowercaseItem.indexOf(lowercaseWord) === 0 && lowercaseItem !== lowercaseWord;
             });
@@ -1216,8 +1238,7 @@ define(function(require) {
          * @private
          */
         _getStrings: function(object, baseName, baseData) {
-            var _this = this,
-                arr = [];
+            var arr = [];
 
             if (_.isArray(object) && !baseName) {
                 arr = _.union(arr, object);
@@ -1232,13 +1253,13 @@ define(function(require) {
                     if (item.type === 'array') {
                         arr.push(subName);
                     } else if (_.isObject(item) && !_.isArray(item)) {
-                        arr = _.union(arr, _this._getStrings(item, name, baseData || object));
+                        arr = _.union(arr, this._getStrings(item, name, baseData || object));
                     } else if (!_.isUndefined(baseData) && _.isObject(baseData[name])) {
-                        arr = _.union(arr, _this._getStrings(baseData[name], subName, baseData || object));
+                        arr = _.union(arr, this._getStrings(baseData[name], subName, baseData || object));
                     } else {
                         arr.push(subName);
                     }
-                });
+                }, this);
             }
 
             return _.compact(arr);
@@ -1327,25 +1348,12 @@ define(function(require) {
          * @private
          */
         _getValueByPath: function(path, obj) {
-            path = path || '';
-
-            var _this = this,
-                pathValue = getValue(path, obj),
-                lastCharIsSpace = path[path.length - 1] === ' ',
-                termParts = !lastCharIsSpace ? /^(.*)\.(.*)\W?/g.exec(path) : null;
-
-            if (!pathValue) {
-                pathValue = getValue(termParts ? termParts[1] : '', obj);
-            }
-
-            return pathValue;
-
-            function getValue(path, obj) {
-                var result = obj || _this.entities,
-                    pathWay = _this._replaceWraps(path, '[]', 'wipe').split('.');
+            var getValue = _.bind(function(path, obj) {
+                var result = obj || this.entities;
+                var pathWay = this._replaceWraps(path, '[]', 'wipe').split('.');
 
                 if (_.isEmpty(path)) {
-                    return _this.isEntities ? null : obj;
+                    return this.isEntities ? null : obj;
                 }
 
                 _.each(pathWay, function(node) {
@@ -1356,10 +1364,20 @@ define(function(require) {
                             result = result[node];
                         }
                     }
-                }, _this);
+                }, this);
 
                 return result;
+            }, this);
+
+            var _path = path || '';
+            var pathValue = getValue(_path, obj);
+            var termParts = _path[_path.length - 1] !== ' ' ? /^(.*)\.(.*)\W?/g.exec(_path) : null;
+
+            if (!pathValue) {
+                pathValue = getValue(termParts ? termParts[1] : '', obj);
             }
+
+            return pathValue;
         },
 
         /**
@@ -1373,8 +1391,7 @@ define(function(require) {
          * @private
          */
         _replaceWraps: function(string, brackets, type, replace) {
-            var output,
-                _this = this;
+            var output;
 
             if (_.isEmpty(brackets)) {
                 return string;
@@ -1383,12 +1400,12 @@ define(function(require) {
             if (_.isArray(string)) {
                 output = [];
                 _.each(string, function(string, i) {
-                    output[i] = _this._replaceWraps(string, brackets, type, replace);
-                });
+                    output[i] = this._replaceWraps(string, brackets, type, replace);
+                }, this);
             } else if (_.isArray(brackets)) {
                 _.each(brackets, function(item) {
-                    output = _this._replaceWraps(string, item, type, replace);
-                });
+                    output = this._replaceWraps(string, item, type, replace);
+                }, this);
             } else {
                 output = string ? _replace(string, brackets, type, replace).trim() : string;
             }
@@ -1396,16 +1413,22 @@ define(function(require) {
             return output;
 
             function _replace(string, brackets, type, replace) {
+                var re;
                 var split = brackets.split('');
 
                 switch (type) {
                     case 'trim':
-                        return string.replace(new RegExp('^' + '\\' + split.join('(.*?)\\') + '$', 'g'), _.isUndefined(replace) ? '$1' : replace + '$1' + replace);
+                        re = '^' + '\\' + split.join('(.*?)\\') + '$';
+                        replace = _.isUndefined(replace) ? '$1' : replace + '$1' + replace;
+                        break;
                     case 'wipe':
-                        return string.replace(new RegExp('\\' + split.join('(.*)?\\'), 'g'), replace || '');
+                        re = '\\' + split.join('(.*)?\\');
+                        break;
                     default:
-                        return string.replace(new RegExp('\\' + split.join('|\\'), 'g'), replace || '');
+                        re = '\\' + split.join('|\\');
                 }
+
+                return string.replace(new RegExp(re, 'g'), replace || '');
             }
         }
     });
