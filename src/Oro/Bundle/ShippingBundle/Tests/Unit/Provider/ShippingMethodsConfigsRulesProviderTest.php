@@ -88,4 +88,34 @@ class ShippingMethodsConfigsRulesProviderTest extends \PHPUnit_Framework_TestCas
             $this->provider->getAllFilteredShippingMethodsConfigs($context)
         );
     }
+
+    public function testGetFilteredShippingMethodsConfigsRegardlessDestinationWithShippingAddress()
+    {
+        $this->repository->expects(static::once())
+            ->method('getByDestinationAndCurrency')
+            ->willReturn([new ShippingMethodsConfigsRule()]);
+
+        $context = new ShippingContext([
+            ShippingContext::FIELD_SHIPPING_ADDRESS => $this->createMock(AddressInterface::class)
+        ]);
+
+        static::assertSame(
+            $this->ruleCollection,
+            $this->provider->getFilteredShippingMethodsConfigsRegardlessDestination($context)
+        );
+    }
+
+    public function testGetFilteredShippingMethodsConfigsRegardlessDestinationWithoutShippingAddress()
+    {
+        $this->repository->expects(static::once())
+            ->method('getByCurrency')
+            ->willReturn([new ShippingMethodsConfigsRule()]);
+
+        $context = new ShippingContext([]);
+
+        static::assertSame(
+            $this->ruleCollection,
+            $this->provider->getFilteredShippingMethodsConfigsRegardlessDestination($context)
+        );
+    }
 }

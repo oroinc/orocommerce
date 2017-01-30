@@ -12,5 +12,12 @@ interface PaymentMethodsConfigsRulesProviderInterface
      *
      * @return PaymentMethodsConfigsRule[]
      */
+    public function getFilteredPaymentMethodsConfigsRegardlessDestination(PaymentContextInterface $context);
+
+    /**
+     * @param PaymentContextInterface $context
+     *
+     * @return PaymentMethodsConfigsRule[]
+     */
     public function getFilteredPaymentMethodsConfigs(PaymentContextInterface $context);
 }
