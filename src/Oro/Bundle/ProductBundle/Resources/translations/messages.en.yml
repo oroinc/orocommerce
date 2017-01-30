@@ -5,7 +5,6 @@ oro:
         entity_description: Represents product information
         id.label: Id
         sku.label: SKU
-        grouping.label: "Grouping"
         qty_sold.label: "Qty Sold"
         skip_empty_periods.label: "Exclude Empty Periods"
         item_number.label: "Item #"
@@ -33,7 +32,6 @@ oro:
         images.label: Images
         anything.label: Any Text
         featured_products.label: Featured Products
-        time_period.label: Time Period
         slugs:
             label:              'Slugs'
             singular_label:     'Slug'

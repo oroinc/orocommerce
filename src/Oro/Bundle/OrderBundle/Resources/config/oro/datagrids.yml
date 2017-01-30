@@ -696,7 +696,7 @@ datagrids:
                 frontend_type: date
                 renderable: false
             dateGrouping:
-                label:         oro.product.time_period.label
+                label:         oro.report.datagrid.column.time_period.label
             sku:
                 label:         oro.product.sku.label
             productName:
@@ -722,7 +722,7 @@ datagrids:
         filters:
             columns:
                 createdAt:
-                    label:     oro.product.time_period.label
+                    label:     oro.report.datagrid.column.time_period.label
                     type:      datetime
                     data_name: calendarDate.date
                 sku:
@@ -734,12 +734,12 @@ datagrids:
                 skip_empty_periods:
                     type:      skip_empty_periods
                     data_name: calendarDate.date
-                    label:     oro.product.skip_empty_periods.label
+                    label:     oro.report.filter.skip_empty_periods.label
                     not_nullable_field: product.id
                 grouping:
                     type:      date_grouping
                     data_name: calendarDate.date
-                    label:     oro.product.grouping.label
+                    label:     oro.report.filter.grouping.label
                     column_name: dateGrouping
                     calendar_entity: %oro_report.calendar_date.entity.class%
                     target_entity: %oro_order.entity.order.class%
