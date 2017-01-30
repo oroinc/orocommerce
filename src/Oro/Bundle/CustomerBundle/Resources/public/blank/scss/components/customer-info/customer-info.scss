@@ -1,0 +1,23 @@
+// @theme: blank
+
+.customer-info-box {
+  padding-top: 10px;
+  margin: 0 0 30px 17px;
+
+  border-top: 1px solid get-color('additional', 'light');
+
+  .control-group {
+    display: flex;
+
+    padding: 5px 0;
+  }
+
+  .control-label {
+    min-width: 160px;
+    margin-right: 10px;
+  }
+}
+
+.customer-profile__wrapper {
+  margin-top: 15px;
+}

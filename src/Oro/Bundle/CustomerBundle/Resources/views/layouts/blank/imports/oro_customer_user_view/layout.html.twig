@@ -20,10 +20,31 @@
 {% endblock %}
 
 {% block _customer_user_view_information_title_widget %}
-    <div class="customer-oq__item customer-oq__item_full mb0-sm">
-        <h2 class="customer-oq__item__title">
-            {{ block_widget(block) }}
-        </h2>
+    {% set attr = layout_attr_defaults(attr, {'~class': ' page-subtitle'}) %}
+    <h2 {{ block('block_attributes') }}>
+        <span class="badge"><i class="fa-user"></i></span>
+        <span class="page-subtitle__text">{{ block_widget(block) }}</span>
+    </h2>
+{% endblock %}
+
+{% block _customer_user_view_information_content_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% import 'OroEmailBundle::actions.html.twig' as EmailActions %}
+    {% import 'OroEmailBundle::macros.html.twig' as Email %}
+
+    <div class="customer-info-box">
+        {{ UI.renderProperty('oro.customer.customeruser.first_name.label'|trans, customerUser.getFullName) }}
+        {{ UI.renderHtmlProperty('oro.customer.customeruser.email.label'|trans, Email.email_address_simple(customerUser.email)) }}
+        {% if resource_granted('oro_customer_frontend_customer_user_role_view') %}
+            {% set roles = [] %}
+            {% for customerUserRole in customerUser.roles %}
+                {% set roles = roles|merge([customerUserRole.label|escape]) %}
+            {% endfor %}
+            {{ UI.renderHtmlProperty('oro.customer.customeruser.roles.label'|trans, roles|join('<br />')) }}
+        {% endif %}
+        {% if customerUser.customer %}
+            {{ UI.renderProperty('oro.customer.customeruser.profile.company_name'|trans, customerUser.customer.name) }}
+        {% endif %}
     </div>
 {% endblock %}
 

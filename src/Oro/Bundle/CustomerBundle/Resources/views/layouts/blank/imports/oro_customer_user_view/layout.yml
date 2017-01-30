@@ -19,6 +19,14 @@ layout:
             optionValue: 'oro.customer.frontend.sections.customer_user.my_profile'
 
         - '@add':
+            id: __customer_user_view_information_content
+            parentId: __customer_user_view_information
+            blockType: customer_user_awere_block
+            prepend: false
+            options:
+                customerUser: '=data["entity"]'
+
+        - '@add':
             id: __customer_user_address_book_manage_addresses_link
             parentId: __user_addresses_list_template
             blockType: link

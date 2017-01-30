@@ -1,15 +1,6 @@
 .user-page {
   .oro-customer__block {
     margin-top: 15px;
-
-    .customer-oq__item {
-      padding-bottom: 5px;
-    }
-    .customer-oq__item__body {
-      border-top: 1px solid #ebebeb;
-      padding-top: 10px;
-      margin-left: 15px;
-    }
   }
 
   .oro-customer__controls-list {
@@ -18,70 +9,9 @@
     float: right;
     margin: 0 15px 0 0;
   }
-
-  .customer-info {
-    ul.inline {
-      margin-bottom: 0;
-      color: #777;
-
-      li {
-        &:first-child {
-          padding: 0 10px 0 0;
-          border: 0;
-        }
-
-        padding: 0 10px;
-        margin-bottom: 4px;
-        border-left: 1px solid #e6e6e6;
-        font-size: 11px;
-        line-height: 14px;
-      }
-    }
-  }
-
-  .form-horizontal .control-group label.control-label {
-    float: left;
-    width: 160px;
-    padding-top: 1.8rem;
-    color: #777;
-    font-weight: normal;
-    font-size: 13px;
-    text-align: right;
-  }
-
-  .form-horizontal .control-group .controls{
-    margin-left: 170px;
-  }
-
-  .form-horizontal .control-group .controls .control-label{
-    padding-top: 1.8rem;
-    width: 100%;
-    word-wrap: break-word;
-    padding-left: 5px;
-    box-sizing: border-box;
-    text-align: left;
-  }
-
-  .form-horizontal .control-label{
-    font-size: 13px;
-    text-align: left;
-    line-height: 1.2em;
-  }
-
-  .actions-list{
-    text-align: right;
-  }
-
-  ul.inline {
-    margin-left: 0;
-    list-style: none;
-
-    li {
-      display: inline-block;
-    }
-  }
 }
 
+//TODO: Find dependent widget
 .profile__form__row {
   position: relative;
 
