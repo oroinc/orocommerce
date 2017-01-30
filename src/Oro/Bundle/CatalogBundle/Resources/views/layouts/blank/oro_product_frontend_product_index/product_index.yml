@@ -5,9 +5,9 @@ layout:
         - '@addTree':
             items:
                 category_picture:
-                    blockType: category_data
+                    blockType: category
                     options:
-                        currentCategory: '=data["category"].getCurrentCategory()'
+                        category: '=data["category"].getCurrentCategory()'
                 category_breadcrumbs_container:
                     blockType: container
                 category_breadcrumbs:
@@ -16,9 +16,9 @@ layout:
                         currentCategory: '=data["category"].getCurrentCategory()'
                         parentCategories: '=data["category"].getParentCategories()'
                 category_title:
-                    blockType: category_data
+                    blockType: category
                     options:
-                        currentCategory: '=data["category"].getCurrentCategory()'
+                        category: '=data["category"].getCurrentCategory()'
             tree:
                 page_content:
                     category_picture: ~
