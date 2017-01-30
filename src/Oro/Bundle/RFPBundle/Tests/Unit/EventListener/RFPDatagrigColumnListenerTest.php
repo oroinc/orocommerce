@@ -31,21 +31,7 @@ class RFPDatagrigColumnListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function buildBeforeDataProvider()
     {
-        yield 'datagrig not matches & workflow step column defined' => [
-            'configuration' => [
-                'columns' => [
-                    WorkflowStepColumnListener::WORKFLOW_STEP_COLUMN => ['label' => 'Test'],
-                ]
-            ],
-            'datagridName' => 'test_name',
-            'expected' => [
-                'columns' => [
-                    WorkflowStepColumnListener::WORKFLOW_STEP_COLUMN => ['label' => 'Test'],
-                ]
-            ]
-        ];
-
-        yield 'datagrig matches & workflow step column not defined' => [
+        yield 'workflow step column not defined' => [
             'configuration' => [
                 'columns' => [
                     'test' => ['label' => 'Test'],
@@ -59,7 +45,7 @@ class RFPDatagrigColumnListenerTest extends \PHPUnit_Framework_TestCase
             ]
         ];
 
-        yield 'datagrig matches & workflow step column defined' => [
+        yield 'workflow step column defined' => [
             'configuration' => [
                 'columns' => [
                     WorkflowStepColumnListener::WORKFLOW_STEP_COLUMN => ['label' => 'Test'],

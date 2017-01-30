@@ -37,43 +37,43 @@
                 - category_1_2_3
                 - category_1_2_3_4
         hiddenProducts:
-            - product.4
-            - product.7
-            - product.8
+            - product-4
+            - product-7
+            - product-8
         hiddenProductsByCustomerGroups:
             customer_group.group2:
-                - product.7
-                - product.8
+                - product-7
+                - product-8
             customer_group.group3:
-                - product.3
-                - product.6
+                - product-3
+                - product-6
         hiddenProductsByCustomers:
             customer.level_1.1:
-                - product.1
-                - product.2
-                - product.3
-                - product.6
-                - product.4
-                - product.7
-                - product.8
+                - product-1
+                - product-2
+                - product-3
+                - product-6
+                - product-4
+                - product-7
+                - product-8
             customer.level_1.2:
-                - product.7
-                - product.8
+                - product-7
+                - product-8
             customer.level_1.2.1:
-                - product.7
-                - product.8
+                - product-7
+                - product-8
             customer.level_1.3.1:
-                - product.3
-                - product.6
-                - product.4
-                - product.7
-                - product.8
+                - product-3
+                - product-6
+                - product-4
+                - product-7
+                - product-8
             customer.level_1.3.1.1:
-                - product.2
-                - product.3
-                - product.6
+                - product-2
+                - product-3
+                - product-6
             customer.level_1.4:
-                - product.3
+                - product-3
 'change visibility to all to config':
     categoryReference: category_1
     visibility:
@@ -113,43 +113,43 @@
                 - category_1_2_3
                 - category_1_2_3_4
         hiddenProducts:
-            - product.4
-            - product.7
-            - product.8
+            - product-4
+            - product-7
+            - product-8
         hiddenProductsByCustomerGroups:
             customer_group.group2:
-                - product.7
-                - product.8
+                - product-7
+                - product-8
             customer_group.group3:
-                - product.3
-                - product.6
+                - product-3
+                - product-6
         hiddenProductsByCustomers:
             customer.level_1.1:
-                - product.1
-                - product.2
-                - product.3
-                - product.6
-                - product.4
-                - product.7
-                - product.8
+                - product-1
+                - product-2
+                - product-3
+                - product-6
+                - product-4
+                - product-7
+                - product-8
             customer.level_1.2:
-                - product.7
-                - product.8
+                - product-7
+                - product-8
             customer.level_1.2.1:
-                - product.7
-                - product.8
+                - product-7
+                - product-8
             customer.level_1.3.1:
-                - product.3
-                - product.6
-                - product.4
-                - product.7
-                - product.8
+                - product-3
+                - product-6
+                - product-4
+                - product-7
+                - product-8
             customer.level_1.3.1.1:
-                - product.2
-                - product.3
-                - product.6
+                - product-2
+                - product-3
+                - product-6
             customer.level_1.4:
-                - product.3
+                - product-3
 'change visibility to all to hidden':
     categoryReference: category_1
     visibility:
@@ -212,69 +212,69 @@
                 - category_1_2
                 - category_1_5
         hiddenProducts:
-            - product.1
-            - product.2
-            - product.5
-            - product.4
-            - product.7
-            - product.8
+            - product-1
+            - product-2
+            - product-5
+            - product-4
+            - product-7
+            - product-8
         hiddenProductsByCustomerGroups:
             customer_group.group2:
-                - product.1
-                - product.2
-                - product.5
-                - product.7
-                - product.8
+                - product-1
+                - product-2
+                - product-5
+                - product-7
+                - product-8
             customer_group.group3:
-                - product.2
-                - product.3
-                - product.6
+                - product-2
+                - product-3
+                - product-6
         hiddenProductsByCustomers:
             customer.level_1.1:
-                - product.1
-                - product.2
-                - product.3
-                - product.6
-                - product.5
-                - product.4
-                - product.7
-                - product.8
+                - product-1
+                - product-2
+                - product-3
+                - product-6
+                - product-5
+                - product-4
+                - product-7
+                - product-8
             customer.level_1.2:
-                - product.7
-                - product.8
+                - product-7
+                - product-8
             customer.level_1.2.1:
-                - product.1
-                - product.2
-                - product.3
-                - product.6
-                - product.5
-                - product.7
-                - product.8
+                - product-1
+                - product-2
+                - product-3
+                - product-6
+                - product-5
+                - product-7
+                - product-8
             customer.level_1.2.1.1:
-                - product.1
-                - product.2
-                - product.5
-                - product.4
-                - product.7
-                - product.8
+                - product-1
+                - product-2
+                - product-5
+                - product-4
+                - product-7
+                - product-8
             customer.level_1.3.1:
-                - product.2
-                - product.3
-                - product.6
-                - product.4
-                - product.7
-                - product.8
+                - product-2
+                - product-3
+                - product-6
+                - product-4
+                - product-7
+                - product-8
             customer.level_1.3.1.1:
-                - product.1
-                - product.2
-                - product.3
-                - product.6
-                - product.5
-                - product.4
+                - product-1
+                - product-2
+                - product-3
+                - product-6
+                - product-5
+                - product-4
             customer.level_1.4:
-                - product.2
-                - product.3
-                - product.5
+                - product-2
+                - product-3
+                - product-5
 'change visibility customer group to hidden':
     categoryReference: category_1
     visibility:
@@ -319,53 +319,53 @@
                 - category_1_2_3
                 - category_1_2_3_4
         hiddenProducts:
-            - product.4
-            - product.7
-            - product.8
+            - product-4
+            - product-7
+            - product-8
         hiddenProductsByCustomerGroups:
             customer_group.group2:
-                - product.7
-                - product.8
+                - product-7
+                - product-8
             customer_group.group3:
-                - product.1
-                - product.3
-                - product.6
-                - product.5
-                - product.4
-                - product.7
-                - product.8
+                - product-1
+                - product-3
+                - product-6
+                - product-5
+                - product-4
+                - product-7
+                - product-8
         hiddenProductsByCustomers:
             customer.level_1.1:
-                - product.1
-                - product.2
-                - product.3
-                - product.6
-                - product.4
-                - product.7
-                - product.8
+                - product-1
+                - product-2
+                - product-3
+                - product-6
+                - product-4
+                - product-7
+                - product-8
             customer.level_1.2:
-                - product.7
-                - product.8
+                - product-7
+                - product-8
             customer.level_1.2.1:
-                - product.7
-                - product.8
+                - product-7
+                - product-8
             customer.level_1.3.1:
-                - product.1
-                - product.3
-                - product.6
-                - product.5
-                - product.4
-                - product.7
-                - product.8
+                - product-1
+                - product-3
+                - product-6
+                - product-5
+                - product-4
+                - product-7
+                - product-8
             customer.level_1.3.1.1:
-                - product.2
-                - product.3
-                - product.6
-                - product.7
-                - product.8
+                - product-2
+                - product-3
+                - product-6
+                - product-7
+                - product-8
             customer.level_1.4:
-                - product.3
-                - product.4
+                - product-3
+                - product-4
 'change visibility customer group to parent category':
     categoryReference: category_1
     visibility:
@@ -406,43 +406,43 @@
                 - category_1_2_3
                 - category_1_2_3_4
         hiddenProducts:
-            - product.4
-            - product.7
-            - product.8
+            - product-4
+            - product-7
+            - product-8
         hiddenProductsByCustomerGroups:
             customer_group.group2:
-                - product.7
-                - product.8
+                - product-7
+                - product-8
             customer_group.group3:
-                - product.3
-                - product.6
+                - product-3
+                - product-6
         hiddenProductsByCustomers:
             customer.level_1.1:
-                - product.1
-                - product.2
-                - product.3
-                - product.6
-                - product.4
-                - product.7
-                - product.8
+                - product-1
+                - product-2
+                - product-3
+                - product-6
+                - product-4
+                - product-7
+                - product-8
             customer.level_1.2:
-                - product.7
-                - product.8
+                - product-7
+                - product-8
             customer.level_1.2.1:
-                - product.7
-                - product.8
+                - product-7
+                - product-8
             customer.level_1.3.1:
-                - product.3
-                - product.6
-                - product.4
-                - product.7
-                - product.8
+                - product-3
+                - product-6
+                - product-4
+                - product-7
+                - product-8
             customer.level_1.3.1.1:
-                - product.2
-                - product.3
-                - product.6
+                - product-2
+                - product-3
+                - product-6
             customer.level_1.4:
-                - product.3
+                - product-3
 'change visibility customer group to all':
     categoryReference: category_1
     visibility:
@@ -483,43 +483,43 @@
                 - category_1_2_3
                 - category_1_2_3_4
         hiddenProducts:
-            - product.4
-            - product.7
-            - product.8
+            - product-4
+            - product-7
+            - product-8
         hiddenProductsByCustomerGroups:
             customer_group.group2:
-                - product.7
-                - product.8
+                - product-7
+                - product-8
             customer_group.group3:
-                - product.3
-                - product.6
+                - product-3
+                - product-6
         hiddenProductsByCustomers:
             customer.level_1.1:
-                - product.1
-                - product.2
-                - product.3
-                - product.6
-                - product.4
-                - product.7
-                - product.8
+                - product-1
+                - product-2
+                - product-3
+                - product-6
+                - product-4
+                - product-7
+                - product-8
             customer.level_1.2:
-                - product.7
-                - product.8
+                - product-7
+                - product-8
             customer.level_1.2.1:
-                - product.7
-                - product.8
+                - product-7
+                - product-8
             customer.level_1.3.1:
-                - product.3
-                - product.6
-                - product.4
-                - product.7
-                - product.8
+                - product-3
+                - product-6
+                - product-4
+                - product-7
+                - product-8
             customer.level_1.3.1.1:
-                - product.2
-                - product.3
-                - product.6
+                - product-2
+                - product-3
+                - product-6
             customer.level_1.4:
-                - product.3
+                - product-3
 'change visibility customer group to visible':
     categoryReference: category_1
     visibility:
@@ -560,43 +560,43 @@
                 - category_1_2_3
                 - category_1_2_3_4
         hiddenProducts:
-            - product.4
-            - product.7
-            - product.8
+            - product-4
+            - product-7
+            - product-8
         hiddenProductsByCustomerGroups:
             customer_group.group2:
-                - product.7
-                - product.8
+                - product-7
+                - product-8
             customer_group.group3:
-                - product.3
-                - product.6
+                - product-3
+                - product-6
         hiddenProductsByCustomers:
             customer.level_1.1:
-                - product.1
-                - product.2
-                - product.3
-                - product.6
-                - product.4
-                - product.7
-                - product.8
+                - product-1
+                - product-2
+                - product-3
+                - product-6
+                - product-4
+                - product-7
+                - product-8
             customer.level_1.2:
-                - product.7
-                - product.8
+                - product-7
+                - product-8
             customer.level_1.2.1:
-                - product.7
-                - product.8
+                - product-7
+                - product-8
             customer.level_1.3.1:
-                - product.3
-                - product.6
-                - product.4
-                - product.7
-                - product.8
+                - product-3
+                - product-6
+                - product-4
+                - product-7
+                - product-8
             customer.level_1.3.1.1:
-                - product.2
-                - product.3
-                - product.6
+                - product-2
+                - product-3
+                - product-6
             customer.level_1.4:
-                - product.3
+                - product-3
 'change visibility customer to parent category':
     categoryReference: category_1
     visibility:
@@ -637,43 +637,43 @@
                 - category_1_2_3
                 - category_1_2_3_4
         hiddenProducts:
-            - product.4
-            - product.7
-            - product.8
+            - product-4
+            - product-7
+            - product-8
         hiddenProductsByCustomerGroups:
             customer_group.group2:
-                - product.7
-                - product.8
+                - product-7
+                - product-8
             customer_group.group3:
-                - product.3
-                - product.6
+                - product-3
+                - product-6
         hiddenProductsByCustomers:
             customer.level_1.1:
-                - product.1
-                - product.2
-                - product.3
-                - product.6
-                - product.4
-                - product.7
-                - product.8
+                - product-1
+                - product-2
+                - product-3
+                - product-6
+                - product-4
+                - product-7
+                - product-8
             customer.level_1.2:
-                - product.7
-                - product.8
+                - product-7
+                - product-8
             customer.level_1.2.1:
-                - product.7
-                - product.8
+                - product-7
+                - product-8
             customer.level_1.3.1:
-                - product.3
-                - product.6
-                - product.4
-                - product.7
-                - product.8
+                - product-3
+                - product-6
+                - product-4
+                - product-7
+                - product-8
             customer.level_1.3.1.1:
-                - product.2
-                - product.3
-                - product.6
+                - product-2
+                - product-3
+                - product-6
             customer.level_1.4:
-                - product.3
+                - product-3
 'change visibility customer to hidden':
     categoryReference: category_1
     visibility:
@@ -719,49 +719,49 @@
                 - category_1_2_3
                 - category_1_2_3_4
         hiddenProducts:
-            - product.4
-            - product.7
-            - product.8
+            - product-4
+            - product-7
+            - product-8
         hiddenProductsByCustomerGroups:
             customer_group.group2:
-                - product.7
-                - product.8
+                - product-7
+                - product-8
             customer_group.group3:
-                - product.3
-                - product.6
+                - product-3
+                - product-6
         hiddenProductsByCustomers:
             customer.level_1.1:
-                - product.1
-                - product.2
-                - product.3
-                - product.6
-                - product.4
-                - product.7
-                - product.8
+                - product-1
+                - product-2
+                - product-3
+                - product-6
+                - product-4
+                - product-7
+                - product-8
             customer.level_1.2:
-                - product.7
-                - product.8
+                - product-7
+                - product-8
             customer.level_1.2.1:
-                - product.7
-                - product.8
+                - product-7
+                - product-8
             customer.level_1.2.1.1:
-                - product.1
-                - product.5
-                - product.4
-                - product.7
-                - product.8
+                - product-1
+                - product-5
+                - product-4
+                - product-7
+                - product-8
             customer.level_1.3.1:
-                - product.3
-                - product.6
-                - product.4
-                - product.7
-                - product.8
+                - product-3
+                - product-6
+                - product-4
+                - product-7
+                - product-8
             customer.level_1.3.1.1:
-                - product.2
-                - product.3
-                - product.6
+                - product-2
+                - product-3
+                - product-6
             customer.level_1.4:
-                - product.3
+                - product-3
 'change visibility customer to visible':
     categoryReference: category_1_2_3
     visibility:
@@ -800,41 +800,41 @@
                 - category_1_2_3
                 - category_1_2_3_4
         hiddenProducts:
-            - product.4
-            - product.7
-            - product.8
+            - product-4
+            - product-7
+            - product-8
         hiddenProductsByCustomerGroups:
             customer_group.group2:
-                - product.7
-                - product.8
+                - product-7
+                - product-8
             customer_group.group3:
-                - product.3
-                - product.6
+                - product-3
+                - product-6
         hiddenProductsByCustomers:
             customer.level_1.1:
-                - product.1
-                - product.2
-                - product.4
-                - product.7
-                - product.8
+                - product-1
+                - product-2
+                - product-4
+                - product-7
+                - product-8
             customer.level_1.2:
-                - product.7
-                - product.8
+                - product-7
+                - product-8
             customer.level_1.2.1:
-                - product.7
-                - product.8
+                - product-7
+                - product-8
             customer.level_1.3.1:
-                - product.3
-                - product.6
-                - product.4
-                - product.7
-                - product.8
+                - product-3
+                - product-6
+                - product-4
+                - product-7
+                - product-8
             customer.level_1.3.1.1:
-                - product.2
-                - product.3
-                - product.6
+                - product-2
+                - product-3
+                - product-6
             customer.level_1.4:
-                - product.3
+                - product-3
 'change visibility customer to all':
     categoryReference: category_1_5_6
     visibility:
@@ -878,47 +878,47 @@
                 - category_1_2_3
                 - category_1_2_3_4
         hiddenProducts:
-            - product.4
-            - product.7
-            - product.8
+            - product-4
+            - product-7
+            - product-8
         hiddenProductsByCustomerGroups:
             customer_group.group2:
-                - product.7
-                - product.8
+                - product-7
+                - product-8
             customer_group.group3:
-                - product.3
-                - product.6
+                - product-3
+                - product-6
         hiddenProductsByCustomers:
             customer.level_1.1:
-                - product.1
-                - product.2
-                - product.3
-                - product.6
-                - product.4
-                - product.7
-                - product.8
+                - product-1
+                - product-2
+                - product-3
+                - product-6
+                - product-4
+                - product-7
+                - product-8
             customer.level_1.2:
-                - product.7
-                - product.8
+                - product-7
+                - product-8
             customer.level_1.2.1:
-                - product.7
-                - product.8
+                - product-7
+                - product-8
             customer.level_1.2.1.1:
-                - product.4
-                - product.7
-                - product.8
+                - product-4
+                - product-7
+                - product-8
             customer.level_1.3.1:
-                - product.3
-                - product.6
-                - product.4
-                - product.7
-                - product.8
+                - product-3
+                - product-6
+                - product-4
+                - product-7
+                - product-8
             customer.level_1.3.1.1:
-                - product.2
-                - product.3
-                - product.6
+                - product-2
+                - product-3
+                - product-6
             customer.level_1.4:
-                - product.3
+                - product-3
 'change visibility customer to group':
     categoryReference: category_1_5_6
     visibility:
@@ -958,40 +958,40 @@
                 - category_1_2_3
                 - category_1_2_3_4
         hiddenProducts:
-            - product.4
-            - product.7
-            - product.8
+            - product-4
+            - product-7
+            - product-8
         hiddenProductsByCustomerGroups:
             customer_group.group2:
-                - product.7
-                - product.8
+                - product-7
+                - product-8
             customer_group.group3:
-                - product.3
-                - product.6
+                - product-3
+                - product-6
         hiddenProductsByCustomers:
             customer.level_1.1:
-                - product.1
-                - product.2
-                - product.3
-                - product.6
-                - product.4
-                - product.7
-                - product.8
+                - product-1
+                - product-2
+                - product-3
+                - product-6
+                - product-4
+                - product-7
+                - product-8
             customer.level_1.2:
-                - product.7
-                - product.8
+                - product-7
+                - product-8
             customer.level_1.2.1:
-                - product.7
-                - product.8
+                - product-7
+                - product-8
             customer.level_1.3.1:
-                - product.3
-                - product.6
-                - product.4
-                - product.7
-                - product.8
+                - product-3
+                - product-6
+                - product-4
+                - product-7
+                - product-8
             customer.level_1.3.1.1:
-                - product.2
-                - product.3
-                - product.6
+                - product-2
+                - product-3
+                - product-6
             customer.level_1.4:
-                - product.3
+                - product-3

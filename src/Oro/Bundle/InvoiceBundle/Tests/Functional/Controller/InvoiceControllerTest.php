@@ -89,7 +89,7 @@ class InvoiceControllerTest extends WebTestCase
         $customer = $this->getCustomer();
 
         /** @var Product $product */
-        $product = $this->getReference('product.1');
+        $product = $this->getReference('product-1');
 
         $lineItems = [
             [
@@ -157,7 +157,7 @@ class InvoiceControllerTest extends WebTestCase
 
         $customer = $this->getCustomer();
         /** @var Product $product */
-        $product = $this->getReference('product.2');
+        $product = $this->getReference('product-2');
 
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();

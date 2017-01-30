@@ -2,8 +2,11 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller\Frontend;
 
+use Doctrine\ORM\EntityManager;
 use Symfony\Component\DomCrawler\Field\InputFormField;
 
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\RFPBundle\Entity\Request;
@@ -68,7 +71,7 @@ class RequestControllerTest extends WebTestCase
     public function testIndex(array $inputData, array $expectedData, $activateFrontoffice = false)
     {
         if (!$activateFrontoffice) {
-            $this->manager->deactivateWorkflow('rfq_frontoffice_default');
+            $this->manager->deactivateWorkflow('b2b_rfq_frontoffice_default');
         }
 
         $authParams = $inputData['login']
@@ -220,6 +223,7 @@ class RequestControllerTest extends WebTestCase
                         'createdAt',
                         'update_link',
                         'view_link',
+                        'workflowStepLabel',
                         'action_configuration',
                         'customerStatusName',
                     ],
@@ -684,19 +688,19 @@ class RequestControllerTest extends WebTestCase
         return [
             [
                 'productLineItems' => [
-                    'product.1' => [
+                    'product-1' => [
                         ['unit' => 'liter', 'quantity' => 10]
                     ],
-                    'product.2' => [
+                    'product-2' => [
                         ['unit' => 'bottle', 'quantity' => 20],
                         ['unit' => 'box', 'quantity' => 2],
                     ],
                 ],
                 'expectedData' => [
-                    'product.1' => [
+                    'product-1' => [
                         ['unit' => 'liter', 'quantity' => 10]
                     ],
-                    'product.2' => [
+                    'product-2' => [
                         ['unit' => 'bottle', 'quantity' => 20],
                         ['unit' => 'box', 'quantity' => 2],
                     ],
@@ -704,16 +708,16 @@ class RequestControllerTest extends WebTestCase
             ],
             [
                 'productLineItems' => [
-                    'product.1' => [
+                    'product-1' => [
                         ['unit' => 'no_unit', 'quantity' => 10],
                         ['unit' => 'liter', 'quantity' => 10],
                     ],
-                    'product.2' => [
+                    'product-2' => [
                         ['unit' => 'bottle'],
                     ],
                 ],
                 'expectedData' => [
-                    'product.1' => [
+                    'product-1' => [
                         ['unit' => 'liter', 'quantity' => 10]
                     ],
                 ]
@@ -768,6 +772,51 @@ class RequestControllerTest extends WebTestCase
                 $this->getReference(LoadUserData::ACCOUNT1_USER2)->getFullName()
             ]
         );
+    }
+
+    public function testViewDeleted()
+    {
+        $this->loginUser(LoadUserData::ACCOUNT1_USER1);
+
+        /* @var $request Request */
+        $request = $this->getReference(LoadRequestData::REQUEST2);
+        $id = $request->getId();
+
+        $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_view', ['id' => $id]));
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+
+        $em = $this->getManager(Request::class);
+        $request = $em->find(Request::class, $id);
+
+        $request->setInternalStatus(
+            $this->getEnumEntity(Request::INTERNAL_STATUS_CODE, Request::INTERNAL_STATUS_DELETED)
+        );
+
+        $em->flush($request);
+
+        $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_view', ['id' => $id]));
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 404);
+    }
+
+    /**
+     * @param string $enumField
+     * @param string $enumCode
+     * @return AbstractEnumValue
+     */
+    protected function getEnumEntity($enumField, $enumCode)
+    {
+        $className = ExtendHelper::buildEnumValueClassName($enumField);
+
+        return $this->getManager($className)->getReference($className, $enumCode);
+    }
+
+    /**
+     * @param string $className
+     * @return EntityManager
+     */
+    protected function getManager($className)
+    {
+        return $this->getContainer()->get('doctrine')->getManagerForClass($className);
     }
 
     /**

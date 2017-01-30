@@ -1,7 +1,7 @@
 oro:
     checkout:
-        entity_label: Open Order
-        entity_plural_label: Open Orders
+        entity_label: Checkout
+        entity_plural_label: Checkouts
         id.label: Id
         owner.label: Owner
         customer.label: Global Address Book
@@ -35,7 +35,12 @@ oro:
         line_items_count.label: Items
         started_from.label: Started From
         order_history.label: Order History
+        open_order:
+            label: Open Order
+            plural_label: Open Orders
         deleted.label: Deleted
+        completed.label: Completed
+        completed_data.label: Completed Data
 
         basecheckout:
             entity_label: Base Checkout
@@ -102,6 +107,14 @@ oro:
         workflow:
             view_options.label: View Options for this Order
             unavailable_transition.message: 'This action is not available, reason:'
+
+            success:
+                thank_you.label: 'Thank You For Your Purchase!'
+                order_number.label: 'Your order number is'
+                click_to_review.label: 'click here to review'
+                receive_email.label: 'You will receive a confirmation email with your order details.'
+                done.label: 'Done'
+
             b2b_flow_checkout:
                 label: Checkout
 
@@ -196,3 +209,5 @@ oro:
         frontend:
             quote:
                 submit_to_order: 'Accept and Submit to Order'
+            order:
+                view.label: 'View Order'

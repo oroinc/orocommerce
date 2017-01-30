@@ -25,7 +25,7 @@ oro:
             ship_until.label: 'Do Not Ship Later Than'
             request_products.label: 'Request Products'
             assigned_users.label: 'Assigned To'
-            assigned_customer_users.label: 'Assigned Customers'
+            assigned_customer_users.label: 'Assigned Customer Users'
             cancellation_reason.label: 'Cancelation reason'
             cancellation_success.label: 'Cancellation was successful'
             deleted_at.label: 'Deleted At'
@@ -118,8 +118,8 @@ oro:
 
         datagrid:
             action_restore: 'Restore'
-            customer.label: 'Requests for Quote'
-            customer_user.label: 'Requests for Quote'
+            customer.label: 'Requests For Quote'
+            customer_user.label: 'Requests For Quote'
 
         controller:
             request:

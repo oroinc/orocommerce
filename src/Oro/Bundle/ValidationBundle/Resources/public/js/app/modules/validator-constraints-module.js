@@ -1,7 +1,7 @@
 /*global require*/
 require([
     'oroui/js/app/controllers/base/controller'
-], function (BaseController) {
+], function(BaseController) {
     'use strict';
 
     /**
@@ -9,7 +9,7 @@ require([
      */
     BaseController.loadBeforeAction([
         'jquery', 'jquery.validate'
-    ], function ($) {
+    ], function($) {
         var constraints = [
             'orovalidation/js/validator/letters',
             'orovalidation/js/validator/alphanumeric',

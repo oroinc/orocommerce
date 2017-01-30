@@ -45,7 +45,7 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
         enabled: '1'
         confirmed: '1'
         customer: '@customer1'
-        organization: ['@organization']
+        organization: '@organization'
         role: ['@buyer']
         owner: '@admin'
         website: '@website1'
@@ -110,7 +110,7 @@ Oro\Bundle\PricingBundle\Entity\PriceList:
     pricelist_shipping:
         name: 'pricelist_shipping'
         default: true
-        currencies: ['USD', 'EUR']
+        setCurrencies: [['USD', 'EUR']]
         active: true
 
 Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:

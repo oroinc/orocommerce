@@ -27,8 +27,13 @@ class PayflowExpressCheckout implements PaymentMethodInterface
 
     const COMPLETE = 'complete';
 
+    // PayPal BN code
+    const BUTTON_SOURCE = 'OroCommerce_SP';
+
     const PILOT_REDIRECT_URL = 'https://www.sandbox.paypal.com/webscr?cmd=_express-checkout&useraction=commit&token=%s';
     const PRODUCTION_REDIRECT_URL = 'https://www.paypal.com/webscr?cmd=_express-checkout&useraction=commit&token=%s';
+
+    const AMOUNT_PRECISION = 2;
 
     /** @var Gateway */
     protected $gateway;
@@ -58,6 +63,7 @@ class PayflowExpressCheckout implements PaymentMethodInterface
      * @param DoctrineHelper $doctrineHelper
      * @param ExtractOptionsProvider $optionsProvider
      * @param SurchargeProvider $surchargeProvider
+     * @param PropertyAccessor $propertyAccessor
      */
     public function __construct(
         Gateway $gateway,
@@ -65,7 +71,8 @@ class PayflowExpressCheckout implements PaymentMethodInterface
         RouterInterface $router,
         DoctrineHelper $doctrineHelper,
         ExtractOptionsProvider $optionsProvider,
-        SurchargeProvider $surchargeProvider
+        SurchargeProvider $surchargeProvider,
+        PropertyAccessor $propertyAccessor
     ) {
         $this->gateway = $gateway;
         $this->config = $config;
@@ -73,6 +80,7 @@ class PayflowExpressCheckout implements PaymentMethodInterface
         $this->doctrineHelper = $doctrineHelper;
         $this->optionsProvider = $optionsProvider;
         $this->surchargeProvider = $surchargeProvider;
+        $this->propertyAccessor = $propertyAccessor;
     }
 
     /**
@@ -124,12 +132,13 @@ class PayflowExpressCheckout implements PaymentMethodInterface
      */
     protected function purchase(PaymentTransaction $paymentTransaction)
     {
-        $paymentTransaction->setRequest(array_merge(
+        $options = array_merge(
             $this->getCredentials(),
             $this->getSetExpressCheckoutOptions($paymentTransaction),
             $this->getShippingAddressOptions($paymentTransaction)
-        ));
+        );
 
+        $paymentTransaction->setRequest($options);
         $paymentTransaction->setAction($this->config->getPurchaseAction());
 
         $this->execute($paymentTransaction->getAction(), $paymentTransaction);
@@ -148,11 +157,13 @@ class PayflowExpressCheckout implements PaymentMethodInterface
      */
     protected function complete(PaymentTransaction $paymentTransaction)
     {
-        $paymentTransaction->setRequest(array_merge(
+        $options = array_merge(
             $this->getCredentials(),
+            $this->getAdditionalOptions(),
             $this->getDoExpressCheckoutOptions($paymentTransaction)
-        ));
+        );
 
+        $paymentTransaction->setRequest($options);
         $response = $this->actionRequest($paymentTransaction, ECOption\Action::DO_EC);
 
         $data = $response->getData();
@@ -182,10 +193,13 @@ class PayflowExpressCheckout implements PaymentMethodInterface
      */
     protected function authorize(PaymentTransaction $paymentTransaction)
     {
-        $paymentTransaction->setRequest(array_merge(
+        $options = array_merge(
             $paymentTransaction->getRequest(),
+            $this->getAdditionalOptions(),
             [Option\Transaction::TRXTYPE => Option\Transaction::AUTHORIZATION]
-        ));
+        );
+
+        $paymentTransaction->setRequest($options);
         $this->setExpressCheckoutRequest($paymentTransaction);
     }
 
@@ -194,10 +208,13 @@ class PayflowExpressCheckout implements PaymentMethodInterface
      */
     protected function charge(PaymentTransaction $paymentTransaction)
     {
-        $paymentTransaction->setRequest(array_merge(
+        $options = array_merge(
             $paymentTransaction->getRequest(),
+            $this->getAdditionalOptions(),
             [Option\Transaction::TRXTYPE => Option\Transaction::SALE]
-        ));
+        );
+
+        $paymentTransaction->setRequest($options);
         $this->setExpressCheckoutRequest($paymentTransaction);
     }
 
@@ -218,6 +235,7 @@ class PayflowExpressCheckout implements PaymentMethodInterface
 
         $options = array_merge(
             $this->getCredentials(),
+            $this->getAdditionalOptions(),
             $this->getDelayedCaptureOptions($paymentTransaction)
         );
 
@@ -285,7 +303,7 @@ class PayflowExpressCheckout implements PaymentMethodInterface
             [
                 ECOption\PaymentType::PAYMENTTYPE => ECOption\PaymentType::INSTANTONLY,
                 ECOption\ShippingAddressOverride::ADDROVERRIDE => ECOption\ShippingAddressOverride::TRUE,
-                Option\Amount::AMT => $paymentTransaction->getAmount(),
+                Option\Amount::AMT => round($paymentTransaction->getAmount(), self::AMOUNT_PRECISION),
                 Option\Currency::CURRENCY => $paymentTransaction->getCurrency(),
                 Option\ReturnUrl::RETURNURL => $this->router->generate(
                     'oro_payment_callback_return',
@@ -312,7 +330,7 @@ class PayflowExpressCheckout implements PaymentMethodInterface
     protected function getDoExpressCheckoutOptions(PaymentTransaction $paymentTransaction)
     {
         $options = [
-            Option\Amount::AMT => $paymentTransaction->getAmount(),
+            Option\Amount::AMT => round($paymentTransaction->getAmount(), self::AMOUNT_PRECISION),
             Option\Transaction::TRXTYPE => $this->getTransactionType($paymentTransaction),
             ECOption\Token::TOKEN => $paymentTransaction->getReference(),
         ];
@@ -335,7 +353,7 @@ class PayflowExpressCheckout implements PaymentMethodInterface
         $sourceTransaction = $paymentTransaction->getSourcePaymentTransaction();
 
         return [
-            Option\Amount::AMT => $paymentTransaction->getAmount(),
+            Option\Amount::AMT => round($paymentTransaction->getAmount(), self::AMOUNT_PRECISION),
             Option\OriginalTransaction::ORIGID => $sourceTransaction->getReference(),
         ];
     }
@@ -409,7 +427,9 @@ class PayflowExpressCheckout implements PaymentMethodInterface
                 Option\LineItems::NAME => $lineItemOption->getName(),
                 Option\LineItems::DESC => $lineItemOption->getDescription(),
                 Option\LineItems::COST => $lineItemOption->getCost(),
-                Option\LineItems::QTY => $lineItemOption->getQty(),
+                // PayPal accepts only integer qty.
+                // Float qty could be correctly converted to int in getLineItemPaymentOptions
+                Option\LineItems::QTY => (int)$lineItemOption->getQty(),
             ];
         }
 
@@ -477,10 +497,6 @@ class PayflowExpressCheckout implements PaymentMethodInterface
      */
     protected function getPropertyAccessor()
     {
-        if (!$this->propertyAccessor) {
-            $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
-        }
-
         return $this->propertyAccessor;
     }
 
@@ -495,5 +511,15 @@ class PayflowExpressCheckout implements PaymentMethodInterface
                 Option\Tender::TENDER => Option\Tender::PAYPAL,
             ]
         );
+    }
+
+    /**
+     * @return array
+     */
+    protected function getAdditionalOptions()
+    {
+        return [
+            Option\ButtonSource::BUTTONSOURCE => self::BUTTON_SOURCE
+        ];
     }
 }

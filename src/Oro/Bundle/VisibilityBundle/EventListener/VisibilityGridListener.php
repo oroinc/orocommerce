@@ -3,14 +3,10 @@
 namespace Oro\Bundle\VisibilityBundle\EventListener;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Doctrine\ORM\Query;
-use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
-use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
-use Oro\Bundle\DataGridBundle\Event\OrmResultBeforeQuery;
+use Oro\Bundle\DataGridBundle\Datasource\Orm\OrmDatasource;
+use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
-use Oro\Bundle\DataGridBundle\Event\OrmResultBefore;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Entity\ScopeAwareInterface;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
@@ -29,11 +25,6 @@ class VisibilityGridListener
      * @var VisibilityChoicesProvider
      */
     protected $visibilityChoicesProvider;
-
-    /**
-     * @var array
-     */
-    protected $subscribedGridConfig;
 
     /**
      * @var ScopeManager
@@ -56,19 +47,17 @@ class VisibilityGridListener
     }
 
     /**
-     * @param string $datagrid
      * @param string $scopeAttr
      * @param string $visibilityEntityClass
      * @param string $targetEntityClass
      */
-    public function addSubscribedGridConfig($datagrid, $scopeAttr, $visibilityEntityClass, $targetEntityClass)
+    public function setGridOptions($scopeAttr, $visibilityEntityClass, $targetEntityClass)
     {
-        $this->subscribedGridConfig[$datagrid] =
-            [
-                'visibilityEntityClass' => $visibilityEntityClass,
-                'targetEntityClass' => $targetEntityClass,
-                'scopeAttr' => $scopeAttr,
-            ];
+        $this->gridOptions = [
+            'visibilityEntityClass' => $visibilityEntityClass,
+            'targetEntityClass' => $targetEntityClass,
+            'scopeAttr' => $scopeAttr,
+        ];
     }
 
     /**
@@ -77,12 +66,11 @@ class VisibilityGridListener
     public function onPreBuild(PreBuild $event)
     {
         $config = $event->getConfig();
-        $datagridName = $config->getName();
-        $visibilityClass = $this->subscribedGridConfig[$datagridName]['visibilityEntityClass'];
+        $visibilityClass = $config->offsetGetByPath('[options][visibilityEntityClass]');
         $params = $event->getParameters();
         $targetEntity = $this->getEntity(
             $params->get('target_entity_id'),
-            $this->subscribedGridConfig[$datagridName]['targetEntityClass']
+            $config->offsetGetByPath('[options][targetEntityClass]')
         );
         if (is_a($visibilityClass, ScopeAwareInterface::class, true) && $params->has('scope_id')) {
             $selectorPath = '[options][cellSelection][selector]';
@@ -120,110 +108,29 @@ class VisibilityGridListener
     }
 
     /**
-     * @param OrmResultBeforeQuery $event
+     * @param BuildAfter $event
      */
-    public function onOrmResultBeforeQuery(OrmResultBeforeQuery $event)
+    public function onDatagridBuildAfter(BuildAfter $event)
     {
-        $parameters = $event->getDatagrid()->getParameters();
-        $datagridName = $event->getDatagrid()->getName();
+        $datasource = $event->getDatagrid()->getDatasource();
+        if ($datasource instanceof OrmDatasource) {
+            $parameters = $event->getDatagrid()->getParameters();
 
-        if ($parameters->has('scope_id')) {
-            $rootScope = $this->registry->getRepository(Scope::class)->find($parameters->get('scope_id'));
-        } else {
-            $rootScope = $this->scopeManager->findDefaultScope();
-        }
-
-        $type = call_user_func(
-            [
-                $this->subscribedGridConfig[$datagridName]['visibilityEntityClass'],
-                'getScopeType',
-            ]
-        );
-        $criteria = $this->scopeManager->getCriteriaByScope($rootScope, $type);
-        $criteria->applyToJoin(
-            $event->getQueryBuilder(),
-            'scope',
-            [$this->subscribedGridConfig[$datagridName]['scopeAttr']]
-        );
-    }
-
-    /**
-     * @param OrmResultBefore $event
-     */
-    public function onResultBefore(OrmResultBefore $event)
-    {
-        $parameters = $event->getDatagrid()->getParameters();
-        $datagridName = $event->getDatagrid()->getName();
-        $targetEntity = $this->getEntity(
-            $parameters->get('target_entity_id'),
-            $this->subscribedGridConfig[$datagridName]['targetEntityClass']
-        );
-
-        if (!$this->isFilteredByDefaultValue(
-            $targetEntity,
-            $parameters,
-            $this->subscribedGridConfig[$datagridName]['visibilityEntityClass']
-        )) {
-            return;
-        }
-        /** @var OrmDatasource $dataSource */
-        $dataSource = $event->getDatagrid()->getDatasource();
-        /** @var array $parts */
-        $parts = $dataSource->getQueryBuilder()->getDQLPart('where')->getParts();
-        foreach ($parts as $id => $part) {
-            if (preg_match(sprintf('/%s/', self::VISIBILITY_FIELD), $part)) {
-                unset($parts[$id]);
+            if ($parameters->has('scope_id')) {
+                $rootScope = $this->registry->getRepository(Scope::class)->find($parameters->get('scope_id'));
+            } else {
+                $rootScope = $this->scopeManager->findDefaultScope();
             }
+
+            $config = $event->getDatagrid()->getConfig();
+            $type = call_user_func([$config->offsetGetByPath('[options][visibilityEntityClass]'), 'getScopeType']);
+            $criteria = $this->scopeManager->getCriteriaByScope($rootScope, $type);
+            $criteria->applyToJoin(
+                $datasource->getQueryBuilder(),
+                'scope',
+                [$config->offsetGetByPath('[options][scopeAttr]')]
+            );
         }
-        $parts[] = $dataSource->getQueryBuilder()->expr()->isNull(self::VISIBILITY_FIELD);
-        $dataSource->getQueryBuilder()->orWhere(
-            call_user_func_array(
-                [
-                    $dataSource->getQueryBuilder()->expr(),
-                    'andX',
-                ],
-                $parts
-            )
-        );
-        /** @var Query $query */
-        $query = $event->getQuery();
-        $query->setDQL($dataSource->getQueryBuilder()->getQuery()->getDQL());
-    }
-
-    /**
-     * @param object $targetEntity
-     * @param ParameterBag $params
-     * @param string $visibilityClass
-     * @return bool
-     */
-    protected function isFilteredByDefaultValue($targetEntity, ParameterBag $params, $visibilityClass)
-    {
-        if (!$params->get('_filter')) {
-            return false;
-        }
-
-        foreach ($params->get('_filter')['visibility']['value'] as $value) {
-            if ($this->isDefaultValue($targetEntity, $value, $visibilityClass)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * @param string $value
-     *
-     * @param object $targetEntity
-     * @param string $visibilityClass
-     * @return bool
-     */
-    protected function isDefaultValue($targetEntity, $value, $visibilityClass)
-    {
-        /** @var string $defaultValue */
-        $defaultValue = call_user_func([$visibilityClass, 'getDefault'], $targetEntity);
-
-        return $defaultValue === $value;
     }
 
     /**

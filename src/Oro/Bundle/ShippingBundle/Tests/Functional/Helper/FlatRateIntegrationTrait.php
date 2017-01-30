@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Functional\Helper;
 
-use Oro\Bundle\FlatRateBundle\Tests\Functional\DataFixtures\LoadFlatRateIntegration;
+use Oro\Bundle\FlatRateShippingBundle\Tests\Functional\DataFixtures\LoadFlatRateIntegration;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 
 trait FlatRateIntegrationTrait
@@ -21,7 +21,15 @@ trait FlatRateIntegrationTrait
     {
         $channel = $this->getChannelReference();
 
-        return 'flat_rate' . $channel->getId();
+        return 'flat_rate_' . $channel->getId();
+    }
+
+    /**
+     * @return string
+     */
+    protected function getFlatRatePrimaryIdentifier()
+    {
+        return 'primary';
     }
 
     /**

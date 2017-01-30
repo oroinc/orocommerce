@@ -99,8 +99,8 @@ class ProductVisibilityIndexerTest extends \PHPUnit_Framework_TestCase
                     ['value' => BaseVisibilityResolved::VISIBILITY_VISIBLE, 'all_text' => false],
                 'is_visible_by_default' =>
                     ['value' => BaseVisibilityResolved::VISIBILITY_VISIBLE, 'all_text' => false],
-                'visibility_customer_ACCOUNT_ID' => [
-                    ['value' => new PlaceholderValue(1, ['ACCOUNT_ID' => 1]), 'all_text' => false],
+                'visibility_customer_CUSTOMER_ID' => [
+                    ['value' => new PlaceholderValue(1, ['CUSTOMER_ID' => 1]), 'all_text' => false],
                 ]
             ],
             2 => [
@@ -110,8 +110,8 @@ class ProductVisibilityIndexerTest extends \PHPUnit_Framework_TestCase
                     ['value' => BaseVisibilityResolved::VISIBILITY_VISIBLE, 'all_text' => false],
                 'is_visible_by_default' =>
                     ['value' => BaseVisibilityResolved::VISIBILITY_HIDDEN, 'all_text' => false],
-                'visibility_customer_ACCOUNT_ID' => [
-                    ['value' => new PlaceholderValue(1, ['ACCOUNT_ID' => 3]), 'all_text' => false]
+                'visibility_customer_CUSTOMER_ID' => [
+                    ['value' => new PlaceholderValue(1, ['CUSTOMER_ID' => 3]), 'all_text' => false]
                 ]
             ],
             3 => [
@@ -121,8 +121,8 @@ class ProductVisibilityIndexerTest extends \PHPUnit_Framework_TestCase
                     ['value' => BaseVisibilityResolved::VISIBILITY_HIDDEN, 'all_text' => false],
                 'is_visible_by_default' =>
                     ['value' => BaseVisibilityResolved::VISIBILITY_VISIBLE, 'all_text' => false],
-                'visibility_customer_ACCOUNT_ID' => [
-                    ['value' => new PlaceholderValue(1, ['ACCOUNT_ID' => 2]), 'all_text' => false],
+                'visibility_customer_CUSTOMER_ID' => [
+                    ['value' => new PlaceholderValue(1, ['CUSTOMER_ID' => 2]), 'all_text' => false],
                 ]
             ]
         ];

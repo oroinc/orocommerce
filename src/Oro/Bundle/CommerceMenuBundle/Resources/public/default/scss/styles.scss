@@ -1,14 +1,11 @@
+// @theme: default
 @import './components/top-bar';
 @import './components/quick-access/quick-access';
-@import './components/footer_menu';
+@import './components/footer-nav/footer-nav.scss';
 
-@import './components/header-row';
-@import './components/header-row-helper';
-@import './components/main-menu';
-@import './components/nav-trigger';
+@import 'components/header-row';
+@import 'components/main-menu';
+@import 'components/nav-trigger';
 
-@import './components/main-menu-outer/main-menu-outer';
-@import './components/main-menu/main-menu';
-@import 'components/main-menu-columns/main-menu-columns.scss';
-@import 'components/main-menu-column/main-menu-column.scss';
-@import './components/sales-block';
+@import 'components/main-menu-outer/main-menu-outer';
+@import 'components/sales-block';

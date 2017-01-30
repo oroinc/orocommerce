@@ -10,8 +10,8 @@ use Oro\Bundle\WindowsBundle\Entity\AbstractWindowsState;
 
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\CustomerBundle\Entity\Repository\WindowsStateRepository")
- * @ORM\Table(name="oro_acc_windows_state",
- *      indexes={@ORM\Index(name="oro_acc_windows_state_acu_idx", columns={"customer_user_id"})})
+ * @ORM\Table(name="oro_cus_windows_state",
+ *      indexes={@ORM\Index(name="oro_cus_windows_state_acu_idx", columns={"customer_user_id"})})
  */
 class WindowsState extends AbstractWindowsState
 {

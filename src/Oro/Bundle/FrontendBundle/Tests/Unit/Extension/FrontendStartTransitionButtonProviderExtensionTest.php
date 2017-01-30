@@ -1,13 +1,13 @@
 <?php
 
-namespace Oro\Bundle\FrontendBundle\Tests\Unit\Form\Extension;
+namespace Oro\Bundle\FrontendBundle\Tests\Unit\Extension;
 
 use Oro\Bundle\FrontendBundle\Extension\FrontendStartTransitionButtonProviderExtension;
 use Oro\Bundle\FrontendBundle\Provider\ActionCurrentApplicationProvider;
 
-use Oro\Bundle\WorkflowBundle\Tests\Unit\Extension\StartTransitionButtonProviderExtensionTest;
+use Oro\Bundle\WorkflowBundle\Tests\Unit\Extension\StartTransitionButtonProviderExtensionTestCase;
 
-class FrontendStartTransitionButtonProviderExtensionTest extends StartTransitionButtonProviderExtensionTest
+class FrontendStartTransitionButtonProviderExtensionTestTest extends StartTransitionButtonProviderExtensionTestCase
 {
     /**
      * {@inheritdoc}

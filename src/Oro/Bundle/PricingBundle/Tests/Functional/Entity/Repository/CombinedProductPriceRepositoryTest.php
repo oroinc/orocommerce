@@ -96,17 +96,17 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
         return [
             'test getting price lists 1' => [
                 'combinedPriceList' => '1t_2t_3t',
-                'product' => 'product.1',
+                'product' => 'product-1',
                 'expectedExists' => true,
             ],
             'test getting price lists 2' => [
                 'combinedPriceList' => '1t_2t_3t',
-                'product' => 'product.2',
+                'product' => 'product-2',
                 'expectedExists' => true,
             ],
             'test getting price lists 3' => [
                 'combinedPriceList' => '2t_3f_1t',
-                'product' => 'product.7',
+                'product' => 'product-7',
                 'expectedExists' => false,
             ],
         ];
@@ -164,16 +164,16 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
         return [
             [
                 'combinedPriceList' => '1t_2t_3t',
-                'products' => ['product.1'],
+                'products' => ['product-1'],
                 'currency' => 'USD',
             ],
             [
                 'combinedPriceList' => '1t_2t_3t',
-                'products' => ['product.2'],
+                'products' => ['product-2'],
             ],
             [
                 'combinedPriceList' => '1t_2t_3t',
-                'products' => ['product.1', 'product.2'],
+                'products' => ['product-1', 'product-2'],
             ],
         ];
     }

@@ -16,9 +16,17 @@ define(function(require) {
             lensOpacity: 0.22
         },
 
-        _init: function() {
-            this.element.elevateZoom(this.options);
+        _create: function() {
             var self = this;
+            this.element.one('slider:currentImage', function(e, activeImage) {
+                self.element.data('zoom-image', $(activeImage).attr('data-url-zoom'));
+            });
+            this.element.trigger('zoom-widget:created');
+        },
+
+        _init: function() {
+            var self = this;
+            this.element.elevateZoom(this.options);
             this.element.on('slider:activeImage', function(e, activeImage) {
                 $(this).data('zoom-image', $(activeImage).attr('data-url-zoom'));
                 self._destroy();

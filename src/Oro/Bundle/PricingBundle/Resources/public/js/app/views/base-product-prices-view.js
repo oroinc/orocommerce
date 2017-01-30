@@ -10,8 +10,6 @@ define(function(require) {
     var $ = require('jquery');
 
     BaseProductPricesView = BaseView.extend(_.extend({}, ElementsHelper, {
-        autoRender: true,
-
         options: {
             defaultQuantity: 1
         },
@@ -50,11 +48,16 @@ define(function(require) {
 
             $.extend(this, _.pick(options, ['changeQuantity']));
 
+            this.deferredInitializeCheck(options, ['productModel']);
+        },
+
+        deferredInitialize: function(options) {
             this.initModel(options);
             if (!this.model) {
                 return;
             }
             this.initializeElements(options);
+            this.render();
         },
 
         dispose: function() {
@@ -71,6 +74,9 @@ define(function(require) {
 
         initModel: function(options) {
             this.modelAttr = $.extend(true, {}, this.modelAttr, options.modelAttr || {});
+            if (!options.productModel) {
+                this.$el.trigger('options:set:productModel', options);
+            }
             if (options.productModel) {
                 this.model = options.productModel;
             }

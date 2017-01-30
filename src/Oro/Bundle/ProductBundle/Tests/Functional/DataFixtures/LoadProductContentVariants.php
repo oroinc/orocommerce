@@ -24,9 +24,9 @@ class LoadProductContentVariants extends AbstractFixture implements DependentFix
      */
     public function load(ObjectManager $manager)
     {
-        $this->createTestContentVariant($manager, 'test_product_variant.1', $this->getReference('product.1'));
-        $this->createTestContentVariant($manager, 'test_product_variant.2', $this->getReference('product.2'));
-        $this->createTestContentVariant($manager, 'test_product_variant.3', $this->getReference('product.3'));
+        $this->createTestContentVariant($manager, 'test_product_variant.1', $this->getReference('product-1'));
+        $this->createTestContentVariant($manager, 'test_product_variant.2', $this->getReference('product-2'));
+        $this->createTestContentVariant($manager, 'test_product_variant.3', $this->getReference('product-3'));
         $this->createTestContentVariant($manager, 'test_product_variant.4');
         $this->createTestContentVariant($manager, 'test_product_variant.5');
         $this->createTestContentVariant($manager, 'test_product_variant.6');

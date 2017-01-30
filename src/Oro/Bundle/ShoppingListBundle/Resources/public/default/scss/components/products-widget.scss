@@ -15,12 +15,11 @@
     }
 
     .line_item_form_fields__form__row {
-      width: 60%;
+      width: 50%;
 
       + .line_item_form_fields__form__row {
         width: calc(40% - 10px);
         margin-right: 10px;
-        max-width: 50px;
       }
     }
   }
@@ -53,6 +52,20 @@
   .form__col {
     padding-left: 0;
     padding-right: 0;
+
+    .select2-choice {
+      height: 38px;
+    }
+
+    .select2-chosen {
+      position: absolute;
+      width: calc(100% - 16px);
+    }
+  }
+  
+  .add-to-shopping-list-button {
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 

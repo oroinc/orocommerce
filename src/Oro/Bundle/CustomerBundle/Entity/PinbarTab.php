@@ -11,7 +11,7 @@ use Oro\Bundle\NavigationBundle\Entity\AbstractPinbarTab;
  *
  * @ORM\Entity(repositoryClass="Oro\Bundle\CustomerBundle\Entity\Repository\PinbarTabRepository")
  * @ORM\HasLifecycleCallbacks
- * @ORM\Table(name="oro_acc_nav_item_pinbar")
+ * @ORM\Table(name="oro_cus_nav_item_pinbar")
  */
 class PinbarTab extends AbstractPinbarTab
 {

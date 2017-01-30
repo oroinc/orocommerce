@@ -27,28 +27,45 @@ services:
 
     oro_visibility.event_listener.visibility_grid_listener:
         class: 'Oro\Bundle\VisibilityBundle\EventListener\VisibilityGridListener'
+        abstract: true
+        private: true
         arguments:
             - "@doctrine"
             - "@oro_visibility.provider.visibility_choices"
             - "@oro_scope.scope_manager"
-        calls:
-            - [ addSubscribedGridConfig, { datagrid: customer-group-category-visibility-grid, scopeAttr: customerGroup, visibilityEntityClass: '%oro_visibility.entity.customer_group_category_visibility.class%', targetEntityClass: '%oro_catalog.entity.category.class%' }]
-            - [ addSubscribedGridConfig, { datagrid: customer-category-visibility-grid, scopeAttr: customer, visibilityEntityClass: '%oro_visibility.entity.customer_category_visibility.class%', targetEntityClass: '%oro_catalog.entity.category.class%' }]
-            - [ addSubscribedGridConfig, { datagrid: customer-group-product-visibility-grid, scopeAttr: customerGroup, visibilityEntityClass: '%oro_visibility.entity.customer_group_product_visibility.class%', targetEntityClass: '%oro_product.entity.product.class%' }]
-            - [ addSubscribedGridConfig, { datagrid: customer-product-visibility-grid, scopeAttr: customer, visibilityEntityClass: '%oro_visibility.entity.customer_product_visibility.class%', targetEntityClass: '%oro_product.entity.product.class%' }]
+
+    oro_visibility.event_listener.visibility_grid_listener.product.customer:
+        parent: oro_visibility.event_listener.visibility_grid_listener
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.customer-product-visibility-grid, method: onPreBuild }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.customer-product-visibility-grid, method: onDatagridBuildAfter }
+
+    oro_visibility.event_listener.visibility_grid_listener.product.customer_group:
+        parent: oro_visibility.event_listener.visibility_grid_listener
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.customer-group-product-visibility-grid, method: onPreBuild }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.customer-group-product-visibility-grid, method: onDatagridBuildAfter }
+
+    oro_visibility.event_listener.visibility_grid_listener.category.customer:
+        parent: oro_visibility.event_listener.visibility_grid_listener
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.customer-category-visibility-grid, method: onPreBuild }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.customer-category-visibility-grid, method: onDatagridBuildAfter }
+
+    oro_visibility.event_listener.visibility_grid_listener.category.customer_group:
+        parent: oro_visibility.event_listener.visibility_grid_listener
+        tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.customer-group-category-visibility-grid, method: onPreBuild }
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before_query.customer-category-visibility-grid, method: onOrmResultBeforeQuery }
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before_query.customer-group-category-visibility-grid, method: onOrmResultBeforeQuery }
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before.customer-category-visibility-grid, method: onResultBefore }
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before.customer-group-category-visibility-grid, method: onResultBefore }
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.customer-product-visibility-grid, method: onPreBuild }
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.pre.customer-group-product-visibility-grid, method: onPreBuild }
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before.customer-product-visibility-grid, method: onResultBefore }
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before.customer-group-product-visibility-grid, method: onResultBefore }
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before_query.customer-product-visibility-grid, method: onOrmResultBeforeQuery }
-            - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.before_query.customer-group-product-visibility-grid, method: onOrmResultBeforeQuery }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.customer-group-category-visibility-grid, method: onDatagridBuildAfter }
+
+
+    oro_visibility.filter.visibility_type_choice:
+        class: 'Oro\Bundle\VisibilityBundle\Filter\VisibilityChoiceFilter'
+        parent: 'oro_filter.choice_filter'
+        calls:
+            - [ setRegistry, ['@doctrine']]
+        tags:
+            - { name: oro_filter.extension.orm_filter.filter, type: visibility_choice }
 
     oro_visibility.event_listener.product_duplicate_listener:
         class: 'Oro\Bundle\VisibilityBundle\EventListener\ProductDuplicateListener'

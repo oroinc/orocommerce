@@ -13,7 +13,7 @@ use Symfony\Component\Security\Core\SecurityContextInterface;
 class RecordOwnerDataListener
 {
     const OWNER_TYPE_USER = 'FRONTEND_USER';
-    const OWNER_TYPE_ACCOUNT = 'FRONTEND_ACCOUNT';
+    const OWNER_TYPE_ACCOUNT = 'FRONTEND_CUSTOMER';
 
     /** @var ServiceLink */
     protected $securityContextLink;

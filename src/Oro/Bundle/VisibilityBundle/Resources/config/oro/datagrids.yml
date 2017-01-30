@@ -36,12 +36,17 @@ datagrids:
                     type:      string
                     data_name: customer.name
                 visibility:
-                    type: choice
+                    type: visibility_choice
+                    visibilityEntityClass: '%oro_visibility.entity.customer_category_visibility.class%'
+                    targetEntityClass: '%oro_catalog.entity.category.class%'
                     data_name: visibilityAlias.visibility
                     options:
                         field_options:
                             multiple: true
         options:
+            scopeAttr: 'customer'
+            visibilityEntityClass: '%oro_visibility.entity.customer_category_visibility.class%'
+            targetEntityClass: '%oro_catalog.entity.category.class%'
             cellSelection:
                 dataField: id
                 columnName:
@@ -87,12 +92,17 @@ datagrids:
                     type:      string
                     data_name: customerGroup.name
                 visibility:
-                    type: choice
+                    type: visibility_choice
+                    visibilityEntityClass: '%oro_visibility.entity.customer_group_category_visibility.class%'
+                    targetEntityClass: '%oro_catalog.entity.category.class%'
                     data_name: visibilityAlias.visibility
                     options:
                         field_options:
                             multiple: true
         options:
+            scopeAttr: 'customerGroup'
+            visibilityEntityClass: '%oro_visibility.entity.customer_group_category_visibility.class%'
+            targetEntityClass: '%oro_catalog.entity.category.class%'
             cellSelection:
                 dataField: id
                 columnName:
@@ -139,12 +149,17 @@ datagrids:
                     type:      string
                     data_name: customer.name
                 visibility:
-                    type: choice
+                    type: visibility_choice
+                    visibilityEntityClass: '%oro_visibility.entity.customer_product_visibility.class%'
+                    targetEntityClass: '%oro_product.entity.product.class%'
                     data_name: visibilityAlias.visibility
                     options:
                         field_options:
                             multiple: true
         options:
+            scopeAttr: 'customer'
+            visibilityEntityClass: '%oro_visibility.entity.customer_product_visibility.class%'
+            targetEntityClass: '%oro_product.entity.product.class%'
             cellSelection:
                 dataField: id
                 columnName:
@@ -190,12 +205,17 @@ datagrids:
                     type:      string
                     data_name: customerGroup.name
                 visibility:
-                    type: choice
+                    type: visibility_choice
                     data_name: visibilityAlias.visibility
+                    visibilityEntityClass: '%oro_visibility.entity.customer_group_product_visibility.class%'
+                    targetEntityClass: '%oro_product.entity.product.class%'
                     options:
                         field_options:
                             multiple: true
         options:
+            scopeAttr: 'customerGroup'
+            visibilityEntityClass: '%oro_visibility.entity.customer_group_product_visibility.class%'
+            targetEntityClass: '%oro_product.entity.product.class%'
             cellSelection:
                 dataField: id
                 columnName:

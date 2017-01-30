@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller\Frontend;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists;
+use Oro\Bundle\ProductBundle\Controller\Frontend\ProductController;
 use Oro\Bundle\ProductBundle\DataGrid\DataGridThemeHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
@@ -58,12 +59,12 @@ class ProductControllerTest extends WebTestCase
     public function testIndexDatagridViews()
     {
         // default view is DataGridThemeHelper::VIEW_GRID
-        $response = $this->client->requestFrontendGrid('frontend-product-search-grid', [], true);
+        $response = $this->client->requestFrontendGrid(ProductController::GRID_NAME, [], true);
         $result = $this->getJsonResponseContent($response, 200);
         $this->assertArrayHasKey('image', $result['data'][0]);
 
         $response = $this->client->requestFrontendGrid(
-            'frontend-product-search-grid',
+            ProductController::GRID_NAME,
             [
                 'frontend-product-search-grid[row-view]' => DataGridThemeHelper::VIEW_LIST,
             ],
@@ -74,7 +75,7 @@ class ProductControllerTest extends WebTestCase
         $this->assertArrayNotHasKey('image', $result['data'][0]);
 
         $response = $this->client->requestFrontendGrid(
-            'frontend-product-search-grid',
+            ProductController::GRID_NAME,
             [
                 'frontend-product-search-grid[row-view]' => DataGridThemeHelper::VIEW_GRID,
             ],
@@ -85,7 +86,7 @@ class ProductControllerTest extends WebTestCase
         $this->assertArrayHasKey('image', $result['data'][0]);
 
         $response = $this->client->requestFrontendGrid(
-            'frontend-product-search-grid',
+            ProductController::GRID_NAME,
             [
                 'frontend-product-search-grid[row-view]' => DataGridThemeHelper::VIEW_TILES,
             ],
@@ -96,7 +97,7 @@ class ProductControllerTest extends WebTestCase
         $this->assertArrayHasKey('image', $result['data'][0]);
 
         // view saves to session so current view is DataGridThemeHelper::VIEW_TILES
-        $response = $this->client->requestFrontendGrid('frontend-product-search-grid', [], true);
+        $response = $this->client->requestFrontendGrid(ProductController::GRID_NAME, [], true);
         $result = $this->getJsonResponseContent($response, 200);
         $this->assertArrayHasKey('image', $result['data'][0]);
     }

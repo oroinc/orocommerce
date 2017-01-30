@@ -2,3 +2,6 @@ config:
     paths:
         'ororfp/js/app/components/order-line-item-offers': 'bundles/ororfp/js/app/components/order-line-item-offers.js'
         'ororfp/js/app/views/line-items-view': 'bundles/ororfp/js/app/views/line-items-view.js'
+        'ororfp/js/app/views/line-item-view': 'bundles/ororfp/js/app/views/line-item-view.js'
+        'ororfp/js/app/views/line-item-offer-view': 'bundles/ororfp/js/app/views/line-item-offer-view.js'
+        'ororfp/js/app/views/frontend-line-item-view': 'bundles/ororfp/js/app/views/frontend-line-item-view.js'

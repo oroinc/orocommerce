@@ -118,7 +118,6 @@ operations:
         acl_resource: [CREATE, entity:Oro\Bundle\ShoppingListBundle\Entity\LineItem]
         button_options:
             icon: fa-plus
-            page_component_module: oroproduct/js/app/components/product-unit-component
         frontend_options:
             options:
                 modal: false
@@ -128,6 +127,7 @@ operations:
                 allowMinimize: true
                 dblclick: maximize
                 maximizedHeightDecreaseBy: minimize-bar
+                form_page_component_module: oroproduct/js/app/components/product-unit-component
         form_init:
             - '@create_object':
                 class: Oro\Bundle\ShoppingListBundle\Entity\LineItem
@@ -181,7 +181,6 @@ operations:
             icon: fa-briefcase
         preconditions:
             '@and':
-                - '@route_exists': oro_rfp_frontend_request_create
                 - '@service_exists': oro_rfp.form.type.extension.frontend_request_data_storage
                 - '@has_elements': $lineItems
                 - '@rfp_allowed': $lineItems

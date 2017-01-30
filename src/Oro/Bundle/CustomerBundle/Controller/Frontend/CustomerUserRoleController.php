@@ -44,7 +44,7 @@ class CustomerUserRoleController extends Controller
     {
         $isGranted = $role->isPredefined()
             ? $this->getSecurityFacade()->isGranted('oro_customer_frontend_customer_user_role_view')
-            : $this->getSecurityFacade()->isGranted('FRONTEND_ACCOUNT_ROLE_VIEW', $role);
+            : $this->getSecurityFacade()->isGranted('FRONTEND_CUSTOMER_ROLE_VIEW', $role);
 
         if (!$isGranted || !$role->isSelfManaged() || !$role->isPublic()) {
             throw $this->createAccessDeniedException();
@@ -87,7 +87,7 @@ class CustomerUserRoleController extends Controller
     {
         $isGranted = $role->isPredefined()
             ? $this->getSecurityFacade()->isGranted('oro_customer_frontend_customer_user_role_create')
-            : $this->getSecurityFacade()->isGranted('FRONTEND_ACCOUNT_ROLE_UPDATE', $role);
+            : $this->getSecurityFacade()->isGranted('FRONTEND_CUSTOMER_ROLE_UPDATE', $role);
 
         if (!$isGranted || !$role->isSelfManaged() || !$role->isPublic()) {
             throw $this->createAccessDeniedException();
@@ -113,8 +113,11 @@ class CustomerUserRoleController extends Controller
         $handler = $this->get('oro_customer.form.handler.update_customer_user_role_frontend');
         $form = $handler->createForm($role);
 
+        // This is cloned role in case of original role was predefined
+        $customizableRole = $form->getData();
+
         $response = $this->get('oro_form.model.update_handler')->handleUpdate(
-            $form->getData(),
+            $customizableRole,
             $form,
             function (CustomerUserRole $role) {
                 return [
@@ -138,7 +141,8 @@ class CustomerUserRoleController extends Controller
 
         return [
             'data' => [
-                'entity' => $role
+                'entity' => $role,
+                'customizableRole' => $customizableRole
             ]
         ];
     }

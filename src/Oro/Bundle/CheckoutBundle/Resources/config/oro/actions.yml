@@ -10,13 +10,59 @@ operations:
         for_all_entities: false
         label: oro.checkout.grid.delete.label
         preconditions:
-            '@not_blank': $.data
+            '@and':
+                - '@not_blank': $.data
+                - '@equal': [$.data.completed, false]
         datagrids:
             - frontend-checkouts-grid
         replace:
             - applications
             - preconditions
             - datagrids
+        preactions:
+            - '@trans':
+                id: oro.checkout.open_order.label
+                attribute: $.entityLabel
+
+    oro_checkout_frontend_view_order:
+        label: oro.checkout.frontend.order.view.label
+        applications: [commerce]
+        datagrids:
+            - frontend-checkouts-grid
+        order: 20
+        button_options:
+            icon: fa-eye
+        preactions:
+            - '@tree':
+                conditions:
+                    '@equal': [$.data.completed, true]
+                actions:
+                    - '@call_method':
+                        object: $.data.completedData
+                        method: getOrderData
+                        attribute: $.orderData
+                    - '@tree':
+                        conditions:
+                            '@not_empty': $.orderData
+                        actions:
+                            - '@call_service_method':
+                                service: oro_entity.entity_alias_resolver
+                                method: getClassByAlias
+                                method_parameters: [$.orderData.entityAlias]
+                                attribute: $.entityClass
+                            - '@find_entity':
+                                class: $.entityClass
+                                where: $.orderData.entityId
+                                attribute: $.order
+        preconditions:
+            '@and':
+                - '@equal': [$.data.completed, true]
+                - '@not_empty': $.order
+                - '@acl_granted': [VIEW, $.order]
+        actions:
+            - '@redirect':
+                 route: 'oro_order_frontend_view'
+                 route_parameters: {id: $.order.id}
 
     oro_checkout_frontend_quote_submit_to_order:
         label: oro.checkout.frontend.quote.submit_to_order

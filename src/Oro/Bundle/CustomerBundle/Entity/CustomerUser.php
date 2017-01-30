@@ -10,6 +10,7 @@ use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Model\FullNameInterface;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\UserBundle\Entity\AbstractUser;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
@@ -18,28 +19,6 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  * @ORM\Entity()
  * @ORM\Table(name="oro_customer_user")
  * @ORM\HasLifecycleCallbacks()
- * @ORM\AssociationOverrides({
- *      @ORM\AssociationOverride(
- *          name="organizations",
- *          joinTable=@ORM\JoinTable(
- *              name="oro_customer_user_org",
- *              joinColumns={
- *                  @ORM\JoinColumn(
- *                      name="customer_user_id",
- *                      referencedColumnName="id",
- *                      onDelete="CASCADE"
- *                  )
- *              },
- *              inverseJoinColumns={
- *                  @ORM\JoinColumn(
- *                      name="organization_id",
- *                      referencedColumnName="id",
- *                      onDelete="CASCADE"
- *                  )
- *              }
- *          )
- *      )
- * })
  * @Config(
  *      routeName="oro_customer_customer_user_index",
  *      routeView="oro_customer_customer_user_view",
@@ -52,7 +31,7 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
  *              "owner_type"="USER",
  *              "owner_field_name"="owner",
  *              "owner_column_name"="owner_id",
- *              "frontend_owner_type"="FRONTEND_ACCOUNT",
+ *              "frontend_owner_type"="FRONTEND_CUSTOMER",
  *              "frontend_owner_field_name"="customer",
  *              "frontend_owner_column_name"="customer_id",
  *              "organization_field_name"="organization",
@@ -432,7 +411,7 @@ class CustomerUser extends AbstractUser implements FullNameInterface, EmailHolde
     /**
      * {@inheritDoc}
      */
-    public function isCustomerNonLocked()
+    public function isAccountNonLocked()
     {
         return $this->isEnabled() && $this->isConfirmed();
     }

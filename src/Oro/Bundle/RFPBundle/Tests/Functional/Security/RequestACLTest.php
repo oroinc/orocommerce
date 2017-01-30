@@ -51,7 +51,7 @@ class RequestACLTest extends WebTestCase
      */
     public function testRFPPermissions($level, $permissions, $expectedCode)
     {
-        $this->manager->deactivateWorkflow('rfq_frontoffice_default');
+        $this->manager->deactivateWorkflow('b2b_rfq_frontoffice_default');
 
         $this->setRolePermissions($level);
         $this->login(LoadCustomerUsersData::USER_EMAIL, LoadCustomerUsersData::USER_PASSWORD);

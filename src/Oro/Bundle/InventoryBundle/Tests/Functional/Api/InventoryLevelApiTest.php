@@ -80,7 +80,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                     [
                         'method' => 'getSku',
                         'key' => 'product.sku',
-                        'references' => ['product.1']
+                        'references' => ['product-1']
                     ],
                 ],
                 'expectedCount' => 3,
@@ -99,12 +99,12 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                                     'product' => [
                                         'key' => 'id',
                                         'method' => 'getId',
-                                        'reference' => 'product.1',
+                                        'reference' => 'product-1',
                                     ],
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.1',
+                                        'sku' => 'product-1',
                                     ],
                                 ],
                             ],
@@ -116,7 +116,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                                     'product' => [
                                         'key' => 'id',
                                         'method' => 'getId',
-                                        'reference' => 'product_unit_precision.product.1.liter',
+                                        'reference' => 'product_unit_precision.product-1.liter',
                                     ],
                                 ],
                                 'included' => [
@@ -145,12 +145,12 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                                     'product' => [
                                         'key' => 'id',
                                         'method' => 'getId',
-                                        'reference' => 'product.1',
+                                        'reference' => 'product-1',
                                     ],
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.1',
+                                        'sku' => 'product-1',
                                     ],
                                 ],
                             ],
@@ -162,7 +162,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                                     'product' => [
                                         'key' => 'id',
                                         'method' => 'getId',
-                                        'reference' => 'product_unit_precision.product.1.bottle',
+                                        'reference' => 'product_unit_precision.product-1.bottle',
                                     ],
                                 ],
                                 'included' => [
@@ -191,12 +191,12 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                                     'product' => [
                                         'key' => 'id',
                                         'method' => 'getId',
-                                        'reference' => 'product.1',
+                                        'reference' => 'product-1',
                                     ],
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.1',
+                                        'sku' => 'product-1',
                                     ],
                                 ],
                             ],
@@ -208,7 +208,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                                     'product' => [
                                         'key' => 'id',
                                         'method' => 'getId',
-                                        'reference' => 'product_unit_precision.product.1.milliliter',
+                                        'reference' => 'product_unit_precision.product-1.milliliter',
                                     ],
                                 ],
                                 'included' => [
@@ -230,7 +230,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                     [
                         'method' => 'getSku',
                         'key' => 'product.sku',
-                        'references' => ['product.1', 'product.2']
+                        'references' => ['product-1', 'product-2']
                     ],
                 ],
                 'expectedCount' => 6,
@@ -249,12 +249,12 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                                     'product' => [
                                         'key' => 'id',
                                         'method' => 'getId',
-                                        'reference' => 'product.1',
+                                        'reference' => 'product-1',
                                     ],
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.1',
+                                        'sku' => 'product-1',
                                     ],
                                 ],
                             ],
@@ -266,7 +266,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                                     'product' => [
                                         'key' => 'id',
                                         'method' => 'getId',
-                                        'reference' => 'product_unit_precision.product.1.liter',
+                                        'reference' => 'product_unit_precision.product-1.liter',
                                     ],
                                 ],
                                 'included' => [
@@ -295,12 +295,12 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                                     'product' => [
                                         'key' => 'id',
                                         'method' => 'getId',
-                                        'reference' => 'product.1',
+                                        'reference' => 'product-1',
                                     ],
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.1',
+                                        'sku' => 'product-1',
                                     ],
                                 ],
                             ],
@@ -312,7 +312,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                                     'product' => [
                                         'key' => 'id',
                                         'method' => 'getId',
-                                        'reference' => 'product_unit_precision.product.1.bottle',
+                                        'reference' => 'product_unit_precision.product-1.bottle',
                                     ],
                                 ],
                                 'included' => [
@@ -341,12 +341,12 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                                     'product' => [
                                         'key' => 'id',
                                         'method' => 'getId',
-                                        'reference' => 'product.2',
+                                        'reference' => 'product-2',
                                     ],
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.2',
+                                        'sku' => 'product-2',
                                     ],
                                 ],
                             ],
@@ -358,7 +358,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                                     'product' => [
                                         'key' => 'id',
                                         'method' => 'getId',
-                                        'reference' => 'product_unit_precision.product.2.liter',
+                                        'reference' => 'product_unit_precision.product-2.liter',
                                     ],
                                 ],
                                 'included' => [
@@ -387,12 +387,12 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                                     'product' => [
                                         'key' => 'id',
                                         'method' => 'getId',
-                                        'reference' => 'product.2',
+                                        'reference' => 'product-2',
                                     ],
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.2',
+                                        'sku' => 'product-2',
                                     ],
                                 ],
                             ],
@@ -404,7 +404,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                                     'product' => [
                                         'key' => 'id',
                                         'method' => 'getId',
-                                        'reference' => 'product_unit_precision.product.2.bottle',
+                                        'reference' => 'product_unit_precision.product-2.bottle',
                                     ],
                                 ],
                                 'included' => [
@@ -433,12 +433,12 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                                     'product' => [
                                         'key' => 'id',
                                         'method' => 'getId',
-                                        'reference' => 'product.2',
+                                        'reference' => 'product-2',
                                     ],
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.2',
+                                        'sku' => 'product-2',
                                     ],
                                 ],
                             ],
@@ -450,7 +450,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                                     'product' => [
                                         'key' => 'id',
                                         'method' => 'getId',
-                                        'reference' => 'product_unit_precision.product.2.box',
+                                        'reference' => 'product_unit_precision.product-2.box',
                                     ],
                                 ],
                                 'included' => [
@@ -479,12 +479,12 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                                     'product' => [
                                         'key' => 'id',
                                         'method' => 'getId',
-                                        'reference' => 'product.1',
+                                        'reference' => 'product-1',
                                     ],
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.1',
+                                        'sku' => 'product-1',
                                     ],
                                 ],
                             ],
@@ -496,7 +496,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                                     'product' => [
                                         'key' => 'id',
                                         'method' => 'getId',
-                                        'reference' => 'product_unit_precision.product.1.milliliter',
+                                        'reference' => 'product_unit_precision.product-1.milliliter',
                                     ],
                                 ],
                                 'included' => [
@@ -518,7 +518,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                     [
                         'method' => 'getSku',
                         'key' => 'product.sku',
-                        'references' => ['product.1', 'product.2']
+                        'references' => ['product-1', 'product-2']
                     ],
                     [
                         'method' => 'getCode',
@@ -542,12 +542,12 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                                     'product' => [
                                         'key' => 'id',
                                         'method' => 'getId',
-                                        'reference' => 'product.1',
+                                        'reference' => 'product-1',
                                     ],
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.1',
+                                        'sku' => 'product-1',
                                     ],
                                 ],
                             ],
@@ -559,7 +559,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                                     'product' => [
                                         'key' => 'id',
                                         'method' => 'getId',
-                                        'reference' => 'product_unit_precision.product.1.bottle',
+                                        'reference' => 'product_unit_precision.product-1.bottle',
                                     ],
                                 ],
                                 'included' => [
@@ -588,12 +588,12 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                                     'product' => [
                                         'key' => 'id',
                                         'method' => 'getId',
-                                        'reference' => 'product.2',
+                                        'reference' => 'product-2',
                                     ],
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.2',
+                                        'sku' => 'product-2',
                                     ],
                                 ],
                             ],
@@ -605,7 +605,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                                     'product' => [
                                         'key' => 'id',
                                         'method' => 'getId',
-                                        'reference' => 'product_unit_precision.product.2.bottle',
+                                        'reference' => 'product_unit_precision.product-2.bottle',
                                     ],
                                 ],
                                 'included' => [
@@ -627,7 +627,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                     [
                         'method' => 'getSku',
                         'key' => 'product.sku',
-                        'references' => ['product.1', 'product.2']
+                        'references' => ['product-1', 'product-2']
                     ],
                     [
                         'method' => 'getCode',
@@ -651,12 +651,12 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                                     'product' => [
                                         'key' => 'id',
                                         'method' => 'getId',
-                                        'reference' => 'product.1',
+                                        'reference' => 'product-1',
                                     ],
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.1',
+                                        'sku' => 'product-1',
                                     ],
                                 ],
                             ],
@@ -668,7 +668,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                                     'product' => [
                                         'key' => 'id',
                                         'method' => 'getId',
-                                        'reference' => 'product_unit_precision.product.1.liter',
+                                        'reference' => 'product_unit_precision.product-1.liter',
                                     ],
                                 ],
                                 'included' => [
@@ -697,12 +697,12 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                                     'product' => [
                                         'key' => 'id',
                                         'method' => 'getId',
-                                        'reference' => 'product.1',
+                                        'reference' => 'product-1',
                                     ],
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.1',
+                                        'sku' => 'product-1',
                                     ],
                                 ],
                             ],
@@ -714,7 +714,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                                     'product' => [
                                         'key' => 'id',
                                         'method' => 'getId',
-                                        'reference' => 'product_unit_precision.product.1.bottle',
+                                        'reference' => 'product_unit_precision.product-1.bottle',
                                     ],
                                 ],
                                 'included' => [
@@ -743,12 +743,12 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                                     'product' => [
                                         'key' => 'id',
                                         'method' => 'getId',
-                                        'reference' => 'product.2',
+                                        'reference' => 'product-2',
                                     ],
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.2',
+                                        'sku' => 'product-2',
                                     ],
                                 ],
                             ],
@@ -760,7 +760,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                                     'product' => [
                                         'key' => 'id',
                                         'method' => 'getId',
-                                        'reference' => 'product_unit_precision.product.2.liter',
+                                        'reference' => 'product_unit_precision.product-2.liter',
                                     ],
                                 ],
                                 'included' => [
@@ -789,12 +789,12 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                                     'product' => [
                                         'key' => 'id',
                                         'method' => 'getId',
-                                        'reference' => 'product.2',
+                                        'reference' => 'product-2',
                                     ],
                                 ],
                                 'included' => [
                                     'attributes' => [
-                                        'sku' => 'product.2',
+                                        'sku' => 'product-2',
                                     ],
                                 ],
                             ],
@@ -806,7 +806,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                                     'product' => [
                                         'key' => 'id',
                                         'method' => 'getId',
-                                        'reference' => 'product_unit_precision.product.2.bottle',
+                                        'reference' => 'product_unit_precision.product-2.bottle',
                                     ],
                                 ],
                                 'included' => [
@@ -832,7 +832,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
         $inventoryLevel = $this->getReference(
             sprintf(
                 'inventory_level.%s',
-                'product_unit_precision.product.1.liter'
+                'product_unit_precision.product-1.liter'
             )
         );
         $this->assertEquals('10', $inventoryLevel->getQuantity());
@@ -869,7 +869,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
         $data = [
             'data' => [
                 'type' => $entityType,
-                'id' => 'product.1',
+                'id' => 'product-1',
                 'attributes' =>
                     [
                         'quantity' => 1,
@@ -880,7 +880,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
             'PATCH',
             $this->getUrl(
                 'oro_rest_api_patch',
-                ['entity' => $entityType, 'id' => 'product.1']
+                ['entity' => $entityType, 'id' => 'product-1']
             ),
             $data
         );
@@ -902,7 +902,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                     'product' => [
                         'data' => [
                             'type' => $this->getEntityType(Product::class),
-                            'id' => 'product.3',
+                            'id' => 'product-3',
                         ],
                     ],
                     'unit' => [
@@ -921,7 +921,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
         );
 
         $this->assertResponseStatusCodeEquals($response, Response::HTTP_CREATED);
-        $this->assertCreatedInventoryLevel('product.3', 'liter', 100);
+        $this->assertCreatedInventoryLevel('product-3', 'liter', 100);
     }
 
     public function testCreateEntityWithDefaultUnit()
@@ -936,7 +936,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                     'product' => [
                         'data' => [
                             'type' => $this->getEntityType(Product::class),
-                            'id' => 'product.2',
+                            'id' => 'product-2',
                         ],
                     ],
                 ]
@@ -949,7 +949,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
         );
 
         $this->assertResponseStatusCodeEquals($response, Response::HTTP_CREATED);
-        $this->assertCreatedInventoryLevel('product.2', null, 50);
+        $this->assertCreatedInventoryLevel('product-2', null, 50);
     }
 
     public function testDeleteEntity()
@@ -958,7 +958,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
         $inventoryLevel = $this->getReference(
             sprintf(
                 'inventory_level.%s',
-                'product_unit_precision.product.1.bottle'
+                'product_unit_precision.product-1.bottle'
             )
         );
 
@@ -978,7 +978,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
         $inventoryLevel = $this->getReference(
             sprintf(
                 'inventory_level.%s',
-                'product_unit_precision.product.1.liter'
+                'product_unit_precision.product-1.liter'
             )
         );
 

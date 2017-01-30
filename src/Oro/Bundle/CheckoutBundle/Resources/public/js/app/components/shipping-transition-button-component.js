@@ -15,11 +15,16 @@ define(function(require) {
         initialize: function(options) {
             this.defaults.selectors.shippingForm = '[data-content="shipping_method_form"]';
             this.defaults.selectors.shippingMethodTypeSelector = '[name$="shippingMethodType"]';
+            this.defaults.selectors.checkoutRequire = '[data-role="checkout-require"]';
             this.defaults.selectors.shippingMethod = '[name$="[shipping_method]"]';
             this.defaults.selectors.shippingMethodType = '[name$="[shipping_method_type]"]';
 
             ShippingTransitionButtonComponent.__super__.initialize.call(this, options);
-            
+
+            mediator.on('checkout:shipping-method:rendered', this.onShippingMethodRendered, this);
+        },
+
+        onShippingMethodRendered: function() {
             this.getShippingMethodTypeSelector().on('change', $.proxy(this.onShippingMethodTypeChange, this));
             this.initShippingMethod();
         },
@@ -42,7 +47,6 @@ define(function(require) {
                 } else {
                     this.setElementsValue(null, null);
                 }
-
             }
         },
 
@@ -64,7 +68,7 @@ define(function(require) {
          * @param {string} type
          * @param {string} method
          */
-        setElementsValue: function (type, method) {
+        setElementsValue: function(type, method) {
             this.getShippingMethodTypeElement().val(type);
             this.getShippingMethodElement().val(method);
         },
@@ -74,9 +78,9 @@ define(function(require) {
          */
         onShippingMethodTypeChange: function(event) {
             mediator.trigger('checkout:shipping-method:changed');
-            var method_type = $(event.target);
-            var method = method_type.data('shipping-method');
-            this.setElementsValue(method_type.val(), method);
+            var methodType = $(event.target);
+            var method = methodType.data('shipping-method');
+            this.setElementsValue(methodType.val(), method);
         },
 
         /**
@@ -106,7 +110,9 @@ define(function(require) {
          */
         getShippingMethodTypeSelector: function() {
             if (!this.hasOwnProperty('$shippingMethodTypeSelector')) {
-                this.$shippingMethodTypeSelector = this.getShippingForm().find(this.options.selectors.shippingMethodTypeSelector);
+                this.$shippingMethodTypeSelector = this.getShippingForm().find(
+                    this.options.selectors.shippingMethodTypeSelector
+                );
             }
 
             return this.$shippingMethodTypeSelector;
@@ -121,6 +127,17 @@ define(function(require) {
             }
 
             return this.$shippingMethodTypeElement;
+        },
+
+        onFail: function() {
+            this.$el.removeClass('btn--info');
+            this.$el.prop('disabled', true);
+            this.$el.closest(this.defaults.selectors.checkoutContent)
+                .find(this.defaults.selectors.checkoutRequire)
+                .addClass('hidden');
+
+            mediator.trigger('transition:failed');
+            ShippingTransitionButtonComponent.__super__.onFail.call(this);
         },
 
         /**

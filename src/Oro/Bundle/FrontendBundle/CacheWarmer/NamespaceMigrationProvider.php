@@ -33,6 +33,7 @@ class NamespaceMigrationProvider implements NamespaceMigrationProviderInterface
             'Oro\Bundle\VisibilityBundle\Entity\Visibility\Account'
                 => 'Oro\Bundle\VisibilityBundle\Entity\Visibility\Customer',
             'Oro\Bundle\TaxBundle\Entity\AccountTaxCode' => 'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode',
+            'FRONTEND_ACCOUNT' => 'FRONTEND_CUSTOMER'
         ];
 
     /**
