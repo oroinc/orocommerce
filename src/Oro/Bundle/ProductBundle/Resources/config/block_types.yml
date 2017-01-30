@@ -61,11 +61,3 @@ services:
             - [setParent, ['attribute_text']]
         tags:
              - { name: layout.block_type, alias: attribute_product_images }
-
-    oro_catalog.layout.block_type.category_data:
-        parent: oro_layout.block_type.abstract_configurable_container
-        calls:
-            - [setOptionsConfig, [{currentCategory: {required: true}}]]
-            - [setName, ['category_data']]
-        tags:
-             - { name: layout.block_type, alias: category_data }
