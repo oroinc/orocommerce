@@ -4,7 +4,6 @@ namespace Oro\Bundle\InventoryBundle\Inventory;
 
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
-use Oro\Bundle\InventoryBundle\Exception\InsufficientInventoryQuantityException;
 
 class InventoryQuantityManager
 {
