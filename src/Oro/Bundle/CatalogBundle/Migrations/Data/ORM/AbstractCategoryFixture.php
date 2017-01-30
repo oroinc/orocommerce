@@ -74,8 +74,12 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
             $category = new Category();
             $category->addTitle($categoryTitle);
             if (!empty($images[$title])) {
-                $category->setSmallImage($this->getCategoryImage($manager, $images[$title], false));
-                $category->setLargeImage($this->getCategoryImage($manager, $images[$title], true));
+                if (isset($images[$title]['small'])) {
+                    $category->setSmallImage($this->getCategoryImage($manager, $images[$title]['small']));
+                }
+                if (isset($images[$title]['large'])) {
+                    $category->setLargeImage($this->getCategoryImage($manager, $images[$title]['large']));
+                }
             }
 
             $manager->persist($category);
@@ -91,20 +95,15 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
     /**
      * @param ObjectManager $manager
      * @param               $sku
-     * @param               $large
      * @return null
      */
-    protected function getCategoryImage(ObjectManager $manager, $sku, $large)
+    protected function getCategoryImage(ObjectManager $manager, $sku)
     {
         $image   = null;
         $locator = $this->container->get('file_locator');
 
         try {
-            if ($large) {
-                $imagePath = $locator->locate(sprintf('@OroCatalogBundle/Migrations/Data/Demo/ORM/images/%s_large.jpg', $sku));
-            } else {
-                $imagePath = $locator->locate(sprintf('@OroCatalogBundle/Migrations/Data/Demo/ORM/images/%s.jpg', $sku));
-            }
+            $imagePath = $locator->locate(sprintf('@OroCatalogBundle/Migrations/Data/Demo/ORM/images/%s.jpg', $sku));
 
             if (is_array($imagePath)) {
                 $imagePath = current($imagePath);
