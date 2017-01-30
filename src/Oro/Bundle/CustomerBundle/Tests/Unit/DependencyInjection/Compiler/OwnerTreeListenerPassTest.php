@@ -48,7 +48,7 @@ class OwnerTreeListenerPassTest extends \PHPUnit_Framework_TestCase
             ->method('addMethodCall')
             ->with(
                 'addSupportedClass',
-                ['Entity\CustomerUser', ['customer', 'organization'], ['organizations']]
+                ['Entity\CustomerUser', ['customer', 'organization']]
             );
 
         $compilerPass = new OwnerTreeListenerPass();

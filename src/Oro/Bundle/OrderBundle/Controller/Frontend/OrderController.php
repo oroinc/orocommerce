@@ -53,31 +53,6 @@ class OrderController extends AbstractOrderController
     }
 
     /**
-     * Success order
-     *
-     * @Route("/success/{id}", name="oro_order_frontend_success", requirements={"id"="\d+"})
-     * @Layout()
-     * @Acl(
-     *      id="oro_order_view",
-     *      type="entity",
-     *      class="OroOrderBundle:Order",
-     *      permission="EDIT"
-     * )
-     *
-     * @param Order $order
-     *
-     * @return array
-     */
-    public function successAction(Order $order)
-    {
-        return [
-            'data' => [
-                'order' => $order,
-            ],
-        ];
-    }
-
-    /**
      * @return TotalProcessorProvider
      */
     protected function getTotalProcessor()
