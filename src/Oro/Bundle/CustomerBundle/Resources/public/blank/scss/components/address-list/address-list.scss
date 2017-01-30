@@ -1,0 +1,92 @@
+// @theme: blank;
+
+.address-list {
+  display: flex;
+
+  margin-left: 25px;
+  padding-top: 20px;
+
+  flex-direction: row;
+  justify-content: space-between;
+
+  border-top: 1px solid get-color('additional', 'light');
+
+  &__item {
+    position: relative;
+
+    padding-right: 70px;
+  }
+
+  &__primary {
+    display: inline-block;
+
+    padding: 3px 7px;
+
+    border-radius: 5px;
+
+    color: get-color('additional', 'ultra');
+    background-color: get-color('primary', 'main');
+  }
+
+  &__actions {
+    position: absolute;
+    top: 0;
+    right: 0;
+  }
+
+  &__manage {
+    padding: 20px 0;
+  }
+
+  &__manage-link {
+    @extend .link;
+  }
+
+  .no-data {
+    flex-grow: 1;
+  }
+}
+
+.map-address-list {
+  flex-basis: 44%;
+  flex-grow: 1;
+}
+
+.list-item {
+  padding: 20px 15px 20px 20px;
+
+  border-bottom: 1px solid get-color('additional', 'light');
+
+  &.active {
+    background-color: get-color('additional', 'base');
+  }
+}
+
+.map-visual-frame {
+  flex-basis: 54%;
+
+  height: 320px;
+  margin-left: 2%;
+}
+
+.map-visual {
+  height: 320px;
+}
+
+
+@include breakpoint('tablet-small') {
+  .address-list {
+    display: block;
+
+    padding-top: 0;
+    margin-left: 0;
+  }
+
+  .list-item {
+    padding: 15px 10px;
+  }
+
+  .map-visual-frame {
+    margin-left: 0;
+  }
+}

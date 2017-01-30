@@ -61,7 +61,7 @@ oro.customer:
         add: 'Add Address'
         cancel: 'Cancel'
         save: 'Save'
-        manage: 'Manage Addresses'
+        manage: 'Manage Addresses >'
 
     customergroup:
         entity_label: 'Customer Group'
@@ -444,6 +444,7 @@ oro.customer:
             customer_user.user_profile: 'User profile'
             customer_user.my_profile: 'My profile'
             customer_user.address_book: 'Address book'
+            customer_user.default_addresses: 'Default addresses'
 
         customer_user_link.text: '< Back to Customer User List'
         action:
