@@ -172,7 +172,7 @@ class PayPalSettingsType extends AbstractType
         $this->transformWithEncodedValue($builder, 'vendor');
         $this->transformWithEncodedValue($builder, 'partner');
         $this->transformWithEncodedValue($builder, 'user');
-        $this->transformWithEncodedValue($builder, 'password');
+        $this->transformWithEncodedValue($builder, 'password', false);
         $this->transformWithEncodedValue($builder, 'proxyHost');
         $this->transformWithEncodedValue($builder, 'proxyPort');
     }
@@ -200,12 +200,16 @@ class PayPalSettingsType extends AbstractType
     /**
      * @param FormBuilderInterface $builder
      * @param string $field
+     * @param bool $decrypt
      * @throws \InvalidArgumentException
      */
-    protected function transformWithEncodedValue(FormBuilderInterface $builder, $field)
+    protected function transformWithEncodedValue(FormBuilderInterface $builder, $field, $decrypt = true)
     {
         $builder->get($field)->addModelTransformer(new CallbackTransformer(
-            function ($value) {
+            function ($value) use ($decrypt) {
+                if ($decrypt === true) {
+                    return $this->encoder->decryptData($value);
+                }
                 return $value;
             },
             function ($value) {
