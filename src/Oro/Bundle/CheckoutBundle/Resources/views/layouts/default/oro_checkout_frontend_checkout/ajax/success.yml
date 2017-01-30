@@ -1,7 +1,8 @@
 layout:
     actions:
         - '@setBlockTheme':
-            themes: '../templates/widget_checkout.html.twig'
+            themes: '../templates/success.html.twig'
+
         - '@addTree':
             items:
                 head:
@@ -11,7 +12,7 @@ layout:
                     options:
                         value: '=data["title_provider"].getTitle(context["route_name"], params)'
                         params:
-                            '%step_label%': '=data["translator"].getTrans(data["workflowStep"].getLabel(),[],"workflows")'
+                            '%step_label%': '=data["translator"].getTrans("oro.checkout.workflow.success.thank_you.label")'
                 body:
                     blockType: body
                 raw_notification:
@@ -22,12 +23,12 @@ layout:
                         title: ~
                     body:
                         raw_notification: ~
-    imports:
-        -
-            id: oro_checkout_content
-            root: body
-        -
-            id: oro_checkout_sidebar
-            root: body
 
-    conditions: 'context["workflowStepName"]!="order_created"'
+        - '@add':
+            id: success_order
+            parentId: page_content
+            blockType: success_order
+            options:
+                order: '=data["workflowItem"].getData().get("order")'
+
+    conditions: 'context["workflowStepName"]=="order_created"'
