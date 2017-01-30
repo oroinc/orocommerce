@@ -5,7 +5,7 @@ namespace Oro\Bundle\DPDBundle\Method\Factory;
 use Oro\Bundle\DPDBundle\Cache\ZipCodeRulesCache;
 use Oro\Bundle\DPDBundle\Factory\DPDRequestFactory;
 use Oro\Bundle\DPDBundle\Provider\PackageProvider;
-use Oro\Bundle\DPDBundle\Provider\RateTablePriceProvider;
+use Oro\Bundle\DPDBundle\Provider\RateProvider;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
 use Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGeneratorInterface;
@@ -38,9 +38,9 @@ class DPDShippingMethodTypeFactory implements DPDShippingMethodTypeFactoryInterf
     private $packageProvider;
 
     /**
-     * @var RateTablePriceProvider
+     * @var RateProvider
      */
-    private $rateTablePriceProvider;
+    private $rateProvider;
 
     /**
      * @var DPDRequestFactory
@@ -62,7 +62,7 @@ class DPDShippingMethodTypeFactory implements DPDShippingMethodTypeFactoryInterf
      * @param IntegrationMethodIdentifierGeneratorInterface $methodIdentifierGenerator
      * @param DPDTransport                                  $transport
      * @param PackageProvider                               $packageProvider
-     * @param RateTablePriceProvider                        $rateTablePriceProvider
+     * @param RateProvider                                  $rateProvider
      * @param DPDRequestFactory                             $dpdRequestFactory
      * @param ZipCodeRulesCache                             $zipCodeRulesCache
      * @param OrderShippingLineItemConverterInterface       $shippingLineItemConverter
@@ -72,7 +72,7 @@ class DPDShippingMethodTypeFactory implements DPDShippingMethodTypeFactoryInterf
         IntegrationMethodIdentifierGeneratorInterface $methodIdentifierGenerator,
         DPDTransport $transport,
         PackageProvider $packageProvider,
-        RateTablePriceProvider $rateTablePriceProvider,
+        RateProvider $rateProvider,
         DPDRequestFactory $dpdRequestFactory,
         ZipCodeRulesCache $zipCodeRulesCache,
         OrderShippingLineItemConverterInterface $shippingLineItemConverter
@@ -81,7 +81,7 @@ class DPDShippingMethodTypeFactory implements DPDShippingMethodTypeFactoryInterf
         $this->methodIdentifierGenerator = $methodIdentifierGenerator;
         $this->transport = $transport;
         $this->packageProvider = $packageProvider;
-        $this->rateTablePriceProvider = $rateTablePriceProvider;
+        $this->rateProvider = $rateProvider;
         $this->dpdRequestFactory = $dpdRequestFactory;
         $this->zipCodeRulesCache = $zipCodeRulesCache;
         $this->shippingLineItemConverter = $shippingLineItemConverter;
@@ -103,7 +103,7 @@ class DPDShippingMethodTypeFactory implements DPDShippingMethodTypeFactoryInterf
             $this->getSettings($channel),
             $this->transport,
             $this->packageProvider,
-            $this->rateTablePriceProvider,
+            $this->rateProvider,
             $this->dpdRequestFactory,
             $this->zipCodeRulesCache,
             $this->shippingLineItemConverter

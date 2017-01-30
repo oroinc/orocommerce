@@ -7,7 +7,6 @@ use Oro\Bundle\DPDBundle\Method\DPDShippingMethod;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Validator\Constraints\Type;
 
 class DPDShippingMethodOptionsType extends AbstractType
 {
@@ -31,18 +30,17 @@ class DPDShippingMethodOptionsType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $priceOptions = [
-            'scale' => $this->roundingService->getPrecision(),
-            'rounding_mode' => $this->roundingService->getRoundType(),
-            'attr' => ['data-scale' => $this->roundingService->getPrecision()],
-        ];
-
         $builder
-            ->add(DPDShippingMethod::HANDLING_FEE_OPTION, NumberType::class, array_merge([
+            ->add(DPDShippingMethod::HANDLING_FEE_OPTION, NumberType::class, [
+                'required' => true,
                 'label' => 'oro.dpd.form.shipping_method_config_options.handling_fee.label',
-                'tooltip' => 'oro.dpd.form.shipping_method_config_options.handling_fee.tooltip',
-                'constraints' => [new Type(['type' => 'numeric'])],
-            ], $priceOptions));
+                'scale' => $this->roundingService->getPrecision(),
+                'rounding_mode' => $this->roundingService->getRoundType(),
+                'attr' => [
+                    'data-scale' => $this->roundingService->getPrecision(),
+                    'class' => 'method-options-surcharge',
+                ],
+            ]);
     }
 
     /**

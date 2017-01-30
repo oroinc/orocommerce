@@ -13,7 +13,7 @@ use Oro\Bundle\DPDBundle\Model\ZipCodeRulesResponse;
 use Oro\Bundle\DPDBundle\Model\SetOrderResponse;
 use Oro\Bundle\DPDBundle\Provider\DPDTransport as DPDTransportProvider;
 use Oro\Bundle\DPDBundle\Provider\PackageProvider;
-use Oro\Bundle\DPDBundle\Provider\RateTablePriceProvider;
+use Oro\Bundle\DPDBundle\Provider\RateProvider;
 use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
@@ -53,9 +53,9 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
     protected $packageProvider;
 
     /**
-     * @var RateTablePriceProvider
+     * @var RateProvider
      */
-    protected $rateTablePriceProvider;
+    protected $rateProvider;
 
     /**
      * @var DPDRequestFactory
@@ -72,6 +72,9 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
      */
     protected $shippingLineItemConverter;
 
+    /** @var \DateTime */
+    protected $today;
+
     /**
      * @param $identifier
      * @param $label
@@ -80,10 +83,11 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
      * @param DPDSettings                             $transport
      * @param DPDTransportProvider                    $transportProvider
      * @param PackageProvider                         $packageProvider
-     * @param RateTablePriceProvider                  $rateTablePriceProvider
+     * @param RateProvider                            $rateProvider
      * @param DPDRequestFactory                       $dpdRequestFactory
      * @param ZipCodeRulesCache                       $zipCodeRulesCache
      * @param OrderShippingLineItemConverterInterface $shippingLineItemConverter
+     * @param \DateTime                               $today
      */
     public function __construct(
         $identifier,
@@ -93,10 +97,11 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
         DPDSettings $transport,
         DPDTransportProvider $transportProvider,
         PackageProvider $packageProvider,
-        RateTablePriceProvider $rateTablePriceProvider,
+        RateProvider $rateProvider,
         DPDRequestFactory $dpdRequestFactory,
         ZipCodeRulesCache $zipCodeRulesCache,
-        OrderShippingLineItemConverterInterface $shippingLineItemConverter
+        OrderShippingLineItemConverterInterface $shippingLineItemConverter,
+        \DateTime $today = null
     ) {
         $this->identifier = $identifier;
         $this->label = $label;
@@ -105,10 +110,14 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
         $this->transport = $transport;
         $this->transportProvider = $transportProvider;
         $this->packageProvider = $packageProvider;
-        $this->rateTablePriceProvider = $rateTablePriceProvider;
+        $this->rateProvider = $rateProvider;
         $this->dpdRequestFactory = $dpdRequestFactory;
         $this->zipCodeRulesCache = $zipCodeRulesCache;
         $this->shippingLineItemConverter = $shippingLineItemConverter;
+        $this->today = $today;
+        if (is_null($this->today)) {
+            $this->today = new \DateTime('today');
+        }
     }
 
     /**
@@ -153,21 +162,14 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
             return null;
         }
 
-        $price = null;
-        if ($this->transport->getRatePolicy() === DPDSettings::FLAT_RATE_POLICY) {
-            $price = $this->transport->getFlatRatePriceValue();
-        } elseif ($this->transport->getRatePolicy() === DPDSettings::TABLE_RATE_POLICY) {
-            $rate = $this->rateTablePriceProvider->getRateByServiceAndDestination(
-                $this->transport,
-                $this->shippingService,
-                $context->getShippingAddress()
-            );
-            if ($rate !== null) {
-                $price = $rate->getPriceValue();
-            }
-        }
+        $rateValue = $this->rateProvider->getRateValue(
+            $this->transport,
+            $this->shippingService,
+            $context->getShippingAddress(),
+            reset($packageList)->getWeight()
+        );
 
-        if ($price === null) {
+        if ($rateValue === null) {
             return null;
         }
 
@@ -181,7 +183,7 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
             $methodOptions[DPDShippingMethod::HANDLING_FEE_OPTION] +
             $typeOptions[DPDShippingMethod::HANDLING_FEE_OPTION];
 
-        return Price::create((float) $price + (float) $handlingFee, $context->getCurrency());
+        return Price::create((float) $rateValue + (float) $handlingFee, $context->getCurrency());
     }
 
     /**
@@ -246,15 +248,13 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
      *
      * @return int 0 if shipDate is valid pickup day or a number of days to increase shipDate for a possible valid date
      */
-    public function checkShipDate(\DateTime $shipDate)
+    private function checkShipDate(\DateTime $shipDate)
     {
         $zipCodeRulesResponse = $this->fetchZipCodeRules();
 
-        // check if cut-off shipping date is today
-        $today = new \DateTime('today');
         $shipDateMidnight = clone $shipDate;
         $shipDateMidnight->setTime(0, 0, 0);
-        $diff = $today->diff($shipDateMidnight);
+        $diff = $this->today->diff($shipDateMidnight);
         $diffDays = (int) $diff->format('%R%a');
         if ($diffDays === 0) {
             $cutOffDate = \DateTime::createFromFormat(
@@ -289,11 +289,10 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
     /**
      * @return ZipCodeRulesResponse
      */
-    public function fetchZipCodeRules()
+    private function fetchZipCodeRules()
     {
         $zipCodeRulesRequest = $this->dpdRequestFactory->createZipCodeRulesRequest();
-        $cacheKey = $this->zipCodeRulesCache->createKey($this->transport, $zipCodeRulesRequest,
-            $this->getIdentifier());
+        $cacheKey = $this->zipCodeRulesCache->createKey($this->transport, $zipCodeRulesRequest, $this->methodId);
 
         if ($this->zipCodeRulesCache->containsZipCodeRules($cacheKey)) {
             return $this->zipCodeRulesCache->fetchZipCodeRules($cacheKey);

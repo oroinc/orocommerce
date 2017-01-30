@@ -22,8 +22,8 @@ services:
             - '@oro_shipping.provider.measure_units.conversion'
             - '@oro_locale.helper.localization'
 
-    oro_dpd.provider.rate_table_price:
-        class: 'Oro\Bundle\DPDBundle\Provider\RateTablePriceProvider'
+    oro_dpd.provider.rate:
+        class: 'Oro\Bundle\DPDBundle\Provider\RateProvider'
         public: false
         arguments:
             - '@doctrine'
@@ -61,7 +61,7 @@ services:
             - '@oro_dpd.method.identifier_generator.method'
             - '@oro_dpd.provider.transport'
             - '@oro_dpd.provider.package'
-            - '@oro_dpd.provider.rate_table_price'
+            - '@oro_dpd.provider.rate'
             - '@oro_dpd.factory.dpd_request_factory'
             - '@oro_dpd.zip_code_rules_cache'
             - '@oro_order.shipping_line_item.converter_basic'

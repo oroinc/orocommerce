@@ -18,6 +18,7 @@ class DPDShippingMethod implements
 {
     const IDENTIFIER = 'dpd';
     const TRACKING_URL = 'https://tracking.dpd.de/parcelstatus?query=';
+    const TRACKING_REGEX = '/\b 0 [0-9]{13}\b/x';
 
     const HANDLING_FEE_OPTION = 'handling_fee';
 
@@ -128,8 +129,11 @@ class DPDShippingMethod implements
 
     public function getTrackingLink($number)
     {
-        //FIXME: get current locale to localize url
-        return self::TRACKING_URL.$number;
+        if (!preg_match(self::TRACKING_REGEX, $number, $match)) {
+            return null;
+        }
+
+        return self::TRACKING_URL.$match[0];
     }
 
     /**
