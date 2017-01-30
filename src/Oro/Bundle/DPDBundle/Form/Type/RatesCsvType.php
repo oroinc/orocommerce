@@ -12,10 +12,6 @@ class RatesCsvType extends AbstractType
 {
     const NAME = 'oro_dpd_rates_csv';
 
-    public function __construct()
-    {
-    }
-
     /**
      * @param FormView      $view
      * @param FormInterface $form

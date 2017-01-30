@@ -509,7 +509,7 @@ class DPDTransport extends Transport
      *
      * @return $this
      */
-    public function setInvalidateCacheAt(\DateTime $invalidateCacheAt)
+    public function setInvalidateCacheAt(\DateTime $invalidateCacheAt = null)
     {
         $this->invalidateCacheAt = $invalidateCacheAt;
 
