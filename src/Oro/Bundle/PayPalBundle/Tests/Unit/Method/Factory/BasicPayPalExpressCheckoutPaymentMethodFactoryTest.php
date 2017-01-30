@@ -9,39 +9,45 @@ use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\Factory\BasicPayPalExpressCheckoutPaymentMethodFactory;
 use Oro\Bundle\PayPalBundle\Method\PayPalExpressCheckoutPaymentMethod;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Gateway;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\Routing\RouterInterface;
 
 class BasicPayPalExpressCheckoutPaymentMethodFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var Gateway
+     * @var BasicPayPalExpressCheckoutPaymentMethodFactory
+     */
+    private $factory;
+
+    /**
+     * @var Gateway|\PHPUnit_Framework_MockObject_MockObject
      */
     private $gateway;
 
     /**
-     * @var RouterInterface
+     * @var RouterInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $router;
 
     /**
-     * @var DoctrineHelper
+     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
      */
     private $doctrineHelper;
 
     /**
-     * @var ExtractOptionsProvider
+     * @var ExtractOptionsProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     private $optionsProvider;
 
     /**
-     * @var SurchargeProvider
+     * @var SurchargeProvider|\PHPUnit_Framework_MockObject_MockObject
      */
     private $surchargeProvider;
 
     /**
-     * @var BasicPayPalExpressCheckoutPaymentMethodFactory
+     * @var PropertyAccessor|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $factory;
+    private $propertyAccessor;
 
     protected function setUp()
     {
@@ -50,12 +56,15 @@ class BasicPayPalExpressCheckoutPaymentMethodFactoryTest extends \PHPUnit_Framew
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->optionsProvider = $this->createMock(ExtractOptionsProvider::class);
         $this->surchargeProvider = $this->createMock(SurchargeProvider::class);
+        $this->propertyAccessor = $this->createMock(PropertyAccessor::class);
+
         $this->factory = new BasicPayPalExpressCheckoutPaymentMethodFactory(
             $this->gateway,
             $this->router,
             $this->doctrineHelper,
             $this->optionsProvider,
-            $this->surchargeProvider
+            $this->surchargeProvider,
+            $this->propertyAccessor
         );
     }
 
@@ -70,7 +79,8 @@ class BasicPayPalExpressCheckoutPaymentMethodFactoryTest extends \PHPUnit_Framew
             $this->router,
             $this->doctrineHelper,
             $this->optionsProvider,
-            $this->surchargeProvider
+            $this->surchargeProvider,
+            $this->propertyAccessor
         );
 
         $this->assertEquals($method, $this->factory->create($config));

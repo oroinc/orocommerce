@@ -96,10 +96,16 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
         ];
 
         $this->encoder
-            ->expects($this->once())
+            ->expects(static::any())
             ->method('encryptData')
-            ->with($submitData['password'])
-            ->willReturn($submitData['password']);
+            ->willReturnMap([
+                [$submitData['vendor'], $submitData['vendor']],
+                [$submitData['partner'], $submitData['partner']],
+                [$submitData['user'], $submitData['user']],
+                [$submitData['password'], $submitData['password']],
+                [$submitData['proxyHost'], $submitData['proxyHost']],
+                [$submitData['proxyPort'], $submitData['proxyPort']],
+            ]);
 
         $payPalSettings = new PayPalSettings();
 
@@ -107,8 +113,8 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
 
         $form->submit($submitData);
 
-        $this->assertTrue($form->isValid());
-        $this->assertEquals($payPalSettings, $form->getData());
+        static::assertTrue($form->isValid());
+        static::assertEquals($payPalSettings, $form->getData());
     }
 
     public function testConfigureOptions()

@@ -276,7 +276,6 @@ class LoadAddressBookUserData extends AbstractFixture implements ContainerAwareI
                 ->setFirstName($item['firstname'])
                 ->setLastName($item['lastname'])
                 ->setConfirmed(true)
-                ->addOrganization($organization)
                 ->setOrganization($organization)
                 ->addRole($this->getReference($item['role']))
                 ->setSalt('')

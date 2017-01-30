@@ -63,8 +63,6 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
             - Date: ~
         customer:
             - NotBlank: ~
-        organization:
-            - NotBlank: ~
         addresses:
             - Oro\Bundle\FormBundle\Validator\Constraints\ContainsPrimary:
                 message: One of the addresses must be set as primary.

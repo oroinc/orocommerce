@@ -7,7 +7,6 @@ use Oro\Bundle\PaymentBundle\Event\CallbackNotifyEvent;
 use Oro\Bundle\PaymentBundle\Event\CallbackReturnEvent;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
-use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
 use Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowListener;
 use Oro\Bundle\PayPalBundle\PayPal\Payflow\Response\ResponseStatusMap;
 use Psr\Log\LoggerInterface;
@@ -22,10 +21,10 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
     /** @var Session|\PHPUnit_Framework_MockObject_MockObject */
     protected $session;
 
-    /** @var PaymentMethodProvidersRegistryInterface|\PHPUnit_Framework_MockObject_MockObject */
-    protected $paymentMethodRegistry;
+    /** @var PaymentMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $paymentMethodProvider;
 
-    /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject $dispatcher */
+    /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $logger;
 
     protected function setUp()
@@ -33,20 +32,11 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
         $this->session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
             ->disableOriginalConstructor()
             ->getMock();
-
-        $this->paymentMethodRegistry = $this->getMockBuilder(PaymentMethodProvidersRegistryInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
         $this->logger = $this->createMock('Psr\Log\LoggerInterface');
 
-        $this->listener = new PayflowListener($this->session, $this->paymentMethodRegistry);
+        $this->listener = new PayflowListener($this->session, $this->paymentMethodProvider);
         $this->listener->setLogger($this->logger);
-    }
-
-    protected function tearDown()
-    {
-        unset($this->listener, $this->session, $this->logger, $this->paymentMethodRegistry);
     }
 
     public function testOnNotify()
@@ -58,23 +48,21 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
             ->setResponse(['existing' => 'response']);
 
         $paymentMethod = $this->createMock(PaymentMethodInterface::class);
-        $paymentMethod->expects(static::once())
+        $paymentMethod
+            ->expects(static::once())
             ->method('execute')
             ->with('complete', $paymentTransaction);
 
-        $paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
-        $paymentMethodProvider->expects(static::any())
+        $this->paymentMethodProvider
+            ->expects(static::once())
             ->method('hasPaymentMethod')
             ->with('payment_method')
             ->willReturn(true);
-        $paymentMethodProvider->expects(static::any())
+        $this->paymentMethodProvider
+            ->expects(static::once())
             ->method('getPaymentMethod')
             ->with('payment_method')
             ->willReturn($paymentMethod);
-
-        $this->paymentMethodRegistry->expects(static::once())
-            ->method('getPaymentMethodProviders')
-            ->willReturn([$paymentMethodProvider]);
 
         $event = new CallbackNotifyEvent(['RESULT' => ResponseStatusMap::APPROVED]);
         $event->setPaymentTransaction($paymentTransaction);
@@ -102,19 +90,14 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
             ->method('execute')
             ->willThrowException(new \InvalidArgumentException());
 
-        $paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
-        $paymentMethodProvider->expects(static::any())
+        $this->paymentMethodProvider->expects(static::any())
             ->method('hasPaymentMethod')
             ->with('payment_method')
             ->willReturn(true);
-        $paymentMethodProvider->expects(static::any())
+        $this->paymentMethodProvider->expects(static::any())
             ->method('getPaymentMethod')
             ->with('payment_method')
             ->willReturn($paymentMethod);
-
-        $this->paymentMethodRegistry->expects(static::once())
-            ->method('getPaymentMethodProviders')
-            ->willReturn([$paymentMethodProvider]);
 
         $event = new CallbackNotifyEvent(['RESULT' => ResponseStatusMap::APPROVED]);
         $event->setPaymentTransaction($paymentTransaction);
@@ -132,6 +115,27 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(Response::HTTP_FORBIDDEN, $event->getResponse()->getStatusCode());
     }
 
+    public function testOnNotifyWithWrongTransaction()
+    {
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction
+            ->setPaymentMethod('payment_method');
+
+        $this->paymentMethodProvider->expects(static::any())
+            ->method('hasPaymentMethod')
+            ->with('payment_method')
+            ->willReturn(false);
+
+        $this->paymentMethodProvider->expects(static::never())
+            ->method('getPaymentMethod')
+            ->with('payment_method');
+
+        $event = new CallbackNotifyEvent(['RESULT' => ResponseStatusMap::APPROVED]);
+        $event->setPaymentTransaction($paymentTransaction);
+
+        $this->listener->onNotify($event);
+    }
+
     public function testOnNotifyTransactionWithReference()
     {
         $paymentTransaction = new PaymentTransaction();
@@ -139,9 +143,6 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
             ->setPaymentMethod('payment_method')
             ->setAction('action')
             ->setReference('reference');
-
-        $this->paymentMethodRegistry->expects($this->never())
-            ->method($this->anything());
 
         $event = new CallbackNotifyEvent(['RESULT' => ResponseStatusMap::APPROVED]);
         $event->setPaymentTransaction($paymentTransaction);
@@ -154,9 +155,6 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnNotifyWithoutTransaction()
     {
-        $this->paymentMethodRegistry->expects($this->never())
-            ->method($this->anything());
-
         $event = new CallbackNotifyEvent(['RESULT' => ResponseStatusMap::APPROVED]);
 
         $this->assertEquals(Response::HTTP_FORBIDDEN, $event->getResponse()->getStatusCode());
@@ -167,6 +165,29 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnError()
     {
         $event = new CallbackReturnEvent([]);
+
+        $this->session->expects($this->never())->method($this->anything());
+
+        $this->listener->onError($event);
+    }
+
+    public function testOnErrorWithWrongTransaction()
+    {
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction
+            ->setPaymentMethod('payment_method');
+
+        $this->paymentMethodProvider->expects(static::any())
+            ->method('hasPaymentMethod')
+            ->with('payment_method')
+            ->willReturn(false);
+
+        $this->paymentMethodProvider->expects(static::never())
+            ->method('getPaymentMethod')
+            ->with('payment_method');
+
+        $event = new CallbackNotifyEvent(['RESULT' => ResponseStatusMap::APPROVED]);
+        $event->setPaymentTransaction($paymentTransaction);
 
         $this->session->expects($this->never())->method($this->anything());
 
@@ -184,7 +205,17 @@ class PayflowListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnErrorTokenExpired()
     {
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction
+            ->setPaymentMethod('payment_method');
+
+        $this->paymentMethodProvider->expects(static::any())
+            ->method('hasPaymentMethod')
+            ->with('payment_method')
+            ->willReturn(true);
+
         $event = new CallbackReturnEvent(['RESULT' => ResponseStatusMap::SECURE_TOKEN_EXPIRED]);
+        $event->setPaymentTransaction($paymentTransaction);
 
         $flashBag = $this->createMock('Symfony\Component\HttpFoundation\Session\Flash\FlashBagInterface');
         $flashBag->expects($this->once())

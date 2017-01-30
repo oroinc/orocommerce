@@ -12,7 +12,7 @@ class PaymentTermViewProvider
     /**
      * @var PaymentMethodViewProvidersRegistryInterface
      */
-    protected $paymentMethodViewRegistry;
+    protected $paymentMethodViewProvidersRegistry;
 
     /**
      * @var PaymentMethodProviderInterface
@@ -20,14 +20,14 @@ class PaymentTermViewProvider
     private $paymentMethodProvider;
 
     /**
-     * @param PaymentMethodViewProvidersRegistryInterface $paymentMethodViewRegistry
+     * @param PaymentMethodViewProvidersRegistryInterface $paymentMethodViewProvidersRegistry
      * @param PaymentMethodProviderInterface $paymentMethodProvider
      */
     public function __construct(
-        PaymentMethodViewProvidersRegistryInterface $paymentMethodViewRegistry,
+        PaymentMethodViewProvidersRegistryInterface $paymentMethodViewProvidersRegistry,
         PaymentMethodProviderInterface $paymentMethodProvider
     ) {
-        $this->paymentMethodViewRegistry = $paymentMethodViewRegistry;
+        $this->paymentMethodViewProvidersRegistry = $paymentMethodViewProvidersRegistry;
         $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
@@ -48,7 +48,7 @@ class PaymentTermViewProvider
                 return null;
             }
 
-            $views = $this->paymentMethodViewRegistry->getPaymentMethodViews($paymentMethods);
+            $views = $this->paymentMethodViewProvidersRegistry->getPaymentMethodViews($paymentMethods);
         } catch (\InvalidArgumentException $e) {
             return null;
         }
@@ -67,7 +67,6 @@ class PaymentTermViewProvider
      */
     protected function formatPaymentViews($views, PaymentContextInterface $context)
     {
-
         $paymentMethodViews = [];
         foreach ($views as $view) {
             $paymentMethodViews[$view->getPaymentMethodIdentifier()] = [

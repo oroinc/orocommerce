@@ -133,10 +133,12 @@ class CheckoutRepository extends EntityRepository
             ->where(
                 $qb->expr()->eq('c.customerUser', ':customerUser'),
                 $qb->expr()->eq('c.deleted', ':deleted'),
-                $qb->expr()->eq('s.deleted', ':deleted')
+                $qb->expr()->eq('s.deleted', ':deleted'),
+                $qb->expr()->eq('c.completed', ':completed')
             )
             ->setParameter('customerUser', $customerUser)
-            ->setParameter('deleted', false, Type::BOOLEAN);
+            ->setParameter('deleted', false, Type::BOOLEAN)
+            ->setParameter('completed', false, Type::BOOLEAN);
 
         foreach ($sourceCriteria as $field => $value) {
             $qb->andWhere($qb->expr()->eq('s.' . $field, ':' . $field))

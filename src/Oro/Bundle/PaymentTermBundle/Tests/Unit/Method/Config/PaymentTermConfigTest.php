@@ -25,32 +25,16 @@ class PaymentTermConfigTest extends AbstractPaymentSystemConfigTestCase
         return 'payment_term_';
     }
 
+    public function testGetPaymentMethodIdentifier()
+    {
+        $this->assertSame('payment_term', $this->config->getPaymentMethodIdentifier());
+    }
+
     /**
      * {@inheritdoc}
      */
     protected function getExtensionAlias()
     {
         return OroPaymentTermExtension::ALIAS;
-    }
-
-    public function testGetLabel()
-    {
-        $returnValue = 'test label';
-        $this->setConfig($this->once(), $this->getConfigPrefix() . 'label', $returnValue);
-        $this->assertSame($returnValue, $this->config->getLabel());
-    }
-
-    public function testGetShortLabel()
-    {
-        $returnValue = 'test short label';
-        $this->setConfig($this->once(), $this->getConfigPrefix() . 'short_label', $returnValue);
-        $this->assertSame($this->getConfigPrefix() . 'short_label', $this->config->getShortLabel());
-    }
-
-    public function testIsRequireCvvEntryEnabled()
-    {
-        $returnValue = true;
-        $this->setConfig($this->once(), $this->getConfigPrefix() . 'require_cvv', $returnValue);
-        $this->assertSame($returnValue, $this->config->isRequireCvvEntryEnabled());
     }
 }
