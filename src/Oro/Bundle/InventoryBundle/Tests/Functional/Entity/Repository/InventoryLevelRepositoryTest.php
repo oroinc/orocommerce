@@ -40,7 +40,7 @@ class InventoryLevelRepositoryTest extends WebTestCase
         $inventoryLevel = $this->inventoryLevelRepo->getLevelByProductAndProductUnit($product, $productUnit);
         $this->assertInstanceOf(InventoryLevel::class, $inventoryLevel);
         $this->assertEquals(LoadInventoryLevels::PRECISION_LITER_QTY_10, $inventoryLevel->getQuantity());
-        
+
         /** @var Product $productReference */
         $product = $this->getReference('product-1');
         /** @var ProductUnit $unitReference */
