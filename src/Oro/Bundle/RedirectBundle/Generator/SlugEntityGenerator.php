@@ -21,16 +21,21 @@ class SlugEntityGenerator
 
     /**
      * @param RoutingInformationProviderInterface $routingInformationProvider
+     * @param RedirectGenerator $redirectGenerator
      */
-    public function __construct(RoutingInformationProviderInterface $routingInformationProvider)
-    {
+    public function __construct(
+        RoutingInformationProviderInterface $routingInformationProvider,
+        RedirectGenerator $redirectGenerator
+    ) {
         $this->routingInformationProvider = $routingInformationProvider;
+        $this->redirectGenerator = $redirectGenerator;
     }
 
     /**
      * @param SluggableInterface $entity
+     * @param bool $generateRedirects
      */
-    public function generate(SluggableInterface $entity)
+    public function generate(SluggableInterface $entity, $generateRedirects = false)
     {
         $slugUrls = $this->getSlugUrls($entity);
 
@@ -40,11 +45,19 @@ class SlugEntityGenerator
             if ($slugUrls->containsKey($localizationId)) {
                 /** @var SlugUrl $slugUrl */
                 $slugUrl = $slugUrls->get($localizationId);
-                $slug->setUrl($slugUrl->getUrl());
+
+                $previousSlugUrl = $slug->getUrl();
+                $updatedSlug = $slugUrl->getUrl();
+                $slug->setUrl($updatedSlug);
+
+                if ($generateRedirects) {
+                    $this->redirectGenerator->generate($previousSlugUrl, $slug);
+                }
             } else {
                 $toRemove[] = $slug;
             }
         }
+
         foreach ($toRemove as $slugToRemove) {
             $entity->removeSlug($slugToRemove);
         }

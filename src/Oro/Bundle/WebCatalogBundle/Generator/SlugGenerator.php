@@ -8,6 +8,7 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Generator\DTO\SlugUrl;
+use Oro\Bundle\RedirectBundle\Generator\RedirectGenerator;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
@@ -23,17 +24,27 @@ class SlugGenerator
     protected $contentVariantTypeRegistry;
 
     /**
-     * @param ContentVariantTypeRegistry $contentVariantTypeRegistry
+     * @var RedirectGenerator
      */
-    public function __construct(ContentVariantTypeRegistry $contentVariantTypeRegistry)
-    {
+    protected $redirectGenerator;
+
+    /**
+     * @param ContentVariantTypeRegistry $contentVariantTypeRegistry
+     * @param RedirectGenerator $redirectGenerator
+     */
+    public function __construct(
+        ContentVariantTypeRegistry $contentVariantTypeRegistry,
+        RedirectGenerator $redirectGenerator
+    ) {
         $this->contentVariantTypeRegistry = $contentVariantTypeRegistry;
+        $this->redirectGenerator = $redirectGenerator;
     }
 
     /**
      * @param ContentNode $contentNode
+     * @param bool $generateRedirects
      */
-    public function generate(ContentNode $contentNode)
+    public function generate(ContentNode $contentNode, $generateRedirects = false)
     {
         if ($contentNode->getParentNode()) {
             $slugUrls = $this->prepareSlugUrls($contentNode);
@@ -43,7 +54,7 @@ class SlugGenerator
         }
 
         $this->updateLocalizedUrls($contentNode, $slugUrls);
-        $this->bindSlugs($contentNode, $slugUrls);
+        $this->bindSlugs($contentNode, $slugUrls, $generateRedirects);
 
         if (!$contentNode->getChildNodes()->isEmpty()) {
             foreach ($contentNode->getChildNodes() as $childNode) {
@@ -55,8 +66,9 @@ class SlugGenerator
     /**
      * @param ContentNode $contentNode
      * @param SlugUrl[]|Collection $slugUrls
+     * @param bool $generateRedirects
      */
-    protected function bindSlugs(ContentNode $contentNode, Collection $slugUrls)
+    protected function bindSlugs(ContentNode $contentNode, Collection $slugUrls, $generateRedirects = false)
     {
         foreach ($contentNode->getContentVariants() as $contentVariant) {
             $contentVariantType = $this->contentVariantTypeRegistry->getContentVariantType($contentVariant->getType());
@@ -67,14 +79,21 @@ class SlugGenerator
             foreach ($contentVariant->getSlugs() as $slug) {
                 $localeId = (int)$this->getLocaleId($slug->getLocalization());
                 if ($slugUrls->containsKey($localeId)) {
+                    $previousSlugUrl = $slug->getUrl();
+
                     /** @var SlugUrl $slugUrl */
                     $slugUrl = $slugUrls->get($localeId);
                     $slug->resetScopes();
                     $this->fillSlug($slug, $slugUrl, $routeData, $scopes);
+
+                    if ($generateRedirects) {
+                        $this->redirectGenerator->generate($previousSlugUrl, $slug);
+                    }
                 } else {
                     $toRemove[] = $slug;
                 }
             }
+
             foreach ($toRemove as $slugToRemove) {
                 $contentVariant->removeSlug($slugToRemove);
             }

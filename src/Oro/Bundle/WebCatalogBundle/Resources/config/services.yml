@@ -150,6 +150,7 @@ services:
         class: Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator
         arguments:
             - '@oro_web_catalog.content_variant_type.registry'
+            - '@oro_redirect.generator.redirect'
 
     oro_web_catalog.generator.slug_generator.link:
         tags:

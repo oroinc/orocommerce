@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Generator;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Bundle\RedirectBundle\Generator\RedirectGenerator;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
@@ -24,6 +25,11 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
     protected $contentVariantTypeRegistry;
 
     /**
+     * @var RedirectGenerator|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $redirectGenerator;
+
+    /**
      * @var SlugGenerator
      */
     protected $slugGenerator;
@@ -31,7 +37,11 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->contentVariantTypeRegistry = $this->createMock(ContentVariantTypeRegistry::class);
-        $this->slugGenerator = new SlugGenerator($this->contentVariantTypeRegistry);
+        $this->redirectGenerator = $this->getMockBuilder(RedirectGenerator::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->slugGenerator = new SlugGenerator($this->contentVariantTypeRegistry, $this->redirectGenerator);
     }
 
     public function testGenerateForRoot()
@@ -253,6 +263,63 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->contentVariantTypeRegistry->expects($this->once())
             ->method('getContentVariantType')
             ->willReturn($contentVariantType);
+
+        $this->redirectGenerator->expects($this->any())
+            ->method('generate');
+
+        $this->slugGenerator->generate($contentNode);
+
+        /** @var ContentVariant $actualContentVariant */
+        $actualContentVariant = $contentNode->getContentVariants()->first();
+        $actualSlugs = $actualContentVariant->getSlugs();
+
+        $this->assertCount(1, $actualSlugs);
+        $expectedSlugs = [
+            (new Slug())->setUrl(SlugGenerator::ROOT_URL)
+                ->setRouteName($routeId)
+                ->setRouteParameters($routeParameters)
+                ->addScope($scope)
+        ];
+
+        $expectedUrls = [(new LocalizedFallbackValue())->setText(SlugGenerator::ROOT_URL)];
+        foreach ($contentNode->getLocalizedUrls() as $url) {
+            $this->assertContains($url, $expectedUrls, '', false, false);
+        }
+
+        foreach ($actualSlugs as $slug) {
+            $this->assertContains($slug, $expectedSlugs, '', false, false);
+        }
+    }
+
+    public function testGenerateWithExistingSlugsWithoutGenerateRedirects()
+    {
+        $routeId = 'route_id';
+        $routeParameters = [];
+        $routData = new RouteData($routeId, $routeParameters);
+        $scope = new Scope();
+
+        $contentVariantType = $this->createMock(ContentVariantTypeInterface::class);
+        $contentVariantType->expects($this->once())
+            ->method('getRouteData')
+            ->willReturn($routData);
+
+        $existingSlug = new Slug();
+        $existingSlug->setUrl(SlugGenerator::ROOT_URL);
+
+        $contentVariant = new ContentVariant();
+        $contentVariant->setType('test_type1');
+        $contentVariant->addScope($scope);
+        $contentVariant->addSlug($existingSlug);
+
+        $contentNode = new ContentNode();
+        $contentNode->addContentVariant($contentVariant);
+
+        $this->contentVariantTypeRegistry->expects($this->once())
+            ->method('getContentVariantType')
+            ->willReturn($contentVariantType);
+
+        $this->redirectGenerator->expects($this->never())
+            ->method('generate');
 
         $this->slugGenerator->generate($contentNode);
 

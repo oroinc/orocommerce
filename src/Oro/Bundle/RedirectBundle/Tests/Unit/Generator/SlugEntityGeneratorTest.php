@@ -6,6 +6,7 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
+use Oro\Bundle\RedirectBundle\Generator\RedirectGenerator;
 use Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator;
 use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProviderInterface;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Entity\SluggableEntityStub;
@@ -22,6 +23,11 @@ class SlugEntityGeneratorTest extends \PHPUnit_Framework_TestCase
     protected $routingInformationProvider;
 
     /**
+     * @var RedirectGenerator|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $redirectGenerator;
+
+    /**
      * @var SlugEntityGenerator
      */
     protected $generator;
@@ -29,7 +35,11 @@ class SlugEntityGeneratorTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->routingInformationProvider = $this->createMock(RoutingInformationProviderInterface::class);
-        $this->generator = new SlugEntityGenerator($this->routingInformationProvider);
+        $this->redirectGenerator = $this->getMockBuilder(RedirectGenerator::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->generator = new SlugEntityGenerator($this->routingInformationProvider, $this->redirectGenerator);
     }
 
     /**
@@ -151,5 +161,51 @@ class SlugEntityGeneratorTest extends \PHPUnit_Framework_TestCase
                     )
             ],
         ];
+    }
+
+    public function testGenerateWithRedirects()
+    {
+        $localization = $this->getEntity(Localization::class, ['id' => 1]);
+
+        $valueOne = new LocalizedFallbackValue();
+        $valueOne->setString('test1');
+        $valueTwo = new LocalizedFallbackValue();
+        $valueTwo->setString('test2');
+        $valueTwo->setLocalization($localization);
+
+        $defaultSlug = (new Slug())
+            ->setUrl('/test/test1')
+            ->setRouteName('some_route')
+            ->setRouteParameters(['id' => 42]);
+        $slugTwo = (new Slug())
+            ->setUrl('/test/test2')
+            ->setLocalization($localization)
+            ->setRouteName('some_route')
+            ->setRouteParameters(['id' => 42]);
+
+        $entity = new SluggableEntityStub();
+        $entity->addSlugPrototype($valueOne)
+            ->addSlugPrototype($valueTwo)
+            ->addSlug($defaultSlug);
+
+        $expected = new SluggableEntityStub();
+        $expected->addSlugPrototype($valueOne)
+            ->addSlugPrototype($valueTwo)
+            ->addSlug($defaultSlug)
+            ->addSlug($slugTwo);
+
+        $this->routingInformationProvider->expects($this->any())
+            ->method('getRouteData')
+            ->willReturn(new RouteData('some_route', ['id' => 42]));
+
+        $this->routingInformationProvider->expects($this->any())
+            ->method('getUrlPrefix')
+            ->willReturn('/test');
+
+        $this->redirectGenerator->expects($this->once())
+            ->method('generate');
+
+        $this->generator->generate($entity, true);
+        $this->assertEquals($expected, $entity);
     }
 }

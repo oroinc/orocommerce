@@ -70,10 +70,25 @@ services:
             - { name: doctrine.event_listener, event: onFlush }
             - { name: doctrine.event_listener, event: postPersist }
 
+    oro_redirect.event_listener.slug_change:
+        class: Oro\Bundle\RedirectBundle\EventListener\SlugEntityListener
+        public: false
+        arguments:
+            - '@doctrine'
+            - '@oro_message_queue.client.message_producer'
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+
     oro_redirect.generator.slug_entity:
         class: Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator
         arguments:
             - '@oro_redirect.provider.routing_information_provider'
+            - '@oro_redirect.generator.redirect'
+
+    oro_redirect.generator.redirect:
+        class: Oro\Bundle\RedirectBundle\Generator\RedirectGenerator
+        arguments:
+            - '@doctrine'
 
     oro_redirect.direct_url_message_factory:
         class: Oro\Bundle\RedirectBundle\Model\DirectUrlMessageFactory
@@ -107,6 +122,15 @@ services:
            - '@oro_message_queue.client.message_producer'
            - '@monolog.logger'
            - '@oro_redirect.direct_url_message_factory'
+        tags:
+            - { name: 'oro_message_queue.client.message_processor' }
+
+    oro_redirect.async.sync_slug_redirects_processor:
+        class: Oro\Bundle\RedirectBundle\Async\SyncSlugRedirectsProcessor
+        arguments:
+           - '@doctrine'
+           - '@logger'
+           - '@oro_entity.database_exception_helper'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 
