@@ -4,11 +4,11 @@ dpd.shipping_region.1:
     countryRef: 'dpd.shipping_country.1'
 
 dpd.shipping_region.2:
-    combinedCode: 'ZY-AA'
-    code: 'AA'
-    countryRef: 'dpd.shipping_country.2'
+    combinedCode: 'ZX-BB'
+    code: 'BB'
+    countryRef: 'dpd.shipping_country.1'
 
 dpd.shipping_region.3:
-    combinedCode: 'ZZ-AA'
-    code: 'AA'
-    countryRef: 'dpd.shipping_country.3'
+    combinedCode: 'ZX-CC'
+    code: 'CC'
+    countryRef: 'dpd.shipping_country.1'

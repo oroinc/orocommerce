@@ -3,6 +3,7 @@
 namespace Oro\Bundle\DPDBundle\Controller;
 
 use Oro\Bundle\DPDBundle\Entity\DPDTransport;
+use Oro\Bundle\DPDBundle\Entity\Repository\ShippingServiceRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -27,17 +28,23 @@ class DPDController extends Controller
      */
     public function ratesDownloadAction(DPDTransport $transport)
     {
+        /** @var ShippingServiceRepository $repository */
+        $repository = $this->container
+            ->get('doctrine')
+            ->getManagerForClass('OroDPDBundle:ShippingService')
+            ->getRepository('OroDPDBundle:ShippingService');
+        $shippingServices = $repository->getAllShippingServices();
+
         $response = new StreamedResponse();
-        $response->setCallback(function () use ($transport) {
+        $response->setCallback(function () use ($transport, $shippingServices) {
             $handle = fopen('php://output', 'rb+');
 
             // Add BOM to fix UTF-8 in Excel
             fwrite($handle, $bom = (chr(0xEF).chr(0xBB).chr(0xBF)));
 
             // Add the header of the CSV file
-            // FIXME: Use translations in headers
             $header = [
-                'Shipping Service Code',
+                'Shipping Service Code ('.implode('/', array_keys($shippingServices)).')',
                 'Country Code (ISO 3166-1 alpha-2)',
                 'Region Code (ISO 3166-2)',
                 'Weight Value ('.$transport->getUnitOfWeight().')',
