@@ -1,0 +1,14 @@
+dpd.shipping_region.1:
+    combinedCode: 'ZX-AA'
+    code: 'AA'
+    countryRef: 'dpd.shipping_country.1'
+
+dpd.shipping_region.2:
+    combinedCode: 'ZY-AA'
+    code: 'AA'
+    countryRef: 'dpd.shipping_country.2'
+
+dpd.shipping_region.3:
+    combinedCode: 'ZZ-AA'
+    code: 'AA'
+    countryRef: 'dpd.shipping_country.3'
