@@ -119,6 +119,7 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
                 'action_group' => 'start_shoppinglist_checkout',
                 'parameters_mapping' => [
                     'shoppingList' => $shoppingList,
+                    'showErrors' => true,
                 ],
                 'results' => [
                     'redirectUrl' => new PropertyPath('redirectUrl'),

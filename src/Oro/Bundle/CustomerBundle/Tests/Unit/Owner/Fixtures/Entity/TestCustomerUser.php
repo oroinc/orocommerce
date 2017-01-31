@@ -24,11 +24,8 @@ class TestCustomerUser
     protected $customer;
 
     /**
-     * @ORM\ManyToMany(targetEntity="TestOrganization")
-     * @ORM\JoinTable(name="tbl_customer_user_to_organization",
-     *      joinColumns={@ORM\JoinColumn(name="customer_user_id", referencedColumnName="id")},
-     *      inverseJoinColumns={@ORM\JoinColumn(name="organization_id", referencedColumnName="id")}
-     *  )
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
+     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
      */
-    protected $organizations;
+    protected $organization;
 }

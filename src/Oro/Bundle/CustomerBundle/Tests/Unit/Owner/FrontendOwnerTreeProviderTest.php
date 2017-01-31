@@ -218,18 +218,16 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
         foreach ($users as $item) {
             $queryResult[] = [
                 'id_0'   => $item['userId'],
-                'id_1'   => $item['orgId'],
+                'sclr_1'   => $item['orgId'],
                 'sclr_2' => $item['customerId'],
             ];
         }
         $this->setQueryExpectationAt(
             $connection,
             2,
-            'SELECT t0_.id AS id_0, t1_.id AS id_1, t0_.customer_id AS sclr_2'
+            'SELECT t0_.id AS id_0, t0_.organization_id AS sclr_1, t0_.customer_id AS sclr_2'
             . ' FROM tbl_customer_user t0_'
-            . ' INNER JOIN tbl_customer_user_to_organization t2_ ON t0_.id = t2_.customer_user_id'
-            . ' INNER JOIN tbl_organization t1_ ON t1_.id = t2_.organization_id'
-            . ' ORDER BY id_1 ASC',
+            . ' ORDER BY sclr_1 ASC',
             $queryResult
         );
     }

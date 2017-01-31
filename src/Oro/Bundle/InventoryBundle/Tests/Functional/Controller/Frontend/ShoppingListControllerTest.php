@@ -58,10 +58,51 @@ class ShoppingListControllerTest extends WebTestCase
      * @param $quantity
      * @param $minLimit
      * @param $maxLimit
+     *
+     * @dataProvider getShoppingListDataProvider
+     */
+    public function testQuantitysOnShoppingListView($quantity, $minLimit, $maxLimit)
+    {
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
+        $lineItem = $shoppingList->getLineItems()[0];
+        $lineItem->setQuantity($quantity);
+        $product = $lineItem->getProduct();
+        $this->setProductLimits($product, $minLimit, $maxLimit);
+
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()])
+        );
+
+        $createOrderLabel = $this->translator->trans('oro.shoppinglist.btn.create_order');
+        $this->assertContains($createOrderLabel, $crawler->html());
+        $this->client->followRedirects(true);
+        $crawler->selectLink($createOrderLabel)->link();
+    }
+
+    /**
+     * @return array
+     */
+    public function getShoppingListDataProvider()
+    {
+        return [
+            [
+                'quantity' => 4,
+                'minLimit' => 3,
+                'maxLimit' => 5,
+            ],
+        ];
+    }
+
+    /**
+     * @param $quantity
+     * @param $minLimit
+     * @param $maxLimit
      * @param $errorMessage
      * @param $errorLimit
      *
-     * @dataProvider getShoppingListTestData
+     * @dataProvider getShoppingListErrorsDataProvider
      */
     public function testQuantityErrorMessagesOnShoppingListView(
         $quantity,
@@ -77,27 +118,27 @@ class ShoppingListControllerTest extends WebTestCase
         $product = $lineItem->getProduct();
         $this->setProductLimits($product, $minLimit, $maxLimit);
 
-        $this->client->request(
+        $crawler = $this->client->request(
             'GET',
             $this->getUrl('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()])
         );
 
-        if ($errorMessage) {
-            $errorMessage = $this->translator->trans(
-                $errorMessage,
-                ['%limit%' => $errorLimit, '%sku%' => $product->getSku(), '%product_name%' => $product->getName()]
-            );
-            $this->assertContains($errorMessage, $this->client->getResponse()->getContent());
-            $this->assertNotContains('Create Order', $this->client->getResponse()->getContent());
-        } else {
-            $this->assertContains('Create Order', $this->client->getResponse()->getContent());
-        }
+        $createOrderLabel = $this->translator->trans('oro.shoppinglist.btn.create_order');
+        $this->assertContains($createOrderLabel, $crawler->html());
+        $this->client->followRedirects(true);
+        $crawler->selectLink($createOrderLabel)->link();
+
+        $errorMessage = $this->translator->trans(
+            $errorMessage,
+            ['%limit%' => $errorLimit, '%sku%' => $product->getSku(), '%product_name%' => $product->getName()]
+        );
+        $this->assertContains($errorMessage, $this->client->getResponse()->getContent());
     }
 
     /**
      * @return array
      */
-    public function getShoppingListTestData()
+    public function getShoppingListErrorsDataProvider()
     {
         return [
             [
@@ -113,13 +154,6 @@ class ShoppingListControllerTest extends WebTestCase
                 'maxLimit' => 5,
                 'errorLimit' => 5,
                 'errorMessage' => 'oro.inventory.product.error.quantity_over_max_limit',
-            ],
-            [
-                'quantity' => 4,
-                'minLimit' => 3,
-                'maxLimit' => 5,
-                'errorLimit' => null,
-                'errorMessage' => null,
             ],
         ];
     }
