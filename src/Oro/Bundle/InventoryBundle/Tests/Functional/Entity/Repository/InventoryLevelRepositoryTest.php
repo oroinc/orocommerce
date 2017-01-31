@@ -32,9 +32,9 @@ class InventoryLevelRepositoryTest extends WebTestCase
 
     public function testGetLevelByProductAndProductUnit()
     {
-        /** @var Product $productReference */
+        /** @var Product $product */
         $product = $this->getReference('product-1');
-        /** @var ProductUnit $unitReference */
+        /** @var ProductUnit $productUnit */
         $productUnit = $this->getReference('product_unit.liter');
 
         $inventoryLevel = $this->inventoryLevelRepo->getLevelByProductAndProductUnit($product, $productUnit);
