@@ -26,10 +26,14 @@
     </div>
 {% endblock %}
 
-{% block _form_actions_widget %}
+{% block __line_item_buttons__line_item_form_buttons_shopping_list_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " widget-actions"
+        'componentModule': 'oroshoppinglist/js/app/views/matrix-grid-add-to-shopping-list-view'
     }) %}
+    {{ block_widget(block, {attr: attr}) }}
+{% endblock %}
+
+{% block _form_actions_widget %}
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>

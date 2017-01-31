@@ -5,6 +5,7 @@ config:
         'oroshoppinglist/js/app/views/line-item-view': 'bundles/oroshoppinglist/js/app/views/line-item-view.js'
         'oroshoppinglist/js/app/views/line-items-view': 'bundles/oroshoppinglist/js/app/views/line-items-view.js'
         'oroshoppinglist/js/app/views/product-add-to-shopping-list-view': 'bundles/oroshoppinglist/js/app/views/product-add-to-shopping-list-view.js'
+        'oroshoppinglist/js/app/views/matrix-grid-add-to-shopping-list-view': 'bundles/oroshoppinglist/js/app/views/matrix-grid-add-to-shopping-list-view.js'
         'oroshoppinglist/js/app/views/product-quick-add-to-shopping-list-view': 'bundles/oroshoppinglist/js/app/views/product-quick-add-to-shopping-list-view.js'
         'oroshoppinglist/js/app/views/product-shopping-lists-view': 'bundles/oroshoppinglist/js/app/views/product-shopping-lists-view.js'
         'oroshoppinglist/js/app/views/shoppinglist-widget-view': 'bundles/oroshoppinglist/js/app/views/shoppinglist-widget-view.js'

@@ -29,13 +29,21 @@ define(function(require) {
             MatrixGridOrderWidget.__super__.initialize.apply(this, arguments);
         },
 
+        _adoptWidgetActions: function() {
+            var result = MatrixGridOrderWidget.__super__._adoptWidgetActions.apply(this, arguments);
+            if (!this.form) {
+                this.form = this.$el.find('form:first');
+            }
+            return result;
+        },
+
         _onContentLoad: function(content) {
             if (_.has(content, 'redirectUrl')) {
                 mediator.execute('redirectTo', {url: content.redirectUrl}, {redirect: true});
                 return;
             }
 
-            MatrixGridOrderWidget.__super__._onContentLoad.apply(this, arguments);
+            return MatrixGridOrderWidget.__super__._onContentLoad.apply(this, arguments);
         }
     });
 
