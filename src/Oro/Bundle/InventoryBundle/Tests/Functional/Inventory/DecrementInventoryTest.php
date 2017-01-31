@@ -225,15 +225,21 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
     {
         $inventoryLevelEm = $this->doctrineHelper->getEntityManagerForClass(InventoryLevel::class);
         $productUnitPrecisionEm = $this->doctrineHelper->getEntityManagerForClass(ProductUnitPrecision::class);
+        $lineItemEm = $this->doctrineHelper->getEntityManagerForClass(LineItem::class);
+
         $productUnitPrecision = $productUnitPrecisionEm
             ->getRepository(ProductUnitPrecision::class)
             ->findOneBy(['product' => $lineItem->getProduct()]);
         $inventoryLevel = new InventoryLevel();
         $inventoryLevel->setProductUnitPrecision($productUnitPrecision);
         $inventoryLevel->setQuantity(10);
+        if ($productUnitPrecision->getProductUnit()) {
+            $lineItem->setUnit($productUnitPrecision->getProductUnit());
+            $lineItemEm->flush();
+        }
         $inventoryLevelEm->persist($inventoryLevel);
-        $productUnitPrecisionEm->persist($productUnitPrecision);
         $inventoryLevelEm->flush();
+        $productUnitPrecisionEm->flush();
 
         return $inventoryLevel;
     }
