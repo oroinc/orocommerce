@@ -40,6 +40,22 @@
 
   &__manage-link {
     @extend .link;
+
+    &:after {
+      content: "\f105";
+
+      display: inline-block;
+
+      margin-left: 5px;
+
+      font-family: $icon-font;
+
+      vertical-align: middle;
+    }
+  }
+
+  .view-loading {
+    flex-grow: 1;
   }
 
   .no-data {
@@ -72,7 +88,6 @@
 .map-visual {
   height: 320px;
 }
-
 
 @include breakpoint('tablet-small') {
   .address-list {
