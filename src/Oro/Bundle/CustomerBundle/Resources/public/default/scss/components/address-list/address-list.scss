@@ -30,6 +30,8 @@
     background: transparent;
     color: get-color('additional', 'middle');
 
+    font-size: $base-font-size;
+
     // override icon right margin
     [class^="cf-"],
     [class*=" cf-"],
