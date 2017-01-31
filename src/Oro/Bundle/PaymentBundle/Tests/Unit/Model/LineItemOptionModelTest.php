@@ -15,23 +15,11 @@ class LineItemOptionModelTest extends \PHPUnit_Framework_TestCase
             ['name', 'Name'],
             ['description', 'Description'],
             ['cost', 5.23],
-            ['qty', 2]
+            ['qty', 2.0],
+            ['currency', 'USD'],
+            ['unit', 'kg'],
         ];
 
         $this->assertPropertyAccessors(new LineItemOptionModel(), $properties);
-    }
-
-    public function testTruncate()
-    {
-        $optionModel = new LineItemOptionModel();
-
-        $name = str_repeat('n', 37);
-        $description = str_repeat('d', 36);
-
-        $optionModel->setName($name);
-        $optionModel->setDescription($description);
-
-        $this->assertEquals(36, strlen($optionModel->getName()));
-        $this->assertEquals(35, strlen($optionModel->getDescription()));
     }
 }

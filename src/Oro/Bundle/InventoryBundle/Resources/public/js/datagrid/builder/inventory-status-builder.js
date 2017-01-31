@@ -1,4 +1,4 @@
-define(['jquery', 'underscore'], function ($, _) {
+define(['jquery', 'underscore'], function($, _) {
     'use strict';
 
     var InventoryStatus = function() {
@@ -32,7 +32,7 @@ define(['jquery', 'underscore'], function ($, _) {
             var self = this;
 
             self.datagrid = options.grid;
-            self.statusMetadata = _.find(options.options.metadata.columns, function (column) {
+            self.statusMetadata = _.find(options.options.metadata.columns, function(column) {
                 return column.name === self.options.statusColumnName;
             });
 
@@ -49,12 +49,12 @@ define(['jquery', 'underscore'], function ($, _) {
             var statusColumn = self.options.statusColumnName;
 
             _.each(this.datagrid.collection.models, function(model) {
-                self._initializeInventoryStatus(model, statusColumn );
+                self._initializeInventoryStatus(model, statusColumn);
 
                 model.on('change:' + statusColumn, function(model, value) {
                     self._updateInventoryStatus(model, value);
                 });
-           });
+            });
         },
 
         /**
@@ -86,13 +86,13 @@ define(['jquery', 'underscore'], function ($, _) {
 
             if (typeof columnValue !== 'undefined') {
                 _.each(this.datagrid.body.rows, function(row) {
-                    if (row.model.get(self.options.productKey) === model.get(self.options.productKey)
-                        && row.model.get(self.options.statusColumnName) != columnValue
+                    if (row.model.get(self.options.productKey) === model.get(self.options.productKey) &&
+                        row.model.get(self.options.statusColumnName) !== columnValue
                     ) {
                         row.model.set(self.options.statusColumnName, columnValue);
                         row.render();
                     }
-                })
+                });
             }
         }
     });

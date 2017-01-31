@@ -25,7 +25,7 @@ define(function(require) {
                 e.preventDefault();
 
                 var value = $(e.currentTarget).data('catalog-view-trigger');
-                var url = this.addUrlParameter(location.href, this.parameterName, value) ;
+                var url = this.addUrlParameter(location.href, this.parameterName, value);
                 mediator.execute('redirectTo', {url: url}, {redirect: true});
             }
         }

@@ -26,7 +26,7 @@ define([
             if (requiredMissed.length) {
                 throw new TypeError('Missing required option(s): ' + requiredMissed.join(','));
             }
-            this.form = $(this.el).parents("form:first").get(0);
+            this.form = $(this.el).parents('form:first').get(0);
             if (this.form === undefined) {
                 throw new TypeError('Form not found');
             }
@@ -36,7 +36,9 @@ define([
 
             this.button.on('click', _.bind(this.changeHandler, this));
 
-            var elements = this.form.find(".oro-payment-rule-method-configs-collection .row-oro.oro-multiselect-holder");
+            var elements = this.form.find(
+                '.oro-payment-rule-method-configs-collection .row-oro.oro-multiselect-holder'
+            );
             this.methodCount = elements.length;
             var self = this;
             elements.each(function(index, element) {
@@ -73,7 +75,9 @@ define([
         },
 
         updateMethodSelector: function(removedElement) {
-            var elements = this.form.find(".oro-payment-rule-method-configs-collection .row-oro.oro-multiselect-holder");
+            var elements = this.form.find(
+                '.oro-payment-rule-method-configs-collection .row-oro.oro-multiselect-holder'
+            );
             var methods = [];
             var self = this;
 
@@ -90,14 +94,13 @@ define([
             this.methodSelect.empty(); // remove old options
             $.each(self.options.methods, function(value, label) {
                 if ($.inArray(value, methods) === -1) {
-                    self.methodSelect.append($("<option></option>").attr("value", value).text(label));
+                    self.methodSelect.append($('<option></option>').attr('value', value).text(label));
                 }
             });
 
             $.uniform.update(this.methodSelect);
             $(this.el).show();
         },
-
 
         getMethod: function(element) {
             return $(element).find('input[data-name="field__type"]').val();

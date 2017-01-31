@@ -1,21 +1,20 @@
 /*jslint nomen:true*/
 /*global define*/
-define(function (require) {
+define(function(require) {
     'use strict';
 
-    var ProductUnitPrecisionLimitationsComponent,
-        $ = require('jquery'),
-        _ = require('underscore'),
-        BaseComponent = require('oroui/js/app/components/base/component'),
-        __ = require('orotranslation/js/translator'),
-        mediator = require('oroui/js/mediator');
+    var ProductUnitPrecisionLimitationsComponent;
+    var $ = require('jquery');
+    var _ = require('underscore');
+    var BaseComponent = require('oroui/js/app/components/base/component');
+    var __ = require('orotranslation/js/translator');
 
     ProductUnitPrecisionLimitationsComponent = BaseComponent.extend({
         /**
          * @property {Object}
          */
         options: {
-            selectSelector: "select[name^='oro_product[prices]'][name$='[unit]']",
+            selectSelector: 'select[name^="oro_product[prices]"][name$="[unit]"]',
             unitsAttribute: 'units',
             unitRemovedSuffix: __('oro.product.productunit.removed.suffix')
         },
@@ -32,7 +31,7 @@ define(function (require) {
         /**
          * @inheritDoc
          */
-        initialize: function (options) {
+        initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
             this.options._sourceElement
@@ -44,11 +43,11 @@ define(function (require) {
         /**
          * Change options in selects
          */
-        onChange: function () {
-            var self = this,
-                units = this.getUnits();
+        onChange: function() {
+            var self = this;
+            var units = this.getUnits();
 
-            _.each(this.getSelects(), function (select) {
+            _.each(this.getSelects(), function(select) {
                 var $select = $(select);
                 var clearChangeRequired = self.clearOptions(units, $select);
                 var addChangeRequired = self.addOptions(units, $select);
@@ -66,17 +65,17 @@ define(function (require) {
          *
          * @return {Boolean}
          */
-        clearOptions: function (units, $select) {
+        clearOptions: function(units, $select) {
             var updateRequired = false;
             var self = this;
 
-            _.each($select.find('option'), function (option) {
+            _.each($select.find('option'), function(option) {
                 if (!option.value) {
                     return;
                 }
 
                 if (!units.hasOwnProperty(option.value)) {
-                    if ( option.selected != true) {
+                    if (option.selected !== true) {
                         option.remove();
                     } else if (option.text.indexOf(' - ') < 0) {
                         $(option).text($(option).text() + ' - ' + self.options.unitRemovedSuffix);
@@ -97,9 +96,9 @@ define(function (require) {
          *
          * @return {Boolean}
          */
-        addOptions: function (units, $select) {
-            var updateRequired = false,
-                emptyOption = $select.find('option[value=""]');
+        addOptions: function(units, $select) {
+            var updateRequired = false;
+            var emptyOption = $select.find('option[value=""]');
 
             if (_.isEmpty(units)) {
                 emptyOption.show();
@@ -107,24 +106,24 @@ define(function (require) {
                 emptyOption.hide();
             }
 
-            _.each($select.find('option:contains( - )'), function(option){
+            _.each($select.find('option:contains( - )'), function(option) {
                 if (units.hasOwnProperty(option.value)) {
                     var oldText = option.text;
-                    var newText = oldText.substring(0,oldText.indexOf(' - '));
+                    var newText = oldText.substring(0, oldText.indexOf(' - '));
                     $(option).text(newText);
                     $select.closest('.oro-multiselect-holder').find('.validation-failed').hide();
                     updateRequired = true;
                 }
             });
 
-            _.each(units, function (text, value) {
-                if (!$select.find("option[value='" + value + "']").length) {
+            _.each(units, function(text, value) {
+                if (!$select.find('option[value="' + value + '"]').length) {
                     $select.append('<option value="' + value + '">' + text + '</option>');
                     updateRequired = true;
                 }
             });
 
-            if ($select.val() == '' && !_.isEmpty(units)) {
+            if ($select.val() === '' && !_.isEmpty(units)) {
                 var value = _.keys(units)[0];
                 $select.val(value);
                 updateRequired = true;
@@ -138,7 +137,7 @@ define(function (require) {
          *
          * @returns {jQuery.Element}
          */
-        getSelects: function () {
+        getSelects: function() {
             return this.options._sourceElement.find(this.options.selectSelector);
         },
 
@@ -147,16 +146,16 @@ define(function (require) {
          *
          * @returns {Object}
          */
-        getUnits: function () {
+        getUnits: function() {
             var units = {};
             var attribute = this.options.unitsAttribute;
-            _.each($(':data(' + attribute + ')'), function(container){
+            _.each($(':data(' + attribute + ')'), function(container) {
                 var unit = $(container).data(attribute) || {};
-                _.each(unit, function(val, key){
+                _.each(unit, function(val, key) {
                     units[key] = val;
                 });
-            })
-            
+            });
+
             return units;
         },
 
@@ -165,17 +164,17 @@ define(function (require) {
          *
          * @returns {Object}
          */
-        getUnitsWithPrices: function () {
-            var units_with_price = {};
-            _.each(this.getSelects(), function (select) {
+        getUnitsWithPrices: function() {
+            var unitsWithPrice = {};
+            _.each(this.getSelects(), function(select) {
                 var selected = $(select).find('option:selected');
-                units_with_price[selected.val()] = selected.text();
+                unitsWithPrice[selected.val()] = selected.text();
             });
 
-            return units_with_price;
+            return unitsWithPrice;
         },
 
-        dispose: function () {
+        dispose: function() {
             if (this.disposed) {
                 return;
             }

@@ -82,7 +82,7 @@ class FirstOffersQuoteToShippingLineItemConverterTest extends \PHPUnit_Framework
             ->willReturn($quoteProducts);
 
         $quoteProductMock
-            ->expects($this->exactly(2))
+            ->expects($this->once())
             ->method('getQuoteProductOffers')
             ->willReturn($quoteProductOffers);
 
@@ -107,7 +107,7 @@ class FirstOffersQuoteToShippingLineItemConverterTest extends \PHPUnit_Framework
             ->willReturn($quantity);
 
         $quoteProductOfferMock
-            ->expects($this->once())
+            ->expects($this->any())
             ->method('getPrice')
             ->willReturn($price);
 
@@ -136,6 +136,36 @@ class FirstOffersQuoteToShippingLineItemConverterTest extends \PHPUnit_Framework
         $actualLineItems = $this->firstOffersQuoteToShippingLineItemConverter->convertLineItems($quoteMock);
 
         $this->assertEquals($expectedLineItemsCollection, $actualLineItems);
+    }
+
+    public function testConvertLineItemsWithoutPrice()
+    {
+        $quoteProductOfferMock = $this->getQuoteProductOfferMock();
+        $quoteProductOffers = new ArrayCollection([$quoteProductOfferMock]);
+
+        $quoteProductMock = $this->getQuoteProductMock();
+        $quoteProductMock->expects($this->once())->method('getQuoteProductOffers')->willReturn($quoteProductOffers);
+
+        $expectedLineItemsArray = [];
+        $expectedLineItemsCollection = new DoctrineShippingLineItemCollection($expectedLineItemsArray);
+
+        $quoteMock = $this->getQuoteMock();
+        $quoteMock->expects($this->once())
+            ->method('getQuoteProducts')
+            ->willReturn(new ArrayCollection([$quoteProductMock]));
+
+        $this->shippingLineItemBuilderFactory->expects($this->never())->method('createBuilder');
+
+        $this->shippingLineItemCollectionFactory
+            ->expects($this->once())
+            ->method('createShippingLineItemCollection')
+            ->with($expectedLineItemsArray)
+            ->willReturn($expectedLineItemsCollection);
+
+        $this->assertEquals(
+            $expectedLineItemsCollection,
+            $this->firstOffersQuoteToShippingLineItemConverter->convertLineItems($quoteMock)
+        );
     }
 
     public function testConvertLineItemsWithoutOffers()

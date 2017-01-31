@@ -217,7 +217,7 @@ action_groups:
                         shippingMethodType: $.shippingMethodType
                     settings:
                         allow_manual_source_remove: false
-                        auto_remove_source: true
+                        auto_remove_source: false
                         edit_order_link: $.editLink
                         disallow_shipping_address_edit: $.disallow_shipping_address_edit
                         disallow_shipping_method_edit: $.disallow_shipping_method_edit

@@ -186,7 +186,8 @@ oro:
             shortcut_new_order.label: Create new order
             shortcut_new_order.description: Create new order item
             shortcut_order_list.description: Show list of existing orders
-
+            best_selling_list.label: Best Selling Products
+            best_selling_list.description: List of best selling products
         widgets:
             order_information: Order Information
             shipping_tracking: Shipping Tracking
@@ -242,12 +243,6 @@ oro:
             groups:
                 orders.title: 'Orders'
                 orders_history.title: 'Orders History'
-        success:
-            thank_you: 'Thank You For Your Purchase!'
-            order_number: 'Your order number is'
-            click_to_review: 'click here to review'
-            receive_email: 'You will receive a confirmation email with your order details.'
-            done: 'Done'
 
         privilege:
             category.orders.label: 'Orders'
