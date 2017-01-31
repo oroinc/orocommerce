@@ -1,0 +1,14 @@
+dpd.transport.1:
+    liveMode: false
+    cloudUserId: 'user_1'
+    cloudUserToken: 'password_1'
+    applicableShippingServices:
+        - 'dpd.shipping_service.1'
+
+dpd.transport.2:
+    liveMode: false
+    cloudUserId: 'user_2'
+    cloudUserToken: 'password_2'
+    applicableShippingServices:
+        - 'dpd.shipping_service.1'
+        - 'dpd.shipping_service.2'
