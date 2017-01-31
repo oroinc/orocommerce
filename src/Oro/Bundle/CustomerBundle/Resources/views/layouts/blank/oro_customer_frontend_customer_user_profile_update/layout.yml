@@ -1,6 +1,21 @@
 layout:
     imports:
         -
+            id: oro_customer_breadcrumbs
+            root: page_main
+        -
             id: oro_customer_menu
             root: page_sidebar
-    actions: []
+        -
+            id: oro_customer_user_view
+            root: page_content
+    actions:
+        - '@setOption':
+            id: customer_breadcrumbs
+            optionName: customerUser
+            optionValue: '=data["entity"].getFullName()'
+
+        - '@setOption':
+            id: customer_breadcrumbs
+            optionName: currentPage
+            optionValue: 'oro.customer.menu.customer_user_profile.label'
