@@ -257,13 +257,15 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
         $diff = $this->today->diff($shipDateMidnight);
         $diffDays = (int) $diff->format('%R%a');
         if ($diffDays === 0) {
-            $cutOffDate = \DateTime::createFromFormat(
-                'H:i',
-                $this->shippingService->isClassicService() ?
-                    $zipCodeRulesResponse->getClassicCutOff() :
-                    $zipCodeRulesResponse->getExpressCutOff()
-            );
-
+            $cutOffDate = clone $this->today;
+            list($cutOffHour, $cutOffMin) =
+                explode(
+                    ':',
+                    $this->shippingService->isClassicService() ?
+                        $zipCodeRulesResponse->getClassicCutOff() :
+                        $zipCodeRulesResponse->getExpressCutOff()
+                );
+            $cutOffDate->setTime($cutOffHour, $cutOffMin);
             if ($shipDate > $cutOffDate) {
                 return 1;
             }

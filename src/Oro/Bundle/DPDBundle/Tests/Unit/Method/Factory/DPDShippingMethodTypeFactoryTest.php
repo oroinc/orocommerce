@@ -125,7 +125,7 @@ class DPDShippingMethodTypeFactoryTest extends \PHPUnit_Framework_TestCase
             $settings,
             $this->transport,
             $this->packageProvider,
-            $this->rateTablePriceProvider,
+            $this->rateProvider,
             $this->dpdRequestFactory,
             $this->zipCodeRulesCache,
             $this->shippingLineItemConverter
