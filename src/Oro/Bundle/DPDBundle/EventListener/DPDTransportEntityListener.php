@@ -66,8 +66,9 @@ class DPDTransportEntityListener
                 list($shippingServiceCode, $countryCode, $regionCode, $weightValue, $priceValue) = $row;
 
                 $rate = new Rate();
-                $rate->setShippingService($entityManager->getReference('OroDPDBundle:ShippingService',
-                    $shippingServiceCode));
+                $rate->setShippingService(
+                    $entityManager->getReference('OroDPDBundle:ShippingService', $shippingServiceCode)
+                );
                 $rate->setCountry($entityManager->getReference('OroAddressBundle:Country', $countryCode));
                 if (!empty($regionCode)) {
                     $rate->setRegion($entityManager->getReference('OroAddressBundle:Region', $regionCode));

@@ -62,7 +62,10 @@ class RateProviderTest extends \PHPUnit_Framework_TestCase
         $this->transport->expects(self::any())->method('getRatePolicy')->willReturn(DPDTransport::FLAT_RATE_POLICY);
         $this->transport->expects(self::once())->method('getFlatRatePriceValue')->willReturn('1.0');
 
-        static::assertEquals('1.0', $this->rateProvider->getRateValue($this->transport, new ShippingService(), new OrderAddress(), null));
+        static::assertEquals(
+            '1.0',
+            $this->rateProvider->getRateValue($this->transport, new ShippingService(), new OrderAddress(), null)
+        );
     }
 
     public function testGetRateValueTablePolicy()
@@ -82,6 +85,9 @@ class RateProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->registry->expects(self::any())->method('getManagerForClass')->willReturn($manager);
 
-        static::assertEquals('1.0', $this->rateProvider->getRateValue($this->transport, new ShippingService(), new OrderAddress(), null));
+        static::assertEquals(
+            '1.0',
+            $this->rateProvider->getRateValue($this->transport, new ShippingService(), new OrderAddress(), null)
+        );
     }
 }
