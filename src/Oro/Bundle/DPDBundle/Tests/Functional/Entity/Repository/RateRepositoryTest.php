@@ -41,8 +41,13 @@ class RateRepositoryTest extends WebTestCase
      * @param string $regionRef
      * @param array  $expectedRatesRefs
      */
-    public function testFindRatesByServiceAndDestination($transportRef, $shippingServiceRef, $countryRef, $regionRef, array $expectedRatesRefs)
-    {
+    public function testFindRatesByServiceAndDestination(
+        $transportRef,
+        $shippingServiceRef,
+        $countryRef,
+        $regionRef,
+        array $expectedRatesRefs
+    ) {
         /** @var Rate[] $expectedRates */
         $expectedRates = $this->getEntitiesByReferences($expectedRatesRefs);
 
@@ -80,8 +85,13 @@ class RateRepositoryTest extends WebTestCase
      * @param string $regionRef
      * @param array  $expectedRatesRefs
      */
-    public function testFindFirstRateByServiceAndDestination($transportRef, $shippingServiceRef, $countryRef, $regionRef, array $expectedRatesRefs)
-    {
+    public function testFindFirstRateByServiceAndDestination(
+        $transportRef,
+        $shippingServiceRef,
+        $countryRef,
+        $regionRef,
+        array $expectedRatesRefs
+    ) {
         /** @var Rate $expectedRate */
         $expectedRate = $this->getEntitiesByReferences($expectedRatesRefs)[0];
 

@@ -196,38 +196,19 @@ class DPDTransportSettingsType extends AbstractType
             [
                 'required' => true,
                 'choices' => [
-                    DPDTransport::UPPERLEFT_LABEL_START_POSITION => 'oro.dpd.transport.label_start_position.upperleft.label',
-                    DPDTransport::UPPERRIGHT_LABEL_START_POSITION => 'oro.dpd.transport.label_start_position.upperright.label',
-                    DPDTransport::LOWERLEFT_LABEL_START_POSITION => 'oro.dpd.transport.label_start_position.lowerleft.label',
-                    DPDTransport::LOWERRIGHT_LABEL_START_POSITION => 'oro.dpd.transport.label_start_position.lowerright.label',
+                    DPDTransport::UPPERLEFT_LABEL_START_POSITION =>
+                        'oro.dpd.transport.label_start_position.upperleft.label',
+                    DPDTransport::UPPERRIGHT_LABEL_START_POSITION =>
+                        'oro.dpd.transport.label_start_position.upperright.label',
+                    DPDTransport::LOWERLEFT_LABEL_START_POSITION =>
+                        'oro.dpd.transport.label_start_position.lowerleft.label',
+                    DPDTransport::LOWERRIGHT_LABEL_START_POSITION =>
+                        'oro.dpd.transport.label_start_position.lowerright.label',
                 ],
                 'label' => 'oro.dpd.transport.label_start_position.label',
             ]
         );
-        //$builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'onPreSetData']);
     }
-
-//    public function onPreSetData(FormEvent $event)
-//    {
-//        /** @var DPDTransport $transport */
-//        $transport = $event->getData();
-//        $form = $event->getForm();
-
-//        if ($transport && $transport->getId() !== null) {
-//            $cloudUserTokenField = $form->get('cloudUserToken');
-//            $config = $cloudUserTokenField->getConfig();
-//            $form->add(
-//                'cloudUserToken',
-//                $config->getType()->getName(),
-//                array_replace(
-//                    $config->getOptions(),
-//                    [
-//                        'required' => false
-//                    ]
-//                )
-//            );
-//        }
-//    }
 
     /**
      * {@inheritdoc}

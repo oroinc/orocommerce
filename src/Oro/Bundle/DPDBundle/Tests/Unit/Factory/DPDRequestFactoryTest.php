@@ -61,8 +61,14 @@ class DPDRequestFactoryTest extends \PHPUnit_Framework_TestCase
      *
      * @dataProvider testCreateSetOrderRequestDataProvider
      */
-    public function testCreateSetOrderRequest($requestAction, $shipDate, $orderId, $orderAddress, $orderEmail, $packages)
-    {
+    public function testCreateSetOrderRequest(
+        $requestAction,
+        $shipDate,
+        $orderId,
+        $orderAddress,
+        $orderEmail,
+        $packages
+    ) {
         $request = $this->dpdRequestFactory->createSetOrderRequest(
             $this->transport,
             $this->shippingService,
@@ -111,7 +117,8 @@ class DPDRequestFactoryTest extends \PHPUnit_Framework_TestCase
                 'orderId' => '1',
                 'orderAddress' => new OrderAddress(),
                 'orderEmail' => 'an@email.com',
-                'packages' => [(new Package())->setContents('contents'), (new Package())->setContents('other contents')],
+                'packages' =>
+                    [(new Package())->setContents('contents'), (new Package())->setContents('other contents')],
             ],
         ];
     }

@@ -276,8 +276,14 @@ class DPDShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
      * @param $expectedResult
      * @dataProvider testIsShipDatePickupDayProvider
      */
-    public function testIsShipDatePickupDay($shipDate, $isClassicService, $classicCutOff, $expressCutOff, $isNoPickupDay, $expectedResult)
-    {
+    public function testIsShipDatePickupDay(
+        $shipDate,
+        $isClassicService,
+        $classicCutOff,
+        $expressCutOff,
+        $isNoPickupDay,
+        $expectedResult
+    ) {
         $this->shippingService
             ->expects(self::any())
             ->method('isClassicService')
@@ -449,8 +455,14 @@ class DPDShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
      * @param $expectedResult
      * @dataProvider testGetNextPickupDayProvider
      */
-    public function testGetNextPickupDay($shipDate, $isClassicService, $classicCutOff, $expressCutOff, $noPickupDays, $expectedResult)
-    {
+    public function testGetNextPickupDay(
+        $shipDate,
+        $isClassicService,
+        $classicCutOff,
+        $expressCutOff,
+        $noPickupDays,
+        $expectedResult
+    ) {
         $this->shippingService
             ->expects(self::any())
             ->method('isClassicService')
