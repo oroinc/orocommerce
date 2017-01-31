@@ -4,11 +4,11 @@ namespace Oro\Bundle\WebCatalogBundle\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
-use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
+use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
-use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -88,12 +88,11 @@ class ContentNodeType extends AbstractType
 
             if ($data->getParentNode() instanceof ContentNode) {
                 $form->add(
-                    'slugPrototypes',
-                    LocalizedSlugType::NAME,
+                    'slugPrototypesWithRedirect',
+                    LocalizedSlugWithRedirectType::NAME,
                     [
                         'label' => 'oro.webcatalog.contentnode.slug_prototypes.label',
                         'required' => true,
-                        'options' => ['constraints' => [new NotBlank(), new UrlSafe()]],
                         'slug_suggestion_enabled' => true,
                         'source_field' => 'titles',
                         'create_redirect_enabled' => true

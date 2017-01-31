@@ -23,7 +23,7 @@ class SlugPrototypesWithRedirect
      * @param Collection $slugPrototypes
      * @param bool $createRedirect
      */
-    public function __construct(Collection $slugPrototypes, $createRedirect = true)
+    public function __construct(Collection $slugPrototypes, $createRedirect = false)
     {
         $this->slugPrototypes = $slugPrototypes;
         $this->createRedirect = $createRedirect;

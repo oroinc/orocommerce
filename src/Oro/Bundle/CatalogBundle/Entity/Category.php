@@ -15,6 +15,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
+use Oro\Bundle\RedirectBundle\Entity\SlugPrototypesWithRedirect;
 use Oro\Component\Tree\Entity\TreeTrait;
 
 /**
@@ -268,6 +269,7 @@ class Category extends ExtendCategory implements SluggableInterface, DatesAwareI
         $this->slugs = new ArrayCollection();
         $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
         $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        $this->slugPrototypesWithRedirect = new SlugPrototypesWithRedirect($this->slugPrototypes);
     }
 
     /**

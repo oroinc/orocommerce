@@ -10,6 +10,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
+use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Validator\Type\FormTypeValidatorExtension;
@@ -95,6 +96,7 @@ class PageTypeTest extends FormIntegrationTestCase
                     OroRichTextType::NAME => new OroRichTextType($configManager, $htmlTagProvider),
                     LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionTypeStub(),
                     LocalizedSlugType::NAME => new LocalizedSlugTypeStub(),
+                    LocalizedSlugWithRedirectType::NAME => new LocalizedSlugWithRedirectType($configManager),
                 ],
                 []
             )
@@ -106,7 +108,7 @@ class PageTypeTest extends FormIntegrationTestCase
         $form = $this->factory->create($this->type);
         $this->assertTrue($form->has('titles'));
         $this->assertTrue($form->has('content'));
-        $this->assertTrue($form->has('slugPrototypes'));
+        $this->assertTrue($form->has('slugPrototypesWithRedirect'));
     }
 
     public function testSetDefaultOptions()
@@ -151,6 +153,8 @@ class PageTypeTest extends FormIntegrationTestCase
             $existingPage->addSlugPrototype((new LocalizedFallbackValue())->setString('slug'));
 
             $defaultData = $existingPage;
+        } else {
+            $defaultData = new Page();
         }
 
         $form = $this->factory->create($this->type, $defaultData, $options);
@@ -159,7 +163,7 @@ class PageTypeTest extends FormIntegrationTestCase
         if (isset($existingPage)) {
             $this->assertEquals($existingPage, $form->getViewData());
         } else {
-            $this->assertNull($form->getViewData());
+            $this->assertEquals($defaultData, $form->getViewData());
         }
 
         $form->submit($submittedData);
@@ -190,7 +194,7 @@ class PageTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'titles' => [['string' => 'First test page']],
                     'content' => 'Page content',
-                    'slugPrototypes'  => [['string' => 'slug']],
+                    'slugPrototypesWithRedirect' => ['slugPrototypes' => [['string' => 'slug']]],
                 ],
                 'expectedData' => $new_page,
             ],
@@ -204,7 +208,7 @@ class PageTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'titles' => [['string' => 'Updated first test page']],
                     'content' => 'Updated page content',
-                    'slugPrototypes'  => [['string' => 'slug-updated']],
+                    'slugPrototypesWithRedirect' => ['slugPrototypes' => [['string' => 'slug-updated']]],
                 ],
                 'expectedData' => $updated_page,
             ],

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
@@ -9,6 +10,7 @@ use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueColl
 use Oro\Bundle\NavigationBundle\Form\Type\RouteChoiceType;
 use Oro\Bundle\NavigationBundle\Tests\Unit\Form\Type\Stub\RouteChoiceTypeStub;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
+use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Oro\Bundle\ScopeBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
@@ -71,6 +73,11 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
 
         $variantCollection = new ContentVariantCollectionType($variantTypeRegistry);
 
+        /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject $configManager */
+        $configManager = $this->getMockBuilder(ConfigManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         return [
             new PreloadedExtension(
                 [
@@ -90,6 +97,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                         ]
                     ),
                     LocalizedSlugType::NAME => new LocalizedSlugTypeStub(),
+                    LocalizedSlugWithRedirectType::NAME => new LocalizedSlugWithRedirectType($configManager),
                 ],
                 []
             ),
@@ -106,7 +114,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('scopes'));
         $this->assertTrue($form->has('contentVariants'));
         $this->assertFalse($form->has('parentScopeUsed'));
-        $this->assertFalse($form->has('slugPrototypes'));
+        $this->assertFalse($form->has('slugPrototypesWithRedirect'));
     }
 
     public function testBuildFormSubNode()
@@ -120,7 +128,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('scopes'));
         $this->assertTrue($form->has('contentVariants'));
         $this->assertTrue($form->has('parentScopeUsed'));
-        $this->assertTrue($form->has('slugPrototypes'));
+        $this->assertTrue($form->has('slugPrototypesWithRedirect'));
     }
 
     public function testBuildFormForExistingEntity()
@@ -206,7 +214,9 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                     ->addSlugPrototype((new LocalizedFallbackValue())->setString('content_node_slug')),
                 [
                     'titles' => [['string' => 'content_node_title'], ['string' => 'another_node_title']],
-                    'slugPrototypes' => [['string' => 'content_node_slug'], ['string' => 'another_node_slug']],
+                    'slugPrototypesWithRedirect' => [
+                        'slugPrototypes' => [['string' => 'content_node_slug'], ['string' => 'another_node_slug']]
+                    ],
                     'parentScopeUsed' => false,
                     'rewriteVariantTitle' => true,
                     'contentVariants' => [
@@ -237,7 +247,9 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                 [
                     'parentNode' => 1,
                     'titles' => [['string' => 'content_node_title'], ['string' => 'another_node_title']],
-                    'slugPrototypes' => [['string' => 'content_node_slug'], ['string' => 'another_node_slug']],
+                    'slugPrototypesWithRedirect' => [
+                        'slugPrototypes' => [['string' => 'content_node_slug'], ['string' => 'another_node_slug']]
+                    ],
                     'contentVariants' => [
                         [
                             'type' => 'system_page',
@@ -275,7 +287,9 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                     ),
                 [
                     'titles' => [['string' => 'content_node_title'], ['string' => 'another_node_title']],
-                    'slugPrototypes' => [['string' => 'content_node_slug'], ['string' => 'another_node_slug']],
+                    'slugPrototypesWithRedirect' => [
+                        'slugPrototypes' => [['string' => 'content_node_slug'], ['string' => 'another_node_slug']]
+                    ],
                     'contentVariants' => [
                         [
                             'type' => 'system_page',

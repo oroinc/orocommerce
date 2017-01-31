@@ -162,14 +162,25 @@ define(function(require) {
             var list = '';
             this.$slugFields.each(_.bind(function(index, item) {
                 if (this.slugFieldsInitialState[index] !== $(item).val()) {
-                    list += '\n' + __(
-                            'oro.redirect.confirm_slug_change.changed_slug_item',
-                            {
-                                'old_slug': this.slugFieldsInitialState[index],
-                                'new_slug': $(item).val(),
-                                'purpose': this._getSlugPurpose($(item))
-                            }
-                        );
+                    var purpose = this._getSlugPurpose($(item));
+                    if (purpose) {
+                        list += '\n' + __(
+                                'oro.redirect.confirm_slug_change.changed_localized_slug_item',
+                                {
+                                    'old_slug': this.slugFieldsInitialState[index],
+                                    'new_slug': $(item).val(),
+                                    'purpose': purpose
+                                }
+                            );
+                    } else {
+                        list += '\n' + __(
+                                'oro.redirect.confirm_slug_change.changed_slug_item',
+                                {
+                                    'old_slug': this.slugFieldsInitialState[index],
+                                    'new_slug': $(item).val()
+                                }
+                            );
+                    }
                 }
             }, this));
             return list;

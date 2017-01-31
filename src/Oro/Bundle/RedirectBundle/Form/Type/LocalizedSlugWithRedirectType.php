@@ -14,12 +14,16 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
-class SlugPrototypesWithRedirectType extends AbstractType
+class LocalizedSlugWithRedirectType extends AbstractType
 {
-    const NAME = 'oro_redirect_slug_prototypes_with_redirect';
-    const CREATE_REDIRECT_OPTION_NAME = 'createRedirect';
+    const NAME = 'oro_redirect_localized_slug_with_redirect';
+    const SLUG_PROTOTYPES_FIELD_NAME = 'slugPrototypes';
+    const CREATE_REDIRECT_FIELD_NAME = 'createRedirect';
 
     /**
      * @var ConfigManager
@@ -55,15 +59,21 @@ class SlugPrototypesWithRedirectType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $constraints = [new UrlSafe()];
+        if (!empty($options['required'])) {
+            $constraints[] = new NotBlank();
+        }
+
         $builder
             ->add(
-                'slugPrototypes',
+                self::SLUG_PROTOTYPES_FIELD_NAME,
                 LocalizedSlugType::NAME,
                 [
-                    'required' => false,
-                    'options'  => ['constraints' => [new UrlSafe()]],
+                    'required' => !empty($options['required']),
+                    'options'  => ['constraints' => $constraints],
                     'source_field' => $options['source_field'],
                     'label' => false,
+                    'slug_suggestion_enabled' => $options['slug_suggestion_enabled'],
                 ]
             );
 
@@ -79,7 +89,7 @@ class SlugPrototypesWithRedirectType extends AbstractType
             && $this->isNotEmptyCollection($event->getData())
         ) {
             $event->getForm()->add(
-                self::CREATE_REDIRECT_OPTION_NAME,
+                self::CREATE_REDIRECT_FIELD_NAME,
                 CheckboxType::class,
                 [
                     'label' => 'oro.redirect.confirm_slug_change.checkbox_label',
@@ -96,9 +106,26 @@ class SlugPrototypesWithRedirectType extends AbstractType
     {
         $resolver->setDefaults([
             'create_redirect_enabled' => false,
+            'slug_suggestion_enabled' => false,
             'data_class' => SlugPrototypesWithRedirect::class,
         ]);
         $resolver->setRequired('source_field');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        if ($form->has(self::CREATE_REDIRECT_FIELD_NAME)) {
+            $fullName = $view->vars['full_name'];
+            $valuesField = sprintf('[name^="%s[%s][values]"]', $fullName, self::SLUG_PROTOTYPES_FIELD_NAME);
+
+            $view->vars['confirm_slug_change_component_options'] = [
+                'slugFields' => $valuesField,
+                'createRedirectCheckbox' => sprintf('[name^="%s[%s]"]', $fullName, self::CREATE_REDIRECT_FIELD_NAME)
+            ];
+        }
     }
 
     /**
@@ -107,7 +134,7 @@ class SlugPrototypesWithRedirectType extends AbstractType
      */
     protected function isNotEmptyCollection($data)
     {
-        return $data instanceof Collection && !$data->isEmpty();
+        return $data->getSlugPrototypes() instanceof Collection && !$data->getSlugPrototypes()->isEmpty();
     }
 
     /**
@@ -116,6 +143,7 @@ class SlugPrototypesWithRedirectType extends AbstractType
      */
     protected function isRedirectConfirmationEnabled($options)
     {
-        return $this->configManager->get('oro_redirect.redirect_generation_strategy') === Configuration::STRATEGY_ASK;
+        return $options['create_redirect_enabled']
+            && $this->configManager->get('oro_redirect.redirect_generation_strategy') === Configuration::STRATEGY_ASK;
     }
 }

@@ -13,6 +13,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\RedirectBundle\Entity\LocalizedSlugPrototypeAwareInterface;
 use Oro\Bundle\RedirectBundle\Entity\LocalizedSlugPrototypeAwareTrait;
+use Oro\Bundle\RedirectBundle\Entity\SlugPrototypesWithRedirect;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Entity\ScopeCollectionAwareInterface;
 use Oro\Bundle\WebCatalogBundle\Model\ExtendContentNode;
@@ -231,6 +232,7 @@ class ContentNode extends ExtendContentNode implements
         $this->scopes = new ArrayCollection();
         $this->contentVariants = new ArrayCollection();
         $this->localizedUrls = new ArrayCollection();
+        $this->slugPrototypesWithRedirect = new SlugPrototypesWithRedirect($this->slugPrototypes);
     }
 
     /**

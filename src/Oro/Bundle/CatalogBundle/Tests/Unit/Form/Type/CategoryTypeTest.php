@@ -11,6 +11,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryDefaultProductOptionsType;
+use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 
 class CategoryTypeTest extends \PHPUnit_Framework_TestCase
 {
@@ -115,6 +116,18 @@ class CategoryTypeTest extends \PHPUnit_Framework_TestCase
                 'defaultProductOptions',
                 CategoryDefaultProductOptionsType::NAME,
                 ['required' => false]
+            )->will($this->returnSelf());
+
+        $builder->expects($this->at(9))
+            ->method('add')
+            ->with(
+                'slugPrototypesWithRedirect',
+                LocalizedSlugWithRedirectType::NAME,
+                [
+                    'label' => 'oro.catalog.category.slug_prototypes.label',
+                    'required' => false,
+                    'source_field' => 'titles'
+                ]
             )->will($this->returnSelf());
 
         $this->type->buildForm($builder, []);

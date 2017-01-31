@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\RedirectBundle\Model\DirectUrlMessageFactory;
 use Oro\Bundle\RedirectBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Entity\SluggableEntityStub;
@@ -18,6 +19,11 @@ class DirectUrlMessageFactoryTest extends \PHPUnit_Framework_TestCase
     protected $registry;
 
     /**
+     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $configManager;
+
+    /**
      * @var DirectUrlMessageFactory
      */
     protected $factory;
@@ -25,16 +31,23 @@ class DirectUrlMessageFactoryTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
-        $this->factory = new DirectUrlMessageFactory($this->registry);
+        $this->configManager = $this->getMockBuilder(ConfigManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->factory = new DirectUrlMessageFactory($this->registry, $this->configManager);
     }
 
     public function testCreateMessage()
     {
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_redirect.redirect_generation_strategy')
+            ->willReturn('always');
         $entity = new SluggableEntityStub();
         $entity->setId(42);
 
         $this->assertEquals(
-            ['class' => SluggableEntityStub::class, 'id' => 42],
+            ['class' => SluggableEntityStub::class, 'id' => 42, 'createRedirect' => true],
             $this->factory->createMessage($entity)
         );
     }

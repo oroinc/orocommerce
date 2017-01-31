@@ -34,6 +34,7 @@ class DirectUrlMessageFactory implements MessageFactoryInterface
 
     /**
      * @param ManagerRegistry $registry
+     * @param ConfigManager $configManager
      */
     public function __construct(ManagerRegistry $registry, ConfigManager $configManager)
     {
@@ -102,6 +103,11 @@ class DirectUrlMessageFactory implements MessageFactoryInterface
                 [
                     self::ID,
                     self::ENTITY_CLASS_NAME
+                ]
+            );
+            $resolver->setDefined(
+                [
+                    self::CREATE_REDIRECT,
                 ]
             );
 
