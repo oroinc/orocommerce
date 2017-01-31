@@ -6,7 +6,9 @@ use Oro\Bundle\AddressBundle\Entity\Address;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentMethodsConfigsRuleRepository;
+use Oro\Bundle\PaymentBundle\Tests\Functional\Entity\DataFixtures\LoadPaymentMethodsConfigsRuleDestinationData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\PaymentBundle\Tests\Functional\Entity\DataFixtures\LoadPaymentMethodsConfigsRuleData;
 
 /**
  * @dbIsolation
@@ -25,13 +27,23 @@ class PaymentMethodsConfigsRuleRepositoryTest extends WebTestCase
             ->get('doctrine')
             ->getRepository('OroPaymentBundle:PaymentMethodsConfigsRule');
 
-        $currentBundleDataFixturesNameSpace = 'Oro\Bundle\PaymentBundle\Tests\Functional\Entity\DataFixtures';
         $this->loadFixtures(
             [
-                $currentBundleDataFixturesNameSpace.'\LoadPaymentMethodsConfigsRuleData',
-                $currentBundleDataFixturesNameSpace.'\LoadPaymentMethodsConfigsRuleDestinationData',
+                LoadPaymentMethodsConfigsRuleData::class,
+                LoadPaymentMethodsConfigsRuleDestinationData::class
             ]
         );
+    }
+
+    /**
+     * @param array $entities
+     * @return array
+     */
+    private function getEntitiesIds(array $entities)
+    {
+        return array_map(function ($entity) {
+            return $entity->getId();
+        }, $entities);
     }
 
     public function testFindAll()
@@ -72,10 +84,7 @@ class PaymentMethodsConfigsRuleRepositoryTest extends WebTestCase
         $expectedConfigsRules = $this->getConfigsRulesByReferences($data['expectedEntityReferences']);
         $configsRules = $this->repository->getByDestinationAndCurrency($billingAddress, $currency);
 
-        sort($expectedConfigsRules);
-        sort($configsRules);
-
-        $this->assertEquals($expectedConfigsRules, $configsRules);
+        $this->assertEquals($this->getEntitiesIds($expectedConfigsRules), $this->getEntitiesIds($configsRules));
     }
 
     /**
@@ -91,8 +100,8 @@ class PaymentMethodsConfigsRuleRepositoryTest extends WebTestCase
                     'postalCode' => '12345',
                     'currency' => 'EUR',
                     'expectedEntityReferences' => [
-                        'payment.payment_methods_configs_rule.4',
                         'payment.payment_methods_configs_rule.2',
+                        'payment.payment_methods_configs_rule.4'
                     ]
                 ],
             ],
@@ -155,12 +164,31 @@ class PaymentMethodsConfigsRuleRepositoryTest extends WebTestCase
             'payment.payment_methods_configs_rule.5',
             'payment.payment_methods_configs_rule.6',
         ]);
+
         $configsRules = $this->repository->getByCurrencyWithoutDestination('USD');
 
-        sort($expectedConfigsRules);
-        sort($configsRules);
+        $this->assertEquals($this->getEntitiesIds($expectedConfigsRules), $this->getEntitiesIds($configsRules));
+    }
 
-        $this->assertEquals($expectedConfigsRules, $configsRules);
+    public function testGetByCurrency()
+    {
+        $expectedConfigsRules = $this->getConfigsRulesByReferences([
+            'payment.payment_methods_configs_rule.1',
+            'payment.payment_methods_configs_rule.3',
+            'payment.payment_methods_configs_rule.5',
+            'payment.payment_methods_configs_rule.6',
+        ]);
+
+        $configsRules = $this->repository->getByCurrency('USD');
+
+        $this->assertEquals($this->getEntitiesIds($expectedConfigsRules), $this->getEntitiesIds($configsRules));
+    }
+
+    public function testGetByCurrencyWhenCurrencyNotExists()
+    {
+        $configsRules = $this->repository->getByCurrency('WON');
+
+        $this->assertEmpty($configsRules);
     }
 
     /**

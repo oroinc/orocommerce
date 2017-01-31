@@ -96,3 +96,7 @@ oro:
             choice:
                 'true': Yes
                 'false': No
+
+        frontend:
+            messages:
+                quantity_limits_error: Cannot create order because some items' quantities don't fit allowed limits

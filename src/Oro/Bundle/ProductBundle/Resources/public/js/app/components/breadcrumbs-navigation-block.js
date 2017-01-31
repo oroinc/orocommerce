@@ -65,7 +65,7 @@ define(function(require) {
                         });
 
                         var hint = datagrid.filterManager.filters[filterDefinition.name].getState().hint;
-                        
+
                         currentFilters.push({
                             hint: hint,
                             label: filterDefinition.label
@@ -81,7 +81,7 @@ define(function(require) {
             }
 
             var buildFilterString = function(filter) {
-                return filter.label + " " + filter.hint;
+                return filter.label + ' ' + filter.hint;
             };
 
             var filtersStrings = [];
