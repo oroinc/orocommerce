@@ -5,6 +5,7 @@ define(function(require) {
 
     var AddressBook;
     var BaseComponent = require('oroaddress/js/address-book');
+    var $ = require('jquery');
     var _ = require('underscore');
     var mediator = require('oroui/js/mediator');
 
@@ -34,6 +35,15 @@ define(function(require) {
             } else {
                 mediator.execute('redirectTo', {url: url}, {redirect: true});
             }
+        },
+
+        addAll: function() {
+            AddressBook.__super__.addAll.apply(this, arguments);
+
+            var $manageAddressesLink = $(this.options.manageAddressesLink).clone();
+            $manageAddressesLink.removeClass('hidden');
+            $(this.options.manageAddressesLink).remove();
+            this.$el.find('.map-address-list').append($manageAddressesLink);
         }
     });
 

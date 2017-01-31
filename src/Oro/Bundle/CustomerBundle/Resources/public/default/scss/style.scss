@@ -89,24 +89,6 @@
   }
 }
 
-.map-address-list {
-  .list-item {
-    &.map-item {
-      &.active {
-        .address-list__item {
-          background-color: #f5f5f5;
-        }
-
-        .actions {
-          a {
-            cursor: pointer;
-          }
-        }
-      }
-    }
-  }
-}
-
 .oro-customer-user-address__add-link {
   a {
     i {
@@ -119,7 +101,7 @@
   padding-left: 0;
 }
 
-.user-page-title {
+.user-page-title { //Remove after replacing this class by '.page-subtitle' class where it's used
   font-size: 16px;
   line-height: 2;
   font-weight: 400;

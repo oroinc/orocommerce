@@ -79,13 +79,6 @@
     </div>
 {% endblock %}
 
-{% block _customer_user_address_book_manage_addresses_link_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ "" }) %}
-    <div{{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
 {% block _customer_user_list_link_widget %}
     <div class="">
         {{ block_widget(block) }}

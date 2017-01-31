@@ -1,0 +1,60 @@
+// @theme: default;
+
+.address-list {
+  margin-left: 35px;
+
+  &__item {
+    padding-right: 50px;
+  }
+
+  &__primary {
+    margin: 5px 0 0;
+
+    font-size: $base-font-size--s - 1;
+  }
+
+  &__type {
+    color: get-color('additional', 'dark');
+  }
+
+  &__actions {
+    font-size: 0;
+
+    white-space: nowrap;
+  }
+
+  &__button {
+    // reset default styles
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: get-color('additional', 'middle');
+
+    font-size: $base-font-size;
+
+    cursor: pointer;
+
+    // override icon right margin
+    [class^="cf-"],
+    [class*=" cf-"],
+    [class^="fa-"],
+    [class*=" fa-"] {
+      margin-right: 0;
+    }
+
+    &:not(:first-child) {
+      border-left: 1px solid get-color('additional', 'middle');
+    }
+
+    &:hover {
+      text-decoration: inherit;
+      color: get-color('ui', 'normal');
+    }
+  }
+}
+
+@include breakpoint('tablet-small') {
+  .address-list {
+    margin-left: 0;
+  }
+}

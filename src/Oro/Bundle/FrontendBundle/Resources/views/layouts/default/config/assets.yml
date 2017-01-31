@@ -5,6 +5,7 @@ styles:
         - 'bundles/orofrontend/default/scss/variables/base-config.scss'
         - 'bundles/orofrontend/default/scss/variables/link-config.scss'
         - 'bundles/orofrontend/default/scss/variables/page-title-config.scss'
+        - 'bundles/orofrontend/default/scss/variables/page-subtitle-config.scss'
         - 'bundles/orofrontend/default/scss/variables/page-main-config.scss'
         - 'bundles/orofrontend/default/scss/variables/page-container-config.scss'
         - 'bundles/orofrontend/default/scss/variables/page-content-config.scss'

@@ -26,15 +26,6 @@ layout:
             options:
                 customerUser: '=data["entity"]'
 
-        - '@add':
-            id: __customer_user_address_book_manage_addresses_link
-            parentId: __user_addresses_list_template
-            blockType: link
-            options:
-                route_name: 'oro_customer_frontend_customer_user_address_index'
-                text: 'oro.customer.address.manage'
-                visible: '=data["acl"].isGranted("oro_customer_frontend_customer_view") or data["acl"].isGranted("oro_customer_frontend_customer_user_view")'
-
         - '@addTree':
             items:
                 __customer_user_view_page:

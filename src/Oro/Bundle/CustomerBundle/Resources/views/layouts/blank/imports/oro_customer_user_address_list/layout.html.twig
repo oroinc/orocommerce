@@ -1,20 +1,13 @@
 {% block __oro_customer_user_address_list__user_addresses_head_widget %}
-    {% set attr = layout_attr_defaults(attr, {'~class': ' grid__row'}) %}
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
+    {{ block_widget(block) }}
 {% endblock %}
 
 {% block __oro_customer_user_address_list__user_addresses_head_title_widget %}
-    {% set attr = layout_attr_defaults(attr, {'~class': ' grid__column grid__column-half'}) %}
-    <div {{ block('block_attributes') }}>
-        <h2 class="user-page-title">
-            <span class="badge">
-                <i class="fa-map-marker"></i>
-            </span>
-            {{ block_widget(block) }}
-        </h2>
-    </div>
+    {% set attr = layout_attr_defaults(attr, {'~class': ' page-subtitle'}) %}
+    <h2 {{ block('block_attributes') }}>
+        <span class="badge"><i class="fa-map-o"></i></span>
+        <span class="page-subtitle__text">{{ block_widget(block) }}</span>
+    </h2>
 {% endblock %}
 
 {% block __oro_customer_user_address_list__user_addresses_create_button_widget %}
@@ -26,7 +19,8 @@
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'orocustomer/js/app/components/frontend-customer-address-book-component',
         'data-page-component-options': componentOptions|merge({
-            template: '#customer-address-book-addresses-list-template'
+            template: '#customer-address-book-addresses-list-template',
+            manageAddressesLink: '[data-role="manage-adresses-link"]'
         }),
         '~class': ' address-list'
     }) %}
@@ -48,7 +42,7 @@
     {% set attr = layout_attr_defaults(attr, {
         '~class': " address-list__item"
     }) %}
-    <div {{ block('block_attributes_underscore') }}>
+    <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
@@ -56,29 +50,33 @@
 {% block __oro_customer_user_address_list__user_addresses_list_template_item_address_widget %}
     {% set attr = layout_attr_defaults(attr, {'~class': " address-list__address"}) %}
     <div {{ block('block_attributes') }}>
-        <%= street %>, <%= city %>, <%= postalCode %>, <%= combinedCode %>
+        <div><%= street %></div>
+        <div><%= city %>, <%= postalCode %>, <%= combinedCode %></div>
     </div>
-{% endblock %}
-
-{% block __oro_customer_user_address_list__user_addresses_list_template_item_label_widget %}
-    {% set attr = layout_attr_defaults(attr, {'~class': " address-list__label"}) %}
-    <% if (primary) { %>
-    <div {{ block('block_attributes') }}><%= _.__('oro.customer.address.primary') %></div>
-    <% } %>
 {% endblock %}
 
 {% block __oro_customer_user_address_list__user_addresses_list_template_item_type_widget %}
     {% set attr = layout_attr_defaults(attr, {'~class': " address-list__type"}) %}
     <div {{ block('block_attributes') }}>
-        <% _.each(types, function(type) { %>
-        <div><%= (_.findWhere(defaults, _.pick(type, 'name'))) ? _.__('oro.customer.address.default_type', {type_name: _.escape(type.label)}) : _.escape(type.label) %></div>
+        <% _.each(types, function(type, index) { %>
+            <span><%= (_.findWhere(defaults, _.pick(type, 'name'))) ? _.__('oro.customer.address.default_type', {type_name: _.escape(type.label)}) : _.escape(type.label) %></span>
+            <% if (index !== types.length - 1) { %>
+            <span class="divider">/</span>
+            <% } %>
         <% }) %>
     </div>
 {% endblock %}
 
+{% block __oro_customer_user_address_list__user_addresses_list_template_item_primary_widget %}
+    {% set attr = layout_attr_defaults(attr, {'~class': " address-list__primary"}) %}
+    <% if (primary) { %>
+    <span {{ block('block_attributes') }}><%= _.__('oro.customer.address.primary') %></span>
+    <% } %>
+{% endblock %}
+
 {% block __oro_customer_user_address_list__user_addresses_list_template_item_actions_widget %}
     {% set attr = layout_attr_defaults(attr, {'~class': " address-list__actions actions"}) %}
-    <nav {{ block('block_attributes') }}>{{ block_widget(block) }}</nav>
+    <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
 
 {% block __oro_customer_user_address_list__user_addresses_list_template_item_actions_edit_widget %}
@@ -90,9 +88,25 @@
 
 {% block __oro_customer_user_address_list__user_addresses_list_template_item_actions_remove_widget %}
     {% set attr = layout_attr_defaults(attr, {'~class': " address-list__button item-remove-button"}) %}
-    <% if (!primary) { %>
-        <button {{ block('block_attributes') }}>
-            <i class="fa-trash-o"></i>
-        </button>
-    <% } %>
+    <button {{ block('block_attributes') }}>
+        <i class="fa-trash-o"></i>
+    </button>
+{% endblock %}
+
+{% block __oro_customer_user_address_list__user_addresses_list_template__manage_addresses_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " address-list__manage hidden",
+        'data-role': "manage-adresses-link"
+    }) %}
+
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_customer_user_address_list__user_addresses_list_template__manage_addresses_link_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' address-list__manage-link'
+    }) %}
+    {{ block_widget(block, {attr: attr}) }}
 {% endblock %}
