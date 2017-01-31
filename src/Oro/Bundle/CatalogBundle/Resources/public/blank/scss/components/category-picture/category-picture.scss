@@ -1,0 +1,13 @@
+// @theme: blank;
+
+.category-picture {
+    position: relative;
+
+    border: 1px solid get-color('additional', 'light');
+
+    &__image {
+        display: block;
+
+        width: 100%;
+    }
+}

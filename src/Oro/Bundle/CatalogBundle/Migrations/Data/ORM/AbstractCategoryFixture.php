@@ -74,7 +74,12 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
             $category = new Category();
             $category->addTitle($categoryTitle);
             if (!empty($images[$title])) {
-                $category->setSmallImage($this->getCategoryImage($manager, $images[$title]));
+                if (isset($images[$title]['small'])) {
+                    $category->setSmallImage($this->getCategoryImage($manager, $images[$title]['small']));
+                }
+                if (isset($images[$title]['large'])) {
+                    $category->setLargeImage($this->getCategoryImage($manager, $images[$title]['large']));
+                }
             }
 
             $manager->persist($category);

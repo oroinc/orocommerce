@@ -153,6 +153,7 @@ oro:
                 line_item_deleted: 'Shopping list item has been deleted'
                 delete_confirm: 'Are you sure you want to delete this Shopping list?'
                 deleted: 'Shopping list has been deleted'
+                cannot_create_order_no_line_item_with_price: 'Cannot create order because Shopping List has no items with price'
             btn:
                 request_quote_create_rfp: 'Request Quote'
                 create_order: 'Create Order'

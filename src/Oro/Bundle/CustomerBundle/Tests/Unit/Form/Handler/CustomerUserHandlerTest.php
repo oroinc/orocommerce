@@ -150,7 +150,6 @@ class CustomerUserHandlerTest extends FormHandlerTestCase
         $this->assertEquals($isProcessed, $this->handler->process($this->entity));
         if ($organization) {
             $this->assertEquals($organization, $this->entity->getOrganization());
-            $this->assertTrue($this->entity->hasOrganization($organization));
         }
     }
 
