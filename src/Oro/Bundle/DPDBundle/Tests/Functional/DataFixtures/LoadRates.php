@@ -18,20 +18,23 @@ class LoadRates extends AbstractFixture implements DependentFixtureInterface
     public function load(ObjectManager $manager)
     {
         foreach ($this->getRatesData() as $reference => $data) {
+            $entity = new Rate();
+
             $transport = $this->getReference($data['transport']);
+            $entity->setTransport($transport);
+
             $shipService = $this->getReference($data['shippingService']);
+            $entity->setShippingService($shipService);
+
             $country = $this->getReference($data['country']);
-            $region = null;
-            if (!empty($data['region'])) {
+            $entity->setCountry($country);
+
+            if (array_key_exists('region', $data)) {
                 $region = $this->getReference($data['region']);
+                $entity->setRegion($region);
             }
 
-            $entity = new Rate();
-            $entity->setTransport($transport);
-            $entity->setShippingService($shipService);
-            $entity->setCountry($country);
-            $entity->setRegion($region);
-            $this->setEntityPropertyValues($entity, $data, ['weightValue', 'priceValue']);
+            $this->setEntityPropertyValues($entity, $data, ['transport', 'shippingService', 'country', 'region']);
             $manager->persist($entity);
             $this->setReference($reference, $entity);
         }

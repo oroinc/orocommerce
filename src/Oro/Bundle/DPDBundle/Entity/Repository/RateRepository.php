@@ -66,4 +66,24 @@ class RateRepository extends EntityRepository
 
         return $results;
     }
+
+    /**
+     * @param DPDTransport     $transport
+     * @param ShippingService  $shippingService
+     * @param AddressInterface $shippingAddress
+     *
+     * @return Rate
+     */
+    public function findFirstRateByServiceAndDestination(
+        DPDTransport $transport,
+        ShippingService $shippingService,
+        AddressInterface $shippingAddress
+    ) {
+        $result =
+            $this->findRatesByServiceAndDestinationQuery($transport, $shippingService, $shippingAddress)
+                ->setMaxResults(1)
+                ->getOneOrNullResult();
+
+        return $result;
+    }
 }

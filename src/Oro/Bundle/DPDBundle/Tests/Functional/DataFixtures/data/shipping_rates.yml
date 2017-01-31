@@ -3,5 +3,23 @@ dpd.rate.1:
     shippingService: 'dpd.shipping_service.1'
     country: 'dpd.shipping_country.1'
     region: 'dpd.shipping_region.1'
-    weight: null
-    price: '1.0'
+    priceValue: '1.000'
+
+dpd.rate.2:
+    transport: 'dpd.transport.1'
+    shippingService: 'dpd.shipping_service.1'
+    country: 'dpd.shipping_country.1'
+    region: 'dpd.shipping_region.2'
+    priceValue: '1.000'
+
+dpd.rate.3:
+    transport: 'dpd.transport.1'
+    shippingService: 'dpd.shipping_service.1'
+    country: 'dpd.shipping_country.1'
+    priceValue: '1.000'
+
+dpd.rate.4:
+    transport: 'dpd.transport.1'
+    shippingService: 'dpd.shipping_service.2'
+    country: 'dpd.shipping_country.1'
+    priceValue: '1.000'

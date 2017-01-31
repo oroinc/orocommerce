@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityRepository;
 
 class ShippingServiceRepository extends EntityRepository
 {
-    public function getAllShippingServiceCodes()
+    public function getAllShippingServices()
     {
         return $this->createQueryBuilder('s', 's.code')->getQuery()->getResult();
     }
