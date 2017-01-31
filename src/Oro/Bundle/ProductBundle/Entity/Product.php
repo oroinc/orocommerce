@@ -1112,6 +1112,7 @@ class Product extends ExtendProduct implements
             $this->parentVariantLinks = new ArrayCollection();
             $this->slugPrototypes = new ArrayCollection();
             $this->slugs = new ArrayCollection();
+            $this->slugPrototypesWithRedirect = new SlugPrototypesWithRedirect($this->slugPrototypes);
             $this->variantFields = [];
         }
     }

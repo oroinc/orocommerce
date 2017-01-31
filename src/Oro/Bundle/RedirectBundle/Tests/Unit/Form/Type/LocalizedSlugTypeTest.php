@@ -45,7 +45,11 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
         $builder = $this->createMock(FormBuilderInterface::class);
         $builder->expects($this->once())
             ->method('addEventListener')
-            ->with(FormEvents::POST_SUBMIT, function (){});
+            ->with(
+                FormEvents::POST_SUBMIT,
+                function() {
+                }
+            );
 
         $this->formType->buildForm($builder, []);
     }

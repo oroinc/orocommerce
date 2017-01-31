@@ -145,7 +145,7 @@ define(function(require) {
         _isSlugFieldsChanged: function() {
             var isChanged = false;
             this.$slugFields.each(_.bind(function(index, item) {
-                if(this.slugFieldsInitialState[index] !== $(item).val()) {
+                if (this.slugFieldsInitialState[index] !== $(item).val()) {
                     isChanged = true;
                     return false;
                 }

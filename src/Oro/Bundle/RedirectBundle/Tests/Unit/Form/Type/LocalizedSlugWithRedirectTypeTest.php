@@ -282,11 +282,11 @@ class LocalizedSlugWithRedirectTypeTest extends FormIntegrationTestCase
 
         $this->assertArrayHasKey('confirm_slug_change_component_options', $view->vars);
         $this->assertEquals(
-            '[name^="form-name[target-name][' . LocalizedSlugWithRedirectType::SLUG_PROTOTYPES_FIELD_NAME . '][values]"]',
+            '[name^="form-name[target-name]['.LocalizedSlugWithRedirectType::SLUG_PROTOTYPES_FIELD_NAME.'][values]"]',
             $view->vars['confirm_slug_change_component_options']['slugFields']
         );
         $this->assertEquals(
-            '[name^="form-name[target-name][' . LocalizedSlugWithRedirectType::CREATE_REDIRECT_FIELD_NAME . ']"]',
+            '[name^="form-name[target-name]['.LocalizedSlugWithRedirectType::CREATE_REDIRECT_FIELD_NAME.']"]',
             $view->vars['confirm_slug_change_component_options']['createRedirectCheckbox']
         );
     }
