@@ -28,6 +28,7 @@ RFPBundle
     - `Oro\Bundle\RFPBundle\Form\Type\RequestStatusSelectType`
     - `Oro\Bundle\RFPBundle\Form\Type\RequestStatusWithDeletedSelectType`
 * The methods `setRequestStatusClass` and `postSubmit` was removed from class `Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType`
+* Added api processors `RequestEntityProcessor` and `RequestProductItemProcessor`
 
 FrontendBundle
 --------------
