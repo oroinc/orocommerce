@@ -1013,20 +1013,34 @@
           td {
             vertical-align: middle;
             padding: 16px 12px;
+
+            &:last-child {
+              padding-right: 0;
+            }
           }
         }
       }
 
+      .actions-row {
+        text-align: right;
+      }
+
+      .launchers-list {
+        display: inline-block;
+        text-align: left;
+      }
+
       .launcher-item {
-        a.action{
+        display: inline-block;
+
+        a.action {
           position: relative;
+          white-space: nowrap;
+          text-align: center;
 
-          padding-left: 18px;
-
-          [class^='fa-'].hide-text{
-            position: absolute;
-            top: 0;
-            left: 0;
+          [class^='fa-'].hide-text {
+            display: inline-block;
+            font-size: $base-font-size--large;
 
             &:after,
             &:before {
@@ -1049,7 +1063,6 @@
 
     a {
       padding: 5px 10px;
-      line-height: 18px;
 
       .hide-text {
         margin-right: 5px;
@@ -1065,31 +1078,33 @@
 //Remove code below, when grid styles will be free of platform styles
 //'.grid__row--has-child-grid' is used in customer bundle on the address book page for addresses datagrid
 //It should remove this class too
+
 .grid__row--has-child-grid {
+  $launcher-color: get-color('additional', 'middle');
+
   .oro-datagrid {
     .grid {
       .launchers-list {
         text-align: right;
-
         white-space: nowrap;
       }
 
       .launcher-item {
-        float:none;
-        padding: 0 5px;
+        float: none;
         display: inline-block;
-        border-left: 1px solid get-color('additional', 'light');
+        border-left: 1px solid $launcher-color;
+        padding: 0;
 
         &:first-child {
           border: 0;
         }
 
-        a.action{
+        a.action {
           min-width: 12px;
           min-height: 18px;
           text-align: center;
-
-          color: get-color('additional', 'light');
+          padding: 0 10px;
+          color: $launcher-color;
 
           &:hover, &:focus, &:active, &:visited {
             background: transparent;
