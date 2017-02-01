@@ -79,7 +79,7 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
 
             $entities = $this->messageFactory->getEntitiesFromMessage($messageData);
             foreach ($entities as $entity) {
-                $this->generator->generate($entity, true);
+                $this->generator->generate($entity);
             }
             $em->flush();
 

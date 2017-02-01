@@ -77,7 +77,7 @@ class ContentNodeSlugsProcessor implements MessageProcessorInterface, TopicSubsc
             $contentNode = $em->find(ContentNode::class, $contentNodeId);
 
             $this->defaultVariantScopesResolver->resolve($contentNode);
-            $this->slugGenerator->generate($contentNode, true);
+            $this->slugGenerator->generate($contentNode);
 
             $em->flush();
             $em->commit();
