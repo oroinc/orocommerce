@@ -167,9 +167,6 @@ services:
     oro_product.website_search.repository.product:
         parent: oro_website_search.repository.abstract
         class: 'Oro\Bundle\ProductBundle\Search\ProductRepository'
-        arguments:
-            - "@oro_website_search.query_factory"
-            - "@oro_search.provider.search_mapping"
         calls:
             - [setEntityName, ['%oro_product.entity.product.class%']]
 

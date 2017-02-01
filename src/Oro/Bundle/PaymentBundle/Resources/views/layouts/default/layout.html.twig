@@ -1,3 +1,7 @@
+{% block payment_additional_data_widget %}
+    {{ block(block_name) }}
+{% endblock %}
+
 {% block _payment_methods_widget %}
     {% set currentPaymentMethod = currentPaymentMethod|default(views|keys|first) %}
     <div class="{{ class_prefix }}__form" data-content="payment_method_form" data-page-component-module="oropayment/js/app/components/payment-method-selector-component">

@@ -2,10 +2,8 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Query\Factory;
 
-use Oro\Bundle\SearchBundle\Engine\EngineV2Interface;
 use Oro\Bundle\SearchBundle\Query\Factory\QueryFactoryInterface;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
-use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchQuery;
 use Oro\Bundle\WebsiteSearchBundle\Query\Factory\CompositeQueryFactory;
 
 class CompositeQueryFactoryTest extends \PHPUnit_Framework_TestCase
