@@ -116,10 +116,8 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
         $crawler = $this->client->request('GET', $data['responseData']['returnUrl']);
 
         $this->assertContains(self::FINISH_SIGN, $crawler->html());
-        $this->assertCount(0, $this->registry->getRepository('OroCheckoutBundle:CheckoutSource')->findAll());
-        $this->assertNull(
-            $this->registry->getRepository('OroShoppingListBundle:ShoppingList')->find($sourceEntityId)
-        );
+        $this->assertCount(1, $this->registry->getRepository('OroCheckoutBundle:CheckoutSource')->findAll());
+        $this->assertNull($this->registry->getRepository('OroShoppingListBundle:ShoppingList')->find($sourceEntityId));
 
         /** @var EntityRepository $objectManager */
         $objectManager = $this->getContainer()

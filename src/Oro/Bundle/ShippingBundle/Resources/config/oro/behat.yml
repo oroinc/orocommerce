@@ -41,3 +41,7 @@ elements:
   Notification Alert:
     selector: '.notification--alert .notification__text'
     class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+  CreateOrderFlashMessage:
+    class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+    selector: '#flash-messages div.notification-flash__text'

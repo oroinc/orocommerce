@@ -66,8 +66,6 @@ workflows:
                 type: entity
                 options:
                     class: Oro\Bundle\OrderBundle\Entity\Order
-            checkout_finished:
-                type: bool
         steps:
             enter_billing_address:
                 order: 10
@@ -94,7 +92,6 @@ workflows:
                     - back_to_shipping_method
             order_review:
                 order: 50
-                is_final: true
                 allowed_transitions:
                     - place_order
                     - verify_payment
@@ -105,6 +102,10 @@ workflows:
                     - back_to_shipping_method
                     - back_to_payment
                     - back_to_shipping_address_on_fail_address
+            order_created:
+                order: 60
+                is_final: true
+
         transitions:
             start_from_shoppinglist:
                 is_start: true
@@ -329,7 +330,7 @@ workflows:
                                 data: $internal_state_token
 
             finish_checkout:
-                step_to: order_review
+                step_to: order_created
                 transition_definition: finish_checkout_definition
                 is_hidden: true
 
@@ -360,16 +361,13 @@ workflows:
                             identifier: $init_context.entityId
                             attribute: $.result.shoppingList
                 preconditions:
-                    '@and':
-                        - '@has_elements': $.result.shoppingList.lineItems
-                        - '@has_price_in_shopping_line_items': $.result.shoppingList.lineItems
-                        - '@extendable':
-                            events: [extendable_condition.start_checkout]
+                    '@has_elements': $.result.shoppingList.lineItems
                 actions:
                     - '@run_action_group':
                         action_group: start_shoppinglist_checkout
                         parameters_mapping:
                             shoppingList: $.result.shoppingList
+                            showErrors: true
                         results:
                             data.checkout: $.checkout
                             result.redirectUrl: $.redirectUrl
@@ -798,7 +796,7 @@ workflows:
                         conditions:
                             '@and':
                                 - '@equal': [$payment_in_progress, true]
-                                - '@equal': [$checkout_finished, false]
+                                - '@equal': [$checkout.completed, false]
                         message: oro.checkout.workflow.condition.payment_has_not_been_processed.message
                         type: 'warning'
                     - '@tree':
@@ -1093,6 +1091,52 @@ workflows:
                             to: $order.customerUser.email
                             template: 'order_confirmation_email'
                             entity: $order
+
+                    - '@assign_value': [$checkout.completed, true]
+
+                    - '@tree':
+                        conditions:
+                            '@not_empty': $order
+                        actions:
+                            - '@count':
+                                value: $order.lineItems
+                                attribute: $checkout.completedData.itemsCount
+                            - '@assign_value': [$.result.orders, []]
+                            - '@get_class_name':
+                                object: $order
+                                attribute: $.result.orderClassName
+                            - '@call_service_method':
+                                service: oro_entity.entity_alias_resolver
+                                method: getAlias
+                                method_parameters: [$.result.orderClassName]
+                                attribute: $.result.orders[0].entityAlias
+                            - '@call_service_method':
+                                service: oro_entity.doctrine_helper
+                                method: getEntityIdentifier
+                                method_parameters: [$order]
+                                attribute: $.result.orders[0].entityId
+                            - '@assign_value': [$checkout.completedData.orders, $.result.orders]
+                    - '@assign_value': [$.result.sourceEntity, $checkout.sourceEntity]
+                    - '@tree':
+                        conditions:
+                            '@not_empty': $.result.sourceEntity
+                        actions:
+                            - '@assign_value':
+                                conditions:
+                                    '@instanceof': [$.result.sourceEntity, Oro\Bundle\SaleBundle\Entity\QuoteDemand]
+                                parameters:
+                                    attribute: $.result.sourceEntity
+                                    value: $.result.sourceEntity.quote
+                            - '@call_service_method':
+                                service: oro_entity.entity_name_resolver
+                                method: getName
+                                method_parameters: [$.result.sourceEntity]
+                                attribute: $checkout.completedData.startedFrom
+                            - '@assign_value':
+                                - [$checkout.completedData.currency, $order.currency]
+                                - [$checkout.completedData.subtotal, $order.subtotalObject.value]
+                                - [$checkout.completedData.total, $order.totalObject.value]
+
                     - '@remove_entity':
                         conditions:
                             '@or':
@@ -1101,14 +1145,6 @@ workflows:
                                     - '@equal': [$allow_manual_source_remove, true]
                                     - '@equal': [$remove_source, true]
                         parameters: [$checkout.sourceEntity]
-                    - '@remove_entity': $checkout.billingAddress
-                    - '@remove_entity': $checkout.shippingAddress
-                    - '@remove_entity': $checkout
-                    - '@assign_value': [$checkout_finished, true]
-                    - '@redirect':
-                        route: oro_order_frontend_success
-                        route_parameters:
-                            id: $order.id
 
             recalculate_state_definition:
                 preconditions:

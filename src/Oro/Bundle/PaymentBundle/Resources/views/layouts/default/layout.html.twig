@@ -1,0 +1,32 @@
+{% block payment_additional_data_widget %}
+    {{ block(block_name) }}
+{% endblock %}
+
+{% block _payment_methods_widget %}
+    {% set currentPaymentMethod = currentPaymentMethod|default(views|keys|first) %}
+    <div class="{{ class_prefix }}__form" data-content="payment_method_form" data-page-component-module="oropayment/js/app/components/payment-method-selector-component">
+        <div class="grid__row grid__row--offset-none">
+            <div class="grid__column grid__column--offset-y grid__column--6" data-payment-method-forms>
+                {% if views|length > 0 %}
+                    <span class="label label--full">{{ 'oro.payment.methods.select_method'|trans }}<sup class="red">*</sup></span>
+                    {% for name, view in views if views is defined and view is iterable %}
+                        {% set selected = currentPaymentMethod == name %}
+                        <div class="{{ class_prefix }}__form__radio" data-item-container>
+                            <label class="custom-radio custom-radio--large {% if selected %}checked{% endif %}" data-radio tabindex="0">
+                                <input class="custom-radio__control" type="radio" name="paymentMethod" data-choice="{{ name }}" value="{{ name }}" {% if selected%}checked="checked"{% endif %} />
+                                <span class="custom-radio__text">{{ view.label }}</span>
+                            </label>
+                            <div class="{{ class_prefix }}__form__payment-container" data-form-container {% if not selected %} style="display: none;" {% endif %}>
+                                {{ block(view.block) }}
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="notification notification--alert">
+                        <span class="notification__text">{{ 'oro.payment.methods.no_method'|trans }}</span>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
