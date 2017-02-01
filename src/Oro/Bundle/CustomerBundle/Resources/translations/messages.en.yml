@@ -78,6 +78,7 @@ oro.customer:
         first_name.label:            'First Name'
         middle_name.label:           'Middle Name'
         last_name.label:             'Last Name'
+        full_name.label:             'Name'
         username.label:              'Email'
         email.label:                 'Email Address'
         password.label:              'Password'
@@ -113,7 +114,7 @@ oro.customer:
         sales_representatives.label: 'Assigned Sales Representatives'
 
         profile:
-            company_name: 'Company Name'
+            company_name: 'Company'
             registration.title: 'Registration'
             register: 'Registration'
             register.description: 'Please register if you do not have an account. A sales representative will contact you shortly.'
@@ -140,6 +141,7 @@ oro.customer:
             confirmed.label: 'Confirmed'
             unconfirmed.label: 'Unconfirmed'
             cancel.label: 'Cancel'
+            status: 'Status'
 
             form:
                 sections:

@@ -1,0 +1,9 @@
+// @theme: blank
+
+.info-list-status {
+    color: get-color('secondary', 'light');
+
+    &--disabled {
+        color: get-color('additional', 'middle');
+    }
+}
