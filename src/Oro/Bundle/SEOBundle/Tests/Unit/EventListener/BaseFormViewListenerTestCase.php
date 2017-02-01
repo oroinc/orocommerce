@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\SEOBundle\EventListener\BaseFormViewListener;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
 use Oro\Bundle\UIBundle\View\ScrollData;
@@ -12,12 +11,7 @@ use Symfony\Component\HttpFoundation\RequestStack;
 
 class BaseFormViewListenerTestCase extends FormViewListenerTestCase
 {
-    /**
-     * @var BaseFormViewListener $listener
-     */
-    protected $listener;
-
-    /** @var  Request|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var Request|\PHPUnit_Framework_MockObject_MockObject */
     protected $request;
 
     /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
@@ -25,30 +19,30 @@ class BaseFormViewListenerTestCase extends FormViewListenerTestCase
 
     protected function tearDown()
     {
-        unset($this->doctrineHelper, $this->translator);
+        unset($this->request, $this->requestStack);
+
+        parent::tearDown();
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 
         $this->request = $this->getRequest();
 
-        $this->requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
+        $this->requestStack = $this->createMock(RequestStack::class);
         $this->requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
     }
 
     /**
      * @param object $entityObject
+     * @param string $labelPrefix
      * @return \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment
      */
-    protected function getEnvironmentForView($entityObject)
+    protected function getEnvironmentForView($entityObject, $labelPrefix)
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
-        $env = $this->getMockBuilder('\Twig_Environment')
+        $env = $this->getMockBuilder(\Twig_Environment::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -59,14 +53,14 @@ class BaseFormViewListenerTestCase extends FormViewListenerTestCase
                     'OroSEOBundle:SEO:description_view.html.twig',
                     [
                         'entity' => $entityObject,
-                        'labelPrefix' => $this->listener->getMetaFieldLabelPrefix()
+                        'labelPrefix' => $labelPrefix
                     ],
                     ''
                 ],
                 [
                     'OroSEOBundle:SEO:keywords_view.html.twig', [
                         'entity' => $entityObject,
-                        'labelPrefix' => $this->listener->getMetaFieldLabelPrefix()
+                        'labelPrefix' => $labelPrefix
                     ],
                     ''
                 ]
@@ -81,7 +75,7 @@ class BaseFormViewListenerTestCase extends FormViewListenerTestCase
     protected function getEnvironmentForEdit()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
-        $env = $this->getMockBuilder('\Twig_Environment')
+        $env = $this->getMockBuilder(\Twig_Environment::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -131,7 +125,7 @@ class BaseFormViewListenerTestCase extends FormViewListenerTestCase
     protected function getScrollData()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|ScrollData $scrollData */
-        $scrollData = $this->createMock('Oro\Bundle\UIBundle\View\ScrollData');
+        $scrollData = $this->createMock(ScrollData::class);
 
         $scrollData->expects($this->once())
             ->method('addNamedBlock');

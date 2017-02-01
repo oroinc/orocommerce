@@ -30,7 +30,7 @@ class CheckoutShippingContextFactory
     /**
      * @var ShippingContextBuilderFactoryInterface|null
      */
-    private $shippingContextBuilderFactory = null;
+    private $shippingContextBuilderFactory;
 
     /**
      * @param CheckoutLineItemsManager $checkoutLineItemsManager
@@ -53,7 +53,7 @@ class CheckoutShippingContextFactory
     /**
      * @param Checkout $checkout
      *
-     * @return ShippingContextInterface
+     * @return ShippingContextInterface|null
      */
     public function create(Checkout $checkout)
     {
