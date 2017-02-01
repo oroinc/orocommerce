@@ -2,24 +2,23 @@
 
 namespace Oro\Bundle\CustomerBundle\Tests\Unit\Owner;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 use Doctrine\Common\Cache\CacheProvider;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Annotations\AnnotationReader;
 use Doctrine\DBAL\Platforms\MySqlPlatform;
 use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
+
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 
 use Oro\Component\TestUtils\ORM\Mocks\ConnectionMock;
 use Oro\Component\TestUtils\ORM\Mocks\DriverMock;
 use Oro\Component\TestUtils\ORM\Mocks\EntityManagerMock;
 use Oro\Component\TestUtils\ORM\OrmTestCase;
+use Oro\Bundle\EntityBundle\Tools\DatabaseChecker;
+use Oro\Bundle\SecurityBundle\Owner\Metadata\MetadataProviderInterface;
 use Oro\Bundle\SecurityBundle\Owner\OwnerTree;
-use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Owner\FrontendOwnerTreeProvider;
-use Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
 class FrontendOwnerTreeProviderTest extends OrmTestCase
 {
@@ -37,13 +36,13 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
     const USER_1 = 100;
     const USER_2 = 200;
 
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ContainerInterface
-     */
-    protected $container;
-
     /** @var EntityManagerMock */
     protected $em;
+
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|DatabaseChecker
+     */
+    protected $databaseChecker;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|CacheProvider
@@ -51,19 +50,14 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
     protected $cache;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|FrontendOwnershipMetadataProvider
+     * @var \PHPUnit_Framework_MockObject_MockObject|MetadataProviderInterface
      */
     protected $ownershipMetadataProvider;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry
+     * @var \PHPUnit_Framework_MockObject_MockObject|TokenStorageInterface
      */
-    protected $managerRegistry;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|SecurityFacade
-     */
-    protected $securityFacade;
+    protected $tokenStorage;
 
     /**
      * @var FrontendOwnerTreeProvider
@@ -88,6 +82,10 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
             ->method('getManagerForClass')
             ->will($this->returnValue($this->em));
 
+        $this->databaseChecker = $this->getMockBuilder('Oro\Bundle\EntityBundle\Tools\DatabaseChecker')
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->cache = $this->getMockForAbstractClass(
             'Doctrine\Common\Cache\CacheProvider',
             [],
@@ -103,10 +101,9 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
         $this->cache->expects($this->any())
             ->method('save');
 
-        $this->ownershipMetadataProvider =
-            $this->getMockBuilder('Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider')
-                ->disableOriginalConstructor()
-                ->getMock();
+        $this->ownershipMetadataProvider = $this->createMock(
+            'Oro\Bundle\SecurityBundle\Owner\Metadata\MetadataProviderInterface'
+        );
         $this->ownershipMetadataProvider->expects($this->any())
             ->method('getBasicLevelClass')
             ->willReturn(self::ENTITY_NAMESPACE . '\TestCustomerUser');
@@ -114,36 +111,17 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
             ->method('getLocalLevelClass')
             ->willReturn(self::ENTITY_NAMESPACE . '\TestCustomer');
 
-        $this->securityFacade = $this->getMockBuilder('Oro\Bundle\SecurityBundle\SecurityFacade')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->tokenStorage = $this->createMock(
+            'Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface'
+        );
 
-        $this->container = $this->createMock('Symfony\Component\DependencyInjection\ContainerInterface');
-        $this->container->expects($this->any())
-            ->method('get')
-            ->willReturnMap(
-                [
-                    [
-                        'oro_customer.owner.frontend_ownership_tree_provider.cache',
-                        ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE,
-                        $this->cache,
-                    ],
-                    [
-                        'oro_customer.owner.frontend_ownership_metadata_provider',
-                        ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE,
-                        $this->ownershipMetadataProvider,
-                    ],
-                    ['doctrine', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE, $doctrine],
-                    [
-                        'oro_security.security_facade',
-                        ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE,
-                        $this->securityFacade,
-                    ],
-                ]
-            );
-
-        $this->treeProvider = new FrontendOwnerTreeProvider();
-        $this->treeProvider->setContainer($this->container);
+        $this->treeProvider = new FrontendOwnerTreeProvider(
+            $doctrine,
+            $this->databaseChecker,
+            $this->cache,
+            $this->ownershipMetadataProvider,
+            $this->tokenStorage
+        );
     }
 
     /**
@@ -171,20 +149,6 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
 
     /**
      * @param \PHPUnit_Framework_MockObject_MockObject $connection
-     * @param string[]                                 $existingTables
-     */
-    protected function setTablesExistExpectation($connection, array $existingTables)
-    {
-        $this->setFetchAllQueryExpectationAt(
-            $connection,
-            0,
-            $this->em->getConnection()->getDatabasePlatform()->getListTablesSQL(),
-            $existingTables
-        );
-    }
-
-    /**
-     * @param \PHPUnit_Framework_MockObject_MockObject $connection
      * @param string[]                                 $customers
      */
     protected function setGetCustomersExpectation($connection, array $customers)
@@ -199,7 +163,7 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
         }
         $this->setQueryExpectationAt(
             $connection,
-            1,
+            0,
             'SELECT t0_.id AS id_0, t0_.organization_id AS sclr_1, t0_.parent_id AS sclr_2,'
             . ' (CASE WHEN t0_.parent_id IS NULL THEN 0 ELSE 1 END) AS sclr_3'
             . ' FROM tbl_customer t0_'
@@ -224,7 +188,7 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
         }
         $this->setQueryExpectationAt(
             $connection,
-            2,
+            1,
             'SELECT t0_.id AS id_0, t0_.organization_id AS sclr_1, t0_.customer_id AS sclr_2'
             . ' FROM tbl_customer_user t0_'
             . ' ORDER BY sclr_1 ASC',
@@ -249,8 +213,11 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
 
     public function testCustomersWithoutOrganization()
     {
+        $this->databaseChecker->expects(self::once())
+            ->method('checkDatabase')
+            ->willReturn(true);
+
         $connection = $this->getDriverConnectionMock($this->em);
-        $this->setTablesExistExpectation($connection, ['tbl_customer_user']);
         // the customers without parent should be at the top,
         // rest customers are sorted by parent id
         $this->setGetCustomersExpectation(
@@ -335,8 +302,11 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
      */
     public function testCustomerTree()
     {
+        $this->databaseChecker->expects(self::once())
+            ->method('checkDatabase')
+            ->willReturn(true);
+
         $connection = $this->getDriverConnectionMock($this->em);
-        $this->setTablesExistExpectation($connection, ['tbl_customer_user']);
         // the customers without parent should be at the top,
         // rest customers are sorted by parent id
         $this->setGetCustomersExpectation(
@@ -423,8 +393,11 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
      */
     public function testCustomerTreeWhenChildCustomerAreLoadedBeforeParentCustomer()
     {
+        $this->databaseChecker->expects(self::once())
+            ->method('checkDatabase')
+            ->willReturn(true);
+
         $connection = $this->getDriverConnectionMock($this->em);
-        $this->setTablesExistExpectation($connection, ['tbl_customer_user']);
         // the customers without parent should be at the top,
         // rest customers are sorted by parent id
         $this->setGetCustomersExpectation(
@@ -508,8 +481,11 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
 
     public function testUserDoesNotHaveParentCustomer()
     {
+        $this->databaseChecker->expects(self::once())
+            ->method('checkDatabase')
+            ->willReturn(true);
+
         $connection = $this->getDriverConnectionMock($this->em);
-        $this->setTablesExistExpectation($connection, ['tbl_customer_user']);
         // the customers without parent should be at the top,
         // rest customers are sorted by parent id
         $this->setGetCustomersExpectation(
@@ -573,8 +549,11 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
      */
     public function testSeveralOrganizations()
     {
+        $this->databaseChecker->expects(self::once())
+            ->method('checkDatabase')
+            ->willReturn(true);
+
         $connection = $this->getDriverConnectionMock($this->em);
-        $this->setTablesExistExpectation($connection, ['tbl_customer_user']);
         // the customers without parent should be at the top,
         // rest customers are sorted by parent id
         $this->setGetCustomersExpectation(
@@ -668,13 +647,38 @@ class FrontendOwnerTreeProviderTest extends OrmTestCase
         );
     }
 
-    public function testSupports()
+    public function testSupportsForSupportedUser()
     {
-        $this->securityFacade->expects($this->exactly(2))
-            ->method('getLoggedUser')
-            ->willReturnOnConsecutiveCalls(new CustomerUser(), new User());
+        $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $this->tokenStorage->expects(self::once())
+            ->method('getToken')
+            ->willReturn($token);
+        $token->expects(self::once())
+            ->method('getUser')
+            ->willReturn(new CustomerUser());
 
         $this->assertTrue($this->treeProvider->supports());
+    }
+
+    public function testSupportsForNotSupportedUser()
+    {
+        $token = $this->createMock('Symfony\Component\Security\Core\Authentication\Token\TokenInterface');
+        $this->tokenStorage->expects(self::once())
+            ->method('getToken')
+            ->willReturn($token);
+        $token->expects(self::once())
+            ->method('getUser')
+            ->willReturn(new User());
+
+        $this->assertFalse($this->treeProvider->supports());
+    }
+
+    public function testSupportsWhenNoSecurityToken()
+    {
+        $this->tokenStorage->expects(self::once())
+            ->method('getToken')
+            ->willReturn(null);
+
         $this->assertFalse($this->treeProvider->supports());
     }
 }
