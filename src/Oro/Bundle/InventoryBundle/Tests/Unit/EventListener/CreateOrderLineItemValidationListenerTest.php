@@ -95,6 +95,9 @@ class CreateOrderLineItemValidationListenerTest extends \PHPUnit_Framework_TestC
             ->willReturn(true);
         $event->expects($this->never())
             ->method('addError');
+        $this->inventoryQuantityManager->expects($this->once())
+            ->method('shouldDecrement')
+            ->willReturn(true);
 
         $this->createOrderLineItemValidationListener->onLineItemValidate($event);
     }
@@ -111,6 +114,8 @@ class CreateOrderLineItemValidationListenerTest extends \PHPUnit_Framework_TestC
             ->method('addError');
         $this->doctrineHelper->expects($this->never())
             ->method('getEntityRepository');
+        $this->inventoryQuantityManager->expects($this->never())
+            ->method('shouldDecrement');
 
         $this->createOrderLineItemValidationListener->onLineItemValidate($event);
     }
@@ -130,6 +135,9 @@ class CreateOrderLineItemValidationListenerTest extends \PHPUnit_Framework_TestC
         $inventoryLevelRepository->expects($this->once())
             ->method('getLevelByProductAndProductUnit')
             ->willReturn(null);
+        $this->inventoryQuantityManager->expects($this->once())
+            ->method('shouldDecrement')
+            ->willReturn(true);
 
         $this->createOrderLineItemValidationListener->onLineItemValidate($event);
     }
@@ -156,7 +164,7 @@ class CreateOrderLineItemValidationListenerTest extends \PHPUnit_Framework_TestC
         $this->requestStack->expects($this->once())
             ->method('getCurrentRequest')
             ->willReturn($request);
-        $lineItem->expects($this->once())
+        $lineItem->expects($this->any())
             ->method('getProduct')
             ->willReturn($product);
         $lineItem->expects($this->once())

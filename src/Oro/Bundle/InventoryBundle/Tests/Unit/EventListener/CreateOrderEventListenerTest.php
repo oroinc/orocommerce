@@ -97,6 +97,9 @@ class CreateOrderEventListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
         $this->quantityManager->expects($this->once())
             ->method('decrementInventory');
+        $this->quantityManager->expects($this->once())
+            ->method('shouldDecrement')
+            ->willReturn(true);
 
         $this->statusHandler->expects($this->once())
             ->method('changeInventoryStatusWhenDecrement');
@@ -115,6 +118,8 @@ class CreateOrderEventListenerTest extends \PHPUnit_Framework_TestCase
         $workflowData->expects($this->never())
             ->method('get')
             ->with('order');
+        $this->quantityManager->expects($this->never())
+            ->method('shouldDecrement');
 
         $this->createOrderEventListener->onCreateOrder($event);
     }
@@ -141,6 +146,9 @@ class CreateOrderEventListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(false);
         $this->quantityManager->expects($this->never())
             ->method('decrementInventory');
+        $this->quantityManager->expects($this->once())
+            ->method('shouldDecrement')
+            ->willReturn(true);
 
         $this->statusHandler->expects($this->never())
             ->method('changeInventoryStatusWhenDecrement');
@@ -163,6 +171,9 @@ class CreateOrderEventListenerTest extends \PHPUnit_Framework_TestCase
         $inventoryLevelRepository->expects($this->once())
             ->method('getLevelByProductAndProductUnit')
             ->willReturn(null);
+        $this->quantityManager->expects($this->once())
+            ->method('shouldDecrement')
+            ->willReturn(true);
 
         $this->createOrderEventListener->onCreateOrder($event);
     }
@@ -186,6 +197,9 @@ class CreateOrderEventListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->quantityManager->expects($this->once())
             ->method('hasEnoughQuantity')
+            ->willReturn(true);
+        $this->quantityManager->expects($this->once())
+            ->method('shouldDecrement')
             ->willReturn(true);
 
         $event->expects($this->never())
@@ -212,6 +226,9 @@ class CreateOrderEventListenerTest extends \PHPUnit_Framework_TestCase
         $this->quantityManager->expects($this->once())
             ->method('hasEnoughQuantity')
             ->willReturn(false);
+        $this->quantityManager->expects($this->once())
+            ->method('shouldDecrement')
+            ->willReturn(true);
         $event->expects($this->once())
             ->method('addError');
 
@@ -233,6 +250,9 @@ class CreateOrderEventListenerTest extends \PHPUnit_Framework_TestCase
         $inventoryLevelRepository->expects($this->once())
             ->method('getLevelByProductAndProductUnit')
             ->willReturn(null);
+        $this->quantityManager->expects($this->once())
+            ->method('shouldDecrement')
+            ->willReturn(true);
 
         $this->createOrderEventListener->onBeforeOrderCreate($event);
     }
@@ -249,7 +269,7 @@ class CreateOrderEventListenerTest extends \PHPUnit_Framework_TestCase
         $product = $this->createMock(Product::class);
         $productUnit = $this->createMock(ProductUnit::class);
         $lineItem = $this->createMock(OrderLineItem::class);
-        $lineItem->expects($this->once())
+        $lineItem->expects($this->any())
             ->method('getProduct')
             ->willReturn($product);
         $lineItem->expects($this->once())
@@ -292,7 +312,7 @@ class CreateOrderEventListenerTest extends \PHPUnit_Framework_TestCase
         $product = $this->createMock(Product::class);
         $productUnit = $this->createMock(ProductUnit::class);
         $lineItem = $this->createMock(LineItem::class);
-        $lineItem->expects($this->once())
+        $lineItem->expects($this->any())
             ->method('getProduct')
             ->willReturn($product);
         $lineItem->expects($this->once())

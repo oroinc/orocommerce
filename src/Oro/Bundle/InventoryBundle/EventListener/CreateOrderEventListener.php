@@ -66,6 +66,10 @@ class CreateOrderEventListener
 
         /** @var OrderLineItem $lineItem */
         foreach ($orderLineItems as $lineItem) {
+            if (!$this->quantityManager->shouldDecrement($lineItem->getProduct())) {
+                continue;
+            }
+
             $inventoryLevel = $this->getInventoryLevel($lineItem->getProduct(), $lineItem->getProductUnit());
             if (!$inventoryLevel) {
                 throw new InventoryLevelNotFoundException();
@@ -90,6 +94,10 @@ class CreateOrderEventListener
         $lineItems = $event->getContext()->getEntity()->getSource()->getShoppingList()->getLineItems();
         /** @var LineItem $lineItem */
         foreach ($lineItems as $lineItem) {
+            if (!$this->quantityManager->shouldDecrement($lineItem->getProduct())) {
+                continue;
+            }
+
             $inventoryLevel = $this->getInventoryLevel($lineItem->getProduct(), $lineItem->getProductUnit());
             if (!$inventoryLevel) {
                 throw new InventoryLevelNotFoundException();

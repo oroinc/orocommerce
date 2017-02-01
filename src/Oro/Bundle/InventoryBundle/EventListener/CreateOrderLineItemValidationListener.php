@@ -77,6 +77,10 @@ class CreateOrderLineItemValidationListener
         $lineItems = $event->getContext()->getEntity()->getSource()->getShoppingList()->getLineItems();
         /** @var LineItem $lineItem */
         foreach ($lineItems as $lineItem) {
+            if (!$this->inventoryQuantityManager->shouldDecrement($lineItem->getProduct())) {
+                continue;
+            }
+
             $inventoryLevel = $this->getInventoryLevel($lineItem->getProduct(), $lineItem->getProductUnit());
             if (!$inventoryLevel) {
                 throw new InventoryLevelNotFoundException();

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Inventory;
 
+use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadInventoryLevels;
 use Symfony\Component\DomCrawler\Crawler;
 
 use Doctrine\ORM\EntityManagerInterface;
@@ -18,6 +19,7 @@ use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingList
 
 /**
  * @dbIsolationPerTest
+ * @group CommunityEdition
  */
 class DecrementInventoryTest extends CheckoutControllerTestCase
 {
@@ -43,8 +45,7 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
 
     public function testOrderWithoutDecrement()
     {
-        $shoppingList = $this->prepareShoppingList(15, '0');
-        $inventoryLevel = $this->setProductInventoryLevels($shoppingList->getLineItems()[0]);
+        $shoppingList = $this->prepareShoppingList(LoadInventoryLevels::PRECISION_BOTTLE_QTY_99, '0');
 
         $crawler = $this->navigateThroughCheckout();
         $form = $crawler->selectButton('Submit Order')->form();
@@ -62,7 +63,8 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
         $crawler = $this->client->request('GET', $data['responseData']['returnUrl']);
         $this->assertContains(self::FINISH_SIGN, $crawler->html());
         $this->assertNull($this->doctrineHelper->getEntityRepositoryForClass(ShoppingList::class)->find($shoppingList));
-        $initialQuantity = $inventoryLevel->getQuantity();
+        $inventoryLevel = $this->getInventoryLevel($shoppingList);
+        $initialQuantity = LoadInventoryLevels::PRECISION_BOTTLE_QTY_99;
         $inventoryLevel = $this->doctrineHelper
             ->getEntityRepositoryForClass(InventoryLevel::class)
             ->find($inventoryLevel);
@@ -71,8 +73,7 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
 
     public function testCheckProductHaveEnoughQuantity()
     {
-        $shoppingList = $this->prepareShoppingList(15);
-        $this->setProductInventoryLevels($shoppingList->getLineItems()[0]);
+        $this->prepareShoppingList(LoadInventoryLevels::PRECISION_BOTTLE_QTY_99 + 1);
 
         $crawler = $this->navigateThroughCheckout();
         $this->assertContains(self::PRODUCT_ERROR_TEXT, $crawler->html());
@@ -80,8 +81,7 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
 
     public function testProductDecrementWithBackorder()
     {
-        $shoppingList = $this->prepareShoppingList(15, '1', '1');
-        $inventoryLevel = $this->setProductInventoryLevels($shoppingList->getLineItems()[0]);
+        $shoppingList = $this->prepareShoppingList(LoadInventoryLevels::PRECISION_BOTTLE_QTY_99 + 1, '1', '1');
 
         $crawler = $this->navigateThroughCheckout();
         $form = $crawler->selectButton('Submit Order')->form();
@@ -99,16 +99,13 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
         $crawler = $this->client->request('GET', $data['responseData']['returnUrl']);
         $this->assertContains(self::FINISH_SIGN, $crawler->html());
         $this->assertNull($this->doctrineHelper->getEntityRepositoryForClass(ShoppingList::class)->find($shoppingList));
-        $inventoryLevel = $this->doctrineHelper
-            ->getEntityRepositoryForClass(InventoryLevel::class)
-            ->find($inventoryLevel);
+        $inventoryLevel = $this->getInventoryLevel($shoppingList);
         $this->assertLessThan(0, $inventoryLevel->getQuantity());
     }
 
     public function testDecrementWithInventoryThreshold()
     {
-        $shoppingList = $this->prepareShoppingList(10);
-        $this->setProductInventoryLevels($shoppingList->getLineItems()[0]);
+        $shoppingList = $this->prepareShoppingList(LoadInventoryLevels::PRECISION_BOTTLE_QTY_99);
         $this->initProductInventoryThreshold($shoppingList->getLineItems()[0]->getProduct());
 
         $crawler = $this->navigateThroughCheckout();
@@ -117,9 +114,9 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
 
     public function testCreateOrderWithInventoryThreshold()
     {
-        $shoppingList = $this->prepareShoppingList(5);
-        $inventoryLevel = $this->setProductInventoryLevels($shoppingList->getLineItems()[0]);
-        $this->initProductInventoryThreshold($shoppingList->getLineItems()[0]->getProduct(), $inventoryThreshold = 5);
+        $inventoryThreshold = 5;
+        $shoppingList = $this->prepareShoppingList(LoadInventoryLevels::PRECISION_BOTTLE_QTY_99 - $inventoryThreshold);
+        $this->initProductInventoryThreshold($shoppingList->getLineItems()[0]->getProduct(), $inventoryThreshold);
 
         $crawler = $this->navigateThroughCheckout();
         $form = $crawler->selectButton('Submit Order')->form();
@@ -137,9 +134,7 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
         $crawler = $this->client->request('GET', $data['responseData']['returnUrl']);
         $this->assertContains(self::FINISH_SIGN, $crawler->html());
         $this->assertNull($this->doctrineHelper->getEntityRepositoryForClass(ShoppingList::class)->find($shoppingList));
-        $inventoryLevel = $this->doctrineHelper
-            ->getEntityRepositoryForClass(InventoryLevel::class)
-            ->find($inventoryLevel);
+        $inventoryLevel = $this->getInventoryLevel($shoppingList);
         $this->assertEquals($inventoryThreshold, $inventoryLevel->getQuantity());
     }
 
@@ -218,33 +213,6 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
     }
 
     /**
-     * @param LineItem $lineItem
-     * @return InventoryLevel
-     */
-    protected function setProductInventoryLevels(LineItem $lineItem)
-    {
-        $inventoryLevelEm = $this->doctrineHelper->getEntityManagerForClass(InventoryLevel::class);
-        $productUnitPrecisionEm = $this->doctrineHelper->getEntityManagerForClass(ProductUnitPrecision::class);
-        $lineItemEm = $this->doctrineHelper->getEntityManagerForClass(LineItem::class);
-
-        $productUnitPrecision = $productUnitPrecisionEm
-            ->getRepository(ProductUnitPrecision::class)
-            ->findOneBy(['product' => $lineItem->getProduct()]);
-        $inventoryLevel = new InventoryLevel();
-        $inventoryLevel->setProductUnitPrecision($productUnitPrecision);
-        $inventoryLevel->setQuantity(10);
-        if ($productUnitPrecision->getProductUnit()) {
-            $lineItem->setUnit($productUnitPrecision->getProductUnit());
-            $lineItemEm->flush();
-        }
-        $inventoryLevelEm->persist($inventoryLevel);
-        $inventoryLevelEm->flush();
-        $productUnitPrecisionEm->flush();
-
-        return $inventoryLevel;
-    }
-
-    /**
      * @param int $quantityToOrder
      * @param string $decrementQuantity
      * @param string $allowBackorder
@@ -282,5 +250,25 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
         $this->assertCurrentStep($crawler, 'Order Review');
 
         return $crawler;
+    }
+
+    /**
+     * @param ShoppingList $shoppingList
+     * @return InventoryLevel
+     */
+    protected function getInventoryLevel(ShoppingList $shoppingList)
+    {
+        $lineItem = $shoppingList->getLineItems()[0];
+        $productUnitPrecision = $this->doctrineHelper
+            ->getEntityRepositoryForClass(ProductUnitPrecision::class)
+            ->findoneBy(['product' => $lineItem->getProduct(), 'unit' => $lineItem->getUnit()]);
+        $inventoryLevel = $this->doctrineHelper
+            ->getEntityRepositoryForClass(InventoryLevel::class)
+            ->findOneBy([
+                'product' => $lineItem->getProduct(),
+                'productUnitPrecision' => $productUnitPrecision
+            ]);
+
+        return $inventoryLevel;
     }
 }

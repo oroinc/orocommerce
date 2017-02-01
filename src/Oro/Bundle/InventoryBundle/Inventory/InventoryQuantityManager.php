@@ -4,6 +4,7 @@ namespace Oro\Bundle\InventoryBundle\Inventory;
 
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class InventoryQuantityManager
 {
@@ -70,6 +71,15 @@ class InventoryQuantityManager
         throw new \LogicException('Not implemented yet');
 
         $inventoryLevel->setQuantity($inventoryLevel->getQuantity() + $quantityToIncrement);
+    }
+
+    public function shouldDecrement(Product $product)
+    {
+        if ($this->entityFallbackResolver->getFallbackValue($product, 'decrementQuantity')) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
