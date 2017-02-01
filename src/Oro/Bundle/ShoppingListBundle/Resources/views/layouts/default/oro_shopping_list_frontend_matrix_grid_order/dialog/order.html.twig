@@ -14,15 +14,30 @@
                 <span class="matrix-order-widget__summary-label">
                     {{ 'oro.frontend.shoppinglist.matrix_grid_order.total_qty'|trans }}
                 </span>
-                <span class="matrix-order-widget__total-quantity-value">{{ totalQuantity }}</span>
+                <span class="matrix-order-widget__total-quantity-value" data-role="total-quantity">{{ totalQuantity }}</span>
             </div>
             <div class="matrix-order-widget__total-price">
                 <span class="matrix-order-widget__summary-label">
                     {{ 'oro.frontend.shoppinglist.matrix_grid_order.total'|trans }}
                 </span>
-                <span class="matrix-order-widget__total-price-value">{{ totalPrice }}</span>
+                <span class="matrix-order-widget__total-price-value" data-role="total-price">{{ totalPrice }}</span>
             </div>
         </div>
+    </div>
+{% endblock %}
+
+{% block matrix_grid_prices_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-module': 'oroui/js/app/components/view-component',
+        '~data-page-component-options': {
+            view: 'oropricing/js/app/views/product-prices-matrix-view',
+            prices: productPrices,
+            unit: unit
+        }
+    }) %}
+
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
     </div>
 {% endblock %}
 

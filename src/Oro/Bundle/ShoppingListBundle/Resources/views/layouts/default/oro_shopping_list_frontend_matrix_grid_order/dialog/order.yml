@@ -11,7 +11,10 @@ layout:
         - '@addTree':
             items:
                 matrix_order_wrapper:
-                    blockType: container
+                    blockType: matrix_grid_prices
+                    options:
+                        productPrices: '=data["frontend_product_prices"].getByProducts(data["products"])'
+                        unit: '=data["oro_shopping_list_matrix_order_form"].getMatrixOrderForm(data["product"]).getData().unit.getCode()'
                 form_start:
                     blockType: form_start
                     options:

@@ -117,3 +117,11 @@ services:
             - [setName, ['matrix_order_form_summary']]
         tags:
             - { name: layout.block_type, alias: matrix_order_form_summary }
+
+    oro_shopping_list.layout.block_type.matrix_grid_prices:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            - [setOptionsConfig, [{productPrices: [], unit: ~}]]
+            - [setName, ['matrix_grid_prices']]
+        tags:
+            - { name: layout.block_type, alias: matrix_grid_prices }

@@ -59,6 +59,9 @@ class MatrixGridOrderController extends Controller
             }
         }
 
-        return ['data' => ['product' => $product]];
+        $products = $this->get('oro_product.provider.product_variant_availability_provider')
+            ->getSimpleProductsByVariantFields($product);
+
+        return ['data' => ['product' => $product, 'products' => ['data' => $products]]];
     }
 }
