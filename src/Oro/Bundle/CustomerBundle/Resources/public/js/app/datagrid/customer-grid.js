@@ -3,11 +3,7 @@ define(function(require) {
 
     var CustomerGrid;
     var _ = require('underscore');
-    var __ = require('orotranslation/js/translator');
-    var mediator = require('oroui/js/mediator');
     var Grid = require('orodatagrid/js/datagrid/grid');
-    var RefreshCollectionAction = require('oro/datagrid/action/refresh-collection-action');
-    var ResetCollectionAction = require('oro/datagrid/action/reset-collection-action');
 
     CustomerGrid = Grid.extend({
         /** @property {String} */
@@ -22,17 +18,17 @@ define(function(require) {
         initialize: function(options) {
             _.extend(options.toolbarOptions, {
                 actionsPanel: {
-                    className: 'btn-group'
+                    className: 'btn-group not-expand customer-datagrid__panel'
                 }
             });
             _.extend(this.defaults.actionOptions.refreshAction.launcherOptions, {
                 className: 'btn btn--default btn--size-s',
-                icon: 'repeat',
+                icon: 'repeat fa--no-offset',
                 iconHideText: true
             });
             _.extend(this.defaults.actionOptions.resetAction.launcherOptions, {
                 className: 'btn btn--default btn--size-s',
-                icon: 'refresh',
+                icon: 'refresh fa--no-offset',
                 iconHideText: true
             });
             CustomerGrid.__super__.initialize.apply(this, arguments);

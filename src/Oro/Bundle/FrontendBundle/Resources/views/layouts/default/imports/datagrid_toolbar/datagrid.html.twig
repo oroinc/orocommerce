@@ -1,6 +1,6 @@
 {% block __datagrid_toolbar__datagrid_toolbar_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' grid__toolbar grid__toolbar--extended'
+        '~class': ' grid__toolbar grid__toolbar--extended grid__toolbar--offset-s'
     }) %}
     <script type="text/html" id="template-datagrid-toolbar">
         <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>

@@ -94,13 +94,13 @@
         font-size: $base-font-size;
     }
 
-  &--large {
-    font-size: 24px;
-  }
+    &--large {
+        font-size: 24px;
+    }
 
-  &--gray {
-    color: lighten(get-color('additional', 'dark'), 17.5%);
-  }
+    &--gray {
+        color: lighten(get-color('additional', 'dark'), 17.5%);
+    }
 
     &--hidden {
         visibility: hidden;

@@ -23,6 +23,12 @@
     }
   }
 
+  &--offset {
+    &-s {
+      margin: $offset-y-s 0;
+    }
+  }
+
   &--simplistic {
     .grid__tool {
       flex-grow: 1;
