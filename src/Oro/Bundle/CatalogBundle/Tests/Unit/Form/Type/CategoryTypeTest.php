@@ -30,6 +30,9 @@ class CategoryTypeTest extends \PHPUnit_Framework_TestCase
         $this->type->setProductClass(self::PRODUCT_CLASS);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testBuildForm()
     {
         /** @var FormBuilder|\PHPUnit_Framework_MockObject_MockObject $builder */
