@@ -47,7 +47,7 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
             ->method('addEventListener')
             ->with(
                 FormEvents::POST_SUBMIT,
-                function() {
+                function () {
                 }
             );
 

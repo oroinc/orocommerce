@@ -141,6 +141,7 @@ class DirectUrlMessageFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $data = [
             DirectUrlMessageFactory::ID => 1,
+            DirectUrlMessageFactory::ENTITY_CLASS_NAME => 'ClassName',
             DirectUrlMessageFactory::CREATE_REDIRECT => true,
         ];
 
