@@ -947,11 +947,68 @@
   position: relative;
 
   .action {
-    &:hover {
-      text-decoration: none;
+    &.icon-only {
+      color: get-color('additional', 'middle');
 
-      background-color: get-color('additional', 'light');
-      border-radius: 4px;
+      @include hover-focus {
+        text-decoration: none;
+
+        color: get-color('additional', 'dark');
+      }
+
+      [class^='fa-'] {
+        margin-right: 0;
+      }
+    }
+
+    &.text-only {
+      [class^="fa-"] {
+        margin-left: 3px;
+
+        font-size: 12px;
+      }
+    }
+  }
+
+  .dropdown-toggle {
+    height: 10px;
+
+    display: inline-block;
+    vertical-align: middle;
+
+    line-height: 0;
+    font-size: 24px;
+    text-decoration: none;
+
+    color: inherit;
+
+    &:after {
+      content: none;
+    }
+  }
+
+  &.action-row {
+    white-space:nowrap;
+
+    .launcher-item {
+      height: 15px;
+
+      display: inline-block;
+
+      padding: 0;
+
+      line-height: 14px;
+
+      & + * {
+        padding-left: 10px;
+        margin-left: 7px;
+
+        border-left: 1px solid get-color('additional', 'middle');
+      }
+
+      [class^="fa-"] {
+        font-size: 15px;
+      }
     }
   }
 }
@@ -1019,15 +1076,7 @@
 
       .launcher-item {
         a.action{
-          position: relative;
-
-          padding-left: 18px;
-
           [class^='fa-'].hide-text{
-            position: absolute;
-            top: 0;
-            left: 0;
-
             &:after,
             &:before {
               color: inherit;
@@ -1035,6 +1084,14 @@
           }
         }
       }
+    }
+  }
+
+  .action-cell {
+    text-align: right;
+
+    .dropdown {
+      display: inline-block;
     }
   }
 }
@@ -1059,42 +1116,5 @@
 
   .nav-pills > li + li {
     margin: 0;
-  }
-}
-
-//Remove code below, when grid styles will be free of platform styles
-//'.grid__row--has-child-grid' is used in customer bundle on the address book page for addresses datagrid
-//It should remove this class too
-.grid__row--has-child-grid {
-  .oro-datagrid {
-    .grid {
-      .launchers-list {
-        text-align: right;
-
-        white-space: nowrap;
-      }
-
-      .launcher-item {
-        float:none;
-        padding: 0 0 0 10px;
-        display: inline-block;
-        border-left: 1px solid get-color('additional', 'light');
-
-        &:first-child {
-          border: 0;
-        }
-
-        a.action{
-          min-width: 12px;
-          min-height: 18px;
-
-          color: get-color('additional', 'light');
-
-          &:hover, &:focus, &:active, &:visited {
-            background: transparent;
-          }
-        }
-      }
-    }
   }
 }

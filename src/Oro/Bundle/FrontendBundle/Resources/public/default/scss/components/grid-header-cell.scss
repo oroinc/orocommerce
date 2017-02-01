@@ -27,6 +27,24 @@
             transform: rotate(180deg);
         }
     }
+
+    &.action-column {
+        text-align: right !important;
+
+        &:not(:empty)&:before {
+            height: 10px;
+            
+            display: inline-block;
+            vertical-align: middle;
+
+            font-size: 24px;
+            line-height: 0;
+
+            color: get-color('additional', 'middle');
+
+            content: '...';
+        }
+    }
 }
 
 @include breakpoint('tablet') {
