@@ -44,6 +44,10 @@ class OroCheckoutExtensionTest extends ExtensionTestCase
 
         $expectedDefinitions = [
             'oro_checkout.layout.data_provider.shipping_context',
+            'oro_checkout.shipping_method.provider_main',
+            'oro_checkout.shipping_method.quote_provider_chain_element',
+            'oro_checkout.shipping_method.price_provider_chain_element',
+            'oro_checkout.condition.checkout_has_applicable_shipping_methods',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 

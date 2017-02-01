@@ -13,6 +13,12 @@
     &:hover {
       border-left: 6px solid get-color('additional', 'light');
       background: get-color('additional', 'base');
+
+      .line-clamp-polyfill {
+        &:after {
+          background: linear-gradient(to right, rgba(245, 245, 245, 0.3), rgb(245, 245, 245) 50%);
+        }
+      }
     }
 
     &:first-child {
@@ -42,6 +48,11 @@
 
     font-size: $base-font-size;
     line-height: 1.3;
+
+    .line-clamp-polyfill {
+      max-height: 40px;
+      overflow: hidden;
+    }
   }
 
   &__desc {
