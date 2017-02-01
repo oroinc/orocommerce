@@ -14,7 +14,8 @@ layout:
             optionName: grid_render_parameters
             optionValue:
                 themeOptions:
-                    launcherMode: 'text-only'
+                    cellLauncherOptions:
+                        launcherMode: 'text-only'
 
         - '@setOption':
             id: page_content

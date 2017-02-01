@@ -24,7 +24,7 @@
     &.action-column {
         text-align: right !important;
 
-        &:before {
+        &:not(:empty)&:before {
             height: 10px;
             
             display: inline-block;
