@@ -9,6 +9,10 @@
         background-color: get-color('additional', 'darker');
     }
 
+    &--yellow {
+        background-color: get-color('secondary', 'main');
+    }
+
     &--offset-none {
         margin-right: 0;
     }

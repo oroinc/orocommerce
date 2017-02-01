@@ -13,8 +13,16 @@
     font-size: $base-font-size--s - 1;
   }
 
+  &__adress {
+    line-height: 1.6;
+  }
+
   &__type {
-    color: get-color('additional', 'dark');
+    margin-top: 4px;
+
+    font-size: $base-font-size--s;
+
+    color: lighten(get-color('additional', 'dark'), 20%);
   }
 
   &__actions {
@@ -34,6 +42,10 @@
 
     cursor: pointer;
 
+    &.item-map-button {
+      border-right: none;
+    }
+
     // override icon right margin
     [class^="cf-"],
     [class*=" cf-"],
@@ -42,8 +54,8 @@
       margin-right: 0;
     }
 
-    &:not(:first-child) {
-      border-left: 1px solid get-color('additional', 'middle');
+    &:not(:last-child) {
+      border-right: 1px solid get-color('additional', 'middle');
     }
 
     &:hover {

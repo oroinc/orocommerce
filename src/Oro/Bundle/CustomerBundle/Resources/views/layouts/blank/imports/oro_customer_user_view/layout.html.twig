@@ -1,19 +1,19 @@
 {% block _customer_user_view_page_widget %}
     {% set attr = attr|merge({
-        class: attr.class|default('') ~ " {{ class_prefix }} {{ class_prefix }}_full"
+        class: attr.class|default('') ~ " {{ class_prefix }}"
     }) %}
     <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
 
-{% block _customer_user_top_actions_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ " oro-order__controls-list oro-customer__controls-list" }) %}
+{% block _customer_user_profile_controls_widget %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " customer-profile__controls" }) %}
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
 {% endblock %}
 
 {% block _customer_user_view_information_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ " oro-customer__block" }) %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " customer-profile__box" }) %}
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
@@ -22,7 +22,7 @@
 {% block _customer_user_view_information_title_widget %}
     {% set attr = layout_attr_defaults(attr, {'~class': ' page-subtitle'}) %}
     <h2 {{ block('block_attributes') }}>
-        <span class="badge"><i class="fa-user"></i></span>
+        <span class="badge badge--yellow"><i class="fa-user"></i></span>
         <span class="page-subtitle__text">{{ block_widget(block) }}</span>
     </h2>
 {% endblock %}
@@ -73,7 +73,6 @@
 {% endblock %}
 
 {% block _customer_user_address_book_widget %}
-    {% set attr = attr|merge({ class: attr.class|default('') ~ " oro-customer__block" }) %}
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>

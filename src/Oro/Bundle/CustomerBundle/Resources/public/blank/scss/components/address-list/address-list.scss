@@ -27,6 +27,12 @@
     background-color: get-color('primary', 'main');
   }
 
+  &__button {
+    &.item-map-button {
+      display: none;
+    }
+  }
+
   &__actions {
     position: absolute;
     top: 0;
@@ -94,6 +100,10 @@
 
     padding-top: 0;
     margin-left: 0;
+
+    &__button.item-map-button {
+      display: inline-flex;
+    }
   }
 
   .list-item {

@@ -430,7 +430,7 @@ oro.customer:
             customer_user.view: 'Customer User - %identifier%'
             customer_user.edit: 'Edit Customer User'
             customer_user.create: 'Create User'
-            customer_user.profile: 'Profile'
+            customer_user.my_profile: 'My profile'
 
             page:
                 customer_user_role.create: Create Role
@@ -442,7 +442,7 @@ oro.customer:
                 users.label: Users
 
             customer_user.user_profile: 'User profile'
-            customer_user.my_profile: 'My profile'
+            customer_user.account_info: 'Account info'
             customer_user.address_book: 'Address book'
             customer_user.default_addresses: 'Default addresses'
 

@@ -29,6 +29,8 @@ layout:
                     blockType: block
                 __user_addresses_list_template_item_actions:
                     blockType: container
+                __user_addresses_list_template_item_actions_open_map:
+                    blockType: block
                 __user_addresses_list_template_item_actions_edit:
                     blockType: block
                     options:
@@ -56,6 +58,7 @@ layout:
                             __user_addresses_list_template_item_type: ~
                             __user_addresses_list_template_item_primary: ~
                             __user_addresses_list_template_item_actions:
+                                __user_addresses_list_template_item_actions_open_map: ~
                                 __user_addresses_list_template_item_actions_edit: ~
                                 __user_addresses_list_template_item_actions_remove: ~
                     __user_addresses_list_template__manage_addresses:

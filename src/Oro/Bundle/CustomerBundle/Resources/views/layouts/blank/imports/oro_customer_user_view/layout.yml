@@ -11,12 +11,12 @@ layout:
         - '@setOption':
             id: page_title
             optionName: text
-            optionValue: 'oro.customer.frontend.title.customer_user.profile'
+            optionValue: 'oro.customer.frontend.title.customer_user.my_profile'
 
         - '@setOption':
             id: customer_user_view_information_title
             optionName: text
-            optionValue: 'oro.customer.frontend.sections.customer_user.my_profile'
+            optionValue: 'oro.customer.frontend.sections.customer_user.account_info'
 
         - '@add':
             id: __customer_user_view_information_content
@@ -31,8 +31,8 @@ layout:
                 __customer_user_view_page:
                     blockType: container
                     options:
-                        class_prefix: 'user-page'
-                __customer_user_top_actions:
+                        class_prefix: 'customer-profile'
+                __customer_user_profile_controls:
                     blockType: line_buttons
                     options:
                         visible: '=data["entity"]!=null'
@@ -48,7 +48,7 @@ layout:
             tree:
                 __root:
                     __customer_user_view_page:
-                        __customer_user_top_actions: ~
                         __customer_user_view_information:
                             __customer_user_view_information_title: ~
+                            __customer_user_profile_controls: ~
                         __customer_user_address_book: ~

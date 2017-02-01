@@ -1,0 +1,23 @@
+// @theme: blank;
+
+.customer-profile {
+  margin-top: 24px;
+
+  &__controls {
+    li {
+      font-size: 0;
+    }
+
+    .fa-pencil {
+      margin: 2px 0 0 6px;
+
+      color: get-color('additional', 'middle');
+    }
+  }
+
+  &__box {
+    .page-subtitle {
+      float: left;
+    }
+  }
+}

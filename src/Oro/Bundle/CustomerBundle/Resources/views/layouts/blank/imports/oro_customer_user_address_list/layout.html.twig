@@ -79,6 +79,13 @@
     <div {{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
 
+{% block __oro_customer_user_address_list__user_addresses_list_template_item_actions_open_map_widget %}
+    {% set attr = layout_attr_defaults(attr, {'~class': " address-list__button item-map-button"}) %}
+    <button {{ block('block_attributes') }}>
+        <i class="fa-map-o"></i>
+    </button>
+{% endblock %}
+
 {% block __oro_customer_user_address_list__user_addresses_list_template_item_actions_edit_widget %}
     {% set attr = layout_attr_defaults(attr, {'~class': " address-list__button item-edit-button"}) %}
     <button {{ block('block_attributes') }}>
