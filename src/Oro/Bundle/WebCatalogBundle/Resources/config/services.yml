@@ -63,6 +63,7 @@ services:
             - '@oro_web_catalog.model.content_node_materialized_path_modifier'
             - '@oro_commerce_entity.extra_insert_entity_storage'
             - '@oro_message_queue.client.message_producer'
+            - '@oro_web_catalog.model.resolve_node_slugs_message_factory'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_web_catalog.entity.content_node.class%', event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_web_catalog.entity.content_node.class%', event: preUpdate }
@@ -289,3 +290,10 @@ services:
             - '@oro_locale.helper.localization'
         tags:
             - { name: layout.data_provider, alias: web_catalog_title }
+
+    oro_web_catalog.model.resolve_node_slugs_message_factory:
+        class: Oro\Bundle\WebCatalogBundle\Model\ResolveNodeSlugsMessageFactory
+        public: false
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_config.manager'

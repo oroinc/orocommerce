@@ -93,6 +93,16 @@ class DirectUrlMessageFactory implements MessageFactoryInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function getCreateRedirectFromMessage($data)
+    {
+        $data = $this->getResolvedData($data);
+
+        return $data[self::CREATE_REDIRECT];
+    }
+
+    /**
      * @return OptionsResolver
      */
     protected function getOptionsResolver()

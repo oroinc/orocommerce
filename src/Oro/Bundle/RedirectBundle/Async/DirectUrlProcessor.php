@@ -78,8 +78,9 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
             $em->beginTransaction();
 
             $entities = $this->messageFactory->getEntitiesFromMessage($messageData);
+            $createRedirect = $this->messageFactory->getCreateRedirectFromMessage($messageData);
             foreach ($entities as $entity) {
-                $this->generator->generate($entity);
+                $this->generator->generate($entity, $createRedirect);
             }
             $em->flush();
 

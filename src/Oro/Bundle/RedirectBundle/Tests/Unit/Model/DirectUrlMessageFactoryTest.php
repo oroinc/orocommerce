@@ -136,4 +136,15 @@ class DirectUrlMessageFactoryTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals([$entity], $this->factory->getEntitiesFromMessage($message));
     }
+
+    public function testGetCreateRedirectFromMessage()
+    {
+        $data = [
+            DirectUrlMessageFactory::ID => 1,
+            DirectUrlMessageFactory::CREATE_REDIRECT => true,
+        ];
+
+        $createRedirect = $this->factory->getCreateRedirectFromMessage($data);
+        $this->assertTrue($createRedirect);
+    }
 }

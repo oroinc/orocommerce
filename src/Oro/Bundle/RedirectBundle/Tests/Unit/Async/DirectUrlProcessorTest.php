@@ -383,10 +383,14 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('getEntitiesFromMessage')
             ->with($messageData)
             ->willReturn([$entity]);
+        $this->messageFactory->expects($this->once())
+            ->method('getCreateRedirectFromMessage')
+            ->with($messageData)
+            ->willReturn(true);
 
         $this->generator->expects($this->once())
             ->method('generate')
-            ->with($entity);
+            ->with($entity, true);
 
         $this->assertEquals(DirectUrlProcessor::ACK, $this->processor->process($message, $session));
     }
