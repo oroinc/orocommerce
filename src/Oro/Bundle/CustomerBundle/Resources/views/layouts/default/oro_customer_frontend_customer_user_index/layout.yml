@@ -10,11 +10,3 @@ layout:
             id: page_title
             optionName: text
             optionValue: 'oro.customer.frontend.customer_user.entity_plural_label'
-
-        - '@setOption':
-            id: customer_users_datagrid
-            optionName: grid_render_parameters
-            optionValue:
-                themeOptions:
-                    cellLauncherOptions:
-                        launcherMode: 'text-only'

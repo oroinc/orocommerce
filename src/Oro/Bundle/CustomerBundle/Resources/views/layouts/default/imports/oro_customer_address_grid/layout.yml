@@ -40,6 +40,8 @@ layout:
                 themeOptions:
                     toolbarTemplateSelector: '#template-customer-address-book-addresses-grid-toolbar'
                     cellActionsHideCount: 4
+                    cellLauncherOptions:
+                        launcherMode: 'icon-only'
 
         - '@setOption':
               id: __addresses_datagrid_toolbar_button_container

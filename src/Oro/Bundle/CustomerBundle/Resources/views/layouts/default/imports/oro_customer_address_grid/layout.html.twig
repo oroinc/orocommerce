@@ -30,16 +30,6 @@
     }) }}
 {% endblock %}
 
-{% block _require_js_config_widget %}
-    <script>
-        require({
-            config: {
-                'orodatagrid/js/datagrid/action-launcher': {launcherMode: 'icon-only'}
-            }
-        });
-    </script>
-{% endblock %}
-
 {% block __oro_customer_address_grid__datagrid_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " grid__row grid__row--has-twin-row"

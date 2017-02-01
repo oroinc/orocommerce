@@ -46,6 +46,8 @@ layout:
                 themeOptions:
                     toolbarTemplateSelector: '#template-customer-user-address-book-addresses-grid-toolbar'
                     cellActionsHideCount: 4
+                    cellLauncherOptions:
+                        launcherMode: 'icon-only'
 
         - '@setOption':
               id: __user_addresses_datagrid_toolbar_button_container
