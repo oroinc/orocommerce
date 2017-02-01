@@ -36,7 +36,7 @@ define(function(require) {
             var urlObject = {};
 
             if (urlSplited.length > 1) {
-                var urlObject = tools.unpackFromQueryString(urlSplited[1]);
+                urlObject = tools.unpackFromQueryString(urlSplited[1]);
             }
 
             if (!urlObject[param]) {
