@@ -135,8 +135,13 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
 
                 return new RedirectResponse($redirectUrl);
             } else {
-                if (!$errors->count()) {
-                    $errors->add($this->messageGenerator->getFailedMessage());
+                $errors = $errors->toArray();
+                if (is_array($actionData->offsetGet('errors'))) {
+                    $errors = array_merge($errors, $actionData->offsetGet('errors'));
+                }
+
+                if (!$errors) {
+                    $errors[] = $this->messageGenerator->getFailedMessage();
                 }
 
                 foreach ($errors as $error) {

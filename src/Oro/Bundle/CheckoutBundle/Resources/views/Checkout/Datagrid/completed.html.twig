@@ -1,0 +1,5 @@
+{% if record.getValue('completed') == true %}
+    {{ 'Yes'|trans }}
+{% else %}
+    {{ 'No'|trans }}
+{% endif %}

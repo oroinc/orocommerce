@@ -1,0 +1,7 @@
+services:
+    oro_flat_rate_shipping.form.type.flat_rate_options:
+        class: 'Oro\Bundle\FlatRateShippingBundle\Form\Type\FlatRateOptionsType'
+        arguments:
+            - '@oro_currency.rounding.price_rounding_service'
+        tags:
+            - { name: form.type }

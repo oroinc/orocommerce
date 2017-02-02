@@ -243,12 +243,6 @@ oro:
             groups:
                 orders.title: 'Orders'
                 orders_history.title: 'Orders History'
-        success:
-            thank_you: 'Thank You For Your Purchase!'
-            order_number: 'Your order number is'
-            click_to_review: 'click here to review'
-            receive_email: 'You will receive a confirmation email with your order details.'
-            done: 'Done'
 
         privilege:
             category.orders.label: 'Orders'

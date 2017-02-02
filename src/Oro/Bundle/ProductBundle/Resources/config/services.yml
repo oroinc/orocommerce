@@ -167,9 +167,6 @@ services:
     oro_product.website_search.repository.product:
         parent: oro_website_search.repository.abstract
         class: 'Oro\Bundle\ProductBundle\Search\ProductRepository'
-        arguments:
-            - "@oro_website_search.query_factory"
-            - "@oro_search.provider.search_mapping"
         calls:
             - [setEntityName, ['%oro_product.entity.product.class%']]
 
@@ -296,16 +293,45 @@ services:
     oro_product.validator.unique_variant_links:
         class: 'Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator'
         arguments:
-            - "@property_accessor"
+            - '@property_accessor'
         tags:
             - { name: validator.constraint_validator, alias: oro_product_unique_variant_links }
+
+    oro_product.validator.variant_links:
+        class: 'Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantLinksValidator'
+        arguments:
+            - '@property_accessor'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_product_variant_links }
+
+    oro_product.validator.unique_variant_links_simple_product:
+        class: 'Oro\Bundle\ProductBundle\Validator\Constraints\UniqueVariantLinksSimpleProductValidator'
+        arguments:
+            - '@validator'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_product_unique_variant_links_simple_product }
+
+    oro_product.validator.empty_variant_field_in_simple_product_for_variant_links:
+        class: 'Oro\Bundle\ProductBundle\Validator\Constraints\EmptyVariantFieldInSimpleProductForVariantLinksValidator'
+        arguments:
+            - '@property_accessor'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_product_empty_variant_field_in_simple_product_for_variant_links }
 
     oro_product.validator.product_variant_field:
         class: 'Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantFieldValidator'
         arguments:
-            - "@oro_product.provider.custom_field_provider"
+            - '@oro_product.provider.custom_field_provider'
         tags:
             - { name: validator.constraint_validator, alias: oro_product_variant_field }
+
+    oro_product.validator.attribute_family_usages_product_variant_field:
+        class: 'Oro\Bundle\ProductBundle\Validator\Constraints\AttributeFamilyUsageInVariantFieldValidator'
+        arguments:
+            - '@oro_entity_config.manager.attribute_manager'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_product_attribute_family_usage_in_variant_field }
 
     oro_product.event_listener.restricted_products_datagrid:
         class: 'Oro\Bundle\ProductBundle\EventListener\RestrictedProductsDatagridEventListener'
