@@ -12,6 +12,9 @@ oro:
             variant_field_required.message: "Can't save product variants. Variant field should be selected"
             has_no_filled_field.message: "Can't save product variants. Variant \"%variant_sku%\" has no filled field \"%field%\" "
 
+        attribute_family:
+            used_in_product_variant_field.message: "Attributes %names% used as product variant in products: %products%"
+
         product_variant_field:
             message: "Can't save product variant field. Field \"{{ field }}\" doesn't exist in product."
 
