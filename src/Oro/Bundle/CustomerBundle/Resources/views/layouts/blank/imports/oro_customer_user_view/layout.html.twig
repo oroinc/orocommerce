@@ -46,7 +46,7 @@
 
         <div class="info-list__item">
             <div class="info-list__name">
-                {{ 'oro.customer.customeruser.full_name.label'|trans }}
+                {{ 'oro.customer.frontend.customer_user.full_name.label'|trans }}
             </div>
             <div class="info-list__desc">
                 {{ customerUser.getFullName }}
@@ -107,12 +107,14 @@
                 <div class="info-list__name">
                     {{ 'oro.customer.customeruser.roles.label'|trans }}
                 </div>
-                <div class="info-list__desc">
+                <div class="info-list__desc info-list__desc--roles">
                     {% for customerUserRole in customerUser.roles %}
                         {{ UI.link({
                             'path': path('oro_customer_frontend_customer_user_role_view', {id: customerUserRole.id}),
-                            'label': customerUserRole.label
+                            'label': customerUserRole.label,
+                            'class': 'info-list__link'
                         }) }}
+                        <br>
                     {% endfor %}
                 </div>
             </div>
@@ -121,7 +123,7 @@
         {% if customerUser.customer %}
             <div class="info-list__item">
                 <div class="info-list__name">
-                    {{ 'oro.customer.customeruser.profile.company_name'|trans }}
+                    {{ 'oro.customer.customeruser.profile.company'|trans }}
                 </div>
                 <div class="info-list__desc">
                     {{ customerUser.customer.name }}
@@ -134,7 +136,12 @@
                 {{ 'oro.customer.customeruser.profile.status'|trans }}
             </div>
             <div class="info-list__desc">
-                {% if customerUser.confirmed %}
+                {% if customerUser.enabled == true and customerUser.confirmed != true %}
+                    <div class="info-list-status">
+                        <i class="fa fa-check"></i>
+                        {{ 'oro.customer.customeruser.profile.enabled.label'|trans }}
+                    </div>
+                {% elseif customerUser.enabled == true and customerUser.confirmed == true %}
                     <div class="info-list-status">
                         <i class="fa fa-check"></i>
                         {{ 'oro.customer.customeruser.profile.confirmed.label'|trans }}
@@ -142,7 +149,7 @@
                 {% else %}
                     <div class="info-list-status info-list-status--disabled">
                         <i class="fa fa-times"></i>
-                        {{ 'oro.customer.customeruser.profile.unconfirmed.label'|trans }}
+                        {{ 'oro.customer.customeruser.profile.disabled.label'|trans }}
                     </div>
                 {% endif %}
             </div>

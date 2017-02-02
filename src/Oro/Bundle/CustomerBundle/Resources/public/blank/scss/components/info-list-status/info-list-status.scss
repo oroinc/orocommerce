@@ -1,6 +1,8 @@
 // @theme: blank
 
 .info-list-status {
+    display: inline-block;
+    
     color: get-color('secondary', 'light');
 
     &--disabled {
