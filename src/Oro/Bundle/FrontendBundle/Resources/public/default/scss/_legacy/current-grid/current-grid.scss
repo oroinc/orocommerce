@@ -990,22 +990,13 @@
   }
 
   &.action-row {
-    white-space:nowrap;
-
     .launcher-item {
-      height: 15px;
-
-      display: inline-block;
-
+      display: block;
       padding: 0;
 
-      line-height: 14px;
-
-      & + * {
-        padding-left: 10px;
-        margin-left: 7px;
-
-        border-left: 1px solid get-color('additional', 'middle');
+      a {
+        padding: 5px 10px;
+        display: inline-block;
       }
 
       [class^="fa-"] {
@@ -1016,8 +1007,7 @@
 
   .dropdown-toggle {
     display: inline-block;
-    padding: 0 15px 10px;
-    line-height: .55;
+    padding: 0 15px;
     margin: 0;
     font-size: $base-font-size--m;
     color: get-color('additional', 'semidark');
@@ -1030,7 +1020,6 @@
   .dropdown-menu__placeholder + .dropdown-toggle,
   .dropdown-toggle:hover {
     text-decoration: none;
-    background-color: get-color('additional', 'middle');
   }
 
 }
@@ -1109,8 +1098,18 @@
         text-align: left;
       }
 
+      .dropdown-menu {
+        .launchers-list {
+          white-space: nowrap;
+        }
+      }
+
       .launcher-item {
-        display: inline-block;
+        display: block;
+
+        &.icon-only {
+          display: inline-block;
+        }
 
         a.action {
           position: relative;
@@ -1142,7 +1141,7 @@
 
 $launcher-color: get-color('additional', 'middle');
 
-.dropdown-menu__action-cell {
+.dropdown-menu {
   min-width: 0;
   margin: 0;
   padding: 0;
@@ -1152,25 +1151,15 @@ $launcher-color: get-color('additional', 'middle');
 
     a {
       padding: 5px 10px;
-      display: inline-block;
-
-      .hide-text {
-        margin-right: 5px;
-      }
+      display: block;
     }
-  }
 
-  & .icons-holder {
-
-    .launcher-item {
+    &.icon-only {
       display: table-cell;
 
       a {
         color: $launcher-color;
         text-align: center;
-        min-width: 12px;
-        min-height: 18px;
-        padding: 5px 10px;
 
         [class^="cf-"], [class*=" cf-"], [class^="fa-"], [class*=" fa-"] {
           margin: 0;
@@ -1187,6 +1176,7 @@ $launcher-color: get-color('additional', 'middle');
     margin: 0;
   }
 }
+
 /*
 //Remove code below, when grid styles will be free of platform styles
 //'.grid__row--has-child-grid' is used in customer bundle on the address book page for addresses datagrid
