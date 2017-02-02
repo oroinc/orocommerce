@@ -1,0 +1,19 @@
+// @theme: blank;
+
+.breadcrumbs {
+  width: 100%;
+  margin-bottom: 15px;
+
+  font-size: 12px;
+
+  color: get-color('additional', 'dark');
+
+  flex: none;
+
+  &__item,
+  &__link,
+  a,
+  a:hover {
+    color: get-color('additional', 'dark');
+  }
+}

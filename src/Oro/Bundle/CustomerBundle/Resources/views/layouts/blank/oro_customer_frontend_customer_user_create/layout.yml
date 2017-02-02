@@ -1,6 +1,18 @@
 layout:
     imports:
         -
+            id: oro_customer_breadcrumbs
+            root: page_main
+        -
             id: oro_customer_menu
             root: page_sidebar
-    actions: []
+    actions:
+        - '@setOption':
+            id: customer_breadcrumbs
+            optionName: customerUser
+            optionValue: '=data["current_user"].getCurrentUser().getFullName()'
+
+        - '@setOption':
+            id: customer_breadcrumbs
+            optionName: currentPage
+            optionValue: 'oro.customer.frontend.title.customer_user.index'
