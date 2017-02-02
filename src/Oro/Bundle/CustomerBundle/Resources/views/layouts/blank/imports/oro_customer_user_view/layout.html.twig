@@ -103,7 +103,11 @@
         {% if resource_granted('oro_customer_frontend_customer_user_role_view') %}
             <div class="info-list__item">
                 <div class="info-list__name">
-                    {{ 'oro.customer.customeruser.roles.label'|trans }}
+                    {% if customerUser.roles|length == 1 %}
+                    {{ 'oro.customer.customeruser.role.label'|trans }}
+                    {% else %}
+                        {{ 'oro.customer.customeruser.roles.label'|trans }}
+                    {% endif %}
                 </div>
                 <div class="info-list__desc info-list__desc--roles">
                     {% for customerUserRole in customerUser.roles %}
@@ -131,23 +135,30 @@
 
         <div class="info-list__item">
             <div class="info-list__name">
-                {{ 'oro.customer.customeruser.profile.status'|trans }}
+                {{ 'oro.customer.customeruser.profile.status.label'|trans }}
             </div>
             <div class="info-list__desc">
-                {% if customerUser.enabled == true and customerUser.confirmed != true %}
+                {% if customerUser.enabled == true %}
                     <div class="info-list-status">
                         <i class="fa fa-check"></i>
-                        {{ 'oro.customer.customeruser.profile.enabled.label'|trans }}
-                    </div>
-                {% elseif customerUser.enabled == true and customerUser.confirmed == true %}
-                    <div class="info-list-status">
-                        <i class="fa fa-check"></i>
-                        {{ 'oro.customer.customeruser.profile.confirmed.label'|trans }}
+                        {{ 'oro.customer.customeruser.profile.statuses.active'|trans }}
                     </div>
                 {% else %}
                     <div class="info-list-status info-list-status--disabled">
                         <i class="fa fa-times"></i>
-                        {{ 'oro.customer.customeruser.profile.disabled.label'|trans }}
+                        {{ 'oro.customer.customeruser.profile.statuses.inactive'|trans }}
+                    </div>
+                {% endif %}
+
+                {% if customerUser.confirmed == true %}
+                    <div class="info-list-status">
+                        <i class="fa fa-check"></i>
+                        {{ 'oro.customer.customeruser.profile.statuses.confirmed'|trans }}
+                    </div>
+                {% else %}
+                    <div class="info-list-status info-list-status--disabled">
+                        <i class="fa fa-times"></i>
+                        {{ 'oro.customer.customeruser.profile.statuses.unconfirmed'|trans }}
                     </div>
                 {% endif %}
             </div>

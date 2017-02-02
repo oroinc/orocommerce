@@ -92,6 +92,7 @@ oro.customer:
         birthday.label:              'Birthday'
         last_login.label:            'Last Login'
         roles.label:                 'Roles'
+        role.label:                  'Role'
         settings.label:              'Settings'
         salt.label:                  'Salt'
         created_at.label:            'Created At'
@@ -101,7 +102,7 @@ oro.customer:
         name_suffix.label:           'Name Suffix'
         password_changed_at.label:   'Password Changed At'
         password_requested_at.label: 'Password Requested At'
-        customer.label:               'Customer'
+        customer.label:              'Customer'
         organization.label:          'Organization'
         organizations.label:         'Organizations'
         has_role.label:              'Has Role'
@@ -135,14 +136,14 @@ oro.customer:
                 message: 'An email has been sent to %email%. It contains a link you must click to reset your password.'
             edit: 'Edit Profile'
             label: 'Profile'
-            enabled.label: 'Active'
-            disabled.label: 'Inactive'
             password.reset.ttl_expired.message: The create password link has expired.
-            confirmed.label: 'Confirmed'
-            unconfirmed.label: 'Unconfirmed'
             cancel.label: 'Cancel'
-            status: 'Status'
-
+            status.label: 'Status'
+            statuses:
+                active: 'Active'
+                inactive: 'Inactive'
+                confirmed: 'Confirmed'
+                unconfirmed: 'Unconfirmed'
             form:
                 sections:
                     profile_information.label: 'Profile information'
