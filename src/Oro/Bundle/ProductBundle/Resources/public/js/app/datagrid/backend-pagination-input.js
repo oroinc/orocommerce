@@ -51,6 +51,8 @@ define(function(require) {
 
             if (this.hidden || totalPages === 1) {
                 this.$el.hide();
+            } else {
+                this.$el.show();
             }
 
             return this;

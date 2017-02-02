@@ -2,6 +2,7 @@
   display: flex;
   flex-wrap: wrap;
   align-content: stretch;
+  justify-content: center;
   margin: 10px 0;
 
   &--extended {
@@ -22,6 +23,12 @@
     }
   }
 
+  &--offset {
+    &-s {
+      margin: $offset-y-s 0;
+    }
+  }
+
   &--simplistic {
     .grid__tool {
       flex-grow: 1;
@@ -36,13 +43,31 @@
       }
     }
   }
+
+  &__side,
+  &__rightside {
+    display: flex;
+    flex: 1 0 0;
+    flex-wrap: wrap;
+
+    min-width: 200px;
+  }
+
+  &__rightside {
+    justify-content: flex-end;
+  }
+  
+  &__base {
+    display: flex;
+    flex: 0 0 auto;
+  }
 }
 
 .grid__tool {
-  font-size: 0;
+  margin: 3px 0;
 
-  &:not(:last-child) {
-    margin-right: $offset-x-s;
+  &:not(:first-child) {
+    margin-left: $offset-x-s;
   }
 
   &:first-child {

@@ -1,7 +1,7 @@
 layout:
     imports:
         -
-            id: datagrid
+            id: oro_customer_grid
             root: __root
             namespace: user_addresses
 
@@ -57,6 +57,8 @@ layout:
                 themeOptions:
                     toolbarTemplateSelector: '#template-customer-user-address-book-addresses-grid-toolbar'
                     cellActionsHideCount: 4
+                    cellLauncherOptions:
+                        launcherMode: 'icon-only'
 
         - '@setOption':
               id: __user_addresses_datagrid_toolbar_button_container
@@ -78,36 +80,6 @@ layout:
             optionName: visible
             optionValue: '=false'
 
-        - '@move':
-            id: __user_addresses_datagrid_toolbar_mass_actions
-            parentId: __user_addresses_datagrid_toolbar
-            siblingId: __user_addresses_datagrid_toolbar_sorting
-
-        - '@move':
-            id: __user_addresses_datagrid_toolbar_extra_actions
-            parentId: __user_addresses_datagrid_toolbar
-            siblingId: __user_addresses_datagrid_toolbar_mass_actions
-
-        - '@move':
-            id: __user_addresses_datagrid_toolbar_pagination
-            parentId: __user_addresses_datagrid_toolbar
-            siblingId: __user_addresses_datagrid_toolbar_extra_actions
-
-        - '@move':
-            id: __user_addresses_datagrid_toolbar_page_size
-            parentId: __user_addresses_datagrid_toolbar
-            siblingId: __user_addresses_datagrid_toolbar_pagination
-
-        - '@move':
-            id: __user_addresses_datagrid_toolbar_items_counter
-            parentId: __user_addresses_datagrid_toolbar
-            siblingId: __user_addresses_datagrid_toolbar_pagination
-
-        - '@move':
-            id: __user_addresses_datagrid_toolbar_actions
-            parentId: __user_addresses_datagrid_toolbar
-            siblingId: __user_addresses_datagrid_toolbar_page_size
-
         - '@remove':
             id: __user_addresses_datagrid_toolbar_actions_container
 
@@ -117,7 +89,7 @@ layout:
         - '@setOption':
             id: __user_addresses_datagrid_toolbar
             optionName: attr.class
-            optionValue: 'grid__toolbar grid__toolbar--extended grid-toolbar'
+            optionValue: 'grid__toolbar grid__toolbar--extended grid__toolbar--offset-s'
 
 #    TODO: return condition in BB-4263
 #    conditions: 'context["customer_address_count"]>=8'

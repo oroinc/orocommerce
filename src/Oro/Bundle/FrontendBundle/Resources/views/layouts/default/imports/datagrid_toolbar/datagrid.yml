@@ -34,14 +34,14 @@ layout:
             id: __datagrid_toolbar_actions
             parentId: __datagrid_toolbar
             siblingId: __datagrid_toolbar_page_size
+        - '@move':
+            id: __datagrid_items_counter
+            parentId: __datagrid_toolbar
+            siblingId: __datagrid_toolbar_sorting
         - '@remove':
             id: __datagrid_toolbar_actions_container
         - '@remove':
             id: __datagrid_toolbar_tools_container
-        - '@setOption':
-            id: __datagrid_toolbar
-            optionName: attr.class
-            optionValue: 'grid__toolbar grid__toolbar--extended'
         - '@add':
             id: __datagrid_toolbar_button_container
             parentId: __datagrid_toolbar

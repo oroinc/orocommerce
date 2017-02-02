@@ -1,0 +1,24 @@
+{% block __oro_customer_grid__datagrid_widget %}
+    {% set grid_render_parameters = layout_attr_defaults(grid_render_parameters, {
+        'datagridComponent': 'orocustomer/js/app/datagrid/customer-datagrid-component'
+    }) %}
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
+{% block __oro_customer_grid__datagrid_toolbar_leftside_container_widget %}
+    <div class="grid__toolbar__side">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_customer_grid__datagrid_toolbar_base_container_widget %}
+    <div class="grid__toolbar__base">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_customer_grid__datagrid_toolbar_rightside_container_widget %}
+    <div class="grid__toolbar__rightside">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}

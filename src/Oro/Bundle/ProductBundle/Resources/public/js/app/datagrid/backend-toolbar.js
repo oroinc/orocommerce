@@ -77,7 +77,7 @@ define(function(require) {
             }
 
             if (this.subviews.itemsCounter) {
-                this.$(this.selector.itemsCounter).replaceWith(this.subviews.itemsCounter.render().$el);
+                this.$(this.selector.itemsCounter).append(this.subviews.itemsCounter.render().$el);
             }
 
             if (this.subviews.sortingDropdown) {

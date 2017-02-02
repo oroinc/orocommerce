@@ -2,10 +2,6 @@
   white-space: nowrap;
   text-align: center;
 
-  &.grid__tool {
-    flex-grow: 2 !important;
-  }
-
   &__label,
   &__total {
     display: inline-block;
@@ -19,7 +15,7 @@
   }
 
   &__total {
-    margin-left: 5px;
+    margin: 0 3px;
   }
 
   &__pager {
@@ -31,58 +27,22 @@
   }
 
   &__input {
-    display: inline-block;
-    width: 30px;
-    height: 30px;
-    vertical-align: middle;
-    padding: 0;
-    border-radius: 0;
-    border: 0;
-    border-top: 1px solid get-color('additional', 'light');
-    border-bottom: 1px solid get-color('additional', 'light');
+    width: 35px;
 
-    font-size: $base-font-size;
-    line-height: 2;
+    margin: 0 3px;
+
     text-align: center;
-
-    appearance: none;
   }
 
   &__prev,
   &__next {
-    display: inline-block;
-    vertical-align: middle;
-    text-align: center;
-    padding: 0;
-    border: 1px solid get-color('additional', 'light');
-
-    background: get-color('additional', 'base');
-    color: get-color('additional', 'dark');
-    font-size: 16px;
-    line-height: 1.8;
-    text-decoration: none;
-
-    cursor: pointer;
-
-    &.disabled {
-      color: get-color('additional', 'middle');
-
-      cursor: default;
-    }
+    margin: 0 3px;
 
     i {
-      margin-right: 0;
+      margin: 0 2px;
+
+      vertical-align: middle;
     }
-  }
-
-  &__prev {
-    border-top-left-radius: 5px;
-    border-bottom-left-radius: 5px;
-  }
-
-  &__next {
-    border-top-right-radius: 5px;
-    border-bottom-right-radius: 5px;
   }
 }
 

@@ -41,7 +41,12 @@
                 'controllers/page-controller': {fullRedirect: true},
                 'oroui/js/app/modules/views-module': {showLoadingMaskOnStartup: false},
                 'oro/datagrid/cell/action-cell': {showCloseButton: false},
-                'orodatagrid/js/app/plugins/grid/column-manager-plugin': {icon: 'gear'},
+                'orodatagrid/js/app/plugins/grid/column-manager-plugin': {
+                    icon: 'gear',
+                    wrapperClassName: 'column-manager btn-group',
+                    className: 'btn btn--default btn--size-s',
+                    iconHideText: true
+                },
                 'orodatagrid/js/datagrid/action-launcher': {iconHideText: false},
                 'orodatagrid/js/datagrid/sorting/dropdown': {
                     hasSortingOrderButton: false,
@@ -53,7 +58,14 @@
                     labelPrefix: '{{ 'oro.ui.filter.by'|trans  }} '
                 },
                 'orofilter/js/filter-hint': {inline: false},
-                'oroaddress/js/region/view': {switchState: 'disable'}
+                'oroaddress/js/region/view': {switchState: 'disable'},
+                'orofilter/js/plugins/filters-toggle-plugin': {
+                    launcherOptions: {
+                        className: 'btn btn--default btn--size-s btn-toggle',
+                        iconHideText: true
+                    },
+                    order: 650
+                }
             }
         });
         (function() {

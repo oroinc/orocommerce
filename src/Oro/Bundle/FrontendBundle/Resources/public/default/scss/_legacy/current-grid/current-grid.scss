@@ -278,7 +278,7 @@
   position: relative;
 
   margin: 10px 0;
-  padding: 7px 11px 0;
+  padding: 10px 10px 5px;
   border: 0;
 
   background: get-color('additional', 'base');
@@ -309,6 +309,9 @@
   }
 
   .filter-item {
+    margin: 0 5px 0 0;
+    padding: 0 0 5px 0;
+
     &.open-filter {
       &:before, &:after {
         display: none;
@@ -320,7 +323,6 @@
     position: relative;
 
     flex-basis: 225px;
-    margin: 0 10px 5px 0;
 
     > .btn {
       position: relative;
@@ -674,8 +676,6 @@
 }
 
 .filter-container {
-  padding: 0 15px;
-
   .filter-items {
     display: flex;
     flex-wrap: wrap;
@@ -691,7 +691,7 @@
     position: relative;
 
     padding: 0 130px 5px 10px;
-    margin: 0 -10px;
+    margin: 5px -10px -5px;
 
     background: get-color('additional', 'light');
     line-height: 20px;
@@ -949,10 +949,68 @@
   padding: 0;
 
   .action {
-    &:hover {
-      text-decoration: none;
-      background-color: get-color('additional', 'light');
-      border-radius: 4px;
+    &.icon-only {
+      color: get-color('additional', 'middle');
+
+      @include hover-focus {
+        text-decoration: none;
+
+        color: get-color('additional', 'dark');
+      }
+
+      [class^='fa-'] {
+        margin-right: 0;
+      }
+    }
+
+    &.text-only {
+      [class^="fa-"] {
+        margin-left: 3px;
+
+        font-size: 12px;
+      }
+    }
+  }
+
+  .dropdown-toggle {
+    height: 10px;
+
+    display: inline-block;
+    vertical-align: middle;
+
+    line-height: 0;
+    font-size: 24px;
+    text-decoration: none;
+
+    color: inherit;
+
+    &:after {
+      content: none;
+    }
+  }
+
+  &.action-row {
+    white-space:nowrap;
+
+    .launcher-item {
+      height: 15px;
+
+      display: inline-block;
+
+      padding: 0;
+
+      line-height: 14px;
+
+      & + * {
+        padding-left: 10px;
+        margin-left: 7px;
+
+        border-left: 1px solid get-color('additional', 'middle');
+      }
+
+      [class^="fa-"] {
+        font-size: 15px;
+      }
     }
   }
 
@@ -1072,6 +1130,14 @@
       }
     }
   }
+
+  .action-cell {
+    text-align: right;
+
+    .dropdown {
+      display: inline-block;
+    }
+  }
 }
 
 $launcher-color: get-color('additional', 'middle');
@@ -1121,7 +1187,7 @@ $launcher-color: get-color('additional', 'middle');
     margin: 0;
   }
 }
-
+/*
 //Remove code below, when grid styles will be free of platform styles
 //'.grid__row--has-child-grid' is used in customer bundle on the address book page for addresses datagrid
 //It should remove this class too
@@ -1162,3 +1228,4 @@ $launcher-color: get-color('additional', 'middle');
     }
   }
 }
+*/
