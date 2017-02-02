@@ -1,23 +1,23 @@
 /*global define*/
 define([
     'underscore', 'orotranslation/js/translator', 'orolocale/js/locale-settings'
-], function (_, __, localeSettings) {
+], function(_, __, localeSettings) {
     'use strict';
 
-    var options = localeSettings.getNumberFormats('decimal'),
-        decimalSeparator = options.decimal_separator_symbol;
+    var options = localeSettings.getNumberFormats('decimal');
+    var decimalSeparator = options.decimal_separator_symbol;
 
     return [
         'decimal-precision',
         function(value, element, param) {
-            if (!_.include(value, decimalSeparator)) {
+            if (!_.contains(value, decimalSeparator)) {
                 return true;
             }
             var floatValue = parseFloat(value);
 
-            return floatValue.toPrecision(param.precision + 1) / 1 == floatValue;
+            return floatValue.toPrecision(param.precision + 1) / 1 === floatValue;
         },
-        function (param, element) {
+        function(param, element) {
             var placeholders = {};
 
             placeholders.precision = param.precision;

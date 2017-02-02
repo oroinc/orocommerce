@@ -13,7 +13,8 @@ define(function(require) {
                 productId: options.productId
             };
 
-            this.options.url = options.url = routing.generate('oro_shopping_list_frontend_matrix_grid_order', urlOptions);
+            options.url = routing.generate('oro_shopping_list_frontend_matrix_grid_order', urlOptions);
+            this.options.url = options.url;
             this.options.regionEnabled = false;
             this.options.incrementalPosition = false;
 
