@@ -6,9 +6,6 @@ layout:
         -
             id: oro_customer_menu
             root: page_sidebar
-        -
-            id: oro_customer_user_view
-            root: page_content
     actions:
         - '@setOption':
             id: customer_breadcrumbs
