@@ -31,13 +31,10 @@ class AllowUnlistedConfiguredPriceProviderDecoratorTest extends \PHPUnit_Framewo
 
     public function setUp()
     {
-        $this->shippingMethodViewFactory = $this->getMockBuilder(ShippingMethodViewFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->shippingMethodViewFactory = $this->createMock(ShippingMethodViewFactory::class);
 
         $this->parentProviderMock = $this
-            ->getMockBuilder(ShippingConfiguredPriceProviderInterface::class)
-            ->getMock();
+            ->createMock(ShippingConfiguredPriceProviderInterface::class);
 
         $this->testedProvider = new AllowUnlistedConfiguredPriceProviderDecorator(
             $this->shippingMethodViewFactory,
@@ -54,11 +51,7 @@ class AllowUnlistedConfiguredPriceProviderDecoratorTest extends \PHPUnit_Framewo
         $configurationMock = $this->getConfigurationMock();
         $contextMock = $this->getShippingContextMock();
 
-        $parentMethodViews = new ShippingMethodViewCollection();
-
-        $parentMethodViews
-            ->addMethodView('anotherMethod', [])
-            ->addMethodTypeView('anotherMethod', 'anotherMethodType', ['price' => Price::create(12, 'USD')]);
+        $parentMethodViews = $this->getParentMethodViews();
 
         $this->parentProviderMock
             ->expects($this->once())
@@ -122,18 +115,99 @@ class AllowUnlistedConfiguredPriceProviderDecoratorTest extends \PHPUnit_Framewo
         $this->assertEquals($expectedMethods, $actualMethods);
     }
 
-    public function getPrice()
+    public function testGetApplicableMethodsViewsForNullConfigurationShippingMethod()
+    {
+        $configurationMock = $this->getConfigurationMock();
+        $contextMock = $this->getShippingContextMock();
+        $parentMethodViews = $this->getParentMethodViews();
+
+        $this->parentProviderMock
+            ->expects(static::once())
+            ->method('getApplicableMethodsViews')
+            ->with($configurationMock, $contextMock)
+            ->willReturn($parentMethodViews);
+
+        $configurationMock
+            ->expects(static::once())
+            ->method('getShippingMethod')
+            ->willReturn(null);
+
+        static::assertEquals(
+            $parentMethodViews,
+            $this->testedProvider->getApplicableMethodsViews($configurationMock, $contextMock)
+        );
+    }
+
+    public function testGetApplicableMethodsViewsForNotAllowUnlistedShippingMethod()
+    {
+        $configurationMock = $this->getConfigurationMock();
+        $contextMock = $this->getShippingContextMock();
+        $parentMethodViews = $this->getParentMethodViews();
+
+        $this->parentProviderMock
+            ->expects(static::once())
+            ->method('getApplicableMethodsViews')
+            ->with($configurationMock, $contextMock)
+            ->willReturn($parentMethodViews);
+
+        $configurationMock
+            ->expects(static::once())
+            ->method('getShippingMethod')
+            ->willReturn('method');
+
+        $configurationMock
+            ->expects(static::once())
+            ->method('isAllowUnlistedShippingMethod')
+            ->willReturn(false);
+
+        static::assertEquals(
+            $parentMethodViews,
+            $this->testedProvider->getApplicableMethodsViews($configurationMock, $contextMock)
+        );
+    }
+
+    public function testGetApplicableMethodsViewsIfTheyHasMethodTypeView()
+    {
+        $configurationMock = $this->getConfigurationMock();
+        $contextMock = $this->getShippingContextMock();
+        $parentMethodViews = $this->getParentMethodViews();
+
+        $this->parentProviderMock
+            ->expects(static::once())
+            ->method('getApplicableMethodsViews')
+            ->with($configurationMock, $contextMock)
+            ->willReturn($parentMethodViews);
+
+        $configurationMock
+            ->expects(static::exactly(2))
+            ->method('getShippingMethod')
+            ->willReturn('anotherMethod');
+
+        $configurationMock
+            ->expects(static::once())
+            ->method('getShippingMethodType')
+            ->willReturn('anotherMethodType');
+
+        $configurationMock
+            ->expects(static::once())
+            ->method('isAllowUnlistedShippingMethod')
+            ->willReturn(true);
+
+        static::assertEquals(
+            $parentMethodViews,
+            $this->testedProvider->getApplicableMethodsViews($configurationMock, $contextMock)
+        );
+    }
+
+    public function testGetPrice()
     {
         $methodId = 'flat_rate';
         $methodTypeId = 'primary';
         $shippingCost = Price::create(50, 'EUR');
+
         $configurationMock = $this->getConfigurationMock();
         $contextMock = $this->getShippingContextMock();
-
-        $parentMethodViews = new ShippingMethodViewCollection();
-        $parentMethodViews
-            ->addMethodView('anotherMethod', [])
-            ->addMethodTypeView('anotherMethod', 'anotherMethodType', ['price' => Price::create(12, 'USD')]);
+        $parentMethodViews = $this->getParentMethodViews();
 
         $this->parentProviderMock
             ->expects($this->once())
@@ -153,7 +227,63 @@ class AllowUnlistedConfiguredPriceProviderDecoratorTest extends \PHPUnit_Framewo
 
         $actualPrice = $this->testedProvider->getPrice($methodId, $methodTypeId, $configurationMock, $contextMock);
 
-        $this->assertEquals($shippingCost, $actualPrice);
+        $this->assertSame($shippingCost, $actualPrice);
+    }
+
+    public function testGetPriceIfNotAllowUnlistedShippingMethod()
+    {
+        $parentPrice = Price::create(50, 'EUR');
+        $configurationMock = $this->getConfigurationMock();
+        $contextMock = $this->getShippingContextMock();
+
+        $configurationMock
+            ->expects($this->once())
+            ->method('isAllowUnlistedShippingMethod')
+            ->willReturn(false);
+
+        $this->parentProviderMock
+            ->expects($this->once())
+            ->method('getPrice')
+            ->willReturn($parentPrice);
+
+        static::assertSame(
+            $parentPrice,
+            $this->testedProvider->getPrice('method', 'type', $configurationMock, $contextMock)
+        );
+    }
+
+    public function testGetPriceIfShippingMethodViewsHasMethodTypeView()
+    {
+        $parentPrice = Price::create(50, 'EUR');
+        $configurationMock = $this->getConfigurationMock();
+        $contextMock = $this->getShippingContextMock();
+        $parentMethodViews = $this->getParentMethodViews();
+
+        $configurationMock
+            ->expects($this->once())
+            ->method('isAllowUnlistedShippingMethod')
+            ->willReturn(true);
+
+        $this->parentProviderMock
+            ->expects($this->once())
+            ->method('getPrice')
+            ->willReturn($parentPrice);
+
+        $this->parentProviderMock
+            ->expects($this->once())
+            ->method('getApplicableMethodsViews')
+            ->with($configurationMock, $contextMock)
+            ->willReturn($parentMethodViews);
+
+        static::assertSame(
+            $parentPrice,
+            $this->testedProvider->getPrice(
+                'anotherMethod',
+                'anotherMethodType',
+                $configurationMock,
+                $contextMock
+            )
+        );
     }
 
     /**
@@ -161,10 +291,7 @@ class AllowUnlistedConfiguredPriceProviderDecoratorTest extends \PHPUnit_Framewo
      */
     private function getShippingContextMock()
     {
-        return $this
-            ->getMockBuilder(ShippingContext::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        return $this->createMock(ShippingContext::class);
     }
 
     /**
@@ -172,8 +299,19 @@ class AllowUnlistedConfiguredPriceProviderDecoratorTest extends \PHPUnit_Framewo
      */
     private function getConfigurationMock()
     {
-        return $this
-            ->getMockBuilder(ComposedShippingMethodConfigurationInterface::class)
-            ->getMock();
+        return $this->createMock(ComposedShippingMethodConfigurationInterface::class);
+    }
+
+    /**
+     * @return ShippingMethodViewCollection
+     */
+    private function getParentMethodViews()
+    {
+        $views = new ShippingMethodViewCollection();
+        $views
+            ->addMethodView('anotherMethod', [])
+            ->addMethodTypeView('anotherMethod', 'anotherMethodType', ['price' => Price::create(12, 'USD')]);
+
+        return $views;
     }
 }

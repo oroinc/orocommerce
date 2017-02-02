@@ -96,49 +96,11 @@ class RestCustomerTest extends AbstractRestTest
                         [
                             'name' => 'customer.1',
                         ],
-                    'relationships' => [
-                        'parent' => [
-                            'data' => [
-                                'type' => 'customers',
-                                'id' => (string)$defaultCustomer->getId(),
-                            ],
-                        ],
-                        'children' => ['data' => [],],
-                        'users' => ['data' => [],],
-                        'owner' => [
-                            'data' => [
-                                'type' => 'users',
-                                'id' => (string)$owner->getId(),
-                            ],
-                        ],
-                        'organization' => [
-                            'data' => [
-                                'type' => 'organizations',
-                                'id' => (string)$organization->getId(),
-                            ],
-                        ],
-                        'salesRepresentatives' => [
-                            'data' => [
-                                [
-                                    'type' => 'users',
-                                    'id' => (string)$owner->getId(),
-                                ],
-                            ],
-                        ],
-                        'internal_rating' => [
-                            'data' =>
-                                [
-                                    'type' => 'accinternalratings',
-                                    'id' => 'internal_rating.1_of_5',
-                                ],
-                        ],
-                        'group' => [
-                            'data' => [
-                                'type' => 'customergroups',
-                                'id' => (string)$this->getGroup(LoadGroups::GROUP1)->getId(),
-                            ],
-                        ],
-                    ],
+                    'relationships' => $this->getRelationships(
+                        $defaultCustomer->getId(),
+                        $owner->getId(),
+                        $organization->getId()
+                    ),
                 ],
             ],
         ];
@@ -170,47 +132,11 @@ class RestCustomerTest extends AbstractRestTest
             'data' => [
                 'type' => $this->getEntityType(Customer::class),
                 'attributes' => ['name' => 'created customer'],
-                'relationships' => [
-                    'parent' => [
-                        'data' => [
-                            'type' => 'customers',
-                            'id' => (string)$parentCustomer->getId(),
-                        ],
-                    ],
-                    'owner' => [
-                        'data' => [
-                            'type' => 'users',
-                            'id' => (string)$owner->getId(),
-                        ],
-                    ],
-                    'organization' => [
-                        'data' => [
-                            'type' => 'organizations',
-                            'id' => (string)$organization->getId(),
-                        ],
-                    ],
-                    'salesRepresentatives' => [
-                        'data' => [
-                            [
-                                'type' => 'users',
-                                'id' => (string)$owner->getId(),
-                            ],
-                        ],
-                    ],
-                    'internal_rating' => [
-                        'data' =>
-                            [
-                                'type' => 'accinternalratings',
-                                'id' => 'internal_rating.1_of_5',
-                            ],
-                    ],
-                    'group' => [
-                        'data' => [
-                            'type' => 'customergroups',
-                            'id' => (string)$group->getId(),
-                        ],
-                    ],
-                ],
+                'relationships' => $this->getRelationships(
+                    $parentCustomer->getId(),
+                    $owner->getId(),
+                    $organization->getId()
+                ),
             ],
         ];
 
@@ -261,49 +187,7 @@ class RestCustomerTest extends AbstractRestTest
                     [
                         'name' => 'customer.1',
                     ],
-                'relationships' => [
-                    'parent' => [
-                        'data' => [
-                            'type' => 'customers',
-                            'id' => (string)$parent->getId(),
-                        ],
-                    ],
-                    'children' => ['data' => [],],
-                    'users' => ['data' => [],],
-                    'owner' => [
-                        'data' => [
-                            'type' => 'users',
-                            'id' => (string)$owner->getId(),
-                        ],
-                    ],
-                    'organization' => [
-                        'data' => [
-                            'type' => 'organizations',
-                            'id' => (string)$organization->getId(),
-                        ],
-                    ],
-                    'salesRepresentatives' => [
-                        'data' => [
-                            [
-                                'type' => 'users',
-                                'id' => (string)$owner->getId(),
-                            ],
-                        ],
-                    ],
-                    'internal_rating' => [
-                        'data' =>
-                            [
-                                'type' => 'accinternalratings',
-                                'id' => 'internal_rating.1_of_5',
-                            ],
-                    ],
-                    'group' => [
-                        'data' => [
-                            'type' => 'customergroups',
-                            'id' => (string)$this->getGroup(LoadGroups::GROUP1)->getId(),
-                        ],
-                    ],
-                ],
+                'relationships' => $this->getRelationships($parent->getId(), $owner->getId(), $organization->getId()),
             ],
         ];
         $this->assertEquals($expected, $content);
@@ -838,49 +722,11 @@ class RestCustomerTest extends AbstractRestTest
                         [
                             'name' => 'customer.1',
                         ],
-                    'relationships' => [
-                        'parent' => [
-                            'data' => [
-                                'type' => 'customers',
-                                'id' => (string)$customer->getId(),
-                            ],
-                        ],
-                        'children' => ['data' => []],
-                        'users' => ['data' => []],
-                        'owner' => [
-                            'data' => [
-                                'type' => 'users',
-                                'id' => (string)$owner->getId(),
-                            ],
-                        ],
-                        'organization' => [
-                            'data' => [
-                                'type' => 'organizations',
-                                'id' => (string)$organization->getId(),
-                            ],
-                        ],
-                        'salesRepresentatives' => [
-                            'data' => [
-                                [
-                                    'type' => 'users',
-                                    'id' => (string)$owner->getId(),
-                                ],
-                            ],
-                        ],
-                        'internal_rating' => [
-                            'data' =>
-                                [
-                                    'type' => 'accinternalratings',
-                                    'id' => 'internal_rating.1_of_5',
-                                ],
-                        ],
-                        'group' => [
-                            'data' => [
-                                'type' => 'customergroups',
-                                'id' => (string)$this->getGroup(LoadGroups::GROUP1)->getId(),
-                            ],
-                        ],
-                    ],
+                    'relationships' => $this->getRelationships(
+                        $customer->getId(),
+                        $owner->getId(),
+                        $organization->getId()
+                    ),
                 ],
             ],
         ];
@@ -1162,5 +1008,58 @@ class RestCustomerTest extends AbstractRestTest
         $this->assertContainsById($user2, $customer->getUsers());
 
         $this->deleteEntities([$user1, $user2, $customer]);
+    }
+
+    /**
+     * @param int $parentId
+     * @param int $ownerId
+     * @param int $organizationId
+     * @return array
+     */
+    protected function getRelationships($parentId, $ownerId, $organizationId)
+    {
+        return [
+            'parent' => [
+                'data' => [
+                    'type' => 'customers',
+                    'id' => (string)$parentId,
+                ],
+            ],
+            'children' => ['data' => [],],
+            'users' => ['data' => [],],
+            'owner' => [
+                'data' => [
+                    'type' => 'users',
+                    'id' => (string)$ownerId,
+                ],
+            ],
+            'organization' => [
+                'data' => [
+                    'type' => 'organizations',
+                    'id' => (string)$organizationId,
+                ],
+            ],
+            'salesRepresentatives' => [
+                'data' => [
+                    [
+                        'type' => 'users',
+                        'id' => (string)$ownerId,
+                    ],
+                ],
+            ],
+            'internal_rating' => [
+                'data' =>
+                    [
+                        'type' => 'accinternalratings',
+                        'id' => 'internal_rating.1_of_5',
+                    ],
+            ],
+            'group' => [
+                'data' => [
+                    'type' => 'customergroups',
+                    'id' => (string)$this->getGroup(LoadGroups::GROUP1)->getId(),
+                ],
+            ],
+        ];
     }
 }
