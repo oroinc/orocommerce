@@ -1,0 +1,8 @@
+services:
+    oro_customer.layout.block_type.navigation:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            - [setOptionsConfig, [{customerUser: {required: true}, customerPage: {required: true}, currentPage: {required: true}}]]
+            - [setName, ['customer_breadcrumbs']]
+        tags:
+             - { name: layout.block_type, alias: customer_breadcrumbs }

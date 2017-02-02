@@ -6,16 +6,22 @@
 
   border-top: 1px solid get-color('additional', 'light');
 
-  clear: both;
+    &__item {
+        display: flex;
 
-  .control-group {
-    display: flex;
-
-    padding: 5px 0 6px 0;
-  }
+        padding: 5px 0 6px 0;
+    }
 
   .control-label {
     min-width: 115px;
     margin-right: 30px;
   }
+}
+
+@include breakpoint('mobile') {
+    .info-list {
+        &__name {
+            min-width: 0;
+        }
+    }
 }

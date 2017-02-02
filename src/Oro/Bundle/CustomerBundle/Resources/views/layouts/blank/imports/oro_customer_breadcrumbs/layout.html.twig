@@ -1,0 +1,24 @@
+{% block _customer_breadcrumbs_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' breadcrumbs'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        <span class="breadcrumbs__item">
+            {{ customerUser }}
+            {% if customerPage is not null %}
+                / {{ customerPage|trans }}
+            {% endif %}
+            {% if currentPage is iterable %}
+                {% set id = null %}
+                {% for value, keys in currentPage %}
+                    {% for key in keys|keys %}
+                        {% set id = key %}
+                    {% endfor %}
+                {% endfor %}
+                / {{ currentPage.label|trans({(id): currentPage.parameters[id]}) }}
+            {% else %}
+                / {{ currentPage|trans }}
+            {% endif %}
+        </span>
+    </div>
+{% endblock %}
