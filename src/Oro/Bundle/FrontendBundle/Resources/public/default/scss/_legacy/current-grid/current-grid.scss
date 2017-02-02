@@ -945,15 +945,36 @@
 
 .more-bar-holder {
   position: relative;
+  display: inline-block;
+  padding: 0;
 
   .action {
     &:hover {
       text-decoration: none;
-
       background-color: get-color('additional', 'light');
       border-radius: 4px;
     }
   }
+
+  .dropdown-toggle {
+    display: inline-block;
+    padding: 0 15px 10px;
+    line-height: .55;
+    margin: 0;
+    font-size: $base-font-size--m;
+    color: get-color('additional', 'semidark');
+
+    &:after {
+      display: none;
+    }
+  }
+
+  .dropdown-menu__placeholder + .dropdown-toggle,
+  .dropdown-toggle:hover {
+    text-decoration: none;
+    background-color: get-color('additional', 'middle');
+  }
+
 }
 
 //Table
@@ -1053,19 +1074,45 @@
   }
 }
 
+$launcher-color: get-color('additional', 'middle');
+
 .dropdown-menu__action-cell {
-  min-width: 100px;
-  padding: 0;
+  min-width: 0;
   margin: 0;
+  padding: 0;
 
   .launcher-item {
     float: none;
 
     a {
       padding: 5px 10px;
+      display: inline-block;
 
       .hide-text {
         margin-right: 5px;
+      }
+    }
+  }
+
+  & .icons-holder {
+
+    .launcher-item {
+      display: table-cell;
+
+      a {
+        color: $launcher-color;
+        text-align: center;
+        min-width: 12px;
+        min-height: 18px;
+        padding: 5px 10px;
+
+        [class^="cf-"], [class*=" cf-"], [class^="fa-"], [class*=" fa-"] {
+          margin: 0;
+          vertical-align: top;
+        }
+        &:hover, &:focus, &:active, &:visited {
+          color: get-color('additional', 'dark');
+        }
       }
     }
   }
@@ -1080,8 +1127,6 @@
 //It should remove this class too
 
 .grid__row--has-child-grid {
-  $launcher-color: get-color('additional', 'middle');
-
   .oro-datagrid {
     .grid {
       .launchers-list {
