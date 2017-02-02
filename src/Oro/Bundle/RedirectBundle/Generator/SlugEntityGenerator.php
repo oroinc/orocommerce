@@ -20,11 +20,20 @@ class SlugEntityGenerator
     protected $routingInformationProvider;
 
     /**
-     * @param RoutingInformationProviderInterface $routingInformationProvider
+     * @var UniqueSlugResolver
      */
-    public function __construct(RoutingInformationProviderInterface $routingInformationProvider)
-    {
+    protected $slugResolver;
+
+    /**
+     * @param RoutingInformationProviderInterface $routingInformationProvider
+     * @param UniqueSlugResolver $slugResolver
+     */
+    public function __construct(
+        RoutingInformationProviderInterface $routingInformationProvider,
+        UniqueSlugResolver $slugResolver
+    ) {
         $this->routingInformationProvider = $routingInformationProvider;
+        $this->slugResolver = $slugResolver;
     }
 
     /**
@@ -32,15 +41,18 @@ class SlugEntityGenerator
      */
     public function generate(SluggableInterface $entity)
     {
-        $slugUrls = $this->getSlugUrls($entity);
+        $slugUrls = $this->getResolvedSlugUrls($entity);
 
         $toRemove = [];
+
         foreach ($entity->getSlugs() as $slug) {
             $localizationId = $this->getLocalizationId($slug->getLocalization());
+
             if ($slugUrls->containsKey($localizationId)) {
                 /** @var SlugUrl $slugUrl */
                 $slugUrl = $slugUrls->get($localizationId);
-                $slug->setUrl($slugUrl->getUrl());
+                $resolvedUrl = $slugUrl->getUrl();
+                $slug->setUrl($resolvedUrl);
             } else {
                 $toRemove[] = $slug;
             }
@@ -144,6 +156,21 @@ class SlugEntityGenerator
         $slug->setRouteParameters($routeData->getRouteParameters());
 
         return $slug;
+    }
+
+    /**
+     * @param SluggableInterface $entity
+     * @return Collection|SlugUrl[]
+     */
+    private function getResolvedSlugUrls(SluggableInterface $entity)
+    {
+        $slugUrls = $this->getSlugUrls($entity);
+
+        foreach ($slugUrls as $slugUrl) {
+            $slugUrl->setUrl($this->slugResolver->resolve($slugUrl, $entity));
+        }
+
+        return $slugUrls;
     }
 
     /**

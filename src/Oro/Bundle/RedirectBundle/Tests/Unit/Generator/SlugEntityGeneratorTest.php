@@ -7,6 +7,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator;
+use Oro\Bundle\RedirectBundle\Generator\UniqueSlugResolver;
 use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProviderInterface;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Entity\SluggableEntityStub;
 use Oro\Component\Routing\RouteData;
@@ -22,6 +23,11 @@ class SlugEntityGeneratorTest extends \PHPUnit_Framework_TestCase
     protected $routingInformationProvider;
 
     /**
+     * @var UniqueSlugResolver|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $slugResolver;
+
+    /**
      * @var SlugEntityGenerator
      */
     protected $generator;
@@ -29,7 +35,11 @@ class SlugEntityGeneratorTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->routingInformationProvider = $this->createMock(RoutingInformationProviderInterface::class);
-        $this->generator = new SlugEntityGenerator($this->routingInformationProvider);
+        $this->slugResolver = $this->getMockBuilder(UniqueSlugResolver::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->generator = new SlugEntityGenerator($this->routingInformationProvider, $this->slugResolver);
     }
 
     /**
@@ -46,6 +56,14 @@ class SlugEntityGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->routingInformationProvider->expects($this->any())
             ->method('getUrlPrefix')
             ->willReturn('/test');
+
+        /** @var Slug[] $expectedSlugs */
+        $expectedSlugs = array_values($expected->getSlugs()->toArray());
+        foreach ($expectedSlugs as $key => $slug) {
+            $this->slugResolver->expects($this->at($key))
+                ->method('resolve')
+                ->willReturn($slug->getUrl());
+        }
 
         $this->generator->generate($entity);
         $this->assertEquals($expected, $entity);

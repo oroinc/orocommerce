@@ -70,17 +70,21 @@ class SluggableEntityListener
 
     /**
      * @param UnitOfWork $unitOfWork
-     * @return \Generator
+     * @return array
      */
     protected function getChangedSluggableEntities(UnitOfWork $unitOfWork)
     {
+        $result = [];
         foreach ($this->getUpdatedSlugs($unitOfWork) as $sluggableEntity) {
             foreach ($this->getLocalizedValues($unitOfWork) as $localizedFallbackValue) {
                 if ($sluggableEntity->hasSlugPrototype($localizedFallbackValue)) {
-                    yield $sluggableEntity;
+                    $result[] = $sluggableEntity;
+                    break;
                 }
             }
         }
+
+        return $result;
     }
 
     /**
