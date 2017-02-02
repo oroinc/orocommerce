@@ -100,29 +100,6 @@ class FrontendCustomerUserRegistrationFormProviderTest extends \PHPUnit_Framewor
         $website = $this->getEntity(Website::class, ['organization' => $organization]);
         $owner = $this->getEntity(User::class);
 
-        $this->configManager
-            ->expects($this->once())
-            ->method('get')
-            ->with('oro_customer.default_customer_owner')
-            ->willReturn($defaultOwnerId);
-
-        $this->websiteManager
-            ->expects($this->once())
-            ->method('getCurrentWebsite')
-            ->willReturn($website);
-
-        $this->roleRepository
-            ->expects($this->once())
-            ->method('getDefaultCustomerUserRoleByWebsite')
-            ->with($website)
-            ->willReturn($defaultRole);
-
-        $this->userRepository
-            ->expects($this->once())
-            ->method('find')
-            ->with($defaultOwnerId)
-            ->willReturn($owner);
-
         $formView = $this->createMock(FormView::class);
 
         $form = $this->createMock(FormInterface::class);
@@ -130,17 +107,7 @@ class FrontendCustomerUserRegistrationFormProviderTest extends \PHPUnit_Framewor
             ->method('createView')
             ->willReturn($formView);
 
-        $this->formFactory
-            ->expects($this->once())
-            ->method('create')
-            ->with(FrontendCustomerUserRegistrationType::NAME)
-            ->willReturn($form);
-
-        $this->router
-            ->expects($this->once())
-            ->method('generate')
-            ->with(FrontendCustomerUserRegistrationFormProvider::ACCOUNT_USER_REGISTER_ROUTE_NAME, [])
-            ->willReturn($action);
+        $this->prepare($defaultOwnerId, $website, $defaultRole, $form, $action, $owner);
 
         $actual = $this->dataProvider->getRegisterFormView();
 
@@ -155,31 +122,7 @@ class FrontendCustomerUserRegistrationFormProviderTest extends \PHPUnit_Framewor
     {
         $defaultOwnerId = false;
 
-        $this->configManager
-            ->expects($this->once())
-            ->method('get')
-            ->with('oro_customer.default_customer_owner')
-            ->willReturn($defaultOwnerId);
-
-        $this->websiteManager
-            ->expects($this->never())
-            ->method('getCurrentWebsite');
-
-        $this->roleRepository
-            ->expects($this->never())
-            ->method('getDefaultCustomerUserRoleByWebsite');
-
-        $this->userRepository
-            ->expects($this->never())
-            ->method('find');
-
-        $this->formFactory
-            ->expects($this->never())
-            ->method('create');
-
-        $this->router
-            ->expects($this->never())
-            ->method('generate');
+        $this->prepare($defaultOwnerId);
 
         $this->dataProvider->getRegisterFormView();
     }
@@ -193,32 +136,7 @@ class FrontendCustomerUserRegistrationFormProviderTest extends \PHPUnit_Framewor
         $defaultOwnerId = 1;
         $website = false;
 
-        $this->configManager
-            ->expects($this->once())
-            ->method('get')
-            ->with('oro_customer.default_customer_owner')
-            ->willReturn($defaultOwnerId);
-
-        $this->websiteManager
-            ->expects($this->once())
-            ->method('getCurrentWebsite')
-            ->willReturn($website);
-
-        $this->roleRepository
-            ->expects($this->never())
-            ->method('getDefaultCustomerUserRoleByWebsite');
-
-        $this->userRepository
-            ->expects($this->never())
-            ->method('find');
-
-        $this->formFactory
-            ->expects($this->never())
-            ->method('create');
-
-        $this->router
-            ->expects($this->never())
-            ->method('generate');
+        $this->prepare($defaultOwnerId, $website);
 
         $this->dataProvider->getRegisterFormView();
     }
@@ -233,32 +151,7 @@ class FrontendCustomerUserRegistrationFormProviderTest extends \PHPUnit_Framewor
         $defaultOwnerId = 1;
         $website = $this->getEntity(Website::class);
 
-        $this->configManager
-            ->expects($this->once())
-            ->method('get')
-            ->with('oro_customer.default_customer_owner')
-            ->willReturn($defaultOwnerId);
-
-        $this->websiteManager
-            ->expects($this->once())
-            ->method('getCurrentWebsite')
-            ->willReturn($website);
-
-        $this->roleRepository
-            ->expects($this->never())
-            ->method('getDefaultCustomerUserRoleByWebsite');
-
-        $this->userRepository
-            ->expects($this->never())
-            ->method('find');
-
-        $this->formFactory
-            ->expects($this->never())
-            ->method('create');
-
-        $this->router
-            ->expects($this->never())
-            ->method('generate');
+        $this->prepare($defaultOwnerId, $website);
 
         $this->dataProvider->getRegisterFormView();
     }
@@ -274,34 +167,7 @@ class FrontendCustomerUserRegistrationFormProviderTest extends \PHPUnit_Framewor
         $organization = $this->getEntity(Organization::class);
         $website = $this->getEntity(Website::class, ['organization' => $organization]);
 
-        $this->configManager
-            ->expects($this->once())
-            ->method('get')
-            ->with('oro_customer.default_customer_owner')
-            ->willReturn($defaultOwnerId);
-
-        $this->websiteManager
-            ->expects($this->once())
-            ->method('getCurrentWebsite')
-            ->willReturn($website);
-
-        $this->roleRepository
-            ->expects($this->once())
-            ->method('getDefaultCustomerUserRoleByWebsite')
-            ->with($website)
-            ->willReturn($defaultRole);
-
-        $this->userRepository
-            ->expects($this->never())
-            ->method('find');
-
-        $this->formFactory
-            ->expects($this->never())
-            ->method('create');
-
-        $this->router
-            ->expects($this->never())
-            ->method('generate');
+        $this->prepare($defaultOwnerId, $website, $defaultRole);
 
         $this->dataProvider->getRegisterFormView();
     }
@@ -317,42 +183,9 @@ class FrontendCustomerUserRegistrationFormProviderTest extends \PHPUnit_Framewor
         $website = $this->getEntity(Website::class, ['organization' => $organization]);
         $owner = $this->getEntity(User::class);
 
-        $this->configManager
-            ->expects($this->once())
-            ->method('get')
-            ->with('oro_customer.default_customer_owner')
-            ->willReturn($defaultOwnerId);
-
-        $this->websiteManager
-            ->expects($this->once())
-            ->method('getCurrentWebsite')
-            ->willReturn($website);
-
-        $this->roleRepository
-            ->expects($this->once())
-            ->method('getDefaultCustomerUserRoleByWebsite')
-            ->with($website)
-            ->willReturn($defaultRole);
-
-        $this->userRepository
-            ->expects($this->once())
-            ->method('find')
-            ->with($defaultOwnerId)
-            ->willReturn($owner);
-
         $form = $this->createMock(FormInterface::class);
 
-        $this->formFactory
-            ->expects($this->once())
-            ->method('create')
-            ->with(FrontendCustomerUserRegistrationType::NAME)
-            ->willReturn($form);
-
-        $this->router
-            ->expects($this->once())
-            ->method('generate')
-            ->with(FrontendCustomerUserRegistrationFormProvider::ACCOUNT_USER_REGISTER_ROUTE_NAME, [])
-            ->willReturn($action);
+        $this->prepare($defaultOwnerId, $website, $defaultRole, $form, $action, $owner);
 
         $actual = $this->dataProvider->getRegisterForm();
 
@@ -367,31 +200,7 @@ class FrontendCustomerUserRegistrationFormProviderTest extends \PHPUnit_Framewor
     {
         $defaultOwnerId = false;
 
-        $this->configManager
-            ->expects($this->once())
-            ->method('get')
-            ->with('oro_customer.default_customer_owner')
-            ->willReturn($defaultOwnerId);
-
-        $this->websiteManager
-            ->expects($this->never())
-            ->method('getCurrentWebsite');
-
-        $this->roleRepository
-            ->expects($this->never())
-            ->method('getDefaultCustomerUserRoleByWebsite');
-
-        $this->userRepository
-            ->expects($this->never())
-            ->method('find');
-
-        $this->formFactory
-            ->expects($this->never())
-            ->method('create');
-
-        $this->router
-            ->expects($this->never())
-            ->method('generate');
+        $this->prepare($defaultOwnerId);
 
         $this->dataProvider->getRegisterForm();
     }
@@ -405,32 +214,7 @@ class FrontendCustomerUserRegistrationFormProviderTest extends \PHPUnit_Framewor
         $defaultOwnerId = 1;
         $website = false;
 
-        $this->configManager
-            ->expects($this->once())
-            ->method('get')
-            ->with('oro_customer.default_customer_owner')
-            ->willReturn($defaultOwnerId);
-
-        $this->websiteManager
-            ->expects($this->once())
-            ->method('getCurrentWebsite')
-            ->willReturn($website);
-
-        $this->roleRepository
-            ->expects($this->never())
-            ->method('getDefaultCustomerUserRoleByWebsite');
-
-        $this->userRepository
-            ->expects($this->never())
-            ->method('find');
-
-        $this->formFactory
-            ->expects($this->never())
-            ->method('create');
-
-        $this->router
-            ->expects($this->never())
-            ->method('generate');
+        $this->prepare($defaultOwnerId, $website);
 
         $this->dataProvider->getRegisterForm();
     }
@@ -441,36 +225,10 @@ class FrontendCustomerUserRegistrationFormProviderTest extends \PHPUnit_Framewor
      */
     public function testGetRegisterFormOrganizationEmpty()
     {
-
         $defaultOwnerId = 1;
         $website = $this->getEntity(Website::class);
 
-        $this->configManager
-            ->expects($this->once())
-            ->method('get')
-            ->with('oro_customer.default_customer_owner')
-            ->willReturn($defaultOwnerId);
-
-        $this->websiteManager
-            ->expects($this->once())
-            ->method('getCurrentWebsite')
-            ->willReturn($website);
-
-        $this->roleRepository
-            ->expects($this->never())
-            ->method('getDefaultCustomerUserRoleByWebsite');
-
-        $this->userRepository
-            ->expects($this->never())
-            ->method('find');
-
-        $this->formFactory
-            ->expects($this->never())
-            ->method('create');
-
-        $this->router
-            ->expects($this->never())
-            ->method('generate');
+        $this->prepare($defaultOwnerId, $website);
 
         $this->dataProvider->getRegisterForm();
     }
@@ -486,35 +244,137 @@ class FrontendCustomerUserRegistrationFormProviderTest extends \PHPUnit_Framewor
         $organization = $this->getEntity(Organization::class);
         $website = $this->getEntity(Website::class, ['organization' => $organization]);
 
+        $this->prepare($defaultOwnerId, $website, $defaultRole);
+
+        $this->dataProvider->getRegisterForm();
+    }
+
+    /**
+     * @param int $defaultOwnerId
+     * @param Website $website
+     * @param RoleInterface $defaultRole
+     * @param FormInterface $form
+     * @param string $routerAction
+     * @param User $owner
+     */
+    protected function prepare(
+        $defaultOwnerId,
+        $website = null,
+        $defaultRole = null,
+        FormInterface $form = null,
+        $routerAction = null,
+        User $owner = null
+    ) {
+        $this->configureDefaultOwner($defaultOwnerId);
+        $this->configureCurrentWebsite($website);
+        $this->configureDefaultRoleByWebsite($defaultRole, $website);
+        $this->configureCreateForm($form);
+        $this->configureRouterGenerator($routerAction);
+        $this->configureUserRepoFind($owner, $defaultOwnerId);
+    }
+
+    /**
+     * @param int $ownerId
+     */
+    protected function configureDefaultOwner($ownerId)
+    {
         $this->configManager
             ->expects($this->once())
             ->method('get')
             ->with('oro_customer.default_customer_owner')
-            ->willReturn($defaultOwnerId);
+            ->willReturn($ownerId);
+    }
 
-        $this->websiteManager
-            ->expects($this->once())
-            ->method('getCurrentWebsite')
-            ->willReturn($website);
+    /**
+     * @param Website|bool|null $website
+     */
+    protected function configureCurrentWebsite($website = null)
+    {
+        if ($website === null) {
+            $this->websiteManager
+                ->expects($this->never())
+                ->method('getCurrentWebsite');
+        } else {
+            $this->websiteManager
+                ->expects($this->once())
+                ->method('getCurrentWebsite')
+                ->willReturn($website);
+        }
+    }
 
-        $this->roleRepository
-            ->expects($this->once())
-            ->method('getDefaultCustomerUserRoleByWebsite')
-            ->with($website)
-            ->willReturn($defaultRole);
+    /**
+     * @param RoleInterface|bool|null $defaultRole
+     * @param Website|bool|null $website
+     */
+    protected function configureDefaultRoleByWebsite(
+        $defaultRole = null,
+        $website = null
+    ) {
+        if ($defaultRole === null) {
+            $this->roleRepository
+                ->expects($this->never())
+                ->method('getDefaultCustomerUserRoleByWebsite');
+        } else {
+            $this->roleRepository
+                ->expects($this->once())
+                ->method('getDefaultCustomerUserRoleByWebsite')
+                ->with($website)
+                ->willReturn($defaultRole);
+        }
+    }
 
-        $this->userRepository
-            ->expects($this->never())
-            ->method('find');
+    /**
+     * @param User|null $owner
+     * @param int|null $ownerId
+     */
+    protected function configureUserRepoFind(User $owner = null, $ownerId = null)
+    {
+        if ($owner === null) {
+            $this->userRepository
+                ->expects($this->never())
+                ->method('find');
+        } else {
+            $this->userRepository
+                ->expects($this->once())
+                ->method('find')
+                ->with($ownerId)
+                ->willReturn($owner);
+        }
+    }
 
-        $this->formFactory
-            ->expects($this->never())
-            ->method('create');
+    /**
+     * @param FormInterface|null $formToCreate
+     */
+    protected function configureCreateForm(FormInterface $formToCreate = null)
+    {
+        if ($formToCreate === null) {
+            $this->formFactory
+                ->expects($this->never())
+                ->method('create');
+        } else {
+            $this->formFactory
+                ->expects($this->once())
+                ->method('create')
+                ->with(FrontendCustomerUserRegistrationType::NAME)
+                ->willReturn($formToCreate);
+        }
+    }
 
-        $this->router
-            ->expects($this->never())
-            ->method('generate');
-
-        $this->dataProvider->getRegisterForm();
+    /**
+     * @param string|null $action
+     */
+    protected function configureRouterGenerator($action = null)
+    {
+        if ($action === null) {
+            $this->router
+                ->expects($this->never())
+                ->method('generate');
+        } else {
+            $this->router
+                ->expects($this->once())
+                ->method('generate')
+                ->with(FrontendCustomerUserRegistrationFormProvider::ACCOUNT_USER_REGISTER_ROUTE_NAME, [])
+                ->willReturn($action);
+        }
     }
 }

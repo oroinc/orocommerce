@@ -4,22 +4,29 @@ configuration: {}
 databaseBefore:
     'Oro\Bundle\OrderBundle\Entity\Order':
         simple_order:
-            poNumber: { property_value: simple_order }
+            poNumber: simple_order
             customer: { class: 'Oro\Bundle\CustomerBundle\Entity\Customer', query: {} }
-            currency: 'USD'
-            billingAddress: { class: 'Oro\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
-            shippingAddress: { class: 'Oro\Bundle\OrderBundle\Entity\OrderAddress', property_value: {} }
+            currency: USD
+            billingAddress: null
+            shippingAddress: null
+    'Oro\Bundle\CurrencyBundle\Entity\Price':
+        usd_price_15.99:
+            value: 15.99
+            currency: USD
+        usd_price_5.55:
+            value: 5.55
+            currency: USD
     'Oro\Bundle\OrderBundle\Entity\OrderLineItem':
         order_line_item_1:
-            productSku: { property_value: order_line_item_1 }
-            order: { reference: simple_order }
-            quantity: { property_value: 5 }
-            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '15.99', currency: USD } }
+            productSku: order_line_item_1
+            order: '@simple_order'
+            quantity: 5
+            price: '@usd_price_15.99'
         order_line_item_2:
-            productSku: { property_value: order_line_item_2 }
-            order: { reference: simple_order }
-            quantity: { property_value: 6 }
-            price: { class: 'Oro\Bundle\CurrencyBundle\Entity\Price', property_value: { value: '5.55', currency: USD } }
+            productSku: order_line_item_2
+            order: '@simple_order'
+            quantity: 6
+            price: '@usd_price_5.55'
 expectedResult:
     total:
         includingTax: '113.25'

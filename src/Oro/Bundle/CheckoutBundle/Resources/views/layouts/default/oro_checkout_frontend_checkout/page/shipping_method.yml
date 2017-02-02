@@ -16,4 +16,13 @@ layout:
                 methods: '=data["checkout_shipping_methods"].getApplicableMethodsViews(data["checkout"]).toArray()'
                 currentShippingMethod: '=data["checkout"].getShippingMethod()'
                 currentShippingMethodType: '=data["checkout"].getShippingMethodType()'
+        - '@add':
+            id: shipping_methods_template
+            parentId: shipping_methods
+            blockType: container
+        - '@add':
+            id: shipping_methods_template_methods
+            parentId: shipping_methods_template
+            blockType: container
+
     conditions: 'context["workflowStepName"]=="enter_shipping_method"'

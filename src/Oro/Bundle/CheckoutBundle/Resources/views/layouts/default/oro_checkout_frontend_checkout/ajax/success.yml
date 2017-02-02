@@ -1,0 +1,34 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: '../templates/success.html.twig'
+
+        - '@addTree':
+            items:
+                head:
+                    blockType: head
+                title:
+                    blockType: title
+                    options:
+                        value: '=data["title_provider"].getTitle(context["route_name"], params)'
+                        params:
+                            '%step_label%': '=data["translator"].getTrans("oro.checkout.workflow.success.thank_you.label")'
+                body:
+                    blockType: body
+                raw_notification:
+                    blockType: block
+            tree:
+                root:
+                    head:
+                        title: ~
+                    body:
+                        raw_notification: ~
+
+        - '@add':
+            id: success_order
+            parentId: page_content
+            blockType: success_order
+            options:
+                order: '=data["workflowItem"].getData().get("order")'
+
+    conditions: 'context["workflowStepName"]=="order_created"'

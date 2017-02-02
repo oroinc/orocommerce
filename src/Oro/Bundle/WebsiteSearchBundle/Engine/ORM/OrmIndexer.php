@@ -34,8 +34,10 @@ class OrmIndexer extends AbstractIndexer
 
         foreach ($sortedEntitiesData as $entityClass => $entityIds) {
             $entityAlias = $this->getEntityAlias($entityClass, $context);
-
-            $this->getDriver()->removeEntities($entityIds, $entityClass, $entityAlias);
+            $batches = array_chunk($entityIds, $this->getBatchSize());
+            foreach ($batches as $batch) {
+                $this->getDriver()->removeEntities($batch, $entityClass, $entityAlias);
+            }
         }
 
         return true;
@@ -64,10 +66,11 @@ class OrmIndexer extends AbstractIndexer
                 ->setTitle($this->getEntityTitle($indexData))
                 ->setChanged(false)
                 ->saveItemData($indexData);
+            $this->getDriver()->writeItem($item);
             $items[] = $item;
         }
 
-        $this->getDriver()->saveItems($items);
+        $this->getDriver()->flushWrites();
 
         return count($items);
     }

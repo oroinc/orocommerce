@@ -3,12 +3,16 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Engine\ORM\Driver;
 
 use Doctrine\ORM\EntityManagerInterface;
+
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\SearchBundle\Engine\Orm\DBALPersisterDriverTrait;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 
 class DriverDecorator implements DriverInterface
 {
+    use DBALPersisterDriverTrait;
+
     /** @var DoctrineHelper */
     private $doctrineHelper;
 
@@ -17,6 +21,9 @@ class DriverDecorator implements DriverInterface
 
     /** @var DriverInterface */
     private $driver;
+
+    /** @var EntityManagerInterface */
+    private $entityManager;
 
     /**
      * @param DoctrineHelper $doctrineHelper
@@ -47,6 +54,8 @@ class DriverDecorator implements DriverInterface
 
             $this->driver = $this->availableDrivers[$databasePlatform];
             $this->driver->initialize($em);
+            // entityManager's use preferred over doctrineHelper in drivers
+            $this->entityManager = $this->doctrineHelper->getEntityManager(Item::class);
         }
 
         return $this->driver;

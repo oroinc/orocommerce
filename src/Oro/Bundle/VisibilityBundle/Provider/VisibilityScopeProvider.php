@@ -6,6 +6,7 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Provider\ScopeCustomerCriteriaProvider;
 use Oro\Bundle\CustomerBundle\Provider\ScopeCustomerGroupCriteriaProvider;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
@@ -26,7 +27,7 @@ class VisibilityScopeProvider
 
     /**
      * @param Website $website
-     * @return \Oro\Bundle\ScopeBundle\Entity\Scope
+     * @return Scope
      */
     public function getProductVisibilityScope(Website $website)
     {
@@ -36,7 +37,7 @@ class VisibilityScopeProvider
     /**
      * @param Customer $customer
      * @param Website $website
-     * @return \Oro\Bundle\ScopeBundle\Entity\Scope
+     * @return Scope
      */
     public function getCustomerProductVisibilityScope(Customer $customer, Website $website)
     {
@@ -51,7 +52,7 @@ class VisibilityScopeProvider
     /**
      * @param CustomerGroup $customerGroup
      * @param Website $website
-     * @return \Oro\Bundle\ScopeBundle\Entity\Scope
+     * @return Scope
      */
     public function getCustomerGroupProductVisibilityScope(CustomerGroup $customerGroup, Website $website)
     {

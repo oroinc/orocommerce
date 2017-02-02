@@ -55,7 +55,7 @@ layout:
                         item_key: 'category'
                         items: '=data["featured_categories"].getAll([2,3,4,6,7,8,9,10])'
                         items_data:
-                            categoryProductsCount: '=data["categories_products"].getCountByCategories(items)'
+                            categoryProductsCount: '=data["categories_products"].getCountByCategories([2,3,4,6,7,8,9,10])'
                 featured_category:
                     blockType: container
                 featured_category_image:
