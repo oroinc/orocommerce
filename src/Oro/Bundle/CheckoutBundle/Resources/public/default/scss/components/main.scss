@@ -42,15 +42,10 @@
   }
 
   &__body {
-    padding: 10px 0 0 50px;
+    padding: 10px 0 0 40px;
 
     @media (max-width: $screen-md) {
       padding: 10px 0 0;
-    }
-
-    .grid__row {
-      margin-left: -9px;
-      margin-right: -9px;
     }
   }
 
@@ -74,6 +69,10 @@
 
       @include badge(33px, 18px);
     }
+  }
+
+  &__form__back {
+    padding: 0 10px;
   }
 }
 
