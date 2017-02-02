@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Validator\Constraints;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -32,42 +32,31 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
     protected $context;
 
     /**
-     * @var PropertyAccessor
+     * {@inheritdoc}
      */
-    protected $propertyAccessor;
-
     protected function setUp()
     {
         $this->context = $this->createMock(ExecutionContextInterface::class);
-        $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
-        $this->service = new UniqueProductVariantLinksValidator($this->propertyAccessor);
+        $propertyAccessor = PropertyAccess::createPropertyAccessor();
+        $this->service = new UniqueProductVariantLinksValidator($propertyAccessor);
         $this->service->initialize($this->context);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function tearDown()
     {
         unset($this->service, $this->context);
     }
 
-    //@codingStandardsIgnoreStart
     /**
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage Entity must be instance of "Oro\Bundle\ProductBundle\Entity\Product", "stdClass" given
      */
-    //@codingStandardsIgnoreEnd
     public function testNotProductValidate()
     {
         $this->service->validate(new \stdClass(), new UniqueProductVariantLinks());
-    }
-
-    public function testDoesNothingIfProductDoesNotHaveVariants()
-    {
-        $product = new Product();
-        $product->setType(Product::TYPE_SIMPLE);
-
-        $this->context->expects($this->never())->method('addViolation');
-
-        $this->service->validate($product, new UniqueProductVariantLinks());
     }
 
     public function testDoesNotAddViolationIfAllVariantFieldCombinationsAreUniqueTypeString()
@@ -226,64 +215,6 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
         $this->service->validate($product, new UniqueProductVariantLinks());
     }
 
-    public function testAddViolationWhenVariantFieldsEmptyAndLinkPresent()
-    {
-        $product = $this->prepareProduct(
-            [],
-            [
-                [
-                    self::VARIANT_FIELD_KEY_SIZE => 'L',
-                    self::VARIANT_FIELD_KEY_COLOR => 'Blue',
-                ]
-            ]
-        );
-
-        $this->context->expects($this->once())
-            ->method('addViolationAt')
-            ->with($this->isType('string'), (new UniqueProductVariantLinks())->variantFieldRequiredMessage);
-
-        $this->service->validate($product, new UniqueProductVariantLinks());
-    }
-
-    public function testSkipIfProductIsMissingAndValidatedByNotBlank()
-    {
-        $product = new Product();
-        $product->setType(Product::TYPE_CONFIGURABLE);
-        $product->setVariantFields(['field1']);
-        $variantLink = new ProductVariantLink($product);
-        $product->addVariantLink($variantLink);
-
-        $this->context->expects($this->never())
-            ->method('addViolation')
-            ->with((new UniqueProductVariantLinks())->uniqueRequiredMessage);
-
-        $this->service->validate($product, new UniqueProductVariantLinks());
-    }
-
-    public function testAddViolationWhenProductHasNoFilledField()
-    {
-        $product = $this->prepareProduct(
-            [
-                self::VARIANT_FIELD_KEY_SIZE,
-                self::VARIANT_FIELD_KEY_COLOR,
-                self::VARIANT_FIELD_KEY_SLIM_FIT
-            ],
-            [
-                [
-                    self::VARIANT_FIELD_KEY_SLIM_FIT => true
-                ]
-            ]
-        );
-
-        $constraint = new UniqueProductVariantLinks();
-
-        $this->context->expects($this->exactly(2))
-            ->method('addViolation')
-            ->with($constraint->variantLinkHasNoFilledFieldMessage);
-
-        $this->service->validate($product, $constraint);
-    }
-
     /**
      * @param array $variantFields
      * @param array $variantLinkFields
@@ -315,5 +246,27 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
         }
 
         return $product;
+    }
+
+    public function testDoesNothingIfSimpleProduct()
+    {
+        $product = new Product();
+        $product->setType(Product::TYPE_SIMPLE);
+
+        $this->context->expects($this->never())->method('addViolation');
+
+        $this->service->validate($product, new UniqueProductVariantLinks());
+    }
+
+    public function testDoesNothingIfProductVariantHasNoProduct()
+    {
+        $product = new Product();
+        $product->setType(Product::TYPE_CONFIGURABLE);
+        $variantLink = new ProductVariantLink($product, null);
+        $product->addVariantLink($variantLink);
+
+        $this->context->expects($this->never())->method('addViolation');
+
+        $this->service->validate($product, new UniqueProductVariantLinks());
     }
 }

@@ -4,7 +4,10 @@ Oro\Bundle\ProductBundle\Entity\Product:
             fields: [sku]
             repositoryMethod: findByCaseInsensitive
         - Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantField: ~
+        - Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantLinks: ~
         - Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinks: ~
+        - Oro\Bundle\ProductBundle\Validator\Constraints\UniqueVariantLinksSimpleProduct: ~
+        - Oro\Bundle\ProductBundle\Validator\Constraints\EmptyVariantFieldInSimpleProductForVariantLinks: ~
     properties:
         sku:
             - NotBlank:
