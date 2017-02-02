@@ -33,7 +33,7 @@
     {% import 'OroEmailBundle::macros.html.twig' as Email %}
 
     <div class="info-list">
-        {% if  customerUser.namePrefix is defined and customerUser.namePrefix != null %}
+        {% if customerUser.namePrefix is defined and customerUser.namePrefix != null %}
             <div class="info-list__item">
                 <div class="info-list__name">
                     {{ 'oro.customer.customeruser.name_prefix.label'|trans }}
@@ -53,7 +53,7 @@
             </div>
         </div>
 
-        {% if  customerUser.middleName is defined and customerUser.middleName != null %}
+        {% if customerUser.middleName is defined and customerUser.middleName != null %}
             <div class="info-list__item">
                 <div class="info-list__name">
                     {{ 'oro.customer.customeruser.middle_name.label'|trans }}
@@ -64,7 +64,7 @@
             </div>
         {% endif %}
 
-        {% if  customerUser.nameSuffix is defined and customerUser.nameSuffix != null %}
+        {% if customerUser.nameSuffix is defined and customerUser.nameSuffix != null %}
             <div class="info-list__item">
                 <div class="info-list__name">
                     {{ 'oro.customer.customeruser.name_suffix.label'|trans }}
@@ -75,12 +75,10 @@
             </div>
         {% endif %}
 
-        {% if  customerUser.birthday is not empty %}
+        {% if customerUser.birthday is not empty %}
             {% set birthday_string %}
-                {{ customerUser.birthday is empty ? 'N/A'|trans : customerUser.birthday|oro_format_date }}
-                {% if customerUser.birthday is not empty %}
-                    ({{ customerUser.birthday|age_string({'default': 'N/A'}) }})
-                {% endif %}
+                {{ customerUser.birthday|oro_format_date }}
+                ({{ customerUser.birthday|age_string({'default': 'N/A'}) }})
             {% endset %}
 
             <div class="info-list__item">
