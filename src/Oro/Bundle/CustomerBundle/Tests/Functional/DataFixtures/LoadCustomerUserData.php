@@ -142,7 +142,6 @@ class LoadCustomerUserData extends AbstractFixture implements DependentFixtureIn
                 ->setEmail($user['email'])
                 ->setEnabled($user['enabled'])
                 ->setOrganization($customer->getOrganization())
-                ->addOrganization($customer->getOrganization())
                 ->addRole($role)
                 ->setPlainPassword($user['password']);
 

@@ -10,7 +10,6 @@ use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
 
 use Oro\Bundle\EntityBundle\Tools\SafeDatabaseChecker;
-use Oro\Bundle\EntityConfigBundle\Entity\EntityConfigModel;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 
@@ -52,11 +51,7 @@ class UpdateEntityConfigWarmer implements CacheWarmerInterface
         /** @var Connection $defaultConnection */
         $defaultConnection = $this->managerRegistry->getConnection('config');
 
-        $tableExists = SafeDatabaseChecker::tablesExist(
-            $defaultConnection,
-            SafeDatabaseChecker::getTableName($this->managerRegistry, EntityConfigModel::class)
-        );
-        if (!$tableExists) {
+        if (!SafeDatabaseChecker::tablesExist($defaultConnection, 'oro_entity_config')) {
             return;
         }
 

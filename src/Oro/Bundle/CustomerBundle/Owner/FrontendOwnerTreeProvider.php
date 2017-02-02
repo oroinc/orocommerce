@@ -3,59 +3,64 @@
 namespace Oro\Bundle\CustomerBundle\Owner;
 
 use Doctrine\Common\Cache\CacheProvider;
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Connection;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
+
 use Oro\Component\DoctrineUtils\ORM\QueryUtils;
+use Oro\Bundle\EntityBundle\Tools\DatabaseChecker;
 use Oro\Bundle\SecurityBundle\Owner\AbstractOwnerTreeProvider;
+use Oro\Bundle\SecurityBundle\Owner\Metadata\MetadataProviderInterface;
 use Oro\Bundle\SecurityBundle\Owner\OwnerTreeInterface;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 
 class FrontendOwnerTreeProvider extends AbstractOwnerTreeProvider
 {
-    /**
-     * @var CacheProvider
-     */
-    private $cache;
+    /** @var ManagerRegistry */
+    private $doctrine;
+
+    /** @var TokenStorageInterface */
+    private $tokenStorage;
+
+    /** @var FrontendOwnershipMetadataProvider */
+    private $ownershipMetadataProvider;
 
     /**
-     * @var FrontendOwnershipMetadataProvider
+     * @param ManagerRegistry           $doctrine
+     * @param DatabaseChecker           $databaseChecker
+     * @param CacheProvider             $cache
+     * @param MetadataProviderInterface $ownershipMetadataProvider
+     * @param TokenStorageInterface     $tokenStorage
      */
-    private $ownershipMetadataProvider;
+    public function __construct(
+        ManagerRegistry $doctrine,
+        DatabaseChecker $databaseChecker,
+        CacheProvider $cache,
+        MetadataProviderInterface $ownershipMetadataProvider,
+        TokenStorageInterface $tokenStorage
+    ) {
+        parent::__construct($databaseChecker, $cache);
+        $this->doctrine = $doctrine;
+        $this->ownershipMetadataProvider = $ownershipMetadataProvider;
+        $this->tokenStorage = $tokenStorage;
+    }
 
     /**
      * {@inheritDoc}
      */
     public function supports()
     {
-        return $this->getContainer()->get('oro_security.security_facade')->getLoggedUser() instanceof CustomerUser;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getCache()
-    {
-        if (!$this->cache) {
-            $this->cache = $this->getContainer()->get('oro_customer.owner.frontend_ownership_tree_provider.cache');
+        $token = $this->tokenStorage->getToken();
+        if (null === $token) {
+            return false;
         }
 
-        return $this->cache;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    protected function getOwnershipMetadataProvider()
-    {
-        if (!$this->ownershipMetadataProvider) {
-            $this->ownershipMetadataProvider = $this->getContainer()
-                ->get('oro_customer.owner.frontend_ownership_metadata_provider');
-        }
-
-        return $this->ownershipMetadataProvider;
+        return $token->getUser() instanceof CustomerUser;
     }
 
     /**
@@ -96,9 +101,8 @@ class FrontendOwnerTreeProvider extends AbstractOwnerTreeProvider
             $this
                 ->getRepository($customerUserClass)
                 ->createQueryBuilder('au')
-                ->innerJoin('au.organizations', 'organizations')
                 ->select(
-                    'au.id as userId, organizations.id as orgId, IDENTITY(au.customer) as customerId'
+                    'au.id as userId, IDENTITY(au.organization) as orgId, IDENTITY(au.customer) as customerId'
                 )
                 ->addOrderBy('orgId')
                 ->getQuery()
@@ -155,6 +159,16 @@ class FrontendOwnerTreeProvider extends AbstractOwnerTreeProvider
     }
 
     /**
+     * @param string $className
+     *
+     * @return EntityManager
+     */
+    protected function getManagerForClass($className)
+    {
+        return $this->doctrine->getManagerForClass($className);
+    }
+
+    /**
      * @param string $entityClass
      *
      * @return EntityRepository
@@ -162,5 +176,13 @@ class FrontendOwnerTreeProvider extends AbstractOwnerTreeProvider
     protected function getRepository($entityClass)
     {
         return $this->getManagerForClass($entityClass)->getRepository($entityClass);
+    }
+
+    /**
+     * @return MetadataProviderInterface
+     */
+    protected function getOwnershipMetadataProvider()
+    {
+        return $this->ownershipMetadataProvider;
     }
 }

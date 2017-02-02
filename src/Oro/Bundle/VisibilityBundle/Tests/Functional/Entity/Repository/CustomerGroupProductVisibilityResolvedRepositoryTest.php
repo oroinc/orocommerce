@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\Repository;
 
+use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -65,7 +66,7 @@ class CustomerGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
     }
 
     /**
-     * @return \Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor
+     * @return InsertFromSelectQueryExecutor
      */
     protected function getInsertFromSelectExecutor()
     {

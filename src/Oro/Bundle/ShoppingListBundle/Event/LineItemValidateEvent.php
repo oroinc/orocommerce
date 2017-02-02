@@ -22,11 +22,18 @@ class LineItemValidateEvent extends Event
     protected $lineItems;
 
     /**
-     * @param LineItem[] $lineItems
+     * @var mixed
      */
-    public function __construct($lineItems)
+    protected $context;
+
+    /**
+     * @param LineItem[] $lineItems
+     * @param mixed $context
+     */
+    public function __construct($lineItems, $context)
     {
         $this->lineItems = $lineItems;
+        $this->context = $context;
         $this->errors = new ArrayCollection();
     }
 
@@ -74,6 +81,25 @@ class LineItemValidateEvent extends Event
     public function setLineItems($lineItems)
     {
         $this->lineItems = $lineItems;
+
+        return $this;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getContext()
+    {
+        return $this->context;
+    }
+
+    /**
+     * @param mixed $context
+     * @return $this
+     */
+    public function setContext($context)
+    {
+        $this->context = $context;
 
         return $this;
     }

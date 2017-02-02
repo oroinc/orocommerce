@@ -104,7 +104,6 @@ oro.customer:
         password_requested_at.label: 'Password Requested At'
         customer.label:              'Customer'
         organization.label:          'Organization'
-        organizations.label:         'Organizations'
         has_role.label:              'Has Role'
         form.choose:                 'Choose a customer user...'
         addresses.label:             'Addresses'

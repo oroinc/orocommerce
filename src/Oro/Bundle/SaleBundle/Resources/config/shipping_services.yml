@@ -19,13 +19,13 @@ services:
         class: 'Oro\Bundle\SaleBundle\Quote\Calculable\ParameterBag\Factory\ParameterBagCalculableQuoteFactory'
 
     oro_sale.quote_event_listener.possible_shipping_methods:
-        class: 'Oro\Bundle\SaleBundle\EventListener\Quote\QuotePossibleShippingMethodsEventListener'
+        class: 'Oro\Bundle\OrderBundle\EventListener\PossibleShippingMethodEventListener'
         arguments:
             - '@oro_sale.quote.first_offers_shipping_context_factory'
             - '@oro_order.converter.shipping_prices'
             - '@oro_shipping.shipping_price.provider'
         tags:
-            - { name: kernel.event_listener, event: oro_sale.quote, method: onQuoteEvent }
+            - { name: kernel.event_listener, event: oro_sale.quote, method: onEvent }
 
     oro_sale.quote.shipping_configuration_factory:
         class: 'Oro\Bundle\SaleBundle\Quote\Shipping\Configuration\QuoteShippingConfigurationFactory'

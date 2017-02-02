@@ -26,8 +26,7 @@ class MethodLockedConfiguredPriceProviderDecoratorTest extends \PHPUnit_Framewor
     public function setUp()
     {
         $this->parentProviderMock = $this
-            ->getMockBuilder(ShippingConfiguredPriceProviderInterface::class)
-            ->getMock();
+            ->createMock(ShippingConfiguredPriceProviderInterface::class);
 
         $this->testedProvider = new MethodLockedConfiguredPriceProviderDecorator($this->parentProviderMock);
     }
@@ -75,6 +74,105 @@ class MethodLockedConfiguredPriceProviderDecoratorTest extends \PHPUnit_Framewor
         $this->assertEquals($expectedMethods, $actualMethods);
     }
 
+    public function testGetApplicableMethodsViewsForNullConfigurationShippingMethod()
+    {
+        $configurationMock = $this->getConfigurationMock();
+        $contextMock = $this->getShippingContextMock();
+
+        $parentMethodViews = new ShippingMethodViewCollection();
+
+        $parentMethodViews
+            ->addMethodView('anotherMethod', [])
+            ->addMethodTypeView('anotherMethod', 'anotherMethodType', ['price' => Price::create(12, 'USD')]);
+
+        $this->parentProviderMock
+            ->expects(static::once())
+            ->method('getApplicableMethodsViews')
+            ->with($configurationMock, $contextMock)
+            ->willReturn($parentMethodViews);
+
+        $configurationMock
+            ->expects(static::once())
+            ->method('getShippingMethod')
+            ->willReturn(null);
+
+        static::assertSame(
+            $parentMethodViews,
+            $this->testedProvider->getApplicableMethodsViews($configurationMock, $contextMock)
+        );
+    }
+
+    public function testGetApplicableMethodsViewsForNotConfigurationShippingMethodLocked()
+    {
+        $configurationMock = $this->getConfigurationMock();
+        $contextMock = $this->getShippingContextMock();
+
+        $parentMethodViews = new ShippingMethodViewCollection();
+
+        $parentMethodViews
+            ->addMethodView('anotherMethod', [])
+            ->addMethodTypeView('anotherMethod', 'anotherMethodType', ['price' => Price::create(12, 'USD')]);
+
+        $this->parentProviderMock
+            ->expects(static::once())
+            ->method('getApplicableMethodsViews')
+            ->with($configurationMock, $contextMock)
+            ->willReturn($parentMethodViews);
+
+        $configurationMock
+            ->expects(static::once())
+            ->method('getShippingMethod')
+            ->willReturn('anotherMethod');
+
+        $configurationMock
+            ->expects(static::once())
+            ->method('isShippingMethodLocked')
+            ->willReturn(false);
+
+        static::assertSame(
+            $parentMethodViews,
+            $this->testedProvider->getApplicableMethodsViews($configurationMock, $contextMock)
+        );
+    }
+
+    public function testGetApplicableMethodsViewsIfMethodsViewsNotHasMethodTypeView()
+    {
+        $configurationMock = $this->getConfigurationMock();
+        $contextMock = $this->getShippingContextMock();
+
+        $parentMethodViews = new ShippingMethodViewCollection();
+
+        $parentMethodViews
+            ->addMethodView('anotherMethod', [])
+            ->addMethodTypeView('anotherMethod', 'anotherMethodType', ['price' => Price::create(12, 'USD')]);
+
+        $this->parentProviderMock
+            ->expects(static::once())
+            ->method('getApplicableMethodsViews')
+            ->with($configurationMock, $contextMock)
+            ->willReturn($parentMethodViews);
+
+        $configurationMock
+            ->expects(static::exactly(2))
+            ->method('getShippingMethod')
+            ->willReturn('anotherMethod2');
+
+        $configurationMock
+            ->expects(static::once())
+            ->method('getShippingMethodType')
+            ->willReturn('anotherMethodType2');
+
+        $configurationMock
+            ->expects(static::once())
+            ->method('isShippingMethodLocked')
+            ->willReturn(true);
+
+        static::assertEquals(
+            $parentMethodViews,
+            $this->testedProvider->getApplicableMethodsViews($configurationMock, $contextMock)
+        );
+    }
+
     public function testGetPrice()
     {
         $methodId = 'flat_rate';
@@ -99,10 +197,7 @@ class MethodLockedConfiguredPriceProviderDecoratorTest extends \PHPUnit_Framewor
      */
     private function getShippingContextMock()
     {
-        return $this
-            ->getMockBuilder(ShippingContext::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        return $this->createMock(ShippingContext::class);
     }
 
     /**
@@ -110,8 +205,6 @@ class MethodLockedConfiguredPriceProviderDecoratorTest extends \PHPUnit_Framewor
      */
     private function getConfigurationMock()
     {
-        return $this
-            ->getMockBuilder(ComposedShippingMethodConfigurationInterface::class)
-            ->getMock();
+        return $this->createMock(ComposedShippingMethodConfigurationInterface::class);
     }
 }

@@ -389,6 +389,11 @@ services:
         tags:
             - { name: oro_workflow.changes.listener, event: oro.workflow.deactivated, method: onDeactivationWorkflowDefinition }
 
+    oro_checkout.listener.checkout:
+        class: 'Oro\Bundle\CheckoutBundle\EventListener\CheckoutListener'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%oro_checkout.entity.checkout.class%', event: postUpdate }
+
     oro_checkout.acl.voter.checkout:
         class: 'Oro\Bundle\CheckoutBundle\Acl\Voter\CheckoutVoter'
         public: false
@@ -398,11 +403,6 @@ services:
             - [setContainer, ["@service_container"]]
         tags:
             - { name: security.voter }
-
-    oro_checkout.shipping_method.provider_main:
-        parent: oro_checkout.shipping_method.price_provider_chain_element
-        tags:
-            - { name: layout.data_provider, alias: 'checkout_shipping_methods' }
 
     oro_checkout.shipping_method.price_provider_chain_element:
         class: 'Oro\Bundle\CheckoutBundle\Shipping\Method\Chain\Member\Price\PriceCheckoutShippingMethodsProviderChainElement'
@@ -417,3 +417,37 @@ services:
         tags:
             - { name: oro_workflow.condition, alias: 'checkout_has_applicable_shipping_methods' }
             - { name: oro_action.condition, alias: 'checkout_has_applicable_shipping_methods' }
+
+    oro_checkout.datagrid.action_permission_provider:
+        class: 'Oro\Bundle\CheckoutBundle\Datagrid\ActionPermissionProvider'
+
+    oro_checkout.event_listener.shipping_methods:
+        class: Oro\Bundle\CheckoutBundle\EventListener\ShippingMethodsListener
+        arguments:
+            - '@oro_order.order.provider.order_address'
+            - '@oro_order.order.provider.order_address_security'
+            - '@oro_order.manager.order_address'
+            - '@oro_shipping.enabled_methods_configs_rules.provider'
+            - '@oro_checkout.factory.shipping_context_factory'
+        tags:
+            - { name: kernel.event_listener, event: extendable_condition.start_checkout, method: onStartCheckout }
+
+    oro_checkout.event_listener.payment_methods:
+        class: Oro\Bundle\CheckoutBundle\EventListener\PaymentMethodsListener
+        arguments:
+            - '@oro_order.order.provider.order_address'
+            - '@oro_order.order.provider.order_address_security'
+            - '@oro_order.manager.order_address'
+            - '@oro_payment.enabled_payment_methods_configs.rules_provider_basic'
+            - '@oro_checkout.factory.payment_context_factory'
+        tags:
+            - { name: kernel.event_listener, event: extendable_condition.start_checkout, method: onStartCheckout }
+
+    oro_checkout.event_listener.has_price_in_shopping_line_items:
+        class: 'Oro\Bundle\CheckoutBundle\EventListener\HasPriceInShoppingLineItemsListener'
+        arguments:
+            - '@oro_pricing.provider.combined_product_price'
+            - '@oro_pricing.user_currency_manager'
+            - '@oro_pricing.model.price_list_request_handler'
+        tags:
+            - { name: kernel.event_listener, event: extendable_condition.start_checkout, method: onStartCheckoutConditionCheck }

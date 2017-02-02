@@ -3,10 +3,8 @@
         '~class': " container-fluid"
     }) %}
     <div {{ block('block_attributes') }}>
-        <div class="row">
-            <div class="col-md-8 col-sm-12 clearfix">
-                {{ block_widget(block) }}
-            </div>
+        <div class="footer-nav clearfix">
+            {{ block_widget(block) }}
         </div>
     </div>
 {% endblock %}
@@ -14,19 +12,38 @@
 {% block _footer_menu_widget %}
     {% set attr = attr|merge({
         class: attr.class|default('') ~ " footer-nav__list",
+        'data-collapse-container-footer': true
     }) %}
+
     {% set child_attr = layout_attr_defaults(child_attr, {
         '~class': ' footer-nav__item'
     }) %}
+
     {% set link_attr = layout_attr_defaults(link_attr, {
         '~class': 'footer-nav__link'
     }) %}
+
+    {% set collapseView =  layout_attr_defaults(attr, {
+        screenType: 'mobile',
+        component: 'oroui/js/app/components/jquery-widget-component',
+        widgetModule: 'oroui/js/widget/collapse-widget',
+        trigger: '[data-collapse-trigger-footer]',
+        container: '[data-collapse-container-footer]',
+        open: false
+    }) %}
+
     {% spaceless %}
         {% for child in item.children %}
             {% if child.extras.isAllowed %}
-                <div class="footer-nav footer-columns footer-columns--one-third">
+                <div class="footer-nav__column collapse-view"
+                    data-page-component-module="oroui/js/app/components/viewport-component"
+                    data-page-component-options="{{ collapseView|json_encode }}">
                     {% set label = child.extras.custom is defined and child.extras.custom == true ? child.label : child.label|trans %}
-                    <h2 class="footer-nav__title">{{ label }}</h2>
+                    <h2 class="footer-nav__title"
+                        data-collapse-trigger-footer>
+                        <i class="footer-nav__icon fa-caret-right"></i>
+                        {{ label }}
+                    </h2>
                     {% set item = child %}
                     {{ block('menu_widget') }}
                 </div>

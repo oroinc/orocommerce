@@ -75,6 +75,9 @@ class Quote extends ExtendQuote implements
     use AuditableFrontendCustomerUserAwareTrait;
     use DatesAwareTrait;
 
+    const CUSTOMER_STATUS_CODE = 'quote_customer_status';
+    const INTERNAL_STATUS_CODE = 'quote_internal_status';
+
     /**
      * @var int
      *
