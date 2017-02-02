@@ -84,37 +84,7 @@ class CanonicalDataProviderTest extends \PHPUnit_Framework_TestCase
         $slug->setRouteName('route_name');
         $slug->setRouteParameters([]);
         $slug->setLocalization($localization);
-        $slugs = new ArrayCollection([$slug]);
-
-        /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $data **/
-        $data = $this->createMock(SluggableInterface::class);
-        $data->expects($this->any())
-            ->method('getSlugs')
-            ->willReturn($slugs);
-
-        $this->configManager->expects($this->once())
-            ->method('get')
-            ->with('oro_redirect.canonical_url_type')
-            ->willReturn(Configuration::DIRECT_URL);
-
-        $this->localizationHelper->expects($this->once())
-            ->method('getCurrentLocalization')
-            ->willReturn($localization);
-
-        /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
-        $request = $this->createMock(Request::class);
-        $request->expects($this->once())
-            ->method('getUriForPath')
-            ->willReturn($expectedUrl);
-        $this->requestStack->expects($this->once())
-            ->method('getMasterRequest')
-            ->willReturn($request);
-
-        $this->routingInformationProvider->expects($this->never())
-            ->method('getRouteData')
-            ->with($data);
-
-        $this->assertEquals($expectedUrl, $this->canonicalDataProvider->getUrl($data));
+        $this->doTestUrl($slug, $localization, $expectedUrl);
     }
 
     public function testGetDirectUrlWithFallbackLocalizationSlug()
@@ -132,37 +102,7 @@ class CanonicalDataProviderTest extends \PHPUnit_Framework_TestCase
         $slug->setRouteName('route_name');
         $slug->setRouteParameters([]);
         $slug->setLocalization($parentLocalization);
-        $slugs = new ArrayCollection([$slug]);
-
-        /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $data **/
-        $data = $this->createMock(SluggableInterface::class);
-        $data->expects($this->any())
-            ->method('getSlugs')
-            ->willReturn($slugs);
-
-        $this->configManager->expects($this->once())
-            ->method('get')
-            ->with('oro_redirect.canonical_url_type')
-            ->willReturn(Configuration::DIRECT_URL);
-
-        $this->localizationHelper->expects($this->once())
-            ->method('getCurrentLocalization')
-            ->willReturn($localization);
-
-        /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
-        $request = $this->createMock(Request::class);
-        $request->expects($this->once())
-            ->method('getUriForPath')
-            ->willReturn($expectedUrl);
-        $this->requestStack->expects($this->once())
-            ->method('getMasterRequest')
-            ->willReturn($request);
-
-        $this->routingInformationProvider->expects($this->never())
-            ->method('getRouteData')
-            ->with($data);
-
-        $this->assertEquals($expectedUrl, $this->canonicalDataProvider->getUrl($data));
+        $this->doTestUrl($slug, $localization, $expectedUrl);
     }
 
     public function testGetSystemUrl()
@@ -236,6 +176,41 @@ class CanonicalDataProviderTest extends \PHPUnit_Framework_TestCase
             ->method('generate')
             ->with($route, $routeParameters, UrlGeneratorInterface::ABSOLUTE_URL)
             ->willReturn($expectedUrl);
+
+        $this->assertEquals($expectedUrl, $this->canonicalDataProvider->getUrl($data));
+    }
+
+    protected function doTestUrl(Slug $slug, Localization $localization, $expectedUrl)
+    {
+        $slugs = new ArrayCollection([$slug]);
+
+        /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $data * */
+        $data = $this->createMock(SluggableInterface::class);
+        $data->expects($this->any())
+            ->method('getSlugs')
+            ->willReturn($slugs);
+
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_redirect.canonical_url_type')
+            ->willReturn(Configuration::DIRECT_URL);
+
+        $this->localizationHelper->expects($this->once())
+            ->method('getCurrentLocalization')
+            ->willReturn($localization);
+
+        /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
+        $request = $this->createMock(Request::class);
+        $request->expects($this->once())
+            ->method('getUriForPath')
+            ->willReturn($expectedUrl);
+        $this->requestStack->expects($this->once())
+            ->method('getMasterRequest')
+            ->willReturn($request);
+
+        $this->routingInformationProvider->expects($this->never())
+            ->method('getRouteData')
+            ->with($data);
 
         $this->assertEquals($expectedUrl, $this->canonicalDataProvider->getUrl($data));
     }

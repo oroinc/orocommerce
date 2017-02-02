@@ -211,3 +211,5 @@ oro:
                 submit_to_order: 'Accept and Submit to Order'
             order:
                 view.label: 'View Order'
+            checkout:
+                cannot_create_order_no_payment_methods_available: 'Cannot create order because no payment methods available'
