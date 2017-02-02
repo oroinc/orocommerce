@@ -41,7 +41,8 @@ class MatrixColumnType extends AbstractType
                     'decimal-precision' => [
                         'message' => 'oro.non_valid_precision',
                         'precision' => $precision,
-                ]];
+                    ]
+                ];
             }
             $event->getForm()->add('quantity', NumberType::class, $quantityConfig);
         });

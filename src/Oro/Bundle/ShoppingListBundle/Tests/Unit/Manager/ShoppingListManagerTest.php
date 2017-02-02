@@ -142,7 +142,6 @@ class ShoppingListManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(1, $shoppingList->getLineItems()->count());
         $this->assertEquals(null, $lineItem->getCustomerUser());
         $this->assertEquals(null, $lineItem->getOrganization());
-
     }
 
     public function testAddLineItemWithShoppingListData()
