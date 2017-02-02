@@ -1,19 +1,27 @@
 // @theme: blank
 
 .info-list {
-  padding-top: 10px;
-  margin: 0 0 30px 17px;
+    margin: 0 0 30px 17px;
+    padding-top: 10px;
 
-  border-top: 1px solid get-color('additional', 'light');
+    border-top: 1px solid get-color('additional', 'light');
 
-  .control-group {
-    display: flex;
+    &__item {
+        display: flex;
 
-    padding: 5px 0;
-  }
+        padding: 5px 0;
+    }
 
-  .control-label {
-    min-width: 160px;
-    margin-right: 10px;
-  }
+    &__name {
+        min-width: 140px;
+        margin-right: 10px;
+    }
+}
+
+@include breakpoint('mobile') {
+    .info-list {
+        &__name {
+            min-width: 0;
+        }
+    }
 }
