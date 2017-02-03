@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CustomerBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\Persistence\ObjectManager;
-
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 use Oro\Bundle\FrontendBundle\Migrations\Data\ORM\AbstractRolesData;
@@ -16,11 +15,13 @@ class LoadCustomerUserRoles extends AbstractRolesData
     const ADMINISTRATOR = 'ADMINISTRATOR';
     const BUYER = 'BUYER';
 
-    /** @var Website[] */
+    /**
+     * @var Website[]
+     */
     protected $websites = [];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getDependencies()
     {
@@ -28,7 +29,7 @@ class LoadCustomerUserRoles extends AbstractRolesData
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function load(ObjectManager $manager)
     {
@@ -76,12 +77,14 @@ class LoadCustomerUserRoles extends AbstractRolesData
     /**
      * @param string $name
      * @param string $label
+     *
      * @return CustomerUserRole
      */
     protected function createEntity($name, $label)
     {
         $role = new CustomerUserRole(CustomerUserRole::PREFIX_ROLE . $name);
         $role->setLabel($label);
+
         return $role;
     }
 
@@ -114,9 +117,9 @@ class LoadCustomerUserRoles extends AbstractRolesData
 
     /**
      * @param CustomerUserRole $role
-     * @param $roleConfigData
+     * @param array            $roleConfigData
      */
-    private function setUpSelfManagedData(CustomerUserRole $role, $roleConfigData)
+    private function setUpSelfManagedData(CustomerUserRole $role, array $roleConfigData)
     {
         $role->setSelfManaged(isset($roleConfigData['self_managed']) ? $roleConfigData['self_managed'] : false);
         $role->setPublic(isset($roleConfigData['public']) ? $roleConfigData['public'] : true);

@@ -1,0 +1,5 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes:
+                - 'layout.html.twig'

@@ -17,8 +17,10 @@ use Oro\Bundle\PaymentBundle\Context\Builder\PaymentContextBuilderInterface;
 use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Doctrine\DoctrinePaymentLineItemCollection;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItem;
 
-class OrderPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
+class OrderPaymentContextFactoryTest extends AbstractOrderContextFactoryTest
 {
+    const TEST_SHIPPING_METHOD = 'SomeShippingMethod';
+
     /**
      * @var OrderPaymentContextFactory
      */
@@ -58,7 +60,6 @@ class OrderPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
         /** @var AddressInterface $address */
         $address = $this->createMock(OrderAddress::class);
         $currency = 'USD';
-        $shippingMethod = 'SomeShippingMethod';
         $amount = 100;
         $customer = $this->createMock(Customer::class);
         $customerUser = $this->createMock(CustomerUser::class);
@@ -88,16 +89,10 @@ class OrderPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
 
         $paymentLineItemCollection = new DoctrinePaymentLineItemCollection($paymentLineItems);
 
-        $this->paymentLineItemConverterMock
-            ->expects($this->once())
-            ->method('convertLineItems')
-            ->with($orderLineItemsCollection)
-            ->willReturn($paymentLineItemCollection);
-
         $order = (new Order())
             ->setBillingAddress($address)
             ->setShippingAddress($address)
-            ->setShippingMethod($shippingMethod)
+            ->setShippingMethod(self::TEST_SHIPPING_METHOD)
             ->setCurrency($currency)
             ->setLineItems($orderLineItemsCollection)
             ->setSubtotal($amount)
@@ -105,21 +100,14 @@ class OrderPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
             ->setCustomer($customer)
             ->setCustomerUser($customerUser);
 
-        $this->contextBuilder
-            ->method('setShippingAddress')
-            ->with($address);
 
-        $this->contextBuilder
-            ->method('setBillingAddress')
-            ->with($address);
+        $this->paymentLineItemConverterMock
+            ->expects($this->once())
+            ->method('convertLineItems')
+            ->with($orderLineItemsCollection)
+            ->willReturn($paymentLineItemCollection);
 
-        $this->contextBuilder
-            ->method('setCustomer')
-            ->with($customer);
-
-        $this->contextBuilder
-            ->method('setCustomerUser')
-            ->with($customerUser);
+        $this->prepareContextBuilder($this->contextBuilder, $order->getShippingAddress(), $customer, $customerUser);
 
         $this->contextBuilder
             ->expects($this->once())
@@ -129,11 +117,7 @@ class OrderPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
         $this->contextBuilder
             ->expects($this->once())
             ->method('setShippingMethod')
-            ->with($shippingMethod);
-
-        $this->contextBuilder
-            ->expects($this->once())
-            ->method('getResult');
+            ->with(self::TEST_SHIPPING_METHOD);
 
         $this->paymentContextBuilderFactoryMock
             ->expects($this->once())
@@ -146,10 +130,9 @@ class OrderPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testWithNullLineItems()
     {
-        /** @var AddressInterface $address */
         $address = $this->createMock(OrderAddress::class);
         $currency = 'USD';
-        $shippingMethod = 'SomeShippingMethod';
+        $shippingMethod = self::TEST_SHIPPING_METHOD;
         $amount = 100;
         $customer = $this->createMock(Customer::class);
         $customerUser = $this->createMock(CustomerUser::class);
@@ -182,21 +165,7 @@ class OrderPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
             ->setCustomer($customer)
             ->setCustomerUser($customerUser);
 
-        $this->contextBuilder
-            ->method('setShippingAddress')
-            ->with($address);
-
-        $this->contextBuilder
-            ->method('setBillingAddress')
-            ->with($address);
-
-        $this->contextBuilder
-            ->method('setCustomer')
-            ->with($customer);
-
-        $this->contextBuilder
-            ->method('setCustomerUser')
-            ->with($customerUser);
+        $this->prepareContextBuilder($this->contextBuilder, $address, $customer, $customerUser);
 
         $this->contextBuilder
             ->expects($this->never())
@@ -206,10 +175,6 @@ class OrderPaymentContextFactoryTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('setShippingMethod')
             ->with($shippingMethod);
-
-        $this->contextBuilder
-            ->expects($this->once())
-            ->method('getResult');
 
         $this->paymentContextBuilderFactoryMock
             ->expects($this->once())

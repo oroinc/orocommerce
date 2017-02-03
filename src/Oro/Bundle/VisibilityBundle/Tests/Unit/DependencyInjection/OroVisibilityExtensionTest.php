@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\VisibilityBundle\Tests\Unit\DependencyInjection;
 
-use Oro\Bundle\TestFrameworkBundle\Test\DependencyInjection\ExtensionTestCase;
-use Oro\Component\DependencyInjection\ExtendedContainerBuilder;
+use Oro\Bundle\SecurityBundle\Tests\Unit\DependencyInjection\AbstractPrependExtensionTest;
 use Oro\Bundle\VisibilityBundle\DependencyInjection\OroVisibilityExtension;
+use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
-class OroVisibilityExtensionTest extends ExtensionTestCase
+class OroVisibilityExtensionTest extends AbstractPrependExtensionTest
 {
     /**
      * Test Extension
@@ -27,60 +27,19 @@ class OroVisibilityExtensionTest extends ExtensionTestCase
         $this->assertEquals('oro_visibility', $extension->getAlias());
     }
 
-    public function testPrepend()
-    {
-        $securityConfig = [
-            0 => [
-                'firewalls' => [
-                    'frontend_secure' => ['frontend_secure_config'],
-                    'frontend' => ['frontend_config'],
-                    'main' => ['main_config'],
-                ]
-            ]
-        ];
-        $expectedSecurityConfig = [
-            0 => [
-                'firewalls' => [
-                    'main' => ['main_config'],
-                    'frontend_secure' => ['frontend_secure_config'],
-                    'frontend' => ['frontend_config'],
-                ]
-            ]
-        ];
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|ExtendedContainerBuilder $containerBuilder */
-        $containerBuilder = $this->getMockBuilder('Oro\Component\DependencyInjection\ExtendedContainerBuilder')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $containerBuilder->expects($this->exactly(2))
-            ->method('getExtensionConfig')
-            ->with('security')
-            ->willReturnCallback(
-                function () use (&$securityConfig) {
-                    return $securityConfig;
-                }
-            );
-        $containerBuilder->expects($this->exactly(2))
-            ->method('setExtensionConfig')
-            ->with('security', $this->isType('array'))
-            ->willReturnCallback(
-                function ($name, array $config = []) use (&$securityConfig) {
-                    $securityConfig = $config;
-                }
-            );
-
-        $extension = new OroVisibilityExtension();
-        $extension->prepend($containerBuilder);
-        $this->assertEquals($expectedSecurityConfig, $securityConfig);
-    }
-
     /**
      * Test Get Alias
      */
     public function testGetAlias()
     {
-        $extension = new OroVisibilityExtension();
+        $this->assertEquals(OroVisibilityExtension::ALIAS, $this->getExtension()->getAlias());
+    }
 
-        $this->assertEquals(OroVisibilityExtension::ALIAS, $extension->getAlias());
+    /**
+     * @return Extension
+     */
+    protected function getExtension()
+    {
+        return new OroVisibilityExtension();
     }
 }

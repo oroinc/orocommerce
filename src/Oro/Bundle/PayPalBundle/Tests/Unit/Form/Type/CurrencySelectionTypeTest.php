@@ -3,57 +3,19 @@
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\ChoiceList\View\ChoiceView;
-use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Intl\Intl;
 
-use Oro\Bundle\CurrencyBundle\Provider\CurrencyProviderInterface;
-use Oro\Bundle\CurrencyBundle\Tests\Unit\Utils\CurrencyNameHelperStub;
 use Oro\Bundle\PayPalBundle\Form\Type\CurrencySelectionType;
+use Oro\Bundle\CurrencyBundle\Tests\Unit\Form\Type\CurrencySelectionTypeTest as CurrencyBundleCurrencySelectionTypeTest;
 
-class CurrencySelectionTypeTest extends FormIntegrationTestCase
+class CurrencySelectionTypeTest extends CurrencyBundleCurrencySelectionTypeTest
 {
-    /**
-     * @var CurrencySelectionType
-     */
-    protected $formType;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|CurrencyProviderInterface
-     */
-    protected $currencyProvider;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\Oro\Bundle\LocaleBundle\Model\LocaleSettings
-     */
-    protected $localeSettings;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|\Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper
-     */
-    protected $currencyNameHelper;
-
     /**
      * {@inheritDoc}
      */
     protected function setUp()
     {
         parent::setUp();
-
-        $this->currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMockForAbstractClass();
-
-        $this->localeSettings = $this
-            ->getMockBuilder('Oro\Bundle\LocaleBundle\Model\LocaleSettings')
-            ->setMethods(['getCurrency', 'getLocale'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->localeSettings->expects($this->any())
-            ->method('getLocale')
-            ->willReturn(\Locale::getDefault());
-
-        /** @var \PHPUnit_Framework_MockObject_MockObject|\Oro\Bundle\CurrencyBundle\Utils\CurrencyNameHelper */
-        $this->currencyNameHelper = new CurrencyNameHelperStub();
 
         $this->formType = new CurrencySelectionType(
             $this->currencyProvider,
@@ -81,20 +43,10 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
             ->method('getCurrencyList')
             ->willReturn($allowedCurrencies);
 
-        $form = $this->factory->create($this->formType, null, $inputOptions);
+        $form = $this->doTestForm($inputOptions, $expectedOptions, $submittedData);
 
-        $formConfig = $form->getConfig();
-        foreach ($expectedOptions as $key => $value) {
-            $this->assertTrue($formConfig->hasOption($key));
-        }
         $this->assertEquals($expectedOptions['choices'], $form->createView()->vars['choices']);
-
-        $this->assertEquals($form->getData(), '');
-        $form->submit($submittedData);
-        $this->assertTrue($form->isValid());
-        $this->assertEquals($submittedData, $form->getData());
     }
-
     /**
      * @return array
      *
@@ -194,54 +146,8 @@ class CurrencySelectionTypeTest extends FormIntegrationTestCase
         ];
     }
 
-    /**
-     * @param array $legacyChoices
-     *
-     * @return array
-     */
-    protected function getChoiceViews(array $legacyChoices)
-    {
-        $choices = [];
-        foreach ($legacyChoices as $key => $value) {
-            $choices[] = new ChoiceView($key, $key, $value);
-        }
-        return $choices;
-    }
-
-    /**
-     * @expectedException \Symfony\Component\Form\Exception\LogicException
-     * @expectedExceptionMessage The option "currencies_list" must be null or not empty array.
-     */
-    public function testInvalidTypeOfCurrenciesListOption()
-    {
-        $this->factory->create($this->formType, null, ['currencies_list' => 'string']);
-    }
-
-    /**
-     * @expectedException \Symfony\Component\Form\Exception\LogicException
-     * @expectedExceptionMessage Found unknown currencies: CUR, TST.
-     */
-    public function testUnknownCurrency()
-    {
-        $this->factory->create($this->formType, null, ['currencies_list' => ['CUR', 'TST']]);
-    }
-
-    /**
-     * @expectedException \Symfony\Component\Form\Exception\LogicException
-     * @expectedExceptionMessage The option "additional_currencies" must be null or array.
-     */
-    public function testInvalidTypeOfAdditionalCurrenciesOption()
-    {
-        $this->factory->create($this->formType, null, ['additional_currencies' => 'string']);
-    }
-
     public function testGetName()
     {
         $this->assertEquals(CurrencySelectionType::NAME, $this->formType->getName());
-    }
-
-    public function testGetParent()
-    {
-        $this->assertEquals('choice', $this->formType->getParent());
     }
 }

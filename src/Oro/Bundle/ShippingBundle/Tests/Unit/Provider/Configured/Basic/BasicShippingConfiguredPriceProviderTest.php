@@ -23,9 +23,7 @@ class BasicShippingConfiguredPriceProviderTest extends \PHPUnit_Framework_TestCa
 
     public function setUp()
     {
-        $this->shippingPriceProviderMock = $this
-            ->getMockBuilder(ShippingPriceProviderInterface::class)
-            ->getMock();
+        $this->shippingPriceProviderMock = $this->createMock(ShippingPriceProviderInterface::class);
 
         $this->testedPriceProvider = new BasicShippingConfiguredPriceProvider($this->shippingPriceProviderMock);
     }
@@ -47,7 +45,7 @@ class BasicShippingConfiguredPriceProviderTest extends \PHPUnit_Framework_TestCa
         $this->assertEquals($expectedMethods, $actualMethods);
     }
 
-    public function testPrice()
+    public function testGetPrice()
     {
         $shippingMethodId = 'flat_rage';
         $shippingMethodTypeId = 'primary';
@@ -76,10 +74,7 @@ class BasicShippingConfiguredPriceProviderTest extends \PHPUnit_Framework_TestCa
      */
     private function getShippingContextMock()
     {
-        return $this
-            ->getMockBuilder(ShippingContext::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        return $this->createMock(ShippingContext::class);
     }
 
     /**
@@ -87,8 +82,6 @@ class BasicShippingConfiguredPriceProviderTest extends \PHPUnit_Framework_TestCa
      */
     private function getConfigurationMock()
     {
-        return $this
-            ->getMockBuilder(ComposedShippingMethodConfigurationInterface::class)
-            ->getMock();
+        return $this->createMock(ComposedShippingMethodConfigurationInterface::class);
     }
 }

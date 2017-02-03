@@ -28,15 +28,13 @@ use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistry;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\RuleBundle\Form\Type\RuleType;
-use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
-use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Form\ChoiceList\ArrayChoiceList;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class PaymentMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
+class PaymentMethodsConfigsRuleTypeTest extends AbstractPaymentMethodsConfigRuleTypeTest
 {
     const PAYMENT_TYPE = 'code1';
     const ADMIN_LABEL = 'admin_label1';
@@ -132,11 +130,7 @@ class PaymentMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
      */
     public function getExtensions()
     {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatableEntityType $registry */
-        $translatableEntity = $this->getMockBuilder('Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType')
-            ->setMethods(['setDefaultOptions', 'buildForm'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $translatableEntity = $this->getTranslatableEntity();
 
         $currencyProvider = $this->getMockBuilder(CurrencyProviderInterface::class)
             ->disableOriginalConstructor()->getMockForAbstractClass();

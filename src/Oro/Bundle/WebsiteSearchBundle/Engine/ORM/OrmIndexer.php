@@ -66,10 +66,11 @@ class OrmIndexer extends AbstractIndexer
                 ->setTitle($this->getEntityTitle($indexData))
                 ->setChanged(false)
                 ->saveItemData($indexData);
+            $this->getDriver()->writeItem($item);
             $items[] = $item;
         }
 
-        $this->getDriver()->saveItems($items);
+        $this->getDriver()->flushWrites();
 
         return count($items);
     }
