@@ -119,7 +119,7 @@ class QuickAddHandler
                 $request
             );
 
-            if (!$response) {
+            if ($response === false) {
                 return $response;
             } elseif (!$response) {
                 $response = new RedirectResponse($this->router->generate($successDefaultRoute));
