@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Processor;
 
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Session\Session;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
@@ -18,6 +19,26 @@ use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 
 class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
 {
+    /**
+     * @var array
+     */
+    private $data = [
+        ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+            ['productSku' => 'sku1', 'productQuantity' => 2],
+            ['productSku' => 'sku2', 'productQuantity' => 3],
+        ]
+    ];
+
+    /**
+     * @var array
+     */
+    private $productIds = ['sku1' => 1, 'sku2' => 2];
+
+    /**
+     * @var array
+     */
+    private $productQuantities = [1 => 2, 2 => 3];
+
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ShoppingListManager
      */
@@ -119,83 +140,240 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
     }
 
     /**
+     * @dataProvider wrongDataDataProvider
      * @param array $data
-     * @param Request $request
-     * @param array $productIds
-     * @param array $productQuantities
-     * @param bool $isSetRedirectUrl
-     * @param bool $failed
-     * @dataProvider processDataProvider
      */
-    public function testProcess(
-        array $data,
-        Request $request,
-        array $productIds = [],
-        array $productQuantities = [],
-        $isSetRedirectUrl = true,
-        $failed = false
-    ) {
+    public function testProcessWithNotValidData($data)
+    {
+        /** @var Request $request */
+        $request = $this->getMockBuilder(Request::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        if (!empty($data[ProductDataStorage::ENTITY_ITEMS_DATA_KEY])) {
-            $shoppingList = new ShoppingList();
+        $this->assertEquals(null, $this->processor->process($data, $request));
+    }
 
-            $this->shoppingListManager->expects($this->once())
-                ->method('create')
-                ->willReturn($shoppingList);
+    /**
+     * @return array
+     */
+    public function wrongDataDataProvider()
+    {
+        return [
+            'entity items are not array' => [
+                'data' => [
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => 'something'
+                ]
+            ],
+            'entity items are not array and empty' => [
+                'data' => [
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => ''
+                ]
+            ],
+            'entity items are empty' => [
+                'data' => [
+                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => []
+                ]
+            ],
+        ];
+    }
 
-            $this->dateFormatter->expects($this->once())
-                ->method('format')
-                ->willReturn('Mar 28, 2016, 2:50 PM');
+    public function testProcessWhenCommitted()
+    {
+        $data = [
+            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                ['productSku' => 'sku1', 'productQuantity' => 2],
+                ['productSku' => 'sku2', 'productQuantity' => 3],
+            ]
+        ];
 
-            $this->translator->expects($this->once())
-                ->method('trans')
-                ->willReturn('Quick Order (Mar 28, 2016, 2:50 PM)');
+        $productIds = ['sku1' => 1, 'sku2' => 2];
+        $productQuantities = [1 => 2, 2 => 3];
 
-            $actionData = new ActionData([
-                'shoppingList' => $shoppingList,
-                'redirectUrl' => $isSetRedirectUrl ? '/customer/shoppingList/123' : null,
-            ]);
+        $shoppingList = new ShoppingList();
 
-            $entitiesCount = count($data);
+        $this->shoppingListManager->expects($this->once())
+            ->method('create')
+            ->willReturn($shoppingList);
 
-            $this->productRepository->expects($this->any())->method('getProductsIdsBySku')->willReturn($productIds);
+        $this->dateFormatter->expects($this->once())
+            ->method('format')
+            ->willReturn('Mar 28, 2016, 2:50 PM');
 
-            if ($failed) {
-                $this->handler->expects($this->once())
-                    ->method('createForShoppingList')
-                    ->willThrowException(new AccessDeniedException());
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->willReturn('Quick Order (Mar 28, 2016, 2:50 PM)');
 
-                $this->assertFailedFlashMessage($request);
-            } else {
-                if (!$isSetRedirectUrl) {
-                    $this->messageGenerator->expects($this->once())
-                        ->method('getFailedMessage')
-                        ->willReturn('error');
+        $redirectUrl = '/customer/shoppingList/123';
+        $actionData = new ActionData([
+            'shoppingList' => $shoppingList,
+            'redirectUrl' => $redirectUrl
+        ]);
 
-                    $this->assertFailedFlashMessage($request);
-                }
+        $this->productRepository->expects($this->any())->method('getProductsIdsBySku')->willReturn($productIds);
 
-                $this->actionGroupRegistry->expects($this->once())
-                    ->method('findByName')
-                    ->with('start_shoppinglist_checkout')
-                    ->willReturn($this->actionGroup);
+        $this->actionGroupRegistry->expects($this->once())
+            ->method('findByName')
+            ->with('start_shoppinglist_checkout')
+            ->willReturn($this->actionGroup);
 
-                $this->actionGroup->expects($this->once())
-                    ->method('execute')
-                    ->willReturn($actionData);
+        $this->actionGroup->expects($this->once())
+            ->method('execute')
+            ->willReturn($actionData);
 
-                $this->handler->expects($data ? $this->once() : $this->never())
-                    ->method('createForShoppingList')
-                    ->with(
-                        $this->isInstanceOf('Oro\Bundle\ShoppingListBundle\Entity\ShoppingList'),
-                        array_values($productIds),
-                        $productQuantities
-                    )
-                    ->willReturn($entitiesCount);
-            }
-        }
+        $this->handler->expects($this->once())
+            ->method('createForShoppingList')
+            ->with(
+                $this->isInstanceOf(ShoppingList::class),
+                array_values($productIds),
+                $productQuantities
+            )
+            ->willReturn(count($data));
 
-        $this->processor->process($data, $request);
+        $this->em
+            ->expects($this->once())
+            ->method('commit');
+
+        $expectedResponse = new RedirectResponse($redirectUrl);
+        $this->assertEquals($expectedResponse, $this->processor->process($data, new Request()));
+    }
+
+    public function testProcessWhenActionGroupFailedWithErrors()
+    {
+        $data = [
+            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                ['productSku' => 'sku1', 'productQuantity' => 2],
+                ['productSku' => 'sku2', 'productQuantity' => 3],
+            ]
+        ];
+
+        $productIds = ['sku1' => 1, 'sku2' => 2];
+        $productQuantities = [1 => 2, 2 => 3];
+
+        $shoppingList = new ShoppingList();
+
+        $this->shoppingListManager->expects($this->once())
+            ->method('create')
+            ->willReturn($shoppingList);
+
+        $this->dateFormatter->expects($this->once())
+            ->method('format')
+            ->willReturn('Mar 28, 2016, 2:50 PM');
+
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->willReturn('Quick Order (Mar 28, 2016, 2:50 PM)');
+
+        $actionData = new ActionData([
+            'shoppingList' => $shoppingList,
+            'redirectUrl' => null,
+            'errors' => []
+        ]);
+
+        $this->productRepository->expects($this->any())->method('getProductsIdsBySku')->willReturn($productIds);
+
+        $this->actionGroupRegistry->expects($this->once())
+            ->method('findByName')
+            ->with('start_shoppinglist_checkout')
+            ->willReturn($this->actionGroup);
+
+        $this->actionGroup->expects($this->once())
+            ->method('execute')
+            ->willReturn($actionData);
+
+        $this->handler->expects($this->once())
+            ->method('createForShoppingList')
+            ->with(
+                $this->isInstanceOf(ShoppingList::class),
+                array_values($productIds),
+                $productQuantities
+            )
+            ->willReturn(count($data));
+
+        $request = new Request();
+        $this->assertFailedFlashMessage($request);
+
+        $this->em
+            ->expects($this->once())
+            ->method('rollback');
+
+        $this->assertFalse($this->processor->process($data, $request));
+    }
+
+    public function testProcessWhenHandlerThrowsException()
+    {
+        $data = [
+            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                ['productSku' => 'sku1', 'productQuantity' => 2],
+                ['productSku' => 'sku2', 'productQuantity' => 3],
+            ]
+        ];
+
+        $productIds = ['sku1' => 1, 'sku2' => 2];
+
+        $shoppingList = new ShoppingList();
+        $this->shoppingListManager->expects($this->once())
+            ->method('create')
+            ->willReturn($shoppingList);
+
+        $this->dateFormatter->expects($this->once())
+            ->method('format')
+            ->willReturn('Mar 28, 2016, 2:50 PM');
+
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->willReturn('Quick Order (Mar 28, 2016, 2:50 PM)');
+
+        $this->productRepository->expects($this->any())->method('getProductsIdsBySku')->willReturn($productIds);
+
+        $this->handler->expects($this->once())
+            ->method('createForShoppingList')
+            ->willThrowException(new AccessDeniedException());
+
+        $request = new Request();
+        $this->assertFailedFlashMessage($request);
+
+        $this->em
+            ->expects($this->once())
+            ->method('rollback');
+
+        $this->assertEquals(null, $this->processor->process($data, $request));
+    }
+
+    public function testProcessWhenNoItemsCreatedForShoppingList()
+    {
+        $shoppingList = new ShoppingList();
+
+        $this->shoppingListManager->expects($this->once())
+            ->method('create')
+            ->willReturn($shoppingList);
+
+        $this->dateFormatter->expects($this->once())
+            ->method('format')
+            ->willReturn('Mar 28, 2016, 2:50 PM');
+
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->willReturn('Quick Order (Mar 28, 2016, 2:50 PM)');
+
+        $this->productRepository->expects($this->any())->method('getProductsIdsBySku')->willReturn($this->productIds);
+
+        $this->handler->expects($this->once())
+            ->method('createForShoppingList')
+            ->with(
+                $this->isInstanceOf(ShoppingList::class),
+                array_values($this->productIds),
+                $this->productQuantities
+            )
+            ->willReturn(0);
+
+        $this->em
+            ->expects($this->once())
+            ->method('rollback');
+
+        $request = new Request();
+        $this->assertFailedFlashMessage($request);
+
+        $this->assertEquals(null, $this->processor->process($this->data, $request));
     }
 
     /**
@@ -224,55 +402,5 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
             ->willReturn($flashBag);
 
         $request->setSession($session);
-    }
-
-    /**
-     * @return array
-     */
-    public function processDataProvider()
-    {
-        return [
-            'empty' => [
-                'data' => [],
-                'request' => new Request()
-            ],
-            'not empty' => [
-                'data' => [
-                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        ['productSku' => 'sku1', 'productQuantity' => 2],
-                        ['productSku' => 'sku2', 'productQuantity' => 3],
-                    ]
-                ],
-                'request' => new Request(),
-                'productIds' =>['sku1' => 1, 'sku2' => 2],
-                'productQuantities' => [1 => 2, 2 => 3],
-            ],
-            'process failed' => [
-                'data' => [
-                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        ['productSku' => 'sku1', 'productQuantity' => 2],
-                        ['productSku' => 'sku2', 'productQuantity' => 3],
-                    ]
-                ],
-                'request' => new Request(),
-                'productIds' =>['sku1' => 1, 'sku2' => 2],
-                'productQuantities' => [1 => 2, 2 => 3],
-                'redirectUrl' => '/customer/shoppingList/123',
-                'failed' => true
-            ],
-            'without redirect url' => [
-                'data' => [
-                    ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-                        ['productSku' => 'sku1', 'productQuantity' => 2],
-                        ['productSku' => 'sku2', 'productQuantity' => 3],
-                    ]
-                ],
-                'request' => new Request(),
-                'productIds' =>['sku1' => 1, 'sku2' => 2],
-                'productQuantities' => [1 => 2, 2 => 3],
-                'failed' => false,
-                'issetRedirectUrl' => false
-            ],
-        ];
     }
 }
