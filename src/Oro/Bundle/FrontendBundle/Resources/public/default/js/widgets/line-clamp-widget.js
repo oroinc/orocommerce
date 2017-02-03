@@ -10,12 +10,12 @@ define(function(require) {
         options: {
             lineClamp: 2,
             supportedClass: 'line-clamp',
-            unSupportedClass: 'line-clamp-polyfill',
-            rendered: false
+            noSupportClass: 'line-clamp-polyfill'
         },
 
         _create: function() {
             this.$el = this.element;
+
             this._super();
             this._checkNativeSupportLineClamp();
         },
@@ -30,26 +30,31 @@ define(function(require) {
         },
 
         _destroy: function() {
-            if (this.nativeSupport) {
-                this.$el.removeClass(this.options.supportedClass);
-            } else {
-                this.$el.removeClass(this.options.unSupportedClass);
-            }
-
+            this.$el.removeClass(this.nativeSupport ? this.options.supportedClass : this.options.noSupportClass);
             delete this.nativeSupport;
         },
 
         _checkNativeSupportLineClamp: function() {
+            // Now native support only webkit browsers
             this.nativeSupport =  '-webkit-line-clamp' in document.body.style;
+        },
+
+        _getCountLines: function () {
+            var lineHeight = parseInt(this.$el.css('line-height'), 10);
+            var height = Math.max(this.$el.height(), this.$el.get(0).scrollHeight);
+
+            return Math.round(height / lineHeight);
         },
 
         _applyLineClamp: function() {
             if (this.nativeSupport) {
                 this.$el.addClass(this.options.supportedClass);
             } else {
-                this.$el.addClass(this.options.unSupportedClass);
+                if (this.options.lineClamp < this._getCountLines()) {
+                    this.$el.addClass(this.options.noSupportClass);
+                }
             }
-        },
+        }
     });
 
     return 'lineClampWidget';
