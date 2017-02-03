@@ -20,26 +20,6 @@ use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
 {
     /**
-     * @var array
-     */
-    private $data = [
-        ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
-            ['productSku' => 'sku1', 'productQuantity' => 2],
-            ['productSku' => 'sku2', 'productQuantity' => 3],
-        ]
-    ];
-
-    /**
-     * @var array
-     */
-    private $productIds = ['sku1' => 1, 'sku2' => 2];
-
-    /**
-     * @var array
-     */
-    private $productQuantities = [1 => 2, 2 => 3];
-
-    /**
      * @var \PHPUnit_Framework_MockObject_MockObject|ShoppingListManager
      */
     protected $shoppingListManager;
@@ -341,6 +321,16 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
 
     public function testProcessWhenNoItemsCreatedForShoppingList()
     {
+        $data = [
+            ProductDataStorage::ENTITY_ITEMS_DATA_KEY => [
+                ['productSku' => 'sku1', 'productQuantity' => 2],
+                ['productSku' => 'sku2', 'productQuantity' => 3],
+            ]
+        ];
+
+        $productIds = ['sku1' => 1, 'sku2' => 2];
+        $productQuantities = [1 => 2, 2 => 3];
+
         $shoppingList = new ShoppingList();
 
         $this->shoppingListManager->expects($this->once())
@@ -355,14 +345,14 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
             ->method('trans')
             ->willReturn('Quick Order (Mar 28, 2016, 2:50 PM)');
 
-        $this->productRepository->expects($this->any())->method('getProductsIdsBySku')->willReturn($this->productIds);
+        $this->productRepository->expects($this->any())->method('getProductsIdsBySku')->willReturn($productIds);
 
         $this->handler->expects($this->once())
             ->method('createForShoppingList')
             ->with(
                 $this->isInstanceOf(ShoppingList::class),
-                array_values($this->productIds),
-                $this->productQuantities
+                array_values($productIds),
+                $productQuantities
             )
             ->willReturn(0);
 
@@ -373,7 +363,7 @@ class QuickAddCheckoutProcessorTest extends AbstractQuickAddProcessorTest
         $request = new Request();
         $this->assertFailedFlashMessage($request);
 
-        $this->assertEquals(null, $this->processor->process($this->data, $request));
+        $this->assertEquals(null, $this->processor->process($data, $request));
     }
 
     /**
