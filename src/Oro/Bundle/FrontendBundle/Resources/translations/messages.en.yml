@@ -18,8 +18,12 @@ oro_frontend:
             theme.title: 'Theme'
             theme_settings.title: 'Theme Settings'
             commerce.title: 'Commerce'
+            page_templates.title: 'Page Templates'
         fields:
             frontend_theme.label: 'Theme'
+            page_template_collection.label: 'Page Templates'
+            no_page_template.label: 'No page template'
+            page_template_routes.label: 'Select Page Template for page'
     copyright: '&copy; 2017 Oro Inc. All Rights Reserved.'
 
     home_page:

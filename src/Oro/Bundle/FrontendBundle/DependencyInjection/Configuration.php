@@ -21,6 +21,7 @@ class Configuration implements ConfigurationInterface
             $rootNode,
             [
                 'frontend_theme' => ['type' => 'string', 'value' => ''],
+                'page_templates' => ['type' => 'array', 'value' => []],
             ]
         );
 

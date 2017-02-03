@@ -15,3 +15,10 @@ services:
         class: 'Oro\Bundle\FrontendBundle\Form\Type\RegionType'
         tags:
             - { name: form.type, alias: oro_frontend_region }
+
+    oro_frontend.form.type.page_template_collection:
+        class: 'Oro\Bundle\FrontendBundle\Form\Type\PageTemplateCollectionType'
+        arguments:
+            - '@oro_layout.page_templates_manager'
+        tags:
+            - { name: form.type, alias: 'oro_frontend_page_template_collection' }

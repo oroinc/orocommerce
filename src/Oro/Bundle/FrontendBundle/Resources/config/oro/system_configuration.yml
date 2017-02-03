@@ -10,6 +10,8 @@ system_configuration:
         commerce:
             title: oro_frontend.system_configuration.groups.commerce.title
             icon:  fa-shopping-cart
+        page_templates:
+            title: oro_frontend.system_configuration.groups.page_templates.title
 
     fields:
         oro_frontend.frontend_theme:
@@ -18,6 +20,14 @@ system_configuration:
             priority: 100
             options:
                 label: oro_frontend.system_configuration.fields.frontend_theme.label
+
+        oro_frontend.page_templates:
+            data_type: array
+            type: oro_frontend_page_template_collection
+            priority: 90
+            options:
+                required: false
+                label: oro_frontend.system_configuration.fields.page_template_routes.label
 
     tree:
         system_configuration:
@@ -31,3 +41,7 @@ system_configuration:
                                     theme_settings:
                                         children:
                                             - oro_frontend.frontend_theme
+                                    page_templates:
+                                        children:
+                                            - oro_frontend.page_templates
+                                    #page_templates: ~

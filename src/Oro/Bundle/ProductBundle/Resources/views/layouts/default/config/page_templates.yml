@@ -1,0 +1,17 @@
+templates:
+    -
+        label: Child Custom sub-theme
+        description: Custom sub-theme description
+        route_name: oro_product_frontend_product_view
+        key: custom
+    -
+        label: Child Additional sub-theme
+        description: Additional sub-theme description
+        route_name: oro_product_frontend_product_view
+        key: additional
+
+    -
+        label: Some new theme is here
+        description: Additional sub-theme description
+        route_name: oro_product_frontend_product_view
+        key: some_new_key
