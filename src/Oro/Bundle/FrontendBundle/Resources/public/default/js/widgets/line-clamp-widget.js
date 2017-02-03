@@ -39,7 +39,7 @@ define(function(require) {
             this.nativeSupport =  '-webkit-line-clamp' in document.body.style;
         },
 
-        _getCountLines: function () {
+        _getCountLines: function() {
             var lineHeight = parseInt(this.$el.css('line-height'), 10);
             var height = Math.max(this.$el.height(), this.$el.get(0).scrollHeight);
 
