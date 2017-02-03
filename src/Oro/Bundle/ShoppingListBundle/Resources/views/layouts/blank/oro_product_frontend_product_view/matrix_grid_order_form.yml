@@ -11,4 +11,4 @@ layout:
             id: product_matrix_grid_order_button
             parentId: line_item_form
             siblingId: line_item_buttons_container
-            prepend: true
+            prepend: false

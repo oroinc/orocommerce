@@ -66,7 +66,12 @@ class MatrixGridOrderProvider
         }
 
         reset($variants);
-        if (count($variants) > 2 || count(current($variants)) > 5) {
+        $variantsCount = count($variants);
+        if ($variantsCount > 2 || count(end($variants)) > 5) {
+            return false;
+        }
+
+        if ($variantsCount === 1 && count(reset($variants)) < 2) {
             return false;
         }
 
