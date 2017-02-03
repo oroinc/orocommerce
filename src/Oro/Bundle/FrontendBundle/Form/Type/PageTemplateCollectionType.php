@@ -34,7 +34,6 @@ class PageTemplateCollectionType extends AbstractType
     {
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) {
 
-            $options['label'] = 'foo';
             $form = $event->getForm();
 
             foreach ($this->pageTemplatesManager->getRoutePageTemplates() as $routeName => $options) {

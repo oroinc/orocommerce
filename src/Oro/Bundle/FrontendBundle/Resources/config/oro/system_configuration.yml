@@ -44,4 +44,3 @@ system_configuration:
                                     page_templates:
                                         children:
                                             - oro_frontend.page_templates
-                                    #page_templates: ~
