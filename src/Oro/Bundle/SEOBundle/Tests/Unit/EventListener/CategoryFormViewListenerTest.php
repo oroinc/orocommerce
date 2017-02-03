@@ -2,21 +2,26 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\EventListener;
 
-use Oro\Bundle\SEOBundle\EventListener\BaseFormViewListener;
 use Oro\Bundle\SEOBundle\EventListener\CategoryFormViewListener;
 
 class CategoryFormViewListenerTest extends BaseFormViewListenerTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function setUp()
+    /** @var CategoryFormViewListener */
+    protected $listener;
+
+    protected function setUp()
     {
         parent::setUp();
 
         $this->listener = new CategoryFormViewListener($this->requestStack, $this->translator, $this->doctrineHelper);
     }
 
+    protected function tearDown()
+    {
+        unset($this->listener);
+
+        parent::tearDown();
+    }
 
     public function testOnCategoryEdit()
     {

@@ -394,7 +394,7 @@ class ProductRepositoryTest extends WebTestCase
 
     /**
      * @param Product $product
-     * @return null|\Oro\Bundle\CatalogBundle\Entity\Category
+     * @return null|Category
      */
     protected function getCategoryByProduct(Product $product)
     {

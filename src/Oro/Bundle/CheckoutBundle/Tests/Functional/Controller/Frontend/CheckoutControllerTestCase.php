@@ -8,6 +8,7 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerAddresse
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as TestCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
+use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadInventoryLevels;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
@@ -72,6 +73,7 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
             LoadShoppingListLineItems::class,
             LoadCombinedProductPrices::class,
             LoadShippingMethodsConfigsRules::class,
+            LoadInventoryLevels::class,
         ], $paymentFixtures));
         $this->registry = $this->getContainer()->get('doctrine');
     }
@@ -119,6 +121,7 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
                 'action_group' => 'start_shoppinglist_checkout',
                 'parameters_mapping' => [
                     'shoppingList' => $shoppingList,
+                    'showErrors' => true,
                 ],
                 'results' => [
                     'redirectUrl' => new PropertyPath('redirectUrl'),

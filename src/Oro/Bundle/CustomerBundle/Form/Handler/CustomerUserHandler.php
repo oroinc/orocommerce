@@ -95,8 +95,7 @@ class CustomerUserHandler
                 $token = $this->securityFacade->getToken();
                 if ($token instanceof OrganizationContextTokenInterface) {
                     $organization = $token->getOrganizationContext();
-                    $customerUser->setOrganization($organization)
-                        ->addOrganization($organization);
+                    $customerUser->setOrganization($organization);
                 }
 
                 $this->userManager->updateUser($customerUser);

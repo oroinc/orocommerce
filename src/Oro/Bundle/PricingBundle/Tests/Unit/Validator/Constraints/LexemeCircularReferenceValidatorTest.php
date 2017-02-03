@@ -76,6 +76,16 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->entityManager->expects($this->any())
+            ->method('getRepository')
+            ->withAnyParameters()
+            ->willReturn($this->entityRepository);
+
+        $this->doctrine->expects($this->any())
+            ->method('getManagerForClass')
+            ->withAnyParameters()
+            ->willReturn($this->entityManager);
+
         $this->validator = new LexemeCircularReferenceValidator($this->parser, $this->doctrine);
         $this->validator->initialize($this->context);
     }
@@ -106,16 +116,7 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit_Framework_TestCase
                 new NameNode(PriceList::class, 'productAssignmentRule', 3)
             );
 
-        $this->entityRepository->expects($this->exactly(2))
-            ->method('find')
-            ->withConsecutive(
-                $this->equalTo(2),
-                $this->equalTo(3)
-            )
-            ->willReturnOnConsecutiveCalls(
-                $priceList2,
-                $priceList3
-            );
+        $this->prepareEntityRepository($priceList2, $priceList3);
 
         $this->entityRepository->expects($this->exactly(2))
             ->method('findBy')
@@ -127,16 +128,6 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit_Framework_TestCase
                 [],
                 []
             );
-
-        $this->entityManager->expects($this->any())
-            ->method('getRepository')
-            ->withAnyParameters()
-            ->willReturn($this->entityRepository);
-
-        $this->doctrine->expects($this->any())
-            ->method('getManagerForClass')
-            ->withAnyParameters()
-            ->willReturn($this->entityManager);
 
         $constraint = new LexemeCircularReference();
         $constraint->fields = ['productAssignmentRule'];
@@ -203,16 +194,6 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit_Framework_TestCase
                 []
             );
 
-        $this->entityManager->expects($this->any())
-            ->method('getRepository')
-            ->withAnyParameters()
-            ->willReturn($this->entityRepository);
-
-        $this->doctrine->expects($this->any())
-            ->method('getManagerForClass')
-            ->withAnyParameters()
-            ->willReturn($this->entityManager);
-
         $constraint = new LexemeCircularReference();
         $constraint->fields = ['productAssignmentRule'];
         $this->context->expects($this->never())->method('buildViolation');
@@ -266,16 +247,7 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit_Framework_TestCase
                 )
             );
 
-        $this->entityRepository->expects($this->exactly(2))
-            ->method('find')
-            ->withConsecutive(
-                $this->equalTo(2),
-                $this->equalTo(3)
-            )
-            ->willReturnOnConsecutiveCalls(
-                $priceList2,
-                $priceList3
-            );
+        $this->prepareEntityRepository($priceList2, $priceList3);
 
         $this->entityRepository->expects($this->exactly(2))
             ->method('findBy')
@@ -291,16 +263,6 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit_Framework_TestCase
                 [],
                 []
             );
-
-        $this->entityManager->expects($this->any())
-            ->method('getRepository')
-            ->withAnyParameters()
-            ->willReturn($this->entityRepository);
-
-        $this->doctrine->expects($this->any())
-            ->method('getManagerForClass')
-            ->withAnyParameters()
-            ->willReturn($this->entityManager);
 
         $constraint = new LexemeCircularReference();
         $constraint->fields = ['productAssignmentRule'];
@@ -360,16 +322,7 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit_Framework_TestCase
                 )
             );
 
-        $this->entityRepository->expects($this->exactly(2))
-            ->method('find')
-            ->withConsecutive(
-                $this->equalTo(2),
-                $this->equalTo(3)
-            )
-            ->willReturnOnConsecutiveCalls(
-                $priceList2,
-                $priceList3
-            );
+        $this->prepareEntityRepository($priceList2, $priceList3);
 
         $this->entityRepository->expects($this->exactly(2))
             ->method('findBy')
@@ -381,16 +334,6 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit_Framework_TestCase
                 [$priceRule2],
                 [$priceRule3]
             );
-
-        $this->entityManager->expects($this->any())
-            ->method('getRepository')
-            ->withAnyParameters()
-            ->willReturn($this->entityRepository);
-
-        $this->doctrine->expects($this->any())
-            ->method('getManagerForClass')
-            ->withAnyParameters()
-            ->willReturn($this->entityManager);
 
         $constraint = new LexemeCircularReference();
         $constraint->fields = ['rule'];
@@ -426,49 +369,9 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit_Framework_TestCase
                 new NameNode(PriceList::class, 'productAssignmentRule', 1)
             );
 
-        $this->entityRepository->expects($this->exactly(2))
-            ->method('find')
-            ->withConsecutive(
-                $this->equalTo(2),
-                $this->equalTo(3)
-            )
-            ->willReturnOnConsecutiveCalls(
-                $priceList2,
-                $priceList3
-            );
+        $this->prepareEntityRepository($priceList2, $priceList3);
 
-        $this->entityRepository->expects($this->exactly(2))
-            ->method('findBy')
-            ->withConsecutive(
-                $this->equalTo(2),
-                $this->equalTo(3)
-            )
-            ->willReturnOnConsecutiveCalls(
-                [],
-                []
-            );
-
-        $this->entityManager->expects($this->any())
-            ->method('getRepository')
-            ->withAnyParameters()
-            ->willReturn($this->entityRepository);
-
-        $this->doctrine->expects($this->any())
-            ->method('getManagerForClass')
-            ->withAnyParameters()
-            ->willReturn($this->entityManager);
-
-        $constraint = new LexemeCircularReference();
-        $constraint->fields = ['productAssignmentRule'];
-
-        $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
-        $builder->expects($this->at(0))->method('atPath')->with('productAssignmentRule')->willReturn($builder);
-        $builder->expects($this->at(1))->method('addViolation');
-
-        $this->context->expects($this->once())
-            ->method('buildViolation')
-            ->with($constraint->message)
-            ->willReturn($builder);
+        $constraint = $this->getReferencePreparedToFail();
 
         $this->validator->validate($priceList1, $constraint);
     }
@@ -508,49 +411,9 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit_Framework_TestCase
                 new NameNode(PriceList::class, 'productAssignmentRule', 1)
             );
 
-        $this->entityRepository->expects($this->exactly(2))
-            ->method('find')
-            ->withConsecutive(
-                $this->equalTo(2),
-                $this->equalTo(3)
-            )
-            ->willReturnOnConsecutiveCalls(
-                $priceList2,
-                $priceList3
-            );
+        $this->prepareEntityRepository($priceList2, $priceList3);
 
-        $this->entityRepository->expects($this->exactly(2))
-            ->method('findBy')
-            ->withConsecutive(
-                $this->equalTo(2),
-                $this->equalTo(3)
-            )
-            ->willReturnOnConsecutiveCalls(
-                [],
-                []
-            );
-
-        $this->entityManager->expects($this->any())
-            ->method('getRepository')
-            ->withAnyParameters()
-            ->willReturn($this->entityRepository);
-
-        $this->doctrine->expects($this->any())
-            ->method('getManagerForClass')
-            ->withAnyParameters()
-            ->willReturn($this->entityManager);
-
-        $constraint = new LexemeCircularReference();
-        $constraint->fields = ['productAssignmentRule'];
-
-        $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
-        $builder->expects($this->at(0))->method('atPath')->with('productAssignmentRule')->willReturn($builder);
-        $builder->expects($this->at(1))->method('addViolation');
-
-        $this->context->expects($this->once())
-            ->method('buildViolation')
-            ->with($constraint->message)
-            ->willReturn($builder);
+        $constraint = $this->getReferencePreparedToFail();
 
         $this->validator->validate($priceList1, $constraint);
     }
@@ -610,16 +473,7 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit_Framework_TestCase
                 new NameNode(PriceList::class, 'productAssignmentRule', 1)
             );
 
-        $this->entityRepository->expects($this->exactly(2))
-            ->method('find')
-            ->withConsecutive(
-                $this->equalTo(2),
-                $this->equalTo(3)
-            )
-            ->willReturnOnConsecutiveCalls(
-                $priceList2,
-                $priceList3
-            );
+        $this->prepareEntityRepository($priceList2, $priceList3);
 
         $this->entityRepository->expects($this->exactly(2))
             ->method('findBy')
@@ -632,16 +486,6 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit_Framework_TestCase
                 [$priceRule3]
             );
 
-        $this->entityManager->expects($this->any())
-            ->method('getRepository')
-            ->withAnyParameters()
-            ->willReturn($this->entityRepository);
-
-        $this->doctrine->expects($this->any())
-            ->method('getManagerForClass')
-            ->withAnyParameters()
-            ->willReturn($this->entityManager);
-
         $constraint = new LexemeCircularReference();
         $constraint->fields = ['rule'];
         $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
@@ -653,5 +497,54 @@ class LexemeCircularReferenceValidatorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($builder);
 
         $this->validator->validate($priceRule1, $constraint);
+    }
+
+    /**
+     * @param PriceList $priceList2
+     * @param PriceList $priceList3
+     */
+    protected function prepareEntityRepository(PriceList $priceList2, PriceList $priceList3)
+    {
+        $this->entityRepository->expects($this->exactly(2))
+            ->method('find')
+            ->withConsecutive(
+                $this->equalTo(2),
+                $this->equalTo(3)
+            )
+            ->willReturnOnConsecutiveCalls(
+                $priceList2,
+                $priceList3
+            );
+    }
+
+    /**
+     * @return LexemeCircularReference
+     */
+    protected function getReferencePreparedToFail()
+    {
+        $this->entityRepository->expects($this->exactly(2))
+            ->method('findBy')
+            ->withConsecutive(
+                $this->equalTo(2),
+                $this->equalTo(3)
+            )
+            ->willReturnOnConsecutiveCalls(
+                [],
+                []
+            );
+
+        $constraint = new LexemeCircularReference();
+        $constraint->fields = ['productAssignmentRule'];
+
+        $builder = $this->createMock(ConstraintViolationBuilderInterface::class);
+        $builder->expects($this->at(0))->method('atPath')->with('productAssignmentRule')->willReturn($builder);
+        $builder->expects($this->at(1))->method('addViolation');
+
+        $this->context->expects($this->once())
+            ->method('buildViolation')
+            ->with($constraint->message)
+            ->willReturn($builder);
+
+        return $constraint;
     }
 }

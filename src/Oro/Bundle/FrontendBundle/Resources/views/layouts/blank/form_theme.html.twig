@@ -25,22 +25,25 @@
 {% endblock %}
 
 {%- block form_row -%}
-    {% set class_prefix = form.vars.class_prefix|default(class_prefix|default('')) %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': " form-field-" ~ form.vars.name,
         placeholder: label|default('')
     }) %}
 
-    <fieldset class="{{ class_prefix }}__form__row">
-        <div class="{{ class_prefix }}__form__col form__col form__col_x12">
-            {{- form_label(form, null, {'class_prefix': class_prefix}) -}}
-            {{- form_widget(form, {
-                'class_prefix': class_prefix,
-                attr: attr
-            }) -}}
-            {{- form_errors(form, {'class_prefix': class_prefix}) -}}
-        </div>
-    </fieldset>
+    {% set parentClass = parentClass|default('') %}
+    {% set class_prefix = form.vars.class_prefix|default(class_prefix|default('')) %}
+    {% set row_attr = layout_attr_defaults(row_attr|default({}), {
+        '~class': [' form-row', parentClass, class_prefix]|join(' ')
+    }) %}
+    
+    {% set widget_attr = attr %}
+    {% set attr = row_attr %}
+
+    <div {{ block('attributes') }}>
+        {{- form_label(form, null) -}}
+        {{- form_widget(form, {attr: widget_attr}) -}}
+        {{- form_errors(form) -}}
+    </div>
 {%- endblock form_row -%}
 
 {% block widget_attributes %}
@@ -165,3 +168,11 @@
 
         {{ block('date_widget') }}
 {%- endblock oro_date_widget -%}
+
+{% block oro_frontend_region_widget %}
+    {{ block('oro_region_widget') }}
+{% endblock %}
+
+{% block oro_frontend_country_widget %}
+    {{ form_widget(form, {'class_prefix': 'checkout'}) }}
+{% endblock %}

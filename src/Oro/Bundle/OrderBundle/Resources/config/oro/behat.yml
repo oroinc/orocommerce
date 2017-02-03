@@ -1,0 +1,8 @@
+elements:
+    Order:
+        class: Oro\Bundle\OrderBundle\Tests\Behat\Element\Order
+        selector: '.page-content'
+
+    OrderTitle:
+        class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+        selector: 'h1.page-title .page-title__text'

@@ -1,0 +1,6 @@
+acls:
+    oro_redirect_view:
+        type: entity
+        class: OroRedirectBundle:Slug
+        permission: VIEW
+        group_name: ""

@@ -223,6 +223,14 @@ services:
             - '@oro_shipping.converter.shipping_context_to_rule_values'
             - '@oro_shipping.repository.shipping_methods_configs_rule'
 
+    oro_shipping.enabled_methods_configs_rules.provider:
+        class: 'Oro\Bundle\ShippingBundle\Provider\ShippingMethodsConfigsRulesProvider'
+        public: false
+        arguments:
+            - '@oro_rule.enabled_rule_filtration.service'
+            - '@oro_shipping.converter.shipping_context_to_rule_values'
+            - '@oro_shipping.repository.shipping_methods_configs_rule'
+
     oro_shipping.shipping_price.provider.cache:
         class: 'Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache'
         arguments:

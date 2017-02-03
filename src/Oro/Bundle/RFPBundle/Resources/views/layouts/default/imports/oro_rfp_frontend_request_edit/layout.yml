@@ -3,9 +3,6 @@ layout:
         - '@setBlockTheme':
             themes: 'layout.html.twig'
 
-        - '@setFormTheme':
-            themes: 'form.html.twig'
-
         - '@addTree':
             items:
                 __rfp_form_start:
