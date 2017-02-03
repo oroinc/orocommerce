@@ -43,7 +43,7 @@ class SlugEntityGenerator
      * @param SluggableInterface $entity
      * @param bool $generateRedirects
      */
-    public function generate(SluggableInterface $entity, $generateRedirects = false)
+    public function generate(SluggableInterface $entity, $generateRedirects = true)
     {
         $slugUrls = $this->getResolvedSlugUrls($entity);
 

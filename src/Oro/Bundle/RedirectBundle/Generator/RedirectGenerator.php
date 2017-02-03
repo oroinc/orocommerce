@@ -25,40 +25,28 @@ class RedirectGenerator
     /**
      * @param string $from
      * @param Slug $toSlug
-     * @return Redirect|null
      */
     public function generate($from, Slug $toSlug)
     {
-        return $this->createRedirect($from, $toSlug);
-    }
-
-    /**
-     * @param string $from
-     * @param Slug $toSlug
-     * @param int $redirectType
-     * @return Redirect
-     */
-    protected function createRedirect($from, Slug $toSlug, $redirectType = Redirect::MOVED_PERMANENTLY)
-    {
-        $redirect = $this->getExistingRedirectForSlug($toSlug);
-        if ($redirect) {
-            $redirect->setTo($toSlug->getUrl());
-        } else {
-            $redirect = $this->createNewRedirect($from, $toSlug, $redirectType);
+        $redirects = $this->getExistingRedirectsForSlug($toSlug);
+        if ($redirects) {
+            foreach ($redirects as $redirect) {
+                $redirect->setTo($toSlug->getUrl());
+            }
         }
 
-        return $redirect;
+        $this->createNewRedirect($from, $toSlug, Redirect::MOVED_PERMANENTLY);
     }
 
     /**
      * @param Slug $slug
-     * @return null|Redirect
+     * @return Redirect[]
      */
-    private function getExistingRedirectForSlug(Slug $slug)
+    private function getExistingRedirectsForSlug(Slug $slug)
     {
         return $this->registry->getManagerForClass(Redirect::class)
             ->getRepository(Redirect::class)
-            ->findOneBy(['slug' => $slug]);
+            ->findBy(['slug' => $slug]);
     }
 
     /**

@@ -58,7 +58,7 @@ class RedirectGeneratorTest extends \PHPUnit_Framework_TestCase
             ->with(Redirect::class)
             ->willReturn($repository);
 
-        $this->registry->expects($this->once())
+        $this->registry->expects($this->any())
             ->method('getManagerForClass')
             ->with(Redirect::class)
             ->willReturn($em);
@@ -106,7 +106,6 @@ class RedirectGeneratorTest extends \PHPUnit_Framework_TestCase
             ->with(Redirect::class)
             ->willReturn($em);
 
-        $actual = $this->redirectGenerator->generate($from, $slug);
-        $this->assertEquals($expectedRedirect, $actual);
+        $this->redirectGenerator->generate($from, $slug);
     }
 }

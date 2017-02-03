@@ -275,6 +275,7 @@ services:
             - '@oro_web_catalog.resolver.default_variant_scope'
             - '@oro_web_catalog.generator.slug_generator'
             - '@oro_message_queue.client.message_producer'
+            - '@oro_web_catalog.model.resolve_node_slugs_message_factory'
             - '@logger'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
