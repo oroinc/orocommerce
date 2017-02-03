@@ -3,3 +3,9 @@
 .info-list {
   margin-left: 35px;
 }
+
+@include breakpoint('mobile') {
+  .info-list {
+    margin-left: 0;
+  }
+}

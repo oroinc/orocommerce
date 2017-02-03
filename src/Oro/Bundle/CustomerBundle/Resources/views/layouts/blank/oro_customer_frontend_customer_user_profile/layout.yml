@@ -19,3 +19,10 @@ layout:
             id: customer_breadcrumbs
             optionName: currentPage
             optionValue: 'oro.customer.menu.customer_user_profile.label'
+
+        - '@move':
+            id: customer_user_profile_controls
+            parentId: customer_user_view_information_title_wrapper
+
+        - '@remove':
+            id: customer_user_profile_controls_wrapper

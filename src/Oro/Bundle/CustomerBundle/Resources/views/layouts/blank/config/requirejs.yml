@@ -1,0 +1,3 @@
+config:
+    paths:
+        'oroui/js/widget-manager': 'bundles/oroui/js/widget/widget-manager.js'

@@ -32,6 +32,8 @@ layout:
                     blockType: container
                     options:
                         class_prefix: 'customer-profile'
+                __customer_user_profile_controls_wrapper:
+                    blockType: container
                 __customer_user_profile_controls:
                     blockType: line_buttons
                     options:
@@ -39,16 +41,20 @@ layout:
                         buttons: '=data["buttons"].getAll(data["entity"])'
                 __customer_user_view_information:
                     blockType: container
+                __customer_user_view_information_title_wrapper:
+                    blockType: container
                 __customer_user_view_information_title:
                     blockType: text
                     options:
-                        text: 'oro.customer.frontend.sections.customer_user.user_profile'
+                        label: 'oro.customer.frontend.sections.customer_user.user_profile'
                 __customer_user_address_book:
                     blockType: container
             tree:
                 __root:
                     __customer_user_view_page:
-                        __customer_user_view_information:
-                            __customer_user_view_information_title: ~
+                        __customer_user_profile_controls_wrapper:
                             __customer_user_profile_controls: ~
+                        __customer_user_view_information:
+                            __customer_user_view_information_title_wrapper:
+                                __customer_user_view_information_title: ~
                         __customer_user_address_book: ~

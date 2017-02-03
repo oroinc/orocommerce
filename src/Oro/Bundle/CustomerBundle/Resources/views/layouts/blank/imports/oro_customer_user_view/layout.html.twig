@@ -5,6 +5,13 @@
     <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
 {% endblock %}
 
+{% block _customer_user_profile_controls_wrapper_widget %}
+    {% set attr = attr|merge({ class: attr.class|default('') ~ " customer-profile__controls-wrapper" }) %}
+    <div{{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block _customer_user_profile_controls_widget %}
     {% set attr = attr|merge({ class: attr.class|default('') ~ " customer-profile__controls" }) %}
     <div{{ block('block_attributes') }}>
@@ -19,12 +26,16 @@
     </div>
 {% endblock %}
 
-{% block _customer_user_view_information_title_widget %}
+{% block _customer_user_view_information_title_wrapper_widget %}
     {% set attr = layout_attr_defaults(attr, {'~class': ' page-subtitle'}) %}
     <h2 {{ block('block_attributes') }}>
-        <span class="badge badge--yellow"><i class="fa-user"></i></span>
-        <span class="page-subtitle__text">{{ block_widget(block) }}</span>
+        {{ block_widget(block) }}
     </h2>
+{% endblock %}
+
+{% block _customer_user_view_information_title_widget %}
+    <span class="badge badge--yellow"><i class="fa-user"></i></span>
+    <span class="page-subtitle__text">{{ block_widget(block) }}</span>
 {% endblock %}
 
 {% block _customer_user_view_information_content_widget %}
