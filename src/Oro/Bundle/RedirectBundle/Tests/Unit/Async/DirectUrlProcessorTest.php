@@ -344,7 +344,11 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(DirectUrlProcessor::REJECT, $this->processor->process($message, $session));
     }
 
-    public function testProcess()
+    /**
+     * @dataProvider processProvider
+     * @param bool $createRedirect
+     */
+    public function testProcess($createRedirect)
     {
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
@@ -384,11 +388,28 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
             ->with($messageData)
             ->willReturn([$entity]);
 
+        $this->messageFactory->expects($this->once())
+            ->method('getCreateRedirectFromMessage')
+            ->with($messageData)
+            ->willReturn($createRedirect);
+
         $this->generator->expects($this->once())
             ->method('generate')
-            ->with($entity);
+            ->with($entity, $createRedirect);
 
         $this->assertEquals(DirectUrlProcessor::ACK, $this->processor->process($message, $session));
+    }
+    
+    public function processProvider()
+    {
+        return [
+            'create redirect true' => [
+                'createRedirect' => true,
+            ],
+            'create redirect false' => [
+                'createRedirect' => false,
+            ],
+        ];
     }
 
     public function testGetSubscribedTopics()

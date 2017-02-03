@@ -9,6 +9,7 @@ use Oro\Bundle\CatalogBundle\Form\Type\CategoryDefaultProductOptionsType;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryUnitPrecisionType;
 use Oro\Bundle\CatalogBundle\Visibility\CategoryDefaultProductUnitOptionsVisibilityInterface;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Extension\Stub\ImageTypeStub;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Extension\Stub\OroRichTextTypeStub;
 use Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type\Stub\DataChangesetTypeStub;
@@ -26,6 +27,7 @@ use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
+use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
 use Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityPostSetDataListener;
 use Oro\Bundle\VisibilityBundle\Form\Extension\CategoryFormExtension;
@@ -83,6 +85,10 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
         $categoryUnitPrecision = new CategoryUnitPrecisionType($defaultProductOptionsVisibility);
         $categoryUnitPrecision->setDataClass('Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision');
 
+        $configManager = $this->getMockBuilder(ConfigManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         return [
             new PreloadedExtension(
                 [
@@ -107,7 +113,8 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
                     EntityChangesetType::NAME => new EntityChangesetTypeStub(),
                     OroRichTextType::NAME => new OroRichTextTypeStub(),
                     ImageType::NAME => new ImageTypeStub(),
-                    LocalizedSlugType::NAME => new LocalizedSlugTypeStub()
+                    LocalizedSlugType::NAME => new LocalizedSlugTypeStub(),
+                    LocalizedSlugWithRedirectType::NAME => new LocalizedSlugWithRedirectType($configManager),
                 ],
                 [
                     CategoryType::NAME => [$this->categoryFormExtension],

@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\WebCatalogBundle\Async\Topics;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
+use Oro\Bundle\WebCatalogBundle\Model\ResolveNodeSlugsMessageFactory;
 use Oro\Bundle\WebCatalogBundle\Resolver\DefaultVariantScopesResolver;
 use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
@@ -14,6 +15,7 @@ use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Bundle\WebCatalogBundle\Async\ContentNodeSlugsProcessor;
+use Oro\Component\MessageQueue\Util\JSON;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Psr\Log\LoggerInterface;
 
@@ -42,6 +44,11 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit_Framework_TestCase
     protected $messageProducer;
 
     /**
+     * @var ResolveNodeSlugsMessageFactory|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $messageFactory;
+
+    /**
      * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $logger;
@@ -61,12 +68,16 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);
+        $this->messageFactory = $this->getMockBuilder(ResolveNodeSlugsMessageFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->processor = new ContentNodeSlugsProcessor(
             $this->registry,
             $this->defaultVariantScopesResolver,
             $this->slugGenerator,
             $this->messageProducer,
+            $this->messageFactory,
             $this->logger
         );
     }
@@ -95,20 +106,28 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit_Framework_TestCase
         $contentNodeId = 42;
         $webCatalog = $this->getEntity(WebCatalog::class, ['id' => 2]);
         $contentNode = $this->getEntity(ContentNode::class, ['id' => $contentNodeId, 'webCatalog' => $webCatalog]);
-
+        $body = [
+            ResolveNodeSlugsMessageFactory::ID => $contentNodeId,
+            ResolveNodeSlugsMessageFactory::CREATE_REDIRECT => true
+        ];
+        
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->once())
             ->method('getBody')
-            ->willReturn("{$contentNodeId}");
+            ->willReturn(JSON::encode($body));
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
-        $em->expects($this->once())
-            ->method('find')
-            ->with(ContentNode::class, $contentNodeId)
+        $this->messageFactory->expects($this->once())
+            ->method('getEntityFromMessage')
+            ->with($body)
             ->willReturn($contentNode);
+        $this->messageFactory->expects($this->once())
+            ->method('getCreateRedirectFromMessage')
+            ->with($body)
+            ->willReturn(true);
 
         $this->defaultVariantScopesResolver->expects($this->once())
             ->method('resolve')
@@ -116,7 +135,7 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->slugGenerator->expects($this->once())
             ->method('generate')
-            ->with($contentNode);
+            ->with($contentNode, true);
         $this->messageProducer->expects($this->once())
             ->method('send')
             ->with(Topics::CALCULATE_WEB_CATALOG_CACHE, 2);
@@ -148,19 +167,28 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit_Framework_TestCase
         $contentNodeId = 42;
         $contentNode = $this->getEntity(ContentNode::class, ['id' => $contentNodeId, 'webCatalog' => new WebCatalog()]);
 
+        $body = [
+            ResolveNodeSlugsMessageFactory::ID => $contentNodeId,
+            ResolveNodeSlugsMessageFactory::CREATE_REDIRECT => true
+        ];
+
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->exactly(2))
             ->method('getBody')
-            ->willReturn("{$contentNodeId}");
+            ->willReturn(JSON::encode($body));
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
-        $em->expects($this->once())
-            ->method('find')
-            ->with(ContentNode::class, $contentNodeId)
+        $this->messageFactory->expects($this->once())
+            ->method('getEntityFromMessage')
+            ->with($body)
             ->willReturn($contentNode);
+        $this->messageFactory->expects($this->once())
+            ->method('getCreateRedirectFromMessage')
+            ->with($body)
+            ->willReturn(true);
 
         $this->defaultVariantScopesResolver->expects($this->once())
             ->method('resolve')

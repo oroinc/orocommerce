@@ -3,11 +3,11 @@
 namespace Oro\Bundle\CMSBundle\Form\Type;
 
 use Oro\Bundle\CMSBundle\Entity\Page;
-use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
-use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
-use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
-use Symfony\Component\Form\AbstractType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
+use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
+
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -45,12 +45,11 @@ class PageType extends AbstractType
                 ]
             )
             ->add(
-                'slugPrototypes',
-                LocalizedSlugType::NAME,
+                'slugPrototypesWithRedirect',
+                LocalizedSlugWithRedirectType::NAME,
                 [
                     'label'    => 'oro.cms.page.slug_prototypes.label',
                     'required' => false,
-                    'options'  => ['constraints' => [new UrlSafe()]],
                     'slug_suggestion_enabled' => true,
                     'source_field' => 'titles',
                     'create_redirect_enabled' => true

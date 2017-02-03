@@ -86,6 +86,7 @@ services:
         class: Oro\Bundle\RedirectBundle\Model\DirectUrlMessageFactory
         arguments:
             - '@doctrine'
+            - '@oro_config.manager'
 
     oro_redirect.async.direct_url_processor:
         class: Oro\Bundle\RedirectBundle\Async\DirectUrlProcessor

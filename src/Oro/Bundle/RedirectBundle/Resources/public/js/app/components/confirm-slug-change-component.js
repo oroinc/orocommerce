@@ -22,7 +22,7 @@ define(function(require) {
         /**
          * @property {Object}
          */
-        requiredOptions: ['slugFields', 'createRedirectCheckbox'],
+        requiredOptions: ['slugFields', 'createRedirectCheckbox', 'disabled'],
 
         /**
          * @property {Object}
@@ -38,6 +38,11 @@ define(function(require) {
          * @property {Object}
          */
         $createRedirectCheckbox: null,
+
+        /**
+         * @property {Boolean}
+         */
+        disabled: false,
 
         /**
          * @property {Boolean}
@@ -65,11 +70,14 @@ define(function(require) {
         },
 
         initializeElements: function() {
-            this.$form = this.options._sourceElement.closest('form');
-            this.$slugFields = this.$form.find(this.options.slugFields).filter(this.options.textFieldSelector);
-            this.$createRedirectCheckbox = this.$form.find(this.options.createRedirectCheckbox);
-            this._saveSlugFieldsInitialState();
-            this.$form.on('submit', _.bind(this.onSubmit, this));
+            this.disabled = this.options.disabled;
+            if (!this.disabled) {
+                this.$form = this.options._sourceElement.closest('form');
+                this.$slugFields = this.$form.find(this.options.slugFields).filter(this.options.textFieldSelector);
+                this.$createRedirectCheckbox = this.$form.find(this.options.createRedirectCheckbox);
+                this._saveSlugFieldsInitialState();
+                this.$form.on('submit', _.bind(this.onSubmit, this));
+            }
         },
 
         /**
@@ -117,6 +125,10 @@ define(function(require) {
          * @inheritDoc
          */
         dispose: function() {
+            if (this.disabled) {
+                return;
+            }
+
             if (this.disposed) {
                 return;
             }
@@ -145,7 +157,7 @@ define(function(require) {
         _isSlugFieldsChanged: function() {
             var isChanged = false;
             this.$slugFields.each(_.bind(function(index, item) {
-                if(this.slugFieldsInitialState[index] !== $(item).val()) {
+                if (this.slugFieldsInitialState[index] !== $(item).val()) {
                     isChanged = true;
                     return false;
                 }
@@ -162,14 +174,25 @@ define(function(require) {
             var list = '';
             this.$slugFields.each(_.bind(function(index, item) {
                 if (this.slugFieldsInitialState[index] !== $(item).val()) {
-                    list += '\n' + __(
-                            'oro.redirect.confirm_slug_change.changed_slug_item',
-                            {
-                                'old_slug': this.slugFieldsInitialState[index],
-                                'new_slug': $(item).val(),
-                                'purpose': this._getSlugPurpose($(item))
-                            }
-                        );
+                    var purpose = this._getSlugPurpose($(item));
+                    if (purpose) {
+                        list += '\n' + __(
+                                'oro.redirect.confirm_slug_change.changed_localized_slug_item',
+                                {
+                                    'old_slug': this.slugFieldsInitialState[index],
+                                    'new_slug': $(item).val(),
+                                    'purpose': purpose
+                                }
+                            );
+                    } else {
+                        list += '\n' + __(
+                                'oro.redirect.confirm_slug_change.changed_slug_item',
+                                {
+                                    'old_slug': this.slugFieldsInitialState[index],
+                                    'new_slug': $(item).val()
+                                }
+                            );
+                    }
                 }
             }, this));
             return list;

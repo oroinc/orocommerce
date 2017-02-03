@@ -52,7 +52,7 @@
     {% endif %}
 
     {% set generalData = generalData|merge([
-        form_row(form.slugPrototypes),
+        form_row(form.slugPrototypesWithRedirect),
         form_row(form.status)
     ]) %}
 

@@ -29,4 +29,10 @@ interface MessageFactoryInterface
      * @return string
      */
     public function getEntityClassFromMessage($data);
+
+    /**
+     * @param array $data
+     * @return bool
+     */
+    public function getCreateRedirectFromMessage($data);
 }

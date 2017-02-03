@@ -1,8 +1,6 @@
 services:
     oro_redirect.form.type.localized_slug:
         class: 'Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType'
-        arguments:
-            - '@oro_config.manager'
         tags:
             - { name: form.type, alias: oro_redirect_localized_slug }
 
@@ -10,3 +8,10 @@ services:
         class: 'Oro\Bundle\RedirectBundle\Form\Type\SlugType'
         tags:
             - { name: form.type, alias: oro_redirect_slug }
+
+    oro_redirect.form.type.localized_slug_with_redirect:
+        class: Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType
+        arguments:
+            - '@oro_config.manager'
+        tags:
+            - { name: form.type, alias: oro_redirect_localized_slug_with_redirect }

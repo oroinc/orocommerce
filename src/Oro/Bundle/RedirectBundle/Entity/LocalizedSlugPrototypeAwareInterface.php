@@ -4,6 +4,7 @@ namespace Oro\Bundle\RedirectBundle\Entity;
 
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 
 interface LocalizedSlugPrototypeAwareInterface
 {
@@ -31,4 +32,16 @@ interface LocalizedSlugPrototypeAwareInterface
      * @return bool
      */
     public function hasSlugPrototype(LocalizedFallbackValue $slugPrototype);
+
+    /**
+     * @return SlugPrototypesWithRedirect
+     */
+    public function getSlugPrototypesWithRedirect();
+
+    /**
+     * @param SlugPrototypesWithRedirect $slugPrototypesWithRedirect
+     *
+     * @return $this
+     */
+    public function setSlugPrototypesWithRedirect(SlugPrototypesWithRedirect $slugPrototypesWithRedirect);
 }

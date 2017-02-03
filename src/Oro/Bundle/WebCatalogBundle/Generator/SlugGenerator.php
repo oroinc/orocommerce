@@ -32,8 +32,9 @@ class SlugGenerator
 
     /**
      * @param ContentNode $contentNode
+     * @param bool $createRedirect
      */
-    public function generate(ContentNode $contentNode)
+    public function generate(ContentNode $contentNode, $createRedirect = false)
     {
         if ($contentNode->getParentNode()) {
             $slugUrls = $this->prepareSlugUrls($contentNode);
