@@ -9,42 +9,114 @@ use Oro\Bundle\EntityConfigBundle\Event\BeforeRemoveFieldEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\EventListener\BeforeRemoveFieldListener;
 
+use Symfony\Component\Translation\TranslatorInterface;
+
 class BeforeRemoveFieldListenerTest extends \PHPUnit_Framework_TestCase
 {
-    // @codingStandardsIgnoreStart
+    /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
+    private $doctrineHelper;
+
+    /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject */
+    private $entityRepository;
+
+    /** @var BeforeRemoveFieldListener */
+    private $listener;
+
+    /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject */
+    private $translator;
+
     /**
-     * @return array
+     * {@inheritdoc}
      */
-    public function onBeforeRemoveFieldDataProvider()
+    public function setUp()
     {
-        return [
-            'Class unsupported' => [
-                'className' => \stdClass::class,
-                'fieldName' => '',
-                'expected' => [
-                    'hasErrors' => false,
-                    'validationMessage' => '',
-                ],
-            ],
-            'Class supported, field is used' => [
-                'className' => Product::class,
-                'fieldName' => 'color',
-                'expected' => [
-                    'hasErrors' => true,
-                    'validationMessage' => 'Cannot remove field because it\'s used as a variant field in the following configurable products: CNFPRD1, CNFPRD3',
-                ],
-            ],
-            'Class supported, field is not used' => [
-                'className' => Product::class,
-                'fieldName' => 'unused_field',
-                'expected' => [
-                    'hasErrors' => false,
-                    'validationMessage' => '',
-                ],
-            ],
-        ];
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+
+        $this->entityRepository = $this->createMock(EntityRepository::class);
+
+        $this->translator = $this->createMock(TranslatorInterface::class);
+
+        $this->listener = new BeforeRemoveFieldListener($this->doctrineHelper, $this->translator);
     }
-    // @codingStandardsIgnoreEnd
+
+    /**
+     * {@inheritdoc}
+     */
+    public function tearDown()
+    {
+        unset(
+            $this->doctrineHelper,
+            $this->entityRepository,
+            $this->translator,
+            $this->listener
+        );
+    }
+
+    public function testOnBeforeRemoveFieldUnsupportedClass()
+    {
+        $event = new BeforeRemoveFieldEvent(\stdClass::class, '');
+
+        $this->entityRepository->expects($this->never())->method('findBy');
+
+        $this->listener->onBeforeRemoveField($event);
+    }
+
+    public function testOnBeforeRemoveFieldIsUsed()
+    {
+        $event = new BeforeRemoveFieldEvent(Product::class, 'color');
+        $this->assertEquals([], $event->getValidationMessages());
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityRepository')
+            ->with(Product::class)
+            ->willReturn($this->entityRepository);
+
+        $this->entityRepository->expects($this->once())
+            ->method('findBy')
+            ->with([
+                'type' => Product::TYPE_CONFIGURABLE
+            ])
+            ->willReturn($this->getConfigurableProducts());
+
+        // @codingStandardsIgnoreStart
+        $message = 'Cannot remove field because it\'s used as a variant field in the following configurable products: CNFPRD1, CNFPRD3';
+        // @codingStandardsIgnoreEnd
+
+        $this->translator->expects($this->once())
+            ->method('trans')
+            ->with('oro.product.field_is_used_as_variant_field.message', [
+                '%skuList%' => 'CNFPRD1, CNFPRD3',
+            ])
+            ->willReturn($message);
+
+        $this->listener->onBeforeRemoveField($event);
+
+        $this->assertEquals([$message], $event->getValidationMessages());
+    }
+
+    public function testOnBeforeRemoveFieldNotUsed()
+    {
+        $event = new BeforeRemoveFieldEvent(Product::class, 'unused_field');
+        $this->assertEquals([], $event->getValidationMessages());
+
+        $this->doctrineHelper->expects($this->once())
+            ->method('getEntityRepository')
+            ->with(Product::class)
+            ->willReturn($this->entityRepository);
+
+        $this->entityRepository->expects($this->once())
+            ->method('findBy')
+            ->with([
+                'type' => Product::TYPE_CONFIGURABLE
+            ])
+            ->willReturn($this->getConfigurableProducts());
+
+        $this->translator->expects($this->never())->method('trans');
+
+        $this->listener->onBeforeRemoveField($event);
+
+        $this->assertEquals([], $event->getValidationMessages());
+    }
 
     /**
      * @return Product[]
@@ -82,45 +154,5 @@ class BeforeRemoveFieldListenerTest extends \PHPUnit_Framework_TestCase
             $product2,
             $product3,
         ];
-    }
-
-    /**
-     * @param string $className
-     * @param string $fieldName
-     * @param array $expected
-     * @dataProvider onBeforeRemoveFieldDataProvider
-     */
-    public function testOnBeforeRemoveField($className, $fieldName, array $expected)
-    {
-        $doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $listener = new BeforeRemoveFieldListener($doctrineHelper);
-
-        $event = new BeforeRemoveFieldEvent($className, $fieldName);
-        $this->assertFalse($event->hasErrors());
-        $this->assertEquals('', $event->getValidationMessage());
-
-        $entityRepository = $this->getMockBuilder(EntityRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $doctrineHelper->expects($this->any())
-            ->method('getEntityRepository')
-            ->with(Product::class)
-            ->willReturn($entityRepository);
-
-        $entityRepository->expects($this->any())
-            ->method('findBy')
-            ->with([
-                'type' => Product::TYPE_CONFIGURABLE
-            ])
-            ->willReturn($this->getConfigurableProducts());
-
-        $listener->onBeforeRemoveField($event);
-
-        $this->assertEquals($expected['hasErrors'], $event->hasErrors());
-        $this->assertEquals($expected['validationMessage'], $event->getValidationMessage());
     }
 }

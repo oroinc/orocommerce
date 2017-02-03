@@ -6,17 +6,24 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Event\BeforeRemoveFieldEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
+use Symfony\Component\Translation\TranslatorInterface;
+
 class BeforeRemoveFieldListener
 {
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
+    /** @var TranslatorInterface */
+    protected $translator;
+
     /**
      * @param DoctrineHelper $doctrineHelper
+     * @param TranslatorInterface $translator
      */
-    public function __construct(DoctrineHelper $doctrineHelper)
+    public function __construct(DoctrineHelper $doctrineHelper, TranslatorInterface $translator)
     {
         $this->doctrineHelper = $doctrineHelper;
+        $this->translator = $translator;
     }
 
     /**
@@ -38,17 +45,16 @@ class BeforeRemoveFieldListener
 
         foreach ($configurableProducts as $configurableProduct) {
             if (in_array($fieldName, $configurableProduct->getVariantFields())) {
-                $event->setHasErrors(true);
                 $skuList[] = $configurableProduct->getSku();
             }
         }
 
-        if ($event->hasErrors()) {
-            $event->setValidationMessage(sprintf(
-                '%s%s',
-                'Cannot remove field because it\'s used as a variant field in the following configurable products: ',
-                implode(', ', array_unique($skuList))
-            ));
+        if ($skuList) {
+            $event->addValidationMessage(
+                $this->translator->trans('oro.product.field_is_used_as_variant_field.message', [
+                    '%skuList%' => implode(', ', array_unique($skuList)),
+                ])
+            );
         }
     }
 }

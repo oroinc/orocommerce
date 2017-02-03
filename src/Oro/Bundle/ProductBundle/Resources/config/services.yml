@@ -734,5 +734,6 @@ services:
         class: 'Oro\Bundle\ProductBundle\EventListener\BeforeRemoveFieldListener'
         arguments:
             - '@oro_entity.doctrine_helper'
+            - '@translator'
         tags:
             - { name: kernel.event_listener, event: oro.entity_config.field.before_remove, method: onBeforeRemoveField }
