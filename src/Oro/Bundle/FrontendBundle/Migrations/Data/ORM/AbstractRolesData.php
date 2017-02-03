@@ -3,17 +3,15 @@
 namespace Oro\Bundle\FrontendBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
-
+use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
+use Oro\Bundle\UserBundle\Entity\AbstractRole;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Security\Acl\Model\SecurityIdentityInterface;
 use Symfony\Component\Yaml\Yaml;
-
-use Oro\Bundle\SecurityBundle\Acl\Persistence\AclManager;
-use Oro\Bundle\UserBundle\Entity\AbstractRole;
 
 abstract class AbstractRolesData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
@@ -25,7 +23,7 @@ abstract class AbstractRolesData extends AbstractFixture implements DependentFix
     protected $container;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function setContainer(ContainerInterface $container = null)
     {
@@ -33,7 +31,7 @@ abstract class AbstractRolesData extends AbstractFixture implements DependentFix
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function load(ObjectManager $manager)
     {
@@ -69,21 +67,24 @@ abstract class AbstractRolesData extends AbstractFixture implements DependentFix
     /**
      * @param string $name
      * @param string $label
+     *
      * @return AbstractRole
      */
     abstract protected function createEntity($name, $label);
 
     /**
+     * @param array|null $bundles
+     *
      * @return array
      */
-    protected function loadRolesData()
+    protected function loadRolesData(array $bundles = null)
     {
         /** @var Kernel $kernel */
         $kernel = $this->container->get('kernel');
-        $bundles = array_keys($this->container->getParameter('kernel.bundles'));
+        $bundlesForRoles = $bundles ?: array_keys($this->container->getParameter('kernel.bundles'));
 
         $rolesData = [];
-        foreach ($bundles as $bundle) {
+        foreach ($bundlesForRoles as $bundle) {
             $fileName = $this->getFileName($bundle);
             try {
                 foreach ($kernel->locateResource($fileName, null, false) as $file) {
@@ -98,6 +99,7 @@ abstract class AbstractRolesData extends AbstractFixture implements DependentFix
 
     /**
      * @param string $bundle
+     *
      * @return string
      */
     protected function getFileName($bundle)
@@ -106,7 +108,7 @@ abstract class AbstractRolesData extends AbstractFixture implements DependentFix
     }
 
     /**
-     * @param AclManager $aclManager
+     * @param AclManager                $aclManager
      * @param SecurityIdentityInterface $sid
      */
     protected function setPermissionGroup(AclManager $aclManager, SecurityIdentityInterface $sid)
@@ -123,9 +125,9 @@ abstract class AbstractRolesData extends AbstractFixture implements DependentFix
     }
 
     /**
-     * @param AclManager $aclManager
+     * @param AclManager                $aclManager
      * @param SecurityIdentityInterface $sid
-     * @param array $permissions
+     * @param array                     $permissions
      */
     protected function setPermissions(AclManager $aclManager, SecurityIdentityInterface $sid, array $permissions)
     {
