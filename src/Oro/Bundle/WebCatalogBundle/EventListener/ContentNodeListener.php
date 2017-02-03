@@ -8,6 +8,7 @@ use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\WebCatalogBundle\Async\Topics;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Model\ContentNodeMaterializedPathModifier;
+use Oro\Bundle\WebCatalogBundle\Model\ResolveNodeSlugsMessageFactory;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 class ContentNodeListener
@@ -28,18 +29,26 @@ class ContentNodeListener
     protected $messageProducer;
 
     /**
+     * @var ResolveNodeSlugsMessageFactory
+     */
+    protected $messageFactory;
+
+    /**
      * @param ContentNodeMaterializedPathModifier $modifier
      * @param ExtraActionEntityStorageInterface $storage
      * @param MessageProducerInterface $messageProducer
+     * @param ResolveNodeSlugsMessageFactory $messageFactory
      */
     public function __construct(
         ContentNodeMaterializedPathModifier $modifier,
         ExtraActionEntityStorageInterface $storage,
-        MessageProducerInterface $messageProducer
+        MessageProducerInterface $messageProducer,
+        ResolveNodeSlugsMessageFactory $messageFactory
     ) {
         $this->modifier = $modifier;
         $this->storage = $storage;
         $this->messageProducer = $messageProducer;
+        $this->messageFactory = $messageFactory;
     }
 
     /**
@@ -94,6 +103,6 @@ class ContentNodeListener
      */
     protected function scheduleContentNodeRecalculation(ContentNode $contentNode)
     {
-        $this->messageProducer->send(Topics::RESOLVE_NODE_SLUGS, $contentNode->getId());
+        $this->messageProducer->send(Topics::RESOLVE_NODE_SLUGS, $this->messageFactory->createMessage($contentNode));
     }
 }

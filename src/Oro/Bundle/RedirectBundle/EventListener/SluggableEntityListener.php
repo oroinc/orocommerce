@@ -79,11 +79,12 @@ class SluggableEntityListener
             foreach ($this->getLocalizedValues($unitOfWork) as $localizedFallbackValue) {
                 if ($sluggableEntity->hasSlugPrototype($localizedFallbackValue)) {
                     $result[] = $sluggableEntity;
+                    break;
                 }
             }
         }
 
-        return array_unique($result, SORT_REGULAR);
+        return $result;
     }
 
     /**

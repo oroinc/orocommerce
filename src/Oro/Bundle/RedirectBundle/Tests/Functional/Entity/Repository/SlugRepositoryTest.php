@@ -7,6 +7,7 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Tests\Functional\DataFixtures\LoadSlugScopesData;
 use Oro\Bundle\RedirectBundle\Tests\Functional\DataFixtures\LoadSlugsData;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
@@ -15,6 +16,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @dbIsolation
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class SlugRepositoryTest extends WebTestCase
 {
@@ -121,5 +123,82 @@ class SlugRepositoryTest extends WebTestCase
         $slug = $this->repository->getSlugByUrlAndScopeCriteria(LoadSlugsData::SLUG_TEST_DUPLICATE_URL, $criteria);
         $expected = $this->getReference(LoadSlugsData::SLUG_TEST_DUPLICATE_REFERENCE);
         $this->assertSame($expected, $slug);
+    }
+
+    public function testFindOneBySlugWithoutScopes()
+    {
+        $actual = $this->repository->findOneBySlugWithoutScopes('/slug/first');
+
+        $this->assertNotEmpty($actual);
+        $this->assertEquals($this->getReference('reference:/slug/first')->getId(), $actual->getId());
+    }
+
+    public function testFindOneBySlugWithoutScopesScopedSlug()
+    {
+        $actual = $this->repository->findOneBySlugWithoutScopes('/slug/page');
+
+        $this->assertEmpty($actual);
+    }
+
+    public function testFindOneBySlugWithoutScopesWithRestriction()
+    {
+        $restrictedEntity = $this->createMock(SluggableInterface::class);
+        $restrictedEntity->expects($this->once())
+            ->method('getSlugs')
+            ->willReturn([$this->getReference('reference:/slug/first')]);
+
+        $actual = $this->repository->findOneBySlugWithoutScopes('/slug/first', $restrictedEntity);
+        $this->assertEmpty($actual);
+    }
+
+    /**
+     * @dataProvider findAllByPatternWithoutScopeDataProvider
+     * @param string $pattern
+     * @param array $expected
+     */
+    public function testFindAllByPatternWithoutScopes($pattern, array $expected)
+    {
+        $actual = $this->repository->findAllByPatternWithoutScopes($pattern);
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * @return array
+     */
+    public function findAllByPatternWithoutScopeDataProvider()
+    {
+        return [
+            [
+                'pattern' => '/slug/f%',
+                'expected' => [
+                    '/slug/first'
+                ]
+            ],
+            [
+                'pattern' => '/slug%',
+                'expected' => [
+                    '/slug/anonymous',
+                    '/slug/first',
+                ]
+            ]
+        ];
+    }
+
+    public function testFindAllByPatternWithoutScopesWithRestriction()
+    {
+        $restrictedEntity = $this->createMock(SluggableInterface::class);
+        $restrictedEntity->expects($this->once())
+            ->method('getSlugs')
+            ->willReturn([$this->getReference('reference:/slug/first')]);
+
+        $actual = $this->repository->findAllByPatternWithoutScopes('/slug/f%', $restrictedEntity);
+        $this->assertEmpty($actual);
+    }
+
+    public function testFindAllByPatternWithoutScopesScopedSlug()
+    {
+        $actual = $this->repository->findAllByPatternWithoutScopes('/slug/page');
+
+        $this->assertEmpty($actual);
     }
 }

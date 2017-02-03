@@ -92,8 +92,8 @@
         {% endset %}
     {% endif %}
 
-    {% if form.slugPrototypes is defined %}
-        {% set formRows = formRows|merge([form_row(form.slugPrototypes)]) %}
+    {% if form.slugPrototypesWithRedirect is defined %}
+        {% set formRows = formRows|merge([form_row(form.slugPrototypesWithRedirect)]) %}
     {% endif %}
 
     {% set dataBlocks = [

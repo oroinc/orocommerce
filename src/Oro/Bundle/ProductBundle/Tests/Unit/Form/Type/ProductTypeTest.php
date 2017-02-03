@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
@@ -37,6 +38,7 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ImageTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductCustomVariantFieldsCollectionTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
+use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
@@ -175,6 +177,10 @@ class ProductTypeTest extends FormIntegrationTestCase
         $customFieldProvider->expects($this->any())
             ->method('getEntityCustomFields')
             ->willReturn($this->exampleCustomFields);
+        /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject $configManager */
+        $configManager = $this->getMockBuilder(ConfigManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         return [
             new PreloadedExtension(
@@ -205,6 +211,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                     ProductImageType::NAME => new ProductImageType(),
                     LocalizedSlugType::NAME => new LocalizedSlugTypeStub(),
                     ProductVariantFieldType::NAME => new ProductVariantFieldType(),
+                    LocalizedSlugWithRedirectType::NAME => new LocalizedSlugWithRedirectType($configManager),
                 ],
                 [
                     'form' => [
@@ -265,7 +272,10 @@ class ProductTypeTest extends FormIntegrationTestCase
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
                     'type' => Product::TYPE_SIMPLE,
-                    'slugPrototypes' => [['string' => 'slug']]
+                    'slugPrototypesWithRedirect' => [
+                        'slugPrototypes' => [['string' => 'slug']],
+                        'createRedirect' => true,
+                    ],
                 ],
                 'expectedData'  => $this->createExpectedProductEntity()
                     ->addSlugPrototype((new LocalizedFallbackValue())->setString('slug')),
@@ -289,6 +299,9 @@ class ProductTypeTest extends FormIntegrationTestCase
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
                     'type' => Product::TYPE_SIMPLE,
+                    'slugPrototypesWithRedirect' => [
+                        'createRedirect' => true,
+                    ],
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(true),
                 'rounding' => false
@@ -314,6 +327,9 @@ class ProductTypeTest extends FormIntegrationTestCase
                         ['text' => 'first short description'],
                         ['text' => 'second short description'],
                     ],
+                    'slugPrototypesWithRedirect' => [
+                        'createRedirect' => true,
+                    ],
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(false, true),
                 'rounding' => false
@@ -327,6 +343,9 @@ class ProductTypeTest extends FormIntegrationTestCase
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
                     'type' => Product::TYPE_SIMPLE,
+                    'slugPrototypesWithRedirect' => [
+                        'createRedirect' => true,
+                    ],
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(false, false),
                 'rounding' => false
@@ -340,7 +359,10 @@ class ProductTypeTest extends FormIntegrationTestCase
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
                     'type' => Product::TYPE_SIMPLE,
-                    'images' => $this->images
+                    'images' => $this->images,
+                    'slugPrototypesWithRedirect' => [
+                        'createRedirect' => true,
+                    ],
                 ],
                 'expectedData'  => $this->createExpectedProductEntity(false, false),
                 'rounding' => false
@@ -354,7 +376,10 @@ class ProductTypeTest extends FormIntegrationTestCase
                     'visible' => 1,
                     'status' => Product::STATUS_DISABLED,
                     'type' => Product::TYPE_CONFIGURABLE,
-                    'variantFields' => $this->submitCustomFields
+                    'variantFields' => $this->submitCustomFields,
+                    'slugPrototypesWithRedirect' => [
+                        'createRedirect' => true,
+                    ],
                 ],
                 'expectedData' => $this->createExpectedProductEntity(false, false, true)
                     ->setType(Product::TYPE_CONFIGURABLE),

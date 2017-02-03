@@ -1,29 +1,20 @@
 {% block oro_redirect_localized_slug_row %}
-        {% if form.vars.localized_slug_component is defined %}
-            <div
-                    data-page-component-module="{{ form.vars.localized_slug_component }}"
-                    data-page-component-options="{{ form.vars.localized_slug_component_options|json_encode }}"
-            >
-        {% endif %}
-            <div class="control-group">
-                <div class="control-label wrap">
-                    {{ form_label(form) }}
-                </div>
-                <div class="controls">
-                    {{ form_widget(form.values) }}
-                    {{ form_errors(form.values) }}
-                    {{ form_widget(form.ids) }}
-                    {{ form_errors(form.ids) }}
-                </div>
+    <div
+            data-page-component-module="ororedirect/js/app/components/localized-field-slugify-component"
+            data-page-component-options="{{ form.vars.slugify_component_options|json_encode }}"
+    >
+        <div class="control-group">
+            <div class="control-label wrap">
+                {{ form_label(form) }}
             </div>
-            {% if form.createRedirect is defined %}
-                <div class="hide">
-                    {{ form_row(form.createRedirect) }}
-                </div>
-            {% endif %}
-        {% if form.vars.localized_slug_component is defined %}
+            <div class="controls">
+                {{ form_widget(form.values) }}
+                {{ form_errors(form.values) }}
+                {{ form_widget(form.ids) }}
+                {{ form_errors(form.ids) }}
             </div>
-        {% endif %}
+        </div>
+    </div>
 {% endblock %}
 
 {% block oro_redirect_slug_widget %}
@@ -33,4 +24,16 @@
     >
         {{ form_widget(form) }}
     </div>
+{% endblock %}
+
+{% block oro_redirect_localized_slug_with_redirect_widget %}
+    {{ form_widget(form.slugPrototypes) }}
+    {% if form.createRedirect is defined %}
+        <div class="hide"
+            data-page-component-module="ororedirect/js/app/components/confirm-slug-change-component"
+            data-page-component-options="{{ form.vars.confirm_slug_change_component_options|json_encode }}"
+        >
+            {{ form_widget(form.createRedirect) }}
+        </div>
+    {% endif %}
 {% endblock %}

@@ -20,14 +20,22 @@ class SlugEntityGenerator
     protected $routingInformationProvider;
 
     /**
+     * @var UniqueSlugResolver
+     */
+    protected $slugResolver;
+
+    /**
      * @param RoutingInformationProviderInterface $routingInformationProvider
+     * @param UniqueSlugResolver $slugResolver
      * @param RedirectGenerator $redirectGenerator
      */
     public function __construct(
         RoutingInformationProviderInterface $routingInformationProvider,
+        UniqueSlugResolver $slugResolver,
         RedirectGenerator $redirectGenerator
     ) {
         $this->routingInformationProvider = $routingInformationProvider;
+        $this->slugResolver = $slugResolver;
         $this->redirectGenerator = $redirectGenerator;
     }
 
@@ -37,18 +45,20 @@ class SlugEntityGenerator
      */
     public function generate(SluggableInterface $entity, $generateRedirects = false)
     {
-        $slugUrls = $this->getSlugUrls($entity);
+        $slugUrls = $this->getResolvedSlugUrls($entity);
 
         $toRemove = [];
+
         foreach ($entity->getSlugs() as $slug) {
             $localizationId = $this->getLocalizationId($slug->getLocalization());
+
             if ($slugUrls->containsKey($localizationId)) {
                 /** @var SlugUrl $slugUrl */
                 $slugUrl = $slugUrls->get($localizationId);
 
                 $previousSlugUrl = $slug->getUrl();
-                $updatedSlug = $slugUrl->getUrl();
-                $slug->setUrl($updatedSlug);
+                $updatedUrl = $slugUrl->getUrl();
+                $slug->setUrl($updatedUrl);
 
                 if ($generateRedirects) {
                     $this->redirectGenerator->generate($previousSlugUrl, $slug);
@@ -157,6 +167,21 @@ class SlugEntityGenerator
         $slug->setRouteParameters($routeData->getRouteParameters());
 
         return $slug;
+    }
+
+    /**
+     * @param SluggableInterface $entity
+     * @return Collection|SlugUrl[]
+     */
+    private function getResolvedSlugUrls(SluggableInterface $entity)
+    {
+        $slugUrls = $this->getSlugUrls($entity);
+
+        foreach ($slugUrls as $slugUrl) {
+            $slugUrl->setUrl($this->slugResolver->resolve($slugUrl, $entity));
+        }
+
+        return $slugUrls;
     }
 
     /**

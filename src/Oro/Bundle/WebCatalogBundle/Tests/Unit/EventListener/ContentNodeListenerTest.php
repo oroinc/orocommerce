@@ -9,6 +9,7 @@ use Oro\Bundle\WebCatalogBundle\Async\Topics;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\EventListener\ContentNodeListener;
 use Oro\Bundle\WebCatalogBundle\Model\ContentNodeMaterializedPathModifier;
+use Oro\Bundle\WebCatalogBundle\Model\ResolveNodeSlugsMessageFactory;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -36,6 +37,11 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
      */
     protected $messageProducer;
 
+    /**
+     * @var ResolveNodeSlugsMessageFactory|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $messageFactory;
+
     protected function setUp()
     {
         $this->modifier = $this->getMockBuilder(ContentNodeMaterializedPathModifier::class)
@@ -44,11 +50,15 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->storage = $this->createMock(ExtraActionEntityStorageInterface::class);
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);
+        $this->messageFactory = $this->getMockBuilder(ResolveNodeSlugsMessageFactory::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->contentNodeListener = new ContentNodeListener(
             $this->modifier,
             $this->storage,
-            $this->messageProducer
+            $this->messageProducer,
+            $this->messageFactory
         );
     }
 
@@ -110,9 +120,13 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
     {
         $contentNode = $this->getEntity(ContentNode::class, ['id' => 1]);
 
+        $this->messageFactory->expects($this->once())
+            ->method('createMessage')
+            ->with($contentNode)
+            ->willReturn([]);
         $this->messageProducer->expects($this->once())
             ->method('send')
-            ->with(Topics::RESOLVE_NODE_SLUGS, $contentNode->getId());
+            ->with(Topics::RESOLVE_NODE_SLUGS, []);
 
         /** @var AfterFormProcessEvent|\PHPUnit_Framework_MockObject_MockObject $event */
         $event = $this->getMockBuilder(AfterFormProcessEvent::class)
@@ -130,9 +144,13 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
         /** @var ContentNode $contentNode */
         $contentNode = $this->getEntity(ContentNode::class, ['id' => 1]);
 
+        $this->messageFactory->expects($this->once())
+            ->method('createMessage')
+            ->with($contentNode)
+            ->willReturn([]);
         $this->messageProducer->expects($this->once())
             ->method('send')
-            ->with(Topics::RESOLVE_NODE_SLUGS, $contentNode->getId());
+            ->with(Topics::RESOLVE_NODE_SLUGS, []);
 
         $this->contentNodeListener->postRemove($contentNode);
     }

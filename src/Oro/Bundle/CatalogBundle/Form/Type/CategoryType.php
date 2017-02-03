@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\CatalogBundle\Form\Type;
 
-use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
-use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
@@ -12,6 +10,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 
 class CategoryType extends AbstractType
 {
@@ -145,12 +144,11 @@ class CategoryType extends AbstractType
                 ]
             )
             ->add(
-                'slugPrototypes',
-                LocalizedSlugType::NAME,
+                'slugPrototypesWithRedirect',
+                LocalizedSlugWithRedirectType::NAME,
                 [
                     'label'    => 'oro.catalog.category.slug_prototypes.label',
                     'required' => false,
-                    'options'  => ['constraints' => [new UrlSafe()]],
                     'source_field' => 'titles',
                 ]
             );

@@ -3,5 +3,4 @@ config:
         'ororedirect/js/app/components/text-field-slugify-component': 'bundles/ororedirect/js/app/components/text-field-slugify-component.js'
         'ororedirect/js/app/components/localized-field-slugify-component': 'bundles/ororedirect/js/app/components/localized-field-slugify-component.js'
         'ororedirect/js/app/components/confirm-slug-change-component': 'bundles/ororedirect/js/app/components/confirm-slug-change-component.js'
-        'ororedirect/js/app/components/localized-slug-component': 'bundles/ororedirect/js/app/components/localized-slug-component.js'
         'ororedirect/js/confirm-slug-change-modal': 'bundles/ororedirect/js/confirm-slug-change-modal.js'

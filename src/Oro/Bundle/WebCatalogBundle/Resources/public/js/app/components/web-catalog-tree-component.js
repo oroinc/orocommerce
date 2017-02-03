@@ -116,7 +116,7 @@ define(function(require) {
             var urls;
             $.ajax({
                 async: false,
-                url: routing.generate('oro_content_node_get_possible_urls',{id: nodeId, newParentId: newParentId}),
+                url: routing.generate('oro_content_node_get_possible_urls', {id: nodeId, newParentId: newParentId}),
                 success: _.bind(function(result) {
                     urls = result;
                 }, this)

@@ -57,11 +57,11 @@ define(function(require) {
          * @private
          */
         _initEvents: function() {
-            this.$el.on('change', this.options.confirmCreateRedirectSelector, _.bind(function(event){
+            this.$el.on('change', this.options.confirmCreateRedirectSelector, _.bind(function(event) {
                 this.trigger('confirm-option-changed', $(event.target).prop('checked'));
             }, this));
 
-            this.$el.on('shown', _.bind(function(){
+            this.$el.on('shown', _.bind(function() {
                 this.$el.find(this.options.confirmCreateRedirectSelector).prop('checked', this.options.confirmState);
             }, this));
         },
