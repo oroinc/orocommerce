@@ -3,17 +3,12 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\ImportExport;
 
 use Akeneo\Bundle\BatchBundle\Job\DoctrineJobRepository as BatchJobRepository;
-
 use Symfony\Component\DomCrawler\Form;
 
-use Oro\Bundle\ImportExportBundle\Async\ExportMessageProcessor;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
-use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
-use Oro\Bundle\NotificationBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Component\MessageQueue\Transport\Null\NullMessage;
-use Oro\Component\MessageQueue\Transport\SessionInterface;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageProcessTrait;
 
 /**
  * @dbIsolation
@@ -21,7 +16,7 @@ use Oro\Component\MessageQueue\Transport\SessionInterface;
  */
 class ImportExportTest extends WebTestCase
 {
-    use MessageQueueExtension;
+    use MessageProcessTrait;
 
     /**
      * @var string
@@ -97,7 +92,7 @@ class ImportExportTest extends WebTestCase
         $this->assertCount(1, $data);
         $this->assertTrue($data['success']);
 
-        $filePath = $this->processExportMessage();
+        $filePath = $this->processExportMessage($this->getContainer(), $this->client);
 
         $content = file_get_contents($filePath);
         $content = str_getcsv($content, "\n", '"', '"');
@@ -130,7 +125,7 @@ class ImportExportTest extends WebTestCase
         $this->assertCount(1, $data);
         $this->assertTrue($data['success']);
 
-        $filePath = $this->processExportMessage();
+        $filePath = $this->processExportMessage($this->getContainer(), $this->client);
 
         $locator = $this->getContainer()->get('file_locator');
         $this->assertFileEquals(
@@ -400,63 +395,5 @@ class ImportExportTest extends WebTestCase
             ->get('oro_importexport.file.file_system_operator')
             ->getTemporaryFile(end($chains))
             ->getRealPath();
-    }
-
-    /**
-     * @return string
-     */
-    protected function processExportMessage()
-    {
-        $sentMessages = $this->getSentMessages();
-        $exportMessageData = reset($sentMessages);
-        $this->tearDownMessageCollector();
-
-        $message = new NullMessage();
-        $message->setMessageId('abc');
-        $message->setBody(json_encode($exportMessageData['message']));
-
-        /** @var ExportMessageProcessor $processor */
-        $processor = $this->getContainer()->get('oro_importexport.async.export');
-        $processorResult = $processor->process($message, $this->createSessionInterfaceMock());
-
-        $this->assertEquals(ExportMessageProcessor::ACK, $processorResult);
-
-        $sentMessages = $this->getSentMessages();
-        foreach ($sentMessages as $messageData) {
-            if (Topics::SEND_NOTIFICATION_EMAIL === $messageData['topic']) {
-                break;
-            }
-        }
-
-        preg_match('/http.*\.csv/', $messageData['message']['body'], $match);
-        $urlChunks = explode('/', $match[0]);
-        $filename = end($urlChunks);
-
-        $this->client->request(
-            'GET',
-            $this->getUrl('oro_importexport_export_download', ['fileName' => $filename]),
-            [],
-            [],
-            $this->generateNoHashNavigationHeader()
-        );
-
-        $result = $this->client->getResponse();
-
-        $this->assertResponseStatusCodeEquals($result, 200);
-        $this->assertResponseContentTypeEquals($result, 'text/csv');
-        $this->assertStringStartsWith(
-            'attachment; filename="oro_pricing_product_price_',
-            $result->headers->get('Content-Disposition')
-        );
-
-        return $result->getFile()->getPathname();
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|SessionInterface
-     */
-    private function createSessionInterfaceMock()
-    {
-        return $this->createMock(SessionInterface::class);
     }
 }

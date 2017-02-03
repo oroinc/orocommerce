@@ -13,6 +13,12 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
 class CustomerViewListener
 {
+    const CUSTOMER_VIEW_TEMPLATE = 'OroSaleBundle:Customer:quote_view.html.twig';
+    const CUSTOMER_LABEL = 'oro.sale.quote.datagrid.customer.label';
+
+    const CUSTOMER_USER_VIEW_TEMPLATE = 'OroSaleBundle:CustomerUser:quote_view.html.twig';
+    const CUSTOMER_USER_LABEL = 'oro.sale.quote.datagrid.customer_user.label';
+
     /**
      * @var TranslatorInterface
      */
@@ -52,13 +58,13 @@ class CustomerViewListener
         $customer = $this->getEntityFromRequestId('OroCustomerBundle:Customer');
         if ($customer) {
             $template = $event->getEnvironment()->render(
-                'OroSaleBundle:Customer:quote_view.html.twig',
+                static::CUSTOMER_VIEW_TEMPLATE,
                 ['entity' => $customer]
             );
             $this->addRequestForQuotesBlock(
                 $event->getScrollData(),
                 $template,
-                $this->translator->trans('oro.sale.quote.datagrid.customer.label')
+                $this->translator->trans(static::CUSTOMER_LABEL)
             );
         }
     }
@@ -72,13 +78,13 @@ class CustomerViewListener
         $customer = $this->getEntityFromRequestId('OroCustomerBundle:CustomerUser');
         if ($customer) {
             $template = $event->getEnvironment()->render(
-                'OroSaleBundle:CustomerUser:quote_view.html.twig',
+                static::CUSTOMER_USER_VIEW_TEMPLATE,
                 ['entity' => $customer]
             );
             $this->addRequestForQuotesBlock(
                 $event->getScrollData(),
                 $template,
-                $this->translator->trans('oro.sale.quote.datagrid.customer_user.label')
+                $this->translator->trans(static::CUSTOMER_USER_LABEL)
             );
         }
     }
