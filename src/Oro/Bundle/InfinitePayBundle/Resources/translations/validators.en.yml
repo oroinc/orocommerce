@@ -1,0 +1,4 @@
+oro:
+    infinite_pay:
+        validators:
+            vat_id_required: 'VAT Id is required to define an EU billing address'

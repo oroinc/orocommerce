@@ -104,7 +104,7 @@ class RestCustomerTest extends AbstractRestTest
                 ],
             ],
         ];
-        $this->assertEquals($expected, $content);
+        $this->assertArraySubset($expected, $content);
     }
 
     public function testDeleteByFilterCustomer()
@@ -190,7 +190,7 @@ class RestCustomerTest extends AbstractRestTest
                 'relationships' => $this->getRelationships($parent->getId(), $owner->getId(), $organization->getId()),
             ],
         ];
-        $this->assertEquals($expected, $content);
+        $this->assertArraySubset($expected, $content);
     }
 
     public function testUpdateCustomer()
@@ -633,7 +633,7 @@ class RestCustomerTest extends AbstractRestTest
                 ],
             ],
         ];
-        $this->assertEquals($expected, $content);
+        $this->assertArraySubset($expected, $content);
     }
 
     public function testGetParentRelationship()
@@ -730,7 +730,7 @@ class RestCustomerTest extends AbstractRestTest
                 ],
             ],
         ];
-        $this->assertEquals($expected, $content);
+        $this->assertArraySubset($expected, $content);
     }
 
     public function testGetChildrenRelationship()

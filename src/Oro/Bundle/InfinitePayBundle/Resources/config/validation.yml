@@ -1,0 +1,8 @@
+Oro\Bundle\CustomerBundle\Entity\Customer:
+    constraints:
+        - Oro\Bundle\InfinitePayBundle\Validator\Constraints\CustomerRequireVatId: ~
+
+Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
+    properties:
+        frontendOwner:
+            - Oro\Bundle\InfinitePayBundle\Validator\Constraints\CustomerRequireVatId: ~

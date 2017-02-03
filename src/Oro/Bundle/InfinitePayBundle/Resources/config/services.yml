@@ -45,3 +45,8 @@ services:
         class: 'Oro\Bundle\InfinitePayBundle\Action\PropertyAccessor\CustomerPropertyAccessor'
         arguments:
             - '@property_accessor'
+
+    oro_infinite_pay.validator.customer_require_vat_id:
+        class: 'Oro\Bundle\InfinitePayBundle\Validator\Constraints\CustomerRequireVatIdValidator'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_infinite_pay_customer_require_vat_id_validator }
