@@ -17,7 +17,6 @@ class OroPaymentTermExtensionTest extends ExtensionTestCase
         $this->assertParametersLoaded($expectedParameters);
 
         $expectedDefinitions = [
-            'oro_payment_term.payment_term.manager.api',
             'oro_payment_term.form.type.payment_term'
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);

@@ -315,6 +315,49 @@ operations:
             - customer-group-customers-grid-update-basic
             - customer-groups-select-grid
             - customer-user-by-customer-grid
+            - customer-groups-grid
+
+    oro_customer_frontend_user_delete:
+        extends: DELETE
+        replace:
+            - preconditions
+            - for_all_datagrids
+            - for_all_entities
+            - datagrids
+        preconditions:
+            '@and':
+                - '@not_blank': $.data
+                - '@not_equal': [$.loggedUser.id, $id]
+        preactions:
+            - '@call_service_method':
+                  service: 'oro_security.security_facade'
+                  method: 'getLoggedUser'
+                  attribute: $.loggedUser
+        datagrids:
+            - frontend-customer-customer-user-grid
+
+    oro_customer_groups_delete:
+        extends: DELETE
+        replace:
+            - for_all_datagrids
+            - for_all_entities
+            - entities
+            - datagrids
+            - datagrid_options
+        entities:
+            - Oro\Bundle\CustomerBundle\Entity\CustomerGroup
+        datagrids:
+            - customer_groups_grid
+        actions:
+            - '@redirect': {route: 'oro_customer_customer_group_index'}
+        datagrid_options:
+            mass_action:
+                entity_name: Oro\Bundle\CustomerBundle\Entity\CustomerGroup
+                data_identifier: customer_group.id
+                type: delete
+                label: oro.grid.action.delete
+                link: delete_link
+                icon: trash-o
 
 action_groups:
     oro_customer_customeruser_set_enabled:

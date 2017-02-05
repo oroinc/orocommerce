@@ -16,21 +16,6 @@
     {{ parent() }}
 {% endblock pageHeader %}
 
-{% block navButtons %}
-    {{ parent() }}
-    
-    {% if resource_granted('DELETE', entity) %}
-        {{ UI.deleteButton({
-            'dataUrl': path('oro_api_customer_delete_customer_group', {'id': entity.id}),
-            'dataRedirect': path('oro_customer_customer_group_index'),
-            'aCss': 'no-hash remove-button',
-            'dataId': entity.id,
-            'id': 'btn-remove-attribute',
-            'entity_label': 'oro.customer.customergroup.entity_label'|trans,
-        }) }}
-    {% endif %}
-{% endblock navButtons %}
-
 {% block content_data %}
     {% set customerGroupInfo %}
         {{ oro_widget_render({

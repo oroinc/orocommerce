@@ -3,5 +3,21 @@ operations:
         exclude_datagrids:
             - category-products-grid
     DELETE:
-        exclude_datagrids:
-            - category-products-grid
+        exclude_entities:
+            - Oro\Bundle\CatalogBundle\Entity\Category
+
+    oro_catalog_category_delete:
+        extends: DELETE
+        replace:
+            - entities
+            - preconditions
+            - acl_resource
+            - for_all_datagrids
+            - for_all_entities
+        entities:
+            - Oro\Bundle\CatalogBundle\Entity\Category
+        acl_resource: [DELETE, entity:Oro\Bundle\CatalogBundle\Entity\Category]
+        preconditions:
+            '@and':
+                '@not_blank': $.data
+                '@not_equal': [$parentCategory, null]

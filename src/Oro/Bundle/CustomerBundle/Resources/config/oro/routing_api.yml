@@ -2,16 +2,6 @@ oro_customer_address_api:
     resource: "@OroCustomerBundle/Controller/Api/Rest/CommerceCustomerAddressController.php"
     type:     rest
 
-oro_customer_group_api:
-    resource: "@OroCustomerBundle/Controller/Api/Rest/CustomerGroupController.php"
-    type:     rest
-
-oro_customer_frontend_customer_user_api:
-    resource: "@OroCustomerBundle/Controller/Frontend/Api/Rest/CustomerUserController.php"
-    type:     rest
-    options:
-        frontend: true
-
 oro_customer_customer_user_address_api:
     resource: "@OroCustomerBundle/Controller/Api/Rest/CustomerUserAddressController.php"
     type:     rest
