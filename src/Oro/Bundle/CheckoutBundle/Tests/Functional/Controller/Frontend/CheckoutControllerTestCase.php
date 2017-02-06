@@ -2,12 +2,13 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
-use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as TestCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
+use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadInventoryLevels;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
@@ -72,6 +73,7 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
             LoadShoppingListLineItems::class,
             LoadCombinedProductPrices::class,
             LoadShippingMethodsConfigsRules::class,
+            LoadInventoryLevels::class,
         ], $paymentFixtures));
         $this->registry = $this->getContainer()->get('doctrine');
     }
@@ -119,6 +121,7 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
                 'action_group' => 'start_shoppinglist_checkout',
                 'parameters_mapping' => [
                     'shoppingList' => $shoppingList,
+                    'showErrors' => true,
                 ],
                 'results' => [
                     'redirectUrl' => new PropertyPath('redirectUrl'),
@@ -171,24 +174,6 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
             $values[CheckoutControllerTestCase::ORO_WORKFLOW_TRANSITION][$type],
             $address
         );
-
-        return $values;
-    }
-
-    /**
-     * @param Crawler $crawler
-     * @param array $values
-     * @return array
-     */
-    protected function setShippingFormData(Crawler $crawler, array $values)
-    {
-        $input = $crawler->filter('input[name="shippingMethodType"]');
-        $method = $input->extract('data-shipping-method');
-        $values[self::ORO_WORKFLOW_TRANSITION]['shipping_method'] = reset($method);
-        $type = $input->extract('value');
-        $values[self::ORO_WORKFLOW_TRANSITION]['shipping_method_type'] = reset($type);
-        $values['_widgetContainer'] = 'ajax';
-        $values['_wid'] = 'ajax_checkout';
 
         return $values;
     }

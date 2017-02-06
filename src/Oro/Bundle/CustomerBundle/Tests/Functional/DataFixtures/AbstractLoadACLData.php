@@ -209,7 +209,6 @@ abstract class AbstractLoadACLData extends AbstractFixture implements
                     ->setFirstName($item['email'])
                     ->setLastName($item['email'])
                     ->setConfirmed(true)
-                    ->addOrganization($organization)
                     ->setOrganization($organization)
                     ->setPlainPassword($item['email']);
                 $this->setReference($item['email'], $customerUser);

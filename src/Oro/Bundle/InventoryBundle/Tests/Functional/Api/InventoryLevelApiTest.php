@@ -84,146 +84,26 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                     ],
                 ],
                 'expectedCount' => 3,
-                'expectedContent' => [
+                'expectedContent' => $this->getInventoryLevelContent([
                     [
-                        'type' => 'inventorylevels',
-                        'attributes' => [
-                            'quantity' => 10,
-                        ],
-                        'relationships' => [
-                            'product' => [
-                                'data' => [
-                                    'type' => 'products',
-                                ],
-                                'references' => [
-                                    'product' => [
-                                        'key' => 'id',
-                                        'method' => 'getId',
-                                        'reference' => 'product-1',
-                                    ],
-                                ],
-                                'included' => [
-                                    'attributes' => [
-                                        'sku' => 'product-1',
-                                    ],
-                                ],
-                            ],
-                            'productUnitPrecision' => [
-                                'data' => [
-                                    'type' => 'productunitprecisions',
-                                ],
-                                'references' => [
-                                    'product' => [
-                                        'key' => 'id',
-                                        'method' => 'getId',
-                                        'reference' => 'product_unit_precision.product-1.liter',
-                                    ],
-                                ],
-                                'included' => [
-                                    'relationships' => [
-                                        'unit' => [
-                                            'data' => [
-                                                'id' => 'liter',
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
+                        'quantity' => 10,
+                        'sku' => 'product-1',
+                        'reference' => 'product_unit_precision.product-1.liter',
+                        'id' => 'liter'
                     ],
                     [
-                        'type' => 'inventorylevels',
-                        'attributes' => [
-                            'quantity' => 99,
-                        ],
-                        'relationships' => [
-                            'product' => [
-                                'data' => [
-                                    'type' => 'products',
-                                ],
-                                'references' => [
-                                    'product' => [
-                                        'key' => 'id',
-                                        'method' => 'getId',
-                                        'reference' => 'product-1',
-                                    ],
-                                ],
-                                'included' => [
-                                    'attributes' => [
-                                        'sku' => 'product-1',
-                                    ],
-                                ],
-                            ],
-                            'productUnitPrecision' => [
-                                'data' => [
-                                    'type' => 'productunitprecisions',
-                                ],
-                                'references' => [
-                                    'product' => [
-                                        'key' => 'id',
-                                        'method' => 'getId',
-                                        'reference' => 'product_unit_precision.product-1.bottle',
-                                    ],
-                                ],
-                                'included' => [
-                                    'relationships' => [
-                                        'unit' => [
-                                            'data' => [
-                                                'id' => 'bottle',
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
+                        'quantity' => 99,
+                        'sku' => 'product-1',
+                        'reference' => 'product_unit_precision.product-1.bottle',
+                        'id' => 'bottle'
                     ],
                     [
-                        'type' => 'inventorylevels',
-                        'attributes' => [
-                            'quantity' => 10,
-                        ],
-                        'relationships' => [
-                            'product' => [
-                                'data' => [
-                                    'type' => 'products',
-                                ],
-                                'references' => [
-                                    'product' => [
-                                        'key' => 'id',
-                                        'method' => 'getId',
-                                        'reference' => 'product-1',
-                                    ],
-                                ],
-                                'included' => [
-                                    'attributes' => [
-                                        'sku' => 'product-1',
-                                    ],
-                                ],
-                            ],
-                            'productUnitPrecision' => [
-                                'data' => [
-                                    'type' => 'productunitprecisions',
-                                ],
-                                'references' => [
-                                    'product' => [
-                                        'key' => 'id',
-                                        'method' => 'getId',
-                                        'reference' => 'product_unit_precision.product-1.milliliter',
-                                    ],
-                                ],
-                                'included' => [
-                                    'relationships' => [
-                                        'unit' => [
-                                            'data' => [
-                                                'id' => 'milliliter',
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
+                        'quantity' => 10,
+                        'sku' => 'product-1',
+                        'reference' => 'product_unit_precision.product-1.milliliter',
+                        'id' => 'milliliter'
                     ],
-                ],
+                ]),
             ],
             'filter by Products' => [
                 'filter' => [
@@ -234,284 +114,44 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                     ],
                 ],
                 'expectedCount' => 6,
-                'expectedContent' => [
+                'expectedContent' => $this->getInventoryLevelContent([
                     [
-                        'type' => 'inventorylevels',
-                        'attributes' => [
-                            'quantity' => 10,
-                        ],
-                        'relationships' => [
-                            'product' => [
-                                'data' => [
-                                    'type' => 'products',
-                                ],
-                                'references' => [
-                                    'product' => [
-                                        'key' => 'id',
-                                        'method' => 'getId',
-                                        'reference' => 'product-1',
-                                    ],
-                                ],
-                                'included' => [
-                                    'attributes' => [
-                                        'sku' => 'product-1',
-                                    ],
-                                ],
-                            ],
-                            'productUnitPrecision' => [
-                                'data' => [
-                                    'type' => 'productunitprecisions',
-                                ],
-                                'references' => [
-                                    'product' => [
-                                        'key' => 'id',
-                                        'method' => 'getId',
-                                        'reference' => 'product_unit_precision.product-1.liter',
-                                    ],
-                                ],
-                                'included' => [
-                                    'relationships' => [
-                                        'unit' => [
-                                            'data' => [
-                                                'id' => 'liter',
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
+                        'quantity' => 10,
+                        'sku' => 'product-1',
+                        'reference' => 'product_unit_precision.product-1.liter',
+                        'id' => 'liter'
                     ],
                     [
-                        'type' => 'inventorylevels',
-                        'attributes' => [
-                            'quantity' => 99,
-                        ],
-                        'relationships' => [
-                            'product' => [
-                                'data' => [
-                                    'type' => 'products',
-                                ],
-                                'references' => [
-                                    'product' => [
-                                        'key' => 'id',
-                                        'method' => 'getId',
-                                        'reference' => 'product-1',
-                                    ],
-                                ],
-                                'included' => [
-                                    'attributes' => [
-                                        'sku' => 'product-1',
-                                    ],
-                                ],
-                            ],
-                            'productUnitPrecision' => [
-                                'data' => [
-                                    'type' => 'productunitprecisions',
-                                ],
-                                'references' => [
-                                    'product' => [
-                                        'key' => 'id',
-                                        'method' => 'getId',
-                                        'reference' => 'product_unit_precision.product-1.bottle',
-                                    ],
-                                ],
-                                'included' => [
-                                    'relationships' => [
-                                        'unit' => [
-                                            'data' => [
-                                                'id' => 'bottle',
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
+                        'quantity' => 99,
+                        'sku' => 'product-1',
+                        'reference' => 'product_unit_precision.product-1.bottle',
+                        'id' => 'bottle'
                     ],
                     [
-                        'type' => 'inventorylevels',
-                        'attributes' => [
-                            'quantity' => 12.345,
-                        ],
-                        'relationships' => [
-                            'product' => [
-                                'data' => [
-                                    'type' => 'products',
-                                ],
-                                'references' => [
-                                    'product' => [
-                                        'key' => 'id',
-                                        'method' => 'getId',
-                                        'reference' => 'product-2',
-                                    ],
-                                ],
-                                'included' => [
-                                    'attributes' => [
-                                        'sku' => 'product-2',
-                                    ],
-                                ],
-                            ],
-                            'productUnitPrecision' => [
-                                'data' => [
-                                    'type' => 'productunitprecisions',
-                                ],
-                                'references' => [
-                                    'product' => [
-                                        'key' => 'id',
-                                        'method' => 'getId',
-                                        'reference' => 'product_unit_precision.product-2.liter',
-                                    ],
-                                ],
-                                'included' => [
-                                    'relationships' => [
-                                        'unit' => [
-                                            'data' => [
-                                                'id' => 'liter',
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
+                        'quantity' => 12.345,
+                        'sku' => 'product-2',
+                        'reference' => 'product_unit_precision.product-2.liter',
+                        'id' => 'liter'
                     ],
                     [
-                        'type' => 'inventorylevels',
-                        'attributes' => [
-                            'quantity' => 98,
-                        ],
-                        'relationships' => [
-                            'product' => [
-                                'data' => [
-                                    'type' => 'products',
-                                ],
-                                'references' => [
-                                    'product' => [
-                                        'key' => 'id',
-                                        'method' => 'getId',
-                                        'reference' => 'product-2',
-                                    ],
-                                ],
-                                'included' => [
-                                    'attributes' => [
-                                        'sku' => 'product-2',
-                                    ],
-                                ],
-                            ],
-                            'productUnitPrecision' => [
-                                'data' => [
-                                    'type' => 'productunitprecisions',
-                                ],
-                                'references' => [
-                                    'product' => [
-                                        'key' => 'id',
-                                        'method' => 'getId',
-                                        'reference' => 'product_unit_precision.product-2.bottle',
-                                    ],
-                                ],
-                                'included' => [
-                                    'relationships' => [
-                                        'unit' => [
-                                            'data' => [
-                                                'id' => 'bottle',
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
+                        'quantity' => 98,
+                        'sku' => 'product-2',
+                        'reference' => 'product_unit_precision.product-2.bottle',
+                        'id' => 'bottle'
                     ],
                     [
-                        'type' => 'inventorylevels',
-                        'attributes' => [
-                            'quantity' => 42,
-                        ],
-                        'relationships' => [
-                            'product' => [
-                                'data' => [
-                                    'type' => 'products',
-                                ],
-                                'references' => [
-                                    'product' => [
-                                        'key' => 'id',
-                                        'method' => 'getId',
-                                        'reference' => 'product-2',
-                                    ],
-                                ],
-                                'included' => [
-                                    'attributes' => [
-                                        'sku' => 'product-2',
-                                    ],
-                                ],
-                            ],
-                            'productUnitPrecision' => [
-                                'data' => [
-                                    'type' => 'productunitprecisions',
-                                ],
-                                'references' => [
-                                    'product' => [
-                                        'key' => 'id',
-                                        'method' => 'getId',
-                                        'reference' => 'product_unit_precision.product-2.box',
-                                    ],
-                                ],
-                                'included' => [
-                                    'relationships' => [
-                                        'unit' => [
-                                            'data' => [
-                                                'id' => 'box',
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
+                        'quantity' => 42,
+                        'sku' => 'product-2',
+                        'reference' => 'product_unit_precision.product-2.box',
+                        'id' => 'box'
                     ],
                     [
-                        'type' => 'inventorylevels',
-                        'attributes' => [
-                            'quantity' => 10,
-                        ],
-                        'relationships' => [
-                            'product' => [
-                                'data' => [
-                                    'type' => 'products',
-                                ],
-                                'references' => [
-                                    'product' => [
-                                        'key' => 'id',
-                                        'method' => 'getId',
-                                        'reference' => 'product-1',
-                                    ],
-                                ],
-                                'included' => [
-                                    'attributes' => [
-                                        'sku' => 'product-1',
-                                    ],
-                                ],
-                            ],
-                            'productUnitPrecision' => [
-                                'data' => [
-                                    'type' => 'productunitprecisions',
-                                ],
-                                'references' => [
-                                    'product' => [
-                                        'key' => 'id',
-                                        'method' => 'getId',
-                                        'reference' => 'product_unit_precision.product-1.milliliter',
-                                    ],
-                                ],
-                                'included' => [
-                                    'relationships' => [
-                                        'unit' => [
-                                            'data' => [
-                                                'id' => 'milliliter',
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
+                        'quantity' => 10,
+                        'sku' => 'product-1',
+                        'reference' => 'product_unit_precision.product-1.milliliter',
+                        'id' => 'milliliter'
                     ],
-                ],
+                ]),
             ],
             'filter by Products and Unit' => [
                 'filter' => [
@@ -527,302 +167,62 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                     ],
                 ],
                 'expectedCount' => 2,
-                'expectedContent' => [
+                'expectedContent' => $this->getInventoryLevelContent([
                     [
-                        'type' => 'inventorylevels',
-                        'attributes' => [
-                            'quantity' => 99,
-                        ],
-                        'relationships' => [
-                            'product' => [
-                                'data' => [
-                                    'type' => 'products',
-                                ],
-                                'references' => [
-                                    'product' => [
-                                        'key' => 'id',
-                                        'method' => 'getId',
-                                        'reference' => 'product-1',
-                                    ],
-                                ],
-                                'included' => [
-                                    'attributes' => [
-                                        'sku' => 'product-1',
-                                    ],
-                                ],
-                            ],
-                            'productUnitPrecision' => [
-                                'data' => [
-                                    'type' => 'productunitprecisions',
-                                ],
-                                'references' => [
-                                    'product' => [
-                                        'key' => 'id',
-                                        'method' => 'getId',
-                                        'reference' => 'product_unit_precision.product-1.bottle',
-                                    ],
-                                ],
-                                'included' => [
-                                    'relationships' => [
-                                        'unit' => [
-                                            'data' => [
-                                                'id' => 'bottle',
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
+                        'quantity' => 99,
+                        'sku' => 'product-1',
+                        'reference' => 'product_unit_precision.product-1.bottle',
+                        'id' => 'bottle'
                     ],
                     [
-                        'type' => 'inventorylevels',
-                        'attributes' => [
-                            'quantity' => 98,
+                        'quantity' => 98,
+                        'sku' => 'product-2',
+                        'reference' => 'product_unit_precision.product-2.bottle',
+                        'id' => 'bottle'
+                    ],
+                ]),
+                'filter by Products and Units' => [
+                    'filter' => [
+                        [
+                            'method' => 'getSku',
+                            'key' => 'product.sku',
+                            'references' => ['product-1', 'product-2']
                         ],
-                        'relationships' => [
-                            'product' => [
-                                'data' => [
-                                    'type' => 'products',
-                                ],
-                                'references' => [
-                                    'product' => [
-                                        'key' => 'id',
-                                        'method' => 'getId',
-                                        'reference' => 'product-2',
-                                    ],
-                                ],
-                                'included' => [
-                                    'attributes' => [
-                                        'sku' => 'product-2',
-                                    ],
-                                ],
-                            ],
-                            'productUnitPrecision' => [
-                                'data' => [
-                                    'type' => 'productunitprecisions',
-                                ],
-                                'references' => [
-                                    'product' => [
-                                        'key' => 'id',
-                                        'method' => 'getId',
-                                        'reference' => 'product_unit_precision.product-2.bottle',
-                                    ],
-                                ],
-                                'included' => [
-                                    'relationships' => [
-                                        'unit' => [
-                                            'data' => [
-                                                'id' => 'bottle',
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
+                        [
+                            'method' => 'getCode',
+                            'key' => 'productUnitPrecision.unit.code',
+                            'references' => ['product_unit.bottle', 'product_unit.liter']
                         ],
                     ],
-                ],
-            ],
-            'filter by Products and Units' => [
-                'filter' => [
-                    [
-                        'method' => 'getSku',
-                        'key' => 'product.sku',
-                        'references' => ['product-1', 'product-2']
-                    ],
-                    [
-                        'method' => 'getCode',
-                        'key' => 'productUnitPrecision.unit.code',
-                        'references' => ['product_unit.bottle', 'product_unit.liter']
-                    ],
-                ],
-                'expectedCount' => 4,
-                'expectedContent' => [
-                    [
-                        'type' => 'inventorylevels',
-                        'attributes' => [
+                    'expectedCount' => 4,
+                    'expectedContent' => $this->getInventoryLevelContent([
+                        [
                             'quantity' => 10,
+                            'sku' => 'product-1',
+                            'reference' => 'product_unit_precision.product-1.liter',
+                            'id' => 'liter'
                         ],
-                        'relationships' => [
-                            'product' => [
-                                'data' => [
-                                    'type' => 'products',
-                                ],
-                                'references' => [
-                                    'product' => [
-                                        'key' => 'id',
-                                        'method' => 'getId',
-                                        'reference' => 'product-1',
-                                    ],
-                                ],
-                                'included' => [
-                                    'attributes' => [
-                                        'sku' => 'product-1',
-                                    ],
-                                ],
-                            ],
-                            'productUnitPrecision' => [
-                                'data' => [
-                                    'type' => 'productunitprecisions',
-                                ],
-                                'references' => [
-                                    'product' => [
-                                        'key' => 'id',
-                                        'method' => 'getId',
-                                        'reference' => 'product_unit_precision.product-1.liter',
-                                    ],
-                                ],
-                                'included' => [
-                                    'relationships' => [
-                                        'unit' => [
-                                            'data' => [
-                                                'id' => 'liter',
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                    [
-                        'type' => 'inventorylevels',
-                        'attributes' => [
+                        [
                             'quantity' => 99,
+                            'sku' => 'product-1',
+                            'reference' => 'product_unit_precision.product-1.bottle',
+                            'id' => 'bottle'
                         ],
-                        'relationships' => [
-                            'product' => [
-                                'data' => [
-                                    'type' => 'products',
-                                ],
-                                'references' => [
-                                    'product' => [
-                                        'key' => 'id',
-                                        'method' => 'getId',
-                                        'reference' => 'product-1',
-                                    ],
-                                ],
-                                'included' => [
-                                    'attributes' => [
-                                        'sku' => 'product-1',
-                                    ],
-                                ],
-                            ],
-                            'productUnitPrecision' => [
-                                'data' => [
-                                    'type' => 'productunitprecisions',
-                                ],
-                                'references' => [
-                                    'product' => [
-                                        'key' => 'id',
-                                        'method' => 'getId',
-                                        'reference' => 'product_unit_precision.product-1.bottle',
-                                    ],
-                                ],
-                                'included' => [
-                                    'relationships' => [
-                                        'unit' => [
-                                            'data' => [
-                                                'id' => 'bottle',
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                    [
-                        'type' => 'inventorylevels',
-                        'attributes' => [
+                        [
                             'quantity' => 12.345,
+                            'sku' => 'product-2',
+                            'reference' => 'product_unit_precision.product-2.liter',
+                            'id' => 'liter'
                         ],
-                        'relationships' => [
-                            'product' => [
-                                'data' => [
-                                    'type' => 'products',
-                                ],
-                                'references' => [
-                                    'product' => [
-                                        'key' => 'id',
-                                        'method' => 'getId',
-                                        'reference' => 'product-2',
-                                    ],
-                                ],
-                                'included' => [
-                                    'attributes' => [
-                                        'sku' => 'product-2',
-                                    ],
-                                ],
-                            ],
-                            'productUnitPrecision' => [
-                                'data' => [
-                                    'type' => 'productunitprecisions',
-                                ],
-                                'references' => [
-                                    'product' => [
-                                        'key' => 'id',
-                                        'method' => 'getId',
-                                        'reference' => 'product_unit_precision.product-2.liter',
-                                    ],
-                                ],
-                                'included' => [
-                                    'relationships' => [
-                                        'unit' => [
-                                            'data' => [
-                                                'id' => 'liter',
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                    [
-                        'type' => 'inventorylevels',
-                        'attributes' => [
+                        [
                             'quantity' => 98,
+                            'sku' => 'product-2',
+                            'reference' => 'product_unit_precision.product-2.bottle',
+                            'id' => 'bottle'
                         ],
-                        'relationships' => [
-                            'product' => [
-                                'data' => [
-                                    'type' => 'products',
-                                ],
-                                'references' => [
-                                    'product' => [
-                                        'key' => 'id',
-                                        'method' => 'getId',
-                                        'reference' => 'product-2',
-                                    ],
-                                ],
-                                'included' => [
-                                    'attributes' => [
-                                        'sku' => 'product-2',
-                                    ],
-                                ],
-                            ],
-                            'productUnitPrecision' => [
-                                'data' => [
-                                    'type' => 'productunitprecisions',
-                                ],
-                                'references' => [
-                                    'product' => [
-                                        'key' => 'id',
-                                        'method' => 'getId',
-                                        'reference' => 'product_unit_precision.product-2.bottle',
-                                    ],
-                                ],
-                                'included' => [
-                                    'relationships' => [
-                                        'unit' => [
-                                            'data' => [
-                                                'id' => 'bottle',
-                                            ],
-                                        ],
-                                    ],
-                                ],
-                            ],
-                        ],
-                    ],
-                ],
-            ],
+                    ])
+                ]
+            ]
         ];
     }
 
@@ -1096,5 +496,63 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
         $inventoryLevelRepository = $doctrineHelper->getEntityRepository(InventoryLevel::class);
         $result = $inventoryLevelRepository->findOneBy(['id' => $inventoryLevelId]);
         $this->assertNull($result);
+    }
+
+    /**
+     * @param array $rows
+     * @return array
+     */
+    protected function getInventoryLevelContent(array $rows)
+    {
+        $content = [];
+        foreach ($rows as $row) {
+            $content[] = [
+                'type' => 'inventorylevels',
+                'attributes' => [
+                    'quantity' => $row['quantity'],
+                ],
+                'relationships' => [
+                    'product' => [
+                        'data' => [
+                            'type' => 'products',
+                        ],
+                        'references' => [
+                            'product' => [
+                                'key' => 'id',
+                                'method' => 'getId',
+                                'reference' => $row['sku'],
+                            ],
+                        ],
+                        'included' => [
+                            'attributes' => [
+                                'sku' => $row['sku'],
+                            ],
+                        ],
+                    ],
+                    'productUnitPrecision' => [
+                        'data' => [
+                            'type' => 'productunitprecisions',
+                        ],
+                        'references' => [
+                            'product' => [
+                                'key' => 'id',
+                                'method' => 'getId',
+                                'reference' => $row['reference'],
+                            ],
+                        ],
+                        'included' => [
+                            'relationships' => [
+                                'unit' => [
+                                    'data' => [
+                                        'id' => $row['id'],
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ],
+                ],
+            ];
+        }
+        return $content;
     }
 }

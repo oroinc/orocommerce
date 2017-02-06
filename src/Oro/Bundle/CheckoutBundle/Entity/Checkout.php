@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\CheckoutBundle\Model\CompletedCheckoutData;
 use Oro\Bundle\CustomerBundle\Entity\CustomerOwnerAwareInterface;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Ownership\FrontendCustomerUserAwareTrait;
@@ -160,6 +161,25 @@ class Checkout implements
      * @ORM\Column(name="deleted", type="boolean", options={"default"=false})
      */
     protected $deleted = false;
+
+    /**
+     * @var bool
+     *
+     * @ORM\Column(name="completed", type="boolean", options={"default"=false})
+     */
+    protected $completed = false;
+
+    /**
+     * @var CompletedCheckoutData
+     *
+     * @ORM\Column(name="completed_data", type="json_array")
+     */
+    protected $completedData;
+
+    public function __construct()
+    {
+        $this->completedData = new CompletedCheckoutData();
+    }
 
     /**
      * @return int
@@ -398,11 +418,43 @@ class Checkout implements
     }
 
     /**
+     * @param bool $completed
+     *
+     * @return $this
+     */
+    public function setCompleted($completed)
+    {
+        $this->completed = (bool)$completed;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isCompleted()
+    {
+        return $this->completed;
+    }
+
+    /**
+     * @return CompletedCheckoutData
+     */
+    public function getCompletedData()
+    {
+        return $this->completedData;
+    }
+
+    /**
      * @ORM\PostLoad
      */
     public function postLoad()
     {
         $this->shippingCost = Price::create($this->shippingEstimateAmount, $this->shippingEstimateCurrency);
+
+        if (!$this->completedData instanceof CompletedCheckoutData) {
+            $this->completedData = CompletedCheckoutData::jsonDeserialize($this->completedData);
+        }
     }
 
     /**

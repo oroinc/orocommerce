@@ -15,11 +15,13 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductController extends Controller
 {
+    const GRID_NAME = 'frontend-product-search-grid';
+
     /**
      * View list of products
      *
      * @Route("/", name="oro_product_frontend_product_index")
-     * @Layout(vars={"entity_class"})
+     * @Layout(vars={"entity_class", "grid_config"})
      * @AclAncestor("oro_product_frontend_view")
      *
      * @return array
@@ -28,6 +30,9 @@ class ProductController extends Controller
     {
         return [
             'entity_class' => $this->container->getParameter('oro_product.entity.product.class'),
+            'grid_config' => [
+                'frontend-product-search-grid'
+            ],
         ];
     }
 

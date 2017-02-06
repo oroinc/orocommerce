@@ -243,7 +243,7 @@
                 {{ block_widget(block) }}
             </div>
             <div class="grid__column">
-                <div class="checkout__form__req-text {% if transitionData.isAllowed == false %}hidden{% endif %}"><sup>*</sup>
+                <div data-role="checkout-require" class="checkout__form__req-text {% if transitionData.isAllowed == false %}hidden{% endif %}"><sup>*</sup>
                     {{ 'oro.checkout.workflow.b2b_flow_checkout.form.required.label'|trans }}
                 </div>
             </div>

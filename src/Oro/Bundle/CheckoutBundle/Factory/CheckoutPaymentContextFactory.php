@@ -30,7 +30,7 @@ class CheckoutPaymentContextFactory
     /**
      * @var PaymentContextBuilderFactoryInterface|null
      */
-    private $paymentContextBuilderFactory = null;
+    private $paymentContextBuilderFactory;
 
     /**
      * @param CheckoutLineItemsManager $checkoutLineItemsManager
@@ -53,7 +53,7 @@ class CheckoutPaymentContextFactory
     /**
      * @param Checkout $checkout
      *
-     * @return PaymentContextInterface
+     * @return PaymentContextInterface|null
      */
     public function create(Checkout $checkout)
     {

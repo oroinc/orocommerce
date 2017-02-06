@@ -2,8 +2,6 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: '../templates/request_approval.html.twig'
-        - '@setFormTheme':
-            themes: 'OroCheckoutBundle:layouts:default/oro_checkout_frontend_checkout/templates/form_theme.html.twig'
         - '@setOption':
             id: checkout_information
             optionName: stepOrder

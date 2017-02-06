@@ -3,27 +3,27 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Datagrid;
 
 use Doctrine\Common\Cache\Cache;
-use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
+use Doctrine\ORM\EntityManagerInterface;
 
-use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
-use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
-use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
+use Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridHelper;
+use Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridListener;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
+use Oro\Bundle\CheckoutBundle\Model\CompletedCheckoutData;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
-use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-use Oro\Bundle\EntityConfigBundle\Config\Config;
-use Oro\Bundle\EntityConfigBundle\Config\Id\ConfigIdInterface;
 use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
-use Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridHelper;
-use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository;
-use Oro\Bundle\SaleBundle\Entity\Quote;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridListener;
+use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
+use Oro\Bundle\DataGridBundle\Event\BuildBefore;
+use Oro\Bundle\DataGridBundle\Event\OrmResultAfter;
+use Oro\Bundle\EntityBundle\Provider\EntityNameResolver;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
-use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
+use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
+use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 
 class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
 {
@@ -72,10 +72,7 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->em = $this->createMock(EntityManagerInterface::class);
-
-        $metadata = $this->getMockBuilder(ClassMetadata::class)->disableOriginalConstructor()->getMock();
-
+        $metadata = $this->createMock(ClassMetadata::class);
         $metadata->method('hasField')
             ->will($this->returnValueMap(
                 [
@@ -84,7 +81,6 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
                     ['total', true],
                 ]
             ));
-
         $metadata->method('hasAssociation')
             ->will($this->returnValueMap(
                 [
@@ -92,44 +88,22 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
                 ]
             ));
 
+        $this->em = $this->createMock(EntityManagerInterface::class);
         $this->em->method('getClassMetadata')->willReturn($metadata);
 
-        $this->currencyManager = $this->getMockBuilder(UserCurrencyManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->currencyManager = $this->createMock(UserCurrencyManager::class);
         $this->currencyManager->expects($this->any())->method('getUserCurrency')->willReturn('USD');
 
-        $this->cache = $this->getMockBuilder(Cache::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
+        $this->cache = $this->getMockBuilder(Cache::class)->disableOriginalConstructor()->getMock();
         $this->cache->method('contains')->willReturn(false);
 
-        $this->checkoutRepository = $this->getMockBuilder(CheckoutRepository::class)
-            ->setMethods(['find', 'countItemsPerCheckout', 'getSourcePerCheckout'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->checkoutRepository = $this->createMock(CheckoutRepository::class);
 
-        $this->checkoutRepository->expects($this->any())
-            ->method('find')
-            ->willReturn(new Checkout());
+        $this->totalProcessor = $this->createMock(TotalProcessorProvider::class);
 
-        $this->totalProcessor = $this->getMockBuilder(TotalProcessorProvider::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->entityNameResolver = $this->createMock(EntityNameResolver::class);
 
-        $this->totalProcessor->expects($this->any())
-            ->method('getTotal')
-            ->willReturn((new Subtotal())->setAmount(10));
-
-        $this->entityNameResolver = $this->getMockBuilder(EntityNameResolver::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->checkoutGridHelper = $this->getMockBuilder(CheckoutGridHelper::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->checkoutGridHelper = $this->createMock(CheckoutGridHelper::class);
 
         $this->listener = new CheckoutGridListener(
             $this->currencyManager,
@@ -188,42 +162,26 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
             'bindParameters' => [
                 'user_currency' => 'user_currency'
             ],
-            'selects'        => [],
-            'sorters'        => [],
-            'columns'        => [],
-            'filters'        => [],
-            'joins'          => [],
+            'selects' => [],
+            'sorters' => [],
+            'columns' => [],
+            'filters' => [],
+            'joins' => [],
         ];
 
-        $this->checkoutGridHelper->expects($this->once())
-                                 ->method('getUpdates')
-                                 ->willReturn($data);
+        $this->checkoutGridHelper->expects($this->once())->method('getUpdates')->willReturn($data);
+
+        $parameters = $this->createMock(ParameterBag::class);
+        $parameters->expects($this->once())->method('set')->with(CheckoutGridListener::USER_CURRENCY_PARAMETER, 'USD');
+
+        $datagrid = $this->createMock(DatagridInterface::class);
+        $datagrid->method('getParameters')->willReturn($parameters);
 
         $config = $this->getGridConfiguration();
 
-        $event = $this->getMockBuilder(BuildBefore::class)
-                      ->disableOriginalConstructor()
-                      ->getMock();
-
-        $event->method('getConfig')
-              ->willReturn($config);
-
-        $parameters = $this->getMockBuilder(ParameterBag::class)
-                           ->getMock();
-
-        $parameters->expects($this->once())
-            ->method('set')
-            ->with(CheckoutGridListener::USER_CURRENCY_PARAMETER, 'USD');
-
-        $datagrid = $this->getMockBuilder(DatagridInterface::class)
-                         ->getMock();
-
-        $datagrid->method('getParameters')
-                 ->willReturn($parameters);
-
-        $event->expects($this->once())
-              ->method('getDatagrid')
-              ->willReturn($datagrid);
+        $event = $this->getMockBuilder(BuildBefore::class)->disableOriginalConstructor()->getMock();
+        $event->method('getConfig')->willReturn($config);
+        $event->expects($this->once())->method('getDatagrid')->willReturn($datagrid);
 
         $this->listener->onBuildBefore($event);
     }
@@ -253,177 +211,151 @@ class CheckoutGridListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testBuildItemsCountColumn()
     {
-        /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMockBuilder(OrmResultAfter::class)->disableOriginalConstructor()->getMock();
+        $data = array_combine(range(2, 10, 2), range(2, 10, 2));
 
-        $data = array_combine(range(1, 10), range(1, 10));
-
-        $this->checkoutRepository->expects($this->atLeastOnce())
-                                     ->method('countItemsPerCheckout')
-                                     ->will($this->returnValue($data));
+        $this->checkoutRepository->expects($this->atLeastOnce())->method('countItemsPerCheckout')->willReturn($data);
 
         $records = [];
+        $checkouts = [];
 
         for ($i = 1; $i <= 10; $i++) {
-            $record = $this->createMock(
-                'Oro\Bundle\DataGridBundle\Datasource\ResultRecord',
-                ['getValue', 'addData'],
-                [[]]
-            );
+            $completed = (bool) ($i % 2);
 
-            $record->expects($this->atLeastOnce())
-                   ->method('getValue')
-                   ->will($this->returnValue($i));
+            $records[$i] = new ResultRecord(['id' => $i, 'completed' => $completed]);
 
-            $record->expects($this->atLeastOnce())
-                   ->method('addData');
+            $checkout = new Checkout();
+            $checkout->getCompletedData()->offsetSet(CompletedCheckoutData::ITEMS_COUNT, $completed ? 42 + $i : null);
 
-            $records[] = $record;
+            $checkouts[$i] = $checkout;
         }
 
+        $this->checkoutRepository->expects($this->any())
+            ->method('find')
+            ->willReturnCallback(
+                function ($id) use ($checkouts) {
+                    return $checkouts[$id];
+                }
+            );
+
+        /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = $this->getMockBuilder(OrmResultAfter::class)->disableOriginalConstructor()->getMock();
         $event->expects($this->atLeastOnce())->method('getRecords')->willReturn($records);
 
-        $event->expects($this->atLeastOnce())
-              ->method('getRecords')
-              ->will($this->returnValue($records));
-
         $this->listener->onResultAfter($event);
+
+        foreach ($records as $key => $record) {
+            $completed = (bool) ($key % 2);
+
+            $this->assertEquals($completed ? 42 + $key : $key, $record->getValue('itemsCount'));
+        }
     }
 
     public function testBuildStartedFromColumn()
     {
-        /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMockBuilder(OrmResultAfter::class)->disableOriginalConstructor()->getMock();
-
         $shoppingList = new ShoppingList();
         $shoppingList->setLabel('test');
 
-        $quote = new Quote();
+        $quoteDemand = new QuoteDemand();
+        $quoteDemand->setQuote(new Quote());
 
         $this->checkoutRepository->expects($this->atLeastOnce())
-                                     ->method('getSourcePerCheckout')
-                                     ->will($this->returnValue([
-                                                                   3 => $shoppingList,
-                                                                   2 => $quote
-                                                               ]));
-
-        $records = [];
+            ->method('getSourcePerCheckout')
+            ->willReturn([
+                3 => $shoppingList,
+                2 => $quoteDemand
+            ]);
 
         $foundSources = [];
+        $records = [
+            new ResultRecord(['id' => 3, 'completed' => false]),
+            new ResultRecord(['id' => 2, 'completed' => false]),
+            new ResultRecord(['id' => 4, 'completed' => true])
+        ];
 
-        $record = $this->getMockBuilder('\StdClass')
-                       ->setMethods(['getValue', 'addData'])
-                       ->getMock();
-
-        $record->expects($this->atLeastOnce())
-               ->method('getValue')
-               ->will($this->returnValue(3));
-
-        $record->expects($this->atLeastOnce())
-               ->method('addData')
-               ->will($this->returnCallback(function ($value) use (& $foundSources) {
-                   $foundSources[] = $value;
-               }));
-
-        $records[] = $record;
-
-        $record = $this->getMockBuilder('Oro\Bundle\DataGridBundle\Datasource\ResultRecord')
-                       ->disableOriginalConstructor()
-                       ->setMethods(['getValue', 'addData'])
-                       ->getMock();
-
-        $record->expects($this->atLeastOnce())
-               ->method('getValue')
-               ->will($this->returnValue(2));
-
-        $record->expects($this->atLeastOnce())
-               ->method('addData')
-               ->will($this->returnCallback(function ($value) use (& $foundSources) {
-                   $foundSources[] = $value;
-               }));
-
-        $records[] = $record;
-
+        /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = $this->getMockBuilder(OrmResultAfter::class)->disableOriginalConstructor()->getMock();
         $event->expects($this->atLeastOnce())->method('getRecords')->willReturn($records);
 
-        $event->expects($this->atLeastOnce())
-              ->method('getRecords')
-              ->will($this->returnValue($records));
-
         $this->entityNameResolver->expects($this->atLeastOnce())
-             ->method('getName')
-             ->will($this->returnCallback(function ($entity) use ($shoppingList, $quote) {
-                if ($entity == $shoppingList) {
-                    return $shoppingList->getLabel();
-                }
+            ->method('getName')
+            ->willReturnCallback(
+                function ($entity) use ($shoppingList, $quoteDemand) {
+                    if ($entity === $shoppingList) {
+                        return $shoppingList->getLabel();
+                    }
 
-                if ($entity == $quote) {
-                    return 'Quote';
+                    if ($entity === $quoteDemand->getQuote()) {
+                        return 'Quote';
+                    }
+
+                    return null;
                 }
-             }));
+            );
+
+        $checkout = new Checkout();
+        $checkout->getCompletedData()->offsetSet(CompletedCheckoutData::STARTED_FROM, 'started test');
+
+        $this->checkoutRepository->expects($this->any())->method('find')->willReturn($checkout);
+        $this->totalProcessor->expects($this->any())->method('getTotal')->willReturn(new Subtotal());
 
         $this->listener->onResultAfter($event);
 
-        $foundShoppingList = false;
+        foreach ($records as $record) {
+            $foundSources[] = $record->getValue('startedFrom');
+        }
 
-        foreach ($foundSources as $source) {
-            if ($source['startedFrom']['label'] == $shoppingList->getLabel()) {
-                $foundShoppingList = true;
+        $this->assertCheckoutSource($foundSources, $shoppingList->getLabel(), 'Did not found any ShoppingList entity');
+        $this->assertCheckoutSource($foundSources, 'Quote', 'Did not found any Quote entity');
+        $this->assertCheckoutSource($foundSources, 'started test', 'Did not found any data from completed checkout');
+    }
+
+    /**
+     * @param array $sources
+     * @param string $expectedLabel
+     * @param string $message
+     */
+    protected function assertCheckoutSource(array $sources, $expectedLabel, $message)
+    {
+        $found = false;
+
+        foreach ($sources as $source) {
+            if ($source === $expectedLabel || (isset($source['label']) && $source['label'] === $expectedLabel)) {
+                $found = true;
             }
         }
 
-        $this->assertTrue($foundShoppingList, 'Did not found any ShoppingList entity');
-
-        $foundQuote = false;
-
-        foreach ($foundSources as $source) {
-            if (strstr($source['startedFrom']['label'], 'Quote')) {
-                $foundQuote = true;
-            }
-        }
-
-        $this->assertTrue($foundQuote, 'Did not found any Quote entity');
+        $this->assertTrue($found, $message);
     }
 
     public function testBuildTotalColumn()
     {
+        $this->totalProcessor->expects($this->at(0))->method('getTotal')->willReturn((new Subtotal())->setAmount(10));
+
+        $checkout = new Checkout();
+        $checkout->getCompletedData()->offsetSet(CompletedCheckoutData::TOTAL, 42);
+        $checkout->getCompletedData()->offsetSet(CompletedCheckoutData::SUBTOTAL, 142);
+        $checkout->getCompletedData()->offsetSet(CompletedCheckoutData::CURRENCY, 'USD');
+
+        $this->checkoutRepository->expects($this->any())->method('find')->willReturn($checkout);
+        $this->checkoutRepository->expects($this->any())
+            ->method('getSourcePerCheckout')
+            ->willReturn([2 => new ShoppingList()]);
+
+        $record1 = new ResultRecord(['id' => 1, 'total' => 10, 'completed' => false]);
+        $record2 = new ResultRecord(['id' => 2, 'completed' => false]);
+        $record3 = new ResultRecord(['id' => 3, 'completed' => true]);
+
+        $records = [$record1, $record2, $record3];
+
         /** @var OrmResultAfter|\PHPUnit_Framework_MockObject_MockObject $event */
         $event = $this->getMockBuilder(OrmResultAfter::class)->disableOriginalConstructor()->getMock();
-
-        $this->totalProcessor->expects($this->once())
-                             ->method('getTotal')
-                             ->willReturn((new Subtotal())->setAmount(10));
-
-        $this->checkoutRepository->expects($this->once())
-                                     ->method('find')
-                                     ->with(2)
-                                     ->willReturn(new Checkout());
-
-        $record1 = new ResultRecord(['id' => 1, 'total' => 10]);
-        $record2 = new ResultRecord(['id' => 2]);
-
-        $records = [$record1, $record2];
-
         $event->expects($this->atLeastOnce())->method('getRecords')->willReturn($records);
-
-        $event->expects($this->atLeastOnce())
-              ->method('getRecords')
-              ->will($this->returnValue($records));
 
         $this->listener->onResultAfter($event);
 
         $this->assertSame(10, $record2->getValue('total'));
-    }
-
-    /**
-     * @param array $parameters
-     * @return Config
-     */
-    protected function getFieldConfig(array $parameters)
-    {
-        /** @var ConfigIdInterface $configId */
-        $configId = $this->createMock('Oro\Bundle\EntityConfigBundle\Config\Id\ConfigIdInterface');
-
-        return new Config($configId, $parameters);
+        $this->assertSame(42, $record3->getValue('total'));
+        $this->assertSame(142, $record3->getValue('subtotal'));
+        $this->assertSame('USD', $record3->getValue('currency'));
     }
 }

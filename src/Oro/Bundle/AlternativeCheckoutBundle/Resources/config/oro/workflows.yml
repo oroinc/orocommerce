@@ -70,6 +70,10 @@ workflows:
                 type: string
             internal_state_token:
                 type: string
+            order:
+                type: entity
+                options:
+                    class: Oro\Bundle\OrderBundle\Entity\Order
         steps:
             enter_billing_address:
                 order: 10
@@ -114,7 +118,6 @@ workflows:
                     - back_to_order_review
             approve_request:
                 order: 70
-                is_final: true
                 allowed_transitions:
                     - approve_order
                     - place_order_with_inactive_possibility
@@ -125,6 +128,10 @@ workflows:
                     - back_to_payment
                     - back_to_order_review
                     - back_to_request_approval
+            order_created:
+                order: 80
+                is_final: true
+
         transitions:
             start_from_shoppinglist:
                 is_start: true
@@ -356,7 +363,7 @@ workflows:
                     is_checkout_back: true
 
             place_order:
-                step_to: approve_request
+                step_to: order_created
                 transition_definition: place_order_definition
                 display_type: page
                 is_unavailable_hidden: true
@@ -371,7 +378,7 @@ workflows:
                             form_type: textarea
 
             place_order_with_inactive_possibility:
-                step_to: approve_request
+                step_to: order_created
                 transition_definition: place_order_definition
                 display_type: page
                 is_unavailable_hidden: false
@@ -430,16 +437,13 @@ workflows:
                             identifier: $init_context.entityId
                             attribute: $.result.shoppingList
                 preconditions:
-                    '@and':
-                        - '@has_elements': $.result.shoppingList.lineItems
-                        - '@has_price_in_shopping_line_items': $.result.shoppingList.lineItems
-                        - '@extendable':
-                            events: [extendable_condition.start_checkout]
+                    '@has_elements': $.result.shoppingList.lineItems
                 actions:
                     - '@run_action_group':
                         action_group: start_shoppinglist_checkout
                         parameters_mapping:
                             shoppingList: $.result.shoppingList
+                            showErrors: true
                         results:
                             data.checkout: $.checkout
                             result.redirectUrl: $.redirectUrl
@@ -778,6 +782,9 @@ workflows:
                             - '@acl_granted': 'oro_alternativecheckout_checkout_approve'
                 conditions:
                     '@and':
+                        - '@extendable':
+                            message: 'oro.checkout.workflow.b2b_flow_checkout.transition.place_order.condition.extendable.message'
+                            events: ['extendable_condition.before_order_create']
                         - '@or':
                             - '@empty': $.result.savedCheckoutState
                             - '@check_checkout_states':
@@ -834,7 +841,7 @@ workflows:
                         attribute: $.result.lineItems
                         checkout: $checkout
                     - '@create_order':
-                        attribute: $.result.order
+                        attribute: $order
                         checkout: $checkout
                         data:
                             billingAddress: $.result.billingAddress
@@ -846,8 +853,8 @@ workflows:
                         service: oro_order.handler.order_totals_handler
                         method: fillSubtotals
                         method_parameters:
-                            - $.result.order
-                    - '@flush_entity': $.result.order
+                            - $order
+                    - '@flush_entity': $order
 
                     # Save billing address if required
                     - '@assign_constant_value': [$.result.typeBillingName, Oro\Bundle\AddressBundle\Entity\AddressType::TYPE_BILLING]
@@ -855,8 +862,8 @@ workflows:
                         conditions:
                             '@and':
                                 - '@equal': [$checkout.saveBillingAddress, true]
-                                - '@empty': $.result.order.billingAddress.customerAddress
-                                - '@empty': $.result.order.billingAddress.customerUserAddress
+                                - '@empty': $order.billingAddress.customerAddress
+                                - '@empty': $order.billingAddress.customerUserAddress
                                 - '@acl_granted': 'oro_order_address_billing_allow_manual'
                         actions:
                             - '@find_entity':
@@ -870,21 +877,21 @@ workflows:
                                     frontendOwner: $checkout.customerUser
                                     owner: $checkout.owner
                                     systemOrganization: $checkout.organization
-                                    label: $.result.order.billingAddress.label
-                                    organization: $.result.order.billingAddress.organization
-                                    street: $.result.order.billingAddress.street
-                                    street2: $.result.order.billingAddress.street2
-                                    city: $.result.order.billingAddress.city
-                                    postalCode: $.result.order.billingAddress.postalCode
-                                    country: $.result.order.billingAddress.country
-                                    region: $.result.order.billingAddress.region
-                                    regionText: $.result.order.billingAddress.regionText
-                                    namePrefix: $.result.order.billingAddress.namePrefix
-                                    firstName: $.result.order.billingAddress.firstName
-                                    middleName: $.result.order.billingAddress.middleName
-                                    lastName: $.result.order.billingAddress.lastName
-                                    nameSuffix: $.result.order.billingAddress.nameSuffix
-                                    phone: $.result.order.billingAddress.phone
+                                    label: $order.billingAddress.label
+                                    organization: $order.billingAddress.organization
+                                    street: $order.billingAddress.street
+                                    street2: $order.billingAddress.street2
+                                    city: $order.billingAddress.city
+                                    postalCode: $order.billingAddress.postalCode
+                                    country: $order.billingAddress.country
+                                    region: $order.billingAddress.region
+                                    regionText: $order.billingAddress.regionText
+                                    namePrefix: $order.billingAddress.namePrefix
+                                    firstName: $order.billingAddress.firstName
+                                    middleName: $order.billingAddress.middleName
+                                    lastName: $order.billingAddress.lastName
+                                    nameSuffix: $order.billingAddress.nameSuffix
+                                    phone: $order.billingAddress.phone
                             - '@call_method':
                                 object: $.result.customerBillingAddress
                                 method: addType
@@ -901,8 +908,8 @@ workflows:
                         conditions:
                             '@and':
                                 - '@equal': [$checkout.saveShippingAddress, true]
-                                - '@empty': $.result.order.shippingAddress.customerAddress
-                                - '@empty': $.result.order.shippingAddress.customerUserAddress
+                                - '@empty': $order.shippingAddress.customerAddress
+                                - '@empty': $order.shippingAddress.customerUserAddress
                                 - '@acl_granted': 'oro_order_address_shipping_allow_manual'
                         actions:
                             - '@find_entity':
@@ -922,19 +929,19 @@ workflows:
                                             systemOrganization: $checkout.organization
                                             label: $checkout.shippingAddress.label
                                             organization: $checkout.shippingAddress.organization
-                                            street: $.result.order.shippingAddress.street
-                                            street2: $.result.order.shippingAddress.street2
-                                            city: $.result.order.shippingAddress.city
-                                            postalCode: $.result.order.shippingAddress.postalCode
-                                            country: $.result.order.shippingAddress.country
-                                            region: $.result.order.shippingAddress.region
-                                            regionText: $.result.order.shippingAddress.regionText
-                                            namePrefix: $.result.order.shippingAddress.namePrefix
-                                            firstName: $.result.order.shippingAddress.firstName
-                                            middleName: $.result.order.shippingAddress.middleName
-                                            lastName: $.result.order.shippingAddress.lastName
-                                            nameSuffix: $.result.order.shippingAddress.nameSuffix
-                                            phone: $.result.order.shippingAddress.phone
+                                            street: $order.shippingAddress.street
+                                            street2: $order.shippingAddress.street2
+                                            city: $order.shippingAddress.city
+                                            postalCode: $order.shippingAddress.postalCode
+                                            country: $order.shippingAddress.country
+                                            region: $order.shippingAddress.region
+                                            regionText: $order.shippingAddress.regionText
+                                            namePrefix: $order.shippingAddress.namePrefix
+                                            firstName: $order.shippingAddress.firstName
+                                            middleName: $order.shippingAddress.middleName
+                                            lastName: $order.shippingAddress.lastName
+                                            nameSuffix: $order.shippingAddress.nameSuffix
+                                            phone: $order.shippingAddress.phone
                                     - '@call_method':
                                         object: $.result.customerShippingAddress
                                         method: addType
@@ -955,25 +962,71 @@ workflows:
 
                     - '@tree':
                         conditions:
-                            '@not_empty': $.result.order.id
+                            '@not_empty': $order.id
                         actions:
                             - '@assign_url':
                                 attribute: $.result.successUrl
-                                route: oro_order_frontend_success
+                                route: oro_checkout_frontend_checkout
                                 route_parameters:
-                                    id: $.result.order.id
+                                    id: $checkout.id
                             - '@payment_purchase':
                                 attribute: $.result.responseData
-                                object:  $.result.order
-                                amount:  $.result.order.total
-                                currency:  $.result.order.currency
+                                object:  $order
+                                amount:  $order.total
+                                currency:  $order.currency
                                 paymentMethod: $payment_method
                                 transactionOptions:
                                     successUrl: $.result.successUrl
                             - '@redirect':
-                                route: oro_order_frontend_success
+                                route: oro_checkout_frontend_checkout
                                 route_parameters:
-                                    id: $.result.order.id
+                    - '@extendable':
+                        events: [extendable_action.finish_checkout]
+
+                    - '@assign_value': [$checkout.completed, true]
+
+                    - '@tree':
+                        conditions:
+                            '@not_empty': $order
+                        actions:
+                            - '@count':
+                                value: $order.lineItems
+                                attribute: $checkout.completedData.itemsCount
+                            - '@assign_value': [$.result.orders, []]
+                            - '@get_class_name':
+                                object: $order
+                                attribute: $.result.orderClassName
+                            - '@call_service_method':
+                                service: oro_entity.entity_alias_resolver
+                                method: getAlias
+                                method_parameters: [$.result.orderClassName]
+                                attribute: $.result.orders[0].entityAlias
+                            - '@call_service_method':
+                                service: oro_entity.doctrine_helper
+                                method: getEntityIdentifier
+                                method_parameters: [$order]
+                                attribute: $.result.orders[0].entityId
+                            - '@assign_value': [$checkout.completedData.orders, $.result.orders]
+                    - '@assign_value': [$.result.sourceEntity, $checkout.sourceEntity]
+                    - '@tree':
+                        conditions:
+                            '@not_empty': $.result.sourceEntity
+                        actions:
+                            - '@assign_value':
+                                conditions:
+                                    '@instanceof': [$.result.sourceEntity, Oro\Bundle\SaleBundle\Entity\QuoteDemand]
+                                parameters:
+                                    attribute: $.result.sourceEntity
+                                    value: $.result.sourceEntity.quote
+                            - '@call_service_method':
+                                service: oro_entity.entity_name_resolver
+                                method: getName
+                                method_parameters: [$.result.sourceEntity]
+                                attribute: $checkout.completedData.startedFrom
+                            - '@assign_value':
+                                - [$checkout.completedData.currency, $order.currency]
+                                - [$checkout.completedData.subtotal, $order.subtotalObject.value]
+                                - [$checkout.completedData.total, $order.totalObject.value]
 
                     - '@remove_entity':
                         conditions:
@@ -983,7 +1036,6 @@ workflows:
                                     - '@equal': [$allow_manual_source_remove, true]
                                     - '@equal': [$remove_source, true]
                         parameters: [$checkout.sourceEntity]
-                    - '@remove_entity': $checkout
 
             continue_to_request_approval_definition:
                 preactions:
