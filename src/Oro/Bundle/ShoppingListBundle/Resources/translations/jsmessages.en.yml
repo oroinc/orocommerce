@@ -1,6 +1,6 @@
 oro:
     shoppinglist:
-        entity_label: Shopping list
+        entity_label: Shopping List
         line_item_save:
             flash:
                 success: Line Item has been saved
