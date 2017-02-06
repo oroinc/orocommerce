@@ -9,7 +9,6 @@ define(function(require) {
     var __ = require('orotranslation/js/translator');
     var routing = require('routing');
     var mediator = require('oroui/js/mediator');
-    var messenger = require('oroui/js/messenger');
 
     CustomerSelectionComponent = BaseComponent.extend({
         /**
@@ -106,10 +105,7 @@ define(function(require) {
                 complete: function() {
                     self.loadingMask.hide();
                 },
-                error: function(xhr) {
-                    self.loadingMask.hide();
-                    messenger.showErrorMessage(__(self.options.errorMessage), xhr.responseJSON);
-                }
+                errorHandlerMessage: __(this.options.errorMessage)
             });
         },
 
