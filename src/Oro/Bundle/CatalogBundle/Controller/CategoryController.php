@@ -98,11 +98,8 @@ class CategoryController extends Controller
         $selected = $request->get('selected', []);
 
         $collection = new TreeCollection();
-        foreach ($selected as $key) {
-            if (in_array($key, $choices)) {
-                $collection->source[$key] = $choices[$key];
-            }
-        }
+        $collection->source = array_intersect_key($choices, array_flip($selected));
+
         $form = $this->createForm(TreeMoveType::class, $collection, [
             'source_config' => [
                 'choices' => $choices,

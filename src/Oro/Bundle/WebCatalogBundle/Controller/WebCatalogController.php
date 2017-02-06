@@ -111,11 +111,8 @@ class WebCatalogController extends Controller
         $selected = $request->get('selected', []);
 
         $collection = new TreeCollection();
-        foreach ($choices as $choice) {
-            if (in_array($choice->getKey(), $selected)) {
-                $collection->source[$choice->getKey()] = $choice;
-            }
-        }
+        $collection->source = array_intersect_key($choices, array_flip($selected));
+
         $form = $this->createForm(TreeMoveType::class, $collection, [
             'source_config' => [
                 'choices' => $choices,
@@ -144,7 +141,6 @@ class WebCatalogController extends Controller
         }
 
         $responseData['form'] = $form->createView();
-        $responseData['formAction'] = $this->generateUrl('oro_web_catalog_move', ['id' => $webCatalog->getId()]);
 
         return $responseData;
     }
