@@ -1,18 +1,13 @@
-{% block oro_redirect_localized_slug_row %}
+{% block oro_redirect_localized_slug_widget %}
     <div
             data-page-component-module="ororedirect/js/app/components/localized-field-slugify-component"
             data-page-component-options="{{ form.vars.slugify_component_options|json_encode }}"
     >
         <div class="control-group">
-            <div class="control-label wrap">
-                {{ form_label(form) }}
-            </div>
-            <div class="controls">
-                {{ form_widget(form.values) }}
-                {{ form_errors(form.values) }}
-                {{ form_widget(form.ids) }}
-                {{ form_errors(form.ids) }}
-            </div>
+            {{ form_widget(form.values) }}
+            {{ form_errors(form.values) }}
+            {{ form_widget(form.ids) }}
+            {{ form_errors(form.ids) }}
         </div>
     </div>
 {% endblock %}
