@@ -138,40 +138,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->with('oro_redirect.enable_direct_url')
             ->willReturn(false);
 
-        /** @var UnitOfWork|\PHPUnit_Framework_MockObject_MockObject $uow */
-        $uow = $this->getMockBuilder(UnitOfWork::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->any())
-            ->method('getUnitOfWork')
-            ->willReturn($uow);
-        $event->expects($this->any())
-            ->method('getEntityManager')
-            ->willReturn($em);
-
-        $prototype = new LocalizedFallbackValue();
-
-        /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
-        $entity = $this->createMock(SluggableInterface::class);
-        $entity->expects($this->once())
-            ->method('hasSlugPrototype')
-            ->with($prototype)
-            ->willReturn(true);
-
-        $uow->expects($this->any())
-            ->method('getScheduledEntityUpdates')
-            ->willReturn([
-                $entity
-            ]);
-        $uow->expects($this->any())
-            ->method('getScheduledEntityInsertions')
-            ->willReturn([$prototype]);
-        $uow->expects($this->any())
-            ->method('getScheduledEntityDeletions')
-            ->willReturn([]);
+        $this->prepareSluggableEntity($event);
 
         $this->messageProducer->expects($this->never())
             ->method($this->anything());
@@ -285,40 +252,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->with('oro_redirect.enable_direct_url')
             ->willReturn(true);
 
-        /** @var UnitOfWork|\PHPUnit_Framework_MockObject_MockObject $uow */
-        $uow = $this->getMockBuilder(UnitOfWork::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->any())
-            ->method('getUnitOfWork')
-            ->willReturn($uow);
-        $event->expects($this->any())
-            ->method('getEntityManager')
-            ->willReturn($em);
-
-        $prototype = new LocalizedFallbackValue();
-
-        /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
-        $entity = $this->createMock(SluggableInterface::class);
-        $entity->expects($this->once())
-            ->method('hasSlugPrototype')
-            ->with($prototype)
-            ->willReturn(true);
-
-        $uow->expects($this->any())
-            ->method('getScheduledEntityUpdates')
-            ->willReturn([
-                $entity
-            ]);
-        $uow->expects($this->any())
-            ->method('getScheduledEntityInsertions')
-            ->willReturn([$prototype]);
-        $uow->expects($this->any())
-            ->method('getScheduledEntityDeletions')
-            ->willReturn([]);
+        $entity = $this->prepareSluggableEntity($event);
 
         $message = ['class' => get_class($entity), 'id' => 1];
         $this->messageFactory->expects($this->once())
@@ -334,6 +268,9 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnFlushChangedSlugWithChangedPrototypesDel()
     {
+        /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
+        $entity = $this->createMock(SluggableInterface::class);
+
         /** @var OnFlushEventArgs|\PHPUnit_Framework_MockObject_MockObject $event **/
         $event = $this->getMockBuilder(OnFlushEventArgs::class)
             ->disableOriginalConstructor()
@@ -344,34 +281,15 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->with('oro_redirect.enable_direct_url')
             ->willReturn(true);
 
-        /** @var UnitOfWork|\PHPUnit_Framework_MockObject_MockObject $uow */
-        $uow = $this->getMockBuilder(UnitOfWork::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->any())
-            ->method('getUnitOfWork')
-            ->willReturn($uow);
-        $event->expects($this->any())
-            ->method('getEntityManager')
-            ->willReturn($em);
+        $uow = $this->prepareUow($event, $entity);
 
         $prototype = new LocalizedFallbackValue();
 
-        /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
-        $entity = $this->createMock(SluggableInterface::class);
         $entity->expects($this->once())
             ->method('hasSlugPrototype')
             ->with($prototype)
             ->willReturn(true);
 
-        $uow->expects($this->any())
-            ->method('getScheduledEntityUpdates')
-            ->willReturn([
-                $entity
-            ]);
         $uow->expects($this->any())
             ->method('getScheduledEntityInsertions')
             ->willReturn([]);
@@ -389,5 +307,63 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->with(Topics::GENERATE_DIRECT_URL_FOR_ENTITIES, $message);
 
         $this->sluggableEntityListener->onFlush($event);
+    }
+
+    /**
+     * @param OnFlushEventArgs|\PHPUnit_Framework_MockObject_MockObject $event
+     * @return SluggableInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function prepareSluggableEntity($event)
+    {
+        /** @var SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $entity */
+        $entity = $this->createMock(SluggableInterface::class);
+
+        $uow  = $this->prepareUow($event, $entity);
+
+        $prototype = new LocalizedFallbackValue();
+
+        $entity->expects($this->once())
+            ->method('hasSlugPrototype')
+            ->with($prototype)
+            ->willReturn(true);
+
+        $uow->expects($this->any())
+            ->method('getScheduledEntityInsertions')
+            ->willReturn([$prototype]);
+        $uow->expects($this->any())
+            ->method('getScheduledEntityDeletions')
+            ->willReturn([]);
+
+        return $entity;
+    }
+
+    /**
+     * @param OnFlushEventArgs|\PHPUnit_Framework_MockObject_MockObject $event
+     * @param SluggableInterface|\PHPUnit_Framework_MockObject_MockObject $entity
+     * @return UnitOfWork|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function prepareUow($event, $entity)
+    {
+        /** @var UnitOfWork|\PHPUnit_Framework_MockObject_MockObject $uow */
+        $uow = $this->getMockBuilder(UnitOfWork::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
+        $em = $this->createMock(EntityManagerInterface::class);
+        $em->expects($this->any())
+            ->method('getUnitOfWork')
+            ->willReturn($uow);
+        $event->expects($this->any())
+            ->method('getEntityManager')
+            ->willReturn($em);
+
+        $uow->expects($this->any())
+            ->method('getScheduledEntityUpdates')
+            ->willReturn([
+                $entity
+            ]);
+
+        return $uow;
     }
 }

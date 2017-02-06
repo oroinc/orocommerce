@@ -18,7 +18,8 @@ class LineItemValidateEventTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->lineItemValidateEvent = new LineItemValidateEvent($this->lineItems);
+        $context = [];
+        $this->lineItemValidateEvent = new LineItemValidateEvent($this->lineItems, $context);
     }
 
     public function testAddError()

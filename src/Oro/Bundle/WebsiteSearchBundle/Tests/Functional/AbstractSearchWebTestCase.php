@@ -383,41 +383,6 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
         $this->assertCount(0, $items);
     }
 
-    public function testResetIndexForSpecificClass()
-    {
-        $this->loadFixtures([LoadProductsToIndex::class]);
-        $this->setClassSupportedExpectation(TestProduct::class, true);
-        $this->setEntityAliasExpectation();
-        $this->setGetEntityConfigExpectation();
-
-        $restrictedProduct = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
-
-        $this->dispatcher->addListener(
-            $this->getRestrictEntityEventName(),
-            function (RestrictIndexEntityEvent $event) use ($restrictedProduct) {
-                $qb = $event->getQueryBuilder();
-                list($rootAlias) = $qb->getRootAliases();
-                $qb->where($qb->expr()->neq($rootAlias . '.id', ':id'))
-                    ->setParameter('id', $restrictedProduct->getId());
-            },
-            -255
-        );
-
-        $this->setListener();
-        $this->indexer->reindex(
-            TestProduct::class,
-            [
-
-                AbstractIndexer::CONTEXT_WEBSITE_IDS => [$this->getDefaultWebsiteId()]
-            ]
-        );
-
-        $items = $this->getResultItems(['alias' => 'oro_product_' . $this->getDefaultWebsiteId(), 'items_count' => 1]);
-
-        $this->assertCount(1, $items);
-        $this->assertContains('Reindexed product', $items[0]->getTitle());
-    }
-
     public function testReindexOfAllWebsites()
     {
         $this->loadFixtures([LoadItemData::class]);

@@ -13,6 +13,12 @@ use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 
 class LoadInventoryLevels extends AbstractFixture implements DependentFixtureInterface
 {
+    const PRECISION_LITER_QTY_10 = 10;
+    const PRECISION_LITER_QTY_12345 = 12.345;
+    const PRECISION_BOTTLE_QTY_99 = 99;
+    const PRECISION_BOTTLE_QTY_98 = 98;
+    const PRECISION_BOX_QTY_42 = 42;
+
     use UserUtilityTrait;
 
     /**
@@ -30,11 +36,15 @@ class LoadInventoryLevels extends AbstractFixture implements DependentFixtureInt
      */
     public function load(ObjectManager $manager)
     {
-        $this->createInventoryLevel($manager, 'product_unit_precision.product-1.liter', 10);
-        $this->createInventoryLevel($manager, 'product_unit_precision.product-1.bottle', 99);
-        $this->createInventoryLevel($manager, 'product_unit_precision.product-2.liter', 12.345);
-        $this->createInventoryLevel($manager, 'product_unit_precision.product-2.bottle', 98);
-        $this->createInventoryLevel($manager, 'product_unit_precision.product-2.box', 42);
+        $this->createInventoryLevel($manager, 'product_unit_precision.product-1.liter', self::PRECISION_LITER_QTY_10);
+        $this->createInventoryLevel($manager, 'product_unit_precision.product-1.bottle', self::PRECISION_BOTTLE_QTY_99);
+        $this->createInventoryLevel(
+            $manager,
+            'product_unit_precision.product-2.liter',
+            self::PRECISION_LITER_QTY_12345
+        );
+        $this->createInventoryLevel($manager, 'product_unit_precision.product-2.bottle', self::PRECISION_BOTTLE_QTY_98);
+        $this->createInventoryLevel($manager, 'product_unit_precision.product-2.box', self::PRECISION_BOX_QTY_42);
 
         $manager->flush();
     }

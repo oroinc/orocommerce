@@ -1,19 +1,19 @@
 <?php
 
-namespace Oro\Bundle\OrderBundle\EventListener\Order;
+namespace Oro\Bundle\OrderBundle\EventListener;
 
-use Oro\Bundle\OrderBundle\Converter\ShippingPricesConverter;
-use Oro\Bundle\OrderBundle\Event\OrderEvent;
-use Oro\Bundle\OrderBundle\Factory\OrderShippingContextFactory;
+use Oro\Bundle\ShippingBundle\Context\ShippingContextFactoryInterface;
+use Oro\Bundle\ShippingBundle\EventListener\EntityDataAwareEventInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
+use Oro\Bundle\OrderBundle\Converter\ShippingPricesConverter;
 
-class OrderPossibleShippingMethodsEventListener
+class PossibleShippingMethodEventListener
 {
     const CALCULATE_SHIPPING_KEY = 'calculateShipping';
     const POSSIBLE_SHIPPING_METHODS_KEY = 'possibleShippingMethods';
 
     /**
-     * @var OrderShippingContextFactory
+     * @var ShippingContextFactoryInterface
      */
     protected $factory;
 
@@ -28,12 +28,12 @@ class OrderPossibleShippingMethodsEventListener
     protected $priceConverter;
 
     /**
-     * @param OrderShippingContextFactory $factory
+     * @param ShippingContextFactoryInterface $factory
      * @param ShippingPricesConverter $priceConverter
      * @param ShippingPriceProvider|null $priceProvider
      */
     public function __construct(
-        OrderShippingContextFactory $factory,
+        ShippingContextFactoryInterface $factory,
         ShippingPricesConverter $priceConverter,
         ShippingPriceProvider $priceProvider = null
     ) {
@@ -43,9 +43,9 @@ class OrderPossibleShippingMethodsEventListener
     }
 
     /**
-     * @param OrderEvent $event
+     * @param EntityDataAwareEventInterface $event
      */
-    public function onOrderEvent(OrderEvent $event)
+    public function onEvent(EntityDataAwareEventInterface $event)
     {
         $submittedData = $event->getSubmittedData();
         if ($submittedData === null
@@ -56,7 +56,7 @@ class OrderPossibleShippingMethodsEventListener
         ) {
             $data = [];
             if ($this->priceProvider) {
-                $shippingContext = $this->factory->create($event->getOrder());
+                $shippingContext = $this->factory->create($event->getEntity());
                 $shippingMethodViews = $this->priceProvider
                     ->getApplicableMethodsViews($shippingContext)
                     ->toArray();

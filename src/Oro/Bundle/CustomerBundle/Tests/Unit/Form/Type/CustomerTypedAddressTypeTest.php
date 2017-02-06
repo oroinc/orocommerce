@@ -5,6 +5,8 @@ namespace Oro\Bundle\CustomerBundle\Tests\Unit\Form\Type;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\EntityRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 
 use Oro\Bundle\AddressBundle\Entity\AddressType;
@@ -26,12 +28,20 @@ class CustomerTypedAddressTypeTest extends FormIntegrationTestCase
     /** @var AddressType */
     protected $shippingType;
 
+    /** @var \PHPUnit_Framework_MockObject_MockObject|EntityManager */
+    protected $em;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject|EntityRepository */
+    protected $addressRepository;
+
     /**
      * {@inheritdoc}
      */
     public function __construct($name = null, array $data = array(), $dataName = '')
     {
         parent::__construct($name, $data, $dataName);
+
+        // We need they in data provider, so we should create they here
         $this->billingType = new AddressType(AddressType::TYPE_BILLING);
         $this->shippingType = new AddressType(AddressType::TYPE_SHIPPING);
 
@@ -252,11 +262,11 @@ class CustomerTypedAddressTypeTest extends FormIntegrationTestCase
 
     /**
      * @param array $entityModels
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject|EntityRepository
      */
-    protected function createRepositoryMock($entityModels = [])
+    protected function createRepositoryMock(array $entityModels = [])
     {
-        $repo = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
+        $repo = $this->getMockBuilder(EntityRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -272,11 +282,11 @@ class CustomerTypedAddressTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @return \PHPUnit_Framework_MockObject_MockObject
+     * @return \PHPUnit_Framework_MockObject_MockObject|EntityManager
      */
     protected function createEntityManagerMock()
     {
-        return $this->getMockBuilder('Doctrine\ORM\EntityManager')
+        return $this->getMockBuilder(EntityManager::class)
             ->disableOriginalConstructor()
             ->getMock();
     }

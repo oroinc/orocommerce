@@ -782,6 +782,9 @@ workflows:
                             - '@acl_granted': 'oro_alternativecheckout_checkout_approve'
                 conditions:
                     '@and':
+                        - '@extendable':
+                            message: 'oro.checkout.workflow.b2b_flow_checkout.transition.place_order.condition.extendable.message'
+                            events: ['extendable_condition.before_order_create']
                         - '@or':
                             - '@empty': $.result.savedCheckoutState
                             - '@check_checkout_states':
@@ -977,7 +980,8 @@ workflows:
                             - '@redirect':
                                 route: oro_checkout_frontend_checkout
                                 route_parameters:
-                                    id: $checkout.id
+                    - '@extendable':
+                        events: [extendable_action.finish_checkout]
 
                     - '@assign_value': [$checkout.completed, true]
 
