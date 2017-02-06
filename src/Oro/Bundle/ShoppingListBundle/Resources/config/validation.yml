@@ -25,3 +25,11 @@ Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     properties:
         label:
             - NotBlank: ~
+
+Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn:
+    constraints:
+        - Oro\Bundle\ShoppingListBundle\Validator\Constraints\MatrixCollectionColumn: ~
+    properties:
+        quantity:
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
+            - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero:
