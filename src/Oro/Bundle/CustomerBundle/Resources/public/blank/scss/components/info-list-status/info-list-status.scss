@@ -1,19 +1,11 @@
 // @theme: blank
 
 .info-list-status {
-    display: inline-block;
-
     margin-right: 3px;
     
     color: get-color('secondary', 'lighten');
 
     &--disabled {
-        color: get-color('additional', 'middle');
-    }
-
-    &:last-child:before {
-        content: '/';
-        display: inline-block;
         color: get-color('additional', 'middle');
     }
 

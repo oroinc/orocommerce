@@ -26,7 +26,7 @@
 
 @include breakpoint('mobile') {
     .info-list {
-        margin-left: 0;
+        margin: 0 0 20px 0;
 
         &__name {
             min-width: 88px;

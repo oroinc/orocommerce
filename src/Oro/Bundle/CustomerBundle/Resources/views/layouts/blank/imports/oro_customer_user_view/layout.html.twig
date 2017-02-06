@@ -44,47 +44,21 @@
     {% import 'OroEmailBundle::macros.html.twig' as Email %}
 
     <div class="info-list">
-        {% if customerUser.namePrefix is defined and customerUser.namePrefix != null %}
-            <div class="info-list__item">
-                <div class="info-list__name">
-                    {{ 'oro.customer.customeruser.name_prefix.label'|trans }}
-                </div>
-                <div class="info-list__desc">
-                    {{ customerUser.namePrefix }}
-                </div>
-            </div>
-        {% endif %}
-
         <div class="info-list__item">
             <div class="info-list__name">
                 {{ 'oro.customer.frontend.customer_user.full_name.label'|trans }}
             </div>
             <div class="info-list__desc">
-                {{ customerUser.getFullName }}
+                {{ 'oro.customer.customeruser.full_name'|trans({
+                    '%name_prefix%': customerUser.namePrefix,
+                    '%first_name%': customerUser.firstName,
+                    '%middle_name%': customerUser.middleName,
+                    '%last_name%': customerUser.lastName,
+                    '%name_suffix%': customerUser.nameSuffix
+                })|raw
+                }}
             </div>
         </div>
-
-        {% if customerUser.middleName is defined and customerUser.middleName != null %}
-            <div class="info-list__item">
-                <div class="info-list__name">
-                    {{ 'oro.customer.customeruser.middle_name.label'|trans }}
-                </div>
-                <div class="info-list__desc">
-                    {{ customerUser.middleName }}
-                </div>
-            </div>
-        {% endif %}
-
-        {% if customerUser.nameSuffix is defined and customerUser.nameSuffix != null %}
-            <div class="info-list__item">
-                <div class="info-list__name">
-                    {{ 'oro.customer.customeruser.name_suffix.label'|trans }}
-                </div>
-                <div class="info-list__desc">
-                    {{ customerUser.nameSuffix }}
-                </div>
-            </div>
-        {% endif %}
 
         {% if customerUser.birthday is not empty %}
             {% set birthday_string %}
@@ -115,7 +89,7 @@
             <div class="info-list__item">
                 <div class="info-list__name">
                     {% if customerUser.roles|length == 1 %}
-                    {{ 'oro.customer.customeruser.role.label'|trans }}
+                        {{ 'oro.customer.customeruser.role.label'|trans }}
                     {% else %}
                         {{ 'oro.customer.customeruser.roles.label'|trans }}
                     {% endif %}
@@ -156,7 +130,7 @@
                     </div>
                 {% else %}
                     <div class="info-list-status info-list-status--disabled">
-                        <i class="fa fa-times"></i>
+                        <i class="fa fa-ban"></i>
                         {{ 'oro.customer.customeruser.profile.statuses.inactive'|trans }}
                     </div>
                 {% endif %}
@@ -168,7 +142,7 @@
                     </div>
                 {% else %}
                     <div class="info-list-status info-list-status--disabled">
-                        <i class="fa fa-times"></i>
+                        <i class="fa fa-ban"></i>
                         {{ 'oro.customer.customeruser.profile.statuses.unconfirmed'|trans }}
                     </div>
                 {% endif %}

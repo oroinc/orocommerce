@@ -72,6 +72,7 @@ oro.customer:
         form.choose: 'Choose a customer group...'
 
     customeruser:
+        full_name:                   %name_prefix% %first_name% %middle_name% %last_name% %name_suffix%
         entity_label:                'Customer User'
         entity_plural_label:         'Customer Users'
         id.label:                    'ID'

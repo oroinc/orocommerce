@@ -26,7 +26,3 @@ layout:
             options:
                 route_name: oro_customer_frontend_customer_user_index
                 text: 'oro.customer.frontend.customer_user_link.text'
-
-        - '@move':
-            id: customer_user_profile_controls
-            parentId: customer_user_profile_controls_wrapper

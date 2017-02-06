@@ -1,0 +1,5 @@
+layout:
+    actions:
+        - '@move':
+            id: customer_user_profile_controls
+            parentId: customer_user_profile_controls_wrapper
