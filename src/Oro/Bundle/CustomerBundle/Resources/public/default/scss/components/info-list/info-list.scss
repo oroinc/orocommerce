@@ -1,11 +1,11 @@
 // @theme: default
 
 .info-list {
-  margin-left: 35px;
+    margin-left: 35px;
 }
 
 @include breakpoint('mobile') {
-  .info-list {
-    margin-left: 0;
-  }
+    .info-list {
+        margin-left: 0;
+    }
 }

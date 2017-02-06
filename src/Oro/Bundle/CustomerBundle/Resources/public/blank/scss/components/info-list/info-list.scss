@@ -1,27 +1,27 @@
 // @theme: blank
 
 .info-list {
-  padding-top: 12px;
-  margin: 0 0 50px 17px;
+    margin: 0 0 50px 17px;
+    padding-top: 12px;
 
-  border-top: 1px solid get-color('additional', 'light');
+    border-top: 1px solid get-color('additional', 'light');
 
-  &__item {
-      display: flex;
+    &__item {
+        display: flex;
 
-      padding: 5px 0 6px 0;
-  }
-
-  &__name {
-    min-width: 115px;
-    margin-right: 30px;
-
-    &:after {
-      content: ':';
-
-      margin-left: -2px;
+        padding: 5px 0 6px 0;
     }
-  }
+
+    &__name {
+        min-width: 115px;
+        margin-right: 30px;
+
+        &:after {
+            margin-left: -2px;
+
+            content: ':';
+        }
+    }
 }
 
 @include breakpoint('mobile') {
