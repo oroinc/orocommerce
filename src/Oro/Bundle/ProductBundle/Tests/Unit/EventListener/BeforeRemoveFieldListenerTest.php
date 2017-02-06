@@ -31,11 +31,8 @@ class BeforeRemoveFieldListenerTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
-
         $this->entityRepository = $this->createMock(EntityRepository::class);
-
         $this->translator = $this->createMock(TranslatorInterface::class);
-
         $this->listener = new BeforeRemoveFieldListener($this->doctrineHelper, $this->translator);
     }
 

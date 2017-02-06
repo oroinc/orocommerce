@@ -31,7 +31,7 @@ class BeforeRemoveFieldListener
      */
     public function onBeforeRemoveField(BeforeRemoveFieldEvent $event)
     {
-        if ($event->getClassName() !== Product::class && !is_subclass_of($event->getClassName(), Product::class)) {
+        if (!is_a($event->getClassName(), Product::class, true)) {
             return;
         }
 
