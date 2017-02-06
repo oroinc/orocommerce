@@ -67,6 +67,7 @@ class SyncSlugRedirectsProcessor implements MessageProcessorInterface, TopicSubs
         $manager = $this->registry->getManagerForClass(Redirect::class);
         $manager->beginTransaction();
         try {
+            /** @var Slug $slug */
             $slug = $this->registry->getManagerForClass(Slug::class)
                 ->getRepository(Slug::class)
                 ->find($messageData['slugId']);

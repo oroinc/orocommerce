@@ -223,6 +223,14 @@ class SlugEntityGeneratorTest extends \PHPUnit_Framework_TestCase
             ->method('getUrlPrefix')
             ->willReturn('/test');
 
+        $this->slugResolver->expects($this->at(0))
+            ->method('resolve')
+            ->willReturn('/test/test1');
+
+        $this->slugResolver->expects($this->at(1))
+            ->method('resolve')
+            ->willReturn('/test/test2');
+
         $this->redirectGenerator->expects($this->once())
             ->method('generate');
 

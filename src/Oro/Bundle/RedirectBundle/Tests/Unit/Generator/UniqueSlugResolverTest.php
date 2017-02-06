@@ -41,7 +41,7 @@ class UniqueSlugResolverTest extends \PHPUnit_Framework_TestCase
 
         $repository = $this->createMock(SlugRepository::class);
         $repository->expects($this->once())
-            ->method('findOneBySlug')
+            ->method('findOneBySlugWithoutScopes')
             ->with($slug)
             ->willReturn(null);
 
@@ -71,12 +71,12 @@ class UniqueSlugResolverTest extends \PHPUnit_Framework_TestCase
 
         $repository = $this->createMock(SlugRepository::class);
         $repository->expects($this->once())
-            ->method('findOneBySlug')
+            ->method('findOneBySlugWithoutScopes')
             ->with($slug)
             ->willReturn(new Slug());
 
         $repository->expects($this->once())
-            ->method('findAllSlugByPattern')
+            ->method('findAllByPatternWithoutScopes')
             ->with('/test-%', $entity)
             ->willReturn([$existingSlug]);
 
@@ -106,14 +106,14 @@ class UniqueSlugResolverTest extends \PHPUnit_Framework_TestCase
 
         $repository = $this->createMock(SlugRepository::class);
         $repository->expects($this->any())
-            ->method('findOneBySlug')
+            ->method('findOneBySlugWithoutScopes')
             ->willReturnMap([
                 [$slug, $entity, $this->getEntity(Slug::class, ['id' => 123])],
                 ['/test', $entity, $this->getEntity(Slug::class, ['id' => 42])]
             ]);
 
         $repository->expects($this->once())
-            ->method('findAllSlugByPattern')
+            ->method('findAllByPatternWithoutScopes')
             ->with('/test-%', $entity)
             ->willReturn([$existingSlug]);
 

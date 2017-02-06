@@ -8,10 +8,13 @@ use Oro\Bundle\RedirectBundle\Entity\Redirect;
 use Oro\Bundle\RedirectBundle\Entity\Repository\RedirectRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Generator\RedirectGenerator;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class RedirectGeneratorTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /**
      * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -41,19 +44,26 @@ class RedirectGeneratorTest extends \PHPUnit_Framework_TestCase
     public function testGenerateWithExistingRedirect()
     {
         $from = '/from';
+        $to = '/to-url';
         $slug = new Slug();
-        $slug->setUrl('/to-url');
+        $slug->setUrl($to);
 
-        $redirect = new Redirect();
+        $existingRedirect = $this->getEntity(Redirect::class, ['id' => 42]);
+        $createdRedirect = new Redirect();
+        $createdRedirect->setFrom($from)
+            ->setTo($to)
+            ->setSlug($slug)
+            ->setType(Redirect::MOVED_PERMANENTLY);
+
 
         $repository = $this->createMock(RedirectRepository::class);
         $repository->expects($this->once())
-            ->method('findOneBy')
+            ->method('findBy')
             ->with(['slug' => $slug])
-            ->willReturn($redirect);
+            ->willReturn([$existingRedirect]);
 
         $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())
+        $em->expects($this->any())
             ->method('getRepository')
             ->with(Redirect::class)
             ->willReturn($repository);
@@ -63,9 +73,18 @@ class RedirectGeneratorTest extends \PHPUnit_Framework_TestCase
             ->with(Redirect::class)
             ->willReturn($em);
 
+        $em->expects($this->once())
+            ->method('persist')
+            ->with($createdRedirect);
+
+        $em->expects($this->once())
+            ->method('flush')
+            ->with($createdRedirect);
+
         $this->redirectGenerator->generate($from, $slug);
 
-        $this->assertEquals($slug->getScopes(), $redirect->getScopes());
+        $this->assertEquals($slug->getUrl(), $existingRedirect->getTo());
+        $this->assertEquals($slug->getUrl(), $createdRedirect->getTo());
     }
 
     public function testGenerateWithoutExistingRedirect()
@@ -83,7 +102,7 @@ class RedirectGeneratorTest extends \PHPUnit_Framework_TestCase
 
         $repository = $this->createMock(RedirectRepository::class);
         $repository->expects($this->once())
-            ->method('findOneBy')
+            ->method('findBy')
             ->with(['slug' => $slug])
             ->willReturn(null);
 
@@ -107,5 +126,6 @@ class RedirectGeneratorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($em);
 
         $this->redirectGenerator->generate($from, $slug);
+        $this->assertEquals($slug->getUrl(), $expectedRedirect->getTo());
     }
 }
