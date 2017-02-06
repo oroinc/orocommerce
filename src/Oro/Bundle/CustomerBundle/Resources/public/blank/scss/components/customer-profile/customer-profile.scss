@@ -1,71 +1,72 @@
 // @theme: blank;
 
 .customer-profile {
-  margin-top: 24px;
+    margin-top: 24px;
 
-  &__controls {
-      text-align: right;
-
-      li {
-        display: inline-block;
-
-        margin: 0 6px 0 0;
-        padding-right: 6px;
-
-        border-right: 1px solid get-color('secondary', 'base');
-
-        font-size: $base-font-size;
-
-        line-height: 1;
-
-        &:last-child {
-          border-right: 0;
-        }
-      }
-
-      &-wrapper {
+    &__controls-wrapper {
         display: inline-flex;
-        justify-content: space-between;
 
         width: 100%;
         margin-bottom: 20px;
-      }
-  }
 
-  .page-subtitle & {
-    &__controls {
-      display: inline-block;
-      text-align: left;
-
-      li {
-        border-right: 0;
-
-        font-size: 0;
-      }
-
-      .fa-pencil {
-        margin: -12px 0 0 6px;
-
-        font-size: 15px;
-
-        color: get-color('additional', 'middle');
-      }
+        justify-content: space-between;
     }
-  }
+
+    &__controls {
+        text-align: right;
+
+        li {
+            display: inline-block;
+
+            margin: 0 6px 0 0;
+            padding-right: 6px;
+
+            font-size: $base-font-size;
+            line-height: 1;
+
+            border-right: 1px solid get-color('secondary', 'base');
+
+            &:last-child {
+                border-right: 0;
+            }
+        }
+    }
+
+    .page-subtitle & {
+        &__controls {
+            display: inline-block;
+
+            text-align: left;
+
+            li {
+                font-size: 0;
+
+                border-right: 0;
+            }
+
+            .fa-pencil {
+                margin: -12px 0 0 6px;
+
+                font-size: 15px;
+
+                color: get-color('additional', 'middle');
+            }
+        }
+    }
 }
 
 @include breakpoint('mobile') {
-  .customer-profile {
-    margin-top: 24px;
+    .customer-profile {
+        margin-top: 24px;
 
-    &__controls {
-      margin-top: 10px;
+        &__controls-wrapper {
+            display: block;
+        }
 
-      text-align: left;
+        &__controls {
+            margin-top: 10px;
 
-      &-wrapper {
-        display: block;
-      }
+            text-align: left;
+        }
     }
-  }
 }
