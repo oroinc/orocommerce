@@ -192,3 +192,10 @@ services:
             - 'oro_frontend_workflow_transition_form'
             - 'oro_api_frontend_workflow_transit'
             - 'oro_frontend_workflow_widget_buttons'
+
+    oro_frontend.layout_context_configurator.page_template:
+        class: 'Oro\Bundle\FrontendBundle\Layout\Extension\PageTemplateContextConfigurator'
+        arguments:
+            - '@oro_config.global'
+        tags:
+            - { name: layout.context_configurator }
