@@ -153,7 +153,7 @@ class ShoppingListManager
 
     /**
      * @param LineItem          $lineItem
-     * @param ShoppingList|null $shoppingList
+     * @param ShoppingList $shoppingList
      * @param bool|true         $flush
      * @param bool|false        $concatNotes
      */
@@ -162,10 +162,10 @@ class ShoppingListManager
         $this->ensureProductTypeAllowed($lineItem);
         $em = $this->managerRegistry->getManagerForClass('OroShoppingListBundle:LineItem');
         $lineItem->setShoppingList($shoppingList);
-        if ($shoppingList && $shoppingList->getCustomerUser() && null === $lineItem->getCustomerUser()) {
+        if (null === $lineItem->getCustomerUser() && $shoppingList->getCustomerUser()) {
             $lineItem->setCustomerUser($shoppingList->getCustomerUser());
         }
-        if ($shoppingList && $shoppingList->getOrganization() && null === $lineItem->getOrganization()) {
+        if (null === $lineItem->getOrganization() && $shoppingList->getOrganization()) {
             $lineItem->setOrganization($shoppingList->getOrganization());
         }
         /** @var LineItemRepository $repository */
