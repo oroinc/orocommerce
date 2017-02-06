@@ -14,7 +14,6 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
  * @group CommunityEdition
- * @dbIsolation
  */
 class AjaxEntityTotalsControllerTest extends WebTestCase
 {

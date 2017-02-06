@@ -7,9 +7,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestStatusData;
 
-/**
- * @dbIsolation
- */
 class RequestStatusControllerTest extends WebTestCase
 {
     /**

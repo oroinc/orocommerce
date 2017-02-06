@@ -7,9 +7,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 
-/**
- * @dbIsolation
- */
 class InventoryLevelControllerTest extends WebTestCase
 {
     protected function setUp()

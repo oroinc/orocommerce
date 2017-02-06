@@ -6,9 +6,6 @@ use Symfony\Component\Routing\RouterInterface;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
-/**
- * @dbIsolation
- */
 class WarehouseInventoryLevelControllerNoProductUnitsTest extends WebTestCase
 {
     protected function setUp()

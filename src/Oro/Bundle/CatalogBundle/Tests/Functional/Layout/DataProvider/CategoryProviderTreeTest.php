@@ -17,9 +17,6 @@ use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadMasterCatalogLoca
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-/**
- * @dbIsolation
- */
 class CategoryProviderTreeTest extends WebTestCase
 {
     /**

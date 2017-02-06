@@ -4,7 +4,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 
-use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
+use Oro\Bundle\SearchBundle\Tests\Functional\SearchExtensionTrait;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDatetime;
@@ -21,6 +21,8 @@ use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadProductsToI
  */
 class ItemRepositoryTest extends WebTestCase
 {
+    use SearchExtensionTrait;
+
     protected function setUp()
     {
         $this->initClient();
@@ -29,7 +31,7 @@ class ItemRepositoryTest extends WebTestCase
 
     protected function tearDown()
     {
-        $this->clearIndexTextTable();
+        $this->clearIndexTextTable(IndexText::class);
     }
 
     public function testRemoveIndexByAlias()
@@ -138,20 +140,6 @@ class ItemRepositoryTest extends WebTestCase
     protected function getRepository($entityClass)
     {
         return $this->getContainer()->get('doctrine')->getRepository($entityClass, 'search');
-    }
-
-    /**
-     * Workaround to clear MyISAM table as it's not rolled back by transaction.
-     */
-    protected function clearIndexTextTable()
-    {
-        /** @var OroEntityManager $manager */
-        $manager = $this->getContainer()->get('doctrine')->getManager('search');
-        $repository = $manager->getRepository(IndexText::class);
-        $repository->createQueryBuilder('t')
-            ->delete()
-            ->getQuery()
-            ->execute();
     }
 
     /**

@@ -2,13 +2,22 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Command;
 
+use Oro\Bundle\SearchBundle\Tests\Functional\SearchExtensionTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WebsiteSearchBundle\Entity\IndexText;
 
 class ReindexCommandTest extends WebTestCase
 {
+    use SearchExtensionTrait;
+
     protected function setUp()
     {
         $this->initClient();
+    }
+
+    protected function tearDown()
+    {
+        $this->clearIndexTextTable(IndexText::class);
     }
 
     public function testCommand()

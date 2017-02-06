@@ -15,8 +15,6 @@ use Symfony\Component\HttpFoundation\Response;
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
- *
- * @dbIsolation
  */
 class RestCustomerTest extends AbstractRestTest
 {
