@@ -286,7 +286,10 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(DirectUrlProcessor::ACK, $this->processor->process($message, $session));
     }
-    
+
+    /**
+     * @return array
+     */
     public function processProvider()
     {
         return [
@@ -340,7 +343,7 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('rollback');
 
         $this->messageFactory->expects($this->once())
-            ->method('getEntityFromMessage')
+            ->method('getEntitiesFromMessage')
             ->with($messageData)
             ->willThrowException($exception);
 

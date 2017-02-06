@@ -7,6 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\RedirectBundle\Entity\Redirect;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
@@ -54,12 +55,20 @@ class LoadRedirects extends AbstractFixture implements DependentFixtureInterface
             $redirect->setFrom($item['from']);
             $redirect->setTo($item['to']);
             $redirect->setType($item['type']);
+
+            $scope = new Scope();
             if ($item['website']) {
                 /** @var Website $website */
                 $website = $this->getReference($item['website']);
-                $redirect->setWebsite($website);
+                if (method_exists($scope, 'setWebsite')) {
+                    $scope->setWebsite($website);
+                }
             }
-            
+
+            $manager->persist($scope);
+
+            $redirect->addScope($scope);
+
             $manager->persist($redirect);
             
             $this->addReference($item['reference'], $redirect);

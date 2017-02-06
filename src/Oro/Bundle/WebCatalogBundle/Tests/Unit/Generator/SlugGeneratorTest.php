@@ -163,6 +163,63 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
             ->method('getContentVariantType')
             ->willReturn($contentVariantType);
 
+        $this->redirectGenerator->expects($this->atLeast(1))
+            ->method('generate');
+
+        $this->slugGenerator->generate($contentNode, true);
+
+        /** @var ContentVariant $actualContentVariant */
+        $actualContentVariant = $contentNode->getContentVariants()->first();
+        $actualSlugs = $actualContentVariant->getSlugs();
+
+        $this->assertCount(1, $actualSlugs);
+        $expectedSlugs = [
+            (new Slug())->setUrl(SlugGenerator::ROOT_URL)
+                ->setRouteName($routeId)
+                ->setRouteParameters($routeParameters)
+                ->addScope($scope)
+        ];
+
+        $expectedUrls = [(new LocalizedFallbackValue())->setText(SlugGenerator::ROOT_URL)];
+        foreach ($contentNode->getLocalizedUrls() as $url) {
+            $this->assertContains($url, $expectedUrls, '', false, false);
+        }
+
+        foreach ($actualSlugs as $slug) {
+            $this->assertContains($slug, $expectedSlugs, '', false, false);
+        }
+    }
+
+    public function testGenerateWithExistingSlugsWithoutGenerateRedirects()
+    {
+        $routeId = 'route_id';
+        $routeParameters = [];
+        $routData = new RouteData($routeId, $routeParameters);
+        $scope = new Scope();
+
+        $contentVariantType = $this->createMock(ContentVariantTypeInterface::class);
+        $contentVariantType->expects($this->once())
+            ->method('getRouteData')
+            ->willReturn($routData);
+
+        $existingSlug = new Slug();
+        $existingSlug->setUrl(SlugGenerator::ROOT_URL);
+
+        $contentVariant = new ContentVariant();
+        $contentVariant->setType('test_type1');
+        $contentVariant->addScope($scope);
+        $contentVariant->addSlug($existingSlug);
+
+        $contentNode = new ContentNode();
+        $contentNode->addContentVariant($contentVariant);
+
+        $this->contentVariantTypeRegistry->expects($this->once())
+            ->method('getContentVariantType')
+            ->willReturn($contentVariantType);
+
+        $this->redirectGenerator->expects($this->never())
+            ->method('generate');
+
         $this->slugGenerator->generate($contentNode);
 
         /** @var ContentVariant $actualContentVariant */

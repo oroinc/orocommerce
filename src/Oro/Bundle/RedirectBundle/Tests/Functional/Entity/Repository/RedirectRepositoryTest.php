@@ -5,8 +5,6 @@ namespace Oro\Bundle\RedirectBundle\Tests\Functional\Entity\Repository;
 use Oro\Bundle\RedirectBundle\Entity\Redirect;
 use Oro\Bundle\RedirectBundle\Tests\Functional\DataFixtures\LoadRedirects;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
  * @dbIsolation
@@ -21,45 +19,37 @@ class RedirectRepositoryTest extends WebTestCase
         ]);
     }
 
-    public function testFindByFromWithoutWebsite()
-    {
-        $result = $this->getContainer()->get('doctrine')->getRepository(Redirect::class)
-            ->findByFrom('/from-1');
-        
-        $this->assertEquals($this->getReference(LoadRedirects::REDIRECT_1), $result);
-    }
-
     /**
-     * @dataProvider findByFromWithoutWebsiteDataProvider
-     * @param string $website
-     * @param string $fromUrl
+     * @dataProvider findByFromDataProvider
      * @param string $redirect
      */
-    public function testFindByFromWithWebsite($website, $fromUrl, $redirect)
+    public function testFindByFrom($redirect)
     {
-        /** @var Website $website */
-        $website = $this->getReference($website);
+        /** @var Redirect $redirect */
+        $redirect = $this->getReference($redirect);
+
+        $fromUrl = $redirect->getFrom();
+        $scope = $redirect->getScopes()->first();
 
         $result = $this->getContainer()->get('doctrine')->getRepository(Redirect::class)
-            ->findByFrom($fromUrl, $website);
+            ->findByFrom($fromUrl, $scope);
 
-        $this->assertEquals($this->getReference($redirect), $result);
+        $this->assertEquals($redirect, $result);
     }
 
     /**
      * @return array
      */
-    public function findByFromWithoutWebsiteDataProvider()
+    public function findByFromDataProvider()
     {
         return [
             [
-                'website' => LoadWebsiteData::WEBSITE1,
-                'from_url' => '/from-2',
+                'redirect' => LoadRedirects::REDIRECT_1
+            ],
+            [
                 'redirect' => LoadRedirects::REDIRECT_2
             ],
             [
-                'website' => LoadWebsiteData::WEBSITE2,
-                'from_url' => '/from-3',
                 'redirect' => LoadRedirects::REDIRECT_3
             ]
         ];

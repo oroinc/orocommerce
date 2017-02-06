@@ -58,7 +58,7 @@ class SlugGenerator
 
         if (!$contentNode->getChildNodes()->isEmpty()) {
             foreach ($contentNode->getChildNodes() as $childNode) {
-                $this->generate($childNode);
+                $this->generate($childNode, $generateRedirects);
             }
         }
     }
