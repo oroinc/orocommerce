@@ -49,7 +49,6 @@ class FrontendRoutingTest extends WebTestCase
 
     public function testSlugRoutingAuthentication()
     {
-        $this->markTestSkipped('Will be fixed in BB-7513');
         /** @var Slug $slug */
         $slug = $this->getReference(LoadSlugsData::SLUG_URL_USER);
         $this->client->request(
