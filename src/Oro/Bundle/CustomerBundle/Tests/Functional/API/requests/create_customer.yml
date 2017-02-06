@@ -1,0 +1,30 @@
+data:
+    type: customers
+    attributes:
+        name: 'created customer'
+    relationships:
+        parent:
+            data:
+                type: customers
+                id: '<toString(@default_customer->id)>'
+        owner:
+            data:
+                type: users
+                id: '<toString(@default_customer->owner->id)>'
+        organization:
+            data:
+                type: organizations
+                id: '<toString(@default_customer->organization->id)>'
+        salesRepresentatives:
+            data:
+                -
+                    type: users
+                    id: '<toString(@default_customer->owner->id)>'
+        internal_rating:
+            data:
+                type: accinternalratings
+                id: internal_rating.1_of_5
+        group:
+            data:
+                type: customergroups
+                id: '<toString(@customer_group.group1->id)>'

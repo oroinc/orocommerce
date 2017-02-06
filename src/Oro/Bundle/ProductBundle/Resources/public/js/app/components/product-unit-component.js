@@ -7,7 +7,6 @@ define(function(require) {
     var BaseComponent = require('oroui/js/app/components/base/component');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     var routing = require('routing');
-    var messenger = require('oroui/js/messenger');
     var _ = require('underscore');
     var $ = require('jquery');
     var __ = require('orotranslation/js/translator');
@@ -79,7 +78,6 @@ define(function(require) {
         onProductChange: function(e) {
             this.unitSelector.trigger('value:changing');
             var value = e.target.value;
-            var self = this;
 
             if (!value) {
                 this._dropValues();
@@ -93,10 +91,8 @@ define(function(require) {
                 beforeSend: $.proxy(this._beforeSend, this),
                 success: $.proxy(this._success, this),
                 complete: $.proxy(this._complete, this),
-                error: $.proxy(function(jqXHR) {
-                    this._dropValues();
-                    messenger.showErrorMessage(__(self.options.errorMessage), jqXHR.responseJSON);
-                }, this)
+                errorHandlerMessage: __(this.options.errorMessage),
+                error: $.proxy(this._dropValues, this)
             });
         },
 
