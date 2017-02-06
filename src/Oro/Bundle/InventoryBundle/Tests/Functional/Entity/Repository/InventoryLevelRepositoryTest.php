@@ -4,7 +4,6 @@ namespace Oro\Bundle\InventoryBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Entity\Repository\InventoryLevelRepository;
-use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadInventoryLevels;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -23,7 +22,7 @@ class InventoryLevelRepositoryTest extends WebTestCase
     {
         $this->initClient();
         $this->loadFixtures([
-            LoadInventoryLevels::class,
+            '@OroInventoryBundle/Tests/Functional/DataFixtures/inventory_level.yml',
         ]);
 
         $this->inventoryLevelRepo = $this->client->getContainer()->get('oro_entity.doctrine_helper')
@@ -39,7 +38,10 @@ class InventoryLevelRepositoryTest extends WebTestCase
 
         $inventoryLevel = $this->inventoryLevelRepo->getLevelByProductAndProductUnit($product, $productUnit);
         $this->assertInstanceOf(InventoryLevel::class, $inventoryLevel);
-        $this->assertEquals(LoadInventoryLevels::PRECISION_LITER_QTY_10, $inventoryLevel->getQuantity());
+        $this->assertEquals(
+            self::processTemplateData('@inventory_level.product_unit_precision.product-1.liter->quantity'),
+            $inventoryLevel->getQuantity()
+        );
 
         /** @var Product $productReference */
         $product = $this->getReference('product-1');
@@ -47,6 +49,9 @@ class InventoryLevelRepositoryTest extends WebTestCase
         $productUnit = $this->getReference('product_unit.bottle');
         $inventoryLevel = $this->inventoryLevelRepo->getLevelByProductAndProductUnit($product, $productUnit);
         $this->assertInstanceOf(InventoryLevel::class, $inventoryLevel);
-        $this->assertEquals(LoadInventoryLevels::PRECISION_BOTTLE_QTY_99, $inventoryLevel->getQuantity());
+        $this->assertEquals(
+            self::processTemplateData('@inventory_level.product_unit_precision.product-1.bottle->quantity'),
+            $inventoryLevel->getQuantity()
+        );
     }
 }
