@@ -172,17 +172,7 @@ class ShoppingListManager
         $repository = $em->getRepository('OroShoppingListBundle:LineItem');
         $duplicate = $repository->findDuplicate($lineItem);
         if ($duplicate instanceof LineItem && $shoppingList->getId()) {
-            $quantity = $this->rounding->roundQuantity(
-                $duplicate->getQuantity() + $lineItem->getQuantity(),
-                $duplicate->getUnit(),
-                $duplicate->getProduct()
-            );
-            $duplicate->setQuantity($quantity);
-
-            if ($concatNotes) {
-                $notes = trim(implode(' ', [$duplicate->getNotes(), $lineItem->getNotes()]));
-                $duplicate->setNotes($notes);
-            }
+            $this->mergeLineItems($lineItem, $duplicate, $concatNotes);
         } else {
             $shoppingList->addLineItem($lineItem);
             $em->persist($lineItem);
@@ -192,6 +182,26 @@ class ShoppingListManager
 
         if ($flush) {
             $em->flush();
+        }
+    }
+
+    /**
+     * @param LineItem $lineItem
+     * @param LineItem $duplicate
+     * @param bool     $concatNotes
+     */
+    protected function mergeLineItems(LineItem $lineItem, LineItem $duplicate, $concatNotes)
+    {
+        $quantity = $this->rounding->roundQuantity(
+            $duplicate->getQuantity() + $lineItem->getQuantity(),
+            $duplicate->getUnit(),
+            $duplicate->getProduct()
+        );
+        $duplicate->setQuantity($quantity);
+
+        if ($concatNotes) {
+            $notes = trim(implode(' ', [$duplicate->getNotes(), $lineItem->getNotes()]));
+            $duplicate->setNotes($notes);
         }
     }
 

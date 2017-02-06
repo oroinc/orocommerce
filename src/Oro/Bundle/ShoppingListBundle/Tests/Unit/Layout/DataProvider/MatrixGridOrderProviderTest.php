@@ -72,7 +72,7 @@ class MatrixGridOrderProviderTest extends \PHPUnit_Framework_TestCase
         $this->productVariantAvailability->expects($this->once())
             ->method('getVariantFieldsAvailability')
             ->with($product)
-            ->willReturn([[1]]);
+            ->willReturn([1, 2]);
 
         $this->productVariantAvailability->expects($this->once())
             ->method('getSimpleProductsByVariantFields')
@@ -138,7 +138,7 @@ class MatrixGridOrderProviderTest extends \PHPUnit_Framework_TestCase
         $this->productVariantAvailability->expects($this->once())
             ->method('getVariantFieldsAvailability')
             ->with($product)
-            ->willReturn([[1]]);
+            ->willReturn([[1, 2]]);
 
         $this->productVariantAvailability->expects($this->once())
             ->method('getSimpleProductsByVariantFields')

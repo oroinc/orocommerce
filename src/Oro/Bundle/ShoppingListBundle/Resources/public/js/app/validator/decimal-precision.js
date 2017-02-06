@@ -15,7 +15,7 @@ define([
             }
             var floatValue = parseFloat(value);
 
-            return floatValue.toFixed(param.precision) == floatValue;
+            return parseFloat(floatValue.toFixed(param.precision)) === floatValue;
         },
         function(param, element) {
             var placeholders = {};
