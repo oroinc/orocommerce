@@ -69,7 +69,7 @@ class LocalizedSlugType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'slug_suggestion_enabled' => false,
+            'slug_suggestion_enabled' => true,
             'slugify_route' => 'oro_api_slugify_slug',
         ]);
         $resolver->setDefined('source_field');
