@@ -58,7 +58,7 @@ class PayPalSettings extends Transport
      *     targetEntity="Oro\Bundle\PayPalBundle\Entity\CreditCardPaymentAction",
      *     inversedBy="payPalSettings"
      * )
-     * @ORM\JoinColumn(name="cc_settings_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="pp_credit_card_action_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $creditCardPaymentAction;
 
@@ -69,7 +69,7 @@ class PayPalSettings extends Transport
      *     targetEntity="Oro\Bundle\PayPalBundle\Entity\ExpressCheckoutPaymentAction",
      *     inversedBy="payPalSettings"
      * )
-     * @ORM\JoinColumn(name="ec_settings_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\JoinColumn(name="pp_express_checkout_action_id", referencedColumnName="id", onDelete="CASCADE")
      */
     protected $expressCheckoutPaymentAction;
 
@@ -78,12 +78,12 @@ class PayPalSettings extends Transport
      *
      * @ORM\ManyToMany(targetEntity="Oro\Bundle\PayPalBundle\Entity\CreditCardType")
      * @ORM\JoinTable(
-     *      name="oro_paypal_allowed_cc_types",
+     *      name="oro_paypal_allowed_card_tps",
      *      joinColumns={
      *          @ORM\JoinColumn(name="pp_settings_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
      *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="cc_id", referencedColumnName="id", onDelete="CASCADE")
+     *          @ORM\JoinColumn(name="credit_card_type_id", referencedColumnName="id", onDelete="CASCADE")
      *      }
      * )
      **/

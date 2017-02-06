@@ -77,21 +77,25 @@ services:
 
     oro_paypal.method.generator.identifier.payflow_gateway.credit_card:
         parent: oro_integration.generator.prefixed_identifier_generator
+        public: true
         arguments:
             - '%oro_paypal.method.identifier_prefix.payflow_gateway.credit_card%'
 
     oro_paypal.method.generator.identifier.payflow_gateway.express_checkout:
         parent: oro_integration.generator.prefixed_identifier_generator
+        public: true
         arguments:
             - '%oro_paypal.method.identifier_prefix.payflow_gateway.express_checkout%'
 
     oro_paypal.method.generator.identifier.payments_pro.credit_card:
         parent: oro_integration.generator.prefixed_identifier_generator
+        public: true
         arguments:
             - '%oro_paypal.method.identifier_prefix.payments_pro.credit_card%'
 
     oro_paypal.method.generator.identifier.payments_pro.express_checkout:
         parent: oro_integration.generator.prefixed_identifier_generator
+        public: true
         arguments:
             - '%oro_paypal.method.identifier_prefix.payments_pro.express_checkout%'
 

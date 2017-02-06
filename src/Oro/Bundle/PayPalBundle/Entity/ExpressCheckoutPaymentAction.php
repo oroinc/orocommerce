@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="oro_paypal_ec_payment_action")
+ * @ORM\Table(name="oro_paypal_xprs_chkt_pmnt_actn")
  * @ORM\Entity
  */
 class ExpressCheckoutPaymentAction

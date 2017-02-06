@@ -8,11 +8,11 @@ use Symfony\Component\DependencyInjection\Reference;
 
 class PaymentMethodViewProvidersPass implements CompilerPassInterface
 {
-    const REGISTRY_SERVICE = 'oro_payment.payment_method_view_provider.registry';
+    const REGISTRY_SERVICE = 'oro_payment.payment_method_view.composite_provider';
     const TAG = 'oro_payment.payment_method_view_provider';
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function process(ContainerBuilder $container)
     {

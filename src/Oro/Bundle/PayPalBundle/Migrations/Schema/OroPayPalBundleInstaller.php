@@ -3,15 +3,16 @@
 namespace Oro\Bundle\PayPalBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Oro\Bundle\MigrationBundle\Migration\Installation;
-use Oro\Bundle\MigrationBundle\Migration\ParametrizedSqlMigrationQuery;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class OroPayPalBundleInstaller implements Installation
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getMigrationVersion()
     {
@@ -19,99 +20,25 @@ class OroPayPalBundleInstaller implements Installation
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $this->migratePayPalSettings($schema, $queries);
         $this->updateOroIntegrationTransportTable($schema);
-        $this->createOroPaypalAllowedCcTypesTable($schema);
-        $this->createOroPaypalCcPaymentActionTable($schema);
+        $this->createOroPaypalAllowedCardTpsTable($schema);
+        $this->createOroPaypalCrdtCrdPmntActnTable($schema);
         $this->createOroPaypalCreditCardLblTable($schema);
         $this->createOroPaypalCreditCardShLblTable($schema);
         $this->createOroPaypalCreditCardTypeTable($schema);
-        $this->createOroPaypalEcPaymentActionTable($schema);
+        $this->createOroPaypalXprdChktPmntActnTable($schema);
         $this->createOroPaypalXprssChktLblTable($schema);
         $this->createOroPaypalXprssChktShrtLblTable($schema);
         $this->addOroIntegrationTransportForeignKeys($schema);
-        $this->addOroPaypalAllowedCcTypesForeignKeys($schema);
+        $this->addOroPaypalAllowedCardTpsForeignKeys($schema);
         $this->addOroPaypalCreditCardLblForeignKeys($schema);
         $this->addOroPaypalCreditCardShLblForeignKeys($schema);
         $this->addOroPaypalXprssChktLblForeignKeys($schema);
         $this->addOroPaypalXprssChktShrtLblForeignKeys($schema);
-    }
-
-    /**
-     * @param Schema $schema
-     * @param QueryBag $queries
-     */
-    protected function migratePayPalSettings(Schema $schema, QueryBag $queries)
-    {
-        // PayPal Payments Pro
-        $this->migrateSetting($queries, 'paypal_payments_pro_label');
-        $this->migrateSetting($queries, 'paypal_payments_pro_short_label');
-        $this->migrateSetting($queries, 'paypal_payments_pro_allowed_cc_types');
-        $this->migrateSetting($queries, 'paypal_payments_pro_partner');
-        $this->migrateSetting($queries, 'paypal_payments_pro_user');
-        $this->migrateSetting($queries, 'paypal_payments_pro_vendor');
-        $this->migrateSetting($queries, 'paypal_payments_pro_password');
-        $this->migrateSetting($queries, 'paypal_payments_pro_payment_action');
-        $this->migrateSetting($queries, 'paypal_payments_pro_test_mode');
-        $this->migrateSetting($queries, 'paypal_payments_pro_use_proxy');
-        $this->migrateSetting($queries, 'paypal_payments_pro_proxy_host');
-        $this->migrateSetting($queries, 'paypal_payments_pro_proxy_port');
-        $this->migrateSetting($queries, 'paypal_payments_pro_debug_mode');
-        $this->migrateSetting($queries, 'paypal_payments_pro_enable_ssl_verification');
-        $this->migrateSetting($queries, 'paypal_payments_pro_require_cvv');
-        $this->migrateSetting($queries, 'paypal_payments_pro_zero_amount_authorization');
-        $this->migrateSetting($queries, 'paypal_payments_pro_authorization_for_required_amount');
-        $this->migrateSetting($queries, 'paypal_payments_pro_allowed_currencies');
-        $this->migrateSetting($queries, 'paypal_payments_pro_express_checkout_enabled');
-        $this->migrateSetting($queries, 'paypal_payments_pro_express_checkout_label');
-        $this->migrateSetting($queries, 'paypal_payments_pro_express_checkout_short_label');
-        $this->migrateSetting($queries, 'paypal_payments_pro_express_checkout_sort_order');
-        $this->migrateSetting($queries, 'paypal_payments_pro_express_checkout_payment_action');
-
-        // Payflow Gateway
-        $this->migrateSetting($queries, 'payflow_gateway_label');
-        $this->migrateSetting($queries, 'payflow_gateway_short_label');
-        $this->migrateSetting($queries, 'payflow_gateway_allowed_cc_types');
-        $this->migrateSetting($queries, 'payflow_gateway_partner');
-        $this->migrateSetting($queries, 'payflow_gateway_user');
-        $this->migrateSetting($queries, 'payflow_gateway_vendor');
-        $this->migrateSetting($queries, 'payflow_gateway_password');
-        $this->migrateSetting($queries, 'payflow_gateway_payment_action');
-        $this->migrateSetting($queries, 'payflow_gateway_test_mode');
-        $this->migrateSetting($queries, 'payflow_gateway_use_proxy');
-        $this->migrateSetting($queries, 'payflow_gateway_proxy_host');
-        $this->migrateSetting($queries, 'payflow_gateway_proxy_port');
-        $this->migrateSetting($queries, 'payflow_gateway_debug_mode');
-        $this->migrateSetting($queries, 'payflow_gateway_enable_ssl_verification');
-        $this->migrateSetting($queries, 'payflow_gateway_require_cvv');
-        $this->migrateSetting($queries, 'payflow_gateway_zero_amount_authorization');
-        $this->migrateSetting($queries, 'payflow_gateway_authorization_for_required_amount');
-        $this->migrateSetting($queries, 'payflow_gateway_allowed_currencies');
-
-        // Payflow Express Checkout
-        $this->migrateSetting($queries, 'payflow_express_checkout_label');
-        $this->migrateSetting($queries, 'payflow_express_checkout_short_label');
-        $this->migrateSetting($queries, 'payflow_express_checkout_payment_action');
-    }
-
-    /**
-     * @param QueryBag $queries
-     * @param string $name
-     */
-    protected function migrateSetting(QueryBag $queries, $name)
-    {
-        $queries->addQuery(new ParametrizedSqlMigrationQuery(
-            'UPDATE oro_config_value SET section = :new_section WHERE name = :name AND section = :old_section',
-            [
-                'name' => $name,
-                'new_section' => 'oro_paypal',
-                'old_section' => 'orob2b_payment'
-            ]
-        ));
     }
 
     /**
@@ -122,8 +49,8 @@ class OroPayPalBundleInstaller implements Installation
     protected function updateOroIntegrationTransportTable(Schema $schema)
     {
         $table = $schema->getTable('oro_integration_transport');
-        $table->addColumn('ec_settings_id', 'integer', ['notnull' => false]);
-        $table->addColumn('cc_settings_id', 'integer', ['notnull' => false]);
+        $table->addColumn('pp_express_checkout_action_id', 'integer', ['notnull' => false]);
+        $table->addColumn('pp_credit_card_action_id', 'integer', ['notnull' => false]);
         $table->addColumn('pp_express_checkout_name', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('pp_partner', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('pp_vendor', 'string', ['notnull' => false, 'length' => 255]);
@@ -138,31 +65,29 @@ class OroPayPalBundleInstaller implements Installation
         $table->addColumn('pp_proxy_host', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('pp_proxy_port', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('pp_enable_ssl_verification', 'boolean', ['default' => '1', 'notnull' => false]);
-        $table->addIndex(['cc_settings_id'], 'IDX_D7A389A8EEC289BC', []);
-        $table->addIndex(['ec_settings_id'], 'IDX_D7A389A81600C20A', []);
     }
 
     /**
-     * Create oro_paypal_allowed_cc_types table
+     * Create oro_paypal_allowed_card_tps table
      *
      * @param Schema $schema
      */
-    protected function createOroPaypalAllowedCcTypesTable(Schema $schema)
+    protected function createOroPaypalAllowedCardTpsTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_paypal_allowed_cc_types');
+        $table = $schema->createTable('oro_paypal_allowed_card_tps');
         $table->addColumn('pp_settings_id', 'integer', []);
-        $table->addColumn('cc_id', 'integer', []);
-        $table->setPrimaryKey(['pp_settings_id', 'cc_id']);
+        $table->addColumn('credit_card_type_id', 'integer', []);
+        $table->setPrimaryKey(['pp_settings_id', 'credit_card_type_id']);
     }
 
     /**
-     * Create oro_paypal_cc_payment_action table
+     * Create oro_paypal_crdt_crd_pmnt_actn table
      *
      * @param Schema $schema
      */
-    protected function createOroPaypalCcPaymentActionTable(Schema $schema)
+    protected function createOroPaypalCrdtCrdPmntActnTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_paypal_cc_payment_action');
+        $table = $schema->createTable('oro_paypal_crdt_crd_pmnt_actn');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('label', 'string', ['notnull' => true, 'length' => 255]);
         $table->setPrimaryKey(['id']);
@@ -180,7 +105,6 @@ class OroPayPalBundleInstaller implements Installation
         $table->addColumn('localized_value_id', 'integer', []);
         $table->setPrimaryKey(['transport_id', 'localized_value_id']);
         $table->addUniqueIndex(['localized_value_id'], 'UNIQ_92E5B87EEB576E89');
-        $table->addIndex(['transport_id'], 'IDX_92E5B87E9909C13F', []);
     }
 
     /**
@@ -211,13 +135,13 @@ class OroPayPalBundleInstaller implements Installation
     }
 
     /**
-     * Create oro_paypal_ec_payment_action table
+     * Create oro_paypal_xprs_chkt_pmnt_actn table
      *
      * @param Schema $schema
      */
-    protected function createOroPaypalEcPaymentActionTable(Schema $schema)
+    protected function createOroPaypalXprdChktPmntActnTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_paypal_ec_payment_action');
+        $table = $schema->createTable('oro_paypal_xprs_chkt_pmnt_actn');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('label', 'string', ['notnull' => true, 'length' => 255]);
         $table->setPrimaryKey(['id']);
@@ -252,16 +176,16 @@ class OroPayPalBundleInstaller implements Installation
     }
 
     /**
-     * Add oro_paypal_allowed_cc_types foreign keys.
+     * Add oro_paypal_allowed_card_tps foreign keys.
      *
      * @param Schema $schema
      */
-    protected function addOroPaypalAllowedCcTypesForeignKeys(Schema $schema)
+    protected function addOroPaypalAllowedCardTpsForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('oro_paypal_allowed_cc_types');
+        $table = $schema->getTable('oro_paypal_allowed_card_tps');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_paypal_credit_card_types'),
-            ['cc_id'],
+            ['credit_card_type_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
@@ -370,14 +294,14 @@ class OroPayPalBundleInstaller implements Installation
     {
         $table = $schema->getTable('oro_integration_transport');
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_paypal_ec_payment_action'),
-            ['ec_settings_id'],
+            $schema->getTable('oro_paypal_xprs_chkt_pmnt_actn'),
+            ['pp_express_checkout_action_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );
         $table->addForeignKeyConstraint(
-            $schema->getTable('oro_paypal_cc_payment_action'),
-            ['cc_settings_id'],
+            $schema->getTable('oro_paypal_crdt_crd_pmnt_actn'),
+            ['pp_credit_card_action_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
         );

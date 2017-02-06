@@ -451,3 +451,10 @@ services:
             - '@oro_pricing.model.price_list_request_handler'
         tags:
             - { name: kernel.event_listener, event: extendable_condition.start_checkout, method: onStartCheckoutConditionCheck }
+
+    oro_checkout.payment.method.event_listener.method_renaming:
+        class: 'Oro\Bundle\CheckoutBundle\Payment\Method\EventListener\MethodRenamingListener'
+        arguments:
+            - '@oro_checkout.repository.checkout'
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.method_renaming, method: onMethodRename}

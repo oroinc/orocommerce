@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PaymentBundle\Migrations\Data\ORM;
+namespace Oro\Bundle\PayPalBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -17,7 +17,7 @@ class AddExpressCheckoutPaymentActions extends AbstractFixture implements Contai
     use ContainerAwareTrait;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function load(ObjectManager $manager)
     {

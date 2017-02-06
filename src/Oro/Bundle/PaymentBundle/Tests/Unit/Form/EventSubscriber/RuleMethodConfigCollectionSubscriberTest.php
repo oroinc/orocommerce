@@ -20,7 +20,7 @@ use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleDestinationType;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleType;
 use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistry;
 use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
-use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistry;
+use Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
@@ -89,7 +89,7 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getExtensions()
     {
@@ -114,18 +114,18 @@ class RuleMethodConfigCollectionSubscriberTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        /** @var PaymentMethodViewProvidersRegistry $methodViewRegistry */
-        $methodViewRegistry = new PaymentMethodViewProvidersRegistry();
+        /** @var CompositePaymentMethodViewProvider $methodViewProvider */
+        $methodViewProvider = new CompositePaymentMethodViewProvider();
 
         return [
             new PreloadedExtension(
                 [
                     PaymentMethodsConfigsRuleType::class
-                    => new PaymentMethodsConfigsRuleType($this->methodRegistry, $methodViewRegistry),
+                    => new PaymentMethodsConfigsRuleType($this->methodRegistry, $methodViewProvider),
                     PaymentMethodConfigCollectionType::class
                     => new PaymentMethodConfigCollectionType($this->subscriber),
                     PaymentMethodConfigType::class
-                    => new PaymentMethodConfigType($this->methodRegistry, $methodViewRegistry),
+                    => new PaymentMethodConfigType($this->methodRegistry, $methodViewProvider),
                     CurrencySelectionType::NAME => new CurrencySelectionType(
                         $currencyProvider,
                         $this->getMockBuilder(LocaleSettings::class)->disableOriginalConstructor()->getMock(),

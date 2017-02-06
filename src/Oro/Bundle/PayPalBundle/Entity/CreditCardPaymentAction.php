@@ -7,7 +7,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Table(name="oro_paypal_cc_payment_action")
+ * @ORM\Table(name="oro_paypal_crdt_crd_pmnt_actn")
  * @ORM\Entity
  */
 class CreditCardPaymentAction

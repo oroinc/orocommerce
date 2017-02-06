@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PaymentBundle\Migrations\Data\ORM;
+namespace Oro\Bundle\PayPalBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
@@ -14,7 +14,7 @@ class AddCreditCardTypes extends AbstractFixture implements ContainerAwareInterf
     use ContainerAwareTrait;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function load(ObjectManager $manager)
     {

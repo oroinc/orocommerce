@@ -153,7 +153,7 @@ class ShoppingListManager
 
     /**
      * @param LineItem          $lineItem
-     * @param ShoppingList|null $shoppingList
+     * @param ShoppingList $shoppingList
      * @param bool|true         $flush
      * @param bool|false        $concatNotes
      */
@@ -162,21 +162,17 @@ class ShoppingListManager
         $this->ensureProductTypeAllowed($lineItem);
         $em = $this->managerRegistry->getManagerForClass('OroShoppingListBundle:LineItem');
         $lineItem->setShoppingList($shoppingList);
+        if (null === $lineItem->getCustomerUser() && $shoppingList->getCustomerUser()) {
+            $lineItem->setCustomerUser($shoppingList->getCustomerUser());
+        }
+        if (null === $lineItem->getOrganization() && $shoppingList->getOrganization()) {
+            $lineItem->setOrganization($shoppingList->getOrganization());
+        }
         /** @var LineItemRepository $repository */
         $repository = $em->getRepository('OroShoppingListBundle:LineItem');
         $duplicate = $repository->findDuplicate($lineItem);
         if ($duplicate instanceof LineItem && $shoppingList->getId()) {
-            $quantity = $this->rounding->roundQuantity(
-                $duplicate->getQuantity() + $lineItem->getQuantity(),
-                $duplicate->getUnit(),
-                $duplicate->getProduct()
-            );
-            $duplicate->setQuantity($quantity);
-
-            if ($concatNotes) {
-                $notes = trim(implode(' ', [$duplicate->getNotes(), $lineItem->getNotes()]));
-                $duplicate->setNotes($notes);
-            }
+            $this->mergeLineItems($lineItem, $duplicate, $concatNotes);
         } else {
             $shoppingList->addLineItem($lineItem);
             $em->persist($lineItem);
@@ -186,6 +182,26 @@ class ShoppingListManager
 
         if ($flush) {
             $em->flush();
+        }
+    }
+
+    /**
+     * @param LineItem $lineItem
+     * @param LineItem $duplicate
+     * @param bool     $concatNotes
+     */
+    protected function mergeLineItems(LineItem $lineItem, LineItem $duplicate, $concatNotes)
+    {
+        $quantity = $this->rounding->roundQuantity(
+            $duplicate->getQuantity() + $lineItem->getQuantity(),
+            $duplicate->getUnit(),
+            $duplicate->getProduct()
+        );
+        $duplicate->setQuantity($quantity);
+
+        if ($concatNotes) {
+            $notes = trim(implode(' ', [$duplicate->getNotes(), $lineItem->getNotes()]));
+            $duplicate->setNotes($notes);
         }
     }
 

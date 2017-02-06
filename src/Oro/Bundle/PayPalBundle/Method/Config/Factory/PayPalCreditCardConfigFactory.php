@@ -4,13 +4,13 @@ namespace Oro\Bundle\PayPalBundle\Method\Config\Factory;
 
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfig;
-use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
 class PayPalCreditCardConfigFactory extends AbstractPayPalConfigFactory implements
     PayPalCreditCardConfigFactoryInterface
 {
     /**
      * @param PayPalSettings $settings
+     *
      * @return PayPalCreditCardConfig
      * @throws \InvalidArgumentException
      */

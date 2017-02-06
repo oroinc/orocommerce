@@ -18,6 +18,11 @@ use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 class CheckoutRepositoryTest extends WebTestCase
 {
     /**
+     * @var CheckoutRepository
+     */
+    protected $repository;
+
+    /**
      * {@inheritdoc}
      */
     protected function setUp()
@@ -31,6 +36,8 @@ class CheckoutRepositoryTest extends WebTestCase
                 LoadCustomerUserData::class,
             ]
         );
+
+        $this->repository = $this->getRepository();
     }
 
     /**
@@ -142,6 +149,14 @@ class CheckoutRepositoryTest extends WebTestCase
         $repository->deleteWithoutWorkflowItem();
 
         $this->assertCount(count($checkouts), $repository->findBy(['deleted' => true]));
+    }
+
+    public function testFindByType()
+    {
+        $checkouts = $this->repository->findByPaymentMethod(LoadQuoteCheckoutsData::PAYMENT_METHOD);
+
+        static::assertContains($this->getReference(LoadQuoteCheckoutsData::CHECKOUT_1), $checkouts);
+        static::assertContains($this->getReference(LoadQuoteCheckoutsData::CHECKOUT_2), $checkouts);
     }
 
     protected function deleteAllWorkflowItems()
