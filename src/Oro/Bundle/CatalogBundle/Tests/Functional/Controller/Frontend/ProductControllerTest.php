@@ -15,8 +15,6 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
  */
 class ProductControllerTest extends WebTestCase
 {
-    const SIDEBAR_ROUTE = 'oro_catalog_frontend_category_product_sidebar';
-
     protected function setUp()
     {
         $this->initClient(
@@ -74,24 +72,6 @@ class ProductControllerTest extends WebTestCase
                 ],
             ],
         ];
-    }
-
-    public function testSidebarAction()
-    {
-        $secondLevelCategory = $this->getReference(LoadCategoryData::SECOND_LEVEL1);
-        $crawler = $this->client->request(
-            'GET',
-            $this->getUrl(
-                static::SIDEBAR_ROUTE,
-                [RequestProductHandler::CATEGORY_ID_KEY => $secondLevelCategory->getId()]
-            ),
-            ['_widgetContainer' => 'widget']
-        );
-        $json = $crawler->filterXPath('//*[@data-page-component-options]')->attr('data-page-component-options');
-        $this->assertJson($json);
-        $arr = json_decode($json, true);
-        $this->assertEquals($arr['defaultCategoryId'], $secondLevelCategory->getId());
-        $this->assertCount(8, $arr['data']);
     }
 
     /**
