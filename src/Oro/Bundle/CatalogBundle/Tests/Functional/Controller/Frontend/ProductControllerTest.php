@@ -16,8 +16,6 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
  */
 class ProductControllerTest extends WebTestCase
 {
-    const SIDEBAR_ROUTE = 'oro_catalog_frontend_category_product_sidebar';
-
     /**
      * @var Client
      */
