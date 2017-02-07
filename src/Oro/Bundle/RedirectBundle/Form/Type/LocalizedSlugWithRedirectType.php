@@ -92,8 +92,8 @@ class LocalizedSlugWithRedirectType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'create_redirect_enabled' => false,
-            'slug_suggestion_enabled' => false,
+            'create_redirect_enabled' => true,
+            'slug_suggestion_enabled' => true,
             'data_class' => SlugPrototypesWithRedirect::class,
         ]);
         $resolver->setRequired('source_field');
