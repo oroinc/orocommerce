@@ -14,7 +14,7 @@ class ZipCodeRulesResponseTest extends \PHPUnit_Framework_TestCase
     {
         $values = [
             'Ack' => true,
-            'TimeStamp' => '2017-01-06',
+            'TimeStamp' => '2017-02-06T17:35:54.978392+01:00',
             'ZipCodeRules' => [
                 'Country' => 'DE',
                 'ZipCode' => '97318',
@@ -25,7 +25,8 @@ class ZipCodeRulesResponseTest extends \PHPUnit_Framework_TestCase
                 'State' => 'BY',
             ],
         ];
-        $this->model = new ZipCodeRulesResponse($values);
+        $this->model = new ZipCodeRulesResponse();
+        $this->model->parse($values);
     }
 
     public function tearDown()
@@ -43,7 +44,7 @@ class ZipCodeRulesResponseTest extends \PHPUnit_Framework_TestCase
     {
         self::assertEquals(
             [
-                '01.01.2017', '01.02.2017', '01.03.2017',
+                new \DateTime('01.01.2017'), new \DateTime('01.02.2017'), new \DateTime('01.03.2017'),
             ],
             $this->model->getNoPickupDays()
         );
@@ -58,6 +59,7 @@ class ZipCodeRulesResponseTest extends \PHPUnit_Framework_TestCase
     public function testEvaluateThrowing(array $values)
     {
         $response = new ZipCodeRulesResponse($values);
+        $this->model->parse($values);
     }
 
     /**

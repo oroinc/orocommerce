@@ -2,32 +2,25 @@
 
 namespace Oro\Bundle\DPDBundle\Model;
 
-class SetOrderRequest extends DPDRequest
+use Symfony\Component\HttpFoundation\ParameterBag;
+
+class SetOrderRequest extends ParameterBag
 {
     const START_ORDER_ACTION = 'startOrder';
     const CHECK_ORDER_ACTION = 'checkOrderData';
 
-    /** @var string */
-    protected $orderAction;
-
-    /** @var \DateTime */
-    protected $shipDate;
-
-    /** @var string */
-    protected $labelSize;
-
-    /** @var string */
-    protected $labelStartPosition;
-
-    /** @var OrderData[] */
-    protected $orderDataList;
+    const FIELD_ORDER_ACTION = 'order_action';
+    const FIELD_SHIP_DATE = 'ship_date';
+    const FIELD_LABEL_SIZE = 'label_size';
+    const FIELD_LABEL_START_POSITION = 'label_start_position';
+    const FIELD_ORDER_DATA_LIST = 'order_data_list';
 
     /**
      * SetOrderRequest constructor.
      */
-    public function __construct()
+    public function __construct(array $params)
     {
-        $this->orderDataList = [];
+        parent::__construct($params);
     }
 
     /**
@@ -35,19 +28,7 @@ class SetOrderRequest extends DPDRequest
      */
     public function getOrderAction()
     {
-        return $this->orderAction;
-    }
-
-    /**
-     * @param string $orderAction
-     *
-     * @return SetOrderRequest
-     */
-    public function setOrderAction($orderAction)
-    {
-        $this->orderAction = $orderAction;
-
-        return $this;
+        return $this->get(self::FIELD_ORDER_ACTION);
     }
 
     /**
@@ -55,19 +36,7 @@ class SetOrderRequest extends DPDRequest
      */
     public function getShipDate()
     {
-        return $this->shipDate;
-    }
-
-    /**
-     * @param \DateTime $shipDate
-     *
-     * @return SetOrderRequest
-     */
-    public function setShipDate(\DateTime $shipDate)
-    {
-        $this->shipDate = $shipDate;
-
-        return $this;
+        return $this->get(self::FIELD_SHIP_DATE);
     }
 
     /**
@@ -75,19 +44,7 @@ class SetOrderRequest extends DPDRequest
      */
     public function getLabelSize()
     {
-        return $this->labelSize;
-    }
-
-    /**
-     * @param string $labelSize
-     *
-     * @return SetOrderRequest
-     */
-    public function setLabelSize($labelSize)
-    {
-        $this->labelSize = $labelSize;
-
-        return $this;
+        return $this->get(self::FIELD_LABEL_SIZE);
     }
 
     /**
@@ -95,19 +52,7 @@ class SetOrderRequest extends DPDRequest
      */
     public function getLabelStartPosition()
     {
-        return $this->labelStartPosition;
-    }
-
-    /**
-     * @param string $labelStartPosition
-     *
-     * @return SetOrderRequest
-     */
-    public function setLabelStartPosition($labelStartPosition)
-    {
-        $this->labelStartPosition = $labelStartPosition;
-
-        return $this;
+        return $this->get(self::FIELD_LABEL_START_POSITION);
     }
 
     /**
@@ -115,19 +60,7 @@ class SetOrderRequest extends DPDRequest
      */
     public function getOrderDataList()
     {
-        return $this->orderDataList;
-    }
-
-    /**
-     * @param OrderData[] $orderDataList
-     *
-     * @return SetOrderRequest
-     */
-    public function setOrderDataList(array $orderDataList)
-    {
-        $this->orderDataList = $orderDataList;
-
-        return $this;
+        return $this->get(self::FIELD_ORDER_DATA_LIST);
     }
 
     /**
@@ -136,15 +69,15 @@ class SetOrderRequest extends DPDRequest
     public function toArray()
     {
         $request = [
-            'OrderAction' => $this->orderAction,
+            'OrderAction' => $this->getOrderAction(),
             'OrderSettings' => [
-                'ShipDate' => $this->shipDate->format('Y-m-d'),
-                'LabelSize' => $this->labelSize,
-                'LabelStartPosition' => $this->labelStartPosition,
+                'ShipDate' => $this->getShipDate()->format('Y-m-d'),
+                'LabelSize' => $this->getLabelSize(),
+                'LabelStartPosition' => $this->getLabelStartPosition(),
             ],
         ];
 
-        foreach ($this->orderDataList as $orderData) {
+        foreach ($this->getOrderDataList() as $orderData) {
             $request['OrderDataList'][] = $orderData->toArray();
         }
 

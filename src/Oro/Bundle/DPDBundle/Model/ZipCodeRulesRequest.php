@@ -2,15 +2,13 @@
 
 namespace Oro\Bundle\DPDBundle\Model;
 
-class ZipCodeRulesRequest extends DPDRequest
+class ZipCodeRulesRequest
 {
     /**
      * @return array
      */
     public function toArray()
     {
-        $request = [];
-
-        return $request;
+        return [];
     }
 }

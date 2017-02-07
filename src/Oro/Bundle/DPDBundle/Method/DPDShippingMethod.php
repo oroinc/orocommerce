@@ -14,7 +14,8 @@ use Oro\Bundle\DPDBundle\Provider\DPDTransport as DPDTransportProvider;
 class DPDShippingMethod implements
     ShippingMethodInterface,
     ShippingTrackingAwareInterface,
-    PricesAwareShippingMethodInterface
+    PricesAwareShippingMethodInterface,
+    DPDHandledShippingMethodAwareInterface
 {
     const IDENTIFIER = 'dpd';
     const TRACKING_URL = 'https://tracking.dpd.de/parcelstatus?query=';
@@ -31,6 +32,9 @@ class DPDShippingMethod implements
     /** @var ShippingMethodTypeInterface[] */
     protected $types;
 
+    /** @var DPDHandlerInterface[] */
+    protected $handlers;
+
     /** @var DPDSettings */
     protected $transport;
 
@@ -43,6 +47,7 @@ class DPDShippingMethod implements
      * @param $identifier
      * @param $label
      * @param array                $types
+     * @param array                $handlers
      * @param DPDSettings          $transport
      * @param DPDTransportProvider $transportProvider
      */
@@ -50,12 +55,14 @@ class DPDShippingMethod implements
         $identifier,
         $label,
         array $types,
+        array $handlers,
         DPDSettings $transport,
         DPDTransportProvider $transportProvider
     ) {
         $this->identifier = $identifier;
         $this->label = $label;
         $this->types = $types;
+        $this->handlers = $handlers;
         $this->transport = $transport;
         $this->transportProvider = $transportProvider;
     }
@@ -93,9 +100,7 @@ class DPDShippingMethod implements
     }
 
     /**
-     * @param string $identifier
-     *
-     * @return DPDShippingMethodType|null
+     * {@inheritdoc}
      */
     public function getType($identifier)
     {
@@ -153,5 +158,30 @@ class DPDShippingMethod implements
         }
 
         return $prices;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDPDHandlers()
+    {
+        return $this->handlers;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDPDHandler($identifier)
+    {
+        $handlers = $this->getDPDHandlers();
+        if ($handlers !== null) {
+            foreach ($handlers as $handler) {
+                if ($handler->getIdentifier() === (string) $identifier) {
+                    return $handler;
+                }
+            }
+        }
+
+        return null;
     }
 }

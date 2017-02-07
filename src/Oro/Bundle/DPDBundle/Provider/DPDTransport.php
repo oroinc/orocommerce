@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\DPDBundle\Provider;
 
-use Oro\Bundle\DPDBundle\Model\ZipCodeRulesRequest;
 use Oro\Bundle\DPDBundle\Model\ZipCodeRulesResponse;
 use Oro\Bundle\DPDBundle\Model\SetOrderRequest;
 use Oro\Bundle\DPDBundle\Model\SetOrderResponse;
@@ -13,6 +12,7 @@ use Oro\Bundle\DPDBundle\Form\Type\DPDTransportSettingsType;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpFoundation\ParameterBag;
+use Oro\Bundle\DPDBundle\Entity\DPDTransport as DPDTransportSettings;
 
 class DPDTransport extends AbstractRestTransport
 {
@@ -96,7 +96,7 @@ class DPDTransport extends AbstractRestTransport
      */
     public function getSettingsEntityFQCN()
     {
-        return 'Oro\Bundle\DPDBundle\Entity\DPDTransport';
+        return DPDTransportSettings::class;
     }
 
     /**
@@ -104,6 +104,8 @@ class DPDTransport extends AbstractRestTransport
      * @param Transport       $transportEntity
      *
      * @return null|SetOrderResponse
+     *
+     * @throws \InvalidArgumentException
      */
     public function getSetOrderResponse(SetOrderRequest $setOrderRequest, Transport $transportEntity)
     {
@@ -112,7 +114,18 @@ class DPDTransport extends AbstractRestTransport
             $headers = $this->getRequestHeaders($transportEntity);
             $data = $this->client->post(static::API_SET_ORDER, $setOrderRequest->toArray(), $headers)->json();
 
-            return new SetOrderResponse($data);
+            $response = new SetOrderResponse();
+            $response->parse($data);
+
+            $this->logger->debug(
+                sprintf(
+                    'setOrder REST request=> %s, response=> %s',
+                    $setOrderRequest->toJson(),
+                    $response->toJson()
+                )
+            );
+
+            return $response;
         } catch (RestException $restException) {
             $this->logger->error(
                 sprintf(
@@ -127,19 +140,30 @@ class DPDTransport extends AbstractRestTransport
     }
 
     /**
-     * @param ZipCodeRulesRequest $zipCodeRulesRequest
-     * @param Transport           $transportEntity
+     * @param Transport $transportEntity
      *
      * @return null|ZipCodeRulesResponse
+     *
+     * @throws \InvalidArgumentException
      */
-    public function getZipCodeRulesResponse(ZipCodeRulesRequest $zipCodeRulesRequest, Transport $transportEntity)
+    public function getZipCodeRulesResponse(Transport $transportEntity)
     {
         try {
             $this->client = $this->createRestClient($transportEntity);
             $headers = $this->getRequestHeaders($transportEntity);
             $data = $this->client->get(static::API_GET_ZIPCODE_RULES, [], $headers)->json();
 
-            return new ZipCodeRulesResponse($data);
+            $response = new ZipCodeRulesResponse();
+            $response->parse($data);
+
+            $this->logger->debug(
+                sprintf(
+                    'zipCodeRules REST request=> [], response=> %s',
+                    $response->toJson()
+                )
+            );
+
+            return $response;
         } catch (RestException $restException) {
             $this->logger->error(
                 sprintf(

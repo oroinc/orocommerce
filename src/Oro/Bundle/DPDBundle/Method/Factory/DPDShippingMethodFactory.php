@@ -34,21 +34,29 @@ class DPDShippingMethodFactory implements IntegrationShippingMethodFactoryInterf
     private $methodTypeFactory;
 
     /**
+     * @var DPDHandlerFactoryInterface
+     */
+    private $handlerFactory;
+
+    /**
      * @param DPDTransport                                  $transport
      * @param LocalizationHelper                            $localizationHelper
      * @param IntegrationMethodIdentifierGeneratorInterface $methodIdentifierGenerator
      * @param DPDShippingMethodTypeFactoryInterface         $methodTypeFactory
+     * @param DPDHandlerFactoryInterface                    $handlerFactory
      */
     public function __construct(
         DPDTransport $transport,
         LocalizationHelper $localizationHelper,
         IntegrationMethodIdentifierGeneratorInterface $methodIdentifierGenerator,
-        DPDShippingMethodTypeFactoryInterface $methodTypeFactory
+        DPDShippingMethodTypeFactoryInterface $methodTypeFactory,
+        DPDHandlerFactoryInterface $handlerFactory
     ) {
         $this->transport = $transport;
         $this->localizationHelper = $localizationHelper;
         $this->methodIdentifierGenerator = $methodIdentifierGenerator;
         $this->methodTypeFactory = $methodTypeFactory;
+        $this->handlerFactory = $handlerFactory;
     }
 
     /**
@@ -60,6 +68,7 @@ class DPDShippingMethodFactory implements IntegrationShippingMethodFactoryInterf
             $this->getIdentifier($channel),
             $this->getLabel($channel),
             $this->createTypes($channel),
+            $this->createHandlers($channel),
             $this->getSettings($channel),
             $this->transport
         );
@@ -108,6 +117,20 @@ class DPDShippingMethodFactory implements IntegrationShippingMethodFactoryInterf
 
         return array_map(function (ShippingService $shippingService) use ($channel) {
             return $this->methodTypeFactory->create($channel, $shippingService);
+        }, $applicableShippingServices);
+    }
+
+    /**
+     * @param Channel $channel
+     *
+     * @return array
+     */
+    private function createHandlers(Channel $channel)
+    {
+        $applicableShippingServices = $this->getSettings($channel)->getApplicableShippingServices()->toArray();
+
+        return array_map(function (ShippingService $shippingService) use ($channel) {
+            return $this->handlerFactory->create($channel, $shippingService);
         }, $applicableShippingServices);
     }
 }

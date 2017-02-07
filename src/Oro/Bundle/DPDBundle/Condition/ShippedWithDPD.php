@@ -8,6 +8,14 @@ use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
 use Oro\Component\ConfigExpression\Exception;
 
+/**
+ * Check if an order shipping method matches any DPD method
+ * Usage:.
+ *
+ *   Check order shipping method is DPD, $.data is an order entity:
+ *
+ *      @shipped_with_dpd: $.data.shippingMethod
+ */
 class ShippedWithDPD extends AbstractCondition implements ContextAccessorAwareInterface
 {
     use ContextAccessorAwareTrait;

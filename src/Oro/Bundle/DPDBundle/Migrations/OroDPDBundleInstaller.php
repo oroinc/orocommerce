@@ -162,8 +162,6 @@ class OroDPDBundleInstaller implements Installation, ContainerAwareInterface
         $table->addColumn('transport_id', 'integer', []);
         $table->addColumn('ship_service_id', 'string', ['length' => 30]);
         $table->setPrimaryKey(['transport_id', 'ship_service_id']);
-        $table->addIndex(['transport_id'], 'IDX_269F87B9909C13F', []);
-        $table->addIndex(['ship_service_id'], 'IDX_269F87B37CA9B1D', []);
     }
 
     /**

@@ -57,14 +57,14 @@ class OrderShippingDPDHandler
             return null;
         }
 
-        $shippingMethodType = $shippingMethod->getType($order->getShippingMethodType());
-        if (!$shippingMethodType) {
+        $dpdHandler = $shippingMethod->getDPDHandler($order->getShippingMethodType());
+        if (!$dpdHandler) {
             return null;
         }
 
-        $shipDate = $shippingMethodType->getNextPickupDay(new \DateTime('now')); //TODO: pass shipDate from UI?
+        $shipDate = $dpdHandler->getNextPickupDay(new \DateTime('now')); //TODO: pass shipDate from UI?
 
-        $response = $shippingMethodType->shipOrder($order, $shipDate);
+        $response = $dpdHandler->shipOrder($order, $shipDate);
         if ($response && $response->isSuccessful()) {
             $tmpFile = $this->fileManager->writeToTemporaryFile($response->getLabelPDF());
             $labelFile = new File();
@@ -73,7 +73,6 @@ class OrderShippingDPDHandler
 
             $dpdTransaction = (new DPDTransaction())
                 ->setOrder($order)
-                ->setCreatedAt($response->getTimeStamp())
                 ->setLabelFile($labelFile)
                 ->setParcelNumbers($response->getParcelNumbers());
 

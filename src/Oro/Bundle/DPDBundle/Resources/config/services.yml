@@ -52,6 +52,7 @@ services:
             - '@oro_locale.helper.localization'
             - '@oro_dpd.method.identifier_generator.method'
             - '@oro_dpd.method.factory.type'
+            - '@oro_dpd.method.factory.dpd_handler'
 
     oro_dpd.method.factory.type:
         class: 'Oro\Bundle\DPDBundle\Method\Factory\DPDShippingMethodTypeFactory'
@@ -62,6 +63,15 @@ services:
             - '@oro_dpd.provider.transport'
             - '@oro_dpd.provider.package'
             - '@oro_dpd.provider.rate'
+
+    oro_dpd.method.factory.dpd_handler:
+        class: 'Oro\Bundle\DPDBundle\Method\Factory\DPDHandlerFactory'
+        public: false
+        arguments:
+            - '@oro_dpd.method.identifier_generator.type'
+            - '@oro_dpd.method.identifier_generator.method'
+            - '@oro_dpd.provider.transport'
+            - '@oro_dpd.provider.package'
             - '@oro_dpd.factory.dpd_request_factory'
             - '@oro_dpd.zip_code_rules_cache'
             - '@oro_order.shipping_line_item.converter_basic'

@@ -15,7 +15,9 @@ class SetOrderResponseTest extends \PHPUnit_Framework_TestCase
      */
     public function testEvaluate(array $values, $expectedResult)
     {
-        $response = new SetOrderResponse($values);
+        $response = new SetOrderResponse();
+        $this->assertFalse($response->isSuccessful());
+        $response->parse($values);
         $this->assertEquals(
             $expectedResult,
             [
@@ -36,7 +38,7 @@ class SetOrderResponseTest extends \PHPUnit_Framework_TestCase
             'one_parcel_response' => [
                 'values' => [
                     'Ack' => true,
-                    'TimeStamp' => '2017-01-06',
+                    'TimeStamp' => '2017-02-06T17:35:54.978392+01:00',
                     'LabelResponse' => [
                         'LabelPDF' => base64_encode('pdf data'),
                         'LabelDataList' => [
@@ -49,7 +51,7 @@ class SetOrderResponseTest extends \PHPUnit_Framework_TestCase
                 ],
                 'expectedResult' => [
                     true,
-                    new \DateTime('2017-01-06'),
+                    '2017-02-06T17:35:54.978392+01:00',
                     'pdf data',
                     [
                         'internal id' => 'a number',
@@ -59,7 +61,7 @@ class SetOrderResponseTest extends \PHPUnit_Framework_TestCase
             'two_parcel_response' => [
                 'values' => [
                     'Ack' => true,
-                    'TimeStamp' => '2017-01-06',
+                    'TimeStamp' => '2017-02-06T17:35:54.978392+01:00',
                     'LabelResponse' => [
                         'LabelPDF' => base64_encode('pdf data'),
                         'LabelDataList' => [
@@ -76,7 +78,7 @@ class SetOrderResponseTest extends \PHPUnit_Framework_TestCase
                 ],
                 'expectedResult' => [
                     true,
-                    new \DateTime('2017-01-06'),
+                    '2017-02-06T17:35:54.978392+01:00',
                     'pdf data',
                     [
                         'internal id 1' => 'a number',
@@ -95,7 +97,9 @@ class SetOrderResponseTest extends \PHPUnit_Framework_TestCase
      */
     public function testEvaluateThrowing(array $values)
     {
-        $response = new SetOrderResponse($values);
+        $response = new SetOrderResponse();
+        $this->assertFalse($response->isSuccessful());
+        $response->parse($values);
     }
 
     /**
@@ -107,13 +111,13 @@ class SetOrderResponseTest extends \PHPUnit_Framework_TestCase
             'no_label_response' => [
                 'values' => [
                     'Ack' => true,
-                    'TimeStamp' => '2017-01-06',
+                    'TimeStamp' => '2017-02-06T17:35:54.978392+01:00',
                 ],
             ],
             'no_label_pdf_response' => [
                 'values' => [
                     'Ack' => true,
-                    'TimeStamp' => '2017-01-06',
+                    'TimeStamp' => '2017-02-06T17:35:54.978392+01:00',
                     'LabelResponse' => [
                         'LabelDataList' => [
                             [
@@ -127,7 +131,7 @@ class SetOrderResponseTest extends \PHPUnit_Framework_TestCase
             'no_label_data_response' => [
                 'values' => [
                     'Ack' => true,
-                    'TimeStamp' => '2017-01-06',
+                    'TimeStamp' => '2017-02-06T17:35:54.978392+01:00',
                     'LabelResponse' => [
                         'LabelPDF' => base64_encode('pdf data'),
                     ],
@@ -136,7 +140,7 @@ class SetOrderResponseTest extends \PHPUnit_Framework_TestCase
             'no_label_data_internal_id_response' => [
                 'values' => [
                     'Ack' => true,
-                    'TimeStamp' => '2017-01-06',
+                    'TimeStamp' => '2017-02-06T17:35:54.978392+01:00',
                     'LabelResponse' => [
                         'LabelPDF' => base64_encode('pdf data'),
                         'LabelDataList' => [
@@ -150,7 +154,7 @@ class SetOrderResponseTest extends \PHPUnit_Framework_TestCase
             'no_label_data_parcel_no_response' => [
                 'values' => [
                     'Ack' => true,
-                    'TimeStamp' => '2017-01-06',
+                    'TimeStamp' => '2017-02-06T17:35:54.978392+01:00',
                     'LabelResponse' => [
                         'LabelPDF' => base64_encode('pdf data'),
                         'LabelDataList' => [

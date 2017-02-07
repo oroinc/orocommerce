@@ -117,8 +117,8 @@ class DPDRequestFactoryTest extends \PHPUnit_Framework_TestCase
                 'orderId' => '1',
                 'orderAddress' => new OrderAddress(),
                 'orderEmail' => 'an@email.com',
-                'packages' =>
-                    [(new Package())->setContents('contents'), (new Package())->setContents('other contents')],
+                'packages' => [(new Package())->setContents('contents'),
+                    (new Package())->setContents('other contents')],
             ],
         ];
     }
