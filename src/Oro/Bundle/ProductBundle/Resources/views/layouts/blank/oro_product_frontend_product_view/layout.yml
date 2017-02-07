@@ -14,6 +14,8 @@ layout:
                     options:
                         product: '=data["oro_product_variant"].getProductVariantOrProduct(data)'
                         parentProduct: '=data["product"].isConfigurable()?data["product"]'
+                product_view_primary_wrapper:
+                    blockType: container
                 product_view_primary_container:
                     blockType: container
                 product_view_aside_container:
@@ -53,10 +55,11 @@ layout:
             tree:
                 page_content:
                     product_view_container:
-                        product_view_primary_container:
-                        product_view_aside_container:
-                          product_view_attribute_group_images: ~
-                          product_media_popup: ~
+                        product_view_primary_wrapper:
+                            product_view_primary_container:
+                            product_view_aside_container:
+                                product_view_attribute_group_images: ~
+                                product_media_popup: ~
                         product_view_main_container:
                             product_view_content_container:
                                 product_view_specification_container:

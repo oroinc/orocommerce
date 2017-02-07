@@ -1,1 +1,16 @@
 // @theme: default
+
+@include breakpoint('tablet') {
+    .product-view {
+        &__primary-wrapper {
+            display: flex;
+            flex-direction: column-reverse;
+
+            margin-top: -15px;
+        }
+
+        &__primary {
+            text-align: center;
+        }
+    }
+}
