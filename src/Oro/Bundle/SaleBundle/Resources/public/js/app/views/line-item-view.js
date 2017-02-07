@@ -9,7 +9,6 @@ define(function(require) {
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     var mediator = require('oroui/js/mediator');
     var routing = require('routing');
-    var messenger = require('oroui/js/messenger');
     require('jquery.validate');
 
     /**
@@ -332,10 +331,7 @@ define(function(require) {
                     complete: function() {
                         self.loadingMask.hide();
                     },
-                    error: function(xhr) {
-                        self.loadingMask.hide();
-                        messenger.showErrorMessage(__(self.options.errorMessage), xhr.responseJSON);
-                    }
+                    errorHandlerMessage: __(this.options.errorMessage)
                 });
             }
         },

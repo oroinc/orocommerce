@@ -9,9 +9,6 @@ use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility;
 
-/**
- * @dbIsolation
- */
 class CustomerRepositoryTest extends WebTestCase
 {
     /**

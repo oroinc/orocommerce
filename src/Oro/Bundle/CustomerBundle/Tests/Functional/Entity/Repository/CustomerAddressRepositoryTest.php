@@ -7,9 +7,6 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerAddressRepository;
 
-/**
- * @dbIsolation
- */
 class CustomerAddressRepositoryTest extends WebTestCase
 {
     /**

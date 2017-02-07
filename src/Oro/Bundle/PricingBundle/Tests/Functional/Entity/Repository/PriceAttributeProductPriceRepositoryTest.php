@@ -7,9 +7,6 @@ use Oro\Bundle\PricingBundle\Entity\PriceAttributePriceList;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceAttributeProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
-/**
- * @dbIsolation
- */
 class PriceAttributeProductPriceRepositoryTest extends WebTestCase
 {
     protected function setUp()

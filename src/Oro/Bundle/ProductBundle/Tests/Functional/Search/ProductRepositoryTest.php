@@ -13,9 +13,6 @@ use Oro\Bundle\ProductBundle\Search\ProductRepository as ProductSearchRepository
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
-/**
- * @dbIsolation
- */
 class ProductRepositoryTest extends WebTestCase
 {
     protected function setUp()

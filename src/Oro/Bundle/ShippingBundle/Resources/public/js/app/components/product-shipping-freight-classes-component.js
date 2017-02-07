@@ -9,7 +9,6 @@ define(function(require) {
     var BaseComponent = require('oroui/js/app/components/base/component');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     var routing = require('routing');
-    var messenger =  require('oroui/js/messenger');
     var __ = require('orotranslation/js/translator');
 
     /**
@@ -104,13 +103,12 @@ define(function(require) {
          * @param {jQuery.Event} e
          */
         callEntryPoint: function(e) {
-            var self = this;
             var $itemContainer = $(e.target).closest(this.options.selectors.itemContainer);
 
             var inputsSelector = ':input[data-ftid]';
             _.each(this.options.excludeFields, function(field) {
-                inputsSelector += self.options.excludeFilter.replace('{{name}}', field);
-            });
+                inputsSelector += this.options.excludeFilter.replace('{{name}}', field);
+            }, this);
             var $formInputs = $itemContainer.closest('form').find(inputsSelector);
 
             var formData = $formInputs.serialize();
@@ -132,10 +130,8 @@ define(function(require) {
                 beforeSend: $.proxy(this._beforeSend, this),
                 success: $.proxy(this._success, this),
                 complete: $.proxy(this._complete, this),
-                error: $.proxy(function(jqXHR) {
-                    this._dropValues(true);
-                    messenger.showErrorMessage(__(self.options.errorMessage), jqXHR.responseJSON);
-                }, this)
+                errorHandlerMessage: __(this.options.errorMessage),
+                error: $.proxy(this._dropValues, this)
             });
         },
 

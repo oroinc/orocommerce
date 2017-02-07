@@ -18,9 +18,6 @@ use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
 use Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
-/**
- * @dbIsolation
- */
 class CategoryTypeTest extends WebTestCase
 {
     const LARGE_IMAGE_NAME = 'large_image.png';

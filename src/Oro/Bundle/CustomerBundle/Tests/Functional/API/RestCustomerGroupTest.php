@@ -12,8 +12,6 @@ use Symfony\Component\HttpFoundation\Response;
  * @SuppressWarnings(PHPMD.ExcessivePublicCount)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
- *
- * @dbIsolation
  */
 class RestCustomerGroupTest extends AbstractRestTest
 {
@@ -39,11 +37,8 @@ class RestCustomerGroupTest extends AbstractRestTest
         $customer1 = $this->createCustomer('customer1', $group);
         $customer2 = $this->createCustomer('customer2', $group);
 
-        $uri = $this->getUrl('oro_rest_api_cget', ['entity' => $this->getEntityType(CustomerGroup::class)]);
-        $response = $this->request('GET', $uri);
+        $response = $this->get('oro_rest_api_cget', ['entity' => $this->getEntityType(CustomerGroup::class)]);
 
-        $this->assertApiResponseStatusCodeEquals($response, Response::HTTP_OK, CustomerGroup::class, 'get list');
-        $content = json_decode($response->getContent(), true);
         $expected = [
             'data' => [
                 [
@@ -79,7 +74,7 @@ class RestCustomerGroupTest extends AbstractRestTest
                 ],
             ],
         ];
-        $this->assertEquals($expected, $content);
+        $this->assertResponseContains($expected, $response);
         $this->deleteEntities([$group, $customer1, $customer2]);
     }
 
@@ -141,17 +136,14 @@ class RestCustomerGroupTest extends AbstractRestTest
         $customer1 = $this->createCustomer('customer1', $group);
         $customer2 = $this->createCustomer('customer2', $group);
 
-        $uri = $this->getUrl(
+        $response = $this->get(
             'oro_rest_api_get',
             [
                 'entity' => $this->getEntityType(CustomerGroup::class),
                 'id' => (string)$group->getId(),
             ]
         );
-        $response = $this->request('GET', $uri);
 
-        $this->assertApiResponseStatusCodeEquals($response, Response::HTTP_OK, Customer::class, 'get');
-        $content = json_decode($response->getContent(), true);
         $expected = [
             'data' => [
                 'type' => 'customergroups',
@@ -175,7 +167,7 @@ class RestCustomerGroupTest extends AbstractRestTest
                 ],
             ],
         ];
-        $this->assertEquals($expected, $content);
+        $this->assertResponseContains($expected, $response);
         $this->deleteEntities([$group, $customer1, $customer2]);
     }
 

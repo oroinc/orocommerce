@@ -16,9 +16,6 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
 
-/**
- * @dbIsolation
- */
 class CombinedProductPriceResolverTest extends WebTestCase
 {
     /**

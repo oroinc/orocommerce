@@ -4,9 +4,6 @@ namespace Oro\Bundle\FrontendBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-/**
- * @dbIsolation
- */
 class FrontendControllerTest extends WebTestCase
 {
     const FRONTEND_THEME_CONFIG_KEY = 'oro_frontend.frontend_theme';

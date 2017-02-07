@@ -11,9 +11,6 @@ use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Entity\Repository\CustomerTaxCodeRepository;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadCustomerTaxCodes as TaxFixture;
 
-/**
- * @dbIsolation
- */
 class CustomerTaxCodeRepositoryTest extends WebTestCase
 {
     protected function setUp()

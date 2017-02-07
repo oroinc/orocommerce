@@ -8,13 +8,13 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
+use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\VisibilityTrait;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\CategoryResolvedCacheBuilder;
 use Symfony\Component\Yaml\Yaml;
 
 /**
  * @group CommunityEdition
- * @dbIsolation
  */
 class CategoryVisibilityChangeTest extends CategoryCacheTestCase
 {
@@ -63,7 +63,7 @@ class CategoryVisibilityChangeTest extends CategoryCacheTestCase
     /**
      * @param $categoryReference
      * @param array $visibility
-     * @return \Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface
+     * @return VisibilityInterface
      */
     protected function getVisibilityEntity($categoryReference, array $visibility)
     {

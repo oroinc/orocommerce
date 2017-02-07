@@ -15,6 +15,8 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductController extends Controller
 {
+    const GRID_NAME = 'frontend-product-search-grid';
+
     /**
      * View list of products
      *

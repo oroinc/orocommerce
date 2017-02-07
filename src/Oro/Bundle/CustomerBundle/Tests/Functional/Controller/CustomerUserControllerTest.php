@@ -10,7 +10,6 @@ use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadCustomerUserRoles;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadUserData;
 
 /**
- * @dbIsolation
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class CustomerUserControllerTest extends AbstractUserControllerTest

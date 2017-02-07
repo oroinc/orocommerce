@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CatalogBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
-use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
@@ -12,15 +11,10 @@ use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadFrontendCategoryP
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 /**
- * @dbIsolation
+ * @method \Oro\Bundle\FrontendTestFrameworkBundle\Test\Client getClient
  */
 class ProductControllerTest extends WebTestCase
 {
-    /**
-     * @var Client
-     */
-    protected $client;
-
     protected function setUp()
     {
         $this->initClient(
@@ -135,7 +129,7 @@ class ProductControllerTest extends WebTestCase
 
         $crawler = $this->client->request('GET', $url);
 
-        $navigationBarNode = $crawler->filter('div.catalog-navigation-bar')->first()->getNode(0);
+        $navigationBarNode = $crawler->filter('div.breadcrumbs')->first()->getNode(0);
         $text = $navigationBarNode->textContent;
 
         $foundParts = [];
@@ -147,7 +141,7 @@ class ProductControllerTest extends WebTestCase
         }
 
         $this->assertSame($foundParts, $expectedParts);
-        $breadCrumbsNodes = $crawler->filter('span.path-info a');
+        $breadCrumbsNodes = $crawler->filter('span.breadcrumbs__item a');
 
         foreach ($breadCrumbsNodes as $key => $node) {
             $this->assertNotNull($node->getAttribute('href'));

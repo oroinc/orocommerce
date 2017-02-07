@@ -15,9 +15,6 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelation
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
-/**
- * @dbIsolation
- */
 class PriceListToCustomerGroupRepositoryTest extends WebTestCase
 {
     protected function setUp()

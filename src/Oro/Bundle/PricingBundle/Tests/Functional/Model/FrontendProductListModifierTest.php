@@ -14,9 +14,6 @@ use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
-/**
- * @dbIsolation
- */
 class FrontendProductListModifierTest extends WebTestCase
 {
     /**

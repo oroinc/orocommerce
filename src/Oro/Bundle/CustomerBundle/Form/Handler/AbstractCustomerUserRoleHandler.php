@@ -4,6 +4,7 @@ namespace Oro\Bundle\CustomerBundle\Form\Handler;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
+use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserRoleRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\SecurityBundle\Owner\Metadata\ChainMetadataProvider;
@@ -14,8 +15,13 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserRoleType;
 
+use Symfony\Component\HttpFoundation\RequestStack;
+
 abstract class AbstractCustomerUserRoleHandler extends AclRoleHandler
 {
+    /** @var  RequestStack */
+    protected $requestStack;
+
     /**
      * @var ConfigProvider
      */
@@ -35,6 +41,15 @@ abstract class AbstractCustomerUserRoleHandler extends AclRoleHandler
      * @var Customer
      */
     protected $originalCustomer;
+
+    /**
+     * @param RequestStack $requestStack
+     */
+    public function setRequestStack($requestStack)
+    {
+        $this->requestStack = $requestStack;
+        $this->request = $requestStack->getCurrentRequest();
+    }
 
     /**
      * @param ConfigProvider $provider
@@ -148,5 +163,53 @@ abstract class AbstractCustomerUserRoleHandler extends AclRoleHandler
     public function getCustomerUserRolePrivilegeConfig(CustomerUserRole $role)
     {
         return $this->privilegeConfig;
+    }
+
+    /**
+     * @param CustomerUserRole|AbstractRole $role
+     * @param array $appendUsers
+     * @param array $removeUsers
+     */
+    protected function applyCustomerLimits(CustomerUserRole $role, array &$appendUsers, array &$removeUsers)
+    {
+        /** @var CustomerUserRoleRepository $roleRepository */
+        $roleRepository = $this->doctrineHelper->getEntityRepository($role);
+
+        // Role moved to another customer OR customer added
+        if ($role->getId() && (
+                ($this->originalCustomer !== $role->getCustomer() &&
+                    $this->originalCustomer !== null && $role->getCustomer() !== null) ||
+                ($this->originalCustomer === null && $role->getCustomer() !== null)
+            )
+        ) {
+            // Remove assigned users
+            $assignedUsers = $roleRepository->getAssignedUsers($role);
+
+            $removeUsers = array_replace(
+                $removeUsers,
+                array_filter(
+                    $assignedUsers,
+                    function (CustomerUser $customerUser) use ($role) {
+                        return $customerUser->getCustomer() !== $role->getCustomer();
+                    }
+                )
+            );
+
+            $appendNewUsers = array_diff($appendUsers, $removeUsers);
+            $removeNewUsers = array_diff($removeUsers, $appendUsers);
+
+            $removeUsers = $removeNewUsers;
+            $appendUsers = $appendNewUsers;
+        }
+
+        if ($role->getCustomer()) {
+            // Security check
+            $appendUsers = array_filter(
+                $appendUsers,
+                function (CustomerUser $user) use ($role) {
+                    return $user->getCustomer() === $role->getCustomer();
+                }
+            );
+        }
     }
 }
