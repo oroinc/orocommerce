@@ -10,7 +10,20 @@
         }
 
         &__primary {
+            margin-top: 0;
+
             text-align: center;
+        }
+
+        &__content {
+            display: flex;
+            flex-direction: column-reverse;
+        }
+
+        &__description {
+            margin-bottom: 20px;
+
+            border-bottom: 1px solid get-color('additional', 'light');
         }
     }
 }

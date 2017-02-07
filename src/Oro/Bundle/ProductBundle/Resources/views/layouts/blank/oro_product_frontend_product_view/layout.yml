@@ -56,7 +56,7 @@ layout:
                 page_content:
                     product_view_container:
                         product_view_primary_wrapper:
-                            product_view_primary_container:
+                            product_view_primary_container: ~
                             product_view_aside_container:
                                 product_view_attribute_group_images: ~
                                 product_media_popup: ~
@@ -71,7 +71,7 @@ layout:
                         product_view_additional_container: ~
         - '@move':
             id: product_view_attribute_group_general_attribute_text_sku
-            parentId: product_view_specification_container
+            parentId: product_view_primary_container
             prepend: true
         - '@move':
             id: product_view_attribute_group_general_attribute_localized_fallback_descriptions
