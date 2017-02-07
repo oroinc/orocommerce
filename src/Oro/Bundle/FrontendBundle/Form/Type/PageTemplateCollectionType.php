@@ -3,8 +3,10 @@
 namespace Oro\Bundle\FrontendBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
+
+
+use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 
 use Oro\Component\Layout\Extension\Theme\Manager\PageTemplatesManager;
 
@@ -33,10 +35,9 @@ class PageTemplateCollectionType extends AbstractType
         foreach ($this->pageTemplatesManager->getRoutePageTemplates() as $routeName => $routeOptions) {
             $builder->add(
                 $routeName,
-                ChoiceType::class,
+                PageTemplateType::class,
                 [
-                    'choices' => $routeOptions['choices'],
-                    'placeholder' => 'oro_frontend.system_configuration.fields.no_page_template.label',
+                    'route_name' => $routeName,
                     'label' => $routeOptions['label']
                 ]
             );

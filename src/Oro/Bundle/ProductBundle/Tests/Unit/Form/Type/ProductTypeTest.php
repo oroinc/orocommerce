@@ -5,10 +5,14 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
+use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
+use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType as OroCollectionType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
+use Oro\Bundle\FrontendBundle\Form\Type\PageTemplateType;
 use Oro\Bundle\LayoutBundle\Provider\ImageTypeProvider;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
@@ -39,6 +43,7 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeS
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
+use Oro\Component\Layout\Extension\Theme\Manager\PageTemplatesManager;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -175,6 +180,20 @@ class ProductTypeTest extends FormIntegrationTestCase
         $customFieldProvider->expects($this->any())
             ->method('getEntityCustomFields')
             ->willReturn($this->exampleCustomFields);
+        /** @var \PHPUnit_Framework_MockObject_MockObject|EntityFallbackResolver $entityFallbackResolver */
+        $entityFallbackResolver = $this->getMockBuilder(EntityFallbackResolver::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $entityFallbackResolver->expects($this->any())
+            ->method('getFallbackConfig')
+            ->willReturn([]);
+        /** @var \PHPUnit_Framework_MockObject_MockObject|PageTemplatesManager $pageTemplatesManager */
+        $pageTemplatesManager = $this->getMockBuilder(PageTemplatesManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $pageTemplatesManager->expects($this->any())
+            ->method('getRoutePageTemplates')
+            ->willReturn([]);
 
         return [
             new PreloadedExtension(
@@ -205,6 +224,8 @@ class ProductTypeTest extends FormIntegrationTestCase
                     ProductImageType::NAME => new ProductImageType(),
                     LocalizedSlugType::NAME => new LocalizedSlugTypeStub(),
                     ProductVariantFieldType::NAME => new ProductVariantFieldType(),
+                    EntityFieldFallbackValueType::NAME => new EntityFieldFallbackValueType($entityFallbackResolver),
+                    PageTemplateType::class => new PageTemplateType($pageTemplatesManager),
                 ],
                 [
                     'form' => [
@@ -417,6 +438,12 @@ class ProductTypeTest extends FormIntegrationTestCase
                 $expectedProduct->addImage($image);
             }
         }
+
+        $entityFieldFallbackValue = new EntityFieldFallbackValue();
+        $entityFieldFallbackValue->setArrayValue([
+            'oro_product_frontend_product_view' => null
+        ]);
+        $expectedProduct->setPageTemplate($entityFieldFallbackValue);
 
         return $expectedProduct->setSku('test sku');
     }

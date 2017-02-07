@@ -125,6 +125,31 @@
         }
     }) %}
 
+    {% set pageTemplatesData = '' %}
+    {% set pageTemplateValue = oro_entity_fallback_value(entity, 'pageTemplate') %}
+    {% if pageTemplateValue %}
+        {% set pageTemplatesData = pageTemplateValue.oro_product_frontend_product_view %}
+    {% endif %}
+
+    {% if pageTemplatesData == null %}
+        {% set pageTemplatesData = 'oro.product.form.no_page_template'|trans %}
+    {% else %}
+        {% set pageTemplatesData = UI.renderHtmlProperty(
+            'oro.product.page_template.label'|trans,
+            pageTemplatesData
+        ) %}
+    {% endif %}
+
+    {% set dataBlocks = dataBlocks|merge({
+        'design': {
+            'title': 'oro.product.sections.design'|trans,
+            'priority': 0,
+            'subblocks': [{
+                'data': {'pageTemplate': pageTemplatesData }
+            }]
+        }
+    }) %}
+
     {% set id = 'product-view' %}
     {% set data = {'dataBlocks': dataBlocks} %}
 
