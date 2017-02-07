@@ -11,9 +11,6 @@ use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadCustomerTaxCodes;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 
-/**
- * @dbIsolation
- */
 class CustomerControllerTest extends WebTestCase
 {
     const ACCOUNT_NAME = 'Customer_name';

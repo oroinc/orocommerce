@@ -15,9 +15,6 @@ use Oro\Component\MessageQueue\Transport\Dbal\DbalMessage;
 use Oro\Component\MessageQueue\Transport\Null\NullSession;
 use Oro\Component\MessageQueue\Util\JSON;
 
-/**
- * @dbIsolation
- */
 class ImageResizeMessageProcessorTest extends WebTestCase
 {
     const EXAMPLE_IMAGE_PATH = '/../DataFixtures/files/example.gif';

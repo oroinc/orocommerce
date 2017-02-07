@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
@@ -12,7 +13,7 @@ use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingList
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
 /**
- * @dbIsolation
+ * @dbIsolationPerTest
  */
 class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
 {
@@ -20,15 +21,15 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW),
-            true
+            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
         $this->loadFixtures([
             LoadCustomerAddresses::class,
             LoadProductUnitPrecisions::class,
             LoadShoppingListLineItems::class,
             LoadCombinedProductPrices::class,
-        ], true);
+            LoadPaymentMethodsConfigsRuleData::class
+        ]);
         $this->registry = $this->getContainer()->get('doctrine');
     }
 
@@ -38,18 +39,13 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         /** @var ShoppingList $shoppingList */
         $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_3);
         $this->startCheckout($shoppingList);
-        $crawler = $this->client->request('GET', self::$checkoutUrl);
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $noProductsError = $translator->trans('oro.checkout.workflow.condition.order_line_item_has_count.message');
-        $this->assertContains($noProductsError, $crawler->html());
+        $this->assertNull(self::$checkoutUrl);
 
-        $form = $this->getTransitionForm($crawler);
-        $values = $this->explodeArrayPaths($form->getValues());
-        $data = $this->setFormData($values, self::BILLING_ADDRESS);
-        $this->client->request('POST', $form->getUri(), $data);
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 500);
+        $flashBag = $this->getContainer()->get('session.flash_bag');
+        $noItemsWithPriceError = $translator
+            ->trans('oro.frontend.shoppinglist.messages.cannot_create_order_no_line_item_with_price');
+        $this->assertTrue($flashBag->has('error'));
+        $this->assertContains($noItemsWithPriceError, $flashBag->get('error'));
     }
 
     public function testStartCheckoutSeveralProductsWithoutPrices()

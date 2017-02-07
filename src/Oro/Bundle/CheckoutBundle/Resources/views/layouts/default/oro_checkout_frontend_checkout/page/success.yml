@@ -1,0 +1,19 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: '../templates/success.html.twig'
+
+        - '@setOption':
+            id: title
+            optionName: params
+            optionValue:
+                 '%step_label%': '=data["translator"].getTrans("oro.checkout.workflow.success.thank_you.label")'
+
+        - '@add':
+            id: success_order
+            parentId: page_content
+            blockType: success_order
+            options:
+                order: '=data["workflowItem"].getData().get("order")'
+
+    conditions: 'context["workflowStepName"]=="order_created"'

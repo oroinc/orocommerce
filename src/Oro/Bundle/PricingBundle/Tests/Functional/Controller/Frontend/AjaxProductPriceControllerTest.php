@@ -15,9 +15,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
-/**
- * @dbIsolation
- */
 class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerTest
 {
     /**

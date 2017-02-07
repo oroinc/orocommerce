@@ -9,9 +9,6 @@ use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
 
-/**
- * @dbIsolation
- */
 class QuoteFrontendOperationsTest extends FrontendActionTestCase
 {
     /**

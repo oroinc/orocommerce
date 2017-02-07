@@ -1,3 +1,5 @@
+include:
+    - ../../../../../PaymentBundle/Tests/Behat/Features/Fixtures/PaymentMethodsConfigsRule.yml
 Oro\Bundle\RuleBundle\Entity\Rule:
     rule1:
         name: 'Shipping Rule First'

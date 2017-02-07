@@ -8,9 +8,6 @@ use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData;
 use Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadPageMetaData;
 
-/**
- * @dbIsolation
- */
 class PageControllerTest extends WebTestCase
 {
     use SEOFrontendTrait;
