@@ -1,7 +1,0 @@
-services:
-    oro_customer_user.api.create.save_entity:
-        class: Oro\Bundle\CustomerBundle\Api\Processor\Create\SaveCustomerUser
-        arguments:
-            - '@oro_customer_user.manager'
-        tags:
-            - { name: oro.api.processor, action: create, group: save_data, class: Oro\Bundle\CustomerBundle\Entity\CustomerUser}
