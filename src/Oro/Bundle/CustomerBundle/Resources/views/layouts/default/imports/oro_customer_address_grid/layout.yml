@@ -53,6 +53,7 @@ layout:
                     cellActionsHideCount: 4
                     cellLauncherOptions:
                         launcherMode: 'icon-only'
+                    actionsDropdown:  'auto'
 
         - '@setOption':
               id: __addresses_datagrid_toolbar_button_container
