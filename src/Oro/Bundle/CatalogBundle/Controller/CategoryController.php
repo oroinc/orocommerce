@@ -98,9 +98,9 @@ class CategoryController extends Controller
         $selected = $request->get('selected', []);
 
         $collection = new TreeCollection();
-        foreach ($choices as $choice) {
-            if (in_array($choice->getKey(), $selected)) {
-                $collection->source[$choice->getKey()] = $choice;
+        foreach ($selected as $key) {
+            if (in_array($key, $choices)) {
+                $collection->source[$key] = $choices[$key];
             }
         }
         $form = $this->createForm(TreeMoveType::class, $collection, [
@@ -131,7 +131,6 @@ class CategoryController extends Controller
         }
 
         $responseData['form'] = $form->createView();
-        $responseData['formAction'] = $this->generateUrl('oro_catalog_category_move_form');
 
         return $responseData;
     }
