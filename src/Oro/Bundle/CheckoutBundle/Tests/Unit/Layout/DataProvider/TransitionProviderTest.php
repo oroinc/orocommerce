@@ -26,7 +26,7 @@ class TransitionDataProviderTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->workflowManager = $this->getMockBuilder('Oro\Bundle\WorkflowBundle\Model\WorkflowManager')
+        $this->workflowManager = $this->getMockBuilder(WorkflowManager::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -35,36 +35,12 @@ class TransitionDataProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetBackTransitions()
     {
-        $this->workflowManager->expects($this->any())
-            ->method('isTransitionAvailable')
-            ->willReturn(true);
+        /** @var Transition $backTransition */
+        /** @var WorkflowItem $workflowItem */
+        list($workflowItem, $backTransition) = $this->prepareTestEntities();
 
-        $workflowItem = new WorkflowItem();
-        $step = new WorkflowStep();
-        $workflowItem->setCurrentStep($step);
-
-        $transition = new Transition();
-        $transition->setName('transition1');
-
-        $step = new Step();
-        $step->setName('to_step');
-        $step->setOrder(10);
-        $backTransition = new Transition();
-        $backTransition->setName('transition3');
-        $backTransition->setFrontendOptions(['is_checkout_back' => true]);
-        $backTransition->setStepTo($step);
-
-        $transitions = [
-            $transition,
-            $backTransition
-        ];
-
-        $this->workflowManager->expects($this->once())
-            ->method('getTransitionsByWorkflowItem')
-            ->with($workflowItem)
-            ->will($this->returnValue($transitions));
-
-        $expected = [$step->getName() => new TransitionData($backTransition, true, new ArrayCollection())];
+        $stepName = $backTransition->getStepTo()->getName();
+        $expected = [$stepName => new TransitionData($backTransition, true, new ArrayCollection())];
         $this->assertEquals($expected, $this->provider->getBackTransitions($workflowItem));
     }
 
@@ -157,6 +133,35 @@ class TransitionDataProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetBackTransition()
     {
+        /** @var Transition $backTransition */
+        /** @var WorkflowItem $workflowItem */
+        list($workflowItem, $backTransition) = $this->prepareTestEntities();
+
+        $expected = new TransitionData($backTransition, true, new ArrayCollection());
+        $this->assertEquals($expected, $this->provider->getBackTransition($workflowItem));
+    }
+
+    public function testGetBackTransitionNull()
+    {
+        $workflowItem = new WorkflowItem();
+        $step = new WorkflowStep();
+        $workflowItem->setCurrentStep($step);
+
+        $transitions = [];
+
+        $this->workflowManager->expects($this->once())
+            ->method('getTransitionsByWorkflowItem')
+            ->with($workflowItem)
+            ->will($this->returnValue($transitions));
+
+        $this->assertNull($this->provider->getBackTransition($workflowItem));
+    }
+
+    /**
+     * @return array
+     */
+    protected function prepareTestEntities()
+    {
         $this->workflowManager->expects($this->any())
             ->method('isTransitionAvailable')
             ->willReturn(true);
@@ -186,23 +191,6 @@ class TransitionDataProviderTest extends \PHPUnit_Framework_TestCase
             ->with($workflowItem)
             ->will($this->returnValue($transitions));
 
-        $expected = new TransitionData($backTransition, true, new ArrayCollection());
-        $this->assertEquals($expected, $this->provider->getBackTransition($workflowItem));
-    }
-
-    public function testGetBackTransitionNull()
-    {
-        $workflowItem = new WorkflowItem();
-        $step = new WorkflowStep();
-        $workflowItem->setCurrentStep($step);
-
-        $transitions = [];
-
-        $this->workflowManager->expects($this->once())
-            ->method('getTransitionsByWorkflowItem')
-            ->with($workflowItem)
-            ->will($this->returnValue($transitions));
-
-        $this->assertNull($this->provider->getBackTransition($workflowItem));
+        return [$workflowItem, $backTransition];
     }
 }

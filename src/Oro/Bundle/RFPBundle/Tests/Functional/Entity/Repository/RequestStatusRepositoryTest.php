@@ -7,9 +7,6 @@ use Oro\Bundle\RFPBundle\Entity\Repository\RequestStatusRepository;
 use Oro\Bundle\RFPBundle\Entity\RequestStatus;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestStatusData;
 
-/**
- * @dbIsolation
- */
 class RequestStatusRepositoryTest extends WebTestCase
 {
     /**

@@ -215,7 +215,8 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                 [
                     'titles' => [['string' => 'content_node_title'], ['string' => 'another_node_title']],
                     'slugPrototypesWithRedirect' => [
-                        'slugPrototypes' => [['string' => 'content_node_slug'], ['string' => 'another_node_slug']]
+                        'slugPrototypes' => [['string' => 'content_node_slug'], ['string' => 'another_node_slug']],
+                        'createRedirect' => true,
                     ],
                     'parentScopeUsed' => false,
                     'rewriteVariantTitle' => true,
@@ -248,7 +249,8 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                     'parentNode' => 1,
                     'titles' => [['string' => 'content_node_title'], ['string' => 'another_node_title']],
                     'slugPrototypesWithRedirect' => [
-                        'slugPrototypes' => [['string' => 'content_node_slug'], ['string' => 'another_node_slug']]
+                        'slugPrototypes' => [['string' => 'content_node_slug'], ['string' => 'another_node_slug']],
+                        'createRedirect' => true,
                     ],
                     'contentVariants' => [
                         [
@@ -288,7 +290,8 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                 [
                     'titles' => [['string' => 'content_node_title'], ['string' => 'another_node_title']],
                     'slugPrototypesWithRedirect' => [
-                        'slugPrototypes' => [['string' => 'content_node_slug'], ['string' => 'another_node_slug']]
+                        'slugPrototypes' => [['string' => 'content_node_slug'], ['string' => 'another_node_slug']],
+                        'createRedirect' => true,
                     ],
                     'contentVariants' => [
                         [

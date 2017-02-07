@@ -7,9 +7,6 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\Controller\AbstractUserController
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserACLData;
 use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 
-/**
- * @dbIsolation
- */
 class CustomerUserControllerTest extends AbstractUserControllerTest
 {
     const NAME_PREFIX = 'NamePrefix';

@@ -22,7 +22,7 @@ define(function(require) {
         /**
          * @property {Object}
          */
-        requiredOptions: ['slugFields', 'createRedirectCheckbox'],
+        requiredOptions: ['slugFields', 'createRedirectCheckbox', 'disabled'],
 
         /**
          * @property {Object}
@@ -38,6 +38,11 @@ define(function(require) {
          * @property {Object}
          */
         $createRedirectCheckbox: null,
+
+        /**
+         * @property {Boolean}
+         */
+        disabled: false,
 
         /**
          * @property {Boolean}
@@ -65,11 +70,14 @@ define(function(require) {
         },
 
         initializeElements: function() {
-            this.$form = this.options._sourceElement.closest('form');
-            this.$slugFields = this.$form.find(this.options.slugFields).filter(this.options.textFieldSelector);
-            this.$createRedirectCheckbox = this.$form.find(this.options.createRedirectCheckbox);
-            this._saveSlugFieldsInitialState();
-            this.$form.on('submit', _.bind(this.onSubmit, this));
+            this.disabled = this.options.disabled;
+            if (!this.disabled) {
+                this.$form = this.options._sourceElement.closest('form');
+                this.$slugFields = this.$form.find(this.options.slugFields).filter(this.options.textFieldSelector);
+                this.$createRedirectCheckbox = this.$form.find(this.options.createRedirectCheckbox);
+                this._saveSlugFieldsInitialState();
+                this.$form.on('submit', _.bind(this.onSubmit, this));
+            }
         },
 
         /**
@@ -117,6 +125,10 @@ define(function(require) {
          * @inheritDoc
          */
         dispose: function() {
+            if (this.disabled) {
+                return;
+            }
+
             if (this.disposed) {
                 return;
             }

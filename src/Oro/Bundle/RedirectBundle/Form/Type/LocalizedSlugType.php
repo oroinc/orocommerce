@@ -69,7 +69,7 @@ class LocalizedSlugType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'slug_suggestion_enabled' => false,
+            'slug_suggestion_enabled' => true,
             'slugify_route' => 'oro_api_slugify_slug',
         ]);
         $resolver->setDefined('source_field');
@@ -84,7 +84,11 @@ class LocalizedSlugType extends AbstractType
             && isset($options['source_field'])
             && !empty($view->parent->vars['full_name'])
         ) {
-            $sourceFieldName = sprintf('%s[%s]', $view->parent->vars['full_name'], $options['source_field']);
+            $parent = $view->parent;
+            while ($parent->parent) {
+                $parent = $parent->parent;
+            }
+            $sourceFieldName = sprintf('%s[%s]', $parent->vars['full_name'], $options['source_field']);
             $targetFieldName = $view->vars['full_name'];
 
             $view->vars['slugify_component_options'] = [

@@ -19,7 +19,7 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\ProductBundle\Model\ExtendProduct;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
-use Oro\Bundle\RedirectBundle\Entity\SlugPrototypesWithRedirect;
+use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 
 /**
  * @ORM\Table(

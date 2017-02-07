@@ -14,9 +14,6 @@ use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Engine\ORM\OrmIndexerTest;
 
-/**
- * @dbIsolation
- */
 class WebCatalogEntityIndexerListenerTest extends FrontendWebTestCase
 {
     const QUERY = 'web_catalog_entit_indexer_listener_test_query_string';

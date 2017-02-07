@@ -13,9 +13,6 @@ use Symfony\Component\Security\Core\Exception\AuthenticationException;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CustomerBundle\Layout\DataProvider\SignInProvider;
 
-/**
- * @dbIsolation
- */
 class SignInProviderTest extends WebTestCase
 {
     /** @var SignInProvider */

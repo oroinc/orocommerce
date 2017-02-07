@@ -5,9 +5,6 @@ namespace Oro\Bundle\CustomerBundle\Tests\Functional\Operation;
 use Oro\Bundle\ActionBundle\Tests\Functional\ActionTestCase;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserRoleData;
 
-/**
- * @dbIsolation
- */
 class CustomerUserRoleDeleteOperationTest extends ActionTestCase
 {
     /**

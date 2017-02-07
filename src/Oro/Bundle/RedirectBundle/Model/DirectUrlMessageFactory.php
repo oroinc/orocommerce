@@ -115,11 +115,7 @@ class DirectUrlMessageFactory implements MessageFactoryInterface
                     self::ENTITY_CLASS_NAME
                 ]
             );
-            $resolver->setDefined(
-                [
-                    self::CREATE_REDIRECT,
-                ]
-            );
+            $resolver->setDefault(self::CREATE_REDIRECT, true);
 
             $resolver->setAllowedTypes(self::ID, ['int', 'array']);
             $resolver->setAllowedTypes(self::ENTITY_CLASS_NAME, 'string');

@@ -8,10 +8,11 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\PersistentCollection;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
-use Oro\Bundle\RedirectBundle\Entity\SlugPrototypesWithRedirect;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
+use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormEvent;
@@ -58,187 +59,35 @@ class LocalizedSlugWithRedirectTypeTest extends FormIntegrationTestCase
     {
         /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
         $builder = $this->createMock(FormBuilderInterface::class);
-        $builder->expects($this->once())
+        $builder->expects($this->exactly(2))
             ->method('add')
-            ->with(
-                LocalizedSlugWithRedirectType::SLUG_PROTOTYPES_FIELD_NAME,
-                LocalizedSlugType::NAME,
+            ->withConsecutive(
                 [
-                    'required' => false,
-                    'options' => ['constraints' => [new UrlSafe()]],
-                    'label' => false,
-                    'source_field' => 'field',
-                    'slug_suggestion_enabled' => true,
+                    LocalizedSlugWithRedirectType::SLUG_PROTOTYPES_FIELD_NAME,
+                    LocalizedSlugType::NAME,
+                    [
+                        'required' => false,
+                        'options' => ['constraints' => [new UrlSafe()]],
+                        'label' => false,
+                        'source_field' => 'field',
+                        'slug_suggestion_enabled' => true,
+                    ]
+                ],
+                [
+                    LocalizedSlugWithRedirectType::CREATE_REDIRECT_FIELD_NAME,
+                    CheckboxType::class,
+                    [
+                        'label' => 'oro.redirect.confirm_slug_change.checkbox_label',
+                        'data' => true,
+                    ]
                 ]
-            );
-        $builder->expects($this->once())
-            ->method('addEventListener')
-            ->with(FormEvents::PRE_SET_DATA, [$this->formType, 'preSetData']);
+            )
+            ->willReturnSelf();
 
         $this->formType->buildForm(
             $builder,
             ['source_field' => 'field', 'slug_suggestion_enabled' => true]
         );
-    }
-
-    public function testOnPreSetDataForUpdateConfirmationEnabled()
-    {
-        $this->configManager->expects($this->any())
-            ->method('get')
-            ->with('oro_redirect.redirect_generation_strategy')
-            ->willReturn(Configuration::STRATEGY_ASK);
-
-        /** @var FormConfigInterface|\PHPUnit_Framework_MockObject_MockObject $formConfig */
-        $formConfig = $this->createMock(FormConfigInterface::class);
-        $formConfig->expects($this->any())
-            ->method('getOptions')
-            ->with()
-            ->willReturn(['create_redirect_enabled' => true]);
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->createMock(FormInterface::class);
-        $form->expects($this->any())
-            ->method('getConfig')
-            ->will($this->returnValue($formConfig));
-        $form->expects($this->once())
-            ->method('add')
-            ->with(LocalizedSlugWithRedirectType::CREATE_REDIRECT_FIELD_NAME);
-
-        /** @var FormEvent|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMockBuilder(FormEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $data = new SlugPrototypesWithRedirect($this->createPersistentCollection());
-        $event->expects($this->any())
-            ->method('getData')
-            ->will($this->returnValue($data));
-        $event->expects($this->any())
-            ->method('getForm')
-            ->will($this->returnValue($form));
-
-        $this->formType->preSetData($event);
-    }
-
-    /**
-     * @dataProvider disabledConfirmationStrategiesDataProvider
-     * @param string $strategy
-     */
-    public function testOnPreSetDataForUpdateConfirmationDisabled($strategy)
-    {
-        $this->configManager->expects($this->any())
-            ->method('get')
-            ->with('oro_redirect.redirect_generation_strategy')
-            ->willReturn($strategy);
-
-        /** @var FormConfigInterface|\PHPUnit_Framework_MockObject_MockObject $formConfig */
-        $formConfig = $this->createMock(FormConfigInterface::class);
-        $formConfig->expects($this->any())
-            ->method('getOptions')
-            ->with()
-            ->willReturn(['create_redirect_enabled' => true]);
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->createMock(FormInterface::class);
-        $form->expects($this->any())
-            ->method('getConfig')
-            ->will($this->returnValue($formConfig));
-        $form->expects($this->never())
-            ->method('add')
-            ->with(LocalizedSlugWithRedirectType::CREATE_REDIRECT_FIELD_NAME);
-
-        /** @var FormEvent|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMockBuilder(FormEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $data = new SlugPrototypesWithRedirect($this->createPersistentCollection());
-        $event->expects($this->any())
-            ->method('getData')
-            ->will($this->returnValue($data));
-        $event->expects($this->any())
-            ->method('getForm')
-            ->will($this->returnValue($form));
-
-        $this->formType->preSetData($event);
-    }
-
-    /**
-     * @return array
-     */
-    public function disabledConfirmationStrategiesDataProvider()
-    {
-        return [
-            [Configuration::STRATEGY_ALWAYS],
-            [Configuration::STRATEGY_NEVER]
-        ];
-    }
-
-    public function testOnPreSetDataForUpdateConfirmationDisabledByOption()
-    {
-        $this->configManager->expects($this->any())
-            ->method('get')
-            ->with('oro_redirect.redirect_generation_strategy')
-            ->willReturn(Configuration::STRATEGY_ASK);
-
-        /** @var FormConfigInterface|\PHPUnit_Framework_MockObject_MockObject $formConfig */
-        $formConfig = $this->createMock(FormConfigInterface::class);
-        $formConfig->expects($this->any())
-            ->method('getOptions')
-            ->with()
-            ->willReturn(['create_redirect_enabled' => false]);
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->createMock(FormInterface::class);
-        $form->expects($this->any())
-            ->method('getConfig')
-            ->will($this->returnValue($formConfig));
-        $form->expects($this->never())
-            ->method('add')
-            ->with(LocalizedSlugWithRedirectType::CREATE_REDIRECT_FIELD_NAME);
-
-        /** @var FormEvent|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMockBuilder(FormEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $data = new SlugPrototypesWithRedirect($this->createPersistentCollection());
-        $event->expects($this->any())
-            ->method('getData')
-            ->will($this->returnValue($data));
-        $event->expects($this->any())
-            ->method('getForm')
-            ->will($this->returnValue($form));
-
-        $this->formType->preSetData($event);
-    }
-
-    public function testOnPreSetDataForCreate()
-    {
-        $this->configManager->expects($this->any())
-            ->method('get')
-            ->with('oro_redirect.redirect_generation_strategy')
-            ->willReturn(Configuration::STRATEGY_ASK);
-
-        $formConfig = $this->createMock(FormConfigInterface::class);
-        $formConfig->expects($this->any())
-            ->method('getOptions')
-            ->willReturn(['create_redirect_enabled' => true]);
-        $form = $this->createMock(FormInterface::class);
-        $form->expects($this->any())
-            ->method('getConfig')
-            ->will($this->returnValue($formConfig));
-
-        $form->expects($this->never())
-            ->method('add')
-            ->with(LocalizedSlugWithRedirectType::CREATE_REDIRECT_FIELD_NAME);
-
-        /** @var FormEvent|\PHPUnit_Framework_MockObject_MockObject $event */
-        $event = $this->getMockBuilder(FormEvent::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $event->expects($this->any())
-            ->method('getData')
-            ->will($this->returnValue(new SlugPrototypesWithRedirect(new ArrayCollection())));
-        $event->expects($this->any())
-            ->method('getForm')
-            ->will($this->returnValue($form));
-
-        $this->formType->preSetData($event);
     }
 
     public function testConfigureOptions()
@@ -249,8 +98,8 @@ class LocalizedSlugWithRedirectTypeTest extends FormIntegrationTestCase
             $this->callback(
                 function (array $options) {
                     $this->assertEquals(SlugPrototypesWithRedirect::class, $options['data_class']);
-                    $this->assertFalse($options['slug_suggestion_enabled']);
-                    $this->assertFalse($options['create_redirect_enabled']);
+                    $this->assertTrue($options['slug_suggestion_enabled']);
+                    $this->assertTrue($options['create_redirect_enabled']);
 
                     return true;
                 }
@@ -261,20 +110,31 @@ class LocalizedSlugWithRedirectTypeTest extends FormIntegrationTestCase
         $this->formType->configureOptions($resolver);
     }
 
-    public function testBuildViewForConfirmationComponent()
+    /**
+     * @dataProvider buildViewProvider
+     * @param bool $createRedirectEnabled
+     * @param string $strategy
+     * @param SlugPrototypesWithRedirect $data
+     * @param bool $expectDisabled
+     */
+    public function testBuildView($createRedirectEnabled, $strategy, SlugPrototypesWithRedirect $data, $expectDisabled)
     {
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $this->createMock(FormInterface::class);
-        $form->expects($this->once())
-            ->method('has')
-            ->with(LocalizedSlugWithRedirectType::CREATE_REDIRECT_FIELD_NAME)
-            ->willReturn(true);
+        $form->expects($this->any())
+            ->method('getData')
+            ->willReturn($data);
+
+        $this->configManager->expects($this->any())
+            ->method('get')
+            ->with('oro_redirect.redirect_generation_strategy')
+            ->willReturn($strategy);
 
         $view = new FormView();
         $view->vars['full_name'] = 'form-name[target-name]';
         $options = [
             'source_field' => 'test',
-            'create_redirect_enabled' => true,
+            'create_redirect_enabled' => $createRedirectEnabled,
             'slug_suggestion_enabled' => false,
         ];
 
@@ -289,6 +149,37 @@ class LocalizedSlugWithRedirectTypeTest extends FormIntegrationTestCase
             '[name^="form-name[target-name]['.LocalizedSlugWithRedirectType::CREATE_REDIRECT_FIELD_NAME.']"]',
             $view->vars['confirm_slug_change_component_options']['createRedirectCheckbox']
         );
+        $this->assertEquals($expectDisabled, $view->vars['confirm_slug_change_component_options']['disabled']);
+    }
+
+    public function buildViewProvider()
+    {
+        return [
+            'create redirect disabled true by option' => [
+                'createRedirectEnabled' => false,
+                'strategy' => 'any',
+                'data' => new SlugPrototypesWithRedirect(new ArrayCollection()),
+                'expectDisabled' => true,
+            ],
+            'create redirect disabled true by strategy' => [
+                'createRedirectEnabled' => true,
+                'strategy' => 'any',
+                'data' => new SlugPrototypesWithRedirect(new ArrayCollection()),
+                'expectDisabled' => true,
+            ],
+            'create redirect disabled true by slugPrototypes collection empty' => [
+                'createRedirectEnabled' => true,
+                'strategy' => Configuration::STRATEGY_ASK,
+                'data' => new SlugPrototypesWithRedirect(new ArrayCollection()),
+                'expectDisabled' => true,
+            ],
+            'create redirect disabled false' => [
+                'createRedirectEnabled' => true,
+                'strategy' => Configuration::STRATEGY_ASK,
+                'data' => new SlugPrototypesWithRedirect(new ArrayCollection(['some data'])),
+                'expectDisabled' => false,
+            ],
+        ];
     }
 
     /**

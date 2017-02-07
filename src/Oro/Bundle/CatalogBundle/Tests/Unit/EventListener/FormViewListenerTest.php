@@ -6,36 +6,41 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-use Doctrine\ORM\EntityRepository;
-
 use Oro\Component\Testing\Unit\FormViewListenerTestCase;
-use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\EventListener\FormViewListener;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Unit\EventListener\Traits\FormViewListenerWrongProductTestTrait;
 
 class FormViewListenerTest extends FormViewListenerTestCase
 {
+    use FormViewListenerWrongProductTestTrait;
+
     /**
      * @var FormViewListener
      */
     protected $listener;
 
-    /** @var  Request|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var Request|\PHPUnit_Framework_MockObject_MockObject */
     protected $request;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 
         $this->request = $this->getRequest();
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
-        $requestStack = $this->createMock('Symfony\Component\HttpFoundation\RequestStack');
+        $requestStack = $this->createMock(RequestStack::class);
         $requestStack->expects($this->any())->method('getCurrentRequest')->willReturn($this->request);
         $this->listener = new FormViewListener($this->translator, $this->doctrineHelper, $requestStack);
+    }
+
+    protected function tearDown()
+    {
+        unset($this->listener, $this->request);
+
+        parent::tearDown();
     }
 
     public function testOnProductEdit()
@@ -71,8 +76,8 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->with('id')
             ->willReturn(1);
 
-        /** @var \PHPUnit_Framework_MockObject_MockObject|EntityRepository $repository */
-        $repository = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
+        /** @var \PHPUnit_Framework_MockObject_MockObject|CategoryRepository $repository */
+        $repository = $this->getMockBuilder(CategoryRepository::class)
             ->disableOriginalConstructor()
             ->setMethods(['findOneByProduct'])
             ->getMock();
@@ -92,7 +97,7 @@ class FormViewListenerTest extends FormViewListenerTestCase
             ->willReturn($repository);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
-        $env = $this->getMockBuilder('\Twig_Environment')
+        $env = $this->getMockBuilder(\Twig_Environment::class)
             ->disableOriginalConstructor()
             ->getMock();
         $env->expects($this->once())
@@ -104,54 +109,6 @@ class FormViewListenerTest extends FormViewListenerTestCase
         $event->expects($this->once())
             ->method('getEnvironment')
             ->willReturn($env);
-
-        $this->listener->onProductView($event);
-    }
-
-    public function testOnProductViewInvalidId()
-    {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|BeforeListRenderEvent $event */
-        $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->doctrineHelper
-            ->expects($this->never())
-            ->method('getEntityReference');
-
-        $this->listener->onProductView($event);
-
-        $this->request
-            ->expects($this->once())
-            ->method('get')
-            ->with('id')
-            ->willReturn('string');
-
-        $this->listener->onProductView($event);
-    }
-
-    public function testOnProductViewEmptyProduct()
-    {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|BeforeListRenderEvent $event */
-        $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->doctrineHelper
-            ->expects($this->once())
-            ->method('getEntityReference')
-            ->willReturn(null);
-
-        $this->request
-            ->expects($this->once())
-            ->method('get')
-            ->with('id')
-            ->willReturn(1);
-
-        $this->doctrineHelper
-            ->expects($this->never())
-            ->method('getEntityRepository')
-            ->willReturn(null);
 
         $this->listener->onProductView($event);
     }

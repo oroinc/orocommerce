@@ -8,9 +8,6 @@ use Oro\Bundle\LocaleBundle\ImportExport\Normalizer\LocalizedFallbackValueCollec
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-/**
- * @dbIsolation
- */
 class LocalizedFallbackValueCollectionNormalizerTest extends WebTestCase
 {
     use EntityTrait;

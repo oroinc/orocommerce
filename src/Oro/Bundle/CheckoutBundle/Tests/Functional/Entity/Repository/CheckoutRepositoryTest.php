@@ -12,9 +12,6 @@ use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteProductDemandDa
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 
-/**
- * @dbIsolation
- */
 class CheckoutRepositoryTest extends WebTestCase
 {
     /**

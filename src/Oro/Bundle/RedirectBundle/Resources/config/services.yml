@@ -74,6 +74,13 @@ services:
         class: Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator
         arguments:
             - '@oro_redirect.provider.routing_information_provider'
+            - '@oro_redirect.generator.unique_slug_resolver'
+
+    oro_redirect.generator.unique_slug_resolver:
+        class: Oro\Bundle\RedirectBundle\Generator\UniqueSlugResolver
+        public: false
+        arguments:
+            - "@doctrine"
 
     oro_redirect.direct_url_message_factory:
         class: Oro\Bundle\RedirectBundle\Model\DirectUrlMessageFactory

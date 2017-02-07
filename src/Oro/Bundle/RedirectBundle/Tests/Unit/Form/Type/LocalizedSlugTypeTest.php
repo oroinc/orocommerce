@@ -62,7 +62,7 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
             $this->callback(
                 function (array $options) {
                     $this->assertEquals('oro_api_slugify_slug', $options['slugify_route']);
-                    $this->assertFalse($options['slug_suggestion_enabled']);
+                    $this->assertTrue($options['slug_suggestion_enabled']);
 
                     return true;
                 }

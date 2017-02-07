@@ -14,9 +14,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 use Symfony\Component\DomCrawler\Form;
 
-/**
- * @dbIsolation
- */
 class CustomerAddressControllerTest extends WebTestCase
 {
     protected function setUp()

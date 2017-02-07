@@ -138,33 +138,85 @@ class PageTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @param array $options
+     * @param mixed $submittedData
+     * @param mixed $expectedData
+     * @dataProvider submitDataProviderNew
+     */
+    public function testSubmitNew($submittedData, $expectedData)
+    {
+        $defaultData = new Page();
+
+        $form = $this->factory->create($this->type, $defaultData, []);
+
+        $this->assertEquals($defaultData, $form->getData());
+        $this->assertEquals($defaultData, $form->getViewData());
+
+        $form->submit($submittedData);
+        $this->assertTrue($form->isValid());
+
+        $this->assertEquals($expectedData, $form->getData());
+    }
+
+
+    /**
+     * @return array
+     */
+    public function submitDataProviderNew()
+    {
+        $page = new Page();
+        $page->addTitle((new LocalizedFallbackValue())->setString('First test page'));
+        $page->setContent('Page content');
+        $page->addSlugPrototype((new LocalizedFallbackValue())->setString('slug'));
+
+        $pageWithoutRedirect = clone $page;
+        $pageWithoutRedirect->setSlugPrototypesWithRedirect(clone $page->getSlugPrototypesWithRedirect());
+        $pageWithoutRedirect->getSlugPrototypesWithRedirect()->setCreateRedirect(false);
+
+        return [
+            'new page with create redirect' => [
+                'submittedData' => [
+                    'titles' => [['string' => 'First test page']],
+                    'content' => 'Page content',
+                    'slugPrototypesWithRedirect' => [
+                        'slugPrototypes' => [['string' => 'slug']],
+                        'createRedirect' => true,
+                    ],
+                ],
+                'expectedData' => $page,
+            ],
+            'new page without create redirect' => [
+                'submittedData' => [
+                    'titles' => [['string' => 'First test page']],
+                    'content' => 'Page content',
+                    'slugPrototypesWithRedirect' => [
+                        'slugPrototypes' => [['string' => 'slug']],
+                        'createRedirect' => false,
+                    ],
+                ],
+                'expectedData' => $pageWithoutRedirect,
+            ],
+        ];
+    }
+
+    /**
      * @param mixed $defaultData
      * @param mixed $submittedData
      * @param mixed $expectedData
-     * @dataProvider submitDataProvider
+     * @dataProvider submitDataProviderUpdate
      */
-    public function testSubmit(array $options, $defaultData, $submittedData, $expectedData)
+    public function testSubmitUpdate($defaultData, $submittedData, $expectedData)
     {
-        if ($defaultData) {
-            $existingPage = new Page();
-            $existingPage->addTitle((new LocalizedFallbackValue())->setString($defaultData['titles']));
-            $existingPage->setContent($defaultData['content']);
-            $existingPage->addSlugPrototype((new LocalizedFallbackValue())->setString('slug'));
+        $existingPage = new Page();
+        $existingPage->addTitle((new LocalizedFallbackValue())->setString($defaultData['titles']));
+        $existingPage->setContent($defaultData['content']);
+        $existingPage->addSlugPrototype((new LocalizedFallbackValue())->setString('slug'));
 
-            $defaultData = $existingPage;
-        } else {
-            $defaultData = new Page();
-        }
+        $defaultData = $existingPage;
 
-        $form = $this->factory->create($this->type, $defaultData, $options);
+        $form = $this->factory->create($this->type, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
-        if (isset($existingPage)) {
-            $this->assertEquals($existingPage, $form->getViewData());
-        } else {
-            $this->assertEquals($defaultData, $form->getViewData());
-        }
+        $this->assertEquals($existingPage, $form->getViewData());
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
@@ -173,33 +225,21 @@ class PageTypeTest extends FormIntegrationTestCase
     }
 
     /**
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
-    public function submitDataProvider()
+    public function submitDataProviderUpdate()
     {
-        $new_page = new Page();
-        $new_page->addTitle((new LocalizedFallbackValue())->setString('First test page'));
-        $new_page->setContent('Page content');
-        $new_page->addSlugPrototype((new LocalizedFallbackValue())->setString('slug'));
-        $updated_page = new Page();
-        $updated_page->addTitle((new LocalizedFallbackValue())->setString('Updated first test page'));
-        $updated_page->setContent('Updated page content');
-        $updated_page->addSlugPrototype((new LocalizedFallbackValue())->setString('slug-updated'));
+        $page = new Page();
+        $page->addTitle((new LocalizedFallbackValue())->setString('Updated first test page'));
+        $page->setContent('Updated page content');
+        $page->addSlugPrototype((new LocalizedFallbackValue())->setString('slug-updated'));
+
+        $pageWithoutRedirect = clone $page;
+        $pageWithoutRedirect->setSlugPrototypesWithRedirect(clone $page->getSlugPrototypesWithRedirect());
+        $pageWithoutRedirect->getSlugPrototypesWithRedirect()->setCreateRedirect(false);
 
         return [
-            'new page' => [
-                'options' => [],
-                'defaultData' => null,
-                'submittedData' => [
-                    'titles' => [['string' => 'First test page']],
-                    'content' => 'Page content',
-                    'slugPrototypesWithRedirect' => ['slugPrototypes' => [['string' => 'slug']]],
-                ],
-                'expectedData' => $new_page,
-            ],
             'update page' => [
-                'options' => [],
                 'defaultData' => [
                     'titles' => [['string' => 'First test page']],
                     'content' => 'Page content',
@@ -208,9 +248,28 @@ class PageTypeTest extends FormIntegrationTestCase
                 'submittedData' => [
                     'titles' => [['string' => 'Updated first test page']],
                     'content' => 'Updated page content',
-                    'slugPrototypesWithRedirect' => ['slugPrototypes' => [['string' => 'slug-updated']]],
+                    'slugPrototypesWithRedirect' => [
+                        'slugPrototypes' => [['string' => 'slug-updated']],
+                        'createRedirect' => true,
+                    ],
                 ],
-                'expectedData' => $updated_page,
+                'expectedData' => $page,
+            ],
+            'update page without redirect' => [
+                'defaultData' => [
+                    'titles' => [['string' => 'First test page']],
+                    'content' => 'Page content',
+                    'slugs'  => [['string' => 'slug']],
+                ],
+                'submittedData' => [
+                    'titles' => [['string' => 'Updated first test page']],
+                    'content' => 'Updated page content',
+                    'slugPrototypesWithRedirect' => [
+                        'slugPrototypes' => [['string' => 'slug-updated']],
+                        'createRedirect' => false,
+                    ],
+                ],
+                'expectedData' => $pageWithoutRedirect,
             ],
         ];
     }

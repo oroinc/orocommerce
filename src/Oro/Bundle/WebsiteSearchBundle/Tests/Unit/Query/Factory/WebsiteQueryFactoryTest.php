@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Query\Factory;
 
-use Oro\Bundle\SearchBundle\Engine\EngineV2Interface;
+use Oro\Bundle\SearchBundle\Engine\EngineInterface;
 use Oro\Bundle\SearchBundle\Query\Factory\QueryFactoryInterface;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
 use Oro\Bundle\WebsiteSearchBundle\Query\Factory\WebsiteQueryFactory;
@@ -13,14 +13,13 @@ class WebsiteQueryFactoryTest extends \PHPUnit_Framework_TestCase
     /** @var QueryFactoryInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $queryFactory;
 
-    /** @var EngineV2Interface|\PHPUnit_Framework_MockObject_MockBuilder */
+    /** @var EngineInterface|\PHPUnit_Framework_MockObject_MockBuilder */
     protected $engine;
-
 
     public function setUp()
     {
         $this->queryFactory    = $this->createMock(QueryFactoryInterface::class);
-        $this->engine          = $this->createMock(EngineV2Interface::class);
+        $this->engine          = $this->createMock(EngineInterface::class);
     }
 
     public function testCreate()

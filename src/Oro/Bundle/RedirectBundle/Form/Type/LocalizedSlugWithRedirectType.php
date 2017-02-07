@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\Collection;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
-use Oro\Bundle\RedirectBundle\Entity\SlugPrototypesWithRedirect;
+use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
 
 use Symfony\Component\Form\AbstractType;
@@ -75,20 +75,8 @@ class LocalizedSlugWithRedirectType extends AbstractType
                     'label' => false,
                     'slug_suggestion_enabled' => $options['slug_suggestion_enabled'],
                 ]
-            );
-
-        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
-    }
-
-    /**
-     * @param FormEvent $event
-     */
-    public function preSetData(FormEvent $event)
-    {
-        if ($this->isRedirectConfirmationEnabled($event->getForm()->getConfig()->getOptions())
-            && $this->isNotEmptyCollection($event->getData())
-        ) {
-            $event->getForm()->add(
+            )
+            ->add(
                 self::CREATE_REDIRECT_FIELD_NAME,
                 CheckboxType::class,
                 [
@@ -96,7 +84,6 @@ class LocalizedSlugWithRedirectType extends AbstractType
                     'data' => true,
                 ]
             );
-        }
     }
 
     /**
@@ -105,8 +92,8 @@ class LocalizedSlugWithRedirectType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'create_redirect_enabled' => false,
-            'slug_suggestion_enabled' => false,
+            'create_redirect_enabled' => true,
+            'slug_suggestion_enabled' => true,
             'data_class' => SlugPrototypesWithRedirect::class,
         ]);
         $resolver->setRequired('source_field');
@@ -117,33 +104,36 @@ class LocalizedSlugWithRedirectType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        if ($form->has(self::CREATE_REDIRECT_FIELD_NAME)) {
-            $fullName = $view->vars['full_name'];
-            $valuesField = sprintf('[name^="%s[%s][values]"]', $fullName, self::SLUG_PROTOTYPES_FIELD_NAME);
+        $fullName = $view->vars['full_name'];
+        $valuesField = sprintf('[name^="%s[%s][values]"]', $fullName, self::SLUG_PROTOTYPES_FIELD_NAME);
 
-            $view->vars['confirm_slug_change_component_options'] = [
-                'slugFields' => $valuesField,
-                'createRedirectCheckbox' => sprintf('[name^="%s[%s]"]', $fullName, self::CREATE_REDIRECT_FIELD_NAME)
-            ];
+        $view->vars['confirm_slug_change_component_options'] = [
+            'slugFields' => $valuesField,
+            'createRedirectCheckbox' => sprintf('[name^="%s[%s]"]', $fullName, self::CREATE_REDIRECT_FIELD_NAME),
+            'disabled' => false,
+        ];
+
+        if ($this->isRedirectConfirmationDisabled($options) || $this->isEmptyCollection($form->getData())) {
+            $view->vars['confirm_slug_change_component_options']['disabled'] = true;
         }
     }
 
     /**
-     * @param mixed $data
+     * @param SlugPrototypesWithRedirect $data
      * @return bool
      */
-    protected function isNotEmptyCollection($data)
+    protected function isEmptyCollection(SlugPrototypesWithRedirect $data)
     {
-        return $data->getSlugPrototypes() instanceof Collection && !$data->getSlugPrototypes()->isEmpty();
+        return $data->getSlugPrototypes()->isEmpty();
     }
 
     /**
      * @param array|\ArrayAccess $options
      * @return bool
      */
-    protected function isRedirectConfirmationEnabled($options)
+    protected function isRedirectConfirmationDisabled($options)
     {
-        return $options['create_redirect_enabled']
-            && $this->configManager->get('oro_redirect.redirect_generation_strategy') === Configuration::STRATEGY_ASK;
+        return !$options['create_redirect_enabled']
+            || !$this->configManager->get('oro_redirect.redirect_generation_strategy') === Configuration::STRATEGY_ASK;
     }
 }

@@ -7,9 +7,6 @@ use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Component\Duplicator\Test\Stub\RFPRequest;
 
-/**
- * @dbIsolation
- */
 class RequestControllerTest extends WebTestCase
 {
     /**

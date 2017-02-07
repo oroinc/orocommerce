@@ -5,10 +5,59 @@ namespace Oro\Bundle\RedirectBundle\Entity\Repository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 
 class SlugRepository extends EntityRepository
 {
+    /**
+     * @param string $slug
+     * @param SlugAwareInterface $restrictedEntity
+     * @return Slug|null
+     */
+    public function findOneBySlugWithoutScopes($slug, SlugAwareInterface $restrictedEntity = null)
+    {
+        $qb = $this->createQueryBuilder('slug');
+
+        $qb->leftJoin('slug.scopes', 'scopes', Join::WITH)
+            ->where($qb->expr()->eq('slug.url', ':url'))
+            ->andWhere($qb->expr()->isNull('scopes.id'))
+            ->setParameter('url', $slug)
+            ->setMaxResults(1);
+
+        if ($restrictedEntity && $ids = $this->getEntitySlugIds($restrictedEntity)) {
+            $qb->andWhere($qb->expr()->notIn('slug.id', ':ids'))
+                ->setParameter('ids', $ids);
+        }
+
+        return $qb->getQuery()->getOneOrNullResult();
+    }
+
+    /**
+     * @param string $pattern
+     * @param SlugAwareInterface $restrictedEntity
+     * @return array|string[]
+     */
+    public function findAllByPatternWithoutScopes($pattern, SlugAwareInterface $restrictedEntity = null)
+    {
+        $qb = $this->createQueryBuilder('slug');
+        $qb->select('slug.url')
+            ->leftJoin('slug.scopes', 'scopes', Join::WITH)
+            ->where('slug.url LIKE :pattern')
+            ->andWhere($qb->expr()->isNull('scopes.id'))
+            ->setParameter('pattern', $pattern)
+            ->orderBy('slug.id');
+
+        if ($restrictedEntity && $ids = $this->getEntitySlugIds($restrictedEntity)) {
+            $qb->andWhere($qb->expr()->notIn('slug.id', ':ids'))
+                ->setParameter('ids', $ids);
+        }
+
+        return array_map(function ($item) {
+            return $item['url'];
+        }, $qb->getQuery()->getArrayResult());
+    }
+
     /**
      * @param string $url
      * @param ScopeCriteria $scopeCriteria
@@ -54,5 +103,19 @@ class SlugRepository extends EntityRepository
             ->where($deleteQb->expr()->in('slug', $idsQb->getDQL()));
 
         $deleteQb->getQuery()->execute();
+    }
+
+    /**
+     * @param SlugAwareInterface $restrictedEntity
+     * @return array|int[]
+     */
+    private function getEntitySlugIds(SlugAwareInterface $restrictedEntity)
+    {
+        $entitySlugIds = [];
+        foreach ($restrictedEntity->getSlugs() as $entitySlug) {
+            $entitySlugIds[] = $entitySlug->getId();
+        }
+
+        return $entitySlugIds;
     }
 }

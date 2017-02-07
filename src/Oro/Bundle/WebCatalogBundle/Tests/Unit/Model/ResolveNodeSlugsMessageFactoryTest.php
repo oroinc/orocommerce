@@ -6,7 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
-use Oro\Bundle\RedirectBundle\Entity\SlugPrototypesWithRedirect;
+use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Model\ResolveNodeSlugsMessageFactory;
@@ -44,71 +44,79 @@ class ResolveNodeSlugsMessageFactoryTest extends \PHPUnit_Framework_TestCase
             $this->configManager
         );
     }
-    
-    public function testCreateMessageCreateRedirectAlways()
+
+    /**
+     * @dataProvider createMessageCreateRedirectProvider
+     * @param string $strategy
+     * @param array $nodeParams
+     * @param array $expectedMessage
+     */
+    public function testCreateMessageCreateRedirectAlways($strategy, $nodeParams, $expectedMessage)
     {
         $this->configManager->expects($this->once())
             ->method('get')
             ->with('oro_redirect.redirect_generation_strategy')
-            ->willReturn(Configuration::STRATEGY_ALWAYS);
+            ->willReturn($strategy);
         
         /** @var ContentNode $contentNode */
         $contentNode = $this->getEntity(
             ContentNode::class,
-            ['id' => 1]
+            $nodeParams
         );
         
         $message = $this->factory->createMessage($contentNode);
-        $expectedMessage = [
-            ResolveNodeSlugsMessageFactory::ID => 1,
-            ResolveNodeSlugsMessageFactory::CREATE_REDIRECT => true,
-        ];
         $this->assertEquals($expectedMessage, $message);
     }
-    
-    public function testCreateMessageCreateRedirectNever()
+
+    /**
+     * @return array
+     */
+    public function createMessageCreateRedirectProvider()
     {
-        $this->configManager->expects($this->once())
-            ->method('get')
-            ->with('oro_redirect.redirect_generation_strategy')
-            ->willReturn(Configuration::STRATEGY_NEVER);
-        
-        /** @var ContentNode $contentNode */
-        $contentNode = $this->getEntity(
-            ContentNode::class,
-            ['id' => 1]
-        );
-        
-        $message = $this->factory->createMessage($contentNode);
-        $expectedMessage = [
-            ResolveNodeSlugsMessageFactory::ID => 1,
-            ResolveNodeSlugsMessageFactory::CREATE_REDIRECT => false,
+        return [
+            'strategy always' => [
+                'strategy' => Configuration::STRATEGY_ALWAYS,
+                'nodeParams' => [
+                    'id' => 1,
+                ],
+                'expectedMessage' => [
+                    ResolveNodeSlugsMessageFactory::ID => 1,
+                    ResolveNodeSlugsMessageFactory::CREATE_REDIRECT => true,
+                ],
+            ],
+            'strategy never' => [
+                'strategy' => Configuration::STRATEGY_NEVER,
+                'nodeParams' => [
+                    'id' => 1,
+                ],
+                'expectedMessage' => [
+                    ResolveNodeSlugsMessageFactory::ID => 1,
+                    ResolveNodeSlugsMessageFactory::CREATE_REDIRECT => false,
+                ],
+            ],
+            'strategy ask true' => [
+                'strategy' => Configuration::STRATEGY_ASK,
+                'nodeParams' => [
+                    'id' => 1,
+                    'slugPrototypesWithRedirect' => new SlugPrototypesWithRedirect(new ArrayCollection())
+                ],
+                'expectedMessage' => [
+                    ResolveNodeSlugsMessageFactory::ID => 1,
+                    ResolveNodeSlugsMessageFactory::CREATE_REDIRECT => true,
+                ],
+            ],
+            'strategy ask false' => [
+                'strategy' => Configuration::STRATEGY_ASK,
+                'nodeParams' => [
+                    'id' => 1,
+                    'slugPrototypesWithRedirect' => new SlugPrototypesWithRedirect(new ArrayCollection(), false)
+                ],
+                'expectedMessage' => [
+                    ResolveNodeSlugsMessageFactory::ID => 1,
+                    ResolveNodeSlugsMessageFactory::CREATE_REDIRECT => false,
+                ],
+            ],
         ];
-        $this->assertEquals($expectedMessage, $message);
-    }
-    
-    public function testCreateMessageCreateRedirectAsk()
-    {
-        $this->configManager->expects($this->once())
-            ->method('get')
-            ->with('oro_redirect.redirect_generation_strategy')
-            ->willReturn(Configuration::STRATEGY_ASK);
-        
-        /** @var ContentNode $contentNode */
-        $contentNode = $this->getEntity(
-            ContentNode::class,
-            [
-                'id' => 1,
-                'slugPrototypesWithRedirect' => new SlugPrototypesWithRedirect(new ArrayCollection())
-            ]
-        );
-        
-        $message = $this->factory->createMessage($contentNode);
-        $expectedMessage = [
-            ResolveNodeSlugsMessageFactory::ID => 1,
-            ResolveNodeSlugsMessageFactory::CREATE_REDIRECT => false,
-        ];
-        $this->assertEquals($expectedMessage, $message);
     }
 
     public function testGetEntityFromMessage()
@@ -118,29 +126,49 @@ class ResolveNodeSlugsMessageFactoryTest extends \PHPUnit_Framework_TestCase
             ResolveNodeSlugsMessageFactory::CREATE_REDIRECT => true,
         ];
 
+        $expectedContentNode = new ContentNode();
         $repository = $this->getMockBuilder(ContentNodeRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
         $repository->expects($this->once())
             ->method('find')
             ->with($data[ResolveNodeSlugsMessageFactory::ID])
-            ->willReturn(new ContentNode());
+            ->willReturn($expectedContentNode);
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepositoryForClass')
             ->with(ContentNode::class)
             ->willReturn($repository);
 
-        $this->factory->getEntityFromMessage($data);
+        $contentNode = $this->factory->getEntityFromMessage($data);
+        $this->assertEquals($expectedContentNode, $contentNode);
     }
 
-    public function testGetCreateRedirectFromMessage()
+    /**
+     * @dataProvider getCreateRedirectFormMessageProvider
+     * @param bool $createRedirect
+     */
+    public function testGetCreateRedirectFromMessage($createRedirect)
     {
         $data = [
             ResolveNodeSlugsMessageFactory::ID => 1,
-            ResolveNodeSlugsMessageFactory::CREATE_REDIRECT => true,
+            ResolveNodeSlugsMessageFactory::CREATE_REDIRECT => $createRedirect,
         ];
 
-        $createRedirect = $this->factory->getCreateRedirectFromMessage($data);
-        $this->assertTrue($createRedirect);
+        $this->assertEquals($createRedirect, $this->factory->getCreateRedirectFromMessage($data));
+    }
+
+    /**
+     * @return array
+     */
+    public function getCreateRedirectFormMessageProvider()
+    {
+        return [
+            'create true' => [
+                'createRedirect' => true,
+            ],
+            'create false' => [
+                'createRedirect' => false,
+            ],
+        ];
     }
 }

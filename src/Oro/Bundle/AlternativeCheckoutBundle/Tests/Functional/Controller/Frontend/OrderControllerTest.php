@@ -15,9 +15,6 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPr
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 
-/**
- * @dbIsolation
- */
 class OrderControllerTest extends FrontendWebTestCase
 {
     const GRID_NAME      = 'frontend-checkouts-grid';
