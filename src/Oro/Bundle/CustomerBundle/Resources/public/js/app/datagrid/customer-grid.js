@@ -21,6 +21,9 @@ define(function(require) {
                     className: 'btn-group not-expand customer-datagrid__panel'
                 }
             });
+            _.extend(options.themeOptions, {
+                actionsDropdown: 'auto'
+            });
             _.extend(this.defaults.actionOptions.refreshAction.launcherOptions, {
                 className: 'btn btn--default btn--size-s',
                 icon: 'repeat fa--no-offset',
