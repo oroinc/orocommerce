@@ -30,12 +30,12 @@ class ContentNodeTreeHandler extends AbstractTreeHandler
     /**
      * @var ResolveNodeSlugsMessageFactory
      */
-    protected $messageFactory;
+    private $messageFactory;
 
     /**
      * @var bool
      */
-    protected $createRedirect = false;
+    private $createRedirect = false;
 
     /**
      * @param string $entityClass

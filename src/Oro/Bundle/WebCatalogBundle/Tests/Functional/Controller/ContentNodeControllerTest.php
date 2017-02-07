@@ -8,9 +8,6 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadContentNodesData;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadContentVariantsData;
 
-/**
- * @dbIsolation
- */
 class ContentNodeControllerTest extends WebTestCase
 {
     protected function setUp()
