@@ -96,8 +96,7 @@ class PackageProviderTest extends \PHPUnit_Framework_TestCase
                 ),
                 ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => 'test1',
                 ShippingLineItem::FIELD_ENTITY_IDENTIFIER => 1,
-                ShippingLineItem::FIELD_DIMENSIONS =>
-                    Dimensions::create(7, 7, 7, (new LengthUnit())->setCode('inch')),
+                ShippingLineItem::FIELD_DIMENSIONS => Dimensions::create(7, 7, 7, (new LengthUnit())->setCode('inch')),
                 ShippingLineItem::FIELD_WEIGHT => Weight::create($productWeight, $this->getEntity(
                     WeightUnit::class,
                     ['code' => 'lbs']

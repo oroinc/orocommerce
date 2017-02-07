@@ -72,18 +72,16 @@ class RateProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->transport->expects(self::any())->method('getRatePolicy')->willReturn(DPDTransport::TABLE_RATE_POLICY);
 
-        $rates = [
-            (new Rate())->setPriceValue('1.0'),
-            (new Rate())->setPriceValue('2.0'),
-        ];
-
         $repository = $this->createMock(RateRepository::class);
-        $repository->expects(self::any())->method('findRatesByServiceAndDestination')->willReturn($rates);
+        $repository
+            ->expects(self::once())
+            ->method('findFirstRateByServiceAndDestination')
+            ->willReturn((new Rate())->setPriceValue('1.0'));
 
         $manager = $this->getMockBuilder(ObjectManager::class)->disableOriginalConstructor()->getMock();
-        $manager->expects(self::any())->method('getRepository')->willReturn($repository);
+        $manager->expects(self::once())->method('getRepository')->willReturn($repository);
 
-        $this->registry->expects(self::any())->method('getManagerForClass')->willReturn($manager);
+        $this->registry->expects(self::once())->method('getManagerForClass')->willReturn($manager);
 
         static::assertEquals(
             '1.0',

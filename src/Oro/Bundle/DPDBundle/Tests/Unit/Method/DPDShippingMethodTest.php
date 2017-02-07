@@ -3,14 +3,15 @@
 namespace Oro\Bundle\DPDBundle\Tests\Unit\Method;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\DPDBundle\Method\DPDHandlerInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\DPDBundle\Entity\ShippingService;
 use Oro\Bundle\DPDBundle\Entity\DPDTransport;
 use Oro\Bundle\DPDBundle\Factory\DPDRequestFactory;
 use Oro\Bundle\DPDBundle\Form\Type\DPDShippingMethodOptionsType;
 use Oro\Bundle\DPDBundle\Method\DPDShippingMethod;
-use Oro\Bundle\DPDBundle\Method\DPDShippingMethodType;
 use Oro\Bundle\DPDBundle\Provider\DPDTransport as DPDTransportProvider;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 /**
@@ -71,7 +72,7 @@ class DPDShippingMethodTest extends \PHPUnit_Framework_TestCase
         $this->transport = $this->createMock(DPDTransport::class);
         $this->transport->expects(self::any())->method('getApplicableShippingServices')->willReturn([$shippingService]);
 
-        $type = $this->createMock(DPDShippingMethodType::class);
+        $type = $this->createMock(ShippingMethodTypeInterface::class);
         $type
             ->method('getIdentifier')
             ->willReturn(self::TYPE_IDENTIFIER);
@@ -79,11 +80,17 @@ class DPDShippingMethodTest extends \PHPUnit_Framework_TestCase
             ->method('calculatePrice')
             ->willReturn(Price::create('1.0', 'USD'));
 
+        $handler = $this->createMock(DPDHandlerInterface::class);
+        $handler
+            ->method('getIdentifier')
+            ->willReturn(self::TYPE_IDENTIFIER);
+
         $this->dpdShippingMethod =
             new DPDShippingMethod(
                 self::IDENTIFIER,
                 self::LABEL,
                 [$type],
+                [$handler],
                 $this->transport,
                 $this->transportProvider
             );
@@ -117,7 +124,7 @@ class DPDShippingMethodTest extends \PHPUnit_Framework_TestCase
         $identifier = self::TYPE_IDENTIFIER;
         $type = $this->dpdShippingMethod->getType($identifier);
 
-        static::assertInstanceOf(DPDShippingMethodType::class, $type);
+        static::assertInstanceOf(ShippingMethodTypeInterface::class, $type);
         static::assertEquals(self::TYPE_IDENTIFIER, $type->getIdentifier());
     }
 

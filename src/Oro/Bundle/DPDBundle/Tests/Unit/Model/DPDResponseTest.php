@@ -15,7 +15,9 @@ class DPDResponseTest extends \PHPUnit_Framework_TestCase
      */
     public function testEvaluate(array $values, $expectedResult)
     {
-        $response = new DPDResponse($values);
+        $response = new DPDResponse();
+        $this->assertFalse($response->isSuccessful());
+        $response->parse($values);
         $this->assertEquals(
             $expectedResult,
             [
@@ -37,14 +39,20 @@ class DPDResponseTest extends \PHPUnit_Framework_TestCase
             'successful_response' => [
                 'values' => [
                     'Ack' => true,
-                    'TimeStamp' => '2017-01-06',
+                    'TimeStamp' => '2017-02-06T17:35:54.978392+01:00',
                 ],
-                'expectedResult' => [true, new \DateTime('2017-01-06'), 0, [], []],
+                'expectedResult' => [
+                    true,
+                    '2017-02-06T17:35:54.978392+01:00',
+                    0,
+                    [],
+                    [],
+                ],
             ],
             'failed_response' => [
                 'values' => [
                     'Ack' => false,
-                    'TimeStamp' => '2017-01-06',
+                    'TimeStamp' => '2017-02-06T17:35:54.978392+01:00',
                     'ErrorDataList' => [
                         [
                             'ErrorID' => 1,
@@ -56,7 +64,7 @@ class DPDResponseTest extends \PHPUnit_Framework_TestCase
                 ],
                 'expectedResult' => [
                     false,
-                    new \DateTime('2017-01-06'),
+                    '2017-02-06T17:35:54.978392+01:00',
                     1,
                     ['A short error msg (ErrorID=1)'],
                     ['A long error msg (ErrorID=1)'],
@@ -65,7 +73,7 @@ class DPDResponseTest extends \PHPUnit_Framework_TestCase
             'failed_response_with_two_errors' => [
                 'values' => [
                     'Ack' => false,
-                    'TimeStamp' => '2017-01-06',
+                    'TimeStamp' => '2017-02-06T17:35:54.978392+01:00',
                     'ErrorDataList' => [
                         [
                             'ErrorID' => 1,
@@ -83,7 +91,7 @@ class DPDResponseTest extends \PHPUnit_Framework_TestCase
                 ],
                 'expectedResult' => [
                     false,
-                    new \DateTime('2017-01-06'),
+                    '2017-02-06T17:35:54.978392+01:00',
                     2,
                     ['A short error msg (ErrorID=1)', 'Another short error msg (ErrorID=2)'],
                     ['A long error msg (ErrorID=1)', 'Another long error msg (ErrorID=2)'],
@@ -100,7 +108,9 @@ class DPDResponseTest extends \PHPUnit_Framework_TestCase
      */
     public function testEvaluateThrowing(array $values)
     {
-        $response = new DPDResponse($values);
+        $response = new DPDResponse();
+        $this->assertFalse($response->isSuccessful());
+        $response->parse($values);
     }
 
     /**
@@ -114,7 +124,7 @@ class DPDResponseTest extends \PHPUnit_Framework_TestCase
             ],
             'no_ack_response' => [
                 'values' => [
-                    'TimeStamp' => '2017-01-06',
+                    'TimeStamp' => '2017-02-06T17:35:54.978392+01:00',
                     'ErrorDataList' => [
                         [
                             'ErrorID' => 1,
@@ -128,12 +138,6 @@ class DPDResponseTest extends \PHPUnit_Framework_TestCase
             'no_timestamp_response' => [
                 'values' => [
                     'Ack' => true,
-                ],
-            ],
-            'no_error_list_response' => [
-                'values' => [
-                    'Ack' => false,
-                    'TimeStamp' => '2017-01-06',
                 ],
             ],
         ];

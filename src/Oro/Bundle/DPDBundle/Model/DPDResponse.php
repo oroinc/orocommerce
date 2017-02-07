@@ -13,50 +13,39 @@ class DPDResponse
     const DPD_ERROR_DATA_MSG_LONG_KEY = 'ErrorMsgLong';
 
     /**
-     * @var \ArrayObject
-     */
-    protected $values;
-
-    /**
      * @var bool
      */
-    protected $ack;
+    protected $ack = false;
 
     /**
-     * @var \DateTime
+     * @var string
      */
     protected $timeStamp;
 
     /**
      * @var array
      */
-    protected $errors;
+    protected $errors = [];
 
     /**
-     * @param array $values
+     * @param array $data
      *
      * @throws \InvalidArgumentException
      */
-    public function __construct(array $values = [])
+    public function parse(array $data)
     {
-        $this->values = new \ArrayObject($values);
-        $this->errors = [];
-
-        if (!$this->values->offsetExists(self::DPD_ACK_KEY)) {
+        if (!array_key_exists(self::DPD_ACK_KEY, $data)) {
             throw new \InvalidArgumentException('No Ack parameter found in response data');
         }
-        $this->ack = $this->values->offsetGet(self::DPD_ACK_KEY);
+        $this->ack = $data[self::DPD_ACK_KEY];
 
-        if (!$this->values->offsetExists(self::DPD_TIMESTAMP_KEY)) {
+        if (!array_key_exists(self::DPD_TIMESTAMP_KEY, $data)) {
             throw new \InvalidArgumentException('No TimeStamp parameter found in response data');
         }
-        $this->timeStamp = new \DateTime($this->values->offsetGet(self::DPD_TIMESTAMP_KEY));
+        $this->timeStamp = $data[self::DPD_TIMESTAMP_KEY];
 
-        if (!$this->isSuccessful()) {
-            if (!$this->values->offsetExists(self::DPD_ERROR_DATA_LIST_KEY)) {
-                throw new \InvalidArgumentException('No ErrorDataList parameter found in response data');
-            }
-            $this->errors = $this->values->offsetGet(self::DPD_ERROR_DATA_LIST_KEY);
+        if (array_key_exists(self::DPD_ERROR_DATA_LIST_KEY, $data) && $data[self::DPD_ERROR_DATA_LIST_KEY]) {
+            $this->errors = $data[self::DPD_ERROR_DATA_LIST_KEY];
         }
     }
 
@@ -69,7 +58,7 @@ class DPDResponse
     }
 
     /**
-     * @return \DateTime
+     * @return string
      */
     public function getTimeStamp()
     {
@@ -104,5 +93,27 @@ class DPDResponse
         }
 
         return $errMsgs;
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray()
+    {
+        $response = [
+            'Ack' => $this->isSuccessful(),
+            'TimeStamp' => $this->getTimeStamp(),
+            'Errors' => $this->getErrors()
+        ];
+
+        return $response;
+    }
+
+    /**
+     * @return string
+     */
+    public function toJson()
+    {
+        return json_encode($this->toArray());
     }
 }

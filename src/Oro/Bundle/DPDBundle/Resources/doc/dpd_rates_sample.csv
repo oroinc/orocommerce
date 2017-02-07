@@ -1,0 +1,4 @@
+﻿"Shipping Service Code","Country Code (ISO 3166-1 alpha-2)","Region Code (ISO 3166-2)","Weight Value (kg)","Price Value"
+Classic,PT,,,5.0000
+Classic,PT,PT-08,,4.0000
+Classic,DE,,,10.0000

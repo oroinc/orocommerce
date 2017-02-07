@@ -51,38 +51,17 @@ class RateProvider
         if ($transport->getRatePolicy() === DPDTransportEntity::FLAT_RATE_POLICY) {
             $rateValue = $transport->getFlatRatePriceValue();
         } elseif ($transport->getRatePolicy() === DPDTransportEntity::TABLE_RATE_POLICY) {
-            $rate = $this->getRateByServiceAndDestination(
-                $transport,
-                $shippingService,
-                $shippingAddress
-            );
+            /** @var RateRepository $rateRepository */
+            $rateRepository =
+                $this->registry->getManagerForClass('OroDPDBundle:Rate')->getRepository('OroDPDBundle:Rate');
+            $rate =
+                $rateRepository->findFirstRateByServiceAndDestination($transport, $shippingService, $shippingAddress);
+
             if ($rate !== null) {
                 $rateValue = $rate->getPriceValue();
             }
         }
 
         return $rateValue;
-    }
-
-    /**
-     * @param DPDTransportEntity $transport
-     * @param ShippingService    $shippingService
-     * @param AddressInterface   $shippingAddress
-     *
-     * @return Rate|null
-     */
-    protected function getRateByServiceAndDestination(
-        DPDTransportEntity $transport,
-        ShippingService $shippingService,
-        AddressInterface $shippingAddress
-    ) {
-        /** @var RateRepository $rateRepository */
-        $rateRepository = $this->registry->getManagerForClass('OroDPDBundle:Rate')->getRepository('OroDPDBundle:Rate');
-        $rates = $rateRepository->findRatesByServiceAndDestination($transport, $shippingService, $shippingAddress);
-        if (!empty($rates)) {
-            return reset($rates);
-        }
-
-        return null;
     }
 }

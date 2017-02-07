@@ -10,18 +10,27 @@ class SetOrderRequestTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;
 
-    public function testAccessors()
+    public function testConstructionAndGetters()
     {
-        static::assertPropertyAccessors(
-            new SetOrderRequest(),
-            [
-                ['orderAction', SetOrderRequest::CHECK_ORDER_ACTION],
-                ['shipDate', new \DateTime()],
-                ['labelSize', 'label size'],
-                ['labelStartPosition', 'label start position'],
-                ['orderDataList', [new OrderData()], false],
-            ]
-        );
+        $params = [
+            SetOrderRequest::FIELD_ORDER_ACTION => SetOrderRequest::CHECK_ORDER_ACTION,
+            SetOrderRequest::FIELD_SHIP_DATE => new \DateTime(),
+            SetOrderRequest::FIELD_LABEL_SIZE => 'label size',
+            SetOrderRequest::FIELD_LABEL_START_POSITION => 'label start position',
+            SetOrderRequest::FIELD_ORDER_DATA_LIST => [new OrderData([])],
+        ];
+
+        $setOrderRequest = new SetOrderRequest($params);
+
+        $getterValues = [
+            SetOrderRequest::FIELD_ORDER_ACTION => $setOrderRequest->getOrderAction(),
+            SetOrderRequest::FIELD_SHIP_DATE => $setOrderRequest->getShipDate(),
+            SetOrderRequest::FIELD_LABEL_SIZE => $setOrderRequest->getLabelSize(),
+            SetOrderRequest::FIELD_LABEL_START_POSITION => $setOrderRequest->getLabelStartPosition(),
+            SetOrderRequest::FIELD_ORDER_DATA_LIST => $setOrderRequest->getOrderDataList(),
+        ];
+
+        $this->assertEquals($params, $getterValues);
     }
 
     public function testToArray()
@@ -33,12 +42,15 @@ class SetOrderRequestTest extends \PHPUnit_Framework_TestCase
             ->method('toArray')
             ->willReturn(['OrderData']);
 
-        $request = (new SetOrderRequest())
-            ->setOrderAction(SetOrderRequest::CHECK_ORDER_ACTION)
-            ->setShipDate($shipDate)
-            ->setLabelSize('label size')
-            ->setLabelStartPosition('label start position')
-            ->setOrderDataList([$orderData]);
+        $params = [
+            SetOrderRequest::FIELD_ORDER_ACTION => SetOrderRequest::CHECK_ORDER_ACTION,
+            SetOrderRequest::FIELD_SHIP_DATE => $shipDate,
+            SetOrderRequest::FIELD_LABEL_SIZE => 'label size',
+            SetOrderRequest::FIELD_LABEL_START_POSITION => 'label start position',
+            SetOrderRequest::FIELD_ORDER_DATA_LIST => [$orderData],
+        ];
+
+        $request = new SetOrderRequest($params);
         self::assertEquals(
             [
                 'OrderAction' => SetOrderRequest::CHECK_ORDER_ACTION,

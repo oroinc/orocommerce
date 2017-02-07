@@ -12,22 +12,35 @@ class OrderDataTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTestCaseTrait;
 
-    public function testAccessors()
+    public function testConstructionAndGetters()
     {
-        static::assertPropertyAccessors(
-            new OrderData(),
-            [
-                ['shipToAddress', new OrderAddress()],
-                ['shipToEmail', 'an@email'],
-                ['parcelShopId', 1],
-                ['shipServiceCode', 'SERVICE_CODE'],
-                ['weight', 1.0],
-                ['content', 'content string'],
-                ['yourInternalId', 'internal id'],
-                ['reference1', 'reference 1'],
-                ['reference2', 'reference 2'],
-            ]
-        );
+        $params = [
+            OrderData::FIELD_SHIP_TO_ADDRESS => new OrderAddress(),
+            OrderData::FIELD_SHIP_TO_EMAIL => 'an@email',
+            OrderData::FIELD_PARCEL_SHOP_ID => 1,
+            OrderData::FIELD_SHIP_SERVICE_CODE => 'SERVICE_CODE',
+            OrderData::FIELD_WEIGHT => 1.0,
+            OrderData::FIELD_CONTENT => 'content string',
+            OrderData::FIELD_YOUR_INTERNAL_ID => 'internal id',
+            OrderData::FIELD_REFERENCE1 => 'reference 1',
+            OrderData::FIELD_REFERENCE2 => 'reference 2',
+        ];
+
+        $orderData = new OrderData($params);
+
+        $getterValues = [
+            OrderData::FIELD_SHIP_TO_ADDRESS => $orderData->getShipToAddress(),
+            OrderData::FIELD_SHIP_TO_EMAIL => $orderData->getShipToEmail(),
+            OrderData::FIELD_PARCEL_SHOP_ID => $orderData->getParcelShopId(),
+            OrderData::FIELD_SHIP_SERVICE_CODE => $orderData->getShipServiceCode(),
+            OrderData::FIELD_WEIGHT => $orderData->getWeight(),
+            OrderData::FIELD_CONTENT => $orderData->getContent(),
+            OrderData::FIELD_YOUR_INTERNAL_ID => $orderData->getYourInternalId(),
+            OrderData::FIELD_REFERENCE1 => $orderData->getReference1(),
+            OrderData::FIELD_REFERENCE2 => $orderData->getReference2(),
+        ];
+
+        $this->assertEquals($params, $getterValues);
     }
 
     public function testToArrayNonUS()
@@ -43,31 +56,38 @@ class OrderDataTest extends \PHPUnit_Framework_TestCase
             ->setOrganization('Organization')
             ->setStreet('Street')
             ->setStreet2('Street2')
-            ->setPostalCode('PostalCode')
+            ->setPostalCode('1000')
             ->setCity('City')
             ->setPhone('Phone');
 
-        $orderData = (new OrderData())
-            ->setShipToAddress($nonUSAddress)
-            ->setShipToEmail('an@email')
-            ->setParcelShopId(1)
-            ->setShipServiceCode('SERVICE_CODE')
-            ->setWeight(1.0)
-            ->setContent('content string')
-            ->setYourInternalId('internal id')
-            ->setReference1('reference 1')
-            ->setReference2('reference 2');
+        $params = [
+            OrderData::FIELD_SHIP_TO_ADDRESS => $nonUSAddress,
+            OrderData::FIELD_SHIP_TO_EMAIL => 'an@email',
+            OrderData::FIELD_PARCEL_SHOP_ID => 1,
+            OrderData::FIELD_SHIP_SERVICE_CODE => 'SERVICE_CODE',
+            OrderData::FIELD_WEIGHT => 1.0,
+            OrderData::FIELD_CONTENT => 'content string',
+            OrderData::FIELD_YOUR_INTERNAL_ID => 'internal id',
+            OrderData::FIELD_REFERENCE1 => 'reference 1',
+            OrderData::FIELD_REFERENCE2 => 'reference 2',
+        ];
+
+        $orderData = new OrderData($params);
 
         self::assertEquals(
             [
                 'ShipAddress' => [
                     'Company' => 'Organization',
                     'Salutation' => 'NamePrefix',
-                    'Name' => 'FirstName MiddleName LastName NameSuffix',
+                    'Name' => substr(
+                        'FirstName MiddleName LastName NameSuffix',
+                        0,
+                        OrderData::DPD_API_SHIP_ADDRESS_NAME_MAX_LENGTH
+                    ),
                     'Street' => 'Street',
                     'HouseNo' => 'Street2',
                     'Country' => 'DE',
-                    'ZipCode' => 'PostalCode',
+                    'ZipCode' => '1000',
                     'City' => 'City',
                     'State' => '',
                     'Phone' => 'Phone',
@@ -90,7 +110,7 @@ class OrderDataTest extends \PHPUnit_Framework_TestCase
     public function testToArrayUS()
     {
         /** @var OrderAddress $shipToAddress */
-        $nonUSAddress = (new OrderAddress())
+        $USAddress = (new OrderAddress())
             ->setCountry((new Country('US'))->setName('United States'))
             ->setRegion((new Region('US-FL'))->setCode('FL'))
             ->setFirstName('FirstName')
@@ -101,31 +121,38 @@ class OrderDataTest extends \PHPUnit_Framework_TestCase
             ->setOrganization('Organization')
             ->setStreet('Street')
             ->setStreet2('Street2')
-            ->setPostalCode('PostalCode')
+            ->setPostalCode('1000')
             ->setCity('City')
             ->setPhone('Phone');
 
-        $orderData = (new OrderData())
-            ->setShipToAddress($nonUSAddress)
-            ->setShipToEmail('an@email')
-            ->setParcelShopId(1)
-            ->setShipServiceCode('SERVICE_CODE')
-            ->setWeight(1.0)
-            ->setContent('content string')
-            ->setYourInternalId('internal id')
-            ->setReference1('reference 1')
-            ->setReference2('reference 2');
+        $params = [
+            OrderData::FIELD_SHIP_TO_ADDRESS => $USAddress,
+            OrderData::FIELD_SHIP_TO_EMAIL => 'an@email',
+            OrderData::FIELD_PARCEL_SHOP_ID => 1,
+            OrderData::FIELD_SHIP_SERVICE_CODE => 'SERVICE_CODE',
+            OrderData::FIELD_WEIGHT => 1.0,
+            OrderData::FIELD_CONTENT => 'content string',
+            OrderData::FIELD_YOUR_INTERNAL_ID => 'internal id',
+            OrderData::FIELD_REFERENCE1 => 'reference 1',
+            OrderData::FIELD_REFERENCE2 => 'reference 2',
+        ];
+
+        $orderData = new OrderData($params);
 
         self::assertEquals(
             [
                 'ShipAddress' => [
                     'Company' => 'Organization',
                     'Salutation' => 'NamePrefix',
-                    'Name' => 'FirstName MiddleName LastName NameSuffix',
+                    'Name' => substr(
+                        'FirstName MiddleName LastName NameSuffix',
+                        0,
+                        OrderData::DPD_API_SHIP_ADDRESS_NAME_MAX_LENGTH
+                    ),
                     'Street' => 'Street',
                     'HouseNo' => 'Street2',
                     'Country' => 'US',
-                    'ZipCode' => 'PostalCode',
+                    'ZipCode' => '1000',
                     'City' => 'City',
                     'State' => 'FL',
                     'Phone' => 'Phone',

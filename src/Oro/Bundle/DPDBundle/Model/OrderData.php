@@ -3,54 +3,44 @@
 namespace Oro\Bundle\DPDBundle\Model;
 
 use Oro\Bundle\OrderBundle\Entity\OrderAddress;
+use Symfony\Component\HttpFoundation\ParameterBag;
 
-class OrderData
+class OrderData extends ParameterBag
 {
-    /** @var OrderAddress */
-    protected $shipToAddress;
+    const FIELD_SHIP_TO_ADDRESS = 'ship_to_address';
+    const FIELD_SHIP_TO_EMAIL = 'ship_to_email';
+    const FIELD_PARCEL_SHOP_ID = 'parcel_shop_id';
+    const FIELD_SHIP_SERVICE_CODE = 'ship_service_code';
+    const FIELD_WEIGHT = 'weight';
+    const FIELD_CONTENT = 'content';
+    const FIELD_YOUR_INTERNAL_ID = 'your_internal_id';
+    const FIELD_REFERENCE1 = 'reference1';
+    const FIELD_REFERENCE2 = 'reference2';
 
-    /** @var string */
-    protected $shipToEmail;
+    const DPD_API_SHIP_ADDRESS_COMPANY_MAX_LENGTH = 35;
+    const DPD_API_SHIP_ADDRESS_SALUTATION_MAX_LENGTH = 10;
+    const DPD_API_SHIP_ADDRESS_NAME_MAX_LENGTH = 35;
+    const DPD_API_SHIP_ADDRESS_STREET_MAX_LENGTH = 35;
+    const DPD_API_SHIP_ADDRESS_HOUSE_NO_MAX_LENGTH = 8;
+    const DPD_API_SHIP_ADDRESS_ZIP_CODE_MAX_LENGTH = 8;
+    const DPD_API_SHIP_ADDRESS_CITY_MAX_LENGTH = 35;
+    const DPD_API_SHIP_ADDRESS_PHONE_MAX_LENGTH = 20;
+    const DPD_API_PARCEL_DATA_CONTENT_MAX_LENGTH = 35;
+    const DPD_API_PARCEL_DATA_YOUR_INTERNAL_ID_MAX_LENGTH = 35;
+    const DPD_API_PARCEL_DATA_REFERENCE1_MAX_LENGTH = 35;
+    const DPD_API_PARCEL_DATA_REFERENCE2_MAX_LENGTH = 35;
 
-    /** @var int */
-    protected $parcelShopId;
-
-    /** @var string */
-    protected $shipServiceCode;
-
-    /** @var float */
-    protected $weight;
-
-    /** @var string */
-    protected $content;
-
-    /** @var string */
-    protected $yourInternalId;
-
-    /** @var string */
-    protected $reference1;
-
-    /** @var string */
-    protected $reference2;
+    public function __construct(array $params)
+    {
+        parent::__construct($params);
+    }
 
     /**
      * @return OrderAddress
      */
     public function getShipToAddress()
     {
-        return $this->shipToAddress;
-    }
-
-    /**
-     * @param OrderAddress $shipToAddress
-     *
-     * @return OrderData
-     */
-    public function setShipToAddress(OrderAddress $shipToAddress)
-    {
-        $this->shipToAddress = $shipToAddress;
-
-        return $this;
+        return $this->get(self::FIELD_SHIP_TO_ADDRESS);
     }
 
     /**
@@ -58,19 +48,7 @@ class OrderData
      */
     public function getShipToEmail()
     {
-        return $this->shipToEmail;
-    }
-
-    /**
-     * @param string $shipToEmail
-     *
-     * @return OrderData
-     */
-    public function setShipToEmail($shipToEmail)
-    {
-        $this->shipToEmail = $shipToEmail;
-
-        return $this;
+        return $this->get(self::FIELD_SHIP_TO_EMAIL);
     }
 
     /**
@@ -78,19 +56,7 @@ class OrderData
      */
     public function getParcelShopId()
     {
-        return $this->parcelShopId;
-    }
-
-    /**
-     * @param int $parcelShopId
-     *
-     * @return OrderData
-     */
-    public function setParcelShopId($parcelShopId)
-    {
-        $this->parcelShopId = $parcelShopId;
-
-        return $this;
+        return $this->get(self::FIELD_PARCEL_SHOP_ID);
     }
 
     /**
@@ -98,19 +64,7 @@ class OrderData
      */
     public function getShipServiceCode()
     {
-        return $this->shipServiceCode;
-    }
-
-    /**
-     * @param string $shipServiceCode
-     *
-     * @return OrderData
-     */
-    public function setShipServiceCode($shipServiceCode)
-    {
-        $this->shipServiceCode = $shipServiceCode;
-
-        return $this;
+        return $this->get(self::FIELD_SHIP_SERVICE_CODE);
     }
 
     /**
@@ -118,19 +72,7 @@ class OrderData
      */
     public function getWeight()
     {
-        return $this->weight;
-    }
-
-    /**
-     * @param float $weight
-     *
-     * @return OrderData
-     */
-    public function setWeight($weight)
-    {
-        $this->weight = $weight;
-
-        return $this;
+        return $this->get(self::FIELD_WEIGHT);
     }
 
     /**
@@ -138,19 +80,7 @@ class OrderData
      */
     public function getContent()
     {
-        return $this->content;
-    }
-
-    /**
-     * @param string $content
-     *
-     * @return OrderData
-     */
-    public function setContent($content)
-    {
-        $this->content = $content;
-
-        return $this;
+        return $this->get(self::FIELD_CONTENT);
     }
 
     /**
@@ -158,19 +88,7 @@ class OrderData
      */
     public function getYourInternalId()
     {
-        return $this->yourInternalId;
-    }
-
-    /**
-     * @param string $yourInternalId
-     *
-     * @return OrderData
-     */
-    public function setYourInternalId($yourInternalId)
-    {
-        $this->yourInternalId = $yourInternalId;
-
-        return $this;
+        return $this->get(self::FIELD_YOUR_INTERNAL_ID);
     }
 
     /**
@@ -178,19 +96,7 @@ class OrderData
      */
     public function getReference1()
     {
-        return $this->reference1;
-    }
-
-    /**
-     * @param string $reference1
-     *
-     * @return OrderData
-     */
-    public function setReference1($reference1)
-    {
-        $this->reference1 = $reference1;
-
-        return $this;
+        return $this->get(self::FIELD_REFERENCE1);
     }
 
     /**
@@ -198,19 +104,7 @@ class OrderData
      */
     public function getReference2()
     {
-        return $this->reference2;
-    }
-
-    /**
-     * @param string $reference2
-     *
-     * @return OrderData
-     */
-    public function setReference2($reference2)
-    {
-        $this->reference2 = $reference2;
-
-        return $this;
+        return $this->get(self::FIELD_REFERENCE2);
     }
 
     /**
@@ -225,39 +119,88 @@ class OrderData
          *      to specify a state!
          */
         $state = '';
-        $countryIso2Code = $this->shipToAddress->getCountryIso2();
+        $countryIso2Code = $this->getShipToAddress()->getCountryIso2();
         if ($countryIso2Code === 'US' || $countryIso2Code === 'CA') {
-            $state = $this->shipToAddress->getRegionCode();
+            $state = $this->getShipToAddress()->getRegionCode();
         }
 
-        $name = $this->shipToAddress->getFirstName().' '
-            .$this->shipToAddress->getMiddleName().' '
-            .$this->shipToAddress->getLastName().' '
-            .$this->shipToAddress->getNameSuffix();
+        $name = $this->getShipToAddress()->getFirstName().' '
+            .$this->getShipToAddress()->getMiddleName().' '
+            .$this->getShipToAddress()->getLastName().' '
+            .$this->getShipToAddress()->getNameSuffix();
         $name = preg_replace('/ +/', ' ', $name);
 
         $orderData = [
             'ShipAddress' => [
-                'Company' => $this->shipToAddress->getOrganization(),
-                'Salutation' => $this->shipToAddress->getNamePrefix(),
-                'Name' => $name,
-                'Street' => $this->shipToAddress->getStreet(),
-                'HouseNo' => $this->shipToAddress->getStreet2(),
+                'Company' => substr(
+                    $this->getShipToAddress()->getOrganization(),
+                    0,
+                    self::DPD_API_SHIP_ADDRESS_COMPANY_MAX_LENGTH
+                ),
+                'Salutation' => substr(
+                    $this->getShipToAddress()->getNamePrefix(),
+                    0,
+                    self::DPD_API_SHIP_ADDRESS_SALUTATION_MAX_LENGTH
+                ),
+                'Name' => substr(
+                    $name,
+                    0,
+                    self::DPD_API_SHIP_ADDRESS_NAME_MAX_LENGTH
+                ),
+                'Street' => substr(
+                    $this->getShipToAddress()->getStreet(),
+                    0,
+                    self::DPD_API_SHIP_ADDRESS_STREET_MAX_LENGTH
+                ),
+                //FIXME: we can't ensure this is the House number
+                'HouseNo' => substr(
+                    $this->getShipToAddress()->getStreet2(),
+                    0,
+                    self::DPD_API_SHIP_ADDRESS_HOUSE_NO_MAX_LENGTH
+                ),
                 'Country' => $countryIso2Code,
-                'ZipCode' => $this->shipToAddress->getPostalCode(),
-                'City' => $this->shipToAddress->getCity(),
+                'ZipCode' => substr(
+                    $this->getShipToAddress()->getPostalCode(),
+                    0,
+                    self::DPD_API_SHIP_ADDRESS_ZIP_CODE_MAX_LENGTH
+                ),
+                'City' => substr(
+                    $this->getShipToAddress()->getCity(),
+                    0,
+                    self::DPD_API_SHIP_ADDRESS_CITY_MAX_LENGTH
+                ),
                 'State' => $state,
-                'Phone' => $this->shipToAddress->getPhone(),
-                'Mail' => $this->shipToEmail,
+                'Phone' => substr(
+                    $this->getShipToAddress()->getPhone(),
+                    0,
+                    self::DPD_API_SHIP_ADDRESS_PHONE_MAX_LENGTH
+                ),
+                'Mail' => $this->getShipToEmail(),
             ],
-            'ParcelShopID' => $this->parcelShopId,
+            'ParcelShopID' => $this->getParcelShopId(),
             'ParcelData' => [
-                'ShipService' => $this->shipServiceCode,
-                'Weight' => $this->weight,
-                'Content' => substr($this->content, 0, 35),
-                'YourInternalID' => substr($this->yourInternalId, 0, 35),
-                'Reference1' => substr($this->reference1, 0, 35),
-                'Reference2' => substr($this->reference2, 0, 35),
+                'ShipService' => $this->getShipServiceCode(),
+                'Weight' => $this->getWeight(),
+                'Content' => substr(
+                    $this->getContent(),
+                    0,
+                    self::DPD_API_PARCEL_DATA_CONTENT_MAX_LENGTH
+                ),
+                'YourInternalID' => substr(
+                    $this->getYourInternalId(),
+                    0,
+                    self::DPD_API_PARCEL_DATA_YOUR_INTERNAL_ID_MAX_LENGTH
+                ),
+                'Reference1' => substr(
+                    $this->getReference1(),
+                    0,
+                    self::DPD_API_PARCEL_DATA_REFERENCE1_MAX_LENGTH
+                ),
+                'Reference2' => substr(
+                    $this->getReference2(),
+                    0,
+                    self::DPD_API_PARCEL_DATA_REFERENCE2_MAX_LENGTH
+                ),
             ],
         ];
 

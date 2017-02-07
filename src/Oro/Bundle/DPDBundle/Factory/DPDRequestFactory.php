@@ -36,24 +36,30 @@ class DPDRequestFactory
         $orderDataList = [];
         /** @var Package $package */
         foreach ($packages as $idx => $package) {
-            $orderDataList[] = (new OrderData())
-                ->setShipToAddress($orderAddress)
-                ->setShipToEmail($orderEmail)
-                ->setParcelShopId(0)
-                ->setShipServiceCode($shippingService->getCode())
-                ->setWeight($package->getWeight())
-                ->setContent($package->getContents())
-                ->setYourInternalId($idx)
-                ->setReference1($package->getContents())
-                ->setReference2($orderId);
+            $orderDataList[] = new OrderData(
+                [
+                    OrderData::FIELD_SHIP_TO_ADDRESS => $orderAddress,
+                    OrderData::FIELD_SHIP_TO_EMAIL => $orderEmail,
+                    OrderData::FIELD_PARCEL_SHOP_ID => 0,
+                    OrderData::FIELD_SHIP_SERVICE_CODE => $shippingService->getCode(),
+                    OrderData::FIELD_WEIGHT => $package->getWeight(),
+                    OrderData::FIELD_CONTENT => $package->getContents(),
+                    OrderData::FIELD_YOUR_INTERNAL_ID => $idx,
+                    OrderData::FIELD_REFERENCE1 => $package->getContents(),
+                    OrderData::FIELD_REFERENCE2 => $orderId,
+                ]
+            );
         }
 
-        $setOrderRequest = (new SetOrderRequest())
-            ->setOrderAction($requestAction)
-            ->setShipDate($shipDate)
-            ->setLabelSize($transport->getLabelSize())
-            ->setLabelStartPosition($transport->getLabelStartPosition())
-            ->setOrderDataList($orderDataList);
+        $setOrderRequest = new SetOrderRequest(
+            [
+                SetOrderRequest::FIELD_ORDER_ACTION => $requestAction,
+                SetOrderRequest::FIELD_SHIP_DATE => $shipDate,
+                SetOrderRequest::FIELD_LABEL_SIZE => $transport->getLabelSize(),
+                SetOrderRequest::FIELD_LABEL_START_POSITION => $transport->getLabelStartPosition(),
+                SetOrderRequest::FIELD_ORDER_DATA_LIST => $orderDataList,
+            ]
+        );
 
         return $setOrderRequest;
     }

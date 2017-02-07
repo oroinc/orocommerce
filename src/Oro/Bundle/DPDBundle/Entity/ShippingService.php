@@ -73,7 +73,6 @@ class ShippingService
      */
     public function isClassicService()
     {
-        // FIXME: Use 0 === strpos($this->code, static::CLASSIC_SERVICE_SUBSTR) instead?
         return substr($this->code, 0, strlen(static::CLASSIC_SERVICE_SUBSTR)) === static::CLASSIC_SERVICE_SUBSTR;
     }
 
@@ -82,7 +81,6 @@ class ShippingService
      */
     public function isExpressService()
     {
-        // FIXME: Use 0 === strpos($this->code, static::CLASSIC_SERVICE_SUBSTR) instead?
         return substr($this->code, 0, strlen(static::EXPRESS_SERVICE_SUBSTR)) === static::EXPRESS_SERVICE_SUBSTR;
     }
 

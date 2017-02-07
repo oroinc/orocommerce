@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\DPDBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\DPDBundle\Model\ZipCodeRulesRequest;
 use Oro\Bundle\DPDBundle\Model\SetOrderRequest;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestClientFactoryInterface;
@@ -146,8 +145,6 @@ class DPDTransportTest extends \PHPUnit_Framework_TestCase
 
     public function testGetZipCodeRulesResponse()
     {
-        $zipCodeRulesRequest = $this->createMock(ZipCodeRulesRequest::class);
-
         $integration = new Channel();
         $transportEntity = new DPDTransportEntity();
         $integration->setTransport($transportEntity);
@@ -183,14 +180,12 @@ class DPDTransportTest extends \PHPUnit_Framework_TestCase
             ->method('get')
             ->willReturn($restResponse);
 
-        $zipCodeRulesResponse = $this->transport->getZipCodeRulesResponse($zipCodeRulesRequest, $transportEntity);
+        $zipCodeRulesResponse = $this->transport->getZipCodeRulesResponse($transportEntity);
         static::assertInstanceOf('Oro\Bundle\DPDBundle\Model\ZipCodeRulesResponse', $zipCodeRulesResponse);
     }
 
     public function testGetZipCodeRulesResponseRestException()
     {
-        $getZipCodeRulesRequest = $this->createMock(ZipCodeRulesRequest::class);
-
         $integration = new Channel();
         $transportEntity = new DPDTransportEntity();
         $integration->setTransport($transportEntity);
@@ -212,6 +207,6 @@ class DPDTransportTest extends \PHPUnit_Framework_TestCase
                     '404'
                 )
             );
-        $this->transport->getZipCodeRulesResponse($getZipCodeRulesRequest, $transportEntity);
+        $this->transport->getZipCodeRulesResponse($transportEntity);
     }
 }

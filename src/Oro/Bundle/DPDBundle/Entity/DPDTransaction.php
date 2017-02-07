@@ -55,6 +55,7 @@ class DPDTransaction
     public function __construct()
     {
         $this->parcelNumbers = array();
+        $this->setCreatedAt(new \DateTime('now', new \DateTimeZone('UTC')));
     }
 
     /**

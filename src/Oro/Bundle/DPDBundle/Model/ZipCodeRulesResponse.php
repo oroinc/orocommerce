@@ -13,6 +13,8 @@ class ZipCodeRulesResponse extends DPDResponse
     const DPD_ZIP_CODE_RULES_PICKUP_DEPOT_KEY = 'PickupDepot';
     const DPD_ZIP_CODE_RULES_STATE_KEY = 'State';
 
+    const DPD_ZIP_CODE_RULES_NO_PICKUP_DAYS_FORMAT = 'd.m.Y';
+
     /**
      * @var string
      */
@@ -49,19 +51,19 @@ class ZipCodeRulesResponse extends DPDResponse
     protected $state;
 
     /**
-     * @param array $values
+     * @param array $data
      *
      * @throws \InvalidArgumentException
      */
-    public function __construct(array $values = [])
+    public function parse(array $data)
     {
-        parent::__construct($values);
+        parent::parse($data);
         $this->noPickupDays = [];
         if ($this->isSuccessful()) {
-            if (!$this->values->offsetExists(self::DPD_ZIP_CODE_RULES_KEY)) {
+            if (!array_key_exists(self::DPD_ZIP_CODE_RULES_KEY, $data)) {
                 throw new \InvalidArgumentException('No ZipCodeRules parameter found in response data');
             }
-            $zipCodeRules = $this->values->offsetGet(self::DPD_ZIP_CODE_RULES_KEY);
+            $zipCodeRules = $data[self::DPD_ZIP_CODE_RULES_KEY];
 
             if (!array_key_exists(self::DPD_ZIP_CODE_RULES_COUNTRY_KEY, $zipCodeRules)) {
                 throw new \InvalidArgumentException('No Country parameter found in response data');
@@ -122,7 +124,15 @@ class ZipCodeRulesResponse extends DPDResponse
      */
     public function getNoPickupDays()
     {
-        return array_keys($this->noPickupDays);
+        return array_map(
+            function ($noPickupDayString) {
+                return \DateTime::createFromFormat(
+                    self::DPD_ZIP_CODE_RULES_NO_PICKUP_DAYS_FORMAT.'|',
+                    $noPickupDayString
+                );
+            },
+            array_keys($this->noPickupDays)
+        );
     }
 
     /**
@@ -132,7 +142,10 @@ class ZipCodeRulesResponse extends DPDResponse
      */
     public function isNoPickupDay(\DateTime $date)
     {
-        return array_key_exists($date->format('d.m.Y'), $this->noPickupDays);
+        return array_key_exists(
+            $date->format(self::DPD_ZIP_CODE_RULES_NO_PICKUP_DAYS_FORMAT),
+            $this->noPickupDays
+        );
     }
 
     /**
@@ -165,5 +178,27 @@ class ZipCodeRulesResponse extends DPDResponse
     public function getState()
     {
         return $this->state;
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray()
+    {
+        $response = parent::toArray();
+        $response = array_merge(
+            $response,
+            [
+                'Country' => $this->getCountry(),
+                'ZipCode' => $this->getZipCode(),
+                'NoPickupDays' => $this->getNoPickupDays(),
+                'ClassicCutOff' => $this->getClassicCutOff(),
+                'ExpressCutOff' => $this->getExpressCutOff(),
+                'PickupDepot' => $this->getPickupDepot(),
+                'State' => $this->getState()
+            ]
+        );
+
+        return $response;
     }
 }

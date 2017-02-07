@@ -18,21 +18,21 @@ class SetOrderResponse extends DPDResponse
     /**
      * @var array
      */
-    protected $parcelNumbers = array();
+    protected $parcelNumbers = [];
 
     /**
-     * @param array $values
+     * @param array $data
      *
      * @throws \InvalidArgumentException
      */
-    public function __construct(array $values = [])
+    public function parse(array $data)
     {
-        parent::__construct($values);
+        parent::parse($data);
         if ($this->isSuccessful()) {
-            if (!$this->values->offsetExists(self::DPD_LABEL_RESPONSE_KEY)) {
+            if (!array_key_exists(self::DPD_LABEL_RESPONSE_KEY, $data)) {
                 throw new \InvalidArgumentException('No LabelResponse parameter found in response data');
             }
-            $labelResponse = $this->values->offsetGet(self::DPD_LABEL_RESPONSE_KEY);
+            $labelResponse = $data[self::DPD_LABEL_RESPONSE_KEY];
 
             if (!array_key_exists(self::DPD_LABEL_PDF_KEY, $labelResponse)) {
                 throw new \InvalidArgumentException('No LabelPDF parameter found in response data');
@@ -74,5 +74,21 @@ class SetOrderResponse extends DPDResponse
     public function getParcelNumbers()
     {
         return $this->parcelNumbers;
+    }
+
+    /**
+     * @return array
+     */
+    public function toArray()
+    {
+        $response = parent::toArray();
+        $response = array_merge(
+            $response,
+            [
+                'ParcelNumbers' => $this->getParcelNumbers()
+            ]
+        );
+
+        return $response;
     }
 }
