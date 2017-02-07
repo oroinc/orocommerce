@@ -6,6 +6,8 @@
         {% endif %}
     {% endfor %}
 
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
     {% set options = {
         elSelector: '.btn.role-submit',
         formName: form.vars.name,
@@ -21,7 +23,19 @@
          data-page-component-options="{{ options|json_encode }}">
     </div>
 
-    {{ form_row(form.customer) }}
+    {% set customerUserRoleOptions = {
+        customerFieldId: '#' ~ form.customer.vars.id,
+        datagridName: 'frontend-customer-customer-users-grid-update',
+        originalValue: form.customer.vars.value
+    } %}
+
+    <div {{ UI.renderPageComponentAttributes({
+        module: 'orocustomer/js/app/components/frontend-customer-user-role-component',
+        options: customerUserRoleOptions
+    }) }} >
+        {{ form_row(form.customer) }}
+    </div>
+
     {{ form_row(form.label) }}
 
     {{ form_widget(form.appendUsers, {'id': 'roleAppendUsers'}) }}

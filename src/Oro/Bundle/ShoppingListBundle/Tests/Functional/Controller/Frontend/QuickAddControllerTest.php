@@ -4,9 +4,6 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\ProductBundle\Tests\Functional\Controller\Frontend\QuickAddControllerTest as BaseControllerTest;
 
-/**
- * @dbIsolation
- */
 class QuickAddControllerTest extends BaseControllerTest
 {
     /**

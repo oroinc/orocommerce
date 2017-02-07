@@ -24,11 +24,14 @@ class LineItemErrorsProvider
 
     /**
      * @param LineItem[] $lineItems
+     * @param mixed $additionalContext
      * @return array
      */
-    public function getLineItemErrors($lineItems)
+    public function getLineItemErrors($lineItems, $additionalContext = null)
     {
-        $lineItemErrors = $this->validator->validate($lineItems, [new LineItemCollectionConstraint]);
+        $constraint = new LineItemCollectionConstraint();
+        $constraint->setAdditionalContext($additionalContext);
+        $lineItemErrors = $this->validator->validate($lineItems, [$constraint]);
         $indexedLineItemErrors = [];
         foreach ($lineItemErrors as $error) {
             $indexedLineItemErrors[$error->getPropertyPath()][] = $error;

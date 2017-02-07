@@ -8,9 +8,6 @@ use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
-/**
- * @dbIsolation
- */
 class WebsiteEntityListenerTest extends WebTestCase
 {
     protected function setUp()
@@ -21,7 +18,7 @@ class WebsiteEntityListenerTest extends WebTestCase
 
     public function testPrePersist()
     {
-        $em = $this->getClient()->getContainer()->get('doctrine')->getManager();
+        $em = $this->client->getContainer()->get('doctrine')->getManager();
         $website = new Website();
         $website->setName('test');
         $em->persist($website);

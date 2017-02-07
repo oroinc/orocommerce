@@ -10,9 +10,6 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserRoleData;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
-/**
- * @dbIsolation
- */
 class CustomerUserRoleRepositoryTest extends WebTestCase
 {
     /**

@@ -11,5 +11,7 @@ config:
         'orocustomer/js/app/views/customer-role-view': 'bundles/orocustomer/js/app/views/customer-role-view.js'
         'orocustomer/js/address-book': 'bundles/orocustomer/js/address-book.js'
         'orocustomer/js/app/components/frontend-customer-address-book-component': 'bundles/orocustomer/js/app/components/frontend-customer-address-book-component.js'
+        'orocustomer/js/app/components/frontend-customer-user-role-component': 'bundles/orocustomer/js/app/components/frontend-customer-user-role-component.js'
+
     appmodules:
         - orocustomer/js/app/modules/views-module

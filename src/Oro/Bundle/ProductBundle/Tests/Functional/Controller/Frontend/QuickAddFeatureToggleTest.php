@@ -6,9 +6,6 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-/**
- * @dbIsolation
- */
 class QuickAddFeatureToggleTest extends WebTestCase
 {
     /** @var ConfigManager $configManager */

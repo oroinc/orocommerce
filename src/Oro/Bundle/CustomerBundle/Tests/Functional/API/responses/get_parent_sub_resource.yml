@@ -1,0 +1,32 @@
+data:
+    type: customers
+    id: '<toString(@default_customer->id)>'
+    attributes:
+        name: 'CustomerUser CustomerUser'
+    relationships:
+        parent:
+            data: null
+        children:
+            data:
+                -
+                    type: customers
+                    id: '<toString(@customer.1->id)>'
+        group:
+            data: null
+        users:
+            data:
+                -
+                    type: customerusers
+                    id: '<toString(@default_customer->id)>'
+        owner:
+            data:
+                type: users
+                id: '<toString(@default_customer->owner->id)>'
+        organization:
+            data:
+                type: organizations
+                id: '<toString(@default_customer->organization->id)>'
+        salesRepresentatives:
+            data: {  }
+        internal_rating:
+            data: null

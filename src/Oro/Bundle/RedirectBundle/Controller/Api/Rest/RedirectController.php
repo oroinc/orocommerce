@@ -11,8 +11,6 @@ use Symfony\Component\HttpFoundation\Response;
 
 use Nelmio\ApiDocBundle\Annotation\ApiDoc;
 
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-
 /**
  * @RouteResource("slug")
  * @NamePrefix("oro_api_")
@@ -29,13 +27,6 @@ class RedirectController extends FOSRestController
      * @ApiDoc(
      *      description="Get slug for string",
      *      resource=true
-     * )
-     *
-     * @Acl(
-     *      id="oro_redirect_view",
-     *      type="entity",
-     *      class="OroRedirectBundle:Slug",
-     *      permission="VIEW"
      * )
      *
      * @param string $string

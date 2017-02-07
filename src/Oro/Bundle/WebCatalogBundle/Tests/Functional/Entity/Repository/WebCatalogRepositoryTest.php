@@ -12,9 +12,6 @@ use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadWebCatalogData;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadWebCatalogScopes;
 
-/**
- * @dbIsolation
- */
 class WebCatalogRepositoryTest extends WebTestCase
 {
     /**

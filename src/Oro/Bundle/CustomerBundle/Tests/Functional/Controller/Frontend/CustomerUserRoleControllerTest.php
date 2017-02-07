@@ -12,8 +12,6 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserRoleData;
 
 /**
- * @dbIsolation
- *
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class CustomerUserRoleControllerTest extends WebTestCase

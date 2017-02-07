@@ -8,9 +8,6 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageCollector;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-/**
- * @dbIsolation
- */
 class CategoryListenerTest extends WebTestCase
 {
     /**

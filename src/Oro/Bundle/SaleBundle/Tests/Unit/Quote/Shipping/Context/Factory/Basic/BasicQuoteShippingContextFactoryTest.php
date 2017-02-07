@@ -160,6 +160,14 @@ class BasicQuoteShippingContextFactoryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testUnsupportedEntity()
+    {
+        $this->basicQuoteShippingContextFactory->create(new \stdClass());
+    }
+
+    /**
      * @return Subtotal|\PHPUnit_Framework_MockObject_MockObject
      */
     private function getTotalMock()

@@ -9,9 +9,6 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListActivationRule;
 
-/**
- * @dbIsolation
- */
 class CombinedPriceListActivationRuleRepositoryTest extends WebTestCase
 {
     /**

@@ -9,9 +9,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as LoadLoginCustomerUserData;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 
-/**
- * @dbIsolation
- */
 class AjaxCustomerUserControllerTest extends WebTestCase
 {
     /**

@@ -9,9 +9,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
 
-/**
- * @dbIsolation
- */
 class ProductControllerTest extends WebTestCase
 {
     const TEST_SKU = 'SKU-001';

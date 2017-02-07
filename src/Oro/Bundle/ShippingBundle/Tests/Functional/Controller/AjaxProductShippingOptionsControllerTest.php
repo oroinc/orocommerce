@@ -7,9 +7,6 @@ use Oro\Bundle\ShippingBundle\Form\Extension\ProductFormExtension;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Form;
 
-/**
- * @dbIsolation
- */
 class AjaxProductShippingOptionsControllerTest extends WebTestCase
 {
     protected function setUp()

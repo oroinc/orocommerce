@@ -9,9 +9,6 @@ use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 use Oro\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes as TaxFixture;
 
-/**
- * @dbIsolation
- */
 class ProductTaxCodeRepositoryTest extends WebTestCase
 {
     protected function setUp()

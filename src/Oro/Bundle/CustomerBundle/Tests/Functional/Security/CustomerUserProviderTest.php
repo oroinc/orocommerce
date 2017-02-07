@@ -10,8 +10,6 @@ use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadCustomerUserRoles;
 use Oro\Bundle\CustomerBundle\Security\CustomerUserProvider;
 
 /**
- * @dbIsolation
- *
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class CustomerUserProviderTest extends WebTestCase

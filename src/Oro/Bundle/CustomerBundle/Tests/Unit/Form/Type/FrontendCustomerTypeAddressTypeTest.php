@@ -22,14 +22,6 @@ class FrontendCustomerTypedAddressTypeTest extends CustomerTypedAddressTypeTest
     /**
      * {@inheritdoc}
      */
-    public function __construct($name = null, array $data = array(), $dataName = '')
-    {
-        parent::__construct($name, $data, $dataName);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
     protected function setUp()
     {
         parent::setUp();
@@ -45,6 +37,8 @@ class FrontendCustomerTypedAddressTypeTest extends CustomerTypedAddressTypeTest
     protected function tearDown()
     {
         unset($this->formType);
+
+        parent::tearDown();
     }
 
     /**
@@ -120,7 +114,7 @@ class FrontendCustomerTypedAddressTypeTest extends CustomerTypedAddressTypeTest
             ->setTypes(new ArrayCollection([$this->billingType, $this->shippingType]))
             ->setDefaults(new ArrayCollection([$this->billingType, $this->shippingType]));
 
-        $customer = new Customer();
+        $customer = $this->getCustomer();
         $customer->addAddress($customerAddress1);
         $customer->addAddress($customerAddress2);
 
@@ -158,5 +152,13 @@ class FrontendCustomerTypedAddressTypeTest extends CustomerTypedAddressTypeTest
     {
         $this->assertInternalType('string', $this->formType->getName());
         $this->assertEquals('oro_customer_frontend_typed_address', $this->formType->getName());
+    }
+
+    /**
+     * @return Customer
+     */
+    protected function getCustomer()
+    {
+        return new Customer();
     }
 }
