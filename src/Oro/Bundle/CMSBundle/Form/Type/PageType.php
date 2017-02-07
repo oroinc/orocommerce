@@ -50,9 +50,7 @@ class PageType extends AbstractType
                 [
                     'label'    => 'oro.cms.page.slug_prototypes.label',
                     'required' => false,
-                    'slug_suggestion_enabled' => true,
                     'source_field' => 'titles',
-                    'create_redirect_enabled' => true
                 ]
             );
     }

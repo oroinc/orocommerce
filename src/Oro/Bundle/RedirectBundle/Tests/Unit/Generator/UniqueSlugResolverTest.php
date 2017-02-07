@@ -42,7 +42,7 @@ class UniqueSlugResolverTest extends \PHPUnit_Framework_TestCase
         $repository = $this->createMock(SlugRepository::class);
         $repository->expects($this->once())
             ->method('findOneBySlugWithoutScopes')
-            ->with($slug)
+            ->with($slug, $entity)
             ->willReturn(null);
 
         $em = $this->createMock(EntityManagerInterface::class);
@@ -72,7 +72,7 @@ class UniqueSlugResolverTest extends \PHPUnit_Framework_TestCase
         $repository = $this->createMock(SlugRepository::class);
         $repository->expects($this->once())
             ->method('findOneBySlugWithoutScopes')
-            ->with($slug)
+            ->with($slug, $entity)
             ->willReturn(new Slug());
 
         $repository->expects($this->once())

@@ -5,7 +5,7 @@ layout:
 
         - '@setOption':
             id: page_title
-            optionName: text
+            optionName: defaultValue
             optionValue:
                 label: 'oro.customer.customeruser.profile.edit'
 

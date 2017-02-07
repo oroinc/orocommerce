@@ -98,8 +98,8 @@ class LocalizedSlugWithRedirectTypeTest extends FormIntegrationTestCase
             $this->callback(
                 function (array $options) {
                     $this->assertEquals(SlugPrototypesWithRedirect::class, $options['data_class']);
-                    $this->assertFalse($options['slug_suggestion_enabled']);
-                    $this->assertFalse($options['create_redirect_enabled']);
+                    $this->assertTrue($options['slug_suggestion_enabled']);
+                    $this->assertTrue($options['create_redirect_enabled']);
 
                     return true;
                 }

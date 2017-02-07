@@ -6,9 +6,6 @@ use Oro\Bundle\RedirectBundle\Entity\Redirect;
 use Oro\Bundle\RedirectBundle\Tests\Functional\DataFixtures\LoadRedirects;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-/**
- * @dbIsolation
- */
 class RedirectRepositoryTest extends WebTestCase
 {
     protected function setUp()

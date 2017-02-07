@@ -7,9 +7,6 @@ use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Tests\Functional\DataFixtures\LoadSlugsData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-/**
- * @dbIsolation
- */
 class FrontendRoutingTest extends WebTestCase
 {
     protected function setUp()
@@ -49,7 +46,6 @@ class FrontendRoutingTest extends WebTestCase
 
     public function testSlugRoutingAuthentication()
     {
-        $this->markTestSkipped('Will be fixed in BB-7513');
         /** @var Slug $slug */
         $slug = $this->getReference(LoadSlugsData::SLUG_URL_USER);
         $this->client->request(

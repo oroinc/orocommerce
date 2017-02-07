@@ -70,24 +70,11 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessInvalidMessage()
     {
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
-        $message = $this->createMock(MessageInterface::class);
-
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
 
-        $class = \stdClass::class;
-        $id = null;
-        $messageData = ['class' => $class, 'id' => $id];
-        $messageBody = json_encode($messageData);
-        $message->expects($this->any())
-            ->method('getBody')
-            ->willReturn($messageBody);
         $exception = new InvalidArgumentException('Test');
-        $this->messageFactory->expects($this->once())
-            ->method('getEntityClassFromMessage')
-            ->with($messageData)
-            ->willThrowException($exception);
+        $message = $this->prepareMessage($exception);
 
         $this->logger->expects($this->once())
             ->method('error')
@@ -95,7 +82,7 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
                 'Queue Message is invalid',
                 [
                     'exception' => $exception,
-                    'message' => $messageBody
+                    'message' => $message->getBody()
                 ]
             );
 
@@ -106,7 +93,6 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
     {
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
-
 
         $exception = new InvalidArgumentException('Test');
         $message = $this->prepareMessage($exception);
@@ -202,14 +188,6 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
     {
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
-
-        $class = \stdClass::class;
-        $id = null;
-        $messageData = ['class' => $class, 'id' => $id];
-        $messageBody = json_encode($messageData);
-        $message->expects($this->any())
-            ->method('getBody')
-            ->willReturn($messageBody);
 
         /** @var AbstractDriverException|\PHPUnit_Framework_MockObject_MockObject $exception */
         $exception = $this->getMockBuilder(AbstractDriverException::class)

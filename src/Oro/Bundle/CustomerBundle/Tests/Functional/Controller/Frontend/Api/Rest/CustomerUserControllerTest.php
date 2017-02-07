@@ -7,9 +7,6 @@ use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserACLData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-/**
- * @dbIsolation
- */
 class CustomerUserControllerTest extends WebTestCase
 {
     /**

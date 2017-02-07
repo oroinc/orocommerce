@@ -1,0 +1,20 @@
+{% block __line_item_buttons__line_item_buttons_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {% set attr = layout_attr_defaults(attr, {
+        'html': block_widget(block),
+        'mobileEnabled': true,
+        '~dataAttributes': {
+            'layout': 'deferred-initialize'
+        },
+        '~options': {
+            'widgetModule': 'oroproduct/js/content-processor/product-add-to-dropdown-button',
+            'widgetName': 'productAddToDropdownButtonProcessor',
+            'truncateLength': 15,
+            'groupContainer': '<div class="btn-group full"></div>',
+            'decoreClass': ' btn--info'
+        }
+    }) %}
+    {% if block.children is not empty %}
+        {{ UI.pinnedDropdownButton(attr) }}
+    {% endif %}
+{% endblock %}

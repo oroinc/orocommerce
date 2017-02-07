@@ -6,9 +6,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadCategoryMetaData;
 use Symfony\Component\DomCrawler\Crawler;
 
-/**
- * @dbIsolation
- */
 class CategoryControllerTest extends WebTestCase
 {
     protected function setUp()

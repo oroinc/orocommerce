@@ -10,9 +10,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 
-/**
- * @dbIsolation
- */
 class CustomerUserAddressControllerTest extends WebTestCase
 {
     /** @var CustomerUser $customerUser */

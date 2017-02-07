@@ -15,9 +15,6 @@ use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibi
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
-/**
- * @dbIsolation
- */
 class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
 {
     const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.product_visibility';
