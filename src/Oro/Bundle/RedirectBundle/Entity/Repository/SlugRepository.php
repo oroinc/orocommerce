@@ -94,18 +94,13 @@ class SlugRepository extends EntityRepository
     public function deleteSlugAttachedToEntityByClass($entityClass)
     {
         $idsQb = $this->getEntityManager()->createQueryBuilder();
-        $ids = $idsQb->select('s.id')
+        $idsQb->select('s.id')
             ->from(Slug::class, 's')
-            ->innerJoin($entityClass, 'e', Join::WITH, $idsQb->expr()->isMemberOf('s', 'e.slugs'))
-            ->getQuery()->getResult();
-
-        foreach ($ids as &$id) {
-            $id = $id['id'];
-        }
+            ->innerJoin($entityClass, 'e', Join::WITH, $idsQb->expr()->isMemberOf('s', 'e.slugs'));
 
         $deleteQb = $this->getEntityManager()->createQueryBuilder();
         $deleteQb->delete(Slug::class, 'slug')
-            ->where($deleteQb->expr()->in('slug', $ids));
+            ->where($deleteQb->expr()->in('slug', $idsQb->getDQL()));
 
         $deleteQb->getQuery()->execute();
     }
