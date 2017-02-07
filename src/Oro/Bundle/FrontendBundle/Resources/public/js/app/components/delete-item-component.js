@@ -70,9 +70,7 @@ define(function(require) {
                     }
                 },
                 error: function() {
-                    var message = __('unexpected_error');
                     mediator.execute('hideLoading');
-                    mediator.execute('showMessage', 'error', message);
                 }
             });
         },

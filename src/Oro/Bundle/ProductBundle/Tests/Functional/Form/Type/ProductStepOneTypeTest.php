@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Form\Type;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 
@@ -10,9 +9,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ProductBundle\Form\Type\ProductStepOneType;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 
-/**
- * @dbIsolation
- */
 class ProductStepOneTypeTest extends WebTestCase
 {
     const CATEGORY_ID = 1;

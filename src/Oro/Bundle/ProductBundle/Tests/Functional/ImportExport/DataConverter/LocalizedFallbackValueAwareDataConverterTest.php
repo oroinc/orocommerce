@@ -5,9 +5,6 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\ImportExport\DataConverter;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\LocaleBundle\ImportExport\DataConverter\LocalizedFallbackValueAwareDataConverter;
 
-/**
- * @dbIsolation
- */
 class LocalizedFallbackValueAwareDataConverterTest extends WebTestCase
 {
     const DEFAULT_EXPECTED_LOCALIZATION = [

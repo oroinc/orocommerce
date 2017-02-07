@@ -10,9 +10,6 @@ use Oro\Component\Testing\Performance\PerformanceMeasureTrait;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 use Oro\Bundle\SaleBundle\Tests\Performance\DataFixtures\LoadQuoteDataForPerformance;
 
-/**
- * @dbIsolation
- */
 class DisableQuotesProcessTest extends WebTestCase
 {
     use PerformanceMeasureTrait;

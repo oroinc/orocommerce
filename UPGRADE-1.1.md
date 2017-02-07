@@ -21,3 +21,7 @@ FlatRateBundle
 WebsiteSearchBundle
 -------------------
 - Driver::writeItem() and Driver::flushWrites() should be used instead of Driver::saveItems()
+
+FrontendTestFrameworkBundle
+---------------------------
+- 'Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase' method `tearDown` renamed to `afterFrontendTest`

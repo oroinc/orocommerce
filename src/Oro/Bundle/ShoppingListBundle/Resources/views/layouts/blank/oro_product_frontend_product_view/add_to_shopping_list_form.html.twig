@@ -1,0 +1,8 @@
+{% block _line_item_form_shopping_lists_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " form__col"
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}

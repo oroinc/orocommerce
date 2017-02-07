@@ -10,9 +10,6 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Autocomplete\ProductVisibilityLimitedSearchHandler;
 
-/**
- * @dbIsolation
- */
 abstract class AbstractProductSelectTypeTest extends WebTestCase
 {
     /** @var string */

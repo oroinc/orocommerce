@@ -8,9 +8,6 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\CategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\CategoryVisibilityRepository;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData;
 
-/**
- * @dbIsolation
- */
 class CategoryVisibilityRepositoryTest extends WebTestCase
 {
     const ROOT_CATEGORY = 'Products categories';

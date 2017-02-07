@@ -9,9 +9,6 @@ use Oro\Bundle\AddressBundle\Entity\AddressType;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 
-/**
- * @dbIsolation
- */
 class CustomerAddressControllerTest extends WebTestCase
 {
     /** @var Customer $customer */

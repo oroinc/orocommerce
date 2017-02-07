@@ -6,7 +6,6 @@ use Doctrine\Common\Collections\ArrayCollection;
 
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
 use Symfony\Component\Security\Core\Exception\AccessDeniedException;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\SecurityBundle\Acl\Domain\ObjectIdentityFactory;
 use Oro\Bundle\UserBundle\Entity\AbstractRole;
@@ -27,22 +26,10 @@ class CustomerUserRoleUpdateFrontendHandler extends AbstractCustomerUserRoleHand
      */
     protected $loggedCustomerUser;
 
-    /** @var  RequestStack */
-    protected $requestStack;
-
     /**
      * @var CustomerUserRole
      */
     protected $predefinedRole;
-
-    /**
-     * @param RequestStack $requestStack
-     */
-    public function setRequestStack($requestStack)
-    {
-        $this->requestStack = $requestStack;
-        $this->request = $requestStack->getCurrentRequest();
-    }
 
     /**
      * @param TokenStorageInterface $tokenStorage
@@ -167,6 +154,8 @@ class CustomerUserRoleUpdateFrontendHandler extends AbstractCustomerUserRoleHand
         if ($entity instanceof CustomerUserRole) {
             $entity->setSelfManaged(true);
         }
+
+        $this->applyCustomerLimits($entity, $appendUsers, $removeUsers);
 
         parent::onSuccess($entity, $appendUsers, $removeUsers);
     }

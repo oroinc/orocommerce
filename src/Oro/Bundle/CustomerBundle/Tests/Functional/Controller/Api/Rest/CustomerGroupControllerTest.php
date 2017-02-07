@@ -6,9 +6,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\DependencyInjection\Configuration;
 
-/**
- * @dbIsolation
- */
 class CustomerGroupControllerTest extends WebTestCase
 {
     protected function setUp()

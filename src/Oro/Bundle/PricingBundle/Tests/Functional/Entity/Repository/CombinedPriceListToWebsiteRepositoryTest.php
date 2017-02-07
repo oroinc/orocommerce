@@ -8,9 +8,6 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
 use Oro\Bundle\PricingBundle\Entity\PriceListWebsiteFallback;
 
-/**
- * @dbIsolation
- */
 class CombinedPriceListToWebsiteRepositoryTest extends AbstractCombinedPriceListRelationRepositoryTest
 {
 

@@ -3,7 +3,6 @@
 namespace Oro\Bundle\TaxBundle\Tests\Functional\Manager;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\ORM\EntityManager;
 
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\Finder\SplFileInfo;
@@ -32,7 +31,7 @@ class TaxManagerTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->initClient([], [], true);
+        $this->initClient();
         $this->client->useHashNavigation(true);
 
         $this->loadFixtures(

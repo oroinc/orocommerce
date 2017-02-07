@@ -7,9 +7,6 @@ use Oro\Bundle\FrontendBundle\Tests\Functional\FrontendActionTestCase;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * @dbIsolation
- */
 class OrderFrontendOperationTest extends FrontendActionTestCase
 {
     protected function setUp()

@@ -11,9 +11,6 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\TaxBundle\Entity\TaxValue;
 
-/**
- * @dbIsolation
- */
 class OrderTaxListenerTest extends WebTestCase
 {
     const ORDER_CLASS = 'Oro\Bundle\OrderBundle\Entity\Order';
@@ -31,11 +28,6 @@ class OrderTaxListenerTest extends WebTestCase
         $this->client->useHashNavigation(true);
         $this->doctrine = $this->getContainer()->get('doctrine');
         $this->orderEm = $this->doctrine->getManagerForClass(self::ORDER_CLASS);
-    }
-
-    protected function tearDown()
-    {
-        unset($this->orderEm, $this->doctrine);
     }
 
     public function testSaveOrderTaxValue()

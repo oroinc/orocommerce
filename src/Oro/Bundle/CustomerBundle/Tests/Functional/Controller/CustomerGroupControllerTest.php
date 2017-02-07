@@ -10,9 +10,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 
-/**
- * @dbIsolation
- */
 class CustomerGroupControllerTest extends WebTestCase
 {
     const NAME = 'Group_name';

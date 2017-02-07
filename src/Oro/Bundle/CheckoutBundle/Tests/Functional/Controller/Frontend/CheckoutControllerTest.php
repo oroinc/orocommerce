@@ -2,27 +2,32 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CheckoutBundle\Event\CheckoutValidateEvent;
-use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
-use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
+use Oro\Bundle\CheckoutBundle\Event\CheckoutValidateEvent;
+use Oro\Bundle\CustomerBundle\Entity\Customer;
+use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
+use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- * @dbIsolation
  */
 class CheckoutControllerTest extends CheckoutControllerTestCase
 {
     public function testStartCheckout()
     {
-        $this->startCheckout($this->getSourceEntity());
+        $shoppingList = $this->getSourceEntity();
+        $this->startCheckout($shoppingList);
+        $this->setProductInventoryLevels($shoppingList->getLineItems()[0]);
         $crawler = $this->client->request('GET', self::$checkoutUrl);
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -41,18 +46,22 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $values = $this->explodeArrayPaths($form->getValues());
         $data = $this->setFormData($values, self::BILLING_ADDRESS);
 
-        $this->client->reboot(false);
+        $this->client->disableReboot();
 
         /* @var $dispatcher EventDispatcherInterface */
         $dispatcher = $this->getContainer()->get('event_dispatcher');
-        $dispatcher->addListener(CheckoutValidateEvent::NAME, function (CheckoutValidateEvent $event) {
+        $listener = function (CheckoutValidateEvent $event) {
             $event->setIsCheckoutRestartRequired(true);
-        });
+        };
+        $dispatcher->addListener(CheckoutValidateEvent::NAME, $listener);
 
         $crawler = $this->client->request('POST', $form->getUri(), $data);
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertNotContains(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
         $this->assertContains(self::BILLING_ADDRESS_SIGN, $crawler->html());
+
+        $dispatcher->removeListener(CheckoutValidateEvent::NAME, $listener);
+        $this->client->enableReboot();
     }
 
     /**
@@ -458,5 +467,26 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
             }
         }
         $this->registry->getManager()->flush();
+    }
+
+    /**
+     * @param LineItem $lineItem
+     * @return InventoryLevel
+     */
+    protected function setProductInventoryLevels(LineItem $lineItem)
+    {
+        $inventoryLevelEm = $this->registry->getManagerForClass(InventoryLevel::class);
+        $productUnitPrecisionEm = $this->registry->getManagerForClass(ProductUnitPrecision::class);
+        $productUnitPrecision = $productUnitPrecisionEm
+            ->getRepository(ProductUnitPrecision::class)
+            ->findOneBy(['product' => $lineItem->getProduct()]);
+        $inventoryLevel = new InventoryLevel();
+        $inventoryLevel->setProductUnitPrecision($productUnitPrecision);
+        $inventoryLevel->setQuantity(10);
+        $inventoryLevelEm->persist($inventoryLevel);
+        $productUnitPrecisionEm->persist($productUnitPrecision);
+        $inventoryLevelEm->flush();
+
+        return $inventoryLevel;
     }
 }
