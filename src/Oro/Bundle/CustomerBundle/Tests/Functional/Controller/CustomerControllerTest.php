@@ -10,9 +10,6 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadUserData;
 
-/**
- * @dbIsolation
- */
 class CustomerControllerTest extends WebTestCase
 {
     const ACCOUNT_NAME = 'Customer_name';

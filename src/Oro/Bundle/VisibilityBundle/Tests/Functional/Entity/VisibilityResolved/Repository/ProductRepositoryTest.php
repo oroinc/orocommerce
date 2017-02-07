@@ -23,7 +23,6 @@ use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibil
 use Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\ResolvedEntityRepositoryTestTrait;
 
 /**
- * @dbIsolation
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class ProductRepositoryTest extends WebTestCase

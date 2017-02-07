@@ -5,9 +5,6 @@ namespace Oro\Bundle\SaleBundle\Tests\Functional\Model;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
-/**
- * @dbIsolation
- */
 class RequestHelperTest extends WebTestCase
 {
     protected function setUp()

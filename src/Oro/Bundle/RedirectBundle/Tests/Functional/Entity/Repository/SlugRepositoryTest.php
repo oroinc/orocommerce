@@ -15,7 +15,6 @@ use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationT
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
- * @dbIsolation
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class SlugRepositoryTest extends WebTestCase

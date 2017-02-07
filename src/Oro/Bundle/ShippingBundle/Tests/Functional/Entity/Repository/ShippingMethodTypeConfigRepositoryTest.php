@@ -8,9 +8,6 @@ use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsC
 use Oro\Bundle\ShippingBundle\Tests\Functional\Helper\FlatRateIntegrationTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-/**
- * @dbIsolation
- */
 class ShippingMethodTypeConfigRepositoryTest extends WebTestCase
 {
     use FlatRateIntegrationTrait;

@@ -8,9 +8,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Manager\SlugManager;
 
-/**
- * @dbIsolation
- */
 class SlugManagerTest extends WebTestCase
 {
     /**

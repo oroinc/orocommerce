@@ -12,9 +12,6 @@ use Oro\Bundle\CustomerBundle\EventListener\Datagrid\CustomerDatagridListener;
 use Oro\Bundle\CustomerBundle\Security\CustomerUserProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-/**
- * @dbIsolation
- */
 class CustomerDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;

@@ -11,9 +11,6 @@ use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\ExpressionLanguage\ExpressionLanguage;
 
-/**
- * @dbIsolation
- */
 class ProductDecoratorTest extends WebTestCase
 {
     /**

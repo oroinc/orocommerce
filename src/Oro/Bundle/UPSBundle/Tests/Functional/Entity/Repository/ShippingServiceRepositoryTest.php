@@ -9,9 +9,6 @@ use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Tests\Functional\DataFixtures\LoadShippingCountries;
 use Oro\Bundle\UPSBundle\Tests\Functional\DataFixtures\LoadShippingServices;
 
-/**
- * @dbIsolation
- */
 class ShippingServiceRepositoryTest extends WebTestCase
 {
     /**

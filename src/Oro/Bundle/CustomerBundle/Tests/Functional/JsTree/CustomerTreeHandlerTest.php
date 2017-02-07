@@ -6,9 +6,6 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Component\Tree\Handler\AbstractTreeHandler;
 use Oro\Component\Tree\Test\AbstractTreeHandlerTestCase;
 
-/**
- * @dbIsolation
- */
 class CustomerTreeHandlerTest extends AbstractTreeHandlerTestCase
 {
     /**

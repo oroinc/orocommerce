@@ -7,9 +7,6 @@ use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 
-/**
- * @dbIsolation
- */
 class CustomerControllerTest extends WebTestCase
 {
     /**

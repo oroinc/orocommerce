@@ -7,9 +7,6 @@ use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestStatusData;
 
-/**
- * @dbIsolation
- */
 class RFPActionsTest extends WebTestCase
 {
     protected function setUp()

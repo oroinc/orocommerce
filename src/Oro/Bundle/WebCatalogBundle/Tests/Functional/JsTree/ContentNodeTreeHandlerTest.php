@@ -11,7 +11,6 @@ use Oro\Component\Tree\Handler\AbstractTreeHandler;
 use Oro\Component\Tree\Test\AbstractTreeHandlerTestCase;
 
 /**
- * @dbIsolation
  * @property ContentNodeTreeHandler $handler
  */
 class ContentNodeTreeHandlerTest extends AbstractTreeHandlerTestCase

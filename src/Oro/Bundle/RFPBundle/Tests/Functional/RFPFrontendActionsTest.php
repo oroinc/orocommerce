@@ -11,9 +11,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ComponentProcessor\DataStorageAwareComponentProcessor;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadFrontendProductVisibilityData;
 
-/**
- * @dbIsolation
- */
 class RFPFrontendActionsTest extends WebTestCase
 {
     /**

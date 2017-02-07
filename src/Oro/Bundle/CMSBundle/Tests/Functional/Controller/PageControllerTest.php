@@ -12,7 +12,6 @@ use Oro\Bundle\CMSBundle\Entity\Page;
 /**
  * @group segfault
  *
- * @dbIsolation
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class PageControllerTest extends WebTestCase

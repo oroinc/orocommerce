@@ -6,7 +6,6 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerGroupType;
 
 /**
- * @dbIsolation
  * @group CommunityEdition
  */
 class CustomerGroupControllerTest extends AbstractPriceListsByEntityTestCase

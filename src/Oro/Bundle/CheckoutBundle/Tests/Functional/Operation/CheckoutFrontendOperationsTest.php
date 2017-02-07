@@ -8,9 +8,6 @@ use Oro\Bundle\FrontendBundle\Tests\Functional\FrontendActionTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 
-/**
- * @dbIsolation
- */
 class CheckoutFrontendOperationsTest extends FrontendActionTestCase
 {
     /**
