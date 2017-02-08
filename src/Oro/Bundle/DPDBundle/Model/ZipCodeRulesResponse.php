@@ -195,7 +195,7 @@ class ZipCodeRulesResponse extends DPDResponse
                 'ClassicCutOff' => $this->getClassicCutOff(),
                 'ExpressCutOff' => $this->getExpressCutOff(),
                 'PickupDepot' => $this->getPickupDepot(),
-                'State' => $this->getState()
+                'State' => $this->getState(),
             ]
         );
 

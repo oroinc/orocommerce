@@ -1,0 +1,9 @@
+{% extends 'OroActionBundle:Operation:form.html.twig' %}
+
+{% block form_widget %}
+    {% set options = operation.definition.frontendOptions.options|default({}) %}
+    <div class="dpd-message">
+        {{ options.message|trans }}
+    </div>
+    {{ form_widget(form) }}
+{% endblock %}

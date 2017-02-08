@@ -11,6 +11,7 @@ use Oro\Bundle\DPDBundle\Method\DPDShippingMethod;
 use Oro\Bundle\DPDBundle\Method\DPDShippingMethodProvider;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\OrderShippingTracking;
+use Symfony\Component\Form\FormInterface;
 
 class OrderShippingDPDHandler
 {
@@ -45,12 +46,15 @@ class OrderShippingDPDHandler
     }
 
     /**
-     * @param Order $order
+     * @param Order         $order
+     * @param FormInterface $form
      *
      * @return array
      */
-    public function shipOrder(Order $order)
+    public function shipOrder(Order $order, FormInterface $form)
     {
+        $shipDate = $form->get('shipDate')->getData();
+
         $result = [];
         $shippingMethod = $this->shippingMethodProvider->getShippingMethod($order->getShippingMethod());
         if (!$shippingMethod || !($shippingMethod instanceof DPDShippingMethod)) {
@@ -61,8 +65,6 @@ class OrderShippingDPDHandler
         if (!$dpdHandler) {
             return null;
         }
-
-        $shipDate = $dpdHandler->getNextPickupDay(new \DateTime('now')); //TODO: pass shipDate from UI?
 
         $response = $dpdHandler->shipOrder($order, $shipDate);
         if ($response && $response->isSuccessful()) {
@@ -86,6 +88,26 @@ class OrderShippingDPDHandler
         $result['errors'] = $response ? $response->getErrorMessagesLong() : [];
 
         return $result;
+    }
+
+    /**
+     * @param Order $order
+     *
+     * @return \DateTime
+     */
+    public function getNextPickupDay(Order $order)
+    {
+        $shippingMethod = $this->shippingMethodProvider->getShippingMethod($order->getShippingMethod());
+        if (!$shippingMethod || !($shippingMethod instanceof DPDShippingMethod)) {
+            return null;
+        }
+
+        $dpdHandler = $shippingMethod->getDPDHandler($order->getShippingMethodType());
+        if (!$dpdHandler) {
+            return null;
+        }
+
+        return $dpdHandler->getNextPickupDay(new \DateTime('now'));
     }
 
     /**

@@ -103,7 +103,7 @@ class DPDResponse
         $response = [
             'Ack' => $this->isSuccessful(),
             'TimeStamp' => $this->getTimeStamp(),
-            'Errors' => $this->getErrors()
+            'Errors' => $this->getErrors(),
         ];
 
         return $response;

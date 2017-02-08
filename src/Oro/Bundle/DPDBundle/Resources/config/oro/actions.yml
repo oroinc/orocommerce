@@ -73,20 +73,44 @@ operations:
             '@equal': [$type, $.dpdtype]
 
     oro_dpd_ship_order:
-        label: oro.dpd.actions.ship_order.widgets.ship_order.label
+        label: oro.dpd.form.ship_order.label
         routes:
             - oro_order_view
         acl_resource: [UPDATE, entity:Oro\Bundle\OrderBundle\Entity\Order]
         button_options:
             icon: fa-list-alt
         frontend_options:
-            title: oro.dpd.actions.ship_order.frontend_options.title
-            confirmation:
-                title: oro.dpd.actions.ship_order.frontend_options.confirmation.title
-                okText: oro.dpd.actions.ship_order.frontend_options.confirmation.ok_text
-                message: oro.dpd.actions.ship_order.frontend_options.confirmation.message
-                message_parameters:
-                    entityLabel: $.entityLabel
+            template: OroDPDBundle:Action:shipOrder.html.twig
+            title: oro.dpd.form.ship_order.title
+            options:
+                width: 505
+                modal: false
+                stateEnabled: false
+                incrementalPosition: false
+                allowMaximize: false
+                allowMinimize: false
+                maximizedHeightDecreaseBy: minimize-bar
+                message: oro.dpd.form.ship_order.message
+        attributes:
+            shipDate:
+                label: oro.dpd.form.ship_order.ship_date.label
+                type: object
+                options:
+                    class: \DateTime
+        form_options:
+            attribute_fields:
+                shipDate:
+                    form_type: Oro\Bundle\FormBundle\Form\Type\OroDateType
+                    options:
+                        disabled: true
+            attribute_default_values:
+                shipDate: $.shipDate
+        form_init:
+            - '@call_service_method':
+                attribute: $.shipDate
+                service: oro_dpd.handler.order_shipping_dpd
+                method: getNextPickupDay
+                method_parameters: [$.data]
         preactions:
             - '@find_entity':
                 class: Oro\Bundle\DPDBundle\Entity\DPDTransaction
@@ -103,7 +127,7 @@ operations:
                 attribute: $.result
                 service: oro_dpd.handler.order_shipping_dpd
                 method: shipOrder
-                method_parameters: [$.data]
+                method_parameters: [$.data, $.form]
             - '@tree':
                 conditions:
                     '@equal': ['$.result[successful]', true]
@@ -117,7 +141,7 @@ operations:
                         method: addTrackingNumbersToOrder
                         method_parameters: [$.data, '$.result[transaction]']
                     - '@flash_message':
-                        message: oro.dpd.actions.ship_order.flash.success
+                        message: oro.dpd.form.ship_order.flash.success
                         type: 'success'
                     - '@refresh_grid': order-shipping-trackings-grid
                     - '@refresh_grid': attachment-grid
@@ -130,20 +154,44 @@ operations:
                         type: 'error'
 
     oro_dpd_reship_order:
-        label: oro.dpd.actions.reship_order.widgets.reship_order.label
+        label: oro.dpd.form.reship_order.label
         routes:
             - oro_order_view
         acl_resource: [UPDATE, entity:Oro\Bundle\OrderBundle\Entity\Order]
         button_options:
             icon: fa-list-alt
         frontend_options:
-            title: oro.dpd.actions.reship_order.frontend_options.title
-            confirmation:
-                title: oro.dpd.actions.reship_order.frontend_options.confirmation.title
-                okText: oro.dpd.actions.reship_order.frontend_options.confirmation.ok_text
-                message: oro.dpd.actions.reship_order.frontend_options.confirmation.message
-                message_parameters:
-                    entityLabel: $.entityLabel
+            template: OroDPDBundle:Action:shipOrder.html.twig
+            title: oro.dpd.form.reship_order.title
+            options:
+                width: 505
+                modal: false
+                stateEnabled: false
+                incrementalPosition: false
+                allowMaximize: false
+                allowMinimize: false
+                maximizedHeightDecreaseBy: minimize-bar
+                message: oro.dpd.form.reship_order.message
+        attributes:
+            shipDate:
+                label: oro.dpd.form.reship_order.ship_date.label
+                type: object
+                options:
+                    class: \DateTime
+        form_options:
+            attribute_fields:
+                shipDate:
+                    form_type: Oro\Bundle\FormBundle\Form\Type\OroDateType
+                    options:
+                        disabled: true
+            attribute_default_values:
+                shipDate: $.shipDate
+        form_init:
+            - '@call_service_method':
+                attribute: $.shipDate
+                service: oro_dpd.handler.order_shipping_dpd
+                method: getNextPickupDay
+                method_parameters: [$.data]
         preactions:
             - '@find_entity':
                 class: Oro\Bundle\DPDBundle\Entity\DPDTransaction
@@ -162,7 +210,7 @@ operations:
                 attribute: $.result
                 service: oro_dpd.handler.order_shipping_dpd
                 method: shipOrder
-                method_parameters: [$.data]
+                method_parameters: [$.data, $.form]
             - '@tree':
                 conditions:
                     '@equal': ['$.result[successful]', true]
@@ -184,7 +232,7 @@ operations:
                         method: addTrackingNumbersToOrder
                         method_parameters: [$.data, '$.result[transaction]']
                     - '@flash_message':
-                        message: oro.dpd.actions.reship_order.flash.success
+                        message: oro.dpd.form.reship_order.flash.success
                         type: 'success'
                     - '@refresh_grid': order-shipping-trackings-grid
                     - '@refresh_grid': attachment-grid
