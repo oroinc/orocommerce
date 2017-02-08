@@ -13,7 +13,7 @@ use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingList
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
 /**
- * @dbIsolation
+ * @dbIsolationPerTest
  */
 class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
 {
@@ -21,8 +21,7 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW),
-            true
+            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
         $this->loadFixtures([
             LoadCustomerAddresses::class,
@@ -30,7 +29,7 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
             LoadShoppingListLineItems::class,
             LoadCombinedProductPrices::class,
             LoadPaymentMethodsConfigsRuleData::class
-        ], true);
+        ]);
         $this->registry = $this->getContainer()->get('doctrine');
     }
 

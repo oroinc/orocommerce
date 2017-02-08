@@ -18,9 +18,6 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
-/**
- * @dbIsolation
- */
 class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
 {
     const MONEY_ORDER_PAY_TO_VALUE = 'Johnson Brothers LLC.';

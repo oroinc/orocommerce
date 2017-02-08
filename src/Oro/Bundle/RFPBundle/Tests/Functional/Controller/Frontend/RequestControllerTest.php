@@ -12,7 +12,6 @@ use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData;
 
 /**
- * @dbIsolation
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class RequestControllerTest extends WebTestCase

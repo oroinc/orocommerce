@@ -11,9 +11,6 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 
-/**
- * @dbIsolation
- */
 class LineItemsExtensionTest extends \PHPUnit_Framework_TestCase
 {
     /**

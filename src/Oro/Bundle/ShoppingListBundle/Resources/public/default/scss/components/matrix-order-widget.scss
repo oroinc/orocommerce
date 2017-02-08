@@ -1,0 +1,203 @@
+// @theme: default;
+
+/* Matrix Grid Order Widget */
+.matrix-order-widget {
+  max-width: 820px;
+
+  input[type="text"] {
+    @include element-state('disabled') {
+      background: get-color('additional', 'base');
+
+      @include element-state('hover') {
+        border-color: get-color('additional', 'light');
+        box-shadow: none;
+      }
+    }
+  }
+
+  &__grid {
+    margin-bottom: 30px;
+
+    font-family: $font-family-base;
+  }
+
+  &__grid-head {
+    border-top: 1px solid get-color('additional', 'light');
+    border-bottom: 1px solid get-color('additional', 'light');
+    background: get-color('additional', 'base');
+
+    padding: 20px;
+
+    line-height: 3.5;
+    text-align: center
+  }
+
+  &__head-body-wrapper {
+      padding-bottom: 20px;
+
+      border-bottom: 1px solid get-color('additional', 'light');
+
+      line-height: 60px;
+  }
+
+  &__form__row {
+    padding-top: 20px;
+  }
+
+  &__form__col {
+    padding: 0 0 0 20px;
+    margin: 0;
+
+    line-height: 1.5;
+    vertical-align: middle;
+
+    .form-field-quantity {
+      font-family: $font-family-base;
+      text-align: center;
+    }
+  }
+
+  &__form__col-wrapper {
+    display: flex;
+
+    margin: 10px 0;
+
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__btn {
+    display: block;
+
+    width: 100%;
+    margin-top: 10px;
+    padding: 11px 0;
+
+    background: get-color('additional', 'base');
+    border: 1px solid get-color('additional', 'light');
+    border-radius: 5px;
+
+    text-align: center;
+
+    @include fa-icon($fa-var-angle-right, after);
+
+    &:after {
+      display: inline-block;
+
+      margin-left: 4px;
+
+      font-size: 12px;
+      text-decoration: none;
+    }
+
+    .fa-list-ul {
+      margin: -2px 6px 0 0;
+    }
+  }
+
+  &__summary {
+    display: flex;
+    justify-content: flex-end;
+
+    min-width: 140px;
+    margin-left: auto;
+
+    font-family: $font-family-base;
+    text-align: right;
+  }
+
+  &__summary-label {
+    display: inline-flex;
+
+    min-width: 85px;
+  }
+
+  &__total-quantity,
+  &__total-price {
+    display: flex;
+    justify-content: space-between;
+  }
+
+  &__total-quantity-vlaue {
+    float: right;
+  }
+
+  &__total-price {
+    margin: 10px 0;
+
+    font-size: 17px;
+  }
+
+  .pinned-dropdown {
+    max-width: 210px;
+
+    .btn-group {
+      &.open .dropdown-menu {
+        display: flex;
+        flex-direction: column-reverse;
+
+        margin-bottom: 20px;
+        bottom: 30px;
+        top: auto;
+      }
+    }
+  }
+
+  &--dialog {
+    & .ui-widget-content {
+      margin-top: -20px;
+    }
+
+    .ui-dialog-title {
+      display: none;
+    }
+
+    .ui-dialog-titlebar-close {
+      font-size: 0;
+    }
+  }
+}
+
+@include breakpoint('desktop') {
+  .matrix-order-widget {
+    &--dialog {
+      padding-bottom: 10px;
+
+      width: 820px !important;
+    }
+  }
+}
+
+@include breakpoint('tablet-small') {
+  .matrix-order-widget {
+
+    &--dialog {
+      padding-bottom: 0;
+
+      .ui-widget-content {
+        padding: 0 15px 5px 15px;
+        height: 90% !important;
+      }
+    }
+
+    &__form__col {
+      padding: 0 0 0 8px;
+
+      .form-field-quantity {
+        padding: 11px;
+        text-align: center;
+      }
+    }
+  }
+}
+
+@include breakpoint('mobile-landskape') {
+  .matrix-order-widget {
+    &__form__col {
+      .form-field-quantity {
+        padding: 9px;
+      }
+    }
+  }
+}
+

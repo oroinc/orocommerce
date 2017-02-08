@@ -3,24 +3,18 @@
 namespace Oro\Bundle\InventoryBundle\Tests\Functional\Api;
 
 use Symfony\Component\HttpFoundation\Response;
-
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\ProductBundle\Tests\Functional\Api\ApiResponseContentTrait;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
-use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadInventoryLevelWithPrimaryUnit;
 
 /**
- * @dbIsolation
  * @group CommunityEdition
  *
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
 class InventoryLevelApiTest extends RestJsonApiTestCase
 {
-    use ApiResponseContentTrait;
-
     const ARRAY_DELIMITER = ',';
 
     /**
@@ -29,200 +23,70 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->loadFixtures([LoadInventoryLevelWithPrimaryUnit::class]);
+        $this->loadFixtures(['@OroInventoryBundle/Tests/Functional/DataFixtures/inventory_level.yml']);
     }
 
     /**
-     * @param array $filters
-     * @param int $expectedCount
-     * @param array $expectedContent
+     * @param array $parameters
+     * @param string $expectedContentFile
      *
      * @dataProvider cgetParamsAndExpectation
      */
-    public function testCgetEntity(array $filters, $expectedCount, array $expectedContent)
+    public function testCgetEntity(array $parameters, $expectedContentFile)
     {
         $entityType = $this->getEntityType(InventoryLevel::class);
-
-        $params = ['include' => 'product,productUnitPrecision'];
-        foreach ($filters as $filter) {
-            $filterValue = '';
-            foreach ($filter['references'] as $value) {
-                $method = $filter['method'];
-                $filterValue .= $this->getReference($value)->$method() . self::ARRAY_DELIMITER;
-            }
-            $params['filter'][$filter['key']] = substr($filterValue, 0, -1);
-        }
-
-        $response = $this->request(
-            'GET',
-            $this->getUrl('oro_rest_api_cget', ['entity' => $entityType]),
-            $params
-        );
-
-        $this->assertApiResponseStatusCodeEquals($response, Response::HTTP_OK, $entityType, 'get list');
-        $content = json_decode($response->getContent(), true);
-        $this->assertCount($expectedCount, $content['data']);
-
-        $expectedContent = $this->addReferenceRelationshipsAndAssertIncluded($expectedContent, $content['included']);
-        $this->assertIsContained($expectedContent, $content['data']);
+        $response = $this->get('oro_rest_api_cget', ['entity' => $entityType], $parameters);
+        $this->assertResponseContains($expectedContentFile, $response);
     }
 
     /**
      * @return array
-     *
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function cgetParamsAndExpectation()
     {
         return [
             'filter by Product' => [
-                'filter' => [
-                    [
-                        'method' => 'getSku',
-                        'key' => 'product.sku',
-                        'references' => ['product-1']
-                    ],
+                'parameters' => [
+                    'include' => 'product,productUnitPrecision',
+                    'filter' => [
+                        'product.sku' => ['@product-1->sku'],
+                    ]
                 ],
-                'expectedCount' => 3,
-                'expectedContent' => $this->getInventoryLevelContent([
-                    [
-                        'quantity' => 10,
-                        'sku' => 'product-1',
-                        'reference' => 'product_unit_precision.product-1.liter',
-                        'id' => 'liter'
-                    ],
-                    [
-                        'quantity' => 99,
-                        'sku' => 'product-1',
-                        'reference' => 'product_unit_precision.product-1.bottle',
-                        'id' => 'bottle'
-                    ],
-                    [
-                        'quantity' => 10,
-                        'sku' => 'product-1',
-                        'reference' => 'product_unit_precision.product-1.milliliter',
-                        'id' => 'milliliter'
-                    ],
-                ]),
+                'expectedContent'
+                => '@OroInventoryBundle/Tests/Functional/DataFixtures/responses/filter_by_product.yml',
             ],
             'filter by Products' => [
-                'filter' => [
-                    [
-                        'method' => 'getSku',
-                        'key' => 'product.sku',
-                        'references' => ['product-1', 'product-2']
-                    ],
+                'parameters' => [
+                    'include' => 'product,productUnitPrecision',
+                    'filter' => [
+                        'product.sku' => ['@product-1->sku', '@product-2->sku'],
+                    ]
                 ],
-                'expectedCount' => 6,
-                'expectedContent' => $this->getInventoryLevelContent([
-                    [
-                        'quantity' => 10,
-                        'sku' => 'product-1',
-                        'reference' => 'product_unit_precision.product-1.liter',
-                        'id' => 'liter'
-                    ],
-                    [
-                        'quantity' => 99,
-                        'sku' => 'product-1',
-                        'reference' => 'product_unit_precision.product-1.bottle',
-                        'id' => 'bottle'
-                    ],
-                    [
-                        'quantity' => 12.345,
-                        'sku' => 'product-2',
-                        'reference' => 'product_unit_precision.product-2.liter',
-                        'id' => 'liter'
-                    ],
-                    [
-                        'quantity' => 98,
-                        'sku' => 'product-2',
-                        'reference' => 'product_unit_precision.product-2.bottle',
-                        'id' => 'bottle'
-                    ],
-                    [
-                        'quantity' => 42,
-                        'sku' => 'product-2',
-                        'reference' => 'product_unit_precision.product-2.box',
-                        'id' => 'box'
-                    ],
-                    [
-                        'quantity' => 10,
-                        'sku' => 'product-1',
-                        'reference' => 'product_unit_precision.product-1.milliliter',
-                        'id' => 'milliliter'
-                    ],
-                ]),
+                'expectedContent'
+                => '@OroInventoryBundle/Tests/Functional/DataFixtures/responses/filter_by_products.yml',
             ],
             'filter by Products and Unit' => [
-                'filter' => [
-                    [
-                        'method' => 'getSku',
-                        'key' => 'product.sku',
-                        'references' => ['product-1', 'product-2']
-                    ],
-                    [
-                        'method' => 'getCode',
-                        'key' => 'productUnitPrecision.unit.code',
-                        'references' => ['product_unit.bottle']
-                    ],
-                ],
-                'expectedCount' => 2,
-                'expectedContent' => $this->getInventoryLevelContent([
-                    [
-                        'quantity' => 99,
-                        'sku' => 'product-1',
-                        'reference' => 'product_unit_precision.product-1.bottle',
-                        'id' => 'bottle'
-                    ],
-                    [
-                        'quantity' => 98,
-                        'sku' => 'product-2',
-                        'reference' => 'product_unit_precision.product-2.bottle',
-                        'id' => 'bottle'
-                    ],
-                ]),
-                'filter by Products and Units' => [
+                'parameters' => [
+                    'include' => 'product,productUnitPrecision',
                     'filter' => [
-                        [
-                            'method' => 'getSku',
-                            'key' => 'product.sku',
-                            'references' => ['product-1', 'product-2']
-                        ],
-                        [
-                            'method' => 'getCode',
-                            'key' => 'productUnitPrecision.unit.code',
-                            'references' => ['product_unit.bottle', 'product_unit.liter']
-                        ],
-                    ],
-                    'expectedCount' => 4,
-                    'expectedContent' => $this->getInventoryLevelContent([
-                        [
-                            'quantity' => 10,
-                            'sku' => 'product-1',
-                            'reference' => 'product_unit_precision.product-1.liter',
-                            'id' => 'liter'
-                        ],
-                        [
-                            'quantity' => 99,
-                            'sku' => 'product-1',
-                            'reference' => 'product_unit_precision.product-1.bottle',
-                            'id' => 'bottle'
-                        ],
-                        [
-                            'quantity' => 12.345,
-                            'sku' => 'product-2',
-                            'reference' => 'product_unit_precision.product-2.liter',
-                            'id' => 'liter'
-                        ],
-                        [
-                            'quantity' => 98,
-                            'sku' => 'product-2',
-                            'reference' => 'product_unit_precision.product-2.bottle',
-                            'id' => 'bottle'
-                        ],
-                    ])
-                ]
-            ]
+                        'product.sku' => ['@product-1->sku', '@product-2->sku'],
+                        'productUnitPrecision.unit.code' => ['@product_unit.bottle->code'],
+                    ]
+                ],
+                'expectedContent'
+                => '@OroInventoryBundle/Tests/Functional/DataFixtures/responses/filter_by_products_and_unit.yml',
+            ],
+            'filter by Products and Units' => [
+                'parameters' => [
+                    'include' => 'product,productUnitPrecision',
+                    'filter' => [
+                        'product.sku' => ['@product-1->sku', '@product-2->sku'],
+                        'productUnitPrecision.unit.code' => ['@product_unit.bottle->code', '@product_unit.liter->code'],
+                    ]
+                ],
+                'expectedContent'
+                => '@OroInventoryBundle/Tests/Functional/DataFixtures/responses/filter_by_products and_units.yml',
+            ],
         ];
     }
 
@@ -235,7 +99,6 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
                 'product_unit_precision.product-1.liter'
             )
         );
-        $this->assertEquals('10', $inventoryLevel->getQuantity());
 
         $entityType = $this->getEntityType(InventoryLevel::class);
         $data = [
@@ -398,48 +261,6 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
 
         $this->assertResponseStatusCodeEquals($response, Response::HTTP_NO_CONTENT);
         $this->assertDeletedInventorLevel($inventoryLevel->getId());
-    }
-
-    /**
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     *
-     * @param array $expectedContent
-     * @param array $includedItems
-     * @return array
-     */
-    protected function addReferenceRelationshipsAndAssertIncluded(array $expectedContent, array $includedItems)
-    {
-        foreach ($expectedContent as $key => $expected) {
-            if (array_key_exists('relationships', $expected)) {
-                $relationships = [];
-                foreach ($expected['relationships'] as $relationshipKey => $relationship) {
-                    if (array_key_exists('references', $relationship)) {
-                        foreach ($relationship['references'] as $reference) {
-                            $method = $reference['method'];
-                            $referenceId = $reference['reference'];
-                            $relationship['data'][$reference['key']] = $this->getReference($referenceId)->$method();
-                        }
-                        unset($relationship['references']);
-                    }
-                    $relationships[$relationshipKey] = $relationship;
-                }
-                foreach ($relationships as $relationshipKey => $relationship) {
-                    if (array_key_exists('included', $relationship)) {
-                        foreach ($includedItems as $included) {
-                            if ($included['type'] == $relationship['data']['type']
-                                && $included['id'] == $relationship['data']['id']
-                            ) {
-                                $this->assertIsContained($relationship['included'], $included);
-                            }
-                        }
-                        unset($relationships[$relationshipKey]['included']);
-                    }
-                }
-                $expectedContent[$key]['relationships'] = $relationships;
-            }
-        }
-
-        return $expectedContent;
     }
 
     /**
