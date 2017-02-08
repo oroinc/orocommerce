@@ -93,16 +93,35 @@ class SlugRepository extends EntityRepository
      */
     public function deleteSlugAttachedToEntityByClass($entityClass)
     {
-        $idsQb = $this->getEntityManager()->createQueryBuilder();
-        $idsQb->select('s.id')
-            ->from(Slug::class, 's')
-            ->innerJoin($entityClass, 'e', Join::WITH, $idsQb->expr()->isMemberOf('s', 'e.slugs'));
+        $entityManager = $this->getEntityManager();
 
-        $deleteQb = $this->getEntityManager()->createQueryBuilder();
-        $deleteQb->delete(Slug::class, 'slug')
-            ->where($deleteQb->expr()->in('slug', $idsQb->getDQL()));
+        $entityMetadata = $entityManager->getClassMetadata($entityClass);
+        $mapping = $entityMetadata->getAssociationMapping('slugs');
 
-        $deleteQb->getQuery()->execute();
+        $entityIdField = $entityMetadata->getSingleIdentifierFieldName();
+        $subQueryBuilder = $entityManager->getConnection()->createQueryBuilder();
+
+        $joinColumn = reset($mapping['joinTable']['joinColumns']);
+        $inverseJoinColumn = reset($mapping['joinTable']['inverseJoinColumns']);
+        $subQueryBuilder
+            ->select(sprintf('slugsJoinTable.%s', $inverseJoinColumn['name']))
+            ->from($entityMetadata->getTableName(), 'entity')
+            ->innerJoin(
+                'entity',
+                $mapping['joinTable']['name'],
+                'slugsJoinTable',
+                sprintf('entity.%s = slugsJoinTable.%s', $entityIdField, $joinColumn['name'])
+            );
+
+        $slugMetadata = $entityManager->getClassMetadata($this->_entityName);
+        $slugIdField = $slugMetadata->getSingleIdentifierFieldName();
+
+        $queryBuilder = $entityManager->getConnection()->createQueryBuilder();
+        $queryBuilder
+            ->delete($slugMetadata->getTableName())
+            ->where($queryBuilder->expr()->in($slugIdField, $subQueryBuilder->getSQL()));
+
+        $queryBuilder->execute();
     }
 
     /**
