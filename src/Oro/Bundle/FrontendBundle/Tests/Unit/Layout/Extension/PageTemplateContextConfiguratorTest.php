@@ -1,11 +1,11 @@
 <?php
 
-
 namespace Oro\Bundle\FrontendBundle\Tests\Unit\Layout\Extension;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FrontendBundle\DependencyInjection\OroFrontendExtension;
 use Oro\Bundle\FrontendBundle\Layout\Extension\PageTemplateContextConfigurator;
+
 use Oro\Component\Layout\LayoutContext;
 
 class PageTemplateContextConfiguratorTest extends \PHPUnit_Framework_TestCase
