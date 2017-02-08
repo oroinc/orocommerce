@@ -71,7 +71,7 @@ services:
             - { name: doctrine.event_listener, event: postPersist }
 
     oro_redirect.event_listener.slug_change:
-        class: Oro\Bundle\RedirectBundle\EventListener\SlugEntityListener
+        class: Oro\Bundle\RedirectBundle\EventListener\SlugListener
         public: false
         arguments:
             - '@doctrine'
