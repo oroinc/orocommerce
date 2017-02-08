@@ -6,9 +6,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Tests\Functional\DataFixtures\LoadShippingServices;
 
-/**
- * @dbIsolation
- */
 class AjaxUPSControllerTest extends WebTestCase
 {
     protected function setUp()

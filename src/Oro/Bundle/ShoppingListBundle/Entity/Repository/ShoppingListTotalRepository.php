@@ -7,7 +7,7 @@ use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
-use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 
 class ShoppingListTotalRepository extends EntityRepository
 {
@@ -38,9 +38,8 @@ class ShoppingListTotalRepository extends EntityRepository
             ->setParameter(':isValid', true)
             ->setParameter('priceLists', $cplIds);
 
-        $iterator = new BufferedQueryResultIterator($qb);
+        $iterator = new BufferedIdentityQueryResultIterator($qb);
         $iterator->setHydrationMode(Query::HYDRATE_SCALAR);
-
         $this->invalidateTotals($iterator);
     }
 
@@ -57,7 +56,7 @@ class ShoppingListTotalRepository extends EntityRepository
         $qb->andWhere($qb->expr()->in('shoppingList.customer', ':customers'))
             ->setParameter('customers', $customerIds);
 
-        $iterator = new BufferedQueryResultIterator($qb);
+        $iterator = new BufferedIdentityQueryResultIterator($qb);
         $iterator->setHydrationMode(Query::HYDRATE_SCALAR);
         $this->invalidateTotals($iterator);
     }
@@ -80,9 +79,9 @@ class ShoppingListTotalRepository extends EntityRepository
     }
 
     /**
-     * @param BufferedQueryResultIterator $iterator
+     * @param \Iterator $iterator
      */
-    protected function invalidateTotals(BufferedQueryResultIterator $iterator)
+    protected function invalidateTotals(\Iterator $iterator)
     {
         $ids = [];
         $qbUpdate = $this->_em->createQueryBuilder()

@@ -157,13 +157,13 @@ services:
             - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent }
 
     oro_order.event_listener.order.possible_shipping_methods:
-        class: 'Oro\Bundle\OrderBundle\EventListener\Order\OrderPossibleShippingMethodsEventListener'
+        class: 'Oro\Bundle\OrderBundle\EventListener\PossibleShippingMethodEventListener'
         arguments:
             - '@oro_order.factory.shipping_context'
             - '@oro_order.converter.shipping_prices'
             - '@?oro_shipping.shipping_price.provider'
         tags:
-            - { name: kernel.event_listener, event: oro_order.order, method: onOrderEvent }
+            - { name: kernel.event_listener, event: oro_order.order, method: onEvent }
 
     oro_order.event_listener.order.matching_price:
         class: 'Oro\Bundle\OrderBundle\EventListener\Order\MatchingPriceEventListener'
@@ -289,8 +289,8 @@ services:
 
     oro_order.event_listener.extract_line_item_options:
         class: 'Oro\Bundle\OrderBundle\EventListener\ExtractLineItemPaymentOptionsListener'
-        calls:
-            - [setHtmlTagHelper, ['@oro_ui.html_tag_helper']]
+        arguments:
+            - '@oro_ui.html_tag_helper'
         tags:
             - { name: kernel.event_listener, event: oro_payment.event.extract_line_item_options, priority: 0, method: onExtractLineItemPaymentOptions }
 

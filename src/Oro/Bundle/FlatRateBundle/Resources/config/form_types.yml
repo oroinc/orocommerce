@@ -1,7 +1,0 @@
-services:
-    oro_flat_rate.form.type.flat_rate_options:
-        class: 'Oro\Bundle\FlatRateBundle\Form\Type\FlatRateOptionsType'
-        arguments:
-            - '@oro_currency.rounding.price_rounding_service'
-        tags:
-            - { name: form.type }

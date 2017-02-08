@@ -48,7 +48,7 @@ class VisibilityFormFieldDataProvider
     /**
      * @param FormInterface $form
      * @param string $field
-     * @return VisibilityInterface|\Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface[]
+     * @return VisibilityInterface|VisibilityInterface[]
      */
     public function findFormFieldData($form, $field)
     {

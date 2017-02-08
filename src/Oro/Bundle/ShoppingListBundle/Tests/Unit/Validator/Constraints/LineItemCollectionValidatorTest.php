@@ -3,11 +3,11 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Validator\Constraints;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilder;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
+use Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItemCollection;
 use Oro\Bundle\ShoppingListBundle\Validator\Constraints\LineItemCollectionValidator;
 
 class LineItemCollectionValidatorTest extends \PHPUnit_Framework_TestCase
@@ -31,7 +31,7 @@ class LineItemCollectionValidatorTest extends \PHPUnit_Framework_TestCase
     {
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->lineItemCollectionValidator = new LineItemCollectionValidator($this->eventDispatcher);
-        $this->constraint = $this->getMockBuilder(Constraint::class)
+        $this->constraint = $this->getMockBuilder(LineItemCollection::class)
             ->disableOriginalConstructor()
             ->getMock();
     }

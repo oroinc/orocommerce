@@ -11,7 +11,7 @@ use Oro\Bundle\ProductBundle\Event\ProductSearchQueryRestrictionEvent;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
- * @dbIsolation
+ * @dbIsolationPerTest
  */
 class ProductVisibilityLimitedSearchHandlerTest extends WebTestCase
 {
@@ -22,7 +22,7 @@ class ProductVisibilityLimitedSearchHandlerTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->initClient([], [], true);
+        $this->initClient();
         $this->loadFixtures([
             LoadFrontendProductData::class
         ]);

@@ -243,6 +243,13 @@ services:
             - '@oro_payment.repository.payment_methods_configs_rule'
             - '@oro_rule.rule_filtration.service'
 
+    oro_payment.enabled_payment_methods_configs.rules_provider_basic:
+        class: 'Oro\Bundle\PaymentBundle\Provider\BasicPaymentMethodsConfigsRulesProvider'
+        arguments:
+            - '@oro_payment.context.rules_converter_basic'
+            - '@oro_payment.repository.payment_methods_configs_rule'
+            - '@oro_rule.enabled_rule_filtration.service'
+
     oro_payment.query_designer.select_query_converter:
         class: 'Oro\Bundle\PaymentBundle\QueryDesigner\SelectQueryConverter'
         arguments:

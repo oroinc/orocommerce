@@ -9,9 +9,6 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserD
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrdersACLData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-/**
- * @dbIsolation
- */
 class CheckoutControllerAclTest extends WebTestCase
 {
     protected function setUp()

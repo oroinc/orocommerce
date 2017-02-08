@@ -42,13 +42,14 @@ class LoadCategoryDemoData extends AbstractCategoryFixture
      * @var array
      */
     protected $categoryImages = [
-        'Lighting Products'           => '1',
-        'Architectural Floodlighting' => '2',
-        'Headlamps'                   => '3',
-        'Medical Uniforms'            => '4',
-        'Office Furniture'            => '5',
-        'Retail Supplies'             => '6',
-        'POS Systems'                 => '7',
-        'Printers'                    => '8'
+        'Lighting Products'           => ['small' => '1'],
+        'Architectural Floodlighting' => ['small' => '2'],
+        'Headlamps'                   => ['small' => '3'],
+        'Medical Uniforms'            => ['small' => '4'],
+        'Office Furniture'            => ['small' => '5'],
+        'Retail Supplies'             => ['small' => '6'],
+        'POS Systems'                 => ['small' => '7'],
+        'Printers'                    => ['small' => '8'],
+        'Medical Apparel'             => ['large' => '9_large'],
     ];
 }

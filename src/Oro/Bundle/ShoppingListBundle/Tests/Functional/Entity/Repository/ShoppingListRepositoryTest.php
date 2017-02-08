@@ -13,9 +13,6 @@ use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingList
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
-/**
- * @dbIsolation
- */
 class ShoppingListRepositoryTest extends WebTestCase
 {
     /**

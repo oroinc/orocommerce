@@ -24,7 +24,8 @@ define(['jquery'], function($) {
             this.datagrid.collection.on('sync', $.proxy(this, 'triggerFiltersUpdateEvent'));
 
             // trigger for first rendering
-            this.triggerFiltersUpdateEvent();
+            // It's not this.triggerFiltersUpdateEvent(); because it will not pass datagrid.filterManager
+            this.datagrid.on('filterManager:connected', this.triggerFiltersUpdateEvent, this);
         },
 
         triggerFiltersUpdateEvent: function() {

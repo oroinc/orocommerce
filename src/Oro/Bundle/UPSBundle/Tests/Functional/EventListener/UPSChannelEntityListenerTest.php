@@ -7,9 +7,6 @@ use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UPSBundle\Method\UPSShippingMethod;
 
-/**
- * @dbIsolation
- */
 class UPSChannelEntityListenerTest extends WebTestCase
 {
     protected function setUp()

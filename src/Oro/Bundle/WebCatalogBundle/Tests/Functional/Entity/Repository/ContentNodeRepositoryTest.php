@@ -10,9 +10,6 @@ use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadContentNodesDa
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadContentVariantsData;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadWebCatalogData;
 
-/**
- * @dbIsolation
- */
 class ContentNodeRepositoryTest extends WebTestCase
 {
     /**
