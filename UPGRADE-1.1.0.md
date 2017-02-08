@@ -1,9 +1,26 @@
 UPGRADE FROM 1.0.0 to 1.1.0
 ===========================
 
+General
+-------
+* For upgrade from **1.0.0** use the command:
+```bash
+php app/console oro:platform:upgrade20 --env=prod --force
+```
+
 FlatRateBundle
 --------------
 - Change name of the bundle to FlatRateShippingBundle
+
+FrontendBundle
+--------------
+* Added transition buttons provide for commerce applications:
+    - `FrontendStartTransitionButtonProviderExtension`
+    - `FrontendTransitionButtonProviderExtension`
+
+OrderBundle
+-----------
+* The method `__construct` has been added to `ExtractLineItemPaymentOptionsListener`. Pass `HtmlTagHelper` as the first argument.
 
 RFPBundle
 ---------
@@ -28,9 +45,3 @@ RFPBundle
     - `Oro\Bundle\RFPBundle\Form\Type\RequestStatusSelectType`
     - `Oro\Bundle\RFPBundle\Form\Type\RequestStatusWithDeletedSelectType`
 * The methods `setRequestStatusClass` and `postSubmit` was removed from class `Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType`
-
-FrontendBundle
---------------
-* Added transition buttons provide for commerce applications:
-    - `FrontendStartTransitionButtonProviderExtension`
-    - `FrontendTransitionButtonProviderExtension`

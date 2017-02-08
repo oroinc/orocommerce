@@ -47,7 +47,5 @@ services:
 
     oro_catalog.form.type.category_page_content_variant:
         class: Oro\Bundle\CatalogBundle\Form\Type\CategoryPageVariantType
-        arguments:
-            - '@doctrine'
         tags:
             - { name: form.type, alias: oro_catalog_category_page_variant }
