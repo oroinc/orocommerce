@@ -8,7 +8,6 @@ use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData as ProductFixture;
 
 /**
- * @dbIsolation
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class ProductRepositoryTest extends WebTestCase

@@ -3,13 +3,13 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Operation;
 
 use Doctrine\ORM\EntityRepository;
+
+use Symfony\Component\HttpFoundation\Response;
+
 use Oro\Bundle\ActionBundle\Tests\Functional\ActionTestCase;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 
-/**
- * @dbIsolation
- */
 class PriceListDisableOperationTest extends ActionTestCase
 {
     public function setUp()
@@ -37,7 +37,7 @@ class PriceListDisableOperationTest extends ActionTestCase
             PriceList::class,
             [],
             [],
-            200
+            Response::HTTP_OK
         );
 
         // assert that price list is disabled
@@ -62,7 +62,7 @@ class PriceListDisableOperationTest extends ActionTestCase
             PriceList::class,
             [],
             [],
-            404
+            Response::HTTP_FORBIDDEN
         );
     }
 

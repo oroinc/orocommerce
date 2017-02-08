@@ -16,9 +16,6 @@ use Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener\MessageQueue
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
 
-/**
- * @dbIsolation
- */
 class CombinedPriceListScheduleResolverTest extends WebTestCase
 {
     use MessageQueueTrait;

@@ -7,9 +7,6 @@ use Symfony\Component\DomCrawler\Crawler;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
 
-/**
- * @dbIsolation
- */
 class ProductTaxCodeControllerTest extends WebTestCase
 {
     const PRODUCT_TAX_CODE = 'unique';

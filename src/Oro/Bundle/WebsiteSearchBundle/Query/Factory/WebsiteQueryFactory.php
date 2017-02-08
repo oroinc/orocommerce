@@ -3,20 +3,20 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Query\Factory;
 
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\YamlToSearchQueryConverter;
-use Oro\Bundle\SearchBundle\Engine\EngineV2Interface;
+use Oro\Bundle\SearchBundle\Engine\EngineInterface;
 use Oro\Bundle\SearchBundle\Query\Factory\QueryFactoryInterface;
 use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchQuery;
 use Oro\Bundle\SearchBundle\Query\Query;
 
 class WebsiteQueryFactory implements QueryFactoryInterface
 {
-    /** @var EngineV2Interface */
+    /** @var EngineInterface */
     protected $engine;
 
     /**
-     * @param EngineV2Interface $engine
+     * @param EngineInterface $engine
      */
-    public function __construct(EngineV2Interface $engine)
+    public function __construct(EngineInterface $engine)
     {
         $this->engine = $engine;
     }

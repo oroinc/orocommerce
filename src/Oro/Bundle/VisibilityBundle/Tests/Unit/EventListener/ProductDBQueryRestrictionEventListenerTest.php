@@ -34,7 +34,7 @@ class ProductDBQueryRestrictionEventListenerTest extends \PHPUnit_Framework_Test
         $this->frontendHelper = $this->getMockBuilder('Oro\Bundle\FrontendBundle\Request\FrontendHelper')
             ->disableOriginalConstructor()->getMock();
         $this->modifier = $this
-            ->getMockBuilder(\Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier::class)
+            ->getMockBuilder(ProductVisibilityQueryBuilderModifier::class)
             ->disableOriginalConstructor()->getMock();
         $this->listener = new ProductDBQueryRestrictionEventListener(
             $this->frontendHelper,

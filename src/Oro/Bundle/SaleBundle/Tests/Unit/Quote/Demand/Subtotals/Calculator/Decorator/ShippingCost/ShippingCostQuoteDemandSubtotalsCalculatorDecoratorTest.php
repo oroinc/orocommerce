@@ -9,7 +9,7 @@ use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Quote\Demand\Subtotals\Calculator\Decorator\ShippingCost\ShippingCostQuoteDemandSubtotalsCalculatorDecorator;
 use Oro\Bundle\SaleBundle\Quote\Demand\Subtotals\Calculator\QuoteDemandSubtotalsCalculatorInterface;
 use Oro\Bundle\SaleBundle\Quote\Shipping\Configuration\QuoteShippingConfigurationFactory;
-use Oro\Bundle\SaleBundle\Quote\Shipping\Context\Factory\QuoteShippingContextFactoryInterface;
+use Oro\Bundle\ShippingBundle\Context\ShippingContextFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\Configuration\Composed\ComposedShippingMethodConfigurationInterface;
 use Oro\Bundle\ShippingBundle\Provider\Price\Configured\ShippingConfiguredPriceProviderInterface;
@@ -18,7 +18,7 @@ use Oro\Bundle\ShippingBundle\Provider\Price\Configured\ShippingConfiguredPriceP
 class ShippingCostQuoteDemandSubtotalsCalculatorDecoratorTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var QuoteShippingContextFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingContextFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $quoteShippingContextFactoryMock;
 
@@ -45,7 +45,7 @@ class ShippingCostQuoteDemandSubtotalsCalculatorDecoratorTest extends \PHPUnit_F
     public function setUp()
     {
         $this->quoteShippingContextFactoryMock = $this
-            ->getMockBuilder(QuoteShippingContextFactoryInterface::class)
+            ->getMockBuilder(ShippingContextFactoryInterface::class)
             ->getMock();
 
         $this->quoteShippingConfigurationFactoryMock = $this

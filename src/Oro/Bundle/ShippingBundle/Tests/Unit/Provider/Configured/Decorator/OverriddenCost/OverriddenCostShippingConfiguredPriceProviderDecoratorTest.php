@@ -26,8 +26,7 @@ class OverriddenCostShippingConfiguredPriceProviderDecoratorTest extends \PHPUni
     public function setUp()
     {
         $this->parentProviderMock = $this
-            ->getMockBuilder(ShippingConfiguredPriceProviderInterface::class)
-            ->getMock();
+            ->createMock(ShippingConfiguredPriceProviderInterface::class);
 
         $this->testedProvider = new OverriddenCostShippingConfiguredPriceProviderDecorator($this->parentProviderMock);
     }
@@ -37,12 +36,7 @@ class OverriddenCostShippingConfiguredPriceProviderDecoratorTest extends \PHPUni
         $overriddenShippingCost = Price::create(50, 'EUR');
         $configurationMock = $this->getConfigurationMock();
         $contextMock = $this->getShippingContextMock();
-
-        $parentMethodViews = new ShippingMethodViewCollection();
-
-        $parentMethodViews
-            ->addMethodView('flat_rate', [])
-            ->addMethodTypeView('flat_rate', 'primary', ['price' => Price::create(12, 'USD')]);
+        $parentMethodViews = $this->getParentMethodViews();
 
         $this->parentProviderMock
             ->expects($this->once())
@@ -70,6 +64,29 @@ class OverriddenCostShippingConfiguredPriceProviderDecoratorTest extends \PHPUni
         $this->assertEquals($expectedMethods, $actualMethods);
     }
 
+    public function testGetApplicableMethodsViewsForNotConfigurationOverriddenShippingCost()
+    {
+        $configurationMock = $this->getConfigurationMock();
+        $contextMock = $this->getShippingContextMock();
+        $parentMethodViews = $this->getParentMethodViews();
+
+        $this->parentProviderMock
+            ->expects(static::once())
+            ->method('getApplicableMethodsViews')
+            ->with($configurationMock, $contextMock)
+            ->willReturn($parentMethodViews);
+
+        $configurationMock
+            ->expects(static::once())
+            ->method('isOverriddenShippingCost')
+            ->willReturn(false);
+
+        static::assertSame(
+            $parentMethodViews,
+            $this->testedProvider->getApplicableMethodsViews($configurationMock, $contextMock)
+        );
+    }
+
     public function testGetPrice()
     {
         $methodId = 'flat_rate';
@@ -93,15 +110,42 @@ class OverriddenCostShippingConfiguredPriceProviderDecoratorTest extends \PHPUni
         $this->assertEquals($overriddenShippingCost, $actualPrice);
     }
 
+    public function testGetPriceForNotConfigurationOverriddenShippingCost()
+    {
+        $methodId = 'flat_rate';
+        $methodTypeId = 'primary';
+        $shippingCost = Price::create(50, 'EUR');
+        $configurationMock = $this->getConfigurationMock();
+        $contextMock = $this->getShippingContextMock();
+
+        $configurationMock
+            ->expects(static::once())
+            ->method('isOverriddenShippingCost')
+            ->willReturn(false);
+
+        $this->parentProviderMock
+            ->expects(static::once())
+            ->method('getPrice')
+            ->with($methodId, $methodTypeId, $configurationMock, $contextMock)
+            ->willReturn($shippingCost);
+
+        static::assertSame(
+            $shippingCost,
+            $this->testedProvider->getPrice(
+                $methodId,
+                $methodTypeId,
+                $configurationMock,
+                $contextMock
+            )
+        );
+    }
+
     /**
      * @return ShippingContext|\PHPUnit_Framework_MockObject_MockObject
      */
     private function getShippingContextMock()
     {
-        return $this
-            ->getMockBuilder(ShippingContext::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        return $this->createMock(ShippingContext::class);
     }
 
     /**
@@ -109,8 +153,20 @@ class OverriddenCostShippingConfiguredPriceProviderDecoratorTest extends \PHPUni
      */
     private function getConfigurationMock()
     {
-        return $this
-            ->getMockBuilder(ComposedShippingMethodConfigurationInterface::class)
-            ->getMock();
+        return $this->createMock(ComposedShippingMethodConfigurationInterface::class);
+    }
+
+    /**
+     * @return ShippingMethodViewCollection
+     */
+    private function getParentMethodViews()
+    {
+        $parentMethodViews = new ShippingMethodViewCollection();
+
+        $parentMethodViews
+            ->addMethodView('flat_rate', [])
+            ->addMethodTypeView('flat_rate', 'primary', ['price' => Price::create(12, 'USD')]);
+
+        return $parentMethodViews;
     }
 }

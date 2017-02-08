@@ -38,9 +38,6 @@ define(function(require) {
                 },
                 success: function(response) {
                     mediator.execute('showFlashMessage', 'success', response);
-                },
-                error: function(xhr) {
-                    mediator.execute('showFlashMessage', 'error', xhr.responseText);
                 }
             });
         },

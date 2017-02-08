@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
-use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
@@ -241,7 +241,7 @@ abstract class AbstractIndexer implements IndexerInterface
             $queryBuilder->where($queryBuilder->expr()->in("entity.$identifierName", $contextEntityIds));
         }
 
-        $iterator = new BufferedQueryResultIterator($queryBuilder);
+        $iterator = new BufferedIdentityQueryResultIterator($queryBuilder);
         $iterator->setBufferSize($this->getBatchSize());
 
         $itemsCount = 0;

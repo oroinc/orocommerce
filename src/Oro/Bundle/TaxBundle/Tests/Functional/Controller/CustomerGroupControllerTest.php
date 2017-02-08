@@ -7,9 +7,6 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadCustomerTaxCodes;
 
-/**
- * @dbIsolation
- */
 class CustomerGroupControllerTest extends WebTestCase
 {
     const ACCOUNT_GROUP_NAME = 'Customer_Group';

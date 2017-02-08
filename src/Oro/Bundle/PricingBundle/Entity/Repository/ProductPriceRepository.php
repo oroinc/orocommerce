@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
-use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
@@ -59,7 +59,7 @@ class ProductPriceRepository extends BaseProductPriceRepository
             ->where($qb->expr()->eq('invalidPrice.priceList', ':priceList'))
             ->andWhere($qb->expr()->isNull('productRelation.id'))
             ->setParameter('priceList', $priceList);
-        $iterator = new BufferedQueryResultIterator($qb);
+        $iterator = new BufferedIdentityQueryResultIterator($qb);
         $iterator->setHydrationMode(Query::HYDRATE_SCALAR);
         $iterator->setBufferSize(self::BUFFER_SIZE);
 

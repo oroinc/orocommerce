@@ -1,4 +1,12 @@
 services:
+    oro_catalog.layout.block_type.category:
+        parent: oro_layout.block_type.abstract_configurable_container
+        calls:
+            - [setOptionsConfig, [{category: {required: true}}]]
+            - [setName, ['category']]
+        tags:
+             - { name: layout.block_type, alias: category }
+
     oro_catalog.layout.block_type.category_tree:
         parent: oro_layout.block_type.abstract_configurable_container
         calls:
@@ -30,6 +38,7 @@ services:
         public: true
         arguments:
             - "@oro_catalog.provider.category_tree_provider"
+            - "@security.token_storage"
         tags:
             - { name: layout.data_provider, alias: featured_categories }
 

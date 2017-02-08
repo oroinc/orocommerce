@@ -1,6 +1,6 @@
 services:
     oro_shipping.layout.block_type.shipping_methods:
-        parent: oro_layout.block_type.abstract_configurable
+        parent: oro_layout.block_type.abstract_configurable_container
         calls:
             -
                 - setOptionsConfig

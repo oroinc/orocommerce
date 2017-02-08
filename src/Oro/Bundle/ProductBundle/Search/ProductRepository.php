@@ -39,11 +39,10 @@ class ProductRepository extends WebsiteSearchRepository
         // Convert to uppercase for insensitive search in all DB
         $upperCaseSkus = array_map("strtoupper", $skus);
 
-        $searchQuery->setFrom('oro_product_WEBSITE_ID')
+        $searchQuery
             ->addSelect('sku')
             ->addSelect('name_LOCALIZATION_ID as name')
-            ->getCriteria()
-            ->andWhere(Criteria::expr()->in('sku_uppercase', $upperCaseSkus));
+            ->addWhere(Criteria::expr()->in('sku_uppercase', $upperCaseSkus));
 
         return $searchQuery;
     }
@@ -69,13 +68,11 @@ class ProductRepository extends WebsiteSearchRepository
     {
         $searchQuery = $this->createQuery();
 
-        $searchQuery->setFrom('oro_product_WEBSITE_ID')
+        $searchQuery
             ->addSelect('sku')
             ->addSelect('name_LOCALIZATION_ID as name')
-            ->getCriteria()
-            ->andWhere(
-                Criteria::expr()->contains('all_text_LOCALIZATION_ID', $search)
-            )->orderBy(['product_id' => Criteria::ASC])
+            ->addWhere(Criteria::expr()->contains('all_text_LOCALIZATION_ID', $search))
+            ->setOrderBy('integer.product_id', Criteria::ASC)
             ->setFirstResult($firstResult)
             ->setMaxResults($maxResults);
 

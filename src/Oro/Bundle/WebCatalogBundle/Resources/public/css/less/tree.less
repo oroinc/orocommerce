@@ -16,6 +16,20 @@
 .web-catalog-page-data {
   margin-left: 334px;
   border-left: 1px solid #f2f2f2;
+
+  .oro-multiselect-holder {
+    td {
+      display: block;
+      float: left;
+    }
+
+    .entity-create-or-select-container {
+      margin-left: 0;
+      @media (max-width: @smallScreen) {
+        width: auto;
+      }
+    }
+  }
 }
 
 .web-catalog-sidebar {

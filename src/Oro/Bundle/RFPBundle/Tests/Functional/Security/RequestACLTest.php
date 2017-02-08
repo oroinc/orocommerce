@@ -17,9 +17,6 @@ use Oro\Bundle\CustomerBundle\Owner\Metadata\FrontendOwnershipMetadataProvider;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadCustomerUsersData;
 
-/**
- * @dbIsolation
- */
 class RequestACLTest extends WebTestCase
 {
     protected function setUp()

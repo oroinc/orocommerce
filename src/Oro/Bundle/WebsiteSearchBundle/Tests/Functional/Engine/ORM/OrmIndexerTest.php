@@ -4,9 +4,8 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Engine\ORM;
 
 use Doctrine\ORM\EntityRepository;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
 use Oro\Bundle\EntityBundle\ORM\Registry;
+use Oro\Bundle\SearchBundle\Tests\Functional\SearchExtensionTrait;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestDepartment;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestEmployee;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
@@ -92,9 +91,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
 
     protected function tearDown()
     {
-        parent::tearDown();
-
-        $this->clearIndexTextTable();
+        $this->clearIndexTextTable(IndexText::class);
     }
 
     /**
@@ -138,23 +135,8 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         return $this->doctrine->getRepository($entity, 'search');
     }
 
-    /**
-     * Workaround to clear MyISAM table as it's not rolled back by transaction.
-     */
-    protected function clearIndexTextTable()
-    {
-        /** @var OroEntityManager $manager */
-        $manager = $this->doctrine->getManager('search');
-        $repository = $manager->getRepository(IndexText::class);
-        $repository->createQueryBuilder('t')
-            ->delete()
-            ->getQuery()
-            ->execute();
-    }
-
     public function testResetIndexOfCertainClass()
     {
-        $this->clearIndexTextTable();
         $this->loadFixtures([LoadItemData::class]);
         $this->indexer->resetIndex(TestProduct::class);
 
@@ -213,6 +195,35 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         $product2 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT2);
         $this->assertItemsCount(8);
 
+        $this->indexer->delete(
+            [
+                $product1,
+                $product2,
+            ],
+            [AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY => $this->getDefaultWebsiteId()]
+        );
+
+        $this->assertItemsCount(6);
+        $this->assertEntityCount(1, IndexInteger::class);
+        $this->assertEntityCount(5, IndexText::class);
+        $this->assertEntityCount(1, IndexDatetime::class);
+        $this->assertEntityCount(1, IndexDecimal::class);
+    }
+
+    public function testDeleteWhenProductEntitiesForSpecificWebsiteRemovedWithABatch()
+    {
+        $this->loadFixtures([LoadItemData::class]);
+        $this->mappingProviderMock
+            ->expects($this->any())
+            ->method('isClassSupported')
+            ->with(TestProduct::class)
+            ->willReturn(true);
+        $this->setEntityAliasExpectation();
+
+        $product1 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT1);
+        $product2 = $this->getReference(LoadProductsToIndex::REFERENCE_PRODUCT2);
+        $this->assertItemsCount(8);
+        $this->indexer->setBatchSize(1);
         $this->indexer->delete(
             [
                 $product1,

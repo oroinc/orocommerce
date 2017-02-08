@@ -4,7 +4,7 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings;
@@ -25,7 +25,7 @@ abstract class AbstractFallbackRepositoryTest extends WebTestCase
 
     /**
      * @param string[] $expectedCustomers
-     * @param BufferedQueryResultIterator|array $iterator
+     * @param BufferedIdentityQueryResultIterator|array $iterator
      */
     public function checkExpectedCustomers($expectedCustomers, $iterator)
     {

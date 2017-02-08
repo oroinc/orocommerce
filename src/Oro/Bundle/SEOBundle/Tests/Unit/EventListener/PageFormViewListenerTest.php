@@ -7,14 +7,21 @@ use Oro\Bundle\SEOBundle\EventListener\PageFormViewListener;
 
 class PageFormViewListenerTest extends BaseFormViewListenerTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function setUp()
+    /** @var PageFormViewListener */
+    protected $listener;
+
+    protected function setUp()
     {
         parent::setUp();
 
         $this->listener = new PageFormViewListener($this->requestStack, $this->translator, $this->doctrineHelper);
+    }
+
+    protected function tearDown()
+    {
+        unset($this->listener);
+
+        parent::tearDown();
     }
 
     public function testOnLandingPageView()
@@ -32,7 +39,7 @@ class PageFormViewListenerTest extends BaseFormViewListenerTestCase
             ->willReturn($page);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
-        $env = $this->getEnvironmentForView($page);
+        $env = $this->getEnvironmentForView($page, $this->listener->getMetaFieldLabelPrefix());
         $event = $this->getEventForView($env);
 
         $this->listener->onPageView($event);
