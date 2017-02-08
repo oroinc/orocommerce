@@ -1,8 +1,0 @@
-layout:
-    actions:
-        - '@setBlockTheme':
-            themes: 'main_menu.html.twig'
-
-        - '@move':
-            id: header_row
-            parentId: page_header

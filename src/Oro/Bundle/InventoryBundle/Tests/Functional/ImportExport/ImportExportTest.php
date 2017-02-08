@@ -5,17 +5,13 @@ namespace Oro\Bundle\InventoryBundle\Tests\Functional\ImportExport;
 use Symfony\Component\Form\Form;
 use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\Yaml\Yaml;
-
 use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
-use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadInventoryLevels;
 use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
- * @dbIsolation
  * @group CommunityEdition
  *
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -51,7 +47,7 @@ class ImportExportTest extends AbstractImportExportTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-        $this->loadFixtures([LoadInventoryLevels::class]);
+        $this->loadFixtures(['@OroInventoryBundle/Tests/Functional/DataFixtures/inventory_level.yml']);
     }
 
     /**

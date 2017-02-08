@@ -4,9 +4,6 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Form\Type;
 
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
-/**
- * @dbIsolation
- */
 abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelectTypeTest
 {
     /** @var \Oro\Bundle\ConfigBundle\Config\ConfigManager */

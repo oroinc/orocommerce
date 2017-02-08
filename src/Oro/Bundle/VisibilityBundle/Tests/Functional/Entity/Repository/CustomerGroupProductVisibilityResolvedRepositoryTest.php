@@ -9,9 +9,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerGroupProductRepository;
 
-/**
- * @dbIsolation
- */
 class CustomerGroupProductVisibilityResolvedRepositoryTest extends WebTestCase
 {
     /**

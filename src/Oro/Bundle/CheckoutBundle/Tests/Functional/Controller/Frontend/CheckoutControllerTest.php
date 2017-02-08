@@ -20,7 +20,6 @@ use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingList
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- * @dbIsolation
  */
 class CheckoutControllerTest extends CheckoutControllerTestCase
 {
@@ -47,18 +46,22 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $values = $this->explodeArrayPaths($form->getValues());
         $data = $this->setFormData($values, self::BILLING_ADDRESS);
 
-        $this->client->reboot(false);
+        $this->client->disableReboot();
 
         /* @var $dispatcher EventDispatcherInterface */
         $dispatcher = $this->getContainer()->get('event_dispatcher');
-        $dispatcher->addListener(CheckoutValidateEvent::NAME, function (CheckoutValidateEvent $event) {
+        $listener = function (CheckoutValidateEvent $event) {
             $event->setIsCheckoutRestartRequired(true);
-        });
+        };
+        $dispatcher->addListener(CheckoutValidateEvent::NAME, $listener);
 
         $crawler = $this->client->request('POST', $form->getUri(), $data);
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertNotContains(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
         $this->assertContains(self::BILLING_ADDRESS_SIGN, $crawler->html());
+
+        $dispatcher->removeListener(CheckoutValidateEvent::NAME, $listener);
+        $this->client->enableReboot();
     }
 
     /**

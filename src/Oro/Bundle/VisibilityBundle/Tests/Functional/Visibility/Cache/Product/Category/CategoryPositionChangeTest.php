@@ -7,7 +7,6 @@ use Symfony\Component\Yaml\Yaml;
 
 /**
  * @group CommunityEdition
- * @dbIsolation
  */
 class CategoryPositionChangeTest extends CategoryCacheTestCase
 {

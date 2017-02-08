@@ -10,9 +10,6 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListACLData;
 
-/**
- * @dbIsolation
- */
 class ShoppingListFrontendOperationButtonsAclTest extends FrontendActionTestCase
 {
     /**

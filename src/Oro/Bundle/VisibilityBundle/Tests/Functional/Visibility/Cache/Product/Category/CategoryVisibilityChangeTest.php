@@ -15,7 +15,6 @@ use Symfony\Component\Yaml\Yaml;
 
 /**
  * @group CommunityEdition
- * @dbIsolation
  */
 class CategoryVisibilityChangeTest extends CategoryCacheTestCase
 {

@@ -13,9 +13,6 @@ use Oro\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceImportStrategy;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
-/**
- * @dbIsolation
- */
 class ProductPriceImportStrategyTest extends WebTestCase
 {
     /**
@@ -63,11 +60,6 @@ class ProductPriceImportStrategyTest extends WebTestCase
         $this->strategy->setEntityName(
             $container->getParameter('oro_pricing.entity.product_price.class')
         );
-    }
-
-    protected function tearDown()
-    {
-        unset($this->strategy, $this->context, $this->stepExecution);
     }
 
     public function testProcessLoadPriceAndProduct()

@@ -14,9 +14,6 @@ use Oro\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceResetStrategy;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
-/**
- * @dbIsolation
- */
 class ProductPriceResetStrategyTest extends WebTestCase
 {
     /**
@@ -64,11 +61,6 @@ class ProductPriceResetStrategyTest extends WebTestCase
         $this->strategy->setEntityName(
             $container->getParameter('oro_pricing.entity.product_price.class')
         );
-    }
-
-    protected function tearDown()
-    {
-        unset($this->strategy, $this->context, $this->stepExecution);
     }
 
     public function testProcessResetPriceListProductPrices()

@@ -13,9 +13,6 @@ use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingAddressStub;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-/**
- * @dbIsolation
- */
 class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
 {
     use EntityTrait;
