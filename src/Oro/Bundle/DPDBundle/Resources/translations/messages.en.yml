@@ -47,10 +47,15 @@ oro:
             invalidate_cache.type:
                 immediate: 'Now'
                 scheduled: 'Schedule Invalidation'
-        actions:
             ship_order:
+                title: 'Send order to DPD'
                 flash.success: 'DPD Shipping label request successful. Check attachments to get shipping labels.'
-                widgets.ship_order.label: 'Request DPD shipping label'
+                label: 'Request DPD shipping label'
+                message: 'Send order shipping information to DPD?'
+                ship_date.label: 'Pickup date'
             reship_order:
+                title: 'Confirm DPD shipping label retransmission'
                 flash.success: 'New DPD Shipping label request successful. Check attachments to get shipping labels.'
-                widgets.reship_order.label: 'Retransmit request for DPD shipping label'
+                label: 'Retransmit request for DPD shipping label'
+                message: 'Retransmit order shipping information to DPD? This will remove current tracking information and label.'
+                ship_date.label: 'New pickup date'

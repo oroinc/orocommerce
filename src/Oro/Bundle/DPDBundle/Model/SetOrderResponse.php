@@ -85,7 +85,7 @@ class SetOrderResponse extends DPDResponse
         $response = array_merge(
             $response,
             [
-                'ParcelNumbers' => $this->getParcelNumbers()
+                'ParcelNumbers' => $this->getParcelNumbers(),
             ]
         );
 
