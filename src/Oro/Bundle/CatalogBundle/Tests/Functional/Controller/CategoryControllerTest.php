@@ -5,12 +5,13 @@ namespace Oro\Bundle\CatalogBundle\Tests\Functional\Controller;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @group segfault
@@ -229,7 +230,6 @@ class CategoryControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 404);
     }
 
-
     public function testDeleteRoot()
     {
         $this->client->request(
@@ -278,13 +278,17 @@ class CategoryControllerTest extends WebTestCase
             $form->getFormNode()->getAttribute('action') . '?_widgetContainer=dialog'
         );
 
-        $crawler = $this->client->submit($form);
+        $this->client->submit($form);
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $html = $crawler->html();
-        $this->assertContains('oro.ui.jstree.move_success', $html);
+        /** @var CategoryRepository $repository */
+        $repository = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroCatalogBundle:Category')
+            ->getRepository('OroCatalogBundle:Category');
+        $category = $repository->findOneByDefaultTitle(LoadCategoryData::FOURTH_LEVEL2);
+        $this->assertEquals($category->getParentCategory()->getTitle(), LoadCategoryData::FIRST_LEVEL);
     }
 
     /**

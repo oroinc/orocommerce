@@ -3,6 +3,7 @@
 namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadContentNodesData;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadWebCatalogData;
 
@@ -63,12 +64,16 @@ class CategoryControllerTest extends WebTestCase
             $form->getFormNode()->getAttribute('action') . '?_widgetContainer=dialog'
         );
 
-        $crawler = $this->client->submit($form);
+        $this->client->submit($form);
         $result = $this->client->getResponse();
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $html = $crawler->html();
-        $this->assertContains('oro.ui.jstree.move_success', $html);
+        /** @var ContentNodeRepository $repository */
+        $repository = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroWebCatalogBundle:ContentNode')
+            ->getRepository('OroWebCatalogBundle:ContentNode');
+        $node = $repository->find($this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_2)->getId());
+        $this->assertEquals($node->getParentNode()->getTitle(), LoadContentNodesData::CATALOG_1_ROOT);
     }
 }
