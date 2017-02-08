@@ -82,9 +82,6 @@ class SyncSlugRedirectsProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $slugId = 42;
 
-        /** @var AbstractDriverException|\PHPUnit_Framework_MockObject_MockObject $exception */
-        $exception = new \Exception('Some exception');
-
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->once())
@@ -98,7 +95,7 @@ class SyncSlugRedirectsProcessorTest extends \PHPUnit_Framework_TestCase
         $slugRepository->expects($this->once())
             ->method('find')
             ->with($slugId)
-            ->willThrowException($exception);
+            ->willThrowException(new \Exception('Some exception'));
 
         $slugManager = $this->createMock(EntityManagerInterface::class);
         $slugManager->expects($this->once())
