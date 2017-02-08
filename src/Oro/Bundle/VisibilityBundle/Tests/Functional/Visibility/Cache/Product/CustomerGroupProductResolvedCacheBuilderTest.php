@@ -7,9 +7,6 @@ use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerGroupProductRepository;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\CustomerGroupProductResolvedCacheBuilder;
 
-/**
- * @dbIsolation
- */
 class CustomerGroupProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
 {
     /**

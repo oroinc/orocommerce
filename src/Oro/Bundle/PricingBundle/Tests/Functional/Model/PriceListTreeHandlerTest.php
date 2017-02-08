@@ -13,9 +13,6 @@ use Oro\Bundle\PricingBundle\Model\PriceListTreeHandler;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
-/**
- * @dbIsolation
- */
 class PriceListTreeHandlerTest extends WebTestCase
 {
     /**

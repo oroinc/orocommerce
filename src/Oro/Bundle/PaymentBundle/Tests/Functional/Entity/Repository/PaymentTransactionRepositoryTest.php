@@ -7,9 +7,6 @@ use Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactio
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository;
 
-/**
- * @dbIsolation
- */
 class PaymentTransactionRepositoryTest extends WebTestCase
 {
     /**

@@ -6,9 +6,6 @@ use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
-/**
- * @dbIsolation
- */
 class ProductApiTest extends RestJsonApiTestCase
 {
     const ARRAY_DELIMITER = ',';

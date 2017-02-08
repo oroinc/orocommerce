@@ -4,8 +4,10 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Engine\ORM\Driver;
 
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\Query;
+use Oro\Bundle\SearchBundle\Tests\Functional\SearchExtensionTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TestFrameworkBundle\Test\DateTime\TrimMicrosecondsTrait;
+use Oro\Bundle\WebsiteSearchBundle\Entity\IndexText;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\DataFixtures\LoadItemData;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultWebsiteIdTestTrait;
@@ -17,6 +19,7 @@ class DriverDecoratorTest extends WebTestCase
 {
     use DefaultWebsiteIdTestTrait;
     use TrimMicrosecondsTrait;
+    use SearchExtensionTrait;
 
     protected function setUp()
     {
@@ -27,6 +30,11 @@ class DriverDecoratorTest extends WebTestCase
         }
 
         $this->loadFixtures([LoadItemData::class]);
+    }
+
+    protected function tearDown()
+    {
+        $this->clearIndexTextTable(IndexText::class);
     }
 
     public function testSearchDefaultWebsite()

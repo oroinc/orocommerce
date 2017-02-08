@@ -13,7 +13,7 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadFrontendCategoryProductData;
 
 /**
- * @dbIsolation
+ * @dbIsolationPerTest
  */
 class ProductSearchGridTest extends FrontendWebTestCase
 {
@@ -26,8 +26,7 @@ class ProductSearchGridTest extends FrontendWebTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW),
-            true
+            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
         $this->getContainer()->get('request_stack')->push(Request::create(''));
         $this->setCurrentWebsite('default');

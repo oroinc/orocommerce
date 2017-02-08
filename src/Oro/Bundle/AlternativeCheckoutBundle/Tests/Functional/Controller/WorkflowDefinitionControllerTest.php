@@ -5,9 +5,6 @@ namespace Oro\Bundle\AlternativeCheckoutBundle\Tests\Functional\Controller;
 use Oro\Bundle\AlternativeCheckoutBundle\Tests\Functional\DataFixtures\LoadTranslations;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\WorkflowDefinitionCheckoutTestCase as BaseTest;
 
-/**
- * @dbIsolation
- */
 class WorkflowDefinitionControllerTest extends BaseTest
 {
     public function setUp()

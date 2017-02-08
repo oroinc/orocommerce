@@ -10,7 +10,6 @@ use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\OrderBundle\Tests\Functional\Security\AbstractAddressACLTest;
 
 /**
- * @dbIsolation
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
 class AddressACLTest extends AbstractAddressACLTest

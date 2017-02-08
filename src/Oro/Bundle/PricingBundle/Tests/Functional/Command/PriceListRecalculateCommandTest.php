@@ -9,9 +9,6 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelation
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
-/**
- * @dbIsolation
- */
 class PriceListRecalculateCommandTest extends WebTestCase
 {
     /**
