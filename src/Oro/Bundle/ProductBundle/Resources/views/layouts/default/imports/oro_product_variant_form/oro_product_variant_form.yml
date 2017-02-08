@@ -2,10 +2,6 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'oro_product_variant_form.html.twig'
-        - '@setOption':
-            id: variant_field_form
-            optionName: vars.simple_product_variants
-            optionValue: '=data["oro_product_form"].getSimpleProductVariants(data["product"])'
         - '@addTree':
             items:
                 __variant_field_form:
