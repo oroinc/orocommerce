@@ -6,7 +6,10 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutValidateEvent;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
+use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Symfony\Component\DomCrawler\Crawler;
@@ -404,5 +407,25 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
     protected function getSourceEntity()
     {
         return $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
+    }
+
+    /**
+     * @param LineItem $lineItem
+     * @return InventoryLevel
+     */
+    protected function setProductInventoryLevels(LineItem $lineItem)
+    {
+        $inventoryLevelEm = $this->registry->getManagerForClass(InventoryLevel::class);
+        $productUnitPrecisionEm = $this->registry->getManagerForClass(ProductUnitPrecision::class);
+        $productUnitPrecision = $productUnitPrecisionEm
+            ->getRepository(ProductUnitPrecision::class)
+            ->findOneBy(['product' => $lineItem->getProduct()]);
+        $inventoryLevel = new InventoryLevel();
+        $inventoryLevel->setProductUnitPrecision($productUnitPrecision);
+        $inventoryLevel->setQuantity(10);
+        $inventoryLevelEm->persist($inventoryLevel);
+        $productUnitPrecisionEm->persist($productUnitPrecision);
+        $inventoryLevelEm->flush();
+        return $inventoryLevel;
     }
 }
