@@ -89,7 +89,6 @@ class EmptyVariantFieldInSimpleProductForVariantLinksValidatorTest extends \PHPU
                 ]
             );
 
-
         $this->validator->validate($product, new EmptyVariantFieldInSimpleProductForVariantLinks());
     }
 
@@ -118,7 +117,6 @@ class EmptyVariantFieldInSimpleProductForVariantLinksValidatorTest extends \PHPU
                     ]
                 ]
             );
-
 
         $this->validator->validate($product, new EmptyVariantFieldInSimpleProductForVariantLinks());
     }
