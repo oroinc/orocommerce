@@ -66,9 +66,9 @@ abstract class AbstractTreeHandler
         $connection->beginTransaction();
 
         try {
-            $this->moveProcessing($entityId, $parentId, $position);
+            $entity = $this->moveProcessing($entityId, $parentId, $position);
 
-            $em->flush();
+            $em->flush($entity);
             $connection->commit();
         } catch (\Exception $e) {
             $connection->rollBack();
@@ -174,6 +174,7 @@ abstract class AbstractTreeHandler
      * @param int $entityId
      * @param int $parentId
      * @param int $position
+     * @return object $entity
      */
     abstract protected function moveProcessing($entityId, $parentId, $position);
 
