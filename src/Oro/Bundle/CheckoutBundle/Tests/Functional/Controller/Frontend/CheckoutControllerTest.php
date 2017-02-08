@@ -2,19 +2,11 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
-use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\DomCrawler\Form;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutValidateEvent;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
-use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
-use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Symfony\Component\DomCrawler\Crawler;
