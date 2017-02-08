@@ -10,7 +10,7 @@ use Oro\Component\MessageQueue\Client\Message;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
-class SlugEntityListener
+class SlugListener
 {
     /**
      * @var ManagerRegistry
@@ -65,7 +65,7 @@ class SlugEntityListener
     protected function synchronizeRedirectScopes(Slug $slug)
     {
         $this->messageProducer->send(
-            Topics::GENERATE_SLUG_REDIRECTS,
+            Topics::SYNC_SLUG_REDIRECTS,
             new Message(['slugId' => $slug->getId()])
         );
     }

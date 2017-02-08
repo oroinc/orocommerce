@@ -2,8 +2,11 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Async;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Driver\AbstractDriverException;
 use Doctrine\ORM\EntityManagerInterface;
+use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
+use Oro\Bundle\RedirectBundle\Async\SyncSlugRedirectsProcessor;
 use Oro\Bundle\RedirectBundle\Async\Topics;
 use Oro\Bundle\RedirectBundle\Entity\Redirect;
 use Oro\Bundle\RedirectBundle\Entity\Repository\RedirectRepository;
@@ -12,14 +15,9 @@ use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
-
-use Psr\Log\LoggerInterface;
-
-use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
-use Oro\Bundle\RedirectBundle\Async\SyncSlugRedirectsProcessor;
+use Psr\Log\LoggerInterface;
 
 class SyncSlugRedirectsProcessorTest extends \PHPUnit_Framework_TestCase
 {
@@ -47,9 +45,7 @@ class SyncSlugRedirectsProcessorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->registry = $this->getMockBuilder(ManagerRegistry::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->registry = $this->createMock(ManagerRegistry::class);
         $this->logger = $this->createMock(LoggerInterface::class);
         $this->databaseExceptionHelper = $this->getMockBuilder(DatabaseExceptionHelper::class)
             ->disableOriginalConstructor()
@@ -254,9 +250,6 @@ class SyncSlugRedirectsProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testGetSubscribedTopics()
     {
-        $this->assertEquals(
-            [Topics::GENERATE_SLUG_REDIRECTS],
-            $this->processor->getSubscribedTopics()
-        );
+        $this->assertEquals([Topics::SYNC_SLUG_REDIRECTS], $this->processor->getSubscribedTopics());
     }
 }

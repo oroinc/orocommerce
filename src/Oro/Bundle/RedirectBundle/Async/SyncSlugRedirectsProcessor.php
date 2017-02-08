@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Async;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Driver\DriverException;
 use Doctrine\ORM\EntityManager;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
@@ -13,7 +14,6 @@ use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class SyncSlugRedirectsProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
@@ -107,6 +107,6 @@ class SyncSlugRedirectsProcessor implements MessageProcessorInterface, TopicSubs
      */
     public static function getSubscribedTopics()
     {
-        return [Topics::GENERATE_SLUG_REDIRECTS];
+        return [Topics::SYNC_SLUG_REDIRECTS];
     }
 }

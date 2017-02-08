@@ -53,7 +53,6 @@ class SlugEntityGenerator
             $localizationId = $this->getLocalizationId($slug->getLocalization());
 
             if ($slugUrls->containsKey($localizationId)) {
-                /** @var SlugUrl $slugUrl */
                 $slugUrl = $slugUrls->get($localizationId);
 
                 $previousSlugUrl = $slug->getUrl();

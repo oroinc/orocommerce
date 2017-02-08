@@ -53,7 +53,6 @@ class RedirectGenerator
      * @param string $from
      * @param Slug $toSlug
      * @param int $redirectType
-     * @return Redirect
      */
     private function createNewRedirect($from, Slug $toSlug, $redirectType = Redirect::MOVED_PERMANENTLY)
     {
@@ -68,7 +67,5 @@ class RedirectGenerator
 
         $em->persist($redirect);
         $em->flush($redirect);
-
-        return $redirect;
     }
 }

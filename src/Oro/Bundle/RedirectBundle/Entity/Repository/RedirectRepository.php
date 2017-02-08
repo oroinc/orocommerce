@@ -21,10 +21,10 @@ class RedirectRepository extends EntityRepository
         ->where(
             $qb->expr()->andX(
                 $qb->expr()->eq('redirect.fromHash', ':fromHash'),
-                $qb->expr()->eq('redirect.from', ':fromUrl')
+                $qb->expr()->eq('redirect.from', ':fromUrl'),
+                $qb->expr()->isMemberOf(':scope', 'redirect.scopes')
             )
         )
-        ->andWhere(':scope MEMBER OF redirect.scopes')
         ->setMaxResults(1)
         ->setParameters([
             'fromHash' => md5($from),

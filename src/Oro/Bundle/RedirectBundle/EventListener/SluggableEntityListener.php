@@ -14,8 +14,6 @@ use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 class SluggableEntityListener
 {
-    const SLUG_PROTOTYPE_FIELD = 'slugPrototypes';
-
     /**
      * @var MessageFactoryInterface
      */

@@ -11,9 +11,9 @@ use Oro\Component\MessageQueue\Client\Message;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
-use Oro\Bundle\RedirectBundle\EventListener\SlugEntityListener;
+use Oro\Bundle\RedirectBundle\EventListener\SlugListener;
 
-class SlugEntityListenerTest extends \PHPUnit_Framework_TestCase
+class SlugListenerTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
@@ -28,7 +28,7 @@ class SlugEntityListenerTest extends \PHPUnit_Framework_TestCase
     protected $messageProducer;
 
     /**
-     * @var SlugEntityListener
+     * @var SlugListener
      */
     protected $listener;
 
@@ -39,16 +39,11 @@ class SlugEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);
 
-        $this->listener = new SlugEntityListener($this->registry, $this->messageProducer);
+        $this->listener = new SlugListener($this->registry, $this->messageProducer);
     }
 
     public function testOnFlushNoChangedSlugs()
     {
-        /** @var OnFlushEventArgs|\PHPUnit_Framework_MockObject_MockObject $event **/
-        $event = $this->getMockBuilder(OnFlushEventArgs::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
         /** @var UnitOfWork|\PHPUnit_Framework_MockObject_MockObject $uow */
         $uow = $this->getMockBuilder(UnitOfWork::class)
             ->disableOriginalConstructor()
@@ -60,9 +55,7 @@ class SlugEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getUnitOfWork')
             ->willReturn($uow);
 
-        $event->expects($this->any())
-            ->method('getEntityManager')
-            ->willReturn($em);
+        $event = new OnFlushEventArgs($em);
 
         $uow->expects($this->any())
             ->method('getScheduledEntityUpdates')
@@ -78,11 +71,6 @@ class SlugEntityListenerTest extends \PHPUnit_Framework_TestCase
     {
         $updatedSlug = $this->getEntity(Slug::class, ['id' => 123]);
 
-        /** @var OnFlushEventArgs|\PHPUnit_Framework_MockObject_MockObject $event **/
-        $event = $this->getMockBuilder(OnFlushEventArgs::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
         /** @var UnitOfWork|\PHPUnit_Framework_MockObject_MockObject $uow */
         $uow = $this->getMockBuilder(UnitOfWork::class)
             ->disableOriginalConstructor()
@@ -94,9 +82,7 @@ class SlugEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getUnitOfWork')
             ->willReturn($uow);
 
-        $event->expects($this->any())
-            ->method('getEntityManager')
-            ->willReturn($em);
+        $event = new OnFlushEventArgs($em);
 
         $uow->expects($this->any())
             ->method('getScheduledEntityUpdates')
@@ -105,7 +91,7 @@ class SlugEntityListenerTest extends \PHPUnit_Framework_TestCase
         $this->messageProducer->expects($this->once())
             ->method('send')
             ->with(
-                Topics::GENERATE_SLUG_REDIRECTS,
+                Topics::SYNC_SLUG_REDIRECTS,
                 new Message(['slugId' => $updatedSlug->getId()])
             );
 
