@@ -39,11 +39,17 @@ class FirstOffersQuoteToShippingLineItemConverter implements QuoteToShippingLine
         $lineItems = [];
 
         foreach ($quote->getQuoteProducts() as $quoteProduct) {
-            if ($quoteProduct->getQuoteProductOffers()->count() <= 0) {
-                continue;
+            $offers = $quoteProduct->getQuoteProductOffers();
+            if ($offers->count() <= 0) {
+                $lineItems = [];
+                break;
             }
 
-            $firstQuoteProductOffer = $quoteProduct->getQuoteProductOffers()[0];
+            $firstQuoteProductOffer = $offers->first();
+            if (!$firstQuoteProductOffer->getPrice()) {
+                $lineItems = [];
+                break;
+            }
 
             $lineItemBuilder = $this->shippingLineItemBuilderFactory->createBuilder(
                 $firstQuoteProductOffer->getPrice(),

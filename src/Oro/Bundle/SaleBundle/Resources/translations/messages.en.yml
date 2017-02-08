@@ -40,6 +40,8 @@ oro:
             shipping_method_type.label: 'Shipping Method Type'
             currency.label: 'Currency'
             shipping_address.label: 'Shipping Address'
+            customer_status.label: 'Customer Status'
+            internal_status.label: 'Internal Status'
 
             sections:
                 general: 'General'

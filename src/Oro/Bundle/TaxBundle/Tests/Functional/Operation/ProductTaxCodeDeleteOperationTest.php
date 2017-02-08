@@ -5,9 +5,6 @@ namespace Oro\Bundle\TaxBundle\Tests\Functional\Operation;
 use Oro\Bundle\ActionBundle\Tests\Functional\ActionTestCase;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
 
-/**
- * @dbIsolation
- */
 class ProductTaxCodeDeleteOperationTest extends ActionTestCase
 {
     protected function setUp()

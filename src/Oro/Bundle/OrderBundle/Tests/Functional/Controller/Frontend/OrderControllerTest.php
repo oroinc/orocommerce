@@ -13,9 +13,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 
-/**
- * @dbIsolation
- */
 class OrderControllerTest extends WebTestCase
 {
     const ORDER_PO_NUMBER = 'PO-NUMBER';

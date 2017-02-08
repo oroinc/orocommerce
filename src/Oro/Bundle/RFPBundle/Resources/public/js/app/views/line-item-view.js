@@ -10,7 +10,6 @@ define(function(require) {
     var __ = require('orotranslation/js/translator');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     var routing = require('routing');
-    var messenger = require('oroui/js/messenger');
 
     /**
      * @export ororfp/js/app/views/line-item-view
@@ -194,10 +193,7 @@ define(function(require) {
                     complete: function() {
                         self.loadingMask.hide();
                     },
-                    error: function(xhr) {
-                        self.loadingMask.hide();
-                        messenger.showErrorMessage(__(self.options.errorMessage), xhr.responseJSON);
-                    }
+                    errorHandlerMessage: __(this.options.errorMessage)
                 });
             }
         },

@@ -7,10 +7,11 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\ShippingBundle\Context\ShippingContextFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\Builder\Factory\ShippingContextBuilderFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 
-class OrderShippingContextFactory
+class OrderShippingContextFactory implements ShippingContextFactoryInterface
 {
     /**
      * @var DoctrineHelper
@@ -46,8 +47,10 @@ class OrderShippingContextFactory
      * @param Order $order
      * @return ShippingContextInterface
      */
-    public function create(Order $order)
+    public function create($order)
     {
+        $this->ensureApplicable($order);
+
         if (null === $this->shippingContextBuilderFactory) {
             return null;
         }
@@ -99,5 +102,20 @@ class OrderShippingContextFactory
         }
 
         return $shippingContextBuilder->getResult();
+    }
+
+    /**
+     * @param object $entity
+     * @throws \InvalidArgumentException
+     */
+    protected function ensureApplicable($entity)
+    {
+        if (!is_a($entity, Order::class)) {
+            throw new \InvalidArgumentException(sprintf(
+                '"%s" expected, "%s" given',
+                Order::class,
+                is_object($entity) ? get_class($entity) : gettype($entity)
+            ));
+        }
     }
 }

@@ -6,9 +6,6 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository;
 
-/**
- * @dbIsolation
- */
 class PaymentTransactionRepositoryTest extends WebTestCase
 {
     protected function setUp()

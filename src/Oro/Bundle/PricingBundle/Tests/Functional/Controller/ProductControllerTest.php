@@ -14,9 +14,6 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 
-/**
- * @dbIsolation
- */
 class ProductControllerTest extends WebTestCase
 {
     /**

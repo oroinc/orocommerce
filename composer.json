@@ -14,10 +14,10 @@
         "oro/platform-serialised-fields": "1.x-dev",
         "oro/calendar-bundle": "1.x-dev",
         "oro/marketing": "1.x-dev",
+        "oro/customer-portal": "1.x-dev",
         "box/spout": "2.3.*",
         "brick/math": "0.5.*",
         "myclabs/deep-copy": "1.5.*",
-        "leafo/scssphp": "0.6.3",
         "bower-asset/jquery-creditcardvalidator": "1.0",
         "bower-asset/jquery-validate": "1.11.1",
         "bower-asset/elevatezoom3": "3.0.8.1"

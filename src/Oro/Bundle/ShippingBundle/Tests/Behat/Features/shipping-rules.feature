@@ -14,8 +14,8 @@ Feature: Applying shipping rules
   Scenario: "SHIPPING 2B" > EDIT AND DISABLE SHIPPING RULE #1 BASED ON COUNTRY ONLY. PRIORITY - MAJOR
     Given Admin User edited "Shipping Rule First" with next data:
       | Enabled  | false   |
-    When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
-    Then There is no shipping method available for this order
+    When Buyer is on view shopping list "Shopping List 1" page and clicks create order button
+    Then Flash message appears that there is no shipping methods available
 
   Scenario: "SHIPPING 2C" > DIFFERENT CURRENCIES FOR SHIPPING RULE #1 AND ORDER. PRIORITY - MAJOR
     Given Currency is set to USD
@@ -25,8 +25,8 @@ Feature: Applying shipping rules
       | Country  | Germany |
     # specific for community edition
     And Currency is set to EUR
-    When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
-    Then There is no shipping method available for this order
+    When Buyer is on view shopping list "Shopping List 1" page and clicks create order button
+    Then Flash message appears that there is no shipping methods available
 
   Scenario: "SHIPPING 2D" > DIFFERENT COUNTRIES FOR SHIPPING RULE #1 AND ORDER. PRIORITY - MAJOR
     Given Currency is set to EUR

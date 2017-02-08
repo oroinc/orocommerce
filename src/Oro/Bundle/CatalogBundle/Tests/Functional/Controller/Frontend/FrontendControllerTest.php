@@ -5,9 +5,6 @@ namespace Oro\Bundle\CatalogBundle\Bundle\Tests\Functional\Controller\Frontend;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-/**
- * @dbIsolation
- */
 class FrontendControllerTest extends WebTestCase
 {
     protected function setUp()

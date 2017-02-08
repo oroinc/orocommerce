@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Functional\ExpressionLanguage;
 
-use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadInventoryLevels;
 use Oro\Bundle\PaymentBundle\Context\LineItem\Collection\Doctrine\DoctrinePaymentLineItemCollection;
 use Oro\Bundle\PaymentBundle\Context\PaymentContext;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItem;
@@ -12,9 +11,6 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\ExpressionLanguage\ExpressionLanguage;
 
-/**
- * @dbIsolation
- */
 class ProductDecoratorTest extends WebTestCase
 {
     /**
@@ -24,7 +20,7 @@ class ProductDecoratorTest extends WebTestCase
     {
         $this->initClient();
 
-        $this->loadFixtures([LoadInventoryLevels::class]);
+        $this->loadFixtures(['@OroInventoryBundle/Tests/Functional/DataFixtures/inventory_level.yml']);
     }
 
     /**
