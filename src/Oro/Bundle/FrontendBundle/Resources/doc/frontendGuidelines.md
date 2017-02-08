@@ -160,7 +160,6 @@ Last - attributes with JSON content.
 .element {
     // Use base color
     color: $color;
-
 }
 ```
 

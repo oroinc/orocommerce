@@ -1,12 +1,3 @@
-{% block _quick_add_form_widget %}
-    {% set attr = attr|merge({
-        class: attr.class|default('') ~ ' hidden-form'
-    }) %}
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
-{% endblock %}
-
 {% block _quick_add_form_start_widget %}
     {% do set_class_prefix_to_form(form, class_prefix) %}
     {% set pageComponentOptions = {
@@ -16,9 +7,21 @@
     } %}
     {% set attr = {
         'data-page-component-module': 'oroproduct/js/app/components/quick-add-component',
-        'data-page-component-options': pageComponentOptions|json_encode
-    }|merge(attr) %}
+        'data-page-component-options': pageComponentOptions|json_encode,
+        class: attr.class|default('') ~ ' oro_product_quick_add'
+}|merge(attr) %}
     {{ block('form_start_widget') }}
+
+
+{% endblock %}
+
+{% block _quick_add_form_fields_widget %}
+    {% set attr = attr|merge({
+    class: attr.class|default('') ~ ' hidden-form'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
 {% endblock %}
 
 {% block _quick_add_form_buttons_widget %}
