@@ -10,9 +10,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\DPDBundle\Entity\Repository\RateRepository;
 use Oro\Bundle\DPDBundle\Entity\Rate;
 
-/**
- * @dbIsolation
- */
 class RateRepositoryTest extends WebTestCase
 {
     /**
