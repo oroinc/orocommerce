@@ -1,3 +1,2 @@
 include:
-    - ../../../../../CustomerBundle/Tests/Behat/Features/Fixtures/BuyerCustomerFixture.yml
     - ../../../../../ShoppingListBundle/Tests/Behat/Features/Fixtures/ShoppingListFixture.yml

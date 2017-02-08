@@ -1,3 +1,6 @@
+include:
+    - ../../../../../CustomerBundle/Tests/Behat/Features/Fixtures/BuyerCustomerFixture.yml
+
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     precision1:
         unit: '@item'
