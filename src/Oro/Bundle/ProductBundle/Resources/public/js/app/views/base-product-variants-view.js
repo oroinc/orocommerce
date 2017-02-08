@@ -10,7 +10,8 @@ define(function(require) {
 
     BaseProductVariantsView = BaseView.extend(_.extend({}, ElementsHelper, {
         options: {
-            showLoading: true
+            showLoading: true,
+            simpleProductVariants: []
         },
 
         elements: {

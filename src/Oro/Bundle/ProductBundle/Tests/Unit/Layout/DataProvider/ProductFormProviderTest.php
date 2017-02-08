@@ -314,4 +314,33 @@ class ProductFormProviderTest extends \PHPUnit_Framework_TestCase
             'parentProduct' => $product,
         ];
     }
+
+    public function testGetSimpleProductVariants()
+    {
+        $product = new Product();
+        $product->setVariantFields([ 'field_first', 'field_second']);
+        $productVariant = new Product();
+
+        $this->productVariantAvailabilityProvider->expects($this->once())
+            ->method('getSimpleProductsByVariantFields')
+            ->with($product)
+            ->willReturn([$productVariant]);
+
+        $this->productVariantAvailabilityProvider->expects($this->exactly(2))
+            ->method('getVariantFieldScalarValue')
+            ->withConsecutive(
+                [$productVariant, 'field_first'],
+                [$productVariant, 'field_second']
+            )
+            ->willReturnOnConsecutiveCalls('value1', 'value2');
+
+        $expectedResult = [
+            null => [
+                'field_first' => 'value1',
+                'field_second' => 'value2',
+            ]
+        ];
+
+        $this->assertEquals($expectedResult, $this->provider->getSimpleProductVariants($product));
+    }
 }

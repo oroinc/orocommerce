@@ -210,7 +210,15 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
         $handler = $this->createMock(ProductVariantTypeHandlerInterface::class);
         $handler->expects($this->once())
             ->method('createForm')
-            ->with($fieldName, $availability, ['data' => $expectedData->{$fieldName}])
+            ->with(
+                $fieldName,
+                $availability,
+                [
+                    'data' => $expectedData->{$fieldName},
+                    'placeholder' => 'oro.product.type.please_select_option',
+                    'empty_data' => null
+                ]
+            )
             ->willReturn($form);
 
         return $handler;

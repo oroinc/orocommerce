@@ -155,6 +155,31 @@ class ProductFormProvider extends AbstractFormProvider
     }
 
     /**
+     * @param Product $product
+     * @return array
+     */
+    public function getSimpleProductVariants(Product $product)
+    {
+        $simpleProducts = $this->productVariantAvailabilityProvider->getSimpleProductsByVariantFields($product);
+
+        $variantFields = $product->getVariantFields();
+
+        $simpleProductVariants = [];
+
+        foreach ($variantFields as $key => $fieldName) {
+            foreach ($simpleProducts as $simpleProduct) {
+                $value = $this->productVariantAvailabilityProvider->getVariantFieldScalarValue(
+                    $simpleProduct,
+                    $fieldName
+                );
+                $simpleProductVariants[$simpleProduct->getId()][$fieldName] = $value;
+            }
+        }
+
+        return $simpleProductVariants;
+    }
+
+    /**
      * @return array
      */
     private function getQuickAddFormCacheKeyOptions()
