@@ -11,6 +11,6 @@ Feature: Start checkout for a quote
     And I fill in "PO Number" with "PONUMBER1"
     And I click "Submit Request"
     And Admin creates a quote for RFQ with PO Number "PONUMBER1"
-    And I click "Quotes"
+    When I click "Quotes"
     And Buyer starts checkout for a quote with "PONUMBER1" PO Number
     Then Buyer is on enter billing information checkout step
