@@ -5,12 +5,10 @@ system_configuration:
     fields:
         oro_catalog.category_direct_url_prefix:
             data_type: string
-            type: text
+            type: oro_redirect_sluggable_prefix
             options:
                 label: oro.catalog.system_configuration.fields.category_direct_url_prefix.label
                 required: false
-                constraints:
-                    - Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe: ~
 
     tree:
         system_configuration:

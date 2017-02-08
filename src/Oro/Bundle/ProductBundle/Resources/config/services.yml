@@ -707,6 +707,7 @@ services:
         class: Oro\Bundle\RedirectBundle\EventListener\ConfigRegenerateDirectUrlListener
         arguments:
             - '@oro_message_queue.client.message_producer'
+            - '@oro_redirect.form.storage.redirect_storage'
             - 'oro_product.product_direct_url_prefix'
             - '%oro_product.entity.product.class%'
         tags:
