@@ -453,7 +453,6 @@ services:
             - '@form.factory'
             - '@router'
             - '@oro_product.provider.product_variant_availability_provider'
-            - '@property_accessor'
         tags:
             - { name: layout.data_provider, alias: oro_product_form }
 
