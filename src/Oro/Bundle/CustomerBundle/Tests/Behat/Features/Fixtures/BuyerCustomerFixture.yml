@@ -19,4 +19,3 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUser:
         role: ['@buyer']
         owner: '@admin'
         website: '@website1'
-
