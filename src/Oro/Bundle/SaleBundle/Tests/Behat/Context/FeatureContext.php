@@ -36,15 +36,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @Given I set :poNumber value to PO Number field
-     * @param string $poNumber
-     */
-    public function setValueToPONumberField($poNumber)
-    {
-        $this->getSession()->getPage()->fillField('PO Number', $poNumber);
-    }
-
-    /**
      * @Given Admin creates a quote for RFQ with PO Number :poNumber
      * @param string $poNumber
      */
@@ -65,10 +56,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $grid->clickActionLink($poNumber, 'View');
         $this->waitForAjax();
 
-        $this->getSession()->getPage()->clickLink('Create Quote');
+        $this->getPage()->clickLink('Create Quote');
         $this->waitForAjax();
 
-        $unitPrice = $this->getSession()->getPage()->findField(
+        $unitPrice = $this->getPage()->findField(
             'oro_sale_quote[quoteProducts][0][quoteProductOffers][0][price][value]'
         );
 
@@ -76,18 +67,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $unitPrice->setValue('5.0');
         $unitPrice->blur();
 
-        $this->getSession()->getPage()->pressButton('Save and Close');
+        $this->getPage()->pressButton('Save and Close');
 
         $this->getSession('second_session')->stop();
         $this->getMink()->setDefaultSessionName('first_session');
-    }
-
-    /**
-     * @When Buyer is on quotes page
-     */
-    public function buyerIsOnQuotesPage()
-    {
-        $this->visitPath('customer/quote');
     }
 
     /**
@@ -101,10 +84,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $grid->clickActionLink($poNumber, 'View');
         $this->waitForAjax();
 
-        $this->getSession()->getPage()->clickLink('Accept and Submit to Order');
+        $this->getPage()->clickLink('Accept and Submit to Order');
         $this->waitForAjax();
 
-        $this->getSession()->getPage()->pressButton('Submit');
+        $this->getPage()->pressButton('Submit');
         $this->waitForAjax();
     }
 

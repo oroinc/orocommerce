@@ -1,0 +1,38 @@
+Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
+    precision1:
+        unit: '@item'
+        precision: '1'
+
+Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue:
+    locvalue1:
+        string: Product1
+
+Oro\Bundle\ProductBundle\Entity\Product:
+    product1:
+        sku: 'AA1'
+        primaryUnitPrecision: '@precision1'
+        addName: ['@locvalue1']
+        inventoryStatus: '@enumInventoryStatuses'
+        status: 'enabled'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
+    shoppinglist1:
+        label: 'Shopping List 1'
+        customerUser: '@amanda'
+
+Oro\Bundle\ShoppingListBundle\Entity\LineItem:
+    lineitem1:
+        product: '@product1'
+        quantity: '5'
+        unit: '@item'
+        customerUser: '@amanda'
+        shoppingList: '@shoppinglist1'
+        organization: '@organization'
+
+Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal:
+    shoppinglisttotal:
+        __construct: ['@shoppinglist1','USD']
+        shoppingList: '@shoppinglist1'
+        currency: 'USD'
+        subtotalValue: '10.1'
+        valid: true

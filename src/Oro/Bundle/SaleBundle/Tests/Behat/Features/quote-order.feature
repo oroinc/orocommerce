@@ -8,9 +8,9 @@ Feature: Start checkout for a quote
     Given I login as AmandaRCole@example.org buyer
     And I open page with shopping list Shopping List 1
     And I click "Request Quote"
-    And I set "PONUMBER1" value to PO Number field
+    And I fill in "PO Number" with "PONUMBER1"
     And I click "Submit Request"
     And Admin creates a quote for RFQ with PO Number "PONUMBER1"
-    When Buyer is on quotes page
+    And I click "Quotes"
     And Buyer starts checkout for a quote with "PONUMBER1" PO Number
     Then Buyer is on enter billing information checkout step
