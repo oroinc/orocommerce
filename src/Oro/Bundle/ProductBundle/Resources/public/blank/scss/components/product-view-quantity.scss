@@ -1,0 +1,16 @@
+// @theme: blank;
+
+.product-view-quantity {
+    display: flex;
+
+    margin-bottom: 20px;
+
+    &__unit {
+        width: 75%;
+        margin-right: 5px;
+    }
+
+    &__value {
+        width: 25%;
+    }
+}
