@@ -150,6 +150,19 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit_Framework_TestCase
         $this->quantityToOrderConditionListener->onStartCheckoutConditionCheck($event);
     }
 
+    public function testOnStartCheckoutConditionWhenSourceEntityIsNotOfShoppingListType()
+    {
+        $checkoutSource = new CheckoutSourceStub();
+        $checkoutSource->setShoppingList(new \stdClass());
+        $checkout = $this->getEntity(Checkout::class, ['source' => $checkoutSource]);
+
+        $event = new ExtendableConditionEvent(new ActionData(['checkout' => $checkout]));
+
+        $this->validatorService->expects($this->never())
+            ->method('isLineItemListValid');
+        $this->quantityToOrderConditionListener->onStartCheckoutConditionCheck($event);
+    }
+
     public function testOnStartCheckoutConditionCheckAddsErrorToEvent()
     {
         $lineItems = new ArrayCollection();
@@ -169,6 +182,27 @@ class QuantityToOrderConditionListenerTest extends \PHPUnit_Framework_TestCase
         $this->quantityToOrderConditionListener->onStartCheckoutConditionCheck($event);
 
         $this->assertNotEmpty($event->getErrors());
+    }
+
+    public function testOnStartCheckoutConditionCheckAddsNoErrorToEvent()
+    {
+        $lineItems = new ArrayCollection();
+        $shoppingList = $this->getEntity(ShoppingList::class, ['lineItems' => $lineItems]);
+        $checkoutSource = new CheckoutSourceStub();
+        $checkoutSource->setShoppingList($shoppingList);
+        $checkout = $this->getEntity(Checkout::class, ['source' => $checkoutSource]);
+        $context = new ActionData(['checkout' => $checkout]);
+        $event = new ExtendableConditionEvent($context);
+
+        $this->validatorService
+            ->expects($this->once())
+            ->method('isLineItemListValid')
+            ->with($lineItems)
+            ->willReturn(true);
+
+        $this->quantityToOrderConditionListener->onStartCheckoutConditionCheck($event);
+
+        $this->assertEmpty($event->getErrors());
     }
 
     public function testOnCheckoutConditionCheckAddsError()
