@@ -146,7 +146,7 @@ class CategoryController extends Controller
      */
     public function treeWidgetAction()
     {
-
+        return [];
     }
 
     /**

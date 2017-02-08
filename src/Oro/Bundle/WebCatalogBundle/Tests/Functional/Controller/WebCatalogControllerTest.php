@@ -7,10 +7,7 @@ use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadContentNodesData;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadWebCatalogData;
 
-/**
- * @dbIsolation
- */
-class CategoryControllerTest extends WebTestCase
+class WebCatalogControllerTest extends WebTestCase
 {
     /**
      * {@inheritdoc}
