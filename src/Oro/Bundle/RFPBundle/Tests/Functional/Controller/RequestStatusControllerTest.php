@@ -5,9 +5,6 @@ namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\RFPBundle\Entity\RequestStatus;
 
-/**
- * @dbIsolation
- */
 class RequestStatusControllerTest extends WebTestCase
 {
     const OLD_NAME = 'test';

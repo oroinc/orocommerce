@@ -12,10 +12,7 @@ class ContentNodeFormViewListenerTest extends BaseFormViewListenerTestCase
      */
     protected $listener;
 
-    /**
-     * {@inheritdoc}
-     */
-    public function setUp()
+    protected function setUp()
     {
         parent::setUp();
 
@@ -24,6 +21,11 @@ class ContentNodeFormViewListenerTest extends BaseFormViewListenerTestCase
             $this->translator,
             $this->doctrineHelper
         );
+    }
+
+    protected function tearDown()
+    {
+        unset($this->listener);
     }
 
     public function testOnContentNodeView()
@@ -41,7 +43,7 @@ class ContentNodeFormViewListenerTest extends BaseFormViewListenerTestCase
             ->willReturn($page);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
-        $env = $this->getEnvironmentForView($page);
+        $env = $this->getEnvironmentForView($page, $this->listener->getMetaFieldLabelPrefix());
         $event = $this->getEventForView($env);
 
         $this->listener->onContentNodeView($event);

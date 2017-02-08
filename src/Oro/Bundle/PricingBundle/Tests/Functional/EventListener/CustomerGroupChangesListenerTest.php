@@ -12,7 +12,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 /**
- * @dbIsolation
+ * @dbIsolationPerTest
  */
 class CustomerGroupChangesListenerTest extends WebTestCase
 {
@@ -20,13 +20,12 @@ class CustomerGroupChangesListenerTest extends WebTestCase
 
     protected function setUp()
     {
-        $this->initClient([], $this->generateWsseAuthHeader(), true);
+        $this->initClient([], $this->generateWsseAuthHeader());
         $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
                 LoadPriceListRelations::class
-            ],
-            true
+            ]
         );
     }
 

@@ -5,6 +5,8 @@ layout:
             root: __product_line_item_form
             namespace: product
     actions:
+        - '@setBlockTheme':
+            themes: 'product_shopping_lists.html.twig'
         - '@move':
             id: __product_shopping_lists
             parentId: __product_line_item_form

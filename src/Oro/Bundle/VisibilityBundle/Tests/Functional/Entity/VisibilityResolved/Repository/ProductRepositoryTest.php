@@ -23,7 +23,6 @@ use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibil
 use Oro\Bundle\VisibilityBundle\Tests\Functional\Entity\ResolvedEntityRepositoryTestTrait;
 
 /**
- * @dbIsolation
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class ProductRepositoryTest extends WebTestCase
@@ -394,7 +393,7 @@ class ProductRepositoryTest extends WebTestCase
 
     /**
      * @param Product $product
-     * @return null|\Oro\Bundle\CatalogBundle\Entity\Category
+     * @return null|Category
      */
     protected function getCategoryByProduct(Product $product)
     {

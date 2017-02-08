@@ -6,11 +6,11 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Quote\Calculable\Factory\CalculableQuoteFactoryInterface;
-use Oro\Bundle\SaleBundle\Quote\Shipping\Context\Factory\QuoteShippingContextFactoryInterface;
 use Oro\Bundle\SaleBundle\Quote\Shipping\LineItem\Converter\QuoteToShippingLineItemConverterInterface;
+use Oro\Bundle\ShippingBundle\Context\ShippingContextFactoryInterface;
 use Oro\Bundle\ShippingBundle\Context\Builder\Factory\ShippingContextBuilderFactoryInterface;
 
-class BasicQuoteShippingContextFactory implements QuoteShippingContextFactoryInterface
+class BasicQuoteShippingContextFactory implements ShippingContextFactoryInterface
 {
     /**
      * @var ShippingContextBuilderFactoryInterface
@@ -52,9 +52,12 @@ class BasicQuoteShippingContextFactory implements QuoteShippingContextFactoryInt
 
     /**
      * {@inheritdoc}
+     * @param Quote $quote
      */
-    public function create(Quote $quote)
+    public function create($quote)
     {
+        $this->ensureApplicable($quote);
+
         $this->totalProcessorProvider->enableRecalculation();
 
         $convertedLineItems = $this->quoteToShippingLineItemConverter->convertLineItems($quote);
@@ -80,5 +83,20 @@ class BasicQuoteShippingContextFactory implements QuoteShippingContextFactoryInt
         }
 
         return $shippingContextBuilder->getResult();
+    }
+
+    /**
+     * @param object $entity
+     * @throws \InvalidArgumentException
+     */
+    protected function ensureApplicable($entity)
+    {
+        if (!is_a($entity, Quote::class)) {
+            throw new \InvalidArgumentException(sprintf(
+                '"%s" expected, "%s" given',
+                Quote::class,
+                is_object($entity) ? get_class($entity) : gettype($entity)
+            ));
+        }
     }
 }

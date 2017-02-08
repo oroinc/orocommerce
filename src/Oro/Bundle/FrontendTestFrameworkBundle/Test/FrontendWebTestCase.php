@@ -27,14 +27,15 @@ class FrontendWebTestCase extends WebTestCase
         return $client;
     }
 
-    protected function tearDown()
+    /**
+     * @after
+     */
+    public function afterFrontendTest()
     {
         if ($this->storedWebsiteManager) {
             $this->client->getContainer()->set('oro_website.manager', $this->storedWebsiteManager);
             unset($this->storedWebsiteManager);
         }
-
-        parent::tearDown();
     }
 
     /**

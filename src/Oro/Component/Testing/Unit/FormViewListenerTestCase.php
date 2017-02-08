@@ -30,7 +30,7 @@ class FormViewListenerTestCase extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->translator = $this->createMock('Symfony\Component\Translation\TranslatorInterface');
+        $this->translator = $this->createMock(TranslatorInterface::class);
         $this->translator->expects($this->any())
             ->method('trans')
             ->willReturnCallback(
@@ -39,7 +39,7 @@ class FormViewListenerTestCase extends \PHPUnit_Framework_TestCase
                 }
             );
 
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
+        $this->doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->em = $this->getMockBuilder(EntityManager::class)->disableOriginalConstructor()->getMock();
@@ -47,7 +47,7 @@ class FormViewListenerTestCase extends \PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
-        unset($this->doctrineHelper, $this->listener);
+        unset($this->doctrineHelper, $this->em, $this->translator);
     }
 
     /**
@@ -69,7 +69,7 @@ class FormViewListenerTestCase extends \PHPUnit_Framework_TestCase
      */
     protected function getBeforeListRenderEventMock()
     {
-        return $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
+        return $this->getMockBuilder(BeforeListRenderEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
     }
@@ -80,7 +80,7 @@ class FormViewListenerTestCase extends \PHPUnit_Framework_TestCase
     protected function getScrollData()
     {
         /** @var \PHPUnit_Framework_MockObject_MockObject|ScrollData $scrollData */
-        $scrollData = $this->createMock('Oro\Bundle\UIBundle\View\ScrollData');
+        $scrollData = $this->createMock(ScrollData::class);
 
         $scrollData->expects($this->once())
             ->method('addBlock');
@@ -99,7 +99,7 @@ class FormViewListenerTestCase extends \PHPUnit_Framework_TestCase
      */
     protected function getRequest()
     {
-        return $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
+        return $this->getMockBuilder(Request::class)
             ->disableOriginalConstructor()
             ->getMock();
     }

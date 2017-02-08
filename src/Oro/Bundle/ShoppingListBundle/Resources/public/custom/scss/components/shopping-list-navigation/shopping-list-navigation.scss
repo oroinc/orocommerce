@@ -65,27 +65,23 @@ $shopping-list-items-count: 6;
             }
         }
 
-        &__item-indicator,
         &__name {
             vertical-align: baseline;;
         }
 
         &__item-indicator {
-            position: static;
-
-            display: inline-block;
-            margin-right: 10px;
-            min-width: 26px;
+           left: 16px;
         }
 
         &__name {
             padding: 16px 15px 12px;
         }
 
-        &__title {
+        &__text {
             overflow: hidden;
-            display: inline-block;
             max-width: 100%;
+
+            padding-left: 31px; // 26px (badge size) + 5px (default offset)
 
             line-height: 26px;
 
@@ -97,5 +93,9 @@ $shopping-list-items-count: 6;
         &__desc {
             display: none;
         }
+    }
+
+    .line-clamp {
+        display: inline;
     }
 }

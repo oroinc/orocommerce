@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Async;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\PricingBundle\Async\NotificationMessages;
 use Oro\Bundle\PricingBundle\Async\PriceListAssignedProductsProcessor;
@@ -10,26 +9,17 @@ use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Model\DTO\PriceListTrigger;
-use Oro\Bundle\PricingBundle\Model\Exception\InvalidArgumentException;
-use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Bundle\PricingBundle\NotificationMessage\Message;
-use Oro\Bundle\PricingBundle\NotificationMessage\Messenger;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Psr\Log\LoggerInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
-class PriceListAssignedProductsProcessorTest extends \PHPUnit_Framework_TestCase
+class PriceListAssignedProductsProcessorTest extends AbstractPriceProcessorTest
 {
     use EntityTrait;
-
-    /**
-     * @var PriceListTriggerFactory|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $triggerFactory;
 
     /**
      * @var PriceListProductAssignmentBuilder|\PHPUnit_Framework_MockObject_MockObject
@@ -37,25 +27,9 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit_Framework_TestCase
     protected $assignmentBuilder;
 
     /**
-     * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $logger;
-
-    /**
-     * @var Messenger|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $messenger;
-
-    /**
      * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $translator;
-
-
-    /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $registry;
 
     /**
      * @var PriceListAssignedProductsProcessor
@@ -64,21 +38,13 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->triggerFactory = $this->getMockBuilder(PriceListTriggerFactory::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->assignmentBuilder = $this->getMockBuilder(PriceListProductAssignmentBuilder::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->logger = $this->createMock(LoggerInterface::class);
-
-        $this->messenger = $this->getMockBuilder(Messenger::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        parent::setUp();
 
         $this->translator = $this->createMock(TranslatorInterface::class);
 
-        $this->registry = $this->createMock(ManagerRegistry::class);
+        $this->assignmentBuilder = $this->getMockBuilder(PriceListProductAssignmentBuilder::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->processor = new PriceListAssignedProductsProcessor(
             $this->triggerFactory,
@@ -92,46 +58,10 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessInvalidArgumentException()
     {
-        $data = ['test' => 1];
-        $body = json_encode($data);
-
-        $em = $this->createMock(EntityManagerInterface::class);
-
-        $em->expects($this->once())
-            ->method('beginTransaction');
-
-        $em->expects(($this->once()))
-            ->method('rollback');
-
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->with(PriceList::class)
-            ->willReturn($em);
-
-
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
-        $message = $this->createMock(MessageInterface::class);
-        $message->expects($this->any())
-            ->method('getBody')
-            ->willReturn($body);
-
-        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session * */
         $session = $this->createMock(SessionInterface::class);
 
-        $this->logger->expects($this->once())
-            ->method('error')
-            ->with(
-                sprintf(
-                    'Message is invalid: %s. Original message: "%s"',
-                    'Test message',
-                    $body
-                )
-            );
-
-        $this->triggerFactory->expects($this->once())
-            ->method('createFromArray')
-            ->with($data)
-            ->willThrowException(new InvalidArgumentException('Test message'));
+        $message = $this->prepareMessageForProcessInvalidArgumentException();
 
         $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process($message, $session));
     }
@@ -140,24 +70,7 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $exception = new \Exception('Some error');
 
-        $em = $this->createMock(EntityManagerInterface::class);
-
-        $em->expects($this->once())
-            ->method('beginTransaction');
-
-        $em->expects(($this->once()))
-            ->method('rollback');
-
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->with(PriceList::class)
-            ->willReturn($em);
-
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
-        $message = $this->createMock(MessageInterface::class);
-        $message->expects($this->any())
-            ->method('getBody')
-            ->willThrowException($exception);
+        $message = $this->prepareMessageForProcessExceptionWithoutTrigger($exception);
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
         $session = $this->createMock(SessionInterface::class);
@@ -169,45 +82,20 @@ class PriceListAssignedProductsProcessorTest extends \PHPUnit_Framework_TestCase
                 ['exception' => $exception]
             );
 
-        $this->triggerFactory->expects($this->never())
-            ->method('createFromArray');
-
-        $this->messenger->expects($this->never())
-            ->method('send');
-
         $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process($message, $session));
     }
 
     public function testProcessExceptionWithTrigger()
     {
-        $data = ['test' => 1];
-        $body = json_encode($data);
         $exception = new \Exception('Some error');
-
-        $em = $this->createMock(EntityManagerInterface::class);
-
-        $em->expects($this->once())
-            ->method('beginTransaction');
-
-        $em->expects(($this->once()))
-            ->method('rollback');
-
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->with(PriceList::class)
-            ->willReturn($em);
+        $data = ['test' => 1];
+        $message = $this->prepareMessageWithBody($data);
 
         /** @var PriceList $priceList */
         $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
         /** @var Product $product */
         $product = $this->getEntity(Product::class, ['id' => 2]);
         $trigger = new PriceListTrigger($priceList, $product);
-
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
-        $message = $this->createMock(MessageInterface::class);
-        $message->expects($this->any())
-            ->method('getBody')
-            ->willReturn($body);
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
         $session = $this->createMock(SessionInterface::class);

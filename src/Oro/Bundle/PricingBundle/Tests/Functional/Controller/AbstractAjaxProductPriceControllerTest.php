@@ -6,9 +6,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandlerInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
-/**
- * @dbIsolation
- */
 abstract class AbstractAjaxProductPriceControllerTest extends WebTestCase
 {
     /**
