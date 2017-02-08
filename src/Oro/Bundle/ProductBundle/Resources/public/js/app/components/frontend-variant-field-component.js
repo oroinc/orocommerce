@@ -2,6 +2,7 @@ define(function(require) {
     'use strict';
 
     var FrontendVariantFieldComponent;
+    var _ = require('underscore');
     var BaseComponent = require('oroui/js/app/components/base/component');
 
     FrontendVariantFieldComponent = BaseComponent.extend({

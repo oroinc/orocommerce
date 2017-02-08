@@ -132,7 +132,6 @@ class FrontendVariantFiledType extends AbstractType
             'data_class' => $this->productClass,
             'attr' => [
                 'data-page-component-module' => 'oroproduct/js/app/components/frontend-variant-field-component'
-
             ],
         ]);
 
