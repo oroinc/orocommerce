@@ -17,7 +17,7 @@ system_configuration:
             priority: 90
             options:
                 label: oro.payment.system_configuration.fields.label.label
-                tooltip: tooltip: oro.payment.system_configuration.fields.label.tooltip
+                tooltip: oro.payment.system_configuration.fields.label.tooltip
 
         oro_infinite_pay.infinite_pay_label_short:
             data_type: string

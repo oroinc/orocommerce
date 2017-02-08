@@ -3,6 +3,7 @@ oro:
         infinite_pay.label: 'Infinite Pay'
     customer:
         vat_id.label: 'VAT Id'
+    infinite_pay:
         system_configuration:
             groups:
                 infinite_pay.title: 'Infinite Pay'
