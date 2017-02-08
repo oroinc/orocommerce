@@ -56,9 +56,7 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
             ->method('getRouteData')
             ->willReturn($routData);
 
-        $contentVariant = new ContentVariant();
-        $contentVariant->setType('test_type');
-        $contentVariant->addScope($scope);
+        $contentVariant = $this->createContentVariant($scope, 'test_type');
 
         $contentNode = new ContentNode();
         $contentNode->addContentVariant($contentVariant);
@@ -151,9 +149,7 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
         $existingSlug = new Slug();
         $existingSlug->setUrl(SlugGenerator::ROOT_URL);
 
-        $contentVariant = new ContentVariant();
-        $contentVariant->setType('test_type1');
-        $contentVariant->addScope($scope);
+        $contentVariant = $this->createContentVariant($scope, 'test_type');
         $contentVariant->addSlug($existingSlug);
 
         $contentNode = new ContentNode();
@@ -205,9 +201,7 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
         $existingSlug = new Slug();
         $existingSlug->setUrl(SlugGenerator::ROOT_URL);
 
-        $contentVariant = new ContentVariant();
-        $contentVariant->setType('test_type1');
-        $contentVariant->addScope($scope);
+        $contentVariant = $this->createContentVariant($scope, 'test_type');
         $contentVariant->addSlug($existingSlug);
 
         $contentNode = new ContentNode();
@@ -352,9 +346,7 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
             ->method('getRouteData')
             ->willReturn($routData);
 
-        $contentVariant = new ContentVariant();
-        $contentVariant->setType('test_type');
-        $contentVariant->addScope($scope);
+        $contentVariant = $this->createContentVariant($scope, 'test_type');
 
         $contentNode = new ContentNode();
         $contentNode->setParentNode($parentContentNode);
@@ -368,5 +360,19 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->slugGenerator->generate($contentNode);
 
         return $contentNode;
+    }
+
+    /**
+     * @param Scope $scope
+     * @param $type
+     * @return ContentVariant
+     */
+    protected function createContentVariant(Scope $scope, $type)
+    {
+        $contentVariant = new ContentVariant();
+        $contentVariant->setType($type);
+        $contentVariant->addScope($scope);
+
+        return $contentVariant;
     }
 }
