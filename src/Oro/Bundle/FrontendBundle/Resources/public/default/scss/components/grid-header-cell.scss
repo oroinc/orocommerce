@@ -31,7 +31,7 @@
     &.action-column {
         text-align: right !important;
 
-        &:not(:empty)&:before {
+        &:before {
             height: 10px;
             
             display: inline-block;
