@@ -58,7 +58,7 @@ class CheckoutController extends Controller
         if ($request->isMethod(Request::METHOD_POST) &&
             $this->isCheckoutRestartRequired($workflowItem)
         ) {
-            $this->restartCheckout($workflowItem);
+            $this->restartCheckout($workflowItem, $checkout);
             $workflowItem = $this->getWorkflowItem($checkout);
         } else {
             $this->handleTransition($workflowItem, $request);
@@ -304,10 +304,9 @@ class CheckoutController extends Controller
 
     /**
      * @param WorkflowItem $workflowItem
-     * @throws ForbiddenActionGroupException
-     * @throws \Exception
+     * @param CheckoutInterface $checkout
      */
-    protected function restartCheckout(WorkflowItem $workflowItem)
+    protected function restartCheckout(WorkflowItem $workflowItem, CheckoutInterface $checkout)
     {
         $workflowName = $workflowItem->getWorkflowName();
 
