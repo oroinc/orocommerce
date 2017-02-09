@@ -13,7 +13,10 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
+use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
+use Oro\Bundle\FrontendBundle\Form\DataTransformer\PageTemplateEntityFieldFallbackValueTransformer;
+use Oro\Bundle\FrontendBundle\Form\Type\PageTemplateType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -22,6 +25,7 @@ use Oro\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
 class ProductType extends AbstractType
 {
     const NAME = 'oro_product';
+    const PAGE_TEMPLATE_ROUTE_NAME = 'oro_product_frontend_product_view';
 
     /**
      * @var string
@@ -148,6 +152,16 @@ class ProductType extends AbstractType
                 ProductImageCollectionType::NAME,
                 ['required' => false]
             )
+            ->add(
+                'pageTemplate',
+                EntityFieldFallbackValueType::class,
+                [
+                    'value_type' => PageTemplateType::class,
+                    'value_options' => [
+                        'route_name' => self::PAGE_TEMPLATE_ROUTE_NAME
+                    ]
+                ]
+            )
             ->add('type', HiddenType::class)
             ->add(
                 'slugPrototypes',
@@ -162,6 +176,9 @@ class ProductType extends AbstractType
             ->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener'])
             ->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetDataListener'])
             ->addEventListener(FormEvents::SUBMIT, [$this, 'submitListener']);
+
+        $builder->get('pageTemplate')
+            ->addViewTransformer(new PageTemplateEntityFieldFallbackValueTransformer(self::PAGE_TEMPLATE_ROUTE_NAME));
     }
 
     /**

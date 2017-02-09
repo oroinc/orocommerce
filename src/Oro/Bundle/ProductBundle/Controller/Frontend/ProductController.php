@@ -40,7 +40,7 @@ class ProductController extends Controller
      * View list of products
      *
      * @Route("/view/{id}", name="oro_product_frontend_product_view", requirements={"id"="\d+"})
-     * @Layout(vars={"product_type", "attribute_family"})
+     * @Layout(vars={"product_type", "attribute_family", "page_template"})
      * @Acl(
      *      id="oro_product_frontend_view",
      *      type="entity",
@@ -68,11 +68,19 @@ class ProductController extends Controller
             }
         }
 
-        return [
+        $response = [
             'data' => $data,
             'product_type' => $product->getType(),
             'attribute_family' => $product->getAttributeFamily(),
         ];
+
+        $entityFallbackResolver = $this->get('oro_entity.fallback.resolver.entity_fallback_resolver');
+        $pageTemplate = $entityFallbackResolver->getFallbackValue($product, 'pageTemplate');
+        if ($pageTemplate) {
+            $response['page_template'] = $pageTemplate['oro_product_frontend_product_view'];
+        }
+
+        return $response;
     }
 
     /**

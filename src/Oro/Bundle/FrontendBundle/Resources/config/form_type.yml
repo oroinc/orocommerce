@@ -22,3 +22,10 @@ services:
             - '@oro_layout.page_templates_manager'
         tags:
             - { name: form.type, alias: 'oro_frontend_page_template_collection' }
+
+    oro_frontend.form.type.page_template:
+        class: 'Oro\Bundle\FrontendBundle\Form\Type\PageTemplateType'
+        arguments:
+            - '@oro_layout.page_templates_manager'
+        tags:
+            - { name: form.type, alias: 'oro_frontend_page_template' }
