@@ -36,7 +36,6 @@ class SlugRepositoryTest extends WebTestCase
 
     public function testDeleteSlugAttachedToEntityByClass()
     {
-        $this->markTestSkipped('Will be fixed in BB-7564');
         /** @var Page $page */
         $page = $this->getReference(LoadPageData::PAGE_1);
         $this->assertNotEmpty($page->getSlugs());
