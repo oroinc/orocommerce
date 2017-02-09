@@ -3,13 +3,17 @@
 namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WebCatalogBundle\Async\Topics;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadContentNodesData;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadContentVariantsData;
 
 class ContentNodeControllerTest extends WebTestCase
 {
+    use MessageQueueAssertTrait;
+
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
@@ -50,5 +54,32 @@ class ContentNodeControllerTest extends WebTestCase
         ];
         $actual = json_decode($result->getContent(), true);
         $this->assertEquals($expected, $actual);
+    }
+
+    public function testRedirectCreationDuringMove()
+    {
+        /** @var ContentNode $contentNode */
+        $contentNode = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_1);
+        /** @var ContentNode $newParentContentNode */
+        $newParentContentNode = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_2);
+
+        $this->client->request(
+            'PUT',
+            $this->getUrl(
+                'oro_content_node_move',
+                [
+                    'id' => $contentNode->getId(),
+                    'newParentId' => $newParentContentNode->getId(),
+                    'position' => 0,
+                    'createRedirect' => 1
+                ]
+            )
+        );
+
+        $messages = self::getSentMessages();
+
+        $this->assertEquals(Topics::RESOLVE_NODE_SLUGS, $messages[0]['topic']);
+        $this->assertEquals($contentNode->getId(), $messages[0]['message']['id']);
+        $this->assertEquals(true, $messages[0]['message']['createRedirect']);
     }
 }
