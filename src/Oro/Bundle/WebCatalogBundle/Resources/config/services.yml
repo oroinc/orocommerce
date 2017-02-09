@@ -47,6 +47,7 @@ services:
             - '@doctrine'
             - '@oro_locale.helper.localization'
             - '@oro_message_queue.client.message_producer'
+            - '@oro_web_catalog.model.resolve_node_slugs_message_factory'
 
     oro_web_catalog.twig.extension:
         class: Oro\Bundle\WebCatalogBundle\Twig\WebCatalogExtension
@@ -180,6 +181,13 @@ services:
         class: Oro\Bundle\WebCatalogBundle\Form\Extension\WebCatalogScopeExtension
         tags:
             - { name: form.type_extension, extended_type: Oro\Bundle\ScopeBundle\Form\Type\ScopeType }
+
+    oro_web_catalog.form.extension.page_variant_type:
+        class: Oro\Bundle\WebCatalogBundle\Form\Extension\PageVariantTypeExtension
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: form.type_extension, extended_type: Oro\Component\WebCatalog\Form\PageVariantType }
 
     oro_web_catalog.event_listener.website_search_index:
         class: 'Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogEntityIndexerListener'

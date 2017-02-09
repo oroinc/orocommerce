@@ -38,7 +38,7 @@ define(function(require) {
                     id: data.node.id,
                     parent: data.parent,
                     position: data.position,
-                    createRedirect: this.confirmState
+                    createRedirect: +this.confirmState
                 },
                 success: _.bind(function(result) {
                     if (!result.status) {

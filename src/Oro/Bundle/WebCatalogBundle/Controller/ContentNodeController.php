@@ -83,10 +83,12 @@ class ContentNodeController extends Controller
         $nodeId = (int)$request->get('id');
         $parentId = (int)$request->get('parent');
         $position = (int)$request->get('position');
+        $createRedirect = (bool)$request->get('createRedirect', false);
+        
+        $handler = $this->getTreeHandler();
+        $handler->setCreateRedirect($createRedirect);
 
-        return new JsonResponse(
-            $this->getTreeHandler()->moveNode($nodeId, $parentId, $position)
-        );
+        return new JsonResponse($handler->moveNode($nodeId, $parentId, $position));
     }
 
     /**

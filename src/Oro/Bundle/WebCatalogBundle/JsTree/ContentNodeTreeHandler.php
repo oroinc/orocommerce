@@ -8,6 +8,7 @@ use Oro\Bundle\WebCatalogBundle\Async\Topics;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
+use Oro\Bundle\WebCatalogBundle\Model\ResolveNodeSlugsMessageFactory;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\Tree\Handler\AbstractTreeHandler;
 
@@ -27,21 +28,34 @@ class ContentNodeTreeHandler extends AbstractTreeHandler
     protected $messageProducer;
 
     /**
+     * @var ResolveNodeSlugsMessageFactory
+     */
+    private $messageFactory;
+
+    /**
+     * @var bool
+     */
+    private $createRedirect = false;
+
+    /**
      * @param string $entityClass
      * @param ManagerRegistry $managerRegistry
      * @param LocalizationHelper $localizationHelper
      * @param MessageProducerInterface $messageProducer
+     * @param ResolveNodeSlugsMessageFactory $messageFactory
      */
     public function __construct(
         $entityClass,
         ManagerRegistry $managerRegistry,
         LocalizationHelper $localizationHelper,
-        MessageProducerInterface $messageProducer
+        MessageProducerInterface $messageProducer,
+        ResolveNodeSlugsMessageFactory $messageFactory
     ) {
         parent::__construct($entityClass, $managerRegistry);
 
         $this->localizationHelper = $localizationHelper;
         $this->messageProducer = $messageProducer;
+        $this->messageFactory = $messageFactory;
     }
 
     /**
@@ -93,7 +107,8 @@ class ContentNodeTreeHandler extends AbstractTreeHandler
         }
 
         // Schedule slugs reorganization after node move
-        $this->messageProducer->send(Topics::RESOLVE_NODE_SLUGS, $node->getId());
+        $node->getSlugPrototypesWithRedirect()->setCreateRedirect($this->createRedirect);
+        $this->messageProducer->send(Topics::RESOLVE_NODE_SLUGS, $this->messageFactory->createMessage($node));
     }
 
     /**
@@ -115,5 +130,13 @@ class ContentNodeTreeHandler extends AbstractTreeHandler
     public function getTreeRootByWebCatalog(WebCatalog $webCatalog)
     {
         return $this->getEntityRepository()->getRootNodeByWebCatalog($webCatalog);
+    }
+
+    /**
+     * @param bool $createRedirect
+     */
+    public function setCreateRedirect($createRedirect)
+    {
+        $this->createRedirect = $createRedirect;
     }
 }

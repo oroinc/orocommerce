@@ -1,30 +1,27 @@
 <?php
 
-namespace Oro\Component\WebCatalog\Form;
+namespace Oro\Bundle\WebCatalogBundle\Form\Extension;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
-use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
-use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
-use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
-use Symfony\Component\Form\Extension\Core\Type\RadioType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\AbstractTypeExtension;
+use Symfony\Component\Form\Extension\Core\Type\RadioType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 
-abstract class AbstractPageVariantType extends AbstractType
+use Oro\Component\WebCatalog\Form\PageVariantType;
+use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
+use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
+use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
+
+class PageVariantTypeExtension extends AbstractTypeExtension
 {
     /**
      * @var ManagerRegistry
      */
     protected $registry;
-
-    /**
-     * @return string
-     */
-    abstract protected function getPageContentVariantTypeName();
 
     /**
      * @param ManagerRegistry $registry
@@ -37,8 +34,18 @@ abstract class AbstractPageVariantType extends AbstractType
     /**
      * {@inheritdoc}
      */
+    public function getExtendedType()
+    {
+        return PageVariantType::class;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $pageContentVariantTypeName = $options['content_variant_type'];
+
         $builder
             ->add(
                 'scopes',
@@ -56,7 +63,7 @@ abstract class AbstractPageVariantType extends AbstractType
                 'type',
                 HiddenType::class,
                 [
-                    'data' => $this->getPageContentVariantTypeName()
+                    'data' => $pageContentVariantTypeName
                 ]
             )
             ->add(
@@ -69,10 +76,10 @@ abstract class AbstractPageVariantType extends AbstractType
 
         $builder->addEventListener(
             FormEvents::POST_SUBMIT,
-            function (FormEvent $event) {
+            function (FormEvent $event) use ($pageContentVariantTypeName) {
                 $data = $event->getData();
                 if ($data instanceof ContentVariantInterface) {
-                    $data->setType($this->getPageContentVariantTypeName());
+                    $data->setType($pageContentVariantTypeName);
                 }
             }
         );
@@ -85,7 +92,7 @@ abstract class AbstractPageVariantType extends AbstractType
     {
         $em = $this->registry->getManager();
 
-        $resolver->setRequired('web_catalog');
+        $resolver->setRequired(['web_catalog', 'content_variant_type']);
         $resolver->setAllowedTypes(
             'web_catalog',
             [
