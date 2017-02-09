@@ -42,6 +42,7 @@ services:
         arguments:
             - '@oro_message_queue.client.message_producer'
             - '@oro_redirect.form.storage.redirect_storage'
+            - '@oro_redirect.direct_url_message_factory'
             - 'oro_cms.landing_page_direct_url_prefix'
             - '%oro_cms.entity.page.class%'
         tags:

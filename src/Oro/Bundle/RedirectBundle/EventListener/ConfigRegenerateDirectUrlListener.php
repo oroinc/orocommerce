@@ -5,8 +5,8 @@ namespace Oro\Bundle\RedirectBundle\EventListener;
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\RedirectBundle\Async\Topics;
 use Oro\Bundle\RedirectBundle\Form\Storage\RedirectStorage;
+use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
-use Oro\Component\MessageQueue\Util\JSON;
 
 /**
  * Run Direct URLs regeneration for given entityClass when configParameter is changed.
@@ -29,6 +29,11 @@ class ConfigRegenerateDirectUrlListener
     private $redirectStorage;
 
     /**
+     * @var MessageFactoryInterface
+     */
+    private $messageFactory;
+
+    /**
      * @var string
      */
     private $entityClass;
@@ -36,17 +41,20 @@ class ConfigRegenerateDirectUrlListener
     /**
      * @param MessageProducerInterface $messageProducer
      * @param RedirectStorage $redirectStorage
+     * @param MessageFactoryInterface $messageFactory
      * @param string $configParameter
      * @param string $entityClass
      */
     public function __construct(
         MessageProducerInterface $messageProducer,
         RedirectStorage $redirectStorage,
+        MessageFactoryInterface $messageFactory,
         $configParameter,
         $entityClass
     ) {
         $this->messageProducer = $messageProducer;
         $this->redirectStorage = $redirectStorage;
+        $this->messageFactory = $messageFactory;
         $this->configParameter = $configParameter;
         $this->entityClass = $entityClass;
     }
@@ -58,13 +66,9 @@ class ConfigRegenerateDirectUrlListener
     {
         if ($event->isChanged($this->configParameter)) {
             $createRedirect = $this->redirectStorage->getPrefixByKey($this->configParameter)->getCreateRedirect();
-            $this->messageProducer->send(
-                Topics::REGENERATE_DIRECT_URL_FOR_ENTITY_TYPE,
-                JSON::encode([
-                    'class' => $this->entityClass,
-                    'createRedirect' => $createRedirect
-                ])
-            );
+
+            $message = $this->messageFactory->createMassMessage($this->entityClass, [], $createRedirect);
+            $this->messageProducer->send(Topics::REGENERATE_DIRECT_URL_FOR_ENTITY_TYPE, $message);
         }
     }
 }

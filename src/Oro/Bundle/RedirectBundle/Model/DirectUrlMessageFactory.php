@@ -57,11 +57,12 @@ class DirectUrlMessageFactory implements MessageFactoryInterface
     /**
      * {@inheritdoc}
      */
-    public function createMassMessage($entityClass, $id)
+    public function createMassMessage($entityClass, $id, $createRedirect)
     {
         return [
             self::ID => $id,
-            self::ENTITY_CLASS_NAME => $entityClass
+            self::ENTITY_CLASS_NAME => $entityClass,
+            self::CREATE_REDIRECT => $createRedirect
         ];
     }
 

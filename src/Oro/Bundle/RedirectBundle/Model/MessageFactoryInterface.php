@@ -14,9 +14,10 @@ interface MessageFactoryInterface
     /**
      * @param string $entityClass
      * @param array|int $id
+     * @param bool $createRedirect
      * @return array
      */
-    public function createMassMessage($entityClass, $id);
+    public function createMassMessage($entityClass, $id, $createRedirect);
 
     /**
      * @param array $data

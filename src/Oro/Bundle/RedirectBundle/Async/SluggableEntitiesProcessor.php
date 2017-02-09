@@ -73,8 +73,8 @@ class SluggableEntitiesProcessor implements MessageProcessorInterface, TopicSubs
     {
         $messageData = JSON::decode($message->getBody());
 
-        $entityClass = $messageData['entityClass'];
-        $createRedirect = $messageData['createRedirect'];
+        $entityClass = $this->messageFactory->getEntityClassFromMessage($messageData);
+        $createRedirect = $this->messageFactory->getCreateRedirectFromMessage($messageData);
 
         $result = $this->jobRunner->runUnique(
             $message->getMessageId(),
@@ -106,6 +106,7 @@ class SluggableEntitiesProcessor implements MessageProcessorInterface, TopicSubs
                             Job $child
                         ) use (
                             $entityClass,
+                            $createRedirect,
                             $i,
                             $repository,
                             $identifierFieldName

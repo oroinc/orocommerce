@@ -81,7 +81,7 @@ class SluggableEntityPrefixType extends AbstractType
                 self::CREATE_REDIRECT_FIELD_NAME,
                 CheckboxType::class,
                 [
-                    'label' => 'oro.redirect.confirm_slug_change.checkbox_label',
+                    'label' => 'oro.redirect.prefix_change.checkbox_label',
                 ]
             );
 
@@ -102,5 +102,13 @@ class SluggableEntityPrefixType extends AbstractType
         );
 
         $this->storage->addPrefix($key, $data);
+    }
+
+    /**
+     * @return bool
+     */
+    protected function checkIsAskStrategy()
+    {
+        //$this->configManager->get('oro_redirect.redirect_generation_strategy') !== Configuration::STRATEGY_ASK;
     }
 }

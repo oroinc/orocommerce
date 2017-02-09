@@ -205,6 +205,7 @@ services:
         arguments:
             - '@oro_message_queue.client.message_producer'
             - '@oro_redirect.form.storage.redirect_storage'
+            - '@oro_redirect.direct_url_message_factory'
             - 'oro_catalog.category_direct_url_prefix'
             - '%oro_catalog.entity.category.class%'
         tags:
