@@ -95,41 +95,31 @@ class CategoryController extends Controller
         $root = $this->getMasterRootCategory();
         $choices = $handler->getTreeItemList($root, true);
 
-        $selected = $request->get('selected', []);
-
         $collection = new TreeCollection();
-        $collection->source = array_intersect_key($choices, array_flip($selected));
+        $collection->source = array_intersect_key($choices, array_flip($request->get('selected', [])));
 
         $form = $this->createForm(TreeMoveType::class, $collection, [
-            'source_config' => [
-                'choices' => $choices,
-            ],
-            'target_config' => [
-                'choices' => $choices,
-            ],
+            'source_config' => ['choices' => $choices],
+            'target_config' => ['choices' => $choices],
         ]);
 
-        $responseData = [];
+        $response = [];
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $changed = [];
             foreach ($collection->source as $source) {
                 $handler->moveNode($source->getKey(), $collection->target->getKey(), 0);
-                $changed[] = [
+                $response['changed'][] = [
                     'id' => $source->getKey(),
                     'parent' => $collection->target->getKey(),
                     'position' => 0
                 ];
             }
 
-            $responseData['saved'] = true;
-            $responseData['changed'] = $changed;
+            $response['saved'] = true;
         }
 
-        $responseData['form'] = $form->createView();
-
-        return $responseData;
+        return array_merge($response, ['form' => $form->createView()]);
     }
 
     /**
