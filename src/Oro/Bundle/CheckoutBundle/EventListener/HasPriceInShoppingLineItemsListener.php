@@ -11,6 +11,7 @@ use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Component\Action\Event\ExtendableConditionEvent;
 
 /**
@@ -76,7 +77,13 @@ class HasPriceInShoppingLineItemsListener
 
     private function isApplicable($context)
     {
-        return ($context instanceof ActionData && $context->get('checkout') instanceof Checkout);
+        if (!$context instanceof ActionData) {
+            return false;
+        }
+
+        $checkout = $context->get('checkout');
+
+        return ($checkout instanceof Checkout && $checkout->getSourceEntity() instanceof ShoppingList);
     }
 
     /**
