@@ -178,13 +178,11 @@ class SlugGenerator
         $slugPrototypes = $contentNode->getSlugPrototypes();
         $changedSlugPrototypes = [];
         foreach ($slugPrototypes as $slugPrototype) {
-            if (!$slugPrototype->getFallback()) {
+            $value = $slugPrototype->getString();
+            if ($value !== '' && $value !== null && !$slugPrototype->getFallback()) {
                 $localeId = $this->getLocaleId($slugPrototype->getLocalization());
 
-                $changedSlugPrototypes[$localeId] = new SlugUrl(
-                    $slugPrototype->getString(),
-                    $slugPrototype->getLocalization()
-                );
+                $changedSlugPrototypes[$localeId] = new SlugUrl($value, $slugPrototype->getLocalization());
             }
         }
 
