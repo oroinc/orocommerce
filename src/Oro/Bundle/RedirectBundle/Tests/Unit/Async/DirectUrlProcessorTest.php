@@ -264,7 +264,10 @@ class DirectUrlProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(DirectUrlProcessor::ACK, $this->processor->process($message, $session));
     }
-    
+
+    /**
+     * @return array
+     */
     public function processProvider()
     {
         return [

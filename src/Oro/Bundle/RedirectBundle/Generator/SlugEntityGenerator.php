@@ -27,20 +27,23 @@ class SlugEntityGenerator
     /**
      * @param RoutingInformationProviderInterface $routingInformationProvider
      * @param UniqueSlugResolver $slugResolver
+     * @param RedirectGenerator $redirectGenerator
      */
     public function __construct(
         RoutingInformationProviderInterface $routingInformationProvider,
-        UniqueSlugResolver $slugResolver
+        UniqueSlugResolver $slugResolver,
+        RedirectGenerator $redirectGenerator
     ) {
         $this->routingInformationProvider = $routingInformationProvider;
         $this->slugResolver = $slugResolver;
+        $this->redirectGenerator = $redirectGenerator;
     }
 
     /**
      * @param SluggableInterface $entity
-     * @param bool $createRedirect
+     * @param bool $generateRedirects
      */
-    public function generate(SluggableInterface $entity, $createRedirect = true)
+    public function generate(SluggableInterface $entity, $generateRedirects = false)
     {
         $slugUrls = $this->getResolvedSlugUrls($entity);
 
@@ -50,14 +53,20 @@ class SlugEntityGenerator
             $localizationId = $this->getLocalizationId($slug->getLocalization());
 
             if ($slugUrls->containsKey($localizationId)) {
-                /** @var SlugUrl $slugUrl */
                 $slugUrl = $slugUrls->get($localizationId);
-                $resolvedUrl = $slugUrl->getUrl();
-                $slug->setUrl($resolvedUrl);
+
+                $previousSlugUrl = $slug->getUrl();
+                $updatedUrl = $slugUrl->getUrl();
+                $slug->setUrl($updatedUrl);
+
+                if ($generateRedirects) {
+                    $this->redirectGenerator->generate($previousSlugUrl, $slug);
+                }
             } else {
                 $toRemove[] = $slug;
             }
         }
+
         foreach ($toRemove as $slugToRemove) {
             $entity->removeSlug($slugToRemove);
         }
