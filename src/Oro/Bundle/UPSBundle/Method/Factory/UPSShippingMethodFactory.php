@@ -46,12 +46,12 @@ class UPSShippingMethodFactory implements IntegrationShippingMethodFactoryInterf
     private $methodTypeFactory;
 
     /**
-     * @param UPSTransport $transport
-     * @param PriceRequestFactory $priceRequestFactory
-     * @param LocalizationHelper $localizationHelper
-     * @param ShippingPriceCache $shippingPriceCache
+     * @param UPSTransport                                  $transport
+     * @param PriceRequestFactory                           $priceRequestFactory
+     * @param LocalizationHelper                            $localizationHelper
+     * @param ShippingPriceCache                            $shippingPriceCache
      * @param IntegrationMethodIdentifierGeneratorInterface $methodIdentifierGenerator
-     * @param UPSShippingMethodTypeFactoryInterface $methodTypeFactory
+     * @param UPSShippingMethodTypeFactoryInterface         $methodTypeFactory
      */
     public function __construct(
         UPSTransport $transport,
@@ -70,7 +70,7 @@ class UPSShippingMethodFactory implements IntegrationShippingMethodFactoryInterf
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function create(Channel $channel)
     {
@@ -81,7 +81,8 @@ class UPSShippingMethodFactory implements IntegrationShippingMethodFactoryInterf
             $this->getSettings($channel),
             $this->transport,
             $this->priceRequestFactory,
-            $this->shippingPriceCache
+            $this->shippingPriceCache,
+            $channel->isEnabled()
         );
     }
 
@@ -101,6 +102,7 @@ class UPSShippingMethodFactory implements IntegrationShippingMethodFactoryInterf
     private function getLabel(Channel $channel)
     {
         $settings = $this->getSettings($channel);
+
         return (string)$this->localizationHelper->getLocalizedValue($settings->getLabels());
     }
 

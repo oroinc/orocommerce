@@ -7,28 +7,41 @@ use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 
 class FlatRateMethod implements ShippingMethodInterface
 {
-    /** @var FlatRateMethodType */
+    /**
+     * @var FlatRateMethodType
+     */
     protected $type;
 
-    /** @var string */
+    /**
+     * @var string
+     */
     protected $label;
 
-    /** @var int */
+    /**
+     * @var int
+     */
     protected $identifier;
+
+    /**
+     * @var bool
+     */
+    private $enabled;
 
     /**
      * @param int|string $identifier
      * @param string     $label
+     * @param bool       $enabled
      */
-    public function __construct($identifier, $label)
+    public function __construct($identifier, $label, $enabled)
     {
         $this->identifier = $identifier;
         $this->label = $label;
         $this->type = new FlatRateMethodType($label);
+        $this->enabled = $enabled;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getIdentifier()
     {
@@ -36,7 +49,7 @@ class FlatRateMethod implements ShippingMethodInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function isGrouped()
     {
@@ -44,7 +57,15 @@ class FlatRateMethod implements ShippingMethodInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
+     */
+    public function isEnabled()
+    {
+        return $this->enabled;
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function getLabel()
     {
@@ -52,7 +73,7 @@ class FlatRateMethod implements ShippingMethodInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getTypes()
     {
@@ -60,18 +81,19 @@ class FlatRateMethod implements ShippingMethodInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getType($type)
     {
         if ($this->type->getIdentifier() === $type) {
             return $this->type;
         }
+
         return null;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getOptionsConfigurationFormType()
     {
@@ -79,7 +101,7 @@ class FlatRateMethod implements ShippingMethodInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getOptions()
     {
@@ -87,7 +109,7 @@ class FlatRateMethod implements ShippingMethodInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getSortOrder()
     {

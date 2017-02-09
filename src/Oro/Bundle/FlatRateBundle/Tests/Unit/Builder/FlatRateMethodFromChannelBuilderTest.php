@@ -11,13 +11,19 @@ use Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGener
 
 class FlatRateMethodFromChannelBuilderTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var IntegrationMethodIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /**
+     * @var IntegrationMethodIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
     private $identifierGenerator;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|LocalizationHelper */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|LocalizationHelper
+     */
     private $localizationHelper;
 
-    /** @var FlatRateMethodFromChannelBuilder */
+    /**
+     * @var FlatRateMethodFromChannelBuilder
+     */
     private $builder;
 
     protected function setUp()
@@ -51,6 +57,7 @@ class FlatRateMethodFromChannelBuilderTest extends \PHPUnit_Framework_TestCase
         static::assertInstanceOf(FlatRateMethod::class, $method);
         static::assertSame($identifier, $method->getIdentifier());
         static::assertSame($label, $method->getLabel());
+        static::assertTrue($method->isEnabled());
     }
 
     /**
@@ -62,6 +69,7 @@ class FlatRateMethodFromChannelBuilderTest extends \PHPUnit_Framework_TestCase
 
         $channel = new Channel();
         $channel->setTransport($settings);
+        $channel->setEnabled(true);
 
         return $channel;
     }
