@@ -305,6 +305,8 @@ class CheckoutController extends Controller
     /**
      * @param WorkflowItem $workflowItem
      * @param CheckoutInterface $checkout
+     * @throws ForbiddenActionGroupException
+     * @throws \Exception
      */
     protected function restartCheckout(WorkflowItem $workflowItem, CheckoutInterface $checkout)
     {
