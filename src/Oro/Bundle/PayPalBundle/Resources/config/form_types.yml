@@ -29,5 +29,7 @@ services:
         arguments:
             - '@translator.default'
             - '@oro_security.encoder.mcrypt'
+            - '@oro_paypal.settings.card_type.provider'
+            - '@oro_paypal.settings.payment_action.provider'
         tags:
             - { name: form.type }

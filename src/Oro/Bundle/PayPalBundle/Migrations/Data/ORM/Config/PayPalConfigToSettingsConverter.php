@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PaymentBundle\Migrations\Data\ORM\Config;
+namespace Oro\Bundle\PayPalBundle\Migrations\Data\ORM\Config;
 
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 
@@ -34,9 +34,7 @@ class PayPalConfigToSettingsConverter
         $settings->addCreditCardShortLabel($config->getCreditCardShortLabel());
 
         if ($config->getAllowedCreditCardTypes()) {
-            foreach ($config->getAllowedCreditCardTypes() as $allowedCreditCardType) {
-                $settings->addAllowedCreditCardType($allowedCreditCardType);
-            }
+            $settings->setAllowedCreditCardTypes($config->getAllowedCreditCardTypes());
         }
     }
 

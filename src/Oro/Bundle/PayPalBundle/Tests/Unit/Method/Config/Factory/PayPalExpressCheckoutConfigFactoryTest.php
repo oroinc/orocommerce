@@ -7,8 +7,6 @@ use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
-use Oro\Bundle\PayPalBundle\Entity\CreditCardType;
-use Oro\Bundle\PayPalBundle\Entity\ExpressCheckoutPaymentAction;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Method\Config\Factory\PayPalExpressCheckoutConfigFactory;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfig;
@@ -90,8 +88,8 @@ class PayPalExpressCheckoutConfigFactoryTest extends \PHPUnit_Framework_TestCase
             'debugMode' => true,
             'authorizationForRequiredAmount' => true,
             'zeroAmountAuthorization' => true,
-            'allowedCreditCardTypes' => [$this->createMock(CreditCardType::class)],
-            'expressCheckoutPaymentAction' => $this->createMock(ExpressCheckoutPaymentAction::class),
+            'allowedCreditCardTypes' => ['visa'],
+            'expressCheckoutPaymentAction' => 'charge',
             'vendor' => 'string',
             'user' => 'string',
             'password' => 'string',
@@ -128,7 +126,7 @@ class PayPalExpressCheckoutConfigFactoryTest extends \PHPUnit_Framework_TestCase
             'admin_label' => 'Express Checkout Name',
             'payment_method_identifier' => 'paypal_payflow_gateway_express_checkout_1',
             'test_mode' => true,
-            'purchase_action' => $this->createMock(ExpressCheckoutPaymentAction::class),
+            'purchase_action' => 'charge',
             'credentials' => [
                 Option\Vendor::VENDOR => 'string',
                 Option\User::USER => 'string',

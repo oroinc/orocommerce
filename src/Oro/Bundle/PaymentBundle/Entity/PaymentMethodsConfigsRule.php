@@ -8,6 +8,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\PaymentBundle\Model\ExtendPaymentMethodsConfigsRule;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
@@ -36,7 +38,9 @@ use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
  *      }
  * )
  */
-class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implements RuleOwnerInterface
+class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implements
+    RuleOwnerInterface,
+    OrganizationAwareInterface
 {
     /**
      * @var integer
@@ -117,6 +121,7 @@ class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implemen
 
     /**
      * @var Organization
+     *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
      * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
      */
@@ -263,7 +268,7 @@ class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implemen
     }
 
     /**
-     * @return Organization
+     * @return OrganizationInterface
      */
     public function getOrganization()
     {
@@ -271,11 +276,11 @@ class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implemen
     }
 
     /**
-     * @param Organization $organization
+     * @param OrganizationInterface $organization
      *
      * @return $this
      */
-    public function setOrganization($organization)
+    public function setOrganization(OrganizationInterface $organization)
     {
         $this->organization = $organization;
 

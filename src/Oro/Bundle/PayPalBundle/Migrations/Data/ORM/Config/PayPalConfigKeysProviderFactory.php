@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PaymentBundle\Migrations\Data\ORM\Config;
+namespace Oro\Bundle\PayPalBundle\Migrations\Data\ORM\Config;
 
 class PayPalConfigKeysProviderFactory
 {

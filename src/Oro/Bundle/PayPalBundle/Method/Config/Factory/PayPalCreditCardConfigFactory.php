@@ -25,8 +25,7 @@ class PayPalCreditCardConfigFactory extends AbstractPayPalConfigFactory implemen
         $params[PayPalCreditCardConfig::LABEL_KEY] = $this->getLocalizedValue($settings->getCreditCardLabels());
         $params[PayPalCreditCardConfig::SHORT_LABEL_KEY] =
             $this->getLocalizedValue($settings->getCreditCardShortLabels());
-        $params[PayPalCreditCardConfig::ALLOWED_CREDIT_CARD_TYPES_KEY] =
-            $settings->getAllowedCreditCardTypes()->toArray();
+        $params[PayPalCreditCardConfig::ALLOWED_CREDIT_CARD_TYPES_KEY] = $settings->getAllowedCreditCardTypes();
 
         $params[PayPalCreditCardConfig::CREDENTIALS_KEY] = $this->getCredentials($settings);
         $params[PayPalCreditCardConfig::TEST_MODE_KEY] = $settings->getTestMode();

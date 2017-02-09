@@ -3,13 +3,11 @@
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
-use Oro\Bundle\PayPalBundle\Entity\CreditCardPaymentAction;
-use Oro\Bundle\PayPalBundle\Entity\CreditCardType;
-use Oro\Bundle\PayPalBundle\Entity\ExpressCheckoutPaymentAction;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Form\Type\PayPalSettingsType;
+use Oro\Bundle\PayPalBundle\Settings\DataProvider\CardTypesDataProviderInterface;
+use Oro\Bundle\PayPalBundle\Settings\DataProvider\PaymentActionsDataProviderInterface;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
-use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
@@ -17,15 +15,23 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
 use Symfony\Component\Validator\Validation;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class PayPalSettingsTypeTest extends FormIntegrationTestCase
 {
-    /** @var PayPalSettingsType */
+    const CARD_TYPES = [
+        'visa',
+        'mastercard',
+    ];
+
+    const PAYMENT_ACTION = 'authorize';
+
+    /**
+     * @var PayPalSettingsType
+     */
     private $formType;
 
-    /** @var SymmetricCrypterInterface|\PHPUnit_Framework_MockObject_MockObject $translator */
+    /**
+     * @var SymmetricCrypterInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
     private $encoder;
 
     public function setUp()
@@ -34,9 +40,27 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
 
         /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject $translator */
         $translator = $this->createMock(TranslatorInterface::class);
+        /** @var CardTypesDataProviderInterface|\PHPUnit_Framework_MockObject_MockObject $cardTypesDataProvider */
+        $cardTypesDataProvider = $this->createMock(CardTypesDataProviderInterface::class);
+        $cardTypesDataProvider->expects($this->any())
+            ->method('getCardTypes')
+            ->willReturn(self::CARD_TYPES);
+
+        $paymentActionsDataProvider = $this->createMock(PaymentActionsDataProviderInterface::class);
+        $paymentActionsDataProvider->expects($this->any())
+            ->method('getPaymentActions')
+            ->willReturn([
+                self::PAYMENT_ACTION,
+                'charge',
+            ]);
 
         $this->encoder = $this->createMock(SymmetricCrypterInterface::class);
-        $this->formType = new PayPalSettingsType($translator, $this->encoder);
+        $this->formType = new PayPalSettingsType(
+            $translator,
+            $this->encoder,
+            $cardTypesDataProvider,
+            $paymentActionsDataProvider
+        );
     }
 
     /**
@@ -44,19 +68,12 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
-        $entityType = new EntityType([
-            'creditCardPaymentAction' => new CreditCardPaymentAction(),
-            'expressCheckoutPaymentAction' => new ExpressCheckoutPaymentAction(),
-            'mastercard' => new CreditCardType(),
-            'visa' => new CreditCardType(),
-        ]);
         $localizedType = new LocalizedFallbackValueCollectionTypeStub();
 
         return [
             new PreloadedExtension(
                 [
                     $localizedType->getName() => $localizedType,
-                    $entityType->getName() => $entityType,
                 ],
                 []
             ),
@@ -77,9 +94,9 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
             'expressCheckoutLabels' => [['string' => 'expressCheckout']],
             'expressCheckoutShortLabels' => [['string' => 'expressCheckoutShort']],
             'expressCheckoutName' => 'checkoutName',
-            'allowedCreditCardTypes' => ['mastercard', 'visa'],
-            'creditCardPaymentAction' => 'creditCardPaymentAction',
-            'expressCheckoutPaymentAction' => 'expressCheckoutPaymentAction',
+            'allowedCreditCardTypes' => self::CARD_TYPES,
+            'creditCardPaymentAction' => self::PAYMENT_ACTION,
+            'expressCheckoutPaymentAction' => self::PAYMENT_ACTION,
             'partner' => 'partner',
             'vendor' => 'vendor',
             'user' => 'user',

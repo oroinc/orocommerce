@@ -23,6 +23,7 @@ class CompositePaymentMethodViewProviderTest extends \PHPUnit_Framework_TestCase
         $testView = $this->getTypeMock('test_method_view');
         $testView2 = $this->getTypeMock('test_method_view2');
 
+        /** @var PaymentMethodViewProviderInterface|\PHPUnit_Framework_MockObject_MockObject $viewProvider */
         $viewProvider = $this->createMock(PaymentMethodViewProviderInterface::class);
         $viewProvider->expects($this->any())->method('getPaymentMethodViews')
             ->with(['test_method_view', 'test_method_view2'])
@@ -38,7 +39,8 @@ class CompositePaymentMethodViewProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetPaymentMethodView()
     {
         $testView = $this->getTypeMock('test_method_view');
-
+            
+        /** @var PaymentMethodViewProviderInterface|\PHPUnit_Framework_MockObject_MockObject $viewProvider */
         $viewProvider = $this->createMock(PaymentMethodViewProviderInterface::class);
         $viewProvider->expects($this->any())->method('getPaymentMethodView')
             ->with('test_method_view')

@@ -1,29 +1,18 @@
 <?php
 
-namespace Oro\Bundle\PaymentBundle\Migrations\Data\ORM\Config;
+namespace Oro\Bundle\PayPalBundle\Migrations\Data\ORM\Config;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\PayPalBundle\DependencyInjection\OroPayPalExtension;
-use Oro\Bundle\PayPalBundle\Entity\CreditCardPaymentAction;
-use Oro\Bundle\PayPalBundle\Entity\CreditCardType;
-use Oro\Bundle\PayPalBundle\Entity\ExpressCheckoutPaymentAction;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Oro\Bundle\PayPalBundle\Settings\DataProvider\CardTypesDataProviderInterface;
+use Oro\Bundle\PayPalBundle\Settings\DataProvider\PaymentActionsDataProviderInterface;
 
 class PayPalConfig
 {
-    const CARD_VISA = 'visa';
-    const CARD_MASTERCARD = 'mastercard';
-
     const PAY_WITH_PAYPAL = 'Pay with PayPal';
     const PAYPAL = 'PayPal';
     const CREDIT_CARD_LABEL = 'Credit Card';
-
-    /**
-     * @var ManagerRegistry
-     */
-    private $managerRegistry;
 
     /**
      * @var ConfigManager
@@ -36,31 +25,29 @@ class PayPalConfig
     private $keysProvider;
 
     /**
-     * @var CreditCardType[]
+     * @var PaymentActionsDataProviderInterface
      */
-    private static $creditCardTypes;
+    private $paymentActionsDataProvider;
 
     /**
-     * @var CreditCardPaymentAction[]
+     * @var CardTypesDataProviderInterface
      */
-    private static $creditCardPaymentActions;
+    private $cardTypesDataProvider;
 
     /**
-     * @var ExpressCheckoutPaymentAction[]
-     */
-    private static $expressCheckoutPaymentActions;
-
-    /**
-     * @param ManagerRegistry          $managerRegistry
-     * @param ConfigManager            $configManager
-     * @param PayPalConfigKeysProvider $keysProvider
+     * @param PaymentActionsDataProviderInterface $paymentActionsDataProvider
+     * @param CardTypesDataProviderInterface      $cardTypesDataProvider
+     * @param ConfigManager                       $configManager
+     * @param PayPalConfigKeysProvider            $keysProvider
      */
     public function __construct(
-        ManagerRegistry $managerRegistry,
+        PaymentActionsDataProviderInterface $paymentActionsDataProvider,
+        CardTypesDataProviderInterface $cardTypesDataProvider,
         ConfigManager $configManager,
         PayPalConfigKeysProvider $keysProvider
     ) {
-        $this->managerRegistry = $managerRegistry;
+        $this->paymentActionsDataProvider = $paymentActionsDataProvider;
+        $this->cardTypesDataProvider = $cardTypesDataProvider;
         $this->configManager = $configManager;
         $this->keysProvider = $keysProvider;
     }
@@ -214,45 +201,44 @@ class PayPalConfig
     }
 
     /**
-     * @return ArrayCollection|CreditCardType[]
+     * @return string[]
      */
     public function getAllowedCreditCardTypes()
     {
-        $creditCardTypes = $this->getConfigValue($this->keysProvider->getAllowedCreditCardTypesKey());
+        $configTypes = $this->getConfigValue($this->keysProvider->getAllowedCreditCardTypesKey()) ?: [];
 
-        if ($creditCardTypes === null) {
-            $creditCardTypes = [
-                self::CARD_VISA,
-                self::CARD_MASTERCARD,
-            ];
-        }
-        $creditCardTypeEntities = array_filter(array_map(function ($creditCardType) {
-            return $this->getCreditCardTypeEntityByConfigType($creditCardType);
-        }, $creditCardTypes));
+        $actualTypes = $this->cardTypesDataProvider->getCardTypes();
 
-        if (empty($creditCardTypeEntities)) {
-            return null;
+        $configTypes = array_filter($configTypes, function ($configType) use ($actualTypes) {
+            return in_array($configType, $actualTypes, true);
+        });
+
+        if (count($configTypes) > 0) {
+            return $configTypes;
         }
 
-        return new ArrayCollection($creditCardTypeEntities);
+        // return default card types action
+        return array_splice($actualTypes, 0, 2);
     }
 
     /**
-     * @return null|CreditCardPaymentAction
+     * @return string
      */
     public function getCreditCardPaymentAction()
     {
         $action = $this->getConfigValue($this->keysProvider->getCreditCardPaymentActionKey());
-        return $this->getCreditCardPaymentActionEntityByConfigAction($action);
+
+        return $this->getPaymentActionByConfigAction($action);
     }
 
     /**
-     * @return null|ExpressCheckoutPaymentAction
+     * @return string
      */
     public function getExpressCheckoutPaymentAction()
     {
         $action = $this->getConfigValue($this->keysProvider->getExpressCheckoutPaymentActionKey());
-        return $this->getExpressCheckoutPaymentActionEntityByConfigAction($action);
+
+        return $this->getPaymentActionByConfigAction($action);
     }
 
     /**
@@ -298,7 +284,7 @@ class PayPalConfig
      */
     private function getFullConfigKey($key)
     {
-        return OroPayPalExtension::ALIAS.ConfigManager::SECTION_MODEL_SEPARATOR.$key;
+        return OroPayPalExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . $key;
     }
 
     /**
@@ -310,79 +296,24 @@ class PayPalConfig
     private function getLocalizedFallbackValueFromConfig($key, $default)
     {
         $creditCardLabel = $this->getConfigValue($key);
+
         return (new LocalizedFallbackValue())->setString($creditCardLabel ?: $default);
     }
 
     /**
-     * @param string $actionLabel
+     * @param string $configAction
      *
-     * @return null|ExpressCheckoutPaymentAction
+     * @return string
      */
-    private function getExpressCheckoutPaymentActionEntityByConfigAction($actionLabel)
+    private function getPaymentActionByConfigAction($configAction)
     {
-        if (!self::$expressCheckoutPaymentActions) {
-            self::$expressCheckoutPaymentActions = $this
-                ->findAllEntitiesByClassName(ExpressCheckoutPaymentAction::class);
-        }
+        $actions = $this->paymentActionsDataProvider->getPaymentActions();
 
-        foreach (self::$expressCheckoutPaymentActions as $actionEntity) {
-            if ($actionEntity->getLabel() === $actionLabel) {
-                return $actionEntity;
-            }
+        if (in_array($configAction, $actions, true)) {
+            return $configAction;
         }
 
         // return default payment action
-        return reset(self::$expressCheckoutPaymentActions);
-    }
-
-    /**
-     * @param string $creditCardType
-     *
-     * @return null|CreditCardType
-     */
-    private function getCreditCardTypeEntityByConfigType($creditCardType)
-    {
-        if (!self::$creditCardTypes) {
-            self::$creditCardTypes = $this->findAllEntitiesByClassName(CreditCardType::class);
-        }
-
-        foreach (self::$creditCardTypes as $typeEntity) {
-            if ($typeEntity->getLabel() === $creditCardType) {
-                return $typeEntity;
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * @param string $actionLabel
-     *
-     * @return null|CreditCardPaymentAction
-     */
-    private function getCreditCardPaymentActionEntityByConfigAction($actionLabel)
-    {
-        if (!self::$creditCardPaymentActions) {
-            self::$creditCardPaymentActions = $this->findAllEntitiesByClassName(CreditCardPaymentAction::class);
-        }
-
-        foreach (self::$creditCardPaymentActions as $actionEntity) {
-            if ($actionEntity->getLabel() === $actionLabel) {
-                return $actionEntity;
-            }
-        }
-
-        // return default payment action
-        return reset(self::$creditCardPaymentActions);
-    }
-
-    /**
-     * @param string $className
-     *
-     * @return array
-     */
-    private function findAllEntitiesByClassName($className)
-    {
-        return $this->managerRegistry->getRepository($className)->findAll();
+        return reset($actions);
     }
 }

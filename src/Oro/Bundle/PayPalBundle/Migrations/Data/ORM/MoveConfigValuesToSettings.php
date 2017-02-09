@@ -3,22 +3,21 @@
 namespace Oro\Bundle\PayPalBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\ConfigBundle\Entity\ConfigValue;
 use Oro\Bundle\ConfigBundle\Entity\Repository\ConfigValueRepository;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\PaymentBundle\Method\Event\MethodRenamingEventDispatcherInterface;
-use Oro\Bundle\PaymentBundle\Migrations\Data\ORM\Config\ChannelByTypeFactory;
-use Oro\Bundle\PaymentBundle\Migrations\Data\ORM\Config\PaymentMethodIdentifierByChannelProvider;
-use Oro\Bundle\PaymentBundle\Migrations\Data\ORM\Config\PayPalConfigFactory;
-use Oro\Bundle\PaymentBundle\Migrations\Data\ORM\Config\PayPalConfigToSettingsConverter;
+use Oro\Bundle\PayPalBundle\Migrations\Data\ORM\Config\ChannelByTypeFactory;
+use Oro\Bundle\PayPalBundle\Migrations\Data\ORM\Config\PaymentMethodIdentifierByChannelProvider;
+use Oro\Bundle\PayPalBundle\Migrations\Data\ORM\Config\PayPalConfigToSettingsConverter;
+use Oro\Bundle\PayPalBundle\Migrations\Data\ORM\Config\PayPalConfigFactory;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class MoveConfigValuesToSettings extends AbstractFixture implements ContainerAwareInterface, DependentFixtureInterface
+class MoveConfigValuesToSettings extends AbstractFixture implements ContainerAwareInterface
 {
     const SECTION_NAME = 'oro_paypal';
 
@@ -61,18 +60,6 @@ class MoveConfigValuesToSettings extends AbstractFixture implements ContainerAwa
      * @var MethodRenamingEventDispatcherInterface
      */
     protected $dispatcher;
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getDependencies()
-    {
-        return [
-            AddCreditCardPaymentActions::class,
-            AddCreditCardTypes::class,
-            AddExpressCheckoutPaymentActions::class,
-        ];
-    }
 
     /**
      * Sets the container.
@@ -195,7 +182,8 @@ class MoveConfigValuesToSettings extends AbstractFixture implements ContainerAwa
     protected function createPayPalConfigFactory(ContainerInterface $container)
     {
         return new PayPalConfigFactory(
-            $container->get('doctrine'),
+            $container->get('oro_paypal.settings.payment_action.provider'),
+            $container->get('oro_paypal.settings.card_type.provider'),
             $container->get('oro_config.manager')
         );
     }

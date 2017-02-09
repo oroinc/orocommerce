@@ -1,8 +1,10 @@
 <?php
 
-namespace Oro\Bundle\PaymentBundle\Migrations\Data\ORM\Config;
+namespace Oro\Bundle\PayPalBundle\Migrations\Data\ORM\Config;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\PayPalBundle\Settings\DataProvider\CardTypesDataProviderInterface;
+use Oro\Bundle\PayPalBundle\Settings\DataProvider\PaymentActionsDataProviderInterface;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class PayPalConfigFactory
@@ -15,15 +17,25 @@ class PayPalConfigFactory
     /**
      * @var ManagerRegistry
      */
-    private $doctrine;
+    private $cardTypesDataProvider;
 
     /**
-     * @param ManagerRegistry $doctrine
-     * @param ConfigManager   $configManager
+     * @var ManagerRegistry
      */
-    public function __construct(ManagerRegistry $doctrine, ConfigManager $configManager)
-    {
-        $this->doctrine = $doctrine;
+    private $paymentActionsDataProvider;
+
+    /**
+     * @param PaymentActionsDataProviderInterface $paymentActionsDataProvider
+     * @param CardTypesDataProviderInterface      $cardTypesDataProvider
+     * @param ConfigManager                       $configManager
+     */
+    public function __construct(
+        PaymentActionsDataProviderInterface $paymentActionsDataProvider,
+        CardTypesDataProviderInterface $cardTypesDataProvider,
+        ConfigManager $configManager
+    ) {
+        $this->paymentActionsDataProvider = $paymentActionsDataProvider;
+        $this->cardTypesDataProvider = $cardTypesDataProvider;
         $this->configManager = $configManager;
     }
 
@@ -50,6 +62,11 @@ class PayPalConfigFactory
      */
     protected function createPayPalConfig(PayPalConfigKeysProvider $keysProvider)
     {
-        return new PayPalConfig($this->doctrine, $this->configManager, $keysProvider);
+        return new PayPalConfig(
+            $this->paymentActionsDataProvider,
+            $this->cardTypesDataProvider,
+            $this->configManager,
+            $keysProvider
+        );
     }
 }
