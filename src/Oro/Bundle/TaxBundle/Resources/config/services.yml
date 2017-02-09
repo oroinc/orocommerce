@@ -286,9 +286,7 @@ services:
         class: 'Oro\Bundle\TaxBundle\OrderTax\ContextHandler\OrderLineItemHandler'
         arguments:
             - "@oro_tax.provider.taxation_address_provider"
-            - "@oro_entity.doctrine_helper"
-            - '%oro_tax.entity.product_tax_code.class%'
-            - '%oro_tax.entity.customer_tax_code.class%'
+            - "@oro_tax.provider.tax_code"
             - '%oro_order.entity.order_line_item.class%'
         tags:
             - { name: kernel.event_listener, event: oro_tax.mapper.context, method: onContextEvent }
@@ -296,7 +294,7 @@ services:
     oro_tax.order_tax.context_handler.order_handler:
         class: 'Oro\Bundle\TaxBundle\OrderTax\ContextHandler\OrderHandler'
         arguments:
-            - "@oro_entity.doctrine_helper"
+            - '@oro_tax.provider.tax_code'
         tags:
             - { name: kernel.event_listener, event: oro_tax.mapper.context, method: onContextEvent }
 
@@ -503,3 +501,32 @@ services:
             - '@oro_tax.factory.tax'
         tags:
             - { name: oro_pricing.subtotal_provider, priority: 20 }
+
+    oro_tax.repository.product_tax_code:
+        class: 'Oro\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository'
+        parent: oro_entity.abstract_repository
+        arguments: ['Oro\Bundle\TaxBundle\Entity\ProductTaxCode']
+
+    oro_tax.repository.customer_tax_code:
+        class: 'Oro\Bundle\TaxBundle\Entity\Repository\CustomerTaxCodeRepository'
+        parent: oro_entity.abstract_repository
+        arguments: ['Oro\Bundle\TaxBundle\Entity\CustomerTaxCode']
+
+    oro_tax.provider.tax_code:
+        class: 'Oro\Bundle\TaxBundle\Provider\TaxCodeProvider'
+        arguments:
+            - '@oro_tax.repository.product_tax_code'
+            - '@oro_tax.repository.customer_tax_code'
+            - '@oro_tax.cache.tax_codes'
+
+    oro_tax.cache.tax_codes:
+        class: 'Oro\Bundle\TaxBundle\Cache\TaxCodesCache'
+        arguments:
+            - '@oro_tax.tax_codes.cache'
+            - '@oro_entity.doctrine_helper'
+
+    oro_tax.tax_codes.cache:
+        public: false
+        parent: doctrine_cache.abstract.array
+        calls:
+            - [ setNamespace, [ 'oro_tax_tax_codes' ] ]
