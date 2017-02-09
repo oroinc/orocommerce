@@ -22,7 +22,7 @@ Parameters overview:
 * Shipping Service - Shipping service type, currently only _classic_ type is supported.
 * Rate policy - Defines the rate type to be used in price calculation.
 * Flat Rate Price - Monetary amount that should be charged for shipping using _flat-rate_.
-* Rates CSV - Upload/Download CSV file with _table-rates_. The entry that more specifically matches the address will be the one used (e.g. an entry with _country_ and _region_ that matches a shipping address will have precedence over another entry with just _country_). A sample file can be found [here](./Resources/doc/dpd_rates_sample.csv)  
+* Rates CSV - Upload/Download CSV file with _table-rates_. The entry that more specifically matches the address will be the one used (e.g. an entry with _country_ and _region_ that matches a shipping address will have precedence over another entry with just _country_). A sample file can be found [here](./dpd_rates_sample.csv)  
 * Label Size - Options for the different label size types.
 * Label Position - Options for the different label printing positions.
 
