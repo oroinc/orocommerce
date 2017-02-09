@@ -2,13 +2,21 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Engine;
 
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
 use Oro\Bundle\SearchBundle\Entity\Item;
+use Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\ReindexMessageGranularizer;
+use Oro\Bundle\WebsiteSearchBundle\Engine\IndexerInputValidator;
+use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 class AsyncIndexerTest extends \PHPUnit_Framework_TestCase
 {
+    const WEBSITE_ID = 1;
+
     /**
      * @var AsyncIndexer
      */
@@ -24,13 +32,59 @@ class AsyncIndexerTest extends \PHPUnit_Framework_TestCase
      */
     private $baseIndexer;
 
+    /**
+     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $doctrineHelper;
+
+    /**
+     * @var WebsiteSearchMappingProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $mappingProvider;
+
+    /**
+     * @var ReindexMessageGranularizer|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $granularizer;
+
+    /**
+     * @var IndexerInputValidator|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $inputValidator;
+
     public function setUp()
     {
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);
 
         $this->baseIndexer = $this->createMock(IndexerInterface::class);
 
-        $this->indexer = new AsyncIndexer($this->baseIndexer, $this->messageProducer);
+        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+
+        $websiteRepository = $this->createMock(WebsiteRepository::class);
+        $websiteRepository->method('getWebsiteIdentifiers')
+            ->willReturn([self::WEBSITE_ID]);
+
+        $this->doctrineHelper->method('getEntityRepository')
+            ->with(Website::class)
+            ->willReturn($websiteRepository);
+
+        $this->mappingProvider = $this->createMock(WebsiteSearchMappingProvider::class);
+
+        $this->mappingProvider->method('isClassSupported')
+            ->willReturn(true);
+
+        $this->inputValidator = $this->createMock(IndexerInputValidator::class);
+
+        $this->granularizer = $this->createMock(ReindexMessageGranularizer::class);
+
+        $this->indexer = new AsyncIndexer(
+            $this->baseIndexer,
+            $this->messageProducer,
+            $this->doctrineHelper,
+            $this->mappingProvider,
+            $this->inputValidator,
+            $this->granularizer
+        );
     }
 
     public function testSaveOne()
@@ -193,6 +247,19 @@ class AsyncIndexerTest extends \PHPUnit_Framework_TestCase
                 'test'
             ]
         ];
+
+        $this->inputValidator->method('validateReindexRequest')
+            ->willReturn([
+                            [Item::class],
+                            [self::WEBSITE_ID]
+                         ]);
+
+        $this->granularizer->expects($this->atLeastOnce())
+            ->method('process')
+            ->with([Item::class], [self::WEBSITE_ID], $context)
+            ->willReturn(
+                [$expectedParams]
+            );
 
         $this->messageProducer->expects($this->atLeastOnce())
             ->method('send')
