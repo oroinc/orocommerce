@@ -24,6 +24,8 @@ oro_frontend:
             page_template_collection.label: 'Page Templates'
             no_page_template.label: 'No page template'
             page_template_routes.label: 'Select Page Template for page'
+        messages:
+            no_page_templates: 'No templates available.'
     copyright: '&copy; 2017 Oro Inc. All Rights Reserved.'
 
     home_page:

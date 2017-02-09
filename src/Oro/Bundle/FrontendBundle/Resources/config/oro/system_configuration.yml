@@ -28,6 +28,7 @@ system_configuration:
             options:
                 required: false
                 label: oro_frontend.system_configuration.fields.page_template_routes.label
+                resettable: false
 
     tree:
         system_configuration:
