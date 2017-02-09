@@ -2,15 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Controller\Frontend;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\FormErrorIterator;
-use Symfony\Component\Form\FormInterface;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-
+use Oro\Bundle\ActionBundle\Exception\ForbiddenActionGroupException;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface;
@@ -21,6 +13,14 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowStep;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\Form\Exception\AlreadySubmittedException;
+use Symfony\Component\Form\FormErrorIterator;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class CheckoutController extends Controller
 {
@@ -53,9 +53,21 @@ class CheckoutController extends Controller
      */
     public function checkoutAction(Request $request, Checkout $checkout)
     {
-        $workflowItem = $this->handleTransition($checkout, $request);
+        $workflowItem = $this->getWorkflowItem($checkout);
+
+        if ($request->isMethod(Request::METHOD_POST) &&
+            $this->isCheckoutRestartRequired($workflowItem)
+        ) {
+            $this->restartCheckout($workflowItem);
+            $workflowItem = $this->getWorkflowItem($checkout);
+        } else {
+            $this->handleTransition($workflowItem, $request);
+        }
+
         $currentStep = $this->validateStep($workflowItem);
-        $this->validateOrderLineItems($workflowItem, $checkout, $request);
+        if ($checkout->getId()) {
+            $this->validateOrderLineItems($workflowItem, $checkout, $request);
+        }
 
         $responseData = [];
         if ($workflowItem->getResult()->has('responseData')) {
@@ -120,22 +132,25 @@ class CheckoutController extends Controller
         if ($request->isXmlHttpRequest()) {
             return;
         }
+
         $continueTransition = $this->get('oro_checkout.layout.data_provider.transition')
             ->getContinueTransition($workflowItem);
         if (!$continueTransition) {
             return;
         }
+
         $frontendOptions = $continueTransition->getTransition()->getFrontendOptions();
         if (!array_key_exists('is_checkout_show_errors', $frontendOptions)) {
             return;
         }
+
+        $this->addTransitionErrors($continueTransition);
+
         $errors = $continueTransition->getErrors();
-        foreach ($errors as $error) {
-            $this->get('session')->getFlashBag()->add('error', $error['message']);
-        }
         if (!$errors->isEmpty()) {
             return;
         }
+
         $manager = $this->get('oro_checkout.data_provider.manager.checkout_line_items');
         $orderLineItemsCount = $manager->getData($checkout, true)->count();
         if ($orderLineItemsCount && $orderLineItemsCount !== $manager->getData($checkout)->count()) {
@@ -145,44 +160,83 @@ class CheckoutController extends Controller
     }
 
     /**
-     * @param CheckoutInterface $checkout
-     * @param Request $request
-     * @return WorkflowItem
-     * @throws \Oro\Bundle\WorkflowBundle\Exception\InvalidTransitionException
-     * @throws \Oro\Bundle\WorkflowBundle\Exception\WorkflowException
+     * @param TransitionData $continueTransition
      */
-    protected function handleTransition(CheckoutInterface $checkout, Request $request)
+    protected function addTransitionErrors(TransitionData $continueTransition)
     {
-        $workflowItem = $this->getWorkflowItem($checkout);
+        $errors = $continueTransition->getErrors();
+        foreach ($errors as $error) {
+            $this->get('session')->getFlashBag()->add('error', $error['message']);
+        }
+    }
 
-        if ($request->isMethod(Request::METHOD_POST)) {
-            if ($this->isCheckoutRestartRequired($workflowItem)) {
-                return $this->restartCheckout($workflowItem, $checkout);
-            }
-            $transitionProvider = $this->get('oro_checkout.layout.data_provider.transition');
-            $continueTransition = $transitionProvider->getContinueTransition($workflowItem);
-            if ($continueTransition) {
-                $transitionForm = $this->getTransitionForm($continueTransition, $workflowItem);
-
-                if ($transitionForm) {
-                    $transitionForm->submit($request);
-
-                    if ($transitionForm->isValid()) {
-                        $this->getWorkflowManager()->transit($workflowItem, $continueTransition->getTransition());
-                        $transitionProvider->clearCache();
-                    } else {
-                        $this->handleFormErrors($transitionForm->getErrors());
-                    }
-                } else {
-                    $this->getWorkflowManager()->transit($workflowItem, $continueTransition->getTransition());
-                }
-            }
-        } elseif ($request->query->has('transition') && $request->isMethod(Request::METHOD_GET)) {
+    /**
+     * @param WorkflowItem $workflowItem
+     * @param Request $request
+     */
+    protected function handleGetTransition(WorkflowItem $workflowItem, Request $request)
+    {
+        if ($request->query->has('transition')) {
             $transition = $request->get('transition');
             $this->getWorkflowManager()->transitIfAllowed($workflowItem, $transition);
         }
+    }
 
-        return $workflowItem;
+    /**
+     * @param WorkflowItem $workflowItem
+     * @param Request $request
+     * @throws ForbiddenActionGroupException
+     * @throws \Exception
+     * @throws AlreadySubmittedException
+     */
+    protected function handlePostTransition(WorkflowItem $workflowItem, Request $request)
+    {
+        $transitionProvider = $this->get('oro_checkout.layout.data_provider.transition');
+
+        $continueTransition = $transitionProvider->getContinueTransition($workflowItem);
+        if (!$continueTransition) {
+            return;
+        }
+
+        $this->addTransitionErrors($continueTransition);
+
+        $transitionForm = $this->getTransitionForm($continueTransition, $workflowItem);
+        if (!$transitionForm) {
+            $this->getWorkflowManager()->transitIfAllowed(
+                $workflowItem,
+                $continueTransition->getTransition()
+            );
+            return;
+        }
+
+        $transitionForm->submit($request);
+        if (!$transitionForm->isValid()) {
+            $this->handleFormErrors($transitionForm->getErrors());
+            return;
+        }
+
+        $this->getWorkflowManager()->transitIfAllowed(
+            $workflowItem,
+            $continueTransition->getTransition()
+        );
+
+        $transitionProvider->clearCache();
+    }
+
+    /**
+     * @param WorkflowItem $workflowItem
+     * @param Request $request
+     * @throws ForbiddenActionGroupException
+     * @throws \Exception
+     * @throws AlreadySubmittedException
+     */
+    protected function handleTransition(WorkflowItem $workflowItem, Request $request)
+    {
+        if ($request->isMethod(Request::METHOD_GET)) {
+            $this->handleGetTransition($workflowItem, $request);
+        } elseif ($request->isMethod(Request::METHOD_POST)) {
+            $this->handlePostTransition($workflowItem, $request);
+        }
     }
 
     /**
@@ -250,10 +304,10 @@ class CheckoutController extends Controller
 
     /**
      * @param WorkflowItem $workflowItem
-     * @param CheckoutInterface $checkout
-     * @return WorkflowItem
+     * @throws ForbiddenActionGroupException
+     * @throws \Exception
      */
-    protected function restartCheckout(WorkflowItem $workflowItem, CheckoutInterface $checkout)
+    protected function restartCheckout(WorkflowItem $workflowItem)
     {
         $workflowName = $workflowItem->getWorkflowName();
 
@@ -265,7 +319,5 @@ class CheckoutController extends Controller
         $this->get('oro_action.action_group_registry')
             ->findByName('start_shoppinglist_checkout')
             ->execute($actionData);
-
-        return $this->getWorkflowItem($checkout);
     }
 }

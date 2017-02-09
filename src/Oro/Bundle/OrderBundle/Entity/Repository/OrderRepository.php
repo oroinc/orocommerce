@@ -3,6 +3,8 @@
 namespace Oro\Bundle\OrderBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+
+use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 class OrderRepository extends EntityRepository
@@ -27,5 +29,22 @@ class OrderRepository extends EntityRepository
         }
 
         return (bool) $qb->getQuery()->getSingleScalarResult();
+    }
+
+    /**
+     * @param int $id
+     * @return Order|null
+     */
+    public function getOrderWithRelations($id)
+    {
+        $qb = $this->createQueryBuilder('orders');
+        $qb->select('orders, lineItems, shippingAddress, billingAddress, discounts')
+            ->leftJoin('orders.lineItems', 'lineItems')
+            ->leftJoin('orders.shippingAddress', 'shippingAddress')
+            ->leftJoin('orders.billingAddress', 'billingAddress')
+            ->leftJoin('orders.discounts', 'discounts')
+            ->where($qb->expr()->eq('orders.id', $id));
+
+        return $qb->getQuery()->getOneOrNullResult();
     }
 }

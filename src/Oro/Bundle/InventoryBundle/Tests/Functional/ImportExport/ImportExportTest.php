@@ -376,7 +376,7 @@ class ImportExportTest extends AbstractImportExportTestCase
 
         $jobResult = $this->getContainer()->get('oro_importexport.job_executor')->executeJob(
             ProcessorRegistry::TYPE_IMPORT_VALIDATION,
-            JobExecutor::JOB_VALIDATE_IMPORT_FROM_CSV,
+            JobExecutor::JOB_IMPORT_VALIDATION_FROM_CSV,
             $configuration
         );
 

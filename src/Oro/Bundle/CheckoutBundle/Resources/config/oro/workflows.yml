@@ -319,6 +319,7 @@ workflows:
                 display_type: page
                 frontend_options:
                     is_checkout_continue: true
+                    is_checkout_show_errors: true
                 form_options:
                     form_init:
                         - '@generate_checkout_state_snapshot':
@@ -636,6 +637,7 @@ workflows:
                             parameters:
                                 entity: $checkout
                         - '@checkout_has_applicable_shipping_methods':
+                            message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
                             checkout: $checkout
                 conditions:
                     '@and':
@@ -702,7 +704,11 @@ workflows:
                             message: oro.checkout.workflow.condition.order_line_item_has_count.message
                             parameters:
                                 entity: $checkout
+                        - '@checkout_has_applicable_shipping_methods':
+                            message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
+                            checkout: $checkout
                         - '@has_applicable_payment_methods':
+                            message: oro.checkout.workflow.condition.payment_method_is_not_applicable.message
                             context: $.result.paymentContext
                 conditions:
                     '@and':
@@ -844,8 +850,11 @@ workflows:
                 preconditions:
                     '@and':
                         - '@not_empty': $.result.paymentContext
+                        - '@checkout_has_applicable_shipping_methods':
+                            message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
+                            checkout: $checkout
                         - '@payment_method_applicable':
-                            message: oro.checkout.workflow.condition.payment_method_is_not_applicable_please_return_to_payment_step.message
+                            message: oro.checkout.workflow.condition.payment_method_is_not_applicable.message
                             payment_method: $checkout.paymentMethod
                             context: $.result.paymentContext
                 conditions:

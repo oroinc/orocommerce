@@ -2,13 +2,16 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\Manager;
 
+use Doctrine\Common\Persistence\ObjectRepository;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\TaxBundle\Entity\Tax;
 use Oro\Bundle\TaxBundle\Entity\TaxValue;
 use Oro\Bundle\TaxBundle\Manager\TaxValueManager;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class TaxValueManagerTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     const TAX_VALUE_CLASS = 'Oro\Bundle\TaxBundle\Entity\TaxValue';
     const TAX_CLASS = 'Oro\Bundle\TaxBundle\Entity\Tax';
 
@@ -200,5 +203,34 @@ class TaxValueManagerTest extends \PHPUnit_Framework_TestCase
                 'expectedResult' => true
             ]
         ];
+    }
+
+    public function testPreloadTaxValues()
+    {
+        $entityClass = 'SomeClass';
+        $entityIds = [1, 2, 5];
+        $taxValue1 = $this->getEntity(TaxValue::class, ['entityId' => 1]);
+        $taxValue2 = $this->getEntity(TaxValue::class, ['entityId' => 5]);
+        $taxValues = [$taxValue1, $taxValue2];
+
+        $repository = $this->createMock(ObjectRepository::class);
+        $repository
+            ->expects($this->once())
+            ->method('findBy')
+            ->with(['entityClass' => $entityClass, 'entityId' => $entityIds])
+            ->willReturn($taxValues);
+
+        $this->doctrineHelper
+            ->expects($this->once())
+            ->method('getEntityRepositoryForClass')
+            ->with(self::TAX_VALUE_CLASS)
+            ->willReturn($repository);
+
+        $this->manager->preloadTaxValues($entityClass, $entityIds);
+
+        $this->assertEquals($taxValue1, $this->manager->getTaxValue($entityClass, 1));
+        $this->assertEquals($taxValue2, $this->manager->getTaxValue($entityClass, 5));
+
+        $this->manager->preloadTaxValues($entityClass, $entityIds); // Check cache
     }
 }
