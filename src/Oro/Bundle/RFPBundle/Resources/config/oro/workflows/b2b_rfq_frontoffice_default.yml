@@ -9,6 +9,7 @@ workflows:
         exclusive_record_groups: ['b2b_rfq_frontoffice_flow']
 
         start_step: submitted
+        force_autostart: true
         steps_display_ordered: true
         steps:
             submitted:

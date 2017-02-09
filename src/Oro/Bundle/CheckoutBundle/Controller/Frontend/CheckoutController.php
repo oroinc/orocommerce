@@ -255,8 +255,11 @@ class CheckoutController extends Controller
      */
     protected function restartCheckout(WorkflowItem $workflowItem, CheckoutInterface $checkout)
     {
+        $workflowName = $workflowItem->getWorkflowName();
+
         $shoppingList = $workflowItem->getEntity()->getSource()->getShoppingList();
         $this->getWorkflowManager()->resetWorkflowItem($workflowItem);
+        $this->getWorkflowManager()->startWorkflow($workflowName, $checkout);
 
         $actionData = new ActionData(['shoppingList' => $shoppingList, 'forceStartCheckout' => true]);
         $this->get('oro_action.action_group_registry')

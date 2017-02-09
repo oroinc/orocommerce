@@ -4,10 +4,11 @@ namespace Oro\Bundle\AlternativeCheckoutBundle\Tests\Functional\DataFixtures;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\AbstractLoadCheckouts;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\PaymentTermBundle\Method\PaymentTerm;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteProductDemandData;
 
-class LoadAlternativeCheckouts extends AbstractLoadCheckouts
+class LoadQuoteCheckoutsData extends AbstractLoadCheckouts
 {
     const CHECKOUT_1 = 'alternative.checkout.1';
     const CHECKOUT_2 = 'alternative.checkout.2';
@@ -19,6 +20,7 @@ class LoadAlternativeCheckouts extends AbstractLoadCheckouts
     {
         return [
             self::CHECKOUT_1 => [
+                'customerUser' => LoadCustomerUserData::EMAIL,
                 'source' => LoadQuoteProductDemandData::QUOTE_DEMAND_1,
                 'checkout' => ['payment_method' => PaymentTerm::TYPE]
             ],

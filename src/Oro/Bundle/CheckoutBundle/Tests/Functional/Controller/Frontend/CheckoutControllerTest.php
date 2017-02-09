@@ -326,7 +326,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
                         'entityId' => ['id' => $order->getId()]
                     ]
                 ],
-                'startedFrom' => 'shopping_list_1_label',
+                'startedFrom' => 'shopping_list_8_label',
                 'currency' => $order->getCurrency(),
                 'subtotal' => $order->getSubtotal(),
                 'total' => $order->getTotal()
@@ -432,7 +432,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
      */
     protected function getSourceEntity()
     {
-        return $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
+        return $this->getReference(LoadShoppingLists::SHOPPING_LIST_8);
     }
 
     /**

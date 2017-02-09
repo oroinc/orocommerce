@@ -2,7 +2,6 @@ workflows:
     b2b_flow_checkout:
         entity: Oro\Bundle\CheckoutBundle\Entity\Checkout
         entity_attribute: checkout
-        start_step: enter_billing_address
         steps_display_ordered: true
 
         defaults:
@@ -109,6 +108,11 @@ workflows:
                 is_final: true
 
         transitions:
+            __start__:
+                is_start: true
+                is_hidden: true
+                step_to: enter_billing_address
+                transition_definition: __start___definition
             start_from_shoppinglist:
                 is_start: true
                 step_to: enter_billing_address

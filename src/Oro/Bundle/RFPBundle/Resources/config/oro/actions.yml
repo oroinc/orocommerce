@@ -175,7 +175,6 @@ action_groups:
                 settings:
                   - [[setNull], [propertyName, [id]]]
                   - [[collection], [propertyType, ['Doctrine\Common\Collections\Collection']]]
-                  - [[setNull], [propertyName, [status]]]
                   - [[keep], [propertyName, [customerUser]]]
                   - [[keep], [propertyName, [customer]]]
                   - [[keep], [propertyName, [organization]]]

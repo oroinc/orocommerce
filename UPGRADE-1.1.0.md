@@ -8,15 +8,14 @@ General
 php app/console oro:platform:upgrade20 --env=prod --force
 ```
 
+CheckoutBundle
+--------------
+* `Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository`:
+    - added third argument `string $workflowName` for method `public function findCheckoutByCustomerUserAndSourceCriteria()`
+
 FlatRateBundle
 --------------
 - Change name of the bundle to FlatRateShippingBundle
-
-FrontendBundle
---------------
-* Added transition buttons provide for commerce applications:
-    - `FrontendStartTransitionButtonProviderExtension`
-    - `FrontendTransitionButtonProviderExtension`
 
 OrderBundle
 -----------
