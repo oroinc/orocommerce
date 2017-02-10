@@ -166,7 +166,7 @@ class PayPalCreditCardPaymentMethodViewTest extends \PHPUnit_Framework_TestCase
 
     public function testGetBlock()
     {
-        $this->assertEquals('_payment_methods_credit_card_widget', $this->methodView->getBlock());
+        $this->assertEquals('_payment_methods_paypal_credit_card_widget', $this->methodView->getBlock());
     }
 
     public function testGetAllowedCreditCards()
