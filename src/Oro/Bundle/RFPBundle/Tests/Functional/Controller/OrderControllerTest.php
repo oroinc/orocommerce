@@ -9,9 +9,6 @@ use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
-/**
- * @dbIsolation
- */
 class OrderControllerTest extends WebTestCase
 {
     protected function setUp()

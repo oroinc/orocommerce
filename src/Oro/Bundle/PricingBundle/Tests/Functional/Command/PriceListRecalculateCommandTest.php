@@ -9,9 +9,6 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListRelation
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
-/**
- * @dbIsolation
- */
 class PriceListRecalculateCommandTest extends WebTestCase
 {
     /**
@@ -51,6 +48,7 @@ class PriceListRecalculateCommandTest extends WebTestCase
         $this->getContainer()->get('oro_pricing.builder.website_combined_price_list_builder')->resetCache();
         $this->getContainer()->get('oro_pricing.builder.customer_group_combined_price_list_builder')->resetCache();
         $this->getContainer()->get('oro_pricing.builder.customer_combined_price_list_builder')->resetCache();
+        $this->getContainer()->get('oro_pricing.resolver.combined_product_price_resolver')->resetCache();
 
         foreach ($websites as $websiteName) {
             $params[] = '--website='.$this->getReference($websiteName)->getId();

@@ -6,9 +6,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListRepository;
 
-/**
- * @dbIsolation
- */
 class ShoppingListAddButtonTest extends WebTestCase
 {
 

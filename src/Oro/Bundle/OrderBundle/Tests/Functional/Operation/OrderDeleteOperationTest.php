@@ -5,9 +5,6 @@ namespace Oro\Bundle\OrderBundle\Tests\Functional\Operation;
 use Oro\Bundle\ActionBundle\Tests\Functional\ActionTestCase;
 use Oro\Bundle\OrderBundle\Entity\Order;
 
-/**
- * @dbIsolation
- */
 class OrderDeleteOperationTest extends ActionTestCase
 {
     protected function setUp()

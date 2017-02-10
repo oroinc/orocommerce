@@ -10,9 +10,6 @@ use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteData;
 
-/**
- * @dbIsolation
- */
 class AjaxQuoteProductControllerTest extends WebTestCase
 {
     /**

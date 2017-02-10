@@ -3,23 +3,20 @@
 namespace Oro\Bundle\WebsiteSearchBundle\Engine\ORM\Driver;
 
 use Doctrine\ORM\EntityManagerInterface;
+
 use Oro\Bundle\WebsiteSearchBundle\Entity\Item;
 use Oro\Bundle\WebsiteSearchBundle\Entity\Repository\ItemRepository;
 
 /**
- * @method initRepo(\Doctrine\ORM\EntityManager $em, \Doctrine\ORM\Mapping\ClassMetadata $class)
+ * @method initRepo(EntityManagerInterface $em, \Doctrine\ORM\Mapping\ClassMetadata $class)
+ * @property EntityManagerInterface $entityManager
  */
 trait DriverTrait
 {
-    /** @var EntityManagerInterface */
-    private $entityManager;
-
     /** {@inheritdoc} */
     public function initialize(EntityManagerInterface $entityManager)
     {
         $this->initRepo($entityManager, $entityManager->getClassMetadata(Item::class));
-
-        $this->entityManager = $entityManager;
     }
 
     /**
@@ -74,7 +71,9 @@ trait DriverTrait
         return new $className();
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritdoc}
+     */
     public function saveItems(array $items)
     {
         array_walk(

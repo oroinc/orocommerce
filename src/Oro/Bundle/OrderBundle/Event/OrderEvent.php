@@ -6,8 +6,9 @@ use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\Form\FormInterface;
 
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\ShippingBundle\EventListener\EntityDataAwareEventInterface;
 
-class OrderEvent extends Event
+class OrderEvent extends Event implements EntityDataAwareEventInterface
 {
     const NAME = 'oro_order.order';
 
@@ -20,8 +21,8 @@ class OrderEvent extends Event
     /** @var \ArrayObject */
     protected $data;
 
-    /** @var array */
-    protected $submittedData = [];
+    /** @var array|null */
+    protected $submittedData;
 
     /**
      * @param FormInterface $form
@@ -46,7 +47,7 @@ class OrderEvent extends Event
     }
 
     /**
-     * @return \ArrayObject
+     * {@inheritdoc}
      */
     public function getData()
     {
@@ -62,10 +63,18 @@ class OrderEvent extends Event
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getSubmittedData()
     {
         return $this->submittedData;
+    }
+
+    /**
+     * @return Order
+     */
+    public function getEntity()
+    {
+        return $this->getOrder();
     }
 }

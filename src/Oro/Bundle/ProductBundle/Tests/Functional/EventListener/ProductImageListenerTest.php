@@ -47,15 +47,6 @@ class ProductImageListenerTest extends WebTestCase
         $this->imageResizeTopic = ProductImageResizeListener::IMAGE_RESIZE_TOPIC;
 
         $this->loadFixtures([LoadProductImageData::class]);
-
-        $this->setUpMessageCollector();
-        $this->getMessageCollector()->clear();
-    }
-
-    protected function tearDown()
-    {
-        parent::tearDown();
-        $this->tearDownMessageCollector();
     }
 
     public function testCreateProductImage()

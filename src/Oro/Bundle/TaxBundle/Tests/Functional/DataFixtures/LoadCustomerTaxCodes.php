@@ -16,9 +16,13 @@ class LoadCustomerTaxCodes extends AbstractFixture implements DependentFixtureIn
 {
     const TAX_1 = 'TAX1';
     const TAX_2 = 'TAX2';
+    const TAX_3 = 'TAX3';
+    const TAX_4 = 'TAX4';
 
     const DESCRIPTION_1 = 'Tax description 1';
     const DESCRIPTION_2 = 'Tax description 2';
+    const DESCRIPTION_3 = 'Tax description 3';
+    const DESCRIPTION_4 = 'Tax description 4';
 
     const REFERENCE_PREFIX = 'customer_tax_code';
 
@@ -42,7 +46,15 @@ class LoadCustomerTaxCodes extends AbstractFixture implements DependentFixtureIn
             [LoadCustomers::DEFAULT_ACCOUNT_NAME],
             []
         );
+        $this->createCustomerTaxCode(
+            $manager,
+            self::TAX_3,
+            self::DESCRIPTION_3,
+            [LoadCustomers::CUSTOMER_LEVEL_1_1],
+            []
+        );
         $this->createCustomerTaxCode($manager, self::TAX_2, self::DESCRIPTION_2, [], [LoadGroups::GROUP2]);
+        $this->createCustomerTaxCode($manager, self::TAX_4, self::DESCRIPTION_4, [], [LoadGroups::GROUP3]);
 
         $manager->flush();
     }

@@ -1,6 +1,0 @@
-{% macro underscoreRaw(content) -%}
-    {{ content|replace({
-        '&lt;%': '<%',
-        '%&gt;': '%>'
-    })|raw }}
-{% endmacro %}

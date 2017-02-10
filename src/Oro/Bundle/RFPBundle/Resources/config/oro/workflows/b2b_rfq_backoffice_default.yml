@@ -1,0 +1,242 @@
+workflows:
+    b2b_rfq_backoffice_default:
+        entity: Oro\Bundle\RFPBundle\Entity\Request
+        entity_attribute: request
+
+        applications: ['default']
+        datagrids: ['rfp-requests-grid']
+        defaults: {active: true}
+
+        exclusive_record_groups: ['b2b_rfq_backoffice_flow']
+
+        start_step: open
+        force_autostart: true
+        steps_display_ordered: false
+        steps:
+            open:
+                order: 10
+                allowed_transitions:
+                    - process_transition
+                    - request_more_information_transition
+                    - decline_transition
+                    - cancel_transition
+                    - delete_transition
+            more_info_requested:
+                order: 20
+                allowed_transitions:
+                    - cancel_transition
+                    - delete_transition
+                    - info_provided_transition
+            processed:
+                order: 30
+                allowed_transitions:
+                    - delete_transition
+            declined:
+                order: 40
+                allowed_transitions:
+                    - cancel_transition
+                    - delete_transition
+                    - reprocess_transition
+            cancelled:
+                order: 50
+                allowed_transitions:
+                    - delete_transition
+                    - reprocess_transition
+            deleted:
+                order: 60
+                allowed_transitions:
+                    - undelete_to_cancelled_transition
+                    - undelete_to_open_transition
+                    - undelete_to_more_information_requested_transition
+
+        attributes:
+            notes:
+                type: string
+            internal_status_before_deletion:
+                type: string
+
+        transitions:
+            __start__:
+                is_start: true
+                is_hidden: true
+                is_unavailable_hidden: true
+                step_to: open
+                transition_definition: __start___definition
+            process_transition:
+                step_to: processed
+                transition_definition: process_transition_definition
+                frontend_options:
+                    icon: 'fa-archive'
+                triggers:
+                    -
+                        entity_class: 'Oro\Bundle\RFPBundle\Entity\Request'
+                        event: update
+                        field: internal_status
+                        require: "entity.getInternalStatus().getId() === 'processed'"
+            request_more_information_transition:
+                step_to: more_info_requested
+                transition_definition: request_more_information_transition_definition
+                frontend_options:
+                    icon: 'fa-question-circle-o'
+                form_options:
+                    attribute_fields:
+                        notes:
+                            form_type: textarea
+                            options:
+                                required: true
+                                constraints:
+                                  - NotBlank: ~
+            decline_transition:
+                step_to: declined
+                transition_definition: decline_transition_definition
+                frontend_options:
+                    icon: 'fa-minus-square'
+            cancel_transition:
+                step_to: cancelled
+                transition_definition: cancel_transition_definition
+                is_hidden: true
+                triggers:
+                    -
+                        entity_class: 'Oro\Bundle\RFPBundle\Entity\Request'
+                        event: update
+                        field: internal_status
+                        require: "entity.getInternalStatus().getId() === 'cancelled_by_customer'"
+            delete_transition:
+                step_to: deleted
+                frontend_options:
+                    icon: 'fa-times'
+                transition_definition: delete_transition_definition
+            info_provided_transition:
+                step_to: open
+                transition_definition: info_provided_transition_definition
+                is_hidden: true
+                triggers:
+                    -
+                        entity_class: 'Oro\Bundle\RFPBundle\Entity\Request'
+                        event: update
+                        field: internal_status
+                        require: "entity.getInternalStatus().getId() === 'open'"
+            reprocess_transition:
+                step_to: open
+                transition_definition: reprocess_transition_definition
+                frontend_options:
+                    icon: 'fa-external-link'
+            undelete_to_cancelled_transition:
+                is_unavailable_hidden: true
+                step_to: cancelled
+                frontend_options:
+                    icon: 'fa-undo'
+                transition_definition: undelete_to_cancelled_transition_definition
+            undelete_to_open_transition:
+                is_unavailable_hidden: true
+                step_to: open
+                frontend_options:
+                    icon: 'fa-undo'
+                transition_definition: undelete_to_open_transition_definition
+            undelete_to_more_information_requested_transition:
+                is_unavailable_hidden: true
+                step_to: more_info_requested
+                frontend_options:
+                    icon: 'fa-undo'
+                transition_definition: undelete_to_more_information_requested_transition_definition
+
+        transition_definitions:
+            __start___definition:
+                actions:
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_internal_status'
+                        attribute: $request.internalStatus
+                        identifier: 'open'
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_customer_status'
+                        attribute: $request.customerStatus
+                        identifier: 'submitted'
+            request_more_information_transition_definition:
+                actions:
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_internal_status'
+                        attribute: $request.internalStatus
+                        identifier: 'more_info_requested'
+
+                    - '@assign_constant_value':
+                        attribute: $.result.note_type
+                        value: Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote::TYPE_SELLER_NOTE
+                    - '@run_action_group':
+                        action_group: oro_rfp_create_request_additional_note
+                        parameters_mapping:
+                            request: $request
+                            note_type: $.result.note_type
+                            notes: $notes
+                    - '@unset_value': [$notes] # unset temporary property
+            delete_transition_definition:
+                actions:
+                    - '@assign_value': [$internal_status_before_deletion, $request.internalStatus.id]
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_internal_status'
+                        attribute: $request.internalStatus
+                        identifier: 'deleted'
+            decline_transition_definition:
+                actions:
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_internal_status'
+                        attribute: $request.internalStatus
+                        identifier: 'declined'
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_customer_status'
+                        attribute: $request.customerStatus
+                        identifier: 'cancelled'
+            cancel_transition_definition: ~
+            undelete_to_cancelled_transition_definition:
+                preconditions:
+                    '@equal': ['cancelled_by_customer', $internal_status_before_deletion]
+                actions:
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_internal_status'
+                        attribute: $request.internalStatus
+                        identifier: $internal_status_before_deletion
+                    - '@unset_value': [$internal_status_before_deletion]
+            undelete_to_open_transition_definition:
+                preconditions:
+                    '@and':
+                        - '@not_equal': ['cancelled_by_customer', $internal_status_before_deletion]
+                        - '@or':
+                            - '@equal': ['submitted', $request.customerStatus.id]
+                            - '@equal': ['cancelled', $request.customerStatus.id]
+                actions:
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_internal_status'
+                        attribute: $request.internalStatus
+                        identifier: 'open'
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_customer_status'
+                        attribute: $request.customerStatus
+                        identifier: 'submitted'
+                    - '@unset_value': [$internal_status_before_deletion]
+            undelete_to_more_information_requested_transition_definition:
+                preconditions:
+                    '@and':
+                        - '@not_equal': ['cancelled_by_customer', $internal_status_before_deletion]
+                        - '@equal': ['requires_attention', $request.customerStatus.id]
+                actions:
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_internal_status'
+                        attribute: $request.internalStatus
+                        identifier: 'more_info_requested'
+                    - '@unset_value': [$internal_status_before_deletion]
+            process_transition_definition:
+                actions:
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_internal_status'
+                        identifier: 'processed'
+                        attribute: $request.internalStatus
+            info_provided_transition_definition: ~
+            reprocess_transition_definition:
+                actions:
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_internal_status'
+                        identifier: 'open'
+                        attribute: $request.internalStatus
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_customer_status'
+                        identifier: 'submitted'
+                        attribute: $request.customerStatus

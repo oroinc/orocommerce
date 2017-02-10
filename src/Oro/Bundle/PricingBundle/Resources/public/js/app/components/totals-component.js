@@ -6,7 +6,6 @@ define(function(require) {
     var _ = require('underscore');
     var routing = require('routing');
     var mediator = require('oroui/js/mediator');
-    var messenger =  require('oroui/js/messenger');
     var NumberFormatter = require('orolocale/js/formatter/number');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     var BaseComponent = require('oroui/js/app/components/base/component');
@@ -217,9 +216,6 @@ define(function(require) {
                         var totals = response || {};
                         callback(totals);
                     }
-                },
-                error: function(jqXHR) {
-                    messenger.showErrorMessage(_.__('Sorry, an unexpected error has occurred.'), jqXHR.responseJSON);
                 }
             });
         },

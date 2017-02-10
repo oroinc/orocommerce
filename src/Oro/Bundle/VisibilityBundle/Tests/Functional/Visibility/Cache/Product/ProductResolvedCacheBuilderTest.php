@@ -9,7 +9,6 @@ use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\ProductResolvedCacheBui
 
 /**
  * @group CommunityEdition
- * @dbIsolation
  */
 class ProductResolvedCacheBuilderTest extends AbstractCacheBuilderTest
 {
