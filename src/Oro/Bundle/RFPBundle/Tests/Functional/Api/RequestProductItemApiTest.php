@@ -9,9 +9,6 @@ use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
-/**
- * @dbIsolation
- */
 class RequestProductItemApiTest extends AbstractRequestApiTest
 {
     /**

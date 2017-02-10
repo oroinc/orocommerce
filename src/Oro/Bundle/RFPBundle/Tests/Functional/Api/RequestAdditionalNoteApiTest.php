@@ -8,9 +8,6 @@ use Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestAdditionalNoteData;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
-/**
- * @dbIsolation
- */
 class RequestAdditionalNoteApiTest extends AbstractRequestApiTest
 {
     /**

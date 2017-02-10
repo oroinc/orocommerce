@@ -30,6 +30,7 @@ class RequestProductItemProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $actualItem = new RequestProductItem();
 
+        /** @var FormContext|\PHPUnit_Framework_MockObject_MockObject $context */
         $context = $this->createMock(FormContext::class);
         $context->expects($this->any())->method('getRequestData')->willReturn($requestData);
         $context->expects($this->any())->method('getResult')->willReturn($actualItem);
@@ -44,25 +45,26 @@ class RequestProductItemProcessorTest extends \PHPUnit_Framework_TestCase
     public function requestDataProvider()
     {
         $productItem = new RequestProductItem();
+        $productItem->setPrice(Price::create(10, 'USD'));
 
         yield 'empty request' => [
             'requestData' => [],
-            'expectedItem' => clone $productItem,
+            'expectedItem' => new RequestProductItem(),
         ];
 
         yield 'empty currency' => [
             'requestData' => ['value' => 10],
-            'expectedItem' => clone $productItem,
+            'expectedItem' => new RequestProductItem(),
         ];
 
         yield 'empty value' => [
             'requestData' => ['currency' => 'USD'],
-            'expectedItem' => clone $productItem,
+            'expectedItem' => new RequestProductItem(),
         ];
 
         yield 'value & currency exist' => [
             'requestData' => ['currency' => 'USD', 'value' => 10],
-            'expectedItem' => (clone $productItem)->setPrice(Price::create(10, 'USD')),
+            'expectedItem' => $productItem,
         ];
     }
 }

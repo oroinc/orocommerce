@@ -7,9 +7,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
-/**
- * @dbIsolation
- */
 class RequestApiTest extends AbstractRequestApiTest
 {
     /**

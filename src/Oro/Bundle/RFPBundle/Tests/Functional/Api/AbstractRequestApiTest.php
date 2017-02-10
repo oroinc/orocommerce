@@ -5,12 +5,9 @@ namespace Oro\Bundle\RFPBundle\Tests\Functional\Api;
 use Symfony\Component\HttpFoundation\Response;
 
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
-use Oro\Bundle\ProductBundle\Tests\Functional\Api\ApiResponseContentTrait;
 
 abstract class AbstractRequestApiTest extends RestJsonApiTestCase
 {
-    use ApiResponseContentTrait;
-
     /**
      * @return string
      */
