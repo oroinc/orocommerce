@@ -124,25 +124,6 @@ CustomerBundle
     - `AccountGroupVoter` to `CustomerGroupVoter`
     - `AccountVoter` to `CustomerVoter`
 * The method `ActionPermissionProvider::getAccountUserRolePermission` was renamed to `OrderAddressType::getCustomerUserRolePermission`.
-* `Oro\Bundle\CustomerBundle\Controller\Frontend\Api\Rest\GridViewController`
-    - added api controller based on `Oro\Bundle\DataGridBundle\Controller\Api\Rest\GridViewController ` and override methods:
-        postAction(), putAction(), deleteAction(), defaultAction()
-* `Oro\Bundle\CustomerBundle\Datagrid\Extension\GridViewsExtension`
-    - added class based on `Oro\Bundle\DataGridBundle\Extension\GridViews\GridViewsExtension`
-* `Oro\Bundle\CustomerBundle\Datagrid\Extension\GridViewsExtensionComposite`
-    - added class based on `Oro\Bundle\DataGridBundle\Extension\GridViews\GridViewsExtension` and override methods:
-        isApplicable(), getPriority(), visitMetadata(), setParameters()
-* `Oro\Bundle\CustomerBundle\Entity\GridView`
-    - added entity class based on `Oro\Bundle\DataGridBundle\Entity\AbstractGridView` with new field `customer_user_owner_id`
-* `Oro\Bundle\CustomerBundle\Entity\GridViewUser`
-    - added entity class based on `Oro\Bundle\DataGridBundle\Entity\AbstractGridView` with new field `customer_user_id`
-* `Oro\Bundle\CustomerBundle\Entity\Manager\GridViewManagerComposite`
-    - added class based on `Oro\Bundle\DataGridBundle\Entity\Manager\GridViewManager` and override methods:
-        setDefaultGridView(), getSystemViews(), getAllGridViews(), getDefaultView(), getView()
-* `Oro\Bundle\CustomerBundle\Entity\Repository\GridViewRepository`
-    - added repository class based on `Oro\Bundle\DataGridBundle\Entity\Repository\GridViewRepository` with replaced getOwnerFieldName() and getUserFieldName() to `customerUserOwner` and `customerUser`
-* `Oro\Bundle\CustomerBundle\Entity\Repository\GridViewUserRepository`
-    - added repository class based on `Oro\Bundle\DataGridBundle\Entity\Repository\GridViewUserRepository` with replaced getUserFieldName() to `customerUser`
 
 FrontendBundle
 --------------
