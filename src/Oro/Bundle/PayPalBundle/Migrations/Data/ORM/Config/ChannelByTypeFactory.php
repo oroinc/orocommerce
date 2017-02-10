@@ -4,7 +4,7 @@ namespace Oro\Bundle\PayPalBundle\Migrations\Data\ORM\Config;
 
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Provider\ChannelInterface;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Integration\PayPalPayflowGatewayChannelType;
 use Oro\Bundle\PayPalBundle\Integration\PayPalPaymentsProChannelType;
@@ -43,13 +43,13 @@ class ChannelByTypeFactory
     }
 
     /**
-     * @param Organization   $organization
-     * @param PayPalSettings $settings
-     * @param bool           $isEnabled
+     * @param OrganizationInterface $organization
+     * @param PayPalSettings        $settings
+     * @param bool                  $isEnabled
      *
      * @return Channel
      */
-    public function createPaymentProChannel(Organization $organization, PayPalSettings $settings, $isEnabled)
+    public function createPaymentProChannel(OrganizationInterface $organization, PayPalSettings $settings, $isEnabled)
     {
         return $this->createChannel(
             $organization,
@@ -61,14 +61,17 @@ class ChannelByTypeFactory
     }
 
     /**
-     * @param Organization   $organization
-     * @param PayPalSettings $settings
-     * @param bool           $isEnabled
+     * @param OrganizationInterface $organization
+     * @param PayPalSettings        $settings
+     * @param bool                  $isEnabled
      *
      * @return Channel
      */
-    public function createPayflowGatewayChannel(Organization $organization, PayPalSettings $settings, $isEnabled)
-    {
+    public function createPayflowGatewayChannel(
+        OrganizationInterface $organization,
+        PayPalSettings $settings,
+        $isEnabled
+    ) {
         return $this->createChannel(
             $organization,
             $this->payflowGatewayChannelType,
@@ -79,16 +82,16 @@ class ChannelByTypeFactory
     }
 
     /**
-     * @param Organization     $organization
-     * @param ChannelInterface $channel
-     * @param string           $type
-     * @param PayPalSettings   $settings
-     * @param bool             $isEnabled
+     * @param OrganizationInterface $organization
+     * @param ChannelInterface      $channel
+     * @param string                $type
+     * @param PayPalSettings        $settings
+     * @param bool                  $isEnabled
      *
      * @return Channel
      */
     private function createChannel(
-        Organization $organization,
+        OrganizationInterface $organization,
         ChannelInterface $channel,
         $type,
         PayPalSettings $settings,
