@@ -93,7 +93,7 @@ class EnumValueForProductExtension extends AbstractTypeExtension
                 $parentProduct = $parentVariantLink->getParentProduct();
 
                 if (in_array($configId->getFieldName(), $parentProduct->getVariantFields())) {
-                    $configProductsSkuUsingEnum[] = $parentProduct->getSku();
+                    $configProductsSkuUsingEnum[$parentProduct->getId()] = $parentProduct->getSku();
                 }
             }
         }
