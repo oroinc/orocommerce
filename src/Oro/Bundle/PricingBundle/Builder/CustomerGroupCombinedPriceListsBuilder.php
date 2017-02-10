@@ -28,22 +28,22 @@ class CustomerGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBu
     /**
      * @param Website $website
      * @param CustomerGroup|null $currentCustomerGroup
-     * @param bool|false $force
+     * @param int|null $forceTimestamp
      */
-    public function build(Website $website, CustomerGroup $currentCustomerGroup = null, $force = false)
+    public function build(Website $website, CustomerGroup $currentCustomerGroup = null, $forceTimestamp = null)
     {
         if (!$this->isBuiltForCustomerGroup($website, $currentCustomerGroup)) {
             $customerGroups = [$currentCustomerGroup];
             if (!$currentCustomerGroup) {
-                $fallback = $force ? null : PriceListCustomerGroupFallback::WEBSITE;
+                $fallback = $forceTimestamp ? null : PriceListCustomerGroupFallback::WEBSITE;
                 $customerGroups = $this->getPriceListToEntityRepository()
                     ->getCustomerGroupIteratorByDefaultFallback($website, $fallback);
             }
 
             foreach ($customerGroups as $customerGroup) {
-                $this->updatePriceListsOnCurrentLevel($website, $customerGroup, $force);
+                $this->updatePriceListsOnCurrentLevel($website, $customerGroup, $forceTimestamp);
                 $this->customerCombinedPriceListsBuilder
-                    ->buildByCustomerGroup($website, $customerGroup, $force);
+                    ->buildByCustomerGroup($website, $customerGroup, $forceTimestamp);
             }
 
             if ($currentCustomerGroup) {
@@ -57,10 +57,13 @@ class CustomerGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBu
     /**
      * @param Website $website
      * @param CustomerGroup $customerGroup
-     * @param bool $force
+     * @param int|null $forceTimestamp
      */
-    protected function updatePriceListsOnCurrentLevel(Website $website, CustomerGroup $customerGroup, $force)
-    {
+    protected function updatePriceListsOnCurrentLevel(
+        Website $website,
+        CustomerGroup $customerGroup,
+        $forceTimestamp = null
+    ) {
         $priceListsToCustomerGroup = $this->getPriceListToEntityRepository()
             ->findOneBy(['website' => $website, 'customerGroup' => $customerGroup]);
         if (!$priceListsToCustomerGroup) {
@@ -75,7 +78,7 @@ class CustomerGroupCombinedPriceListsBuilder extends AbstractCombinedPriceListBu
         }
         $collection = $this->priceListCollectionProvider->getPriceListsByCustomerGroup($customerGroup, $website);
         $combinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection);
-        $this->updateRelationsAndPrices($combinedPriceList, $website, $customerGroup, $force);
+        $this->updateRelationsAndPrices($combinedPriceList, $website, $customerGroup, $forceTimestamp);
     }
 
     /**
