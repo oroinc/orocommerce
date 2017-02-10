@@ -6,8 +6,6 @@ use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
-use Oro\Bundle\PayPalBundle\Entity\CreditCardPaymentAction;
-use Oro\Bundle\PayPalBundle\Entity\CreditCardType;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Method\Config\Factory\PayPalCreditCardConfigFactory;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfig;
@@ -80,8 +78,8 @@ class PayPalCreditCardConfigFactoryTest extends \PHPUnit_Framework_TestCase
             'debugMode' => true,
             'authorizationForRequiredAmount' => true,
             'zeroAmountAuthorization' => true,
-            'allowedCreditCardTypes' => [$this->createMock(CreditCardType::class)],
-            'creditCardPaymentAction' => $this->createMock(CreditCardPaymentAction::class),
+            'allowedCreditCardTypes' => ['visa'],
+            'creditCardPaymentAction' => 'charge',
             'vendor' => 'string',
             'user' => 'string',
             'password' => 'string',
@@ -126,8 +124,8 @@ class PayPalCreditCardConfigFactoryTest extends \PHPUnit_Framework_TestCase
             'debug_mode' => true,
             'authorization_for_required_amount' => true,
             'zero_amount_authorization' => true,
-            'allowed_credit_card_types' => [$this->createMock(CreditCardType::class)],
-            'purchase_action' => $this->createMock(CreditCardPaymentAction::class),
+            'allowed_credit_card_types' => ['visa'],
+            'purchase_action' => 'charge',
             'credentials' => [
                 Option\Vendor::VENDOR => 'string',
                 Option\User::USER => 'string',

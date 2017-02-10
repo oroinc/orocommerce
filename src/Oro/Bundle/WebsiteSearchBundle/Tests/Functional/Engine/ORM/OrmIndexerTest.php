@@ -4,14 +4,14 @@ namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Engine\ORM;
 
 use Doctrine\ORM\EntityRepository;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
 use Oro\Bundle\EntityBundle\ORM\Registry;
+use Oro\Bundle\SearchBundle\Tests\Functional\SearchExtensionTrait;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestDepartment;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestEmployee;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
+use Oro\Bundle\WebsiteSearchBundle\Engine\IndexerInputValidator;
 use Oro\Bundle\WebsiteSearchBundle\Engine\ORM\OrmIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDatetime;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDecimal;
@@ -78,12 +78,18 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $inputValidator = new IndexerInputValidator(
+            $this->doctrineHelper,
+            $this->mappingProviderMock
+        );
+
         $this->indexer = new OrmIndexer(
             $this->doctrineHelper,
             $this->mappingProviderMock,
             $this->getContainer()->get('oro_website_search.engine.entity_dependencies_resolver'),
             $this->getContainer()->get('oro_website_search.engine.index_data'),
-            $this->getContainer()->get('oro_website_search.placeholder_decorator')
+            $this->getContainer()->get('oro_website_search.placeholder_decorator'),
+            $inputValidator
         );
 
         $this->indexer->setDriver($this->getContainer()->get('oro_website_search.engine.orm.driver'));
@@ -92,9 +98,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
 
     protected function tearDown()
     {
-        parent::tearDown();
-
-        $this->clearIndexTextTable();
+        $this->clearIndexTextTable(IndexText::class);
     }
 
     /**
@@ -138,23 +142,8 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
         return $this->doctrine->getRepository($entity, 'search');
     }
 
-    /**
-     * Workaround to clear MyISAM table as it's not rolled back by transaction.
-     */
-    protected function clearIndexTextTable()
-    {
-        /** @var OroEntityManager $manager */
-        $manager = $this->doctrine->getManager('search');
-        $repository = $manager->getRepository(IndexText::class);
-        $repository->createQueryBuilder('t')
-            ->delete()
-            ->getQuery()
-            ->execute();
-    }
-
     public function testResetIndexOfCertainClass()
     {
-        $this->clearIndexTextTable();
         $this->loadFixtures([LoadItemData::class]);
         $this->indexer->resetIndex(TestProduct::class);
 

@@ -3,18 +3,28 @@
 namespace Oro\Bundle\SEOBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Unit\EventListener\Traits\FormViewListenerWrongProductTestTrait;
 use Oro\Bundle\SEOBundle\EventListener\ProductFormViewListener;
 
 class ProductFormViewListenerTest extends BaseFormViewListenerTestCase
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function setUp()
+    use FormViewListenerWrongProductTestTrait;
+
+    /** @var ProductFormViewListener */
+    protected $listener;
+
+    protected function setUp()
     {
         parent::setUp();
 
         $this->listener = new ProductFormViewListener($this->requestStack, $this->translator, $this->doctrineHelper);
+    }
+
+    protected function terDown()
+    {
+        unset($this->listener);
+
+        parent::tearDown();
     }
 
     public function testOnProductView()
@@ -32,7 +42,7 @@ class ProductFormViewListenerTest extends BaseFormViewListenerTestCase
             ->willReturn($product);
 
         /** @var \PHPUnit_Framework_MockObject_MockObject|\Twig_Environment $env */
-        $env = $this->getEnvironmentForView($product);
+        $env = $this->getEnvironmentForView($product, $this->listener->getMetaFieldLabelPrefix());
         $event = $this->getEventForView($env);
 
         $this->listener->onProductView($event);
@@ -44,47 +54,5 @@ class ProductFormViewListenerTest extends BaseFormViewListenerTestCase
         $event = $this->getEventForEdit($env);
 
         $this->listener->onProductEdit($event);
-    }
-
-    public function testOnProductViewInvalidId()
-    {
-        $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->doctrineHelper
-            ->expects($this->never())
-            ->method('getEntityReference');
-
-        $this->listener->onProductView($event);
-
-        $this->request
-            ->expects($this->once())
-            ->method('get')
-            ->with('id')
-            ->willReturn('string');
-
-        $this->listener->onProductView($event);
-    }
-
-    public function testOnProductViewEmptyProduct()
-    {
-        /** @var \PHPUnit_Framework_MockObject_MockObject|BeforeListRenderEvent $event */
-        $event = $this->getMockBuilder('Oro\Bundle\UIBundle\Event\BeforeListRenderEvent')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->doctrineHelper
-            ->expects($this->once())
-            ->method('getEntityReference')
-            ->willReturn(null);
-
-        $this->request
-            ->expects($this->once())
-            ->method('get')
-            ->with('id')
-            ->willReturn(1);
-
-        $this->listener->onProductView($event);
     }
 }

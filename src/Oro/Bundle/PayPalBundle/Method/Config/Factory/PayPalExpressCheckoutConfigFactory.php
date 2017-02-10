@@ -4,13 +4,12 @@ namespace Oro\Bundle\PayPalBundle\Method\Config\Factory;
 
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfig;
-use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
 class PayPalExpressCheckoutConfigFactory extends AbstractPayPalConfigFactory implements
     PayPalExpressCheckoutConfigFactoryInterface
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function createConfig(PayPalSettings $settings)
     {

@@ -65,7 +65,7 @@ class QuantityToOrderConditionListener
     {
         /** @var ActionData $context */
         $context = $event->getContext();
-        if ($this->isNotCorrectConditionContextForStart($context)) {
+        if (!$this->isApplicableContextForStartCheckout($context)) {
             return;
         }
 
@@ -140,8 +140,14 @@ class QuantityToOrderConditionListener
      * @param mixed $context
      * @return bool
      */
-    protected function isNotCorrectConditionContextForStart($context)
+    protected function isApplicableContextForStartCheckout($context)
     {
-        return (!$context instanceof ActionData || !is_a($context->get('checkout'), Checkout::class, true));
+        if (!$context instanceof ActionData) {
+            return false;
+        }
+
+        $checkout = $context->get('checkout');
+
+        return ($checkout instanceof Checkout && $checkout->getSourceEntity() instanceof ShoppingList);
     }
 }

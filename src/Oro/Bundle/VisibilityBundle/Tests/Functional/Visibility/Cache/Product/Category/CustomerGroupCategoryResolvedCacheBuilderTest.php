@@ -19,9 +19,6 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibility
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\CustomerGroupCategoryResolvedCacheBuilder;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeGroupSubtreeCacheBuilder;
 
-/**
- * @dbIsolation
- */
 class CustomerGroupCategoryResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuilderTest
 {
     /** @var Category */

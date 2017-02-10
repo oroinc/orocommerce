@@ -1,0 +1,10 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'line_item_buttons.html.twig'
+        - '@add':
+            id: __line_item_buttons
+            blockType: container
+            parentId: __root
+            siblingId: ~
+    conditions: 'context["is_logged_in"]'

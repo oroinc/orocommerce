@@ -15,9 +15,6 @@ use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
 use Oro\Bundle\TaxBundle\Tests\Functional\Matcher\DataFixtures\LoadTaxJurisdictions;
 use Oro\Bundle\TaxBundle\Tests\Functional\Matcher\DataFixtures\LoadTaxRules;
 
-/**
- * @dbIsolation
- */
 class ZipCodeMatcherTest extends WebTestCase
 {
     const ZIP_US_NY_RANGE_INSIDE = '00200';

@@ -5,9 +5,6 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Operation;
 use Oro\Bundle\ActionBundle\Tests\Functional\ActionTestCase;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 
-/**
- * @dbIsolation
- */
 class ProductPriceDeleteOperationTest extends ActionTestCase
 {
     protected function setUp()

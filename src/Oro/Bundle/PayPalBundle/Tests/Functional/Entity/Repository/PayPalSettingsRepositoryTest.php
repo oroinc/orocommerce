@@ -6,9 +6,6 @@ use Oro\Bundle\PayPalBundle\Entity\Repository\PayPalSettingsRepository;
 use Oro\Bundle\PayPalBundle\Tests\Functional\DataFixtures\LoadPayPalChannelData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-/**
- * @dbIsolation
- */
 class PayPalSettingsRepositoryTest extends WebTestCase
 {
     /**

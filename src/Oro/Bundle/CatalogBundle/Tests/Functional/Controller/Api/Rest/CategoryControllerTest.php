@@ -7,9 +7,6 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 
-/**
- * @dbIsolation
- */
 class CategoryControllerTest extends WebTestCase
 {
     protected function setUp()

@@ -5,14 +5,14 @@ namespace Oro\Bundle\AlternativeCheckoutBundle\Layout\DataProvider;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
-use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistryInterface;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
 
 class PaymentTermViewProvider
 {
     /**
-     * @var PaymentMethodViewProvidersRegistryInterface
+     * @var PaymentMethodViewProviderInterface
      */
-    protected $paymentMethodViewProvidersRegistry;
+    protected $paymentMethodViewProvider;
 
     /**
      * @var PaymentMethodProviderInterface
@@ -20,19 +20,20 @@ class PaymentTermViewProvider
     private $paymentMethodProvider;
 
     /**
-     * @param PaymentMethodViewProvidersRegistryInterface $paymentMethodViewProvidersRegistry
+     * @param PaymentMethodViewProviderInterface $paymentMethodViewProvider
      * @param PaymentMethodProviderInterface $paymentMethodProvider
      */
     public function __construct(
-        PaymentMethodViewProvidersRegistryInterface $paymentMethodViewProvidersRegistry,
+        PaymentMethodViewProviderInterface $paymentMethodViewProvider,
         PaymentMethodProviderInterface $paymentMethodProvider
     ) {
-        $this->paymentMethodViewProvidersRegistry = $paymentMethodViewProvidersRegistry;
+        $this->paymentMethodViewProvider = $paymentMethodViewProvider;
         $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
      * @param PaymentContextInterface $context
+     *
      * @return array|null
      */
     public function getView(PaymentContextInterface $context)
@@ -48,7 +49,7 @@ class PaymentTermViewProvider
                 return null;
             }
 
-            $views = $this->paymentMethodViewProvidersRegistry->getPaymentMethodViews($paymentMethods);
+            $views = $this->paymentMethodViewProvider->getPaymentMethodViews($paymentMethods);
         } catch (\InvalidArgumentException $e) {
             return null;
         }
@@ -62,7 +63,8 @@ class PaymentTermViewProvider
 
     /**
      * @param PaymentMethodViewInterface[] $views
-     * @param PaymentContextInterface $context
+     * @param PaymentContextInterface      $context
+     *
      * @return array
      */
     protected function formatPaymentViews($views, PaymentContextInterface $context)

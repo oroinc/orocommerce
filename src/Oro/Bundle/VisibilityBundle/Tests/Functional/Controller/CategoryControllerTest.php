@@ -21,9 +21,6 @@ use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\VisibilityTrait;
 
-/**
- * @dbIsolation
- */
 class CategoryControllerTest extends WebTestCase
 {
     use VisibilityTrait;

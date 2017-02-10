@@ -30,23 +30,8 @@ class TaxRuleTest extends \PHPUnit_Framework_TestCase
         ]);
     }
 
-    public function testPrePersist()
-    {
-        $tax = $this->createTaxRuleEntity();
-        $tax->prePersist();
-        $this->assertInstanceOf('DateTime', $tax->getCreatedAt());
-        $this->assertInstanceOf('DateTime', $tax->getUpdatedAt());
-    }
-
-    public function testPreUpdate()
-    {
-        $tax = $this->createTaxRuleEntity();
-        $tax->preUpdate();
-        $this->assertInstanceOf('DateTime', $tax->getUpdatedAt());
-    }
-
     /**
-     * @return Tax
+     * @return TaxRule
      */
     protected function createTaxRuleEntity()
     {

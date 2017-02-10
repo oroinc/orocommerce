@@ -16,7 +16,6 @@ use Symfony\Component\DomCrawler\Form;
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- * @dbIsolation
  * @group CommunityEdition
  */
 class ShippingMethodsConfigsRuleControllerTest extends WebTestCase

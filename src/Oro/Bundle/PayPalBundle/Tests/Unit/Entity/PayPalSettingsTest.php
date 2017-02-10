@@ -3,9 +3,6 @@
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Entity;
 
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\PayPalBundle\Entity\CreditCardPaymentAction;
-use Oro\Bundle\PayPalBundle\Entity\CreditCardType;
-use Oro\Bundle\PayPalBundle\Entity\ExpressCheckoutPaymentAction;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -32,11 +29,11 @@ class PayPalSettingsTest extends \PHPUnit_Framework_TestCase
             ['useProxy', false],
             ['proxyHost', 'some string'],
             ['proxyPort', 'some string'],
-            ['expressCheckoutPaymentAction', new ExpressCheckoutPaymentAction()],
-            ['creditCardPaymentAction', new CreditCardPaymentAction()],
+            ['expressCheckoutPaymentAction', 'charge'],
+            ['creditCardPaymentAction', 'charge'],
+            ['allowedCreditCardTypes', ['visa']],
         ]);
         static::assertPropertyCollections(new PayPalSettings(), [
-            ['allowedCreditCardTypes', new CreditCardType()],
             ['creditCardLabels', new LocalizedFallbackValue()],
             ['creditCardShortLabels', new LocalizedFallbackValue()],
             ['expressCheckoutLabels', new LocalizedFallbackValue()],
@@ -63,13 +60,13 @@ class PayPalSettingsTest extends \PHPUnit_Framework_TestCase
                 'useProxy' => true,
                 'proxyHost' => 'some host',
                 'proxyPort' => 'some proxy',
-                'allowedCreditCardTypes' => [new CreditCardType()],
-                'expressCheckoutPaymentAction' => new ExpressCheckoutPaymentAction(),
-                'creditCardPaymentAction' => new CreditCardPaymentAction(),
+                'expressCheckoutPaymentAction' => 'charge',
+                'creditCardPaymentAction' => 'charge',
+                'allowedCreditCardTypes' => ['visa', 'mastercard'],
                 'creditCardLabels' => [(new LocalizedFallbackValue())->setString('label')],
                 'creditCardShortLabels' => [(new LocalizedFallbackValue())->setString('lbl')],
                 'expressCheckoutLabels' => [(new LocalizedFallbackValue())->setString('label')],
-                'expressCheckoutShortLabels' => [(new LocalizedFallbackValue())->setString('lbl')]
+                'expressCheckoutShortLabels' => [(new LocalizedFallbackValue())->setString('lbl')],
             ]
         );
 
@@ -91,7 +88,7 @@ class PayPalSettingsTest extends \PHPUnit_Framework_TestCase
 
         static::assertEquals(
             $result->get('allowed_credit_card_types'),
-            $entity->getAllowedCreditCardTypes()->toArray()
+            $entity->getAllowedCreditCardTypes()
         );
         static::assertEquals(
             $result->get('express_checkout_payment_action'),

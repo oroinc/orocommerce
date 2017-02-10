@@ -80,7 +80,6 @@ services:
         tags:
             - { name: layout.data_provider, alias: checkout_payment_context }
 
-
     oro_checkout.expression.acl_granted:
         class: Oro\Bundle\CheckoutBundle\Expression\CheckRequest
         arguments:
@@ -404,11 +403,6 @@ services:
         tags:
             - { name: security.voter }
 
-    oro_checkout.shipping_method.provider_main:
-        parent: oro_checkout.shipping_method.price_provider_chain_element
-        tags:
-            - { name: layout.data_provider, alias: 'checkout_shipping_methods' }
-
     oro_checkout.shipping_method.price_provider_chain_element:
         class: 'Oro\Bundle\CheckoutBundle\Shipping\Method\Chain\Member\Price\PriceCheckoutShippingMethodsProviderChainElement'
         arguments:
@@ -456,3 +450,10 @@ services:
             - '@oro_pricing.model.price_list_request_handler'
         tags:
             - { name: kernel.event_listener, event: extendable_condition.start_checkout, method: onStartCheckoutConditionCheck }
+
+    oro_checkout.payment.method.event_listener.method_renaming:
+        class: 'Oro\Bundle\CheckoutBundle\Payment\Method\EventListener\MethodRenamingListener'
+        arguments:
+            - '@oro_checkout.repository.checkout'
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.method_renaming, method: onMethodRename}

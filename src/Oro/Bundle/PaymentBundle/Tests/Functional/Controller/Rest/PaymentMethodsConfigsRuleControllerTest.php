@@ -6,9 +6,6 @@ use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-/**
- * @dbIsolation
- */
 class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
 {
     protected function setUp()

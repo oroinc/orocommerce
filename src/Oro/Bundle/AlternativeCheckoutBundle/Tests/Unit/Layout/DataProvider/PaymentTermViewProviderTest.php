@@ -7,7 +7,7 @@ use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
-use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistry;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
 use Oro\Bundle\PaymentTermBundle\Method\PaymentTerm;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -18,9 +18,9 @@ class PaymentTermViewProviderTest extends \PHPUnit_Framework_TestCase
     const METHOD = PaymentTerm::TYPE;
 
     /**
-     * @var PaymentMethodViewProvidersRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var PaymentMethodViewProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $paymentMethodViewRegistry;
+    protected $paymentMethodViewProvider;
 
     /**
      * @var PaymentMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -34,12 +34,12 @@ class PaymentTermViewProviderTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->paymentMethodViewRegistry = $this->createMock(PaymentMethodViewProvidersRegistry::class);
+        $this->paymentMethodViewProvider = $this->createMock(PaymentMethodViewProviderInterface::class);
 
         $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
 
         $this->provider = new PaymentTermViewProvider(
-            $this->paymentMethodViewRegistry,
+            $this->paymentMethodViewProvider,
             $this->paymentMethodProvider
         );
     }
@@ -61,7 +61,7 @@ class PaymentTermViewProviderTest extends \PHPUnit_Framework_TestCase
             ->method('isApplicable')
             ->willReturn(false);
 
-        $this->paymentMethodViewRegistry
+        $this->paymentMethodViewProvider
             ->expects($this->never())
             ->method('getPaymentMethodViews');
 
@@ -110,7 +110,7 @@ class PaymentTermViewProviderTest extends \PHPUnit_Framework_TestCase
             ->with($context)
             ->willReturn([]);
 
-        $this->paymentMethodViewRegistry->expects(static::once())
+        $this->paymentMethodViewProvider->expects(static::once())
             ->method('getPaymentMethodViews')
             ->with([static::METHOD])
             ->willReturn([$view]);

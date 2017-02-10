@@ -14,8 +14,6 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
- *
- * @dbIsolation
  */
 class ProductControllerTest extends WebTestCase
 {

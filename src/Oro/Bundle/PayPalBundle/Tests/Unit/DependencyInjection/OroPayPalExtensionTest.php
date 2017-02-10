@@ -41,7 +41,9 @@ class OroPayPalExtensionTest extends ExtensionTestCase
             'oro_paypal.event_listener.callback.payflow_gateway.express_checkout.redirect',
             'oro_paypal.event_listener.callback.payments_pro.express_checkout.redirect',
             'oro_paypal.event_listener.ip_check.payflow_gateway.credit_card',
-            'oro_paypal.event_listener.ip_check.payments_pro.credit_card'
+            'oro_paypal.event_listener.ip_check.payments_pro.credit_card',
+            'oro_paypal.settings.payment_action.provider',
+            'oro_paypal.settings.card_type.provider'
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }

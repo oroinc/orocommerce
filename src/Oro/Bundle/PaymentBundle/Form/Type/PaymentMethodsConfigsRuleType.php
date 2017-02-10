@@ -6,7 +6,7 @@ use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
-use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistryInterface;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
 use Oro\Bundle\RuleBundle\Form\Type\RuleType;
 use Oro\Bundle\PaymentBundle\Form\EventSubscriber\DestinationCollectionTypeSubscriber;
 use Symfony\Component\Form\AbstractType;
@@ -26,24 +26,24 @@ class PaymentMethodsConfigsRuleType extends AbstractType
     protected $methodRegistry;
 
     /**
-     * @var PaymentMethodViewProvidersRegistryInterface
+     * @var PaymentMethodViewProviderInterface
      */
-    protected $methodViewRegistry;
+    protected $methodViewProvider;
 
     /**
      * @param PaymentMethodProvidersRegistryInterface $methodRegistry
-     * @param PaymentMethodViewProvidersRegistryInterface $methodViewRegistry
+     * @param PaymentMethodViewProviderInterface      $methodViewProvider
      */
     public function __construct(
         PaymentMethodProvidersRegistryInterface $methodRegistry,
-        PaymentMethodViewProvidersRegistryInterface $methodViewRegistry
+        PaymentMethodViewProviderInterface $methodViewProvider
     ) {
         $this->methodRegistry = $methodRegistry;
-        $this->methodViewRegistry = $methodViewRegistry;
+        $this->methodViewProvider = $methodViewProvider;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -72,7 +72,7 @@ class PaymentMethodsConfigsRuleType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
@@ -90,7 +90,7 @@ class PaymentMethodsConfigsRuleType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getBlockPrefix()
     {
@@ -107,7 +107,7 @@ class PaymentMethodsConfigsRuleType extends AbstractType
             function (array $result, PaymentMethodProviderInterface $provider) {
                 foreach ($provider->getPaymentMethods() as $method) {
                     $result[$method->getIdentifier()] = $this
-                        ->methodViewRegistry->getPaymentMethodView($method->getIdentifier())
+                        ->methodViewProvider->getPaymentMethodView($method->getIdentifier())
                         ->getAdminLabel();
                 }
                 return $result;

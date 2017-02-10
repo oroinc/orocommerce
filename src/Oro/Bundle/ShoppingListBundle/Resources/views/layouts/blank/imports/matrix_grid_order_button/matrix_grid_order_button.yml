@@ -1,0 +1,12 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'matrix_grid_order_button.html.twig'
+        - '@add':
+            id: __matrix_grid_order_button
+            blockType: matrix_grid_order_button
+            parentId: __root
+            options:
+                product: '=data["product"]'
+                visible: '=data["acl"].isGranted("oro_shopping_list_frontend_update") and data["oro_shopping_list_matrix_grid_order"].isAvailable(data["product"])'
+    conditions: 'context["is_logged_in"]'

@@ -14,19 +14,25 @@ use Symfony\Component\Form\FormFactoryInterface;
 
 class PayPalCreditCardPaymentMethodView implements PaymentMethodViewInterface
 {
-    /** @var FormFactoryInterface */
+    /**
+     * @var FormFactoryInterface
+     */
     protected $formFactory;
 
-    /** @var PaymentTransactionProvider */
+    /**
+     * @var PaymentTransactionProvider
+     */
     protected $paymentTransactionProvider;
 
-    /** @var PayPalCreditCardConfigInterface */
+    /**
+     * @var PayPalCreditCardConfigInterface
+     */
     protected $config;
 
     /**
-     * @param FormFactoryInterface $formFactory
+     * @param FormFactoryInterface            $formFactory
      * @param PayPalCreditCardConfigInterface $config
-     * @param PaymentTransactionProvider $paymentTransactionProvider
+     * @param PaymentTransactionProvider      $paymentTransactionProvider
      */
     public function __construct(
         FormFactoryInterface $formFactory,
@@ -38,7 +44,9 @@ class PayPalCreditCardPaymentMethodView implements PaymentMethodViewInterface
         $this->paymentTransactionProvider = $paymentTransactionProvider;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritDoc}
+     */
     public function getOptions(PaymentContextInterface $context)
     {
         $isZeroAmountAuthorizationEnabled = $this->config->isZeroAmountAuthorizationEnabled();
@@ -82,6 +90,7 @@ class PayPalCreditCardPaymentMethodView implements PaymentMethodViewInterface
 
     /**
      * @param PaymentTransaction $paymentTransaction
+     *
      * @return string|null
      */
     protected function getLast4(PaymentTransaction $paymentTransaction)
@@ -93,26 +102,32 @@ class PayPalCreditCardPaymentMethodView implements PaymentMethodViewInterface
         return substr($acct, -4);
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritDoc}
+     */
     public function getBlock()
     {
-        return '_payment_methods_credit_card_widget';
+        return '_payment_methods_paypal_credit_card_widget';
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritDoc}
+     */
     public function getLabel()
     {
         return $this->config->getLabel();
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritDoc}
+     */
     public function getShortLabel()
     {
         return $this->config->getShortLabel();
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getAdminLabel()
     {
@@ -127,7 +142,9 @@ class PayPalCreditCardPaymentMethodView implements PaymentMethodViewInterface
         return $this->config->getAllowedCreditCards();
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritDoc}
+     */
     public function getPaymentMethodIdentifier()
     {
         return $this->config->getPaymentMethodIdentifier();

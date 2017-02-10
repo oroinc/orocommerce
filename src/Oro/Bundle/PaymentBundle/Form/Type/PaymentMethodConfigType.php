@@ -5,7 +5,7 @@ namespace Oro\Bundle\PaymentBundle\Form\Type;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
-use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistryInterface;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -23,24 +23,24 @@ class PaymentMethodConfigType extends AbstractType
     protected $methodRegistry;
 
     /**
-     * @var PaymentMethodViewProvidersRegistryInterface
+     * @var PaymentMethodViewProviderInterface
      */
-    protected $methodViewRegistry;
+    protected $methodViewProvider;
 
     /**
      * @param PaymentMethodProvidersRegistryInterface $methodRegistry
-     * @param PaymentMethodViewProvidersRegistryInterface $methodViewRegistry
+     * @param PaymentMethodViewProviderInterface      $methodViewProvider
      */
     public function __construct(
         PaymentMethodProvidersRegistryInterface $methodRegistry,
-        PaymentMethodViewProvidersRegistryInterface $methodViewRegistry
+        PaymentMethodViewProviderInterface $methodViewProvider
     ) {
         $this->methodRegistry = $methodRegistry;
-        $this->methodViewRegistry = $methodViewRegistry;
+        $this->methodViewProvider = $methodViewProvider;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -57,7 +57,7 @@ class PaymentMethodConfigType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
@@ -65,8 +65,9 @@ class PaymentMethodConfigType extends AbstractType
             $this->methodRegistry->getPaymentMethodProviders(),
             function (array $result, PaymentMethodProviderInterface $provider) {
                 foreach ($provider->getPaymentMethods() as $method) {
-                    $result[$method->getIdentifier()] = $this
-                        ->methodViewRegistry->getPaymentMethodView($method->getIdentifier())
+                    $methodId = $method->getIdentifier();
+                    $result[$methodId] = $this
+                        ->methodViewProvider->getPaymentMethodView($methodId)
                         ->getAdminLabel();
                 }
                 return $result;
@@ -86,7 +87,7 @@ class PaymentMethodConfigType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getBlockPrefix()
     {
