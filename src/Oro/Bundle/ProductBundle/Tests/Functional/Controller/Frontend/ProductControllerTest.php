@@ -14,9 +14,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use Symfony\Bundle\FrameworkBundle\Translation\Translator;
 
-/**
- * @dbIsolation
- */
 class ProductControllerTest extends WebTestCase
 {
     /**

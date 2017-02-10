@@ -8,9 +8,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\PhpUtils\ArrayUtil;
 use Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadProductMetaData;
 
-/**
- * @dbIsolation
- */
 class ProductControllerTest extends WebTestCase
 {
     protected function setUp()

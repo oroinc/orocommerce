@@ -6,9 +6,6 @@ use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductDa
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFrontendProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\Form\Type\AbstractFrontendScopedProductSelectTypeTest;
 
-/**
- * @dbIsolation
- */
 class FrontendProductSelectTypeTest extends AbstractFrontendScopedProductSelectTypeTest
 {
     public function setUp()

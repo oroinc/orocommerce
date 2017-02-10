@@ -8,9 +8,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
-/**
- * @dbIsolation
- */
 class RedirectRepositoryTest extends WebTestCase
 {
     protected function setUp()

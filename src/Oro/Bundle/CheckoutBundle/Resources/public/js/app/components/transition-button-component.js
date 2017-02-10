@@ -74,6 +74,7 @@ define(function(require) {
 
             data = data || {method: 'GET'};
             data.url = url;
+            data.errorHandlerMessage = false;
             $.ajax(data)
                 .done(_.bind(this.onSuccess, this))
                 .fail(_.bind(this.onFail, this));

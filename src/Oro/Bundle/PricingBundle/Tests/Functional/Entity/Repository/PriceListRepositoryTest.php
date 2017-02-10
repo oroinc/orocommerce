@@ -11,9 +11,6 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceRules;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 
-/**
- * @dbIsolation
- */
 class PriceListRepositoryTest extends WebTestCase
 {
     /**

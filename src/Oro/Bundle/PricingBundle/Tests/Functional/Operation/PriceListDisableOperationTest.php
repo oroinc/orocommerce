@@ -10,9 +10,6 @@ use Oro\Bundle\ActionBundle\Tests\Functional\ActionTestCase;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 
-/**
- * @dbIsolation
- */
 class PriceListDisableOperationTest extends ActionTestCase
 {
     public function setUp()

@@ -81,8 +81,10 @@ oro:
                 shipping_method_type:
                     label: 'Shipping method type'
             transition:
+                __start__:
+                    label: 'Create Order'
                 start_from_shoppinglist:
-                    label: Create Order
+                    label: 'Create Order'
                 start_from_quickorderform:
                     label: 'Create Order'
                 continue_to_shipping_address:

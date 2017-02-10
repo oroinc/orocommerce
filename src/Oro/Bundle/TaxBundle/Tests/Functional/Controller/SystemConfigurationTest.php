@@ -8,9 +8,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use Oro\Bundle\TaxBundle\Provider\BuiltInTaxProvider;
 
-/**
- * @dbIsolation
- */
 class SystemConfigurationTest extends WebTestCase
 {
     /** @var ConfigManager */

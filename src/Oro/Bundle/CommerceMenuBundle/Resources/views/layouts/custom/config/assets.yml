@@ -1,5 +1,0 @@
-styles:
-    inputs:
-        - 'bundles/orocommercemenu/custom/scss/variables/main-menu-column/main-menu-column-config.scss'
-        - 'bundles/orocommercemenu/blank/scss/styles.scss': 'bundles/orocommercemenu/blank/scss/styles_custom.scss'
-        - 'bundles/orocommercemenu/custom/scss/styles.scss'

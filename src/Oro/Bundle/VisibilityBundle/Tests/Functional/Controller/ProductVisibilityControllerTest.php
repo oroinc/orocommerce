@@ -15,9 +15,6 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Symfony\Component\DomCrawler\Field\ChoiceFormField;
 
-/**
- * @dbIsolation
- */
 class ProductVisibilityControllerTest extends WebTestCase
 {
     protected function setUp()
@@ -36,7 +33,7 @@ class ProductVisibilityControllerTest extends WebTestCase
         $product = $this->getReference(LoadProductData::PRODUCT_1);
 
         //load product visibility page
-        $scope = $this->getClient()->getContainer()->get('oro_scope.scope_manager')->findDefaultScope();
+        $scope = $this->client->getContainer()->get('oro_scope.scope_manager')->findDefaultScope();
         $crawler = $this->client->request(
             'GET',
             $this->getUrl('oro_product_visibility_edit', ['id' => $product->getId()])
@@ -91,7 +88,7 @@ class ProductVisibilityControllerTest extends WebTestCase
             ]
         );
 
-        $em = $this->getClient()->getContainer()->get('doctrine')->getManager();
+        $em = $this->client->getContainer()->get('doctrine')->getManager();
 
         // assert product visibility to all saved properly
         $pv = $em->getRepository(ProductVisibility::class)->findBy(['product' => $product]);
@@ -134,9 +131,9 @@ class ProductVisibilityControllerTest extends WebTestCase
      */
     protected function assertVisibilityEntity($class, $value, array $context, Product $product)
     {
-        $em = $this->getClient()->getContainer()->get('doctrine')->getManager();
+        $em = $this->client->getContainer()->get('doctrine')->getManager();
         $type = call_user_func([$class, 'getScopeType']);
-        $scope = $this->getClient()->getContainer()->get('oro_scope.scope_manager')->findOrCreate($type, $context);
+        $scope = $this->client->getContainer()->get('oro_scope.scope_manager')->findOrCreate($type, $context);
         /** @var VisibilityInterface $visibility */
         $visibility = $em->getRepository($class)->findOneBy(['product' => $product, 'scope' => $scope]);
         $this->assertNotNull($visibility, sprintf("%s entity missing for expected value %s", $class, $value));
@@ -146,7 +143,7 @@ class ProductVisibilityControllerTest extends WebTestCase
     public function testScopeWidgetAction()
     {
         $product = $this->getReference(LoadProductData::PRODUCT_3);
-        $scope = $this->getClient()->getContainer()->get('oro_scope.scope_manager')->findDefaultScope();
+        $scope = $this->client->getContainer()->get('oro_scope.scope_manager')->findDefaultScope();
 
         //load widget
         $crawler = $this->client->request(

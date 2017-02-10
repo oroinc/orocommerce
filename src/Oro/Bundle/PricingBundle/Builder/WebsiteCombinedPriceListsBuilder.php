@@ -29,21 +29,21 @@ class WebsiteCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
 
     /**
      * @param Website|null $currentWebsite
-     * @param bool $force
+     * @param int|null $forceTimestamp
      */
-    public function build(Website $currentWebsite = null, $force = false)
+    public function build(Website $currentWebsite = null, $forceTimestamp = null)
     {
         if (!$this->isBuiltForWebsite($currentWebsite)) {
             $websites = [$currentWebsite];
             if (!$currentWebsite) {
-                $fallback = $force ? null : PriceListWebsiteFallback::CONFIG;
+                $fallback = $forceTimestamp ? null : PriceListWebsiteFallback::CONFIG;
                 $websites = $this->getPriceListToEntityRepository()
                     ->getWebsiteIteratorByDefaultFallback($fallback);
             }
 
             foreach ($websites as $website) {
-                $this->updatePriceListsOnCurrentLevel($website, $force);
-                $this->customerGroupCombinedPriceListsBuilder->build($website, null, $force);
+                $this->updatePriceListsOnCurrentLevel($website, $forceTimestamp);
+                $this->customerGroupCombinedPriceListsBuilder->build($website, null, $forceTimestamp);
             }
 
             if ($currentWebsite) {
@@ -55,9 +55,9 @@ class WebsiteCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
 
     /**
      * @param Website $website
-     * @param bool $force
+     * @param int|null $forceTimestamp
      */
-    protected function updatePriceListsOnCurrentLevel(Website $website, $force)
+    protected function updatePriceListsOnCurrentLevel(Website $website, $forceTimestamp = null)
     {
         $priceListsToWebsite = $this->getPriceListToEntityRepository()
             ->findOneBy(['website' => $website]);
@@ -73,7 +73,7 @@ class WebsiteCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
         }
         $collection = $this->priceListCollectionProvider->getPriceListsByWebsite($website);
         $combinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection);
-        $this->updateRelationsAndPrices($combinedPriceList, $website, null, $force);
+        $this->updateRelationsAndPrices($combinedPriceList, $website, null, $forceTimestamp);
     }
 
     /**

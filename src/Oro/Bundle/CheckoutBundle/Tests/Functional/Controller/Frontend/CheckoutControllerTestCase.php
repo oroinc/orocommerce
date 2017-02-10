@@ -73,7 +73,7 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
             LoadShoppingListLineItems::class,
             LoadCombinedProductPrices::class,
             LoadShippingMethodsConfigsRules::class,
-            LoadInventoryLevels::class,
+            '@OroInventoryBundle/Tests/Functional/DataFixtures/inventory_level.yml',
         ], $paymentFixtures));
         $this->registry = $this->getContainer()->get('doctrine');
     }

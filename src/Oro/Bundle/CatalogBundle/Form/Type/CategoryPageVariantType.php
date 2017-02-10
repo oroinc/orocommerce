@@ -2,12 +2,15 @@
 
 namespace Oro\Bundle\CatalogBundle\Form\Type;
 
-use Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType;
-use Oro\Component\WebCatalog\Form\AbstractPageVariantType;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolverInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-class CategoryPageVariantType extends AbstractPageVariantType
+use Oro\Component\WebCatalog\Form\PageVariantType;
+use Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType;
+
+class CategoryPageVariantType extends AbstractType
 {
     const NAME = 'oro_catalog_category_page_variant';
 
@@ -26,8 +29,14 @@ class CategoryPageVariantType extends AbstractPageVariantType
                     'constraints' => [new NotBlank()]
                 ]
             );
+    }
 
-        parent::buildForm($builder, $options);
+    /**
+     * {@inheritdoc}
+     */
+    public function getParent()
+    {
+        return PageVariantType::class;
     }
 
     /**
@@ -49,8 +58,10 @@ class CategoryPageVariantType extends AbstractPageVariantType
     /**
      * {@inheritdoc}
      */
-    protected function getPageContentVariantTypeName()
+    public function setDefaultOptions(OptionsResolverInterface $resolver)
     {
-        return CategoryPageContentVariantType::TYPE;
+        $resolver->setDefaults([
+            'content_variant_type' => CategoryPageContentVariantType::TYPE,
+        ]);
     }
 }

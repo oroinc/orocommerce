@@ -11,9 +11,6 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListSchedule;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListActivationRuleRepository;
 
-/**
- * @dbIsolation
- */
 class CombinedPriceListActivationPlanBuilderTest extends WebTestCase
 {
     /**

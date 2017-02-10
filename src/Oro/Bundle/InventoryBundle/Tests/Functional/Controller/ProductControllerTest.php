@@ -9,9 +9,6 @@ use Oro\Bundle\EntityBundle\Tests\Functional\Helper\FallbackTestTrait;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-/**
- * @dbIsolation
- */
 class ProductControllerTest extends WebTestCase
 {
     use FallbackTestTrait;
