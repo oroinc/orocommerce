@@ -2,22 +2,17 @@
 
 namespace Oro\Bundle\PayPalBundle\Migrations\Data\ORM;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\ConfigBundle\Entity\ConfigValue;
-use Oro\Bundle\ConfigBundle\Entity\Repository\ConfigValueRepository;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\PaymentBundle\Method\Event\MethodRenamingEventDispatcherInterface;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
+use Oro\Bundle\PaymentBundle\Migrations\Data\ORM\AbstractMoveConfigValuesToSettings;
 use Oro\Bundle\PayPalBundle\Migrations\Data\ORM\Config\ChannelByTypeFactory;
 use Oro\Bundle\PayPalBundle\Migrations\Data\ORM\Config\PaymentMethodIdentifierByChannelProvider;
-use Oro\Bundle\PayPalBundle\Migrations\Data\ORM\Config\PayPalConfigToSettingsConverter;
 use Oro\Bundle\PayPalBundle\Migrations\Data\ORM\Config\PayPalConfigFactory;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Oro\Bundle\PayPalBundle\Migrations\Data\ORM\Config\PayPalConfigToSettingsConverter;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class MoveConfigValuesToSettings extends AbstractFixture implements ContainerAwareInterface
+class MoveConfigValuesToSettings extends AbstractMoveConfigValuesToSettings
 {
     const SECTION_NAME = 'oro_paypal';
 
@@ -25,11 +20,6 @@ class MoveConfigValuesToSettings extends AbstractFixture implements ContainerAwa
     const PAYFLOW_GATEWAY_EXPRESS_CHECKOUT_TYPE = 'payflow_express_checkout';
     const PAYMENTS_PRO_TYPE = 'paypal_payments_pro';
     const PAYMENTS_PRO_EXPRESS_CHECKOUT_TYPE = 'paypal_payments_pro_express_checkout';
-
-    /**
-     * @var ManagerRegistry
-     */
-    protected $doctrine;
 
     /**
      * @var ChannelByTypeFactory
@@ -47,33 +37,20 @@ class MoveConfigValuesToSettings extends AbstractFixture implements ContainerAwa
     protected $payPalConfigToSettingsConverter;
 
     /**
-     * @var bool
-     */
-    protected $installed;
-
-    /**
      * @var PaymentMethodIdentifierByChannelProvider
      */
     protected $paymentMethodIdentifierByChannelProvider;
 
     /**
-     * @var MethodRenamingEventDispatcherInterface
-     */
-    protected $dispatcher;
-
-    /**
-     * Sets the container.
-     *
-     * @param ContainerInterface|null $container A ContainerInterface instance or null
+     * {@inheritDoc}
      */
     public function setContainer(ContainerInterface $container = null)
     {
-        $this->doctrine = $container->get('doctrine');
+        parent::setContainer($container);
+
         $this->channelFromPayPalConfigFactory = $this->createChannelFromPayPalConfigFactory($container);
         $this->payPalConfigFactory = $this->createPayPalConfigFactory($container);
         $this->payPalConfigToSettingsConverter = new PayPalConfigToSettingsConverter();
-        $this->installed = $container->hasParameter('installed') && $container->getParameter('installed');
-        $this->dispatcher = $container->get('oro_payment.method.event.dispatcher.method_renaming');
         $this->paymentMethodIdentifierByChannelProvider =
             $this->createPaymentMethodIdentifierByChannelProvider($container);
     }
@@ -81,23 +58,12 @@ class MoveConfigValuesToSettings extends AbstractFixture implements ContainerAwa
     /**
      * {@inheritDoc}
      */
-    public function load(ObjectManager $manager)
-    {
-        if ($this->installed) {
-            $this->moveConfigFromSystemConfigToIntegration($manager);
-            $this->getConfigValueRepository()->removeBySection(self::SECTION_NAME);
-        }
-    }
-
-    /**
-     * @param ObjectManager $manager
-     */
-    protected function moveConfigFromSystemConfigToIntegration(ObjectManager $manager)
-    {
+    protected function moveConfigFromSystemConfigToIntegration(
+        ObjectManager $manager,
+        OrganizationInterface $organization
+    ) {
         $paymentsProSystemConfig = $this->payPalConfigFactory->createPaymentsProConfig();
         $payflowGatewaySystemConfig = $this->payPalConfigFactory->createPayflowGatewayConfig();
-
-        $organization = $this->getOrganization();
 
         $paymentsProChannel = $this->channelFromPayPalConfigFactory->createPaymentProChannel(
             $organization,
@@ -142,22 +108,6 @@ class MoveConfigValuesToSettings extends AbstractFixture implements ContainerAwa
         foreach ($newNamesByOldNames as $oldName => $newName) {
             $this->dispatcher->dispatch($oldName, $newName);
         }
-    }
-
-    /**
-     * @return ConfigValueRepository
-     */
-    protected function getConfigValueRepository()
-    {
-        return $this->doctrine->getManagerForClass(ConfigValue::class)->getRepository(ConfigValue::class);
-    }
-
-    /**
-     * @return Organization
-     */
-    protected function getOrganization()
-    {
-        return $this->doctrine->getRepository(Organization::class)->getFirst();
     }
 
     /**
