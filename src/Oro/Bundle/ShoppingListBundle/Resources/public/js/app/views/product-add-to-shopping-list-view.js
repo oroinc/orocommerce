@@ -232,6 +232,9 @@ define(function(require) {
 
         onClick: function(e) {
             var $button = $(e.currentTarget);
+            if ( $button.data('disabled')) {
+                return false;
+            }
             var url = $button.data('url');
             var intention = $button.data('intention');
             var formData = this.$form.serialize();

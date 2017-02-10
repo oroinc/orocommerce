@@ -15,7 +15,8 @@ define(function(require) {
         elements: {
             fields: '[data-name="field__quantity"]:enabled',
             totalQty: '[data-role="total-quantity"]',
-            totalPrice: '[data-role="total-price"]'
+            totalPrice: '[data-role="total-price"]',
+            submitButtons: '[data-shoppingList]'
         },
 
         elementsEvents: {
@@ -92,6 +93,12 @@ define(function(require) {
          * Render actual view
          */
         render: function() {
+            if (this.total.quantity === 0) {
+                this.getElement('submitButtons').addClass('disabled').data('disabled', true);
+            } else {
+                this.getElement('submitButtons').removeClass('disabled').data('disabled', false);
+            }
+
             this.getElement('totalQty').text(this.total.quantity);
             this.getElement('totalPrice').text(
                 NumberFormatter.formatCurrency(this.total.price)
