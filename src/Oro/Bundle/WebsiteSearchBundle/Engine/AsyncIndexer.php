@@ -31,16 +31,6 @@ class AsyncIndexer implements IndexerInterface
     private $reindexMessageGranularizer;
 
     /**
-     * @var DoctrineHelper
-     */
-    private $doctrineHelper;
-
-    /**
-     * @var WebsiteSearchMappingProvider
-     */
-    private $mappingProvider;
-
-    /**
      * @var IndexerInputValidator
      */
     private $inputValidator;
@@ -48,23 +38,17 @@ class AsyncIndexer implements IndexerInterface
     /**
      * @param IndexerInterface $baseIndexer
      * @param MessageProducerInterface $messageProducer
-     * @param DoctrineHelper $doctrineHelper
-     * @param WebsiteSearchMappingProvider $mappingProvider
      * @param IndexerInputValidator $indexerInputValidator
      * @param ReindexMessageGranularizer $reindexMessageGranularizer
      */
     public function __construct(
         IndexerInterface $baseIndexer,
         MessageProducerInterface $messageProducer,
-        DoctrineHelper $doctrineHelper,
-        WebsiteSearchMappingProvider $mappingProvider,
         IndexerInputValidator $indexerInputValidator,
         ReindexMessageGranularizer $reindexMessageGranularizer
     ) {
         $this->baseIndexer                = $baseIndexer;
         $this->messageProducer            = $messageProducer;
-        $this->doctrineHelper             = $doctrineHelper;
-        $this->mappingProvider            = $mappingProvider;
         $this->inputValidator             = $indexerInputValidator;
         $this->reindexMessageGranularizer = $reindexMessageGranularizer;
     }
