@@ -1,9 +1,0 @@
-oro_frontend:
-    form:
-        inlineEditing:
-            action.save: Save
-            action.cancel: Cancel
-    unexpected_error: "An unexpected error has occurred. Please contact the system administrator."
-    item_deleted: "Item has been deleted."
-    widget_form_component:
-        save_flash_success: Saved successfully

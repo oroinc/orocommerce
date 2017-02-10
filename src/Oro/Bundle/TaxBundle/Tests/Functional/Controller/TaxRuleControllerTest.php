@@ -15,9 +15,6 @@ use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadProductTaxCodes;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxes;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxJurisdictions;
 
-/**
- * @dbIsolation
- */
 class TaxRulesControllerTest extends WebTestCase
 {
     const TAX_DESCRIPTION = 'description';

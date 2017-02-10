@@ -99,7 +99,8 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
         $this->buildPriceRulesForAllPriceLists();
 
         $output->writeln('<info>Start combining all Price Lists</info>');
-        $this->getContainer()->get('oro_pricing.builder.combined_price_list_builder')->build(true);
+        $now = new \DateTime();
+        $this->getContainer()->get('oro_pricing.builder.combined_price_list_builder')->build($now->getTimestamp());
         $output->writeln('<info>The cache is updated successfully</info>');
     }
 
@@ -140,16 +141,16 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
         $websiteCPLBuilder = $container->get('oro_pricing.builder.website_combined_price_list_builder');
         $customerGroupCPLBuilder = $container->get('oro_pricing.builder.customer_group_combined_price_list_builder');
         $customerCPLBuilder = $container->get('oro_pricing.builder.customer_combined_price_list_builder');
-
+        $now = new \DateTime();
         foreach ($websites as $website) {
             if (count($customerGroups) === 0 && count($customers) === 0) {
-                $websiteCPLBuilder->build($website, true);
+                $websiteCPLBuilder->build($website, $now->getTimestamp());
             } else {
                 foreach ($customerGroups as $customerGroup) {
-                    $customerGroupCPLBuilder->build($website, $customerGroup, true);
+                    $customerGroupCPLBuilder->build($website, $customerGroup, $now->getTimestamp());
                 }
                 foreach ($customers as $customer) {
-                    $customerCPLBuilder->build($website, $customer, true);
+                    $customerCPLBuilder->build($website, $customer, $now->getTimestamp());
                 }
             }
         }

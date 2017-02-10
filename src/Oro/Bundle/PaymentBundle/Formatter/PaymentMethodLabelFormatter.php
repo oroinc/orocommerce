@@ -2,32 +2,33 @@
 
 namespace Oro\Bundle\PaymentBundle\Formatter;
 
-use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistryInterface;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
 
 class PaymentMethodLabelFormatter
 {
     /**
-     * @var PaymentMethodViewProvidersRegistryInterface
+     * @var PaymentMethodViewProviderInterface
      */
-    protected $paymentMethodViewRegistry;
+    protected $paymentMethodViewProvider;
 
     /**
-     * @param PaymentMethodViewProvidersRegistryInterface $paymentMethodViewRegistry
+     * @param PaymentMethodViewProviderInterface $paymentMethodViewProvider
      */
-    public function __construct(PaymentMethodViewProvidersRegistryInterface $paymentMethodViewRegistry)
+    public function __construct(PaymentMethodViewProviderInterface $paymentMethodViewProvider)
     {
-        $this->paymentMethodViewRegistry = $paymentMethodViewRegistry;
+        $this->paymentMethodViewProvider = $paymentMethodViewProvider;
     }
 
     /**
      * @param string $paymentMethod
-     * @param bool $shortLabel
+     * @param bool   $shortLabel
+     *
      * @return string
      */
     public function formatPaymentMethodLabel($paymentMethod, $shortLabel = true)
     {
         try {
-            $paymentMethodView = $this->paymentMethodViewRegistry->getPaymentMethodView($paymentMethod);
+            $paymentMethodView = $this->paymentMethodViewProvider->getPaymentMethodView($paymentMethod);
 
             return $shortLabel ? $paymentMethodView->getShortLabel() : $paymentMethodView->getLabel();
         } catch (\InvalidArgumentException $e) {
@@ -37,12 +38,13 @@ class PaymentMethodLabelFormatter
 
     /**
      * @param string $paymentMethod
+     *
      * @return string
      */
     public function formatPaymentMethodAdminLabel($paymentMethod)
     {
         try {
-            return $this->paymentMethodViewRegistry->getPaymentMethodView($paymentMethod)->getAdminLabel();
+            return $this->paymentMethodViewProvider->getPaymentMethodView($paymentMethod)->getAdminLabel();
         } catch (\InvalidArgumentException $e) {
             return '';
         }

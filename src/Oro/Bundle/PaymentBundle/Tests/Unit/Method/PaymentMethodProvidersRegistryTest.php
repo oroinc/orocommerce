@@ -3,33 +3,33 @@
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Method\Provider;
 
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
-use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
+use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistry;
 
 class PaymentMethodProvidersRegistryTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var PaymentMethodProvidersRegistryInterface
+     * @var PaymentMethodProvidersRegistry
      */
     private $providerRegistry;
 
-    /**
-     * @var PaymentMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $paymentMethodProvider;
-
-
     public function setUp()
     {
-        $this->paymentMethodProvider = $this->getMockBuilder(PaymentMethodProviderInterface::class)->getMock();
-
-        $this->providerRegistry = new PaymentMethodProvidersRegistryInterface();
-        $this->providerRegistry->addProvider($this->paymentMethodProvider);
+        $this->providerRegistry = new PaymentMethodProvidersRegistry();
     }
 
-    public function testGetPaymentMethodProviders()
+    public function testAddGetPaymentMethodProviders()
     {
-        static::assertEquals(
-            [$this->paymentMethodProvider],
+        $providers = [
+            $this->createMock(PaymentMethodProviderInterface::class),
+            $this->createMock(PaymentMethodProviderInterface::class),
+        ];
+
+        foreach ($providers as $provider) {
+            $this->providerRegistry->addProvider($provider);
+        }
+
+        static::assertSame(
+            $providers,
             $this->providerRegistry->getPaymentMethodProviders()
         );
     }

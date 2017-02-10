@@ -46,6 +46,7 @@ services:
             - '%oro_web_catalog.entity.content_node.class%'
             - '@doctrine'
             - '@oro_locale.helper.localization'
+            - '@oro_message_queue.client.message_producer'
 
     oro_web_catalog.twig.extension:
         class: Oro\Bundle\WebCatalogBundle\Twig\WebCatalogExtension
@@ -61,7 +62,6 @@ services:
         arguments:
             - '@oro_web_catalog.model.content_node_materialized_path_modifier'
             - '@oro_commerce_entity.extra_insert_entity_storage'
-            - '@oro_web_catalog.generator.slug_generator.link'
             - '@oro_message_queue.client.message_producer'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_web_catalog.entity.content_node.class%', event: postPersist }
@@ -178,6 +178,13 @@ services:
         class: Oro\Bundle\WebCatalogBundle\Form\Extension\WebCatalogScopeExtension
         tags:
             - { name: form.type_extension, extended_type: Oro\Bundle\ScopeBundle\Form\Type\ScopeType }
+
+    oro_web_catalog.form.extension.page_variant_type:
+        class: Oro\Bundle\WebCatalogBundle\Form\Extension\PageVariantTypeExtension
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: form.type_extension, extended_type: Oro\Component\WebCatalog\Form\PageVariantType }
 
     oro_web_catalog.event_listener.website_search_index:
         class: 'Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogEntityIndexerListener'

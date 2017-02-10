@@ -4,14 +4,14 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
-use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistry;
+use Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider;
 
 class PaymentMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var PaymentMethodViewProvidersRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var CompositePaymentMethodViewProvider|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $paymentMethodViewRegistry;
+    protected $paymentMethodViewProvider;
 
     /**
      * @var PaymentMethodViewInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -25,15 +25,15 @@ class PaymentMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->paymentMethodViewRegistry = $this
-            ->getMockBuilder(PaymentMethodViewProvidersRegistry::class)
+        $this->paymentMethodViewProvider = $this
+            ->getMockBuilder(CompositePaymentMethodViewProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->paymentMethodView = $this
             ->getMockBuilder(PaymentMethodViewInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->formatter = new PaymentMethodLabelFormatter($this->paymentMethodViewRegistry);
+        $this->formatter = new PaymentMethodLabelFormatter($this->paymentMethodViewProvider);
     }
 
     public function testFormatPaymentMethodLabel()
@@ -41,17 +41,17 @@ class PaymentMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
         $label = 'label';
         $paymentMethodConstant = 'payment_method';
         $paymentMethodNotExistsConstant = 'not_exists_method';
-        $this->paymentMethodViewRegistry
+        $this->paymentMethodViewProvider
             ->expects($this->at(0))
             ->method('getPaymentMethodView')
             ->with($paymentMethodConstant)
             ->willReturn($this->paymentMethodView);
-        $this->paymentMethodViewRegistry
+        $this->paymentMethodViewProvider
             ->expects($this->at(1))
             ->method('getPaymentMethodView')
             ->with($paymentMethodNotExistsConstant)
             ->willThrowException(new \InvalidArgumentException());
-        $this->paymentMethodViewRegistry
+        $this->paymentMethodViewProvider
             ->expects($this->at(2))
             ->method('getPaymentMethodView')
             ->with($paymentMethodConstant)
@@ -78,7 +78,7 @@ class PaymentMethodLabelFormatterTest extends \PHPUnit_Framework_TestCase
         $paymentMethodAdminLabel = 'Payment Method';
         $expectedResult = 'Payment Method';
 
-        $this->paymentMethodViewRegistry
+        $this->paymentMethodViewProvider
             ->expects($this->once())
             ->method('getPaymentMethodView')
             ->with($paymentMethod)

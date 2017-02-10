@@ -30,12 +30,23 @@ navigation:
                     description:    'oro.order.menu.shortcut_new_order.description'
                     is_custom_action: true
 
+            best_selling_list:
+                label:           'oro.order.menu.best_selling_list.label'
+                route:           'oro_report_view_grid'
+                route_parameters:
+                    gridName:    'best-selling-products'
+                extras:
+                    description: 'oro.order.menu.best_selling_list.description'
+
         tree:
             application_menu:
                 children:
                     sales_tab:
                         children:
                             order_list: ~
+                    reports_tab:
+                        children:
+                            best_selling_list: ~
             frontend_menu:
                 children:
                     frontend_order_list: ~
@@ -53,4 +64,3 @@ navigation:
 
         oro_order_frontend_index:  ~
         oro_order_frontend_view:   'oro.order.navigation.view'
-        oro_order_frontend_success: 'oro.order.success.thank_you'

@@ -24,9 +24,13 @@
                  }
              }|json_encode }}">
 
-            <fieldset class="checkout__form__row">
-                {{ form_row(form.shipping_address.customerAddress) }}
-            </fieldset>
+            <div class="grid">
+                <div class="grid__row grid__row--offset-none">
+                    <div class="grid__column grid__column--6">
+                        {{ form_row(form.shipping_address.customerAddress) }}
+                    </div>
+                </div>
+            </div>
 
             {{ address.address_form(form.shipping_address, form.save_shipping_address, hasCustomAddress) }}
 

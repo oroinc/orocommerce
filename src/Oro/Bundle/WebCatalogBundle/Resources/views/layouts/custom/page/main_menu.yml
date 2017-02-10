@@ -1,0 +1,10 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'main_menu.html.twig'
+        - '@move':
+            id: web_catalog_menu
+            parentId: sidebar_product_categories_container
+        - '@remove':
+            id: web_catalog_menu_list
+

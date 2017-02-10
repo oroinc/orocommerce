@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\PayPalBundle\EventListener;
 
-use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
 use Oro\Bundle\PaymentBundle\Event\RequirePaymentRedirectEvent;
 use Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalCreditCardConfigProviderInterface;
 

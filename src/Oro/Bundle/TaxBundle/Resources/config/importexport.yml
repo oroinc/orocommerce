@@ -1,0 +1,62 @@
+services:
+    oro_tax.importexport.data_converter.tax_rule:
+        parent: oro_importexport.data_converter.configurable
+
+    oro_tax.importexport.strategy.tax_rule.add_or_replace:
+        parent: oro_importexport.strategy.configurable_add_or_replace
+
+    oro_tax.importexport.processor.export.tax_rule:
+        parent: oro_importexport.processor.export_abstract
+        calls:
+            - [setDataConverter, [@oro_tax.importexport.data_converter.tax_rule]]
+        tags:
+            - name: oro_importexport.processor
+              type: export
+              entity: %oro_tax.entity.tax_rule.class%
+              alias:  oro_tax_tax_rule
+
+    oro_tax.importexport.processor.import.tax_rule:
+        parent: oro_importexport.processor.import_abstract
+        calls:
+            - [setDataConverter, [@oro_tax.importexport.data_converter.tax_rule]]
+            - [setStrategy, [@oro_tax.importexport.strategy.tax_rule.add_or_replace]]
+        tags:
+            - name: oro_importexport.processor
+              type: import
+              entity: %oro_tax.entity.tax_rule.class%
+              alias:  oro_tax_tax_rule
+            - name: oro_importexport.processor
+              type: import_validation
+              entity: %oro_tax.entity.tax_rule.class%
+              alias: oro_tax_tax_rule
+
+    oro_tax.importexport.data_converter.tax:
+        parent: oro_importexport.data_converter.configurable
+
+    oro_tax.importexport.strategy.tax.add_or_replace:
+        parent: oro_importexport.strategy.configurable_add_or_replace
+
+    oro_tax.importexport.processor.export.tax:
+        parent: oro_importexport.processor.export_abstract
+        calls:
+            - [setDataConverter, [@oro_tax.importexport.data_converter.tax]]
+        tags:
+            - name: oro_importexport.processor
+              type: export
+              entity: %oro_tax.entity.tax.class%
+              alias:  oro_tax_tax
+
+    oro_tax.importexport.processor.import.tax:
+        parent: oro_importexport.processor.import_abstract
+        calls:
+            - [setDataConverter, [@oro_tax.importexport.data_converter.tax]]
+            - [setStrategy, [@oro_tax.importexport.strategy.tax.add_or_replace]]
+        tags:
+            - name: oro_importexport.processor
+              type: import
+              entity: %oro_tax.entity.tax.class%
+              alias:  oro_tax_tax
+            - name: oro_importexport.processor
+              type: import_validation
+              entity: %oro_tax.entity.tax.class%
+              alias:  oro_tax_tax

@@ -8,7 +8,7 @@ use Oro\Bundle\PaymentBundle\Form\EventSubscriber\RuleMethodConfigCollectionSubs
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigCollectionType;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigType;
 use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
-use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProvidersRegistry;
+use Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider;
 use Oro\Bundle\PaymentBundle\Tests\Unit\Form\EventListener\Stub\RuleMethodConfigCollectionSubscriberStub;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
@@ -42,7 +42,7 @@ class PaymentMethodConfigCollectionTypeTest extends FormIntegrationTestCase
      * @dataProvider submitDataProvider
      *
      * @param array|PaymentMethodConfig[] $existing
-     * @param array $submitted
+     * @param array                       $submitted
      * @param array|PaymentMethodConfig[] $expected
      */
     public function testSubmit(array $existing, array $submitted, array $expected = null)
@@ -102,14 +102,14 @@ class PaymentMethodConfigCollectionTypeTest extends FormIntegrationTestCase
     {
         /** @var PaymentMethodProvidersRegistryInterface|\PHPUnit_Framework_MockObject_MockObject $methodRegistry */
         $methodRegistry = $this->createMock(PaymentMethodProvidersRegistryInterface::class);
-        /** @var PaymentMethodViewProvidersRegistry|\PHPUnit_Framework_MockObject_MockObject $methodViewRegistry */
-        $methodViewRegistry = $this->createMock(PaymentMethodViewProvidersRegistry::class);
+        /** @var CompositePaymentMethodViewProvider|\PHPUnit_Framework_MockObject_MockObject $methodViewProvider */
+        $methodViewProvider = $this->createMock(CompositePaymentMethodViewProvider::class);
 
         return [
             new PreloadedExtension(
                 [
                     CollectionType::NAME          => new CollectionType(),
-                    PaymentMethodConfigType::NAME => new PaymentMethodConfigType($methodRegistry, $methodViewRegistry),
+                    PaymentMethodConfigType::NAME => new PaymentMethodConfigType($methodRegistry, $methodViewProvider),
                 ],
                 []
             ),

@@ -7,6 +7,9 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\PaymentBundle\Model\ExtendPaymentMethodsConfigsRule;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
@@ -20,6 +23,11 @@ use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
  *      routeCreate="oro_payment_methods_configs_rule_create",
  *      routeUpdate="oro_payment_methods_configs_rule_update",
  *      defaultValues={
+ *          "ownership"={
+ *              "owner_type"="ORGANIZATION",
+ *              "owner_field_name"="organization",
+ *              "owner_column_name"="organization_id"
+ *          },
  *          "dataaudit"={
  *              "auditable"=true
  *          },
@@ -30,7 +38,9 @@ use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
  *      }
  * )
  */
-class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implements RuleOwnerInterface
+class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implements
+    RuleOwnerInterface,
+    OrganizationAwareInterface
 {
     /**
      * @var integer
@@ -109,6 +119,14 @@ class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implemen
      */
     protected $currency;
 
+    /**
+     * @var Organization
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
+     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    protected $organization;
+
     public function __construct()
     {
         parent::__construct();
@@ -127,6 +145,7 @@ class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implemen
 
     /**
      * @param Rule $rule
+     *
      * @return $this
      */
     public function setRule(Rule $rule)
@@ -154,6 +173,7 @@ class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implemen
 
     /**
      * @param PaymentMethodConfig $methodConfig
+     *
      * @return bool
      */
     public function hasMethodConfig(PaymentMethodConfig $methodConfig)
@@ -163,6 +183,7 @@ class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implemen
 
     /**
      * @param PaymentMethodConfig $methodConfig
+     *
      * @return $this
      */
     public function addMethodConfig(PaymentMethodConfig $methodConfig)
@@ -177,6 +198,7 @@ class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implemen
 
     /**
      * @param PaymentMethodConfig $methodConfig
+     *
      * @return $this
      */
     public function removeMethodConfig(PaymentMethodConfig $methodConfig)
@@ -198,6 +220,7 @@ class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implemen
 
     /**
      * @param PaymentMethodsConfigsRuleDestination $destination
+     *
      * @return $this
      */
     public function addDestination(PaymentMethodsConfigsRuleDestination $destination)
@@ -212,6 +235,7 @@ class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implemen
 
     /**
      * @param PaymentMethodsConfigsRuleDestination $destination
+     *
      * @return $this
      */
     public function removeDestination(PaymentMethodsConfigsRuleDestination $destination)
@@ -233,11 +257,32 @@ class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implemen
 
     /**
      * @param string $currency
+     *
      * @return $this
      */
     public function setCurrency($currency)
     {
         $this->currency = $currency;
+
+        return $this;
+    }
+
+    /**
+     * @return OrganizationInterface
+     */
+    public function getOrganization()
+    {
+        return $this->organization;
+    }
+
+    /**
+     * @param OrganizationInterface $organization
+     *
+     * @return $this
+     */
+    public function setOrganization(OrganizationInterface $organization)
+    {
+        $this->organization = $organization;
 
         return $this;
     }

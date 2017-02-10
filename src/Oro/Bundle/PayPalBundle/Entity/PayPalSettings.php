@@ -52,42 +52,25 @@ class PayPalSettings extends Transport
     protected $settings;
 
     /**
-     * @var CreditCardPaymentAction
+     * @var string
      *
-     * @ORM\ManyToOne(
-     *     targetEntity="Oro\Bundle\PayPalBundle\Entity\CreditCardPaymentAction",
-     *     inversedBy="payPalSettings"
-     * )
-     * @ORM\JoinColumn(name="cc_settings_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\Column(name="pp_credit_card_action", type="string", length=255, nullable=false)
      */
     protected $creditCardPaymentAction;
 
     /**
-     * @var ExpressCheckoutPaymentAction
+     * @var string
      *
-     * @ORM\ManyToOne(
-     *     targetEntity="Oro\Bundle\PayPalBundle\Entity\ExpressCheckoutPaymentAction",
-     *     inversedBy="payPalSettings"
-     * )
-     * @ORM\JoinColumn(name="ec_settings_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ORM\Column(name="pp_express_checkout_action", type="string", length=255, nullable=false)
      */
     protected $expressCheckoutPaymentAction;
 
     /**
-     * @var CreditCardType[]|Collection
+     * @var array
      *
-     * @ORM\ManyToMany(targetEntity="Oro\Bundle\PayPalBundle\Entity\CreditCardType")
-     * @ORM\JoinTable(
-     *      name="oro_paypal_allowed_cc_types",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="pp_settings_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="cc_id", referencedColumnName="id", onDelete="CASCADE")
-     *      }
-     * )
+     * @ORM\Column(name="pp_allowed_card_types", type="array", length=255, nullable=false)
      **/
-    protected $allowedCreditCardTypes;
+    protected $allowedCreditCardTypes = [];
 
     /**
      * @var Collection|LocalizedFallbackValue[]
@@ -281,7 +264,7 @@ class PayPalSettings extends Transport
                     self::EXPRESS_CHECKOUT_SHORT_LABELS_KEY => $this->getExpressCheckoutShortLabels(),
                     self::CREDIT_CARD_PAYMENT_ACTION_KEY => $this->getCreditCardPaymentAction(),
                     self::EXPRESS_CHECKOUT_PAYMENT_ACTION_KEY => $this->getExpressCheckoutPaymentAction(),
-                    self::ALLOWED_CREDIT_CARD_TYPES_KEY => $this->getAllowedCreditCardTypes()->toArray(),
+                    self::ALLOWED_CREDIT_CARD_TYPES_KEY => $this->getAllowedCreditCardTypes(),
                     self::EXPRESS_CHECKOUT_NAME_KEY => $this->getExpressCheckoutName(),
                     self::PARTNER_KEY => $this->getPartner(),
                     self::VENDOR_KEY => $this->getVendor(),
@@ -308,7 +291,6 @@ class PayPalSettings extends Transport
      */
     public function __construct()
     {
-        $this->allowedCreditCardTypes = new ArrayCollection();
         $this->creditCardLabels = new ArrayCollection();
         $this->creditCardShortLabels = new ArrayCollection();
         $this->expressCheckoutLabels = new ArrayCollection();
@@ -819,35 +801,16 @@ class PayPalSettings extends Transport
         return $this->expressCheckoutShortLabels;
     }
 
-
     /**
-     * Add allowedCreditCardType
+     * Set allowedCreditCardTypes
      *
-     * @param CreditCardType $allowedCreditCardType
+     * @param array $allowedCreditCardTypes
      *
      * @return PayPalSettings
      */
-    public function addAllowedCreditCardType(CreditCardType $allowedCreditCardType)
+    public function setAllowedCreditCardTypes(array $allowedCreditCardTypes)
     {
-        if (!$this->allowedCreditCardTypes->contains($allowedCreditCardType)) {
-            $this->allowedCreditCardTypes->add($allowedCreditCardType);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Remove allowedCreditCardType
-     *
-     * @param CreditCardType $allowedCreditCardType
-     *
-     * @return PayPalSettings
-     */
-    public function removeAllowedCreditCardType(CreditCardType $allowedCreditCardType)
-    {
-        if ($this->allowedCreditCardTypes->contains($allowedCreditCardType)) {
-            $this->allowedCreditCardTypes->removeElement($allowedCreditCardType);
-        }
+        $this->allowedCreditCardTypes = $allowedCreditCardTypes;
 
         return $this;
     }
@@ -865,11 +828,11 @@ class PayPalSettings extends Transport
     /**
      * Set creditCardPaymentAction
      *
-     * @param CreditCardPaymentAction $creditCardPaymentAction
+     * @param string $creditCardPaymentAction
      *
      * @return PayPalSettings
      */
-    public function setCreditCardPaymentAction(CreditCardPaymentAction $creditCardPaymentAction = null)
+    public function setCreditCardPaymentAction($creditCardPaymentAction)
     {
         $this->creditCardPaymentAction = $creditCardPaymentAction;
 
@@ -879,7 +842,7 @@ class PayPalSettings extends Transport
     /**
      * Get creditCardPaymentAction
      *
-     * @return CreditCardPaymentAction
+     * @return string
      */
     public function getCreditCardPaymentAction()
     {
@@ -889,11 +852,11 @@ class PayPalSettings extends Transport
     /**
      * Set expressCheckoutPaymentAction
      *
-     * @param ExpressCheckoutPaymentAction $expressCheckoutPaymentAction
+     * @param string $expressCheckoutPaymentAction
      *
      * @return PayPalSettings
      */
-    public function setExpressCheckoutPaymentAction(ExpressCheckoutPaymentAction $expressCheckoutPaymentAction = null)
+    public function setExpressCheckoutPaymentAction($expressCheckoutPaymentAction)
     {
         $this->expressCheckoutPaymentAction = $expressCheckoutPaymentAction;
 
@@ -903,7 +866,7 @@ class PayPalSettings extends Transport
     /**
      * Get expressCheckoutPaymentAction
      *
-     * @return ExpressCheckoutPaymentAction
+     * @return string
      */
     public function getExpressCheckoutPaymentAction()
     {

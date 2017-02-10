@@ -10,9 +10,6 @@ use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
-/**
- * @dbIsolation
- */
 class ShoppingListActionsTest extends ActionTestCase
 {
     protected function setUp()

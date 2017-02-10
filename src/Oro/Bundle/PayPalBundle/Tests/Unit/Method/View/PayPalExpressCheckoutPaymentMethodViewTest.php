@@ -40,7 +40,7 @@ class PayPalExpressCheckoutPaymentMethodViewTest extends \PHPUnit_Framework_Test
 
     public function testGetBlock()
     {
-        $this->assertEquals('_payment_methods_payflow_express_checkout_widget', $this->methodView->getBlock());
+        $this->assertEquals('_payment_methods_paypal_express_checkout_widget', $this->methodView->getBlock());
     }
 
     public function testGetPaymentMethodIdentifier()

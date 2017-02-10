@@ -1,4 +1,4 @@
-define(function (require) {
+define(function(require) {
     'use strict';
 
     var TotalsListener;
@@ -17,9 +17,9 @@ define(function (require) {
          *
          * @param {jQuery|Array} $fields
          */
-        listen: function ($fields) {
+        listen: function($fields) {
             ValueChangingListener.listen('total-target:changing', $fields);
-            _.each($fields, _.bind(function (field) {
+            _.each($fields, _.bind(function(field) {
                 $(field).change(_.bind(this.updateTotals, this));
             }, this));
         },
@@ -27,7 +27,7 @@ define(function (require) {
         /**
          * Trigger subtotals update
          */
-        updateTotals: function (e) {
+        updateTotals: function(e) {
             mediator.trigger('line-items-totals:update', e);
         }
     };

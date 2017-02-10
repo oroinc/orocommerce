@@ -1,4 +1,4 @@
-define(function (require) {
+define(function(require) {
     'use strict';
 
     var LineItemsView;
@@ -28,7 +28,7 @@ define(function (require) {
         /**
          * @inheritDoc
          */
-        initialize: function (options) {
+        initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
             this.subview('productsPricesComponent', new ProductsPricesComponent({
@@ -50,33 +50,33 @@ define(function (require) {
             this._reindexLineItems();
         },
 
-        _fetchLastSortOrder: function () {
+        _fetchLastSortOrder: function() {
             return +this.$el.find(this.options.selectors.lineItem).last().find(this.options.selectors.sortOrder).val();
         },
 
         /**
          * @param {Object} e
          */
-        _reindexLineItems: function (e) {
+        _reindexLineItems: function(e) {
             var i = 1;
-            this.$el.find(this.options.selectors.lineItem).each(_.bind(function (index, element) {
+            this.$el.find(this.options.selectors.lineItem).each(_.bind(function(index, element) {
                 $(element).find(this.options.selectors.lineItemIndex).text(i);
-                if (!e || !(e.type == 'content:remove' && element === e.target)) {
+                if (!e || !(e.type === 'content:remove' && element === e.target)) {
                     i++;
                 }
-            }, this))
+            }, this));
         },
 
-        _handleRemoveItem: function () {
+        _handleRemoveItem: function() {
             mediator.trigger('line-items-totals:update');
         },
 
         /**
          * @param {jQuery.Element} $lineItem
          */
-        _setNextSortOrder: function ($lineItem) {
+        _setNextSortOrder: function($lineItem) {
             var $sortOrder = $lineItem.find(this.options.selectors.sortOrder);
-            if(!$sortOrder.val()){
+            if (!$sortOrder.val()) {
                 $sortOrder.val(this.options.nextSortOrder);
                 this.options.nextSortOrder++;
             }
@@ -85,7 +85,7 @@ define(function (require) {
         /**
          * @param {String} val
          */
-        _setPrototypeCurrency: function (val) {
+        _setPrototypeCurrency: function(val) {
             this.options.currency = val;
             var prototype = $(this.options.selectors.prototypeHolder).attr('data-prototype');
             var $prototype = $('<div></div>').html(prototype);

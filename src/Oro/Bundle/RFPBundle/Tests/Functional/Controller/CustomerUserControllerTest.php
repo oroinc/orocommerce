@@ -7,9 +7,6 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
-/**
- * @dbIsolation
- */
 class CustomerUserControllerTest extends WebTestCase
 {
     /**

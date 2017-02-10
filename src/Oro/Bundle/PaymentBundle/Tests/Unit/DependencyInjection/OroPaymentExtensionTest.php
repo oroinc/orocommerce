@@ -27,6 +27,7 @@ class OroPaymentExtensionTest extends ExtensionTestCase
             'oro_payment.query_designer.select_query_converter',
             'oro_payment.expression_language.decorated_product_line_item_factory',
             'oro_payment.datagrid.payment_rule_actions_visibility_provider',
+            'oro_payment.payment_method_provider.registry'
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }

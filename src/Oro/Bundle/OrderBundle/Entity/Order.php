@@ -22,6 +22,7 @@ use Oro\Bundle\OrderBundle\Model\ShippingAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\LineItemsAwareInterface;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\SubtotalAwareInterface;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UserBundle\Entity\Ownership\AuditableUserAwareTrait;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
@@ -1303,5 +1304,20 @@ class Order extends ExtendOrder implements
         }
 
         $this->setBaseTotalValue(null);
+    }
+
+    /**
+     * @return array|Product[]
+     */
+    public function getProductsFromLineItems()
+    {
+        $products = [];
+        foreach ($this->getLineItems() as $lineItem) {
+            if ($lineItem->getProduct()) {
+                $products[] = $lineItem->getProduct();
+            }
+        }
+
+        return $products;
     }
 }

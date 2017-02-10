@@ -25,6 +25,26 @@ abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
      */
     protected function getExtensions()
     {
+        return [
+            new PreloadedExtension(
+                [
+                    'oro_address' => new AddressType(new AddressCountryAndRegionSubscriberStub()),
+                    'oro_country' => new CountryType(),
+                    'genemu_jqueryselect2_translatable_entity' => new Select2Type('translatable_entity'),
+                    'genemu_jqueryselect2_choice' => new Select2Type('choice'),
+                    'translatable_entity' => $this->getTranslatableEntity(),
+                    'oro_region' => new RegionType(),
+                ],
+                ['form' => [new AdditionalAttrExtension()]]
+            )
+        ];
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function getTranslatableEntity()
+    {
         /** @var \PHPUnit_Framework_MockObject_MockObject|TranslatableEntityType $registry */
         $translatableEntity = $this->getMockBuilder('Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType')
             ->setMethods(['setDefaultOptions', 'buildForm'])
@@ -66,19 +86,6 @@ abstract class AddressFormExtensionTestCase extends FormIntegrationTestCase
                 }
             )
         );
-
-        return [
-            new PreloadedExtension(
-                [
-                    'oro_address' => new AddressType(new AddressCountryAndRegionSubscriberStub()),
-                    'oro_country' => new CountryType(),
-                    'genemu_jqueryselect2_translatable_entity' => new Select2Type('translatable_entity'),
-                    'genemu_jqueryselect2_choice' => new Select2Type('choice'),
-                    'translatable_entity' => $translatableEntity,
-                    'oro_region' => new RegionType(),
-                ],
-                ['form' => [new AdditionalAttrExtension()]]
-            )
-        ];
+        return $translatableEntity;
     }
 }

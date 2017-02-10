@@ -59,7 +59,7 @@ define(function(require) {
                 this.$form.find('[data-depends-on-field="' + id + '"]'),
                 function(item) {
                     var $item = $(item);
-                    if ($item.data('depends-on-field-value') == value) {
+                    if ($item.data('depends-on-field-value') === value) {
                         $item.closest(this.options.selectors.row_container).show();
                     } else {
                         $item.closest(this.options.selectors.row_container).hide();

@@ -29,3 +29,5 @@ layout:
         -
             id: oro_checkout_sidebar
             root: body
+
+    conditions: 'context["workflowStepName"]!="order_created"'

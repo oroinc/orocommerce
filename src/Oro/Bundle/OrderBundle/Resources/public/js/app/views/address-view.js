@@ -81,7 +81,7 @@ define(function(require) {
             this.useDefaultAddress = true;
             this.$fields = this.$el.find(':input[data-ftid]').filter(':not(' + this.options.selectors.address + ')');
             this.fieldsByName = {};
-            this.$fields.each(function () {
+            this.$fields.each(function() {
                 var $field = $(this);
                 if ($field.val().length > 0) {
                     self.useDefaultAddress = false;

@@ -70,21 +70,6 @@ class QuoteController extends Controller
     }
 
     /**
-     * @Route("/info/{id}", name="oro_sale_quote_frontend_info", requirements={"id"="\d+"})
-     * @Template("OroSaleBundle:Quote/Frontend/widget:info.html.twig")
-     * @AclAncestor("oro_sale_quote_frontend_view")
-     *
-     * @param Quote $quote
-     * @return array
-     */
-    public function infoAction(Quote $quote)
-    {
-        return [
-            'entity' => $quote
-        ];
-    }
-
-    /**
      * @Route("/choice/{id}", name="oro_sale_quote_frontend_choice", requirements={"id"="\d+"})
      * @Layout()
      * @Acl(

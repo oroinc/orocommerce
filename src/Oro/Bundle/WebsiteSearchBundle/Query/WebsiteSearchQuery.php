@@ -5,19 +5,19 @@ namespace Oro\Bundle\WebsiteSearchBundle\Query;
 use Doctrine\Common\Collections\Expr\Expression;
 
 use Oro\Bundle\SearchBundle\Query\AbstractSearchQuery;
-use Oro\Bundle\SearchBundle\Engine\EngineV2Interface;
+use Oro\Bundle\SearchBundle\Engine\EngineInterface;
 use Oro\Bundle\SearchBundle\Query\Query;
 
 class WebsiteSearchQuery extends AbstractSearchQuery
 {
-    /** @var EngineV2Interface */
+    /** @var EngineInterface */
     protected $engine;
 
     /**
-     * @param EngineV2Interface $engine
+     * @param EngineInterface $engine
      * @param Query $query
      */
-    public function __construct(EngineV2Interface $engine, Query $query)
+    public function __construct(EngineInterface $engine, Query $query)
     {
         $this->engine = $engine;
         $this->query  = $query;

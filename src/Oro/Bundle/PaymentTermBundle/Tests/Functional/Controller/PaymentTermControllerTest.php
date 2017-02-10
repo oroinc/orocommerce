@@ -8,9 +8,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 
-/**
- * @dbIsolation
- */
 class PaymentTermControllerTest extends WebTestCase
 {
     const TERM_LABEL_NEW = 'net 100';
