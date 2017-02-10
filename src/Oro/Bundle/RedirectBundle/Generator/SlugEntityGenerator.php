@@ -66,11 +66,10 @@ class SlugEntityGenerator
         $slugPrototypes = $entity->getSlugPrototypes();
         $filledSlugPrototypes = [];
         foreach ($slugPrototypes as $slugPrototype) {
-            if (!$slugPrototype->getFallback()) {
-                $filledSlugPrototypes[] = new SlugUrl(
-                    $slugPrototype->getString(),
-                    $slugPrototype->getLocalization()
-                );
+            $value = $slugPrototype->getString();
+            // empty() function can not be used here, as '0' is a valid slug prototype value
+            if ($value !== '' && $value !== null && !$slugPrototype->getFallback()) {
+                $filledSlugPrototypes[] = new SlugUrl($value, $slugPrototype->getLocalization());
             }
         }
 

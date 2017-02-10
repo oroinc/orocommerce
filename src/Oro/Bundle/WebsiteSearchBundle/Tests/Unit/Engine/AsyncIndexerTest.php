@@ -33,16 +33,6 @@ class AsyncIndexerTest extends \PHPUnit_Framework_TestCase
     private $baseIndexer;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $doctrineHelper;
-
-    /**
-     * @var WebsiteSearchMappingProvider|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $mappingProvider;
-
-    /**
      * @var ReindexMessageGranularizer|\PHPUnit_Framework_MockObject_MockObject
      */
     private $granularizer;
@@ -58,20 +48,9 @@ class AsyncIndexerTest extends \PHPUnit_Framework_TestCase
 
         $this->baseIndexer = $this->createMock(IndexerInterface::class);
 
-        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
-
         $websiteRepository = $this->createMock(WebsiteRepository::class);
         $websiteRepository->method('getWebsiteIdentifiers')
             ->willReturn([self::WEBSITE_ID]);
-
-        $this->doctrineHelper->method('getEntityRepository')
-            ->with(Website::class)
-            ->willReturn($websiteRepository);
-
-        $this->mappingProvider = $this->createMock(WebsiteSearchMappingProvider::class);
-
-        $this->mappingProvider->method('isClassSupported')
-            ->willReturn(true);
 
         $this->inputValidator = $this->createMock(IndexerInputValidator::class);
 
@@ -80,8 +59,6 @@ class AsyncIndexerTest extends \PHPUnit_Framework_TestCase
         $this->indexer = new AsyncIndexer(
             $this->baseIndexer,
             $this->messageProducer,
-            $this->doctrineHelper,
-            $this->mappingProvider,
             $this->inputValidator,
             $this->granularizer
         );
