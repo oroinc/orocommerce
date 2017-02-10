@@ -13,6 +13,7 @@ CustomerBundle
         TokenStorageInterface $tokenStorage
     )
   ```
+- Class `Oro\Bundle\CustomerBundle\Audit\DiscriminatorMapListener` moved to `Oro\Bundle\EntityBundle\ORM\DiscriminatorMapListener`
 
 FlatRateBundle
 -------------------
