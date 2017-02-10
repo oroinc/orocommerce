@@ -2,7 +2,9 @@
     {% set grid_render_parameters = layout_attr_defaults(grid_render_parameters, {
         'datagridComponent': 'orocustomer/js/app/datagrid/customer-datagrid-component'
     }) %}
-    {{ parent_block_widget(block) }}
+    {{ block_widget(block, {
+        grid_render_parameters: grid_render_parameters
+    }) }}
 {% endblock %}
 
 {% block __oro_customer_grid__datagrid_toolbar_leftside_container_widget %}
