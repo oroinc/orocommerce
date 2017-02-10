@@ -64,6 +64,8 @@ services:
 
     oro_payment.provider.method_widget_provider:
         class: 'Oro\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodWidgetProvider'
+        arguments:
+            - '@oro_payment.payment_method_view.composite_provider'
         tags:
             - { name: layout.data_provider, alias: oro_payment_method_widget_provider }
 
