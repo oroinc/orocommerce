@@ -80,7 +80,6 @@ services:
         tags:
             - { name: layout.data_provider, alias: checkout_payment_context }
 
-
     oro_checkout.expression.acl_granted:
         class: Oro\Bundle\CheckoutBundle\Expression\CheckRequest
         arguments:
@@ -403,11 +402,6 @@ services:
             - [setContainer, ["@service_container"]]
         tags:
             - { name: security.voter }
-
-    oro_checkout.shipping_method.provider_main:
-        parent: oro_checkout.shipping_method.price_provider_chain_element
-        tags:
-            - { name: layout.data_provider, alias: 'checkout_shipping_methods' }
 
     oro_checkout.shipping_method.price_provider_chain_element:
         class: 'Oro\Bundle\CheckoutBundle\Shipping\Method\Chain\Member\Price\PriceCheckoutShippingMethodsProviderChainElement'

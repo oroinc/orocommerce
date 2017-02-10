@@ -124,21 +124,28 @@ class CheckoutRepository extends EntityRepository
     /**
      * @param CustomerUser $customerUser
      * @param array $sourceCriteria [shoppingList => ShoppingList, deleted => false]
+     * @param string $workflowName
      * @return array
      */
-    public function findCheckoutByCustomerUserAndSourceCriteria(CustomerUser $customerUser, array $sourceCriteria)
-    {
+    public function findCheckoutByCustomerUserAndSourceCriteria(
+        CustomerUser $customerUser,
+        array $sourceCriteria,
+        $workflowName
+    ) {
         $qb = $this->createQueryBuilder('c');
-        $qb->innerJoin('c.source', 's')
+        $this->joinWorkflowItem($qb)
+            ->innerJoin('c.source', 's')
             ->where(
                 $qb->expr()->eq('c.customerUser', ':customerUser'),
                 $qb->expr()->eq('c.deleted', ':deleted'),
                 $qb->expr()->eq('s.deleted', ':deleted'),
-                $qb->expr()->eq('c.completed', ':completed')
+                $qb->expr()->eq('c.completed', ':completed'),
+                $qb->expr()->eq('workflowItem.workflowName', ':workflowName')
             )
             ->setParameter('customerUser', $customerUser)
             ->setParameter('deleted', false, Type::BOOLEAN)
-            ->setParameter('completed', false, Type::BOOLEAN);
+            ->setParameter('completed', false, Type::BOOLEAN)
+            ->setParameter('workflowName', $workflowName);
 
         foreach ($sourceCriteria as $field => $value) {
             $qb->andWhere($qb->expr()->eq('s.' . $field, ':' . $field))

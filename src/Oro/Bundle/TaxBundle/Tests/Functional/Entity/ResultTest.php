@@ -8,9 +8,6 @@ use Oro\Bundle\TaxBundle\Model\Result;
 use Oro\Bundle\TaxBundle\Model\ResultElement;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-/**
- * @dbIsolation
- */
 class ResultTest extends WebTestCase
 {
     /**

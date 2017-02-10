@@ -6,9 +6,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutWorkflowStateRepository;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadCheckoutWorkflowState;
 
-/**
- * @dbIsolation
- */
 class CheckoutWorkflowStateRepositoryTest extends WebTestCase
 {
     /**

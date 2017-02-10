@@ -13,9 +13,6 @@ use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingList
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
-/**
- * @dbIsolation
- */
 class ShoppingListRepositoryTest extends WebTestCase
 {
     /**
@@ -54,7 +51,7 @@ class ShoppingListRepositoryTest extends WebTestCase
         $this->assertInstanceOf(ShoppingList::class, $availableShoppingList);
 
         // the latest shopping list for current user
-        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_5);
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_8);
         $this->assertSame($shoppingList, $availableShoppingList);
     }
 

@@ -9,9 +9,6 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Symfony\Component\HttpFoundation\Request;
 
-/**
- * @dbIsolation
- */
 class FrontendProductPriceFilterTest extends FrontendWebTestCase
 {
     public function setUp()

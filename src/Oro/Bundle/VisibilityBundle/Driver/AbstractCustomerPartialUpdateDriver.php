@@ -4,7 +4,8 @@ namespace Oro\Bundle\VisibilityBundle\Driver;
 
 use Doctrine\ORM\Query;
 
-use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIteratorInterface;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\VisibilityBundle\Indexer\ProductVisibilityIndexer;
 use Oro\Bundle\VisibilityBundle\Visibility\Provider\ProductVisibilityProvider;
@@ -161,7 +162,7 @@ abstract class AbstractCustomerPartialUpdateDriver implements CustomerPartialUpd
      * @param Customer $customer
      * @param Website $website
      * @param int $batchSize
-     * @return BufferedQueryResultIterator
+     * @return BufferedQueryResultIteratorInterface
      */
     protected function getCustomerVisibilityIterator(
         Customer $customer,
@@ -177,7 +178,7 @@ abstract class AbstractCustomerPartialUpdateDriver implements CustomerPartialUpd
 
         $queryBuilder->select('product.id');
 
-        $iterator = new BufferedQueryResultIterator($queryBuilder);
+        $iterator = new BufferedIdentityQueryResultIterator($queryBuilder);
         $iterator->setHydrationMode(Query::HYDRATE_ARRAY);
         $iterator->setBufferSize($batchSize);
 

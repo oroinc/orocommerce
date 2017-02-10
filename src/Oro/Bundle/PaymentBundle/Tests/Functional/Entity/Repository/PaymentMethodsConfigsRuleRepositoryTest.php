@@ -10,9 +10,6 @@ use Oro\Bundle\PaymentBundle\Tests\Functional\Entity\DataFixtures\LoadPaymentMet
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PaymentBundle\Tests\Functional\Entity\DataFixtures\LoadPaymentMethodsConfigsRuleData;
 
-/**
- * @dbIsolation
- */
 class PaymentMethodsConfigsRuleRepositoryTest extends WebTestCase
 {
     /**

@@ -14,9 +14,6 @@ use Oro\Bundle\PricingBundle\Provider\PriceListSequenceMember;
 use Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
-/**
- * @dbIsolation
- */
 class PriceListCollectionProviderTest extends WebTestCase
 {
     const DEFAULT_PRICE_LIST = 1;

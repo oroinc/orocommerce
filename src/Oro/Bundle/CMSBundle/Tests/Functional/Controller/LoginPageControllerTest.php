@@ -7,9 +7,6 @@ use Symfony\Component\DomCrawler\Crawler;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CMSBundle\Entity\LoginPage;
 
-/**
- * @dbIsolation
- */
 class LoginPageControllerTest extends WebTestCase
 {
     const TOP_CONTENT = 'html top content';

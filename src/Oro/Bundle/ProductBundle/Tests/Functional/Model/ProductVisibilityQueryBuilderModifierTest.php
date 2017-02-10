@@ -9,9 +9,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
-/**
- * @dbIsolation
- */
 class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
 {
     /**
