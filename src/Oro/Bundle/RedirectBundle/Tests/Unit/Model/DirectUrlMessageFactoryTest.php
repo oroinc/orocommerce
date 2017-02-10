@@ -52,12 +52,38 @@ class DirectUrlMessageFactoryTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    public function testCreateMassMessage()
+    /**
+     * @dataProvider createMassMessageDataProvider
+     *
+     * @param string $className
+     * @param array $ids
+     * @param bool $createRedirect
+     * @param array $expected
+     */
+    public function testCreateMassMessage($className, array $ids, $createRedirect, array $expected)
     {
-        $this->assertEquals(
-            ['class' => SluggableEntityStub::class, 'id' => [1, 2, 3]],
-            $this->factory->createMassMessage(SluggableEntityStub::class, [1, 2, 3])
-        );
+        $this->assertEquals($expected, $this->factory->createMassMessage($className, $ids, $createRedirect));
+    }
+
+    /**
+     * @return array
+     */
+    public function createMassMessageDataProvider()
+    {
+        return [
+            'with redirects' => [
+                'className' => SluggableEntityStub::class,
+                'ids' => [1, 2, 3],
+                'createRedirect' => true,
+                'expected' => ['class' => SluggableEntityStub::class, 'id' => [1, 2, 3], 'createRedirect' => true]
+            ],
+            'without redirects' => [
+                'className' => SluggableEntityStub::class,
+                'ids' => [2, 3],
+                'createRedirect' => false,
+                'expected' => ['class' => SluggableEntityStub::class, 'id' => [2, 3], 'createRedirect' => false]
+            ]
+        ];
     }
 
     public function testGetEntityClassFromMessage()

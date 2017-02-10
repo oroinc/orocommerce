@@ -3,16 +3,17 @@
 namespace Oro\Bundle\RedirectBundle\Form\Type;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\RedirectBundle\Form\DataTransformer\PrefixWithRedirectToStringTransformer;
+use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
 use Oro\Bundle\RedirectBundle\Form\Storage\RedirectStorage;
 use Oro\Bundle\RedirectBundle\Model\PrefixWithRedirect;
-use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SluggableEntityPrefixType extends AbstractType
@@ -27,11 +28,18 @@ class SluggableEntityPrefixType extends AbstractType
     protected $storage;
 
     /**
-     * @param RedirectStorage $storage
+     * @var ConfigManager
      */
-    public function __construct(RedirectStorage $storage)
+    protected $configManager;
+
+    /**
+     * @param RedirectStorage $storage
+     * @param ConfigManager $configManager
+     */
+    public function __construct(RedirectStorage $storage, ConfigManager $configManager)
     {
         $this->storage = $storage;
+        $this->configManager = $configManager;
     }
 
     /**
@@ -72,9 +80,9 @@ class SluggableEntityPrefixType extends AbstractType
                 self::PREFIX_FIELD_NAME,
                 TextType::class,
                 [
-                    'required' => !empty($options['required']),
                     'label' => '',
-                    'constraints' => [new UrlSafe()]
+                    'required' => $options['required'],
+                    'constraints' => $options['constraints']
                 ]
             )
             ->add(
@@ -85,8 +93,31 @@ class SluggableEntityPrefixType extends AbstractType
                 ]
             );
 
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
         $builder->addEventListener(FormEvents::SUBMIT, [$this, 'onSubmit']);
-        $builder->addModelTransformer(new PrefixWithRedirectToStringTransformer());
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function onPreSubmit(FormEvent $event)
+    {
+        // Value from model should be converted from string to appropriate array for `Use Default` case
+        $data = $event->getData();
+        if (is_string($data)) {
+            $data = ['prefix' => $data];
+        }
+
+        $event->setData($data);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        $view->vars['isAskStrategy'] = $this->checkIsAskStrategy();
+        $view->vars['askStrategyName'] = Configuration::STRATEGY_ASK;
     }
 
     /**
@@ -94,7 +125,7 @@ class SluggableEntityPrefixType extends AbstractType
      */
     public function onSubmit(FormEvent $event)
     {
-        $data = $event->getData();
+        $data = $event->getForm()->getViewData();
         $key = str_replace(
             ConfigManager::SECTION_VIEW_SEPARATOR,
             ConfigManager::SECTION_MODEL_SEPARATOR,
@@ -109,6 +140,6 @@ class SluggableEntityPrefixType extends AbstractType
      */
     protected function checkIsAskStrategy()
     {
-        //$this->configManager->get('oro_redirect.redirect_generation_strategy') !== Configuration::STRATEGY_ASK;
+        return $this->configManager->get('oro_redirect.redirect_generation_strategy') === Configuration::STRATEGY_ASK;
     }
 }

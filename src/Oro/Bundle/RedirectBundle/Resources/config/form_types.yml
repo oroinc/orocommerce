@@ -20,8 +20,12 @@ services:
         class: Oro\Bundle\RedirectBundle\Form\Type\SluggableEntityPrefixType
         arguments:
             - '@oro_redirect.form.storage.redirect_storage'
+            - '@oro_config.manager'
         tags:
             - { name: form.type, alias: oro_redirect_sluggable_prefix }
 
     oro_redirect.form.storage.redirect_storage:
         class: 'Oro\Bundle\RedirectBundle\Form\Storage\RedirectStorage'
+
+    oro_redirect.form.transformer.prefix_with_redirect_to_string:
+        class: 'Oro\Bundle\RedirectBundle\Form\DataTransformer\PrefixWithRedirectToStringTransformer'

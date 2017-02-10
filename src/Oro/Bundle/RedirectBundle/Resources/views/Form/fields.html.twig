@@ -41,12 +41,16 @@
         data-page-component-options="{{ {
             'view': 'ororedirect/js/app/views/prefix-redirect-view',
             selectors: {
+                strategySelector: 'select[name$="__redirect_generation_strategy][value]"]',
                 prefixSelector: '#' ~ form.prefix.vars.id,
-            }
+            },
+            askStrategyName: form.vars.askStrategyName,
+            isAskStrategy: form.vars.isAskStrategy
         }|json_encode }}">
         {{ form_widget(form.prefix) }}
         <div class="create-redirect">
             {{ form_row(form.createRedirect) }}
         </div>
+        {{ form_errors(form) }}
     </div>
 {% endblock %}

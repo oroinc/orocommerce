@@ -25,6 +25,7 @@ class PrefixWithRedirectToStringTransformer implements DataTransformerInterface
 
     /**
      * {@inheritdoc}
+     * @param PrefixWithRedirect $value
      */
     public function reverseTransform($value)
     {

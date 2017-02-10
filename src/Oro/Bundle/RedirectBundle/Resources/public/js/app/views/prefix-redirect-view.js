@@ -17,15 +17,13 @@ define(function(require) {
          */
         options: {
             selectors: {
+                strategySelector: null,
                 prefixSelector: '.slug-prefix',
                 redirectSelector: '.create-redirect'
-            }
+            },
+            isAskStrategy: false,
+            askStrategyName: 'ask'
         },
-
-        /**
-         * @property {jQuery}
-         */
-        $prefixField: null,
 
         /**
          * @property string
@@ -35,7 +33,17 @@ define(function(require) {
         /**
          * @property {jQuery}
          */
+        $prefixField: null,
+
+        /**
+         * @property {jQuery}
+         */
         $createRedirectField: null,
+
+        /**
+         * @property {jQuery}
+         */
+        $strategySelector: null,
 
         /**
          * @inheritdoc
@@ -43,18 +51,44 @@ define(function(require) {
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, options || {});
 
+            if (this.options.selectors.strategySelector) {
+                this.$strategySelector = $(this.el).closest('form').find(this.options.selectors.strategySelector);
+            }
+
             this.$prefixField = $(this.el).find(this.options.selectors.prefixSelector);
             this.defaultPrefixValue = this.$prefixField.val();
             this.$createRedirectField = $(this.el).find(this.options.selectors.redirectSelector);
 
             this.$prefixField.on('keyup', _.bind(this.onPrefixChange, this));
+
+            if (this.$strategySelector.length) {
+                this.$strategySelector.on('change', _.bind(this.onStrategyChange, this));
+            }
+        },
+
+        onStrategyChange: function(event) {
+            if ($(event.target).val() === this.options.askStrategyName &&
+                this.$prefixField.val() !== this.defaultPrefixValue
+            ) {
+                this.$createRedirectField.show();
+            } else {
+                this.$createRedirectField.hide();
+            }
         },
 
         onPrefixChange: function(event) {
-            if ($(event.target).val() === this.defaultPrefixValue) {
-                this.$createRedirectField.hide();
-            } else {
+            if (this.isAskStrategy() && $(event.target).val() !== this.defaultPrefixValue) {
                 this.$createRedirectField.show();
+            } else {
+                this.$createRedirectField.hide();
+            }
+        },
+
+        isAskStrategy: function() {
+            if (this.$strategySelector) {
+                return this.$strategySelector.val() === this.options.askStrategyName;
+            } else {
+                return this.options.isAskStrategy;
             }
         }
     });
