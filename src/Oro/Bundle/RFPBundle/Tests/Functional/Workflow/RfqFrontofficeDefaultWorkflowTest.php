@@ -14,9 +14,6 @@ use Oro\Bundle\WorkflowBundle\Model\TransitionManager;
 use Oro\Bundle\WorkflowBundle\Model\Workflow;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
-/**
- * @dbIsolation
- */
 class RfqFrontofficeDefaultWorkflowTestCase extends FrontendWebTestCase
 {
     /** @var Request */

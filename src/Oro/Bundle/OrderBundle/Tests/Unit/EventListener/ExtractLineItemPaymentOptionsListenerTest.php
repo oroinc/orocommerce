@@ -25,8 +25,7 @@ class ExtractLineItemPaymentOptionsListenerTest extends \PHPUnit_Framework_TestC
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->listener = new ExtractLineItemPaymentOptionsListener();
-        $this->listener->setHtmlTagHelper($this->htmlTagHelper);
+        $this->listener = new ExtractLineItemPaymentOptionsListener($this->htmlTagHelper);
     }
 
     public function testOnExtractLineItemPaymentOptions()

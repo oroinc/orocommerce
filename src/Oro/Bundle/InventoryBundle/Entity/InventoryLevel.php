@@ -13,7 +13,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
  * @ORM\Table(
  *     name="oro_inventory_level",
  * )
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Oro\Bundle\InventoryBundle\Entity\Repository\InventoryLevelRepository")
  * @Config(
  *      defaultValues={
  *          "security"={

@@ -12,9 +12,6 @@ use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
 
-/**
- * @dbIsolation
- */
 class QuoteControllerTest extends WebTestCase
 {
     /**

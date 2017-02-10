@@ -7,9 +7,6 @@ use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingList
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListUserACLData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-/**
- * @dbIsolation
- */
 class CustomerUserShoppingListsProviderTest extends WebTestCase
 {
     protected function setUp()
@@ -35,7 +32,7 @@ class CustomerUserShoppingListsProviderTest extends WebTestCase
         $this->loginUser($user);
         $this->client->request('GET', $this->getUrl('oro_frontend_root'));
 
-        $actualShoppingLists = self::$clientInstance->getContainer()
+        $actualShoppingLists = $this->getContainer()
             ->get('oro_shopping_list.layout.data_provider.customer_user_shopping_lists')
             ->getShoppingLists();
 

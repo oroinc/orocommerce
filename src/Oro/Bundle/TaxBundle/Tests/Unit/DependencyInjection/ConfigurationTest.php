@@ -4,6 +4,7 @@ namespace Oro\Bundle\TaxBundle\Tests\Unit\DependencyInjection;
 
 use Oro\Bundle\TaxBundle\DependencyInjection\Configuration;
 
+use Oro\Bundle\TaxBundle\Provider\AddressResolverSettingsProvider;
 use Oro\Bundle\TaxBundle\Provider\BuiltInTaxProvider;
 use Oro\Bundle\TaxBundle\Provider\TaxationSettingsProvider;
 
@@ -78,6 +79,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 ],
                 'shipping_rates_include_tax' => [
                     'value' => false,
+                    'scope' => 'app'
+                ],
+                'address_resolver_granularity' => [
+                    'value' =>  AddressResolverSettingsProvider::ADDRESS_RESOLVER_GRANULARITY_ZIP,
                     'scope' => 'app'
                 ]
             ],

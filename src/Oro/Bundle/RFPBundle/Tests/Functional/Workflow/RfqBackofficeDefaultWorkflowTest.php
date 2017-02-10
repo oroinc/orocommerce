@@ -16,8 +16,6 @@ use Oro\Bundle\WorkflowBundle\Model\Workflow;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
 /**
- * @dbIsolation
- *
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class RfqBackofficeDefaultWorkflowTest extends WebTestCase

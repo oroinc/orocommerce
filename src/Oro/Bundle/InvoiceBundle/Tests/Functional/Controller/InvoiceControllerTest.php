@@ -13,7 +13,6 @@ use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 
 /**
- * @dbIsolation
  * @group CommunityEdition
  */
 class InvoiceControllerTest extends WebTestCase

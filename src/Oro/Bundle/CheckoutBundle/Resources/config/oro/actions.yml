@@ -125,6 +125,12 @@ action_groups:
             forceStartCheckout:
                 type: bool
                 default: false
+            showErrors:
+                type: bool
+                default: false
+            validateOnStartCheckout:
+                type: bool
+                default: true
         actions:
             - '@assign_url':
                 attribute: $.editLink
@@ -144,9 +150,12 @@ action_groups:
                         edit_order_link: $.editLink
                         source_remove_label: $.sourceRemoveLabel
                     force: $.forceStartCheckout
+                    showErrors: $.showErrors
+                    validateOnStartCheckout: $.validateOnStartCheckout
                 results:
                     redirectUrl: $.redirectUrl
                     checkout: $.checkout
+                    errors: $.errors
 
     start_checkout:
         parameters:
@@ -161,6 +170,9 @@ action_groups:
             settings:
                 type: array
                 default: []
+            showErrors:
+                type: bool
+                default: false
         actions:
             - '@run_action_group':
                 action_group: find_checkout
@@ -181,11 +193,15 @@ action_groups:
                         parameters_mapping:
                             entity: $.checkout
                             data: $.settings
-
             - '@redirect':
-                route: oro_checkout_frontend_checkout
-                route_parameters:
-                    id: $.checkout.id
+                conditions:
+                    '@extendable':
+                        events: [extendable_condition.start_checkout]
+                        showErrors: $.showErrors
+                parameters:
+                    route: oro_checkout_frontend_checkout
+                    route_parameters:
+                        id: $.checkout.id
 
     find_checkout:
         parameters:
@@ -199,12 +215,26 @@ action_groups:
                 default: false
         actions:
             # find or create checkout and checkout source
+            - '@get_available_workflow_by_record_group':
+                attribute: $.currentWorkflow
+                entity_class: 'Oro\Bundle\CheckoutBundle\Entity\Checkout'
+                group_name: 'b2b_checkout_flow'
+
             - '@get_active_user': $.currentUser
+
             - '@call_service_method':
                 attribute: $.checkout
                 service: 'oro_checkout.repository.checkout'
                 method: findCheckoutByCustomerUserAndSourceCriteria
-                method_parameters: [$.currentUser, $.sourceCriteria]
+                method_parameters:
+                    - $.currentUser
+                    - $.sourceCriteria
+                    - $.currentWorkflow.name
+
+            - '@call_service_method':
+                attribute: $.currentWebsite
+                service: oro_website.manager
+                method: getCurrentWebsite
 
             - '@tree':
                 conditions:
@@ -220,15 +250,15 @@ action_groups:
                         data:
                             source: $.source
                             customerUser: $.currentUser
+                            website: $.currentWebsite
                     - '@create_datetime': {attribute: $.checkout.createdAt}
                     - '@create_datetime': {attribute: $.checkout.updatedAt}
                     - '@assign_value': [$.updateData, true]
 
-            # actualize user currency
-            - '@call_service_method':
-                attribute: $.checkout.currency
-                service: oro_pricing.user_currency_manager
-                method: getUserCurrency
+                    - '@start_workflow':
+                        attribute: $.workflowItem
+                        name: $.currentWorkflow.name
+                        entity: $.checkout
 
             # update checkout data
             - '@tree':
@@ -237,12 +267,15 @@ action_groups:
                 actions:
                     - '@assign_value': [$.checkout.customer, $.currentUser.customer]
                     - '@assign_value': [$.checkout.organization, $.currentUser.customer.organization]
-                    - '@call_service_method':
-                        attribute: $.checkout.website
-                        service: oro_website.manager
-                        method: getCurrentWebsite
+                    - '@assign_value': [$.checkout.website, $.currentWebsite]
                     # update custom data
                     - '@copy_values': [$.checkout, $.checkoutData]
+
+            # actualize user currency
+            - '@call_service_method':
+                attribute: $.checkout.currency
+                service: oro_pricing.user_currency_manager
+                method: getUserCurrency
 
             - '@flush_entity': $.checkout
 
@@ -253,15 +286,16 @@ action_groups:
             data:
                 type: array
         actions:
-            - '@call_service_method':
-                attribute: $.workflowItems
-                service: oro_workflow.manager
-                method: getWorkflowItemsByEntity
-                method_parameters: [$.entity]
+            - '@get_available_workflow_by_record_group':
+                attribute: $.currentWorkflow
+                entity_class: 'Oro\Bundle\CheckoutBundle\Entity\Checkout'
+                group_name: 'b2b_checkout_flow'
 
-            - '@assign_value':
-                - $.workflowItem
-                - $.workflowItems[0]
+            - '@call_service_method':
+                attribute: $.workflowItem
+                service: oro_workflow.manager
+                method: getWorkflowItem
+                method_parameters: [$.entity, $.currentWorkflow.name]
 
             - '@copy_values': [$.workflowItem.data, $.data]
 

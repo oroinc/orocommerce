@@ -14,9 +14,6 @@ use Oro\Bundle\ShoppingListBundle\Entity\Repository\LineItemRepository;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
-/**
- * @dbIsolation
- */
 class LineItemRepositoryTest extends WebTestCase
 {
     protected function setUp()

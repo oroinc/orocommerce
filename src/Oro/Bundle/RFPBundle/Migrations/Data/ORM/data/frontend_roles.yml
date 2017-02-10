@@ -4,4 +4,4 @@ BUYER:
 
 ADMINISTRATOR:
     permissions:
-        entity|Oro\Bundle\RFPBundle\Entity\Request: [VIEW_SYSTEM, CREATE_SYSTEM, EDIT_SYSTEM, ASSIGN_SYSTEM]
+        entity|Oro\Bundle\RFPBundle\Entity\Request: [VIEW_DEEP, CREATE_DEEP, EDIT_DEEP, ASSIGN_DEEP]

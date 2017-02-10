@@ -16,7 +16,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
 /**
- * @dbIsolation
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class RequestControllerTest extends WebTestCase

@@ -18,9 +18,6 @@ use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadCustomerUsersData;
 use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
-/**
- * @dbIsolation
- */
 class RequestACLTest extends WebTestCase
 {
     /** @var WorkflowManager */

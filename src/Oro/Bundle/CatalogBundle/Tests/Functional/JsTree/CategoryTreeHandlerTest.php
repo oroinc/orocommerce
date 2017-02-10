@@ -7,9 +7,6 @@ use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Component\Tree\Handler\AbstractTreeHandler;
 use Oro\Component\Tree\Test\AbstractTreeHandlerTestCase;
 
-/**
- * @dbIsolation
- */
 class CategoryTreeHandlerTest extends AbstractTreeHandlerTestCase
 {
     /**

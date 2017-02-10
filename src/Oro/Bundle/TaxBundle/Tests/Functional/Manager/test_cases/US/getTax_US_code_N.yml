@@ -34,7 +34,7 @@ databaseBefore:
             region: { class: 'Oro\Bundle\AddressBundle\Entity\Region', query: { combinedCode: 'US-CA' } }
     'Oro\Bundle\TaxBundle\Entity\CustomerTaxCode':
         customer_tax_code.TAX3:
-            code: TAX3
+            code: TAX_3
             description: 'TAX3 customer tax code description'
             customers:
                 - '@customer.TAX3'

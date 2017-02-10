@@ -7,7 +7,8 @@ use Doctrine\ORM\Query\Expr\Join;
 
 use Doctrine\ORM\Query\Expr\Orx;
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIteratorInterface;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\BaseCombinedPriceListRelation;
@@ -142,7 +143,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
      */
     protected function getBufferSize()
     {
-        return BufferedQueryResultIterator::DEFAULT_BUFFER_SIZE;
+        return BufferedIdentityQueryResultIterator::DEFAULT_BUFFER_SIZE;
     }
 
     /**
@@ -286,7 +287,7 @@ class CombinedPriceListRepository extends BasePriceListRepository
     /**
      * @param PriceList $priceList
      * @param null $hasCalculatedPrices
-     * @return BufferedQueryResultIterator
+     * @return BufferedQueryResultIteratorInterface
      */
     public function getCombinedPriceListsByPriceList(PriceList $priceList, $hasCalculatedPrices = null)
     {
@@ -306,12 +307,12 @@ class CombinedPriceListRepository extends BasePriceListRepository
                 ->setParameter('hasCalculatedPrices', $hasCalculatedPrices);
         }
 
-        return new BufferedQueryResultIterator($qb->getQuery());
+        return new BufferedIdentityQueryResultIterator($qb->getQuery());
     }
 
     /**
      * @param array|PriceList[]|int[] $priceLists
-     * @return BufferedQueryResultIterator
+     * @return BufferedQueryResultIteratorInterface
      */
     public function getCombinedPriceListsByPriceLists(array $priceLists)
     {
@@ -327,19 +328,19 @@ class CombinedPriceListRepository extends BasePriceListRepository
             ->where($qb->expr()->in('priceListRelations.priceList', ':priceLists'))
             ->setParameter('priceLists', $priceLists);
 
-        return new BufferedQueryResultIterator($qb->getQuery());
+        return new BufferedIdentityQueryResultIterator($qb->getQuery());
     }
 
     /**
      * @param int $offsetHours
      *
-     * @return BufferedQueryResultIterator|CombinedPriceList[]
+     * @return BufferedQueryResultIteratorInterface|CombinedPriceList[]
      */
     public function getCPLsForPriceCollectByTimeOffset($offsetHours)
     {
         $qb = $this->getCPLsForPriceCollectByTimeOffsetQueryBuilder($offsetHours);
 
-        $iterator = new BufferedQueryResultIterator($qb);
+        $iterator = new BufferedIdentityQueryResultIterator($qb);
         $iterator->setBufferSize(self::CPL_BATCH_SIZE);
 
         return $iterator;

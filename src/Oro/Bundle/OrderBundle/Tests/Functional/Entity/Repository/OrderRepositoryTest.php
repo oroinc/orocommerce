@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Functional\Entity\Respository;
 
+use Doctrine\Common\Collections\AbstractLazyCollection;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Entity\Repository\OrderRepository;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
@@ -11,9 +12,6 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\User;
 
-/**
- * @dbIsolation
- */
 class OrderRepositoryTest extends WebTestCase
 {
     /**
@@ -47,5 +45,21 @@ class OrderRepositoryTest extends WebTestCase
         $this->assertFalse($this->orderRepo->hasRecordsWithRemovingCurrencies(['UAH']));
         $this->assertTrue($this->orderRepo->hasRecordsWithRemovingCurrencies(['EUR'], $user->getOrganization()));
         $this->assertFalse($this->orderRepo->hasRecordsWithRemovingCurrencies(['USD'], $organization));
+    }
+
+    public function testGetOrderWithRelations()
+    {
+        $reference = $this->getReference(LoadOrders::ORDER_1);
+        /** @var Order $order */
+        $orderWithRelations = $this->orderRepo->getOrderWithRelations($reference->getId());
+
+        /** @var AbstractLazyCollection $lineItems */
+        $lineItems = $orderWithRelations->getLineItems();
+
+        /** @var AbstractLazyCollection $discounts */
+        $discounts = $orderWithRelations->getDiscounts();
+
+        $this->assertTrue($lineItems->isInitialized());
+        $this->assertTrue($discounts->isInitialized());
     }
 }

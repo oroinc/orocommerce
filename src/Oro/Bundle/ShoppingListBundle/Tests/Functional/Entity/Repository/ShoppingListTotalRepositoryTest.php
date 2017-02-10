@@ -12,9 +12,6 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
-/**
- * @dbIsolation
- */
 class ShoppingListTotalRepositoryTest extends WebTestCase
 {
     /**
