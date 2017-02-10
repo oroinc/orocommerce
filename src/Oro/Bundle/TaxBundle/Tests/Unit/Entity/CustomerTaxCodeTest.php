@@ -44,21 +44,6 @@ class CustomerTaxCodeTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('test', (string)$entity);
     }
 
-    public function testPreUpdate()
-    {
-        $customerTaxCode = $this->createCustomerTaxCode();
-        $customerTaxCode->preUpdate();
-        $this->assertInstanceOf('\DateTime', $customerTaxCode->getUpdatedAt());
-    }
-
-    public function testPrePersist()
-    {
-        $customerTaxCode = $this->createCustomerTaxCode();
-        $customerTaxCode->prePersist();
-        $this->assertInstanceOf('\DateTime', $customerTaxCode->getUpdatedAt());
-        $this->assertInstanceOf('\DateTime', $customerTaxCode->getCreatedAt());
-    }
-
     /**
      * @return CustomerTaxCode
      */
