@@ -18,6 +18,16 @@ system_configuration:
                     system: oro.redirect.system_configuration.fields.canonical_url_type.choice.system.label
                     direct: oro.redirect.system_configuration.fields.canonical_url_type.choice.direct.label
 
+        oro_redirect.canonical_url_security_type:
+            data_type: string
+            type: 'Symfony\Component\Form\Extension\Core\Type\ChoiceType'
+            priority: 200
+            options:
+                label: oro.redirect.system_configuration.fields.canonical_url_security_type.label
+                choices:
+                    insecure: oro.redirect.system_configuration.fields.canonical_url_security_type.choice.insecure.label
+                    secure: oro.redirect.system_configuration.fields.canonical_url_security_type.choice.secure.label
+
     tree:
         system_configuration:
             platform:
@@ -30,3 +40,4 @@ system_configuration:
                                         children:
                                             - oro_redirect.enable_direct_url
                                             - oro_redirect.canonical_url_type
+                                            - oro_redirect.canonical_url_security_type
