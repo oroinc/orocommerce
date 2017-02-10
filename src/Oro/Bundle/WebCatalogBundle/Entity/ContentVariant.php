@@ -125,8 +125,7 @@ class ContentVariant extends ExtendContentVariant implements
     }
 
     /**
-     * @param string $type
-     * @return $this
+     * {@inheritdoc}
      */
     public function setType($type)
     {

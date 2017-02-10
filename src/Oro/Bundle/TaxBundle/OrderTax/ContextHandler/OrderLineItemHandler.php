@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\TaxBundle\OrderTax\ContextHandler;
 
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
-use Oro\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository;
 use Oro\Bundle\TaxBundle\Event\ContextEvent;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 use Oro\Bundle\TaxBundle\Provider\TaxationAddressProvider;
+use Oro\Bundle\TaxBundle\Provider\TaxCodeProvider;
 
 class OrderLineItemHandler
 {
@@ -18,19 +17,9 @@ class OrderLineItemHandler
     protected $addressProvider;
 
     /**
-     * @var DoctrineHelper
+     * @var TaxCodeProvider
      */
-    protected $doctrineHelper;
-
-    /**
-     * @var string
-     */
-    protected $productTaxCodeClass;
-
-    /**
-     * @var string
-     */
-    protected $customerTaxCodeClass;
+    protected $taxCodeProvider;
 
     /**
      * @var string
@@ -44,22 +33,16 @@ class OrderLineItemHandler
 
     /**
      * @param TaxationAddressProvider $addressProvider
-     * @param DoctrineHelper $doctrineHelper
-     * @param string $productTaxCodeClass
-     * @param string $customerTaxCodeClass
+     * @param TaxCodeProvider $taxCodeProvider
      * @param string $orderLineItemClass
      */
     public function __construct(
         TaxationAddressProvider $addressProvider,
-        DoctrineHelper $doctrineHelper,
-        $productTaxCodeClass,
-        $customerTaxCodeClass,
+        TaxCodeProvider $taxCodeProvider,
         $orderLineItemClass
     ) {
         $this->addressProvider = $addressProvider;
-        $this->doctrineHelper = $doctrineHelper;
-        $this->productTaxCodeClass = $productTaxCodeClass;
-        $this->customerTaxCodeClass = $customerTaxCodeClass;
+        $this->taxCodeProvider = $taxCodeProvider;
         $this->orderLineItemClass = $orderLineItemClass;
     }
 
@@ -165,23 +148,8 @@ class OrderLineItemHandler
      */
     protected function getTaxCode($type, $object)
     {
-        $taxCode = $this->getRepository($type)->findOneByEntity((string)$type, $object);
+        $taxCode = $this->taxCodeProvider->getTaxCode((string)$type, $object);
         return $taxCode ? $taxCode->getCode() : null;
-    }
-
-    /**
-     * @param string $type
-     * @return AbstractTaxCodeRepository
-     */
-    protected function getRepository($type)
-    {
-        if ($type === TaxCodeInterface::TYPE_PRODUCT) {
-            return $this->doctrineHelper->getEntityRepositoryForClass($this->productTaxCodeClass);
-        } elseif ($type === TaxCodeInterface::TYPE_ACCOUNT || $type === TaxCodeInterface::TYPE_ACCOUNT_GROUP) {
-            return $this->doctrineHelper->getEntityRepositoryForClass($this->customerTaxCodeClass);
-        }
-
-        throw new \InvalidArgumentException(sprintf('Unknown type: %s', $type));
     }
 
     /**
@@ -198,7 +166,7 @@ class OrderLineItemHandler
 
     /**
      * @param string $cacheKey
-     * @return null|TaxCodeInterface
+     * @return false|TaxCodeInterface
      */
     protected function getCachedTaxCode($cacheKey)
     {

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\TaxBundle;
 
+use Oro\Bundle\TaxBundle\DependencyInjection\CompilerPass\AddressMatcherRegistryPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -20,6 +21,7 @@ class OroTaxBundle extends Bundle
         $container->addCompilerPass(new TaxProviderPass());
         $container->addCompilerPass(new TaxMapperPass());
         $container->addCompilerPass(new ResolverEventConnectorPass());
+        $container->addCompilerPass(new AddressMatcherRegistryPass());
     }
 
     /** {@inheritdoc} */

@@ -14,8 +14,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 /**
  * @group segfault
  *
- * @dbIsolation
- *
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class CategoryControllerTest extends WebTestCase

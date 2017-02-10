@@ -6,9 +6,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PayPalBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 
-/**
- * @dbIsolation
- */
 class CallbackControllerTest extends WebTestCase
 {
     const ALLOWED_REMOTE_ADDR = '173.0.81.1';

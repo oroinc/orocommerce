@@ -3,10 +3,11 @@
 namespace Oro\Bundle\SaleBundle\Event;
 
 use Oro\Bundle\SaleBundle\Entity\Quote;
+use Oro\Bundle\ShippingBundle\EventListener\EntityDataAwareEventInterface;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\Form\FormInterface;
 
-class QuoteEvent extends Event
+class QuoteEvent extends Event implements EntityDataAwareEventInterface
 {
     const NAME = 'oro_sale.quote';
 
@@ -60,10 +61,18 @@ class QuoteEvent extends Event
     }
 
     /**
-     * @return array
+     * {@inheritdoc}
      */
     public function getSubmittedData()
     {
         return $this->submittedData;
+    }
+
+    /**
+     * @return Quote
+     */
+    public function getEntity()
+    {
+        return $this->getQuote();
     }
 }

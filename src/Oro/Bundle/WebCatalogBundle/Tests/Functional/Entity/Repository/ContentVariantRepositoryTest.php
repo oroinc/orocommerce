@@ -10,9 +10,6 @@ use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentVariantRepository;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadContentVariantsData;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadContentVariantSlugsData;
 
-/**
- * @dbIsolation
- */
 class ContentVariantRepositoryTest extends WebTestCase
 {
     /**

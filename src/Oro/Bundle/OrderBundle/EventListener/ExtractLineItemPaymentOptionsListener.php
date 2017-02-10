@@ -15,7 +15,7 @@ class ExtractLineItemPaymentOptionsListener
     /**
      * @param HtmlTagHelper $htmlTagHelper
      */
-    public function setHtmlTagHelper(HtmlTagHelper $htmlTagHelper)
+    public function __construct(HtmlTagHelper $htmlTagHelper)
     {
         $this->htmlTagHelper = $htmlTagHelper;
     }
@@ -42,10 +42,7 @@ class ExtractLineItemPaymentOptionsListener
             $lineItemModel = new LineItemOptionModel();
 
             $name = implode(' ', array_filter([$product->getSku(), (string)$product->getDefaultName()]));
-            $description = (string)$product->getDefaultShortDescription();
-            if ($this->htmlTagHelper) {
-                $description = $this->htmlTagHelper->stripTags($description);
-            }
+            $description = $this->htmlTagHelper->stripTags((string)$product->getDefaultShortDescription());
 
             $lineItemModel
                 ->setName($name)

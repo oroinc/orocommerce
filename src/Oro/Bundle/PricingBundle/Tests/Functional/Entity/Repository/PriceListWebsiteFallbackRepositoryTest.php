@@ -2,9 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
-/**
- * @dbIsolation
- */
 class PriceListWebsiteFallbackRepositoryTest extends AbstractFallbackRepositoryTest
 {
     public function testGetWebsiteIdByDefaultFallback()

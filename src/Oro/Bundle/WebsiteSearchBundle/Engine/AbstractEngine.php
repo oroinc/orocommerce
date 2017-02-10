@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
-use Oro\Bundle\SearchBundle\Engine\EngineV2Interface;
+use Oro\Bundle\SearchBundle\Engine\EngineInterface;
 use Oro\Bundle\SearchBundle\Provider\AbstractSearchMappingProvider;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result;
@@ -11,7 +11,7 @@ use Oro\Bundle\WebsiteSearchBundle\Resolver\QueryPlaceholderResolverInterface;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-abstract class AbstractEngine implements EngineV2Interface
+abstract class AbstractEngine implements EngineInterface
 {
     /** @var EventDispatcherInterface */
     private $eventDispatcher;
