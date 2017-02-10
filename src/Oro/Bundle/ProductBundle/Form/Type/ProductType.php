@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
+use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
+use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -60,6 +62,14 @@ class ProductType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $product = $builder->getData();
+
+        if (!$product->getPageTemplate()) {
+            $entityFallback = new EntityFieldFallbackValue();
+            $entityFallback->setFallback(SystemConfigFallbackProvider::FALLBACK_ID);
+            $product->setPageTemplate($entityFallback);
+        }
+
         $builder
             ->add('sku', 'text', ['required' => true, 'label' => 'oro.product.sku.label'])
             ->add('status', ProductStatusType::NAME, ['label' => 'oro.product.status.label'])
@@ -178,7 +188,7 @@ class ProductType extends AbstractType
             ->addEventListener(FormEvents::SUBMIT, [$this, 'submitListener']);
 
         $builder->get('pageTemplate')
-            ->addViewTransformer(new PageTemplateEntityFieldFallbackValueTransformer(self::PAGE_TEMPLATE_ROUTE_NAME));
+            ->addModelTransformer(new PageTemplateEntityFieldFallbackValueTransformer(self::PAGE_TEMPLATE_ROUTE_NAME));
     }
 
     /**

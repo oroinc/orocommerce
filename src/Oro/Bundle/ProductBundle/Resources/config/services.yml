@@ -703,3 +703,10 @@ services:
             - [addBlockTypeUsingMetadata, ['%oro_product.entity.product_image.class%', 'attribute_product_images']]
         tags:
             - { name: oro_entity_config.layout.attribute_block_type_mapper }
+
+    oro_product.provider.page_template_provider:
+        class: 'Oro\Bundle\ProductBundle\Provider\PageTemplateProvider'
+        arguments:
+            - "@oro_layout.theme_manager"
+            - "@oro_entity.fallback.resolver.entity_fallback_resolver"
+

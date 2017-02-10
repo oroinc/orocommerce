@@ -1,19 +1,19 @@
 templates:
     -
-        label: Parent Custom sub-theme
-        description: Custom sub-theme description
+        label: Initial Product template
+        description: Initial Product template
         route_name: oro_product_frontend_product_view
-        key: custom
+        key: product_initial_template
     -
-        label: Parent Custom sub-theme
-        description: Custom sub-theme description
+        label: Secondary Product template
+        description: Secondary Product template
+        route_name: oro_product_frontend_product_view
+        key: product_secondary_template
+    -
+        label: CMS sample template
+        description: CMS sample template
         route_name: oro_cms_frontend_page_view
-        key: custom
-    -
-        label: Parent Additional sub-theme
-        description: Additional sub-theme description
-        route_name: oro_product_frontend_product_view
-        key: additional
+        key: cms_template
 titles:
-    oro_product_frontend_product_view: Frontend view
+    oro_product_frontend_product_view: Product frontend view
     oro_cms_frontend_page_view: CMS frontend view

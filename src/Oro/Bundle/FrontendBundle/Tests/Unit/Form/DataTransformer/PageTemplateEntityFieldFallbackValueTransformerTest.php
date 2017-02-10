@@ -7,31 +7,36 @@ use Oro\Bundle\FrontendBundle\Form\DataTransformer\PageTemplateEntityFieldFallba
 
 class PageTemplateEntityFieldFallbackValueTransformerTest extends \PHPUnit_Framework_TestCase
 {
+    /** @var PageTemplateEntityFieldFallbackValueTransformer */
+    private $transformer;
+
+    protected function setUp()
+    {
+        $this->transformer = new PageTemplateEntityFieldFallbackValueTransformer('route_name');
+    }
+
     public function testTransform()
     {
-        $transformer = new PageTemplateEntityFieldFallbackValueTransformer('route_name');
-
-        $value = 'value';
-        $this->assertEquals($value, $transformer->transform($value));
+        $value = new EntityFieldFallbackValue();
+        $value->setArrayValue(['route_name' => 'Some value']);
+        $this->transformer->transform($value);
+        $this->assertEquals('Some value', $value->getScalarValue());
     }
 
     public function testReverseTransform()
     {
-        $transformer = new PageTemplateEntityFieldFallbackValueTransformer('route_name');
-
         $value = 'value';
-        $this->assertEquals($value, $transformer->reverseTransform($value));
+        $this->assertEquals($value, $this->transformer->reverseTransform($value));
     }
 
     public function testReverseTransformEntityFieldFallbackValue()
     {
-        $transformer = new PageTemplateEntityFieldFallbackValueTransformer('route_name');
-
         $value = new EntityFieldFallbackValue();
         $value->setScalarValue('value');
 
-        $transformer->reverseTransform($value);
+        $this->transformer->reverseTransform($value);
 
-        $this->assertEquals(['route_name' => 'value'], $value->getScalarValue());
+        $this->assertEquals(['route_name' => 'value'], $value->getArrayValue());
+        $this->assertNull($value->getScalarValue());
     }
 }

@@ -1,17 +1,19 @@
 templates:
+    #Two new templates in Default theme for Product view
     -
-        label: Child Custom sub-theme
+        label: Default theme Product template
         description: Custom sub-theme description
         route_name: oro_product_frontend_product_view
-        key: custom
+        key: default_theme_product_template
     -
-        label: Child Additional sub-theme
+        label: Additional Default theme Product template
         description: Additional sub-theme description
         route_name: oro_product_frontend_product_view
-        key: additional
+        key: additional_default_theme_product_template
 
+    #Disabled page template from parent theme
     -
-        label: Some new theme is here
-        description: Additional sub-theme description
+        label: Secondary Product template
         route_name: oro_product_frontend_product_view
-        key: some_new_key
+        key: product_secondary_template
+        enabled: false
