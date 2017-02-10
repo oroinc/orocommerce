@@ -162,8 +162,6 @@ services:
         arguments:
             - '@oro_website_search.indexer'
             - '@oro_message_queue.client.message_producer'
-            - '@oro_entity.doctrine_helper'
-            - '@oro_website_search.provider.search_mapping'
             - '@oro_website_search.indexer.input_validator'
             - '@oro_website_search.async.indexer.message_granularizer.reindex'
 

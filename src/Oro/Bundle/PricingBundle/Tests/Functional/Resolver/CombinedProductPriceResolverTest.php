@@ -56,7 +56,11 @@ class CombinedProductPriceResolverTest extends WebTestCase
         $collector->clear();
         /** @var CombinedPriceList $combinedPriceList */
         $combinedPriceList = $this->getReference($combinedPriceList);
-        $this->resolver->combinePrices($combinedPriceList);
+        $now = new \DateTime();
+
+        // second call to check avoiding of same recalculation
+        $this->resolver->combinePrices($combinedPriceList, null, $now->getTimestamp());
+        $this->resolver->combinePrices($combinedPriceList, null, $now->getTimestamp());
 
         $actualPrices = $this->getCombinedPrices($combinedPriceList);
         $this->assertEquals($expectedPrices, $actualPrices);
