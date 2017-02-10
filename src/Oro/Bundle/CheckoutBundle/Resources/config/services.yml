@@ -80,7 +80,6 @@ services:
         tags:
             - { name: layout.data_provider, alias: checkout_payment_context }
 
-
     oro_checkout.expression.acl_granted:
         class: Oro\Bundle\CheckoutBundle\Expression\CheckRequest
         arguments:

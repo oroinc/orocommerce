@@ -95,6 +95,7 @@ services:
         class: 'Oro\Bundle\TaxBundle\Form\Type\TaxJurisdictionType'
         arguments:
             - '@oro_address.form.listener.address'
+            - '@oro_tax.provider.taxation_settings_provider'
         calls:
             - [setDataClass, ['%oro_tax.entity.tax_jurisdiction.class%']]
         tags:

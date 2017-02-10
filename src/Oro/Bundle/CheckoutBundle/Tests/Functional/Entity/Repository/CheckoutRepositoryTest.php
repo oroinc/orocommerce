@@ -121,7 +121,11 @@ class CheckoutRepositoryTest extends WebTestCase
 
         $this->assertSame(
             $this->getReference(LoadQuoteCheckoutsData::CHECKOUT_1),
-            $this->getRepository()->findCheckoutByCustomerUserAndSourceCriteria($customerUser, $criteria)
+            $this->getRepository()->findCheckoutByCustomerUserAndSourceCriteria(
+                $customerUser,
+                $criteria,
+                'b2b_flow_checkout'
+            )
         );
     }
 
@@ -132,7 +136,11 @@ class CheckoutRepositoryTest extends WebTestCase
 
         $this->assertSame(
             $this->getReference(LoadShoppingListsCheckoutsData::CHECKOUT_7),
-            $this->getRepository()->findCheckoutByCustomerUserAndSourceCriteria($customerUser, $criteria)
+            $this->getRepository()->findCheckoutByCustomerUserAndSourceCriteria(
+                $customerUser,
+                $criteria,
+                'b2b_flow_checkout'
+            )
         );
     }
 
