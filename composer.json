@@ -10,10 +10,10 @@
         }
     ],
     "require": {
-        "oro/platform": "2.0.0",
-        "oro/platform-serialised-fields": "2.0.0",
-        "oro/calendar-bundle": "2.0.0",
-        "oro/marketing": "2.0.0",
+        "oro/platform": "2.0.*",
+        "oro/platform-serialised-fields": "2.0.*",
+        "oro/calendar-bundle": "2.0.*",
+        "oro/marketing": "2.0.*",
         "box/spout": "2.3.*",
         "brick/math": "0.5.*",
         "myclabs/deep-copy": "1.5.*",
@@ -24,7 +24,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-master": "1.x-dev"
+            "dev-master": "2.x-dev"
         }
     },
     "autoload": {
