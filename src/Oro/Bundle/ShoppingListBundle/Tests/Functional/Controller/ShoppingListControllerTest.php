@@ -5,9 +5,6 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Controller;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
-/**
- * @dbIsolation
- */
 class ShoppingListControllerTest extends WebTestCase
 {
     protected function setUp()

@@ -10,8 +10,11 @@ use Oro\Bundle\OrderBundle\RequestHandler\OrderRequestHandler;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -108,6 +111,7 @@ class OrderController extends AbstractOrderController
      * Edit order form
      *
      * @Route("/update/{id}", name="oro_order_update", requirements={"id"="\d+"})
+     * @ParamConverter("order", options={"repository_method" = "getOrderWithRelations"})
      * @Template
      * @Acl(
      *      id="oro_order_update",

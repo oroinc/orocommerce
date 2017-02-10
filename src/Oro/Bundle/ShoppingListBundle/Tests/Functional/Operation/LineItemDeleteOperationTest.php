@@ -5,9 +5,6 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Operation;
 use Oro\Bundle\ActionBundle\Tests\Functional\ActionTestCase;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
-/**
- * @dbIsolation
- */
 class LineItemDeleteOperationTest extends ActionTestCase
 {
     protected function setUp()

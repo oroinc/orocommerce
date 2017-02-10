@@ -9,9 +9,6 @@ use Oro\Bundle\PricingBundle\Validator\Constraints\LexemeCircularReference;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-/**
- * @dbIsolation
- */
 class LexemeCircularReferenceValidatorTest extends WebTestCase
 {
     /**

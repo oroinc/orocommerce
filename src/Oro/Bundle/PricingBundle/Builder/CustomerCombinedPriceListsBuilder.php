@@ -16,12 +16,12 @@ class CustomerCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
     /**
      * @param Website $website
      * @param Customer $customer
-     * @param bool|false $force
+     * @param int|null $forceTimestamp
      */
-    public function build(Website $website, Customer $customer, $force = false)
+    public function build(Website $website, Customer $customer, $forceTimestamp = null)
     {
         if (!$this->isBuiltForCustomer($website, $customer)) {
-            $this->updatePriceListsOnCurrentLevel($website, $customer, $force);
+            $this->updatePriceListsOnCurrentLevel($website, $customer, $forceTimestamp);
             $this->garbageCollector->cleanCombinedPriceLists();
             $this->setBuiltForCustomer($website, $customer);
         }
@@ -30,17 +30,17 @@ class CustomerCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
     /**
      * @param Website $website
      * @param CustomerGroup $customerGroup
-     * @param bool|false $force
+     * @param int|null $forceTimestamp
      */
-    public function buildByCustomerGroup(Website $website, CustomerGroup $customerGroup, $force = false)
+    public function buildByCustomerGroup(Website $website, CustomerGroup $customerGroup, $forceTimestamp = null)
     {
         if (!$this->isBuiltForCustomerGroup($website, $customerGroup)) {
-            $fallback = $force ? null : PriceListCustomerFallback::ACCOUNT_GROUP;
+            $fallback = $forceTimestamp ? null : PriceListCustomerFallback::ACCOUNT_GROUP;
             $customers = $this->getPriceListToEntityRepository()
                 ->getCustomerIteratorByDefaultFallback($customerGroup, $website, $fallback);
 
             foreach ($customers as $customer) {
-                $this->updatePriceListsOnCurrentLevel($website, $customer, $force);
+                $this->updatePriceListsOnCurrentLevel($website, $customer, $forceTimestamp);
             }
             $this->setBuiltForCustomerGroup($website, $customerGroup);
         }
@@ -49,9 +49,9 @@ class CustomerCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
     /**
      * @param Website $website
      * @param Customer $customer
-     * @param bool $force
+     * @param int|null $forceTimestamp
      */
-    protected function updatePriceListsOnCurrentLevel(Website $website, Customer $customer, $force)
+    protected function updatePriceListsOnCurrentLevel(Website $website, Customer $customer, $forceTimestamp = null)
     {
         $priceListsToCustomer = $this->getPriceListToEntityRepository()
             ->findOneBy(['website' => $website, 'customer' => $customer]);
@@ -67,7 +67,7 @@ class CustomerCombinedPriceListsBuilder extends AbstractCombinedPriceListBuilder
         }
         $collection = $this->priceListCollectionProvider->getPriceListsByCustomer($customer, $website);
         $combinedPriceList = $this->combinedPriceListProvider->getCombinedPriceList($collection);
-        $this->updateRelationsAndPrices($combinedPriceList, $website, $customer, $force);
+        $this->updateRelationsAndPrices($combinedPriceList, $website, $customer, $forceTimestamp);
     }
 
     /**

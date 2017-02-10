@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
+use Oro\Bundle\CheckoutBundle\Tests\Unit\Model\Action\CheckoutSourceStub;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
@@ -169,6 +170,19 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit_Framework_TestCas
         $this->listener->onStartCheckoutConditionCheck($event);
     }
 
+    public function testOnStartCheckoutConditionCheckWhenSourceEntityIsNotOfShoppingListType()
+    {
+        $shoppingList = new \stdClass();
+        $checkoutSource = new CheckoutSourceStub();
+        $checkoutSource->setShoppingList($shoppingList);
+        $checkout = $this->getEntity(Checkout::class, ['source' => $checkoutSource]);
+
+        $context = new ActionData(['checkout' => $checkout]);
+        $event = new ExtendableConditionEvent($context);
+
+        $this->listener->onStartCheckoutConditionCheck($event);
+    }
+
     public function testOnStartCheckoutConditionCheckWhenCheckoutHasNoPrices()
     {
         $event = $this->expectsPrepareLineItemsAndReturnPrices([]);
@@ -198,12 +212,9 @@ class HasPriceInShoppingLineItemsListenerTest extends \PHPUnit_Framework_TestCas
     public function testOnStartCheckoutConditionCheckWhenCheckoutHasNoItems()
     {
         $shoppingList = $this->getEntity(ShoppingList::class, []);
-        $checkoutSourceMock = $this->createMock(CheckoutSource::class);
-        $checkoutSourceMock
-            ->expects($this->once())
-            ->method('getEntity')
-            ->willReturn($shoppingList);
-        $checkout = $this->getEntity(Checkout::class, ['source' => $checkoutSourceMock]);
+        $checkoutSource = new CheckoutSourceStub();
+        $checkoutSource->setShoppingList($shoppingList);
+        $checkout = $this->getEntity(Checkout::class, ['source' => $checkoutSource]);
 
         $context = new ActionData(['checkout' => $checkout]);
         $event = new ExtendableConditionEvent($context);

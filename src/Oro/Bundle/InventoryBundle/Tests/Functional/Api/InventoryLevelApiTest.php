@@ -9,7 +9,6 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 
 /**
- * @dbIsolation
  * @group CommunityEdition
  *
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)

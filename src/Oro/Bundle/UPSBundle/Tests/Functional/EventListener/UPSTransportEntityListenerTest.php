@@ -8,9 +8,6 @@ use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Oro\Bundle\UPSBundle\Method\UPSShippingMethod;
 
-/**
- * @dbIsolation
- */
 class UPSTransportEntityListenerTest extends WebTestCase
 {
     protected function setUp()

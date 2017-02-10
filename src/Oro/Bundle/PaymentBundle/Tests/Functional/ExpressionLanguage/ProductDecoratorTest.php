@@ -11,9 +11,6 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnits;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\ExpressionLanguage\ExpressionLanguage;
 
-/**
- * @dbIsolation
- */
 class ProductDecoratorTest extends WebTestCase
 {
     /**
