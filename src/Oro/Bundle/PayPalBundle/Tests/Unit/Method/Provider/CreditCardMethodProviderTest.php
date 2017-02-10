@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method\Provider;
 
+use Oro\Bundle\PaymentBundle\Tests\Unit\Method\Provider\AbstractMethodProviderTest;
 use Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfigInterface;
 use Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalCreditCardConfigProviderInterface;
 use Oro\Bundle\PayPalBundle\Method\Factory\PayPalCreditCardPaymentMethodFactoryInterface;
