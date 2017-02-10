@@ -343,7 +343,7 @@ class ShoppingListControllerTest extends WebTestCase
             ->getRepository('OroShoppingListBundle:LineItem')
             ->findBy(['shoppingList' => $shoppingList], ['id' => 'DESC']);
 
-        $this->assertCount(3, $items);
+        $this->assertCount(2, $items);
         $item = $items[0];
 
         $this->assertEquals($sku, $item->getProductSku());

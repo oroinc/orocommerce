@@ -53,6 +53,17 @@ class TaxValueManager
             $taxValue = $this->findTaxValue($entityClass, $entityId);
         }
 
+        return $this->cacheTaxValue($entityClass, $entityId, $taxValue);
+    }
+
+    /**
+     * @param string $entityClass
+     * @param string $entityId
+     * @param TaxValue|null $taxValue
+     * @return TaxValue
+     */
+    private function cacheTaxValue($entityClass, $entityId, $taxValue)
+    {
         if (!$taxValue) {
             /** @var TaxValue $taxValue */
             $taxValue = new $this->taxValueClass;
@@ -63,10 +74,63 @@ class TaxValueManager
 
         // Save taxValues to cache only with entity IDs
         if ($entityId) {
+            $key = $this->getTaxValueCacheKey($entityClass, $entityId);
             $this->taxValues[$key] = $taxValue;
         }
 
         return $taxValue;
+    }
+
+    /**
+     * @param string $entityClass
+     * @param array $entityIds
+     * @return bool
+     */
+    private function isCached($entityClass, array $entityIds)
+    {
+        foreach ($entityIds as $entityId) {
+            $key = $this->getTaxValueCacheKey($entityClass, $entityId);
+            if (!array_key_exists($key, $this->taxValues)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * @param string $entityClass
+     * @param array $entityIds
+     */
+    public function preloadTaxValues($entityClass, array $entityIds)
+    {
+        if ($this->isCached($entityClass, $entityIds)) {
+            return;
+        }
+
+        $taxValues = $this->findTaxValues($entityClass, $entityIds);
+        $taxValuesByEntityIds = [];
+
+        foreach ($taxValues as $taxValue) {
+            $taxValuesByEntityIds[$taxValue->getEntityId()] = $taxValue;
+        }
+
+        foreach ($entityIds as $entityId) {
+            $taxValue = !empty($taxValuesByEntityIds[$entityId]) ? $taxValuesByEntityIds[$entityId] : null;
+
+            $this->cacheTaxValue($entityClass, $entityId, $taxValue);
+        }
+    }
+
+    /**
+     * @param string $entityClass
+     * @param array $entityIds
+     * @return array|TaxValue[]
+     */
+    private function findTaxValues($entityClass, array $entityIds)
+    {
+        return $this->doctrineHelper->getEntityRepositoryForClass($this->taxValueClass)
+            ->findBy(['entityClass' => $entityClass, 'entityId' => $entityIds]);
     }
 
     /**
