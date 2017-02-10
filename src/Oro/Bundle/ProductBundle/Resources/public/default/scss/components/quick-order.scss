@@ -318,10 +318,8 @@
 
   }
 
-  .hidden-form {
-    .quick-order-import-validation__form__row {
+  .hidden-form & {
       display: none;
-    }
   }
 }
 .ui-dialog {
@@ -332,10 +330,4 @@
       overflow: hidden;
     }
   }
-}
-
-.oro_product_quick_add {
-   .hidden-form {
-     display: none;
-   }
 }
