@@ -4,12 +4,8 @@ namespace Oro\Bundle\PaymentTermBundle\Tests\Functional\Repository;
 
 use Oro\Bundle\PaymentTermBundle\Entity\Repository\PaymentTermSettingsRepository;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadChannelData;
-use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermSettingsData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-/**
- * @dbIsolation
- */
 class PaymentTermSettingsRepositoryTest extends WebTestCase
 {
     /**
@@ -41,6 +37,6 @@ class PaymentTermSettingsRepositoryTest extends WebTestCase
             $this->getReference('payment_term:transport_2')
         ];
 
-        $this->assertEquals($fixtureSettingsByEnabledChannel, $settingsByEnabledChannel);
+        static::assertEquals($fixtureSettingsByEnabledChannel, $settingsByEnabledChannel);
     }
 }
