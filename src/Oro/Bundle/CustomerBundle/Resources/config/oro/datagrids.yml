@@ -1048,21 +1048,21 @@ datagrids:
                 route: oro_customer_frontend_customer_address_update
                 params: {entityId: frontendOwner.id , id: id}
 
-            delete_link:
-                type: url
-                route: oro_api_customer_frontend_delete_customer_address
-                params: {entityId: frontendOwner.id , addressId: id}
+#            delete_link:
+#                type: url
+#                route: oro_api_customer_frontend_delete_customer_address
+#                params: {entityId: frontendOwner.id , addressId: id}
         actions:
             update:
                 type:          navigate
                 link:          update_link
                 icon:          pencil
                 acl_resource:  oro_customer_frontend_customer_address_update
-            delete:
-                type:          delete
-                link:          delete_link
-                icon:          trash-o
-                acl_resource:  oro_customer_frontend_customer_address_remove
+#            delete:
+#                type:          delete
+#                link:          delete_link
+#                icon:          trash-o
+#                acl_resource:  oro_customer_frontend_customer_address_remove
 
     frontend-customer-customer-user-address-grid:
         acl_resource: oro_customer_frontend_customer_user_address_view
@@ -1078,18 +1078,18 @@ datagrids:
                 route: oro_customer_frontend_customer_user_address_update
                 params: {entityId: frontendOwner.id , id: id}
 
-            delete_link:
-                type: url
-                route: oro_api_customer_frontend_delete_customeruser_address
-                params: {entityId: frontendOwner.id , addressId: id}
+#            delete_link:
+#                type: url
+#                route: oro_api_customer_frontend_delete_customeruser_address
+#                params: {entityId: frontendOwner.id , addressId: id}
         actions:
             update:
                 type:          navigate
                 link:          update_link
                 icon:          pencil
                 acl_resource:  oro_customer_frontend_customer_user_address_update
-            delete:
-                type:          delete
-                link:          delete_link
-                icon:          trash-o
-                acl_resource:  oro_customer_frontend_customer_user_address_remove
+#            delete:
+#                type:          delete
+#                link:          delete_link
+#                icon:          trash-o
+#                acl_resource:  oro_customer_frontend_customer_user_address_remove

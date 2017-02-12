@@ -342,12 +342,9 @@ operations:
             - for_all_datagrids
             - for_all_entities
             - entities
-            - datagrids
             - datagrid_options
         entities:
             - Oro\Bundle\CustomerBundle\Entity\CustomerGroup
-        datagrids:
-            - customer_groups_grid
         actions:
             - '@redirect': {route: 'oro_customer_customer_group_index'}
         datagrid_options:
@@ -358,6 +355,28 @@ operations:
                 label: oro.grid.action.delete
                 link: delete_link
                 icon: trash-o
+
+    oro_customer_frontend_address_delete:
+        extends: DELETE
+        replace:
+            - for_all_datagrids
+            - for_all_entities
+            - datagrids
+            - acl_resource
+        acl_resource: oro_customer_frontend_customer_address_remove
+        datagrids:
+            - frontend-customer-customer-address-grid
+
+    oro_customer_user_frontend_address_delete:
+        extends: DELETE
+        replace:
+            - for_all_datagrids
+            - for_all_entities
+            - datagrids
+            - acl_resource
+        acl_resource: oro_customer_frontend_customer_user_address_remove
+        datagrids:
+            - frontend-customer-customer-user-address-grid
 
 action_groups:
     oro_customer_customeruser_set_enabled:
