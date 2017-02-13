@@ -1,7 +1,7 @@
 layout:
     imports:
         -
-            id: oro_customer_grid
+            id: datagrid
             root: __root
 
     actions:
