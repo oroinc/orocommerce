@@ -1,2 +1,2 @@
 bundles:
-    - { name: Oro\Bundle\PaymentBundle\OroPaymentBundle  }
+    - { name: Oro\Bundle\PaymentBundle\OroPaymentBundle, priority: 30  }
