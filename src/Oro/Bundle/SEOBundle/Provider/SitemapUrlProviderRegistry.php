@@ -11,39 +11,35 @@ class SitemapUrlProviderRegistry
 
     /**
      * @param SitemapUrlProviderInterface $provider
+     * @param string $name
      */
-    public function registerProvider(SitemapUrlProviderInterface $provider)
+    public function registerProvider(SitemapUrlProviderInterface $provider, $name)
     {
-        $this->providers[] = $provider;
+        $this->providers[$name] = $provider;
     }
 
     /**
-     * @param string $entityClass
-     * @return bool
+     * @return array|SitemapUrlProviderInterface[]
      */
-    public function isSupported($entityClass)
+    public function getProviders()
     {
-        foreach ($this->providers as $provider) {
-            if ($provider->isSupported($entityClass)) {
-                return true;
-            }
-        }
-
-        return false;
+        return $this->providers;
     }
 
     /**
-     * @param string $entityClass
+     * @return array
+     */
+    public function getProviderNames()
+    {
+        return array_keys($this->providers);
+    }
+
+    /**
+     * @param string $name
      * @return null|SitemapUrlProviderInterface
      */
-    public function getProviderByClass($entityClass)
+    public function getProviderByName($name)
     {
-        foreach ($this->providers as $provider) {
-            if ($provider->isSupported($entityClass)) {
-                return $provider;
-            }
-        }
-
-        return null;
+        return isset($this->providers[$name]) ? $this->providers[$name] : null;
     }
 }
