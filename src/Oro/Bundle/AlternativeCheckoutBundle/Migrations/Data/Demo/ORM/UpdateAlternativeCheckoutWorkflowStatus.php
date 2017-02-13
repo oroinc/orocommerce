@@ -39,6 +39,6 @@ class UpdateAlternativeCheckoutWorkflowStatus extends AbstractFixture implements
             return;
         }
 
-        $this->container->get('oro_workflow.manager')->activateWorkflow($workflowDefinition->getName());
+        $this->container->get('oro_workflow.manager.system')->activateWorkflow($workflowDefinition->getName());
     }
 }

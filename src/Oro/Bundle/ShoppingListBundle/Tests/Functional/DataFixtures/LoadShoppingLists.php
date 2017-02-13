@@ -20,13 +20,15 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
     const SHOPPING_LIST_5 = 'shopping_list_5';
     const SHOPPING_LIST_6 = 'shopping_list_6';
     const SHOPPING_LIST_7 = 'shopping_list_7';
+    const SHOPPING_LIST_8 = 'shopping_list_8';
 
     /**
      * @var array
      */
     protected $shoppingListsWithDefaultWebsite = [
         self::SHOPPING_LIST_1,
-        self::SHOPPING_LIST_2
+        self::SHOPPING_LIST_2,
+        self::SHOPPING_LIST_8,
     ];
 
     /**
@@ -133,6 +135,9 @@ class LoadShoppingLists extends AbstractFixture implements DependentFixtureInter
             ],
             self::SHOPPING_LIST_7 => [
                 'customerUser' => LoadCustomerUserData::LEVEL_1_EMAIL,
+            ],
+            self::SHOPPING_LIST_8 => [
+                'customerUser' => LoadBaseCustomerUserData::AUTH_USER,
             ],
         ];
     }

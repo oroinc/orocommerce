@@ -3,7 +3,6 @@
 namespace Oro\Bundle\TaxBundle\Tests\Unit\OrderTax\ContextHandler;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\OrderBundle\Entity\Order;
@@ -12,17 +11,15 @@ use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
-use Oro\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository;
 use Oro\Bundle\TaxBundle\Event\ContextEvent;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 use Oro\Bundle\TaxBundle\OrderTax\ContextHandler\OrderLineItemHandler;
 use Oro\Bundle\TaxBundle\Provider\TaxationAddressProvider;
+use Oro\Bundle\TaxBundle\Provider\TaxCodeProvider;
 
 class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
 {
-    const PRODUCT_TAX_CODE_CLASS = 'PRODUCT_TAX_CODE_CLASS';
-    const ACCOUNT_TAX_CODE_CLASS = 'ACCOUNT_TAX_CODE_CLASS';
     const ORDER_LINE_ITEM_CLASS = 'Oro\Bundle\OrderBundle\Entity\OrderLineItem';
     const PRODUCT_TAX_CODE = 'PTC';
     const ACCOUNT_TAX_CODE = 'ATC';
@@ -35,14 +32,9 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
     protected $addressProvider;
 
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var TaxCodeProvider|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $doctrineHelper;
-
-    /**
-     * @var AbstractTaxCodeRepository|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $repository;
+    protected $taxCodeProvider;
 
     /**
      * @var OrderLineItemHandler
@@ -123,33 +115,16 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
                 }
             );
 
-        $this->repository = $this
-            ->getMockBuilder('Oro\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository')
+        $this->taxCodeProvider = $this
+            ->getMockBuilder(TaxCodeProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
-
-        $this->doctrineHelper = $this
-            ->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->doctrineHelper
-            ->expects($this->any())
-            ->method('getEntityRepositoryForClass')
-            ->willReturn($this->repository);
 
         $this->handler = new OrderLineItemHandler(
             $this->addressProvider,
-            $this->doctrineHelper,
-            self::PRODUCT_TAX_CODE_CLASS,
-            self::ACCOUNT_TAX_CODE_CLASS,
+            $this->taxCodeProvider,
             self::ORDER_LINE_ITEM_CLASS
         );
-    }
-
-    protected function tearDown()
-    {
-        unset($this->handler, $this->doctrineHelper, $this->addressProvider);
     }
 
     /**
@@ -209,9 +184,9 @@ class OrderLineItemHandlerTest extends \PHPUnit_Framework_TestCase
             $this->customerGroupTaxCode = null;
         }
 
-        $this->repository
+        $this->taxCodeProvider
             ->expects($this->atLeastOnce())
-            ->method('findOneByEntity')
+            ->method('getTaxCode')
             ->willReturnCallback(function ($type) {
                 switch ($type) {
                     case TaxCodeInterface::TYPE_PRODUCT:

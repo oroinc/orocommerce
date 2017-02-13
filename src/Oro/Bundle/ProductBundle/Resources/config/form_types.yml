@@ -169,8 +169,6 @@ services:
 
     oro_product.form.type.product_page_content_variant:
         class: Oro\Bundle\ProductBundle\Form\Type\ProductPageVariantType
-        arguments:
-            - '@doctrine'
         tags:
             - { name: form.type, alias: oro_product_page_variant }
 

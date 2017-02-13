@@ -11,6 +11,7 @@ use Oro\Bundle\TestFrameworkBundle\Entity\TestEmployee;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer;
+use Oro\Bundle\WebsiteSearchBundle\Engine\IndexerInputValidator;
 use Oro\Bundle\WebsiteSearchBundle\Engine\ORM\OrmIndexer;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDatetime;
 use Oro\Bundle\WebsiteSearchBundle\Entity\IndexDecimal;
@@ -77,12 +78,18 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $inputValidator = new IndexerInputValidator(
+            $this->doctrineHelper,
+            $this->mappingProviderMock
+        );
+
         $this->indexer = new OrmIndexer(
             $this->doctrineHelper,
             $this->mappingProviderMock,
             $this->getContainer()->get('oro_website_search.engine.entity_dependencies_resolver'),
             $this->getContainer()->get('oro_website_search.engine.index_data'),
-            $this->getContainer()->get('oro_website_search.placeholder_decorator')
+            $this->getContainer()->get('oro_website_search.placeholder_decorator'),
+            $inputValidator
         );
 
         $this->indexer->setDriver($this->getContainer()->get('oro_website_search.engine.orm.driver'));

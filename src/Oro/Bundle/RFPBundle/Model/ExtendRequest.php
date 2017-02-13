@@ -2,6 +2,12 @@
 
 namespace Oro\Bundle\RFPBundle\Model;
 
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+
+/**
+ * @method AbstractEnumValue getInternalStatus()
+ * @method AbstractEnumValue getCustomerStatus()
+ */
 class ExtendRequest
 {
     /**

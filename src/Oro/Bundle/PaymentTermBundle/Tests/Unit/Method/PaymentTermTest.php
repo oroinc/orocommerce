@@ -9,10 +9,10 @@ use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Method\PaymentTerm as PaymentTermMethod;
+use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
-use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -61,10 +61,9 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
         $this->method = new PaymentTermMethod(
             $this->paymentTermProvider,
             $this->paymentTermAssociationProvider,
-            $this->doctrineHelper
+            $this->doctrineHelper,
+            $this->logger
         );
-
-        $this->method->setLogger($this->logger);
     }
 
     public function testExecuteNoEntity()
@@ -201,7 +200,7 @@ class PaymentTermTest extends \PHPUnit_Framework_TestCase
 
     public function testGetType()
     {
-        $this->assertEquals('payment_term', $this->method->getType());
+        $this->assertEquals('payment_term', $this->method->getIdentifier());
     }
 
     /**

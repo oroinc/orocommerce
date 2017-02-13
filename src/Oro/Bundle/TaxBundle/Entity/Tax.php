@@ -4,6 +4,8 @@ namespace Oro\Bundle\TaxBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
@@ -17,12 +19,19 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *      routeUpdate="oro_tax_update"
  * )
  */
-class Tax
+class Tax implements DatesAwareInterface
 {
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
      */
     protected $id;
 
@@ -34,6 +43,10 @@ class Tax
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *              },
+     *          "importexport"={
+     *              "order"=100,
+     *              "identity"=true
      *          }
      *      }
      * )
@@ -48,6 +61,9 @@ class Tax
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "order"=200
      *          }
      *      }
      * )
@@ -62,6 +78,9 @@ class Tax
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "order"=300
      *          }
      *      }
      * )
@@ -74,6 +93,9 @@ class Tax
      *      defaultValues={
      *          "entity"={
      *              "label"="oro.ui.created_at"
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
      *          }
      *      }
      * )
@@ -83,11 +105,15 @@ class Tax
     protected $createdAt;
 
     /**
+     *
      * @ORM\Column(name="updated_at", type="datetime")
      * @ConfigField(
      *      defaultValues={
      *          "entity"={
      *              "label"="oro.ui.updated_at"
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
      *          }
      *      }
      * )
@@ -95,6 +121,11 @@ class Tax
      * @var \DateTime
      */
     protected $updatedAt;
+
+    /**
+     * @var bool
+     */
+    protected $updatedAtSet;
 
     /**
      * @return int
@@ -162,6 +193,14 @@ class Tax
     }
 
     /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return (string)$this->code;
+    }
+
+    /**
      * @return \DateTime
      */
     public function getCreatedAt()
@@ -173,7 +212,7 @@ class Tax
      * @param \DateTime $createdAt
      * @return $this
      */
-    public function setCreatedAt($createdAt)
+    public function setCreatedAt(\DateTime $createdAt = null)
     {
         $this->createdAt = $createdAt;
 
@@ -190,41 +229,26 @@ class Tax
 
     /**
      * @param \DateTime $updatedAt
+     *
      * @return $this
      */
-    public function setUpdatedAt($updatedAt)
+    public function setUpdatedAt(\DateTime $updatedAt = null)
     {
+        $this->updatedAtSet = false;
+        if ($updatedAt !== null) {
+            $this->updatedAtSet = true;
+        }
+
         $this->updatedAt = $updatedAt;
 
         return $this;
     }
 
     /**
-     * Pre persist event handler
-     *
-     * @ORM\PrePersist
+     * @return bool
      */
-    public function prePersist()
+    public function isUpdatedAtSet()
     {
-        $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
-    }
-
-    /**
-     * Pre update event handler
-     *
-     * @ORM\PreUpdate
-     */
-    public function preUpdate()
-    {
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString()
-    {
-        return (string)$this->code;
+        return $this->updatedAtSet;
     }
 }

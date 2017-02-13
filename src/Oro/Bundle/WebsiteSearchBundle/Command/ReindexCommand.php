@@ -32,6 +32,12 @@ class ReindexCommand extends ContainerAwareCommand
                 InputOption::VALUE_OPTIONAL,
                 'INTEGER. Website ID needs to reindex'
             )
+            ->addOption(
+                'scheduled',
+                null,
+                InputOption::VALUE_NONE,
+                'Enforces a scheduled (background) reindexation'
+            )
             ->setDescription('Rebuild search index for certain website/entity type or all mapped entities');
     }
 
@@ -42,6 +48,7 @@ class ReindexCommand extends ContainerAwareCommand
     {
         $class = $input->getOption('class');
         $websiteId = $input->getOption('website-id');
+        $isScheduled = $input->getOption('scheduled');
 
         $class = $class ? $this->getFQCN($class) : null;
         
@@ -50,7 +57,7 @@ class ReindexCommand extends ContainerAwareCommand
 
         $output->writeln($this->getStartingMessage($class, $websiteId));
 
-        $event = new ReindexationRequestEvent($classes, $websiteIds, [], false);
+        $event = new ReindexationRequestEvent($classes, $websiteIds, [], $isScheduled);
         $dispatcher = $this->getContainer()->get('event_dispatcher');
         $dispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $event);
 

@@ -4,6 +4,8 @@ namespace Oro\Bundle\TaxBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 
@@ -17,12 +19,19 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *      routeUpdate="oro_tax_rule_update"
  * )
  */
-class TaxRule
+class TaxRule implements DatesAwareInterface
 {
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "excluded"=true
+     *          }
+     *      }
+     * )
      */
     protected $id;
 
@@ -34,6 +43,9 @@ class TaxRule
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "order"=500
      *          }
      *      }
      * )
@@ -45,6 +57,14 @@ class TaxRule
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\TaxBundle\Entity\ProductTaxCode")
      * @ORM\JoinColumn(name="product_tax_code_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "identity"=true,
+     *              "order"=200
+     *          }
+     *      }
+     * )
      */
     protected $productTaxCode;
 
@@ -53,6 +73,14 @@ class TaxRule
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\TaxBundle\Entity\CustomerTaxCode")
      * @ORM\JoinColumn(name="customer_tax_code_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "identity"=true,
+     *              "order"=100
+     *          }
+     *      }
+     * )
      */
     protected $customerTaxCode;
 
@@ -61,6 +89,14 @@ class TaxRule
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\TaxBundle\Entity\Tax")
      * @ORM\JoinColumn(name="tax_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "identity"=true,
+     *              "order"=400
+     *          }
+     *      }
+     * )
      */
     protected $tax;
 
@@ -69,6 +105,14 @@ class TaxRule
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\TaxBundle\Entity\TaxJurisdiction")
      * @ORM\JoinColumn(name="tax_jurisdiction_id", referencedColumnName="id", onDelete="CASCADE")
+     * @ConfigField(
+     *      defaultValues={
+     *          "importexport"={
+     *              "identity"=true,
+     *              "order"=300
+     *          }
+     *      }
+     * )
      */
     protected $taxJurisdiction;
 
@@ -78,6 +122,9 @@ class TaxRule
      *      defaultValues={
      *          "entity"={
      *              "label"="oro.ui.created_at"
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
      *          }
      *      }
      * )
@@ -93,6 +140,9 @@ class TaxRule
      *      defaultValues={
      *          "entity"={
      *              "label"="oro.ui.updated_at"
+     *          },
+     *          "importexport"={
+     *              "excluded"=true
      *          }
      *      }
      * )
@@ -100,6 +150,11 @@ class TaxRule
      * @var \DateTime
      */
     protected $updatedAt;
+
+    /**
+     * @var bool
+     */
+    protected $updatedAtSet;
 
     /**
      * @return int
@@ -208,6 +263,7 @@ class TaxRule
         return $this->taxJurisdiction;
     }
 
+
     /**
      * @return \DateTime
      */
@@ -220,7 +276,7 @@ class TaxRule
      * @param \DateTime $createdAt
      * @return $this
      */
-    public function setCreatedAt($createdAt)
+    public function setCreatedAt(\DateTime $createdAt = null)
     {
         $this->createdAt = $createdAt;
 
@@ -237,33 +293,26 @@ class TaxRule
 
     /**
      * @param \DateTime $updatedAt
+     *
      * @return $this
      */
-    public function setUpdatedAt($updatedAt)
+    public function setUpdatedAt(\DateTime $updatedAt = null)
     {
+        $this->updatedAtSet = false;
+        if ($updatedAt !== null) {
+            $this->updatedAtSet = true;
+        }
+
         $this->updatedAt = $updatedAt;
 
         return $this;
     }
 
     /**
-     * Pre persist event handler
-     *
-     * @ORM\PrePersist
+     * @return bool
      */
-    public function prePersist()
+    public function isUpdatedAtSet()
     {
-        $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
-    }
-
-    /**
-     * Pre update event handler
-     *
-     * @ORM\PreUpdate
-     */
-    public function preUpdate()
-    {
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
+        return $this->updatedAtSet;
     }
 }
