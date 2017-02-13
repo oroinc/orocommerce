@@ -71,12 +71,15 @@ class SluggableEntitiesProcessor implements MessageProcessorInterface, TopicSubs
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
-        $entityClass = JSON::decode($message->getBody());
+        $messageData = JSON::decode($message->getBody());
+
+        $entityClass = $this->messageFactory->getEntityClassFromMessage($messageData);
+        $createRedirect = $this->messageFactory->getCreateRedirectFromMessage($messageData);
 
         $result = $this->jobRunner->runUnique(
             $message->getMessageId(),
             sprintf('%s:%s', Topics::REGENERATE_DIRECT_URL_FOR_ENTITY_TYPE, $entityClass),
-            function (JobRunner $jobRunner) use ($entityClass) {
+            function (JobRunner $jobRunner) use ($entityClass, $createRedirect) {
                 /** @var EntityManager $em */
                 if (!$em = $this->doctrine->getManagerForClass($entityClass)) {
                     $this->logger->error(
@@ -103,13 +106,15 @@ class SluggableEntitiesProcessor implements MessageProcessorInterface, TopicSubs
                             Job $child
                         ) use (
                             $entityClass,
+                            $createRedirect,
                             $i,
                             $repository,
                             $identifierFieldName
                         ) {
                             $message = $this->messageFactory->createMassMessage(
                                 $entityClass,
-                                $this->getEntityIds($repository, $identifierFieldName, $i)
+                                $this->getEntityIds($repository, $identifierFieldName, $i),
+                                $createRedirect
                             );
                             $message['jobId'] = $child->getId();
 

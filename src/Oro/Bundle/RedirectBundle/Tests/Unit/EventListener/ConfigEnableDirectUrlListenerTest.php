@@ -5,6 +5,8 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\EventListener;
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\RedirectBundle\Async\Topics;
 use Oro\Bundle\RedirectBundle\EventListener\ConfigEnableDirectUrlListener;
+use Oro\Bundle\RedirectBundle\Model\DirectUrlMessageFactory;
+use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
 use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProvider;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
@@ -25,12 +27,22 @@ class ConfigEnableDirectUrlListenerTest extends \PHPUnit_Framework_TestCase
      */
     private $listener;
 
+    /**
+     * @var MessageFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $messageFactory;
+
     protected function setUp()
     {
         $this->messageProducer = $this->createMock(MessageProducerInterface::class);
         $this->provider = $this->createMock(RoutingInformationProvider::class);
+        $this->messageFactory = $this->createMock(MessageFactoryInterface::class);
 
-        $this->listener = new ConfigEnableDirectUrlListener($this->messageProducer, $this->provider);
+        $this->listener = new ConfigEnableDirectUrlListener(
+            $this->messageProducer,
+            $this->provider,
+            $this->messageFactory
+        );
     }
 
     public function testOnUpdateAfterIsNotChanged()
@@ -97,9 +109,21 @@ class ConfigEnableDirectUrlListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getEntityClasses')
             ->willReturn(['stdClass']);
 
+        $entityClass = 'stdClass';
+        $expectedMessage = [
+            DirectUrlMessageFactory::ID => [],
+            DirectUrlMessageFactory::ENTITY_CLASS_NAME => $entityClass,
+            DirectUrlMessageFactory::CREATE_REDIRECT => false
+        ];
+
+        $this->messageFactory->expects($this->once())
+            ->method('createMassMessage')
+            ->with($entityClass, [], false)
+            ->willReturn($expectedMessage);
+
         $this->messageProducer->expects($this->once())
             ->method('send')
-            ->with(Topics::REGENERATE_DIRECT_URL_FOR_ENTITY_TYPE, json_encode('stdClass'));
+            ->with(Topics::REGENERATE_DIRECT_URL_FOR_ENTITY_TYPE, $expectedMessage);
 
         $this->listener->onUpdateAfter($event);
     }

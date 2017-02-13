@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\RedirectBundle\Async\SluggableEntitiesProcessor;
 use Oro\Bundle\RedirectBundle\Async\Topics;
+use Oro\Bundle\RedirectBundle\Model\DirectUrlMessageFactory;
 use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Test\JobRunner;
@@ -66,12 +67,38 @@ class SluggableEntitiesProcessorTest extends \PHPUnit_Framework_TestCase
         );
     }
 
+    public function testGetSubscribedTopics()
+    {
+        $this->assertEquals(
+            [Topics::REGENERATE_DIRECT_URL_FOR_ENTITY_TYPE],
+            SluggableEntitiesProcessor::getSubscribedTopics()
+        );
+    }
+
     public function testProcessRejectMessageWithNotManagableClass()
     {
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
-        $messageData = \stdClass::class;
+
+        $class = \stdClass::class;
+        $createRedirect = true;
+
+        $messageData = [
+            DirectUrlMessageFactory::class => $class,
+            DirectUrlMessageFactory::CREATE_REDIRECT => $createRedirect
+        ];
+
         $messageBody = json_encode($messageData);
+
+        $this->messageFactory->expects($this->once())
+            ->method('getEntityClassFromMessage')
+            ->with($messageData)
+            ->willReturn($class);
+        $this->messageFactory->expects($this->once())
+            ->method('getCreateRedirectFromMessage')
+            ->with($messageData)
+            ->willReturn($createRedirect);
+
         $message->expects($this->any())
             ->method('getBody')
             ->willReturn($messageBody);
@@ -81,12 +108,12 @@ class SluggableEntitiesProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->doctrine->expects($this->once())
             ->method('getManagerForClass')
-            ->with($messageData)
+            ->with($class)
             ->willReturn(null);
 
         $this->logger->expects($this->once())
             ->method('error')
-            ->with(sprintf('Entity manager is not defined for class: "%s"', $messageData));
+            ->with(sprintf('Entity manager is not defined for class: "%s"', $class));
 
         $this->assertEquals(SluggableEntitiesProcessor::REJECT, $this->processor->process($message, $session));
     }
@@ -95,8 +122,25 @@ class SluggableEntitiesProcessorTest extends \PHPUnit_Framework_TestCase
     {
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
-        $messageData = \stdClass::class;
+        $class = \stdClass::class;
+        $createRedirect = true;
+
+        $messageData = [
+            DirectUrlMessageFactory::class => $class,
+            DirectUrlMessageFactory::CREATE_REDIRECT => $createRedirect
+        ];
+
         $messageBody = json_encode($messageData);
+
+        $this->messageFactory->expects($this->once())
+            ->method('getEntityClassFromMessage')
+            ->with($messageData)
+            ->willReturn($class);
+        $this->messageFactory->expects($this->once())
+            ->method('getCreateRedirectFromMessage')
+            ->with($messageData)
+            ->willReturn($createRedirect);
+
         $message->expects($this->any())
             ->method('getBody')
             ->willReturn($messageBody);
@@ -116,7 +160,7 @@ class SluggableEntitiesProcessorTest extends \PHPUnit_Framework_TestCase
             ->willReturn('id');
         $em->expects($this->once())
             ->method('getClassMetadata')
-            ->with($messageData)
+            ->with($class)
             ->willReturn($classMetadata);
 
         $countQb = $this->assertCountQueryCalled();
@@ -134,23 +178,23 @@ class SluggableEntitiesProcessorTest extends \PHPUnit_Framework_TestCase
             );
         $em->expects($this->once())
             ->method('getRepository')
-            ->with($messageData)
+            ->with($class)
             ->willReturn($repository);
 
         $this->doctrine->expects($this->once())
             ->method('getManagerForClass')
-            ->with($messageData)
+            ->with($class)
             ->willReturn($em);
 
         $this->messageFactory->expects($this->once())
             ->method('createMassMessage')
-            ->with($messageData, [42])
-            ->willReturn(['className' => $messageData, 'id' => [42]]);
+            ->with($class, [42])
+            ->willReturn(['className' => $class, 'id' => [42]]);
         $this->producer->expects($this->once())
             ->method('send')
             ->with(
                 Topics::JOB_GENERATE_DIRECT_URL_FOR_ENTITIES,
-                ['className' => $messageData, 'id' => [42], 'jobId' => null]
+                ['className' => $class, 'id' => [42], 'jobId' => null]
             );
 
         $this->assertEquals(SluggableEntitiesProcessor::ACK, $this->processor->process($message, $session));
