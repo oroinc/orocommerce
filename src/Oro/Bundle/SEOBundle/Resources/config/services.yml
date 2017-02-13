@@ -84,5 +84,8 @@ services:
         tags:
             - { name: oro_web_catalog.content_variant_provider }
 
+    oro_seo.provider.sitemap_url_provider_registry:
+        class: Oro\Bundle\SEOBundle\Provider\SitemapUrlProviderRegistry
+
     oro_seo.tools.sitemap_dumper:
         class: Oro\Bundle\SEOBundle\Tools\SitemapDumper
