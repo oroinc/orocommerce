@@ -6,7 +6,16 @@ layout:
         -
             id: oro_customer_menu
             root: page_sidebar
+        -
+            id: oro_customer_user_form
+            root: page_content
     actions:
+        - '@setOption':
+            id: page_title
+            optionName: text
+            optionValue:
+                label: 'oro.customer.customeruser.profile.edit'
+
         - '@setOption':
             id: customer_breadcrumbs
             optionName: customerUser
@@ -16,3 +25,8 @@ layout:
             id: customer_breadcrumbs
             optionName: currentPage
             optionValue: 'oro.customer.menu.customer_user_profile.label'
+
+        - '@setOption':
+            id: customer_user_form
+            optionName: form
+            optionValue: '=data["oro_customer_frontend_customer_user_form"].getProfileFormView(data["entity"])'

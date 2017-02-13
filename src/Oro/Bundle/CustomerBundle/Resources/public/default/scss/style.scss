@@ -1,34 +1,9 @@
-//TODO: Find dependent widget
-.profile__form__row {
-  position: relative;
+.customer_user_form {
+  @extend %customer-form;
 
-  legend {
-    text-transform: uppercase;
-    padding: 2rem 0;
-    margin: 0 0 2rem 0;
-    border-bottom: 1px solid #e6e6e6;
-    font-size: 1.6rem;
+  .form-field-roles label {
+    display: block;
   }
-
-  .field {
-    margin: 0 0 1.5rem;
-  }
-
-  .profile__form__col.col_first{
-    padding-right: 2rem;
-  }
-
-  .profile__form__col.col_last{
-    padding-left: 2rem;
-  }
-}
-
-.profile__form__fields_container{
-  margin: 0 0 2rem 0;
-}
-
-.profile__form__col.form__col_x6 {
-  width: 50%;
 }
 
 @include breakpoint('mobile'){
@@ -37,29 +12,13 @@
       display: block;
       width: 100%;
     }
-
-    .profile__form__col.col_first{
-      padding-right: 0;
-    }
-
-    .profile__form__col.col_last{
-      padding-left: 0;
-    }
   }
 
-  .profile__form__col.form__col_x6{
-    width: 100%;
-  }
-}
-
-.profile__form__col {
-  float: left;
 }
 
 .profile__form__req-text {
-  position: absolute;
-  left: 21rem;
-  top: -3.2rem;
+  display: inline-block;
+  margin-left: 21rem;
   color: #b84926;
 }
 

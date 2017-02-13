@@ -22,8 +22,5 @@
         '~class': " required-label"
     }) %}
 
-    <p {{ block('block_attributes') }}>
-        <sup>*</sup>
-        {{ 'oro.customer.form.label.required'|trans }}
-    </p>
+    <p {{ block('block_attributes') }}><sup>*</sup> {{ 'oro.customer.form.label.required'|trans }}</p>
 {% endblock %}

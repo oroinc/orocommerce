@@ -1,0 +1,132 @@
+{% block _customer_user_page_widget %}
+    {% set attr = attr|merge({
+        class: attr.class|default('') ~ " customer_user_form"
+    }) %}
+    <div{{ block('block_attributes') }}>{{ block_widget(block) }}</div>
+{% endblock %}
+
+{% block __oro_customer_user_form__customer_user_form_fields_widget %}
+    {% do block|merge_context({
+        'form': form,
+    }) %}
+    {{ block('container_widget') }}
+{% endblock %}
+
+{% block __oro_customer_user_form__customer_user_form_fields_information_widget %}
+    <div class="form-group">
+        <div class="grid">
+            <div class="grid__row grid__row--offset-none">
+                <div class="grid__column grid__column--12 grid__column--offset-y">
+                    {{ form_row(form.customer, {'attr': {'placeholder': 'oro.customer.form.placeholder.customer'|trans}})}}
+                </div>
+                {% if form.enabled is defined %}
+                    <div class="grid__column grid__column--6 grid__column--offset-y">
+                        {{ form_row(form.enabled, {'attr': {'placeholder': ''|trans}}) }}
+                    </div>
+                {% endif %}
+            </div>
+            <div class="grid__row grid__row--offset-none">
+                <div class="grid__column grid__column--6 grid__column--offset-y">
+                    {{ form_row(form.email, {'attr': {'placeholder': 'oro.customer.form.placeholder.email'|trans}}) }}
+                </div>
+                <div class="grid__column grid__column--6 grid__column--offset-y">
+                    {{ form_row(form.namePrefix, {'attr': {'placeholder': 'oro.customer.form.placeholder.name_prefix'|trans}}) }}
+                </div>
+            </div>
+            <div class="grid__row grid__row--offset-none">
+                <div class="grid__column grid__column--6 grid__column--offset-y">
+                    {{ form_row(form.firstName, {'attr': {'placeholder': 'oro.customer.form.placeholder.first_name'|trans}}) }}
+                </div>
+                <div class="grid__column grid__column--6 grid__column--offset-y">
+                    {{ form_row(form.middleName, {'attr': {'placeholder': 'oro.customer.form.placeholder.middle_name'|trans}}) }}
+                </div>
+            </div>
+            <div class="grid__row grid__row--offset-none">
+                <div class="grid__column grid__column--6 grid__column--offset-y">
+                    {{ form_row(form.lastName, {'attr': {'placeholder': 'oro.customer.form.placeholder.last_name'|trans}}) }}
+                </div>
+                <div class="grid__column grid__column--6 grid__column--offset-y">
+                    {{ form_row(form.nameSuffix, {'attr': {'placeholder': 'oro.customer.form.placeholder.name_suffix'|trans}}) }}
+                </div>
+            </div>
+            {% if form.sendEmail is defined %}
+                <div class="grid__row grid__row--offset-none">
+                    <div class="grid__column grid__column--12 grid__column--offset-y">
+                        {{ form_row(form.sendEmail, {'attr': {'placeholder': ''|trans}}) }}
+                    </div>
+                </div>
+            {% endif %}
+            <div class="grid__row grid__row--offset-none">
+                <div class="grid__column grid__column--6 grid__column--offset-y">
+                    <div class="datepicker-box datepicker-box--form-mode">
+                        <span class="datepicker-box__icon"><i class="fa-calendar"></i></span>
+                        {{ form_row(form.birthday, {
+                            'attr': {
+                                'class': 'datepicker-box__input input input--size-m'
+                            },
+                            'parentClass': '',
+                            'datePickerOptions': {
+                                'maxDate': 0
+                            }
+                        }) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block __oro_customer_user_form__customer_user_form_fields_password_widget %}
+    <div class="form-group">
+        <legend>{{ 'oro.customer.customeruser.profile.form.sections.password.label'|trans }}</legend>
+        <div class="grid">
+            {% set form = form.changePassword|default(form) %}
+
+            {% if form.currentPassword is defined %}
+            <div class="grid__row grid__row--offset-none">
+                <div class="grid__column grid__column--6 grid__column--offset-y">
+                    {{ form_row(form.currentPassword, {'attr': {'placeholder': 'oro.customer.form.placeholder.current_password'|trans}, 'parentClass': 'current_password'}) }}
+                </div>
+            </div>
+            {% endif %}
+
+            <div class="grid__row grid__row--offset-none">
+                <div class="grid__column grid__column--6 grid__column--offset-y">
+                    {{ form_row(form.plainPassword.first, {'attr': {'placeholder': 'oro.customer.form.placeholder.new_password'|trans}, 'parentClass': 'password_first'}) }}
+                </div>
+                <div class="grid__column grid__column--6 grid__column--offset-y">
+                    {{ form_row(form.plainPassword.second, {'attr': {'placeholder': 'oro.customer.form.placeholder.password_confirmation'|trans}, 'parentClass': 'password_second'}) }}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block __oro_customer_user_form__customer_user_form_fields_roles_widget %}
+    {% if form.roles is defined %}
+    <div class="form-group">
+        <legend>{{ 'oro.customer.customeruser.profile.form.sections.roles.label'|trans }}</legend>
+        <div class="grid">
+            <div class="grid__row grid__row--offset-none">
+                <div class="grid__column grid__column--6 grid__column--offset-y">
+                    {{ form_row(form.roles)}}
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+{% endblock %}
+
+{% block __oro_customer_user_form__customer_user_form_actions_widget %}
+    <div class="form-buttons">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block __oro_customer_user_form__customer_user_form_required_label_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " required-label"
+    }) %}
+
+    <p {{ block('block_attributes') }}><sup>*</sup> {{ 'oro.customer.form.label.required'|trans }}</p>
+{% endblock %}

@@ -6,7 +6,24 @@ layout:
         -
             id: oro_customer_menu
             root: page_sidebar
+        -
+            id: oro_customer_user_form
+            root: page_content
     actions:
+        - '@setOption':
+            id: page_title
+            optionName: text
+            optionValue:
+                label: 'oro.customer.frontend.title.page.customer_user.edit'
+                parameters:
+                    '%identifier%': '=data["entity"].getFullName()'
+
+        - '@setOption':
+            id: title
+            optionName: params
+            optionValue:
+                '%user%': '=data["entity"].getFullName()'
+
         - '@setOption':
             id: customer_breadcrumbs
             optionName: customerUser
