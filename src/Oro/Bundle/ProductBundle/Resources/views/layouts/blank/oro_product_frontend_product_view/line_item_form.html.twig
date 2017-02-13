@@ -23,8 +23,14 @@
             {{ form_errors(form.quantity) }}
         </div>
     {% else %}
-        {{ form_row(form.unit) }}
-        {{ form_row(form.quantity) }}
+        <div class="product-view-quantity">
+            <div class="product-view-quantity__unit">
+                {{ form_widget(form.unit) }}
+            </div>
+            <div class="product-view-quantity__value">
+                {{ form_widget(form.quantity) }}
+            </div>
+        </div>
     {% endif %}
 {% endblock %}
 
