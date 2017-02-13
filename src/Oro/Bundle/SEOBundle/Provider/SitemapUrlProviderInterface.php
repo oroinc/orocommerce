@@ -11,10 +11,4 @@ interface SitemapUrlProviderInterface
      * @return array
      */
     public function getUrls(WebsiteInterface $website);
-
-    /**
-     * @param string $entityClass
-     * @return bool
-     */
-    public function isSupported($entityClass);
 }
