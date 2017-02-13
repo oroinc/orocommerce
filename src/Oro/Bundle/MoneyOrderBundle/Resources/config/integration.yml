@@ -1,7 +1,7 @@
 services:
     oro_money_order.integration.channel:
         class: 'Oro\Bundle\MoneyOrderBundle\Integration\MoneyOrderChannelType'
-        public: false
+        public: true
         tags:
             - { name: oro_integration.channel, type: money_order }
 

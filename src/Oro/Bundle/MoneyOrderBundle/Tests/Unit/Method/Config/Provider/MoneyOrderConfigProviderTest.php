@@ -11,6 +11,10 @@ use Oro\Bundle\MoneyOrderBundle\Method\Config\Provider\MoneyOrderConfigProviderI
 
 class MoneyOrderConfigProviderTest extends \PHPUnit_Framework_TestCase
 {
+    const IDENTIFIER1 = 'payment_method_1';
+    const IDENTIFIER2 = 'payment_method_2';
+    const WRONG_IDENTIFIER = 'wrongpayment_method';
+
     /**
      * @var MoneyOrderConfigFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -22,6 +26,11 @@ class MoneyOrderConfigProviderTest extends \PHPUnit_Framework_TestCase
     private $settingsRepository;
 
     /**
+     * @var array
+     */
+    private $configs;
+
+    /**
      * @var MoneyOrderConfigProviderInterface
      */
     private $testedProvider;
@@ -30,6 +39,44 @@ class MoneyOrderConfigProviderTest extends \PHPUnit_Framework_TestCase
     {
         $this->configFactory = $this->createMock(MoneyOrderConfigFactoryInterface::class);
         $this->settingsRepository = $this->createMock(MoneyOrderSettingsRepository::class);
+
+        $settingsOneMock = $this->createMoneyOrderSettingsMock();
+        $settingsTwoMock = $this->createMoneyOrderSettingsMock();
+
+        $configOneMock = $this->createConfigMock();
+        $configTwoMock = $this->createConfigMock();
+
+        $settingsMocks = [$settingsOneMock, $settingsTwoMock];
+
+        $configOneMock
+            ->expects(static::once())
+            ->method('getPaymentMethodIdentifier')
+            ->willReturn(self::IDENTIFIER1);
+
+        $configTwoMock
+            ->expects(static::once())
+            ->method('getPaymentMethodIdentifier')
+            ->willReturn(self::IDENTIFIER2);
+
+        $this->settingsRepository
+            ->expects(static::once())
+            ->method('findWithEnabledChannel')
+            ->willReturn($settingsMocks);
+
+        $this->configFactory
+            ->method('create')
+            ->will(
+                static::returnValueMap(
+                    [
+                        [$settingsOneMock, $configOneMock],
+                        [$settingsTwoMock, $configTwoMock]
+                    ]
+                )
+            );
+        $this->configs = [
+            self::IDENTIFIER1 => $configOneMock,
+            self::IDENTIFIER2 => $configTwoMock
+        ];
 
         $this->testedProvider = new MoneyOrderConfigProvider($this->settingsRepository, $this->configFactory);
     }
@@ -52,94 +99,15 @@ class MoneyOrderConfigProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetPaymentConfigs()
     {
-        $onePaymentMethodId = '1somePaymentMethodId';
-        $twoPaymentMethodId = '2somePaymentMethodId';
-
-        $settingsOneMock = $this->createMoneyOrderSettingsMock();
-        $settingsTwoMock = $this->createMoneyOrderSettingsMock();
-
-        $configOneMock = $this->createConfigMock();
-        $configTwoMock = $this->createConfigMock();
-
-        $settingsMocks = [$settingsOneMock, $settingsTwoMock];
-
-        $configOneMock
-            ->expects(static::once())
-            ->method('getPaymentMethodIdentifier')
-            ->willReturn($onePaymentMethodId);
-
-        $configTwoMock
-            ->expects(static::once())
-            ->method('getPaymentMethodIdentifier')
-            ->willReturn($twoPaymentMethodId);
-
-        $this->settingsRepository
-            ->expects(static::once())
-            ->method('findWithEnabledChannel')
-            ->willReturn($settingsMocks);
-
-        $this->configFactory
-            ->method('create')
-            ->will(
-                static::returnValueMap(
-                    [
-                        [$settingsOneMock, $configOneMock],
-                        [$settingsTwoMock, $configTwoMock]
-                    ]
-                )
-            );
-
-        $expectedResult = [
-            $onePaymentMethodId => $configOneMock,
-            $twoPaymentMethodId => $configTwoMock
-        ];
-
         $actualResult = $this->testedProvider->getPaymentConfigs();
 
-        static::assertEquals($expectedResult, $actualResult);
+        static::assertEquals($this->configs, $actualResult);
     }
 
     public function testGetPaymentConfig()
     {
-        $onePaymentMethodId = '1somePaymentMethodId';
-        $twoPaymentMethodId = '2somePaymentMethodId';
-
-        $settingsOneMock = $this->createMoneyOrderSettingsMock();
-        $settingsTwoMock = $this->createMoneyOrderSettingsMock();
-
-        $configOneMock = $this->createConfigMock();
-        $configTwoMock = $this->createConfigMock();
-
-        $settingsMocks = [$settingsOneMock, $settingsTwoMock];
-
-        $configOneMock
-            ->expects(static::once())
-            ->method('getPaymentMethodIdentifier')
-            ->willReturn($onePaymentMethodId);
-
-        $configTwoMock
-            ->expects(static::once())
-            ->method('getPaymentMethodIdentifier')
-            ->willReturn($twoPaymentMethodId);
-
-        $this->settingsRepository
-            ->expects(static::once())
-            ->method('findWithEnabledChannel')
-            ->willReturn($settingsMocks);
-
-        $this->configFactory
-            ->method('create')
-            ->will(
-                static::returnValueMap(
-                    [
-                        [$settingsOneMock, $configOneMock],
-                        [$settingsTwoMock, $configTwoMock]
-                    ]
-                )
-            );
-
-        $expectedResult = $configOneMock;
-        $actualResult = $this->testedProvider->getPaymentConfig($onePaymentMethodId);
+        $expectedResult = $this->configs[self::IDENTIFIER1];
+        $actualResult = $this->testedProvider->getPaymentConfig(self::IDENTIFIER1);
 
         static::assertEquals($expectedResult, $actualResult);
     }
@@ -151,52 +119,15 @@ class MoneyOrderConfigProviderTest extends \PHPUnit_Framework_TestCase
             ->method('findWithEnabledChannel')
             ->willReturn([]);
 
-        $actualResult = $this->testedProvider->getPaymentConfig('somePaymentMethodId');
+        $actualResult = $this->testedProvider->getPaymentConfig(self::WRONG_IDENTIFIER);
 
         static::assertEquals(null, $actualResult);
     }
 
     public function testHasPaymentConfig()
     {
-        $onePaymentMethodId = '1somePaymentMethodId';
-        $twoPaymentMethodId = '2somePaymentMethodId';
-
-        $settingsOneMock = $this->createMoneyOrderSettingsMock();
-        $settingsTwoMock = $this->createMoneyOrderSettingsMock();
-
-        $configOneMock = $this->createConfigMock();
-        $configTwoMock = $this->createConfigMock();
-
-        $settingsMocks = [$settingsOneMock, $settingsTwoMock];
-
-        $configOneMock
-            ->expects(static::once())
-            ->method('getPaymentMethodIdentifier')
-            ->willReturn($onePaymentMethodId);
-
-        $configTwoMock
-            ->expects(static::once())
-            ->method('getPaymentMethodIdentifier')
-            ->willReturn($twoPaymentMethodId);
-
-        $this->settingsRepository
-            ->expects(static::once())
-            ->method('findWithEnabledChannel')
-            ->willReturn($settingsMocks);
-
-        $this->configFactory
-            ->method('create')
-            ->will(
-                static::returnValueMap(
-                    [
-                        [$settingsOneMock, $configOneMock],
-                        [$settingsTwoMock, $configTwoMock]
-                    ]
-                )
-            );
-
         $expectedResult = true;
-        $actualResult = $this->testedProvider->hasPaymentConfig($onePaymentMethodId);
+        $actualResult = $this->testedProvider->hasPaymentConfig(self::IDENTIFIER1);
 
         static::assertEquals($expectedResult, $actualResult);
     }

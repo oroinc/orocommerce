@@ -30,14 +30,6 @@ class MoneyOrderSettingsType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('payTo', TextType::class, [
-                'label'    => 'oro.money_order.settings.pay_to.label',
-                'required' => true,
-            ])
-            ->add('sendTo', TextareaType::class, [
-                'label'    => 'oro.money_order.settings.send_to.label',
-                'required' => true,
-            ])
             ->add(
                 'labels',
                 LocalizedFallbackValueCollectionType::NAME,
@@ -56,6 +48,14 @@ class MoneyOrderSettingsType extends AbstractType
                     'options'  => ['constraints' => [new NotBlank()]],
                 ]
             )
+            ->add('payTo', TextType::class, [
+                'label'    => 'oro.money_order.settings.pay_to.label',
+                'required' => true,
+            ])
+            ->add('sendTo', TextareaType::class, [
+                'label'    => 'oro.money_order.settings.send_to.label',
+                'required' => true,
+            ])
         ;
     }
 

@@ -4,6 +4,7 @@ parameters:
 services:
     oro_money_order.generator.money_order_config_identifier:
         parent: oro_integration.generator.prefixed_identifier_generator
+        public: true
         arguments:
             - '%oro_money_order.method.identifier_prefix.money_order%'
 

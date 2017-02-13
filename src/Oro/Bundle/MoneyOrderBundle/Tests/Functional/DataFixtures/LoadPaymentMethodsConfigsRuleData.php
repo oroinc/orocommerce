@@ -4,22 +4,36 @@ namespace Oro\Bundle\MoneyOrderBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\IntegrationBundle\Generator\Prefixed\PrefixedIntegrationIdentifierGenerator;
-use Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
-use Oro\Bundle\PaymentBundle\Tests\Functional\Entity\DataFixtures\LoadPaymentMethodsConfigsRuleData
-    as BasicLoadPaymentMethodsConfigsRuleData;
+use Oro\Bundle\PaymentBundle\Tests\Functional\Entity\DataFixtures\LoadPaymentMethodsConfigsRuleData as
+    BasicLoadPaymentMethodsConfigsRuleData;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class LoadPaymentMethodsConfigsRuleData extends BasicLoadPaymentMethodsConfigsRuleData
+class LoadPaymentMethodsConfigsRuleData extends BasicLoadPaymentMethodsConfigsRuleData implements
+    ContainerAwareInterface
 {
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setContainer(ContainerInterface $container = null)
+    {
+        $this->container = $container;
+    }
+
     /**
      * @param Channel $channel
      * @return string
      */
-    public static function getPaymentMethodIdentifier(Channel $channel)
+    protected function getPaymentMethodIdentifier(Channel $channel)
     {
-        return (new PrefixedIntegrationIdentifierGenerator(MoneyOrder::TYPE))
+        return $this->container->get('oro_money_order.generator.money_order_config_identifier')
             ->generateIdentifier($channel);
     }
 
@@ -33,7 +47,7 @@ class LoadPaymentMethodsConfigsRuleData extends BasicLoadPaymentMethodsConfigsRu
         $methodConfig = new PaymentMethodConfig();
         /** @var Channel $channel */
         $channel = $this->getReference('money_order:channel_1');
-        $methodConfig->setType(self::getPaymentMethodIdentifier($channel));
+        $methodConfig->setType($this->getPaymentMethodIdentifier($channel));
 
         /** @var PaymentMethodsConfigsRule $methodsConfigsRule */
         $methodsConfigsRule = $this->getReference('payment.payment_methods_configs_rule.1');

@@ -4,6 +4,7 @@ namespace Oro\Bundle\MoneyOrderBundle\Tests\Functional\Controller;
 
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend\CheckoutControllerTestCase;
+use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\MoneyOrderBundle\Tests\Functional\DataFixtures\LoadMoneyOrderSettingsData;
 use Oro\Bundle\MoneyOrderBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
@@ -40,7 +41,7 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
         $form = $this->getTransitionForm($crawler);
         $values = $this->explodeArrayPaths($form->getValues());
         $values[self::ORO_WORKFLOW_TRANSITION]['payment_method'] =
-            LoadPaymentMethodsConfigsRuleData::getPaymentMethodIdentifier($this->getReference('money_order:channel_1'));
+            $this->getPaymentMethodIdentifier($this->getReference('money_order:channel_1'));
         $values['_widgetContainer'] = 'ajax';
         $values['_wid'] = 'ajax_checkout';
 
@@ -95,7 +96,7 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
 
         $paymentTransactions = $objectManager
             ->findBy([
-                'paymentMethod' => LoadPaymentMethodsConfigsRuleData::getPaymentMethodIdentifier(
+                'paymentMethod' => $this->getPaymentMethodIdentifier(
                     $this->getReference('money_order:channel_1')
                 )
             ])
@@ -200,5 +201,16 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
 
         $addressTypePath = sprintf('%s[%s][customerAddress]', self::ORO_WORKFLOW_TRANSITION, $addressType);
         $form->setValues([$addressTypePath => $addressId]);
+    }
+
+
+    /**
+     * @param Channel $channel
+     * @return string
+     */
+    public function getPaymentMethodIdentifier(Channel $channel)
+    {
+        return static::getContainer()->get('oro_money_order.generator.money_order_config_identifier')
+            ->generateIdentifier($channel);
     }
 }
