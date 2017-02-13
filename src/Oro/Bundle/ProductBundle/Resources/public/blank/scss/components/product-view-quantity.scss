@@ -13,4 +13,8 @@
     &__value {
         width: 25%;
     }
+
+    &__value .input {
+        margin: 0;
+    }
 }
