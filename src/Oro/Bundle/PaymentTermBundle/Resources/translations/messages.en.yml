@@ -37,10 +37,6 @@ oro:
         methods:
             term_method.label: 'Payment Term'
 
-        system_configuration:
-            groups:
-                payment_terms.title: 'Payment Terms'
-
         payment_terms:
             label: 'Terms: %paymentTerm%'
 

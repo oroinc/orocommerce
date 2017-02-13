@@ -89,6 +89,7 @@ services:
 
     oro_payment_term.config.integration_method_identifier_generator:
         class: 'Oro\Bundle\IntegrationBundle\Generator\Prefixed\PrefixedIntegrationIdentifierGenerator'
+        public: true
         arguments:
             - '%oro_payment_term.type%'
 

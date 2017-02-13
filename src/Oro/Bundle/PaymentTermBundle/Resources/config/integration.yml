@@ -1,7 +1,7 @@
 services:
     oro_payment_term.integration.channel:
         class: 'Oro\Bundle\PaymentTermBundle\Integration\PaymentTermChannelType'
-        public: false
+        public: true
         tags:
             - { name: oro_integration.channel, type: payment_term }
 
