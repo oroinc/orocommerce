@@ -7,9 +7,9 @@ use Oro\Bundle\MoneyOrderBundle\DependencyInjection\Configuration;
 use Oro\Bundle\MoneyOrderBundle\DependencyInjection\OroMoneyOrderExtension;
 use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig;
 use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigInterface;
-use Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config\AbstractPaymentConfigTestCase;
+use Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config\AbstractPaymentSystemConfigTestCase;
 
-class MoneyOrderConfigTest extends AbstractPaymentConfigTestCase
+class MoneyOrderConfigTest extends AbstractPaymentSystemConfigTestCase
 {
     /**
      * @var MoneyOrderConfigInterface
@@ -44,6 +44,11 @@ class MoneyOrderConfigTest extends AbstractPaymentConfigTestCase
         $returnValue = 'send_to';
         $this->setConfig($this->once(), Configuration::MONEY_ORDER_SEND_TO_KEY, $returnValue);
         $this->assertSame($returnValue, $this->config->getSendTo());
+    }
+
+    public function testGetPaymentMethodIdentifier()
+    {
+        $this->assertSame('money_order', $this->config->getPaymentMethodIdentifier());
     }
 
     /**

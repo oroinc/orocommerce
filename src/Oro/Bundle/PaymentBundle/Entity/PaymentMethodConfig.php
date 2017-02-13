@@ -8,7 +8,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\PaymentBundle\Model\ExtendPaymentMethodConfig;
 
 /**
- * @ORM\Entity
+ * @ORM\Entity(repositoryClass="Oro\Bundle\PaymentBundle\Entity\Repository\PaymentMethodConfigRepository")
  * @ORM\Table(name="oro_payment_method_config")
  * @Config()
  */
