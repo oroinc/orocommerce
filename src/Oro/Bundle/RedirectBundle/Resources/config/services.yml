@@ -155,6 +155,7 @@ services:
         arguments:
             - '@oro_message_queue.client.message_producer'
             - '@oro_redirect.provider.routing_information_provider'
+            - '@oro_redirect.direct_url_message_factory'
         tags:
             - { name: kernel.event_listener, event: oro_config.update_after, method: onUpdateAfter }
 
