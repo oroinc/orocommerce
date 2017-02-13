@@ -1,4 +1,0 @@
-assets:
-    css:
-        'ororedirect':
-            - 'bundles/ororedirect/css/less/style.less'

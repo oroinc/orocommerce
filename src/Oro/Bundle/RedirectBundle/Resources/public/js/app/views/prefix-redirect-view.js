@@ -66,6 +66,9 @@ define(function(require) {
             }
         },
 
+        /**
+         * @param {Event} event
+         */
         onStrategyChange: function(event) {
             if ($(event.target).val() === this.options.askStrategyName &&
                 this.$prefixField.val() !== this.defaultPrefixValue
@@ -76,6 +79,9 @@ define(function(require) {
             }
         },
 
+        /**
+         * @param {Event} event
+         */
         onPrefixChange: function(event) {
             if (this.isAskStrategy() && $(event.target).val() !== this.defaultPrefixValue) {
                 this.$createRedirectField.show();
