@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Unit\Query;
 
-use Oro\Bundle\SearchBundle\Engine\EngineV2Interface;
+use Oro\Bundle\SearchBundle\Engine\EngineInterface;
 use Oro\Bundle\SearchBundle\Query\Query;
 use Oro\Bundle\SearchBundle\Query\Result;
 use Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchQuery;
@@ -12,7 +12,7 @@ class WebsiteSearchQueryTest extends \PHPUnit_Framework_TestCase
     /** @var WebsiteSearchQuery */
     protected $websiteSearchQuery;
 
-    /** @var EngineV2Interface|\PHPUnit_Framework_MockObject_MockObject */
+    /** @var EngineInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $engine;
 
     /** @var Query|\PHPUnit_Framework_MockObject_MockObject */
@@ -20,7 +20,7 @@ class WebsiteSearchQueryTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->engine = $this->getMockBuilder(EngineV2Interface::class)
+        $this->engine = $this->getMockBuilder(EngineInterface::class)
             ->getMock();
 
         $this->query = $this->getMockBuilder(Query::class)

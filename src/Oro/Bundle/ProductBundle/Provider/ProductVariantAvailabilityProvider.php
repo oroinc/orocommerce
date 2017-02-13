@@ -98,7 +98,7 @@ class ProductVariantAvailabilityProvider
      * @param string $variantFieldName
      * @return array
      */
-    private function getVariantFieldValues($variantFieldName)
+    public function getVariantFieldValues($variantFieldName)
     {
         $type = $this->getCustomFieldType($variantFieldName);
 
@@ -212,7 +212,7 @@ class ProductVariantAvailabilityProvider
      * @return mixed
      * @throws \InvalidArgumentException
      */
-    private function getVariantFieldScalarValue(Product $product, $variantField)
+    public function getVariantFieldScalarValue(Product $product, $variantField)
     {
         $variantValue = $this->propertyAccessor->getValue($product, $variantField);
         $fieldType = $this->getCustomFieldType($variantField);

@@ -1,0 +1,14 @@
+layout:
+    imports:
+        -
+            id: matrix_grid_order_button
+            root: line_item_form
+            namespace: product
+    actions:
+        - '@setBlockTheme':
+            themes: 'matrix_grid_order_form.html.twig'
+        - '@move':
+            id: product_matrix_grid_order_button
+            parentId: line_item_form
+            siblingId: line_item_buttons_container
+            prepend: false

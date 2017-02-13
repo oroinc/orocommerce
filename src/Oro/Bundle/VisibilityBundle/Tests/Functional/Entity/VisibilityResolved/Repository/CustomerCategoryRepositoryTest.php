@@ -11,7 +11,6 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityReso
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerCategoryRepository;
 
 /**
- * @dbIsolation
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class CustomerCategoryRepositoryTest extends AbstractCategoryRepositoryTest

@@ -6,7 +6,7 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
 
-use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Component\PhpUtils\ArrayUtil;
 use Oro\Bundle\PaymentBundle\Entity\PaymentStatus;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
@@ -72,7 +72,7 @@ class AddPaymentStatuses extends AbstractFixture implements ContainerAwareInterf
             ->where('status.id IS NULL')
             ->getQuery();
 
-        $iterableResult = new BufferedQueryResultIterator($query);
+        $iterableResult = new BufferedIdentityQueryResultIterator($query);
 
         $objects = [];
         foreach ($iterableResult as $entity) {

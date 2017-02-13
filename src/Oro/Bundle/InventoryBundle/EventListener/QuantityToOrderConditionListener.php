@@ -63,16 +63,16 @@ class QuantityToOrderConditionListener
      */
     public function onStartCheckoutConditionCheck(ExtendableConditionEvent $event)
     {
-        /** @var WorkflowItem $context */
+        /** @var ActionData $context */
         $context = $event->getContext();
-        if ($this->isNotCorrectConditionContextForStart($context)) {
+        if (!$this->isApplicableContextForStartCheckout($context)) {
             return;
         }
 
-        $shoppingList = $context->getResult()->get('shoppingList');
-
-        if (false == $this->validatorService->isLineItemListValid($shoppingList->getLineItems())) {
-            $event->addError(self::QUANTITY_CHECK_ERROR, $context);
+        /** @var Checkout $checkout */
+        $checkout = $context->get('checkout');
+        if (false == $this->validatorService->isLineItemListValid($checkout->getLineItems())) {
+            $event->addError('oro.inventory.frontend.messages.quantity_limits_error');
         }
     }
 
@@ -140,13 +140,14 @@ class QuantityToOrderConditionListener
      * @param mixed $context
      * @return bool
      */
-    protected function isNotCorrectConditionContextForStart($context)
+    protected function isApplicableContextForStartCheckout($context)
     {
-        return (!$context instanceof WorkflowItem
-            || !in_array($context->getWorkflowName(), self::$allowedWorkflows, true)
-            || !is_a($context->getDefinition()->getRelatedEntity(), Checkout::class, true)
-            // make sure checkout only done from shopping list
-            || !$context->getResult()->get('shoppingList') instanceof ShoppingList
-        );
+        if (!$context instanceof ActionData) {
+            return false;
+        }
+
+        $checkout = $context->get('checkout');
+
+        return ($checkout instanceof Checkout && $checkout->getSourceEntity() instanceof ShoppingList);
     }
 }

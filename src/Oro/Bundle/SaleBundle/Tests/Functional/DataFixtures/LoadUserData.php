@@ -298,7 +298,6 @@ class LoadUserData extends AbstractFixture implements FixtureInterface
                 ->setLastName($item['lastname'])
                 ->setConfirmed(true)
                 ->setOrganization($organization)
-                ->addOrganization($organization)
                 ->setSalt('')
                 ->setPlainPassword($item['password'])
                 ->setEnabled(true)

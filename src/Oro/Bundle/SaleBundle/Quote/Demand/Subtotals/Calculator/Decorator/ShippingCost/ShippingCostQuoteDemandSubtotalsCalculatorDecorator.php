@@ -3,16 +3,16 @@
 namespace Oro\Bundle\SaleBundle\Quote\Demand\Subtotals\Calculator\Decorator\ShippingCost;
 
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
-use Oro\Bundle\SaleBundle\Quote\Shipping\Context\Factory\QuoteShippingContextFactoryInterface;
 use Oro\Bundle\SaleBundle\Quote\Demand\Subtotals\Calculator\Decorator\AbstractQuoteDemandSubtotalsCalculatorDecorator;
 use Oro\Bundle\SaleBundle\Quote\Demand\Subtotals\Calculator\QuoteDemandSubtotalsCalculatorInterface;
 use Oro\Bundle\SaleBundle\Quote\Shipping\Configuration\QuoteShippingConfigurationFactory;
+use Oro\Bundle\ShippingBundle\Context\ShippingContextFactoryInterface;
 use Oro\Bundle\ShippingBundle\Provider\Price\Configured\ShippingConfiguredPriceProviderInterface;
 
 class ShippingCostQuoteDemandSubtotalsCalculatorDecorator extends AbstractQuoteDemandSubtotalsCalculatorDecorator
 {
     /**
-     * @var QuoteShippingContextFactoryInterface
+     * @var ShippingContextFactoryInterface
      */
     private $quoteShippingContextFactory;
 
@@ -27,13 +27,13 @@ class ShippingCostQuoteDemandSubtotalsCalculatorDecorator extends AbstractQuoteD
     private $shippingConfiguredPriceProvider;
 
     /**
-     * @param QuoteShippingContextFactoryInterface $quoteShippingContextFactory
+     * @param ShippingContextFactoryInterface $quoteShippingContextFactory
      * @param QuoteShippingConfigurationFactory $quoteShippingConfigurationFactory
      * @param ShippingConfiguredPriceProviderInterface $shippingConfiguredPriceProvider
      * @param QuoteDemandSubtotalsCalculatorInterface $quoteDemandSubtotalsCalculator
      */
     public function __construct(
-        QuoteShippingContextFactoryInterface $quoteShippingContextFactory,
+        ShippingContextFactoryInterface $quoteShippingContextFactory,
         QuoteShippingConfigurationFactory $quoteShippingConfigurationFactory,
         ShippingConfiguredPriceProviderInterface $shippingConfiguredPriceProvider,
         QuoteDemandSubtotalsCalculatorInterface $quoteDemandSubtotalsCalculator

@@ -748,4 +748,4 @@ datagrids:
                 grouping:
                     value: day
                 skip_empty_periods:
-                    value: true
+                    value: 1

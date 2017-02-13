@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\CheckoutBundle\Model\CompletedCheckoutData;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\UserBundle\Entity\User;
@@ -42,7 +43,9 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
             ['shippingCost', Price::create(2, 'USD')],
             ['shippingMethod', 'shipping_method'],
             ['shippingMethodType', 'shipping_method_type'],
-            ['deleted', true]
+            ['deleted', true],
+            ['completed', true],
+            ['completedData', new CompletedCheckoutData(['test' => 'value']), false]
         ];
 
         $entity = new Checkout();
@@ -121,13 +124,15 @@ class CheckoutTest extends \PHPUnit_Framework_TestCase
             'Oro\Bundle\CheckoutBundle\Entity\Checkout',
             [
                 'shippingEstimateAmount' => $value,
-                'shippingEstimateCurrency' => $currency
+                'shippingEstimateCurrency' => $currency,
+                'completedData' => ['test' => 'value']
             ]
         );
 
         $item->postLoad();
 
         $this->assertEquals(Price::create($value, $currency), $item->getShippingCost());
+        $this->assertEquals(new CompletedCheckoutData(['test' => 'value']), $item->getCompletedData());
     }
 
     public function testUpdateShippingEstimate()

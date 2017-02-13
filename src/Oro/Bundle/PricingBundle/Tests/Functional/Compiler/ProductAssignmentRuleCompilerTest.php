@@ -18,9 +18,6 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceAttributePro
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
-/**
- * @dbIsolation
- */
 class ProductAssignmentRuleCompilerTest extends WebTestCase
 {
     /**

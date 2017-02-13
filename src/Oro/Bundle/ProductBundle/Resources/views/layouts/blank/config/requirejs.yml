@@ -1,0 +1,3 @@
+config:
+    paths:
+        'jquery-elevatezoom': 'bundles/bowerassets/elevatezoom3/jquery.elevatezoom.js'

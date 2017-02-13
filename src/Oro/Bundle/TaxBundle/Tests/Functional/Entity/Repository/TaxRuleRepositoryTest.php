@@ -11,9 +11,6 @@ use Oro\Bundle\TaxBundle\Model\TaxCodes;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxRules;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxJurisdictions;
 
-/**
- * @dbIsolation
- */
 class TaxRuleRepositoryTest extends WebTestCase
 {
     protected function setUp()

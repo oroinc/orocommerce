@@ -44,19 +44,14 @@ trait MessageQueueTrait
     {
         $this->sendScheduledMessages();
 
+        /** @var TraceableMessageProducer $producer */
+        $producer = self::getMessageProducer();
+
         return array_filter(
-            $this->getMessageProducer()->getTraces(),
+            $producer->getTraces(),
             function (array $trace) {
                 return $this->topic === $trace['topic'];
             }
         );
-    }
-
-    /**
-     * @return TraceableMessageProducer
-     */
-    protected static function getMessageProducer()
-    {
-        return self::getContainer()->get('oro_message_queue.message_producer');
     }
 }
