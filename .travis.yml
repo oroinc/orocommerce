@@ -6,6 +6,7 @@ branches:
   only:
     - master
     - /^\d+\.\d+$/
+    - feature/BB-7110_validate_unique_variant_fields
 
 php:
     - 5.6
