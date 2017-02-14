@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\SEOBundle\Provider;
 
-use Oro\Bundle\SEOBundle\Model\WebsiteInterface;
+use Oro\Component\Website\WebsiteInterface;
 
 interface SitemapUrlProviderInterface
 {

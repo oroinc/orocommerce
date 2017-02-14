@@ -288,3 +288,10 @@ services:
         class: Oro\Bundle\WebCatalogBundle\Resolver\DefaultVariantScopesResolver
         arguments:
             - '@doctrine'
+
+    oro_web_catalog.feature.voter.feature_voter:
+        class: Oro\Bundle\WebCatalogBundle\Feature\Voter\FeatureVoter
+        arguments:
+            - '@oro_config.manager'
+        tags:
+            - { name: oro_featuretogle.voter }

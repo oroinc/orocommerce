@@ -23,7 +23,7 @@ class SitemapUrlProviderCompilerPass implements CompilerPassInterface
             $container,
             self::PROVIDER_REGISTRY,
             self::TAG,
-            'registerProvider'
+            'addProvider'
         );
     }
 }

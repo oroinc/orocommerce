@@ -14,7 +14,7 @@ class SitemapUrlProviderCompilerPassTest extends \PHPUnit_Framework_TestCase
             new SitemapUrlProviderCompilerPass(),
             SitemapUrlProviderCompilerPass::PROVIDER_REGISTRY,
             SitemapUrlProviderCompilerPass::TAG,
-            'registerProvider'
+            'addProvider'
         );
     }
 }

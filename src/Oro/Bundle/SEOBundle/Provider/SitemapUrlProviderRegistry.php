@@ -13,7 +13,7 @@ class SitemapUrlProviderRegistry
      * @param SitemapUrlProviderInterface $provider
      * @param string $name
      */
-    public function registerProvider(SitemapUrlProviderInterface $provider, $name)
+    public function addProvider(SitemapUrlProviderInterface $provider, $name)
     {
         $this->providers[$name] = $provider;
     }

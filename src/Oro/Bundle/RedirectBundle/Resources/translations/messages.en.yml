@@ -30,3 +30,8 @@ oro:
                     choice:
                         system.label: 'System URL'
                         direct.label: 'Direct URL'
+                canonical_url_security_type:
+                    label: 'Canonical URL Security Type'
+                    choice:
+                        insecure.label: 'Insecure'
+                        secure.label: 'Secure'

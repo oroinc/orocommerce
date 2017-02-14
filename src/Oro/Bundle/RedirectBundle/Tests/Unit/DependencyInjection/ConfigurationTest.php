@@ -32,7 +32,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'value' => 'system',
                     'scope' => 'app'
                 ],
-
+                'canonical_url_security_type' => [
+                    'value' => 'insecure',
+                    'scope' => 'app'
+                ],
             ]
         ];
 
