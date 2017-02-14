@@ -113,9 +113,11 @@ class WebCatalogController extends Controller
         $collection = new TreeCollection();
         $collection->source = array_intersect_key($treeItems, array_flip($selected));
 
+        $treeData = $handler->createTree($root, true);
+        $handler->disableTreeItems($collection->source, $treeData);
         $form = $this->createForm(TreeMoveType::class, $collection, [
             'tree_items' => $treeItems,
-            'tree_data' => $handler->createTree($root, true),
+            'tree_data' => $treeData,
         ]);
 
         $responseData = ['treeItems' => $treeItems];
