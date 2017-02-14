@@ -118,23 +118,26 @@ class WebCatalogController extends Controller
             'tree_data' => $treeData,
         ]);
 
-        $response = ['treeItems' => $treeItems];
+        $responseData = ['treeItems' => $treeItems];
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
+            $changed = [];
+            $currentInsertPosition = count($collection->target->getChildren());
             foreach ($collection->source as $source) {
-                $handler->moveNode($source->getKey(), $collection->target->getKey(), 0);
-                $response['changed'][] = [
+                $handler->moveNode($source->getKey(), $collection->target->getKey(), $currentInsertPosition);
+                $changed[] = [
                     'id' => $source->getKey(),
                     'parent' => $collection->target->getKey(),
-                    'position' => 0
+                    'position' => $currentInsertPosition
                 ];
+                $currentInsertPosition++;
             }
 
-            $response['saved'] = true;
+            $responseData['saved'] = true;
         }
 
-        return array_merge($response, ['form' => $form->createView()]);
+        return array_merge($responseData, ['form' => $form->createView()]);
     }
 
     /**
