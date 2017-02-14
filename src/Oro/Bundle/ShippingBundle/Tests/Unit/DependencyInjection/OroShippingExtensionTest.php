@@ -34,6 +34,7 @@ class OroShippingExtensionTest extends ExtensionTestCase
             'oro_shipping.formatter.shipping_method_label',
             'oro_shipping.twig.shipping_method_extension',
             'oro_shipping.shipping_price.provider',
+            'oro_shipping.shipping_price.provider_enabled_methods_decorator',
             'oro_shipping.provider.measure_units.conversion',
             'oro_shipping.condition.has_applicable_shipping_methods',
             'oro_shipping.method.view_factory',
