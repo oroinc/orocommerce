@@ -17,6 +17,11 @@ define(function(require) {
      */
     ProductSidebarComponent = BasicTreeComponent.extend({
         /**
+         * @property {Boolean}
+         */
+        checkboxEnabled: true,
+
+        /**
          * @property {Object}
          */
         selectedCategoryId: null,
