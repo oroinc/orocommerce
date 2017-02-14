@@ -4,6 +4,7 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\Generator;
 
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\RedirectBundle\Cache\UrlStorageCache;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Generator\RedirectGenerator;
@@ -34,6 +35,11 @@ class SlugEntityGeneratorTest extends \PHPUnit_Framework_TestCase
     protected $redirectGenerator;
 
     /**
+     * @var UrlStorageCache|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $urlStorageCache;
+
+    /**
      * @var SlugEntityGenerator
      */
     protected $generator;
@@ -47,11 +53,15 @@ class SlugEntityGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->redirectGenerator = $this->getMockBuilder(RedirectGenerator::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->urlStorageCache = $this->getMockBuilder(UrlStorageCache::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->generator = new SlugEntityGenerator(
             $this->routingInformationProvider,
             $this->slugResolver,
-            $this->redirectGenerator
+            $this->redirectGenerator,
+            $this->urlStorageCache
         );
     }
 
@@ -112,10 +122,12 @@ class SlugEntityGeneratorTest extends \PHPUnit_Framework_TestCase
 
         $defaultSlug = (new Slug())
             ->setUrl('/test/test1')
+            ->setSlugPrototype('test1')
             ->setRouteName('some_route')
             ->setRouteParameters(['id' => 42]);
         $slugTwo = (new Slug())
             ->setUrl('/test/test2')
+            ->setSlugPrototype('test2')
             ->setLocalization($localizationOne)
             ->setRouteName('some_route')
             ->setRouteParameters(['id' => 42]);
@@ -164,6 +176,7 @@ class SlugEntityGeneratorTest extends \PHPUnit_Framework_TestCase
                     ->addSlug(
                         (new Slug())
                             ->setUrl('/test/test4')
+                            ->setSlugPrototype('test4')
                             ->setLocalization($localizationTwo)
                             ->setRouteName('some_route')
                             ->setRouteParameters(['id' => 42])
@@ -180,6 +193,7 @@ class SlugEntityGeneratorTest extends \PHPUnit_Framework_TestCase
                     ->addSlug(
                         (new Slug())
                             ->setUrl('/test/test3')
+                            ->setSlugPrototype('test3')
                             ->setLocalization($localizationOne)
                             ->setRouteName('some_route')
                             ->setRouteParameters(['id' => 42])
@@ -217,6 +231,7 @@ class SlugEntityGeneratorTest extends \PHPUnit_Framework_TestCase
             ->setRouteParameters(['id' => 42]);
         $slugTwo = (new Slug())
             ->setUrl('/test/test2')
+            ->setSlugPrototype('test2')
             ->setLocalization($localization)
             ->setRouteName('some_route')
             ->setRouteParameters(['id' => 42]);

@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\DBAL\Driver\DriverException;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\EntityBundle\ORM\DatabaseExceptionHelper;
+use Oro\Bundle\RedirectBundle\Cache\UrlStorageCache;
 use Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator;
 use Oro\Bundle\RedirectBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
@@ -44,24 +45,32 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
     private $logger;
 
     /**
+     * @var UrlStorageCache
+     */
+    private $urlStorageCache;
+
+    /**
      * @param ManagerRegistry $registry
      * @param SlugEntityGenerator $generator
      * @param MessageFactoryInterface $messageFactory
      * @param DatabaseExceptionHelper $databaseExceptionHelper
      * @param LoggerInterface $logger
+     * @param UrlStorageCache $urlStorageCache
      */
     public function __construct(
         ManagerRegistry $registry,
         SlugEntityGenerator $generator,
         MessageFactoryInterface $messageFactory,
         DatabaseExceptionHelper $databaseExceptionHelper,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        UrlStorageCache $urlStorageCache
     ) {
         $this->registry = $registry;
         $this->generator = $generator;
         $this->messageFactory = $messageFactory;
         $this->logger = $logger;
         $this->databaseExceptionHelper = $databaseExceptionHelper;
+        $this->urlStorageCache = $urlStorageCache;
     }
 
     /**
@@ -82,9 +91,11 @@ class DirectUrlProcessor implements MessageProcessorInterface, TopicSubscriberIn
             foreach ($entities as $entity) {
                 $this->generator->generate($entity, $createRedirect);
             }
-            $em->flush();
 
+            $em->flush();
             $em->commit();
+
+            $this->urlStorageCache->flush();
         } catch (InvalidArgumentException $e) {
             if ($em) {
                 $em->rollback();

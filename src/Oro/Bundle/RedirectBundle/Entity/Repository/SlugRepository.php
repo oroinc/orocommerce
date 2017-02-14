@@ -3,59 +3,80 @@
 namespace Oro\Bundle\RedirectBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 
 class SlugRepository extends EntityRepository
 {
     /**
-     * @param string $slug
-     * @param SlugAwareInterface $restrictedEntity
-     * @return Slug|null
+     * @param string $url
+     * @return QueryBuilder
      */
-    public function findOneBySlugWithoutScopes($slug, SlugAwareInterface $restrictedEntity = null)
+    public function getSlugByUrlQueryBuilder($url)
     {
         $qb = $this->createQueryBuilder('slug');
 
-        $qb->leftJoin('slug.scopes', 'scopes', Join::WITH)
-            ->where($qb->expr()->eq('slug.url', ':url'))
-            ->andWhere($qb->expr()->isNull('scopes.id'))
-            ->setParameter('url', $slug)
-            ->setMaxResults(1);
+        $qb->where($qb->expr()->eq('slug.urlHash', ':urlHash'))
+            ->andWhere($qb->expr()->eq('slug.url', ':url'))
+            ->setParameter('url', $url)
+            ->setParameter('urlHash', md5($url));
 
-        if ($restrictedEntity && $ids = $this->getEntitySlugIds($restrictedEntity)) {
-            $qb->andWhere($qb->expr()->notIn('slug.id', ':ids'))
-                ->setParameter('ids', $ids);
-        }
+        return $qb;
+    }
+
+    /**
+     * @param string $slug
+     * @param SlugAwareInterface|null $restrictedEntity
+     * @param ScopeCriteria|null $scopeCriteria
+     * @return null|Slug
+     */
+    public function findOneDirectUrlBySlug(
+        $slug,
+        SlugAwareInterface $restrictedEntity = null,
+        ScopeCriteria $scopeCriteria = null
+    ) {
+        $qb = $this->getSlugByUrlQueryBuilder($slug);
+        $this->applyDirectUrlScopeCriteria($qb, $scopeCriteria);
+
+        $qb->setMaxResults(1);
+        $this->restrictByEntitySlugs($qb, $restrictedEntity);
 
         return $qb->getQuery()->getOneOrNullResult();
     }
 
     /**
      * @param string $pattern
-     * @param SlugAwareInterface $restrictedEntity
-     * @return array|string[]
+     * @param SlugAwareInterface|null $restrictedEntity
+     * @param ScopeCriteria|null $scopeCriteria
+     * @return array|\string[]
      */
-    public function findAllByPatternWithoutScopes($pattern, SlugAwareInterface $restrictedEntity = null)
-    {
-        $qb = $this->createQueryBuilder('slug');
-        $qb->select('slug.url')
-            ->leftJoin('slug.scopes', 'scopes', Join::WITH)
+    public function findAllDirectUrlsByPattern(
+        $pattern,
+        SlugAwareInterface $restrictedEntity = null,
+        ScopeCriteria $scopeCriteria = null
+    ) {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->from($this->getEntityName(), 'slug')
+            ->select('slug.url')
             ->where('slug.url LIKE :pattern')
-            ->andWhere($qb->expr()->isNull('scopes.id'))
             ->setParameter('pattern', $pattern)
             ->orderBy('slug.id');
 
-        if ($restrictedEntity && $ids = $this->getEntitySlugIds($restrictedEntity)) {
-            $qb->andWhere($qb->expr()->notIn('slug.id', ':ids'))
-                ->setParameter('ids', $ids);
-        }
+        $this->applyDirectUrlScopeCriteria($qb, $scopeCriteria);
+        $this->restrictByEntitySlugs($qb, $restrictedEntity);
 
-        return array_map(function ($item) {
-            return $item['url'];
-        }, $qb->getQuery()->getArrayResult());
+        return array_map(
+            function ($item) {
+                return $item['url'];
+            },
+            $qb->getQuery()->getArrayResult()
+        );
     }
 
     /**
@@ -65,33 +86,58 @@ class SlugRepository extends EntityRepository
      */
     public function getSlugByUrlAndScopeCriteria($url, ScopeCriteria $scopeCriteria)
     {
+        $qb = $this->getSlugByUrlQueryBuilder($url);
+
+        $qb->leftJoin('slug.scopes', 'scopes', Join::WITH)
+            ->addSelect('scopes.id as matchedScopeId');
+
+        return $this->getMatchingSlugForCriteria($qb, $scopeCriteria);
+    }
+
+    /**
+     * @param string $slugPrototype
+     * @param ScopeCriteria $scopeCriteria
+     * @return Slug|null
+     */
+    public function getSlugBySlugPrototypeAndScopeCriteria($slugPrototype, ScopeCriteria $scopeCriteria)
+    {
         $qb = $this->createQueryBuilder('slug');
         $qb->leftJoin('slug.scopes', 'scopes', Join::WITH)
             ->addSelect('scopes.id as matchedScopeId')
-            ->where($qb->expr()->eq('slug.urlHash', ':urlHash'))
-            ->andWhere($qb->expr()->eq('slug.url', ':url'))
-            ->setParameter('urlHash', md5($url))
-            ->setParameter('url', $url);
+            ->where($qb->expr()->eq('slug.slugPrototype', ':slugPrototype'))
+            ->setParameter('slugPrototype', $slugPrototype);
 
-        $scopeCriteria->applyToJoinWithPriority($qb, 'scopes');
+        return $this->getMatchingSlugForCriteria($qb, $scopeCriteria);
+    }
 
-        $results = $qb->getQuery()->getResult();
-        foreach ($results as $result) {
-            /** @var Slug $slug */
-            $slug = $result[0];
-            $matchedScopeId = $result['matchedScopeId'];
-            if ($matchedScopeId || $slug->getScopes()->isEmpty()) {
-                return $slug;
-            }
-        }
+    /**
+     * @param array $entityIds
+     * @param ScopeCriteria|null $scopeCriteria
+     * @return \array[]|\Iterator
+     */
+    public function getSlugDataForDirectUrls(array $entityIds, ScopeCriteria $scopeCriteria = null)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->from($this->getEntityName(), 'slug')
+            ->select(['slug.routeParameters', 'slug.url', 'slug.slugPrototype'])
+            ->andWhere($qb->expr()->in('slug.id', ':ids'))
+            ->setParameter('ids', $entityIds)
+            ->addOrderBy('slug.id', 'DESC');
 
-        return null;
+        $this->applyDirectUrlScopeCriteria($qb, $scopeCriteria);
+
+        $iterator = new BufferedQueryResultIterator($qb->getQuery());
+        $iterator->setHydrationMode(Query::HYDRATE_ARRAY);
+        $iterator->setReverse(true);
+
+        return $iterator;
     }
 
     /**
      * @param string $entityClass
+     * @param ScopeCriteria|null $scopeCriteria
      */
-    public function deleteSlugAttachedToEntityByClass($entityClass)
+    public function deleteSlugAttachedToEntityByClass($entityClass, ScopeCriteria $scopeCriteria = null)
     {
         $entityManager = $this->getEntityManager();
 
@@ -125,16 +171,141 @@ class SlugRepository extends EntityRepository
     }
 
     /**
-     * @param SlugAwareInterface $restrictedEntity
+     * @return QueryBuilder
+     */
+    private function getUsedScopesQueryBuilder()
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+
+        $qb->from(Scope::class, 'scope')
+            ->select('scope')
+            ->innerJoin(
+                $this->getEntityName(),
+                'slug',
+                Join::WITH,
+                $qb->expr()->isMemberOf('scope', 'slug.scopes')
+            );
+
+        return $qb;
+    }
+
+    /**
+     * @return Scope[]|\Iterator
+     */
+    public function getUsedScopes()
+    {
+        $qb = $this->getUsedScopesQueryBuilder();
+
+        return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * @param Scope $scope
+     * @return bool
+     */
+    public function isScopeAttachedToSlug(Scope $scope)
+    {
+        $qb = $this->getUsedScopesQueryBuilder();
+        $qb->select('scope.id')
+            ->andWhere($qb->expr()->eq('scope', ':scope'))
+            ->setParameter('scope', $scope);
+
+        return (bool)$qb->getQuery()->getScalarResult();
+    }
+
+    /**
+     * @return array|string[]
+     */
+    public function getUsedRoutes()
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->from($this->getEntityName(), 'slug')
+            ->select('slug.routeName')
+            ->distinct(true);
+
+        return array_map('current', $qb->getQuery()->getScalarResult());
+    }
+
+    /**
+     * @param string $routeName
+     * @return int
+     */
+    public function getSlugsCountByRoute($routeName)
+    {
+        $entityCountQb = $this->createQueryBuilder('slug');
+
+        return $entityCountQb->select('COUNT(slug)')
+            ->where($entityCountQb->expr()->eq('slug.routeName', ':routeName'))
+            ->setParameter('routeName', $routeName)
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
+
+    /**
+     * @param string $routeName
+     * @param int $page
+     * @param int $perPage
      * @return array|int[]
      */
-    private function getEntitySlugIds(SlugAwareInterface $restrictedEntity)
+    public function getSlugIdsByRoute($routeName, $page, $perPage)
     {
-        $entitySlugIds = [];
-        foreach ($restrictedEntity->getSlugs() as $entitySlug) {
-            $entitySlugIds[] = $entitySlug->getId();
+        $qb = $this->createQueryBuilder('slug');
+        $qb->select('slug.id')
+            ->where($qb->expr()->eq('slug.routeName', ':routeName'))
+            ->setParameter('routeName', $routeName)
+            ->setFirstResult($page * $perPage)
+            ->setMaxResults($perPage)
+            ->orderBy('slug.id', 'ASC');
+
+        return array_map('current', $qb->getQuery()->getArrayResult());
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     * @param ScopeCriteria $scopeCriteria
+     * @return null|Slug
+     */
+    private function getMatchingSlugForCriteria(QueryBuilder $qb, ScopeCriteria $scopeCriteria)
+    {
+        $scopeCriteria->applyToJoinWithPriority($qb, 'scopes');
+
+        $results = $qb->getQuery()->getResult();
+        foreach ($results as $result) {
+            /** @var Slug $slug */
+            $slug = $result[0];
+            $matchedScopeId = $result['matchedScopeId'];
+            if ($matchedScopeId || $slug->getScopes()->isEmpty()) {
+                return $slug;
+            }
         }
 
-        return $entitySlugIds;
+        return null;
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     * @param SlugAwareInterface $restrictedEntity
+     */
+    private function restrictByEntitySlugs(QueryBuilder $qb, SlugAwareInterface $restrictedEntity = null)
+    {
+        if ($restrictedEntity && count($restrictedEntity->getSlugs())) {
+            $qb->andWhere($qb->expr()->notIn('slug', ':slugs'))
+                ->setParameter('slugs', $restrictedEntity->getSlugs());
+        }
+    }
+
+    /**
+     * @param QueryBuilder $qb
+     * @param ScopeCriteria|null $scopeCriteria
+     */
+    private function applyDirectUrlScopeCriteria(QueryBuilder $qb, ScopeCriteria $scopeCriteria = null)
+    {
+        if (null === $scopeCriteria) {
+            $qb->leftJoin('slug.scopes', 'scopes', Join::WITH)
+                ->andWhere($qb->expr()->isNull('scopes.id'));
+        } else {
+            $qb->innerJoin('slug.scopes', 'scopes', Join::WITH);
+            $scopeCriteria->applyToJoin($qb, 'scopes');
+        }
     }
 }

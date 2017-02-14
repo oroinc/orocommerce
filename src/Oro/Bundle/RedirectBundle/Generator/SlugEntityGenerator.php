@@ -5,6 +5,7 @@ namespace Oro\Bundle\RedirectBundle\Generator;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\RedirectBundle\Cache\UrlStorageCache;
 use Oro\Bundle\RedirectBundle\Entity\LocalizedSlugPrototypeAwareInterface;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
@@ -25,18 +26,26 @@ class SlugEntityGenerator
     protected $slugResolver;
 
     /**
+     * @var UrlStorageCache
+     */
+    private $urlStorageCache;
+
+    /**
      * @param RoutingInformationProviderInterface $routingInformationProvider
      * @param UniqueSlugResolver $slugResolver
      * @param RedirectGenerator $redirectGenerator
+     * @param UrlStorageCache $urlStorageCache
      */
     public function __construct(
         RoutingInformationProviderInterface $routingInformationProvider,
         UniqueSlugResolver $slugResolver,
-        RedirectGenerator $redirectGenerator
+        RedirectGenerator $redirectGenerator,
+        UrlStorageCache $urlStorageCache
     ) {
         $this->routingInformationProvider = $routingInformationProvider;
         $this->slugResolver = $slugResolver;
         $this->redirectGenerator = $redirectGenerator;
+        $this->urlStorageCache = $urlStorageCache;
     }
 
     /**
@@ -47,34 +56,58 @@ class SlugEntityGenerator
     {
         $slugUrls = $this->getResolvedSlugUrls($entity);
 
+        /** @var Slug[] $toRemove */
         $toRemove = [];
-
         foreach ($entity->getSlugs() as $slug) {
             $localizationId = $this->getLocalizationId($slug->getLocalization());
 
+            // Update existing
             if ($slugUrls->containsKey($localizationId)) {
                 $slugUrl = $slugUrls->get($localizationId);
 
                 $previousSlugUrl = $slug->getUrl();
                 $updatedUrl = $slugUrl->getUrl();
                 $slug->setUrl($updatedUrl);
+                $slug->setSlugPrototype($slugUrl->getSlug());
 
                 if ($generateRedirects) {
                     $this->redirectGenerator->generate($previousSlugUrl, $slug);
                 }
+
+                $this->urlStorageCache->setUrl(
+                    $slug->getRouteName(),
+                    $slug->getRouteParameters(),
+                    $slug->getUrl(),
+                    $slug->getSlugPrototype()
+                );
             } else {
                 $toRemove[] = $slug;
             }
         }
 
+        // Remove deleted
         foreach ($toRemove as $slugToRemove) {
             $entity->removeSlug($slugToRemove);
+
+            $this->urlStorageCache->removeUrl(
+                $slugToRemove->getRouteName(),
+                $slugToRemove->getRouteParameters()
+            );
         }
 
+        // Add new
         foreach ($slugUrls as $slugUrl) {
             if ($this->getExistingSlugs($slugUrl, $entity->getSlugs())->isEmpty()) {
                 $routeData = $this->routingInformationProvider->getRouteData($entity);
-                $entity->addSlug($this->createSlug($routeData, $slugUrl));
+                $slug = $this->createSlug($routeData, $slugUrl);
+                $entity->addSlug($slug);
+
+                $this->urlStorageCache->setUrl(
+                    $slug->getRouteName(),
+                    $slug->getRouteParameters(),
+                    $slug->getUrl(),
+                    $slug->getSlugPrototype()
+                );
             }
         }
     }
@@ -111,7 +144,7 @@ class SlugEntityGenerator
             $localization = $filledSlugPrototype->getLocalization();
 
             $url = $this->getUrl($entity, $slugPrototype);
-            $slugUrl = new SlugUrl($url, $localization);
+            $slugUrl = new SlugUrl($url, $localization, $slugPrototype);
             $slugUrls->set($this->getLocalizationId($localization), $slugUrl);
         }
 
@@ -159,6 +192,7 @@ class SlugEntityGenerator
     {
         $slug = new Slug();
         $slug->setUrl($slugUrl->getUrl());
+        $slug->setSlugPrototype($slugUrl->getSlug());
         $slug->setLocalization($slugUrl->getLocalization());
         $slug->setRouteName($routeData->getRoute());
         $slug->setRouteParameters($routeData->getRouteParameters());

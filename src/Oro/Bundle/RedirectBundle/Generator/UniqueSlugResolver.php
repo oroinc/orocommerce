@@ -2,9 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Generator;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
-use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Generator\DTO\SlugUrl;
 
@@ -15,21 +13,16 @@ class UniqueSlugResolver
     const SLUG_INCREMENT_DATABASE_PATTERN = '%s-%%';
 
     /**
-     * @var ManagerRegistry
-     */
-    protected $registry;
-
-    /**
      * @var SlugRepository
      */
     protected $repository;
 
     /**
-     * @param ManagerRegistry $registry
+     * @param SlugRepository $repository
      */
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(SlugRepository $repository)
     {
-        $this->registry = $registry;
+        $this->repository = $repository;
     }
 
     /**
@@ -41,7 +34,7 @@ class UniqueSlugResolver
     {
         $slug = $slugUrl->getUrl();
 
-        if ($this->getRepository()->findOneBySlugWithoutScopes($slug, $entity)) {
+        if ($this->repository->findOneDirectUrlBySlug($slug, $entity)) {
             $baseSlug = $this->getBaseSlug($slug, $entity);
 
             $resolvedSlug = $this->getIncrementedSlug($baseSlug, $entity);
@@ -74,18 +67,6 @@ class UniqueSlugResolver
     }
 
     /**
-     * @return SlugRepository
-     */
-    protected function getRepository()
-    {
-        if (!$this->repository) {
-            $this->repository = $this->registry->getManagerForClass(Slug::class)->getRepository(Slug::class);
-        }
-
-        return $this->repository;
-    }
-
-    /**
      * @param string $slug
      * @param SluggableInterface $entity
      * @return string
@@ -95,7 +76,7 @@ class UniqueSlugResolver
         if (preg_match(self::INCREMENTED_SLUG_PATTERN, $slug, $matches)) {
             $baseSlug = $matches[1];
 
-            if ($this->getRepository()->findOneBySlugWithoutScopes($baseSlug, $entity)) {
+            if ($this->repository->findOneDirectUrlBySlug($baseSlug, $entity)) {
                 return $baseSlug;
             }
         }
@@ -110,8 +91,10 @@ class UniqueSlugResolver
      */
     protected function getPreMatchedIncrementSlug($slug, SluggableInterface $entity)
     {
-        return $this->getRepository()
-            ->findAllByPatternWithoutScopes(sprintf(self::SLUG_INCREMENT_DATABASE_PATTERN, $slug), $entity);
+        return $this->repository->findAllDirectUrlsByPattern(
+            sprintf(self::SLUG_INCREMENT_DATABASE_PATTERN, $slug),
+            $entity
+        );
     }
 
     /**

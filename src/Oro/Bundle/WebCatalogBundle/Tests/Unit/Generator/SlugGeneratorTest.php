@@ -298,6 +298,7 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, $actualSlugs);
         $expectedSlugs = [
             (new Slug())->setUrl('/parent/node/test-url')
+                ->setSlugPrototype('test-url')
                 ->setRouteName($routeId)
                 ->setRouteParameters($routeParameters)
                 ->addScope($scope)
@@ -338,6 +339,7 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, $actualSlugs);
         $expectedSlugs = [
             (new Slug())->setUrl('/parent/node/test-url')
+                ->setSlugPrototype('test-url')
                 ->setRouteName($routeId)
                 ->setRouteParameters($routeParameters)
                 ->addScope($scope)

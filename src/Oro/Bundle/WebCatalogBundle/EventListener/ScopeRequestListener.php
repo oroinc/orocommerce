@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\EventListener;
 
+use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 
@@ -13,11 +14,18 @@ class ScopeRequestListener
     protected $scopeManager;
 
     /**
-     * @param ScopeManager $scopeManager
+     * @var SlugRepository
      */
-    public function __construct(ScopeManager $scopeManager)
+    private $slugRepository;
+
+    /**
+     * @param ScopeManager $scopeManager
+     * @param SlugRepository $slugRepository
+     */
+    public function __construct(ScopeManager $scopeManager, SlugRepository $slugRepository)
     {
         $this->scopeManager = $scopeManager;
+        $this->slugRepository = $slugRepository;
     }
 
     /**
@@ -31,7 +39,7 @@ class ScopeRequestListener
         }
 
         $scope = $this->scopeManager->findMostSuitable('web_content');
-        if ($scope) {
+        if ($scope && $this->slugRepository->isScopeAttachedToSlug($scope)) {
             $request->attributes->set('_web_content_scope', $scope);
         }
     }

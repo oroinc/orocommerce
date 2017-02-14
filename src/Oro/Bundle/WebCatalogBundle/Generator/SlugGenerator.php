@@ -151,7 +151,7 @@ class SlugGenerator
             }
 
             if (null !== $url) {
-                $slugUrls->set((int)$this->getLocaleId($locale), new SlugUrl($url, $locale));
+                $slugUrls->set((int)$this->getLocaleId($locale), new SlugUrl($url, $locale, $slugPrototype));
             }
         }
 
@@ -251,6 +251,7 @@ class SlugGenerator
     {
         $slug->setLocalization($slugUrl->getLocalization());
         $slug->setUrl($slugUrl->getUrl());
+        $slug->setSlugPrototype($slugUrl->getSlug());
         $slug->setRouteName($routeData->getRoute());
         $slug->setRouteParameters($routeData->getRouteParameters());
         foreach ($scopes as $scope) {

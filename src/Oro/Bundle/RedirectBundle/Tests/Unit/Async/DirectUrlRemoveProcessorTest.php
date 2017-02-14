@@ -5,8 +5,10 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\Async;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\RedirectBundle\Async\DirectUrlRemoveProcessor;
+use Oro\Bundle\RedirectBundle\Async\Topics;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Psr\Log\LoggerInterface;
@@ -24,6 +26,11 @@ class DirectUrlRemoveProcessorTest extends \PHPUnit_Framework_TestCase
     private $logger;
 
     /**
+     * @var MessageProducerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $producer;
+
+    /**
      * @var DirectUrlRemoveProcessor
      */
     private $processor;
@@ -32,8 +39,9 @@ class DirectUrlRemoveProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->logger = $this->createMock(LoggerInterface::class);
+        $this->producer = $this->createMock(MessageProducerInterface::class);
 
-        $this->processor = new DirectUrlRemoveProcessor($this->registry, $this->logger);
+        $this->processor = new DirectUrlRemoveProcessor($this->registry, $this->logger, $this->producer);
     }
 
     public function testProcessExceptionOutsideTransaction()
@@ -68,6 +76,8 @@ class DirectUrlRemoveProcessorTest extends \PHPUnit_Framework_TestCase
                 'Unexpected exception occurred during Direct URL removal',
                 ['exception' => $exception]
             );
+
+        $this->producer->expects($this->never())->method('send');
 
         $this->assertEquals(DirectUrlRemoveProcessor::REJECT, $this->processor->process($message, $session));
     }
@@ -117,6 +127,8 @@ class DirectUrlRemoveProcessorTest extends \PHPUnit_Framework_TestCase
                 ['exception' => $exception]
             );
 
+        $this->producer->expects($this->never())->method('send');
+
         $this->assertEquals(DirectUrlRemoveProcessor::REJECT, $this->processor->process($message, $session));
     }
 
@@ -142,6 +154,8 @@ class DirectUrlRemoveProcessorTest extends \PHPUnit_Framework_TestCase
         $this->logger->expects($this->once())
             ->method('error')
             ->with(sprintf('Entity manager is not defined for class: "%s"', $messageData));
+
+        $this->producer->expects($this->never())->method('send');
 
         $this->assertEquals(DirectUrlRemoveProcessor::REJECT, $this->processor->process($message, $session));
     }
@@ -182,6 +196,19 @@ class DirectUrlRemoveProcessorTest extends \PHPUnit_Framework_TestCase
             ->with($messageData)
             ->willReturn($em);
 
+        $this->producer
+            ->expects($this->once())
+            ->method('send')
+            ->with(Topics::CALCULATE_URL_CACHE_MASS, '');
+
         $this->assertEquals(DirectUrlRemoveProcessor::ACK, $this->processor->process($message, $session));
+    }
+
+    public function testGetSubscribedTopics()
+    {
+        $this->assertEquals(
+            [Topics::REMOVE_DIRECT_URL_FOR_ENTITY_TYPE],
+            DirectUrlRemoveProcessor::getSubscribedTopics()
+        );
     }
 }

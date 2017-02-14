@@ -110,7 +110,7 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit_Framework_TestCase
             ResolveNodeSlugsMessageFactory::ID => $contentNodeId,
             ResolveNodeSlugsMessageFactory::CREATE_REDIRECT => true
         ];
-        
+
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
         $message = $this->createMock(MessageInterface::class);
         $message->expects($this->once())
@@ -136,9 +136,6 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit_Framework_TestCase
         $this->slugGenerator->expects($this->once())
             ->method('generate')
             ->with($contentNode, true);
-        $this->messageProducer->expects($this->once())
-            ->method('send')
-            ->with(Topics::CALCULATE_WEB_CATALOG_CACHE, 2);
 
         $this->assertEquals(MessageProcessorInterface::ACK, $this->processor->process($message, $session));
     }
@@ -201,6 +198,6 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testGetSubscribedTopics()
     {
-        $this->assertEquals([Topics::RESOLVE_NODE_SLUGS], $this->processor->getSubscribedTopics());
+        $this->assertEquals([Topics::RESOLVE_NODE_SLUGS], ContentNodeSlugsProcessor::getSubscribedTopics());
     }
 }

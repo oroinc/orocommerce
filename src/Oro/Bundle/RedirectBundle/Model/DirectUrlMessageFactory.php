@@ -9,6 +9,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Model\Exception\InvalidArgumentException;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class DirectUrlMessageFactory implements MessageFactoryInterface
@@ -47,23 +48,36 @@ class DirectUrlMessageFactory implements MessageFactoryInterface
      */
     public function createMessage(SluggableInterface $entity)
     {
-        return [
-            self::ID => $entity->getId(),
-            self::ENTITY_CLASS_NAME => ClassUtils::getClass($entity),
-            self::CREATE_REDIRECT => $this->isCreateRedirect($entity),
-        ];
+        $createRedirect = true;
+        if ($entity->getSlugPrototypesWithRedirect()) {
+            $createRedirect = $entity->getSlugPrototypesWithRedirect()->getCreateRedirect();
+        }
+
+        $resolver = $this->getOptionsResolver();
+
+        return $resolver->resolve(
+            [
+                self::ID => $entity->getId(),
+                self::ENTITY_CLASS_NAME => ClassUtils::getClass($entity),
+                self::CREATE_REDIRECT => $createRedirect
+            ]
+        );
     }
 
     /**
      * {@inheritdoc}
      */
-    public function createMassMessage($entityClass, $id, $createRedirect)
+    public function createMassMessage($entityClass, $id, $createRedirect = true)
     {
-        return [
-            self::ID => $id,
-            self::ENTITY_CLASS_NAME => $entityClass,
-            self::CREATE_REDIRECT => $createRedirect
-        ];
+        $resolver = $this->getOptionsResolver();
+
+        return $resolver->resolve(
+            [
+                self::ID => $id,
+                self::ENTITY_CLASS_NAME => $entityClass,
+                self::CREATE_REDIRECT => $createRedirect
+            ]
+        );
     }
 
     /**
@@ -116,15 +130,33 @@ class DirectUrlMessageFactory implements MessageFactoryInterface
                     self::ENTITY_CLASS_NAME
                 ]
             );
+
             $resolver->setDefault(self::CREATE_REDIRECT, true);
 
             $resolver->setAllowedTypes(self::ID, ['int', 'array']);
             $resolver->setAllowedTypes(self::ENTITY_CLASS_NAME, 'string');
             $resolver->setAllowedTypes(self::CREATE_REDIRECT, 'bool');
+
             $resolver->setAllowedValues(
                 self::ENTITY_CLASS_NAME,
                 function ($className) {
                     return class_exists($className) && is_a($className, SluggableInterface::class, true);
+                }
+            );
+
+            $resolver->setNormalizer(
+                self::CREATE_REDIRECT,
+                function (Options $options, $value) {
+                    $strategy = $this->configManager->get('oro_redirect.redirect_generation_strategy');
+                    if ($strategy === Configuration::STRATEGY_ALWAYS) {
+                        return true;
+                    }
+
+                    if ($strategy === Configuration::STRATEGY_NEVER) {
+                        return false;
+                    }
+
+                    return $value;
                 }
             );
 
@@ -135,33 +167,20 @@ class DirectUrlMessageFactory implements MessageFactoryInterface
     }
 
     /**
-     * @param array $data
+     * @param array|string $data
      * @return array
      */
     protected function getResolvedData($data)
     {
         try {
+            // BC layer for old message format support where ClassName was passed as message
+            if (is_string($data)) {
+                $data = [self::ENTITY_CLASS_NAME => $data, self::ID => []];
+            }
+
             return $this->getOptionsResolver()->resolve($data);
         } catch (\Exception $e) {
             throw new InvalidArgumentException($e->getMessage());
         }
-    }
-
-    /**
-     * @param SluggableInterface $entity
-     * @return bool
-     */
-    protected function isCreateRedirect(SluggableInterface $entity)
-    {
-        $redirectGenerationStrategy = $this->configManager->get('oro_redirect.redirect_generation_strategy');
-        if ($redirectGenerationStrategy === Configuration::STRATEGY_ALWAYS) {
-            return true;
-        }
-
-        if ($redirectGenerationStrategy === Configuration::STRATEGY_NEVER) {
-            return false;
-        }
-
-        return $entity->getSlugPrototypesWithRedirect()->getCreateRedirect();
     }
 }

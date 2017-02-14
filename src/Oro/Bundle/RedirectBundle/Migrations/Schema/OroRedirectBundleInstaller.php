@@ -45,12 +45,15 @@ class OroRedirectBundleInstaller implements Installation
         $table = $schema->createTable('oro_redirect_slug');
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('localization_id', 'integer', ['notnull' => false]);
-        $table->addColumn('url', 'string', ['length' => 1024]);
         $table->addColumn('url_hash', 'string', ['length' => 32]);
-        $table->addColumn('route_name', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('route_name', 'string', ['length' => 255]);
+        $table->addColumn('url', 'string', ['length' => 1024]);
+        $table->addColumn('slug_prototype', 'string', ['length' => 255, 'notnull' => false]);
         $table->addColumn('route_parameters', 'array', ['comment' => '(DC2Type:array)']);
         $table->setPrimaryKey(['id']);
         $table->addIndex(['url_hash'], 'oro_redirect_slug_url_hash', []);
+        $table->addIndex(['route_name'], 'oro_redirect_slug_route', []);
+        $table->addIndex(['slug_prototype'], 'oro_redirect_slug_slug', []);
     }
 
     /**

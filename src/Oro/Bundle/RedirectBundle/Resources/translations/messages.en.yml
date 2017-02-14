@@ -26,6 +26,7 @@ oro:
             redirects.label: Redirects
             scopes.label: Scopes
             localization.label: Localization
+            slug_prototype.label: Slug Prototype
 
         system_configuration:
             groups:

@@ -102,6 +102,7 @@ services:
         class: Oro\Bundle\WebCatalogBundle\EventListener\ScopeRequestListener
         arguments:
             - '@oro_scope.scope_manager'
+            - '@oro_redirect.repository.slug'
         tags:
             - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 10 }
 
@@ -223,6 +224,13 @@ services:
         parent: oro.cache.abstract
         calls:
             - [ setNamespace, [ 'oro_web_catalog' ] ]
+
+    oro_web_catalog.cache.content_node_tree_cache_warmer:
+        class: Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCacheWarmer
+        arguments:
+            - '@oro_message_queue.client.message_producer'
+        tags:
+            - { name: 'kernel.cache_warmer' }
 
     oro_web_catalog.cache.dumper.content_node_tree_dumper:
         class: Oro\Bundle\WebCatalogBundle\Cache\Dumper\ContentNodeTreeDumper

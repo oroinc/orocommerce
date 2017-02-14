@@ -7,10 +7,14 @@ use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
 use Oro\Bundle\RedirectBundle\Model\DirectUrlMessageFactory;
 use Oro\Bundle\RedirectBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Entity\SluggableEntityStub;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ */
 class DirectUrlMessageFactoryTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -37,51 +41,90 @@ class DirectUrlMessageFactoryTest extends \PHPUnit_Framework_TestCase
         $this->factory = new DirectUrlMessageFactory($this->registry, $this->configManager);
     }
 
-    public function testCreateMessage()
+    /**
+     * @dataProvider redirectStrategyDataProvider
+     * @param string $strategy
+     * @param bool $requestCreateRedirect
+     * @param bool $expectedCreateRedirect
+     */
+    public function testCreateMessage($strategy, $requestCreateRedirect, $expectedCreateRedirect)
     {
         $this->configManager->expects($this->once())
             ->method('get')
             ->with('oro_redirect.redirect_generation_strategy')
-            ->willReturn('always');
+            ->willReturn($strategy);
         $entity = new SluggableEntityStub();
         $entity->setId(42);
+        $entity->getSlugPrototypesWithRedirect()->setCreateRedirect($requestCreateRedirect);
 
         $this->assertEquals(
-            ['class' => SluggableEntityStub::class, 'id' => 42, 'createRedirect' => true],
+            [
+                'class' => SluggableEntityStub::class,
+                'id' => 42,
+                'createRedirect' => $expectedCreateRedirect
+            ],
             $this->factory->createMessage($entity)
         );
     }
 
     /**
-     * @dataProvider createMassMessageDataProvider
-     *
-     * @param string $className
-     * @param array $ids
-     * @param bool $createRedirect
-     * @param array $expected
+     * @dataProvider redirectStrategyDataProvider
+     * @param string $strategy
+     * @param bool $requestCreateRedirect
+     * @param bool $expectedCreateRedirect
      */
-    public function testCreateMassMessage($className, array $ids, $createRedirect, array $expected)
+    public function testCreateMassMessage($strategy, $requestCreateRedirect, $expectedCreateRedirect)
     {
-        $this->assertEquals($expected, $this->factory->createMassMessage($className, $ids, $createRedirect));
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_redirect.redirect_generation_strategy')
+            ->willReturn($strategy);
+
+        $this->assertEquals(
+            [
+                'class' => SluggableEntityStub::class,
+                'id' => [1, 2, 3],
+                'createRedirect' => $expectedCreateRedirect
+            ],
+            $this->factory->createMassMessage(SluggableEntityStub::class, [1, 2, 3], $requestCreateRedirect)
+        );
     }
 
     /**
      * @return array
      */
-    public function createMassMessageDataProvider()
+    public function redirectStrategyDataProvider()
     {
         return [
-            'with redirects' => [
-                'className' => SluggableEntityStub::class,
-                'ids' => [1, 2, 3],
-                'createRedirect' => true,
-                'expected' => ['class' => SluggableEntityStub::class, 'id' => [1, 2, 3], 'createRedirect' => true]
+            'if strategy is always then expectedCreateRedirect is always true #1' => [
+                'strategy' => Configuration::STRATEGY_ALWAYS,
+                'requestCreateRedirect' => false,
+                'expectedCreateRedirect' => true
             ],
-            'without redirects' => [
-                'className' => SluggableEntityStub::class,
-                'ids' => [2, 3],
-                'createRedirect' => false,
-                'expected' => ['class' => SluggableEntityStub::class, 'id' => [2, 3], 'createRedirect' => false]
+            'if strategy is always then expectedCreateRedirect is always true #2' => [
+                'strategy' => Configuration::STRATEGY_ALWAYS,
+                'requestCreateRedirect' => true,
+                'expectedCreateRedirect' => true
+            ],
+            'if strategy is never then expectedCreateRedirect is always false #1' => [
+                'strategy' => Configuration::STRATEGY_NEVER,
+                'requestCreateRedirect' => false,
+                'expectedCreateRedirect' => false
+            ],
+            'if strategy is never then expectedCreateRedirect is always false #2' => [
+                'strategy' => Configuration::STRATEGY_NEVER,
+                'requestCreateRedirect' => true,
+                'expectedCreateRedirect' => false
+            ],
+            'if strategy is ask then expectedCreateRedirect equals to requestCreateRedirect #1' => [
+                'strategy' => Configuration::STRATEGY_ASK,
+                'requestCreateRedirect' => true,
+                'expectedCreateRedirect' => true
+            ],
+            'if strategy is ask then expectedCreateRedirect equals to requestCreateRedirect #2' => [
+                'strategy' => Configuration::STRATEGY_ASK,
+                'requestCreateRedirect' => false,
+                'expectedCreateRedirect' => false
             ]
         ];
     }
@@ -115,6 +158,7 @@ class DirectUrlMessageFactoryTest extends \PHPUnit_Framework_TestCase
             'unsupported class' => [['id' => 1, 'class' => \DateTime::class]],
             'non integer id' => [['id' => 'one', 'class' => SluggableEntityStub::class]],
             'non string class' => [['id' => 'one', 'class' => 123]],
+            'not bool require cache calculation' => [['id' => 1, 'class' => '123', 'requireCacheCalculation' => '3']],
         ];
     }
 
@@ -163,15 +207,25 @@ class DirectUrlMessageFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals([$entity], $this->factory->getEntitiesFromMessage($message));
     }
 
-    public function testGetCreateRedirectFromMessage()
+    /**
+     * @dataProvider redirectStrategyDataProvider
+     * @param string $strategy
+     * @param bool $requestCreateRedirect
+     * @param bool $expectedCreateRedirect
+     */
+    public function testGetCreateRedirectFromMessage($strategy, $requestCreateRedirect, $expectedCreateRedirect)
     {
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_redirect.redirect_generation_strategy')
+            ->willReturn($strategy);
+
         $data = [
             DirectUrlMessageFactory::ID => 1,
             DirectUrlMessageFactory::ENTITY_CLASS_NAME => SluggableEntityStub::class,
-            DirectUrlMessageFactory::CREATE_REDIRECT => true,
+            DirectUrlMessageFactory::CREATE_REDIRECT => $requestCreateRedirect,
         ];
 
-        $createRedirect = $this->factory->getCreateRedirectFromMessage($data);
-        $this->assertTrue($createRedirect);
+        $this->assertEquals($expectedCreateRedirect, $this->factory->getCreateRedirectFromMessage($data));
     }
 }

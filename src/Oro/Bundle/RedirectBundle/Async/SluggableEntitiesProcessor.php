@@ -46,6 +46,11 @@ class SluggableEntitiesProcessor implements MessageProcessorInterface, TopicSubs
     private $messageFactory;
 
     /**
+     * @var int
+     */
+    private $batchSize = self::BATCH_SIZE;
+
+    /**
      * @param ManagerRegistry $doctrine
      * @param JobRunner $jobRunner
      * @param MessageProducerInterface $producer
@@ -64,6 +69,19 @@ class SluggableEntitiesProcessor implements MessageProcessorInterface, TopicSubs
         $this->producer = $producer;
         $this->logger = $logger;
         $this->messageFactory = $messageFactory;
+    }
+
+    /**
+     * @param int $batchSize
+     */
+    public function setBatchSize($batchSize)
+    {
+        $batchSize = (int)$batchSize;
+        if ($batchSize < 1) {
+            $batchSize = self::BATCH_SIZE;
+        }
+
+        $this->batchSize = $batchSize;
     }
 
     /**
@@ -97,7 +115,7 @@ class SluggableEntitiesProcessor implements MessageProcessorInterface, TopicSubs
                     ->getQuery()
                     ->getSingleScalarResult();
 
-                $batches = (int)ceil($entityCount / self::BATCH_SIZE);
+                $batches = (int)ceil($entityCount / $this->batchSize);
                 for ($i = 0; $i < $batches; $i++) {
                     $jobRunner->createDelayed(
                         sprintf('%s:%s:%s', Topics::JOB_GENERATE_DIRECT_URL_FOR_ENTITIES, $entityClass, $i),
@@ -140,8 +158,8 @@ class SluggableEntitiesProcessor implements MessageProcessorInterface, TopicSubs
     {
         $ids = $repository->createQueryBuilder('ids')
             ->select('ids.' . $identifierFieldName)
-            ->setFirstResult($page * self::BATCH_SIZE)
-            ->setMaxResults(self::BATCH_SIZE)
+            ->setFirstResult($page * $this->batchSize)
+            ->setMaxResults($this->batchSize)
             ->orderBy('ids.' . $identifierFieldName, 'ASC')
             ->getQuery()
             ->getArrayResult();
