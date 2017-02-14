@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\SEOBundle\Tools;
 
-use Oro\Bundle\SEOBundle\Model\WebsiteInterface;
 use Oro\Bundle\SEOBundle\Provider\SitemapUrlProviderRegistry;
+use Oro\Component\Website\WebsiteInterface;
 
 class SitemapDumper implements SitemapDumperInterface
 {
