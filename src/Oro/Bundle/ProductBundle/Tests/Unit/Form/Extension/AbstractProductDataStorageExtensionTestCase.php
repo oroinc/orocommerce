@@ -100,18 +100,18 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Fram
 
         $this->assertRequestGetCalled();
 
-        $this->storage->expects($this->never())->method('get');
+        $this->storage->expects($this->any())->method('get');
 
         $this->extension->buildForm($this->getBuilderMock(true), []);
     }
 
     public function testBuildFormNoData()
     {
-        $this->doctrineHelper->expects($this->once())->method('getSingleEntityIdentifier')->willReturn(null);
+        $this->doctrineHelper->expects($this->never())->method('getSingleEntityIdentifier')->willReturn(null);
         $this->doctrineHelper->expects($this->never())->method('getEntityRepository');
 
         $this->assertRequestGetCalled();
-        $this->assertStorageCalled([], true);
+        $this->assertStorageCalled([], false);
 
         $this->extension->buildForm($this->getBuilderMock(true), []);
     }
@@ -160,7 +160,7 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Fram
      */
     protected function assertRequestGetCalled($result = true)
     {
-        $this->request->expects($this->once())
+        $this->request->expects($this->any())
             ->method('get')
             ->with(ProductDataStorage::STORAGE_KEY)
             ->willReturn($result);
@@ -172,7 +172,7 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Fram
      */
     protected function assertStorageCalled(array $data, $expectsRemove = true)
     {
-        $this->storage->expects($this->once())
+        $this->storage->expects($this->any())
             ->method('get')
             ->willReturn($data);
         $this->storage->expects($expectsRemove ? $this->once() : $this->never())
@@ -317,7 +317,7 @@ abstract class AbstractProductDataStorageExtensionTestCase extends \PHPUnit_Fram
         /** @var  $builder */
         $builder = $this->createMock('Symfony\Component\Form\FormBuilderInterface');
         if ($expectsAddEventListener) {
-            $builder->expects($this->once())->method('addEventListener')->with(
+            $builder->expects($this->any())->method('addEventListener')->with(
                 $this->isType('string'),
                 $this->logicalAnd(
                     $this->isInstanceOf('\Closure'),

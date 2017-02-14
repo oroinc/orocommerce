@@ -6,7 +6,6 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
-use Oro\Bundle\PayPalBundle\Method\PayflowGateway;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
@@ -22,7 +21,10 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
     /** {@inheritdoc} */
     public function getDependencies()
     {
-        return ['Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData'];
+        return [
+            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData',
+            'Oro\Bundle\PayPalBundle\Tests\Functional\DataFixtures\LoadPayPalChannelData',
+        ];
     }
 
     /**
@@ -34,26 +36,28 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
             'currency' => 'USD',
             'action' => PaymentMethodInterface::AUTHORIZE,
             'entityIdentifier' => 1,
-            'paymentMethod' => PayflowGateway::TYPE,
             'entityClass' => '\stdClass',
             'frontendOwner' => LoadCustomerUserData::EMAIL,
             'response' => [
                 'SECURETOKEN' => 'SECURETOKEN',
                 'SECURETOKENID' => 'SECURETOKENID',
             ],
+            'channel_reference' => 'paypal:channel_1',
+            'method_prefix' => 'paypal_payflow_gateway_credit_card'
         ],
         self::PAYFLOW_AUTHORIZE_TRANSACTION_IP_FILTER => [
             'amount' => '1000.00',
             'currency' => 'USD',
             'action' => PaymentMethodInterface::AUTHORIZE,
             'entityIdentifier' => 1,
-            'paymentMethod' => PayflowGateway::TYPE,
             'entityClass' => '\stdClass',
             'frontendOwner' => LoadCustomerUserData::EMAIL,
             'response' => [
                 'SECURETOKEN' => 'SECURETOKEN',
                 'SECURETOKENID' => 'SECURETOKENID',
             ],
+            'channel_reference' => 'paypal:channel_1',
+            'method_prefix' => 'paypal_payflow_gateway_credit_card'
         ],
     ];
 
@@ -68,8 +72,15 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
             $data['frontendOwner'] = $this->getReference($data['frontendOwner']);
 
             foreach ($data as $property => $value) {
-                $this->setValue($paymentTransaction, $property, $value);
+                if ($this->getPropertyAccessor()->isWritable($paymentTransaction, $property)) {
+                    $this->setValue($paymentTransaction, $property, $value);
+                }
             }
+
+            $channel = $this->getReference($data['channel_reference']);
+            $paymentMethod = sprintf('%s_%s', $data['method_prefix'], $channel->getId());
+
+            $paymentTransaction->setPaymentMethod($paymentMethod);
 
             $this->setReference($reference, $paymentTransaction);
 
