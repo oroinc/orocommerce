@@ -235,7 +235,7 @@ class UserLocalizationManagerTest extends \PHPUnit_Framework_TestCase
         $this->localizationManager->expects($this->once())
             ->method('getLocalizations')
             ->with([$localization->getId(), 4])
-            ->willReturn([$localization]);
+            ->willReturn([$localization->getId() => $localization]);
 
         $this->localizationManager->expects($this->once())
             ->method('getLocalization')

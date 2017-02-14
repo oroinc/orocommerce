@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRuleDestination;
@@ -14,11 +15,11 @@ class PaymentMethodsConfigsRuleTest extends \PHPUnit_Framework_TestCase
 
     public function testAccessors()
     {
-        $now = new \DateTime('now');
         $properties = [
             ['id', '1'],
             ['rule', new Rule()],
             ['currency', 'USD'],
+            ['organization', new Organization()],
         ];
 
         $entity = new PaymentMethodsConfigsRule();

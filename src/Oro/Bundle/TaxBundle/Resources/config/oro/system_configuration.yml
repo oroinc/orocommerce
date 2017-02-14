@@ -87,6 +87,20 @@ system_configuration:
                     shipping_origin: oro.tax.system_configuration.fields.use_as_base.shipping_origin.label
                     destination: oro.tax.system_configuration.fields.use_as_base.destination.label
 
+        oro_tax.address_resolver_granularity:
+            data_type: string
+            type: choice
+            options:
+                label: oro.tax.system_configuration.fields.address_resolver_granularity.label
+                required: true
+                constraints:
+                    - NotBlank: ~
+                choice_translation_domain: messages
+                choices:
+                    country: oro.tax.system_configuration.fields.address_resolver_granularity.country.label
+                    region: oro.tax.system_configuration.fields.address_resolver_granularity.region.label
+                    zip_code: oro.tax.system_configuration.fields.address_resolver_granularity.zip.label
+
         oro_tax.use_as_base_exclusions:
             data_type: array
             type: oro_tax_base_exclusion_collection
@@ -170,6 +184,7 @@ system_configuration:
                                             - oro_tax.use_as_base_by_default
                                             - oro_tax.use_as_base_exclusions
                                             - oro_tax.destination
+                                            - oro_tax.address_resolver_granularity
                                     origin_address:
                                         priority: 60
                                         children:

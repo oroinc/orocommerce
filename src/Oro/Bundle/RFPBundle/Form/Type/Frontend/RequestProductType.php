@@ -9,7 +9,6 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\ProductBundle\Form\Type\ProductSelectType;
-use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductItemCollectionType;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductType as BaseRequestProductType;
 
 class RequestProductType extends AbstractType

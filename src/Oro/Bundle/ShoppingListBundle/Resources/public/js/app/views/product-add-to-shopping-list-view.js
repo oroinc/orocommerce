@@ -128,7 +128,7 @@ define(function(require) {
                 var $addNewButton = $(this.options.buttonTemplate({
                     id: null,
                     label: _.__('oro.shoppinglist.entity_label')
-                })).find(this.options.buttonsSelector).addClass('btn-block btn-orange btn_lg');
+                })).find(this.options.buttonsSelector);
 
                 return [$addNewButton];
             }
