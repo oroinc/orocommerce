@@ -2,13 +2,14 @@
 
 namespace Oro\Bundle\SEOBundle\Provider;
 
+use Oro\Bundle\SEOBundle\Model\DTO\UrlItem;
 use Oro\Component\Website\WebsiteInterface;
 
 interface SitemapUrlProviderInterface
 {
     /**
      * @param WebsiteInterface $website
-     * @return array
+     * @return array|UrlItem[]
      */
-    public function getUrls(WebsiteInterface $website);
+    public function getUrlItems(WebsiteInterface $website);
 }
