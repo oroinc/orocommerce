@@ -3,7 +3,7 @@
 namespace Oro\Bundle\RedirectBundle\Form\Type;
 
 use Oro\Bundle\RedirectBundle\Helper\ConfirmSlugChangeFormHelper;
-use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
+use Oro\Bundle\RedirectBundle\Model\TextSlugPrototypeWithRedirect;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
 
 use Symfony\Component\Form\AbstractType;
@@ -14,10 +14,10 @@ use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-class LocalizedSlugWithRedirectType extends AbstractType
+class SlugWithRedirectType extends AbstractType
 {
-    const NAME = 'oro_redirect_localized_slug_with_redirect';
-    const SLUG_PROTOTYPES_FIELD_NAME = 'slugPrototypes';
+    const NAME = 'oro_redirect_slug_with_redirect';
+    const TEXT_SLUG_PROTOTYPE_FIELD_NAME = 'textSlugPrototype';
     const CREATE_REDIRECT_FIELD_NAME = 'createRedirect';
 
     /**
@@ -61,13 +61,13 @@ class LocalizedSlugWithRedirectType extends AbstractType
 
         $builder
             ->add(
-                self::SLUG_PROTOTYPES_FIELD_NAME,
-                LocalizedSlugType::NAME,
+                self::TEXT_SLUG_PROTOTYPE_FIELD_NAME,
+                SlugType::NAME,
                 [
                     'required' => !empty($options['required']),
-                    'options'  => ['constraints' => $constraints],
+                    'constraints' => $constraints,
                     'source_field' => $options['source_field'],
-                    'label' => false,
+                    'label' => $options['label'],
                     'slug_suggestion_enabled' => $options['slug_suggestion_enabled'],
                 ]
             )
@@ -89,7 +89,7 @@ class LocalizedSlugWithRedirectType extends AbstractType
         $resolver->setDefaults([
             'create_redirect_enabled' => true,
             'slug_suggestion_enabled' => true,
-            'data_class' => SlugPrototypesWithRedirect::class,
+            'data_class' => TextSlugPrototypeWithRedirect::class,
         ]);
         $resolver->setRequired('source_field');
     }
@@ -99,6 +99,6 @@ class LocalizedSlugWithRedirectType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $this->confirmSlugChangeFormHelper->addConfirmSlugChangeOptionsLocalized($view, $form, $options);
+        $this->confirmSlugChangeFormHelper->addConfirmSlugChangeOptions($view, $form, $options);
     }
 }

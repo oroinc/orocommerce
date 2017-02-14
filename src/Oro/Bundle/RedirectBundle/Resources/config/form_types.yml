@@ -1,20 +1,39 @@
 services:
     oro_redirect.form.type.localized_slug:
         class: 'Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType'
+        arguments:
+            - '@oro_redirect.helper.slugify_form_helper'
         tags:
             - { name: form.type, alias: oro_redirect_localized_slug }
 
     oro_redirect.form.type.slug:
         class: 'Oro\Bundle\RedirectBundle\Form\Type\SlugType'
+        arguments:
+            - '@oro_redirect.helper.slugify_form_helper'
         tags:
             - { name: form.type, alias: oro_redirect_slug }
 
     oro_redirect.form.type.localized_slug_with_redirect:
         class: Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType
         arguments:
-            - '@oro_config.manager'
+            - '@oro_redirect.helper.confirm_slug_change_form_helper'
         tags:
             - { name: form.type, alias: oro_redirect_localized_slug_with_redirect }
+
+    oro_redirect.form.type.slug_with_redirect:
+        class: Oro\Bundle\RedirectBundle\Form\Type\SlugWithRedirectType
+        arguments:
+            - '@oro_redirect.helper.confirm_slug_change_form_helper'
+        tags:
+            - { name: form.type, alias: oro_redirect_slug_with_redirect }
+
+    oro_redirect.helper.confirm_slug_change_form_helper:
+        class: Oro\Bundle\RedirectBundle\Helper\ConfirmSlugChangeFormHelper
+        arguments:
+            - '@oro_config.manager'
+
+    oro_redirect.helper.slugify_form_helper:
+        class: Oro\Bundle\RedirectBundle\Helper\SlugifyFormHelper
 
     oro_redirect.form.type.oro_redirect_sluggable_prefix:
         class: Oro\Bundle\RedirectBundle\Form\Type\SluggableEntityPrefixType

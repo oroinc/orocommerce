@@ -4,6 +4,7 @@ namespace Oro\Bundle\RedirectBundle\Form\Type;
 
 use Oro\Bundle\EntityBundle\EntityProperty\UpdatedAtAwareInterface;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use Oro\Bundle\RedirectBundle\Helper\SlugifyFormHelper;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -16,6 +17,19 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class LocalizedSlugType extends AbstractType
 {
     const NAME = 'oro_redirect_localized_slug';
+
+    /**
+     * @var SlugifyFormHelper
+     */
+    private $slugifyFormHelper;
+
+    /**
+     * @param SlugifyFormHelper $slugifyFormHelper
+     */
+    public function __construct(SlugifyFormHelper $slugifyFormHelper)
+    {
+        $this->slugifyFormHelper = $slugifyFormHelper;
+    }
 
     /**
      * {@inheritDoc}
@@ -80,22 +94,6 @@ class LocalizedSlugType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        if ($options['slug_suggestion_enabled']
-            && isset($options['source_field'])
-            && !empty($view->parent->vars['full_name'])
-        ) {
-            $parent = $view->parent;
-            while ($parent->parent) {
-                $parent = $parent->parent;
-            }
-            $sourceFieldName = sprintf('%s[%s]', $parent->vars['full_name'], $options['source_field']);
-            $targetFieldName = $view->vars['full_name'];
-
-            $view->vars['slugify_component_options'] = [
-                'source' => sprintf('[name^="%s[values]"]', $sourceFieldName),
-                'target' => sprintf('[name^="%s[values]"]', $targetFieldName),
-                'slugify_route' => $options['slugify_route'],
-            ];
-        }
+        $this->slugifyFormHelper->addSlugifyOptionsLocalized($view, $options);
     }
 }

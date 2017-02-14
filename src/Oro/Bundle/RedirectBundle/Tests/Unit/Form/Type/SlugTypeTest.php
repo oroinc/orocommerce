@@ -3,6 +3,7 @@
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\RedirectBundle\Form\Type\SlugType;
+use Oro\Bundle\RedirectBundle\Helper\SlugifyFormHelper;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -10,6 +11,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SlugTypeTest extends FormIntegrationTestCase
 {
+    /**
+     * @var SlugifyFormHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $slugifyFormHelper;
+
     /**
      * @var SlugType
      */
@@ -19,7 +25,8 @@ class SlugTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->formType = new SlugType();
+        $this->slugifyFormHelper = $this->createMock(SlugifyFormHelper::class);
+        $this->formType = new SlugType($this->slugifyFormHelper);
     }
 
     public function testGetName()
@@ -34,14 +41,12 @@ class SlugTypeTest extends FormIntegrationTestCase
 
     public function testConfigureOptions()
     {
+        /** @var OptionsResolver|\PHPUnit_Framework_MockObject_MockObject $resolver */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())->method('setDefaults')->with(
             $this->callback(
                 function (array $options) {
-                    $this->assertEquals(
-                        $options['slugify_component'],
-                        'ororedirect/js/app/components/text-field-slugify-component'
-                    );
+                    $this->assertTrue($options['slug_suggestion_enabled']);
                     $this->assertEquals($options['slugify_route'], 'oro_api_slugify_slug');
 
                     return true;
@@ -49,29 +54,22 @@ class SlugTypeTest extends FormIntegrationTestCase
             )
         );
         $resolver->expects($this->once())->method('setRequired')->with('source_field');
+        $resolver->expects($this->once())->method('setDefined')->with('constraints');
 
         $this->formType->configureOptions($resolver);
     }
 
     public function testBuildView()
     {
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $this->createMock(FormInterface::class);
+        $view = new FormView();
+        $options = ['someOptionName' => 'someOptionValue'];
 
-        $viewParent = new FormView();
-        $viewParent->vars['full_name'] = 'form-name';
-        $view = new FormView($viewParent);
-        $view->vars['full_name'] = 'form-name[target-name]';
-        $options = [
-            'source_field' => 'source-name',
-            'slugify_component' => 'some-component-path',
-            'slugify_route' => 'some-route',
-        ];
+        $this->slugifyFormHelper->expects($this->once())
+            ->method('addSlugifyOptions')
+            ->with($view, $options);
 
         $this->formType->buildView($view, $form, $options);
-
-        $this->assertEquals('some-component-path', $view->vars['slugify_component']);
-        $this->assertEquals('[name="form-name[source-name]"]', $view->vars['slugify_component_options']['source']);
-        $this->assertEquals('[name="form-name[target-name]"]', $view->vars['slugify_component_options']['target']);
-        $this->assertEquals('some-route', $view->vars['slugify_component_options']['slugify_route']);
     }
 }

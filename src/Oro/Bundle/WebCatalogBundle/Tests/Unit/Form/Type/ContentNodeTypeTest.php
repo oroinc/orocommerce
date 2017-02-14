@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
@@ -11,6 +10,7 @@ use Oro\Bundle\NavigationBundle\Form\Type\RouteChoiceType;
 use Oro\Bundle\NavigationBundle\Tests\Unit\Form\Type\Stub\RouteChoiceTypeStub;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
+use Oro\Bundle\RedirectBundle\Helper\ConfirmSlugChangeFormHelper;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Oro\Bundle\ScopeBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
@@ -73,8 +73,8 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
 
         $variantCollection = new ContentVariantCollectionType($variantTypeRegistry);
 
-        /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject $configManager */
-        $configManager = $this->getMockBuilder(ConfigManager::class)
+        /** @var ConfirmSlugChangeFormHelper $confirmSlugChangeFormHelper */
+        $confirmSlugChangeFormHelper = $this->getMockBuilder(ConfirmSlugChangeFormHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -97,7 +97,8 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                         ]
                     ),
                     LocalizedSlugType::NAME => new LocalizedSlugTypeStub(),
-                    LocalizedSlugWithRedirectType::NAME => new LocalizedSlugWithRedirectType($configManager),
+                    LocalizedSlugWithRedirectType::NAME
+                        => new LocalizedSlugWithRedirectType($confirmSlugChangeFormHelper),
                 ],
                 []
             ),

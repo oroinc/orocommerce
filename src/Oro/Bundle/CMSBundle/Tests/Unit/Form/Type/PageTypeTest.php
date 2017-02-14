@@ -11,6 +11,7 @@ use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueCollectionTypeStub;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
+use Oro\Bundle\RedirectBundle\Helper\ConfirmSlugChangeFormHelper;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Validator\Type\FormTypeValidatorExtension;
@@ -88,6 +89,11 @@ class PageTypeTest extends FormIntegrationTestCase
             ->method('getAllowedElements')
             ->willReturn(['br', 'a']);
 
+        /** @var ConfirmSlugChangeFormHelper $confirmSlugChangeFormHelper */
+        $confirmSlugChangeFormHelper = $this->getMockBuilder(ConfirmSlugChangeFormHelper::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         return [
             new PreloadedExtension(
                 [
@@ -96,7 +102,8 @@ class PageTypeTest extends FormIntegrationTestCase
                     OroRichTextType::NAME => new OroRichTextType($configManager, $htmlTagProvider),
                     LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionTypeStub(),
                     LocalizedSlugType::NAME => new LocalizedSlugTypeStub(),
-                    LocalizedSlugWithRedirectType::NAME => new LocalizedSlugWithRedirectType($configManager),
+                    LocalizedSlugWithRedirectType::NAME
+                        => new LocalizedSlugWithRedirectType($confirmSlugChangeFormHelper),
                 ],
                 []
             )

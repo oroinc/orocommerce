@@ -5,7 +5,6 @@ namespace Oro\Bundle\RedirectBundle\Entity;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 
 trait LocalizedSlugPrototypeAwareTrait
 {
@@ -21,39 +20,11 @@ trait LocalizedSlugPrototypeAwareTrait
     protected $slugPrototypes;
 
     /**
-     * @var SlugPrototypesWithRedirect
-     */
-    protected $slugPrototypesWithRedirect;
-
-    /**
-     * @return SlugPrototypesWithRedirect
-     */
-    public function getSlugPrototypesWithRedirect()
-    {
-        if (!$this->slugPrototypesWithRedirect) {
-            $this->slugPrototypesWithRedirect = new SlugPrototypesWithRedirect($this->slugPrototypes);
-        }
-
-        return $this->slugPrototypesWithRedirect;
-    }
-    
-    /**
-     * @param SlugPrototypesWithRedirect $slugPrototypesWithRedirect
-     * @return $this
-     */
-    public function setSlugPrototypesWithRedirect(SlugPrototypesWithRedirect $slugPrototypesWithRedirect)
-    {
-        $this->slugPrototypesWithRedirect = $slugPrototypesWithRedirect;
-
-        return $this;
-    }
-
-    /**
      * @return Collection|LocalizedFallbackValue[]
      */
     public function getSlugPrototypes()
     {
-        return $this->getSlugPrototypesWithRedirect()->getSlugPrototypes();
+        return $this->slugPrototypes;
     }
 
     /**
@@ -62,8 +33,8 @@ trait LocalizedSlugPrototypeAwareTrait
      */
     public function addSlugPrototype(LocalizedFallbackValue $slugPrototype)
     {
-        if (!$this->getSlugPrototypesWithRedirect()->hasSlugPrototype($slugPrototype)) {
-            $this->getSlugPrototypesWithRedirect()->getSlugPrototypes()->add($slugPrototype);
+        if (!$this->hasSlugPrototype($slugPrototype)) {
+            $this->slugPrototypes->add($slugPrototype);
         }
 
         return $this;
@@ -75,8 +46,8 @@ trait LocalizedSlugPrototypeAwareTrait
      */
     public function removeSlugPrototype(LocalizedFallbackValue $slugPrototype)
     {
-        if ($this->getSlugPrototypesWithRedirect()->hasSlugPrototype($slugPrototype)) {
-            $this->getSlugPrototypesWithRedirect()->getSlugPrototypes()->removeElement($slugPrototype);
+        if ($this->hasSlugPrototype($slugPrototype)) {
+            $this->slugPrototypes->removeElement($slugPrototype);
         }
 
         return $this;
@@ -88,6 +59,6 @@ trait LocalizedSlugPrototypeAwareTrait
      */
     public function hasSlugPrototype(LocalizedFallbackValue $slugPrototype)
     {
-        return $this->getSlugPrototypesWithRedirect()->getSlugPrototypes()->contains($slugPrototype);
+        return $this->slugPrototypes->contains($slugPrototype);
     }
 }

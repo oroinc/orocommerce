@@ -2,12 +2,8 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\ORM\EntityManagerInterface;
-use Doctrine\ORM\Mapping\ClassMetadata;
-use Doctrine\ORM\PersistentCollection;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
+use Oro\Bundle\RedirectBundle\Helper\SlugifyFormHelper;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
@@ -18,15 +14,21 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class LocalizedSlugTypeTest extends FormIntegrationTestCase
 {
     /**
+     * @var SlugifyFormHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $slugifyFormHelper;
+
+    /**
      * @var LocalizedSlugType
      */
-    protected $formType;
+    private $formType;
 
     protected function setUp()
     {
         parent::setUp();
 
-        $this->formType = new LocalizedSlugType();
+        $this->slugifyFormHelper = $this->createMock(SlugifyFormHelper::class);
+        $this->formType = new LocalizedSlugType($this->slugifyFormHelper);
     }
 
     public function testGetName()
@@ -73,70 +75,17 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
         $this->formType->configureOptions($resolver);
     }
 
-    public function testBuildViewForSlugifyComponent()
+    public function testBuildView()
     {
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $this->createMock(FormInterface::class);
-
-        $viewParent = new FormView();
-        $viewParent->vars['full_name'] = 'form-name';
-        $view = new FormView($viewParent);
-        $view->vars['full_name'] = 'form-name[target-name]';
-        $options = [
-            'source_field' => 'source-name',
-            'slugify_route' => 'some-route',
-            'slug_suggestion_enabled' => true,
-        ];
-
-        $this->formType->buildView($view, $form, $options);
-
-        $this->assertArrayHasKey('slugify_component_options', $view->vars);
-        $this->assertEquals(
-            '[name^="form-name[source-name][values]"]',
-            $view->vars['slugify_component_options']['source']
-        );
-        $this->assertEquals(
-            '[name^="form-name[target-name][values]"]',
-            $view->vars['slugify_component_options']['target']
-        );
-        $this->assertEquals(
-            'some-route',
-            $view->vars['slugify_component_options']['slugify_route']
-        );
-    }
-
-    public function testBuildViewWithComponentsDisabled()
-    {
-        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
-        $form = $this->createMock(FormInterface::class);
-        $data = $this->createPersistentCollection();
-        $form->expects($this->any())
-            ->method('getData')
-            ->willReturn($data);
-
         $view = new FormView();
-        $view->vars['full_name'] = 'form-name[target-name]';
-        $options = [
-            'source_field' => 'test',
-            'slug_suggestion_enabled' => false,
-        ];
+        $options = ['someOptionName' => 'someOptionValue'];
+        
+        $this->slugifyFormHelper->expects($this->once())
+            ->method('addSlugifyOptionsLocalized')
+            ->with($view, $options);
 
         $this->formType->buildView($view, $form, $options);
-
-        $this->assertArrayNotHasKey('slugify_component_options', $view->vars);
-    }
-
-    /**
-     * @return PersistentCollection
-     */
-    protected function createPersistentCollection()
-    {
-        /** @var EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject $em */
-        $em = $this->createMock(EntityManagerInterface::class);
-        /** @var ClassMetadata $classMetadata */
-        $classMetadata = $this->getMockBuilder(ClassMetadata::class)->disableOriginalConstructor()->getMock();
-        $collection = new ArrayCollection(['some-entry']);
-
-        return new PersistentCollection($em, $classMetadata, $collection);
     }
 }

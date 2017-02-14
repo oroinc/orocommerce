@@ -4,7 +4,6 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
@@ -39,6 +38,7 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductCustomVariantField
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
+use Oro\Bundle\RedirectBundle\Helper\ConfirmSlugChangeFormHelper;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
@@ -177,8 +177,9 @@ class ProductTypeTest extends FormIntegrationTestCase
         $customFieldProvider->expects($this->any())
             ->method('getEntityCustomFields')
             ->willReturn($this->exampleCustomFields);
-        /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject $configManager */
-        $configManager = $this->getMockBuilder(ConfigManager::class)
+
+        /** @var ConfirmSlugChangeFormHelper $confirmSlugChangeFormHelper */
+        $confirmSlugChangeFormHelper = $this->getMockBuilder(ConfirmSlugChangeFormHelper::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -211,7 +212,8 @@ class ProductTypeTest extends FormIntegrationTestCase
                     ProductImageType::NAME => new ProductImageType(),
                     LocalizedSlugType::NAME => new LocalizedSlugTypeStub(),
                     ProductVariantFieldType::NAME => new ProductVariantFieldType(),
-                    LocalizedSlugWithRedirectType::NAME => new LocalizedSlugWithRedirectType($configManager),
+                    LocalizedSlugWithRedirectType::NAME
+                        => new LocalizedSlugWithRedirectType($confirmSlugChangeFormHelper),
                 ],
                 [
                     'form' => [
