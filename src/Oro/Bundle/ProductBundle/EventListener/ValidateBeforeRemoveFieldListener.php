@@ -3,12 +3,12 @@
 namespace Oro\Bundle\ProductBundle\EventListener;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\EntityConfigBundle\Event\BeforeRemoveFieldEvent;
+use Oro\Bundle\EntityExtendBundle\Event\ValidateBeforeRemoveFieldEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
-class BeforeRemoveFieldListener
+class ValidateBeforeRemoveFieldListener
 {
     /** @var DoctrineHelper */
     protected $doctrineHelper;
@@ -27,15 +27,17 @@ class BeforeRemoveFieldListener
     }
 
     /**
-     * @param BeforeRemoveFieldEvent $event
+     * @param ValidateBeforeRemoveFieldEvent $event
      */
-    public function onBeforeRemoveField(BeforeRemoveFieldEvent $event)
+    public function onValidateBeforeRemoveField(ValidateBeforeRemoveFieldEvent $event)
     {
-        if (!is_a($event->getClassName(), Product::class, true)) {
+        $field = $event->getFieldConfig();
+
+        if (!is_a($field->getEntity()->getClassName(), Product::class, true)) {
             return;
         }
 
-        $fieldName = $event->getFieldName();
+        $fieldName = $field->getFieldName();
         $skuList = [];
 
         /** @var Product[] $configurableProducts */

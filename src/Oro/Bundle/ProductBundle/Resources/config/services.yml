@@ -731,9 +731,9 @@ services:
             - { name: oro_entity_config.layout.attribute_block_type_mapper }
 
     oro_product.event_listener.before_remove_field_listener:
-        class: 'Oro\Bundle\ProductBundle\EventListener\BeforeRemoveFieldListener'
+        class: 'Oro\Bundle\ProductBundle\EventListener\ValidateBeforeRemoveFieldListener'
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@translator'
         tags:
-            - { name: kernel.event_listener, event: oro.entity_config.field.before_remove, method: onBeforeRemoveField }
+            - { name: kernel.event_listener, event: oro.entity_extend.field.validate.before_remove, method: onValidateBeforeRemoveField }

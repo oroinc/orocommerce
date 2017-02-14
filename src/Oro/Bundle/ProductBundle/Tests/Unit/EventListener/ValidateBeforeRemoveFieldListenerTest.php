@@ -5,13 +5,15 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\EventListener;
 use Doctrine\ORM\EntityRepository;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\EntityConfigBundle\Event\BeforeRemoveFieldEvent;
+use Oro\Bundle\EntityConfigBundle\Entity\EntityConfigModel;
+use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
+use Oro\Bundle\EntityExtendBundle\Event\ValidateBeforeRemoveFieldEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\EventListener\BeforeRemoveFieldListener;
+use Oro\Bundle\ProductBundle\EventListener\ValidateBeforeRemoveFieldListener;
 
 use Symfony\Component\Translation\TranslatorInterface;
 
-class BeforeRemoveFieldListenerTest extends \PHPUnit_Framework_TestCase
+class ValidateBeforeRemoveFieldListenerTest extends \PHPUnit_Framework_TestCase
 {
     /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject */
     private $doctrineHelper;
@@ -19,7 +21,7 @@ class BeforeRemoveFieldListenerTest extends \PHPUnit_Framework_TestCase
     /** @var EntityRepository|\PHPUnit_Framework_MockObject_MockObject */
     private $entityRepository;
 
-    /** @var BeforeRemoveFieldListener */
+    /** @var ValidateBeforeRemoveFieldListener */
     private $listener;
 
     /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject */
@@ -33,7 +35,7 @@ class BeforeRemoveFieldListenerTest extends \PHPUnit_Framework_TestCase
         $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
         $this->entityRepository = $this->createMock(EntityRepository::class);
         $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->listener = new BeforeRemoveFieldListener($this->doctrineHelper, $this->translator);
+        $this->listener = new ValidateBeforeRemoveFieldListener($this->doctrineHelper, $this->translator);
     }
 
     /**
@@ -51,16 +53,21 @@ class BeforeRemoveFieldListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testOnBeforeRemoveFieldUnsupportedClass()
     {
-        $event = new BeforeRemoveFieldEvent(\stdClass::class, '');
+        $configField = new FieldConfigModel('test');
+        $configField->setEntity(new EntityConfigModel(\stdClass::class));
+
+        $event = new ValidateBeforeRemoveFieldEvent($configField);
 
         $this->entityRepository->expects($this->never())->method('findBy');
 
-        $this->listener->onBeforeRemoveField($event);
+        $this->listener->onValidateBeforeRemoveField($event);
     }
 
     public function testOnBeforeRemoveFieldIsUsed()
     {
-        $event = new BeforeRemoveFieldEvent(Product::class, 'color');
+        $configField = (new FieldConfigModel('color'))->setEntity(new EntityConfigModel(Product::class));
+        $event = new ValidateBeforeRemoveFieldEvent($configField);
+
         $this->assertEquals([], $event->getValidationMessages());
 
         $this->doctrineHelper->expects($this->once())
@@ -86,14 +93,16 @@ class BeforeRemoveFieldListenerTest extends \PHPUnit_Framework_TestCase
             ])
             ->willReturn($message);
 
-        $this->listener->onBeforeRemoveField($event);
+        $this->listener->onValidateBeforeRemoveField($event);
 
         $this->assertEquals([$message], $event->getValidationMessages());
     }
 
     public function testOnBeforeRemoveFieldNotUsed()
     {
-        $event = new BeforeRemoveFieldEvent(Product::class, 'unused_field');
+        $configField = (new FieldConfigModel('unused_field'))->setEntity(new EntityConfigModel(Product::class));
+        $event = new ValidateBeforeRemoveFieldEvent($configField);
+
         $this->assertEquals([], $event->getValidationMessages());
 
         $this->doctrineHelper->expects($this->once())
@@ -109,8 +118,7 @@ class BeforeRemoveFieldListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($this->getConfigurableProducts());
 
         $this->translator->expects($this->never())->method('trans');
-
-        $this->listener->onBeforeRemoveField($event);
+        $this->listener->onValidateBeforeRemoveField($event);
 
         $this->assertEquals([], $event->getValidationMessages());
     }
