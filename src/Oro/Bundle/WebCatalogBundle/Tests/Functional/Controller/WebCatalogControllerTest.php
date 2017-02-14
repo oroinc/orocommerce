@@ -34,7 +34,7 @@ class WebCatalogControllerTest extends WebTestCase
             ),
             [
                 'selected' => [
-                    $this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1)->getId()
+                    $this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_1)->getId()
                 ],
                 '_widgetContainer' => 'dialog',
             ],
@@ -50,7 +50,7 @@ class WebCatalogControllerTest extends WebTestCase
         /** TODO Change after BAP-1813 */
         $form->getFormNode()->setAttribute(
             'action',
-            $form->getFormNode()->getAttribute('action') . '?_widgetContainer=dialog'
+            $form->getFormNode()->getAttribute('action') . '&_widgetContainer=dialog'
         );
 
         $this->client->submit($form);
@@ -62,7 +62,7 @@ class WebCatalogControllerTest extends WebTestCase
         $repository = $this->getContainer()->get('doctrine')
             ->getManagerForClass('OroWebCatalogBundle:ContentNode')
             ->getRepository('OroWebCatalogBundle:ContentNode');
-        $node = $repository->find($this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1)->getId());
-        $this->assertEquals($node->getParentNode()->getTitle(), LoadContentNodesData::CATALOG_1_ROOT);
+        $node = $repository->find($this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_1)->getId());
+        $this->assertEquals(LoadContentNodesData::CATALOG_1_ROOT, $node->getParentNode()->getTitle());
     }
 }

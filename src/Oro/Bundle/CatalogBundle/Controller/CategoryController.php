@@ -105,15 +105,17 @@ class CategoryController extends Controller
             'tree_items' => $treeItems,
         ]);
 
-        $responseData = ['treeItems' => $treeItems];
+        $responseData = [
+            'treeItems' => $treeItems,
+            'changed' => [],
+        ];
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $changed = [];
             $currentInsertPosition = count($collection->target->getChildren());
             foreach ($collection->source as $source) {
                 $handler->moveNode($source->getKey(), $collection->target->getKey(), $currentInsertPosition);
-                $changed[] = [
+                $responseData['changed'][] = [
                     'id' => $source->getKey(),
                     'parent' => $collection->target->getKey(),
                     'position' => $currentInsertPosition

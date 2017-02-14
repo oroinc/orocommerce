@@ -265,7 +265,7 @@ class CategoryControllerTest extends WebTestCase
         /** TODO Change after BAP-1813 */
         $form->getFormNode()->setAttribute(
             'action',
-            $form->getFormNode()->getAttribute('action') . '?_widgetContainer=dialog'
+            $form->getFormNode()->getAttribute('action') . '&_widgetContainer=dialog'
         );
 
         $this->client->submit($form);
@@ -278,7 +278,7 @@ class CategoryControllerTest extends WebTestCase
             ->getManagerForClass('OroCatalogBundle:Category')
             ->getRepository('OroCatalogBundle:Category');
         $category = $repository->findOneByDefaultTitle(LoadCategoryData::THIRD_LEVEL1);
-        $this->assertEquals($category->getParentCategory()->getTitle()->getString(), LoadCategoryData::FIRST_LEVEL);
+        $this->assertEquals(LoadCategoryData::FIRST_LEVEL, $category->getParentCategory()->getTitle()->getString());
     }
 
     /**
