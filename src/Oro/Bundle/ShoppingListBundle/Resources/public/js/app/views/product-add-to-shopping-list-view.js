@@ -232,7 +232,7 @@ define(function(require) {
 
         onClick: function(e) {
             var $button = $(e.currentTarget);
-            if ( $button.data('disabled')) {
+            if ($button.data('disabled')) {
                 return false;
             }
             var url = $button.data('url');

@@ -16,7 +16,7 @@ define(function(require) {
             fields: '[data-name="field__quantity"]:enabled',
             totalQty: '[data-role="total-quantity"]',
             totalPrice: '[data-role="total-price"]',
-            submitButtons: '[data-shoppingList]'
+            submitButtons: '[data-shoppingList],[data-toggle="dropdown"]'
         },
 
         elementsEvents: {
