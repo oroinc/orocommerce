@@ -125,13 +125,15 @@ class WebCatalogController extends Controller
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $changed = [];
+            $currentInsertPosition = count($collection->target->getChildren());
             foreach ($collection->source as $source) {
-                $handler->moveNode($source->getKey(), $collection->target->getKey(), 0);
+                $handler->moveNode($source->getKey(), $collection->target->getKey(), $currentInsertPosition);
                 $changed[] = [
                     'id' => $source->getKey(),
                     'parent' => $collection->target->getKey(),
-                    'position' => 0
+                    'position' => $currentInsertPosition
                 ];
+                $currentInsertPosition++;
             }
 
             $responseData['saved'] = true;
