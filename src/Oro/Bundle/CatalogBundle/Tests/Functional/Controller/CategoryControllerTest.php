@@ -258,14 +258,6 @@ class CategoryControllerTest extends WebTestCase
         );
 
         $form = $crawler->selectButton('Save')->form();
-        $values = $form->getValues();
-
-        $this->assertEquals(
-            [$this->getReference(LoadCategoryData::THIRD_LEVEL1)->getId()],
-            $values['tree_move[source]']
-        );
-
-        $form['tree_move[source]'] = [$this->getReference(LoadCategoryData::FOURTH_LEVEL2)->getId()];
         $form['tree_move[target]'] = $this->getReference(LoadCategoryData::FIRST_LEVEL)->getId();
 
         $this->client->followRedirects(true);
@@ -285,8 +277,8 @@ class CategoryControllerTest extends WebTestCase
         $repository = $this->getContainer()->get('doctrine')
             ->getManagerForClass('OroCatalogBundle:Category')
             ->getRepository('OroCatalogBundle:Category');
-        $category = $repository->findOneByDefaultTitle(LoadCategoryData::FOURTH_LEVEL2);
-        $this->assertEquals($category->getParentCategory()->getTitle(), LoadCategoryData::FIRST_LEVEL);
+        $category = $repository->findOneByDefaultTitle(LoadCategoryData::THIRD_LEVEL1);
+        $this->assertEquals($category->getParentCategory()->getTitle()->getString(), LoadCategoryData::FIRST_LEVEL);
     }
 
     /**

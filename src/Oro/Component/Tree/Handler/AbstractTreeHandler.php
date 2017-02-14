@@ -106,6 +106,21 @@ abstract class AbstractTreeHandler
     }
 
     /**
+     * @param TreeItem[] $sourceData
+     * @param array      $treeData
+     */
+    public function disableTreeItems(array $sourceData, array &$treeData)
+    {
+        foreach ($treeData as &$treeItem) {
+            foreach ($sourceData as $sourceItem) {
+                if ($sourceItem->getKey() === $treeItem['id'] || $sourceItem->hasChildRecursive($treeItem['id'])) {
+                    $treeItem['state']['disabled'] = true;
+                }
+            }
+        }
+    }
+
+    /**
      * @param null $root
      * @param bool $includeRoot
      * @return array

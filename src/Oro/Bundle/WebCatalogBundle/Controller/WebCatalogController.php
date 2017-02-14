@@ -106,17 +106,19 @@ class WebCatalogController extends Controller
         $handler = $this->get('oro_web_catalog.content_node_tree_handler');
 
         $root = $handler->getTreeRootByWebCatalog($webCatalog);
-        $choices = $handler->getTreeItemList($root, true);
+        $treeItems = $handler->getTreeItemList($root, true);
 
         $collection = new TreeCollection();
-        $collection->source = array_intersect_key($choices, array_flip($request->get('selected', [])));
+        $collection->source = array_intersect_key($treeItems, array_flip($request->get('selected', [])));
 
+        $treeData = $handler->createTree($root, true);
+        $handler->disableTreeItems($collection->source, $treeData);
         $form = $this->createForm(TreeMoveType::class, $collection, [
-            'source_config' => ['choices' => $choices],
-            'target_config' => ['choices' => $choices],
+            'tree_items' => $treeItems,
+            'tree_data' => $treeData,
         ]);
 
-        $response = [];
+        $response = ['treeItems' => $treeItems];
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {

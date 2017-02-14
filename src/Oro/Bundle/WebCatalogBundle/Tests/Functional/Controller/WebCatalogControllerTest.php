@@ -43,14 +43,6 @@ class WebCatalogControllerTest extends WebTestCase
         );
 
         $form = $crawler->selectButton('Save')->form();
-        $values = $form->getValues();
-
-        $this->assertEquals(
-            [$this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1)->getId()],
-            $values['tree_move[source]']
-        );
-
-        $form['tree_move[source]'] = [$this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_2)->getId()];
         $form['tree_move[target]'] = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT)->getId();
 
         $this->client->followRedirects(true);
@@ -70,7 +62,7 @@ class WebCatalogControllerTest extends WebTestCase
         $repository = $this->getContainer()->get('doctrine')
             ->getManagerForClass('OroWebCatalogBundle:ContentNode')
             ->getRepository('OroWebCatalogBundle:ContentNode');
-        $node = $repository->find($this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1_2)->getId());
+        $node = $repository->find($this->getReference(LoadContentNodesData::CATALOG_1_ROOT_SUBNODE_1)->getId());
         $this->assertEquals($node->getParentNode()->getTitle(), LoadContentNodesData::CATALOG_1_ROOT);
     }
 }
