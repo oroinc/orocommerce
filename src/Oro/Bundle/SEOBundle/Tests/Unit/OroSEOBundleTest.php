@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit;
 
+use Oro\Bundle\SEOBundle\DependencyInjection\Compiler\SitemapUrlProviderCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\KernelInterface;
 
@@ -32,6 +33,7 @@ class OroSEOBundleTest extends \PHPUnit_Framework_TestCase
                     Category::class => $fields,
                     Page::class => $fields,
                 ]),
+                new SitemapUrlProviderCompilerPass(),
             ],
             $container->getCompiler()->getPassConfig()->getBeforeOptimizationPasses()
         );
