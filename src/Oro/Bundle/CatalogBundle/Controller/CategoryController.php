@@ -93,23 +93,19 @@ class CategoryController extends Controller
         $handler = $this->get('oro_catalog.category_tree_handler');
 
         $root = $this->getMasterRootCategory();
-        $choices = $handler->getTreeItemList($root, true);
+        $treeItems = $handler->getTreeItemList($root, true);
 
         $selected = $request->get('selected', []);
 
         $collection = new TreeCollection();
-        $collection->source = array_intersect_key($choices, array_flip($selected));
+        $collection->source = array_intersect_key($treeItems, array_flip($selected));
 
         $form = $this->createForm(TreeMoveType::class, $collection, [
-            'source_config' => [
-                'choices' => $choices,
-            ],
-            'target_config' => [
-                'choices' => $choices,
-            ],
+            'tree_items' => $treeItems,
+            'tree_data' => $handler->createTree($root, true),
         ]);
 
-        $responseData = [];
+        $responseData = ['treeItems' => $treeItems,];
 
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
@@ -146,7 +142,7 @@ class CategoryController extends Controller
      */
     public function treeWidgetAction()
     {
-
+        return [];
     }
 
     /**
