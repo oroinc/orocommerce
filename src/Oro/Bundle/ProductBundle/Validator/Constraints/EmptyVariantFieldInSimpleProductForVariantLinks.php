@@ -4,17 +4,16 @@ namespace Oro\Bundle\ProductBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-class UniqueProductVariantLinks extends Constraint
+class EmptyVariantFieldInSimpleProductForVariantLinks extends Constraint
 {
-    /** @var string */
-    public $uniqueRequiredMessage = 'oro.product.product_variant_links.unique_variants_combination.message';
+    public $message = 'oro.product.product_variant_field.unique_variant_links_when_empty_variant_field_in_simple';
 
     /**
      * {@inheritdoc}
      */
     public function validatedBy()
     {
-        return UniqueProductVariantLinksValidator::ALIAS;
+        return EmptyVariantFieldInSimpleProductForVariantLinksValidator::ALIAS;
     }
 
     /**
