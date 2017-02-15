@@ -40,7 +40,10 @@ class OroShippingExtensionTest extends ExtensionTestCase
             'oro_shipping.datagrid.shipping_rule_actions_visibility_provider',
             'oro_shipping.converter.shipping_context_to_rule_values',
             'oro_shipping.listener.shipping_rule',
-            'oro_shipping.helper.filtered_datagrid_route'
+            'oro_shipping.helper.filtered_datagrid_route',
+            'oro_shipping.validator.shipping_rule_enabled',
+            'oro_shipping.checker.shipping_method_enabled',
+            'oro_shipping.checker.shipping_rule_enabled'
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 
