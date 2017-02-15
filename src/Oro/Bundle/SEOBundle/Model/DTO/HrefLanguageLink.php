@@ -2,14 +2,14 @@
 
 namespace Oro\Bundle\SEOBundle\Model\DTO;
 
-use Oro\Component\SEO\Model\DTO\UrlItemLinkInterface;
+use Oro\Component\SEO\Model\DTO\HrefLanguageLinkInterface;
 
-class UrlItemLink implements UrlItemLinkInterface
+class HrefLanguageLink implements HrefLanguageLinkInterface
 {
     /**
      * @var string
      */
-    private $rel;
+    private $href;
 
     /**
      * @var string
@@ -19,26 +19,29 @@ class UrlItemLink implements UrlItemLinkInterface
     /**
      * @var string
      */
-    private $href;
+    private $rel;
 
     /**
      * @param string $rel
      * @param string $hrefLanguage
      * @param string $href
      */
-    public function __construct($rel = null, $hrefLanguage = null, $href = null)
-    {
-        $this->rel = $rel;
-        $this->hrefLanguage = $hrefLanguage;
+    public function __construct(
+        $href,
+        $hrefLanguage = HrefLanguageLinkInterface::HREF_LANGUAGE_DEFAULT,
+        $rel = HrefLanguageLinkInterface::REL_ALTERNATE
+    ) {
         $this->href = $href;
+        $this->hrefLanguage = $hrefLanguage;
+        $this->rel = $rel;
     }
 
     /**
      * {@inheritdoc}
      */
-    public function getRel()
+    public function getHref()
     {
-        return $this->rel;
+        return $this->href;
     }
 
     /**
@@ -52,8 +55,8 @@ class UrlItemLink implements UrlItemLinkInterface
     /**
      * {@inheritdoc}
      */
-    public function getHref()
+    public function getRel()
     {
-        return $this->href;
+        return $this->rel;
     }
 }

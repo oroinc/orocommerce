@@ -27,7 +27,7 @@ interface UrlItemInterface
     public function getLastModification();
 
     /**
-     * @return Collection|UrlItemLinkInterface[]
+     * @return Collection|HrefLanguageLinkInterface[]
      */
     public function getLinks();
 }

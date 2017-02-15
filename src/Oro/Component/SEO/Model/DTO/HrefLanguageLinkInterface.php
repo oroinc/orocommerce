@@ -2,8 +2,11 @@
 
 namespace Oro\Component\SEO\Model\DTO;
 
-interface UrlItemLinkInterface
+interface HrefLanguageLinkInterface
 {
+    const HREF_LANGUAGE_DEFAULT = 'x';
+    const REL_ALTERNATE = 'alternate';
+
     /**
      * @return string
      */

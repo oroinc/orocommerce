@@ -4,8 +4,8 @@ namespace Oro\Bundle\SEOBundle\Tests\Unit\Model\DTO;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
+use Oro\Bundle\SEOBundle\Model\DTO\HrefLanguageLink;
 use Oro\Bundle\SEOBundle\Model\DTO\UrlItem;
-use Oro\Bundle\SEOBundle\Model\DTO\UrlItemLink;
 
 class UrlItemTest extends \PHPUnit_Framework_TestCase
 {
@@ -15,7 +15,7 @@ class UrlItemTest extends \PHPUnit_Framework_TestCase
         $changeFrequency = 'daily';
         $priority = 0.5;
         $lastModification = new \DateTime();
-        $links = new ArrayCollection([new UrlItemLink()]);
+        $links = new ArrayCollection([new HrefLanguageLink($location)]);
         $urlItem = new UrlItem($location, $changeFrequency, $priority, $lastModification, $links);
 
         $this->assertSame($location, $urlItem->getLocation());
