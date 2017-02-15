@@ -287,7 +287,6 @@ services:
             - '%oro_product.entity.product_variant_link.class%'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-product-variants-view, method: onBuildAfter }
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-product-variants-edit, method: onBuildAfter }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.product-product-variants-edit, method: onBuildBeforeHideUnsuitable }
 
     oro_product.validator.unique_variant_links:

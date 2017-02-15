@@ -12,7 +12,7 @@ oro:
         sku.placeholder: "Enter Item Number"
         quantity.label: Qty
         quantity.placeholder: "Qty #"
-        variant_fields.label: Variant Fields
+        variant_fields.label: Configurable Attributes
         inventory_status.label: Inventory Status
         status.label: Status
         type.label: Type

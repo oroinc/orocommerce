@@ -155,6 +155,7 @@ class ProductType extends AbstractType
                 [
                     'label' => 'oro.product.variant_fields.label',
                     'tooltip' => 'oro.product.form.tooltip.variant_fields',
+                    'required' => false,
                 ]
             )
             ->add(
