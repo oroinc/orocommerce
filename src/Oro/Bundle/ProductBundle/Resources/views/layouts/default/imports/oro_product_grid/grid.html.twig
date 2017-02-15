@@ -56,7 +56,7 @@
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'oroproduct/js/app/components/catalog-switch-component',
         'data-page-component-options': {
-            'parameterName': 'frontend-product-search-grid[row-view]'
+            'parameterName': 'frontend-product-search-grid'
         },
         class: attr.class|default('') ~ " catalog__filter-controls__item display-options pull-right"
     }) %}
@@ -69,19 +69,28 @@
             {% set query_parameters = app.request.query.all() %}
 
             {% set row_view = constant('Oro\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::VIEW_TILES') %}
+            {% set view_trigger = {
+                'row-view': 'gallery-view'
+            } %}
             <a href="{{ url_prefix ~ '?' ~ query_parameters|merge({'frontend-product-search-grid': {(row_view_key): row_view}})|url_encode }}"
-               class="buttons-group__el {% if current_row_view == row_view %}current{% endif %}" data-catalog-view-trigger="gallery-view">
+               class="buttons-group__el {% if current_row_view == row_view %}current{% endif %}" data-catalog-view-trigger="{{ view_trigger|json_encode }}">
                     <i class="fa-th fa--no-offset"></i>
             </a>
             {% set row_view = constant('Oro\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::VIEW_GRID') %}
+            {% set view_trigger = {
+                'row-view': 'list-view'
+            } %}
             <a href="{{ url_prefix ~ '?' ~ query_parameters|merge({'frontend-product-search-grid': {(row_view_key): row_view}})|url_encode }}"
                class="buttons-group__el {% if current_row_view == row_view %}current{% endif %}"
-               data-catalog-view-trigger="list-view">
+               data-catalog-view-trigger="{{ view_trigger|json_encode }}">
                     <i class="fa-th-list fa--no-offset"></i>
             </a>
             {% set row_view = constant('Oro\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::VIEW_LIST') %}
+            {% set view_trigger = {
+                'row-view': 'no-image-view'
+            } %}
             <a href="{{ url_prefix ~ '?' ~ query_parameters|merge({'frontend-product-search-grid': {(row_view_key): row_view}})|url_encode }}"
-               class="buttons-group__el {% if current_row_view == row_view %}current{% endif %}" data-catalog-view-trigger="no-image-view">
+               class="buttons-group__el {% if current_row_view == row_view %}current{% endif %}" data-catalog-view-trigger="{{ view_trigger|json_encode }}">
                     <i class="fa-bars fa--no-offset"></i>
             </a>
         </div>

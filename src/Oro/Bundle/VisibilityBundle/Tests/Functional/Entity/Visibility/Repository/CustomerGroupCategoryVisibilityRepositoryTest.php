@@ -10,9 +10,6 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibilit
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\CustomerGroupCategoryVisibilityRepository;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData;
 
-/**
- * @dbIsolation
- */
 class CustomerGroupCategoryVisibilityRepositoryTest extends WebTestCase
 {
     /**

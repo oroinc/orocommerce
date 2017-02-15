@@ -6,6 +6,9 @@ use Symfony\Component\HttpFoundation\Response;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+/**
+ * @dbIsolationPerTest
+ */
 class RedirectControllerTest extends WebTestCase
 {
     protected function setUp()

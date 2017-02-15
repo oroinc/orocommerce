@@ -264,9 +264,15 @@ oro:
             default.tooltip: "Enable the fields to be able to group products by these fields"
             priority.tooltip: "Click and drag to reorder"
 
+        non_deletable_enum_value:
+            tooltip: 'This value can not be deleted because it is used in the following configurable products: %skuList%'
+
         privilege:
             category:
                 catalog.label: Catalog
+
+        field_is_used_as_variant_field:
+            message: "Cannot remove field because it's used as a variant field in the following configurable products: %skuList%"
 
     product_unit.each:
         label:

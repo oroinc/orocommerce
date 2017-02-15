@@ -70,4 +70,8 @@
 
     @include badge($badge-size: $icon-size, $badge-f-size: 14px, $badge-radius: 3px);
   }
+
+  &__text {
+    display: inline-block;
+  }
 }

@@ -8,9 +8,6 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
 
-/**
- * @dbIsolation
- */
 class CombinedPriceListToCustomerRepositoryTest extends AbstractCombinedPriceListRelationRepositoryTest
 {
 

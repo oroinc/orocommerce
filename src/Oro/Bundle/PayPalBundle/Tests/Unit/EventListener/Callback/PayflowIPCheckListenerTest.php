@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\EventListener\Callback;
 
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowIPCheckListener;
@@ -9,6 +11,14 @@ use Oro\Bundle\PaymentBundle\Event\CallbackNotifyEvent;
 
 class PayflowIPCheckListenerTest extends \PHPUnit_Framework_TestCase
 {
+    /** @var PaymentMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $paymentMethodProvider;
+
+    public function setUp()
+    {
+        $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
+    }
+
     /**
      * @return array[]
      */
@@ -39,6 +49,12 @@ class PayflowIPCheckListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testOnNotifyAllowed($remoteAddress)
     {
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction
+            ->setAction('action')
+            ->setPaymentMethod('payment_method')
+            ->setResponse(['existing' => 'response']);
+
         $masterRequest = $this->createMock('Symfony\Component\HttpFoundation\Request');
         $masterRequest->method('getClientIp')->will($this->returnValue($remoteAddress));
 
@@ -48,11 +64,23 @@ class PayflowIPCheckListenerTest extends \PHPUnit_Framework_TestCase
 
         /** @var CallbackNotifyEvent|\PHPUnit_Framework_MockObject_MockObject $event */
         $event = $this->createMock('Oro\Bundle\PaymentBundle\Event\CallbackNotifyEvent');
+
         $event
             ->expects($this->never())
             ->method('markFailed');
 
-        $listener = new PayflowIPCheckListener($requestStack);
+        $event
+            ->expects($this->once())
+            ->method('getPaymentTransaction')
+            ->willReturn($paymentTransaction);
+
+        $this->paymentMethodProvider
+            ->expects(static::once())
+            ->method('hasPaymentMethod')
+            ->with('payment_method')
+            ->willReturn(true);
+
+        $listener = new PayflowIPCheckListener($requestStack, $this->paymentMethodProvider);
         $listener->onNotify($event);
     }
 
@@ -62,6 +90,12 @@ class PayflowIPCheckListenerTest extends \PHPUnit_Framework_TestCase
      */
     public function testOnNotifyNotAllowed($remoteAddress)
     {
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction
+            ->setAction('action')
+            ->setPaymentMethod('payment_method')
+            ->setResponse(['existing' => 'response']);
+
         $masterRequest = $this->createMock('Symfony\Component\HttpFoundation\Request');
         $masterRequest->method('getClientIp')->will($this->returnValue($remoteAddress));
 
@@ -75,12 +109,29 @@ class PayflowIPCheckListenerTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('markFailed');
 
-        $listener = new PayflowIPCheckListener($requestStack);
+        $event
+            ->expects($this->once())
+            ->method('getPaymentTransaction')
+            ->willReturn($paymentTransaction);
+
+        $this->paymentMethodProvider
+            ->expects(static::once())
+            ->method('hasPaymentMethod')
+            ->with('payment_method')
+            ->willReturn(true);
+
+        $listener = new PayflowIPCheckListener($requestStack, $this->paymentMethodProvider);
         $listener->onNotify($event);
     }
 
     public function testOnNotifyDontAllowIfMasterRequestEmpty()
     {
+        $paymentTransaction = new PaymentTransaction();
+        $paymentTransaction
+            ->setAction('action')
+            ->setPaymentMethod('payment_method')
+            ->setResponse(['existing' => 'response']);
+
         $masterRequest = null;
 
         /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject $requestStack */
@@ -93,7 +144,18 @@ class PayflowIPCheckListenerTest extends \PHPUnit_Framework_TestCase
             ->expects($this->once())
             ->method('markFailed');
 
-        $listener = new PayflowIPCheckListener($requestStack);
+        $event
+            ->expects($this->once())
+            ->method('getPaymentTransaction')
+            ->willReturn($paymentTransaction);
+
+        $this->paymentMethodProvider
+            ->expects(static::once())
+            ->method('hasPaymentMethod')
+            ->with('payment_method')
+            ->willReturn(true);
+
+        $listener = new PayflowIPCheckListener($requestStack, $this->paymentMethodProvider);
         $listener->onNotify($event);
     }
 }

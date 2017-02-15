@@ -60,8 +60,22 @@ class MoneyOrderView implements PaymentMethodViewInterface
     /**
      * {@inheritdoc}
      */
+    public function getAdminLabel()
+    {
+        return $this->config->getAdminLabel();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getPaymentMethodType()
     {
         return MoneyOrder::TYPE;
+    }
+
+    /** {@inheritdoc} */
+    public function getPaymentMethodIdentifier()
+    {
+        return $this->getPaymentMethodType();
     }
 }

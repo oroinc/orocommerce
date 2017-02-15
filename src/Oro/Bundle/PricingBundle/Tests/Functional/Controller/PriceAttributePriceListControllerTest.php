@@ -9,9 +9,6 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceAttributePri
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\Intl\Intl;
 
-/**
- * @dbIsolation
- */
 class PriceAttributePriceListControllerTest extends WebTestCase
 {
     const PRICE_ATTRIBUTE_PRICE_LIST_NAME = 'MSRP';

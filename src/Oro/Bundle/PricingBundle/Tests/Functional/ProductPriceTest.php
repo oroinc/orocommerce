@@ -8,9 +8,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 
-/**
- * @dbIsolation
- */
 class ProductPriceTest extends WebTestCase
 {
     protected function setUp()

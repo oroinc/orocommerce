@@ -2,44 +2,33 @@
 
 namespace Oro\Bundle\PaymentBundle\Formatter;
 
-use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
-
-use Symfony\Component\Translation\TranslatorInterface;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
 
 class PaymentMethodLabelFormatter
 {
     /**
-     * @var PaymentMethodViewRegistry
+     * @var PaymentMethodViewProviderInterface
      */
-    protected $paymentMethodViewRegistry;
+    protected $paymentMethodViewProvider;
 
     /**
-     * @var TranslatorInterface
+     * @param PaymentMethodViewProviderInterface $paymentMethodViewProvider
      */
-    protected $translator;
-
-    /**
-     * @param PaymentMethodViewRegistry $paymentMethodViewRegistry
-     * @param TranslatorInterface $translator
-     */
-    public function __construct(
-        PaymentMethodViewRegistry $paymentMethodViewRegistry,
-        TranslatorInterface $translator
-    ) {
-        $this->paymentMethodViewRegistry = $paymentMethodViewRegistry;
-        $this->translator = $translator;
+    public function __construct(PaymentMethodViewProviderInterface $paymentMethodViewProvider)
+    {
+        $this->paymentMethodViewProvider = $paymentMethodViewProvider;
     }
-
 
     /**
      * @param string $paymentMethod
-     * @param bool $shortLabel
+     * @param bool   $shortLabel
+     *
      * @return string
      */
     public function formatPaymentMethodLabel($paymentMethod, $shortLabel = true)
     {
         try {
-            $paymentMethodView = $this->paymentMethodViewRegistry->getPaymentMethodView($paymentMethod);
+            $paymentMethodView = $this->paymentMethodViewProvider->getPaymentMethodView($paymentMethod);
 
             return $shortLabel ? $paymentMethodView->getShortLabel() : $paymentMethodView->getLabel();
         } catch (\InvalidArgumentException $e) {
@@ -49,21 +38,15 @@ class PaymentMethodLabelFormatter
 
     /**
      * @param string $paymentMethod
+     *
      * @return string
      */
     public function formatPaymentMethodAdminLabel($paymentMethod)
     {
-        $adminPaymentMethodLabel = $this->translator->trans(sprintf('oro.payment.admin.%s.label', $paymentMethod));
-        $adminPaymentMethodShortLabel = $this->formatPaymentMethodLabel($paymentMethod);
-
-        if ($adminPaymentMethodLabel === $adminPaymentMethodShortLabel) {
-            return $adminPaymentMethodLabel;
-        } else {
-            return sprintf(
-                '%s (%s)',
-                $adminPaymentMethodShortLabel,
-                $adminPaymentMethodLabel
-            );
+        try {
+            return $this->paymentMethodViewProvider->getPaymentMethodView($paymentMethod)->getAdminLabel();
+        } catch (\InvalidArgumentException $e) {
+            return '';
         }
     }
 }

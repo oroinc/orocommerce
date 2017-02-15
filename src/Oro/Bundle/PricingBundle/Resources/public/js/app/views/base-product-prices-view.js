@@ -6,6 +6,7 @@ define(function(require) {
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var layout = require('oroui/js/layout');
     var BaseModel = require('oroui/js/app/models/base/model');
+    var PricesHelper = require('oropricing/js/app/prices-helper');
     var _ = require('underscore');
     var $ = require('jquery');
 
@@ -118,22 +119,8 @@ define(function(require) {
         },
 
         setPrices: function() {
-            this.prices = {};
+            this.prices = PricesHelper.preparePrices(this.model.get('prices'));
             this.foundPrice = {};
-
-            _.each(this.model.get('prices'), function(price) {
-                if (!this.prices[price.unit]) {
-                    this.prices[price.unit] = [];
-                }
-                this.prices[price.unit].push(price);
-            }, this);
-
-            //sort for optimize findPrice
-            _.each(this.prices, function(unitPrices, unit) {
-                unitPrices = _.sortBy(unitPrices, 'quantity');
-                unitPrices.reverse();
-                this.prices[unit] = unitPrices;
-            }, this);
 
             if (!this.rendered) {
                 this.rendered = true;
@@ -174,9 +161,7 @@ define(function(require) {
                 if (changeQuantity) {
                     price = _.last(this.prices[unit]) || null;//sorted by quantity, get smallest
                 } else {
-                    price = _.find(this.prices[unit], function(price) {
-                        return price.quantity <= quantity;
-                    }) || null;
+                    price = PricesHelper.findPrice(this.prices, unit, quantity);
                 }
 
                 this.foundPrice[foundKey] = price;

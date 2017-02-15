@@ -15,9 +15,6 @@ use Oro\Bundle\VisibilityBundle\Visibility\Provider\ProductVisibilityProvider;
 use Oro\Bundle\WebsiteBundle\Migrations\Data\ORM\LoadWebsiteData as LoadWebsiteDataMigration;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
-/**
- * @dbIsolation
- */
 class ProductVisibilityProviderTest extends WebTestCase
 {
     const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.product_visibility';

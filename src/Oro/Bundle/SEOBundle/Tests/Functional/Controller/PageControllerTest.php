@@ -10,7 +10,6 @@ use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * @group segfault
- * @dbIsolation
  */
 class PageControllerTest extends WebTestCase
 {

@@ -1,20 +1,4 @@
 services:
-    oro_rfp.form.type.default_request_status:
-        class: 'Oro\Bundle\RFPBundle\Form\Type\DefaulRequestStatusType'
-        arguments:
-            - "@doctrine"
-        calls:
-            - [setRequestStatusClass, ['%oro_rfp.entity.request.status.class%']]
-        tags:
-            - { name: form.type, alias: oro_rfp_default_request_status }
-
-    oro_rfp.form.type.request_status_with_deleted_select:
-        class: 'Oro\Bundle\RFPBundle\Form\Type\RequestStatusWithDeletedSelectType'
-        calls:
-            - [setEntityClass, ['%oro_rfp.entity.request.status.class%']]
-        tags:
-            - { name: form.type, alias: oro_rfp_request_status_with_deleted_select }
-
     # Request form types
     oro_rfp.form.type.request:
         class: 'Oro\Bundle\RFPBundle\Form\Type\RequestType'
@@ -23,34 +7,12 @@ services:
         tags:
             - { name: form.type, alias: oro_rfp_request }
 
-    oro_rfp.form.type.request_status_select:
-        class: 'Oro\Bundle\RFPBundle\Form\Type\RequestStatusSelectType'
-        calls:
-            - [setEntityClass, ['%oro_rfp.entity.request.status.class%']]
-        tags:
-            - { name: form.type, alias: oro_rfp_request_status_select }
-
     oro_rfp.form.type.user_select:
         class: 'Oro\Bundle\RFPBundle\Form\Type\UserSelectType'
         arguments:
             - "@doctrine"
         tags:
             - { name: form.type, alias: oro_rfp_user_select }
-
-    oro_rfp.form.type.request_status_translation:
-        class: 'Oro\Bundle\RFPBundle\Form\Type\RequestStatusTranslationType'
-        tags:
-            - { name: form.type, alias: oro_rfp_request_status_translation }
-
-    oro_rfp.form.type.request_status:
-        class: 'Oro\Bundle\RFPBundle\Form\Type\RequestStatusType'
-        arguments:
-            - "@oro_config.user"
-            - "@oro_locale.settings"
-        calls:
-            - [setDataClass, ['%oro_rfp.entity.request.status.class%']]
-        tags:
-            - { name: form.type, alias: oro_rfp_request_status }
 
     oro_rfp.form.type.request_product:
         class: 'Oro\Bundle\RFPBundle\Form\Type\RequestProductType'
@@ -90,7 +52,6 @@ services:
             - "@doctrine"
         calls:
             - [setDataClass, ['%oro_rfp.entity.request.class%']]
-            - [setRequestStatusClass, ['%oro_rfp.entity.request.status.class%']]
         tags:
             - { name: form.type, alias: oro_rfp_frontend_request }
 
