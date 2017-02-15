@@ -2,14 +2,9 @@ parameters:
     oro_rfp.entity.request.class: Oro\Bundle\RFPBundle\Entity\Request
     oro_rfp.entity.request_product.class: Oro\Bundle\RFPBundle\Entity\RequestProduct
     oro_rfp.entity.request_product_item.class: Oro\Bundle\RFPBundle\Entity\RequestProductItem
-    oro_rfp.entity.request.status.class: Oro\Bundle\RFPBundle\Entity\RequestStatus
+    oro_rfp.entity.request.additional_note.class: Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote
 
 services:
-    oro_rfp.datagrid.action_permission_provider:
-        class: 'Oro\Bundle\RFPBundle\Datagrid\ActionPermissionProvider'
-        arguments:
-            - "@oro_config.manager"
-
     oro_rfp.mailer.processor:
         class: 'Oro\Bundle\RFPBundle\Mailer\Processor'
         public: false
@@ -209,3 +204,18 @@ services:
            - '@doctrine'
        tags:
            - { name: oro_multi_currency.currency_checker_provider }
+
+    oro_rfp.acl.voter.frontend_request:
+        class: 'Oro\Bundle\RFPBundle\Acl\Voter\FrontendRequestVoter'
+        public: false
+        arguments:
+            - '@oro_frontend.provider.current_application'
+            - '@oro_workflow.manager'
+        tags:
+            - { name: security.voter }
+
+    oro_rfp.datagrid.listener.column:
+        class: 'Oro\Bundle\RFPBundle\EventListener\RFPDatagridColumnListener'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.rfp-requests-grid, method: onBuildBefore }
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.frontend-requests-grid, method: onBuildBefore }

@@ -1,0 +1,41 @@
+<?php
+
+namespace Oro\Bundle\PayPalBundle\Tests\Unit\Method\Config;
+
+use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfig;
+use Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfigInterface;
+use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
+use Oro\Component\Testing\Unit\EntityTrait;
+
+class PayPalExpressCheckoutConfigTest extends AbstractPayPalConfigTest
+{
+    use EntityTrait;
+
+    /**
+     * @var PayPalExpressCheckoutConfigInterface
+     */
+    protected $config;
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function getPaymentConfig()
+    {
+        $params = [
+            PayPalExpressCheckoutConfig::LABEL_KEY => 'test label',
+            PayPalExpressCheckoutConfig::SHORT_LABEL_KEY => 'test short label',
+            PayPalExpressCheckoutConfig::ADMIN_LABEL_KEY => 'test admin label',
+            PayPalExpressCheckoutConfig::PAYMENT_METHOD_IDENTIFIER_KEY => 'test_payment_method_identifier',
+            PayPalExpressCheckoutConfig::TEST_MODE_KEY => true,
+            PayPalExpressCheckoutConfig::PURCHASE_ACTION_KEY => 'string',
+            PayPalExpressCheckoutConfig::CREDENTIALS_KEY => [
+                Option\Vendor::VENDOR => 'string',
+                Option\User::USER => 'string',
+                Option\Password::PASSWORD => 'string',
+                Option\Partner::PARTNER => 'string'
+            ],
+        ];
+
+        return new PayPalExpressCheckoutConfig($params);
+    }
+}

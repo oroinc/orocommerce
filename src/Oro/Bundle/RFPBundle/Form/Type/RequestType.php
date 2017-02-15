@@ -63,9 +63,6 @@ class RequestType extends AbstractType
                 'label' => 'oro.rfp.request.customer.label',
                 'required' => false,
             ])
-            ->add('status', RequestStatusSelectType::NAME, [
-                'label' => 'oro.rfp.request.status.label',
-            ])
             ->add('note', 'textarea', [
                 'label' => 'oro.rfp.request.note.label',
                 'required' => false,
