@@ -11,9 +11,6 @@ define(function(require) {
             var pricesByUnit = {};
             _.each(prices, function(price) {
                 var unit = price.unit;
-                if (price.quantity === 1) {
-                    price.quantity = 5;
-                }
                 pricesByUnit[unit] = pricesByUnit[unit] || [];
                 pricesByUnit[unit].push(price);
             });

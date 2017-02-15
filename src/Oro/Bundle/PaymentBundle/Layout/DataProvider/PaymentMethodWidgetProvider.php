@@ -3,14 +3,30 @@
 namespace Oro\Bundle\PaymentBundle\Layout\DataProvider;
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodAwareInterface;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
 
 class PaymentMethodWidgetProvider
 {
     const NAME = 'oro_payment_method_widget_provider';
 
     /**
+     * @var PaymentMethodViewProviderInterface
+     */
+    protected $paymentMethodViewProvider;
+
+
+    /**
+     * @param PaymentMethodViewProviderInterface $paymentMethodViewProvider
+     */
+    public function __construct(PaymentMethodViewProviderInterface $paymentMethodViewProvider)
+    {
+        $this->paymentMethodViewProvider = $paymentMethodViewProvider;
+    }
+
+    /**
      * @param object $entity
      * @param string $suffix
+     *
      * @return string
      */
     public function getPaymentMethodWidgetName($entity, $suffix)
@@ -22,7 +38,8 @@ class PaymentMethodWidgetProvider
                 PaymentMethodAwareInterface::class
             ));
         }
+        $paymentMethodView = $this->paymentMethodViewProvider->getPaymentMethodView($entity->getPaymentMethod());
 
-        return sprintf('_%s_%s_widget', $entity->getPaymentMethod(), $suffix);
+        return sprintf('_%s%s', $suffix, $paymentMethodView->getBlock());
     }
 }

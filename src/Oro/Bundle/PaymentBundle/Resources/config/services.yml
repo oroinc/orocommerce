@@ -23,8 +23,7 @@ services:
     oro_payment.formatter.payment_method_label:
         class: 'Oro\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter'
         arguments:
-            - "@oro_payment.payment_method.view.registry"
-            - "@translator"
+            - "@oro_payment.payment_method_view.composite_provider"
 
     oro_payment.twig.payment_method_extension:
         class: 'Oro\Bundle\PaymentBundle\Twig\PaymentMethodExtension'
@@ -51,13 +50,13 @@ services:
     oro_payment.method.provider.method_provider:
         class: 'Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider'
         arguments:
-            - '@oro_payment.payment_method.registry'
+            - '@oro_payment.payment_method_provider.registry'
             - '@oro_payment.payment_methods_configs.rules_provider_basic'
 
     oro_payment.provider.methods_provider:
         class: 'Oro\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodViewsProvider'
         arguments:
-            - '@oro_payment.payment_method.view.registry'
+            - '@oro_payment.payment_method_view.composite_provider'
             - '@oro_payment.method.provider.method_provider'
             - '@oro_payment.provider.payment_transaction'
         tags:
@@ -65,6 +64,8 @@ services:
 
     oro_payment.provider.method_widget_provider:
         class: 'Oro\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodWidgetProvider'
+        arguments:
+            - '@oro_payment.payment_method_view.composite_provider'
         tags:
             - { name: layout.data_provider, alias: oro_payment_method_widget_provider }
 
@@ -95,7 +96,7 @@ services:
         abstract: true
         arguments:
             - '@oro_action.expression.context_accessor'
-            - '@oro_payment.payment_method.registry'
+            - '@oro_payment.payment_method_provider.registry'
             - '@oro_payment.provider.payment_transaction'
             - '@router'
         calls:
@@ -148,17 +149,10 @@ services:
         arguments:
             - '@property_accessor'
 
-    oro_payment.provider.payment_context:
-        class: 'Oro\Bundle\PaymentBundle\Provider\PaymentContextProvider'
-        public: false
-        arguments:
-            - '@oro_payment.provider.address_extractor'
-            - '@oro_pricing.user_currency_manager'
-
     oro_payment.condition.payment_method_supports:
         class: 'Oro\Bundle\PaymentBundle\Condition\PaymentMethodSupports'
         arguments:
-            - '@oro_payment.payment_method.registry'
+            - '@oro_payment.payment_method_provider.registry'
         tags:
             - { name: oro_action.condition, alias: 'payment_method_supports' }
 
@@ -192,20 +186,18 @@ services:
     oro_payment.condition.require_payment_redirect:
         class: 'Oro\Bundle\PaymentBundle\Condition\RequirePaymentRedirect'
         arguments:
-            - '@oro_payment.payment_method.registry'
+            - '@oro_payment.payment_method_provider.registry'
             - '@event_dispatcher'
         tags:
             - { name: oro_action.condition, alias: 'require_payment_redirect' }
 
-    oro_payment.payment_method.registry:
-        class: 'Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry'
+    oro_payment.payment_method_provider.registry:
+        class: 'Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistry'
         public: false
 
-    oro_payment.payment_method.view.registry:
-        class: 'Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry'
+    oro_payment.payment_method_view.composite_provider:
+        class: 'Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider'
         public: false
-        arguments:
-            - '@oro_payment.payment_method.registry'
 
     oro_payment.provider.extract_options:
         class: 'Oro\Bundle\PaymentBundle\Provider\ExtractOptionsProvider'
@@ -235,6 +227,18 @@ services:
         parent: oro_entity.abstract_repository
         arguments:
             - 'Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule'
+
+    oro_payment.repository.payment_method_config:
+        class: 'Oro\Bundle\PaymentBundle\Entity\Repository\PaymentMethodConfigRepository'
+        parent: oro_entity.abstract_repository
+        arguments:
+            - 'Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig'
+
+    oro_payment.repository.payment_transaction:
+        class: 'Oro\Bundle\PaymentBundle\Entity\Repository\PaymentTransactionRepository'
+        parent: oro_entity.abstract_repository
+        arguments:
+            - 'Oro\Bundle\PaymentBundle\Entity\PaymentTransaction'
 
     oro_payment.payment_methods_configs.rules_provider_basic:
         class: 'Oro\Bundle\PaymentBundle\Provider\BasicPaymentMethodsConfigsRulesProvider'
@@ -266,3 +270,16 @@ services:
             - '@oro_payment.query_designer.select_query_converter'
             - '@doctrine'
             - '@oro_entity.helper.field_helper'
+
+    oro_payment.method.event_listener.method_renaming:
+        class: 'Oro\Bundle\PaymentBundle\Method\EventListener\MethodRenamingListener'
+        arguments:
+            - '@oro_payment.repository.payment_method_config'
+            - '@oro_payment.repository.payment_transaction'
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.method_renaming, method: onMethodRename}
+
+    oro_payment.method.event.dispatcher.method_renaming:
+        class: 'Oro\Bundle\PaymentBundle\Method\Event\BasicMethodRenamingEventDispatcher'
+        arguments:
+            - '@event_dispatcher'

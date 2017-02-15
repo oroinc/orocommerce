@@ -10,6 +10,9 @@ use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\PaymentBundle\Migrations\Schema\v1_6\OroPaymentBundle;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareInterface
 {
     /**
@@ -22,7 +25,7 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
      */
     public function getMigrationVersion()
     {
-        return 'v1_7';
+        return 'v1_8';
     }
 
     /**
@@ -75,7 +78,6 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addColumn('updated_at', 'datetime', ['comment' => '(DC2Type:datetime)']);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['access_identifier', 'access_token'], 'oro_pay_trans_access_uidx');
-        $table->addIndex(['source_payment_transaction']);
     }
 
     /**
@@ -91,7 +93,6 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addColumn('method', 'string', ['length' => 255]);
         $table->addColumn('options', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['configs_rule_id'], 'idx_oro_payment_method_config_configs_rule_id', []);
     }
 
     /**
@@ -105,8 +106,8 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('rule_id', 'integer', []);
         $table->addColumn('currency', 'string', ['notnull' => true, 'length' => 3]);
+        $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['rule_id'], 'idx_oro_payment_mtds_cfgs_rl_rule_id', []);
 
         $this->activityExtension->addActivityAssociation(
             $schema,
@@ -129,9 +130,6 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addColumn('country_code', 'string', ['length' => 2]);
         $table->addColumn('region_text', 'string', ['notnull' => false, 'length' => 255]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['configs_rule_id'], 'idx_oro_payment_mtds_cfgs_rl_d_configs_rule_id', []);
-        $table->addIndex(['region_code'], 'idx_oro_payment_mtds_cfgs_rl_d_region_code', []);
-        $table->addIndex(['country_code'], 'idx_oro_payment_mtds_cfgs_rl_d_country_code', []);
     }
 
     /**
@@ -146,7 +144,6 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addColumn('destination_id', 'integer', []);
         $table->addColumn('name', 'text', []);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['destination_id'], 'idx_oro_payment_mtdscfgsrl_dst_pc_destination_id', []);
     }
 
     /**
@@ -212,6 +209,13 @@ class OroPaymentBundleInstaller implements Installation, ActivityExtensionAwareI
             ['rule_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_organization'),
+            ['organization_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
     }
 

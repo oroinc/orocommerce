@@ -1,0 +1,86 @@
+services:
+    oro_paypal.event_listener.callback.payflow_gateway.credit_card:
+        class: 'Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowListener'
+        lazy: true
+        arguments:
+            - '@session'
+            - '@oro_paypal.method.provider.payflow_gateway.credit_card'
+        calls:
+            - ['setLogger', ['@logger']]
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.callback.error, method: onError }
+            - { name: kernel.event_listener, event: oro_payment.callback.notify, method: onNotify }
+
+    oro_paypal.event_listener.callback.payments_pro.credit_card:
+        class: 'Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowListener'
+        lazy: true
+        arguments:
+            - '@session'
+            - '@oro_paypal.method.provider.payments_pro.credit_card'
+        calls:
+            - ['setLogger', ['@logger']]
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.callback.error, method: onError }
+            - { name: kernel.event_listener, event: oro_payment.callback.notify, method: onNotify }
+
+    oro_paypal.event_listener.callback.payflow_gateway.express_checkout:
+        class: 'Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowExpressCheckoutListener'
+        lazy: true
+        arguments:
+            - '@oro_paypal.method.provider.payflow_gateway.express_checkout'
+        calls:
+            - ['setLogger', ['@logger']]
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.callback.error, method: onError }
+            - { name: kernel.event_listener, event: oro_payment.callback.return, method: onReturn }
+
+    oro_paypal.event_listener.callback.payments_pro.express_checkout:
+        class: 'Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowExpressCheckoutListener'
+        lazy: true
+        arguments:
+            - '@oro_paypal.method.provider.payments_pro.express_checkout'
+        calls:
+            - ['setLogger', ['@logger']]
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.callback.error, method: onError }
+            - { name: kernel.event_listener, event: oro_payment.callback.return, method: onReturn }
+
+    oro_paypal.event_listener.callback.payflow_gateway.express_checkout.redirect:
+        class: 'Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowExpressCheckoutRedirectListener'
+        lazy: true
+        arguments:
+            - '@session'
+            - '@oro_paypal.method.provider.payflow_gateway.express_checkout'
+        tags:
+            # Priority of this listener should always be less then priority of oro_paypal.event_listener.callback.payflow_gateway.express_checkout
+            - { name: kernel.event_listener, event: oro_payment.callback.return, method: onReturn, priority: -100 }
+
+    oro_paypal.event_listener.callback.payments_pro.express_checkout.redirect:
+        class: 'Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowExpressCheckoutRedirectListener'
+        lazy: true
+        arguments:
+            - '@session'
+            - '@oro_paypal.method.provider.payments_pro.express_checkout'
+        tags:
+            # Priority of this listener should always be less then priority of oro_paypal.event_listener.callback.payments_pro.express_checkout
+            - { name: kernel.event_listener, event: oro_payment.callback.return, method: onReturn, priority: -100 }
+
+    oro_paypal.event_listener.ip_check.payflow_gateway.credit_card:
+        class: 'Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowIPCheckListener'
+        lazy: true
+        arguments:
+            - '@request_stack'
+            - '@oro_paypal.method.provider.payflow_gateway.credit_card'
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.callback.notify, method: onNotify, priority: 255 }
+            - { name: kernel.event_listener, event: oro_payment.callback.notify, method: onNotify, priority: 255 }
+
+    oro_paypal.event_listener.ip_check.payments_pro.credit_card:
+        class: 'Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowIPCheckListener'
+        lazy: true
+        arguments:
+            - '@request_stack'
+            - '@oro_paypal.method.provider.payments_pro.credit_card'
+        tags:
+            - { name: kernel.event_listener, event: oro_payment.callback.notify, method: onNotify, priority: 255 }
+            - { name: kernel.event_listener, event: oro_payment.callback.notify, method: onNotify, priority: 255 }

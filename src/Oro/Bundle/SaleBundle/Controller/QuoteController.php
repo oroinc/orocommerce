@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\SaleBundle\Controller;
 
-use Oro\Bundle\SaleBundle\Event\QuoteEvent;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -22,9 +21,12 @@ use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 use Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider;
 use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
+use Oro\Bundle\SaleBundle\Event\QuoteEvent;
+use Oro\Bundle\SaleBundle\Storage\ReturnRouteDataStorage;
 
 class QuoteController extends Controller
 {
+    const REDIRECT_BACK_FLAG = 'redirect_back';
     /**
      * @Route("/view/{id}", name="oro_sale_quote_view", requirements={"id"="\d+"})
      * @Template
@@ -77,6 +79,14 @@ class QuoteController extends Controller
     {
         $quote = new Quote();
         $quote->setWebsite($this->get('oro_website.manager')->getDefaultWebsite());
+
+        if ($request->get(self::REDIRECT_BACK_FLAG, false)) {
+            return $this->handleRequestAndRedirectBack(
+                $request,
+                $quote,
+                'OroSaleBundle:Quote:createWithReturn.html.twig'
+            );
+        }
 
         if (!$request->get(ProductDataStorage::STORAGE_KEY, false)) {
             return $this->update($quote, $request);
@@ -148,14 +158,14 @@ class QuoteController extends Controller
             $this->createForm(QuoteType::NAME, $quote),
             function (Quote $quote) {
                 return [
-                    'route'         => 'oro_sale_quote_update',
-                    'parameters'    => ['id' => $quote->getId()]
+                    'route' => 'oro_sale_quote_update',
+                    'parameters' => ['id' => $quote->getId()]
                 ];
             },
             function (Quote $quote) {
                 return [
-                    'route'         => 'oro_sale_quote_view',
-                    'parameters'    => ['id' => $quote->getId()]
+                    'route' => 'oro_sale_quote_view',
+                    'parameters' => ['id' => $quote->getId()]
                 ];
             },
             $this->get('translator')->trans('oro.sale.controller.quote.saved.message'),
@@ -200,5 +210,53 @@ class QuoteController extends Controller
     protected function getQuoteHandler()
     {
         return $this->get('oro_sale.service.quote_request_handler');
+    }
+
+    /**
+     * Handles request which requires get back after Quote creating
+     *
+     * TODO: This method should be removed or at least refactored in scope of BAP-13529
+     *
+     * @param Request $request
+     * @param Quote $quote
+     * @param string $template
+     *
+     * @return RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     */
+    private function handleRequestAndRedirectBack(Request $request, Quote $quote, $template)
+    {
+        // Handle form validate and fetch pre-response
+        $updateResponse = $this->update($quote, $request);
+
+        /** @var ReturnRouteDataStorage $redirectStorage */
+        $redirectStorage = $this->get('oro_sale.storage.return_route_storage');
+        $routeToRedirectBack = $redirectStorage->get();
+
+        if ($this->isRequestHandledSuccessfully($updateResponse)) {
+            // We don't need storage data anymore, so clean it and return user to route which we have to
+            $redirectStorage->remove();
+            return $this->redirectToRoute($routeToRedirectBack['route'], $routeToRedirectBack['parameters']);
+        } else {
+            // Render form with limited number of actions because we will redirect back
+            return $this->render(
+                $template,
+                array_merge($updateResponse, [
+                    'return_route' => $routeToRedirectBack
+                ])
+            );
+        }
+    }
+
+    /**
+     * Returns if request is checked by handler
+     *
+     * TODO: This method should be removed or at least refactored in scope of BAP-13529
+     *
+     * @param $updateResponse
+     * @return bool
+     */
+    private function isRequestHandledSuccessfully($updateResponse)
+    {
+        return $updateResponse instanceof RedirectResponse;
     }
 }

@@ -1,5 +1,5 @@
 include:
-    - ../../../../../CustomerBundle/Tests/Behat/Features/Fixtures/BuyerCustomerFixture.yml
+    - ../../../../../../../../../customer-portal/src/Oro/Bundle/CustomerBundle/Tests/Behat/Features/Fixtures/BuyerCustomerFixture.yml
 
 Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision:
     precision1:
