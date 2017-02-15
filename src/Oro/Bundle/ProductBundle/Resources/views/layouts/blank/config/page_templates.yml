@@ -1,19 +1,2 @@
-templates:
-    -
-        label: Initial Product template
-        description: Initial Product template
-        route_name: oro_product_frontend_product_view
-        key: product_initial_template
-    -
-        label: Secondary Product template
-        description: Secondary Product template
-        route_name: oro_product_frontend_product_view
-        key: product_secondary_template
-    -
-        label: CMS sample template
-        description: CMS sample template
-        route_name: oro_cms_frontend_page_view
-        key: cms_template
 titles:
-    oro_product_frontend_product_view: Product view
-    oro_cms_frontend_page_view: CMS view
+    oro_product_frontend_product_view: Product View
