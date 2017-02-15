@@ -9,6 +9,8 @@ services:
         arguments:
             - "@oro_sale.provider.quote_address_security"
             - '@oro_config.global'
+            - '@oro_website.manager'
+            - '@oro_sale.service.quote_request_handler'
         calls:
             - [setDataClass, ['%oro_sale.entity.quote.class%']]
         tags:
