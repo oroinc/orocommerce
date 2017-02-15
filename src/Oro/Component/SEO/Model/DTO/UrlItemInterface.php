@@ -2,6 +2,8 @@
 
 namespace Oro\Component\SEO\Model\DTO;
 
+use Doctrine\Common\Collections\Collection;
+
 interface UrlItemInterface
 {
     /**
@@ -23,4 +25,9 @@ interface UrlItemInterface
      * @return null|string
      */
     public function getLastModification();
+
+    /**
+     * @return Collection|UrlItemLinkInterface[]
+     */
+    public function getLinks();
 }
