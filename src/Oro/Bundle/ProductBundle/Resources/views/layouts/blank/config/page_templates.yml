@@ -15,5 +15,5 @@ templates:
         route_name: oro_cms_frontend_page_view
         key: cms_template
 titles:
-    oro_product_frontend_product_view: Product frontend view
-    oro_cms_frontend_page_view: CMS frontend view
+    oro_product_frontend_product_view: Product view
+    oro_cms_frontend_page_view: CMS view
