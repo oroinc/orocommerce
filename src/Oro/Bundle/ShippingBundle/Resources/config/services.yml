@@ -8,6 +8,8 @@ parameters:
     oro_shipping.entity.weight_unit.class: Oro\Bundle\ShippingBundle\Entity\WeightUnit
     oro_shipping.entity.product_shipping_options.class: Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions
     oro_shipping.entity.shipping_methods_configs_rule.class: Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule
+    oro_shipping.rule_grid_route_name: 'shipping-methods-configs-rule-grid'
+    oro_shipping.rule_grid_name: 'oro_shipping_methods_configs_rule'
 
 services:
     oro_shipping.shipping_rule.manager.api:
@@ -375,6 +377,13 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_shipping.method_removal, method: onMethodRemove }
             - { name: kernel.event_listener, event: oro_shipping.method_type_removal, method: onMethodTypeRemove }
+
+    oro_shipping.helper.filtered_datagrid_route:
+        class: 'Oro\Bundle\DataGridBundle\Tools\FilteredDatagridRouteHelper'
+        arguments:
+                - '%oro_shipping.rule_grid_route_name%'
+                - '%oro_shipping.rule_grid_name%'
+                - '@oro_datagrid.helper.route'
 
     oro_shipping.checker.shipping_method_enabled:
         class: 'Oro\Bundle\ShippingBundle\Checker\ShippingMethodEnabledByIdentifierChecker'
