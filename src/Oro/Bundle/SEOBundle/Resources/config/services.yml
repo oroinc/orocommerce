@@ -86,3 +86,18 @@ services:
 
     oro_seo.provider.sitemap_url_provider_registry:
         class: Oro\Bundle\SEOBundle\Provider\SitemapUrlProviderRegistry
+
+    oro_seo.tools.sitemap_dumper:
+        class: Oro\Bundle\SEOBundle\Tools\SitemapDumper
+        arguments:
+            - '@oro_seo.provider.sitemap_url_provider_registry'
+
+    oro_seo.form.type.sitemap_changefreq:
+        class: Oro\Bundle\SEOBundle\Form\Type\SitemapChangefreqType
+        tags:
+            - { name: form.type, alias: oro_sitemap_changefreq }
+
+    oro_seo.form.type.sitemap_priority:
+        class: Oro\Bundle\SEOBundle\Form\Type\SitemapPriorityType
+        tags:
+            - { name: form.type, alias: oro_sitemap_priority }

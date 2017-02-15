@@ -1,6 +1,31 @@
 oro:
     seo:
         label: SEO
+        system_configuration:
+            groups:
+                sitemap.title: Sitemap
+                sitemap_default.title: Default
+                sitemap_product.title: Product
+                sitemap_category.title: Category
+                sitemap_page.title: Page
+            fields:
+                changefreq:
+                    choice:
+                        always.label: Always
+                        hourly.label: Hourly
+                        daily.label: Daily
+                        weekly.label: Weekly
+                        monthly.label: Monthly
+                        yearly.label: Yearly
+                        never.label: Never
+                changefreq_default.label: Changefreq
+                changefreq_product.label: Changefreq
+                changefreq_category.label: Changefreq
+                changefreq_page.label: Changefreq
+                priority_product.label: Priority
+                priority_category.label: Priority
+                priority_page.label: Priority
+
 
 oro.product.meta_descriptions.label: Meta description
 oro.product.meta_keywords.label: Meta keywords
