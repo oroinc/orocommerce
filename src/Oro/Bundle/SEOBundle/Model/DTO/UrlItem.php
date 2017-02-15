@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\SEOBundle\Model\DTO;
 
-class UrlItem
+use Oro\Component\SEO\Model\DTO\UrlItemInterface;
+
+class UrlItem implements UrlItemInterface
 {
     /**
      * @var string
@@ -43,7 +45,7 @@ class UrlItem
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getLocation()
     {
@@ -51,7 +53,7 @@ class UrlItem
     }
 
     /**
-     * @return null|string
+     * {@inheritdoc}
      */
     public function getChangeFrequency()
     {
@@ -59,7 +61,7 @@ class UrlItem
     }
 
     /**
-     * @return null|float
+     * {@inheritdoc}
      */
     public function getPriority()
     {
@@ -67,7 +69,7 @@ class UrlItem
     }
 
     /**
-     * @return null|string
+     * {@inheritdoc}
      */
     public function getLastModification()
     {

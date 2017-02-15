@@ -1,15 +1,15 @@
 <?php
 
-namespace Oro\Bundle\SEOBundle\Provider;
+namespace Oro\Component\SEO\Provider;
 
-use Oro\Bundle\SEOBundle\Model\DTO\UrlItem;
+use Oro\Component\SEO\Model\DTO\UrlItemInterface;
 use Oro\Component\Website\WebsiteInterface;
 
 interface SitemapUrlProviderInterface
 {
     /**
      * @param WebsiteInterface $website
-     * @return array|UrlItem[]
+     * @return array|UrlItemInterface[]
      */
     public function getUrlItems(WebsiteInterface $website);
 }

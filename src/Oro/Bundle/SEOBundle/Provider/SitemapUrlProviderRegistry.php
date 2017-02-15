@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\SEOBundle\Provider;
 
+use Oro\Component\SEO\Provider\SitemapUrlProviderInterface;
+
 class SitemapUrlProviderRegistry
 {
     /**

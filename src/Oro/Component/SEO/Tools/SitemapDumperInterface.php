@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\SEOBundle\Tools;
+namespace Oro\Component\SEO\Tools;
 
 use Oro\Component\Website\WebsiteInterface;
 
