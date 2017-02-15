@@ -20,11 +20,11 @@ class PriceCheckoutShippingMethodsProviderChainElement extends AbstractCheckoutS
     private $checkoutShippingContextFactory;
 
     /**
-     * @param ShippingPriceProvider $shippingPriceProvider
+     * @param ShippingPriceProviderInterface $shippingPriceProvider
      * @param CheckoutShippingContextFactory $checkoutShippingContextFactory
      */
     public function __construct(
-        ShippingPriceProvider $shippingPriceProvider,
+        ShippingPriceProviderInterface $shippingPriceProvider,
         CheckoutShippingContextFactory $checkoutShippingContextFactory
     ) {
         $this->shippingPriceProvider = $shippingPriceProvider;

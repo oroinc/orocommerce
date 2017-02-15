@@ -9,6 +9,7 @@ use Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInt
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
+use Oro\Bundle\ShippingBundle\Provider\Price\Configured\ShippingConfiguredPriceProviderInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 
 class PriceCheckoutShippingMethodsProviderChainElementTest extends \PHPUnit_Framework_TestCase
