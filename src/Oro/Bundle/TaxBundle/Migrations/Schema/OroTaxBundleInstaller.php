@@ -44,6 +44,7 @@ class OroTaxBundleInstaller implements Installation
         $this->addOroTaxProdTaxCodeProdForeignKeys($schema);
         $this->addOroTaxRuleForeignKeys($schema);
         $this->addOroTaxZipCodeForeignKeys($schema);
+        $this->addOroCustomerTaxCodeForeignKeys($schema);
     }
 
     /**
@@ -353,6 +354,27 @@ class OroTaxBundleInstaller implements Installation
             ['tax_jurisdiction_id'],
             ['id'],
             ['onDelete' => null, 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add oro_tax_customer_tax_code foreign keys.
+     * @param Schema $schema
+     */
+    protected function addOroCustomerTaxCodeForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_tax_customer_tax_code');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_user'),
+            ['owner_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_organization'),
+            ['organization_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
     }
 }
