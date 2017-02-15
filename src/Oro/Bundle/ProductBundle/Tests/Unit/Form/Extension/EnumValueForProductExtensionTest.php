@@ -85,6 +85,23 @@ class EnumValueForProductExtensionTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayNotHasKey('tooltip_parameters', $view->vars);
     }
 
+    public function testBuildViewWhenEmptyDataId()
+    {
+        $view = new FormView();
+
+        $this->form->expects($this->once())
+            ->method('getData')
+            ->willReturn(['id' => null]);
+
+        $this->form->expects($this->never())
+            ->method('getParent');
+
+        $this->extension->buildView($view, $this->form, []);
+
+        $this->assertArrayNotHasKey('tooltip', $view->vars);
+        $this->assertArrayNotHasKey('tooltip_parameters', $view->vars);
+    }
+
     public function testBuildViewWhenConfigIdIsNull()
     {
         $view = new FormView();

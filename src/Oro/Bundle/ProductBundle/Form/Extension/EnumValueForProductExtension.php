@@ -40,7 +40,7 @@ class EnumValueForProductExtension extends AbstractTypeExtension
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $data = $form->getData();
-        if (!$data) {
+        if (!$data || !array_key_exists('id', $data) || !$data['id']) {
             return;
         }
 
