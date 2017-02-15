@@ -23,7 +23,7 @@ class MoneyOrder implements PaymentMethodInterface
     /**
      * {@inheritdoc}
      */
-    public function getType()
+    public function getIdentifier()
     {
         return self::TYPE;
     }

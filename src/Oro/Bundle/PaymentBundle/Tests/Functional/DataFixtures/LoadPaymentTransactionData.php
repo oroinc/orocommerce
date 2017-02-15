@@ -5,11 +5,10 @@ namespace Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class LoadPaymentTransactionData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -19,7 +18,11 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
     const VALIDATE_TRANSACTION = 'validate_transaction';
     const AUTHORIZE_ACTIVE_TRANSACTION = 'authorize_active_transaction';
 
-    /** {@inheritdoc} */
+    const PAYMENT_METHOD = 'payment_method';
+
+    /**
+     * {@inheritDoc}
+     */
     public function getDependencies()
     {
         return ['Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData'];
@@ -34,7 +37,7 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
             'currency' => 'USD',
             'action' => PaymentMethodInterface::AUTHORIZE,
             'entityIdentifier' => 1,
-            'paymentMethod' => 'payment_method',
+            'paymentMethod' => self::PAYMENT_METHOD,
             'entityClass' => PaymentTransaction::class,
             'frontendOwner' => LoadCustomerUserData::EMAIL,
             'response' => [
@@ -49,7 +52,7 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
             'entityIdentifier' => 1,
             'active' => true,
             'successful' => true,
-            'paymentMethod' => 'payment_method',
+            'paymentMethod' => self::PAYMENT_METHOD,
             'entityClass' => PaymentTransaction::class,
             'frontendOwner' => LoadCustomerUserData::EMAIL,
             'response' => [
@@ -64,7 +67,7 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
             'entityIdentifier' => 1,
             'active' => true,
             'successful' => true,
-            'paymentMethod' => 'payment_method',
+            'paymentMethod' => self::PAYMENT_METHOD,
             'entityClass' => PaymentTransaction::class,
             'frontendOwner' => LoadCustomerUserData::EMAIL,
             'response' => [
@@ -75,7 +78,7 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
     ];
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function load(ObjectManager $manager)
     {

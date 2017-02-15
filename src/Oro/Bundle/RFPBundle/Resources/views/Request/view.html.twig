@@ -1,5 +1,6 @@
 {% extends 'OroUIBundle:actions:view.html.twig' %}
 {% import 'OroUIBundle::macros.html.twig' as UI %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
 
 {% oro_title_set({params : {"%title%": entity.__toString()}}) %}
 
@@ -48,6 +49,14 @@
             'subblocks': [{'data' : [requestInfo]}]
         }
     ] %}
+
+    {% set dataBlocks = dataBlocks|merge([{
+        'title': 'oro.rfp.sections.note'|trans,
+
+        'subblocks': [{'data': [
+            dataGrid.renderGrid('rfp-request-additional-notes-grid', {request: entity.id}, {cssClass: 'inner-grid'})
+        ]}]
+    }]) %}
 
     {% if entity.requestProducts|length %}
         {% set lineItems %}
@@ -101,20 +110,6 @@
             'subblocks': [{'data' : [lineItems]}]
         }]) %}
     {% endif %}
-
-    {% set noteContent %}
-        <div class="row-fluid form-horizontal">
-            <div class="responsive-block">
-                {{ entity.note|nl2br }}
-            </div>
-        </div>
-    {% endset %}
-
-    {% set dataBlocks = dataBlocks|merge([{
-        'title': 'oro.rfp.sections.note'|trans,
-        'class': 'active',
-        'subblocks': [{'data' : [noteContent]}]
-    }]) %}
 
     {% set id = 'request-view' %}
     {% set data = {'dataBlocks': dataBlocks} %}

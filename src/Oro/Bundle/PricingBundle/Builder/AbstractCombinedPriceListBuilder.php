@@ -248,13 +248,13 @@ abstract class AbstractCombinedPriceListBuilder
      * @param CombinedPriceList $cpl
      * @param Website $website
      * @param Customer|CustomerGroup $targetEntity
-     * @param bool|false $force
+     * @param int|null $forceTimestamp
      */
     protected function updateRelationsAndPrices(
         CombinedPriceList $cpl,
         Website $website,
         $targetEntity = null,
-        $force = false
+        $forceTimestamp = null
     ) {
         $activeCpl = $this->scheduleResolver->getActiveCplByFullCPL($cpl);
         if ($activeCpl === null) {
@@ -262,12 +262,12 @@ abstract class AbstractCombinedPriceListBuilder
         }
         $relation = $this->getCombinedPriceListRepository()
             ->updateCombinedPriceListConnection($cpl, $activeCpl, $website, $targetEntity);
-        if ($force || !$activeCpl->isPricesCalculated()) {
-            $this->priceResolver->combinePrices($activeCpl);
+        if ($forceTimestamp !== null || !$activeCpl->isPricesCalculated()) {
+            $this->priceResolver->combinePrices($activeCpl, null, $forceTimestamp);
         }
         $hasOtherRelations = $this->getCombinedPriceListRepository()->hasOtherRelations($relation);
         //when CPL used the first time at this website
-        if ($force || !$hasOtherRelations) {
+        if ($forceTimestamp !== null || !$hasOtherRelations) {
             $this->triggerHandler->process($relation->getPriceList(), $relation->getWebsite());
         }
     }

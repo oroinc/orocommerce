@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\PayPalBundle\Tests\Unit\EventListener\Callback;
 
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Session\Session;
@@ -22,22 +24,31 @@ class PayflowExpressCheckoutRedirectListenerTest extends \PHPUnit_Framework_Test
     /** @var PaymentTransaction */
     protected $paymentTransaction;
 
+    /** @var PaymentMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $paymentMethodProvider;
+
     protected function setUp()
     {
         $this->session = $this->getMockBuilder(Session::class)
             ->disableOriginalConstructor()
             ->getMock();
-
+        $this->paymentMethodProvider = $this->createMock(PaymentMethodProviderInterface::class);
         $this->paymentTransaction = new PaymentTransaction();
-        $this->listener = new PayflowExpressCheckoutRedirectListener($this->session);
+        $this->listener = new PayflowExpressCheckoutRedirectListener($this->session, $this->paymentMethodProvider);
     }
 
     public function testOnReturnWithoutErrorInFlashBag()
     {
-
         $this->paymentTransaction
             ->setSuccessful(false)
-            ->setTransactionOptions(['failureUrl' => 'failUrlForExpressCheckout']);
+            ->setTransactionOptions(['failureUrl' => 'failUrlForExpressCheckout'])
+            ->setPaymentMethod('payment_method');
+
+        $this->paymentMethodProvider
+            ->expects(static::once())
+            ->method('hasPaymentMethod')
+            ->with('payment_method')
+            ->willReturn(true);
 
         $event = new CallbackErrorEvent();
         $event->setPaymentTransaction($this->paymentTransaction);
@@ -63,12 +74,39 @@ class PayflowExpressCheckoutRedirectListenerTest extends \PHPUnit_Framework_Test
         $this->assertResponses(new RedirectResponse('failUrlForExpressCheckout'), $event->getResponse());
     }
 
-    public function testOnReturnWithErrorInFlashBag()
+    public function testOnErrorWithWrongTransaction()
     {
-
         $this->paymentTransaction
             ->setSuccessful(false)
-            ->setTransactionOptions(['failureUrl' => 'failUrlForExpressCheckout']);
+            ->setTransactionOptions(['failureUrl' => 'failUrlForExpressCheckout'])
+            ->setPaymentMethod('payment_method');
+
+        $this->paymentMethodProvider
+            ->expects(static::once())
+            ->method('hasPaymentMethod')
+            ->with('payment_method')
+            ->willReturn(false);
+
+        $event = new CallbackErrorEvent();
+        $event->setPaymentTransaction($this->paymentTransaction);
+
+        $this->listener->onReturn($event);
+
+        $this->assertNotInstanceOf(RedirectResponse::class, $event->getResponse());
+    }
+
+    public function testOnReturnWithErrorInFlashBag()
+    {
+        $this->paymentTransaction
+            ->setSuccessful(false)
+            ->setTransactionOptions(['failureUrl' => 'failUrlForExpressCheckout'])
+            ->setPaymentMethod('payment_method');
+
+        $this->paymentMethodProvider
+            ->expects(static::once())
+            ->method('hasPaymentMethod')
+            ->with('payment_method')
+            ->willReturn(true);
 
         $event = new CallbackErrorEvent();
         $event->setPaymentTransaction($this->paymentTransaction);

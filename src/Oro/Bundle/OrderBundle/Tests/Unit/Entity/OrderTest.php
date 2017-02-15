@@ -12,6 +12,7 @@ use Oro\Bundle\OrderBundle\Entity\OrderDiscount;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\OrderBundle\Entity\OrderShippingTracking;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
@@ -255,5 +256,21 @@ class OrderTest extends \PHPUnit_Framework_TestCase
         $reflection->setAccessible(true);
 
         return $reflection->getValue($object);
+    }
+
+    public function testGetProductsFromLineItems()
+    {
+        $firstProduct = $this->getEntity(Product::class, ['id' => 1]);
+        $secondProduct = $this->getEntity(Product::class, ['id' => 5]);
+
+        /** @var Order $order */
+        $order = $this->getEntity(Order::class, [
+            'lineItems' => [
+                $this->getEntity(OrderLineItem::class, ['id' => 1, 'product' => $firstProduct]),
+                $this->getEntity(OrderLineItem::class, ['id' => 2, 'product' => $secondProduct])
+            ]
+        ]);
+
+        $this->assertEquals([$firstProduct, $secondProduct], $order->getProductsFromLineItems());
     }
 }

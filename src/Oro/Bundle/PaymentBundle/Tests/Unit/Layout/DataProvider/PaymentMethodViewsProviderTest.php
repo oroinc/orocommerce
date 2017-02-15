@@ -7,7 +7,7 @@ use Oro\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodViewsProvider;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
-use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
+use Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -18,9 +18,9 @@ class PaymentMethodViewsProviderTest extends \PHPUnit_Framework_TestCase
     const METHOD = 'Method';
 
     /**
-     * @var PaymentMethodViewRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var CompositePaymentMethodViewProvider|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $paymentMethodViewRegistry;
+    protected $paymentMethodViewProvider;
 
     /**
      * @var PaymentMethodProvider|\PHPUnit_Framework_MockObject_MockObject
@@ -39,8 +39,8 @@ class PaymentMethodViewsProviderTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->paymentMethodViewRegistry = $this
-            ->getMockBuilder(PaymentMethodViewRegistry::class)
+        $this->paymentMethodViewProvider = $this
+            ->getMockBuilder(CompositePaymentMethodViewProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -55,7 +55,7 @@ class PaymentMethodViewsProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()->getMock();
 
         $this->provider = new PaymentMethodViewsProvider(
-            $this->paymentMethodViewRegistry,
+            $this->paymentMethodViewProvider,
             $this->paymentMethodProvider,
             $this->paymentTransactionProvider
         );
@@ -71,7 +71,7 @@ class PaymentMethodViewsProviderTest extends \PHPUnit_Framework_TestCase
             ->with($context)
             ->willReturn([]);
 
-        $this->paymentMethodViewRegistry->expects(static::never())
+        $this->paymentMethodViewProvider->expects(static::never())
             ->method('getPaymentMethodViews');
 
         $data = $this->provider->getViews($context);
@@ -87,7 +87,7 @@ class PaymentMethodViewsProviderTest extends \PHPUnit_Framework_TestCase
 
         $paymentMethod = $this->createMock(PaymentMethodInterface::class);
         $paymentMethod->expects(static::once())
-            ->method('getType')
+            ->method('getIdentifier')
             ->willReturn($methodType);
 
         $this->paymentMethodProvider->expects(static::once())
@@ -103,10 +103,10 @@ class PaymentMethodViewsProviderTest extends \PHPUnit_Framework_TestCase
             ->with($context)
             ->willReturn([]);
         $view->expects($this->once())
-            ->method('getPaymentMethodType')
+            ->method('getPaymentMethodIdentifier')
             ->willReturn($methodType);
 
-        $this->paymentMethodViewRegistry->expects($this->once())
+        $this->paymentMethodViewProvider->expects($this->once())
             ->method('getPaymentMethodViews')
             ->with([$methodType])
             ->willReturn([$view]);
