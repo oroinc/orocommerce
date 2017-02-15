@@ -737,3 +737,9 @@ services:
             - '@translator'
         tags:
             - { name: kernel.event_listener, event: oro.entity_extend.field.validate.before_remove, method: onValidateBeforeRemoveField }
+
+    oro_product.provider.page_template_provider:
+        class: 'Oro\Bundle\ProductBundle\Provider\PageTemplateProvider'
+        arguments:
+            - '@oro_layout.theme_manager'
+            - '@oro_entity.fallback.resolver.entity_fallback_resolver'
