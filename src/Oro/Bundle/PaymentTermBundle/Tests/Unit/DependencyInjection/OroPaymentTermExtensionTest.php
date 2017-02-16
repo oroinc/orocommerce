@@ -23,7 +23,6 @@ class OroPaymentTermExtensionTest extends ExtensionTestCase
             'oro_payment_term.integration.channel',
             'oro_payment_term.integration.transport',
             'oro_payment_term.config.by_settings_factory_parameter_bag',
-            'oro_payment_term.repository.payment_term_settings',
             'oro_payment_term.config.provider',
             'oro_payment_term.config.provider_basic',
             'oro_payment_term.config.provider_basic_memory_cached',

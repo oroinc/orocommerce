@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Method\Config\Provider\Basic;
 
-use Oro\Bundle\PaymentTermBundle\Entity\Repository\PaymentTermSettingsRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\PaymentTermBundle\Entity\PaymentTermSettings;
 use Oro\Bundle\PaymentTermBundle\Method\Config\Factory\Settings\PaymentTermConfigBySettingsFactoryInterface;
 use Oro\Bundle\PaymentTermBundle\Method\Config\Provider\PaymentTermConfigProviderInterface;
+use Psr\Log\LoggerInterface;
 
 class BasicPaymentTermConfigProvider implements PaymentTermConfigProviderInterface
 {
@@ -14,30 +16,38 @@ class BasicPaymentTermConfigProvider implements PaymentTermConfigProviderInterfa
     private $paymentTermConfigBySettingsFactory;
 
     /**
-     * @var PaymentTermSettingsRepository
+     * @var ManagerRegistry
      */
-    private $paymentTermSettingsRepository;
+    protected $doctrine;
 
     /**
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
+     * @param ManagerRegistry                             $doctrine
+     * @param LoggerInterface                             $logger
      * @param PaymentTermConfigBySettingsFactoryInterface $paymentTermConfigBySettingsFactory
-     * @param PaymentTermSettingsRepository $paymentTermSettingsRepository
      */
     public function __construct(
-        PaymentTermConfigBySettingsFactoryInterface $paymentTermConfigBySettingsFactory,
-        PaymentTermSettingsRepository $paymentTermSettingsRepository
+        ManagerRegistry $doctrine,
+        LoggerInterface $logger,
+        PaymentTermConfigBySettingsFactoryInterface $paymentTermConfigBySettingsFactory
     ) {
+        $this->doctrine = $doctrine;
+        $this->logger = $logger;
         $this->paymentTermConfigBySettingsFactory = $paymentTermConfigBySettingsFactory;
-        $this->paymentTermSettingsRepository = $paymentTermSettingsRepository;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getPaymentConfigs()
     {
         $configs = [];
 
-        $settings = $this->paymentTermSettingsRepository->findWithEnabledChannel();
+        $settings = $this->getEnabledIntegrationSettings();
 
         foreach ($settings as $setting) {
             $config = $this->paymentTermConfigBySettingsFactory->createConfigBySettings($setting);
@@ -49,7 +59,7 @@ class BasicPaymentTermConfigProvider implements PaymentTermConfigProviderInterfa
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getPaymentConfig($identifier)
     {
@@ -63,10 +73,27 @@ class BasicPaymentTermConfigProvider implements PaymentTermConfigProviderInterfa
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function hasPaymentConfig($identifier)
     {
         return null !== $this->getPaymentConfig($identifier);
+    }
+
+
+    /**
+     * @return PaymentTermSettings[]
+     */
+    protected function getEnabledIntegrationSettings()
+    {
+        try {
+            return $this->doctrine->getManagerForClass('OroPaymentTermBundle:PaymentTermSettings')
+                ->getRepository('OroPaymentTermBundle:PaymentTermSettings')
+                ->findWithEnabledChannel();
+        } catch (\UnexpectedValueException $e) {
+            $this->logger->critical($e->getMessage());
+
+            return [];
+        }
     }
 }

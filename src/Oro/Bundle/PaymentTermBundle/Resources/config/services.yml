@@ -100,12 +100,6 @@ services:
             - '@oro_locale.helper.localization'
             - '@oro_payment_term.config.integration_method_identifier_generator'
 
-    oro_payment_term.repository.payment_term_settings:
-        class: 'Oro\Bundle\PaymentTermBundle\Entity\Repository\PaymentTermSettingsRepository'
-        parent: oro_entity.abstract_repository
-        arguments:
-            - 'Oro\Bundle\PaymentTermBundle\Entity\PaymentTermSettings'
-
     oro_payment_term.config.provider:
         parent: oro_payment_term.config.provider_basic_memory_cached
 
@@ -114,8 +108,9 @@ services:
         class: 'Oro\Bundle\PaymentTermBundle\Method\Config\Provider\Basic\BasicPaymentTermConfigProvider'
         public: false
         arguments:
+            - '@doctrine'
+            - '@logger'
             - '@oro_payment_term.config.by_settings_factory_parameter_bag'
-            - '@oro_payment_term.repository.payment_term_settings'
 
     # use oro_payment_term.config.provider in general
     oro_payment_term.config.provider_basic_memory_cached:

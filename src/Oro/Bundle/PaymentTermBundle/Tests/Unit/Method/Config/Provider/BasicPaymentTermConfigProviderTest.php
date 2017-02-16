@@ -2,11 +2,14 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Tests\Unit\Method\Config\Provider;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTermSettings;
 use Oro\Bundle\PaymentTermBundle\Entity\Repository\PaymentTermSettingsRepository;
 use Oro\Bundle\PaymentTermBundle\Method\Config\Factory\Settings\PaymentTermConfigBySettingsFactoryInterface;
 use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface;
 use Oro\Bundle\PaymentTermBundle\Method\Config\Provider\Basic\BasicPaymentTermConfigProvider;
+use Psr\Log\LoggerInterface;
 
 class BasicPaymentTermConfigProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -29,6 +32,10 @@ class BasicPaymentTermConfigProviderTest extends \PHPUnit_Framework_TestCase
     private $configs;
 
     /**
+     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $doctrine;
+    /**
      * @var PaymentTermSettingsRepository|\PHPUnit_Framework_MockObject_MockObject
      */
     private $paymentTermSettingsRepositoryMock;
@@ -39,8 +46,6 @@ class BasicPaymentTermConfigProviderTest extends \PHPUnit_Framework_TestCase
             PaymentTermConfigBySettingsFactoryInterface::class
         );
 
-        $this->paymentTermSettingsRepositoryMock = $this->createMock(PaymentTermSettingsRepository::class);
-
         $settingsOneMock = $this->createPaymentTermSettingsMock();
         $settingsTwoMock = $this->createPaymentTermSettingsMock();
 
@@ -48,6 +53,23 @@ class BasicPaymentTermConfigProviderTest extends \PHPUnit_Framework_TestCase
         $configTwoMock = $this->createConfigMock();
 
         $settingsMocks = [$settingsOneMock, $settingsTwoMock];
+
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
+
+        $this->paymentTermSettingsRepositoryMock = $this->createMock(PaymentTermSettingsRepository::class);
+        $this->paymentTermSettingsRepositoryMock
+            ->expects(static::once())
+            ->method('findWithEnabledChannel')
+            ->willReturn($settingsMocks);
+
+        $objectManager = $this->createMock(ObjectManager::class);
+        $objectManager->expects(static::once())
+            ->method('getRepository')->willReturn($this->paymentTermSettingsRepositoryMock);
+
+        $this->doctrine->expects(static::once())->method('getManagerForClass')->willReturn($objectManager);
+
+        /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject $logger */
+        $logger = $this->createMock(LoggerInterface::class);
 
         $configOneMock
             ->expects(static::once())
@@ -80,8 +102,9 @@ class BasicPaymentTermConfigProviderTest extends \PHPUnit_Framework_TestCase
         ];
 
         $this->testedProvider = new BasicPaymentTermConfigProvider(
-            $this->paymentTermConfigBySettingsFactoryMock,
-            $this->paymentTermSettingsRepositoryMock
+            $this->doctrine,
+            $logger,
+            $this->paymentTermConfigBySettingsFactoryMock
         );
     }
 
