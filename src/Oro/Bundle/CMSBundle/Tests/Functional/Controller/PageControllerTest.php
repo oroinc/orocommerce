@@ -10,8 +10,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CMSBundle\Entity\Page;
 
 /**
- * @group segfault
- *
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class PageControllerTest extends WebTestCase
@@ -41,6 +39,7 @@ class PageControllerTest extends WebTestCase
 
     public function testIndex()
     {
+        $this->markTestSkipped('Due to BB-7566');
         $crawler = $this->client->request('GET', $this->getUrl('oro_cms_page_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -56,6 +55,7 @@ class PageControllerTest extends WebTestCase
      */
     public function testCreatePage()
     {
+        $this->markTestSkipped('Due to BB-7566');
         return $this->assertCreate(self::DEFAULT_PAGE_TITLE, self::DEFAULT_PAGE_SLUG_TEXT);
     }
 

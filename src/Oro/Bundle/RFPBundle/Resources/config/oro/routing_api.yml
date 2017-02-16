@@ -1,3 +1,0 @@
-oro_rfp_request_status_api:
-    resource: "@OroRFPBundle/Controller/Api/Rest/RequestStatusController.php"
-    type:     rest

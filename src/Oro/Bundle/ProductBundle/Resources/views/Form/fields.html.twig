@@ -61,6 +61,36 @@
         {{ form_widget(form, {disabled: disabled}) }}
 {% endmacro %}
 
+{% block oro_entity_extend_enum_value_widget %}
+    <div class="float-holder {% if form.label.vars.errors|length > 0 %} validation-error{% endif %}">
+        <div class="input-append input-append-sortable collection-element-primary">
+            {{ form_widget(form.label, {disabled: disabled}) }}
+            <span class="add-on ui-sortable-handle{% if disabled %} disabled{% endif %}"
+                  data-name="sortable-handle"
+                  title="{{ 'oro.entity_extend.enum_options.priority.tooltip'|trans }}">
+                <i class="fa-arrows-v {% if disabled %} disabled{% endif %}"></i>
+                {{ form_widget(form.priority, {disabled: disabled}) }}
+            </span>
+            <label class="add-on{% if disabled %} disabled{% endif %}" title="{{ 'oro.entity_extend.enum_options.default.tooltip'|trans }}">
+                {{ form_widget(form.is_default, {disabled: disabled}) }}
+            </label>
+        </div>
+        {{ form_errors(form.label) }}
+    </div>
+    {% if tooltip is defined  and tooltip %}
+        {% import 'OroUIBundle::macros.html.twig' as ui %}
+        {{ ui.tooltip(
+            tooltip,
+            tooltip_parameters|default({}),
+            tooltip_placement|default(null),
+            tooltip_details_enabled|default(false),
+            tooltip_details_link|default(null),
+            tooltip_details_anchor|default(null)
+        ) }}
+    {% endif %}
+    {{ form_rest(form) }}
+{% endblock %}
+
 {% block oro_product_precision_collection_widget %}
     {% spaceless %}
         {% if prototype is defined %}

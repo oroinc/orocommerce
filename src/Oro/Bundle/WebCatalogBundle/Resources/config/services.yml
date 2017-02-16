@@ -179,6 +179,13 @@ services:
         tags:
             - { name: form.type_extension, extended_type: Oro\Bundle\ScopeBundle\Form\Type\ScopeType }
 
+    oro_web_catalog.form.extension.page_variant_type:
+        class: Oro\Bundle\WebCatalogBundle\Form\Extension\PageVariantTypeExtension
+        arguments:
+            - '@doctrine'
+        tags:
+            - { name: form.type_extension, extended_type: Oro\Component\WebCatalog\Form\PageVariantType }
+
     oro_web_catalog.event_listener.website_search_index:
         class: 'Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogEntityIndexerListener'
         arguments:

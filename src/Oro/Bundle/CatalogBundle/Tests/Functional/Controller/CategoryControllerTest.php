@@ -14,8 +14,6 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
- * @group segfault
- *
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class CategoryControllerTest extends WebTestCase

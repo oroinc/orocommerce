@@ -3,7 +3,7 @@
 namespace Oro\Bundle\PaymentBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
 use Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -22,7 +22,7 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
     const PAYMENT_METHOD_TYPE = 'payment_term';
 
     /**
-     * @var PaymentMethodRegistry
+     * @var PaymentMethodProvidersRegistryInterface
      */
     protected $registry;
 
@@ -35,7 +35,7 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
-        $this->registry = static::getContainer()->get('oro_payment.payment_method.registry');
+        $this->registry = static::getContainer()->get('oro_payment.payment_method_provider.registry');
         $this->translator = static::getContainer()->get('translator');
         $currentBundleDataFixturesNameSpace = 'Oro\Bundle\PaymentBundle\Tests\Functional';
         $this->loadFixtures(

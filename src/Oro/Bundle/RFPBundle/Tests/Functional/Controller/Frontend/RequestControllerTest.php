@@ -2,14 +2,18 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller\Frontend;
 
+use Doctrine\ORM\EntityManager;
 use Symfony\Component\DomCrawler\Field\InputFormField;
 
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\RFPBundle\Entity\Request;
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
+use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -22,6 +26,9 @@ class RequestControllerTest extends WebTestCase
     const REQUEST = 'request body';
     const PO_NUMBER = 'CA245566789KL';
 
+    /** @var WorkflowManager */
+    protected $manager;
+
     /**
      * {@inheritdoc}
      */
@@ -29,6 +36,9 @@ class RequestControllerTest extends WebTestCase
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
+
+        $this->manager = $this->getContainer()->get('oro_workflow.manager');
+
         $this->loadFixtures(
             [
                 LoadUserData::class,
@@ -53,11 +63,16 @@ class RequestControllerTest extends WebTestCase
     /**
      * @param array $inputData
      * @param array $expectedData
+     * @param bool $activateFrontoffice
      *
      * @dataProvider indexProvider
      */
-    public function testIndex(array $inputData, array $expectedData)
+    public function testIndex(array $inputData, array $expectedData, $activateFrontoffice = false)
     {
+        if (!$activateFrontoffice) {
+            $this->manager->deactivateWorkflow('b2b_rfq_frontoffice_default');
+        }
+
         $authParams = $inputData['login']
             ? static::generateBasicAuthHeader($inputData['login'], $inputData['password'])
             : [];
@@ -90,7 +105,11 @@ class RequestControllerTest extends WebTestCase
             sort($testedColumns);
             sort($expectedColumns);
 
-            static::assertEquals($expectedData['action_configuration'], $data[0]['action_configuration']);
+            foreach ($expectedData['action_configuration'] as $actionName => $actionData) {
+                static::assertArrayHasKey($actionName, $data[0]['action_configuration']);
+                static::assertEquals($actionData, $data[0]['action_configuration'][$actionName]);
+            }
+
             static::assertEquals($expectedColumns, $testedColumns);
         }
 
@@ -148,13 +167,21 @@ class RequestControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains($request->getFirstName(), $result->getContent());
-        $this->assertContains($request->getLastName(), $result->getContent());
-        $this->assertContains($request->getEmail(), $result->getContent());
-        $this->assertContains($request->getPoNumber(), $result->getContent());
-
+        $shouldContainText = [
+            $request->getFirstName(),
+            $request->getLastName(),
+            $request->getEmail(),
+            $request->getPoNumber(),
+        ];
         if ($request->getShipUntil()) {
-            $this->assertContains($request->getShipUntil()->format('M j, Y'), $result->getContent());
+            $shouldContainText[] = $request->getShipUntil()->format('M j, Y');
+        }
+
+        foreach ($shouldContainText as $expectedText) {
+            $this->assertContains(
+                $expectedText,
+                $result->getContent()
+            );
         }
 
         if (isset($expectedData['columnsCount'])) {
@@ -176,6 +203,37 @@ class RequestControllerTest extends WebTestCase
     public function indexProvider()
     {
         return [
+            'customer1 user1 (only customer user requests) and active frontoffice' => [
+                'input' => [
+                    'login' => LoadUserData::ACCOUNT1_USER1,
+                    'password' => LoadUserData::ACCOUNT1_USER1,
+                ],
+                'expected' => [
+                    'code' => 200,
+                    'data' => [
+                        LoadRequestData::REQUEST2,
+                        LoadRequestData::REQUEST7,
+                        LoadRequestData::REQUEST8,
+                    ],
+                    'columns' => [
+                        'id',
+                        'poNumber',
+                        'shipUntil',
+                        'createdAt',
+                        'update_link',
+                        'view_link',
+                        'workflowStepLabel',
+                        'action_configuration',
+                        'customerStatusName',
+                    ],
+                    'action_configuration' => [
+                        'view' => true,
+                        'update' => false,
+                        'delete' => false,
+                    ],
+                ],
+                'activateFrontoffice' => true
+            ],
             'customer1 user1 (only customer user requests)' => [
                 'input' => [
                     'login' => LoadUserData::ACCOUNT1_USER1,
@@ -190,13 +248,13 @@ class RequestControllerTest extends WebTestCase
                     ],
                     'columns' => [
                         'id',
-                        'statusLabel',
                         'poNumber',
                         'shipUntil',
                         'createdAt',
                         'update_link',
                         'view_link',
                         'action_configuration',
+                        'customerStatusName',
                     ],
                     'action_configuration' => [
                         'view' => true,
@@ -221,7 +279,6 @@ class RequestControllerTest extends WebTestCase
                     ],
                     'columns' => [
                         'id',
-                        'statusLabel',
                         'poNumber',
                         'shipUntil',
                         'createdAt',
@@ -229,6 +286,7 @@ class RequestControllerTest extends WebTestCase
                         'update_link',
                         'view_link',
                         'action_configuration',
+                        'customerStatusName',
                     ],
                     'action_configuration' => [
                         'view' => true,
@@ -249,13 +307,13 @@ class RequestControllerTest extends WebTestCase
                     ],
                     'columns' => [
                         'id',
-                        'statusLabel',
                         'poNumber',
                         'shipUntil',
                         'createdAt',
                         'update_link',
                         'view_link',
                         'action_configuration',
+                        'customerStatusName',
                     ],
                     'action_configuration' => [
                         'view' => true,
@@ -277,13 +335,13 @@ class RequestControllerTest extends WebTestCase
                     ],
                     'columns' => [
                         'id',
-                        'statusLabel',
                         'poNumber',
                         'shipUntil',
                         'createdAt',
                         'update_link',
                         'view_link',
                         'action_configuration',
+                        'customerStatusName',
                     ],
                     'action_configuration' => [
                         'view' => true,
@@ -306,14 +364,14 @@ class RequestControllerTest extends WebTestCase
                     ],
                     'columns' => [
                         'id',
-                        'statusLabel',
                         'poNumber',
                         'shipUntil',
                         'createdAt',
                         'update_link',
                         'view_link',
                         'action_configuration',
-                        'customerUserName'
+                        'customerUserName',
+                        'customerStatusName',
                     ],
                     'action_configuration' => [
                         'view' => true,
@@ -374,7 +432,7 @@ class RequestControllerTest extends WebTestCase
                     'password' => LoadUserData::ACCOUNT1_USER1,
                 ],
                 'expected' => [
-                    'columnsCount' => 9,
+                    'columnsCount' => 8,
                 ],
             ],
             'customer1 user3 (CustomerUser:VIEW_LOCAL)' => [
@@ -384,7 +442,7 @@ class RequestControllerTest extends WebTestCase
                     'password' => LoadUserData::ACCOUNT1_USER2,
                 ],
                 'expected' => [
-                    'columnsCount' => 10,
+                    'columnsCount' => 9,
                     'hideButtonEdit' => true
                 ],
             ],
@@ -492,6 +550,7 @@ class RequestControllerTest extends WebTestCase
     /**
      * @param array $formData
      * @param array $expected
+     *
      * @dataProvider createProvider
      */
     public function testCreate(array $formData, array $expected)
@@ -572,6 +631,7 @@ class RequestControllerTest extends WebTestCase
 
     /**
      * @dataProvider createQueryInitDataProvider
+     *
      * @param array $productItems
      * @param array $expectedData
      */
@@ -606,11 +666,13 @@ class RequestControllerTest extends WebTestCase
                 $quantity = $requestProductItem['quantity'];
                 /** @var InputFormField $unit */
                 $unit = $requestProductItem['productUnit'];
+
                 return [
                     'unit' => $unit->getValue(),
                     'quantity' => $quantity->getValue(),
                 ];
             }, $formRequestProduct['requestProductItems']);
+
             return $result;
         }, []);
         $expectedData = array_combine(array_map($productIdCallable, array_keys($expectedData)), $expectedData);
@@ -709,6 +771,51 @@ class RequestControllerTest extends WebTestCase
                 $this->getReference(LoadUserData::ACCOUNT1_USER2)->getFullName()
             ]
         );
+    }
+
+    public function testViewDeleted()
+    {
+        $this->loginUser(LoadUserData::ACCOUNT1_USER1);
+
+        /* @var $request Request */
+        $request = $this->getReference(LoadRequestData::REQUEST2);
+        $id = $request->getId();
+
+        $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_view', ['id' => $id]));
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+
+        $em = $this->getManager(Request::class);
+        $request = $em->find(Request::class, $id);
+
+        $request->setInternalStatus(
+            $this->getEnumEntity(Request::INTERNAL_STATUS_CODE, Request::INTERNAL_STATUS_DELETED)
+        );
+
+        $em->flush($request);
+
+        $this->client->request('GET', $this->getUrl('oro_rfp_frontend_request_view', ['id' => $id]));
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 404);
+    }
+
+    /**
+     * @param string $enumField
+     * @param string $enumCode
+     * @return AbstractEnumValue
+     */
+    protected function getEnumEntity($enumField, $enumCode)
+    {
+        $className = ExtendHelper::buildEnumValueClassName($enumField);
+
+        return $this->getManager($className)->getReference($className, $enumCode);
+    }
+
+    /**
+     * @param string $className
+     * @return EntityManager
+     */
+    protected function getManager($className)
+    {
+        return $this->getContainer()->get('doctrine')->getManagerForClass($className);
     }
 
     /**

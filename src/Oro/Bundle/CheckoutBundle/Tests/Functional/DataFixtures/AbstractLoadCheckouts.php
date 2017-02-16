@@ -9,13 +9,14 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrderAddressData;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
+use Oro\Bundle\WorkflowBundle\Model\WorkflowManager;
 use Oro\Component\Checkout\Entity\CheckoutSourceEntityInterface;
 
 abstract class AbstractLoadCheckouts extends AbstractFixture implements
@@ -66,6 +67,8 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
     public function load(ObjectManager $manager)
     {
         $this->manager = $manager;
+        /* @var $workflowManager WorkflowManager */
+        $workflowManager = $this->container->get('oro_workflow.manager');
         $this->clearPreconditions();
         /** @var CustomerUser $defaultCustomerUser */
         $defaultCustomerUser = $manager->getRepository('OroCustomerBundle:CustomerUser')
@@ -100,10 +103,11 @@ abstract class AbstractLoadCheckouts extends AbstractFixture implements
                 }
             }
             $manager->persist($checkout);
+            $manager->flush();
             $this->setReference($name, $checkout);
-        }
 
-        $manager->flush();
+            $workflowManager->startWorkflow($this->getWorkflowName(), $checkout);
+        }
     }
 
     protected function clearPreconditions()
