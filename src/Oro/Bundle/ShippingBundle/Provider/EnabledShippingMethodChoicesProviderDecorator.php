@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Provider;
 
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 
-class EnabledShippingMethodChoicesProviderDecorator
+class EnabledShippingMethodChoicesProviderDecorator implements ShippingMethodChoicesProviderInterface
 {
     /**
      * @var ShippingMethodRegistry
