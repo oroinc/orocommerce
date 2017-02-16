@@ -1,0 +1,15 @@
+{% extends 'OroSaleBundle:Quote:update.html.twig' %}
+
+{% set addQueryParameters = false %}
+{% set formAction = path('oro_sale_quote_create', {'redirect_back': true}) %}
+
+{% block navButtons %}
+    {{ UI.cancelButton(path(
+        return_route.route|default('oro_sale_quote_index'),
+        return_route.parameters|default({})
+    )) }}
+    {% if entity.id or resource_granted('oro_sale_quote_create') %}
+        {% set html = UI.saveAndCloseButton() %}
+    {% endif %}
+    {{ UI.dropdownSaveButton({'html': html}) }}
+{% endblock navButtons %}

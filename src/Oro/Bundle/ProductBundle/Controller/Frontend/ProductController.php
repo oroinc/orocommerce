@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Controller\Frontend;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -40,7 +38,7 @@ class ProductController extends Controller
      * View list of products
      *
      * @Route("/view/{id}", name="oro_product_frontend_product_view", requirements={"id"="\d+"})
-     * @Layout(vars={"product_type", "attribute_family"})
+     * @Layout(vars={"product_type", "attribute_family", "page_template"})
      * @Acl(
      *      id="oro_product_frontend_view",
      *      type="entity",
@@ -68,10 +66,14 @@ class ProductController extends Controller
             }
         }
 
-        return [
+        $pageTemplate = $this->get('oro_product.provider.page_template_provider')
+            ->getPageTemplate($product, 'oro_product_frontend_product_view');
+
+        return  [
             'data' => $data,
             'product_type' => $product->getType(),
             'attribute_family' => $product->getAttributeFamily(),
+            'page_template' => $pageTemplate ? $pageTemplate->getKey() : null
         ];
     }
 }
