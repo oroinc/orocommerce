@@ -2,12 +2,15 @@
 
 namespace Oro\Bundle\MoneyOrderBundle\Tests\Unit\Method\Config\Provider;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\MoneyOrderBundle\Entity\MoneyOrderSettings;
 use Oro\Bundle\MoneyOrderBundle\Entity\Repository\MoneyOrderSettingsRepository;
 use Oro\Bundle\MoneyOrderBundle\Method\Config\Factory\MoneyOrderConfigFactoryInterface;
 use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigInterface;
 use Oro\Bundle\MoneyOrderBundle\Method\Config\Provider\MoneyOrderConfigProvider;
 use Oro\Bundle\MoneyOrderBundle\Method\Config\Provider\MoneyOrderConfigProviderInterface;
+use Psr\Log\LoggerInterface;
 
 class MoneyOrderConfigProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,9 +24,14 @@ class MoneyOrderConfigProviderTest extends \PHPUnit_Framework_TestCase
     private $configFactory;
 
     /**
+     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $doctrine;
+
+    /**
      * @var MoneyOrderSettingsRepository|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $settingsRepository;
+    protected $settingsRepository;
 
     /**
      * @var array
@@ -58,10 +66,21 @@ class MoneyOrderConfigProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getPaymentMethodIdentifier')
             ->willReturn(self::IDENTIFIER2);
 
+        $this->doctrine = $this->createMock(ManagerRegistry::class);
+
+        $this->settingsRepository = $this->createMock(MoneyOrderSettingsRepository::class);
         $this->settingsRepository
             ->expects(static::once())
             ->method('findWithEnabledChannel')
             ->willReturn($settingsMocks);
+
+        $objectManager = $this->createMock(ObjectManager::class);
+        $objectManager->expects(static::once())->method('getRepository')->willReturn($this->settingsRepository);
+
+        $this->doctrine->expects(static::once())->method('getManagerForClass')->willReturn($objectManager);
+
+        /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject $logger */
+        $logger = $this->createMock(LoggerInterface::class);
 
         $this->configFactory
             ->method('create')
@@ -78,7 +97,7 @@ class MoneyOrderConfigProviderTest extends \PHPUnit_Framework_TestCase
             self::IDENTIFIER2 => $configTwoMock
         ];
 
-        $this->testedProvider = new MoneyOrderConfigProvider($this->settingsRepository, $this->configFactory);
+        $this->testedProvider = new MoneyOrderConfigProvider($this->doctrine, $logger, $this->configFactory);
     }
 
     /**

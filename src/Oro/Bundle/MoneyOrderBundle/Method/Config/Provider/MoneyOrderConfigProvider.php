@@ -2,16 +2,18 @@
 
 namespace Oro\Bundle\MoneyOrderBundle\Method\Config\Provider;
 
-use Oro\Bundle\MoneyOrderBundle\Entity\Repository\MoneyOrderSettingsRepository;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\MoneyOrderBundle\Entity\MoneyOrderSettings;
 use Oro\Bundle\MoneyOrderBundle\Method\Config\Factory\MoneyOrderConfigFactoryInterface;
 use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigInterface;
+use Psr\Log\LoggerInterface;
 
 class MoneyOrderConfigProvider implements MoneyOrderConfigProviderInterface
 {
     /**
-     * @var MoneyOrderSettingsRepository
+     * @var ManagerRegistry
      */
-    protected $settingsRepository;
+    protected $doctrine;
 
     /**
      * @var MoneyOrderConfigFactoryInterface
@@ -24,25 +26,33 @@ class MoneyOrderConfigProvider implements MoneyOrderConfigProviderInterface
     protected $configs;
 
     /**
-     * @param MoneyOrderSettingsRepository $settingsRepository
+     * @var LoggerInterface
+     */
+    protected $logger;
+
+    /**
+     * @param ManagerRegistry                  $doctrine
+     * @param LoggerInterface                  $logger
      * @param MoneyOrderConfigFactoryInterface $configFactory
      */
     public function __construct(
-        MoneyOrderSettingsRepository $settingsRepository,
+        ManagerRegistry $doctrine,
+        LoggerInterface $logger,
         MoneyOrderConfigFactoryInterface $configFactory
     ) {
-        $this->settingsRepository = $settingsRepository;
+        $this->doctrine = $doctrine;
+        $this->logger = $logger;
         $this->configFactory = $configFactory;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getPaymentConfigs()
     {
         $configs = [];
 
-        $settings = $this->settingsRepository->findWithEnabledChannel();
+        $settings = $this->getEnabledIntegrationSettings();
 
         foreach ($settings as $setting) {
             $config = $this->configFactory->create($setting);
@@ -54,7 +64,7 @@ class MoneyOrderConfigProvider implements MoneyOrderConfigProviderInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getPaymentConfig($identifier)
     {
@@ -68,10 +78,26 @@ class MoneyOrderConfigProvider implements MoneyOrderConfigProviderInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function hasPaymentConfig($identifier)
     {
         return null !== $this->getPaymentConfig($identifier);
+    }
+
+    /**
+     * @return MoneyOrderSettings[]
+     */
+    protected function getEnabledIntegrationSettings()
+    {
+        try {
+            return $this->doctrine->getManagerForClass('OroMoneyOrderBundle:MoneyOrderSettings')
+                ->getRepository('OroMoneyOrderBundle:MoneyOrderSettings')
+                ->findWithEnabledChannel();
+        } catch (\UnexpectedValueException $e) {
+            $this->logger->critical($e->getMessage());
+
+            return [];
+        }
     }
 }
