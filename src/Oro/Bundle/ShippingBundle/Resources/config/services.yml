@@ -377,3 +377,18 @@ services:
                 - '%oro_shipping.rule_grid_route_name%'
                 - '%oro_shipping.rule_grid_name%'
                 - '@oro_datagrid.helper.route'
+
+    oro_shipping.provider.basic_shipping_methos_choices:
+        class: Oro\Bundle\ShippingBundle\Provider\BasicShippingMethodChoicesProvider
+        arguments:
+        - '@oro_shipping.shipping_method.registry'
+        - '@translator'
+
+    oro_shipping.shipping_price.provider_enabled_methods_decorator:
+         class: 'Oro\Bundle\ShippingBundle\Provider\EnabledShippingMethodChoicesProviderDecorator'
+         public: false
+         decorates: oro_shipping.provider.basic_shipping_methos_choices
+         decoration_priority: 255
+         arguments:
+             - '@oro_shipping.shipping_method.registry'
+             - '@oro_shipping.shipping_price.provider_enabled_methods_decorator.inner'
