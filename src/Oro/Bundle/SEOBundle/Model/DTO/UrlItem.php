@@ -2,9 +2,6 @@
 
 namespace Oro\Bundle\SEOBundle\Model\DTO;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-
 use Oro\Component\SEO\Model\DTO\UrlItemInterface;
 
 class UrlItem implements UrlItemInterface
@@ -30,29 +27,21 @@ class UrlItem implements UrlItemInterface
     private $lastModification;
 
     /**
-     * @var Collection
-     */
-    private $links;
-
-    /**
      * @param string $location
      * @param string $changeFrequency
      * @param float $priority
      * @param \DateTime $lastModification
-     * @param Collection $links
      */
     public function __construct(
         $location,
         $changeFrequency = null,
         $priority = null,
-        \DateTime $lastModification = null,
-        Collection $links = null
+        \DateTime $lastModification = null
     ) {
         $this->location = $location;
         $this->changeFrequency = $changeFrequency;
         $this->priority = $priority;
         $this->lastModification = $lastModification;
-        $this->links = $links;
     }
 
     /**
@@ -85,13 +74,5 @@ class UrlItem implements UrlItemInterface
     public function getLastModification()
     {
         return $this->lastModification ? $this->lastModification->format(\DateTime::W3C) : null;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getLinks()
-    {
-        return $this->links ? $this->links : new ArrayCollection();
     }
 }
