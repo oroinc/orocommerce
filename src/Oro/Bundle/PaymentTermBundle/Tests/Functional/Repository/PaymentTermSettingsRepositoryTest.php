@@ -6,6 +6,9 @@ use Oro\Bundle\PaymentTermBundle\Entity\Repository\PaymentTermSettingsRepository
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadChannelData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+/**
+ * @dbIsolationPerTest
+ */
 class PaymentTermSettingsRepositoryTest extends WebTestCase
 {
     /**
