@@ -12,7 +12,7 @@ oro:
         sku.placeholder: "Enter Item Number"
         quantity.label: Qty
         quantity.placeholder: "Qty #"
-        variant_fields.label: Variant Fields
+        variant_fields.label: Configurable Attributes
         inventory_status.label: Inventory Status
         status.label: Status
         type.label: Type
@@ -34,6 +34,7 @@ oro:
         anything.label: Any Text
         featured_products.label: Featured Products
         time_period.label: Time Period
+        page_template.label: Page Template
         slugs:
             label:              'Slugs'
             singular_label:     'Slug'
@@ -69,6 +70,7 @@ oro:
 
         form:
             no_images: No images
+            no_page_template: No page template
             choose: Choose Product...
             product_required: Please select a product first...
         form.add_row: Add More Rows
@@ -160,6 +162,7 @@ oro:
             productVariants: Product Variants
             inventory: Inventory
             images: Images
+            design: Design
 
         widgets:
             product_information: Product Information
@@ -207,6 +210,7 @@ oro:
                     bottomleft.label: 'Bottom Left'
                     bottom.label: 'Bottom'
                     bottomright.label: 'Bottom Right'
+                page_template.label: Page Template
                 product_direct_url_prefix.label: 'Product URL prefix'
             notice:
                 product_image_watermark: >
@@ -265,9 +269,15 @@ oro:
             default.tooltip: "Enable the fields to be able to group products by these fields"
             priority.tooltip: "Click and drag to reorder"
 
+        non_deletable_enum_value:
+            tooltip: 'This value can not be deleted because it is used in the following configurable products: %skuList%'
+
         privilege:
             category:
                 catalog.label: Catalog
+
+        field_is_used_as_variant_field:
+            message: "Cannot remove field because it's used as a variant field in the following configurable products: %skuList%"
 
     product_unit.each:
         label:

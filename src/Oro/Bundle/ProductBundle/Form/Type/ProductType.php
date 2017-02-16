@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
+use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
+use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -11,7 +13,10 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
+use Oro\Bundle\FrontendBundle\Form\DataTransformer\PageTemplateEntityFieldFallbackValueTransformer;
+use Oro\Bundle\FrontendBundle\Form\Type\PageTemplateType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -21,6 +26,7 @@ use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 class ProductType extends AbstractType
 {
     const NAME = 'oro_product';
+    const PAGE_TEMPLATE_ROUTE_NAME = 'oro_product_frontend_product_view';
 
     /**
      * @var string
@@ -55,6 +61,14 @@ class ProductType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $product = $builder->getData();
+
+        if (!$product->getPageTemplate()) {
+            $entityFallback = new EntityFieldFallbackValue();
+            $entityFallback->setFallback(SystemConfigFallbackProvider::FALLBACK_ID);
+            $product->setPageTemplate($entityFallback);
+        }
+
         $builder
             ->add('sku', 'text', ['required' => true, 'label' => 'oro.product.sku.label'])
             ->add('status', ProductStatusType::NAME, ['label' => 'oro.product.status.label'])
@@ -140,12 +154,23 @@ class ProductType extends AbstractType
                 [
                     'label' => 'oro.product.variant_fields.label',
                     'tooltip' => 'oro.product.form.tooltip.variant_fields',
+                    'required' => false,
                 ]
             )
             ->add(
                 'images',
                 ProductImageCollectionType::NAME,
                 ['required' => false]
+            )
+            ->add(
+                'pageTemplate',
+                EntityFieldFallbackValueType::class,
+                [
+                    'value_type' => PageTemplateType::class,
+                    'value_options' => [
+                        'route_name' => self::PAGE_TEMPLATE_ROUTE_NAME
+                    ]
+                ]
             )
             ->add('type', HiddenType::class)
             ->add(
@@ -160,6 +185,9 @@ class ProductType extends AbstractType
             ->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener'])
             ->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetDataListener'])
             ->addEventListener(FormEvents::SUBMIT, [$this, 'submitListener']);
+
+        $builder->get('pageTemplate')
+            ->addModelTransformer(new PageTemplateEntityFieldFallbackValueTransformer(self::PAGE_TEMPLATE_ROUTE_NAME));
     }
 
     /**

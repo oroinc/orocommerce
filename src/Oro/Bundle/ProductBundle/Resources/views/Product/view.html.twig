@@ -123,6 +123,25 @@
         }
     }) %}
 
+    {% if pageTemplate == null %}
+        {% set pageTemplatesData = 'oro.product.form.no_page_template'|trans %}
+    {% else %}
+        {% set pageTemplatesData = UI.renderHtmlProperty(
+            'oro.product.page_template.label'|trans,
+            pageTemplate.label
+        ) %}
+    {% endif %}
+
+    {% set dataBlocks = dataBlocks|merge({
+        'design': {
+            'title': 'oro.product.sections.design'|trans,
+            'priority': 0,
+            'subblocks': [{
+                'data': {'pageTemplate': pageTemplatesData }
+            }]
+        }
+    }) %}
+
     {% set id = 'product-view' %}
     {% set data = {'dataBlocks': dataBlocks} %}
 

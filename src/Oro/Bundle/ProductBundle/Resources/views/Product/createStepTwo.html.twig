@@ -133,6 +133,19 @@
         }
     }) %}
 
+    {% set dataBlocks = dataBlocks|merge({
+        'design': {
+            'title': 'oro.product.sections.design'|trans,
+            'priority': 0,
+            'subblocks': [{
+                'title': '',
+                'data': {
+                'pageTemplate': form_row(form.pageTemplate)
+                }
+            }]
+        }
+    }) %}
+
     {% set data = {
         'formErrors': form_errors(form),
         'dataBlocks': dataBlocks
