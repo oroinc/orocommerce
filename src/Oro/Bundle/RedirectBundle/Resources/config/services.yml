@@ -1,5 +1,6 @@
 parameters:
     oro_redirect.entity.slug.class: Oro\Bundle\RedirectBundle\Entity\Slug
+    oro_redirect.entity.redirect.class: Oro\Bundle\RedirectBundle\Entity\Redirect
 
 services:
     oro_redirect.routing.matched_url_decision_maker:
@@ -10,6 +11,8 @@ services:
         calls:
             - [addSkippedUrlPattern, ['/_profiler']]
             - [addSkippedUrlPattern, ['/_wdt']]
+            - [addSkippedUrlPattern, ['/_fragment']]
+            - [addSkippedUrlPattern, ['/js/']]
             - [addSkippedUrlPattern, ['/api/']]
 
     oro_redirect.routing.slug_url_matcher:
@@ -277,3 +280,18 @@ services:
             - '@request_stack'
             - '@oro_redirect.generator.slug_entity'
             - '@oro_redirect.generator.slug_url_differ'
+
+    oro_redirect.repository.redirect:
+        class: Oro\Bundle\RedirectBundle\Entity\Repository\RedirectRepository
+        parent: oro_entity.abstract_repository
+        arguments:
+            - '%oro_redirect.entity.redirect.class%'
+
+    oro_redirect.event_listener.redirect_exception_listener:
+        class: Oro\Bundle\RedirectBundle\EventListener\RedirectExceptionListener
+        arguments:
+            - '@oro_redirect.repository.redirect'
+            - '@oro_scope.scope_manager'
+            - '@oro_redirect.routing.matched_url_decision_maker'
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception }

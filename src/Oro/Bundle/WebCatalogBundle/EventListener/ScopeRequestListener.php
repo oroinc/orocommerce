@@ -3,9 +3,14 @@
 namespace Oro\Bundle\WebCatalogBundle\EventListener;
 
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
+use Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 
+/**
+ * Set used web catalog scope to request attribute _web_content_scope
+ * Used in menu data provider.
+ */
 class ScopeRequestListener
 {
     /**
@@ -19,13 +24,23 @@ class ScopeRequestListener
     private $slugRepository;
 
     /**
+     * @var MatchedUrlDecisionMaker
+     */
+    private $matchedUrlDecisionMaker;
+
+    /**
      * @param ScopeManager $scopeManager
      * @param SlugRepository $slugRepository
+     * @param MatchedUrlDecisionMaker $matchedUrlDecisionMaker
      */
-    public function __construct(ScopeManager $scopeManager, SlugRepository $slugRepository)
-    {
+    public function __construct(
+        ScopeManager $scopeManager,
+        SlugRepository $slugRepository,
+        MatchedUrlDecisionMaker $matchedUrlDecisionMaker
+    ) {
         $this->scopeManager = $scopeManager;
         $this->slugRepository = $slugRepository;
+        $this->matchedUrlDecisionMaker = $matchedUrlDecisionMaker;
     }
 
     /**
@@ -35,6 +50,9 @@ class ScopeRequestListener
     {
         $request = $event->getRequest();
         if (!$event->isMasterRequest() || $request->attributes->has('_web_content_scope')) {
+            return;
+        }
+        if (!$this->matchedUrlDecisionMaker->matches($request->getPathInfo())) {
             return;
         }
 

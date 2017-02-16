@@ -3,6 +3,7 @@
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
+use Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Tests\Unit\Stub\StubScope;
 use Oro\Bundle\WebCatalogBundle\EventListener\ScopeRequestListener;
@@ -22,6 +23,11 @@ class ScopeRequestListenerTest extends \PHPUnit_Framework_TestCase
     protected $repository;
 
     /**
+     * @var MatchedUrlDecisionMaker|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $matchedUrlDecisionMaker;
+
+    /**
      * @var ScopeRequestListener
      */
     protected $scopeRequestListener;
@@ -34,8 +40,15 @@ class ScopeRequestListenerTest extends \PHPUnit_Framework_TestCase
         $this->repository = $this->getMockBuilder(SlugRepository::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->matchedUrlDecisionMaker = $this->getMockBuilder(MatchedUrlDecisionMaker::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
-        $this->scopeRequestListener = new ScopeRequestListener($this->scopeManager, $this->repository);
+        $this->scopeRequestListener = new ScopeRequestListener(
+            $this->scopeManager,
+            $this->repository,
+            $this->matchedUrlDecisionMaker
+        );
     }
 
     public function testOnKernelRequestSubRequest()
@@ -44,12 +57,20 @@ class ScopeRequestListenerTest extends \PHPUnit_Framework_TestCase
         $event = $this->getMockBuilder(GetResponseEvent::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $request = Request::create('/');
+        $event->expects($this->any())
+            ->method('getRequest')
+            ->willReturn($request);
         $event->expects($this->once())
             ->method('isMasterRequest')
             ->willReturn(false);
 
         $this->scopeManager->expects($this->never())
             ->method($this->anything());
+
+        $this->matchedUrlDecisionMaker->expects($this->any())
+            ->method('matches')
+            ->willReturn(true);
 
         $this->scopeRequestListener->onKernelRequest($event);
     }
@@ -70,10 +91,42 @@ class ScopeRequestListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getRequest')
             ->willReturn($request);
 
+        $this->matchedUrlDecisionMaker->expects($this->any())
+            ->method('matches')
+            ->willReturn(true);
+
         $this->scopeManager->expects($this->never())
             ->method($this->anything());
 
         $this->scopeRequestListener->onKernelRequest($event);
+    }
+
+    public function testOnKernelRequestNotMatchedRequest()
+    {
+        /** @var GetResponseEvent|\PHPUnit_Framework_MockObject_MockObject $event */
+        $event = $this->getMockBuilder(GetResponseEvent::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $request = Request::create('/');
+        $event->expects($this->once())
+            ->method('isMasterRequest')
+            ->willReturn(true);
+        $event->expects($this->any())
+            ->method('getRequest')
+            ->willReturn($request);
+
+        $this->repository->expects($this->any())
+            ->method('isScopeAttachedToSlug')
+            ->willReturn(true);
+
+        $this->matchedUrlDecisionMaker->expects($this->any())
+            ->method('matches')
+            ->willReturn(false);
+
+        $this->scopeRequestListener->onKernelRequest($event);
+
+        $this->assertFalse($request->attributes->has('_web_content_scope'));
     }
 
     public function testOnKernelRequest()
@@ -101,6 +154,10 @@ class ScopeRequestListenerTest extends \PHPUnit_Framework_TestCase
         $this->repository->expects($this->once())
             ->method('isScopeAttachedToSlug')
             ->with($scope)
+            ->willReturn(true);
+
+        $this->matchedUrlDecisionMaker->expects($this->any())
+            ->method('matches')
             ->willReturn(true);
 
         $this->scopeRequestListener->onKernelRequest($event);
@@ -135,6 +192,10 @@ class ScopeRequestListenerTest extends \PHPUnit_Framework_TestCase
             ->method('isScopeAttachedToSlug')
             ->with($scope)
             ->willReturn(false);
+
+        $this->matchedUrlDecisionMaker->expects($this->any())
+            ->method('matches')
+            ->willReturn(true);
 
         $this->scopeRequestListener->onKernelRequest($event);
 

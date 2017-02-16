@@ -5,72 +5,72 @@ namespace Oro\Bundle\RedirectBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
-
+use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Oro\Bundle\RedirectBundle\Entity\Redirect;
-use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class LoadRedirects extends AbstractFixture implements DependentFixtureInterface
+class LoadRedirects extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
     const REDIRECT_1 = 'redirect1';
     const REDIRECT_2 = 'redirect2';
     const REDIRECT_3 = 'redirect3';
-    
+
     /**
      * @var array
      */
-    protected $redirects = [
+    private $redirects = [
         [
             'reference' => self::REDIRECT_1,
             'from' => '/from-1',
-            'to' => '/to-1',
+            'to' => '/',
             'type' => Redirect::MOVED_PERMANENTLY,
-            'website' => null
+            'localization' => null
         ],
         [
             'reference' => self::REDIRECT_2,
             'from' => '/from-2',
             'to' => '/to-2',
             'type' => Redirect::MOVED_PERMANENTLY,
-            'website' => LoadWebsiteData::WEBSITE1
+            'localization' => 'es'
         ],
         [
             'reference' => self::REDIRECT_3,
             'from' => '/from-3',
             'to' => '/to-3',
             'type' => Redirect::MOVED_TEMPORARY,
-            'website' => LoadWebsiteData::WEBSITE2
+            'localization' => 'en_US'
         ]
     ];
+
+    /**
+     * @var ContainerInterface
+     */
+    private $container;
 
     /**
      * {@inheritdoc}
      */
     public function load(ObjectManager $manager)
     {
-
+        /** @var ScopeManager $scopeManager */
+        $scopeManager = $this->container->get('oro_scope.scope_manager');
         foreach ($this->redirects as $item) {
             $redirect = new Redirect();
             $redirect->setFrom($item['from']);
             $redirect->setTo($item['to']);
             $redirect->setType($item['type']);
 
-            $scope = new Scope();
-            if ($item['website']) {
+            if ($item['localization']) {
                 /** @var Website $website */
-                $website = $this->getReference($item['website']);
-                if (method_exists($scope, 'setWebsite')) {
-                    $scope->setWebsite($website);
-                }
+                $website = $this->getReference($item['localization']);
+                $scope = $scopeManager->findOrCreate('web_content', ['localization' => $website]);
+                $redirect->addScope($scope);
             }
 
-            $manager->persist($scope);
-
-            $redirect->addScope($scope);
-
             $manager->persist($redirect);
-            
             $this->addReference($item['reference'], $redirect);
         }
 
@@ -83,7 +83,15 @@ class LoadRedirects extends AbstractFixture implements DependentFixtureInterface
     public function getDependencies()
     {
         return [
-            LoadWebsiteData::class
+            LoadLocalizationData::class
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setContainer(ContainerInterface $container = null)
+    {
+        $this->container = $container;
     }
 }
