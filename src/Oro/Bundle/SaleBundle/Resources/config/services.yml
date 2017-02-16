@@ -91,6 +91,15 @@ services:
             - [addEntity, ['a', '%oro_customer.entity.customer_address.class%']]
             - [addEntity, ['au', '%oro_customer.entity.customer_user_address.class%']]
 
+    oro_sale.privider.form_template_data.quote:
+        class: 'Oro\Bundle\SaleBundle\Form\QuoteFormTemplateDataProvider'
+        arguments:
+            - '@event_dispatcher'
+            - '@oro_sale.provider.quote_product_price'
+            - '@oro_sale.provider.quote_address_security'
+        tags:
+            - { name: oro_form.form_template_data_provider, alias: quote_update }
+
     oro_sale.provider.quote_address:
         class: 'Oro\Bundle\SaleBundle\Provider\QuoteAddressProvider'
         public: false
@@ -128,6 +137,15 @@ services:
         arguments:
             - "@oro_pricing.subtotal_processor.total_processor_provider"
             - "@oro_pricing.subtotal_processor.provider.subtotal_line_item"
+
+    oro_sale.event_listener.quote_update:
+        class: 'Oro\Bundle\SaleBundle\EventListener\QuoteUpdateHandlerEventListener'
+        arguments:
+            - '@oro_website.manager'
+            - '@oro_sale.service.quote_request_handler'
+        tags:
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_form_data_set.oro_sale_quote, method: beforeDataSet }
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_form_submit.oro_sale_quote, method: beforeSubmit }
 
     oro_sale.event_listener.customer_view:
         class: 'Oro\Bundle\SaleBundle\EventListener\CustomerViewListener'

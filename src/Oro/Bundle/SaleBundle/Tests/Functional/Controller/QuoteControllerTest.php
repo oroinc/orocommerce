@@ -184,10 +184,6 @@ class QuoteControllerTest extends WebTestCase
         static::assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('Quote has been saved', $crawler->html());
 
-        $this->assertContains($this->getReference(LoadUserData::USER1)->getFullName(), $result->getContent());
-        $this->assertContains($this->getReference(LoadUserData::ACCOUNT1_USER1)->getFullName(), $result->getContent());
-        $this->assertContains($this->getReference(LoadUserData::ACCOUNT1_USER2)->getFullName(), $result->getContent());
-
         /** @var Quote $quote */
         $quote = $this->getContainer()->get('doctrine')
             ->getManagerForClass('OroSaleBundle:Quote')
@@ -246,6 +242,11 @@ class QuoteControllerTest extends WebTestCase
         $this->client->request('GET', $this->getUrl('oro_sale_quote_view', ['id' => $id]));
 
         $result = $this->client->getResponse();
+
+        $this->assertContains($this->getReference(LoadUserData::USER1)->getFullName(), $result->getContent());
+        $this->assertContains($this->getReference(LoadUserData::ACCOUNT1_USER1)->getFullName(), $result->getContent());
+        $this->assertContains($this->getReference(LoadUserData::ACCOUNT1_USER2)->getFullName(), $result->getContent());
+
         static::assertHtmlResponseStatusCodeEquals($result, 200);
 
         return $id;

@@ -74,7 +74,10 @@ class QuoteTypeTest extends AbstractTest
             ->with('oro_currency.default_currency')
             ->willReturn('USD');
 
-        $this->formType = new QuoteType($this->quoteAddressSecurityProvider, $this->configManager);
+        $this->formType = new QuoteType(
+            $this->quoteAddressSecurityProvider,
+            $this->configManager
+        );
         $this->formType->setDataClass(Quote::class);
     }
 
