@@ -8,13 +8,13 @@ oro:
             groups:
                 infinite_pay.title: 'Infinite Pay'
                 display_options.title: 'Display Options'
-                advanced_options.title: 'Advanded Options'
+                advanced_options.title: 'Advanced Options'
                 credentials.title: 'Credentials'
 
             fields:
                 label: 'Enabled'
-                auto_capture.label: 'Auto Capture'
-                auto_activate.label: 'Auto Activation'
+                auto_capture.label: 'Auto-Capture'
+                auto_activate.label: 'Auto-Activation'
                 debug_mode.label: 'Debug Mode'
                 client_ref.label: 'Client Reference'
                 username_token.label: 'Username Token'
