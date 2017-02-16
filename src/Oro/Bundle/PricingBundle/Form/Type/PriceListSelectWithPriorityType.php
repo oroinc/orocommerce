@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
@@ -36,7 +37,7 @@ class PriceListSelectWithPriorityType extends AbstractType
             )
             ->add(
                 self::PRIORITY_FIELD,
-                'integer',
+                HiddenType::class,
                 [
                     'empty_data' => null,
                     'required' => true,
