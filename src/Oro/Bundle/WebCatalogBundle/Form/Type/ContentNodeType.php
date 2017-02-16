@@ -15,11 +15,25 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 class ContentNodeType extends AbstractType
 {
     const NAME = 'oro_web_catalog_content_node';
+
+    /**
+     * @var RouterInterface
+     */
+    private $router;
+
+    /**
+     * @param RouterInterface $router
+     */
+    public function __construct(RouterInterface $router)
+    {
+        $this->router = $router;
+    }
 
     /**
      * @param FormBuilderInterface $builder
@@ -87,6 +101,11 @@ class ContentNodeType extends AbstractType
             $form = $event->getForm();
 
             if ($data->getParentNode() instanceof ContentNode) {
+                $url = null;
+                if ($data->getId()) {
+                    $url = $this->router->generate('oro_content_node_get_changed_urls', ['id' => $data->getId()]);
+                }
+
                 $form->add(
                     'slugPrototypesWithRedirect',
                     LocalizedSlugWithRedirectType::NAME,
@@ -94,6 +113,7 @@ class ContentNodeType extends AbstractType
                         'label' => 'oro.webcatalog.contentnode.slug_prototypes.label',
                         'required' => true,
                         'source_field' => 'titles',
+                        'get_changed_slugs_url' => $url
                     ]
                 );
                 $form->add(

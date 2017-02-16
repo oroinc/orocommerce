@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
@@ -24,12 +25,19 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Routing\RouterInterface;
 
 class ContentNodeTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
+
+    /**
+     * @var RouterInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $router;
 
     /**
      * @var ContentNodeType
@@ -43,7 +51,9 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->type = new ContentNodeType();
+        $this->router = $this->createMock(RouterInterface::class);
+
+        $this->type = new ContentNodeType($this->router);
     }
 
     /**
@@ -177,6 +187,35 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
         foreach ($data->getContentVariants() as $contentVariant) {
             $this->assertEquals($data, $contentVariant->getNode());
         }
+    }
+
+    public function testGenerateChangedSlugsUrlOnPresetData()
+    {
+        $generatedUrl = '/some/url';
+        $this->router
+            ->expects($this->once())
+            ->method('generate')
+            ->with('oro_content_node_get_changed_urls', ['id' => 1])
+            ->willReturn($generatedUrl);
+
+        /** @var ContentNode $existingData */
+        $existingData = $this->getEntity(ContentNode::class, [
+            'id' => 1,
+            'slugPrototypes' => new ArrayCollection([$this->getEntity(LocalizedFallbackValue::class)])
+        ]);
+        $existingData->setParentNode(new ContentNode());
+
+        /** @var Form $form */
+        $form = $this->factory->create($this->type, $existingData);
+
+        $formView = $form->createView();
+
+        $this->assertArrayHasKey('slugPrototypesWithRedirect', $formView->children);
+        $this->assertEquals(
+            $generatedUrl,
+            $formView->children['slugPrototypesWithRedirect']
+                ->vars['confirm_slug_change_component_options']['changedSlugsUrl']
+        );
     }
 
     /**

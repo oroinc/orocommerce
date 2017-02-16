@@ -2,10 +2,13 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Generator;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Generator\RedirectGenerator;
+use Oro\Bundle\RedirectBundle\Generator\DTO\SlugUrl;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
@@ -30,6 +33,11 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
     protected $redirectGenerator;
 
     /**
+     * @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $localizationHelper;
+
+    /**
      * @var SlugGenerator
      */
     protected $slugGenerator;
@@ -41,7 +49,15 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->slugGenerator = new SlugGenerator($this->contentVariantTypeRegistry, $this->redirectGenerator);
+        $this->localizationHelper = $this->getMockBuilder(LocalizationHelper::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $this->slugGenerator = new SlugGenerator(
+            $this->contentVariantTypeRegistry,
+            $this->redirectGenerator,
+            $this->localizationHelper
+        );
     }
 
     public function testGenerateForRoot()
@@ -104,8 +120,15 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
         $parentContentVariant->addSlug($parentSlug);
 
         $parentContentNode = new ContentNode();
-        $parentContentNode->addLocalizedUrl((new LocalizedFallbackValue())->setText($parentNodeSlugUrl));
+        $localizedUrl = (new LocalizedFallbackValue())->setText($parentNodeSlugUrl);
+        $parentContentNode->addLocalizedUrl($localizedUrl);
         $parentContentNode->addContentVariant($parentContentVariant);
+
+        $this->localizationHelper
+            ->expects($this->once())
+            ->method('getLocalizedValue')
+            ->with($parentContentNode->getLocalizedUrls(), $localization)
+            ->willReturn($localizedUrl);
 
         $this->doTestGenerate($localization, $parentContentNode);
     }
@@ -157,8 +180,15 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
 
         $parentContentNode = new ContentNode();
         $parentContentNode->addContentVariant($parentContentVariant);
-        $parentContentNode->addLocalizedUrl((new LocalizedFallbackValue())->setText($parentNodeSlugUrl));
+        $localizedUrl = (new LocalizedFallbackValue())->setText($parentNodeSlugUrl);
+        $parentContentNode->addLocalizedUrl($localizedUrl);
         $parentContentNode->addContentVariant($parentContentVariant);
+
+        $this->localizationHelper
+            ->expects($this->once())
+            ->method('getLocalizedValue')
+            ->with($parentContentNode->getLocalizedUrls(), $localization)
+            ->willReturn($localizedUrl);
 
         $this->doTestGenerate($localization, $parentContentNode);
     }
@@ -278,7 +308,8 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
 
         $parentContentNode = new ContentNode();
         $parentContentNode->addContentVariant($parentContentVariant);
-        $parentContentNode->addLocalizedUrl((new LocalizedFallbackValue())->setText($parentNodeSlugUrl));
+        $localizedUrl = (new LocalizedFallbackValue())->setText($parentNodeSlugUrl);
+        $parentContentNode->addLocalizedUrl($localizedUrl);
         $parentContentNode->addContentVariant($parentContentVariant);
 
         $slugPrototype = new LocalizedFallbackValue();
@@ -289,6 +320,12 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
         $routeParameters = [];
         $routData = new RouteData($routeId, $routeParameters);
         $scope = new Scope();
+
+        $this->localizationHelper
+            ->expects($this->once())
+            ->method('getLocalizedValue')
+            ->with($parentContentNode->getLocalizedUrls(), null)
+            ->willReturn($localizedUrl);
 
         $contentNode = $this->prepareContentNode($parentContentNode, $routData, $scope, $slugPrototype);
         /** @var ContentVariant $actualContentVariant */
@@ -404,5 +441,70 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
         $contentVariant->addScope($scope);
 
         return $contentVariant;
+    }
+
+    public function testGetSlugs()
+    {
+        $englishLocalization = $this->getEntity(Localization::class, ['id' => 1]);
+        $frenchLocalization = $this->getEntity(Localization::class, ['id' => 3]);
+
+        /** @var LocalizedFallbackValue $defaultSlug */
+        $defaultSlug = $this->getEntity(LocalizedFallbackValue::class, ['string' => 'defaultUrl']);
+        /** @var LocalizedFallbackValue $englishSlug */
+        $englishSlug = $this->getEntity(LocalizedFallbackValue::class, [
+            'string' => 'englishUrl',
+            'localization' => $englishLocalization
+        ]);
+        /** @var LocalizedFallbackValue $frenchSlug */
+        $frenchSlug = $this->getEntity(LocalizedFallbackValue::class, [
+            'string' => 'frenchUrl',
+            'localization' => $frenchLocalization
+        ]);
+
+        $this->localizationHelper
+            ->expects($this->any())
+            ->method('getLocalizations')
+            ->willReturn([$englishLocalization, $frenchLocalization]);
+
+        $urlDefault = $this->getEntity(LocalizedFallbackValue::class, ['text' => '/parent/default']);
+        $urlEnglish = $this->getEntity(LocalizedFallbackValue::class, ['text' => '/parent/english']);
+        $urlFrench = $this->getEntity(LocalizedFallbackValue::class, ['text' => '/parent/french']);
+
+        $parentNode = $this->getEntity(ContentNode::class, ['localizedUrls' => [$urlDefault, $urlEnglish, $urlFrench]]);
+        /** @var ContentNode $contentNode */
+        $contentNode = $this->getEntity(ContentNode::class, ['parentNode' => $parentNode]);
+        $contentNode
+            ->addSlugPrototype($defaultSlug)
+            ->addSlugPrototype($englishSlug)
+            ->addSlugPrototype($frenchSlug);
+
+        $localizedUrls = $parentNode->getLocalizedUrls();
+
+        $this->localizationHelper
+            ->expects($this->any())
+            ->method('getLocalizedValue')
+            ->willReturnMap([
+                [$localizedUrls, null, $urlDefault],
+                [$localizedUrls, $englishLocalization, $urlEnglish],
+                [$localizedUrls, $frenchLocalization, $urlFrench],
+            ]);
+
+        $defaultLocalizationId = 0;
+        $expectedSlugUrls = new ArrayCollection([
+            $defaultLocalizationId => new SlugUrl('/parent/default/defaultUrl', null, 'defaultUrl'),
+            $englishLocalization->getId()
+                => new SlugUrl('/parent/english/englishUrl', $englishLocalization, 'englishUrl'),
+            $frenchLocalization->getId() => new SlugUrl('/parent/french/frenchUrl', $frenchLocalization, 'frenchUrl')
+        ]);
+
+        $this->assertEquals($expectedSlugUrls, $this->slugGenerator->prepareSlugUrls($contentNode));
+    }
+
+    public function testGetSlugsWithEmptySlugs()
+    {
+        /** @var ContentNode $contentNode */
+        $contentNode = $this->getEntity(ContentNode::class);
+
+        $this->assertEquals(new ArrayCollection(), $this->slugGenerator->prepareSlugUrls($contentNode));
     }
 }

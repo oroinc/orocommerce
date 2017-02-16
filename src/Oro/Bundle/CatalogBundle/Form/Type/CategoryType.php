@@ -2,8 +2,12 @@
 
 namespace Oro\Bundle\CatalogBundle\Form\Type;
 
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -25,6 +29,19 @@ class CategoryType extends AbstractType
      * @var string
      */
     protected $productClass;
+
+    /**
+     * @var UrlGeneratorInterface
+     */
+    protected $urlGenerator;
+
+    /**
+     * @param UrlGeneratorInterface $urlGenerator
+     */
+    public function __construct(UrlGeneratorInterface $urlGenerator)
+    {
+        $this->urlGenerator = $urlGenerator;
+    }
 
     /**
      * @param string $dataClass
@@ -149,9 +166,36 @@ class CategoryType extends AbstractType
                 [
                     'label'    => 'oro.catalog.category.slug_prototypes.label',
                     'required' => false,
-                    'source_field' => 'titles',
+                    'source_field' => 'titles'
+                ]
+            )
+            ->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener']);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function preSetDataListener(FormEvent $event)
+    {
+        $category = $event->getData();
+
+        if ($category instanceof Category && $category->getId()) {
+            $url = $this->urlGenerator->generate(
+                'oro_catalog_category_get_changed_slugs',
+                ['id' => $category->getId()]
+            );
+
+            $event->getForm()->add(
+                'slugPrototypesWithRedirect',
+                LocalizedSlugWithRedirectType::NAME,
+                [
+                    'label'    => 'oro.catalog.category.slug_prototypes.label',
+                    'required' => false,
+                    'source_field' => 'names',
+                    'get_changed_slugs_url' => $url
                 ]
             );
+        }
     }
 
     /**

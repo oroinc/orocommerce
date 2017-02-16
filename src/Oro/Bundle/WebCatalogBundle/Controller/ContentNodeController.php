@@ -109,26 +109,43 @@ class ContentNodeController extends Controller
     public function getPossibleUrlsAction(ContentNode $contentNode, ContentNode $newParentContentNode)
     {
         $slugGenerator = $this->get('oro_web_catalog.generator.slug_generator');
-        $localizationHelper = $this->get('oro_locale.helper.localization');
-        $defaultLocaleLabel = $this->get('translator')->trans('oro.locale.fallback.type.default');
 
         $urlsBeforeMove = $slugGenerator->prepareSlugUrls($contentNode);
         $contentNode->setParentNode($newParentContentNode);
         $urlsAfterMove = $slugGenerator->prepareSlugUrls($contentNode);
-        $urlChanges = [];
-        foreach ($urlsBeforeMove as $urlBeforeMove) {
-            foreach ($urlsAfterMove as $urlAfterMove) {
-                $localization = $urlBeforeMove->getLocalization();
-                if (is_null($localization)) {
-                    $urlChanges[$defaultLocaleLabel]['before'] = $urlBeforeMove->getUrl();
-                    $urlChanges[$defaultLocaleLabel]['after'] = $urlAfterMove->getUrl();
-                } else {
-                    $localeLabel = (string)$localizationHelper->getLocalizedValue($localization->getTitles());
-                    $urlChanges[$localeLabel]['before'] = $urlBeforeMove->getUrl();
-                    $urlChanges[$localeLabel]['after'] = $urlAfterMove->getUrl();
-                }
-            }
-        }
+
+        $slugUrlDiffer = $this->get('oro_redirect.generator.slug_url_differ');
+
+        $urlChanges = $slugUrlDiffer->getSlugUrlsChanges($urlsBeforeMove, $urlsAfterMove);
+
+        return new JsonResponse($urlChanges);
+    }
+
+    /**
+     * @Route(
+     *     "/get-changed-urls/{id}",
+     *     name="oro_content_node_get_changed_urls",
+     *     requirements={"id"="\d+"}
+     * )
+     *
+     * @AclAncestor("oro_web_catalog_update")
+     *
+     * @param ContentNode $node
+     * @return JsonResponse
+     */
+    public function getChangedUrlsAction(ContentNode $node, Request $request)
+    {
+        $slugGenerator = $this->get('oro_web_catalog.generator.slug_generator');
+        $oldUrls = $slugGenerator->prepareSlugUrls($node);
+
+        $form = $this->createForm(ContentNodeType::class, $node);
+        $form->submit($request);
+
+        $newUrls = $slugGenerator->prepareSlugUrls($form->getData());
+
+        $slugUrlDiffer = $this->get('oro_redirect.generator.slug_url_differ');
+
+        $urlChanges = $slugUrlDiffer->getSlugUrlsChanges($oldUrls, $newUrls);
 
         return new JsonResponse($urlChanges);
     }

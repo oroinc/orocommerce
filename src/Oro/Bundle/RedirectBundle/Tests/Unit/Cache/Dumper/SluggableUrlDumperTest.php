@@ -3,7 +3,6 @@
 namespace Oro\Bundle\RedirectBundle\Tests\Cache\Dumper;
 
 use Oro\Bundle\RedirectBundle\Cache\Dumper\SluggableUrlDumper;
-use Oro\Bundle\RedirectBundle\Cache\UrlDataStorage;
 use Oro\Bundle\RedirectBundle\Cache\UrlStorageCache;
 use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
 

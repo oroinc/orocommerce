@@ -5,6 +5,7 @@ define(function(require) {
     var BaseComponent = require('oroui/js/app/components/base/component');
     var ConfirmSlugChangeModal = require('ororedirect/js/confirm-slug-change-modal');
     var mediator = require('oroui/js/mediator');
+    var messenger = require('oroui/js/messenger');
     var __ = require('orotranslation/js/translator');
     var _ = require('underscore');
     var $ = require('jquery');
@@ -98,15 +99,44 @@ define(function(require) {
             }
 
             this._removeConfirmModal();
-            this.confirmModal = new ConfirmSlugChangeModal({
-                'changedSlugs': this._getChangedSlugsList(),
-                'confirmState': this.$createRedirectCheckbox.prop('checked')
-            })
-                .on('ok', _.bind(this.onConfirmModalOk, this))
-                .on('confirm-option-changed', _.bind(this.onConfirmModalOptionChange, this))
-                .open();
+
+            this.loadSlugListAndShowConfirmModal();
 
             return false;
+        },
+
+        loadSlugListAndShowConfirmModal: function() {
+            var formData = this.$form.serialize();
+            var urls = {};
+            var that = this;
+
+            mediator.execute('showLoading');
+            $.ajax({
+                url: this.options.changedSlugsUrl,
+                type: 'POST',
+                data: formData,
+                dataType: 'json',
+                success: function(response) {
+                    mediator.execute('hideLoading');
+                    urls = response;
+
+                    if (!_.isArray(urls)) {
+                        this.confirmModal = new ConfirmSlugChangeModal({
+                            'changedSlugs': that._getUrlsList(urls),
+                            'confirmState': that.$createRedirectCheckbox.prop('checked')
+                        })
+                            .on('ok', _.bind(that.onConfirmModalOk, that))
+                            .on('confirm-option-changed', _.bind(that.onConfirmModalOptionChange, that))
+                            .open();
+                    } else {
+                        that.onConfirmModalOk();
+                    }
+                },
+                error: function() {
+                    mediator.execute('hideLoading');
+                    messenger.notificationFlashMessage('error', __('oro.ui.unexpected_error'));
+                }
+            });
         },
 
         onConfirmModalOk: function() {
@@ -167,34 +197,26 @@ define(function(require) {
         },
 
         /**
+         /**
+         * @param {Object} urls
          * @returns {String}
          * @private
          */
-        _getChangedSlugsList: function() {
+        _getUrlsList: function(urls) {
             var list = '';
-            this.$slugFields.each(_.bind(function(index, item) {
-                if (this.slugFieldsInitialState[index] !== $(item).val()) {
-                    var purpose = this._getSlugPurpose($(item));
-                    if (purpose) {
-                        list += '\n' + __(
-                                'oro.redirect.confirm_slug_change.changed_localized_slug_item',
-                                {
-                                    'old_slug': this.slugFieldsInitialState[index],
-                                    'new_slug': $(item).val(),
-                                    'purpose': purpose
-                                }
-                            );
-                    } else {
-                        list += '\n' + __(
-                                'oro.redirect.confirm_slug_change.changed_slug_item',
-                                {
-                                    'old_slug': this.slugFieldsInitialState[index],
-                                    'new_slug': $(item).val()
-                                }
-                            );
-                    }
+            for (var localization in urls) {
+                if (urls.hasOwnProperty(localization)) {
+                    list += '\n' + __(
+                            'oro.redirect.confirm_slug_change.changed_localized_slug_item',
+                            {
+                                'old_slug': urls[localization].before,
+                                'new_slug': urls[localization].after,
+                                'purpose': localization
+                            }
+                        );
                 }
-            }, this));
+            }
+
             return list;
         },
 

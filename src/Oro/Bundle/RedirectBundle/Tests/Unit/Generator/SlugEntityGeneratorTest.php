@@ -2,11 +2,13 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Generator;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\RedirectBundle\Cache\UrlStorageCache;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
+use Oro\Bundle\RedirectBundle\Generator\DTO\SlugUrl;
 use Oro\Bundle\RedirectBundle\Generator\RedirectGenerator;
 use Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator;
 use Oro\Bundle\RedirectBundle\Generator\UniqueSlugResolver;
@@ -268,5 +270,53 @@ class SlugEntityGeneratorTest extends \PHPUnit_Framework_TestCase
 
         $this->generator->generate($entity, true);
         $this->assertEquals($expected, $entity);
+    }
+
+    public function testPrepareSlugUrls()
+    {
+        /** @var Localization $englishLocalization */
+        $englishLocalization = $this->getEntity(Localization::class, ['id' => 1]);
+        /** @var Localization $frenchLocalization */
+        $frenchLocalization = $this->getEntity(Localization::class, ['id' => 3]);
+
+        /** @var LocalizedFallbackValue $defaultSlug */
+        $defaultSlug = $this->getEntity(LocalizedFallbackValue::class, ['string' => 'defaultUrl']);
+        /** @var LocalizedFallbackValue $englishSlug */
+        $englishSlug = $this->getEntity(LocalizedFallbackValue::class, [
+            'string' => 'englishUrl',
+            'localization' => $englishLocalization
+        ]);
+        /** @var LocalizedFallbackValue $frenchSlug */
+        $frenchSlug = $this->getEntity(LocalizedFallbackValue::class, [
+            'string' => 'frenchUrl',
+            'localization' => $frenchLocalization
+        ]);
+
+        $sluggableEntity = (new SluggableEntityStub())
+            ->addSlugPrototype($defaultSlug)
+            ->addSlugPrototype($englishSlug)
+            ->addSlugPrototype($frenchSlug);
+
+        $this->routingInformationProvider
+            ->expects($this->any())
+            ->method('getUrlPrefix')
+            ->with($sluggableEntity)
+            ->willReturn('prefix');
+
+        $noLocalizationId = 0;
+        $expectedSlugUrls = new ArrayCollection([
+            $noLocalizationId => new SlugUrl('/prefix/defaultUrl', null, 'defaultUrl'),
+            $englishLocalization->getId() => new SlugUrl('/prefix/englishUrl', $englishLocalization, 'englishUrl'),
+            $frenchLocalization->getId() => new SlugUrl('/prefix/frenchUrl', $frenchLocalization, 'frenchUrl')
+        ]);
+
+        $this->assertEquals($expectedSlugUrls, $this->generator->prepareSlugUrls($sluggableEntity));
+    }
+
+    public function testPrepareSlugUrlsWithEmptySlugs()
+    {
+        $sluggableEntity = new SluggableEntityStub();
+
+        $this->assertEquals(new ArrayCollection(), $this->generator->prepareSlugUrls($sluggableEntity));
     }
 }

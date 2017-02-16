@@ -100,18 +100,38 @@ class LocalizedSlugWithRedirectTypeTest extends FormIntegrationTestCase
 
         $this->formType->configureOptions($resolver);
     }
-    
-    public function testBuildView()
+
+    public function testBuildViewWhenGetChangedSlugsUrlOptionsIsNull()
     {
         /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $this->createMock(FormInterface::class);
         $view = new FormView();
-        $options = ['someOptionName' => 'someOptionValue'];
+        $options = ['get_changed_slugs_url' => null];
 
         $this->confirmSlugChangeFormHelper->expects($this->once())
             ->method('addConfirmSlugChangeOptionsLocalized')
             ->with($view, $form, $options);
 
         $this->formType->buildView($view, $form, $options);
+
+        $this->assertEquals(true, $view->vars['confirm_slug_change_component_options']['disabled']);
+        $this->assertArrayNotHasKey('changedSlugsUrl', $view->vars['confirm_slug_change_component_options']);
+    }
+
+    public function testBuildViewWhenGetChangedSlugsUrlOptionsIsNotNull()
+    {
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->createMock(FormInterface::class);
+        $view = new FormView();
+        $changedSlugsUrl = '/some/action/3';
+        $options = ['get_changed_slugs_url' => $changedSlugsUrl];
+
+        $this->confirmSlugChangeFormHelper->expects($this->once())
+            ->method('addConfirmSlugChangeOptionsLocalized')
+            ->with($view, $form, $options);
+
+        $this->formType->buildView($view, $form, $options);
+
+        $this->assertEquals($changedSlugsUrl, $view->vars['confirm_slug_change_component_options']['changedSlugsUrl']);
     }
 }

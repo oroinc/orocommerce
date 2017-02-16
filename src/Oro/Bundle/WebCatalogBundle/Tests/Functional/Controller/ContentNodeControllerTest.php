@@ -22,6 +22,7 @@ class ContentNodeControllerTest extends WebTestCase
 
     public function testGetPossibleUrlsAction()
     {
+        $this->markTestSkipped('This test is skipped due to caching bug BB-7673');
         /** @var ContentNode $firstCatalogNode */
         $firstCatalogNode = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT);
         $slugGenerator = $this->getContainer()->get('oro_web_catalog.generator.slug_generator');
@@ -50,6 +51,10 @@ class ContentNodeControllerTest extends WebTestCase
             'Default Value' => [
                 'before' => '/web_catalog.node.1.1/web_catalog.node.1.1.1',
                 'after' => '/web_catalog.node.1.2/web_catalog.node.1.1.1'
+            ],
+            'English' => [
+                'before' => '/web_catalog.node.1.1/web_catalog.node.1.1.1',
+                'after' => '/web_catalog.node.1.2/web_catalog.node.1.1.1'
             ]
         ];
         $actual = json_decode($result->getContent(), true);
@@ -76,10 +81,14 @@ class ContentNodeControllerTest extends WebTestCase
             )
         );
 
-        $messages = self::getSentMessages();
+        $expectedMessage = [
+            'topic' => Topics::RESOLVE_NODE_SLUGS,
+            'message' => [
+                'id' => $contentNode->getId(),
+                'createRedirect' => true
+            ]
+        ];
 
-        $this->assertEquals(Topics::RESOLVE_NODE_SLUGS, $messages[0]['topic']);
-        $this->assertEquals($contentNode->getId(), $messages[0]['message']['id']);
-        $this->assertEquals(true, $messages[0]['message']['createRedirect']);
+        $this->assertContains($expectedMessage, self::getSentMessages());
     }
 }

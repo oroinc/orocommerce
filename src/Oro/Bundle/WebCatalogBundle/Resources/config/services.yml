@@ -134,6 +134,8 @@ services:
 
     oro_web_catalog.form.type.content_node:
         class: Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType
+        arguments:
+            - '@router'
         tags:
             - { name: form.type, alias: oro_web_catalog_content_node }
 
@@ -154,6 +156,7 @@ services:
         arguments:
             - '@oro_web_catalog.content_variant_type.registry'
             - '@oro_redirect.generator.redirect'
+            - '@oro_locale.helper.localization'
 
     oro_web_catalog.generator.slug_generator.link:
         tags:

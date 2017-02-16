@@ -5,6 +5,7 @@ namespace Oro\Bundle\RedirectBundle\Generator;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\RedirectBundle\Cache\UrlStorageCache;
 use Oro\Bundle\RedirectBundle\Entity\LocalizedSlugPrototypeAwareInterface;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
@@ -35,6 +36,7 @@ class SlugEntityGenerator
      * @param UniqueSlugResolver $slugResolver
      * @param RedirectGenerator $redirectGenerator
      * @param UrlStorageCache $urlStorageCache
+     * @param LocalizationHelper $localizationHelper
      */
     public function __construct(
         RoutingInformationProviderInterface $routingInformationProvider,
@@ -135,7 +137,7 @@ class SlugEntityGenerator
      * @param SluggableInterface $entity
      * @return Collection|SlugUrl[]
      */
-    protected function getSlugUrls(SluggableInterface $entity)
+    public function prepareSlugUrls(SluggableInterface $entity)
     {
         $filledSlugPrototypes = $this->getFilledSlugPrototypes($entity);
         $slugUrls = new ArrayCollection();
@@ -206,7 +208,7 @@ class SlugEntityGenerator
      */
     private function getResolvedSlugUrls(SluggableInterface $entity)
     {
-        $slugUrls = $this->getSlugUrls($entity);
+        $slugUrls = $this->prepareSlugUrls($entity);
 
         foreach ($slugUrls as $slugUrl) {
             $slugUrl->setUrl($this->slugResolver->resolve($slugUrl, $entity));
@@ -219,7 +221,7 @@ class SlugEntityGenerator
      * @param Localization|null $localization
      * @return int
      */
-    public function getLocalizationId(Localization $localization = null)
+    private function getLocalizationId(Localization $localization = null)
     {
         if ($localization) {
             return $localization->getId();

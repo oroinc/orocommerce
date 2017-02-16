@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Form\Type;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Form\Type\PageType;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
@@ -13,19 +14,31 @@ use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 use Oro\Bundle\RedirectBundle\Helper\ConfirmSlugChangeFormHelper;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Validator\Type\FormTypeValidatorExtension;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\Forms;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\ConstraintViolationList;
 
 class PageTypeTest extends FormIntegrationTestCase
 {
+    use EntityTrait;
+
+    const PAGE_ID = 7;
+
+    /**
+     * @var UrlGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $urlGenerator;
+
     /**
      * @var PageType
      */
-    protected $type;
+    private $type;
 
     protected function setUp()
     {
@@ -42,7 +55,9 @@ class PageTypeTest extends FormIntegrationTestCase
             ->addTypeExtension(new FormTypeValidatorExtension($validator))
             ->getFormFactory();
 
-        $this->type = new PageType();
+        $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
+
+        $this->type = new PageType($this->urlGenerator);
     }
 
     /**
@@ -164,7 +179,6 @@ class PageTypeTest extends FormIntegrationTestCase
         $this->assertEquals($expectedData, $form->getData());
     }
 
-
     /**
      * @return array
      */
@@ -279,5 +293,33 @@ class PageTypeTest extends FormIntegrationTestCase
                 'expectedData' => $pageWithoutRedirect,
             ],
         ];
+    }
+
+    public function testGenerateChangedSlugsUrlOnPresetData()
+    {
+        $generatedUrl = '/some/url';
+        $this->urlGenerator
+            ->expects($this->once())
+            ->method('generate')
+            ->with('oro_cms_page_get_changed_urls', ['id' => 1])
+            ->willReturn($generatedUrl);
+
+        /** @var Page $existingData */
+        $existingData = $this->getEntity(Page::class, [
+            'id' => 1,
+            'slugPrototypes' => new ArrayCollection([$this->getEntity(LocalizedFallbackValue::class)])
+        ]);
+
+        /** @var Form $form */
+        $form = $this->factory->create($this->type, $existingData);
+
+        $formView = $form->createView();
+
+        $this->assertArrayHasKey('slugPrototypesWithRedirect', $formView->children);
+        $this->assertEquals(
+            $generatedUrl,
+            $formView->children['slugPrototypesWithRedirect']
+                ->vars['confirm_slug_change_component_options']['changedSlugsUrl']
+        );
     }
 }

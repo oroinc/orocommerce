@@ -90,8 +90,11 @@ class LocalizedSlugWithRedirectType extends AbstractType
             'create_redirect_enabled' => true,
             'slug_suggestion_enabled' => true,
             'data_class' => SlugPrototypesWithRedirect::class,
+            'get_changed_slugs_url' => null
         ]);
         $resolver->setRequired('source_field');
+
+        $resolver->setAllowedTypes('get_changed_slugs_url', ['string', 'null']);
     }
 
     /**
@@ -100,5 +103,12 @@ class LocalizedSlugWithRedirectType extends AbstractType
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
         $this->confirmSlugChangeFormHelper->addConfirmSlugChangeOptionsLocalized($view, $form, $options);
+
+        if (!$options['get_changed_slugs_url']) {
+            $view->vars['confirm_slug_change_component_options']['disabled'] = true;
+        } else {
+            $view->vars['confirm_slug_change_component_options']['changedSlugsUrl']
+                = $options['get_changed_slugs_url'];
+        }
     }
 }

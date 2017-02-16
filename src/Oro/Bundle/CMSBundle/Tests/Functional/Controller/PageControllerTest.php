@@ -4,6 +4,8 @@ namespace Oro\Bundle\CMSBundle\Tests\Functional\Controller;
 
 use Doctrine\ORM\EntityManager;
 
+use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -158,6 +160,73 @@ class PageControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 404);
+    }
+
+    public function testGetChangedUrlsWhenNoSlugChanged()
+    {
+        $this->markTestSkipped('This test is skipped due to caching bug BB-7673');
+        $this->loadFixtures([LoadPageData::class]);
+
+        $page = $this->getReference(LoadPageData::PAGE_1);
+
+        $crawler = $this->client->request('GET', $this->getUrl('oro_cms_page_update', ['id' => $page->getId()]));
+        $form = $crawler->selectButton('Save')->form();
+        $formValues = $form->getPhpValues();
+
+        $this->client->request(
+            'POST',
+            $this->getUrl('oro_cms_page_get_changed_urls', ['id' => $page->getId()]),
+            $formValues
+        );
+
+        $response = $this->client->getResponse();
+        $this->assertEquals('[]', $response->getContent());
+    }
+
+    public function testGetChangedUrlsWhenSlugChanged()
+    {
+        $this->markTestSkipped('This test is skipped due to caching bug BB-7673');
+        $this->loadFixtures([LoadPageData::class]);
+        $localization = $this->getContainer()->get('oro_locale.manager.localization')->getDefaultLocalization(false);
+
+        /** @var Page $page */
+        $page = $this->getReference(LoadPageData::PAGE_1);
+        $page->setDefaultSlugPrototype('old-default-slug');
+        $slugPrototype = new LocalizedFallbackValue();
+        $slugPrototype->setString('old-english-slug')->setLocalization($localization);
+
+        $page->addSlugPrototype($slugPrototype);
+
+        $this->entityManager->persist($page);
+        $this->entityManager->flush();
+
+        $crawler = $this->client->request('GET', $this->getUrl('oro_cms_page_update', ['id' => $page->getId()]));
+        $form = $crawler->selectButton('Save')->form();
+        $formValues = $form->getPhpValues();
+        $formValues['oro_cms_page']['slugPrototypesWithRedirect'] = [
+            'slugPrototypes' => [
+                'values' => [
+                    'default' => 'default-slug',
+                    'localizations' => [
+                        $localization->getId() => ['value' => 'english-slug']
+                    ]
+                ]
+            ]
+        ];
+
+        $this->client->request(
+            'POST',
+            $this->getUrl('oro_cms_page_get_changed_urls', ['id' => $page->getId()]),
+            $formValues
+        );
+
+        $expectedData = [
+            'Default Value' => ['before' => '/old-default-slug', 'after' => '/default-slug'],
+            'English' => ['before' => '/old-english-slug', 'after' => '/english-slug']
+        ];
+
+        $response = $this->client->getResponse();
+        $this->assertJsonStringEqualsJsonString(json_encode($expectedData), $response->getContent());
     }
 
     /**

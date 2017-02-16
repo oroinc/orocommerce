@@ -38,6 +38,7 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as EntityIden
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Validator\Validation;
 
 class CategoryFormExtensionTest extends FormIntegrationTestCase
@@ -90,6 +91,9 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        /** @var RouterInterface $router */
+        $router = $this->createMock(RouterInterface::class);
+
         return [
             new PreloadedExtension(
                 [
@@ -97,7 +101,7 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
                         $postSetDataListener,
                         $visibilityChoicesProvider
                     ),
-                    CategoryType::NAME => new CategoryType(),
+                    CategoryType::NAME => new CategoryType($router),
                     CategoryDefaultProductOptionsType::NAME => $defaultProductOptions,
                     CategoryUnitPrecisionType::NAME => $categoryUnitPrecision,
                     ProductUnitSelectionType::NAME => new ProductUnitSelectionTypeStub(

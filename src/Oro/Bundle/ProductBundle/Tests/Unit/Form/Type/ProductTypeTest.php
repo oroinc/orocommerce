@@ -2,12 +2,14 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\AttachmentBundle\Form\Type\ImageType;
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
 use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\FormBundle\Form\Extension\TooltipFormExtension;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType as OroCollectionType;
@@ -35,6 +37,7 @@ use Oro\Bundle\ProductBundle\Provider\ChainDefaultProductUnitProvider;
 use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 use Oro\Bundle\ProductBundle\Provider\ProductStatusProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\StubProductImage;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\EnumSelectTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ImageTypeStub;
@@ -46,12 +49,17 @@ use Oro\Bundle\RedirectBundle\Helper\ConfirmSlugChangeFormHelper;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
 use Oro\Component\Layout\Extension\Theme\Manager\PageTemplatesManager;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class ProductTypeTest extends FormIntegrationTestCase
 {
+    use EntityTrait;
+
     const DATA_CLASS = 'Oro\Bundle\ProductBundle\Entity\Product';
 
     /**
@@ -60,9 +68,9 @@ class ProductTypeTest extends FormIntegrationTestCase
     protected $type;
 
     /**
-     * @var RoundingServiceInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var UrlGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $roundingService;
+    protected $urlGenerator;
 
     /** @var  ChainDefaultProductUnitProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $defaultProductUnitProvider;
@@ -114,7 +122,6 @@ class ProductTypeTest extends FormIntegrationTestCase
      */
     protected function setUp()
     {
-        $this->roundingService = $this->createMock(RoundingServiceInterface::class);
         $this->defaultProductUnitProvider = $this
             ->getMockBuilder(ChainDefaultProductUnitProvider::class)
             ->disableOriginalConstructor()
@@ -125,7 +132,9 @@ class ProductTypeTest extends FormIntegrationTestCase
             ->method('getDefaultProductUnitPrecision')
             ->will($this->returnValue($this->getDefaultProductUnitPrecision()));
 
-        $this->type = new ProductType($this->defaultProductUnitProvider, $this->roundingService);
+        $this->urlGenerator = $this->createMock(UrlGeneratorInterface::class);
+
+        $this->type = new ProductType($this->defaultProductUnitProvider, $this->urlGenerator);
         $this->type->setDataClass(self::DATA_CLASS);
 
         $image1 = new StubProductImage();
@@ -252,20 +261,9 @@ class ProductTypeTest extends FormIntegrationTestCase
      * @param Product $defaultData
      * @param array $submittedData
      * @param Product $expectedData
-     * @param boolean $rounding
      */
-    public function testSubmit(Product $defaultData, $submittedData, Product $expectedData, $rounding = false)
+    public function testSubmit(Product $defaultData, $submittedData, Product $expectedData)
     {
-        if ($rounding) {
-            $this->roundingService->expects($this->once())
-                ->method('round')
-                ->willReturnCallback(
-                    function ($value, $precision) {
-                        return round($value, $precision);
-                    }
-                );
-        }
-
         $form = $this->factory->create($this->type, $defaultData);
 
         $this->assertEquals($defaultData, $form->getData());
@@ -301,8 +299,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                     ],
                 ],
                 'expectedData'  => $this->createExpectedProductEntity()
-                    ->addSlugPrototype((new LocalizedFallbackValue())->setString('slug')),
-                'rounding' => false
+                    ->addSlugPrototype((new LocalizedFallbackValue())->setString('slug'))
             ],
             'product with additionalUnitPrecisions' => [
                 'defaultData'   => $this->createDefaultProductEntity(),
@@ -326,8 +323,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                         'createRedirect' => true,
                     ],
                 ],
-                'expectedData'  => $this->createExpectedProductEntity(true),
-                'rounding' => false
+                'expectedData'  => $this->createExpectedProductEntity(true)
             ],
             'product with names and descriptions' => [
                 'defaultData'   => $this->createDefaultProductEntity(),
@@ -354,8 +350,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                         'createRedirect' => true,
                     ],
                 ],
-                'expectedData'  => $this->createExpectedProductEntity(false, true),
-                'rounding' => false
+                'expectedData'  => $this->createExpectedProductEntity(false, true)
             ],
             'simple product without variants' => [
                 'defaultData'   => $this->createDefaultProductEntity(false),
@@ -370,8 +365,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                         'createRedirect' => true,
                     ],
                 ],
-                'expectedData'  => $this->createExpectedProductEntity(false, false),
-                'rounding' => false
+                'expectedData'  => $this->createExpectedProductEntity(false, false)
             ],
             'simple product with images' => [
                 'defaultData'   => $this->createDefaultProductEntity(false),
@@ -387,8 +381,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                         'createRedirect' => true,
                     ],
                 ],
-                'expectedData'  => $this->createExpectedProductEntity(false, false),
-                'rounding' => false
+                'expectedData'  => $this->createExpectedProductEntity(false, false)
             ],
             'configurable product' => [
                 'defaultData'   => $this->createDefaultProductEntity(true),
@@ -405,8 +398,7 @@ class ProductTypeTest extends FormIntegrationTestCase
                     ],
                 ],
                 'expectedData' => $this->createExpectedProductEntity(false, false, true)
-                    ->setType(Product::TYPE_CONFIGURABLE),
-                'rounding' => false
+                    ->setType(Product::TYPE_CONFIGURABLE)
             ],
         ];
     }
@@ -531,5 +523,34 @@ class ProductTypeTest extends FormIntegrationTestCase
         $productUnitPrecision->setUnit($productUnit)->setPrecision('0');
 
         return $productUnitPrecision;
+    }
+
+    public function testGenerateChangedSlugsUrlOnPresetData()
+    {
+        $generatedUrl = '/some/url';
+        $this->urlGenerator
+            ->expects($this->once())
+            ->method('generate')
+            ->with('oro_product_get_changed_slugs', ['id' => 1])
+            ->willReturn($generatedUrl);
+
+        /** @var Product $existingData */
+        $existingData = $this->getEntity(Product::class, [
+            'id' => 1,
+            'slugPrototypes' => new ArrayCollection([$this->getEntity(LocalizedFallbackValue::class)]),
+            'directlyPrimaryUnitPrecision' => $this->getEntity(ProductUnitPrecision::class)
+        ]);
+
+        /** @var Form $form */
+        $form = $this->factory->create($this->type, $existingData);
+
+        $formView = $form->createView();
+
+        $this->assertArrayHasKey('slugPrototypesWithRedirect', $formView->children);
+        $this->assertEquals(
+            $generatedUrl,
+            $formView->children['slugPrototypesWithRedirect']
+                ->vars['confirm_slug_change_component_options']['changedSlugsUrl']
+        );
     }
 }

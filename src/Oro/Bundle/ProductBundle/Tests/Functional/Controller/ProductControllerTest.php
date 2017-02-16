@@ -5,15 +5,16 @@ namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class ProductControllerTest extends WebTestCase
 {
@@ -565,6 +566,82 @@ class ProductControllerTest extends WebTestCase
             $actualUnitPrecisions
         );
         return $id;
+    }
+
+    /**
+     * @depends testUpdate
+     */
+    public function testGetChangedUrlsWhenNoSlugChanged()
+    {
+        $this->markTestSkipped('This test is skipped due to caching bug BB-7673');
+        /** @var Product $product */
+        $product = $this->getProductDataBySku(self::UPDATED_SKU);
+
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $product->getId()]));
+        $form = $crawler->selectButton('Save')->form();
+        $formValues = $form->getPhpValues();
+
+        $this->client->request(
+            'POST',
+            $this->getUrl('oro_product_get_changed_slugs', ['id' => $product->getId()]),
+            $formValues
+        );
+
+        $response = $this->client->getResponse();
+        $this->assertEquals('[]', $response->getContent());
+    }
+
+    /**
+     * @depends testUpdate
+     */
+    public function testGetChangedUrlsWhenSlugChanged()
+    {
+        $this->markTestSkipped('This test is skipped due to caching bug BB-7673');
+        $englishLocalization = $this->getContainer()->get('oro_locale.manager.localization')
+            ->getDefaultLocalization(false);
+
+        /** @var Product $product */
+        $product = $this->getProductDataBySku(self::UPDATED_SKU);
+
+        $product->getSlugPrototypes()->clear();
+
+        $product->setDefaultSlugPrototype('old-default-slug');
+        $slugPrototype = new LocalizedFallbackValue();
+        $slugPrototype->setString('old-english-slug')->setLocalization($englishLocalization);
+
+        $product->addSlugPrototype($slugPrototype);
+
+        $entityManager = $this->getContainer()->get('doctrine')->getManagerForClass(Product::class);
+        $entityManager->persist($product);
+        $entityManager->flush();
+
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $product->getId()]));
+        $form = $crawler->selectButton('Save')->form();
+        $formValues = $form->getPhpValues();
+        $formValues['oro_product']['slugPrototypesWithRedirect'] = [
+            'slugPrototypes' => [
+                'values' => [
+                    'default' => 'default-slug',
+                    'localizations' => [
+                        $englishLocalization->getId() => ['value' => 'english-slug'],
+                    ]
+                ]
+            ]
+        ];
+
+        $this->client->request(
+            'POST',
+            $this->getUrl('oro_product_get_changed_slugs', ['id' => $product->getId()]),
+            $formValues
+        );
+
+        $expectedData = [
+            'Default Value' => ['before' => '/old-default-slug', 'after' => '/default-slug'],
+            'English' => ['before' => '/old-english-slug','after' => '/english-slug']
+        ];
+
+        $response = $this->client->getResponse();
+        $this->assertJsonStringEqualsJsonString(json_encode($expectedData), $response->getContent());
     }
 
     /**

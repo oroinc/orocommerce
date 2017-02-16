@@ -100,6 +100,12 @@ services:
         arguments:
             - '@doctrine'
 
+    oro_redirect.generator.slug_url_differ:
+        class: Oro\Bundle\RedirectBundle\Generator\SlugUrlDiffer
+        arguments:
+            - '@oro_locale.helper.localization'
+            - '@translator'
+
     oro_redirect.generator.unique_slug_resolver:
         class: Oro\Bundle\RedirectBundle\Generator\UniqueSlugResolver
         public: false
@@ -263,3 +269,11 @@ services:
         parent: oro_entity.abstract_repository
         arguments:
             - '%oro_redirect.entity.slug.class%'
+
+    oro_redirect.helper.changed_slugs_helper:
+        class: Oro\Bundle\RedirectBundle\Helper\ChangedSlugsHelper
+        arguments:
+            - '@form.factory'
+            - '@request_stack'
+            - '@oro_redirect.generator.slug_entity'
+            - '@oro_redirect.generator.slug_url_differ'
