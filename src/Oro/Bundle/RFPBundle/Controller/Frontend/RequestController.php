@@ -15,7 +15,6 @@ use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\RFPBundle\Entity\Request as RFPRequest;
-use Oro\Bundle\RFPBundle\Entity\RequestStatus;
 use Oro\Bundle\RFPBundle\Form\Handler\RequestUpdateHandler;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 
@@ -37,6 +36,11 @@ class RequestController extends Controller
      */
     public function viewAction(RFPRequest $request)
     {
+        $status = $request->getInternalStatus();
+        if ($status && $status->getId() === RFPRequest::INTERNAL_STATUS_DELETED) {
+            throw $this->createNotFoundException();
+        }
+
         return [
             'data' => [
                 'entity' => $request
@@ -127,11 +131,6 @@ class RequestController extends Controller
         /* @var $handler RequestUpdateHandler */
         $handler = $this->get('oro_rfp.service.request_update_handler');
 
-        // set default status after edit
-        if ($rfpRequest->getId()) {
-            $rfpRequest->setStatus($this->getDefaultRequestStatus());
-        }
-
         $securityFacade = $this->getSecurityFacade();
 
         return $handler->handleUpdate(
@@ -210,21 +209,6 @@ class RequestController extends Controller
     protected function getSecurityFacade()
     {
         return $this->get('oro_security.security_facade');
-    }
-
-    /**
-     * @return RequestStatus
-     */
-    protected function getDefaultRequestStatus()
-    {
-        $requestStatusClass = $this->container->getParameter('oro_rfp.entity.request.status.class');
-        $defaultRequestStatusName = $this->get('oro_config.manager')->get('oro_rfp.default_request_status');
-
-        return $this
-            ->getDoctrine()
-            ->getManagerForClass($requestStatusClass)
-            ->getRepository($requestStatusClass)
-            ->findOneBy(['name' => $defaultRequestStatusName]);
     }
 
     /**

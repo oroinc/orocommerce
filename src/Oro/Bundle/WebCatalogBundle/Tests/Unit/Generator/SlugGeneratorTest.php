@@ -101,6 +101,35 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->doTestGenerate($localization, $parentContentNode);
     }
 
+    public function testGenerateEmptyPrototype()
+    {
+        /** @var Localization $localization */
+        $localization = $this->getEntity(Localization::class, ['id' => 42, 'name' => 'test_localization']);
+
+        $rootUrl = '/';
+        $parentSlug = new Slug();
+        $parentSlug->setUrl($rootUrl);
+        $parentSlug->setLocalization($localization);
+
+        $parentNode = new ContentNode();
+        $parentNode->addLocalizedUrl((new LocalizedFallbackValue())->setText($rootUrl));
+        $parentNode->addContentVariant((new ContentVariant())->addSlug($parentSlug));
+
+        $emptySlugPrototype = new LocalizedFallbackValue();
+        $emptySlugPrototype->setLocalization($localization);
+        $emptySlugPrototype->setString('');
+
+        $routeData = new RouteData('test_route', []);
+        $contentNode = $this->prepareContentNode($parentNode, $routeData, new Scope(), $emptySlugPrototype);
+
+        /** @var ContentVariant $actualContentVariant */
+        $actualContentVariant = $contentNode->getContentVariants()->first();
+
+        $this->assertInstanceOf(ContentVariant::class, $actualContentVariant);
+        $this->assertEmpty($actualContentVariant->getSlugs());
+        $this->assertEmpty($contentNode->getLocalizedUrls());
+    }
+
     public function testGenerateWithFallback()
     {
         $parentLocalization = $this->getEntity(Localization::class, ['id' => 123, 'name' => 'parent_localization']);
@@ -226,7 +255,6 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
         $slugPrototype = new LocalizedFallbackValue();
         $slugPrototype->setLocalization($localization);
         $slugPrototype->setString('test-url');
-
 
         $routeId = 'route_id';
         $routeParameters = [];
