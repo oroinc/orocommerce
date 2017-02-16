@@ -2,6 +2,7 @@ system_configuration:
     groups:
         infinite_pay:
             title: oro.infinite_pay.system_configuration.groups.infinite_pay.title
+            icon: fa-exchange
         credentials:
             title: oro.infinite_pay.system_configuration.groups.credentials.title
         display:
