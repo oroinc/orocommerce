@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\SEOBundle\Provider\SitemapUrlProviderInterface;
 use Oro\Bundle\SEOBundle\Provider\SitemapUrlProviderRegistry;
+use Oro\Component\SEO\Provider\SitemapUrlProviderInterface;
 
 class SitemapUrlProviderRegistryTest extends \PHPUnit_Framework_TestCase
 {
