@@ -287,22 +287,50 @@ services:
             - '%oro_product.entity.product_variant_link.class%'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-product-variants-view, method: onBuildAfter }
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-product-variants-edit, method: onBuildAfter }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.product-product-variants-edit, method: onBuildBeforeHideUnsuitable }
 
     oro_product.validator.unique_variant_links:
         class: 'Oro\Bundle\ProductBundle\Validator\Constraints\UniqueProductVariantLinksValidator'
         arguments:
-            - "@property_accessor"
+            - '@property_accessor'
         tags:
             - { name: validator.constraint_validator, alias: oro_product_unique_variant_links }
+
+    oro_product.validator.variant_links:
+        class: 'Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantLinksValidator'
+        arguments:
+            - '@property_accessor'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_product_variant_links }
+
+    oro_product.validator.unique_variant_links_simple_product:
+        class: 'Oro\Bundle\ProductBundle\Validator\Constraints\UniqueVariantLinksSimpleProductValidator'
+        arguments:
+            - '@validator'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_product_unique_variant_links_simple_product }
+
+    oro_product.validator.empty_variant_field_in_simple_product_for_variant_links:
+        class: 'Oro\Bundle\ProductBundle\Validator\Constraints\EmptyVariantFieldInSimpleProductForVariantLinksValidator'
+        arguments:
+            - '@property_accessor'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_product_empty_variant_field_in_simple_product_for_variant_links }
 
     oro_product.validator.product_variant_field:
         class: 'Oro\Bundle\ProductBundle\Validator\Constraints\ProductVariantFieldValidator'
         arguments:
-            - "@oro_product.provider.custom_field_provider"
+            - '@oro_product.provider.custom_field_provider'
         tags:
             - { name: validator.constraint_validator, alias: oro_product_variant_field }
+
+    oro_product.validator.attribute_family_usages_product_variant_field:
+        class: 'Oro\Bundle\ProductBundle\Validator\Constraints\AttributeFamilyUsageInVariantFieldValidator'
+        arguments:
+            - '@oro_entity_config.manager.attribute_manager'
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_product_attribute_family_usage_in_variant_field }
 
     oro_product.event_listener.restricted_products_datagrid:
         class: 'Oro\Bundle\ProductBundle\EventListener\RestrictedProductsDatagridEventListener'
@@ -700,3 +728,17 @@ services:
             - [addBlockTypeUsingMetadata, ['%oro_product.entity.product_image.class%', 'attribute_product_images']]
         tags:
             - { name: oro_entity_config.layout.attribute_block_type_mapper }
+
+    oro_product.event_listener.before_remove_field_listener:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ValidateBeforeRemoveFieldListener'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@translator'
+        tags:
+            - { name: kernel.event_listener, event: oro.entity_extend.field.validate.before_remove, method: onValidateBeforeRemoveField }
+
+    oro_product.provider.page_template_provider:
+        class: 'Oro\Bundle\ProductBundle\Provider\PageTemplateProvider'
+        arguments:
+            - '@oro_layout.theme_manager'
+            - '@oro_entity.fallback.resolver.entity_fallback_resolver'
