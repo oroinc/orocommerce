@@ -4,15 +4,15 @@ navigation:
             products_tab:
                 label:           'oro.product.menu.products_tab.label'
                 uri:             '#'
+                position:        300
                 extras:
                     icon:        fa-briefcase
-                    position:    300
 
             product_list:
                 label:           'oro.product.entity_plural_label'
                 route:           'oro_product_index'
+                position:        200
                 extras:
-                    position:    200
                     routes:      ['/^oro_product/']
                     description: 'oro.product.menu.product_list.description'
 
@@ -32,8 +32,8 @@ navigation:
             frontend_product_list:
                 label:           'oro.product.frontend.titles.catalog'
                 route:           'oro_product_frontend_product_index'
+                position:        100
                 extras:
-                    position:    100
                     routes:      ['/^oro_product_frontend_product/']
 
             product_attributes_index:
