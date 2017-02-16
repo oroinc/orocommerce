@@ -83,6 +83,9 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
         $this->assertEquals('oro_product_product_variant_frontend_variant_field', $this->type->getBlockPrefix());
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testBuildFormConfigurableProduct()
     {
         $attributeColor = $this->getEntity(FieldConfigModel::class, ['fieldName' => self::FIELD_COLOR]);
