@@ -93,6 +93,7 @@ services:
 
     oro_sale.privider.form_template_data.quote:
         class: 'Oro\Bundle\SaleBundle\Form\QuoteFormTemplateDataProvider'
+        lazy: true
         arguments:
             - '@event_dispatcher'
             - '@oro_sale.provider.quote_product_price'

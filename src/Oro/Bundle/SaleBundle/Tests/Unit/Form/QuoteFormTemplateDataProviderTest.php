@@ -80,6 +80,7 @@ class QuoteFormTemplateDataProviderTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(
             [
+                'entity' => $quote,
                 'form' => $formView,
                 'tierPrices' => ['$5', '$42', '$100500'],
                 'matchedPrices' => ['$42'],
