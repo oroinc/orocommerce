@@ -26,6 +26,6 @@
 
 {% macro renderShippingMethodDisabledFlag(identifier) %}
     {% if oro_shipping_method_enabled(identifier) == false %}
-        <span class="label label-danger">Disabled</span>
+        <span class="label label-important">Disabled</span>
     {% endif %}
 {% endmacro %}
