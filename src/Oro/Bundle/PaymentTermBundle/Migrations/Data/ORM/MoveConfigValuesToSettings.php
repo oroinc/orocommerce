@@ -58,6 +58,10 @@ class MoveConfigValuesToSettings extends AbstractMoveConfigValuesToSettings
         ObjectManager $manager,
         OrganizationInterface $organization
     ) {
+        if ($this->container->hasParameter('oro_payment_term.integration.loaded')) {
+            return;
+        }
+        
         $paymentTermSystemConfig = $this->configFactory->createPaymentTermConfig();
 
         $channel = $this->channelFactory->createChannel(

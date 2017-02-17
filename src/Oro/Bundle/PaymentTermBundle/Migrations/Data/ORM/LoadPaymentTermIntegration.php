@@ -62,6 +62,8 @@ class LoadPaymentTermIntegration extends AbstractFixture implements DependentFix
         $channel = $this->loadIntegration($manager);
 
         $this->loadPaymentRule($manager, $channel);
+        
+        $this->container->setParameter('oro_payment_term.integration.loaded', true);
     }
 
     /**
