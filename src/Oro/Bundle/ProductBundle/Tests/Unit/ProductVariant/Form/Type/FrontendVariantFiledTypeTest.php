@@ -4,7 +4,6 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\PropertyAccess\PropertyAccess;
 
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
@@ -54,13 +53,11 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
 
         $this->attributeManager = $this->createMock(AttributeManager::class);
 
-        $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
-
         $this->type = new FrontendVariantFiledType(
             $this->productVariantAvailabilityProvider,
             $this->productVariantTypeHandlerRegistry,
             $this->attributeManager,
-            $this->propertyAccessor,
+            $this->getPropertyAccessor(),
             self::PRODUCT_CLASS
         );
     }
