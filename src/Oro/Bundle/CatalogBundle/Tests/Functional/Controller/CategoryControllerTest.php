@@ -285,6 +285,7 @@ class CategoryControllerTest extends WebTestCase
         $form['oro_catalog_category[longDescriptions][values][default]'] = $longDescription;
         $form['oro_catalog_category[smallImage][file]'] = $smallImage;
         $form['oro_catalog_category[largeImage][file]'] = $largeImage;
+        $form['oro_catalog_category[inventoryThreshold][scalarValue]'] = 0;
         $form['oro_catalog_category[defaultProductOptions][unitPrecision][unit]'] = $unitPrecision['code'];
         $form['oro_catalog_category[defaultProductOptions][unitPrecision][precision]'] = $unitPrecision['precision'];
 
