@@ -266,6 +266,9 @@ class SlugEntityGeneratorTest extends \PHPUnit_Framework_TestCase
             ->willReturn('/test/test2');
 
         $this->redirectGenerator->expects($this->once())
+            ->method('updateRedirects');
+
+        $this->redirectGenerator->expects($this->once())
             ->method('generate');
 
         $this->generator->generate($entity, true);

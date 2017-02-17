@@ -219,6 +219,9 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($contentVariantType);
 
         $this->redirectGenerator->expects($this->atLeast(1))
+            ->method('updateRedirects');
+
+        $this->redirectGenerator->expects($this->atLeast(1))
             ->method('generate');
 
         $this->slugGenerator->generate($contentNode, true);
@@ -269,6 +272,9 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->contentVariantTypeRegistry->expects($this->once())
             ->method('getContentVariantType')
             ->willReturn($contentVariantType);
+
+        $this->redirectGenerator->expects($this->once())
+            ->method('updateRedirects');
 
         $this->redirectGenerator->expects($this->never())
             ->method('generate');

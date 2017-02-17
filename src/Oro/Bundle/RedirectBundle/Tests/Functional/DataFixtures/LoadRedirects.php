@@ -7,6 +7,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Oro\Bundle\RedirectBundle\Entity\Redirect;
+use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
@@ -24,6 +25,7 @@ class LoadRedirects extends AbstractFixture implements DependentFixtureInterface
     private $redirects = [
         [
             'reference' => self::REDIRECT_1,
+            'slug' => LoadSlugsData::SLUG_URL_ANONYMOUS,
             'from' => '/from-1',
             'to' => '/',
             'type' => Redirect::MOVED_PERMANENTLY,
@@ -31,6 +33,7 @@ class LoadRedirects extends AbstractFixture implements DependentFixtureInterface
         ],
         [
             'reference' => self::REDIRECT_2,
+            'slug' => LoadSlugsData::SLUG_URL_PAGE,
             'from' => '/from-2',
             'to' => '/to-2',
             'type' => Redirect::MOVED_PERMANENTLY,
@@ -38,6 +41,7 @@ class LoadRedirects extends AbstractFixture implements DependentFixtureInterface
         ],
         [
             'reference' => self::REDIRECT_3,
+            'slug' => null,
             'from' => '/from-3',
             'to' => '/to-3',
             'type' => Redirect::MOVED_TEMPORARY,
@@ -63,6 +67,12 @@ class LoadRedirects extends AbstractFixture implements DependentFixtureInterface
             $redirect->setTo($item['to']);
             $redirect->setType($item['type']);
 
+            if (!empty($item['slug'])) {
+                /** @var Slug $slug */
+                $slug = $this->getReference($item['slug']);
+                $redirect->setSlug($slug);
+            }
+
             if ($item['localization']) {
                 /** @var Website $website */
                 $website = $this->getReference($item['localization']);
@@ -83,7 +93,8 @@ class LoadRedirects extends AbstractFixture implements DependentFixtureInterface
     public function getDependencies()
     {
         return [
-            LoadLocalizationData::class
+            LoadLocalizationData::class,
+            LoadSlugsData::class
         ];
     }
 

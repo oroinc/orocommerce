@@ -2,8 +2,9 @@
 
 namespace Oro\Bundle\RedirectBundle\Generator;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\RedirectBundle\Entity\Redirect;
+use Oro\Bundle\RedirectBundle\Entity\Repository\RedirectRepository;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
@@ -24,48 +25,44 @@ class RedirectGenerator
 
     /**
      * @param string $from
-     * @param Slug $toSlug
+     * @param Slug $slug
      */
-    public function generate($from, Slug $toSlug)
+    public function updateRedirects($from, Slug $slug)
     {
-        $redirects = $this->getExistingRedirectsForSlug($toSlug);
-        if ($redirects) {
-            foreach ($redirects as $redirect) {
-                $redirect->setTo($toSlug->getUrl());
-            }
+        if ($from === $slug->getUrl()) {
+            return;
         }
 
-        $this->createNewRedirect($from, $toSlug, Redirect::MOVED_PERMANENTLY);
-    }
-
-    /**
-     * @param Slug $slug
-     * @return Redirect[]
-     */
-    private function getExistingRedirectsForSlug(Slug $slug)
-    {
-        return $this->registry->getManagerForClass(Redirect::class)
-            ->getRepository(Redirect::class)
-            ->findBy(['slug' => $slug]);
+        /** @var RedirectRepository $repository */
+        $repository = $this->getRedirectManager()->getRepository(Redirect::class);
+        $repository->updateRedirectsBySlug($slug);
+        $repository->deleteCyclicRedirects($slug);
     }
 
     /**
      * @param string $from
-     * @param Slug $toSlug
-     * @param int $redirectType
+     * @param Slug $slug
      */
-    private function createNewRedirect($from, Slug $toSlug, $redirectType = Redirect::MOVED_PERMANENTLY)
+    public function generate($from, Slug $slug)
     {
-        /** @var EntityManager $em */
-        $em = $this->registry->getManagerForClass(Redirect::class);
+        if ($from === $slug->getUrl()) {
+            return;
+        }
 
         $redirect = new Redirect();
-        $redirect->setFrom($from)
-            ->setTo($toSlug->getUrl())
-            ->setSlug($toSlug)
-            ->setType($redirectType);
+        $redirect->setFrom($from);
+        $redirect->setTo($slug->getUrl());
+        $redirect->setSlug($slug);
+        $redirect->setType(Redirect::MOVED_PERMANENTLY);
 
-        $em->persist($redirect);
-        $em->flush($redirect);
+        $this->getRedirectManager()->persist($redirect);
+    }
+
+    /**
+     * @return ObjectManager
+     */
+    private function getRedirectManager()
+    {
+        return $this->registry->getManagerForClass(Redirect::class);
     }
 }

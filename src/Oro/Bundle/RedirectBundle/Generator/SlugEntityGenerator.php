@@ -72,6 +72,8 @@ class SlugEntityGenerator
                 $slug->setUrl($updatedUrl);
                 $slug->setSlugPrototype($slugUrl->getSlug());
 
+                $this->redirectGenerator->updateRedirects($previousSlugUrl, $slug);
+
                 if ($generateRedirects) {
                     $this->redirectGenerator->generate($previousSlugUrl, $slug);
                 }

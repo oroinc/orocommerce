@@ -95,6 +95,8 @@ class SlugGenerator
                     $slug->resetScopes();
                     $this->fillSlug($slug, $slugUrl, $routeData, $scopes);
 
+                    $this->redirectGenerator->updateRedirects($previousSlugUrl, $slug);
+
                     if ($generateRedirects) {
                         $this->redirectGenerator->generate($previousSlugUrl, $slug);
                     }

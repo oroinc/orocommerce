@@ -5,6 +5,7 @@ namespace Oro\Bundle\RedirectBundle\Entity\Repository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\RedirectBundle\Entity\Redirect;
+use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 
 class RedirectRepository extends EntityRepository
@@ -45,5 +46,34 @@ class RedirectRepository extends EntityRepository
         }
 
         return null;
+    }
+
+    /**
+     * @param Slug $slug
+     */
+    public function updateRedirectsBySlug(Slug $slug)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->update($this->getEntityName(), 'redirect')
+            ->set('redirect.to', ':newUrl')
+            ->where($qb->expr()->eq('redirect.slug', ':slug'))
+            ->setParameter('newUrl', $slug->getUrl())
+            ->setParameter('slug', $slug);
+
+        $qb->getQuery()->execute();
+    }
+
+    /**
+     * @param Slug $slug
+     */
+    public function deleteCyclicRedirects(Slug $slug)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->delete($this->getEntityName(), 'redirect')
+            ->where($qb->expr()->eq('redirect.slug', ':slug'))
+            ->andWhere($qb->expr()->eq('redirect.from', 'redirect.to'))
+            ->setParameter('slug', $slug);
+
+        $qb->getQuery()->execute();
     }
 }

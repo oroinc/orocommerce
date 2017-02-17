@@ -35,59 +35,61 @@ class RedirectGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->registry = $this->getMockBuilder(ManagerRegistry::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->configManager = $this->getMockBuilder(ConfigManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->redirectGenerator = new RedirectGenerator($this->registry, $this->configManager);
+
+        $this->redirectGenerator = new RedirectGenerator($this->registry);
     }
 
-    public function testGenerateWithExistingRedirect()
+    public function testUpdateRedirectsSameUrl()
     {
-        $from = '/from';
-        $to = '/to-url';
+        $url = '/test';
         $slug = new Slug();
-        $slug->setUrl($to);
+        $slug->setUrl($url);
 
-        $existingRedirect = $this->getEntity(Redirect::class, ['id' => 42]);
-        $createdRedirect = new Redirect();
-        $createdRedirect->setFrom($from)
-            ->setTo($to)
-            ->setSlug($slug)
-            ->setType(Redirect::MOVED_PERMANENTLY);
+        $this->registry->expects($this->never())
+            ->method($this->anything());
 
+        $this->redirectGenerator->updateRedirects($url, $slug);
+    }
 
-        $repository = $this->createMock(RedirectRepository::class);
-        $repository->expects($this->once())
-            ->method('findBy')
-            ->with(['slug' => $slug])
-            ->willReturn([$existingRedirect]);
+    public function testUpdateRedirects()
+    {
+        $fromUrl = '/old';
+        $url = '/test';
+        $slug = new Slug();
+        $slug->setUrl($url);
 
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->any())
+        $repository = $this->getMockBuilder(RedirectRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $em = $this->getEntityManagerMock();
+        $em->expects($this->once())
             ->method('getRepository')
             ->with(Redirect::class)
             ->willReturn($repository);
 
-        $this->registry->expects($this->any())
-            ->method('getManagerForClass')
-            ->with(Redirect::class)
-            ->willReturn($em);
+        $repository->expects($this->once())
+            ->method('updateRedirectsBySlug')
+            ->with($slug);
+        $repository->expects($this->once())
+            ->method('deleteCyclicRedirects')
+            ->with($slug);
 
-        $em->expects($this->once())
-            ->method('persist')
-            ->with($createdRedirect);
-
-        $em->expects($this->once())
-            ->method('flush')
-            ->with($createdRedirect);
-
-        $this->redirectGenerator->generate($from, $slug);
-
-        $this->assertEquals($slug->getUrl(), $existingRedirect->getTo());
-        $this->assertEquals($slug->getUrl(), $createdRedirect->getTo());
+        $this->redirectGenerator->updateRedirects($fromUrl, $slug);
     }
 
-    public function testGenerateWithoutExistingRedirect()
+    public function testGenerateRedirectsCyclic()
+    {
+        $url = '/test';
+        $slug = new Slug();
+        $slug->setUrl($url);
+
+        $this->registry->expects($this->never())
+            ->method($this->anything());
+
+        $this->redirectGenerator->generate($url, $slug);
+    }
+
+    public function testGenerate()
     {
         $from = '/from';
         $to = '/to-url';
@@ -100,32 +102,26 @@ class RedirectGeneratorTest extends \PHPUnit_Framework_TestCase
             ->setSlug($slug)
             ->setType(Redirect::MOVED_PERMANENTLY);
 
-        $repository = $this->createMock(RedirectRepository::class);
-        $repository->expects($this->once())
-            ->method('findBy')
-            ->with(['slug' => $slug])
-            ->willReturn(null);
-
-        $em = $this->createMock(EntityManagerInterface::class);
-        $em->expects($this->once())
-            ->method('getRepository')
-            ->with(Redirect::class)
-            ->willReturn($repository);
-
+        $em = $this->getEntityManagerMock();
         $em->expects($this->once())
             ->method('persist')
             ->with($expectedRedirect);
 
-        $em->expects($this->once())
-            ->method('flush')
-            ->with($expectedRedirect);
+        $this->redirectGenerator->generate($from, $slug);
+        $this->assertEquals($slug->getUrl(), $expectedRedirect->getTo());
+    }
 
+    /**
+     * @return EntityManagerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function getEntityManagerMock()
+    {
+        $em = $this->createMock(EntityManagerInterface::class);
         $this->registry->expects($this->any())
             ->method('getManagerForClass')
             ->with(Redirect::class)
             ->willReturn($em);
 
-        $this->redirectGenerator->generate($from, $slug);
-        $this->assertEquals($slug->getUrl(), $expectedRedirect->getTo());
+        return $em;
     }
 }
