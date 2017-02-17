@@ -42,7 +42,7 @@ class UrlItemEncoderTest extends \PHPUnit_Framework_TestCase
         return [
             'encode with full data' => [
                 'urlItem' => new UrlItem($location, $changeFrequency, $priority, $lastModification),
-                'expectedData' => sprintf(  
+                'expectedData' => sprintf(
                     '<url><loc>%s</loc><changefreq>%s</changefreq><priority>%s</priority><lastmod>%s</lastmod></url>',
                     $location,
                     $changeFrequency,

@@ -50,7 +50,7 @@ class SitemapDumper implements SitemapDumperInterface
     ) {
         $this->providerRegistry = $providerRegistry;
         $this->filesystem = $filesystem;
-        $this->sitemapFullLocation = sprintf('%s/%s', $kernelRootDir, static::SITEMAP_LOCATION); 
+        $this->sitemapFullLocation = sprintf('%s/%s', $kernelRootDir, static::SITEMAP_LOCATION);
 
         $this->urlItemEncoder = new UrlItemEncoder();
         $this->urlSetEncoder = new UrlSetEncoder();

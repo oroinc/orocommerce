@@ -39,12 +39,14 @@ class UrlSetEncoderTest extends \PHPUnit_Framework_TestCase
         $urlItem = new UrlItem($location);
         $urlSet = new UrlSet();
         $urlSet->addUrlItem($urlItem);
+        $xmlHead = '<?xml version="1.0" encoding="UTF-8"?>';
 
         return [
             'encode with url item' => [
                 'urlSet' => $urlSet,
-                'expectedData' => sprintf(  
-                    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"%s\"><url><loc>%s</loc></url></urlset>\n",
+                'expectedData' => sprintf(
+                    "%s\n<urlset xmlns=\"%s\"><url><loc>%s</loc></url></urlset>\n",
+                    $xmlHead,
                     UrlSetInterface::ROOT_NODE_XMLNS,
                     $location
                 ),
@@ -52,7 +54,8 @@ class UrlSetEncoderTest extends \PHPUnit_Framework_TestCase
             'encode without url item' => [
                 'urlItem' => new UrlSet(),
                 'expectedData' => sprintf(
-                    "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<urlset xmlns=\"%s\"/>\n",
+                    "%s\n<urlset xmlns=\"%s\"/>\n",
+                    $xmlHead,
                     UrlSetInterface::ROOT_NODE_XMLNS
                 ),
             ],

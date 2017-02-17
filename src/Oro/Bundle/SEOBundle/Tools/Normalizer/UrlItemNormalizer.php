@@ -16,7 +16,7 @@ class UrlItemNormalizer
             'loc' => $urlItem->getLocation(),
             'changefreq' => $urlItem->getChangeFrequency(),
             'priority' => $urlItem->getPriority(),
-            'lastmod' => $urlItem->getLastModification() 
+            'lastmod' => $urlItem->getLastModification()
                 ? $urlItem->getLastModification()->format(\DateTime::W3C)
                 : null,
         ]);
