@@ -1,13 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var DraggableSorting;
+    var VariantFieldsView;
     var $ = require('jquery');
     var _ = require('underscore');
     var BaseView = require('oroui/js/app/views/base/view');
     require('jquery-ui');
 
-    DraggableSorting = BaseView.extend({
+    VariantFieldsView = BaseView.extend({
         events: {
             'click a.add-list-item': 'reindexValues'
         },
@@ -26,7 +26,8 @@ define(function(require) {
         },
 
         initSortable: function() {
-            this.$('.sortable-wrapper').sortable({
+            this.$('[data-name="field__variant-fields"]').sortable({
+                handle: '[data-name="sortable-handle"]',
                 tolerance: 'pointer',
                 delay: 100,
                 containment: 'parent',
@@ -35,5 +36,5 @@ define(function(require) {
         }
     });
 
-    return DraggableSorting;
+    return VariantFieldsView;
 });

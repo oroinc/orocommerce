@@ -234,10 +234,10 @@
 
 {% block oro_product_custom_variant_fields_collection_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
-    <div class="enum-value-collection sortable-wrapper" {{ UI.renderPageComponentAttributes({
+    <div class="enum-value-collection" {{ UI.renderPageComponentAttributes({
         module: 'oroui/js/app/components/view-component',
         options: {
-            view: 'oroproduct/js/app/views/dgag-n-srop-sorting',
+            view: 'oroproduct/js/app/views/variant-fields-view',
             autoRender: true
         }
     }) }}>

@@ -59,7 +59,7 @@
         <div class="row-oro" {{ UI.renderPageComponentAttributes({
             module: 'oroui/js/app/components/view-component',
             options: {
-                view: 'oroproduct/js/app/views/dgag-n-srop-sorting',
+                view: 'oroui/js/drag-n-drop-sorting',
                 autoRender: true
             }
         }) }}>
@@ -69,9 +69,8 @@
                     <thead>
                     <tr>
                         <th><span>{{ 'oro.pricing.pricelist.entity_label'|trans }}</span></th>
-                        <th></th>
                         <th><span>{{ 'oro.pricing.pricelist.merge_allowed.label'|trans }}</span></th>
-                        <th><span>{{ 'oro.pricing.pricelist.sort_order.label'|trans }}</span></th>
+                        <th></th>
                         <th></th>
                     </tr>
                     </thead>
@@ -102,9 +101,6 @@
     <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
         class="pricing-price-list pricing-price-list-item">
         {{ form_widget(form) }}
-        <td class="sort-cell" style="width: 50px">
-           <span title="Click and drag to reorder."><i class="fa-arrows-v handle ui-sortable-handle"></i></span>
-        </td>
         <td class="pricing-price-list-remove">
             <button type="button" class="removeRow btn icons-holder"><i class="fa-close"></i></button>
         </td>
@@ -113,8 +109,12 @@
 
 {% block oro_pricing_price_list_select_with_priority_widget %}
     <td>{{ form_widget(form.priceList) }} {{ form_errors(form.priceList) }}</td>
-    <td>{{ form_widget(form.priority, { 'attr': {'class': 'priority'} }) }}{{ form_errors(form.priority) }}</td>
     <td>{{ form_widget(form.mergeAllowed, { 'attr': {'class': 'mergeAllowed'} }) }}{{ form_errors(form.mergeAllowed) }}</td>
+    <td>
+        {{ form_widget(form._position) }}
+        <span  class="add-on ui-sortable-handle" data-name="sortable-handle">
+            <i class="fa-arrows-v handle"></i></span>
+    </td>
 {% endblock %}
 
 {# --------------------------- Price List Schedule ------------------------------------------------------ #}
