@@ -1,13 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var VariantFieldsView;
+    var DraggableSorting;
     var $ = require('jquery');
     var _ = require('underscore');
     var BaseView = require('oroui/js/app/views/base/view');
     require('jquery-ui');
 
-    VariantFieldsView = BaseView.extend({
+    DraggableSorting = BaseView.extend({
         events: {
             'click a.add-list-item': 'reindexValues'
         },
@@ -35,5 +35,5 @@ define(function(require) {
         }
     });
 
-    return VariantFieldsView;
+    return DraggableSorting;
 });
