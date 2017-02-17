@@ -370,6 +370,8 @@ oro.customer:
             entity.label: Access
             action.label: Capabillities
         address: #oro.customer.frontend.address
+            datagrid:
+                delete.label: ''
             title:
                 create: 'Create'
                 edit: 'Edit'

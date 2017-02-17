@@ -14,6 +14,9 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ */
 class FrontendCustomerUserFormProviderTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;

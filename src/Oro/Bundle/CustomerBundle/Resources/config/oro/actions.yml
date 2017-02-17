@@ -355,10 +355,37 @@ operations:
                 label: oro.grid.action.delete
                 link: delete_link
                 icon: trash-o
+        actions:
+            - '@run_action_group':
+                action_group: DELETE
+                parameters_mapping:
+                    data: $.data
+            - '@flash_message':
+                message: oro.action.delete_message
+                type: 'success'
+                message_parameters:
+                    entityLabel: $.entityLabel
+            - '@redirect':
+                conditions:
+                    '@and':
+                        - '@empty': $.gridName
+                        - '@not_empty': $.routes[name]
+                parameters:
+                    route: $.routes[name]
+            - '@refresh_grid':
+                conditions:
+                    '@and':
+                        - '@empty': $.routes[name]
+                        - '@not_empty': $.gridName
+                parameters: [$.gridName]
+
+
 
     oro_customer_frontend_address_delete:
+        label: oro.customer.frontend.address.datagrid.delete.label
         extends: DELETE
         replace:
+            - preconditions
             - for_all_datagrids
             - for_all_entities
             - datagrids
@@ -368,8 +395,10 @@ operations:
             - frontend-customer-customer-address-grid
 
     oro_customer_user_frontend_address_delete:
+        label: oro.customer.frontend.address.datagrid.delete.label
         extends: DELETE
         replace:
+            - preconditions
             - for_all_datagrids
             - for_all_entities
             - datagrids
