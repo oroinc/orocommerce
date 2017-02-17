@@ -35,14 +35,7 @@ class PaymentTermSettingsRepositoryTest extends WebTestCase
     {
         $settingsByEnabledChannel = $this->repository->findWithEnabledChannel();
 
-        $fixtureSettingsByEnabledChannel = [
-            $this->getReference('payment_term:transport_1'),
-            $this->getReference('payment_term:transport_2')
-        ];
-
-        static::assertCount(count($fixtureSettingsByEnabledChannel) + 1, $settingsByEnabledChannel);
-        foreach ($fixtureSettingsByEnabledChannel as $item) {
-            static::assertTrue(in_array($item, $settingsByEnabledChannel, true));
-        }
+        static::assertTrue(in_array($this->getReference('payment_term:transport_1'), $settingsByEnabledChannel, true));
+        static::assertTrue(in_array($this->getReference('payment_term:transport_2'), $settingsByEnabledChannel, true));
     }
 }
