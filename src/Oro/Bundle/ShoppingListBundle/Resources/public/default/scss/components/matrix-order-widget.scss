@@ -17,11 +17,9 @@
 
   &__grid {
     margin-bottom: 15px;
+    width: 100%;
 
     font-family: $font-family-base;
-
-    width: 100%;
-    border: none;
 
     border-bottom: 1px solid get-color('additional', 'light');
   }
@@ -35,13 +33,6 @@
 
     line-height: 3.5;
     text-align: center
-  }
-
-  &__grid-head-wrapper{
-    td{
-      border: solid get-color('additional', 'light');
-      border-width: 1px 0;
-    }
   }
 
   &__head-body-wrapper {
@@ -59,10 +50,11 @@
   &__form__col {
     padding: 0 26px 0 0;
     margin: 0;
-    border: none;
+    vertical-align: middle;
 
     line-height: 1.5;
-    vertical-align: middle;
+
+    border: none;
 
     @include breakpoint('mobile-landscape') {
       padding-right: 5px;
@@ -84,7 +76,7 @@
   }
 
   &__grid-body {
-    td{
+    td {
       padding: 6px 26px 6px 0;
       border-top: 1px solid get-color('additional', 'light');
 
@@ -97,8 +89,8 @@
         padding-right: 20px;
 
         @include breakpoint('mobile-landscape') {
-          padding-right: 5px;
           padding-left: 5px;
+          padding-right: 5px;
         }
       }
     }
@@ -148,7 +140,7 @@
     text-align: right;
   }
 
-  &__summary-wrapper{
+  &__summary-wrapper {
     padding: 0 26px 0 0;
 
     @include breakpoint('mobile-landscape') {
@@ -158,9 +150,7 @@
 
   &__summary-label {
     display: inline-flex;
-
     min-width: 110px;
-
     padding: 0 5px 0 0;
   }
 
@@ -171,7 +161,7 @@
   }
 
   &__total-quantity {
-    margin: 0 0 5px;
+    margin-bottom: 5px;
   }
 
   &__total-quantity-vlaue {
