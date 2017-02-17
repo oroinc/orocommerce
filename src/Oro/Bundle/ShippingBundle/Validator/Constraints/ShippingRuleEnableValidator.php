@@ -11,7 +11,9 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 
 class ShippingRuleEnableValidator extends ConstraintValidator
 {
-    /** @var ShippingRuleEnabledCheckerInterface */
+    /**
+     * @var ShippingRuleEnabledCheckerInterface
+     */
     private $ruleEnabledChecker;
 
     /**
@@ -30,7 +32,7 @@ class ShippingRuleEnableValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint)
     {
-        if (! $value instanceof ShippingMethodsConfigsRule) {
+        if (!$value instanceof ShippingMethodsConfigsRule) {
             throw new UnexpectedTypeException($value, ShippingMethodsConfigsRule::class);
         }
 

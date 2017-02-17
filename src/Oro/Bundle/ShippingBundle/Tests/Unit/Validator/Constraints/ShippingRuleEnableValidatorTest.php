@@ -13,16 +13,24 @@ use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
 class ShippingRuleEnableValidatorTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var ShippingRuleEnabledCheckerInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /**
+     * @var ShippingRuleEnabledCheckerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
     private $ruleEnabledChecker;
 
-    /** @var ShippingRuleEnable */
+    /**
+     * @var ShippingRuleEnable
+     */
     private $constraint;
 
-    /** @var \PHPUnit_Framework_MockObject_MockObject|\Symfony\Component\Validator\ExecutionContextInterface */
+    /**
+     * @var \PHPUnit_Framework_MockObject_MockObject|\Symfony\Component\Validator\ExecutionContextInterface
+     */
     private $context;
 
-    /** @var ShippingRuleEnableValidator */
+    /**
+     * @var ShippingRuleEnableValidator
+     */
     private $validator;
 
     protected function setUp()

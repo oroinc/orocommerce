@@ -6,7 +6,9 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 
 class ShippingRuleEnabledChecker implements ShippingRuleEnabledCheckerInterface
 {
-    /** @var ShippingMethodEnabledByIdentifierCheckerInterface */
+    /**
+     * @var ShippingMethodEnabledByIdentifierCheckerInterface
+     */
     private $methodEnabledChecker;
 
     /**
@@ -18,9 +20,7 @@ class ShippingRuleEnabledChecker implements ShippingRuleEnabledCheckerInterface
     }
 
     /**
-     * @param ShippingMethodsConfigsRule $rule
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function canBeEnabled(ShippingMethodsConfigsRule $rule)
     {
