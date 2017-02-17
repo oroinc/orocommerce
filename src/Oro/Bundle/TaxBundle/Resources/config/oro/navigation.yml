@@ -4,47 +4,47 @@ navigation:
             taxes_tab:
                 label:           'oro.tax.menu.taxes_tab.label'
                 uri:             '#'
+                position:        400
                 extras:
                     icon:        fa-filter
-                    position:    400
 
             product_tax_code_list:
                 label:           'oro.tax.producttaxcode.entity_plural_label'
                 route:           'oro_tax_product_tax_code_index'
+                position:        100
                 extras:
-                    position:    100
                     routes:      ['oro_tax_product_tax_code_index', 'oro_tax_product_tax_code_view', 'oro_tax_product_tax_code_update', 'oro_tax_product_tax_code_create']
                     description: 'oro.tax.producttaxcode.description'
 
             customer_tax_code_list:
                 label:           'oro.tax.customertaxcode.entity_plural_label'
                 route:           'oro_tax_customer_tax_code_index'
+                position:        100
                 extras:
-                    position:    100
                     routes:      ['oro_tax_customer_tax_code_index', 'oro_tax_customer_tax_code_view', 'oro_tax_customer_tax_code_update', 'oro_tax_customer_tax_code_create']
                     description: 'oro.tax.customertaxcode.description'
 
             tax_list:
                 label:           'oro.tax.entity_plural_label'
                 route:           'oro_tax_index'
+                position:        100
                 extras:
-                    position:    100
                     routes:      ['oro_tax_index', 'oro_tax_view', 'oro_tax_update', 'oro_tax_create']
                     description: 'oro.tax.tax.description'
 
             tax_rule_list:
                 label:           'oro.tax.taxrule.entity_plural_label'
                 route:           'oro_tax_rule_index'
+                position:        100
                 extras:
-                    position:    100
                     routes:      ['oro_tax_rule_index', 'oro_tax_rule_view', 'oro_tax_rule_update', 'oro_tax_rule_create']
                     description: 'oro.tax.taxrule.description'
 
             tax_jurisdiction:
                 label:           'oro.tax.taxjurisdiction.entity_plural_label'
                 route:           'oro_tax_jurisdiction_index'
+                position:        100
                 extras:
-                    position:    100
                     routes:      ['oro_tax_jurisdiction_index', 'oro_tax_jurisdiction_view', 'oro_tax_jurisdiction_update', 'oro_tax_jurisdiction_create']
                     description: 'oro.tax.taxjurisdiction.description'
 
