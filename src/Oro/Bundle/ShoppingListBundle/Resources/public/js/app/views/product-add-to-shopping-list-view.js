@@ -128,7 +128,7 @@ define(function(require) {
                 var $addNewButton = $(this.options.buttonTemplate({
                     id: null,
                     label: _.__('oro.shoppinglist.entity_label')
-                })).find(this.options.buttonsSelector).addClass('btn-block btn-orange btn_lg');
+                })).find(this.options.buttonsSelector);
 
                 return [$addNewButton];
             }
@@ -232,6 +232,9 @@ define(function(require) {
 
         onClick: function(e) {
             var $button = $(e.currentTarget);
+            if ($button.data('disabled')) {
+                return false;
+            }
             var url = $button.data('url');
             var intention = $button.data('intention');
             var formData = this.$form.serialize();

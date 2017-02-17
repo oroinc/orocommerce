@@ -58,7 +58,7 @@ class CheckoutController extends Controller
         if ($request->isMethod(Request::METHOD_POST) &&
             $this->isCheckoutRestartRequired($workflowItem)
         ) {
-            $this->restartCheckout($workflowItem);
+            $this->restartCheckout($workflowItem, $checkout);
             $workflowItem = $this->getWorkflowItem($checkout);
         } else {
             $this->handleTransition($workflowItem, $request);
@@ -304,13 +304,17 @@ class CheckoutController extends Controller
 
     /**
      * @param WorkflowItem $workflowItem
+     * @param CheckoutInterface $checkout
      * @throws ForbiddenActionGroupException
      * @throws \Exception
      */
-    protected function restartCheckout(WorkflowItem $workflowItem)
+    protected function restartCheckout(WorkflowItem $workflowItem, CheckoutInterface $checkout)
     {
+        $workflowName = $workflowItem->getWorkflowName();
+
         $shoppingList = $workflowItem->getEntity()->getSource()->getShoppingList();
         $this->getWorkflowManager()->resetWorkflowItem($workflowItem);
+        $this->getWorkflowManager()->startWorkflow($workflowName, $checkout);
 
         $actionData = new ActionData(['shoppingList' => $shoppingList, 'forceStartCheckout' => true]);
         $this->get('oro_action.action_group_registry')

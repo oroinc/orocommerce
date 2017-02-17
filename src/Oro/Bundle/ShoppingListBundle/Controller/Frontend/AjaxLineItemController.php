@@ -7,7 +7,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -20,7 +19,7 @@ use Oro\Bundle\ShoppingListBundle\Form\Handler\LineItemHandler;
 use Oro\Bundle\ProductBundle\Form\Type\FrontendLineItemType;
 use Oro\Bundle\ShoppingListBundle\Form\Type\ShoppingListType;
 
-class AjaxLineItemController extends Controller
+class AjaxLineItemController extends AbstractLineItemController
 {
     /**
      * Add Product to Shopping List (product view form)
@@ -170,24 +169,6 @@ class AjaxLineItemController extends Controller
         }
 
         return $response;
-    }
-
-    /**
-     * @param ShoppingList $shoppingList
-     * @param string $translationKey
-     * @return string
-     */
-    protected function getSuccessMessage(ShoppingList $shoppingList, $translationKey)
-    {
-        $link = $this->get('router')->generate('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()]);
-
-        $translator = $this->get('translator');
-        $label = htmlspecialchars($shoppingList->getLabel());
-
-        return $translator->trans(
-            $translationKey,
-            ['%shoppinglist%' => sprintf('<a href="%s">%s</a>', $link, $label)]
-        );
     }
 
     /**
