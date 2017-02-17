@@ -1,0 +1,27 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'product_index.html.twig'
+        - '@addTree':
+            items:
+                category_picture:
+                    blockType: category
+                    options:
+                        category: '=data["category"].getCurrentCategory()'
+                category_breadcrumbs_container:
+                    blockType: container
+                category_breadcrumbs:
+                    blockType: category_breadcrumbs
+                    options:
+                        currentCategory: '=data["category"].getCurrentCategory()'
+                        parentCategories: '=data["category"].getParentCategories()'
+                category_title:
+                    blockType: category
+                    options:
+                        category: '=data["category"].getCurrentCategory()'
+            tree:
+                page_content:
+                    category_picture: ~
+                    category_breadcrumbs_container:
+                        category_breadcrumbs:
+                    category_title: ~

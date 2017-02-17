@@ -1,0 +1,6 @@
+layout:
+    imports:
+        -
+            id: shopping_list_buttons
+            root: __line_item_buttons
+    actions: []

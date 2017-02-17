@@ -42,21 +42,6 @@ class ZipCodeTest extends \PHPUnit_Framework_TestCase
         $this->assertNotEmpty($zipCode->getZipRangeEnd());
     }
 
-    public function testPreUpdate()
-    {
-        $zipCode = $this->createZipCode();
-        $zipCode->preUpdate();
-        $this->assertInstanceOf('\DateTime', $zipCode->getUpdatedAt());
-    }
-
-    public function testPrePersist()
-    {
-        $zipCode = $this->createZipCode();
-        $zipCode->prePersist();
-        $this->assertInstanceOf('\DateTime', $zipCode->getUpdatedAt());
-        $this->assertInstanceOf('\DateTime', $zipCode->getCreatedAt());
-    }
-
     /**
      * @return ZipCode
      */

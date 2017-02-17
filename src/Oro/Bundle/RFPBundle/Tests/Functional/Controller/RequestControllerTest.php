@@ -3,13 +3,11 @@
 namespace Oro\Bundle\RFPBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+
+use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadUserData;
-use Oro\Component\Duplicator\Test\Stub\RFPRequest;
 
-/**
- * @dbIsolation
- */
 class RequestControllerTest extends WebTestCase
 {
     /**
@@ -22,7 +20,7 @@ class RequestControllerTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData'
+                LoadRequestData::class
             ]
         );
     }
@@ -49,7 +47,7 @@ class RequestControllerTest extends WebTestCase
      */
     public function testView()
     {
-        /** @var RFPRequest $request */
+        /** @var Request $request */
         $request = $this->getReference(LoadRequestData::REQUEST1);
         $id = $request->getId();
 

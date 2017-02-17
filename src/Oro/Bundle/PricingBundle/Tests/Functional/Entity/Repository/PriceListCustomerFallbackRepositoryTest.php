@@ -4,9 +4,6 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
-/**
- * @dbIsolation
- */
 class PriceListCustomerFallbackRepositoryTest extends AbstractFallbackRepositoryTest
 {
     /**

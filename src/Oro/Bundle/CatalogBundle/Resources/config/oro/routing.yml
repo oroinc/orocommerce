@@ -8,13 +8,6 @@ oro_catalog_product:
     type:         annotation
     prefix:       /catalog/product
 
-oro_catalog_product_frontend:
-    resource:     "@OroCatalogBundle/Controller/Frontend/ProductController.php"
-    type:         annotation
-    prefix:       /catalog/product
-    options:
-        frontend: true
-
 oro_catalog_ajax:
     resource:     "@OroCatalogBundle/Controller/AjaxCatalogController.php"
     type:         annotation

@@ -9,9 +9,6 @@ use Symfony\Component\DomCrawler\Form;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TaxBundle\Entity\TaxJurisdiction;
 
-/**
- * @dbIsolation
- */
 class TaxJurisdictionControllerTest extends WebTestCase
 {
     const CODE = 'code';

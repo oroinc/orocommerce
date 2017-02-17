@@ -2,14 +2,19 @@
 
 namespace Oro\Bundle\CatalogBundle\Controller;
 
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Form\Handler\CategoryHandler;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\RedirectResponse;
+use Oro\Bundle\UIBundle\Form\Type\TreeMoveType;
+use Oro\Bundle\UIBundle\Model\TreeCollection;
 
 class CategoryController extends Controller
 {
@@ -70,6 +75,78 @@ class CategoryController extends Controller
     }
 
     /**
+     * @Route("/move", name="oro_catalog_category_move_form")
+     * @Template
+     * @Acl(
+     *      id="oro_catalog_category_update",
+     *      type="entity",
+     *      class="OroCatalogBundle:Category",
+     *      permission="EDIT"
+     * )
+     *
+     * @param Request $request
+     *
+     * @return array
+     */
+    public function moveAction(Request $request)
+    {
+        $handler = $this->get('oro_catalog.category_tree_handler');
+
+        $root = $this->getMasterRootCategory();
+        $treeItems = $handler->getTreeItemList($root, true);
+
+        $collection = new TreeCollection();
+        $collection->source = array_intersect_key($treeItems, array_flip($request->get('selected', [])));
+
+        $treeData = $handler->createTree($root, true);
+        $handler->disableTreeItems($collection->source, $treeData);
+        $form = $this->createForm(TreeMoveType::class, $collection, [
+            'tree_data' => $treeData,
+            'tree_items' => $treeItems,
+        ]);
+
+        $responseData = [
+            'treeItems' => $treeItems,
+            'changed' => [],
+        ];
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $currentInsertPosition = count($collection->target->getChildren());
+            foreach ($collection->source as $source) {
+                $handler->moveNode($source->getKey(), $collection->target->getKey(), $currentInsertPosition);
+                $responseData['changed'][] = [
+                    'id' => $source->getKey(),
+                    'parent' => $collection->target->getKey(),
+                    'position' => $currentInsertPosition
+                ];
+                $currentInsertPosition++;
+            }
+
+            $response['saved'] = true;
+        }
+
+        return array_merge($responseData, ['form' => $form->createView()]);
+    }
+
+    /**
+     * @Route("/widget/tree", name="oro_catalog_category_tree_widget")
+     * @Template
+     * @Acl(
+     *      id="oro_catalog_category_view",
+     *      type="entity",
+     *      class="OroCatalogBundle:Category",
+     *      permission="VIEW"
+     * )
+     *
+     * @return array
+     */
+    public function treeWidgetAction()
+    {
+        return [];
+    }
+
+    /**
      * @param Category $category
      * @return array|RedirectResponse
      */
@@ -87,15 +164,15 @@ class CategoryController extends Controller
             $category,
             $form,
             function (Category $category) {
-                return array(
+                return [
                     'route' => 'oro_catalog_category_update',
-                    'parameters' => array('id' => $category->getId())
-                );
+                    'parameters' => ['id' => $category->getId()]
+                ];
             },
             function () {
-                return array(
+                return [
                     'route' => 'oro_catalog_category_index',
-                );
+                ];
             },
             $this->get('translator')->trans('oro.catalog.controller.category.saved.message'),
             $handler

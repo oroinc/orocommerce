@@ -4,10 +4,6 @@ placeholders:
             items:
                 product_sidebar_category_selector:
                     order: 100
-        frontend_product_index_sidebar:
-            items:
-                frontend_product_sidebar_category_selector:
-                    order: 100
         oro_product_step_two_info:
             items:
                 product_step_two_category_info:
@@ -15,7 +11,5 @@ placeholders:
     items:
         product_sidebar_category_selector:
             action: OroCatalogBundle:Product:sidebar
-        frontend_product_sidebar_category_selector:
-            action: OroCatalogBundle:Frontend/Product:sidebar
         product_step_two_category_info:
             template: OroCatalogBundle:Product:category_info.html.twig

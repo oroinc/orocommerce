@@ -18,9 +18,6 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
-/**
- * @dbIsolation
- */
 class DefaultVisibilityListenerTest extends WebTestCase
 {
     use EntityTrait;

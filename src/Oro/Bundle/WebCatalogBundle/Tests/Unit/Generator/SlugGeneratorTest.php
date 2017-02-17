@@ -66,9 +66,9 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(1, $actualSlugs);
         $expectedSlugs = [
             (new Slug())->setUrl(SlugGenerator::ROOT_URL)
-            ->setRouteName($routeId)
-            ->setRouteParameters($routeParameters)
-            ->addScope($scope)
+                ->setRouteName($routeId)
+                ->setRouteParameters($routeParameters)
+                ->addScope($scope)
         ];
 
         $this->assertCount(1, $contentNode->getLocalizedUrls());
@@ -98,59 +98,36 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
         $parentContentNode->addLocalizedUrl((new LocalizedFallbackValue())->setText($parentNodeSlugUrl));
         $parentContentNode->addContentVariant($parentContentVariant);
 
-        $slugUrl = 'test-url';
-        $routeId = 'route_id';
-        $routeParameters = [];
-        $routData = new RouteData($routeId, $routeParameters);
-        $scope = new Scope();
+        $this->doTestGenerate($localization, $parentContentNode);
+    }
 
-        $slugPrototype = new LocalizedFallbackValue();
-        $slugPrototype->setLocalization($localization);
-        $slugPrototype->setString($slugUrl);
+    public function testGenerateEmptyPrototype()
+    {
+        /** @var Localization $localization */
+        $localization = $this->getEntity(Localization::class, ['id' => 42, 'name' => 'test_localization']);
 
-        $contentVariantType = $this->createMock(ContentVariantTypeInterface::class);
-        $contentVariantType->expects($this->once())
-            ->method('getRouteData')
-            ->willReturn($routData);
+        $rootUrl = '/';
+        $parentSlug = new Slug();
+        $parentSlug->setUrl($rootUrl);
+        $parentSlug->setLocalization($localization);
 
-        $contentVariant = new ContentVariant();
-        $contentVariant->setType('test_type');
-        $contentVariant->addScope($scope);
+        $parentNode = new ContentNode();
+        $parentNode->addLocalizedUrl((new LocalizedFallbackValue())->setText($rootUrl));
+        $parentNode->addContentVariant((new ContentVariant())->addSlug($parentSlug));
 
-        $contentNode = new ContentNode();
-        $contentNode->setParentNode($parentContentNode);
-        $contentNode->addContentVariant($contentVariant);
-        $contentNode->addSlugPrototype($slugPrototype);
+        $emptySlugPrototype = new LocalizedFallbackValue();
+        $emptySlugPrototype->setLocalization($localization);
+        $emptySlugPrototype->setString('');
 
-        $this->contentVariantTypeRegistry->expects($this->once())
-            ->method('getContentVariantType')
-            ->willReturn($contentVariantType);
-
-        $this->slugGenerator->generate($contentNode);
+        $routeData = new RouteData('test_route', []);
+        $contentNode = $this->prepareContentNode($parentNode, $routeData, new Scope(), $emptySlugPrototype);
 
         /** @var ContentVariant $actualContentVariant */
         $actualContentVariant = $contentNode->getContentVariants()->first();
-        $actualSlugs = $actualContentVariant->getSlugs();
 
-        $this->assertCount(1, $actualSlugs);
-        $expectedSlugs = [
-            (new Slug())->setUrl('/parent/node/test-url')
-                ->setRouteName($routeId)
-                ->setRouteParameters($routeParameters)
-                ->addScope($scope)
-                ->setLocalization($localization)
-        ];
-
-        $expectedUrls = [
-            (new LocalizedFallbackValue())->setText('/parent/node/test-url')->setLocalization($localization)
-        ];
-        foreach ($contentNode->getLocalizedUrls() as $url) {
-            $this->assertContains($url, $expectedUrls, '', false, false);
-        }
-
-        foreach ($actualSlugs as $slug) {
-            $this->assertContains($slug, $expectedSlugs, '', false, false);
-        }
+        $this->assertInstanceOf(ContentVariant::class, $actualContentVariant);
+        $this->assertEmpty($actualContentVariant->getSlugs());
+        $this->assertEmpty($contentNode->getLocalizedUrls());
     }
 
     public function testGenerateWithFallback()
@@ -172,59 +149,7 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
         $parentContentNode->addLocalizedUrl((new LocalizedFallbackValue())->setText($parentNodeSlugUrl));
         $parentContentNode->addContentVariant($parentContentVariant);
 
-        $slugUrl = 'test-url';
-        $routeId = 'route_id';
-        $routeParameters = [];
-        $routData = new RouteData($routeId, $routeParameters);
-        $scope = new Scope();
-
-        $slugPrototype = new LocalizedFallbackValue();
-        $slugPrototype->setLocalization($localization);
-        $slugPrototype->setString($slugUrl);
-
-        $contentVariantType = $this->createMock(ContentVariantTypeInterface::class);
-        $contentVariantType->expects($this->once())
-            ->method('getRouteData')
-            ->willReturn($routData);
-
-        $contentVariant = new ContentVariant();
-        $contentVariant->setType('test_type');
-        $contentVariant->addScope($scope);
-
-        $contentNode = new ContentNode();
-        $contentNode->setParentNode($parentContentNode);
-        $contentNode->addContentVariant($contentVariant);
-        $contentNode->addSlugPrototype($slugPrototype);
-
-        $this->contentVariantTypeRegistry->expects($this->once())
-            ->method('getContentVariantType')
-            ->willReturn($contentVariantType);
-
-        $this->slugGenerator->generate($contentNode);
-
-        /** @var ContentVariant $actualContentVariant */
-        $actualContentVariant = $contentNode->getContentVariants()->first();
-        $actualSlugs = $actualContentVariant->getSlugs();
-
-        $this->assertCount(1, $actualSlugs);
-        $expectedSlugs = [
-            (new Slug())->setUrl('/parent/node/test-url')
-                ->setRouteName($routeId)
-                ->setRouteParameters($routeParameters)
-                ->addScope($scope)
-                ->setLocalization($localization)
-        ];
-
-        $expectedUrls = [
-            (new LocalizedFallbackValue())->setText('/parent/node/test-url')->setLocalization($localization)
-        ];
-        foreach ($contentNode->getLocalizedUrls() as $url) {
-            $this->assertContains($url, $expectedUrls, '', false, false);
-        }
-
-        foreach ($actualSlugs as $slug) {
-            $this->assertContains($slug, $expectedSlugs, '', false, false);
-        }
+        $this->doTestGenerate($localization, $parentContentNode);
     }
 
     public function testGenerateWithExistingSlugs()
@@ -292,35 +217,16 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
         $parentContentNode->addLocalizedUrl((new LocalizedFallbackValue())->setText($parentNodeSlugUrl));
         $parentContentNode->addContentVariant($parentContentVariant);
 
-        $slugUrl = 'test-url';
+        $slugPrototype = new LocalizedFallbackValue();
+        $slugPrototype->setString('test-url');
+
+
         $routeId = 'route_id';
         $routeParameters = [];
         $routData = new RouteData($routeId, $routeParameters);
         $scope = new Scope();
 
-        $slugPrototype = new LocalizedFallbackValue();
-        $slugPrototype->setString($slugUrl);
-
-        $contentVariantType = $this->createMock(ContentVariantTypeInterface::class);
-        $contentVariantType->expects($this->once())
-            ->method('getRouteData')
-            ->willReturn($routData);
-
-        $contentVariant = new ContentVariant();
-        $contentVariant->setType('test_type');
-        $contentVariant->addScope($scope);
-
-        $contentNode = new ContentNode();
-        $contentNode->setParentNode($parentContentNode);
-        $contentNode->addContentVariant($contentVariant);
-        $contentNode->addSlugPrototype($slugPrototype);
-
-        $this->contentVariantTypeRegistry->expects($this->once())
-            ->method('getContentVariantType')
-            ->willReturn($contentVariantType);
-
-        $this->slugGenerator->generate($contentNode);
-
+        $contentNode = $this->prepareContentNode($parentContentNode, $routData, $scope, $slugPrototype);
         /** @var ContentVariant $actualContentVariant */
         $actualContentVariant = $contentNode->getContentVariants()->first();
         $actualSlugs = $actualContentVariant->getSlugs();
@@ -342,5 +248,72 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
             $this->assertContains($slug, $expectedSlugs, '', false, false);
             $this->assertNull($slug->getLocalization());
         }
+    }
+
+    protected function doTestGenerate(Localization $localization, ContentNode $parentContentNode)
+    {
+        $slugPrototype = new LocalizedFallbackValue();
+        $slugPrototype->setLocalization($localization);
+        $slugPrototype->setString('test-url');
+
+        $routeId = 'route_id';
+        $routeParameters = [];
+        $routData = new RouteData($routeId, $routeParameters);
+        $scope = new Scope();
+
+        $contentNode = $this->prepareContentNode($parentContentNode, $routData, $scope, $slugPrototype);
+
+        /** @var ContentVariant $actualContentVariant */
+        $actualContentVariant = $contentNode->getContentVariants()->first();
+        $actualSlugs = $actualContentVariant->getSlugs();
+
+        $this->assertCount(1, $actualSlugs);
+        $expectedSlugs = [
+            (new Slug())->setUrl('/parent/node/test-url')
+                ->setRouteName($routeId)
+                ->setRouteParameters($routeParameters)
+                ->addScope($scope)
+                ->setLocalization($localization)
+        ];
+
+        $expectedUrls = [
+            (new LocalizedFallbackValue())->setText('/parent/node/test-url')->setLocalization($localization)
+        ];
+        foreach ($contentNode->getLocalizedUrls() as $url) {
+            $this->assertContains($url, $expectedUrls, '', false, false);
+        }
+
+        foreach ($actualSlugs as $slug) {
+            $this->assertContains($slug, $expectedSlugs, '', false, false);
+        }
+    }
+
+    protected function prepareContentNode(
+        ContentNode $parentContentNode,
+        RouteData $routData,
+        Scope $scope,
+        LocalizedFallbackValue $slugPrototype
+    ) {
+        $contentVariantType = $this->createMock(ContentVariantTypeInterface::class);
+        $contentVariantType->expects($this->once())
+            ->method('getRouteData')
+            ->willReturn($routData);
+
+        $contentVariant = new ContentVariant();
+        $contentVariant->setType('test_type');
+        $contentVariant->addScope($scope);
+
+        $contentNode = new ContentNode();
+        $contentNode->setParentNode($parentContentNode);
+        $contentNode->addContentVariant($contentVariant);
+        $contentNode->addSlugPrototype($slugPrototype);
+
+        $this->contentVariantTypeRegistry->expects($this->once())
+            ->method('getContentVariantType')
+            ->willReturn($contentVariantType);
+
+        $this->slugGenerator->generate($contentNode);
+
+        return $contentNode;
     }
 }

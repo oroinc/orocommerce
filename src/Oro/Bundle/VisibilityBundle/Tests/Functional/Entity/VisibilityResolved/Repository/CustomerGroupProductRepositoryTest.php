@@ -12,9 +12,6 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerGroupProductVi
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerGroupProductRepository;
 
-/**
- * @dbIsolation
- */
 class CustomerGroupProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
 {
     public function testInsertUpdateDeleteAndHasEntity()

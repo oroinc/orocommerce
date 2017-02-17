@@ -1,0 +1,8 @@
+{% block _order_review_payment_methods_payment_term_widget -%}
+    {% if options.payment_method is defined %}
+        <div class="hidden"
+             data-page-component-module="oropayment/js/app/components/payment-method-component"
+             data-page-component-options="{{ {paymentMethod: options.payment_method}|json_encode }}">
+        </div>
+    {% endif %}
+{%- endblock %}

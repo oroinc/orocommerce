@@ -1,0 +1,9 @@
+{% block _product_matrix_grid_order_button_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " form__col"
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}

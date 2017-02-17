@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Engine;
 
+use Oro\Bundle\SearchBundle\Tests\Functional\SearchExtensionTrait;
+use Oro\Bundle\WebsiteSearchBundle\Entity\IndexText;
 use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\SearchBundle\Query\Result\Item;
@@ -15,12 +17,12 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteSearchBundle\Engine\AbstractEngine;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
-use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 use Oro\Bundle\WebsiteSearchBundle\Tests\Functional\Traits\DefaultLocalizationIdTestTrait;
 
 abstract class AbstractEngineTest extends WebTestCase
 {
     use DefaultLocalizationIdTestTrait;
+    use SearchExtensionTrait;
 
     /**
      * @var callable
@@ -51,6 +53,8 @@ abstract class AbstractEngineTest extends WebTestCase
     protected function tearDown()
     {
         $this->getContainer()->get('event_dispatcher')->removeListener(IndexEntityEvent::NAME, $this->listener);
+
+        $this->clearIndexTextTable(IndexText::class);
     }
 
     /**

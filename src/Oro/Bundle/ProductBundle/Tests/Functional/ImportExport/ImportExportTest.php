@@ -2,23 +2,15 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\ImportExport;
 
-use Akeneo\Bundle\BatchBundle\Job\DoctrineJobRepository as BatchJobRepository;
-
 use Doctrine\ORM\EntityManager;
-
-use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\Yaml\Yaml;
 
-use Oro\Bundle\ImportExportBundle\Async\ExportMessageProcessor;
+use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageProcessTrait;
 use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
-use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
-use Oro\Bundle\NotificationBundle\Async\Topics;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\SecurityBundle\Authentication\Token\OrganizationToken;
-use Oro\Component\MessageQueue\Transport\Null\NullMessage;
-use Oro\Component\MessageQueue\Transport\SessionInterface;
 
 /**
  * @dbIsolationPerTest
@@ -27,7 +19,7 @@ use Oro\Component\MessageQueue\Transport\SessionInterface;
  */
 class ImportExportTest extends AbstractImportExportTest
 {
-    use MessageQueueExtension;
+    use MessageProcessTrait;
 
     /**
      * @var string
@@ -38,36 +30,6 @@ class ImportExportTest extends AbstractImportExportTest
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-    }
-
-    /**
-     * Delete data required because there is commit to job repository in import/export controller action
-     * Please use
-     *   $this->getContainer()->get('akeneo_batch.job_repository')->getJobManager()->beginTransaction();
-     *   $this->getContainer()->get('akeneo_batch.job_repository')->getJobManager()->rollback();
-     *   $this->getContainer()->get('akeneo_batch.job_repository')->getJobManager()->getConnection()->clear();
-     * if you don't use controller
-     */
-    protected function tearDown()
-    {
-        // clear DB from separate connection
-        $batchJobManager = $this->getBatchJobManager();
-        $batchJobManager->createQuery('DELETE AkeneoBatchBundle:JobInstance')->execute();
-        $batchJobManager->createQuery('DELETE AkeneoBatchBundle:JobExecution')->execute();
-        $batchJobManager->createQuery('DELETE AkeneoBatchBundle:StepExecution')->execute();
-
-        parent::tearDown();
-    }
-
-    /**
-     * @return \Doctrine\ORM\EntityManager
-     */
-    protected function getBatchJobManager()
-    {
-        /** @var BatchJobRepository $batchJobRepository */
-        $batchJobRepository = $this->getContainer()->get('akeneo_batch.job_repository');
-
-        return $batchJobRepository->getJobManager();
     }
 
     public function testShouldExportCorrectData()
@@ -88,7 +50,7 @@ class ImportExportTest extends AbstractImportExportTest
         $this->assertCount(1, $data);
         $this->assertTrue($data['success']);
 
-        $exportedDataFilePath = $this->processExportMessage();
+        $exportedDataFilePath = $this->processExportMessage($this->getContainer(), $this->client);
 
         $expectedDataFilePath = $this->getContainer()->get('file_locator')->locate(
             '@OroProductBundle/Tests/Functional/ImportExport/data/expected_export_product_row.csv'
@@ -106,7 +68,7 @@ class ImportExportTest extends AbstractImportExportTest
 
         unlink($exportedDataFilePath); // remove trash
     }
-    
+
     /**
      * @param string $strategy
      * @dataProvider strategyDataProvider
@@ -130,112 +92,6 @@ class ImportExportTest extends AbstractImportExportTest
         return [
             'add or replace' => ['oro_product_product.add_or_replace'],
         ];
-    }
-
-    /**
-     * @param string $strategy
-     * @param string $file
-     */
-    protected function validateImportFile($strategy, $file)
-    {
-        $crawler = $this->client->request(
-            'GET',
-            $this->getUrl(
-                'oro_importexport_import_form',
-                [
-                    'entity' => Product::class,
-                    '_widgetContainer' => 'dialog',
-                ]
-            )
-        );
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-
-        $this->assertFileExists($file);
-
-        /** @var Form $form */
-        $form = $crawler->selectButton('Submit')->form();
-
-        /** TODO Change after BAP-1813 */
-        $form->getFormNode()->setAttribute(
-            'action',
-            $form->getFormNode()->getAttribute('action') . '&_widgetContainer=dialog'
-        );
-
-        $form['oro_importexport_import[file]']->upload($file);
-        $form['oro_importexport_import[processorAlias]'] = $strategy;
-
-        $this->client->followRedirects(true);
-        $this->client->submit($form);
-
-        $result = $this->client->getResponse();
-
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-
-        $crawler = $this->client->getCrawler();
-        $this->assertEquals(0, $crawler->filter('.import-errors')->count());
-    }
-
-    /**
-     * @param array $fields
-     * @param array $data
-     * @return array
-     */
-    protected function extractFieldValues(array $fields, array $data)
-    {
-        $values = [];
-        foreach ($fields as $field) {
-            $key = array_search($field, $data[0], true);
-            if (false !== $key) {
-                $values[$field] = $data[1][$key];
-            }
-        }
-
-        return $values;
-    }
-
-    /**
-     * @param string $strategy
-     * @return array
-     */
-    protected function doImport($strategy)
-    {
-        $this->client->followRedirects(false);
-        $this->client->request(
-            'GET',
-            $this->getUrl(
-                'oro_importexport_import_process',
-                [
-                    'processorAlias' => $strategy,
-                    '_format' => 'json',
-                ]
-            )
-        );
-
-        return $this->getJsonResponseContent($this->client->getResponse(), 200);
-    }
-
-    /**
-     * @return string
-     */
-    protected function getImportTemplate()
-    {
-        $result = $this
-            ->getContainer()
-            ->get('oro_importexport.handler.export')
-            ->getExportResult(
-                JobExecutor::JOB_EXPORT_TEMPLATE_TO_CSV,
-                'oro_product_product_export_template',
-                ProcessorRegistry::TYPE_EXPORT_TEMPLATE
-            );
-
-        $chains = explode('/', $result['url']);
-
-        return $this
-            ->getContainer()
-            ->get('oro_importexport.file.file_system_operator')
-            ->getTemporaryFile(end($chains))
-            ->getRealPath();
     }
 
     /**
@@ -312,7 +168,7 @@ class ImportExportTest extends AbstractImportExportTest
 
         $jobResult = $this->getContainer()->get('oro_importexport.job_executor')->executeJob(
             ProcessorRegistry::TYPE_IMPORT_VALIDATION,
-            JobExecutor::JOB_VALIDATE_IMPORT_FROM_CSV,
+            JobExecutor::JOB_IMPORT_VALIDATION_FROM_CSV,
             $configuration
         );
 
@@ -531,63 +387,5 @@ class ImportExportTest extends AbstractImportExportTest
             $this->getContainer()->get('doctrine')->getRepository('OroUserBundle:User')->findOneBy([])
         );
         $this->getContainer()->get('security.token_storage')->setToken($token);
-    }
-
-    /**
-     * @return string
-     */
-    protected function processExportMessage()
-    {
-        $sentMessages = $this->getSentMessages();
-        $exportMessageData = reset($sentMessages);
-        $this->tearDownMessageCollector();
-
-        $message = new NullMessage();
-        $message->setMessageId('abc');
-        $message->setBody(json_encode($exportMessageData['message']));
-
-        /** @var ExportMessageProcessor $processor */
-        $processor = $this->getContainer()->get('oro_importexport.async.export');
-        $processorResult = $processor->process($message, $this->createSessionInterfaceMock());
-
-        $this->assertEquals(ExportMessageProcessor::ACK, $processorResult);
-
-        $sentMessages = $this->getSentMessages();
-        foreach ($sentMessages as $messageData) {
-            if (Topics::SEND_NOTIFICATION_EMAIL === $messageData['topic']) {
-                break;
-            }
-        }
-
-        preg_match('/http.*\.csv/', $messageData['message']['body'], $match);
-        $urlChunks = explode('/', $match[0]);
-        $filename = end($urlChunks);
-
-        $this->client->request(
-            'GET',
-            $this->getUrl('oro_importexport_export_download', ['fileName' => $filename]),
-            [],
-            [],
-            $this->generateNoHashNavigationHeader()
-        );
-
-        $result = $this->client->getResponse();
-
-        $this->assertResponseStatusCodeEquals($result, 200);
-        $this->assertResponseContentTypeEquals($result, 'text/csv');
-        $this->assertStringStartsWith(
-            'attachment; filename="oro_product_product_',
-            $result->headers->get('Content-Disposition')
-        );
-
-        return $result->getFile()->getPathname();
-    }
-
-    /**
-     * @return \PHPUnit_Framework_MockObject_MockObject|SessionInterface
-     */
-    private function createSessionInterfaceMock()
-    {
-        return $this->getMockBuilder(SessionInterface::class)->getMock();
     }
 }

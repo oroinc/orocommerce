@@ -1,0 +1,36 @@
+{% block _matrix_collection_widget %}
+<table class="matrix-order-widget__grid">
+    {% if form.rows|length > 0 and form.rows[0].columns|length > 1 %}
+        <thead class="matrix-order-widget__grid-head">
+            <tr class="matrix-order-widget__grid-head-wrapper">
+                <td></td>
+                {% for column in form.rows[0].columns %}
+                    <td class="matrix-order-widget__form__col">
+                        <div class="matrix-order-widget__form__col-wrapper">
+                            {{ column.vars.label }}
+                        </div>
+                    </td>
+                {% endfor %}
+            </tr>
+        </thead>
+    {% endif %}
+    <tbody class="matrix-order-widget__grid-body">
+        {% for row in form.rows %}
+            <tr>
+                <td>{{ row.vars.label }}</td>
+                {% for column in row.columns %}
+                    <td>
+                        {% do set_class_prefix_to_form(column, 'matrix-order-widget') %}
+                        {{ form_widget(column,{
+                            'attr': {
+                                'data-product-id': column.vars.productId
+                            },
+                        })
+                        }}
+                    </td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -3,16 +3,12 @@
 namespace Oro\Bundle\InventoryBundle\Tests\Functional\Controller;
 
 use Symfony\Component\Routing\RouterInterface;
-
 use Doctrine\ORM\EntityRepository;
-
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
-use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadInventoryLevelWithPrimaryUnit;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
- * @dbIsolation
  * @group CommunityEdition
  */
 class InventoryLevelControllerTest extends WebTestCase
@@ -21,9 +17,7 @@ class InventoryLevelControllerTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-        $this->loadFixtures([
-            LoadInventoryLevelWithPrimaryUnit::class
-        ]);
+        $this->loadFixtures(['@OroInventoryBundle/Tests/Functional/DataFixtures/inventory_level.yml']);
     }
 
     public function testIndexAction()

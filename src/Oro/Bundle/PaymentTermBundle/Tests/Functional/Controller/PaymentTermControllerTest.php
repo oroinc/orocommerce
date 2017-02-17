@@ -8,9 +8,6 @@ use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermDa
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Form;
 
-/**
- * @dbIsolation
- */
 class PaymentTermControllerTest extends WebTestCase
 {
     const TERM_LABEL_NEW = 'net 100';

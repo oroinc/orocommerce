@@ -78,27 +78,7 @@ class ProductVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
         $data = ['test' => 42];
         $body = json_encode($data);
 
-        $em = $this->createMock(EntityManagerInterface::class);
-
-        $em->expects($this->once())
-            ->method('beginTransaction');
-
-        $em->expects(($this->once()))
-            ->method('rollback');
-
-        $em->expects(($this->never()))
-            ->method('commit');
-
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->with(ProductVisibilityResolved::class)
-            ->willReturn($em);
-
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message * */
-        $message = $this->createMock(MessageInterface::class);
-        $message->expects($this->any())
-            ->method('getBody')
-            ->willReturn($body);
+        $message = $this->prepareTestProcess($body);
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session * */
         $session = $this->createMock(SessionInterface::class);
@@ -134,27 +114,7 @@ class ProductVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
         $data = ['test' => 42];
         $body = json_encode($data);
 
-        $em = $this->createMock(EntityManagerInterface::class);
-
-        $em->expects($this->once())
-            ->method('beginTransaction');
-
-        $em->expects(($this->once()))
-            ->method('rollback');
-
-        $em->expects(($this->never()))
-            ->method('commit');
-
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->with(ProductVisibilityResolved::class)
-            ->willReturn($em);
-
-        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message * */
-        $message = $this->createMock(MessageInterface::class);
-        $message->expects($this->any())
-            ->method('getBody')
-            ->willReturn($body);
+        $message = $this->prepareTestProcess($body);
 
         /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session * */
         $session = $this->createMock(SessionInterface::class);
@@ -283,5 +243,36 @@ class ProductVisibilityProcessorTest extends \PHPUnit_Framework_TestCase
             'resolvedVisibilityClassName',
             $this->visibilityProcessor
         );
+    }
+
+    /**
+     * @param string $body
+     * @return MessageInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function prepareTestProcess($body)
+    {
+        $em = $this->createMock(EntityManagerInterface::class);
+
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        $em->expects(($this->once()))
+            ->method('rollback');
+
+        $em->expects(($this->never()))
+            ->method('commit');
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(ProductVisibilityResolved::class)
+            ->willReturn($em);
+
+        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message * */
+        $message = $this->createMock(MessageInterface::class);
+        $message->expects($this->any())
+            ->method('getBody')
+            ->willReturn($body);
+
+        return $message;
     }
 }

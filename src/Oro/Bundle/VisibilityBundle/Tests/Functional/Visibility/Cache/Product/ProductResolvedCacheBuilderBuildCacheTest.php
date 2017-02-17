@@ -17,9 +17,6 @@ use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibi
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\ProductResolvedCacheBuilder;
 
-/**
- * @dbIsolation
- */
 class ProductResolvedCacheBuilderBuildCacheTest extends WebTestCase
 {
     /**

@@ -92,7 +92,7 @@
                 {
                     'title' : null,
                     'useSpan': false,
-                    'data' : [dataGrid.renderGrid('category-products-grid', { category_id: entityId }, { cssClass: 'inner-grid' })]
+                    'data' : [dataGrid.renderGrid('category-products-grid', { category_id: entityId ? entityId : 0 }, { cssClass: 'inner-grid' })]
                 }
             ]
         }]) %}
@@ -148,7 +148,14 @@
                     'label': 'oro.catalog.category.entity_plural_label'|trans,
                     'treeOptions': treeOptions
                 },
-                ['expand', 'collapse']
+                {
+                    'expand': 'expand',
+                    'collapse': 'collapse',
+                    'move': {
+                        'view': 'oroui/js/app/views/jstree/move-action-view',
+                        'routeName': 'oro_catalog_category_move_form'
+                    }
+                }
             ) }}
         </div>
     </div>

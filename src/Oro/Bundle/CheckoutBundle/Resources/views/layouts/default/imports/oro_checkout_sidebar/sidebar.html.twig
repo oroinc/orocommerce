@@ -9,7 +9,7 @@
         }|json_encode }}">
         <ul class="checkout-navigation">
             {% set isComplete = true %}
-            {% for key, step in steps %}
+            {% for key, step in steps if step.final == false %}
                 {% set pageNum = key+1 %}
                 {% set isCurrent = currentStep.name == step.name %}
                 {% if isCurrent %}
