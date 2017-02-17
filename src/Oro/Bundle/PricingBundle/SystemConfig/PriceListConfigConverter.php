@@ -9,7 +9,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 class PriceListConfigConverter
 {
     const MERGE_KEY = 'mergeAllowed';
-    const PRIORITY_KEY = 'priority';
+    const PRIORITY_KEY = 'sort_order';
     const PRICE_LIST_KEY = 'priceList';
 
     /** @var RegistryInterface */
@@ -43,7 +43,7 @@ class PriceListConfigConverter
                 /** @var PriceListConfig $config */
                 return [
                     self::PRICE_LIST_KEY => $config->getPriceList()->getId(),
-                    self::PRIORITY_KEY => $config->getPriority(),
+                    self::PRIORITY_KEY => $config->getSortOrder(),
                     self::MERGE_KEY => $config->isMergeAllowed(),
                 ];
             },
@@ -80,7 +80,7 @@ class PriceListConfigConverter
                 function ($a, $b) {
                     /** @var PriceListConfig $a */
                     /** @var PriceListConfig $b */
-                    return ($a->getPriority() < $b->getPriority()) ? -1 : 1;
+                    return ($a->getSortOrder() < $b->getSortOrder()) ? -1 : 1;
                 }
             );
         }
@@ -100,7 +100,7 @@ class PriceListConfigConverter
         foreach ($priceLists as $priceList) {
             if ($config[self::PRICE_LIST_KEY] === $priceList->getId()) {
                 $configModel->setPriceList($priceList)
-                    ->setPriority($config[self::PRIORITY_KEY])
+                    ->setSortOrder($config[self::PRIORITY_KEY])
                     ->setMergeAllowed($config[self::MERGE_KEY]);
 
                 return $configModel;

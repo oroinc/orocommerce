@@ -12,7 +12,7 @@ class PriceListSelectWithPriorityType extends AbstractType
     const NAME = 'oro_pricing_price_list_select_with_priority';
 
     const PRICE_LIST_FIELD = 'priceList';
-    const PRIORITY_FIELD = 'priority';
+    const PRIORITY_FIELD = 'sort_order';
     const MERGE_ALLOWED_FIELD = 'mergeAllowed';
 
     /**

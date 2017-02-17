@@ -17,7 +17,7 @@ class BasePriceListRelation implements WebsiteAwareInterface, PriceListAwareInte
      *
      * @ORM\Column(name="priority", type="integer")
      */
-    protected $priority;
+    protected $sortOrder;
 
     /**
      * @var PriceList
@@ -47,9 +47,9 @@ class BasePriceListRelation implements WebsiteAwareInterface, PriceListAwareInte
     /**
      * @return int
      */
-    public function getPriority()
+    public function getSortOrder()
     {
-        return $this->priority;
+        return $this->sortOrder;
     }
 
     /**
@@ -58,7 +58,7 @@ class BasePriceListRelation implements WebsiteAwareInterface, PriceListAwareInte
      */
     public function setPriority($priority)
     {
-        $this->priority = $priority;
+        $this->sortOrder = $priority;
 
         return $this;
     }
