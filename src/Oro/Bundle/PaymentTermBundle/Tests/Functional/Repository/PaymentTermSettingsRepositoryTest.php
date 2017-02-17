@@ -37,5 +37,6 @@ class PaymentTermSettingsRepositoryTest extends WebTestCase
 
         static::assertTrue(in_array($this->getReference('payment_term:transport_1'), $settingsByEnabledChannel, true));
         static::assertTrue(in_array($this->getReference('payment_term:transport_2'), $settingsByEnabledChannel, true));
+        static::assertFalse(in_array($this->getReference('payment_term:transport_3'), $settingsByEnabledChannel, true));
     }
 }
