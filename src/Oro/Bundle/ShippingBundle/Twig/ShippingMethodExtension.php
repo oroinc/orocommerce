@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Twig;
 
+use Oro\Bundle\ShippingBundle\Checker\ShippingMethodEnabledByIdentifierCheckerInterface;
 use Oro\Bundle\ShippingBundle\Event\ShippingMethodConfigDataEvent;
 use Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -23,20 +24,28 @@ class ShippingMethodExtension extends \Twig_Extension
     protected $dispatcher;
 
     /**
+     * @var ShippingMethodEnabledByIdentifierCheckerInterface
+     */
+    protected $checker;
+
+    /**
      * @var array
      */
     protected $configCache = [];
 
     /**
-     * @param ShippingMethodLabelFormatter $shippingMethodLabelFormatter
-     * @param EventDispatcherInterface $dispatcher
+     * @param ShippingMethodLabelFormatter                      $shippingMethodLabelFormatter
+     * @param EventDispatcherInterface                          $dispatcher
+     * @param ShippingMethodEnabledByIdentifierCheckerInterface $checker
      */
     public function __construct(
         ShippingMethodLabelFormatter $shippingMethodLabelFormatter,
-        EventDispatcherInterface $dispatcher
+        EventDispatcherInterface $dispatcher,
+        ShippingMethodEnabledByIdentifierCheckerInterface $checker
     ) {
         $this->shippingMethodLabelFormatter = $shippingMethodLabelFormatter;
         $this->dispatcher = $dispatcher;
+        $this->checker = $checker;
     }
 
     /**
@@ -49,6 +58,7 @@ class ShippingMethodExtension extends \Twig_Extension
 
     /**
      * @param string $shippingMethodName
+     *
      * @return string Shipping Method config template path
      */
     public function getShippingMethodConfigRenderData($shippingMethodName)
@@ -64,6 +74,16 @@ class ShippingMethodExtension extends \Twig_Extension
         }
 
         return $this->configCache[$shippingMethodName];
+    }
+
+    /**
+     * @param string $methodIdentifier
+     *
+     * @return bool
+     */
+    public function isShippingMethodEnabled($methodIdentifier)
+    {
+        return $this->checker->isEnabled($methodIdentifier);
     }
 
     /**
@@ -87,6 +107,10 @@ class ShippingMethodExtension extends \Twig_Extension
             new \Twig_SimpleFunction(
                 'oro_shipping_method_config_template',
                 [$this, 'getShippingMethodConfigRenderData']
+            ),
+            new \Twig_SimpleFunction(
+                'oro_shipping_method_enabled',
+                [$this, 'isShippingMethodEnabled']
             )
         ];
     }

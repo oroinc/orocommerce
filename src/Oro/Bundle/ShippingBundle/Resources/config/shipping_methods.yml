@@ -21,5 +21,6 @@ services:
         arguments:
             - "@oro_shipping.formatter.shipping_method_label"
             - '@event_dispatcher'
+            - '@oro_shipping.checker.shipping_method_enabled'
         tags:
             - { name: twig.extension }
