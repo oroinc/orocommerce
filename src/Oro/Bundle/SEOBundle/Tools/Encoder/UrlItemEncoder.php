@@ -11,13 +11,10 @@ class UrlItemEncoder
      * @var UrlItemNormalizer
      */
     private $urlItemNormalizer;
-    
-    /**
-     * @param UrlItemNormalizer $urlItemNormalizer
-     */
-    public function __construct(UrlItemNormalizer $urlItemNormalizer)
+
+    public function __construct()
     {
-        $this->urlItemNormalizer = $urlItemNormalizer;
+        $this->urlItemNormalizer = new UrlItemNormalizer();
     }
 
     /**

@@ -5,7 +5,6 @@ namespace Oro\Bundle\SEOBundle\Tests\Unit\Tools\Encoder;
 use Oro\Bundle\SEOBundle\Model\DTO\UrlItem;
 use Oro\Bundle\SEOBundle\Model\UrlSet;
 use Oro\Bundle\SEOBundle\Tools\Encoder\UrlSetEncoder;
-use Oro\Bundle\SEOBundle\Tools\Normalizer\UrlItemNormalizer;
 use Oro\Component\SEO\Model\UrlSetInterface;
 
 class UrlSetEncoderTest extends \PHPUnit_Framework_TestCase
@@ -17,7 +16,7 @@ class UrlSetEncoderTest extends \PHPUnit_Framework_TestCase
     
     protected function setUp()
     {
-        $this->encoder = new UrlSetEncoder(new UrlItemNormalizer());
+        $this->encoder = new UrlSetEncoder();
     }
 
     /**

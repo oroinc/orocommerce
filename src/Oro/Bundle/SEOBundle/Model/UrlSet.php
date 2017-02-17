@@ -31,7 +31,7 @@ class UrlSet implements UrlSetInterface
     
     public function __construct()
     {
-        $this->urlItemEncoder = new UrlItemEncoder(new UrlItemNormalizer());
+        $this->urlItemEncoder = new UrlItemEncoder();
         $this->fileSize += $this->getRootNodeAttributesLength();
     }
 

@@ -6,7 +6,6 @@ use Oro\Bundle\SEOBundle\Model\UrlSet;
 use Oro\Bundle\SEOBundle\Provider\SitemapUrlProviderRegistry;
 use Oro\Bundle\SEOBundle\Tools\Encoder\UrlItemEncoder;
 use Oro\Bundle\SEOBundle\Tools\Encoder\UrlSetEncoder;
-use Oro\Bundle\SEOBundle\Tools\Normalizer\UrlItemNormalizer;
 use Oro\Component\SEO\Tools\SitemapDumperInterface;
 use Oro\Component\Website\WebsiteInterface;
 use Symfony\Component\Filesystem\Filesystem;
@@ -52,10 +51,9 @@ class SitemapDumper implements SitemapDumperInterface
         $this->providerRegistry = $providerRegistry;
         $this->filesystem = $filesystem;
         $this->sitemapFullLocation = sprintf('%s/%s', $kernelRootDir, static::SITEMAP_LOCATION); 
-        
-        $normalizer = new UrlItemNormalizer();
-        $this->urlItemEncoder = new UrlItemEncoder($normalizer);
-        $this->urlSetEncoder = new UrlSetEncoder($normalizer);
+
+        $this->urlItemEncoder = new UrlItemEncoder();
+        $this->urlSetEncoder = new UrlSetEncoder();
     }
 
     /**

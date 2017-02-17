@@ -4,7 +4,6 @@ namespace Oro\Bundle\SEOBundle\Tests\Unit\Tools\Encoder;
 
 use Oro\Bundle\SEOBundle\Model\DTO\UrlItem;
 use Oro\Bundle\SEOBundle\Tools\Encoder\UrlItemEncoder;
-use Oro\Bundle\SEOBundle\Tools\Normalizer\UrlItemNormalizer;
 use Oro\Component\SEO\Model\DTO\UrlItemInterface;
 
 class UrlItemEncoderTest extends \PHPUnit_Framework_TestCase
@@ -16,7 +15,7 @@ class UrlItemEncoderTest extends \PHPUnit_Framework_TestCase
     
     protected function setUp()
     {
-        $this->encoder = new UrlItemEncoder(new UrlItemNormalizer());
+        $this->encoder = new UrlItemEncoder();
     }
 
     /**
