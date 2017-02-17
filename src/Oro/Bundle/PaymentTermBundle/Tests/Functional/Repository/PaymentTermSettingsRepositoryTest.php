@@ -40,6 +40,9 @@ class PaymentTermSettingsRepositoryTest extends WebTestCase
             $this->getReference('payment_term:transport_2')
         ];
 
-        static::assertEquals($fixtureSettingsByEnabledChannel, $settingsByEnabledChannel);
+        static::assertCount(count($fixtureSettingsByEnabledChannel) + 1, $settingsByEnabledChannel);
+        foreach ($fixtureSettingsByEnabledChannel as $item) {
+            static::assertTrue(in_array($item, $settingsByEnabledChannel, true));
+        }
     }
 }

@@ -63,7 +63,7 @@ class MoveConfigValuesToSettings extends AbstractMoveConfigValuesToSettings
         $channel = $this->channelFactory->createChannel(
             $organization,
             $this->configToSettingsConverter->convert($paymentTermSystemConfig),
-            false
+            $paymentTermSystemConfig->isAllRequiredFieldsSet()
         );
 
         $manager->persist($channel);
