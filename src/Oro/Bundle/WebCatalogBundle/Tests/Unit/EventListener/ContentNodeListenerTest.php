@@ -141,16 +141,43 @@ class ContentNodeListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testPostRemove()
     {
+        /** @var ContentNode $parentNode */
+        $parentNode = $this->getEntity(ContentNode::class, ['id' => 1]);
+
         /** @var ContentNode $contentNode */
-        $contentNode = $this->getEntity(ContentNode::class, ['id' => 1]);
+        $contentNode = $this->getEntity(ContentNode::class, ['id' => 2, 'parentNode' => $parentNode]);
 
         $this->messageFactory->expects($this->once())
             ->method('createMessage')
-            ->with($contentNode)
-            ->willReturn([]);
+            ->with($parentNode)
+            ->willReturn([
+                ResolveNodeSlugsMessageFactory::ID => $parentNode->getId(),
+                ResolveNodeSlugsMessageFactory::CREATE_REDIRECT => true
+            ]);
         $this->messageProducer->expects($this->once())
             ->method('send')
-            ->with(Topics::RESOLVE_NODE_SLUGS, []);
+            ->with(
+                Topics::RESOLVE_NODE_SLUGS,
+                [
+                    ResolveNodeSlugsMessageFactory::ID => $parentNode->getId(),
+                    ResolveNodeSlugsMessageFactory::CREATE_REDIRECT => true
+                ]
+            );
+
+        $this->contentNodeListener->postRemove($contentNode);
+    }
+
+    public function testPostRemoveNoParent()
+    {
+        $parentNode = null;
+
+        /** @var ContentNode $contentNode */
+        $contentNode = $this->getEntity(ContentNode::class, ['id' => 2, 'parentNode' => $parentNode]);
+
+        $this->messageFactory->expects($this->never())
+            ->method('createMessage');
+        $this->messageProducer->expects($this->never())
+            ->method('send');
 
         $this->contentNodeListener->postRemove($contentNode);
     }

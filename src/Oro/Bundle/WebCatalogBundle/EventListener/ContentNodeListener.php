@@ -84,7 +84,9 @@ class ContentNodeListener
      */
     public function postRemove(ContentNode $contentNode)
     {
-        $this->scheduleContentNodeRecalculation($contentNode);
+        if ($contentNode->getParentNode()) {
+            $this->scheduleContentNodeRecalculation($contentNode->getParentNode());
+        }
     }
 
     /**
