@@ -2,22 +2,20 @@ navigation:
     menu_config:
         items:
             sales_tab:
-                label: 'oro.menu.sales_tab.label'
-                uri:   '#'
-                extras:
-                    position: 300
+                label:    'oro.menu.sales_tab.label'
+                uri:      '#'
+                position: 300
 
             frontend_request:
                 label:           'oro.frontend.rfp.request.entity_plural_label'
                 route:           'oro_rfp_frontend_request_index'
-                extras:
-                    position:   300
+                position:        300
 
             request_list:
                 label:           'oro.rfp.request.entity_plural_label'
                 route:           'oro_rfp_request_index'
+                position:        200
                 extras:
-                    position:    200
                     routes:
                         - 'oro_rfp_request_index'
                         - 'oro_rfp_request_view'

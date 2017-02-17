@@ -4,8 +4,8 @@ navigation:
             web_catalog_list:
                 label: 'oro.webcatalog.entity_plural_label'
                 route: 'oro_web_catalog_index'
+                position: 100
                 extras:
-                    position: 100
                     routes: ['/^oro_web_catalog/', '/^oro_content_node/']
                     description: 'oro.webcatalog.entity_description'
 
