@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductVariantFieldType extends AbstractType
 {
@@ -16,7 +17,15 @@ class ProductVariantFieldType extends AbstractType
     {
         $builder
             ->add('priority', 'hidden', ['empty_data' => 9999])
-            ->add('is_selected', 'checkbox', ['required' => false, 'label' => $options['label']]);
+            ->add(
+                'is_selected',
+                'checkbox',
+                [
+                    'required' => false,
+                    'attr' => ['data-original-name' => $builder->getName()],
+                    'label' => $options['label']
+                ]
+            );
     }
 
     /**

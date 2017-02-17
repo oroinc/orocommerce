@@ -287,7 +287,6 @@ services:
             - '%oro_product.entity.product_variant_link.class%'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-product-variants-view, method: onBuildAfter }
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-product-variants-edit, method: onBuildAfter }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.product-product-variants-edit, method: onBuildBeforeHideUnsuitable }
 
     oro_product.validator.unique_variant_links:
@@ -737,3 +736,9 @@ services:
             - '@translator'
         tags:
             - { name: kernel.event_listener, event: oro.entity_extend.field.validate.before_remove, method: onValidateBeforeRemoveField }
+
+    oro_product.provider.page_template_provider:
+        class: 'Oro\Bundle\ProductBundle\Provider\PageTemplateProvider'
+        arguments:
+            - '@oro_layout.theme_manager'
+            - '@oro_entity.fallback.resolver.entity_fallback_resolver'
