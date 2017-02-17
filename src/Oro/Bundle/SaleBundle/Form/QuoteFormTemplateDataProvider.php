@@ -62,6 +62,7 @@ class QuoteFormTemplateDataProvider implements FormTemplateDataProviderInterface
         $quoteData = $event->getData()->getArrayCopy();
 
         return [
+            'entity' => $entity,
             'form' => $form->createView(),
             'tierPrices' => $this->quoteProductPriceProvider->getTierPrices($entity),
             'matchedPrices' => $this->quoteProductPriceProvider->getMatchedPrices($entity),
