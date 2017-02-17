@@ -177,6 +177,13 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_shipping_enabled_type_config_validation_group_validator }
 
+    oro_shipping.validator.shipping_rule_enabled:
+        class: 'Oro\Bundle\ShippingBundle\Validator\Constraints\ShippingRuleEnableValidator'
+        arguments:
+            - '@oro_shipping.checker.shipping_rule_enabled'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_shipping_rule_enabled_validator }
+
     oro_shipping.form.data_transformer.measure:
         class: 'Oro\Bundle\ShippingBundle\Form\DataTransformer\MeasureTransformer'
         public: false
@@ -392,3 +399,14 @@ services:
          arguments:
              - '@oro_shipping.shipping_method.registry'
              - '@oro_shipping.shipping_price.provider_enabled_methods_decorator.inner'
+
+    oro_shipping.checker.shipping_method_enabled:
+        class: 'Oro\Bundle\ShippingBundle\Checker\ShippingMethodEnabledByIdentifierChecker'
+        arguments:
+            - '@oro_shipping.shipping_method.registry'
+
+    oro_shipping.checker.shipping_rule_enabled:
+        class: 'Oro\Bundle\ShippingBundle\Checker\ShippingRuleEnabledChecker'
+        arguments:
+            - '@oro_shipping.checker.shipping_method_enabled'
+
