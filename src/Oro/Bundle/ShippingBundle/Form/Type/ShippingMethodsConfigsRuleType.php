@@ -33,19 +33,19 @@ class ShippingMethodsConfigsRuleType extends AbstractType
     protected $translator;
 
     /**
-     * @var EnabledShippingMethodChoicesProviderDecorator
+     * @var ShippingMethodChoicesProviderInterface
      */
     protected $provider;
 
     /**
      * @param ShippingMethodRegistry                        $methodRegistry
      * @param TranslatorInterface                           $translator
-     * @param EnabledShippingMethodChoicesProviderDecorator $provider
+     * @param ShippingMethodChoicesProviderInterface $provider
      */
     public function __construct(
         ShippingMethodRegistry $methodRegistry,
         TranslatorInterface $translator,
-        EnabledShippingMethodChoicesProviderDecorator $provider
+        ShippingMethodChoicesProviderInterface $provider
     ) {
         $this->methodRegistry = $methodRegistry;
         $this->translator = $translator;

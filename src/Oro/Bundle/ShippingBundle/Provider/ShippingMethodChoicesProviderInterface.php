@@ -6,6 +6,7 @@ interface ShippingMethodChoicesProviderInterface
 {
     /**
      * @param bool $translate
+     * 
      * @return array
      */
     public function getMethods($translate = false);

@@ -22,7 +22,7 @@ use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleDestinationTyp
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodTypeConfigCollectionType;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
-use Oro\Bundle\ShippingBundle\Provider\EnabledShippingMethodChoicesProviderDecorator;
+use Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProviderInterface;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber\MethodConfigCollectionSubscriberProxy;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber\MethodConfigSubscriberProxy;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber\MethodTypeConfigCollectionSubscriberProxy;
@@ -63,7 +63,7 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
     protected $methodRegistry;
 
     /**
-     * @var EnabledShippingMethodChoicesProviderDecorator
+     * @var ShippingMethodChoicesProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $choicesProvider;
 
@@ -88,7 +88,7 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
                 return $message.'_translated';
             }));
 
-        $this->choicesProvider = $this->createMock(EnabledShippingMethodChoicesProviderDecorator::class);
+        $this->choicesProvider = $this->createMock(ShippingMethodChoicesProviderInterface::class);
 
         $this->formType = new ShippingMethodsConfigsRuleType(
             $this->methodRegistry,
