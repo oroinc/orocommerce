@@ -22,6 +22,7 @@ use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleDestinationTyp
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleType;
 use Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodTypeConfigCollectionType;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Provider\EnabledShippingMethodChoicesProviderDecorator;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber\MethodConfigCollectionSubscriberProxy;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber\MethodConfigSubscriberProxy;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber\MethodTypeConfigCollectionSubscriberProxy;
@@ -61,6 +62,11 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
      */
     protected $methodRegistry;
 
+    /**
+     * @var EnabledShippingMethodChoicesProviderDecorator
+     */
+    protected $choicesProvider;
+
     protected function setUp()
     {
         $this->methodRegistry = new ShippingMethodRegistry();
@@ -82,7 +88,13 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
                 return $message.'_translated';
             }));
 
-        $this->formType = new ShippingMethodsConfigsRuleType($this->methodRegistry, $translator);
+        $this->choicesProvider = $this->createMock(EnabledShippingMethodChoicesProviderDecorator::class);
+
+        $this->formType = new ShippingMethodsConfigsRuleType(
+            $this->methodRegistry,
+            $translator,
+            $this->choicesProvider
+        );
     }
 
     public function testGetBlockPrefix()

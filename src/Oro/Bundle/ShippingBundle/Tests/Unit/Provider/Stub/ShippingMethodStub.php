@@ -35,6 +35,11 @@ class ShippingMethodStub implements ShippingMethodInterface
     /**
      * @var bool
      */
+    protected $isEnabled = true;
+
+    /**
+     * @var bool
+     */
     protected $isGrouped = false;
 
     /**
@@ -160,7 +165,7 @@ class ShippingMethodStub implements ShippingMethodInterface
      */
     public function isEnabled()
     {
-        return $this->isGrouped;
+        return $this->isEnabled;
     }
 
     /**
