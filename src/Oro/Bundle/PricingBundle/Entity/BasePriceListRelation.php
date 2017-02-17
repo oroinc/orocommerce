@@ -15,7 +15,7 @@ class BasePriceListRelation implements WebsiteAwareInterface, PriceListAwareInte
     /**
      * @var int
      *
-     * @ORM\Column(name="priority", type="integer")
+     * @ORM\Column(name="sort_order", type="integer")
      */
     protected $sortOrder;
 

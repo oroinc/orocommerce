@@ -12,7 +12,7 @@ class PriceListSelectWithPriorityType extends AbstractType
     const NAME = 'oro_pricing_price_list_select_with_priority';
 
     const PRICE_LIST_FIELD = 'priceList';
-    const PRIORITY_FIELD = 'sort_order';
+    const SORT_ORDER_FIELD = 'sort_order';
     const MERGE_ALLOWED_FIELD = 'mergeAllowed';
 
     /**
@@ -65,7 +65,7 @@ class PriceListSelectWithPriorityType extends AbstractType
     {
         $resolver->setDefaults([
             'sortable' => true,
-            'sortable_property_path' =>  self::PRIORITY_FIELD,
+            'sortable_property_path' =>  self::SORT_ORDER_FIELD,
         ]);
     }
 }
