@@ -73,6 +73,6 @@ class UrlItem implements UrlItemInterface
      */
     public function getLastModification()
     {
-        return $this->lastModification ? $this->lastModification->format(\DateTime::W3C) : null;
+        return $this->lastModification ? $this->lastModification : null;
     }
 }

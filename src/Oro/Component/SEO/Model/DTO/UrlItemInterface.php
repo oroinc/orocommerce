@@ -4,6 +4,8 @@ namespace Oro\Component\SEO\Model\DTO;
 
 interface UrlItemInterface
 {
+    const ROOT_NODE_ELEMENT = 'url';
+
     /**
      * @return string
      */
@@ -20,7 +22,7 @@ interface UrlItemInterface
     public function getPriority();
 
     /**
-     * @return null|string
+     * @return null|\DateTime
      */
     public function getLastModification();
 }

@@ -17,7 +17,7 @@ class UrlItemTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($location, $urlItem->getLocation());
         $this->assertSame($changeFrequency, $urlItem->getChangeFrequency());
         $this->assertSame($priority, $urlItem->getPriority());
-        $this->assertSame($lastModification->format(\DateTime::W3C), $urlItem->getLastModification());
+        $this->assertSame($lastModification, $urlItem->getLastModification());
     }
 
     public function testCreateDefaultValues()
