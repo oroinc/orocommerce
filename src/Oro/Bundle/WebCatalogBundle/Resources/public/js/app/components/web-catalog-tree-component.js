@@ -26,6 +26,11 @@ define(function(require) {
         /**
          * @property {Boolean}
          */
+        checkboxEnabled: true,
+
+        /**
+         * @property {Boolean}
+         */
         confirmState: true,
 
         onConfirmModalOk: function() {
@@ -89,7 +94,7 @@ define(function(require) {
         },
 
         /**
-         * @returns {string}
+         * @returns {String}
          * @private
          */
         _getChangedUrlsList: function() {

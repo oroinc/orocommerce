@@ -2,17 +2,17 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Functional\Controller;
 
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
-
-use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
-use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\ProductBundle\Entity\Product;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -228,7 +228,6 @@ class CategoryControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 404);
     }
 
-
     public function testDeleteRoot()
     {
         $this->client->request(
@@ -270,7 +269,9 @@ class CategoryControllerTest extends WebTestCase
         $this->markTestSkipped('This test is skipped due to caching bug BB-7673');
         /** @var Category $category */
         $category = $this->getReference(LoadCategoryData::FIRST_LEVEL);
-        $category->setDefaultSlugPrototype('old-default-slug');
+        if (method_exists($category, 'setDefaultSlugPrototype')) {
+            $category->setDefaultSlugPrototype('old-default-slug');
+        }
 
         $englishLocalization = $this->getContainer()->get('oro_locale.manager.localization')
             ->getDefaultLocalization(false);
@@ -326,6 +327,45 @@ class CategoryControllerTest extends WebTestCase
 
         $response = $this->client->getResponse();
         $this->assertJsonStringEqualsJsonString(json_encode($expectedData), $response->getContent());
+    }
+
+    public function testMove()
+    {
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('oro_catalog_category_move_form'),
+            [
+                'selected' => [
+                    $this->getReference(LoadCategoryData::THIRD_LEVEL1)->getId()
+                ],
+                '_widgetContainer' => 'dialog',
+            ],
+            [],
+            $this->generateWsseAuthHeader()
+        );
+
+        $form = $crawler->selectButton('Save')->form();
+        $form['tree_move[target]'] = $this->getReference(LoadCategoryData::FIRST_LEVEL)->getId();
+
+        $this->client->followRedirects(true);
+
+        /** TODO Change after BAP-1813 */
+        $form->getFormNode()->setAttribute(
+            'action',
+            $form->getFormNode()->getAttribute('action') . '&_widgetContainer=dialog'
+        );
+
+        $this->client->submit($form);
+        $result = $this->client->getResponse();
+
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        /** @var CategoryRepository $repository */
+        $repository = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroCatalogBundle:Category')
+            ->getRepository('OroCatalogBundle:Category');
+        $category = $repository->findOneByDefaultTitle(LoadCategoryData::THIRD_LEVEL1);
+        $this->assertEquals(LoadCategoryData::FIRST_LEVEL, $category->getParentCategory()->getTitle()->getString());
     }
 
     /**

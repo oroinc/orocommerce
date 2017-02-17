@@ -109,6 +109,8 @@ class ContentNodeTreeHandler extends AbstractTreeHandler
         // Schedule slugs reorganization after node move
         $node->getSlugPrototypesWithRedirect()->setCreateRedirect($this->createRedirect);
         $this->messageProducer->send(Topics::RESOLVE_NODE_SLUGS, $this->messageFactory->createMessage($node));
+
+        return $node;
     }
 
     /**
