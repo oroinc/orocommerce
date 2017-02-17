@@ -254,7 +254,7 @@ class CategoryControllerTest extends WebTestCase
         $parameters = $this->explodeArrayPaths($form->getValues());
         $token = $crawler->filterXPath('//input[@name="oro_catalog_category[_token]"]/@value')->text();
 
-        $parameters['oro_catalog_category']['inventoryThreshold']['scalarValue]'] = 0;
+        $parameters['oro_catalog_category']['inventoryThreshold']['scalarValue'] = 0;
         $parameters['oro_catalog_category'] = array_merge(
             $parameters['oro_catalog_category'],
             [
