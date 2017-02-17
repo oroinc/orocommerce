@@ -27,20 +27,21 @@ class EnabledShippingMethodChoicesProviderDecorator implements ShippingMethodCho
         $this->methodRegistry = $methodRegistry;
         $this->provider = $provider;
     }
+
     /**
      * {@inheritdoc}
      */
     public function getMethods($translate = false)
     {
         $methods = $this->provider->getMethods($translate);
-        $methodEnabled = [];
+        $enabledMethods = [];
         foreach ($methods as $methodId => $label) {
             $method = $this->methodRegistry->getShippingMethod($methodId);
             if ($method->isEnabled()) {
-                $methodEnabled[$methodId] =  $label;
+                $enabledMethods[$methodId] =  $label;
             }
         }
 
-        return $methodEnabled;
+        return $enabledMethods;
     }
 }

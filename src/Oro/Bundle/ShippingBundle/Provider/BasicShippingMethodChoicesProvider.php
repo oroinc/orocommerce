@@ -27,6 +27,7 @@ class BasicShippingMethodChoicesProvider implements ShippingMethodChoicesProvide
         $this->methodRegistry = $methodRegistry;
         $this->translator = $translator;
     }
+    
     /**
      * {@inheritdoc}
      */
