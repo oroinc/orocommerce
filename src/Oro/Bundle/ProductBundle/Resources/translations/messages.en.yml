@@ -47,16 +47,13 @@ oro:
         type:
             simple: Simple
             configurable: Configurable
+            please_select_option: Please select option
         attribute_family.label: Product Family
         attribute_family.plural_label: Product Families
 
         status:
             enabled: Enabled
             disabled: Disabled
-
-        type:
-            simple: Simple Product
-            configurable: Configurable Product
 
         variant_fields:
             yes.label: Yes

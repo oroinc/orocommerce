@@ -3,6 +3,8 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -210,9 +212,51 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
         $handler = $this->createMock(ProductVariantTypeHandlerInterface::class);
         $handler->expects($this->once())
             ->method('createForm')
-            ->with($fieldName, $availability, ['data' => $expectedData->{$fieldName}])
+            ->with(
+                $fieldName,
+                $availability,
+                [
+                    'data' => $expectedData->{$fieldName},
+                    'placeholder' => 'oro.product.type.please_select_option',
+                    'empty_data' => null
+                ]
+            )
             ->willReturn($form);
 
         return $handler;
+    }
+
+    public function testFinishView()
+    {
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->createMock(FormInterface::class);
+
+        $formView = new FormView();
+
+        $product = new Product();
+        $product->setVariantFields([ 'field_first', 'field_second']);
+        $productVariant = new Product();
+
+        $this->productVariantAvailabilityProvider->expects($this->once())
+            ->method('getSimpleProductsByVariantFields')
+            ->with($product)
+            ->willReturn([$productVariant]);
+
+        $this->productVariantAvailabilityProvider->expects($this->exactly(2))
+            ->method('getVariantFieldScalarValue')
+            ->withConsecutive(
+                [$productVariant, 'field_first'],
+                [$productVariant, 'field_second']
+            )
+            ->willReturnOnConsecutiveCalls('value1', 'value2');
+
+        $expectedResult = [
+            null => [
+                'field_first' => 'value1',
+                'field_second' => 'value2',
+            ]
+        ];
+
+        $this->type->finishView($formView, $form, ['parentProduct' => $product]);
     }
 }
