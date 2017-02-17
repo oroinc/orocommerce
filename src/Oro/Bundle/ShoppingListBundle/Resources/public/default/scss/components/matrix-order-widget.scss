@@ -16,9 +16,14 @@
   }
 
   &__grid {
-    margin-bottom: 30px;
+    margin-bottom: 15px;
 
     font-family: $font-family-base;
+
+    width: 100%;
+    border: none;
+
+    border-bottom: 1px solid get-color('additional', 'light');
   }
 
   &__grid-head {
@@ -30,6 +35,13 @@
 
     line-height: 3.5;
     text-align: center
+  }
+
+  &__grid-head-wrapper{
+    td{
+      border: solid get-color('additional', 'light');
+      border-width: 1px 0;
+    }
   }
 
   &__head-body-wrapper {
@@ -45,11 +57,16 @@
   }
 
   &__form__col {
-    padding: 0 0 0 20px;
+    padding: 0 26px 0 0;
     margin: 0;
+    border: none;
 
     line-height: 1.5;
     vertical-align: middle;
+
+    @include breakpoint('mobile-landscape') {
+      padding-right: 5px;
+    }
 
     .form-field-quantity {
       font-family: $font-family-base;
@@ -64,6 +81,31 @@
 
     align-items: center;
     justify-content: center;
+  }
+
+  &__grid-body {
+    td{
+      padding: 6px 26px 6px 0;
+      border-top: 1px solid get-color('additional', 'light');
+
+      @include breakpoint('mobile-landscape') {
+        padding-right: 5px;
+      }
+
+      &:first-child {
+        padding-left: 11px;
+        padding-right: 20px;
+
+        @include breakpoint('mobile-landscape') {
+          padding-right: 5px;
+          padding-left: 5px;
+        }
+      }
+    }
+
+    .form-row {
+      margin: 0;
+    }
   }
 
   &__btn {
@@ -106,10 +148,20 @@
     text-align: right;
   }
 
+  &__summary-wrapper{
+    padding: 0 26px 0 0;
+
+    @include breakpoint('mobile-landscape') {
+      padding-right: 5px;
+    }
+  }
+
   &__summary-label {
     display: inline-flex;
 
-    min-width: 85px;
+    min-width: 110px;
+
+    padding: 0 5px 0 0;
   }
 
   &__total-quantity,
@@ -118,14 +170,18 @@
     justify-content: space-between;
   }
 
+  &__total-quantity {
+    margin: 0 0 5px;
+  }
+
   &__total-quantity-vlaue {
     float: right;
   }
 
   &__total-price {
-    margin: 10px 0;
+    margin: 7px 0 15px;
 
-    font-size: 17px;
+    font-size: 18px;
   }
 
   .pinned-dropdown {
