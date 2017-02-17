@@ -9,10 +9,14 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 
 class ShippingRuleEnabledCheckerTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var ShippingMethodEnabledByIdentifierCheckerInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /**
+     * @var ShippingMethodEnabledByIdentifierCheckerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
     private $methodEnabledChecker;
 
-    /** @var ShippingRuleEnabledChecker */
+    /**
+     * @var ShippingRuleEnabledChecker
+     */
     private $ruleChecker;
 
     protected function setUp()
