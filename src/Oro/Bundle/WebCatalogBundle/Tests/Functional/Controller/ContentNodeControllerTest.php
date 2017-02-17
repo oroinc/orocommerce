@@ -22,7 +22,6 @@ class ContentNodeControllerTest extends WebTestCase
 
     public function testGetPossibleUrlsAction()
     {
-        $this->markTestSkipped('This test is skipped due to caching bug BB-7673');
         /** @var ContentNode $firstCatalogNode */
         $firstCatalogNode = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT);
         $slugGenerator = $this->getContainer()->get('oro_web_catalog.generator.slug_generator');
@@ -49,10 +48,6 @@ class ContentNodeControllerTest extends WebTestCase
 
         $expected = [
             'Default Value' => [
-                'before' => '/web_catalog.node.1.1/web_catalog.node.1.1.1',
-                'after' => '/web_catalog.node.1.2/web_catalog.node.1.1.1'
-            ],
-            'English' => [
                 'before' => '/web_catalog.node.1.1/web_catalog.node.1.1.1',
                 'after' => '/web_catalog.node.1.2/web_catalog.node.1.1.1'
             ]

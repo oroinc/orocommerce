@@ -573,7 +573,6 @@ class ProductControllerTest extends WebTestCase
      */
     public function testGetChangedUrlsWhenNoSlugChanged()
     {
-        $this->markTestSkipped('This test is skipped due to caching bug BB-7673');
         /** @var Product $product */
         $product = $this->getProductDataBySku(self::UPDATED_SKU);
 
@@ -596,7 +595,6 @@ class ProductControllerTest extends WebTestCase
      */
     public function testGetChangedUrlsWhenSlugChanged()
     {
-        $this->markTestSkipped('This test is skipped due to caching bug BB-7673');
         $englishLocalization = $this->getContainer()->get('oro_locale.manager.localization')
             ->getDefaultLocalization(false);
 

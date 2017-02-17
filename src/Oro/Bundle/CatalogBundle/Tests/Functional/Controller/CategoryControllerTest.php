@@ -64,6 +64,62 @@ class CategoryControllerTest extends WebTestCase
             ->getMasterCatalogRoot();
     }
 
+    public function testGetChangedUrlsWhenSlugChanged()
+    {
+        /** @var Category $category */
+        $category = $this->getReference(LoadCategoryData::FIRST_LEVEL);
+        if (method_exists($category, 'setDefaultSlugPrototype')) {
+            $category->setDefaultSlugPrototype('old-default-slug');
+        }
+
+        $englishLocalization = $this->getContainer()->get('oro_locale.manager.localization')
+            ->getDefaultLocalization(false);
+
+        $englishSlugPrototype = new LocalizedFallbackValue();
+        $englishSlugPrototype->setString('old-english-slug')->setLocalization($englishLocalization);
+
+        $entityManager = $this->getContainer()->get('doctrine')->getManagerForClass(Category::class);
+        $category->addSlugPrototype($englishSlugPrototype);
+
+        $entityManager->persist($category);
+        $entityManager->flush();
+
+        /** @var Localization $englishLocalization */
+        $englishCALocalization = $this->getReference('en_CA');
+
+        $crawler = $this->client->request('GET', $this->getUrl('oro_catalog_category_update', [
+            'id' => $category->getId()
+        ]));
+
+        $form = $crawler->selectButton('Save')->form();
+        $formValues = $form->getPhpValues();
+        $formValues['oro_catalog_category']['slugPrototypesWithRedirect'] = [
+            'slugPrototypes' => [
+                'values' => [
+                    'default' => 'default-slug',
+                    'localizations' => [
+                        $englishLocalization->getId() => ['value' => 'english-slug'],
+                        $englishCALocalization->getId() => ['value' => 'old-default-slug']
+                    ]
+                ]
+            ]
+        ];
+
+        $this->client->request(
+            'POST',
+            $this->getUrl('oro_catalog_category_get_changed_slugs', ['id' => $category->getId()]),
+            $formValues
+        );
+
+        $expectedData = [
+            'Default Value' => ['before' => '/old-default-slug', 'after' => '/default-slug'],
+            'English' => ['before' => '/old-english-slug','after' => '/english-slug']
+        ];
+
+        $response = $this->client->getResponse();
+        $this->assertJsonStringEqualsJsonString(json_encode($expectedData), $response->getContent());
+    }
+
     public function testIndex()
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_catalog_category_index'));
@@ -244,7 +300,6 @@ class CategoryControllerTest extends WebTestCase
 
     public function testGetChangedUrlsWhenNoSlugChanged()
     {
-        $this->markTestSkipped('This test is skipped due to caching bug BB-7673');
         $category = $this->getReference(LoadCategoryData::FIRST_LEVEL);
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_catalog_category_update', [
@@ -262,71 +317,6 @@ class CategoryControllerTest extends WebTestCase
 
         $response = $this->client->getResponse();
         $this->assertEquals('[]', $response->getContent());
-    }
-
-    public function testGetChangedUrlsWhenSlugChanged()
-    {
-        $this->markTestSkipped('This test is skipped due to caching bug BB-7673');
-        /** @var Category $category */
-        $category = $this->getReference(LoadCategoryData::FIRST_LEVEL);
-        if (method_exists($category, 'setDefaultSlugPrototype')) {
-            $category->setDefaultSlugPrototype('old-default-slug');
-        }
-
-        $englishLocalization = $this->getContainer()->get('oro_locale.manager.localization')
-            ->getDefaultLocalization(false);
-
-        $englishSlugPrototype = new LocalizedFallbackValue();
-        $englishSlugPrototype->setString('old-english-slug')->setLocalization($englishLocalization);
-
-        $entityManager = $this->getContainer()->get('doctrine')->getManagerForClass(Category::class);
-        $category->addSlugPrototype($englishSlugPrototype);
-
-        $entityManager->persist($category);
-        $entityManager->flush();
-
-        /** @var Localization $englishLocalization */
-        $englishUSLocalization = $this->getReference('en_US');
-        /** @var Localization $englishLocalization */
-        $englishCALocalization = $this->getReference('en_CA');
-        /** @var Localization $englishLocalization */
-        $spanishLocalization = $this->getReference('es');
-
-        $crawler = $this->client->request('GET', $this->getUrl('oro_catalog_category_update', [
-            'id' => $category->getId()
-        ]));
-
-        $form = $crawler->selectButton('Save')->form();
-        $formValues = $form->getPhpValues();
-        $formValues['oro_catalog_category']['slugPrototypesWithRedirect'] = [
-           'slugPrototypes' => [
-                'values' => [
-                    'default' => 'default-slug',
-                    'localizations' => [
-                        $englishLocalization->getId() => ['value' => 'english-slug'],
-                        $englishCALocalization->getId() => ['value' => 'old-default-slug'],
-                        $englishUSLocalization->getId() => ['value' => 'english-us-slug'],
-                        $spanishLocalization->getId() => ['value' => 'spanish-slug'],
-                    ]
-                ]
-            ]
-        ];
-
-        $this->client->request(
-            'POST',
-            $this->getUrl('oro_catalog_category_get_changed_slugs', ['id' => $category->getId()]),
-            $formValues
-        );
-
-        $expectedData = [
-            'Default Value' => ['before' => '/old-default-slug', 'after' => '/default-slug'],
-            'English' => ['before' => '/old-english-slug','after' => '/english-slug'],
-            'English (United States)' => ['before' => '/old-default-slug', 'after' => '/english-us-slug'],
-            'Spanish' => ['before' => '/old-default-slug', 'after' => '/spanish-slug'],
-        ];
-
-        $response = $this->client->getResponse();
-        $this->assertJsonStringEqualsJsonString(json_encode($expectedData), $response->getContent());
     }
 
     public function testMove()
