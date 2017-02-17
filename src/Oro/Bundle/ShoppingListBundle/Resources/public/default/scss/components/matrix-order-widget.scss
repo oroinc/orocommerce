@@ -78,6 +78,7 @@
   &__grid-body {
     td {
       padding: 6px 26px 6px 0;
+
       border-top: 1px solid get-color('additional', 'light');
 
       @include breakpoint('mobile-landscape') {
@@ -227,8 +228,6 @@
     }
 
     &__form__col {
-      padding: 0 0 0 8px;
-
       .form-field-quantity {
         padding: 11px;
         text-align: center;
