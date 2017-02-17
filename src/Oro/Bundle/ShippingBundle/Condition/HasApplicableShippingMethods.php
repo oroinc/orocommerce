@@ -26,7 +26,7 @@ class HasApplicableShippingMethods extends AbstractCondition implements ContextA
     protected $shippingMethodRegistry;
 
     /** ShippingPriceProvider */
-    protected $shippingPriceProviderInterface;
+    protected $shippingPriceProvider;
 
     /** @var mixed */
     protected $shippingContext;

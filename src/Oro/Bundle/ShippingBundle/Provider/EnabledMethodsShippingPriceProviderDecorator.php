@@ -9,7 +9,7 @@ use Oro\Bundle\ShippingBundle\Provider\Price\ShippingPriceProviderInterface;
 class EnabledMethodsShippingPriceProviderDecorator implements ShippingPriceProviderInterface
 {
     /**
-     * @var ShippingPriceProviderInterface $provider
+     * @var ShippingPriceProviderInterface
      */
     protected $provider;
 
@@ -19,7 +19,7 @@ class EnabledMethodsShippingPriceProviderDecorator implements ShippingPriceProvi
     protected $registry;
 
     /**
-     * @param ShippingPriceProviderInterface
+     * @param ShippingPriceProviderInterface $provider
      * @param ShippingMethodRegistry $registry
      */
     public function __construct(ShippingPriceProviderInterface $provider, ShippingMethodRegistry $registry)

@@ -60,7 +60,6 @@ class EnabledMethodsShippingPriceProviderDecoratorTest extends \PHPUnit_Framewor
             $expectedCollection ->addMethodView($id, $view);
         }
 
-
         $this->shippingPriceProvider->expects($this->any())
             ->method('getApplicableMethodsViews')
             ->with($context)
@@ -71,8 +70,6 @@ class EnabledMethodsShippingPriceProviderDecoratorTest extends \PHPUnit_Framewor
             ->will($this->returnCallback(function ($methodId) use ($methods) {
                 return array_key_exists($methodId, $methods) ? $methods[$methodId] : null;
             }));
-        
-
 
         $this->assertEquals($expectedCollection, $this->decorator->getApplicableMethodsViews($context));
     }
