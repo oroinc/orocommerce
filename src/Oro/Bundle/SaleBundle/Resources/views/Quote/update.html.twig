@@ -52,14 +52,15 @@
         listenersOn: 'entry-point:listeners:on',
     } %}
 
-    {% set pageComponent = {
+    <div {{ UI.renderPageComponentAttributes({
         module: 'oroorder/js/app/components/entry-point-component',
         options: {
+            _sourceElement: '#' ~ form.vars.id,
             route: 'oro_quote_entry_point',
             routeParams: {id: entity.id|default(0)},
             events: quoteEntryPointEvents
-        },
-    } %}
+        }
+    }) }}></div>
 
     {% set ownerSelectors %}
         <div data-page-component-module="orosale/js/app/components/related-data-component"
