@@ -2,10 +2,11 @@
 namespace Oro\Bundle\ShippingBundle\Provider;
 
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
+use Oro\Bundle\ShippingBundle\Provider\Price\ShippingPriceProviderInterface;
 
-class EnabledMethodsShippingPriceProviderDecorator
+class EnabledMethodsShippingPriceProviderDecorator implements ShippingPriceProviderInterface
 {
     /**
      * @var ShippingPriceProviderInterface $provider
@@ -13,15 +14,15 @@ class EnabledMethodsShippingPriceProviderDecorator
     protected $provider;
 
     /**
-     * @var ShippingMethodRegistry|\PHPUnit_Framework_MockObject_MockObject $registry
+     * @var ShippingMethodRegistry
      */
     protected $registry;
 
     /**
-     * @param ShippingPriceProviderInterface|\PHPUnit_Framework_MockObject_MockObject $provider
+     * @param ShippingPriceProviderInterface
      * @param ShippingMethodRegistry $registry
      */
-    public function __construct($provider, ShippingMethodRegistry $registry)
+    public function __construct(ShippingPriceProviderInterface $provider, ShippingMethodRegistry $registry)
     {
         $this->provider = $provider;
         $this->registry = $registry;
@@ -32,10 +33,7 @@ class EnabledMethodsShippingPriceProviderDecorator
      */
     public function getApplicableMethodsViews(ShippingContextInterface $context)
     {
-        /** var ShippingMethodViewCollection $methodCollection */
-        $methodViewCollection = $this->provider->getApplicableMethodsViews($context);
-
-        /** @var array $methodViews */
+        $methodViewCollection = clone $this->provider->getApplicableMethodsViews($context);
         $methodViews = $methodViewCollection->getAllMethodsViews();
         foreach ($methodViews as $methodId => $methodView) {
             $method = $this->registry->getShippingMethod($methodId);
@@ -45,5 +43,13 @@ class EnabledMethodsShippingPriceProviderDecorator
         }
 
         return $methodViewCollection;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getPrice(ShippingContextInterface $context, $methodId, $typeId)
+    {
+        return $this->provider->getPrice($context, $methodId, $typeId);
     }
 }
