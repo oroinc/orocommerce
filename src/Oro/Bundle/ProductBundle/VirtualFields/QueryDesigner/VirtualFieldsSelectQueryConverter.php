@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PaymentBundle\QueryDesigner;
+namespace Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner;
 
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\EntityBundle\Provider\VirtualFieldProviderInterface;
@@ -9,7 +9,7 @@ use Oro\Bundle\QueryDesignerBundle\QueryDesigner\FunctionProviderInterface;
 use Oro\Bundle\QueryDesignerBundle\QueryDesigner\GroupingOrmQueryConverter;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
-class SelectQueryConverter extends GroupingOrmQueryConverter
+class VirtualFieldsSelectQueryConverter extends GroupingOrmQueryConverter
 {
     /**
      * @var array

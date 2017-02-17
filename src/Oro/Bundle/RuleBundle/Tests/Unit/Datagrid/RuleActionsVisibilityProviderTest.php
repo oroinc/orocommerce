@@ -1,25 +1,25 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Tests\Unit\Datagrid;
+namespace Oro\Bundle\RuleBundle\Tests\Unit\Datagrid;
 
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
+use Oro\Bundle\RuleBundle\Datagrid\RuleActionsVisibilityProvider;
 use Oro\Bundle\RuleBundle\Entity\Rule;
-use Oro\Bundle\ShippingBundle\Datagrid\ShippingRuleActionsVisibilityProvider;
 
-class ShippingRuleActionsVisibilityProviderTest extends \PHPUnit_Framework_TestCase
+class RuleActionsVisibilityProviderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ShippingRuleActionsVisibilityProvider
+     * @var RuleActionsVisibilityProvider
      */
     protected $provider;
 
     protected function setUp()
     {
-        $this->provider = new ShippingRuleActionsVisibilityProvider();
+        $this->provider = new RuleActionsVisibilityProvider();
     }
 
     /**
-     * @param bool $enabled
+     * @param bool  $enabled
      * @param array $actions
      * @param array $expected
      *
@@ -46,13 +46,13 @@ class ShippingRuleActionsVisibilityProviderTest extends \PHPUnit_Framework_TestC
             'enabled' => [
                 true,
                 ['enable' => ['config'], 'disable' => ['config']],
-                ['enable' => false, 'disable' => true]
+                ['enable' => false, 'disable' => true],
             ],
             'disabled' => [
                 false,
                 ['enable' => ['config'], 'disable' => ['config']],
-                ['enable' => true, 'disable' => false]
-            ]
+                ['enable' => true, 'disable' => false],
+            ],
         ];
     }
 }

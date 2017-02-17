@@ -1,17 +1,17 @@
 <?php
 
-namespace Oro\Bundle\PaymentBundle\ExpressionLanguage;
+namespace Oro\Bundle\ProductBundle\VirtualFields;
 
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\EntityBundle\Helper\FieldHelper;
 use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
-use Oro\Bundle\PaymentBundle\QueryDesigner\PaymentProductQueryDesigner;
-use Oro\Bundle\PaymentBundle\QueryDesigner\SelectQueryConverter;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsProductQueryDesigner;
+use Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsSelectQueryConverter;
 use Oro\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 
-class ProductDecorator
+class VirtualFieldsProductDecorator
 {
     const PRODUCT_ID_LABEL = 'product_id';
     const RELATED_ID_LABEL = 'related_id';
@@ -22,7 +22,7 @@ class ProductDecorator
     protected $provider;
 
     /**
-     * @var SelectQueryConverter
+     * @var VirtualFieldsSelectQueryConverter
      */
     protected $converter;
 
@@ -58,7 +58,7 @@ class ProductDecorator
 
     /**
      * @param EntityFieldProvider $provider
-     * @param SelectQueryConverter $converter
+     * @param VirtualFieldsSelectQueryConverter $converter
      * @param ManagerRegistry $doctrine
      * @param FieldHelper $fieldHelper
      * @param array $products
@@ -66,7 +66,7 @@ class ProductDecorator
      */
     public function __construct(
         EntityFieldProvider $provider,
-        SelectQueryConverter $converter,
+        VirtualFieldsSelectQueryConverter $converter,
         ManagerRegistry $doctrine,
         FieldHelper $fieldHelper,
         array $products,
@@ -153,7 +153,7 @@ class ProductDecorator
     {
         $relatedEntityIdentifier = $this->getEntityIdentifier($field['related_entity_name']);
 
-        $queryDesigner = new PaymentProductQueryDesigner();
+        $queryDesigner = new VirtualFieldsProductQueryDesigner();
         $queryDesigner->setEntity(Product::class);
         $queryDesigner->setDefinition(json_encode([
             'columns' => [

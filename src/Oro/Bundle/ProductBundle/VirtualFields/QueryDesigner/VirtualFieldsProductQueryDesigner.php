@@ -1,10 +1,10 @@
 <?php
 
-namespace Oro\Bundle\PaymentBundle\QueryDesigner;
+namespace Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner;
 
 use Oro\Bundle\QueryDesignerBundle\Model\AbstractQueryDesigner;
 
-class PaymentProductQueryDesigner extends AbstractQueryDesigner
+class VirtualFieldsProductQueryDesigner extends AbstractQueryDesigner
 {
     /**
      * @var string

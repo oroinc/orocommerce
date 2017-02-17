@@ -1,10 +1,11 @@
 <?php
 
-namespace Oro\Bundle\PaymentBundle\Datagrid;
+namespace Oro\Bundle\RuleBundle\Datagrid;
 
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecordInterface;
+use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 
-class PaymentRuleActionsVisibilityProvider
+class RuleActionsVisibilityProvider
 {
     /**
      * @param ResultRecordInterface $record
@@ -21,12 +22,14 @@ class PaymentRuleActionsVisibilityProvider
 
         $rule = $record->getValue('rule');
 
-        if (array_key_exists('enable', $visibility)) {
-            $visibility['enable'] = !$rule->isEnabled();
-        }
+        if ($rule instanceof RuleInterface) {
+            if (array_key_exists('enable', $visibility)) {
+                $visibility['enable'] = !$rule->isEnabled();
+            }
 
-        if (array_key_exists('disable', $visibility)) {
-            $visibility['disable'] = $rule->isEnabled();
+            if (array_key_exists('disable', $visibility)) {
+                $visibility['disable'] = $rule->isEnabled();
+            }
         }
 
         return $visibility;

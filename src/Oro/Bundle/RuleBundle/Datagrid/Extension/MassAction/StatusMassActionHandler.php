@@ -1,20 +1,32 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Datagrid\Extension\MassAction;
+namespace Oro\Bundle\RuleBundle\Datagrid\Extension\MassAction;
 
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\QueryBuilder;
+
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerArgs;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionHandlerInterface;
+
 use Oro\Bundle\DataGridBundle\Extension\MassAction\MassActionResponse;
+use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Component\DependencyInjection\ServiceLink;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class StatusMassActionHandler implements MassActionHandlerInterface
 {
     const FLUSH_BATCH_SIZE = 100;
+
+    /**
+     * @var string
+     */
+    protected $responseMessage;
+
+    /**
+     * @var string
+     */
+    protected $repositoryClassPath;
 
     /**
      * @var EntityManager
@@ -27,26 +39,29 @@ class StatusMassActionHandler implements MassActionHandlerInterface
     protected $translator;
 
     /**
-     * @var string
+     * @var SecurityFacade
      */
-    protected $responseMessage = 'oro.shipping.datagrid.status.success_message';
-
-    /** @var SecurityFacade */
     protected $securityFacade;
 
     /**
+     * @param string $responseMessage
+     * @param string $repositoryClassPath
      * @param EntityManager $entityManager
      * @param TranslatorInterface $translator
-     * @param ServiceLink $securityFacadeLink
+     * @param ServiceLink $securityFacadeServiceLink
      */
     public function __construct(
+        $responseMessage,
+        $repositoryClassPath,
         EntityManager $entityManager,
         TranslatorInterface $translator,
-        ServiceLink $securityFacadeLink
+        ServiceLink $securityFacadeServiceLink
     ) {
+        $this->responseMessage = $responseMessage;
+        $this->repositoryClassPath = $repositoryClassPath;
         $this->entityManager = $entityManager;
         $this->translator = $translator;
-        $this->securityFacade = $securityFacadeLink->getService();
+        $this->securityFacade = $securityFacadeServiceLink->getService();
     }
 
     /**
@@ -61,7 +76,7 @@ class StatusMassActionHandler implements MassActionHandlerInterface
         $this->entityManager->beginTransaction();
         try {
             set_time_limit(0);
-            $iteration = $this->handleShippingMethodsConfigsRuleStatuses($options, $data);
+            $iteration = $this->handleMethodsConfigsRuleStatuses($options, $data);
             $this->entityManager->commit();
         } catch (\Exception $e) {
             $this->entityManager->rollback();
@@ -76,28 +91,27 @@ class StatusMassActionHandler implements MassActionHandlerInterface
      * @param array $data
      * @return int
      */
-    protected function handleShippingMethodsConfigsRuleStatuses($options, $data)
+    protected function handleMethodsConfigsRuleStatuses($options, $data)
     {
         $status = $options['enable'];
         $isAllSelected = $this->isAllSelected($data);
         $iteration = 0;
-        $shippingRuleIds = [];
+        $methodsConfigsRuleIds = [];
 
         if (array_key_exists('values', $data) && !empty($data['values'])) {
-            $shippingRuleIds = explode(',', $data['values']);
+            $methodsConfigsRuleIds = explode(',', $data['values']);
         }
 
-        if ($shippingRuleIds || $isAllSelected) {
+        if ($methodsConfigsRuleIds || $isAllSelected) {
             $queryBuilder = $this
                 ->entityManager
-                ->getRepository('OroShippingBundle:ShippingMethodsConfigsRule')
-                ->createQueryBuilder('shippingRule');
-
+                ->getRepository($this->repositoryClassPath)
+                ->createQueryBuilder('rule');
 
             if (!$isAllSelected) {
-                $queryBuilder->andWhere($queryBuilder->expr()->in('shippingRule.id', $shippingRuleIds));
-            } elseif ($shippingRuleIds) {
-                $queryBuilder->andWhere($queryBuilder->expr()->notIn('shippingRule.id', $shippingRuleIds));
+                $queryBuilder->andWhere($queryBuilder->expr()->in('rule.id', $methodsConfigsRuleIds));
+            } elseif ($methodsConfigsRuleIds) {
+                $queryBuilder->andWhere($queryBuilder->expr()->notIn('rule.id', $methodsConfigsRuleIds));
             }
 
             $iteration = $this->process($queryBuilder, $status, $iteration);
@@ -150,7 +164,7 @@ class StatusMassActionHandler implements MassActionHandlerInterface
     {
         $result = $queryBuilder->getQuery()->iterate();
         foreach ($result as $entity) {
-            /** @var ShippingMethodsConfigsRule $entity */
+            /** @var RuleOwnerInterface $entity */
             $entity = $entity[0];
 
             $entity->getRule()->setEnabled($status);

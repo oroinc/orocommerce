@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Tests\Unit\QueryDesigner;
+namespace Oro\Bundle\ProductBundle\Tests\Unit\VirtualFields\QueryDesigner;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\Query\Expr\From;
@@ -9,11 +9,11 @@ use Doctrine\ORM\Query\Expr\Select;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsProductQueryDesigner;
+use Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsSelectQueryConverter;
 use Oro\Bundle\QueryDesignerBundle\Tests\Unit\OrmQueryConverterTest;
-use Oro\Bundle\ShippingBundle\QueryDesigner\SelectQueryConverter;
-use Oro\Bundle\ShippingBundle\QueryDesigner\ShippingProductQueryDesigner;
 
-class SelectQueryConverterTest extends OrmQueryConverterTest
+class VirtualFieldsSelectQueryConverterTest extends OrmQueryConverterTest
 {
     public function testConvert()
     {
@@ -36,13 +36,13 @@ class SelectQueryConverterTest extends OrmQueryConverterTest
             ->method('createQueryBuilder')
             ->willReturn(new QueryBuilder($em));
 
-        $converter = new SelectQueryConverter(
+        $converter = new VirtualFieldsSelectQueryConverter(
             $this->getFunctionProvider(),
             $this->getVirtualFieldProvider(),
             $doctrine
         );
 
-        $queryDesigner = new ShippingProductQueryDesigner();
+        $queryDesigner = new VirtualFieldsProductQueryDesigner();
         $queryDesigner->setEntity(Product::class);
         $queryDesigner->setDefinition(json_encode([
             'columns' => [

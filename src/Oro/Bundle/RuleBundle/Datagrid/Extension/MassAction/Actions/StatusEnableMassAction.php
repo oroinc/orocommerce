@@ -1,14 +1,43 @@
 <?php
 
-namespace Oro\Bundle\ShippingBundle\Datagrid\Extension\MassAction\Actions;
+namespace Oro\Bundle\RuleBundle\Datagrid\Extension\MassAction\Actions;
 
 use Oro\Bundle\DataGridBundle\Extension\Action\ActionConfiguration;
 use Oro\Bundle\DataGridBundle\Extension\MassAction\Actions\AbstractMassAction;
 
-class StatusDisableMassAction extends AbstractMassAction
+class StatusEnableMassAction extends AbstractMassAction
 {
     /** @var array */
     protected $requiredOptions = ['handler', 'entity_name', 'data_identifier'];
+
+    /**
+     * @var string
+     */
+    private $handlerService;
+
+    /**
+     * @var string
+     */
+    private $route;
+
+    /**
+     * @var bool
+     */
+    private $isEnabled;
+
+    /**
+     * @param string $handlerService
+     * @param string $route
+     * @param bool   $isEnabled
+     */
+    public function __construct($handlerService, $route, $isEnabled)
+    {
+        $this->handlerService = $handlerService;
+        $this->route = $route;
+        $this->isEnabled = $isEnabled;
+
+        parent::__construct();
+    }
 
     /**
      * {@inheritDoc}
@@ -16,7 +45,7 @@ class StatusDisableMassAction extends AbstractMassAction
     public function setOptions(ActionConfiguration $options)
     {
         if (empty($options['handler'])) {
-            $options['handler'] = 'oro_shipping.mass_action.status_handler';
+            $options['handler'] = $this->handlerService;
         }
 
         if (empty($options['frontend_type'])) {
@@ -24,7 +53,7 @@ class StatusDisableMassAction extends AbstractMassAction
         }
 
         if (empty($options['route'])) {
-            $options['route'] = 'oro_status_shipping_rule_massaction';
+            $options['route'] = $this->route;
         }
 
         if (empty($options['route_parameters'])) {
@@ -35,7 +64,7 @@ class StatusDisableMassAction extends AbstractMassAction
             $options['frontend_handle'] = 'ajax';
         }
 
-        $options['enable'] = false;
+        $options['enable'] = $this->isEnabled;
 
         return parent::setOptions($options);
     }
