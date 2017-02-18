@@ -47,7 +47,7 @@ class PaymentMethodsConfigsRuleRepositoryTest extends WebTestCase
     {
         $allConfigsRules = $this->repository->findAll();
 
-        $this->assertEquals(7, count($allConfigsRules));
+        $this->assertEquals(6, count($allConfigsRules));
     }
 
     /**
