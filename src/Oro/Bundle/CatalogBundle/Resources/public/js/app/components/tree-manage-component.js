@@ -13,6 +13,11 @@ define(function(require) {
      */
     TreeManageComponent = BasicTreeManageComponent.extend({
         /**
+         * @property {Boolean}
+         */
+        checkboxEnabled: true,
+
+        /**
          * Triggers after page move
          *
          * @param {Object} e

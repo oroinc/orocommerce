@@ -5,6 +5,10 @@ define(function(require) {
     var BasicTreeManageComponent = require('oroui/js/app/components/basic-tree-manage-component');
 
     WebCatalogTreeComponent = BasicTreeManageComponent.extend({
+        /**
+         * @property {Boolean}
+         */
+        checkboxEnabled: true
     });
 
     return WebCatalogTreeComponent;

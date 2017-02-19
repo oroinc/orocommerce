@@ -18,7 +18,7 @@ services:
             - '@doctrine.orm.entity_manager'
 
     oro_payment.datagrid.payment_rule_actions_visibility_provider:
-        class: 'Oro\Bundle\PaymentBundle\Datagrid\PaymentRuleActionsVisibilityProvider'
+        parent: oro_rule.action.visibility_provider
 
     oro_payment.formatter.payment_method_label:
         class: 'Oro\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter'
@@ -254,22 +254,10 @@ services:
             - '@oro_payment.repository.payment_methods_configs_rule'
             - '@oro_rule.enabled_rule_filtration.service'
 
-    oro_payment.query_designer.select_query_converter:
-        class: 'Oro\Bundle\PaymentBundle\QueryDesigner\SelectQueryConverter'
-        arguments:
-            - '@oro_query_designer.query_designer.manager'
-            - '@oro_entity.virtual_field_provider.chain'
-            - '@doctrine'
-        calls:
-            - [setVirtualRelationProvider, ['@oro_entity.virtual_relation_provider.chain']]
-
     oro_payment.expression_language.decorated_product_line_item_factory:
         class: 'Oro\Bundle\PaymentBundle\ExpressionLanguage\DecoratedProductLineItemFactory'
         arguments:
-            - '@oro_entity.entity_field_provider'
-            - '@oro_payment.query_designer.select_query_converter'
-            - '@doctrine'
-            - '@oro_entity.helper.field_helper'
+            - '@oro_product.virtual_fields.decorator_factory'
 
     oro_payment.method.event_listener.method_renaming:
         class: 'Oro\Bundle\PaymentBundle\Method\EventListener\MethodRenamingListener'

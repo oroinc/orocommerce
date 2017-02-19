@@ -287,7 +287,6 @@ services:
             - '%oro_product.entity.product_variant_link.class%'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-product-variants-view, method: onBuildAfter }
-            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-product-variants-edit, method: onBuildAfter }
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.product-product-variants-edit, method: onBuildBeforeHideUnsuitable }
 
     oro_product.validator.unique_variant_links:
@@ -730,6 +729,24 @@ services:
         tags:
             - { name: oro_entity_config.layout.attribute_block_type_mapper }
 
+    oro_product.virtual_fields.decorator_factory:
+        class: 'Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory'
+        public: false
+        arguments:
+            - '@oro_entity.entity_field_provider'
+            - '@oro_product.virtual_fields.select_query_converter'
+            - '@doctrine'
+            - '@oro_entity.helper.field_helper'
+
+    oro_product.virtual_fields.select_query_converter:
+            class: 'Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsSelectQueryConverter'
+            arguments:
+                - '@oro_query_designer.query_designer.manager'
+                - '@oro_entity.virtual_field_provider.chain'
+                - '@doctrine'
+            calls:
+                - [setVirtualRelationProvider, ['@oro_entity.virtual_relation_provider.chain']]
+
     oro_product.event_listener.before_remove_field_listener:
         class: 'Oro\Bundle\ProductBundle\EventListener\ValidateBeforeRemoveFieldListener'
         arguments:
@@ -737,3 +754,9 @@ services:
             - '@translator'
         tags:
             - { name: kernel.event_listener, event: oro.entity_extend.field.validate.before_remove, method: onValidateBeforeRemoveField }
+
+    oro_product.provider.page_template_provider:
+        class: 'Oro\Bundle\ProductBundle\Provider\PageTemplateProvider'
+        arguments:
+            - '@oro_layout.theme_manager'
+            - '@oro_entity.fallback.resolver.entity_fallback_resolver'
