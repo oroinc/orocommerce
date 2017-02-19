@@ -31,7 +31,7 @@ use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
  *          "ownership"={
  *              "owner_type"="USER",
  *              "owner_field_name"="owner",
- *              "owner_column_name"="owner_id",
+ *              "owner_column_name"="user_owner_id",
  *              "organization_field_name"="organization",
  *              "organization_column_name"="organization_id"
  *          },
