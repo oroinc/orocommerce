@@ -132,6 +132,62 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
         $this->assertEquals($expectedConfigValue, $this->config->toArray());
     }
 
+    public function testOnBuildBeforeHideUnsuitableWithDynamicFields()
+    {
+        $product = new Product();
+        $product->setVariantFields([
+            self::FIELD_COLOR,
+            self::FIELD_SIZE,
+        ]);
+
+        $dynamicFields = [
+            'selectedVariantFields' => [
+                self::FIELD_COLOR
+            ],
+        ];
+
+        $this->parameterBag->set('_parameters', $dynamicFields);
+
+        $this->prepareRepositoryProduct($product);
+
+        $this->setParameterBag();
+        $this->listener->onBuildBeforeHideUnsuitable($this->prepareBuildBeforeEvent($this->config));
+
+        $expectedConfigValue = $this->getInitConfig();
+        $this->setValueByPath($expectedConfigValue, '[source][query][where][and]', [
+            sprintf('%s.color IS NOT NULL', self::PRODUCT_ALIAS),
+        ]);
+
+        $this->setValueByPath($expectedConfigValue, '[source][query][where][or]', [
+            sprintf('%s.id IS NOT NULL', self::PRODUCT_VARIANT_LINK_ALIAS)
+        ]);
+
+        $this->assertEquals($expectedConfigValue, $this->config->toArray());
+    }
+
+    public function testOnBuildBeforeHideUnsuitableEmptyDynamicParams()
+    {
+        $product = new Product();
+        $this->prepareRepositoryProduct($product);
+
+        $dynamicFields = [
+          ProductVariantCustomFieldsDatagridListener::FORM_SELECTED_VARIANTS => 0
+        ];
+
+        $this->parameterBag->set('_parameters', $dynamicFields);
+
+        $this->setParameterBag();
+        $this->listener->onBuildBeforeHideUnsuitable($this->prepareBuildBeforeEvent($this->config));
+
+        $expectedConfigValue = $this->getInitConfig();
+        $this->setValueByPath($expectedConfigValue, '[source][query][where][and]', ['1 = 0']);
+        $this->setValueByPath($expectedConfigValue, '[source][query][where][or]', [
+            sprintf('%s.id IS NOT NULL', self::PRODUCT_VARIANT_LINK_ALIAS)
+        ]);
+
+        $this->assertEquals($expectedConfigValue, $this->config->toArray());
+    }
+
     /**
      * @expectedException \InvalidArgumentException
      * @expectedExceptionMessage A root entity is missing for grid "Datagrid name"
@@ -187,6 +243,10 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
 
         $expectedConfigValue = $this->getInitConfig();
         $this->setValueByPath($expectedConfigValue, '[source][query][where][and]', ['1 = 0']);
+        $this->setValueByPath($expectedConfigValue, '[source][query][where][or]', [
+            sprintf('%s.id IS NOT NULL', self::PRODUCT_VARIANT_LINK_ALIAS)
+        ]);
+
         $this->assertEquals($expectedConfigValue, $this->config->toArray());
     }
 

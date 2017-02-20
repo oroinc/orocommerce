@@ -31,7 +31,7 @@ class UniqueProductVariantLinksValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint)
     {
-        if (!$value instanceof Product) {
+        if (!is_a($value, Product::class)) {
             throw new \InvalidArgumentException(
                 sprintf(
                     'Entity must be instance of "%s", "%s" given',
@@ -45,52 +45,7 @@ class UniqueProductVariantLinksValidator extends ConstraintValidator
             return;
         }
 
-        $this->validateLinksWithoutFields($value, $constraint);
-        $this->validateLinksHaveFilledFields($value, $constraint);
         $this->validateUniqueVariantLinks($value, $constraint);
-    }
-
-    /**
-     * Add violation if variant fields empty but variant links presented
-     *
-     * @param Product $value
-     * @param UniqueProductVariantLinks $constraint
-     */
-    private function validateLinksWithoutFields(Product $value, UniqueProductVariantLinks $constraint)
-    {
-        if (count($value->getVariantFields()) === 0 && $value->getVariantLinks()->count() !== 0) {
-            $this->context->addViolationAt('variantFields', $constraint->variantFieldRequiredMessage);
-        }
-    }
-
-    /**
-     * @param Product $value
-     * @param UniqueProductVariantLinks $constraint
-     */
-    private function validateLinksHaveFilledFields(Product $value, UniqueProductVariantLinks $constraint)
-    {
-        $variantFields = $value->getVariantFields();
-        $variantLinks = $value->getVariantLinks();
-
-        foreach ($variantLinks as $variantLink) {
-            $product = $variantLink->getProduct();
-            if (!$product) {
-                continue;
-            }
-
-            foreach ($variantFields as $variantField) {
-                if ($this->propertyAccessor->isReadable($product, $variantField)) {
-                    $value = $this->propertyAccessor->getValue($product, $variantField);
-
-                    if ($value === null) {
-                        $this->context->addViolation($constraint->variantLinkHasNoFilledFieldMessage, [
-                            '%variant_sku%' => $product->getSku(),
-                            '%field%' => $variantField
-                        ]);
-                    }
-                }
-            }
-        }
     }
 
     /**

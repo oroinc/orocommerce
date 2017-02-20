@@ -10,10 +10,15 @@ oro:
         product_variant_links:
             unique_variants_combination.message: "Can't save product variants. Variant field value combinations should be unique."
             variant_field_required.message: "Can't save product variants. Variant field should be selected"
-            has_no_filled_field.message: "Can't save product variants. Variant \"%variant_sku%\" has no filled field \"%field%\" "
+            has_no_filled_field.message: "Can't save product variants. In product \"%product_sku%\" has no filled field(s) \"%fields%\" "
+
+        attribute_family:
+            used_in_product_variant_field.message: "Attributes %names% used as product variant in products: %products%"
 
         product_variant_field:
+            unique_variants_combination_simple_product.message: "The values of additional fields provided cannot be saved because they will violate unique constraint of variant fields in these configurable products: %products%"
             message: "Can't save product variant field. Field \"{{ field }}\" doesn't exist in product."
+            unique_variant_links_when_empty_variant_field_in_simple: "Field \"%variantField%\" can not be empty. It is used in the following configurable products: %products%"
 
         product_by_sku:
             not_found: SKU not found
