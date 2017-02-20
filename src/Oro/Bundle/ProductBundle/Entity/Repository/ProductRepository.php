@@ -342,4 +342,19 @@ class ProductRepository extends EntityRepository
 
         return $queryBuilder->getQuery()->getResult();
     }
+
+    /**
+     * @param int $quantity
+     *
+     * @return QueryBuilder
+     */
+    public function getFeaturedProductsQueryBuilder($quantity)
+    {
+        $queryBuilder = $this->getProductWithNamesQueryBuilder()
+            ->setMaxResults($quantity)
+            ->orderBy('product.id', 'ASC');
+        $this->selectImages($queryBuilder);
+
+        return $queryBuilder;
+    }
 }

@@ -2,12 +2,17 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller;
 
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
+
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFeaturedProductData;
+
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
@@ -75,6 +80,8 @@ class ProductControllerTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
     }
+
+
 
     public function testIndex()
     {
@@ -602,6 +609,27 @@ class ProductControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 404);
+    }
+
+    public function testFeaturedProductsOnFrontendRootAfterUpdatingProduct()
+    {
+        $this->loadFixtures([LoadFeaturedProductData::class]);
+        $product = $this->getProductDataBySku('product-7');
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('oro_product_update', ['id' => $product->getId()])
+        );
+        $form    = $crawler->selectButton('Save and Close')->form();
+        $this->client->followRedirects(true);
+        $this->client->submit($form);
+
+        $this->initClient(
+            [],
+            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
+        );
+        $crawler = $this->client->request('GET', $this->getUrl('oro_frontend_root'));
+
+        $this->assertEquals(12, $crawler->filter('.featured-product')->count());
     }
 
     /**
