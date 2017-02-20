@@ -35,7 +35,6 @@ oro.pricing:
         customers.label: Customers
         websites.label: Websites
         prices.label: Prices
-        priority.label: Priority
         merge_allowed.label: Merge Allowed
         merge_allowed.yes.label: Yes
         merge_allowed.no.label: No
