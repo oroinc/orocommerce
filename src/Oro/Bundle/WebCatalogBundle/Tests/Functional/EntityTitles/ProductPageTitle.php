@@ -30,10 +30,10 @@ class ProductPageTitle extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-//        $this->assertContains(
-//            AbstractLoadWebCatalogData::CONTENT_NODE_TITLE,
-//            $crawler->filter('title')->html()
-//        );
+        $this->assertContains(
+            AbstractLoadWebCatalogData::CONTENT_NODE_TITLE,
+            $crawler->filter('title')->html()
+        );
 
         $this->assertContains(
             AbstractLoadWebCatalogData::CONTENT_NODE_TITLE,
