@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\SaleBundle\Controller;
 
-use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,6 +10,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
+use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
@@ -148,16 +148,6 @@ class QuoteController extends Controller
             'quote_update'
         );
     }
-
-
-    /**
-     * @return \Oro\Bundle\SaleBundle\Model\QuoteRequestHandler
-     */
-    protected function getQuoteHandler()
-    {
-        return $this->get('oro_sale.service.quote_request_handler');
-    }
-
 
     /**
      * Handles request which requires get back after Quote creating

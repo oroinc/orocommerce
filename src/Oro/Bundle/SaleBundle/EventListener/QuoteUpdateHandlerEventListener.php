@@ -2,11 +2,12 @@
 
 namespace Oro\Bundle\SaleBundle\EventListener;
 
+use Symfony\Component\HttpFoundation\RequestStack;
+
 use Oro\Bundle\FormBundle\Event\FormHandler\FormProcessEvent;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Model\QuoteRequestHandler;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 class QuoteUpdateHandlerEventListener
 {

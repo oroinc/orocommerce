@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\EventListener;
 
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FormBundle\Event\FormHandler\FormProcessEvent;
@@ -10,8 +13,6 @@ use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\EventListener\QuoteUpdateHandlerEventListener;
 use Oro\Bundle\SaleBundle\Model\QuoteRequestHandler;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 class QuoteUpdateHandlerEventListenerTest extends \PHPUnit_Framework_TestCase
 {

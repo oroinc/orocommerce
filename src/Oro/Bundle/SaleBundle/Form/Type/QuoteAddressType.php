@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\SaleBundle\Form\Type;
 
-use Oro\Bundle\SaleBundle\Model\QuoteRequestHandler;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
