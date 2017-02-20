@@ -24,7 +24,6 @@ class Configuration implements ConfigurationInterface
             [
                 'feature_enabled' => ['value' => true],
                 'frontend_feature_enabled' => ['value' => true],
-                'default_request_status' => ['value' => 'open'],
                 'notify_owner_of_customer_user_record' => ['value' => 'always'],
                 'notify_assigned_sales_reps_of_the_customer' => ['value' => 'always'],
                 'notify_owner_of_customer' => ['value' => 'always'],

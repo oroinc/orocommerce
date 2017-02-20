@@ -5,37 +5,44 @@ namespace Oro\Bundle\PaymentBundle\Layout\DataProvider;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider;
-use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 
 class PaymentMethodViewsProvider
 {
-    /** @var PaymentMethodViewRegistry */
-    protected $paymentMethodViewRegistry;
+    /**
+     * @var PaymentMethodViewProviderInterface
+     */
+    protected $paymentMethodViewProvider;
 
-    /** @var PaymentMethodProvider */
+    /**
+     * @var PaymentMethodProvider
+     */
     protected $paymentMethodProvider;
 
-    /** @var PaymentTransactionProvider */
+    /**
+     * @var PaymentTransactionProvider
+     */
     protected $paymentTransactionProvider;
 
     /**
-     * @param PaymentMethodViewRegistry $paymentMethodViewRegistry
-     * @param PaymentMethodProvider $paymentMethodProvider
-     * @param PaymentTransactionProvider $transactionProvider
+     * @param PaymentMethodViewProviderInterface $paymentMethodViewProvider
+     * @param PaymentMethodProvider              $paymentMethodProvider
+     * @param PaymentTransactionProvider         $transactionProvider
      */
     public function __construct(
-        PaymentMethodViewRegistry $paymentMethodViewRegistry,
+        PaymentMethodViewProviderInterface $paymentMethodViewProvider,
         PaymentMethodProvider $paymentMethodProvider,
         PaymentTransactionProvider $transactionProvider
     ) {
-        $this->paymentMethodViewRegistry = $paymentMethodViewRegistry;
+        $this->paymentMethodViewProvider = $paymentMethodViewProvider;
         $this->paymentMethodProvider = $paymentMethodProvider;
         $this->paymentTransactionProvider = $transactionProvider;
     }
 
     /**
      * @param PaymentContextInterface $context
+     *
      * @return array[]
      */
     public function getViews(PaymentContextInterface $context)
@@ -46,14 +53,14 @@ class PaymentMethodViewsProvider
             return [];
         }
 
-        $methodTypes = array_map(function (PaymentMethodInterface $method) {
-            return $method->getType();
+        $methodIdentifiers = array_map(function (PaymentMethodInterface $method) {
+            return $method->getIdentifier();
         }, $methods);
 
         $paymentMethodViews = [];
-        $views = $this->paymentMethodViewRegistry->getPaymentMethodViews($methodTypes);
+        $views = $this->paymentMethodViewProvider->getPaymentMethodViews($methodIdentifiers);
         foreach ($views as $view) {
-            $paymentMethodViews[$view->getPaymentMethodType()] = [
+            $paymentMethodViews[$view->getPaymentMethodIdentifier()] = [
                 'label' => $view->getLabel(),
                 'block' => $view->getBlock(),
                 'options' => $view->getOptions($context),
@@ -65,6 +72,7 @@ class PaymentMethodViewsProvider
 
     /**
      * @param object $entity
+     *
      * @return array
      */
     public function getPaymentMethods($entity)

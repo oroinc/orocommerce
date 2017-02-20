@@ -18,7 +18,7 @@ class RegionMatcherTest extends AbstractMatcherTest
      * @var CountryMatcher|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $countryMatcher;
-
+    
     protected function setUp()
     {
         parent::setUp();

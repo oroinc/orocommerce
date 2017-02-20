@@ -5,15 +5,15 @@ namespace Oro\Bundle\CatalogBundle\Tests\Functional\Controller;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
- * @group segfault
- *
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class CategoryControllerTest extends WebTestCase
@@ -49,6 +49,7 @@ class CategoryControllerTest extends WebTestCase
         $this->client->useHashNavigation(true);
         $this->loadFixtures([
             'Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData',
+            'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
             'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData'
         ]);
         $this->localizations = $this->getContainer()
@@ -225,7 +226,6 @@ class CategoryControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 404);
     }
 
-
     public function testDeleteRoot()
     {
         $this->client->request(
@@ -238,6 +238,45 @@ class CategoryControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         self::assertResponseStatusCodeEquals($result, 500);
+    }
+
+    public function testMove()
+    {
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('oro_catalog_category_move_form'),
+            [
+                'selected' => [
+                    $this->getReference(LoadCategoryData::THIRD_LEVEL1)->getId()
+                ],
+                '_widgetContainer' => 'dialog',
+            ],
+            [],
+            $this->generateWsseAuthHeader()
+        );
+
+        $form = $crawler->selectButton('Save')->form();
+        $form['tree_move[target]'] = $this->getReference(LoadCategoryData::FIRST_LEVEL)->getId();
+
+        $this->client->followRedirects(true);
+
+        /** TODO Change after BAP-1813 */
+        $form->getFormNode()->setAttribute(
+            'action',
+            $form->getFormNode()->getAttribute('action') . '&_widgetContainer=dialog'
+        );
+
+        $this->client->submit($form);
+        $result = $this->client->getResponse();
+
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        /** @var CategoryRepository $repository */
+        $repository = $this->getContainer()->get('doctrine')
+            ->getManagerForClass('OroCatalogBundle:Category')
+            ->getRepository('OroCatalogBundle:Category');
+        $category = $repository->findOneByDefaultTitle(LoadCategoryData::THIRD_LEVEL1);
+        $this->assertEquals(LoadCategoryData::FIRST_LEVEL, $category->getParentCategory()->getTitle()->getString());
     }
 
     /**
@@ -285,6 +324,7 @@ class CategoryControllerTest extends WebTestCase
         $form['oro_catalog_category[longDescriptions][values][default]'] = $longDescription;
         $form['oro_catalog_category[smallImage][file]'] = $smallImage;
         $form['oro_catalog_category[largeImage][file]'] = $largeImage;
+        $form['oro_catalog_category[inventoryThreshold][scalarValue]'] = 0;
         $form['oro_catalog_category[defaultProductOptions][unitPrecision][unit]'] = $unitPrecision['code'];
         $form['oro_catalog_category[defaultProductOptions][unitPrecision][precision]'] = $unitPrecision['precision'];
 
@@ -376,6 +416,7 @@ class CategoryControllerTest extends WebTestCase
         $parameters['oro_catalog_category']['shortDescriptions']['values']['default'] = $newShortDescription;
         $parameters['oro_catalog_category']['longDescriptions']['values']['default'] = $newLongDescription;
         $parameters['oro_catalog_category']['largeImage']['emptyFile'] = true;
+        $parameters['oro_catalog_category']['inventoryThreshold']['scalarValue'] = 0;
         $parameters['oro_catalog_category']['defaultProductOptions']['unitPrecision']['unit'] =
             $newUnitPrecision['code']
         ;

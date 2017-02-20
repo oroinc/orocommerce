@@ -101,3 +101,9 @@ services:
             - '@oro_locale.helper.localization'
         tags:
             - { name: layout.data_provider, alias: canonical }
+
+    oro_redirect.repository.slug:
+        class: Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository
+        parent: oro_entity.abstract_repository
+        arguments:
+            - '%oro_redirect.entity.slug.class%'

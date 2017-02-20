@@ -2,25 +2,22 @@
 
 namespace Oro\Bundle\PaymentBundle\Method\Config;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\IntegrationBundle\Entity\Channel;
 
 abstract class AbstractPaymentConfig
 {
-    /** @var ConfigManager */
-    protected $configManager;
+    /**
+     * @var Channel
+     */
+    protected $channel;
 
     /**
-     * @param ConfigManager $configManager
+     * @param Channel $channel
      */
-    public function __construct(ConfigManager $configManager)
+    public function __construct(Channel $channel)
     {
-        $this->configManager = $configManager;
+        $this->channel = $channel;
     }
-
-    /**
-     * @return string
-     */
-    abstract protected function getPaymentExtensionAlias();
 
     /**
      * @param string $key
@@ -28,8 +25,6 @@ abstract class AbstractPaymentConfig
      */
     protected function getConfigValue($key)
     {
-        $key = $this->getPaymentExtensionAlias() . ConfigManager::SECTION_MODEL_SEPARATOR . $key;
-
-        return $this->configManager->get($key);
+        return $this->channel->getTransport()->getSettingsBag()->get($key);
     }
 }
