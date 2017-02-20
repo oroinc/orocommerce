@@ -6,15 +6,18 @@
     margin-bottom: 20px;
 
     &__unit {
-        width: 75%;
+        width: 70%;
         margin-right: 5px;
     }
 
     &__value {
-        width: 25%;
+        width: 30%;
     }
 
     &__value .input {
         margin: 0;
+        padding: 11px 8px;
+
+        text-align: center;
     }
 }

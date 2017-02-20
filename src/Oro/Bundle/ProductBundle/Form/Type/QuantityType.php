@@ -135,7 +135,7 @@ class QuantityType extends AbstractProductAwareType
     /** {@inheritDoc} */
     public function getParent()
     {
-        return 'text';
+        return 'number';
     }
 
     /** {@inheritDoc} */
