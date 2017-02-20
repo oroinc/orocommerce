@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Extension\SortableExtension;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -12,6 +13,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
+use Symfony\Component\Form\Forms;
 
 class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
 {
@@ -27,7 +29,9 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
     {
         $this->formType = new PriceListSelectWithPriorityType();
 
-        parent::setUp();
+        $this->factory = Forms::createFormFactoryBuilder()
+            ->addExtensions($this->getExtensions())
+            ->getFormFactory();
     }
 
     /**
@@ -43,9 +47,9 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
                     $entityType->getName() => $entityType,
                     PriceListSelectType::NAME => new PriceListSelectTypeStub(),
                 ],
-                []
+                ['form' => [new SortableExtension()]]
             ),
-            new ValidatorExtension(Validation::createValidator())
+            new ValidatorExtension(Validation::createValidator()),
         ];
     }
 
@@ -57,7 +61,13 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit(array $defaultData, array $submittedData, array $expectedData)
     {
-        $form = $this->factory->create($this->formType, $defaultData, []);
+        $options = [
+            'sortable' => true,
+            'sortable_property_path' => "[priority]",
+            'allow_extra_fields' => true,
+        ];
+
+        $form = $this->factory->create($this->formType, $defaultData, $options);
 
         $this->assertEquals($defaultData, $form->getData());
 
@@ -78,64 +88,62 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
 
         return [
             'without default data' => [
-                'defaultData'   => [],
+                'defaultData' => [],
                 'submittedData' => [
                     'priceList' => PriceListSelectTypeStub::PRICE_LIST_2,
-                    'priority'  => 100,
-                    'mergeAllowed'     => true
+                    '_position' => 100,
+                    'mergeAllowed' => true,
                 ],
                 'expectedData' => [
                     'priceList' => $expectedPriceList,
-                    'priority'  => 100,
-                    'mergeAllowed'     => true
-                ]
+                    'priority' => 100,
+                    'mergeAllowed' => true,
+                ],
             ],
             'without default data merge off' => [
-                'defaultData'   => [],
+                'defaultData' => [],
                 'submittedData' => [
                     'priceList' => PriceListSelectTypeStub::PRICE_LIST_2,
-                    'priority'  => 100,
-                    'mergeAllowed'     => false
+                    '_position' => 100,
+                    'mergeAllowed' => false,
                 ],
                 'expectedData' => [
                     'priceList' => $expectedPriceList,
-                    'priority'  => 100,
-                    'mergeAllowed'     => false
-                ]
+                    'priority' => 100,
+                    'mergeAllowed' => false,
+                ],
             ],
             'with default data' => [
-                'defaultData'   => [
+                'defaultData' => [
                     'priceList' => $existingPriceList,
-                    'priority'  => 50,
-                    'mergeAllowed'     => true
+                    'mergeAllowed' => true,
                 ],
                 'submittedData' => [
                     'priceList' => PriceListSelectTypeStub::PRICE_LIST_2,
-                    'priority'  => 100,
-                    'mergeAllowed'     => true
+                    '_position' => 100,
+                    'mergeAllowed' => true,
                 ],
                 'expectedData' => [
                     'priceList' => $expectedPriceList,
-                    'priority'  => 100,
-                    'mergeAllowed'     => true
-                ]
+                    'priority' => 100,
+                    'mergeAllowed' => true,
+                ],
             ],
             'with default data merge off' => [
-                'defaultData'   => [
+                'defaultData' => [
                     'priceList' => $existingPriceList,
-                    'priority'  => 50,
-                    'mergeAllowed'     => false
+                    'mergeAllowed' => false,
                 ],
                 'submittedData' => [
                     'priceList' => PriceListSelectTypeStub::PRICE_LIST_2,
-                    'priority'  => 100,
-                    'mergeAllowed'     => false
+                    '_position' => 100,
+                    'mergeAllowed' => false,
                 ],
                 'expectedData' => [
                     'priceList' => $expectedPriceList,
-                    'priority'  => 100,
-                    'mergeAllowed'     => false
-                ]
+                    'priority' => 100,
+                    'mergeAllowed' => false,
+                ],
             ],
         ];
     }

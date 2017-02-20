@@ -15,6 +15,7 @@ use Oro\Bundle\PricingBundle\Form\Type\PriceListSystemConfigType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
 use Oro\Bundle\PricingBundle\Tests\Unit\SystemConfig\ConfigsGeneratorTrait;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
+use Oro\Bundle\FormBundle\Form\Extension\SortableExtension;
 
 class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
 {
@@ -65,7 +66,9 @@ class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
                 $priceListWithPriorityType::NAME => $priceListWithPriorityType,
                 PriceListSelectType::NAME => new PriceListSelectTypeStub(),
                 $entityType->getName() => $entityType,
-            ], []),
+            ],
+                ['form' => [new SortableExtension()]]
+            ),
             new ValidatorExtension(Validation::createValidator())
         ];
     }
@@ -80,12 +83,12 @@ class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
         $form->submit([
             [
                 'priceList' => 1,
-                'priority' => 100,
+                '_position' => 100,
                 'mergeAllowed' => true
             ],
             [
                 'priceList' => 2,
-                'priority' => 200,
+                '_position' => 200,
                 'mergeAllowed' => false
             ]
         ]);
