@@ -119,4 +119,11 @@ class SlugRepositoryTest extends WebTestCase
         $expected = $this->getReference(LoadSlugsData::SLUG_TEST_DUPLICATE_REFERENCE);
         $this->assertSame($expected, $slug);
     }
+
+    public function testIsScopeAttachedToSlug()
+    {
+        /** @var Slug $slug */
+        $slug = $this->getReference(LoadSlugsData::SLUG_URL_USER);
+        $this->assertTrue($this->repository->isScopeAttachedToSlug($slug->getScopes()->first()));
+    }
 }

@@ -98,10 +98,18 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
         $output->writeln('<info>Start processing of all Price rules</info>');
         $this->buildPriceRulesForAllPriceLists();
 
+        $container = $this->getContainer();
+        $databaseTriggerManager = $container->get('oro_pricing.database_triggers.manager.cpp');
+
+        $output->writeln('<info>Disabling triggers for the CPL table</info>');
+        $databaseTriggerManager->disable();
+
         $output->writeln('<info>Start combining all Price Lists</info>');
         $now = new \DateTime();
         $this->getContainer()->get('oro_pricing.builder.combined_price_list_builder')->build($now->getTimestamp());
         $output->writeln('<info>The cache is updated successfully</info>');
+        $output->writeln('<info>Enabling triggers for the CPL table</info>');
+        $databaseTriggerManager->enable();
     }
 
     /**
@@ -141,6 +149,11 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
         $websiteCPLBuilder = $container->get('oro_pricing.builder.website_combined_price_list_builder');
         $customerGroupCPLBuilder = $container->get('oro_pricing.builder.customer_group_combined_price_list_builder');
         $customerCPLBuilder = $container->get('oro_pricing.builder.customer_combined_price_list_builder');
+        $databaseTriggerManager = $container->get('oro_pricing.database_triggers.manager.cpp');
+
+        $output->writeln('<info>Disabling triggers for the CPL table</info>');
+        $databaseTriggerManager->disable();
+
         $now = new \DateTime();
         foreach ($websites as $website) {
             if (count($customerGroups) === 0 && count($customers) === 0) {
@@ -154,7 +167,8 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
                 }
             }
         }
-
+        $output->writeln('<info>Enabling triggers for the CPL table</info>');
+        $databaseTriggerManager->enable();
         $output->writeln('<info>The cache is updated successfully</info>');
     }
 

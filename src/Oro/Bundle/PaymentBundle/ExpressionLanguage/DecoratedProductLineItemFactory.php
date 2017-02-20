@@ -2,56 +2,27 @@
 
 namespace Oro\Bundle\PaymentBundle\ExpressionLanguage;
 
-use Oro\Bundle\EntityBundle\Helper\FieldHelper;
-use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItem;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItemInterface;
-use Oro\Bundle\PaymentBundle\QueryDesigner\SelectQueryConverter;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory;
 
 class DecoratedProductLineItemFactory
 {
     /**
-     * @var EntityFieldProvider
+     * @var VirtualFieldsProductDecoratorFactory
      */
-    protected $entityFieldProvider;
+    private $virtualFieldsProductDecoratorFactory;
 
     /**
-     * @var SelectQueryConverter
+     * @param VirtualFieldsProductDecoratorFactory $virtualFieldsProductDecoratorFactory
      */
-    protected $converter;
-
-    /**
-     * @var ManagerRegistry
-     */
-    protected $doctrine;
-
-    /**
-     * @var FieldHelper
-     */
-    protected $fieldHelper;
-
-    /**
-     * @param EntityFieldProvider $entityFieldProvider
-     * @param SelectQueryConverter $converter
-     * @param ManagerRegistry $doctrine
-     * @param FieldHelper $fieldHelper
-     */
-    public function __construct(
-        EntityFieldProvider $entityFieldProvider,
-        SelectQueryConverter $converter,
-        ManagerRegistry $doctrine,
-        FieldHelper $fieldHelper
-    ) {
-        $this->entityFieldProvider = $entityFieldProvider;
-        $this->converter = $converter;
-        $this->doctrine = $doctrine;
-        $this->fieldHelper = $fieldHelper;
+    public function __construct(VirtualFieldsProductDecoratorFactory $virtualFieldsProductDecoratorFactory)
+    {
+        $this->virtualFieldsProductDecoratorFactory = $virtualFieldsProductDecoratorFactory;
     }
 
     /**
-     * @param array $lineItems
+     * @param PaymentLineItemInterface[] $lineItems
      * @param PaymentLineItemInterface $lineItem
      *
      * @return PaymentLineItem
@@ -59,6 +30,10 @@ class DecoratedProductLineItemFactory
     public function createLineItemWithDecoratedProductByLineItem(array $lineItems, PaymentLineItemInterface $lineItem)
     {
         $product = $lineItem->getProduct();
+
+        $decoratedProduct = $product
+            ? $this->virtualFieldsProductDecoratorFactory->createDecoratedProductByProductHolders($lineItems, $product)
+            : null;
 
         return new PaymentLineItem(
             [
@@ -68,32 +43,8 @@ class DecoratedProductLineItemFactory
                 PaymentLineItem::FIELD_QUANTITY => $lineItem->getQuantity(),
                 PaymentLineItem::FIELD_PRODUCT_HOLDER => $lineItem->getProductHolder(),
                 PaymentLineItem::FIELD_PRODUCT_SKU => $lineItem->getProductSku(),
-                PaymentLineItem::FIELD_PRODUCT
-                    => $product ? $this->createDecoratedProduct($lineItems, $product) : null,
+                PaymentLineItem::FIELD_PRODUCT => $decoratedProduct,
             ]
-        );
-    }
-
-    /**
-     * @param array $lineItems
-     * @param Product $product
-     *
-     * @return ProductDecorator
-     */
-    private function createDecoratedProduct(array $lineItems, Product $product)
-    {
-        return new ProductDecorator(
-            $this->entityFieldProvider,
-            $this->converter,
-            $this->doctrine,
-            $this->fieldHelper,
-            array_map(
-                function (PaymentLineItemInterface $lineItem) {
-                    return $lineItem->getProduct();
-                },
-                $lineItems
-            ),
-            $product
         );
     }
 }

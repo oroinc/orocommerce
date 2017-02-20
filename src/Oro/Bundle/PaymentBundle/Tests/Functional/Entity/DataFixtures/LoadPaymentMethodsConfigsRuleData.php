@@ -5,7 +5,7 @@ namespace Oro\Bundle\PaymentBundle\Tests\Functional\Entity\DataFixtures;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
-use Oro\Bundle\RuleBundle\Entity\Rule;
+use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\AbstractFixture;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Symfony\Component\Yaml\Yaml;
@@ -13,7 +13,7 @@ use Symfony\Component\Yaml\Yaml;
 class LoadPaymentMethodsConfigsRuleData extends AbstractFixture implements DependentFixtureInterface
 {
     use UserUtilityTrait;
-    
+
     /**
      * {@inheritDoc}
      */
@@ -31,11 +31,11 @@ class LoadPaymentMethodsConfigsRuleData extends AbstractFixture implements Depen
     {
         $user = $this->getFirstUser($manager);
         $organization = $user->getOrganization();
-        
+
         foreach ($this->getPaymentMethodsConfigsRulesData() as $reference => $data) {
             $entity = new PaymentMethodsConfigsRule();
 
-            /** @var Rule $rule */
+            /** @var RuleInterface $rule */
             $rule = $this->getReference($data['rule_reference']);
 
             $entity
