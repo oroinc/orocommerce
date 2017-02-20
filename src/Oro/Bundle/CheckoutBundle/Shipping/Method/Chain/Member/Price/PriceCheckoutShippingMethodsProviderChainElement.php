@@ -5,12 +5,12 @@ namespace Oro\Bundle\CheckoutBundle\Shipping\Method\Chain\Member\Price;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Factory\CheckoutShippingContextFactory;
 use Oro\Bundle\CheckoutBundle\Shipping\Method\Chain\Member\AbstractCheckoutShippingMethodsProviderChainElement;
-use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
+use Oro\Bundle\ShippingBundle\Provider\Price\ShippingPriceProviderInterface;
 
 class PriceCheckoutShippingMethodsProviderChainElement extends AbstractCheckoutShippingMethodsProviderChainElement
 {
     /**
-     * @var ShippingPriceProvider
+     * @var ShippingPriceProviderInterface
      */
     private $shippingPriceProvider;
 
@@ -20,11 +20,11 @@ class PriceCheckoutShippingMethodsProviderChainElement extends AbstractCheckoutS
     private $checkoutShippingContextFactory;
 
     /**
-     * @param ShippingPriceProvider $shippingPriceProvider
+     * @param ShippingPriceProviderInterface $shippingPriceProvider
      * @param CheckoutShippingContextFactory $checkoutShippingContextFactory
      */
     public function __construct(
-        ShippingPriceProvider $shippingPriceProvider,
+        ShippingPriceProviderInterface $shippingPriceProvider,
         CheckoutShippingContextFactory $checkoutShippingContextFactory
     ) {
         $this->shippingPriceProvider = $shippingPriceProvider;
