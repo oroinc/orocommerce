@@ -1,0 +1,172 @@
+workflows:
+    b2b_quote_backoffice_default:
+        entity: Oro\Bundle\SaleBundle\Entity\Quote
+        entity_attribute: quote
+
+        applications: ['default']
+        datagrids: ['quotes-grid']
+        defaults: {active: true}
+
+        exclusive_record_groups: ['b2b_quote_backoffice_flow']
+
+        start_step: draft
+        force_autostart: true
+        steps:
+            draft:
+                order: 10
+                allowed_transitions:
+                    - edit_transition
+                    - clone_transition
+                    - delete_transition
+                    - send_to_customer_transition
+            sent_to_customer:
+                order: 20
+                allowed_transitions:
+                    - cancel_transition
+                    - expire_transition
+                    - delete_transition
+                    - create_new_quote_transition
+                    - accept_transition
+                    - decline_transition
+                    - decline_by_customer_transition
+            closed:
+                order: 30
+                allowed_transitions:
+                    - reopen_transition
+            deleted:
+                order: 40
+                allowed_transitions:
+                    - undelete_transition
+
+        transitions:
+            edit_transition:
+                step_to: draft
+                transition_definition: edit_transition_definition
+                frontend_options:
+                    icon: 'fa-edit'
+            clone_transition:
+                step_to: draft
+                transition_definition: clone_transition_definition
+                frontend_options:
+                    icon: 'fa-files-o'
+            delete_transition:
+                step_to: deleted
+                transition_definition: delete_transition_definition
+                frontend_options:
+                    icon: 'fa-trash'
+            undelete_transition:
+                step_to: draft
+                transition_definition: undelete_transition_definition
+                frontend_options:
+                    icon: 'fa-undo'
+            send_to_customer_transition:
+                step_to: sent_to_customer
+                transition_definition: send_to_customer_transition_definition
+                frontend_options:
+                    icon: 'fa-envelope'
+            cancel_transition:
+                step_to: closed
+                transition_definition: cancel_transition_definition
+                frontend_options:
+                    icon: 'fa-close'
+            expire_transition:
+                step_to: closed
+                transition_definition: expire_transition_definition
+                frontend_options:
+                    icon: 'fa-clock-o'
+            create_new_quote_transition:
+                step_to: draft
+                transition_definition: create_new_quote_transition_definition
+                frontend_options:
+                    icon: 'fa-plus'
+            accept_transition:
+                step_to: closed
+                transition_definition: accept_transition_definition
+                is_hidden: true
+                triggers:
+                    -
+                        entity_class: 'Oro\Bundle\SaleBundle\Entity\Quote'
+                        event: update
+                        field: customer_status
+                        require: "entity.getCustomerStatus().getId() === 'accepted'"
+            decline_transition:
+                step_to: closed
+                transition_definition: decline_transition_definition
+                is_hidden: true
+                triggers:
+                    -
+                        entity_class: 'Oro\Bundle\SaleBundle\Entity\Quote'
+                        event: update
+                        field: customer_status
+                        require: "entity.getCustomerStatus().getId() === 'declined'"
+            decline_by_customer_transition:
+                step_to: closed
+                transition_definition: decline_by_customer_transition_definition
+                frontend_options:
+                    icon: 'fa-close'
+            reopen_transition:
+                step_to: draft
+                transition_definition: reopen_transition_definition
+                frontend_options:
+                    icon: 'fa-undo'
+
+        transition_definitions:
+            __start___definition:
+                actions:
+                    - '@request_enum_entity':
+                        enum_code: 'quote_internal_status'
+                        attribute: $quote.internalStatus
+                        identifier: 'draft'
+            edit_transition_definition: ~
+            clone_transition_definition: ~
+            delete_transition_definition:
+                actions:
+                    - '@request_enum_entity':
+                        enum_code: 'quote_internal_status'
+                        attribute: $quote.internalStatus
+                        identifier: 'deleted'
+            undelete_transition_definition:
+                actions:
+                    - '@request_enum_entity':
+                        enum_code: 'quote_internal_status'
+                        attribute: $quote.internalStatus
+                        identifier: 'draft'
+            send_to_customer_transition_definition:
+                actions:
+                    - '@request_enum_entity':
+                        enum_code: 'quote_internal_status'
+                        attribute: $quote.internalStatus
+                        identifier: 'sent_to_customer'
+            cancel_transition_definition:
+                actions:
+                    - '@request_enum_entity':
+                        enum_code: 'quote_internal_status'
+                        attribute: $quote.internalStatus
+                        identifier: 'cancelled'
+            expire_transition_definition:
+                actions:
+                    - '@request_enum_entity':
+                        enum_code: 'quote_internal_status'
+                        attribute: $quote.internalStatus
+                        identifier: 'expired'
+                    - '@assign_value': [$quote.expired, true]
+            create_new_quote_transition_definition: ~
+            accept_transition_definition:
+                actions:
+                    - '@request_enum_entity':
+                        enum_code: 'quote_internal_status'
+                        attribute: $quote.internalStatus
+                        identifier: 'accepted'
+            decline_transition_definition:
+                actions:
+                    - '@request_enum_entity':
+                        enum_code: 'quote_internal_status'
+                        attribute: $quote.internalStatus
+                        identifier: 'declined'
+            decline_by_customer_transition_definition:
+                actions:
+                    - '@request_enum_entity':
+                        enum_code: 'quote_internal_status'
+                        attribute: $quote.internalStatus
+                        identifier: 'declined'
+            reopen_transition_definition: ~
