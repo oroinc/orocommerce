@@ -178,6 +178,7 @@ services:
         arguments:
             - '@oro_product.provider.product_variant_availability_provider'
             - '@oro_product.product_variant.registry.product_variant_type_handler_factory'
+            - '@oro_entity_config.manager.attribute_manager'
             - '@property_accessor'
             - '%oro_product.entity.product.class%'
         tags:

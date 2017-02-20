@@ -105,7 +105,7 @@ services:
             - '@oro_redirect.repository.slug'
             - '@oro_redirect.routing.matched_url_decision_maker'
         tags:
-            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest }
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 0 }
 
     oro_web_catalog.form.autocomplete.web_catalog.search_handler:
         public: false

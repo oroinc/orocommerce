@@ -75,7 +75,7 @@ class ScopeRequestListenerTest extends \PHPUnit_Framework_TestCase
         $this->scopeRequestListener->onKernelRequest($event);
     }
 
-    public function testOnKernelNoAttribute()
+    public function testOnKernelHasAttribute()
     {
         /** @var GetResponseEvent|\PHPUnit_Framework_MockObject_MockObject $event */
         $event = $this->getMockBuilder(GetResponseEvent::class)
