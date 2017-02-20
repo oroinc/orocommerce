@@ -64,20 +64,6 @@ trait ContextTrait
     }
 
     /**
-     * @param array $context [ 'website_id' => int, ...]
-     * @return int
-     * @throws \LogicException
-     */
-    private function requireContextCurrentWebsiteId(array $context)
-    {
-        if (!isset($context[AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY])) {
-            throw new \LogicException('Required website id is not passed to context');
-        }
-
-        return $context[AbstractIndexer::CONTEXT_CURRENT_WEBSITE_ID_KEY];
-    }
-
-    /**
      * @param array $context [ 'websiteIds' => array, 'entityIds' => array ]
      * @param int $websiteId
      * @return array

@@ -10,7 +10,6 @@ define(function(require) {
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     var routing = require('routing');
     var mediator = require('oroui/js/mediator');
-    var messenger = require('oroui/js/messenger');
     var __ = require('orotranslation/js/translator');
 
     ProductSidebarComponent = BaseComponent.extend({
@@ -67,12 +66,7 @@ define(function(require) {
                 beforeSend: $.proxy(this._beforeSend, this),
                 success: $.proxy(this._success, this),
                 complete: $.proxy(this._complete, this),
-                error: _.bind(
-                    function(jqXHR) {
-                        messenger.showErrorMessage(__(this.options.errorMessage), jqXHR.responseJSON);
-                    },
-                    this
-                )
+                errorHandlerMessage: __(this.options.errorMessage)
             });
         },
 

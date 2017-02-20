@@ -6,7 +6,7 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 
-use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
@@ -51,7 +51,7 @@ class PriceListToProductRepository extends EntityRepository
      */
     public function getProductsWithoutPrices(PriceList $priceList)
     {
-        return new BufferedQueryResultIterator($this->getProductsWithoutPricesQueryBuilder($priceList));
+        return new BufferedIdentityQueryResultIterator($this->getProductsWithoutPricesQueryBuilder($priceList));
     }
 
     /**

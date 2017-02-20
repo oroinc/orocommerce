@@ -13,9 +13,6 @@ use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\SecurityBundle\Authentication\Token\UsernamePasswordOrganizationToken;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-/**
- * @dbIsolation
- */
 class SlugRepositoryTest extends WebTestCase
 {
     /**
@@ -121,5 +118,12 @@ class SlugRepositoryTest extends WebTestCase
         $slug = $this->repository->getSlugByUrlAndScopeCriteria(LoadSlugsData::SLUG_TEST_DUPLICATE_URL, $criteria);
         $expected = $this->getReference(LoadSlugsData::SLUG_TEST_DUPLICATE_REFERENCE);
         $this->assertSame($expected, $slug);
+    }
+
+    public function testIsScopeAttachedToSlug()
+    {
+        /** @var Slug $slug */
+        $slug = $this->getReference(LoadSlugsData::SLUG_URL_USER);
+        $this->assertTrue($this->repository->isScopeAttachedToSlug($slug->getScopes()->first()));
     }
 }

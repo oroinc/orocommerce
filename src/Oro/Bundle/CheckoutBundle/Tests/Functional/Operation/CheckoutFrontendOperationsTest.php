@@ -5,12 +5,9 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Operation;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadQuoteCompletedCheckoutsData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\FrontendActionTestCase;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 
-/**
- * @dbIsolation
- */
 class CheckoutFrontendOperationsTest extends FrontendActionTestCase
 {
     /**
@@ -20,10 +17,11 @@ class CheckoutFrontendOperationsTest extends FrontendActionTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
+            $this->generateBasicAuthHeader(LoadCustomerUserData::LEVEL_1_EMAIL, LoadCustomerUserData::LEVEL_1_PASSWORD)
         );
         $this->loadFixtures(
             [
+                LoadCustomerUserData::class,
                 LoadQuoteCompletedCheckoutsData::class
             ]
         );

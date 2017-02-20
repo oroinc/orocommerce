@@ -1,0 +1,175 @@
+workflows:
+    b2b_rfq_frontoffice_default:
+        entity: Oro\Bundle\RFPBundle\Entity\Request
+        entity_attribute: request
+
+        defaults: {active: true}
+        applications: ['commerce']
+
+        exclusive_record_groups: ['b2b_rfq_frontoffice_flow']
+
+        start_step: submitted
+        force_autostart: true
+        steps_display_ordered: false
+        steps:
+            submitted:
+                order: 10
+                allowed_transitions:
+                    - cancel_transition
+                    - decline_transition
+                    - more_information_requested_transition
+            requires_attention:
+                order: 20
+                allowed_transitions:
+                    - cancel_transition
+                    - decline_transition
+                    - provide_more_information_transition
+            cancelled:
+                order: 30
+                allowed_transitions:
+                    - resubmit_transition
+                    - reopen_transition
+
+        attributes:
+            notes:
+                type: string
+
+        transitions:
+            __start__:
+                is_start: true
+                is_hidden: true
+                is_unavailable_hidden: true
+                step_to: submitted
+                transition_definition: __start___definition
+                frontend_options:
+                    icon: fa-envelope-o
+            more_information_requested_transition:
+                step_to: requires_attention
+                transition_definition: more_information_requested_transition_definition
+                is_hidden: true
+                triggers:
+                    -
+                        entity_class: 'Oro\Bundle\RFPBundle\Entity\Request'
+                        event: update
+                        field: internal_status
+                        require: "entity.getInternalStatus().getId() === 'more_info_requested'"
+                frontend_options:
+                    icon: fa-question-circle-o
+            provide_more_information_transition:
+                step_to: submitted
+                transition_definition: provide_more_information_transition_definition
+                form_options:
+                    attribute_fields:
+                        notes:
+                            form_type: textarea
+                            options:
+                                required: true
+                                constraints:
+                                  - NotBlank: ~
+                frontend_options:
+                    icon: fa-comment-o
+            cancel_transition:
+                step_to: cancelled
+                transition_definition: cancel_transition_definition
+                frontend_options:
+                    icon: fa-times
+            decline_transition:
+                step_to: cancelled
+                transition_definition: decline_transition_definition
+                is_hidden: true
+                triggers:
+                    -
+                        entity_class: 'Oro\Bundle\RFPBundle\Entity\Request'
+                        event: update
+                        field: customer_status
+                        require: "entity.getCustomerStatus().getId() === 'cancelled'"
+            resubmit_transition:
+                step_to: cancelled
+                transition_definition: resubmit_transition_definition
+                frontend_options:
+                    icon: fa-repeat
+            reopen_transition:
+                step_to: submitted
+                transition_definition: reopen_transition_definition
+                is_hidden: true
+                triggers:
+                    -
+                        entity_class: 'Oro\Bundle\RFPBundle\Entity\Request'
+                        event: update
+                        field: customer_status
+                        require: >
+                            prevEntity.getCustomerStatus() !== null &&
+                            entity.getCustomerStatus().getId() === 'submitted' &&
+                            prevEntity.getCustomerStatus().getId() === 'cancelled'
+                frontend_options:
+                    icon: fa-external-link
+
+        transition_definitions:
+            __start___definition:
+                actions:
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_internal_status'
+                        attribute: $request.internalStatus
+                        identifier: 'open'
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_customer_status'
+                        attribute: $request.customerStatus
+                        identifier: 'submitted'
+            cancel_transition_definition:
+                actions:
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_internal_status'
+                        attribute: $request.internalStatus
+                        identifier: 'cancelled_by_customer'
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_customer_status'
+                        attribute: $request.customerStatus
+                        identifier: 'cancelled'
+            decline_transition_definition: ~
+            resubmit_transition_definition:
+                actions:
+                    - '@run_action_group':
+                        action_group: oro_rfp_duplicate
+                        parameters_mapping:
+                            request: $request
+                        results:
+                            result.requestCopy: $.requestCopy
+                    - '@assign_url':
+                        attribute: $.result.viewLink
+                        route: oro_rfp_frontend_request_view
+                        route_parameters:
+                            id: $.result.requestCopy.id
+                    - '@flash_message':
+                        message: 'oro.frontend.rfp.request.resubmited.message'
+                        type: 'success'
+                        message_parameters:
+                            viewLink: $.result.viewLink
+            reopen_transition_definition: ~
+            more_information_requested_transition_definition:
+                actions:
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_customer_status'
+                        attribute: $request.customerStatus
+                        identifier: 'requires_attention'
+            provide_more_information_transition_definition:
+                preconditions:
+                    '@equal': [$request.internalStatus.id, 'more_info_requested']
+                actions:
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_internal_status'
+                        attribute: $request.internalStatus
+                        identifier: 'open'
+                    - '@request_enum_entity':
+                        enum_code: 'rfp_customer_status'
+                        attribute: $request.customerStatus
+                        identifier: 'submitted'
+                    - '@assign_constant_value':
+                        attribute: $.result.note_type
+                        value: Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote::TYPE_CUSTOMER_NOTE
+                    - '@run_action_group':
+                        action_group: oro_rfp_create_request_additional_note
+                        parameters_mapping:
+                            request: $request
+                            note_type: $.result.note_type
+                            notes: $notes
+                    - '@unset_value': [$notes] # unset temporary property

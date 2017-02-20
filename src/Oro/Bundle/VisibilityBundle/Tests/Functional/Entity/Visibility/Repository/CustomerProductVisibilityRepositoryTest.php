@@ -8,9 +8,6 @@ use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\CustomerProductVisibilityRepository;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 
-/**
- * @dbIsolation
- */
 class CustomerProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositoryTestCase
 {
     /** @var CustomerProductVisibilityRepository */

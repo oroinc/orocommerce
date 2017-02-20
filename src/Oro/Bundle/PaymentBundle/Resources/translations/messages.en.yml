@@ -69,6 +69,7 @@ oro:
             rule.label: Rule
             destinations.label: Destinations
             currency.label: Currency
+            organization.label: Organization
 
             notification:
                 enabled: Payment rule has been enabled successfully

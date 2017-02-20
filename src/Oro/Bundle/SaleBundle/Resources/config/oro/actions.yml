@@ -27,7 +27,12 @@ operations:
                 message_parameters:
                     id: $id
             - '@redirect':
-                route: 'oro_sale_quote_index'
+                conditions:
+                    '@and':
+                        - '@empty': $.gridName
+                        - '@not_empty': $.routes[name]
+                parameters:
+                    route: $.routes[name]
 
     oro_sale_notify_customer_by_email:
         label: oro.sale.quote.notify_customer.by_email.link.text

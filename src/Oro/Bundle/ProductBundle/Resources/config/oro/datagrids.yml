@@ -141,9 +141,14 @@ datagrids:
                     - productInventoryStatus.id as inventoryStatusId
                     - productInventoryStatus.name as inventoryStatusName
                     - product.status
+                from:
+                    - { table: %oro_product.entity.product.class%, alias: product }
                 join:
                     left:
                         - { join: product.inventory_status, alias: productInventoryStatus}
+                where:
+                    and:
+                        - product.id <> :parentProduct
             bind_parameters:
                 - parentProduct
         properties:
@@ -203,8 +208,6 @@ datagrids:
                                THEN true
                                ELSE false
                           END) as isVariant
-                from:
-                    - { table: %oro_product.entity.product.class%, alias: product }
                 join:
                     left:
                         -
@@ -214,7 +217,6 @@ datagrids:
                             condition: currentVariantLink.product = product.id AND currentVariantLink.parentProduct = :parentProduct
                 where:
                     and:
-                        - product.id <> :parentProduct
                         - product.type <> :productType
             bind_parameters:
                 -
@@ -254,8 +256,6 @@ datagrids:
             query:
                 select:
                     - productVariantLink.visible as visible
-                from:
-                    - { table: %oro_product.entity.product.class%, alias: product }
                 join:
                     inner:
                         -
@@ -263,9 +263,6 @@ datagrids:
                             alias: productVariantLink
                             conditionType: WITH
                             condition: productVariantLink.product = product.id AND productVariantLink.parentProduct = :parentProduct
-                where:
-                    and:
-                        - product.id <> :parentProduct
         columns:
             id:
                 label:         oro.product.id.label
@@ -329,7 +326,6 @@ datagrids:
                     type:      string
                     data_name: sku
                     force_like: true
-                    min_length: 3
                 name:
                     type:      string
                     data_name: name_LOCALIZATION_ID

@@ -4,7 +4,9 @@ namespace Oro\Bundle\RedirectBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 
 class SlugRepository extends EntityRepository
@@ -37,5 +39,35 @@ class SlugRepository extends EntityRepository
         }
 
         return null;
+    }
+
+    /**
+     * @param Scope $scope
+     * @return bool
+     */
+    public function isScopeAttachedToSlug(Scope $scope)
+    {
+        $qb = $this->getUsedScopesQueryBuilder();
+        $qb->select('scope.id')
+            ->andWhere($qb->expr()->eq('scope', ':scope'))
+            ->setParameter('scope', $scope);
+        return (bool)$qb->getQuery()->getScalarResult();
+    }
+
+    /**
+     * @return QueryBuilder
+     */
+    private function getUsedScopesQueryBuilder()
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->from(Scope::class, 'scope')
+            ->select('scope')
+            ->innerJoin(
+                $this->getEntityName(),
+                'slug',
+                Join::WITH,
+                $qb->expr()->isMemberOf('scope', 'slug.scopes')
+            );
+        return $qb;
     }
 }

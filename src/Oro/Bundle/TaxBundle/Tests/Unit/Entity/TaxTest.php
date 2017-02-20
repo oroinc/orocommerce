@@ -23,21 +23,6 @@ class TaxTest extends \PHPUnit_Framework_TestCase
         ]);
     }
 
-    public function testPrePersist()
-    {
-        $tax = $this->createTaxEntity();
-        $tax->prePersist();
-        $this->assertInstanceOf('DateTime', $tax->getCreatedAt());
-        $this->assertInstanceOf('DateTime', $tax->getUpdatedAt());
-    }
-
-    public function testPreUpdate()
-    {
-        $tax = $this->createTaxEntity();
-        $tax->preUpdate();
-        $this->assertInstanceOf('DateTime', $tax->getUpdatedAt());
-    }
-
     /**
      * @return Tax
      */

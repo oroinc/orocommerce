@@ -4,14 +4,9 @@ namespace Oro\Bundle\InventoryBundle\Tests\Functional\Controller\Api\Rest;
 
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
-use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\LoadInventoryLevels;
 
-/**
- * @dbIsolation
- */
 class InventoryLevelControllerTest extends WebTestCase
 {
     protected function setUp()
@@ -20,11 +15,7 @@ class InventoryLevelControllerTest extends WebTestCase
             [],
             $this->generateWsseAuthHeader()
         );
-        $this->loadFixtures(
-            [
-                LoadInventoryLevels::class,
-            ]
-        );
+        $this->loadFixtures(['@OroInventoryBundle/Tests/Functional/DataFixtures/inventory_level.yml']);
     }
 
     public function testDeleteAction()

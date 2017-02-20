@@ -8,9 +8,6 @@ use Oro\Bundle\ActionBundle\Tests\Functional\ActionTestCase;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 
-/**
- * @dbIsolation
- */
 class PriceListDeleteOperationTest extends ActionTestCase
 {
     protected function setUp()

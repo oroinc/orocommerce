@@ -10,6 +10,8 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\OptionsResolver\Options;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
@@ -81,7 +83,7 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        if ($this->requestStack->getCurrentRequest()->get(ProductDataStorage::STORAGE_KEY)) {
+        if ($this->isStorageFull()) {
             $builder->addEventListener(
                 FormEvents::PRE_SET_DATA,
                 function (FormEvent $event) {
@@ -93,6 +95,34 @@ abstract class AbstractProductDataStorageExtension extends AbstractTypeExtension
                     }
                 }
             );
+        }
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isStorageFull()
+    {
+        return $this->requestStack->getCurrentRequest()->get(ProductDataStorage::STORAGE_KEY)
+               && $this->storage->get();
+    }
+
+    /**
+     * @param OptionsResolver $resolver
+     * @return void
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        if ($this->isStorageFull()) {
+            $resolver->setNormalizer('data', function (Options $options, $value) {
+                if ($value instanceof $this->dataClass
+                    && !$this->doctrineHelper->getSingleEntityIdentifier($value)
+                ) {
+                    $this->fillData($value);
+                }
+
+                return $value;
+            });
         }
     }
 

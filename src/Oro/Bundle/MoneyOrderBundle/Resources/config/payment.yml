@@ -5,16 +5,16 @@ services:
         arguments:
             - '@oro_config.global'
 
-    oro_money_order.payment_method.money_order:
-        class: 'Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder'
+    oro_money_order.payment_method_provider.money_order:
+        class: 'Oro\Bundle\MoneyOrderBundle\Method\MoneyOrderMethodProvider'
         public: false
         tags:
-            - { name: oro_payment.payment_method }
+            - { name: oro_payment.payment_method_provider }
 
-    oro_money_order.payment_method.view.money_order:
-        class: 'Oro\Bundle\MoneyOrderBundle\Method\View\MoneyOrderView'
+    oro_money_order.payment_method_view_provider.money_order:
+        class: 'Oro\Bundle\MoneyOrderBundle\Method\View\MoneyOrderMethodViewProvider'
         public: false
         arguments:
             - '@oro_money_order.payment_method.money_order.config'
         tags:
-            - { name: oro_payment.payment_method_view }
+            - { name: oro_payment.payment_method_view_provider }

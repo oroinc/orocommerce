@@ -12,11 +12,13 @@ use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteProductDemandDa
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\WorkflowBundle\Entity\WorkflowItem;
 
-/**
- * @dbIsolation
- */
 class CheckoutRepositoryTest extends WebTestCase
 {
+    /**
+     * @var CheckoutRepository
+     */
+    protected $repository;
+
     /**
      * {@inheritdoc}
      */
@@ -31,6 +33,8 @@ class CheckoutRepositoryTest extends WebTestCase
                 LoadCustomerUserData::class,
             ]
         );
+
+        $this->repository = $this->getRepository();
     }
 
     /**
@@ -117,7 +121,11 @@ class CheckoutRepositoryTest extends WebTestCase
 
         $this->assertSame(
             $this->getReference(LoadQuoteCheckoutsData::CHECKOUT_1),
-            $this->getRepository()->findCheckoutByCustomerUserAndSourceCriteria($customerUser, $criteria)
+            $this->getRepository()->findCheckoutByCustomerUserAndSourceCriteria(
+                $customerUser,
+                $criteria,
+                'b2b_flow_checkout'
+            )
         );
     }
 
@@ -128,7 +136,11 @@ class CheckoutRepositoryTest extends WebTestCase
 
         $this->assertSame(
             $this->getReference(LoadShoppingListsCheckoutsData::CHECKOUT_7),
-            $this->getRepository()->findCheckoutByCustomerUserAndSourceCriteria($customerUser, $criteria)
+            $this->getRepository()->findCheckoutByCustomerUserAndSourceCriteria(
+                $customerUser,
+                $criteria,
+                'b2b_flow_checkout'
+            )
         );
     }
 
@@ -142,6 +154,14 @@ class CheckoutRepositoryTest extends WebTestCase
         $repository->deleteWithoutWorkflowItem();
 
         $this->assertCount(count($checkouts), $repository->findBy(['deleted' => true]));
+    }
+
+    public function testFindByType()
+    {
+        $checkouts = $this->repository->findByPaymentMethod(LoadQuoteCheckoutsData::PAYMENT_METHOD);
+
+        static::assertContains($this->getReference(LoadQuoteCheckoutsData::CHECKOUT_1), $checkouts);
+        static::assertContains($this->getReference(LoadQuoteCheckoutsData::CHECKOUT_2), $checkouts);
     }
 
     protected function deleteAllWorkflowItems()

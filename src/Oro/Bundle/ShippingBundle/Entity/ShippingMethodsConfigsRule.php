@@ -7,9 +7,9 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
-use Oro\Bundle\OrganizationBundle\Entity\Organization;
-use Oro\Bundle\RuleBundle\Entity\Rule;
+use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ShippingBundle\Model\ExtendShippingMethodsConfigsRule;
 
 /**
@@ -57,7 +57,7 @@ class ShippingMethodsConfigsRule extends ExtendShippingMethodsConfigsRule implem
     private $id;
 
     /**
-     * @var Rule
+     * @var RuleInterface
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\RuleBundle\Entity\Rule", cascade={"persist", "remove"})
      * @ORM\JoinColumn(name="rule_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
@@ -145,7 +145,7 @@ class ShippingMethodsConfigsRule extends ExtendShippingMethodsConfigsRule implem
     }
 
     /**
-     * @return Rule
+     * @return RuleInterface
      */
     public function getRule()
     {
@@ -153,7 +153,8 @@ class ShippingMethodsConfigsRule extends ExtendShippingMethodsConfigsRule implem
     }
 
     /**
-     * @param Rule $rule
+     * @param RuleInterface $rule
+     *
      * @return $this
      */
     public function setRule($rule)

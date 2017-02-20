@@ -6,9 +6,6 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadFilterProductVisibilityData;
 
-/**
- * @dbIsolation
- */
 class VisibilityChoiceFilterTest extends WebTestCase
 {
     protected function setUp()

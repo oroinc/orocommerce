@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Controller\Frontend;
 
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -40,7 +38,7 @@ class ProductController extends Controller
      * View list of products
      *
      * @Route("/view/{id}", name="oro_product_frontend_product_view", requirements={"id"="\d+"})
-     * @Layout(vars={"product_type", "attribute_family"})
+     * @Layout(vars={"product_type", "attribute_family", "page_template"})
      * @Acl(
      *      id="oro_product_frontend_view",
      *      type="entity",
@@ -68,26 +66,14 @@ class ProductController extends Controller
             }
         }
 
-        return [
+        $pageTemplate = $this->get('oro_product.provider.page_template_provider')
+            ->getPageTemplate($product, 'oro_product_frontend_product_view');
+
+        return  [
             'data' => $data,
             'product_type' => $product->getType(),
             'attribute_family' => $product->getAttributeFamily(),
-        ];
-    }
-
-    /**
-     * @Route("/info/{id}", name="oro_product_frontend_product_info", requirements={"id"="\d+"})
-     * @Template("OroProductBundle:Product\Frontend\widget:info.html.twig")
-     * @AclAncestor("oro_product_frontend_view")
-     *
-     * @param Product $product
-     *
-     * @return array
-     */
-    public function infoAction(Product $product)
-    {
-        return [
-            'product' => $product
+            'page_template' => $pageTemplate ? $pageTemplate->getKey() : null
         ];
     }
 }

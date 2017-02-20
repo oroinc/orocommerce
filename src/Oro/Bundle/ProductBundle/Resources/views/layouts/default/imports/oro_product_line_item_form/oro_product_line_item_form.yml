@@ -1,4 +1,8 @@
 layout:
+    imports:
+        -
+            id: line_item_buttons
+            root: __line_item_form_buttons
     actions:
         - '@setBlockTheme':
             themes: 'oro_product_line_item_form.html.twig'
