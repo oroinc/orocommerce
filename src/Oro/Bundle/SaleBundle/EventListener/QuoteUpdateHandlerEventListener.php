@@ -43,7 +43,7 @@ class QuoteUpdateHandlerEventListener
     /**
      * @param FormProcessEvent $event
      */
-    public function beforeDataSet(FormProcessEvent $event)
+    public function ensureWebsite(FormProcessEvent $event)
     {
         /** @var Quote $quote */
         $quote = $event->getData();
@@ -51,6 +51,14 @@ class QuoteUpdateHandlerEventListener
         if (!$quote->getWebsite()) {
             $quote->setWebsite($this->websiteManager->getDefaultWebsite());
         }
+    }
+
+    /**
+     * @param FormProcessEvent $event
+     */
+    public function ensureCustomer(FormProcessEvent $event)
+    {
+        $quote = $event->getData();
 
         if (in_array($this->requestStack->getCurrentRequest()->getMethod(), ['POST', 'PUT'], true)) {
             $quote->setCustomer($this->quoteRequestHandler->getCustomer());

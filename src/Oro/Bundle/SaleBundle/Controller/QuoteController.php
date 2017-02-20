@@ -76,13 +76,12 @@ class QuoteController extends Controller
         if ($request->get(self::REDIRECT_BACK_FLAG, false)) {
             return $this->handleRequestAndRedirectBack(
                 $quote,
-                'OroSaleBundle:Quote:createWithReturn.html.twig',
-                $request
+                'OroSaleBundle:Quote:createWithReturn.html.twig'
             );
         }
 
         if (!$request->get(ProductDataStorage::STORAGE_KEY, false)) {
-            return $this->update($quote, $request);
+            return $this->update($quote);
         }
 
         $quote->setWebsite($this->get('oro_website.manager')->getDefaultWebsite());
@@ -113,9 +112,9 @@ class QuoteController extends Controller
      *
      * @return array|RedirectResponse
      */
-    public function updateAction(Quote $quote, Request $request)
+    public function updateAction(Quote $quote)
     {
-        return $this->update($quote, $request);
+        return $this->update($quote);
     }
 
     /**
@@ -137,7 +136,7 @@ class QuoteController extends Controller
      * @param Quote $quote
      * @return array|RedirectResponse
      */
-    protected function update(Quote $quote, Request $request)
+    protected function update(Quote $quote)
     {
         /* @var $handler UpdateHandler */
         $handler = $this->get('oro_form.model.update_handler');
@@ -168,10 +167,10 @@ class QuoteController extends Controller
      *
      * @return RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    private function handleRequestAndRedirectBack(Quote $quote, $template, Request $request)
+    private function handleRequestAndRedirectBack(Quote $quote, $template)
     {
         // Handle form validate and fetch pre-response
-        $updateResponse = $this->update($quote, $request);
+        $updateResponse = $this->update($quote);
 
         /** @var ReturnRouteDataStorage $redirectStorage */
         $redirectStorage = $this->get('oro_sale.storage.return_route_storage');
