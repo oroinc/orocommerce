@@ -394,6 +394,24 @@ services:
                 - '%oro_shipping.rule_grid_name%'
                 - '@oro_datagrid.helper.route'
 
+    oro_shipping.provider.basic_shipping_methos_choices:
+        class: Oro\Bundle\ShippingBundle\Provider\BasicShippingMethodChoicesProvider
+        arguments:
+        - '@oro_shipping.shipping_method.registry'
+        - '@translator'
+
+    oro_shipping.provider.shipping_method_choices:
+        parent: oro_shipping.provider.basic_shipping_methos_choices
+
+    oro_shipping.shipping_price.provider_enabled_methods_decorator:
+         class: 'Oro\Bundle\ShippingBundle\Provider\EnabledShippingMethodChoicesProviderDecorator'
+         public: false
+         decorates: oro_shipping.provider.shipping_method_choices
+         decoration_priority: 255
+         arguments:
+             - '@oro_shipping.shipping_method.registry'
+             - '@oro_shipping.shipping_price.provider_enabled_methods_decorator.inner'
+
     oro_shipping.checker.shipping_method_enabled:
         class: 'Oro\Bundle\ShippingBundle\Checker\ShippingMethodEnabledByIdentifierChecker'
         arguments:
@@ -403,3 +421,4 @@ services:
         class: 'Oro\Bundle\ShippingBundle\Checker\ShippingRuleEnabledChecker'
         arguments:
             - '@oro_shipping.checker.shipping_method_enabled'
+

@@ -55,6 +55,7 @@ services:
         arguments:
             - '@oro_shipping.shipping_method.registry'
             - '@translator'
+            - '@oro_shipping.provider.shipping_method_choices'
         tags:
             - { name: form.type }
 
