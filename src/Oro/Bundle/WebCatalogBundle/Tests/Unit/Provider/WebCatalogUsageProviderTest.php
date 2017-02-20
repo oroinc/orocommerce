@@ -31,7 +31,7 @@ class WebCatalogUsageProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider configDataProvider
+     * @dataProvider inUseDataProvider
      * @param WebCatalog $webCatalog
      * @param int|null $configuredCatalogId
      * @param bool $isInUse
@@ -47,9 +47,23 @@ class WebCatalogUsageProviderTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @dataProvider getAssignedWebCatalogsDataProvider
+     * @param int|null $configuredCatalogId
+     */
+    public function testGetAssignedWebCatalogs($configuredCatalogId)
+    {
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with(WebCatalogUsageProvider::SETTINGS_KEY)
+            ->willReturn($configuredCatalogId);
+
+        $this->assertEquals([0 => $configuredCatalogId], $this->provider->getAssignedWebCatalogs());
+    }
+
+    /**
      * @return array
      */
-    public function configDataProvider()
+    public function inUseDataProvider()
     {
         return [
             'used int value returned' => [
@@ -77,6 +91,16 @@ class WebCatalogUsageProviderTest extends \PHPUnit_Framework_TestCase
                 null,
                 false
             ]
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function getAssignedWebCatalogsDataProvider()
+    {
+        return [
+            [2], [null], [false]
         ];
     }
 }

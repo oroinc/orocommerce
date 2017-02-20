@@ -3,9 +3,10 @@
 namespace Oro\Bundle\WebCatalogBundle\Provider;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
+use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
+use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
 
-class WebCatalogUsageProvider
+class WebCatalogUsageProvider implements WebCatalogUsageProviderInterface
 {
     const SETTINGS_KEY = 'oro_web_catalog.web_catalog';
 
@@ -15,7 +16,7 @@ class WebCatalogUsageProvider
     protected $configManager;
 
     /**
-     * @param ConfigManager $configManager
+     * @param ConfigManager     $configManager
      */
     public function __construct(ConfigManager $configManager)
     {
@@ -23,13 +24,22 @@ class WebCatalogUsageProvider
     }
 
     /**
-     * @param WebCatalog $webCatalog
-     * @return bool
+     * {@inheritdoc}
      */
-    public function isInUse(WebCatalog $webCatalog)
+    public function isInUse(WebCatalogInterface $webCatalog)
     {
-        $usedWebCatalogId = (int)$this->configManager->get(self::SETTINGS_KEY);
+        $usedWebCatalogId = (int)$this->configManager->get(static::SETTINGS_KEY);
 
         return $usedWebCatalogId === $webCatalog->getId();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getAssignedWebCatalogs(array $entities = [])
+    {
+        return [
+            0 => (int)$this->configManager->get(static::SETTINGS_KEY)
+        ];
     }
 }
