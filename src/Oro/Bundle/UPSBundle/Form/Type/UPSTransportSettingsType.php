@@ -6,15 +6,13 @@ use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Form\Type\CountryType;
 use Oro\Bundle\EntityBundle\Exception\NotManageableEntityException;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
-use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -50,27 +48,19 @@ class UPSTransportSettingsType extends AbstractType
      */
     protected $doctrineHelper;
 
-    /** @var SymmetricCrypterInterface */
-    protected $symmetricCrypter;
-
     /**
-     * UPSTransportSettingsType constructor.
-     *
      * @param TransportInterface        $transport
      * @param ShippingOriginProvider    $shippingOriginProvider
      * @param DoctrineHelper            $doctrineHelper
-     * @param SymmetricCrypterInterface $symmetricCrypter
      */
     public function __construct(
         TransportInterface $transport,
         ShippingOriginProvider $shippingOriginProvider,
-        DoctrineHelper $doctrineHelper,
-        SymmetricCrypterInterface $symmetricCrypter
+        DoctrineHelper $doctrineHelper
     ) {
         $this->transport = $transport;
         $this->shippingOriginProvider = $shippingOriginProvider;
         $this->doctrineHelper = $doctrineHelper;
-        $this->symmetricCrypter = $symmetricCrypter;
     }
 
     /**
@@ -109,21 +99,12 @@ class UPSTransportSettingsType extends AbstractType
         );
         $builder->add(
             'apiPassword',
-            PasswordType::class,
+            OroEncodedPlaceholderPasswordType::class,
             [
                 'label' => 'oro.ups.transport.api_password.label',
                 'required' => true
             ]
         );
-        $builder->get('apiPassword')
-            ->addModelTransformer(new CallbackTransformer(
-                function ($password) {
-                    return $password;
-                },
-                function ($password) {
-                    return $this->symmetricCrypter->encryptData($password);
-                }
-            ));
         $builder->add(
             'apiKey',
             TextType::class,
