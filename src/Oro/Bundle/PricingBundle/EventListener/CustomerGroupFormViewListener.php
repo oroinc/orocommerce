@@ -41,7 +41,7 @@ class CustomerGroupFormViewListener extends AbstractCustomerFormViewListener
             ->getEntityRepository('OroPricingBundle:PriceListToCustomerGroup')
             ->findBy(
                 ['customerGroup' => $customerGroup, 'website' => $this->websiteProvider->getWebsites()],
-                ['priority' => Criteria::ASC]
+                ['sortOrder' => Criteria::ASC]
             );
         
         /** @var PriceListCustomerGroupFallback $fallbackEntity */
