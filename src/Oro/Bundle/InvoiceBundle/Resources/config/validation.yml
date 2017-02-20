@@ -19,6 +19,7 @@ Oro\Bundle\InvoiceBundle\Entity\Invoice:
         currency:
             - Currency: ~
         lineItems:
+            - Valid: ~
             - Count:
                 min: 1
                 minMessage: 'oro.invoice.invoicelineitem.count'
