@@ -6,6 +6,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Oro\Bundle\RuleBundle\Entity\Rule;
+use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\EventListener\Cache\ShippingRuleChangeListener;
 use Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache;
@@ -59,7 +60,7 @@ class ShippingRuleChangeListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testMethodsWithShippingRuleInOneRequest()
     {
-        /** @var Rule $entity */
+        /** @var RuleInterface $entity */
         $entity = $this->getEntity(Rule::class, ['id' => 1]);
         $this->mockExpectedQuantity($entity, 1, 1);
         $this->triggerAllMethods($entity);
@@ -67,7 +68,7 @@ class ShippingRuleChangeListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testMethodsWithShippingRuleInDifferentRequests()
     {
-        /** @var Rule $entity */
+        /** @var RuleInterface $entity */
         $entity = $this->getEntity(Rule::class, ['id' => 1]);
         $this->mockExpectedQuantity($entity, 3, 3);
         $listener1 = new ShippingRuleChangeListener($this->priceCache);
@@ -81,7 +82,7 @@ class ShippingRuleChangeListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testMethodsWithNotShippingRule()
     {
-        /** @var Rule $entity */
+        /** @var RuleInterface $entity */
         $entity = $this->getEntity(Rule::class, ['id' => 1]);
         $this->mockExpectedQuantity($entity, 3, 0, false);
         $this->triggerAllMethods($entity);
@@ -110,7 +111,7 @@ class ShippingRuleChangeListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param Rule|ShippingMethodsConfigsRule $entity
+     * @param RuleInterface|ShippingMethodsConfigsRule $entity
      * @param integer $quantity
      * @param integer $clearCacheCnt
      * @param boolean $repositoryResult
@@ -134,7 +135,7 @@ class ShippingRuleChangeListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param Rule|ShippingMethodsConfigsRule $entity
+     * @param RuleInterface|ShippingMethodsConfigsRule $entity
      */
     protected function triggerAllMethods($entity)
     {
