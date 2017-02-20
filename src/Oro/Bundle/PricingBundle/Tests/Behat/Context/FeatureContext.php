@@ -14,36 +14,71 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     use PageObjectDictionary, KernelDictionary;
 
     /**
-     * @When I add price list :priceListName into price lists collection
+     * @When I choose a price list :priceListName in :rowNum row
      * @param string $priceListName
+     * @param int $rowNum
      */
-    public function addPriceListToCollection($priceListName)
+    public function choosePriceListInRow($priceListName, $rowNum)
     {
-        $priceLists = $this->elementFactory->createElement('PriceListCollection');
-        $priceLists->find('named', ['content', 'Add Price List'])->click();
-        $priceLists->find('named', ['content' ,'Choose a Price List...'])->click();
-        $this->waitForAjax();
-        $this->getSession()->getPage()->find('named', ['content', $priceListName])->click();
+        $row = $this->getPriceListRow(--$rowNum);
+        $row->find('css', 'div.entity-create-or-select-container')->click();
+
+        /** @var NodeElement|null $priceList */
+        $priceList = null;
+        $this->spin(function (FeatureContext $context) use ($priceListName, &$priceList) {
+            $priceList = $this->getSession()->getPage()->find('named', ['content', $priceListName]);
+            return (bool)$priceList;
+        });
+        $priceList->click();
         $this->waitForAjax();
     }
 
     /**
-     * @When I set priority :priority to price list :priceListName
-     * @param int $priority
-     * @param string $priceListName
+     * @When I drag :rowNum row on top in price lists collection
+     * @param int $rowNum
      */
-    public function setPriorityToPriceList($priority, $priceListName)
+    public function dragPriceListOnTop($rowNum)
+    {
+        --$rowNum;
+        $this->getPriceListRow($rowNum);
+        $this->getSession()->executeScript('
+            $(document).ready(function(){
+                var lastRow = $("div.pricing-price-list tbody tr.pricing-price-list-item").eq(' . $rowNum . ');
+                $("div.pricing-price-list tbody").prepend(lastRow);
+                $("div.pricing-price-list .sortable-wrapper").sortable("option", "stop")();
+            })
+        ');
+    }
+
+    /**
+     * @Then I should see Drag-n-Drop icon present on price list line
+     */
+    public function assertDragNDropIconOnPriceListLine()
+    {
+        $row = $this->getPriceListRow(0);
+        self::assertNotEmpty($row->find('css', 'i.handle'));
+    }
+
+    /**
+     * @Then I should see that :priceListName price list is in :rowNum row
+     * @param string $priceListName
+     * @param int $rowNum
+     */
+    public function assertPriceListNameInRow($priceListName, $rowNum)
+    {
+        $row = $this->getPriceListRow(--$rowNum);
+        self::assertTrue($row->has('named', ['content', $priceListName]));
+    }
+
+    /**
+     * @param int $rowNum
+     * @return NodeElement
+     */
+    protected function getPriceListRow($rowNum)
     {
         $priceLists = $this->elementFactory->createElement('PriceListCollection');
-        /** @var NodeElement $line */
-        foreach ($priceLists->findAll('css', 'tr.pricing-price-list-item') as $line) {
-            if ($line->has('named', ['content', $priceListName])) {
-                $priorityInput = $line->find('css', 'input.priority');
-                $priorityInput->focus();
-                $priorityInput->setValue($priority);
-                $priorityInput->blur();
-                return;
-            }
-        }
+        $rows = $priceLists->findAll('css', 'tbody tr');
+        self::assertNotEmpty($rows[$rowNum]);
+        return $rows[$rowNum];
     }
 }
