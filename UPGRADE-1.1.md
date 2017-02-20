@@ -86,3 +86,43 @@ VisibilityBundle
 ----------------
 - Class `Oro\Bundle\VisibilityBundle\Driver\AbstractCustomerPartialUpdateDriver`
     - changed the return type of `getCustomerVisibilityIterator` method from `BufferedQueryResultIterator` to `BufferedQueryResultIteratorInterface`
+
+PaymentTermBundle
+----------------
+* Added interfaces:
+    - `Oro/Bundle/PaymentTermBundle/Method/Config/Factory/Settings/PaymentTermConfigBySettingsFactoryInterface.php`
+    - `Oro/Bundle/PaymentTermBundle/Method/Config/Provider/PaymentTermConfigProviderInterface.php`
+    - `Oro/Bundle/PaymentTermBundle/Method/Factory/PaymentTermPaymentMethodFactoryInterface.php`
+    - `Oro/Bundle/PaymentTermBundle/Method/View/Factory/PaymentTermPaymentMethodViewFactoryInterface.php`
+* Removed classes:
+    - `Oro/Bundle/PaymentTermBundle/DependencyInjection/Configuration.php`
+        - it is useless because PaymentTerm payment methods settings were moved from system configuration to integrations
+    - `Oro/Bundle/PaymentTermBundle/Method/Config/PaymentTermConfig.php`
+* Added classes:
+    - `Oro/Bundle/PaymentTermBundle/Entity/PaymentTermSettings.php`
+        - here moved all settings from system configuration related to PaymentTerm payment methods
+    - `Oro/Bundle/PaymentTermBundle/Entity/Repository/PaymentTermSettingsRepository.php`
+        - added method findWithEnabledChannel()
+    - `Oro/Bundle/PaymentTermBundle/Form/Type/PaymentTermSettingsType.php`
+        - form type responsible for filling PaymentTerm payment methods settings
+    - `Oro/Bundle/PaymentTermBundle/Integration/PaymentTermChannelType.php`
+    - `Oro/Bundle/PaymentTermBundle/Integration/PaymentTermTransport.php`
+    - `Oro/Bundle/PaymentTermBundle/Method/Config/ParameterBag/Factory/Settings/ParameterBagPaymentTermConfigBySettingsFactory.php`
+    - `Oro/Bundle/PaymentTermBundle/Method/Config/ParameterBag/ParameterBagPaymentTermConfig.php`
+    - `Oro/Bundle/PaymentTermBundle/Method/Config/Provider/Basic/BasicPaymentTermConfigProvider.php`
+    - `Oro/Bundle/PaymentTermBundle/Method/Config/Provider/Cached/Memory/CachedMemoryPaymentTermConfigProvider.php`
+    - `Oro/Bundle/PaymentTermBundle/Method/Factory/PaymentTermPaymentMethodFactory.php`
+    - `Oro/Bundle/PaymentTermBundle/Method/Provider/PaymentTermMethodProvider.php `
+    - `Oro/Bundle/PaymentTermBundle/Method/View/Factory/PaymentTermPaymentMethodViewFactory.php`
+    - `Oro/Bundle/PaymentTermBundle/Method/View/Provider/PaymentTermMethodViewProvider.php`
+    - `Oro/Bundle/PaymentTermBundle/Migrations/Data/ORM/MoveConfigValuesToSettings.php`
+        - data migration responsible to move PaymentTerm payment methods settings from system configuration to integrations
+* Modified classes:
+    - `Oro/Bundle/PaymentTermBundle/Method/PaymentTerm.php`
+        - modified method getIdentifier (identifier is taken from PaymentTermConfig)
+    - `Oro/Bundle/PaymentTermBundle/Method/View/PaymentTermView.php`
+        - removed methods:
+            - getPaymentMethodType()
+        - added methods:
+            - getAdminLabel()
+            - getPaymentMethodIdentifier()
