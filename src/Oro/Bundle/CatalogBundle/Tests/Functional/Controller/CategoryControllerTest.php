@@ -416,7 +416,7 @@ class CategoryControllerTest extends WebTestCase
         $parameters['oro_catalog_category']['shortDescriptions']['values']['default'] = $newShortDescription;
         $parameters['oro_catalog_category']['longDescriptions']['values']['default'] = $newLongDescription;
         $parameters['oro_catalog_category']['largeImage']['emptyFile'] = true;
-        $parameters['oro_catalog_category']['inventoryThreshold']['scalarValue]'] = 0;
+        $parameters['oro_catalog_category']['inventoryThreshold']['scalarValue'] = 0;
         $parameters['oro_catalog_category']['defaultProductOptions']['unitPrecision']['unit'] =
             $newUnitPrecision['code']
         ;
