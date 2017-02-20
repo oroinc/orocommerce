@@ -11,7 +11,7 @@ use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\PaymentBundle\Model\ExtendPaymentMethodsConfigsRule;
-use Oro\Bundle\RuleBundle\Entity\Rule;
+use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 
 /**
@@ -72,7 +72,7 @@ class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implemen
     protected $methodConfigs;
 
     /**
-     * @var Rule
+     * @var RuleInterface
      *
      * @ORM\ManyToOne(
      *     targetEntity="Oro\Bundle\RuleBundle\Entity\Rule",
@@ -144,11 +144,11 @@ class PaymentMethodsConfigsRule extends ExtendPaymentMethodsConfigsRule implemen
     }
 
     /**
-     * @param Rule $rule
+     * @param RuleInterface $rule
      *
      * @return $this
      */
-    public function setRule(Rule $rule)
+    public function setRule(RuleInterface $rule)
     {
         $this->rule = $rule;
 
