@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Form\Type;
 
+use Oro\Bundle\SaleBundle\Model\QuoteRequestHandler;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -66,29 +67,38 @@ class QuoteAddressType extends AbstractType
         $quote = $options['quote'];
 
         $isManualEditGranted = $this->quoteAddressSecurityProvider->isManualEditGranted($type);
-        $addresses = $this->quoteAddressManager->getGroupedAddresses($quote, $type);
 
-        $customerAddressOptions = [
-            'label' => false,
-            'required' => false,
-            'mapped' => false,
-            'choices' => $this->getChoices($addresses),
-            'configs' => ['placeholder' => 'oro.quote.form.address.choose'],
-            'attr' => [
-                'data-addresses' => json_encode($this->getPlainData($addresses)),
-                'data-default' => $this->getDefaultAddressKey($quote, $type, $addresses),
-            ],
-        ];
+        $builder->addEventListener(
+            FormEvents::PRE_SET_DATA,
+            function (FormEvent $event) use ($quote, $type, $isManualEditGranted) {
+                $form = $event->getForm();
 
-        if ($isManualEditGranted) {
-            $customerAddressOptions['choices'] = array_merge(
-                $customerAddressOptions['choices'],
-                ['oro.sale.quote.form.address.manual']
-            );
-            $customerAddressOptions['configs']['placeholder'] = 'oro.sale.quote.form.address.choose_or_create';
-        }
+                $addresses = $this->quoteAddressManager->getGroupedAddresses($quote, $type);
 
-        $builder->add('customerAddress', 'genemu_jqueryselect2_choice', $customerAddressOptions);
+                $customerAddressOptions = [
+                    'label' => false,
+                    'required' => false,
+                    'mapped' => false,
+                    'choices' => $this->getChoices($addresses),
+                    'configs' => ['placeholder' => 'oro.quote.form.address.choose'],
+                    'attr' => [
+                        'data-addresses' => json_encode($this->getPlainData($addresses)),
+                        'data-default' => $this->getDefaultAddressKey($quote, $type, $addresses),
+                    ],
+                ];
+
+                if ($isManualEditGranted) {
+                    $customerAddressOptions['choices'] = array_merge(
+                        $customerAddressOptions['choices'],
+                        ['oro.sale.quote.form.address.manual']
+                    );
+                    $customerAddressOptions['configs']['placeholder'] = 'oro.sale.quote.form.address.choose_or_create';
+                }
+
+                $form->add('customerAddress', 'genemu_jqueryselect2_choice', $customerAddressOptions);
+            }
+        );
+
         $builder->add('phone', 'text');
 
         $builder->addEventListener(
@@ -159,7 +169,7 @@ class QuoteAddressType extends AbstractType
         $resolver
             ->setRequired(['quote', 'addressType'])
             ->setDefaults(['data_class' => $this->dataClass])
-            ->setAllowedValues('addressType', [ AddressType::TYPE_SHIPPING])
+            ->setAllowedValues('addressType', [AddressType::TYPE_SHIPPING])
             ->setAllowedTypes('quote', 'Oro\Bundle\SaleBundle\Entity\Quote');
     }
 

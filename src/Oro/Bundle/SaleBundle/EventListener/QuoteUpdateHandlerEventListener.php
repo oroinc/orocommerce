@@ -6,6 +6,7 @@ use Oro\Bundle\FormBundle\Event\FormHandler\FormProcessEvent;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Model\QuoteRequestHandler;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 class QuoteUpdateHandlerEventListener
 {
@@ -20,13 +21,23 @@ class QuoteUpdateHandlerEventListener
     private $quoteRequestHandler;
 
     /**
+     * @var RequestStack
+     */
+    private $requestStack;
+
+    /**
      * @param WebsiteManager $websiteManager
      * @param QuoteRequestHandler $quoteRequestHandler
+     * @param RequestStack $requestStack
      */
-    public function __construct(WebsiteManager $websiteManager, QuoteRequestHandler $quoteRequestHandler)
-    {
+    public function __construct(
+        WebsiteManager $websiteManager,
+        QuoteRequestHandler $quoteRequestHandler,
+        RequestStack $requestStack
+    ) {
         $this->websiteManager = $websiteManager;
         $this->quoteRequestHandler = $quoteRequestHandler;
+        $this->requestStack = $requestStack;
     }
 
     /**
@@ -40,17 +51,10 @@ class QuoteUpdateHandlerEventListener
         if (!$quote->getWebsite()) {
             $quote->setWebsite($this->websiteManager->getDefaultWebsite());
         }
-    }
 
-    /**
-     * @param FormProcessEvent $event
-     */
-    public function beforeSubmit(FormProcessEvent $event)
-    {
-        /** @var Quote $quote */
-        $quote = $event->getData();
-
-        $quote->setCustomer($this->quoteRequestHandler->getCustomer());
-        $quote->setCustomerUser($this->quoteRequestHandler->getCustomerUser());
+        if (in_array($this->requestStack->getCurrentRequest()->getMethod(), ['POST', 'PUT'], true)) {
+            $quote->setCustomer($this->quoteRequestHandler->getCustomer());
+            $quote->setCustomerUser($this->quoteRequestHandler->getCustomerUser());
+        }
     }
 }
