@@ -34,7 +34,7 @@ use Oro\Bundle\RuleBundle\Model\ExtendRule;
  *      }
  * )
  */
-class Rule extends ExtendRule implements DatesAwareInterface
+class Rule extends ExtendRule implements DatesAwareInterface, RuleInterface
 {
     use DatesAwareTrait;
 
