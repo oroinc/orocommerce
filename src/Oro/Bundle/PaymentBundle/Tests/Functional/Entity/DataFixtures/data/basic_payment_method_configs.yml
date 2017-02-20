@@ -1,0 +1,23 @@
+payment.payment_method_config.1:
+    type: 'payment_term'
+    configs_rule_reference: 'payment.payment_methods_configs_rule.1'
+
+payment.payment_method_config.2:
+    type: 'pay_pal_1'
+    configs_rule_reference: 'payment.payment_methods_configs_rule.2'
+
+payment.payment_method_config.3:
+    type: 'pay_pal_2'
+    configs_rule_reference: 'payment.payment_methods_configs_rule.3'
+
+payment.payment_method_config.4:
+    type: 'money_order'
+    configs_rule_reference: 'payment.payment_methods_configs_rule.4'
+
+payment.payment_method_config.5:
+    type: 'money_order'
+    configs_rule_reference: 'payment.payment_methods_configs_rule.5'
+
+payment.payment_method_config.6:
+    type: 'money_order'
+    configs_rule_reference: 'payment.payment_methods_configs_rule.6'

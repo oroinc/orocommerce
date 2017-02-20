@@ -26,7 +26,7 @@ services:
     oro_alternativecheckout.provider.method_view_provider:
         class: 'Oro\Bundle\AlternativeCheckoutBundle\Layout\DataProvider\PaymentTermViewProvider'
         arguments:
-            - '@oro_payment.payment_method.view.registry'
-            - '@oro_payment.payment_method.registry'
+            - '@oro_payment_term.payment_method_view_provider.payment_term'
+            - '@oro_payment_term.payment_method_provider.payment_term'
         tags:
             - { name: layout.data_provider, alias: oro_alternativecheckout_payment_term_view_provider }
