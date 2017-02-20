@@ -10,6 +10,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
+use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
@@ -137,7 +138,9 @@ class QuoteController extends Controller
      */
     protected function update(Quote $quote)
     {
-        return $this->get('oro_form.model.update_handler')->update(
+        /* @var $handler UpdateHandler */
+        $handler = $this->get('oro_form.model.update_handler');
+        return $handler->update(
             $quote,
             $this->createForm(QuoteType::NAME, $quote),
             $this->get('translator')->trans('oro.sale.controller.quote.saved.message'),

@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\EventListener;
 
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
+
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\FormBundle\Event\FormHandler\FormProcessEvent;
@@ -22,15 +25,23 @@ class QuoteUpdateHandlerEventListenerTest extends \PHPUnit_Framework_TestCase
     /** @var QuoteUpdateHandlerEventListener */
     private $listener;
 
+    /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject */
+    private $requestStack;
+
     protected function setUp()
     {
         $this->websiteManager = $this->createMock(WebsiteManager::class);
         $this->quoteRequestHandler = $this->createMock(QuoteRequestHandler::class);
+        $this->requestStack = $this->createMock(RequestStack::class);
 
-        $this->listener = new QuoteUpdateHandlerEventListener($this->websiteManager, $this->quoteRequestHandler);
+        $this->listener = new QuoteUpdateHandlerEventListener(
+            $this->websiteManager,
+            $this->quoteRequestHandler,
+            $this->requestStack
+        );
     }
 
-    public function testBeforeDataSetNoWebsite()
+    public function testEnsureWebsite()
     {
         $quote = new Quote();
 
@@ -40,12 +51,12 @@ class QuoteUpdateHandlerEventListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->websiteManager->expects($this->once())->method('getDefaultWebsite')->willReturn($website);
 
-        $this->listener->beforeDataSet($formProcessEvent);
+        $this->listener->ensureWebsite($formProcessEvent);
 
         $this->assertSame($website, $quote->getWebsite());
     }
 
-    public function testBeforeDataSetWebsiteAlreadySet()
+    public function testEnsureWebsiteAlreadySet()
     {
         $quote = new Quote();
 
@@ -57,12 +68,12 @@ class QuoteUpdateHandlerEventListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->websiteManager->expects($this->never())->method('getDefaultWebsite');
 
-        $this->listener->beforeDataSet($formProcessEvent);
+        $this->listener->ensureWebsite($formProcessEvent);
 
         $this->assertSame($website, $quote->getWebsite());
     }
 
-    public function testBeforeSubmit()
+    public function testEnsureCustomer()
     {
         $quote = new Quote();
 
@@ -71,13 +82,33 @@ class QuoteUpdateHandlerEventListenerTest extends \PHPUnit_Framework_TestCase
         $customer = new Customer;
         $customerUser = new CustomerUser;
 
+        $request = $this->createMock(Request::class);
+        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
+        $request->expects($this->once())->method('getMethod')->willReturn('POST');
+
         $this->quoteRequestHandler->expects($this->once())->method('getCustomer')->willReturn($customer);
         $this->quoteRequestHandler->expects($this->once())->method('getCustomerUser')->willReturn($customerUser);
 
-        $this->listener->beforeSubmit($formProcessEvent);
+        $this->listener->ensureCustomer($formProcessEvent);
 
         $this->assertSame($customer, $quote->getCustomer());
         $this->assertSame($customerUser, $quote->getCustomerUser());
+    }
+
+    public function testEnsureCustomerOtherRequests()
+    {
+        $quote = new Quote();
+
+        $formProcessEvent = $this->createFormProcessEvent($quote);
+
+        $request = $this->createMock(Request::class);
+        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
+        $request->expects($this->once())->method('getMethod')->willReturn('GET'); //not our case
+
+        $this->quoteRequestHandler->expects($this->never())->method('getCustomer');
+        $this->quoteRequestHandler->expects($this->never())->method('getCustomerUser');
+
+        $this->listener->ensureCustomer($formProcessEvent);
     }
 
     /**

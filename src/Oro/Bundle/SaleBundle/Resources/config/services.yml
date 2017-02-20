@@ -144,9 +144,10 @@ services:
         arguments:
             - '@oro_website.manager'
             - '@oro_sale.service.quote_request_handler'
+            - '@request_stack'
         tags:
-            - { name: kernel.event_listener, event: oro.form.update_handler.before_form_data_set.oro_sale_quote, method: beforeDataSet }
-            - { name: kernel.event_listener, event: oro.form.update_handler.before_form_submit.oro_sale_quote, method: beforeSubmit }
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_form_data_set.oro_sale_quote, method: ensureWebsite }
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_form_data_set.oro_sale_quote, method: ensureCustomer }
 
     oro_sale.event_listener.customer_view:
         class: 'Oro\Bundle\SaleBundle\EventListener\CustomerViewListener'
