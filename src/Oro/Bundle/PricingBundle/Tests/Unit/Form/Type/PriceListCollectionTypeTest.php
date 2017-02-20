@@ -70,9 +70,9 @@ class PriceListCollectionTypeTest extends FormIntegrationTestCase
         return [
             'test' => [
                 'existing' => [
-                    (new PriceListToWebsite())->setPriority(100)->setPriceList($pl1)->setMergeAllowed(true),
-                    (new PriceListToWebsite())->setPriority(200)->setPriceList($pl2)->setMergeAllowed(false),
-                    (new PriceListToWebsite())->setPriority(300)->setPriceList($pl3)->setMergeAllowed(true)
+                    (new PriceListToWebsite())->setSortOrder(100)->setPriceList($pl1)->setMergeAllowed(true),
+                    (new PriceListToWebsite())->setSortOrder(200)->setPriceList($pl2)->setMergeAllowed(false),
+                    (new PriceListToWebsite())->setSortOrder(300)->setPriceList($pl3)->setMergeAllowed(true)
                 ],
                 'submitted' => [
                     [
@@ -97,9 +97,9 @@ class PriceListCollectionTypeTest extends FormIntegrationTestCase
                     ]
                 ],
                 'expected' => [
-                    (new PriceListToWebsite())->setPriority(400)->setPriceList($pl1)->setMergeAllowed(false),
-                    (new PriceListToWebsite())->setPriority(600)->setPriceList($pl2)->setMergeAllowed(true),
-                    (new PriceListToWebsite())->setPriority(500)->setPriceList($pl3)->setMergeAllowed(true)
+                    (new PriceListToWebsite())->setSortOrder(400)->setPriceList($pl1)->setMergeAllowed(false),
+                    (new PriceListToWebsite())->setSortOrder(600)->setPriceList($pl2)->setMergeAllowed(true),
+                    (new PriceListToWebsite())->setSortOrder(500)->setPriceList($pl3)->setMergeAllowed(true)
                 ]
             ]
         ];

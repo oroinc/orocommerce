@@ -56,7 +56,7 @@ class BasePriceListRelation implements WebsiteAwareInterface, PriceListAwareInte
      * @param int $priority
      * @return $this
      */
-    public function setPriority($priority)
+    public function setSortOrder($priority)
     {
         $this->sortOrder = $priority;
 

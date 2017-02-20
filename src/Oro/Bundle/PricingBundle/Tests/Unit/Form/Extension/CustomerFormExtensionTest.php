@@ -101,11 +101,11 @@ class CustomerFormExtensionTest extends FormIntegrationTestCase
                             [
                                 0 => (new PriceListToCustomer())
                                     ->setPriceList($this->getPriceList(PriceListSelectTypeStub::PRICE_LIST_1))
-                                    ->setPriority(200)
+                                    ->setSortOrder(200)
                                     ->setMergeAllowed(true),
                                 1 => (new PriceListToCustomer())
                                     ->setPriceList($this->getPriceList(PriceListSelectTypeStub::PRICE_LIST_2))
-                                    ->setPriority(100)
+                                    ->setSortOrder(100)
                                     ->setMergeAllowed(false)
                             ],
                     ],
