@@ -34,7 +34,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @When I drag :rowNum row on top in price lists collection
+     * @When I drag :rowNum row on top in price lists table
      * @param int $rowNum
      */
     public function dragPriceListOnTop($rowNum)
@@ -48,6 +48,16 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
                 $("div.pricing-price-list .sortable-wrapper").sortable("option", "stop")();
             })
         ');
+    }
+
+    /**
+     * @Then I should not see :text in price lists table
+     * @param string $text
+     */
+    public function iShouldNotSeeTextInPriceListCollection($text)
+    {
+        $priceLists = $this->elementFactory->createElement('PriceListCollection');
+        self::assertFalse($priceLists->has('named', ['content', $text]));
     }
 
     /**
