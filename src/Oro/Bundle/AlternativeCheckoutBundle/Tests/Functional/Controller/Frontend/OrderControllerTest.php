@@ -87,15 +87,15 @@ class OrderControllerTest extends FrontendWebTestCase
                     /** @var Subtotal $subtotal */
                     $subtotal = $propertyAccessor->getValue($sourceEntity, $columnName);
 
-                    $formattedPrice = $container->get('oro_locale.twig.number')->formatCurrency(
+                    $formattedPrice = $container->get('oro_locale.formatter.number')->formatCurrency(
                         $subtotal->getAmount(),
-                        ['currency' => $subtotal->getCurrency()]
+                        $subtotal->getCurrency()
                     );
                 } else {
                     $currencyField  = property_exists($sourceEntity, 'currency') ? 'currency' : 'totalCurrency';
-                    $formattedPrice = $container->get('oro_locale.twig.number')->formatCurrency(
+                    $formattedPrice = $container->get('oro_locale.formatter.number')->formatCurrency(
                         $propertyAccessor->getValue($sourceEntity, $columnName),
-                        ['currency' => $propertyAccessor->getValue($sourceEntity, $currencyField)]
+                        $propertyAccessor->getValue($sourceEntity, $currencyField)
                     );
                 }
 
