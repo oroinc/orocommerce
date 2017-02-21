@@ -16,7 +16,8 @@ class SlugTest extends \PHPUnit_Framework_TestCase
     {
         $properties = [
             ['id', 1],
-            ['url', 'test/page'],
+            ['url', '/test/page'],
+            ['slugPrototype', 'page'],
             ['routeName', 'oro_cms_page_view'],
             ['routeParameters', ['id' => 1]],
             ['localization', new Localization()]
@@ -28,40 +29,6 @@ class SlugTest extends \PHPUnit_Framework_TestCase
             ['redirects', new Redirect()],
             ['scopes', new Scope()]
         ]);
-    }
-
-    /**
-     * @param $fullUrl
-     * @param $slugUrl
-     * @dataProvider getSlugUrlDataProvider
-     */
-    public function testGetSlugUrl($fullUrl, $slugUrl)
-    {
-        $slug = new Slug();
-        $slug->setUrl($fullUrl);
-        $this->assertEquals($slugUrl, $slug->getSlugUrl());
-        $this->assertAttributeEquals(md5($slug->getUrl()), 'urlHash', $slug);
-    }
-
-    /**
-     * @return array
-     */
-    public function getSlugUrlDataProvider()
-    {
-        return [
-            'no slash' => [
-                'fullUrl' => 'first',
-                'slugUrl' => 'first',
-            ],
-            'one level' =>  [
-                'fullUrl' => '/first',
-                'slugUrl' => 'first',
-            ],
-            'two levels' => [
-                'fullUrl' => '/first/second',
-                'slugUrl' => 'second',
-            ],
-        ];
     }
 
     public function testToString()

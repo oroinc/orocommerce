@@ -19,6 +19,7 @@ use Oro\Bundle\OrganizationBundle\Entity\OrganizationInterface;
 use Oro\Bundle\ProductBundle\Model\ExtendProduct;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
+use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 
 /**
  * @ORM\Table(
@@ -520,6 +521,7 @@ class Product extends ExtendProduct implements
         $this->images = new ArrayCollection();
         $this->slugPrototypes = new ArrayCollection();
         $this->slugs = new ArrayCollection();
+        $this->slugPrototypesWithRedirect = new SlugPrototypesWithRedirect($this->slugPrototypes);
     }
 
     /**
@@ -1110,6 +1112,7 @@ class Product extends ExtendProduct implements
             $this->parentVariantLinks = new ArrayCollection();
             $this->slugPrototypes = new ArrayCollection();
             $this->slugs = new ArrayCollection();
+            $this->slugPrototypesWithRedirect = new SlugPrototypesWithRedirect($this->slugPrototypes);
             $this->variantFields = [];
         }
     }

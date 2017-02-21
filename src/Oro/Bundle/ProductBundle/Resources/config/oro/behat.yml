@@ -4,7 +4,7 @@ elements:
         class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     SlugPrototypesField:
-        selector: "input[name='oro_product[slugPrototypes][values][default]']"
+        selector: "input[name='oro_product[slugPrototypesWithRedirect][slugPrototypes][values][default]']"
         class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     QuickAddForm:
