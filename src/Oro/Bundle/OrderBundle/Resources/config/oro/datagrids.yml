@@ -717,12 +717,14 @@ datagrids:
                     data_name: product.sku
                 cDate:
                     data_name: calendarDate.date
+                dateGrouping:
+                    data_name: calendarDate.date
                 qtySold:
                     data_name: qtySold
                 productName:
                     data_name: productName
             default:
-                cDate: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+                dateGrouping: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
                 sku: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
         filters:
             columns:
