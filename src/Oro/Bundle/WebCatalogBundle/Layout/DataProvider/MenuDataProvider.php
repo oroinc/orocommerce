@@ -78,7 +78,9 @@ class MenuDataProvider
                 $rootNode = $this->getContentNodeRepository()->getRootNodeByWebCatalog($webCatalog);
                 $resolvedNode = $this->contentNodeTreeResolverFacade->getResolvedContentNode($rootNode, $scope);
 
-                $rootItem = $this->prepareItemsData($resolvedNode);
+                if ($resolvedNode) {
+                    $rootItem = $this->prepareItemsData($resolvedNode);
+                }
             }
         }
 

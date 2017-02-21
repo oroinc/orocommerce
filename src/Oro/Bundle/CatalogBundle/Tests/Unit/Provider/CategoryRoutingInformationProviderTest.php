@@ -4,6 +4,7 @@ namespace Oro\Bundle\CatalogBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Provider\CategoryRoutingInformationProvider;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProviderInterface;
 use Oro\Component\Routing\RouteData;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -17,9 +18,17 @@ class CategoryRoutingInformationProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected $provider;
 
+    /**
+     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $configManager;
+
     protected function setUp()
     {
-        $this->provider = new CategoryRoutingInformationProvider();
+        $this->configManager = $this->getMockBuilder(ConfigManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->provider = new CategoryRoutingInformationProvider($this->configManager);
     }
 
     public function testIsSupported()
@@ -34,7 +43,11 @@ class CategoryRoutingInformationProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetUrlPrefix()
     {
-        $this->assertSame('', $this->provider->getUrlPrefix(new Category()));
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_catalog.category_direct_url_prefix')
+            ->willReturn('prefix');
+        $this->assertSame('prefix', $this->provider->getUrlPrefix(new Category()));
     }
 
     public function testGetRouteData()

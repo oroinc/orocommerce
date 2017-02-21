@@ -24,9 +24,11 @@ class LocalizedSlugTypeStub extends LocalizedFallbackValueCollectionTypeStub
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
-            'source_field' => 'titles',
-            'slugify_component' => 'ororedirect/js/app/components/localized-field-slugify-component',
+            'slug_suggestion_enabled' => false,
             'slugify_route' => 'oro_api_slugify_slug',
+            'create_redirect_enabled' => false,
+            'localized_slug_component' => 'ororedirect/js/app/components/localized-slug-component'
         ]);
+        $resolver->setDefined('source_field');
     }
 }
