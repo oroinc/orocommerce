@@ -1,0 +1,41 @@
+operations:
+    oro_flat_rate_integration_deactivate:
+        extends: oro_integration_deactivate
+        for_all_entities: false
+        for_all_datagrids: false
+        replace:
+            - preactions
+            - preconditions
+            - frontend_options
+        preactions:
+            - '@assign_constant_value':
+                attribute: $.flatRateType
+                value: Oro\Bundle\FlatRateBundle\Integration\FlatRateChannelType::TYPE
+            - '@call_service_method':
+                attribute: $.actionAllowed
+                service: oro_integration.utils.edit_mode
+                method: isSwitchEnableAllowed
+                method_parameters: [$.data.editMode]
+            - '@call_service_method':
+                attribute: $.methodIdentifier
+                service: oro_flat_rate.method.identifier_generator.method
+                method: generateIdentifier
+                method_parameters: [$.data]
+            - '@call_service_method':
+                attribute: $.linkGrid
+                service: oro_shipping.helper.filtered_datagrid_route
+                method: generate
+                method_parameters:  [{'methodsConfigs': $.methodIdentifier}]
+        preconditions:
+            '@and':
+                - '@equal': [$type, $.flatRateType]
+                - '@equal': [$.actionAllowed, true]
+                - '@equal': [$.data.enabled, true]
+        frontend_options:
+            confirmation:
+                title: oro.flat_rate.rule.deactivate.title
+                okText: oro.flat_rate.rule.deactivate.button.okText
+                message: oro.flat_rate.rule.deactivate.massage
+                message_parameters:
+                    linkGrid: $.linkGrid
+                component: oroui/js/standart-confirmation
