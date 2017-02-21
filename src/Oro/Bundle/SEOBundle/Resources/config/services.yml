@@ -91,8 +91,8 @@ services:
         class: Oro\Bundle\SEOBundle\Tools\SitemapDumper
         arguments:
             - '@oro_seo.provider.sitemap_url_provider_registry'
-            - '@filesystem'
-            - '%kernel.root_dir%'
+            - '@oro_seo.tools.sitemap_storage_factory'
+            - '@oro_seo.tools.sitemap_file_writer'
 
     oro_seo.form.type.sitemap_changefreq:
         class: Oro\Bundle\SEOBundle\Form\Type\SitemapChangefreqType
@@ -103,3 +103,17 @@ services:
         class: Oro\Bundle\SEOBundle\Form\Type\SitemapPriorityType
         tags:
             - { name: form.type, alias: oro_sitemap_priority }
+
+    oro_seo.tools.sitemap_storage_factory:
+        public: false
+        class: Oro\Bundle\SEOBundle\Tools\SitemapStorageFactory
+
+    oro_seo.tools.sitemap_file_writer_factory:
+        class: Oro\Bundle\SEOBundle\Tools\SitemapFileWriterFactory
+        arguments:
+            - '@filesystem'
+            - '@logger'
+
+    oro_seo.tools.sitemap_file_writer:
+        class: Oro\Bundle\SEOBundle\Tools\SitemapFileWriter
+        factory:

@@ -2,15 +2,8 @@
 
 namespace Oro\Component\SEO\Model\DTO;
 
-interface UrlItemInterface
+interface UrlItemInterface extends SitemapItemInterface
 {
-    const ROOT_NODE_ELEMENT = 'url';
-
-    /**
-     * @return string
-     */
-    public function getLocation();
-
     /**
      * @return null|string
      */
@@ -20,9 +13,4 @@ interface UrlItemInterface
      * @return null|float
      */
     public function getPriority();
-
-    /**
-     * @return null|\DateTime
-     */
-    public function getLastModification();
 }

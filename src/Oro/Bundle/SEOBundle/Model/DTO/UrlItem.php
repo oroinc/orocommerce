@@ -4,13 +4,8 @@ namespace Oro\Bundle\SEOBundle\Model\DTO;
 
 use Oro\Component\SEO\Model\DTO\UrlItemInterface;
 
-class UrlItem implements UrlItemInterface
+class UrlItem extends SitemapItem implements UrlItemInterface
 {
-    /**
-     * @var string
-     */
-    private $location;
-
     /**
      * @var string
      */
@@ -22,34 +17,21 @@ class UrlItem implements UrlItemInterface
     private $priority;
 
     /**
-     * @var \DateTime
-     */
-    private $lastModification;
-
-    /**
      * @param string $location
+     * @param \DateTime $lastModification
      * @param string $changeFrequency
      * @param float $priority
-     * @param \DateTime $lastModification
      */
     public function __construct(
         $location,
+        \DateTime $lastModification = null,
         $changeFrequency = null,
-        $priority = null,
-        \DateTime $lastModification = null
+        $priority = null
     ) {
-        $this->location = $location;
+        parent::__construct($location, $lastModification);
+
         $this->changeFrequency = $changeFrequency;
         $this->priority = $priority;
-        $this->lastModification = $lastModification;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getLocation()
-    {
-        return $this->location;
     }
 
     /**
@@ -66,13 +48,5 @@ class UrlItem implements UrlItemInterface
     public function getPriority()
     {
         return $this->priority;
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getLastModification()
-    {
-        return $this->lastModification ? $this->lastModification : null;
     }
 }
