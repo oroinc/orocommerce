@@ -94,6 +94,7 @@ class CategoryTypeTest extends WebTestCase
             'appendProducts' => implode(',', $this->getProductIds($appendedProducts)),
             'removeProducts' => implode(',', $this->getProductIds($removedProducts)),
             'defaultProductOptions' => ['unitPrecision' => ['unit' => 'kg', 'precision' => 3]],
+            'inventoryThreshold' => ['scalarValue' => 0],
             '_token' => $this->tokenManager->getToken('category')->getValue(),
         ];
 
@@ -133,6 +134,48 @@ class CategoryTypeTest extends WebTestCase
         // assert related products
         $this->assertEquals($appendedProducts, $form->get('appendProducts')->getData());
         $this->assertEquals($removedProducts, $form->get('removeProducts')->getData());
+    }
+
+    public function testInventoryThresholdMandatoryField()
+    {
+        $doctrine = $this->getContainer()->get('doctrine');
+        $localizationRepository = $doctrine->getRepository('OroLocaleBundle:Localization');
+        /** @var Localization[] $localizations */
+        $localizations = $localizationRepository->findAll();
+
+        $defaultTitle = 'Default Title';
+        $defaultShortDescription = 'Default Short Description';
+        $defaultLongDescription = 'Default Long Description';
+        // prepare input array
+        $submitData = [
+            'titles' => [ 'values' => ['default' => $defaultTitle]],
+            'shortDescriptions' => ['values' => ['default' => $defaultShortDescription]],
+            'longDescriptions' => ['values' => [ 'default' => $defaultLongDescription]],
+            'defaultProductOptions' => ['unitPrecision' => ['unit' => 'kg', 'precision' => 3]],
+            '_token' => $this->tokenManager->getToken('category')->getValue(),
+        ];
+
+        foreach ($localizations as $localization) {
+            $localizationId = $localization->getId();
+            $submitData['titles']['values']['localizations'][$localizationId] = [
+                'use_fallback' => true,
+                'fallback' => FallbackType::SYSTEM
+            ];
+            $submitData['shortDescriptions']['values']['localizations'][$localizationId] = [
+                'use_fallback' => true,
+                'fallback' => FallbackType::SYSTEM
+            ];
+            $submitData['longDescriptions']['values']['localizations'][$localizationId] = [
+                'use_fallback' => true,
+                'fallback' => FallbackType::SYSTEM
+            ];
+        }
+
+        // submit form
+        $form = $this->formFactory->create(CategoryType::NAME, new Category());
+        $form->submit($submitData);
+        $this->assertFalse($form->isValid());
+        $this->assertStringStartsWith('inventoryThreshold', $form->getErrorsAsString());
     }
 
     /**

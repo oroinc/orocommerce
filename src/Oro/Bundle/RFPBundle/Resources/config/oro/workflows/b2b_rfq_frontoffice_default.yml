@@ -10,7 +10,7 @@ workflows:
 
         start_step: submitted
         force_autostart: true
-        steps_display_ordered: true
+        steps_display_ordered: false
         steps:
             submitted:
                 order: 10

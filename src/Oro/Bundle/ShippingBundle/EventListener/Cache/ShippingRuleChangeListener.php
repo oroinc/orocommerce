@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShippingBundle\EventListener\Cache;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
 use Oro\Bundle\RuleBundle\Entity\Rule;
+use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
@@ -30,7 +31,7 @@ class ShippingRuleChangeListener
     }
 
     /**
-     * @param Rule|ShippingMethodsConfigsRule|ShippingMethodConfig|ShippingMethodTypeConfig $entity
+     * @param RuleInterface|ShippingMethodsConfigsRule|ShippingMethodConfig|ShippingMethodTypeConfig $entity
      * @param LifecycleEventArgs $args
      */
     public function postPersist($entity, LifecycleEventArgs $args)
@@ -39,7 +40,7 @@ class ShippingRuleChangeListener
     }
 
     /**
-     * @param Rule|ShippingMethodsConfigsRule|ShippingMethodConfig|ShippingMethodTypeConfig $entity
+     * @param RuleInterface|ShippingMethodsConfigsRule|ShippingMethodConfig|ShippingMethodTypeConfig $entity
      * @param LifecycleEventArgs $args
      */
     public function postUpdate($entity, LifecycleEventArgs $args)
@@ -48,20 +49,21 @@ class ShippingRuleChangeListener
     }
 
     /**
-     * @param Rule|ShippingMethodsConfigsRule|ShippingMethodConfig|ShippingMethodTypeConfig $entity
+     * @param RuleInterface|ShippingMethodsConfigsRule|ShippingMethodConfig|ShippingMethodTypeConfig $entity
      * @param LifecycleEventArgs $args
      */
     public function postRemove($entity, LifecycleEventArgs $args)
     {
         $this->invalidateCache($entity, $args);
     }
-    
+
     /**
-     * @param Rule $rule
+     * @param RuleInterface $rule
      * @param LifecycleEventArgs $args
+     *
      * @return boolean
      */
-    protected function isShippingRule(Rule $rule, LifecycleEventArgs $args)
+    protected function isShippingRule(RuleInterface $rule, LifecycleEventArgs $args)
     {
         $repository = $args->getEntityManager()->getRepository(ShippingMethodsConfigsRule::class);
         if ($repository->findOneBy(['rule' => $rule])) {
@@ -71,7 +73,7 @@ class ShippingRuleChangeListener
     }
 
     /**
-     * @param Rule|ShippingMethodsConfigsRule|ShippingMethodConfig|ShippingMethodTypeConfig $entity
+     * @param RuleInterface|ShippingMethodsConfigsRule|ShippingMethodConfig|ShippingMethodTypeConfig $entity
      * @param LifecycleEventArgs $args
      */
     protected function invalidateCache($entity, LifecycleEventArgs $args)

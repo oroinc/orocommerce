@@ -23,3 +23,99 @@
 {% block oro_paypal_paypal_password_type_widget %}
     {{ block('password_widget') }}
 {% endblock %}
+
+{% block oro_paypal_settings_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    <fieldset class="form-horizontal">
+        <h5 class="user-fieldset">
+            <span>{{ 'oro.paypal.settings.form.groups.display_options.title'|trans }}</span>
+        </h5>
+        <div class="control-group control-group-choice">
+            <div class="control-label wrap">
+                {{ UI.tooltip('oro.paypal.settings.label.tooltip', {}, 'right') }}
+                {{ form_label(form.creditCardLabels) }}
+            </div>
+            <div class="controls">
+                {{ form_widget(form.creditCardLabels) }}
+            </div>
+        </div>
+        <div class="control-group control-group-choice">
+            <div class="control-label wrap">
+                {{ UI.tooltip('oro.paypal.settings.short_label.tooltip', {}, 'right') }}
+                {{ form_label(form.creditCardShortLabels) }}
+            </div>
+            <div class="controls">
+                {{ form_widget(form.creditCardShortLabels) }}
+            </div>
+        </div>
+        {{ form_row(form.allowedCreditCardTypes) }}
+    </fieldset>
+    <fieldset class="form-horizontal">
+        <h5 class="user-fieldset">
+            <span>{{ 'oro.paypal.settings.form.groups.integration.title'|trans }}</span>
+        </h5>
+        {{ form_row(form.partner) }}
+        {{ form_row(form.vendor) }}
+        {{ form_row(form.user) }}
+        {{ form_row(form.password) }}
+        {{ form_row(form.testMode) }}
+    </fieldset>
+    <fieldset class="form-horizontal">
+        <h5 class="user-fieldset">
+            <span>{{ 'oro.paypal.settings.form.groups.advanced_settings.title'|trans }}</span>
+        </h5>
+        {{ form_row(form.creditCardPaymentAction) }}
+        {{ form_row(form.debugMode) }}
+        {{ form_row(form.requireCVVEntry) }}
+        <div class="control-group control-group-choice">
+            <div class="control-label wrap">
+                {{ UI.tooltip('oro.paypal.settings.zero_amount_authorization.tooltip', {}, 'right') }}
+                {{ form_label(form.zeroAmountAuthorization) }}
+            </div>
+            <div class="controls">
+                {{ form_widget(form.zeroAmountAuthorization) }}
+            </div>
+        </div>
+        {{ form_row(form.authorizationForRequiredAmount) }}
+    </fieldset>
+    <fieldset class="form-horizontal">
+        <h5 class="user-fieldset">
+            <span>{{ 'oro.paypal.settings.form.groups.connection.title'|trans }}</span>
+        </h5>
+        {{ form_row(form.useProxy) }}
+        {{ form_row(form.proxyHost) }}
+        {{ form_row(form.proxyPort) }}
+        {{ form_row(form.enableSSLVerification) }}
+    </fieldset>
+    <fieldset class="form-horizontal">
+        <h5 class="user-fieldset">
+            <span>{{ 'oro.paypal.settings.form.groups.express_checkout.title'|trans }}</span>
+        </h5>
+        {{ form_row(form.expressCheckoutName) }}
+        <div class="control-group control-group-choice">
+            <div class="control-label wrap">
+                {{ UI.tooltip('oro.paypal.settings.label.tooltip', {}, 'right') }}
+                {{ form_label(form.expressCheckoutLabels) }}
+            </div>
+            <div class="controls">
+                {{ form_widget(form.expressCheckoutLabels) }}
+            </div>
+        </div>
+        <div class="control-group control-group-choice">
+            <div class="control-label wrap">
+                {{ UI.tooltip('oro.paypal.settings.short_label.tooltip', {}, 'right') }}
+                {{ form_label(form.expressCheckoutShortLabels) }}
+            </div>
+            <div class="controls">
+                {{ form_widget(form.expressCheckoutShortLabels) }}
+            </div>
+        </div>
+        {{ form_row(form.expressCheckoutPaymentAction) }}
+    </fieldset>
+    <fieldset class="form-horizontal">
+        <h5 class="user-fieldset">
+            <span>{{ 'oro.paypal.settings.form.groups.other.title'|trans }}</span>
+        </h5>
+        {{ form_rest(form) }}
+    </fieldset>
+{% endblock %}

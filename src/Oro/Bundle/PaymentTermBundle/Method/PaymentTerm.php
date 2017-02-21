@@ -6,13 +6,12 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
-use Psr\Log\LoggerAwareInterface;
-use Psr\Log\LoggerAwareTrait;
+use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 
-class PaymentTerm implements PaymentMethodInterface, LoggerAwareInterface
+class PaymentTerm implements PaymentMethodInterface
 {
     const TYPE = 'payment_term';
 
@@ -25,21 +24,25 @@ class PaymentTerm implements PaymentMethodInterface, LoggerAwareInterface
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
-    use LoggerAwareTrait;
+    /** @var LoggerInterface */
+    private $logger;
 
     /**
      * @param PaymentTermProvider $paymentTermProvider
      * @param PaymentTermAssociationProvider $paymentTermAssociationProvider
      * @param DoctrineHelper $doctrineHelper
+     * @param LoggerInterface $logger
      */
     public function __construct(
         PaymentTermProvider $paymentTermProvider,
         PaymentTermAssociationProvider $paymentTermAssociationProvider,
-        DoctrineHelper $doctrineHelper
+        DoctrineHelper $doctrineHelper,
+        LoggerInterface $logger
     ) {
         $this->paymentTermProvider = $paymentTermProvider;
         $this->paymentTermAssociationProvider = $paymentTermAssociationProvider;
         $this->doctrineHelper = $doctrineHelper;
+        $this->logger = $logger;
     }
 
     /** {@inheritdoc} */
@@ -86,7 +89,7 @@ class PaymentTerm implements PaymentMethodInterface, LoggerAwareInterface
     }
 
     /** {@inheritdoc} */
-    public function getType()
+    public function getIdentifier()
     {
         return self::TYPE;
     }
