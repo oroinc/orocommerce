@@ -26,15 +26,15 @@ class RequestProductItemProcessor implements ProcessorInterface
             return;
         }
 
-        $this->processRequestData($productItem, $requestData);
-        $context->setRequestData($requestData);
+        $context->setRequestData($this->processRequestData($productItem, $requestData));
     }
 
     /**
      * @param RequestProductItem $productItem
      * @param array $requestData
+     * @return array
      */
-    protected function processRequestData(RequestProductItem $productItem, array &$requestData)
+    protected function processRequestData(RequestProductItem $productItem, array $requestData)
     {
         $currency = $productItem->getPrice() ? $productItem->getPrice()->getCurrency() : null;
         $value =  $productItem->getPrice() ? $productItem->getPrice()->getValue() : null;
@@ -52,5 +52,7 @@ class RequestProductItemProcessor implements ProcessorInterface
             $requestData['currency'] = $currency;
             $requestData['value'] = $value;
         }
+
+        return $requestData;
     }
 }

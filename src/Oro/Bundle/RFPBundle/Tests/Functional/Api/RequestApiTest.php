@@ -133,6 +133,9 @@ class RequestApiTest extends AbstractRequestApiTest
         );
     }
 
+    /**
+     * @return int
+     */
     public function testCreate()
     {
         $entityType = $this->getEntityType($this->getEntityClass());

@@ -23,20 +23,22 @@ class RequestEntityProcessor implements ProcessorInterface
             return;
         }
 
-        $this->processRequestData($requestData);
-        $context->setRequestData($requestData);
+        $context->setRequestData($this->processRequestData($requestData));
     }
 
     /**
      * @param array $requestData
+     * @return array
      */
-    protected function processRequestData(array &$requestData)
+    protected function processRequestData(array $requestData)
     {
         foreach ($this->getDisabledAttribute() as $attribute) {
             if (array_key_exists($attribute, $requestData)) {
                 unset($requestData[$attribute]);
             }
         }
+
+        return $requestData;
     }
 
     /**

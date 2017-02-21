@@ -22,8 +22,7 @@ class SortIncludedDataProcessorTest extends \PHPUnit_Framework_TestCase
     {
         /** @var ValueNormalizer|\PHPUnit_Framework_MockObject_MockObject $valueNormalizer */
         $valueNormalizer = $this->createMock(ValueNormalizer::class);
-        $valueNormalizer->expects($this->any())
-            ->method('normalizeValue')->willReturnArgument(0);
+        $valueNormalizer->expects($this->any())->method('normalizeValue')->willReturnArgument(0);
 
         $this->processor = new SortIncludedDataProcessor($valueNormalizer);
     }

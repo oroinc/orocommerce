@@ -33,8 +33,8 @@ class RequestAdditionalNoteApiTest extends AbstractRequestApiTest
     public function cgetParamsAndExpectation()
     {
         $maxCount = LoadRequestData::NUM_REQUESTS * (
-                LoadRequestAdditionalNoteData::NUM_CUSTOMER_NOTES + LoadRequestAdditionalNoteData::NUM_SELLER_NOTES
-            );
+            LoadRequestAdditionalNoteData::NUM_CUSTOMER_NOTES + LoadRequestAdditionalNoteData::NUM_SELLER_NOTES
+        );
 
         return [
             [

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Api\Processor;
 
+use Oro\Bundle\ApiBundle\Processor\ContextInterface;
 use Oro\Bundle\ApiBundle\Processor\FormContext;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\RFPBundle\Api\Processor\RequestProductItemProcessor;
@@ -18,6 +19,36 @@ class RequestProductItemProcessorTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->processor = new RequestProductItemProcessor();
+    }
+
+    public function testProcessWithNotFormContext()
+    {
+        /** @var ContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
+        $context = $this->createMock(ContextInterface::class);
+        $context->expects($this->never())->method($this->anything());
+
+        $this->processor->process($context);
+    }
+
+    public function testProcessWithoutRequestData()
+    {
+        /** @var FormContext|\PHPUnit_Framework_MockObject_MockObject $context */
+        $context = $this->createMock(FormContext::class);
+        $context->expects($this->any())->method('getRequestData')->willReturn([]);
+        $context->expects($this->never())->method('setRequestData');
+
+        $this->processor->process($context);
+    }
+
+    public function testProcessWithoutRequestProductItem()
+    {
+        /** @var FormContext|\PHPUnit_Framework_MockObject_MockObject $context */
+        $context = $this->createMock(FormContext::class);
+        $context->expects($this->any())->method('getRequestData')->willReturn(['currency' => 'USD', 'value' => 10]);
+        $context->expects($this->any())->method('getResult')->willReturn(null);
+        $context->expects($this->never())->method('setRequestData');
+
+        $this->processor->process($context);
     }
 
     /**

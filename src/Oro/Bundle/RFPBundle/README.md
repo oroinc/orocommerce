@@ -1,5 +1,5 @@
-Oro\Bundle\RFPBundle\OroRFPBundle
-===============================================
+OroRFPBundle
+============
 
 Table of Contents
 -----------------

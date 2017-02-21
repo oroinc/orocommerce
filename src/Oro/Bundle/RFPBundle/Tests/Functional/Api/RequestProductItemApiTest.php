@@ -45,6 +45,9 @@ class RequestProductItemApiTest extends AbstractRequestApiTest
         ];
     }
 
+    /**
+     * @return int
+     */
     public function testCreateEntity()
     {
         $entityType = $this->getEntityType($this->getEntityClass());
