@@ -22,6 +22,7 @@ oro.pricing:
         entity_description: Represents price list information
         id.label: Id
         name.label: Name
+        sortOrder.label: Sort Order
         default.label: Is Default
         active.label: Active
         currencies.label: Currencies

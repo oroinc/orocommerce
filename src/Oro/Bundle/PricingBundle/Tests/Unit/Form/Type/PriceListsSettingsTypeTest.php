@@ -73,12 +73,12 @@ class PriceListsSettingsTypeTest extends FormIntegrationTestCase
             PriceListsSettingsType::PRICE_LIST_COLLECTION_FIELD => [
                 [
                     PriceListSelectWithPriorityType::PRICE_LIST_FIELD => '2',
-                    '_position' => '300',
+                    PriceListSelectWithPriorityType::SORT_ORDER_FIELD => '300',
                     PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD => false
                 ],
                 [
                     PriceListSelectWithPriorityType::PRICE_LIST_FIELD => '1',
-                    '_position' => '400',
+                    PriceListSelectWithPriorityType::SORT_ORDER_FIELD => '400',
                     PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD => true
                 ],
             ]

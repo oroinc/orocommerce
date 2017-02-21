@@ -18,7 +18,6 @@ use Oro\Bundle\PricingBundle\EventListener\AbstractPriceListCollectionAwareListe
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\FormBundle\Form\Extension\SortableExtension;
 
 class CustomerFormExtensionTest extends FormIntegrationTestCase
 {
@@ -45,9 +44,7 @@ class CustomerFormExtensionTest extends FormIntegrationTestCase
                     CustomerType::NAME => new CustomerTypeStub()
                 ],
                 [
-                    CustomerType::NAME => [new CustomerFormExtension($listener)],
-                    ['form' => [new SortableExtension()]]
-
+                    CustomerType::NAME => [new CustomerFormExtension($listener)]
                 ]
             )
         ];
@@ -85,13 +82,13 @@ class CustomerFormExtensionTest extends FormIntegrationTestCase
                                 0 => [
                                     PriceListSelectWithPriorityType::PRICE_LIST_FIELD
                                         => (string)PriceListSelectTypeStub::PRICE_LIST_1,
-                                    '_position' => '200',
+                                    PriceListSelectWithPriorityType::SORT_ORDER_FIELD => '200',
                                     PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD => true,
                                 ],
                                 1 => [
                                     PriceListSelectWithPriorityType::PRICE_LIST_FIELD
                                         => (string)PriceListSelectTypeStub::PRICE_LIST_2,
-                                    '_position' => '100',
+                                    PriceListSelectWithPriorityType::SORT_ORDER_FIELD => '100',
                                     PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD => false,
                                 ]
                             ],
@@ -104,11 +101,11 @@ class CustomerFormExtensionTest extends FormIntegrationTestCase
                             [
                                 0 => (new PriceListToCustomer())
                                     ->setPriceList($this->getPriceList(PriceListSelectTypeStub::PRICE_LIST_1))
-                                    ->setPriority(200)
+                                    ->setSortOrder(200)
                                     ->setMergeAllowed(true),
                                 1 => (new PriceListToCustomer())
                                     ->setPriceList($this->getPriceList(PriceListSelectTypeStub::PRICE_LIST_2))
-                                    ->setPriority(100)
+                                    ->setSortOrder(100)
                                     ->setMergeAllowed(false)
                             ],
                     ],

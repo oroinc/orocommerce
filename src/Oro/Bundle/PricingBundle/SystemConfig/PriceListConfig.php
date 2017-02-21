@@ -15,7 +15,7 @@ class PriceListConfig implements PriceListAwareInterface
     /**
      * @var $integer
      */
-    protected $priority;
+    protected $sortOrder;
 
     /**
      * @var boolean
@@ -24,13 +24,13 @@ class PriceListConfig implements PriceListAwareInterface
 
     /**
      * @param PriceList|null $priceList
-     * @param int|string|null $priority
+     * @param int|string|null $sortOrder
      * @param null|boolean $mergeAllowed
      */
-    public function __construct(PriceList $priceList = null, $priority = null, $mergeAllowed = null)
+    public function __construct(PriceList $priceList = null, $sortOrder = null, $mergeAllowed = null)
     {
         $this->priceList = $priceList;
-        $this->priority = $priority;
+        $this->sortOrder = $sortOrder;
         $this->mergeAllowed = $mergeAllowed;
     }
 
@@ -56,18 +56,18 @@ class PriceListConfig implements PriceListAwareInterface
     /**
      * @return mixed
      */
-    public function getPriority()
+    public function getSortOrder()
     {
-        return $this->priority;
+        return $this->sortOrder;
     }
 
     /**
-     * @param int|string $priority
+     * @param int|string $sortOrder
      * @return $this
      */
-    public function setPriority($priority)
+    public function setSortOrder($sortOrder)
     {
-        $this->priority = (int)$priority;
+        $this->sortOrder = (int)$sortOrder;
 
         return $this;
     }

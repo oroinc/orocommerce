@@ -138,7 +138,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addColumn('price_list_id', 'integer', []);
         $table->addColumn('website_id', 'integer', []);
         $table->addColumn('customer_group_id', 'integer', []);
-        $table->addColumn('priority', 'integer', []);
+        $table->addColumn('sort_order', 'integer', []);
         $table->addColumn('merge_allowed', 'boolean', ['default' => true]);
         $table->setPrimaryKey(['customer_group_id', 'price_list_id', 'website_id']);
     }
@@ -154,7 +154,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addColumn('price_list_id', 'integer', []);
         $table->addColumn('website_id', 'integer', []);
         $table->addColumn('customer_id', 'integer', []);
-        $table->addColumn('priority', 'integer', []);
+        $table->addColumn('sort_order', 'integer', []);
         $table->addColumn('merge_allowed', 'boolean', ['default' => true]);
         $table->setPrimaryKey(['customer_id', 'price_list_id', 'website_id']);
     }
@@ -169,7 +169,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $table = $schema->createTable('oro_price_list_to_website');
         $table->addColumn('price_list_id', 'integer', []);
         $table->addColumn('website_id', 'integer', []);
-        $table->addColumn('priority', 'integer', []);
+        $table->addColumn('sort_order', 'integer', []);
         $table->addColumn('merge_allowed', 'boolean', ['default' => true]);
         $table->setPrimaryKey(['price_list_id', 'website_id']);
     }
@@ -949,7 +949,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addColumn('quantity', 'float', ['notnull' => false]);
         $table->addColumn('rule_condition', 'text', ['notnull' => false]);
         $table->addColumn('rule', 'text', ['notnull' => true]);
-        $table->addColumn('priority', 'integer', []);
+        $table->addColumn('sort_order', 'integer', []);
         $table->addColumn('quantity_expression', 'text', ['notnull' => false]);
         $table->addColumn('currency_expression', 'text', ['notnull' => false]);
         $table->addColumn('product_unit_expression', 'text', ['notnull' => false]);

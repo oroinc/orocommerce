@@ -18,7 +18,6 @@ use Oro\Bundle\CustomerBundle\Form\Type\CustomerGroupType;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\EventListener\CustomerGroupListener;
 use Oro\Bundle\PricingBundle\Form\Extension\CustomerGroupFormExtension;
-use Oro\Bundle\FormBundle\Form\Extension\SortableExtension;
 
 class CustomerGroupFormExtensionTest extends FormIntegrationTestCase
 {
@@ -45,8 +44,7 @@ class CustomerGroupFormExtensionTest extends FormIntegrationTestCase
                     CustomerGroupType::NAME => new CustomerGroupTypeStub()
                 ],
                 [
-                    CustomerGroupType::NAME => [new CustomerGroupFormExtension($listener)],
-                    ['form' => [new SortableExtension()]]
+                    CustomerGroupType::NAME => [new CustomerGroupFormExtension($listener)]
                 ]
             )
         ];
@@ -84,13 +82,13 @@ class CustomerGroupFormExtensionTest extends FormIntegrationTestCase
                                 0 => [
                                     PriceListSelectWithPriorityType::PRICE_LIST_FIELD
                                     => (string)PriceListSelectTypeStub::PRICE_LIST_1,
-                                    '_position' => '200',
+                                    PriceListSelectWithPriorityType::SORT_ORDER_FIELD => '200',
                                     PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD => true,
                                 ],
                                 1 => [
                                     PriceListSelectWithPriorityType::PRICE_LIST_FIELD
                                     => (string)PriceListSelectTypeStub::PRICE_LIST_2,
-                                    '_position' => '100',
+                                    PriceListSelectWithPriorityType::SORT_ORDER_FIELD => '100',
                                     PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD => false,
                                 ]
                             ],
@@ -103,11 +101,11 @@ class CustomerGroupFormExtensionTest extends FormIntegrationTestCase
                             [
                                 0 => (new PriceListToCustomerGroup())
                                     ->setPriceList($this->getPriceList(PriceListSelectTypeStub::PRICE_LIST_1))
-                                    ->setPriority(200)
+                                    ->setSortOrder(200)
                                     ->setMergeAllowed(true),
                                 1 => (new PriceListToCustomerGroup())
                                     ->setPriceList($this->getPriceList(PriceListSelectTypeStub::PRICE_LIST_2))
-                                    ->setPriority(100)
+                                    ->setSortOrder(100)
                                     ->setMergeAllowed(false)
                             ],
                     ],
