@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Entity;
 
-interface SluggableInterface extends LocalizedSlugPrototypeAwareInterface, SlugAwareInterface
+interface SluggableInterface extends LocalizedSlugPrototypeWithRedirectAwareInterface, SlugAwareInterface
 {
     /**
      * @return int

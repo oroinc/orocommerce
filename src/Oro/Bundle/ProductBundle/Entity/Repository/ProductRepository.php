@@ -150,7 +150,14 @@ class ProductRepository extends EntityRepository
      */
     public function selectNames(QueryBuilder $queryBuilder)
     {
-        $queryBuilder->addSelect('product_names')->innerJoin('product.names', 'product_names');
+        $queryBuilder
+            ->addSelect('product_names')
+            ->innerJoin(
+                'product.names',
+                'product_names',
+                Expr\Join::WITH,
+                $queryBuilder->expr()->isNull('product_names.localization')
+            );
 
         return $this;
     }
@@ -334,5 +341,20 @@ class ProductRepository extends EntityRepository
         }
 
         return $queryBuilder->getQuery()->getResult();
+    }
+
+    /**
+     * @param int $quantity
+     *
+     * @return QueryBuilder
+     */
+    public function getFeaturedProductsQueryBuilder($quantity)
+    {
+        $queryBuilder = $this->getProductWithNamesQueryBuilder()
+            ->setMaxResults($quantity)
+            ->orderBy('product.id', 'ASC');
+        $this->selectImages($queryBuilder);
+
+        return $queryBuilder;
     }
 }

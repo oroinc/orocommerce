@@ -94,6 +94,7 @@ class ContentNodeTreeResolverTest extends \PHPUnit_Framework_TestCase
         $cacheData = [
             'id' => 1,
             'identifier' => 'root',
+            'resolveVariantTitle' => true,
             'titles' => [
                 ['string' => 'Title 1', 'localization' => null, 'fallback' => FallbackType::NONE],
                 [
@@ -112,6 +113,7 @@ class ContentNodeTreeResolverTest extends \PHPUnit_Framework_TestCase
                 [
                     'id' => 2,
                     'identifier' => 'root__second',
+                    'resolveVariantTitle' => false,
                     'titles' => [
                         ['string' => 'Child Title 1', 'localization' => null, 'fallback' => FallbackType::NONE]
                     ],
@@ -139,7 +141,8 @@ class ContentNodeTreeResolverTest extends \PHPUnit_Framework_TestCase
             ),
             (new ResolvedContentVariant())
                 ->setData(['id' => 3, 'type' => 'test_type', 'test' => 1])
-                ->addLocalizedUrl((new LocalizedFallbackValue())->setString('/test'))
+                ->addLocalizedUrl((new LocalizedFallbackValue())->setString('/test')),
+            true
         );
         $expected->addChildNode(
             new ResolvedContentNode(
@@ -152,7 +155,8 @@ class ContentNodeTreeResolverTest extends \PHPUnit_Framework_TestCase
                 ),
                 (new ResolvedContentVariant())
                     ->setData(['id' => 7, 'type' => 'test_type', 'test' => 2])
-                    ->addLocalizedUrl((new LocalizedFallbackValue())->setString('/test/content'))
+                    ->addLocalizedUrl((new LocalizedFallbackValue())->setString('/test/content')),
+                false
             )
         );
 

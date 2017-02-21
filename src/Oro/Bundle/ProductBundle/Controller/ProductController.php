@@ -14,6 +14,7 @@ use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -232,5 +233,19 @@ class ProductController extends Controller
             },
             $this->get('translator')->trans('oro.product.controller.product.saved.message')
         );
+    }
+
+    /**
+     * @Route("/get-changed-urls/{id}", name="oro_product_get_changed_slugs", requirements={"id"="\d+"})
+     *
+     * @AclAncestor("oro_product_update")
+     *
+     * @param Product $product
+     * @return JsonResponse
+     */
+    public function getChangedSlugsAction(Product $product)
+    {
+        return new JsonResponse($this->get('oro_redirect.helper.changed_slugs_helper')
+            ->getChangedSlugsData($product, ProductType::class));
     }
 }
