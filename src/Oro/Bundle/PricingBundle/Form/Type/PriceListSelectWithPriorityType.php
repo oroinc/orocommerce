@@ -3,11 +3,9 @@
 namespace Oro\Bundle\PricingBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
-
-use Oro\Bundle\ValidationBundle\Validator\Constraints\Integer;
 
 class PriceListSelectWithPriorityType extends AbstractType
 {
@@ -36,16 +34,6 @@ class PriceListSelectWithPriorityType extends AbstractType
                 ]
             )
             ->add(
-                self::PRIORITY_FIELD,
-                HiddenType::class,
-                [
-                    'empty_data' => null,
-                    'required' => true,
-                    'label' => 'oro.pricing.pricelist.priority.label',
-                    'constraints' => [new NotBlank(), new Integer()],
-                ]
-            )
-            ->add(
                 self::MERGE_ALLOWED_FIELD,
                 'checkbox',
                 [
@@ -68,5 +56,16 @@ class PriceListSelectWithPriorityType extends AbstractType
     public function getBlockPrefix()
     {
         return self::NAME;
+    }
+
+    /**
+     * @param OptionsResolver $resolver
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver->setDefaults([
+            'sortable' => true,
+            'sortable_property_path' =>  self::PRIORITY_FIELD,
+        ]);
     }
 }

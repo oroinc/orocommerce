@@ -26,7 +26,8 @@ define(function(require) {
         },
 
         initSortable: function() {
-            this.$('.sortable-wrapper').sortable({
+            this.$('[data-name="field__variant-fields"]').sortable({
+                handle: '[data-name="sortable-handle"]',
                 tolerance: 'pointer',
                 delay: 100,
                 containment: 'parent',

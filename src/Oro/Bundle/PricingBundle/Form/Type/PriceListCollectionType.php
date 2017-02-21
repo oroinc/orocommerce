@@ -138,8 +138,6 @@ class PriceListCollectionType extends AbstractType
      */
     protected function isEmpty($item)
     {
-        return is_array($item)
-            && !$item[PriceListSelectWithPriorityType::PRICE_LIST_FIELD]
-            && !$item[PriceListSelectWithPriorityType::PRIORITY_FIELD];
+        return is_array($item) && !$item[PriceListSelectWithPriorityType::PRICE_LIST_FIELD];
     }
 }
