@@ -16,6 +16,7 @@ class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
     const SLUG_URL_PAGE = '/slug/page';
     const SLUG_TEST_DUPLICATE_URL = '/slug/first';
     const SLUG_TEST_DUPLICATE_REFERENCE = 'reference:/slug/first';
+    const SLUG_TEST_ONLY = '__test-only__';
 
     /**
      * {@inheritdoc}
@@ -24,7 +25,10 @@ class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
     {
         /** @var Page $page */
         $page = $this->getReference(LoadPageData::PAGE_1);
-        $this->createSlug($manager, self::SLUG_URL_ANONYMOUS, 'oro_cms_frontend_page_view', ['id' => $page->getId()]);
+        $anonymousSlug = $this
+            ->createSlug($manager, self::SLUG_URL_ANONYMOUS, 'oro_cms_frontend_page_view', ['id' => $page->getId()]);
+        $anonymousSlug->setSlugPrototype('anonymous');
+
         $this->createSlug($manager, self::SLUG_URL_USER, 'oro_customer_frontend_customer_user_index', []);
         $this->createSlug($manager, self::SLUG_TEST_DUPLICATE_URL, 'oro_customer_frontend_customer_user_index', []);
         $this->createSlug(
@@ -34,7 +38,10 @@ class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
             ['id' => $page->getId()],
             self::SLUG_TEST_DUPLICATE_REFERENCE
         );
-        $this->createSlug($manager, self::SLUG_URL_PAGE, 'oro_customer_frontend_customer_user_index', []);
+        $pageSlug = $this->createSlug($manager, self::SLUG_URL_PAGE, 'oro_customer_frontend_customer_user_index', []);
+        $pageSlug->setSlugPrototype('page');
+
+        $this->createSlug($manager, self::SLUG_TEST_ONLY, '__test__', []);
 
         $manager->flush();
     }

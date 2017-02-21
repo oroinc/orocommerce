@@ -5,21 +5,21 @@ namespace Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
-
-use Symfony\Component\Config\FileLocator;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
+use Oro\Bundle\RedirectBundle\Async\Topics;
+use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
+use Oro\Component\MessageQueue\Util\JSON;
+use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class LoadProductDemoData extends AbstractFixture implements ContainerAwareInterface
 {
@@ -64,7 +64,7 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
             $filePath = current($filePath);
         }
 
-        $handler = fopen($filePath, 'r');
+        $handler = fopen($filePath, 'rb');
         $headers = fgetcsv($handler, 1000, ',');
 
         $outOfStockStatus = $this->getOutOfStockInventoryStatus($manager);
@@ -72,6 +72,7 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
         $allImageTypes = $this->getImageTypes();
         $defaultAttributeFamily = $this->getDefaultAttributeFamily($manager);
 
+        $slugGenerator = $this->container->get('oro_entity_config.slug.generator');
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
 
@@ -114,6 +115,10 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
                 ->addShortDescription($shortDescription)
                 ->setType($row['type']);
 
+            $slugPrototype = new LocalizedFallbackValue();
+            $slugPrototype->setString($slugGenerator->slugify($row['name']));
+            $product->addSlugPrototype($slugPrototype);
+
             $productUnit = $this->getProductUnit($manager, $row['unit']);
 
             $productUnitPrecision = new ProductUnitPrecision();
@@ -137,11 +142,16 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
         fclose($handler);
 
         $manager->flush();
+
+        $this->container->get('oro_message_queue.client.message_producer')->send(
+            Topics::REGENERATE_DIRECT_URL_FOR_ENTITY_TYPE,
+            JSON::encode(Product::class)
+        );
     }
 
     /**
      * @param ObjectManager $manager
-     * @return AbstractEnumValue
+     * @return AbstractEnumValue|object
      *
      * @throws \InvalidArgumentException
      */

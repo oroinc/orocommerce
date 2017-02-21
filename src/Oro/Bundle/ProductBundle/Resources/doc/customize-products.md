@@ -12,6 +12,7 @@ This guide is intended for those already familiar with layouts. So, please, read
         - [Attribute Set (example 1)](./customize-pdp.md#attribute-set-example-1)
         - [Attribute Set (example 2)](./customize-pdp.md#attribute-set-example-2)
         - [Attribute Groups](./customize-pdp.md#attribute-groups)
+    - [Product Page Templates](./customize-pdp.md#product-page-templates)
  - [Product List Page](./customize-plp.md)
     - [Products only](./customize-plp.md#products-only)
     - [Static Block only](./customize-plp.md#static-block-only)

@@ -73,9 +73,15 @@ class PurchaseAction extends AbstractPaymentMethodAction
      */
     protected function isPaymentMethodSupportsValidation(PaymentTransaction $paymentTransaction)
     {
-        return $this->paymentMethodRegistry
-            ->getPaymentMethod($paymentTransaction->getPaymentMethod())
-            ->supports(PaymentMethodInterface::VALIDATE);
+        $methodIdentifier = $paymentTransaction->getPaymentMethod();
+        foreach ($this->paymentMethodRegistry->getPaymentMethodProviders() as $provider) {
+            if ($provider->hasPaymentMethod($methodIdentifier)) {
+                return $provider
+                    ->getPaymentMethod($paymentTransaction->getPaymentMethod())
+                    ->supports(PaymentMethodInterface::VALIDATE);
+            }
+        }
+        return false;
     }
 
     /**

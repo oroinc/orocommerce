@@ -60,7 +60,7 @@
 
     {% set generalData = generalData|merge([
         form_row(form.status),
-        form_row(form.slugPrototypes)
+        form_row(form.slugPrototypesWithRedirect)
     ]) %}
 
     {% if oro_is_product_primary_unit_visible() %}
@@ -128,6 +128,19 @@
                 'title': '',
                 'data': {
                     'images': form_row(form.images)
+                }
+            }]
+        }
+    }) %}
+
+    {% set dataBlocks = dataBlocks|merge({
+        'design': {
+            'title': 'oro.product.sections.design'|trans,
+            'priority': 0,
+            'subblocks': [{
+                'title': '',
+                'data': {
+                'pageTemplate': form_row(form.pageTemplate)
                 }
             }]
         }

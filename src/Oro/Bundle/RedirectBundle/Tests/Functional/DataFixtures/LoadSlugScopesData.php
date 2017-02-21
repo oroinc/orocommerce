@@ -12,6 +12,8 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 class LoadSlugScopesData extends AbstractFixture implements DependentFixtureInterface
 {
+    const SCOPE_KEY = 'slug_scope';
+
     /**
      * {@inheritdoc}
      */
@@ -25,6 +27,7 @@ class LoadSlugScopesData extends AbstractFixture implements DependentFixtureInte
             $scope->setCustomer($customer);
         }
         $manager->persist($scope);
+        $this->addReference(self::SCOPE_KEY, $scope);
 
         /** @var Slug $slug */
         $slug = $this->getReference(LoadSlugsData::SLUG_URL_USER);
