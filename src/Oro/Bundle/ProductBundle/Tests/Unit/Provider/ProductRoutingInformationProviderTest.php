@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\UnitProvider;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\ProductRoutingInformationProvider;
 use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProviderInterface;
@@ -17,9 +18,17 @@ class ProductRoutingInformationProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected $provider;
 
+    /**
+     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $configManager;
+
     protected function setUp()
     {
-        $this->provider = new ProductRoutingInformationProvider();
+        $this->configManager = $this->getMockBuilder(ConfigManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->provider = new ProductRoutingInformationProvider($this->configManager);
     }
 
     public function testIsSupported()
@@ -34,7 +43,11 @@ class ProductRoutingInformationProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetUrlPrefix()
     {
-        $this->assertSame('', $this->provider->getUrlPrefix(new Product()));
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_product.product_direct_url_prefix')
+            ->willReturn('prefix');
+        $this->assertSame('prefix', $this->provider->getUrlPrefix(new Product()));
     }
 
     public function testGetRouteData()

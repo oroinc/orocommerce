@@ -4,22 +4,36 @@ namespace Oro\Bundle\WebCatalogBundle\Form\Type;
 
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
-use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
+use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
-use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
 class ContentNodeType extends AbstractType
 {
     const NAME = 'oro_web_catalog_content_node';
+
+    /**
+     * @var RouterInterface
+     */
+    private $router;
+
+    /**
+     * @param RouterInterface $router
+     */
+    public function __construct(RouterInterface $router)
+    {
+        $this->router = $router;
+    }
 
     /**
      * @param FormBuilderInterface $builder
@@ -87,14 +101,19 @@ class ContentNodeType extends AbstractType
             $form = $event->getForm();
 
             if ($data->getParentNode() instanceof ContentNode) {
+                $url = null;
+                if ($data->getId()) {
+                    $url = $this->router->generate('oro_content_node_get_changed_urls', ['id' => $data->getId()]);
+                }
+
                 $form->add(
-                    'slugPrototypes',
-                    LocalizedSlugType::NAME,
+                    'slugPrototypesWithRedirect',
+                    LocalizedSlugWithRedirectType::NAME,
                     [
                         'label' => 'oro.webcatalog.contentnode.slug_prototypes.label',
                         'required' => true,
-                        'options' => ['constraints' => [new NotBlank(), new UrlSafe()]],
-                        'source_field' => 'titles'
+                        'source_field' => 'titles',
+                        'get_changed_slugs_url' => $url
                     ]
                 );
                 $form->add(

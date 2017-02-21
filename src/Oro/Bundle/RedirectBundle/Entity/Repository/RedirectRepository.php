@@ -3,38 +3,77 @@
 namespace Oro\Bundle\RedirectBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\RedirectBundle\Entity\Redirect;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 
 class RedirectRepository extends EntityRepository
 {
     /**
      * @param string $from
-     * @param Website|null $website
-     * @return array|Redirect[]
+     * @param ScopeCriteria|null $scopeCriteria
+     * @return null|Redirect
      */
-    public function findByFrom($from, Website $website = null)
+    public function findByUrl($from, ScopeCriteria $scopeCriteria = null)
     {
         $qb = $this->createQueryBuilder('redirect');
-        $qb->where(
-            $qb->expr()->andX(
-                $qb->expr()->eq('redirect.fromHash', ':fromHash'),
-                $qb->expr()->eq('redirect.from', ':fromUrl')
-            )
-        )
-        ->setMaxResults(1)
-        ->setParameters([
-            'fromHash' => md5($from),
-            'fromUrl' => $from
-        ]);
+        $qb->leftJoin('redirect.scopes', 'scope', Join::WITH)
+            ->where($qb->expr()->eq('redirect.fromHash', ':fromHash'))
+            ->andWhere($qb->expr()->eq('redirect.from', ':fromUrl'))
+            ->setParameters([
+                'fromHash' => md5($from),
+                'fromUrl' => $from
+            ]);
 
-        if ($website) {
-            $qb->andWhere($qb->expr()->eq('redirect.website', ':website'))
-                ->setParameter('website', $website);
+        if ($scopeCriteria) {
+            $qb->addSelect('scope.id as matchedScopeId');
+            $scopeCriteria->applyToJoinWithPriority($qb, 'scope');
+
+            $results = $qb->getQuery()->getResult();
+            foreach ($results as $result) {
+                /** @var Redirect $redirect */
+                $redirect = $result[0];
+                $matchedScopeId = $result['matchedScopeId'];
+                if ($matchedScopeId || $redirect->getScopes()->isEmpty()) {
+                    return $redirect;
+                }
+            }
         } else {
-            $qb->andWhere($qb->expr()->isNull('redirect.website'));
-        };
-        
-        return $qb->getQuery()->getOneOrNullResult();
+            $qb->andWhere($qb->expr()->isNull('scope.id'));
+
+            return $qb->getQuery()->getOneOrNullResult();
+        }
+
+        return null;
+    }
+
+    /**
+     * @param Slug $slug
+     */
+    public function updateRedirectsBySlug(Slug $slug)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->update($this->getEntityName(), 'redirect')
+            ->set('redirect.to', ':newUrl')
+            ->where($qb->expr()->eq('redirect.slug', ':slug'))
+            ->setParameter('newUrl', $slug->getUrl())
+            ->setParameter('slug', $slug);
+
+        $qb->getQuery()->execute();
+    }
+
+    /**
+     * @param Slug $slug
+     */
+    public function deleteCyclicRedirects(Slug $slug)
+    {
+        $qb = $this->getEntityManager()->createQueryBuilder();
+        $qb->delete($this->getEntityName(), 'redirect')
+            ->where($qb->expr()->eq('redirect.slug', ':slug'))
+            ->andWhere($qb->expr()->eq('redirect.from', 'redirect.to'))
+            ->setParameter('slug', $slug);
+
+        $qb->getQuery()->execute();
     }
 }

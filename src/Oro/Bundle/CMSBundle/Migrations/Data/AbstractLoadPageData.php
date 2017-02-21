@@ -3,6 +3,8 @@
 namespace Oro\Bundle\CMSBundle\Migrations\Data;
 
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\RedirectBundle\Async\Topics;
+use Oro\Component\MessageQueue\Util\JSON;
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -47,6 +49,11 @@ abstract class AbstractLoadPageData extends AbstractFixture implements Container
             }
         }
         $manager->flush();
+
+        $this->container->get('oro_message_queue.client.message_producer')->send(
+            Topics::REGENERATE_DIRECT_URL_FOR_ENTITY_TYPE,
+            JSON::encode(Page::class)
+        );
     }
 
     /**

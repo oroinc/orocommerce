@@ -14,8 +14,6 @@ use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 
 class SluggableEntityListener
 {
-    const SLUG_PROTOTYPE_FIELD = 'slugPrototypes';
-
     /**
      * @var MessageFactoryInterface
      */
@@ -70,17 +68,21 @@ class SluggableEntityListener
 
     /**
      * @param UnitOfWork $unitOfWork
-     * @return \Generator
+     * @return array
      */
     protected function getChangedSluggableEntities(UnitOfWork $unitOfWork)
     {
+        $result = [];
         foreach ($this->getUpdatedSlugs($unitOfWork) as $sluggableEntity) {
             foreach ($this->getLocalizedValues($unitOfWork) as $localizedFallbackValue) {
                 if ($sluggableEntity->hasSlugPrototype($localizedFallbackValue)) {
-                    yield $sluggableEntity;
+                    $result[] = $sluggableEntity;
+                    break;
                 }
             }
         }
+
+        return $result;
     }
 
     /**
@@ -128,7 +130,7 @@ class SluggableEntityListener
     {
         if ($this->configManager->get('oro_redirect.enable_direct_url')) {
             $message = $this->messageFactory->createMessage($entity);
-            $this->messageProducer->send(Topics::GENERATE_DIRECT_URL_FOR_ENTITY, $message);
+            $this->messageProducer->send(Topics::GENERATE_DIRECT_URL_FOR_ENTITIES, $message);
         }
     }
 }
