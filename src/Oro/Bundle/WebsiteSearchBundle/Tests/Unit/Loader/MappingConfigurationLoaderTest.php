@@ -62,11 +62,19 @@ class MappingConfigurationLoaderTest extends \PHPUnit_Framework_TestCase
             'Oro\Bundle\TestBundle2\Entity\Page' => [
                 'alias' => 'page_WEBSITE_ID',
                 'fields' => [
-                    [
+                    'title_LOCALIZATION_ID' => [
                         'name' => 'title_LOCALIZATION_ID',
                         'type' => 'text',
                     ],
-                    [
+                    'test_first_repeating_field' => [
+                        'name' => 'test_first_repeating_field',
+                        'type' => 'integer',
+                    ],
+                    'test_second_repeating_field' => [
+                        'name' => 'test_second_repeating_field',
+                        'type' => 'integer',
+                    ],
+                    'custom_field' => [
                         'name' => 'custom_field',
                         'type' => 'text',
                     ],
@@ -75,11 +83,11 @@ class MappingConfigurationLoaderTest extends \PHPUnit_Framework_TestCase
             'Oro\Bundle\TestBundle3\Entity\Product' => [
                 'alias' => 'product_WEBSITE_ID',
                 'fields' => [
-                    [
+                    'title_LOCALIZATION_ID' => [
                         'name' => 'title_LOCALIZATION_ID',
                         'type' => 'text',
                     ],
-                    [
+                    'price' => [
                         'name' => 'price',
                         'type' => 'decimal',
                     ],
