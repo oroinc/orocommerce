@@ -2,21 +2,31 @@
 
 namespace Oro\Bundle\PaymentBundle\Twig;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 use Oro\Bundle\PaymentBundle\Formatter\PaymentStatusLabelFormatter;
 
 class PaymentStatusExtension extends \Twig_Extension
 {
     const PAYMENT_STATUS_EXTENSION_NAME = 'oro_payment_status';
 
-    /** @var PaymentStatusLabelFormatter */
-    protected $paymentStatusLabelFormatter;
+    /** @var ContainerInterface */
+    protected $container;
 
     /**
-     * @param PaymentStatusLabelFormatter $paymentStatusLabelFormatter
+     * @param ContainerInterface $container
      */
-    public function __construct(PaymentStatusLabelFormatter $paymentStatusLabelFormatter)
+    public function __construct(ContainerInterface $container)
     {
-        $this->paymentStatusLabelFormatter = $paymentStatusLabelFormatter;
+        $this->container = $container;
+    }
+
+    /**
+     * @return PaymentStatusLabelFormatter
+     */
+    protected function getPaymentStatusLabelFormatter()
+    {
+        return $this->container->get('oro_payment.formatter.payment_status_label');
     }
 
     /**
@@ -35,9 +45,19 @@ class PaymentStatusExtension extends \Twig_Extension
         return [
             new \Twig_SimpleFunction(
                 'get_payment_status_label',
-                [$this->paymentStatusLabelFormatter, 'formatPaymentStatusLabel'],
+                [$this, 'formatPaymentStatusLabel'],
                 ['is_safe' => ['html']]
             )
         ];
+    }
+
+    /**
+     * @param string $paymentStatus
+     *
+     * @return string
+     */
+    public function formatPaymentStatusLabel($paymentStatus)
+    {
+        return $this->getPaymentStatusLabelFormatter()->formatPaymentStatusLabel($paymentStatus);
     }
 }

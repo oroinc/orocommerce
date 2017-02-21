@@ -53,8 +53,7 @@ services:
         class: Oro\Bundle\WebCatalogBundle\Twig\WebCatalogExtension
         public: false
         arguments:
-            - '@oro_web_catalog.content_node_tree_handler'
-            - '@oro_web_catalog.content_variant_type.registry'
+            - '@service_container'
         tags:
             - { name: twig.extension }
 

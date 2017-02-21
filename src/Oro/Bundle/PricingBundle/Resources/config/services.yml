@@ -650,7 +650,6 @@ services:
 
     oro_pricing.subtotal_processor.provider.subtotal_line_item:
         class: 'Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider'
-        public: false
         arguments:
             - '@translator'
             - '@oro_currency.rounding.price_rounding_service'
