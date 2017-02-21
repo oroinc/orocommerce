@@ -4,6 +4,11 @@ namespace Oro\Bundle\RFPBundle\Tests\Functional\Api;
 
 use Symfony\Component\HttpFoundation\Response;
 
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\RFPBundle\Entity\RequestProduct;
+use Oro\Bundle\RFPBundle\Entity\RequestProductItem;
 use Oro\Bundle\RFPBundle\Entity\Request;
 use Oro\Bundle\RFPBundle\Tests\Functional\DataFixtures\LoadRequestData;
 
@@ -131,8 +136,16 @@ class RequestApiTest extends AbstractRequestApiTest
     public function testCreate()
     {
         $entityType = $this->getEntityType($this->getEntityClass());
+        /** @var Product $product */
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        $product = (string)$product->getId();
+
+        /** @var ProductUnit $productUnit */
+        $productUnit = $this->getReference('product_unit.liter');
+
         $data = [
             'data' => [
+                'id' => '8da4d8e6',
                 'type' => $entityType,
                 'attributes' => [
                     'company' => 'Oro',
@@ -140,6 +153,61 @@ class RequestApiTest extends AbstractRequestApiTest
                     'lastName' => 'Rivera',
                     'email' => 'test@example.com'
                 ],
+                'relationships' => [
+                    'requestProducts' => [
+                        'data' => [
+                            [
+                                'type' => $this->getEntityType(RequestProduct::class),
+                                'id' => '8da4d8e7-6b25-4c5c-8075-b510f7bbb84f'
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            'included' => [
+                [
+                    'id' => '8da4d8e7-6b25-4c5c-8075-b510f7bbb84f',
+                    'type' => $this->getEntityType(RequestProduct::class),
+                    'attributes' => [
+                        'comment' => 'Test'
+                    ],
+                    'relationships' => [
+                        'request' => [
+                            'data' => ['type' => $this->getEntityType(Request::class), 'id' => '8da4d8e6']
+                        ],
+                        'product' => [
+                            'data' => ['type' => $this->getEntityType(Product::class), 'id' => $product]
+                        ],
+                        'requestProductItems' => [
+                            'data' => [
+                                [
+                                    'type' => $this->getEntityType(RequestProductItem::class),
+                                    'id' => '707dda0d-35f5-47b9-b2ce-a3e92b9fdee7'
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+                [
+                    'id' => '707dda0d-35f5-47b9-b2ce-a3e92b9fdee7',
+                    'type' => $this->getEntityType(RequestProductItem::class),
+                    'attributes' => [
+                        'quantity' => 10,
+                        'value' => 100,
+                        'currency' => 'USD'
+                    ],
+                    'relationships' => [
+                        'productUnit' => [
+                            'data' => ['type' => 'productunits', 'id' => $productUnit->getCode()]
+                        ],
+                        'requestProduct' => [
+                            'data' => [
+                                'type' => $this->getEntityType(RequestProduct::class),
+                                'id' => '8da4d8e7-6b25-4c5c-8075-b510f7bbb84f'
+                            ]
+                        ]
+                    ]
+                ]
             ]
         ];
 

@@ -231,6 +231,14 @@ services:
         tags:
             - { name: oro.api.processor, action: create, group: load_data, priority: -50, class: '%oro_rfp.entity.request.class%' }
 
+    oro_rfp.api.sort_included_data.processor:
+        class: 'Oro\Bundle\RFPBundle\Api\Processor\SortIncludedDataProcessor'
+        arguments:
+            - '@oro_api.value_normalizer'
+        tags:
+            - { name: oro.api.processor, action: create, group: normalize_input, requestType: json_api, priority: -40, class: '%oro_rfp.entity.request.class%' }
+            - { name: oro.api.processor, action: update, group: normalize_input, requestType: json_api, priority: -40, class: '%oro_rfp.entity.request.class%' }
+
     oro_rfp.api.update_request_product_item.processor:
         class: 'Oro\Bundle\RFPBundle\Api\Processor\RequestProductItemProcessor'
         tags:
