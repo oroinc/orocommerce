@@ -2,19 +2,21 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Functional\Controller;
 
-use Symfony\Component\DomCrawler\Form;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
-use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Form;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class CategoryControllerTest extends WebTestCase
 {
@@ -48,9 +50,9 @@ class CategoryControllerTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
         $this->loadFixtures([
-            'Oro\Bundle\LocaleBundle\Tests\Functional\DataFixtures\LoadLocalizationData',
-            'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
-            'Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData'
+            LoadLocalizationData::class,
+            LoadProductData::class,
+            LoadCategoryData::class
         ]);
         $this->localizations = $this->getContainer()
             ->get('doctrine')
@@ -60,6 +62,62 @@ class CategoryControllerTest extends WebTestCase
             ->get('doctrine')
             ->getRepository('OroCatalogBundle:Category')
             ->getMasterCatalogRoot();
+    }
+
+    public function testGetChangedUrlsWhenSlugChanged()
+    {
+        /** @var Category $category */
+        $category = $this->getReference(LoadCategoryData::FIRST_LEVEL);
+        if (method_exists($category, 'setDefaultSlugPrototype')) {
+            $category->setDefaultSlugPrototype('old-default-slug');
+        }
+
+        $englishLocalization = $this->getContainer()->get('oro_locale.manager.localization')
+            ->getDefaultLocalization(false);
+
+        $englishSlugPrototype = new LocalizedFallbackValue();
+        $englishSlugPrototype->setString('old-english-slug')->setLocalization($englishLocalization);
+
+        $entityManager = $this->getContainer()->get('doctrine')->getManagerForClass(Category::class);
+        $category->addSlugPrototype($englishSlugPrototype);
+
+        $entityManager->persist($category);
+        $entityManager->flush();
+
+        /** @var Localization $englishLocalization */
+        $englishCALocalization = $this->getReference('en_CA');
+
+        $crawler = $this->client->request('GET', $this->getUrl('oro_catalog_category_update', [
+            'id' => $category->getId()
+        ]));
+
+        $form = $crawler->selectButton('Save')->form();
+        $formValues = $form->getPhpValues();
+        $formValues['oro_catalog_category']['slugPrototypesWithRedirect'] = [
+            'slugPrototypes' => [
+                'values' => [
+                    'default' => 'default-slug',
+                    'localizations' => [
+                        $englishLocalization->getId() => ['value' => 'english-slug'],
+                        $englishCALocalization->getId() => ['value' => 'old-default-slug']
+                    ]
+                ]
+            ]
+        ];
+
+        $this->client->request(
+            'POST',
+            $this->getUrl('oro_catalog_category_get_changed_slugs', ['id' => $category->getId()]),
+            $formValues
+        );
+
+        $expectedData = [
+            'Default Value' => ['before' => '/old-default-slug', 'after' => '/default-slug'],
+            'English' => ['before' => '/old-english-slug','after' => '/english-slug']
+        ];
+
+        $response = $this->client->getResponse();
+        $this->assertJsonStringEqualsJsonString(json_encode($expectedData), $response->getContent());
     }
 
     public function testIndex()
@@ -238,6 +296,27 @@ class CategoryControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         self::assertResponseStatusCodeEquals($result, 500);
+    }
+
+    public function testGetChangedUrlsWhenNoSlugChanged()
+    {
+        $category = $this->getReference(LoadCategoryData::FIRST_LEVEL);
+
+        $crawler = $this->client->request('GET', $this->getUrl('oro_catalog_category_update', [
+            'id' => $category->getId()
+        ]));
+
+        $form = $crawler->selectButton('Save')->form();
+        $formValues = $form->getPhpValues();
+
+        $this->client->request(
+            'POST',
+            $this->getUrl('oro_catalog_category_get_changed_slugs', ['id' => $category->getId()]),
+            $formValues
+        );
+
+        $response = $this->client->getResponse();
+        $this->assertEquals('[]', $response->getContent());
     }
 
     public function testMove()

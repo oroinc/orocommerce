@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Entity\Stub;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 
 class ContentNodeStub implements ContentNodeInterface
@@ -29,5 +30,21 @@ class ContentNodeStub implements ContentNodeInterface
     public function getContentVariants()
     {
         return [];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTitles()
+    {
+        return new ArrayCollection();
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isRewriteVariantTitle()
+    {
+        return true;
     }
 }

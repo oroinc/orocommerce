@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit;
 
-use Oro\Bundle\RedirectBundle\DependencyInjection\Compiler\RoutingCompilerPass;
+use Oro\Bundle\RedirectBundle\DependencyInjection\Compiler\ContextUrlProviderCompilerPass;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Compiler\RoutingInformationProviderCompilerPass;
 use Oro\Bundle\RedirectBundle\OroRedirectBundle;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -25,8 +25,8 @@ class OroRedirectBundleTest extends \PHPUnit_Framework_TestCase
         $this->assertCount(2, $passes);
 
         $expectedPasses = [
-            new RoutingCompilerPass(),
-            new RoutingInformationProviderCompilerPass()
+            new RoutingInformationProviderCompilerPass(),
+            new ContextUrlProviderCompilerPass()
         ];
 
         foreach ($expectedPasses as $expectedPass) {

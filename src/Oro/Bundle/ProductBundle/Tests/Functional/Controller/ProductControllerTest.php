@@ -2,18 +2,21 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller;
 
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFeaturedProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class ProductControllerTest extends WebTestCase
 {
@@ -75,6 +78,8 @@ class ProductControllerTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
     }
+
+
 
     public function testIndex()
     {
@@ -568,6 +573,80 @@ class ProductControllerTest extends WebTestCase
     }
 
     /**
+     * @depends testUpdate
+     */
+    public function testGetChangedUrlsWhenNoSlugChanged()
+    {
+        /** @var Product $product */
+        $product = $this->getProductDataBySku(self::UPDATED_SKU);
+
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $product->getId()]));
+        $form = $crawler->selectButton('Save')->form();
+        $formValues = $form->getPhpValues();
+
+        $this->client->request(
+            'POST',
+            $this->getUrl('oro_product_get_changed_slugs', ['id' => $product->getId()]),
+            $formValues
+        );
+
+        $response = $this->client->getResponse();
+        $this->assertEquals('[]', $response->getContent());
+    }
+
+    /**
+     * @depends testUpdate
+     */
+    public function testGetChangedUrlsWhenSlugChanged()
+    {
+        $englishLocalization = $this->getContainer()->get('oro_locale.manager.localization')
+            ->getDefaultLocalization(false);
+
+        /** @var Product $product */
+        $product = $this->getProductDataBySku(self::UPDATED_SKU);
+
+        $product->getSlugPrototypes()->clear();
+
+        $product->setDefaultSlugPrototype('old-default-slug');
+        $slugPrototype = new LocalizedFallbackValue();
+        $slugPrototype->setString('old-english-slug')->setLocalization($englishLocalization);
+
+        $product->addSlugPrototype($slugPrototype);
+
+        $entityManager = $this->getContainer()->get('doctrine')->getManagerForClass(Product::class);
+        $entityManager->persist($product);
+        $entityManager->flush();
+
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $product->getId()]));
+        $form = $crawler->selectButton('Save')->form();
+        $formValues = $form->getPhpValues();
+        $formValues['oro_product']['slugPrototypesWithRedirect'] = [
+            'slugPrototypes' => [
+                'values' => [
+                    'default' => 'default-slug',
+                    'localizations' => [
+                        $englishLocalization->getId() => ['value' => 'english-slug'],
+                    ]
+                ]
+            ]
+        ];
+
+        $this->client->request(
+            'POST',
+            $this->getUrl('oro_product_get_changed_slugs', ['id' => $product->getId()]),
+            $formValues
+        );
+
+        $expectedData = [
+            'Default Value' => ['before' => '/old-default-slug', 'after' => '/default-slug'],
+            'English' => ['before' => '/old-english-slug','after' => '/english-slug']
+        ];
+
+        $response = $this->client->getResponse();
+        $this->assertJsonStringEqualsJsonString(json_encode($expectedData), $response->getContent());
+    }
+
+    /**
      * @depends testSaveAndDuplicate
      * @param int $id
      */
@@ -602,6 +681,27 @@ class ProductControllerTest extends WebTestCase
 
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 404);
+    }
+
+    public function testFeaturedProductsOnFrontendRootAfterUpdatingProduct()
+    {
+        $this->loadFixtures([LoadFeaturedProductData::class]);
+        $product = $this->getProductDataBySku('product-7');
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('oro_product_update', ['id' => $product->getId()])
+        );
+        $form    = $crawler->selectButton('Save and Close')->form();
+        $this->client->followRedirects(true);
+        $this->client->submit($form);
+
+        $this->initClient(
+            [],
+            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
+        );
+        $crawler = $this->client->request('GET', $this->getUrl('oro_frontend_root'));
+
+        $this->assertEquals(12, $crawler->filter('.featured-product')->count());
     }
 
     /**
