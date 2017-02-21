@@ -16,9 +16,9 @@ layout:
                         currentCategory: '=data["category"].getCurrentCategory()'
                         parentCategories: '=data["category"].getParentCategories()'
                 category_title:
-                    blockType: category
+                    blockType: text
                     options:
-                        category: '=data["category"].getCurrentCategory()'
+                        text: '=data["locale"].getLocalizedValue(data["category"].getCurrentCategory().getTitles())'
             tree:
                 page_content:
                     category_picture: ~

@@ -72,38 +72,13 @@ class WebCatalogCacheProcessor implements MessageProcessorInterface, TopicSubscr
     {
         try {
             $webCatalogId = JSON::decode($message->getBody());
-            $webCatalog = $this->registry
-                ->getManagerForClass(WebCatalog::class)
-                ->find(WebCatalog::class, $webCatalogId);
-
-            /** @var ContentNodeRepository $contentNodeRepo */
-            $contentNodeRepo = $this->registry
-                ->getManagerForClass(ContentNode::class)
-                ->getRepository(ContentNode::class);
-            $rootNode = $contentNodeRepo->getRootNodeByWebCatalog($webCatalog);
 
             $result = $this->jobRunner->runUnique(
                 $message->getMessageId(),
                 Topics::CALCULATE_WEB_CATALOG_CACHE,
-                function (JobRunner $jobRunner) use ($webCatalog, $rootNode) {
-                    $scopes = $this->scopeMatcher->getUsedScopes($webCatalog);
-
-                    foreach ($scopes as $scope) {
-                        $jobRunner->createDelayed(
-                            sprintf(
-                                '%s:%s:%s',
-                                Topics::CALCULATE_CONTENT_NODE_TREE_BY_SCOPE,
-                                $webCatalog->getId(),
-                                $scope->getId()
-                            ),
-                            function (JobRunner $jobRunner, Job $child) use ($rootNode, $scope) {
-                                $this->producer->send(Topics::CALCULATE_CONTENT_NODE_TREE_BY_SCOPE, [
-                                    'contentNode' => $rootNode->getId(),
-                                    'scope' => $scope->getId(),
-                                    'jobId' => $child->getId(),
-                                ]);
-                            }
-                        );
+                function (JobRunner $jobRunner) use ($webCatalogId) {
+                    foreach ($this->getWebCatalogs($webCatalogId) as $webCatalog) {
+                        $this->scheduleCacheRecalculationForWebCatalog($jobRunner, $webCatalog);
                     }
 
                     return true;
@@ -123,6 +98,65 @@ class WebCatalogCacheProcessor implements MessageProcessorInterface, TopicSubscr
         }
 
         return $result ? self::ACK : self::REJECT;
+    }
+
+    /**
+     * @param int|array|null $webCatalogId
+     * @return array
+     */
+    protected function getWebCatalogs($webCatalogId)
+    {
+        $repository = $this->registry
+            ->getManagerForClass(WebCatalog::class)
+            ->getRepository(WebCatalog::class);
+
+        if ($webCatalogId) {
+            return $repository->findBy(['id' => $webCatalogId]);
+        } else {
+            return $repository->findAll();
+        }
+    }
+
+    /**
+     * @param JobRunner $jobRunner
+     * @param WebCatalog $webCatalog
+     */
+    protected function scheduleCacheRecalculationForWebCatalog(JobRunner $jobRunner, WebCatalog $webCatalog)
+    {
+        $rootNode = $this->getRootNodeByWebCatalog($webCatalog);
+        $scopes = $this->scopeMatcher->getUsedScopes($webCatalog);
+
+        foreach ($scopes as $scope) {
+            $jobRunner->createDelayed(
+                sprintf(
+                    '%s:%s:%s',
+                    Topics::CALCULATE_CONTENT_NODE_TREE_BY_SCOPE,
+                    $webCatalog->getId(),
+                    $scope->getId()
+                ),
+                function (JobRunner $jobRunner, Job $child) use ($rootNode, $scope) {
+                    $this->producer->send(Topics::CALCULATE_CONTENT_NODE_TREE_BY_SCOPE, [
+                        'contentNode' => $rootNode->getId(),
+                        'scope' => $scope->getId(),
+                        'jobId' => $child->getId(),
+                    ]);
+                }
+            );
+        }
+    }
+
+    /**
+     * @param WebCatalog $webCatalog
+     * @return ContentNode
+     */
+    protected function getRootNodeByWebCatalog(WebCatalog $webCatalog)
+    {
+        /** @var ContentNodeRepository $contentNodeRepo */
+        $contentNodeRepo = $this->registry
+            ->getManagerForClass(ContentNode::class)
+            ->getRepository(ContentNode::class);
+
+        return $contentNodeRepo->getRootNodeByWebCatalog($webCatalog);
     }
 
     /**

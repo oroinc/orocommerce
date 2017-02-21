@@ -2,9 +2,28 @@ system_configuration:
     groups:
         catalog:
             title: oro.catalog.system_configuration.groups.catalog.title
+    fields:
+        oro_catalog.category_direct_url_prefix:
+            data_type: string
+            type: oro_redirect_sluggable_prefix
+            options:
+                label: oro.catalog.system_configuration.fields.category_direct_url_prefix.label
+                data_transformer: oro_redirect.form.transformer.prefix_with_redirect_to_string
+                required: false
+                constraints:
+                    - Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe: ~
 
     tree:
         system_configuration:
+            platform:
+                children:
+                    websites:
+                        children:
+                            routing:
+                                children:
+                                    oro_redirect_direct_urls:
+                                        children:
+                                            - oro_catalog.category_direct_url_prefix
             commerce:
                 children:
                     catalog:
