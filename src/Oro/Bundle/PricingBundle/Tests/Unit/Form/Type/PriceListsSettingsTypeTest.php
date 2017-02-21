@@ -52,13 +52,13 @@ class PriceListsSettingsTypeTest extends FormIntegrationTestCase
             [
                 PriceListsSettingsType::FALLBACK_FIELD => PriceListWebsiteFallback::CURRENT_WEBSITE_ONLY,
                 PriceListsSettingsType::PRICE_LIST_COLLECTION_FIELD => [
-                    (new PriceListToWebsite())->setPriority(100)->setPriceList($pl1)->setMergeAllowed(true),
-                    (new PriceListToWebsite())->setPriority(200)->setPriceList($pl2)->setMergeAllowed(false),
+                    (new PriceListToWebsite())->setSortOrder(100)->setPriceList($pl1)->setMergeAllowed(true),
+                    (new PriceListToWebsite())->setSortOrder(200)->setPriceList($pl2)->setMergeAllowed(false),
                 ]
             ],
             [
                 PriceListsSettingsType::PRICE_LIST_RELATION_CLASS
-                    => 'Oro\Bundle\PricingBundle\Entity\PriceListToWebsite',
+                => 'Oro\Bundle\PricingBundle\Entity\PriceListToWebsite',
                 PriceListsSettingsType::FALLBACK_CHOICES => [
                     PriceListWebsiteFallback::CONFIG =>
                         'oro.pricing.fallback.config.label',
@@ -73,12 +73,12 @@ class PriceListsSettingsTypeTest extends FormIntegrationTestCase
             PriceListsSettingsType::PRICE_LIST_COLLECTION_FIELD => [
                 [
                     PriceListSelectWithPriorityType::PRICE_LIST_FIELD => '2',
-                    PriceListSelectWithPriorityType::SORT_ORDER_FIELD => '300',
+                    '_position' => '300',
                     PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD => false
                 ],
                 [
                     PriceListSelectWithPriorityType::PRICE_LIST_FIELD => '1',
-                    PriceListSelectWithPriorityType::SORT_ORDER_FIELD => '400',
+                    '_position' => '400',
                     PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD => true
                 ],
             ]
@@ -88,8 +88,8 @@ class PriceListsSettingsTypeTest extends FormIntegrationTestCase
         $this->assertEquals([
             PriceListsSettingsType::FALLBACK_FIELD => PriceListWebsiteFallback::CURRENT_WEBSITE_ONLY,
             PriceListsSettingsType::PRICE_LIST_COLLECTION_FIELD => [
-                (new PriceListToWebsite())->setPriority(400)->setPriceList($pl1)->setMergeAllowed(true),
-                (new PriceListToWebsite())->setPriority(300)->setPriceList($pl2)->setMergeAllowed(false),
+                (new PriceListToWebsite())->setSortOrder(400)->setPriceList($pl1)->setMergeAllowed(true),
+                (new PriceListToWebsite())->setSortOrder(300)->setPriceList($pl2)->setMergeAllowed(false),
             ]
         ], $form->getData());
     }

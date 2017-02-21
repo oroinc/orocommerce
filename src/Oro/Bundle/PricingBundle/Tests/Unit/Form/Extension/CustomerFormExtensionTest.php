@@ -18,6 +18,7 @@ use Oro\Bundle\PricingBundle\EventListener\AbstractPriceListCollectionAwareListe
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\FormBundle\Form\Extension\SortableExtension;
 
 class CustomerFormExtensionTest extends FormIntegrationTestCase
 {
@@ -44,7 +45,9 @@ class CustomerFormExtensionTest extends FormIntegrationTestCase
                     CustomerType::NAME => new CustomerTypeStub()
                 ],
                 [
-                    CustomerType::NAME => [new CustomerFormExtension($listener)]
+                    CustomerType::NAME => [new CustomerFormExtension($listener)],
+                    ['form' => [new SortableExtension()]]
+
                 ]
             )
         ];
@@ -81,14 +84,14 @@ class CustomerFormExtensionTest extends FormIntegrationTestCase
                             [
                                 0 => [
                                     PriceListSelectWithPriorityType::PRICE_LIST_FIELD
-                                        => (string)PriceListSelectTypeStub::PRICE_LIST_1,
-                                    PriceListSelectWithPriorityType::SORT_ORDER_FIELD => '200',
+                                    => (string)PriceListSelectTypeStub::PRICE_LIST_1,
+                                    '_position' => '200',
                                     PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD => true,
                                 ],
                                 1 => [
                                     PriceListSelectWithPriorityType::PRICE_LIST_FIELD
-                                        => (string)PriceListSelectTypeStub::PRICE_LIST_2,
-                                    PriceListSelectWithPriorityType::SORT_ORDER_FIELD => '100',
+                                    => (string)PriceListSelectTypeStub::PRICE_LIST_2,
+                                    '_position' => '100',
                                     PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD => false,
                                 ]
                             ],

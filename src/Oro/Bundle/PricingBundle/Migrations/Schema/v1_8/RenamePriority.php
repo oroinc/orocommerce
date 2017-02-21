@@ -29,23 +29,22 @@ class RenamePriority implements Migration, RenameExtensionAwareInterface
 
         $priceListToCusGroup = $schema->getTable('oro_price_list_to_cus_group');
         $priceListToCustomer = $schema->getTable('oro_price_list_to_customer');
-        $priceListToWebsite  = $schema->getTable('oro_price_list_to_website');
+        $priceListToWebsite = $schema->getTable('oro_price_list_to_website');
 
-        if($priceListToCusGroup->hasColumn(self::OLD_COLUMN_NAME)) {
+        if ($priceListToCusGroup->hasColumn(self::OLD_COLUMN_NAME)) {
             $extension->renameColumn($schema, $queries, $priceListToCusGroup, 'priority', 'sort_order');
         }
 
-        if( $priceListToCustomer->hasColumn(self::OLD_COLUMN_NAME)) {
+        if ($priceListToCustomer->hasColumn(self::OLD_COLUMN_NAME)) {
             $extension->renameColumn($schema, $queries, $priceListToCustomer, 'priority', 'sort_order');
         }
 
-        if($priceListToWebsite->hasColumn(self::OLD_COLUMN_NAME)) {
+        if ($priceListToWebsite->hasColumn(self::OLD_COLUMN_NAME)) {
             $extension->renameColumn($schema, $queries, $priceListToWebsite, 'priority', 'sort_order');
         }
-        
     }
 
-    /**
+    /**ccd
      * {@inheritdoc}
      */
     public function setRenameExtension(RenameExtension $renameExtension)
@@ -53,4 +52,3 @@ class RenamePriority implements Migration, RenameExtensionAwareInterface
         $this->renameExtension = $renameExtension;
     }
 }
-

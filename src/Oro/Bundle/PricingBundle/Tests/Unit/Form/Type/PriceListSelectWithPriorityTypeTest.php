@@ -63,7 +63,7 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
     {
         $options = [
             'sortable' => true,
-            'sortable_property_path' => "[priority]",
+            'sortable_property_path' => "[sort_order]",
             'allow_extra_fields' => true,
         ];
 
@@ -96,7 +96,7 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     'priceList' => $expectedPriceList,
-                    'priority' => 100,
+                    'sort_order' => 100,
                     'mergeAllowed' => true,
                 ],
             ],
@@ -109,7 +109,7 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     'priceList' => $expectedPriceList,
-                    'priority' => 100,
+                    'sort_order' => 100,
                     'mergeAllowed' => false,
                 ],
             ],
@@ -125,7 +125,7 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     'priceList' => $expectedPriceList,
-                    'priority' => 100,
+                    'sort_order' => 100,
                     'mergeAllowed' => true,
                 ],
             ],
@@ -141,7 +141,7 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
                 ],
                 'expectedData' => [
                     'priceList' => $expectedPriceList,
-                    'priority' => 100,
+                    'sort_order' => 100,
                     'mergeAllowed' => false,
                 ],
             ],
