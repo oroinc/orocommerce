@@ -744,6 +744,7 @@ datagrids:
                     calendar_entity: %oro_report.calendar_date.entity.class%
                     target_entity: %oro_order.entity.order.class%
                     not_nullable_field: product.id
+                    joined_column: createdAt
             default:
                 grouping:
                     value: day
