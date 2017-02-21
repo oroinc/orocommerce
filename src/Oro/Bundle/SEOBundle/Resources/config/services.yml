@@ -116,4 +116,4 @@ services:
 
     oro_seo.tools.sitemap_file_writer:
         class: Oro\Bundle\SEOBundle\Tools\SitemapFileWriter
-        factory:
+        factory: 'oro_seo.tools.sitemap_file_writer_factory:create'
