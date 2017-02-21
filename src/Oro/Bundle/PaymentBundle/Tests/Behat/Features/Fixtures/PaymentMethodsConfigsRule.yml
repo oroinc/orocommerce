@@ -16,7 +16,9 @@ Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule:
     payment_methods_configs_rule1:
         rule: '@paymentRule1'
         currency: 'USD'
+        organization: '@organization'
     payment_methods_configs_rule2:
         rule: '@paymentRule2'
         currency: 'EUR'
+        organization: '@organization'
 

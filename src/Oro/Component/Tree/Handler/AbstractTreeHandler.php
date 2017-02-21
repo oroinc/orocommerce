@@ -5,6 +5,8 @@ namespace Oro\Component\Tree\Handler;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 
+use Oro\Bundle\UIBundle\Model\TreeItem;
+
 use Oro\Component\Tree\Entity\Repository\NestedTreeRepository;
 
 abstract class AbstractTreeHandler
@@ -64,9 +66,9 @@ abstract class AbstractTreeHandler
         $connection->beginTransaction();
 
         try {
-            $this->moveProcessing($entityId, $parentId, $position);
+            $entity = $this->moveProcessing($entityId, $parentId, $position);
 
-            $em->flush();
+            $em->flush($entity);
             $connection->commit();
         } catch (\Exception $e) {
             $connection->rollBack();
@@ -75,6 +77,47 @@ abstract class AbstractTreeHandler
         }
 
         return $status;
+    }
+
+    /**
+     * @param object|null $root
+     * @param bool        $includeRoot
+     * @return TreeItem[]
+     */
+    public function getTreeItemList($root = null, $includeRoot = true)
+    {
+        $nodes = $this->createTree($root, $includeRoot);
+
+        $items = [];
+
+        foreach ($nodes as $node) {
+            $items[$node['id']] = new TreeItem($node['id'], $node['text']);
+        }
+
+        foreach ($nodes as $node) {
+            if (array_key_exists($node['parent'], $items)) {
+                /** @var TreeItem $treeItem */
+                $treeItem = $items[$node['id']];
+                $treeItem->setParent($items[$node['parent']]);
+            }
+        }
+
+        return $items;
+    }
+
+    /**
+     * @param TreeItem[] $sourceData
+     * @param array      $treeData
+     */
+    public function disableTreeItems(array $sourceData, array &$treeData)
+    {
+        foreach ($treeData as &$treeItem) {
+            foreach ($sourceData as $sourceItem) {
+                if ($sourceItem->getKey() === $treeItem['id'] || $sourceItem->hasChildRecursive($treeItem['id'])) {
+                    $treeItem['state']['disabled'] = true;
+                }
+            }
+        }
     }
 
     /**
@@ -146,6 +189,7 @@ abstract class AbstractTreeHandler
      * @param int $entityId
      * @param int $parentId
      * @param int $position
+     * @return object $entity
      */
     abstract protected function moveProcessing($entityId, $parentId, $position);
 
