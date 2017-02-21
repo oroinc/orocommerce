@@ -29,7 +29,6 @@ Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem:
         invoice:
             - NotBlank: ~
         productSku:
-            - NotBlank:
             - Length:
                 max: 255
         quantity:
@@ -41,8 +40,6 @@ Oro\Bundle\InvoiceBundle\Entity\InvoiceLineItem:
         productUnit:
             - NotBlank:
                 message: 'oro.product.productunit.invalid'
-        productUnitCode:
-            - NotBlank:
         sortOrder:
             - NotBlank: ~
         price:
