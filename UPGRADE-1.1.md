@@ -86,3 +86,9 @@ VisibilityBundle
 ----------------
 - Class `Oro\Bundle\VisibilityBundle\Driver\AbstractCustomerPartialUpdateDriver`
     - changed the return type of `getCustomerVisibilityIterator` method from `BufferedQueryResultIterator` to `BufferedQueryResultIteratorInterface`
+
+
+RedirectBundle
+--------------
+- `Oro\Bundle\RedirectBundle\Entity\Redirect`
+    - removed property `website` in favour of `scopes` collection using

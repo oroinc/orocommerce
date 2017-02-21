@@ -121,7 +121,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($message);
         $this->messageProducer->expects($this->once())
             ->method('send')
-            ->with(Topics::GENERATE_DIRECT_URL_FOR_ENTITY, $message);
+            ->with(Topics::GENERATE_DIRECT_URL_FOR_ENTITIES, $message);
 
         $this->sluggableEntityListener->postPersist($args);
     }
@@ -261,7 +261,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($message);
         $this->messageProducer->expects($this->once())
             ->method('send')
-            ->with(Topics::GENERATE_DIRECT_URL_FOR_ENTITY, $message);
+            ->with(Topics::GENERATE_DIRECT_URL_FOR_ENTITIES, $message);
 
         $this->sluggableEntityListener->onFlush($event);
     }
@@ -304,7 +304,7 @@ class SluggableEntityListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn($message);
         $this->messageProducer->expects($this->once())
             ->method('send')
-            ->with(Topics::GENERATE_DIRECT_URL_FOR_ENTITY, $message);
+            ->with(Topics::GENERATE_DIRECT_URL_FOR_ENTITIES, $message);
 
         $this->sluggableEntityListener->onFlush($event);
     }
