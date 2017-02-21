@@ -24,13 +24,14 @@ class PriceListCollectionTypeExtensionsProvider
         $entityType = new EntityType([]);
 
         return [
-            new PreloadedExtension([
-                CollectionType::NAME => new CollectionType(),
-                PriceListSelectWithPriorityType::NAME => new PriceListSelectWithPriorityType(),
-                PriceListSelectType::NAME => new PriceListSelectTypeStub(),
-                PriceListCollectionType::NAME => new PriceListCollectionType(),
-                $entityType->getName() => $entityType,
-            ],
+            new PreloadedExtension(
+                [
+                    CollectionType::NAME => new CollectionType(),
+                    PriceListSelectWithPriorityType::NAME => new PriceListSelectWithPriorityType(),
+                    PriceListSelectType::NAME => new PriceListSelectTypeStub(),
+                    PriceListCollectionType::NAME => new PriceListCollectionType(),
+                    $entityType->getName() => $entityType,
+                ],
                 ['form' => [new SortableExtension()]]
             ),
             new ValidatorExtension(Validation::createValidator())

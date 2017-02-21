@@ -60,13 +60,14 @@ class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
         $priceListWithPriorityType = new PriceListSelectWithPriorityType();
 
         return [
-            new PreloadedExtension([
-                $oroCollectionType::NAME => $oroCollectionType,
-                $priceListCollectionType::NAME => $priceListCollectionType,
-                $priceListWithPriorityType::NAME => $priceListWithPriorityType,
-                PriceListSelectType::NAME => new PriceListSelectTypeStub(),
-                $entityType->getName() => $entityType,
-            ],
+            new PreloadedExtension(
+                [
+                    $oroCollectionType::NAME => $oroCollectionType,
+                    $priceListCollectionType::NAME => $priceListCollectionType,
+                    $priceListWithPriorityType::NAME => $priceListWithPriorityType,
+                    PriceListSelectType::NAME => new PriceListSelectTypeStub(),
+                    $entityType->getName() => $entityType,
+                ],
                 ['form' => [new SortableExtension()]]
             ),
             new ValidatorExtension(Validation::createValidator())
