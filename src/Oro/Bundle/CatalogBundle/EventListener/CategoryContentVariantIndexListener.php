@@ -8,6 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\UnitOfWork;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 
+use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ContentNodeFieldsChangesAwareInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
@@ -15,13 +16,25 @@ use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 
-class CategoryContentVariantIndexListener
+class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwareInterface
 {
-    /** @var ProductIndexScheduler */
+    /**
+     * @var ProductIndexScheduler
+     */
     protected $indexScheduler;
 
-    /** @var PropertyAccessorInterface */
+    /**
+     * @var PropertyAccessorInterface
+     */
     protected $accessor;
+
+    /**
+     * List of fields of ContentNode that this class will listen to changes.
+     * If any of fields have any changes, product reindexation will be triggered.
+     *
+     * @var array
+     */
+    protected $fieldsChangesListenTo = ['titles'];
 
     /**
      * @param ProductIndexScheduler $indexScheduler
@@ -31,6 +44,26 @@ class CategoryContentVariantIndexListener
     {
         $this->indexScheduler = $indexScheduler;
         $this->accessor = $accessor;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addField($fieldName)
+    {
+        if (!in_array($fieldName, $this->fieldsChangesListenTo, true)) {
+            $this->fieldsChangesListenTo[] = $fieldName;
+        }
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFields()
+    {
+        return $this->fieldsChangesListenTo;
     }
 
     /**

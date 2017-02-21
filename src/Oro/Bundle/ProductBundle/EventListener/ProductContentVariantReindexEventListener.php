@@ -11,14 +11,25 @@ use Doctrine\ORM\Event\OnFlushEventArgs;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
+use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ContentNodeFieldsChangesAwareInterface;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductPageContentVariantType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 
-class ProductContentVariantReindexEventListener
+class ProductContentVariantReindexEventListener implements ContentNodeFieldsChangesAwareInterface
 {
-    /** @var EventDispatcherInterface */
+    /**
+     * @var EventDispatcherInterface
+     */
     private $eventDispatcher;
+
+    /**
+     * List of fields of ContentNode that this class will listen to changes.
+     * If any of fields have any changes, product reindexation will be triggered.
+     *
+     * @var array
+     */
+    protected $fieldsChangesListenTo = ['titles'];
 
     /**
      * @param EventDispatcherInterface $eventDispatcher
@@ -26,6 +37,26 @@ class ProductContentVariantReindexEventListener
     public function __construct(EventDispatcherInterface $eventDispatcher)
     {
         $this->eventDispatcher = $eventDispatcher;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function addField($fieldName)
+    {
+        if (!in_array($fieldName, $this->fieldsChangesListenTo, true)) {
+            $this->fieldsChangesListenTo[] = $fieldName;
+        }
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getFields()
+    {
+        return $this->fieldsChangesListenTo;
     }
 
     /**
