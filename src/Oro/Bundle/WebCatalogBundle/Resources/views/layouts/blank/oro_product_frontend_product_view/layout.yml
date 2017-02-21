@@ -5,6 +5,6 @@ layout:
             optionName: value
             optionValue: '=data["web_catalog_title"].getTitle(defaultValue)'
         - '@setOption':
-            id: product_view_title
-            optionName: value
-            optionValue: '=data["web_catalog_title"].getTitle(defaultValue)'
+            id: product_view_attribute_group_general_attribute_localized_fallback_names
+            optionName: translated_value
+            optionValue: '=data["web_catalog_title"].getTitle(data["locale"].getLocalizedValue(value))'
