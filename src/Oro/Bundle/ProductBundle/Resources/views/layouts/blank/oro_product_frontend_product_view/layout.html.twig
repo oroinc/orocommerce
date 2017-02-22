@@ -134,7 +134,21 @@
             arrows: true
         } %}
 
-        {% if product.imagesByType('additional')|length == 1 %}
+
+        {% if product.imagesByType('main')|length == 0 and  product.imagesByType('additional')|length == 0%}
+            <div class="product-view-media__gallery">
+                <div class="product-gallery__image-item">
+                    {% set productImage = product.imagesByType('main')|length > 0 ? product.imagesByType('main').first.image : null %}
+                    <img class="product-gallery__image"
+                         src="{{ Image.url(productImage, 'product_large') }}"
+                         alt="{{ product.names|localized_value }}"
+                         width="378"
+                         height="378"
+                         data-trigger-gallery-open
+                    />
+                </div>
+            </div>
+        {% elseif product.imagesByType('main')|length == 1 and product.imagesByType('additional')|length == 0 %}
             <div class="product-view-media__gallery">
                 <div class="product-gallery__image-item">
                     {% set productImage = product.imagesByType('main')|length > 0 ? product.imagesByType('main').first.image : null %}
@@ -150,6 +164,23 @@
                                 data-page-component-options="{{ zoomOptions|json_encode }}"
                             {% endif %}
                     />
+                </div>
+            </div>
+        {% elseif product.imagesByType('additional')|length == 1 %}
+            <div class="product-view-media__gallery">
+                <div class="product-gallery__image-item">
+                    {% set productImage = product.imagesByType('additional').first %}
+                        <div class="product-gallery__image-item" data-trigger-gallery-open>
+                            <img class="product-gallery__image"
+                                 data-url-zoom="{{ Image.url(productImage.image, 'product_original') }}"
+                                        {% if productImage.image %}
+                                            src="{{ Image.url(productImage.image, 'product_extra_large') }}"
+                                            data-zoom-image="{{ Image.url(productImage.image, 'product_original') }}"
+                                            data-page-component-module="oroui/js/app/components/viewport-component"
+                                            data-page-component-options="{{ zoomOptions|json_encode }}"
+                                        {% endif %}
+                            />
+                        </div>
                 </div>
             </div>
         {% else %}
