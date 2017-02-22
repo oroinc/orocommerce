@@ -4,8 +4,8 @@ navigation:
             shopping_list:
                 label:           'oro.shoppinglist.entity_plural_label'
                 route:           'oro_shopping_list_index'
+                position:        100
                 extras:
-                    position:    100
                     routes:      ['oro_shopping_list_index', 'oro_shopping_list_view']
                     description: 'oro.shoppinglist.menu.shopping_list.description'
 
@@ -18,8 +18,8 @@ navigation:
             frontend_shopping_list:
                 label:           'oro.shoppinglist.entity_plural_label'
                 route:           'oro_shopping_list_frontend_view'
+                position:        200
                 extras:
-                    position:    200
                     description: 'oro.shoppinglist.menu.shopping_list.description'
 
         tree:

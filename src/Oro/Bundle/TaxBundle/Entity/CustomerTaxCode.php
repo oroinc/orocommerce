@@ -10,6 +10,8 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
+use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
+use Oro\Bundle\UserBundle\Entity\Ownership\UserAwareTrait;
 
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\TaxBundle\Entity\Repository\CustomerTaxCodeRepository")
@@ -25,12 +27,25 @@ use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
  *          },
  *          "dataaudit"={
  *              "auditable"=true
+ *          },
+ *          "ownership"={
+ *              "owner_type"="USER",
+ *              "owner_field_name"="owner",
+ *              "owner_column_name"="user_owner_id",
+ *              "organization_field_name"="organization",
+ *              "organization_column_name"="organization_id"
+ *          },
+ *          "security"={
+ *              "type"="ACL",
+ *              "group_name"="commerce"
  *          }
  *      }
  * )
  */
-class CustomerTaxCode extends AbstractTaxCode
+class CustomerTaxCode extends AbstractTaxCode implements OrganizationAwareInterface
 {
+    use UserAwareTrait;
+
     /**
      * @ORM\ManyToMany(targetEntity="Oro\Bundle\CustomerBundle\Entity\Customer")
      * @ORM\JoinTable(

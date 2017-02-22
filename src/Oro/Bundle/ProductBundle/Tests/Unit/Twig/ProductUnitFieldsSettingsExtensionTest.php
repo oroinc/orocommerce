@@ -2,55 +2,75 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Twig;
 
+use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Twig\ProductUnitFieldsSettingsExtension;
 use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
+use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
 class ProductUnitFieldsSettingsExtensionTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var ProductUnitFieldsSettingsInterface
-     */
+    use TwigExtensionTestCaseTrait;
+
+    /** @var \PHPUnit_Framework_MockObject_MockObject */
     protected $productUnitFieldsSettings;
 
-    /**
-     * @var ProductUnitFieldsSettingsExtension
-     */
+    /** @var ProductUnitFieldsSettingsExtension */
     protected $extension;
 
     protected function setUp()
     {
         $this->productUnitFieldsSettings = $this->createMock(ProductUnitFieldsSettingsInterface::class);
-        $this->extension = new ProductUnitFieldsSettingsExtension($this->productUnitFieldsSettings);
+
+        $container = self::getContainerBuilder()
+            ->add('oro_product.visibility.product_unit_fields_settings', $this->productUnitFieldsSettings)
+            ->getContainer($this);
+
+        $this->extension = new ProductUnitFieldsSettingsExtension($container);
     }
 
-    public function testGetFunctions()
+    public function testIsProductUnitSelectionVisible()
     {
-        $expectedFunctions = [
-            [
-                'oro_is_product_unit_selection_visible',
-                [$this->productUnitFieldsSettings, 'isProductUnitSelectionVisible']
-            ],
-            [
-                'oro_is_product_primary_unit_visible',
-                [$this->productUnitFieldsSettings, 'isProductPrimaryUnitVisible']
-            ],
-            [
+        $product = new Product();
+
+        $this->productUnitFieldsSettings->expects(self::once())
+            ->method('isProductUnitSelectionVisible')
+            ->with(self::identicalTo($product))
+            ->willReturn(true);
+
+        self::assertTrue(
+            self::callTwigFunction($this->extension, 'oro_is_product_unit_selection_visible', [$product])
+        );
+    }
+
+    public function testIsProductPrimaryUnitVisible()
+    {
+        $product = new Product();
+
+        $this->productUnitFieldsSettings->expects(self::once())
+            ->method('isProductPrimaryUnitVisible')
+            ->with(self::identicalTo($product))
+            ->willReturn(true);
+
+        self::assertTrue(
+            self::callTwigFunction($this->extension, 'oro_is_product_primary_unit_visible', [$product])
+        );
+    }
+
+    public function testIsAddingAdditionalUnitsToProductAvailable()
+    {
+        $product = new Product();
+
+        $this->productUnitFieldsSettings->expects(self::once())
+            ->method('isAddingAdditionalUnitsToProductAvailable')
+            ->with(self::identicalTo($product))
+            ->willReturn(true);
+
+        self::assertTrue(
+            self::callTwigFunction(
+                $this->extension,
                 'oro_is_adding_additional_units_to_product_available',
-                [$this->productUnitFieldsSettings, 'isAddingAdditionalUnitsToProductAvailable']
-            ],
-        ];
-        /** @var \Twig_SimpleFunction[] $actualFunctions */
-        $actualFunctions = $this->extension->getFunctions();
-        $this->assertSameSize($expectedFunctions, $actualFunctions);
-
-        foreach ($actualFunctions as $twigFunction) {
-            $expectedFunction = current($expectedFunctions);
-
-            $this->assertInstanceOf('\Twig_SimpleFunction', $twigFunction);
-            $this->assertEquals($expectedFunction[0], $twigFunction->getName());
-            $this->assertEquals($expectedFunction[1], $twigFunction->getCallable());
-
-            next($expectedFunctions);
-        }
+                [$product]
+            )
+        );
     }
 }

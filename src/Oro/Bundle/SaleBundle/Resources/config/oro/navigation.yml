@@ -2,24 +2,24 @@ navigation:
     menu_config:
         items:
             sales_tab:
-                label: 'oro.menu.sales_tab.label'
-                uri:   '#'
+                label:    'oro.menu.sales_tab.label'
+                uri:      '#'
+                position: 100
                 extras:
-                    icon:     fa-usd
-                    position: 100
+                    icon: fa-usd
 
             sale_quote_list:
-                label: 'oro.frontend.sale.quote.entity_plural_label'
-                route: 'oro_sale_quote_index'
+                label:      'oro.frontend.sale.quote.entity_plural_label'
+                route:      'oro_sale_quote_index'
+                position:   300
                 extras:
-                    position: 300
                     routes: ['/^oro_sale/']
 
             sale_quote_frontend_list:
-                label: 'oro.frontend.sale.quote.entity_plural_label'
-                route: 'oro_sale_quote_frontend_index'
+                label:      'oro.frontend.sale.quote.entity_plural_label'
+                route:      'oro_sale_quote_frontend_index'
+                position:   400
                 extras:
-                    position: 400
                     routes: ['/^oro_sale_quote_frontend/']
 
         tree:

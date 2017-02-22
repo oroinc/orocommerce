@@ -3,6 +3,7 @@
 namespace Oro\Bundle\RuleBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\RuleBundle\Entity\Rule;
+use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\RuleBundle\Form\Type\RuleType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
@@ -26,9 +27,9 @@ class RuleTypeTest extends FormIntegrationTestCase
     /**
      * @dataProvider submitDataProvider
      *
-     * @param Rule $rule
+     * @param RuleInterface $rule
      */
-    public function testSubmitValid(Rule $rule)
+    public function testSubmitValid(RuleInterface $rule)
     {
         $form = $this->factory->create($this->formType, $rule);
 

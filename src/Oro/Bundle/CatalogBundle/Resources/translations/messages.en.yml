@@ -62,6 +62,8 @@ oro:
         system_configuration:
             groups:
                 catalog.title: 'Catalog'
+            fields:
+                category_direct_url_prefix.label: 'Category URL prefix'
 
         featured_categories:
             view:

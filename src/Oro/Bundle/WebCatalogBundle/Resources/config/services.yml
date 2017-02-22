@@ -47,13 +47,13 @@ services:
             - '@doctrine'
             - '@oro_locale.helper.localization'
             - '@oro_message_queue.client.message_producer'
+            - '@oro_web_catalog.model.resolve_node_slugs_message_factory'
 
     oro_web_catalog.twig.extension:
         class: Oro\Bundle\WebCatalogBundle\Twig\WebCatalogExtension
         public: false
         arguments:
-            - '@oro_web_catalog.content_node_tree_handler'
-            - '@oro_web_catalog.content_variant_type.registry'
+            - '@service_container'
         tags:
             - { name: twig.extension }
 
@@ -63,6 +63,7 @@ services:
             - '@oro_web_catalog.model.content_node_materialized_path_modifier'
             - '@oro_commerce_entity.extra_insert_entity_storage'
             - '@oro_message_queue.client.message_producer'
+            - '@oro_web_catalog.model.resolve_node_slugs_message_factory'
         tags:
             - { name: doctrine.orm.entity_listener, entity: '%oro_web_catalog.entity.content_node.class%', event: postPersist }
             - { name: doctrine.orm.entity_listener, entity: '%oro_web_catalog.entity.content_node.class%', event: preUpdate }
@@ -100,8 +101,10 @@ services:
         class: Oro\Bundle\WebCatalogBundle\EventListener\ScopeRequestListener
         arguments:
             - '@oro_scope.scope_manager'
+            - '@oro_redirect.repository.slug'
+            - '@oro_redirect.routing.matched_url_decision_maker'
         tags:
-            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 10 }
+            - { name: kernel.event_listener, event: kernel.request, method: onKernelRequest, priority: 0 }
 
     oro_web_catalog.form.autocomplete.web_catalog.search_handler:
         public: false
@@ -131,6 +134,8 @@ services:
 
     oro_web_catalog.form.type.content_node:
         class: Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType
+        arguments:
+            - '@router'
         tags:
             - { name: form.type, alias: oro_web_catalog_content_node }
 
@@ -150,6 +155,8 @@ services:
         class: Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator
         arguments:
             - '@oro_web_catalog.content_variant_type.registry'
+            - '@oro_redirect.generator.redirect'
+            - '@oro_locale.helper.localization'
 
     oro_web_catalog.generator.slug_generator.link:
         tags:
@@ -221,6 +228,13 @@ services:
         calls:
             - [ setNamespace, [ 'oro_web_catalog' ] ]
 
+    oro_web_catalog.cache.content_node_tree_cache_warmer:
+        class: Oro\Bundle\WebCatalogBundle\Cache\ContentNodeTreeCacheWarmer
+        arguments:
+            - '@oro_message_queue.client.message_producer'
+        tags:
+            - { name: 'kernel.cache_warmer' }
+
     oro_web_catalog.cache.dumper.content_node_tree_dumper:
         class: Oro\Bundle\WebCatalogBundle\Cache\Dumper\ContentNodeTreeDumper
         arguments:
@@ -280,6 +294,7 @@ services:
             - '@oro_web_catalog.resolver.default_variant_scope'
             - '@oro_web_catalog.generator.slug_generator'
             - '@oro_message_queue.client.message_producer'
+            - '@oro_web_catalog.model.resolve_node_slugs_message_factory'
             - '@logger'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
@@ -288,6 +303,21 @@ services:
         class: Oro\Bundle\WebCatalogBundle\Resolver\DefaultVariantScopesResolver
         arguments:
             - '@doctrine'
+
+    oro_web_catalog.layout.data_provider.title_data:
+        class: Oro\Bundle\WebCatalogBundle\Layout\DataProvider\TitleDataProvider
+        arguments:
+            - '@request_stack'
+            - '@oro_locale.helper.localization'
+        tags:
+            - { name: layout.data_provider, alias: web_catalog_title }
+
+    oro_web_catalog.model.resolve_node_slugs_message_factory:
+        class: Oro\Bundle\WebCatalogBundle\Model\ResolveNodeSlugsMessageFactory
+        public: false
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_config.manager'
 
     oro_web_catalog.feature.voter.feature_voter:
         class: Oro\Bundle\WebCatalogBundle\Feature\Voter\FeatureVoter

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\FormBundle\Form\Type\EntityIdentifierType;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
@@ -9,6 +10,8 @@ use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueColl
 use Oro\Bundle\NavigationBundle\Form\Type\RouteChoiceType;
 use Oro\Bundle\NavigationBundle\Tests\Unit\Form\Type\Stub\RouteChoiceTypeStub;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
+use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
+use Oro\Bundle\RedirectBundle\Helper\ConfirmSlugChangeFormHelper;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
 use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
 use Oro\Bundle\ScopeBundle\Tests\Unit\Form\Type\Stub\ScopeCollectionTypeStub;
@@ -22,12 +25,19 @@ use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as StubEntityIdentifierType;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Form;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Routing\RouterInterface;
 
 class ContentNodeTypeTest extends FormIntegrationTestCase
 {
     use EntityTrait;
+
+    /**
+     * @var RouterInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $router;
 
     /**
      * @var ContentNodeType
@@ -41,7 +51,9 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
     {
         parent::setUp();
 
-        $this->type = new ContentNodeType();
+        $this->router = $this->createMock(RouterInterface::class);
+
+        $this->type = new ContentNodeType($this->router);
     }
 
     /**
@@ -71,6 +83,11 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
 
         $variantCollection = new ContentVariantCollectionType($variantTypeRegistry);
 
+        /** @var ConfirmSlugChangeFormHelper $confirmSlugChangeFormHelper */
+        $confirmSlugChangeFormHelper = $this->getMockBuilder(ConfirmSlugChangeFormHelper::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         return [
             new PreloadedExtension(
                 [
@@ -90,6 +107,8 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                         ]
                     ),
                     LocalizedSlugType::NAME => new LocalizedSlugTypeStub(),
+                    LocalizedSlugWithRedirectType::NAME
+                        => new LocalizedSlugWithRedirectType($confirmSlugChangeFormHelper),
                 ],
                 []
             ),
@@ -106,7 +125,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('scopes'));
         $this->assertTrue($form->has('contentVariants'));
         $this->assertFalse($form->has('parentScopeUsed'));
-        $this->assertFalse($form->has('slugPrototypes'));
+        $this->assertFalse($form->has('slugPrototypesWithRedirect'));
     }
 
     public function testBuildFormSubNode()
@@ -120,7 +139,7 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('scopes'));
         $this->assertTrue($form->has('contentVariants'));
         $this->assertTrue($form->has('parentScopeUsed'));
-        $this->assertTrue($form->has('slugPrototypes'));
+        $this->assertTrue($form->has('slugPrototypesWithRedirect'));
     }
 
     public function testBuildFormForExistingEntity()
@@ -170,6 +189,35 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
         }
     }
 
+    public function testGenerateChangedSlugsUrlOnPresetData()
+    {
+        $generatedUrl = '/some/url';
+        $this->router
+            ->expects($this->once())
+            ->method('generate')
+            ->with('oro_content_node_get_changed_urls', ['id' => 1])
+            ->willReturn($generatedUrl);
+
+        /** @var ContentNode $existingData */
+        $existingData = $this->getEntity(ContentNode::class, [
+            'id' => 1,
+            'slugPrototypes' => new ArrayCollection([$this->getEntity(LocalizedFallbackValue::class)])
+        ]);
+        $existingData->setParentNode(new ContentNode());
+
+        /** @var Form $form */
+        $form = $this->factory->create($this->type, $existingData);
+
+        $formView = $form->createView();
+
+        $this->assertArrayHasKey('slugPrototypesWithRedirect', $formView->children);
+        $this->assertEquals(
+            $generatedUrl,
+            $formView->children['slugPrototypesWithRedirect']
+                ->vars['confirm_slug_change_component_options']['changedSlugsUrl']
+        );
+    }
+
     /**
      * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
@@ -206,7 +254,10 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                     ->addSlugPrototype((new LocalizedFallbackValue())->setString('content_node_slug')),
                 [
                     'titles' => [['string' => 'content_node_title'], ['string' => 'another_node_title']],
-                    'slugPrototypes' => [['string' => 'content_node_slug'], ['string' => 'another_node_slug']],
+                    'slugPrototypesWithRedirect' => [
+                        'slugPrototypes' => [['string' => 'content_node_slug'], ['string' => 'another_node_slug']],
+                        'createRedirect' => true,
+                    ],
                     'parentScopeUsed' => false,
                     'rewriteVariantTitle' => true,
                     'contentVariants' => [
@@ -237,7 +288,10 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                 [
                     'parentNode' => 1,
                     'titles' => [['string' => 'content_node_title'], ['string' => 'another_node_title']],
-                    'slugPrototypes' => [['string' => 'content_node_slug'], ['string' => 'another_node_slug']],
+                    'slugPrototypesWithRedirect' => [
+                        'slugPrototypes' => [['string' => 'content_node_slug'], ['string' => 'another_node_slug']],
+                        'createRedirect' => true,
+                    ],
                     'contentVariants' => [
                         [
                             'type' => 'system_page',
@@ -275,7 +329,10 @@ class ContentNodeTypeTest extends FormIntegrationTestCase
                     ),
                 [
                     'titles' => [['string' => 'content_node_title'], ['string' => 'another_node_title']],
-                    'slugPrototypes' => [['string' => 'content_node_slug'], ['string' => 'another_node_slug']],
+                    'slugPrototypesWithRedirect' => [
+                        'slugPrototypes' => [['string' => 'content_node_slug'], ['string' => 'another_node_slug']],
+                        'createRedirect' => true,
+                    ],
                     'contentVariants' => [
                         [
                             'type' => 'system_page',
