@@ -9,7 +9,7 @@ layout:
                 '%title%': '=data["locale"].getLocalizedValue(data["page"].getTitles())'
         - '@setOption':
             id: page_title
-            optionName: text
+            optionName: defaultValue
             optionValue: '=data["locale"].getLocalizedValue(data["page"].getTitles())'
         - '@addTree':
             items:

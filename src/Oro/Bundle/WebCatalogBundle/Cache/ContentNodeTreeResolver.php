@@ -85,7 +85,13 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
             $titles->add($this->getLocalizedValue($title));
         }
 
-        $resolvedNode = new ResolvedContentNode($nodeData['id'], $nodeData['identifier'], $titles, $resolvedVariant);
+        $resolvedNode = new ResolvedContentNode(
+            $nodeData['id'],
+            $nodeData['identifier'],
+            $titles,
+            $resolvedVariant,
+            $nodeData['resolveVariantTitle']
+        );
         foreach ($nodeData['childNodes'] as $childNodeData) {
             $resolvedNode->addChildNode($this->deserializeCachedNode($childNodeData));
         }

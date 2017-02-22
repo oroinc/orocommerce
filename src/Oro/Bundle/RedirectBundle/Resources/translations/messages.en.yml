@@ -8,7 +8,12 @@ oro:
         to.label: To URL
         type.label: Redirect Type
         slug.label: Slug
+        scopes.label: Scopes
         website.label: Website
+        prefix_change:
+            checkbox_label: Create 301 Redirect
+        confirm_slug_change:
+            checkbox_label: Create 301 Redirect from old to new URLs
 
         slug:
             entity_label:           'Slug'
@@ -21,8 +26,11 @@ oro:
             redirects.label: Redirects
             scopes.label: Scopes
             localization.label: Localization
+            slug_prototype.label: Slug Prototype
 
         system_configuration:
+            groups:
+                direct_urls.label: 'Direct URLs'
             fields:
                 enable_direct_url.label: 'Enable Direct URLs'
                 canonical_url_type:
@@ -30,3 +38,9 @@ oro:
                     choice:
                         system.label: 'System URL'
                         direct.label: 'Direct URL'
+                redirect_generation_strategy:
+                    label: 'Create Redirects'
+                    choice:
+                        ask.label: 'Ask'
+                        always.label: 'Always'
+                        never.label: 'Never'

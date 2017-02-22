@@ -26,6 +26,8 @@ use Oro\Bundle\ProductBundle\Form\Extension\IntegerExtension;
 use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
+use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
+use Oro\Bundle\RedirectBundle\Helper\ConfirmSlugChangeFormHelper;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type\Stub\LocalizedSlugTypeStub;
 use Oro\Bundle\VisibilityBundle\Form\EventListener\VisibilityPostSetDataListener;
 use Oro\Bundle\VisibilityBundle\Form\Extension\CategoryFormExtension;
@@ -36,6 +38,7 @@ use Oro\Component\Testing\Unit\Form\Type\Stub\EntityIdentifierType as EntityIden
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
+use Symfony\Component\Routing\RouterInterface;
 use Symfony\Component\Validator\Validation;
 
 class CategoryFormExtensionTest extends FormIntegrationTestCase
@@ -83,6 +86,14 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
         $categoryUnitPrecision = new CategoryUnitPrecisionType($defaultProductOptionsVisibility);
         $categoryUnitPrecision->setDataClass('Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision');
 
+        /** @var ConfirmSlugChangeFormHelper $confirmSlugChangeFormHelper */
+        $confirmSlugChangeFormHelper = $this->getMockBuilder(ConfirmSlugChangeFormHelper::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        /** @var RouterInterface $router */
+        $router = $this->createMock(RouterInterface::class);
+
         return [
             new PreloadedExtension(
                 [
@@ -90,7 +101,7 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
                         $postSetDataListener,
                         $visibilityChoicesProvider
                     ),
-                    CategoryType::NAME => new CategoryType(),
+                    CategoryType::NAME => new CategoryType($router),
                     CategoryDefaultProductOptionsType::NAME => $defaultProductOptions,
                     CategoryUnitPrecisionType::NAME => $categoryUnitPrecision,
                     ProductUnitSelectionType::NAME => new ProductUnitSelectionTypeStub(
@@ -107,7 +118,9 @@ class CategoryFormExtensionTest extends FormIntegrationTestCase
                     EntityChangesetType::NAME => new EntityChangesetTypeStub(),
                     OroRichTextType::NAME => new OroRichTextTypeStub(),
                     ImageType::NAME => new ImageTypeStub(),
-                    LocalizedSlugType::NAME => new LocalizedSlugTypeStub()
+                    LocalizedSlugType::NAME => new LocalizedSlugTypeStub(),
+                    LocalizedSlugWithRedirectType::NAME
+                        => new LocalizedSlugWithRedirectType($confirmSlugChangeFormHelper),
                 ],
                 [
                     CategoryType::NAME => [$this->categoryFormExtension],

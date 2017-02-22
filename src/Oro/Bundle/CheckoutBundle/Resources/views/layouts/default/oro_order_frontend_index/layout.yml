@@ -27,7 +27,7 @@ layout:
 
         - '@setOption':
             id: page_title
-            optionName: text
+            optionName: defaultValue
             optionValue: 'oro.checkout.order_history.label'
 
         - '@setOption':
