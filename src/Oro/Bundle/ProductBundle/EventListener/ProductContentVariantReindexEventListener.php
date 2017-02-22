@@ -8,6 +8,7 @@ use Doctrine\ORM\UnitOfWork;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 
+use Oro\Component\DoctrineUtils\ORM\FieldUpdatesChecker;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
@@ -32,11 +33,18 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
     protected $fieldsChangesListenTo = ['titles'];
 
     /**
-     * @param EventDispatcherInterface $eventDispatcher
+     * @var FieldUpdatesChecker
      */
-    public function __construct(EventDispatcherInterface $eventDispatcher)
+    private $fieldUpdatesChecker;
+
+    /**
+     * @param EventDispatcherInterface $eventDispatcher
+     * @param FieldUpdatesChecker      $fieldUpdatesChecker
+     */
+    public function __construct(EventDispatcherInterface $eventDispatcher, FieldUpdatesChecker $fieldUpdatesChecker)
     {
         $this->eventDispatcher = $eventDispatcher;
+        $this->fieldUpdatesChecker = $fieldUpdatesChecker;
     }
 
     /**
@@ -67,8 +75,29 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
         $unitOfWork = $event->getEntityManager()->getUnitOfWork();
         $productIds = [];
 
+        $updatedEntities = $unitOfWork->getScheduledEntityUpdates();
+        // @todo Will be used in BB-7734
+        $isAnyFieldChanged = false;
+
+        foreach ($updatedEntities as $entity) {
+            if ($isAnyFieldChanged) {
+                break;
+            }
+
+            if (!$entity instanceof ContentNodeInterface) {
+                continue;
+            }
+
+            foreach ($this->getFields() as $fieldName) {
+                if ($this->fieldUpdatesChecker->isRelationFieldChanged($entity, $fieldName)) {
+                    $isAnyFieldChanged = true;
+                    break;
+                }
+            }
+        }
+
         $this->collectProductIds($unitOfWork->getScheduledEntityInsertions(), $productIds, $unitOfWork);
-        $this->collectProductIds($unitOfWork->getScheduledEntityUpdates(), $productIds, $unitOfWork);
+        $this->collectProductIds($updatedEntities, $productIds, $unitOfWork);
         $this->collectProductIds($unitOfWork->getScheduledEntityDeletions(), $productIds, $unitOfWork);
 
         $this->triggerReindex($productIds);

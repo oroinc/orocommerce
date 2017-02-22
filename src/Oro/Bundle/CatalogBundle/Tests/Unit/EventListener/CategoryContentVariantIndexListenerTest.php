@@ -11,6 +11,7 @@ use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\UnitOfWork;
 
+use Oro\Component\DoctrineUtils\ORM\FieldUpdatesChecker;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
@@ -33,15 +34,27 @@ class CategoryContentVariantIndexListenerTest extends \PHPUnit_Framework_TestCas
     /** @var CategoryContentVariantIndexListener */
     private $listener;
 
+    /** @var FieldUpdatesChecker */
+    private $fieldUpdatesChecker;
+
     protected function setUp()
     {
         $this->indexScheduler = $this->getMockBuilder(ProductIndexScheduler::class)
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->fieldUpdatesChecker = $this->getMockBuilder(FieldUpdatesChecker::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->accessor = PropertyAccess::createPropertyAccessor();
 
-        $this->listener = new CategoryContentVariantIndexListener($this->indexScheduler, $this->accessor);
+        // @todo add test cases in BB-7734
+        $this->listener = new CategoryContentVariantIndexListener(
+            $this->indexScheduler,
+            $this->accessor,
+            $this->fieldUpdatesChecker
+        );
     }
 
     public function testOnFlushNoEntities()

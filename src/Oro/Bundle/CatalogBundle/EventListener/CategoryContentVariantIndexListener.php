@@ -9,6 +9,7 @@ use Doctrine\ORM\UnitOfWork;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ContentNodeFieldsChangesAwareInterface;
+use Oro\Component\DoctrineUtils\ORM\FieldUpdatesChecker;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
@@ -21,12 +22,17 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
     /**
      * @var ProductIndexScheduler
      */
-    protected $indexScheduler;
+    private $indexScheduler;
 
     /**
      * @var PropertyAccessorInterface
      */
-    protected $accessor;
+    private $accessor;
+
+    /**
+     * @var FieldUpdatesChecker
+     */
+    private $fieldUpdatesChecker;
 
     /**
      * List of fields of ContentNode that this class will listen to changes.
@@ -37,13 +43,18 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
     protected $fieldsChangesListenTo = ['titles'];
 
     /**
-     * @param ProductIndexScheduler $indexScheduler
+     * @param ProductIndexScheduler     $indexScheduler
      * @param PropertyAccessorInterface $accessor
+     * @param FieldUpdatesChecker       $fieldUpdatesChecker
      */
-    public function __construct(ProductIndexScheduler $indexScheduler, PropertyAccessorInterface $accessor)
-    {
+    public function __construct(
+        ProductIndexScheduler $indexScheduler,
+        PropertyAccessorInterface $accessor,
+        FieldUpdatesChecker $fieldUpdatesChecker
+    ) {
         $this->indexScheduler = $indexScheduler;
         $this->accessor = $accessor;
+        $this->fieldUpdatesChecker = $fieldUpdatesChecker;
     }
 
     /**
@@ -74,8 +85,30 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
         $unitOfWork = $event->getEntityManager()->getUnitOfWork();
 
         $categories = [];
+
+        $updatedEntities = $unitOfWork->getScheduledEntityUpdates();
+        // @todo Will be used in BB-7734
+        $isAnyFieldChanged = false;
+
+        foreach ($updatedEntities as $entity) {
+            if ($isAnyFieldChanged) {
+                break;
+            }
+
+            if (!$entity instanceof ContentNodeInterface) {
+                continue;
+            }
+
+            foreach ($this->getFields() as $fieldName) {
+                if ($this->fieldUpdatesChecker->isRelationFieldChanged($entity, $fieldName)) {
+                    $isAnyFieldChanged = true;
+                    break;
+                }
+            }
+        }
+
         $this->collectCategories($unitOfWork->getScheduledEntityInsertions(), $categories, $unitOfWork);
-        $this->collectCategories($unitOfWork->getScheduledEntityUpdates(), $categories, $unitOfWork);
+        $this->collectCategories($updatedEntities, $categories, $unitOfWork);
         $this->collectCategories($unitOfWork->getScheduledEntityDeletions(), $categories, $unitOfWork);
 
         if ($categories) {

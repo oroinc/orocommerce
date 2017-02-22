@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
 
+use Oro\Component\DoctrineUtils\ORM\FieldUpdatesChecker;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
@@ -37,13 +38,24 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit_Framework_T
     /** @var AfterFormProcessEvent */
     private $afterFormProcessEvent;
 
+    /** @var FieldUpdatesChecker */
+    private $fieldUpdatesChecker;
+
     public function setUp()
     {
         $this->eventDispatcher = $this->getMockBuilder(EventDispatcherInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->eventListener = new ProductContentVariantReindexEventListener($this->eventDispatcher);
+        $this->fieldUpdatesChecker = $this->getMockBuilder(FieldUpdatesChecker::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        // @todo add test cases in BB-7734
+        $this->eventListener = new ProductContentVariantReindexEventListener(
+            $this->eventDispatcher,
+            $this->fieldUpdatesChecker
+        );
     }
 
     public function testItAcceptsOnlyContentVariantAfterFlush()
