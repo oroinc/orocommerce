@@ -1,3 +1,7 @@
+parameters:
+    oro_ups.api.url.production: https://onlinetools.ups.com/rest
+    oro_ups.api.url.test: https://wwwcie.ups.com/rest
+
 services:
     # Providers
     oro_ups.provider.channel:
@@ -8,6 +12,8 @@ services:
     oro_ups.provider.transport:
         class: 'Oro\Bundle\UPSBundle\Provider\UPSTransport'
         arguments:
+            - '%oro_ups.api.url.production%'
+            - '%oro_ups.api.url.test%'
             - '@logger'
         calls:
             - [setRestClientFactory, ['@oro_integration.transport.rest.client_factory']]

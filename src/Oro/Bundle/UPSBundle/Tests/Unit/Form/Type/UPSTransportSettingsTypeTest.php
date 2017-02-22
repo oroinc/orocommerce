@@ -268,7 +268,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
                     'labels' => [
                         'values' => [ 'default' => 'first label'],
                     ],
-                    'baseUrl' => 'http://ups.com',
+                    'testMode' => true,
                     'apiUser' => 'user',
                     'apiPassword' => 'password',
                     'apiKey' => 'key',
@@ -281,7 +281,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
                 ],
                 'isValid' => true,
                 'expectedData' => (new UPSTransport())
-                    ->setBaseUrl('http://ups.com')
+                    ->setTestMode(true)
                     ->setApiUser('user')
                     ->setApiPassword('password')
                     ->setApiKey('key')

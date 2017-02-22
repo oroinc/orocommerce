@@ -28,11 +28,11 @@ class UPSTransport extends Transport
     const UNIT_OF_LENGTH_CM = 'CM';
 
     /**
-     * @var string
+     * @var bool
      *
-     * @ORM\Column(name="ups_base_url", type="string", length=255, nullable=false)
+     * @ORM\Column(name="ups_test_mode", type="boolean", nullable=false)
      */
-    protected $baseUrl;
+    protected $testMode = false;
 
     /**
      * @var string
@@ -149,23 +149,23 @@ class UPSTransport extends Transport
     }
 
     /**
-     * @param string $baseUrl
-     *
-     * @return $this
+     * @return string
      */
-    public function setBaseUrl($baseUrl)
+    public function isTestMode()
     {
-        $this->baseUrl = $baseUrl;
-
-        return $this;
+        return $this->testMode;
     }
 
     /**
-     * @return string
+     * @param bool $testMode
+     *
+     * @return $this
      */
-    public function getBaseUrl()
+    public function setTestMode($testMode)
     {
-        return $this->baseUrl;
+        $this->testMode = $testMode;
+
+        return $this;
     }
 
     /**
@@ -429,7 +429,7 @@ class UPSTransport extends Transport
                     'api_user' => $this->getApiUser(),
                     'api_password' => $this->getApiPassword(),
                     'api_key' => $this->getApiKey(),
-                    'base_url' => $this->getBaseUrl(),
+                    'test_mode' => $this->isTestMode(),
                     'shipping_account_name' => $this->getShippingAccountName(),
                     'shipping_account_number' => $this->getShippingAccountNumber(),
                     'pickup_type' => $this->getPickupType(),

@@ -12,6 +12,7 @@ use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\ShippingBundle\Provider\ShippingOriginProvider;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -82,11 +83,10 @@ class UPSTransportSettingsType extends AbstractType
             ]
         );
         $builder->add(
-            'baseUrl',
-            TextType::class,
+            'testMode',
+            CheckboxType::class,
             [
-                'label' => 'oro.ups.transport.base_url.label',
-                'required' => true
+                'label' => 'oro.ups.transport.test_mode.label',
             ]
         );
         $builder->add(

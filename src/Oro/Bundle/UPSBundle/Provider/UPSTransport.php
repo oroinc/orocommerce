@@ -19,24 +19,42 @@ class UPSTransport extends AbstractRestTransport
     /**
      * @var LoggerInterface
      */
-    protected $logger;
+    private $logger;
 
     /**
+     * @var string
+     */
+    private $productionUrl;
+
+    /**
+     * @var string
+     */
+    private $testUrl;
+
+    /**
+     * @param string          $productionUrl
+     * @param string          $testUrl
      * @param LoggerInterface $logger
      */
-    public function __construct(LoggerInterface $logger)
+    public function __construct($productionUrl, $testUrl, LoggerInterface $logger)
     {
+        $this->productionUrl = $productionUrl;
+        $this->testUrl = $testUrl;
         $this->logger = $logger;
     }
 
     /**
      * @param ParameterBag $parameterBag
+     *
      * @throws \InvalidArgumentException
      * @return string
      */
     protected function getClientBaseUrl(ParameterBag $parameterBag)
     {
-        return rtrim($parameterBag->get('base_url'), '/') . '/';
+        if ($parameterBag->get('test_mode')) {
+            return $this->testUrl;
+        }
+        return $this->productionUrl;
     }
 
     /**
