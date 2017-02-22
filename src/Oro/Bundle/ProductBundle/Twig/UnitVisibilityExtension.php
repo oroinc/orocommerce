@@ -2,22 +2,29 @@
 
 namespace Oro\Bundle\ProductBundle\Twig;
 
-use Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 use Oro\Bundle\ProductBundle\Visibility\UnitVisibilityInterface;
 
 class UnitVisibilityExtension extends \Twig_Extension
 {
-    /**
-     * @var ProductUnitFieldsSettingsInterface
-     */
-    protected $unitVisibility;
+    /** @var ContainerInterface */
+    protected $container;
 
     /**
-     * @param UnitVisibilityInterface $unitVisibility
+     * @param ContainerInterface $container
      */
-    public function __construct(UnitVisibilityInterface $unitVisibility)
+    public function __construct(ContainerInterface $container)
     {
-        $this->unitVisibility = $unitVisibility;
+        $this->container = $container;
+    }
+
+    /**
+     * @return UnitVisibilityInterface
+     */
+    protected function getUnitVisibility()
+    {
+        return $this->container->get('oro_product.visibility.unit');
     }
 
     /**
@@ -28,8 +35,18 @@ class UnitVisibilityExtension extends \Twig_Extension
         return [
             new \Twig_SimpleFunction(
                 'oro_is_unit_code_visible',
-                [$this->unitVisibility, 'isUnitCodeVisible']
+                [$this, 'isUnitCodeVisible']
             ),
         ];
+    }
+
+    /**
+     * @param string $code
+     *
+     * @return bool
+     */
+    public function isUnitCodeVisible($code)
+    {
+        return $this->getUnitVisibility()->isUnitCodeVisible($code);
     }
 }

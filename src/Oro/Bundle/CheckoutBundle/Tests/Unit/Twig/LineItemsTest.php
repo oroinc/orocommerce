@@ -10,41 +10,36 @@ use Oro\Bundle\PricingBundle\SubtotalProcessor\Model\Subtotal;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider;
 use Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
+use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
 class LineItemsExtensionTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var TotalProcessorProvider|\PHPUnit_Framework_MockObject_MockObject
-     */
+    use TwigExtensionTestCaseTrait;
+
+    /** @var TotalProcessorProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $totalsProvider;
 
-    /**
-     * @var LineItemSubtotalProvider|\PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var LineItemSubtotalProvider|\PHPUnit_Framework_MockObject_MockObject */
     protected $lineItemSubtotalProvider;
 
-    /**
-     * @var LineItemsExtension
-     */
+    /** @var LineItemsExtension */
     protected $extension;
 
     public function setUp()
     {
-        $this->totalsProvider = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider')
+        $this->totalsProvider = $this->getMockBuilder(TotalProcessorProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->lineItemSubtotalProvider = $this
-            ->getMockBuilder('Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider')
+        $this->lineItemSubtotalProvider = $this->getMockBuilder(LineItemSubtotalProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->extension = new LineItemsExtension($this->totalsProvider, $this->lineItemSubtotalProvider);
-    }
 
-    public function testGetFunctions()
-    {
-        $functions = [new \Twig_SimpleFunction('order_line_items', [$this->extension, 'getOrderLineItems'])];
-        $this->assertEquals($this->extension->getFunctions(), $functions);
+        $container = self::getContainerBuilder()
+            ->add('oro_pricing.subtotal_processor.total_processor_provider', $this->totalsProvider)
+            ->add('oro_pricing.subtotal_processor.provider.subtotal_line_item', $this->lineItemSubtotalProvider)
+            ->getContainer($this);
+
+        $this->extension = new LineItemsExtension($container);
     }
 
     /**
@@ -71,7 +66,7 @@ class LineItemsExtensionTest extends \PHPUnit_Framework_TestCase
         $product = $freeForm ? null : (new Product())->setSku($sku);
         $order->addLineItem($this->createLineItem($currency, $quantity, $priceValue, $name, $sku, $product));
 
-        $result = $this->extension->getOrderLineItems($order);
+        $result = self::callTwigFunction($this->extension, 'order_line_items', [$order]);
         $this->assertArrayHasKey('lineItems', $result);
         $this->assertArrayHasKey('subtotals', $result);
         $this->assertCount(1, $result['lineItems']);
