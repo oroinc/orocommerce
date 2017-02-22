@@ -394,7 +394,7 @@ workflows:
 
             back_to_billing_address_definition:
                 preconditions:
-                    '@not_equal': [$payment_in_progress, true]
+                    '@equal': [$checkout_finished, false]
                 actions:
                     - '@assign_value': [$billing_address_has_shipping, true]
                     - '@assign_value': [$payment_method, null]
@@ -437,7 +437,7 @@ workflows:
                     '@and':
                         - '@extendable':
                             events: [extendable_condition.checkout]
-                        - '@not_equal': [$payment_in_progress, true]
+                        - '@equal': [$checkout_finished, false]
                         - '@order_line_item_has_count':
                             message: oro.checkout.workflow.condition.order_line_item_has_count.message
                             parameters:
@@ -545,7 +545,7 @@ workflows:
                                  token: $state_token
                 preconditions:
                     '@and':
-                        - '@not_equal': [$payment_in_progress, true]
+                        - '@equal': [$checkout_finished, false]
                         - '@order_line_item_has_count':
                             message: oro.checkout.workflow.condition.order_line_item_has_count.message
                             parameters:
@@ -699,7 +699,7 @@ workflows:
                         attribute: $.result.paymentContext
                 preconditions:
                     '@and':
-                        - '@not_equal': [$payment_in_progress, true]
+                        - '@equal': [$checkout_finished, false]
                         - '@order_line_item_has_count':
                             message: oro.checkout.workflow.condition.order_line_item_has_count.message
                             parameters:
@@ -774,7 +774,7 @@ workflows:
             verify_payment_definition:
                 preconditions:
                     '@and':
-                        - '@not_equal': [$payment_in_progress, true]
+                        - '@equal': [$checkout_finished, false]
                         - '@order_line_item_has_count':
                             message: oro.checkout.workflow.condition.order_line_item_has_count.message
                             parameters:
@@ -1168,8 +1168,9 @@ workflows:
 
             recalculate_state_definition:
                 preconditions:
-                    '@not_equal': [$payment_in_progress, true]
+                    '@equal': [$checkout_finished, false]
                 actions:
+                    - '@assign_value': [$payment_in_progress, false]
                     - '@run_action_group':
                         action_group: oro_update_shipping_price
                         parameters_mapping:
@@ -1185,9 +1186,10 @@ workflows:
 
             clear_payment_method_and_recalculate_state_definition:
                 preconditions:
-                    '@not_equal': [$payment_in_progress, true]
+                    '@equal': [$checkout_finished, false]
                 actions:
                     - '@assign_value': [$payment_method, null]
+                    - '@assign_value': [$payment_in_progress, false]
                     - '@assign_value': [$shipping_method, null]
                     - '@assign_value': [$checkout.shippingCost, null]
                     - '@generate_checkout_state_snapshot':

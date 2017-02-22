@@ -21,5 +21,10 @@ class OroCatalogExtensionTest extends ExtensionTestCase
         ];
         $this->assertParametersLoaded($expectedParameters);
         $this->assertDefinitionsLoaded($expectedServices);
+
+        $expectedExtensionConfigs = [
+            'oro_catalog',
+        ];
+        $this->assertExtensionConfigsLoaded($expectedExtensionConfigs);
     }
 }
