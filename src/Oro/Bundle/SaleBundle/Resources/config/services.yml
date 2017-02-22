@@ -21,14 +21,12 @@ services:
         class: 'Oro\Bundle\SaleBundle\Twig\QuoteExtension'
         public: false
         arguments:
-            - "@oro_sale.formatter.quote_product"
-            - "@oro_config.manager"
+            - "@service_container"
         tags:
             - { name: twig.extension }
 
     oro_sale.formatter.quote_product:
         class: 'Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter'
-        public: false
         arguments:
             - "@translator"
             - "@oro_locale.formatter.number"

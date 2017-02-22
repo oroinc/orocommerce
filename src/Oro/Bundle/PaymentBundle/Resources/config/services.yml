@@ -29,9 +29,7 @@ services:
         class: 'Oro\Bundle\PaymentBundle\Twig\PaymentMethodExtension'
         public: false
         arguments:
-            - "@oro_payment.provider.payment_transaction"
-            - "@oro_payment.formatter.payment_method_label"
-            - '@event_dispatcher'
+            - "@service_container"
         tags:
             - { name: twig.extension }
 
@@ -179,7 +177,7 @@ services:
         class: 'Oro\Bundle\PaymentBundle\Twig\PaymentStatusExtension'
         public: false
         arguments:
-            - "@oro_payment.formatter.payment_status_label"
+            - "@service_container"
         tags:
             - { name: twig.extension }
 

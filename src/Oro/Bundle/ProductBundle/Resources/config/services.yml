@@ -28,7 +28,6 @@ services:
             - "@translator"
 
     oro_product.formatter.unit_label:
-        public: false
         abstract: true
         class: 'Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter'
         arguments:
@@ -46,7 +45,7 @@ services:
         class: 'Oro\Bundle\ProductBundle\Twig\ProductUnitValueExtension'
         public: false
         arguments:
-            - "@oro_product.formatter.product_unit_value"
+            - "@service_container"
         tags:
             - { name: twig.extension }
 
@@ -54,7 +53,7 @@ services:
         class: 'Oro\Bundle\ProductBundle\Twig\ProductUnitFieldsSettingsExtension'
         public: false
         arguments:
-            - "@oro_product.visibility.product_unit_fields_settings"
+            - "@service_container"
         tags:
             - { name: twig.extension }
 
@@ -62,7 +61,7 @@ services:
         class: 'Oro\Bundle\ProductBundle\Twig\UnitVisibilityExtension'
         public: false
         arguments:
-            - "@oro_product.visibility.unit"
+            - "@service_container"
         tags:
             - { name: twig.extension }
 
@@ -70,7 +69,7 @@ services:
         class: 'Oro\Bundle\ProductBundle\Twig\ProductUnitLabelExtension'
         public: false
         arguments:
-            - "@oro_product.formatter.product_unit_label"
+            - "@service_container"
         tags:
             - { name: twig.extension }
 
@@ -78,7 +77,7 @@ services:
         class: Oro\Bundle\ProductBundle\Twig\ProductExtension
         public: false
         arguments:
-            - "@oro_product.autocomplete_fields_provider"
+            - "@service_container"
         tags:
             - { name: twig.extension }
 
@@ -672,7 +671,6 @@ services:
 
     oro_product.visibility.product_unit_fields_settings:
         class: 'Oro\Bundle\ProductBundle\Visibility\BasicProductUnitFieldsSettings'
-        public: false
         arguments:
             - "@oro_entity.doctrine_helper"
 
@@ -688,7 +686,6 @@ services:
 
     oro_product.visibility.unit:
         class: 'Oro\Bundle\ProductBundle\Visibility\BasicUnitVisibility'
-        public: false
 
     oro_product.visibility.single_unit_mode_unit:
         class: 'Oro\Bundle\ProductBundle\Visibility\SingleUnitModeUnitVisibilityDecorator'

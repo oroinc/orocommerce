@@ -2,21 +2,31 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Twig;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 
 class DeleteMessageTextExtension extends \Twig_Extension
 {
     const DELETE_MESSAGE_TEXT_EXTENSION_NAME = 'oro_payment_term_delete_message';
 
-    /** @var  DeleteMessageTextGenerator */
-    protected $deleteMessageGenerator;
+    /** @var ContainerInterface */
+    protected $container;
 
     /**
-     * @param DeleteMessageTextGenerator $deleteMessageGenerator
+     * @param ContainerInterface $container
      */
-    public function __construct(DeleteMessageTextGenerator $deleteMessageGenerator)
+    public function __construct(ContainerInterface $container)
     {
-        $this->deleteMessageGenerator = $deleteMessageGenerator;
+        $this->container = $container;
+    }
+
+    /**
+     * @return DeleteMessageTextGenerator
+     */
+    protected function getDeleteMessageGenerator()
+    {
+        return $this->container->get('oro_payment_term.payment_term.delete_message_generator');
     }
 
     /**
@@ -44,7 +54,7 @@ class DeleteMessageTextExtension extends \Twig_Extension
      */
     public function getDeleteMessageText(PaymentTerm $paymentTerm)
     {
-        return $this->deleteMessageGenerator->getDeleteMessageText($paymentTerm);
+        return $this->getDeleteMessageGenerator()->getDeleteMessageText($paymentTerm);
     }
 
     /**
@@ -53,6 +63,6 @@ class DeleteMessageTextExtension extends \Twig_Extension
      */
     public function getDeleteMessageDatagrid($paymentTermId)
     {
-        return $this->deleteMessageGenerator->getDeleteMessageTextForDataGrid($paymentTermId);
+        return $this->getDeleteMessageGenerator()->getDeleteMessageTextForDataGrid($paymentTermId);
     }
 }

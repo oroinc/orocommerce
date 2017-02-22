@@ -1,0 +1,37 @@
+oro_behat_extension:
+  elements:
+    CheckoutStep:
+      class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep
+      selector: 'div[data-role="checkout-content"]'
+
+    CheckoutStepTitle:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: 'h2.checkout__title'
+
+    CheckoutSuccessStep:
+      class: Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutSuccessStep
+      selector: '.checkout__success'
+
+    CheckoutSuccessStepTitle:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: 'h1.checkout__success__title'
+
+    OpenOrdersGrid:
+      selector: 'div[data-page-component-name="frontend-checkouts-grid"] div.grid-container'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid
+
+    OpenOrdersGridFilters:
+      selector: 'div[data-page-component-name="frontend-checkouts-grid"] div.filter-box'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilters
+
+    OpenOrdersGridToolbarActions:
+        selector: 'div[data-page-component-name="frontend-checkouts-grid"] div.toolbar div.actions-panel'
+        class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridToolbarActions
+
+    OpenOrdersGridFiltersState:
+        selector: 'div[data-page-component-name="frontend-checkouts-grid"] div.filters-state'
+        class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+
+    OpenOrdersGridFilterItem:
+      selector: 'div[data-page-component-name="frontend-checkouts-grid"] div.filter-items-hint span'
+      class: Oro\Bundle\DataGridBundle\Tests\Behat\Element\GridFilterItem
