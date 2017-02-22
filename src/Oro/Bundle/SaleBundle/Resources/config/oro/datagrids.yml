@@ -188,10 +188,16 @@ datagrids:
                 select:
                     - CONCAT(quoteCustomerUser.firstName, ' ', quoteCustomerUser.lastName) as customerUserName
                     - quoteCustomer.name as customerName
+                    - internalStatus.name as internalStatusName
+                    - internalStatus.id as internalStatusId
+                    - customerStatus.name as customerStatusName
+                    - customerStatus.id as customerStatusId
                 join:
                     left:
                         - { join: quote.customerUser, alias: quoteCustomerUser }
                         - { join: quote.customer, alias: quoteCustomer }
+                        - { join: quote.internal_status, alias: internalStatus }
+                        - { join: quote.customer_status, alias: customerStatus }
         columns:
             customerUserName:
                 label: oro.sale.quote.customer_user.label
@@ -199,12 +205,22 @@ datagrids:
             customerName:
                 label: oro.sale.quote.customer.label
                 order: 3
+            internalStatusName:
+                label: oro.sale.quote.internal_status.label
+                order: 4
+            customerStatusName:
+                label: oro.sale.quote.customer_status.label
+                order: 5
         sorters:
             columns:
                 customerUserName:
                     data_name: customerUserName
                 customerName:
                     data_name: customerName
+                internalStatusName:
+                    data_name: internalStatusName
+                customerStatusName:
+                    data_name: customerStatusName
         filters:
             columns:
                 qid:
@@ -219,6 +235,14 @@ datagrids:
                 customerName:
                     type:      string
                     data_name: customerName
+                internalStatusName:
+                    type:      enum
+                    data_name: internalStatusId
+                    enum_code: quote_internal_status
+                customerStatusName:
+                    type:      enum
+                    data_name: customerStatusId
+                    enum_code: quote_customer_status
                 locked:
                     type:      boolean
                     data_name: quote.locked
@@ -256,6 +280,8 @@ datagrids:
                     - quote.id
                     - quote.qid
                     - CONCAT(quoteCustomerUser.firstName, ' ', quoteCustomerUser.lastName) as customerUserName
+                    - customerStatus.name as customerStatusName
+                    - customerStatus.id as customerStatusId
                     - quote.createdAt
                     - quote.validUntil
                     - quote.poNumber
@@ -265,9 +291,19 @@ datagrids:
                 join:
                     left:
                         - { join: quote.customerUser, alias: quoteCustomerUser }
+                        - { join: quote.customer_status, alias: customerStatus }
+                where:
+                    and:
+                        - IDENTITY(quote.internal_status) IS NULL OR IDENTITY(quote.internal_status) NOT IN (:internalStatuses)
+            bind_parameters:
+                -
+                    name: internalStatuses
+                    default: [deleted, draft]
         columns:
             qid:
                 label:         oro.frontend.sale.quote.qid.label
+            customerStatusName:
+                label:         oro.frontend.sale.quote.customer_status.label
             poNumber:
                 label:         oro.frontend.sale.quote.po_number.label
             shipUntil:
@@ -293,6 +329,8 @@ datagrids:
                     data_name: quote.qid
                 customerUserName:
                     data_name: customerUserName
+                customerStatusName:
+                    data_name: customerStatusName
                 poNumber:
                     data_name: quote.poNumber
                 shipUntil:
@@ -314,6 +352,10 @@ datagrids:
                         field_options:
                             class:      %oro_customer.entity.customer_user.class%
                             multiple:   false
+                customerStatusName:
+                    type:      enum
+                    data_name: customerStatusId
+                    enum_code: quote_customer_status
                 poNumber:
                     type:      string
                     data_name: quote.poNumber

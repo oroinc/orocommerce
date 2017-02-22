@@ -78,6 +78,9 @@ class Quote extends ExtendQuote implements
     const CUSTOMER_STATUS_CODE = 'quote_customer_status';
     const INTERNAL_STATUS_CODE = 'quote_internal_status';
 
+    const INTERNAL_STATUS_DRAFT = 'draft';
+    const INTERNAL_STATUS_DELETED = 'deleted';
+
     /**
      * @var int
      *

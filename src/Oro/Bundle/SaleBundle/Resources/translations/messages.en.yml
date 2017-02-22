@@ -14,6 +14,8 @@ oro:
             quote_products.label: 'Quote Products'
             request.label: 'Request'
             customer.label: 'Customer'
+            internal_status.label: 'Internal Status'
+            customer_status.label: 'Customer Status'
             website.label: 'Website'
             customer_user.label: 'Customer User'
             locked.label: 'Locked'
@@ -242,6 +244,7 @@ oro:
                 entity_plural_label: Quotes
                 qid.label: 'Quote #'
                 customer_user.label: 'Owner'
+                customer_status.label: 'Status'
                 valid_until.label: 'Valid Until'
                 po_number.label: 'PO Number'
                 ship_until.label: 'Do Not Ship Later Than'
