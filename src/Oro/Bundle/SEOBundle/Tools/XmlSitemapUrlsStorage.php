@@ -100,11 +100,7 @@ class XmlSitemapUrlsStorage implements SitemapUrlsStorageInterface
         $this->appendElementIfNotEmpty($urlItemWriter, 'loc', $urlItem->getLocation());
         $this->appendElementIfNotEmpty($urlItemWriter, 'changefreq', $urlItem->getChangeFrequency());
         $this->appendElementIfNotEmpty($urlItemWriter, 'priority', $urlItem->getPriority());
-        $this->appendElementIfNotEmpty(
-            $urlItemWriter,
-            'lastmod',
-            $urlItem->getLastModification() ? $urlItem->getLastModification()->format(\DateTime::W3C) : null
-        );
+        $this->appendElementIfNotEmpty($urlItemWriter, 'lastmod', $urlItem->getLastModification());
 
         $urlItemWriter->endElement();
 
