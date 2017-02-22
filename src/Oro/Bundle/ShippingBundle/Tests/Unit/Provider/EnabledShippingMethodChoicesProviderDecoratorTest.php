@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
-use Oro\Bundle\ShippingBundle\Provider\BasicShippingMethodChoicesProvider;
+use Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProviderInterface;
 use Oro\Bundle\ShippingBundle\Provider\EnabledShippingMethodChoicesProviderDecorator;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodStub;
@@ -13,12 +13,12 @@ class EnabledShippingMethodChoicesProviderDecoratorTest extends \PHPUnit_Framewo
     use EntityTrait;
 
     /**
-     * @var ShippingMethodRegistry
+     * @var ShippingMethodRegistry|\PHPUnit_Framework_MockObject_MockObject phpdoc
      */
     protected $registry;
 
     /**
-     * @var BasicShippingMethodChoicesProvider
+     * @var ShippingMethodChoicesProviderInterface|\PHPUnit_Framework_MockObject_MockObject phpdoc
      */
     protected $choicesProvider;
 
@@ -30,7 +30,7 @@ class EnabledShippingMethodChoicesProviderDecoratorTest extends \PHPUnit_Framewo
     protected function setUp()
     {
         $this->registry = $this->createMock(ShippingMethodRegistry::class);
-        $this->choicesProvider = $this->createMock(BasicShippingMethodChoicesProvider::class);
+        $this->choicesProvider = $this->createMock(ShippingMethodChoicesProviderInterface::class);
         $this->enabledChoicesProvider = new EnabledShippingMethodChoicesProviderDecorator(
             $this->registry,
             $this->choicesProvider

@@ -13,12 +13,12 @@ class BasicShippingMethodChoicesProviderTest extends \PHPUnit_Framework_TestCase
     use EntityTrait;
 
    /**
-    * @var ShippingMethodRegistry
+    * @var ShippingMethodRegistry|\PHPUnit_Framework_MockObject_MockObject phpdoc
     */
     protected $registry;
 
     /**
-     * @var TranslatorInterface
+     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject phpdoc
      */
     protected $translator;
 

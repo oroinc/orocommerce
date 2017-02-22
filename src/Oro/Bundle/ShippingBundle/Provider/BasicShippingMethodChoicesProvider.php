@@ -20,7 +20,7 @@ class BasicShippingMethodChoicesProvider implements ShippingMethodChoicesProvide
 
     /**
      * @param ShippingMethodRegistry $methodRegistry
-     * @param TranslatorInterface $translator
+     * @param TranslatorInterface    $translator
      */
     public function __construct(ShippingMethodRegistry $methodRegistry, TranslatorInterface $translator)
     {
