@@ -2,9 +2,10 @@
 
 namespace Oro\Bundle\SaleBundle\Twig;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
-
 use Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
@@ -13,25 +14,32 @@ class QuoteExtension extends \Twig_Extension
 {
     const NAME = 'oro_sale_quote';
     const FRONTEND_SYSTEM_CONFIG_PATH = 'oro_rfp.frontend_product_visibility';
-    
-    /**
-     * @var QuoteProductFormatter
-     */
-    protected $quoteProductFormatter;
+
+    /** @var ContainerInterface */
+    protected $container;
 
     /**
-     * @var ConfigManager
+     * @param ContainerInterface $container
      */
-    protected $configManager;
-
-    /**
-     * @param QuoteProductFormatter $quoteProductFormatter
-     * @param ConfigManager $configManager
-     */
-    public function __construct(QuoteProductFormatter $quoteProductFormatter, ConfigManager $configManager)
+    public function __construct(ContainerInterface $container)
     {
-        $this->quoteProductFormatter = $quoteProductFormatter;
-        $this->configManager = $configManager;
+        $this->container = $container;
+    }
+
+    /**
+     * @return QuoteProductFormatter
+     */
+    protected function getQuoteProductFormatter()
+    {
+        return $this->container->get('oro_sale.formatter.quote_product');
+    }
+
+    /**
+     * @return ConfigManager
+     */
+    protected function getConfigManager()
+    {
+        return $this->container->get('oro_config.manager');
     }
 
     /**
@@ -74,7 +82,7 @@ class QuoteExtension extends \Twig_Extension
      */
     public function formatProductType($type)
     {
-        return $this->quoteProductFormatter->formatType($type);
+        return $this->getQuoteProductFormatter()->formatType($type);
     }
 
     /**
@@ -83,7 +91,7 @@ class QuoteExtension extends \Twig_Extension
      */
     public function formatProductOffer(QuoteProductOffer $item)
     {
-        return $this->quoteProductFormatter->formatOffer($item);
+        return $this->getQuoteProductFormatter()->formatOffer($item);
     }
 
     /**
@@ -92,7 +100,7 @@ class QuoteExtension extends \Twig_Extension
      */
     public function formatProductRequest(QuoteProductRequest $item)
     {
-        return $this->quoteProductFormatter->formatRequest($item);
+        return $this->getQuoteProductFormatter()->formatRequest($item);
     }
 
     /**
@@ -101,7 +109,7 @@ class QuoteExtension extends \Twig_Extension
      */
     public function isQuoteVisible(Product $product)
     {
-        $supportedStatuses = (array)$this->configManager->get(self::FRONTEND_SYSTEM_CONFIG_PATH);
+        $supportedStatuses = (array)$this->getConfigManager()->get(self::FRONTEND_SYSTEM_CONFIG_PATH);
         $inventoryStatus = $product->getInventoryStatus();
 
         return $inventoryStatus && in_array($inventoryStatus->getId(), $supportedStatuses);

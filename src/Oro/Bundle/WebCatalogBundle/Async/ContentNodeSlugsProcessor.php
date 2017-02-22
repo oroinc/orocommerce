@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
+use Oro\Bundle\WebCatalogBundle\Model\ResolveNodeSlugsMessageFactory;
 use Oro\Bundle\WebCatalogBundle\Resolver\DefaultVariantScopesResolver;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
@@ -43,10 +44,16 @@ class ContentNodeSlugsProcessor implements MessageProcessorInterface, TopicSubsc
     protected $messageProducer;
 
     /**
+     * @var ResolveNodeSlugsMessageFactory
+     */
+    protected $messageFactory;
+
+    /**
      * @param ManagerRegistry $registry
      * @param DefaultVariantScopesResolver $defaultVariantScopesResolver
      * @param SlugGenerator $slugGenerator
      * @param MessageProducerInterface $messageProducer
+     * @param ResolveNodeSlugsMessageFactory $messageFactory
      * @param LoggerInterface $logger
      */
     public function __construct(
@@ -54,12 +61,14 @@ class ContentNodeSlugsProcessor implements MessageProcessorInterface, TopicSubsc
         DefaultVariantScopesResolver $defaultVariantScopesResolver,
         SlugGenerator $slugGenerator,
         MessageProducerInterface $messageProducer,
+        ResolveNodeSlugsMessageFactory $messageFactory,
         LoggerInterface $logger
     ) {
         $this->registry = $registry;
         $this->defaultVariantScopesResolver = $defaultVariantScopesResolver;
         $this->slugGenerator = $slugGenerator;
         $this->messageProducer = $messageProducer;
+        $this->messageFactory = $messageFactory;
         $this->logger = $logger;
     }
 
@@ -73,11 +82,12 @@ class ContentNodeSlugsProcessor implements MessageProcessorInterface, TopicSubsc
         $em->beginTransaction();
 
         try {
-            $contentNodeId = JSON::decode($message->getBody());
-            $contentNode = $em->find(ContentNode::class, $contentNodeId);
+            $body = JSON::decode($message->getBody());
+            $contentNode = $this->messageFactory->getEntityFromMessage($body);
+            $createRedirect = $this->messageFactory->getCreateRedirectFromMessage($body);
 
             $this->defaultVariantScopesResolver->resolve($contentNode);
-            $this->slugGenerator->generate($contentNode);
+            $this->slugGenerator->generate($contentNode, $createRedirect);
 
             $em->flush();
             $em->commit();

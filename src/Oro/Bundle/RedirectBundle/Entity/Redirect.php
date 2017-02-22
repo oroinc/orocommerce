@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\RedirectBundle\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 /**
  * @ORM\Table(name="oro_redirect", indexes={@ORM\Index(name="idx_oro_redirect_from_hash", columns={"from_hash"})})
@@ -64,12 +66,20 @@ class Redirect
     protected $type;
 
     /**
-     * @ORM\ManyToOne(targetEntity="Oro\Bundle\WebsiteBundle\Entity\Website")
-     * @ORM\JoinColumn(name="website_id", referencedColumnName="id")
+     * @ORM\ManyToMany(targetEntity="Oro\Bundle\ScopeBundle\Entity\Scope")
+     * @ORM\JoinTable(
+     *      name="oro_redirect_scope",
+     *      joinColumns={
+     *          @ORM\JoinColumn(name="redirect_id", referencedColumnName="id", onDelete="CASCADE")
+     *      },
+     *      inverseJoinColumns={
+     *          @ORM\JoinColumn(name="scope_id", referencedColumnName="id", onDelete="CASCADE")
+     *      }
+     * )
      *
-     * @var Website
+     * @var Scope[]|Collection
      */
-    protected $website;
+    protected $scopes;
 
     /**
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\RedirectBundle\Entity\Slug", inversedBy="redirects")
@@ -78,6 +88,11 @@ class Redirect
      * @var Slug
      */
     protected $slug;
+
+    public function __construct()
+    {
+        $this->scopes = new ArrayCollection();
+    }
 
     /**
      * @return integer
@@ -146,20 +161,48 @@ class Redirect
     }
 
     /**
-     * @return Website
+     * @return Collection|Scope[]
      */
-    public function getWebsite()
+    public function getScopes()
     {
-        return $this->website;
+        return $this->scopes;
     }
 
     /**
-     * @param Website $website
+     * @param Collection $scopes
      * @return $this
      */
-    public function setWebsite($website)
+    public function setScopes(Collection $scopes)
     {
-        $this->website = $website;
+        $this->scopes = $scopes;
+
+        return $this;
+    }
+
+    /**
+     * @param Scope $scope
+     * @return $this
+     *
+     */
+    public function addScope(Scope $scope)
+    {
+        if (!$this->scopes->contains($scope)) {
+            $this->scopes->add($scope);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Scope $scope
+     *
+     * @return $this
+     */
+    public function removeScope(Scope $scope)
+    {
+        if ($this->scopes->contains($scope)) {
+            $this->scopes->removeElement($scope);
+        }
 
         return $this;
     }

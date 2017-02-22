@@ -41,6 +41,6 @@
     }) %}
 
     <h1 {{ block('block_attributes') }}>
-        {{ category.defaultTitle }}
+        {{ block_widget(block) }}
     </h1>
 {% endblock %}

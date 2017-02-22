@@ -130,6 +130,6 @@ class MappingConfigurationCacheLoader implements ConfigurationLoaderInterface
 
         $cachedHash = $this->cacheProvider->fetch(self::CACHE_KEY_HASH);
 
-        return $cachedHash === $this->hashProvider->getHash(($this->getResources()));
+        return $cachedHash === $this->hashProvider->getHash($this->getResources());
     }
 }
