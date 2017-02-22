@@ -1,56 +1,55 @@
 <?php
 
-namespace Oro\Bundle\UPSBundle\Tests\Unit\Factory\Request;
+namespace Oro\Bundle\UPSBundle\Connection\Validator\Request\Factory;
 
-use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
+use Oro\Bundle\UPSBundle\Client\Request\UpsClientRequest;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
-use Oro\Bundle\UPSBundle\Factory\Request\RateUpsConnectionValidatorRequestFactory;
-use Oro\Bundle\UPSBundle\Request\UpsClientRequest;
 
-class RateUpsConnectionValidatorRequestFactoryTest extends \PHPUnit_Framework_TestCase
+class RateUpsConnectionValidatorRequestFactory implements UpsConnectionValidatorRequestFactoryInterface
 {
-    const USERNAME = 'user';
-    const PASS = 'pass';
-    const KEY = 'key';
-    const COUNTRY_CODE = 'country';
-    const WEIGHT_UNIT = 'kg';
+    /** @internal */
+    const REQUEST_URL = 'Rate';
 
-    public function testCreateByTransport()
+    /**
+     * @var SymmetricCrypterInterface
+     */
+    private $crypter;
+
+    /**
+     * @param SymmetricCrypterInterface $crypter
+     */
+    public function __construct(SymmetricCrypterInterface $crypter)
     {
-        $crypter = $this->createMock(SymmetricCrypterInterface::class);
-        $crypter->expects(static::once())
-            ->method('decryptData')
-            ->willReturn(self::PASS);
-
-        $transport = new UPSTransport();
-        $transport->setApiKey(self::KEY)
-            ->setApiUser(self::USERNAME)
-            ->setApiPassword(self::PASS)
-            ->setCountry(new Country(self::COUNTRY_CODE))
-            ->setUnitOfWeight(self::WEIGHT_UNIT)
-        ;
-
-        $expected = new UpsClientRequest('Rate', $this->getRequestData());
-
-        $factory = new RateUpsConnectionValidatorRequestFactory($crypter);
-
-        static::assertEquals($expected, $factory->createByTransport($transport));
+        $this->crypter = $crypter;
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function createByTransport(UPSTransport $transport)
+    {
+        return new UpsClientRequest([
+            UpsClientRequest::FIELD_URL => self::REQUEST_URL,
+            UpsClientRequest::FIELD_REQUEST_DATA => $this->getRequestData($transport),
+        ]);
+    }
+
+    /**
+     * @param UPSTransport $transport
+     *
      * @return array
      */
-    private function getRequestData()
+    private function getRequestData(UPSTransport $transport)
     {
         return [
             'UPSSecurity' => [
                 'UsernameToken' => [
-                    'Username' => self::USERNAME,
-                    'Password' => self::PASS,
+                    'Username' => $transport->getApiUser(),
+                    'Password' => $this->crypter->decryptData($transport->getApiPassword()),
                 ],
                 'ServiceAccessToken' => [
-                    'AccessLicenseNumber' => self::KEY,
+                    'AccessLicenseNumber' => $transport->getApiKey(),
                 ],
             ],
             'RateRequest' => [
@@ -62,21 +61,21 @@ class RateUpsConnectionValidatorRequestFactoryTest extends \PHPUnit_Framework_Te
                         'Name' => 'Company2',
                         'Address' => [
                             'PostalCode' => '0000000000000000',
-                            'CountryCode' => self::COUNTRY_CODE,
+                            'CountryCode' => $transport->getCountry()->getIso2Code(),
                         ]
                     ],
                     'ShipTo' => [
                         'Name' => 'Company1',
                         'Address' =>[
                             'PostalCode' => '0000000000000000',
-                            'CountryCode' => self::COUNTRY_CODE,
+                            'CountryCode' => $transport->getCountry()->getIso2Code(),
                         ]
                     ],
                     'ShipFrom' => [
                         'Name' => 'Company2',
                         'Address' =>[
                             'PostalCode' => '0000000000000000',
-                            'CountryCode' => self::COUNTRY_CODE,
+                            'CountryCode' => $transport->getCountry()->getIso2Code(),
                         ]
                     ],
                     'Package' => [
@@ -86,7 +85,7 @@ class RateUpsConnectionValidatorRequestFactoryTest extends \PHPUnit_Framework_Te
                             ],
                             'PackageWeight' => [
                                 'UnitOfMeasurement' => [
-                                    'Code' => self::WEIGHT_UNIT,
+                                    'Code' => $transport->getUnitOfWeight(),
                                 ],
                                 'Weight' => '10',
                             ],

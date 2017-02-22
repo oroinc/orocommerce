@@ -1,9 +1,9 @@
 <?php
 
-namespace Oro\Bundle\UPSBundle\Factory\Request;
+namespace Oro\Bundle\UPSBundle\Connection\Validator\Request\Factory;
 
+use Oro\Bundle\UPSBundle\Client\Request\UpsClientRequestInterface;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
-use Oro\Bundle\UPSBundle\Request\UpsClientRequestInterface;
 
 interface UpsConnectionValidatorRequestFactoryInterface
 {

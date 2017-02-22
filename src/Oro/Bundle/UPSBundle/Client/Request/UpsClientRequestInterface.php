@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\UPSBundle\Request;
+namespace Oro\Bundle\UPSBundle\Client\Request;
 
 interface UpsClientRequestInterface
 {
