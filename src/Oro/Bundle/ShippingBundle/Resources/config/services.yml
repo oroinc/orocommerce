@@ -224,6 +224,15 @@ services:
             - '@oro_shipping.shipping_price.provider.cache'
             - '@oro_shipping.method.view_factory'
 
+    oro_shipping.shipping_price.provider_enabled_methods_decorator:
+        class: 'Oro\Bundle\ShippingBundle\Provider\EnabledMethodsShippingPriceProviderDecorator'
+        public: false
+        decorates: oro_shipping.shipping_price.provider
+        decoration_priority: 255
+        arguments:
+             - '@oro_shipping.shipping_price.provider_enabled_methods_decorator.inner'
+             - '@oro_shipping.shipping_method.registry'
+
     oro_shipping.methods_configs_rules.provider:
         class: 'Oro\Bundle\ShippingBundle\Provider\ShippingMethodsConfigsRulesProvider'
         public: false

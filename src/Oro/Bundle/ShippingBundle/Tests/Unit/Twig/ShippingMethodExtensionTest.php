@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Twig;
 
+use Oro\Bundle\ShippingBundle\Checker\ShippingMethodEnabledByIdentifierCheckerInterface;
 use Oro\Bundle\ShippingBundle\Event\ShippingMethodConfigDataEvent;
 use Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
 use Oro\Bundle\ShippingBundle\Twig\ShippingMethodExtension;
@@ -24,19 +25,23 @@ class ShippingMethodExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected $dispatcher;
 
+    /**
+     * @var ShippingMethodEnabledByIdentifierCheckerInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $checker;
+
     public function setUp()
     {
-        $this->shippingMethodLabelFormatter = $this
-            ->getMockBuilder(ShippingMethodLabelFormatter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->dispatcher = $this
-            ->getMockBuilder(EventDispatcherInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->shippingMethodLabelFormatter = $this->createMock(ShippingMethodLabelFormatter::class);
+
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
+
+        $this->checker = $this->createMock(ShippingMethodEnabledByIdentifierCheckerInterface::class);
+
         $this->extension = new ShippingMethodExtension(
             $this->shippingMethodLabelFormatter,
-            $this->dispatcher
+            $this->dispatcher,
+            $this->checker
         );
     }
 
@@ -59,6 +64,10 @@ class ShippingMethodExtensionTest extends \PHPUnit_Framework_TestCase
                 new \Twig_SimpleFunction(
                     'oro_shipping_method_config_template',
                     [$this->extension, 'getShippingMethodConfigRenderData']
+                ),
+                new \Twig_SimpleFunction(
+                    'oro_shipping_method_enabled',
+                    [$this->extension, 'isShippingMethodEnabled']
                 )
             ],
             $this->extension->getFunctions()
@@ -112,5 +121,18 @@ class ShippingMethodExtensionTest extends \PHPUnit_Framework_TestCase
             ));
 
         self::assertEquals($template, $this->extension->getShippingMethodConfigRenderData($methodName));
+    }
+
+    public function testIsShippingMethodEnabled()
+    {
+        $methodIdentifier = 'method_1';
+
+        $this->checker
+            ->expects(static::once())
+            ->method('isEnabled')
+            ->with($methodIdentifier)
+            ->willReturn(true);
+
+        self::assertTrue($this->extension->isShippingMethodEnabled($methodIdentifier));
     }
 }
