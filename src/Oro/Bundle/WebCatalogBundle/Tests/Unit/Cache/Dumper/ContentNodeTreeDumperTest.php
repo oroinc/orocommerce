@@ -89,14 +89,14 @@ class ContentNodeTreeDumperTest extends \PHPUnit_Framework_TestCase
             new ArrayCollection(
                 [
                     (new LocalizedFallbackValue())->setString('Title 1'),
-                    (new LocalizedFallbackValue())
-                        ->setString('Title 1 EN')
+                    (new LocalizedFallbackValue())->setString('Title 1 EN')
                         ->setFallback(FallbackType::PARENT_LOCALIZATION)
                         ->setLocalization($this->getEntity(Localization::class, ['id' => 5])),
                 ]
             ),
             (new ResolvedContentVariant())->setData(['id' => 3, 'type' => 'test_type', 'test' => 1])
-                ->addLocalizedUrl((new LocalizedFallbackValue())->setString('/test'))
+                ->addLocalizedUrl((new LocalizedFallbackValue())->setString('/test')),
+            true
         );
         $resolvedNode->addChildNode(
             new ResolvedContentNode(
@@ -112,12 +112,14 @@ class ContentNodeTreeDumperTest extends \PHPUnit_Framework_TestCase
                         'sub_iterator' => new ArrayCollection(
                             ['c' => $this->getEntity(Localization::class, ['id' => 3])]
                         )
-                    ])
+                    ]),
+                false
             )
         );
         $convertedNode = [
             'id' => $resolvedNode->getId(),
             'identifier' => $resolvedNode->getIdentifier(),
+            'resolveVariantTitle' => true,
             'titles' => [
                 ['string' => 'Title 1', 'localization' => null, 'fallback' => null],
                 [
@@ -134,6 +136,7 @@ class ContentNodeTreeDumperTest extends \PHPUnit_Framework_TestCase
                 [
                     'id' => 2,
                     'identifier' => 'root__second',
+                    'resolveVariantTitle' => false,
                     'titles' => [['string' => 'Child Title 1', 'localization' => null, 'fallback' => null]],
                     'contentVariant' => [
                         'data' => [
@@ -149,9 +152,7 @@ class ContentNodeTreeDumperTest extends \PHPUnit_Framework_TestCase
             ],
         ];
 
-        $this->doctrineHelper->expects($this->any())
-            ->method('isManageableEntity')
-            ->willReturn(true);
+        $this->doctrineHelper->expects($this->any())->method('isManageableEntity')->willReturn(true);
         $this->doctrineHelper->expects($this->any())
             ->method('getEntityClass')
             ->willReturnCallback(
@@ -159,8 +160,7 @@ class ContentNodeTreeDumperTest extends \PHPUnit_Framework_TestCase
                     return get_class($object);
                 }
             );
-        $this->doctrineHelper->expects($this->any())
-            ->method('getSingleEntityIdentifier')
+        $this->doctrineHelper->expects($this->any())->method('getSingleEntityIdentifier')
             ->willReturnCallback(
                 function ($object) {
                     return $object->getId();

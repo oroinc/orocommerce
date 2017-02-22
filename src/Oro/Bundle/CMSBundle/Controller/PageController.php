@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CMSBundle\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -67,6 +68,7 @@ class PageController extends Controller
     /**
      * @Route("/create", name="oro_cms_page_create")
      * @Template("OroCMSBundle:Page:update.html.twig")
+     *
      * @Acl(
      *      id="oro_cms_page_create",
      *      type="entity",
@@ -122,5 +124,19 @@ class PageController extends Controller
             },
             $this->get('translator')->trans('oro.cms.controller.page.saved.message')
         );
+    }
+
+    /**
+     * @Route("/get-changed-urls/{id}", name="oro_cms_page_get_changed_urls", requirements={"id"="\d+"})
+     *
+     * @AclAncestor("oro_cms_page_update")
+     *
+     * @param Page $page
+     * @return JsonResponse
+     */
+    public function getChangedSlugsAction(Page $page)
+    {
+        return new JsonResponse($this->get('oro_redirect.helper.changed_slugs_helper')
+            ->getChangedSlugsData($page, PageType::class));
     }
 }

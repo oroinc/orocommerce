@@ -2,10 +2,49 @@ services:
     oro_redirect.form.type.localized_slug:
         class: 'Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType'
         arguments:
-            - '@doctrine'
+            - '@oro_redirect.helper.slugify_form_helper'
         tags:
             - { name: form.type, alias: oro_redirect_localized_slug }
+
     oro_redirect.form.type.slug:
         class: 'Oro\Bundle\RedirectBundle\Form\Type\SlugType'
+        arguments:
+            - '@oro_redirect.helper.slugify_form_helper'
         tags:
             - { name: form.type, alias: oro_redirect_slug }
+
+    oro_redirect.form.type.localized_slug_with_redirect:
+        class: Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType
+        arguments:
+            - '@oro_redirect.helper.confirm_slug_change_form_helper'
+        tags:
+            - { name: form.type, alias: oro_redirect_localized_slug_with_redirect }
+
+    oro_redirect.form.type.slug_with_redirect:
+        class: Oro\Bundle\RedirectBundle\Form\Type\SlugWithRedirectType
+        arguments:
+            - '@oro_redirect.helper.confirm_slug_change_form_helper'
+        tags:
+            - { name: form.type, alias: oro_redirect_slug_with_redirect }
+
+    oro_redirect.helper.confirm_slug_change_form_helper:
+        class: Oro\Bundle\RedirectBundle\Helper\ConfirmSlugChangeFormHelper
+        arguments:
+            - '@oro_config.manager'
+
+    oro_redirect.helper.slugify_form_helper:
+        class: Oro\Bundle\RedirectBundle\Helper\SlugifyFormHelper
+
+    oro_redirect.form.type.oro_redirect_sluggable_prefix:
+        class: Oro\Bundle\RedirectBundle\Form\Type\SluggableEntityPrefixType
+        arguments:
+            - '@oro_redirect.form.storage.redirect_storage'
+            - '@oro_config.manager'
+        tags:
+            - { name: form.type, alias: oro_redirect_sluggable_prefix }
+
+    oro_redirect.form.storage.redirect_storage:
+        class: 'Oro\Bundle\RedirectBundle\Form\Storage\RedirectStorage'
+
+    oro_redirect.form.transformer.prefix_with_redirect_to_string:
+        class: 'Oro\Bundle\RedirectBundle\Form\DataTransformer\PrefixWithRedirectToStringTransformer'

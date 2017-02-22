@@ -15,5 +15,10 @@ class OroCMSExtensionTest extends ExtensionTestCase
             'oro_cms.entity.page.class',
         ];
         $this->assertParametersLoaded($expectedParameters);
+
+        $expectedExtensionConfigs = [
+            'oro_cms',
+        ];
+        $this->assertExtensionConfigsLoaded($expectedExtensionConfigs);
     }
 }

@@ -15,7 +15,7 @@ layout:
             optionValue: 'customer'
         - '@setOption':
             id: page_title
-            optionName: text
+            optionName: defaultValue
             optionValue:
                 label: 'oro.frontend.rfp.request.title.label'
                 parameters:
