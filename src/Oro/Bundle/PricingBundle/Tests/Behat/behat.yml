@@ -1,4 +1,5 @@
-elements:
+oro_behat_extension:
+  elements:
     PriceListCollection:
         selector: "div.pricing-price-list"
         class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
