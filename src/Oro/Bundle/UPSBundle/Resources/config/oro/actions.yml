@@ -112,3 +112,43 @@ operations:
                 message_parameters:
                     linkGrid: $.linkGrid
                 component: oroui/js/standart-confirmation
+
+    oro_ups_integration_delete:
+        extends: oro_integration_delete
+        for_all_entities: false
+        for_all_datagrids: false
+        replace:
+            - preactions
+            - preconditions
+            - frontend_options
+        preactions:
+            - '@assign_constant_value':
+                attribute: $.upsType
+                value: Oro\Bundle\UPSBundle\Provider\ChannelType::TYPE
+            - '@call_service_method':
+                service: oro_integration.utils.edit_mode
+                method: isEditAllowed
+                method_parameters: [$.data.editMode]
+                attribute: $.actionAllowed
+            - '@call_service_method':
+                attribute: $.methodIdentifier
+                service: oro_ups.method.identifier_generator.method
+                method: generateIdentifier
+                method_parameters: [$.data]
+            - '@call_service_method':
+                attribute: $.linkGrid
+                service: oro_shipping.helper.filtered_datagrid_route
+                method: generate
+                method_parameters:  [{'methodsConfigs': $.methodIdentifier}]
+        preconditions:
+            '@and':
+                - '@equal': [$type, $.upsType]
+                - '@equal': [$.actionAllowed, true]
+        frontend_options:
+            confirmation:
+                title: oro.ups.rule.delete.title
+                okText: oro.ups.rule.delete.button.okText
+                message: oro.ups.rule.delete.massage
+                message_parameters:
+                    linkGrid: $.linkGrid
+                component: oroui/js/standart-confirmation
