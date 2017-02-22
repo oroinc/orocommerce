@@ -199,22 +199,20 @@ services:
         class: 'Oro\Bundle\OrderBundle\Twig\OrderExtension'
         public: false
         arguments:
-            - '@oro_order.formatter.source_document'
-            - '@oro_order.formatter.shipping_tracking'
+            - '@service_container'
         tags:
             - { name: twig.extension }
 
     oro_order.twig.order_shipping:
         class: 'Oro\Bundle\OrderBundle\Twig\OrderShippingExtension'
         public: false
-        calls:
-            - [setShippingLabelFormatter, ['@?oro_shipping.translator.shipping_method_label']]
+        arguments:
+            - "@service_container"
         tags:
             - { name: twig.extension }
 
     oro_order.formatter.source_document:
         class: 'Oro\Bundle\OrderBundle\Formatter\SourceDocumentFormatter'
-        public: false
         arguments:
             - '@oro_entity.entity_class_name_provider'
 

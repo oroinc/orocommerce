@@ -1,3 +1,11 @@
 oro:
     redirect:
+        confirm_slug_change:
+            title: Changing Page URLs
+            message: "Some of the Page's Slugs will be changed:"
+            changed_slug_item: '- "{{ old_slug }}" to the "{{ new_slug }}"'
+            changed_localized_slug_item: '- "{{ old_slug }}" to the "{{ new_slug }}" for "{{ purpose }}"'
+            apply: Apply
+            cancel: Cancel
+            checkbox_label: Create 301 Redirect from old to new URLs
         slugify_error: "Impossible slug generation for \"{{ string }}\""

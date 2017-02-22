@@ -11,10 +11,9 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
-use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
 use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\FrontendBundle\Form\DataTransformer\PageTemplateEntityFieldFallbackValueTransformer;
@@ -23,6 +22,7 @@ use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
+use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 
 class ProductType extends AbstractType
 {
@@ -40,11 +40,18 @@ class ProductType extends AbstractType
     private $provider;
 
     /**
-     * @param DefaultProductUnitProviderInterface $provider
+     * @var UrlGeneratorInterface
      */
-    public function __construct(DefaultProductUnitProviderInterface $provider)
+    private $urlGenerator;
+
+    /**
+     * @param DefaultProductUnitProviderInterface $provider
+     * @param UrlGeneratorInterface $urlGenerator
+     */
+    public function __construct(DefaultProductUnitProviderInterface $provider, UrlGeneratorInterface $urlGenerator)
     {
         $this->provider = $provider;
+        $this->urlGenerator = $urlGenerator;
     }
 
     /**
@@ -175,13 +182,12 @@ class ProductType extends AbstractType
             )
             ->add('type', HiddenType::class)
             ->add(
-                'slugPrototypes',
-                LocalizedSlugType::NAME,
+                'slugPrototypesWithRedirect',
+                LocalizedSlugWithRedirectType::NAME,
                 [
                     'label'    => 'oro.product.slug_prototypes.label',
                     'required' => false,
-                    'options'  => ['constraints' => [new UrlSafe()]],
-                    'source_field' => 'names',
+                    'source_field' => 'names'
                 ]
             )
             ->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener'])
@@ -212,6 +218,21 @@ class ProductType extends AbstractType
                     'error_bubbling' => false,
                     'required'       => true,
                     'data'           => $this->provider->getDefaultProductUnitPrecision()
+                ]
+            );
+        }
+
+        if ($product->getId()) {
+            $url = $this->urlGenerator->generate('oro_product_get_changed_slugs', ['id' => $product->getId()]);
+
+            $form->add(
+                'slugPrototypesWithRedirect',
+                LocalizedSlugWithRedirectType::NAME,
+                [
+                    'label'    => 'oro.product.slug_prototypes.label',
+                    'required' => false,
+                    'source_field' => 'names',
+                    'get_changed_slugs_url' => $url
                 ]
             );
         }

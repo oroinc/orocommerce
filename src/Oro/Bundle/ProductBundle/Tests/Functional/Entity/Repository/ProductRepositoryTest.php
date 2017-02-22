@@ -390,4 +390,12 @@ class ProductRepositoryTest extends WebTestCase
     {
         $this->repository->findByCaseInsensitive(['testField' => new \DateTime()]);
     }
+
+    public function testGetFeaturedProductsQueryBuilder()
+    {
+        $queryBuilder = $this->getRepository()->getFeaturedProductsQueryBuilder(2);
+        $result = $queryBuilder->getQuery()->getResult();
+        $this->assertCount(2, $result);
+        $this->assertInstanceOf(Product::class, $result[0]);
+    }
 }
