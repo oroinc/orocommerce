@@ -32,15 +32,31 @@ class RenamePriority implements Migration, RenameExtensionAwareInterface
         $priceListToWebsite = $schema->getTable('oro_price_list_to_website');
 
         if ($priceListToCusGroup->hasColumn(self::OLD_COLUMN_NAME)) {
-            $extension->renameColumn($schema, $queries, $priceListToCusGroup, self::OLD_COLUMN_NAME, self::NEW_COLUMN_NAME);
+            $extension->renameColumn(
+                $schema,
+                $queries,
+                $priceListToCusGroup,
+                self::OLD_COLUMN_NAME,
+                self::NEW_COLUMN_NAME
+            );
         }
 
         if ($priceListToCustomer->hasColumn(self::OLD_COLUMN_NAME)) {
-            $extension->renameColumn($schema, $queries, $priceListToCustomer, self::OLD_COLUMN_NAME, self::NEW_COLUMN_NAME);
+            $extension->renameColumn(
+                $schema,
+                $queries,
+                $priceListToCustomer,
+                self::OLD_COLUMN_NAME,
+                self::NEW_COLUMN_NAME);
         }
 
         if ($priceListToWebsite->hasColumn(self::OLD_COLUMN_NAME)) {
-            $extension->renameColumn($schema, $queries, $priceListToWebsite, self::OLD_COLUMN_NAME, self::NEW_COLUMN_NAME);
+            $extension->renameColumn(
+                $schema,
+                $queries,
+                $priceListToWebsite,
+                self::OLD_COLUMN_NAME,
+                self::NEW_COLUMN_NAME);
         }
     }
 
