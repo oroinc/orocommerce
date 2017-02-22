@@ -105,7 +105,7 @@ workflows:
                 frontend_options:
                     icon: 'fa-close'
             reopen_transition:
-                step_to: draft
+                step_to: closed
                 transition_definition: reopen_transition_definition
                 frontend_options:
                     icon: 'fa-undo'
@@ -169,4 +169,15 @@ workflows:
                         enum_code: 'quote_internal_status'
                         attribute: $quote.internalStatus
                         identifier: 'declined'
-            reopen_transition_definition: ~
+            reopen_transition_definition:
+                actions:
+                    - '@run_action_group':
+                        action_group: oro_sale_quote_duplicate
+                        parameters_mapping:
+                            quote: $quote
+                        results:
+                            result.quoteCopy: $.quoteCopy
+                    - '@redirect':
+                        route: oro_sale_quote_update
+                        route_parameters:
+                            id: $.result.quoteCopy.id
