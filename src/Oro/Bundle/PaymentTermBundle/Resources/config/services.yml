@@ -21,7 +21,6 @@ services:
 
     oro_payment_term.payment_term.delete_message_generator:
         class: 'Oro\Bundle\PaymentTermBundle\Twig\DeleteMessageTextGenerator'
-        public: false
         arguments:
             - "@router"
             - "@twig"
@@ -37,7 +36,7 @@ services:
         class: 'Oro\Bundle\PaymentTermBundle\Twig\DeleteMessageTextExtension'
         public: false
         arguments:
-            - "@oro_payment_term.payment_term.delete_message_generator"
+            - "@service_container"
         tags:
             - { name: twig.extension }
 

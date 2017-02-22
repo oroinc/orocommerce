@@ -12,6 +12,7 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUserRole;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerUserRoleRepository;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 
 class LoadCustomerUsersData extends AbstractFixture implements DependentFixtureInterface
 {
@@ -41,7 +42,7 @@ class LoadCustomerUsersData extends AbstractFixture implements DependentFixtureI
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers'
+            LoadCustomers::class
         ];
     }
 

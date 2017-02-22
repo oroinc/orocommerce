@@ -3,62 +3,130 @@
 namespace Oro\Bundle\RedirectBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\RedirectBundle\Entity\Redirect;
+use Oro\Bundle\RedirectBundle\Entity\Repository\RedirectRepository;
+use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Tests\Functional\DataFixtures\LoadRedirects;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
+use Oro\Bundle\RedirectBundle\Tests\Functional\DataFixtures\LoadSlugsData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 class RedirectRepositoryTest extends WebTestCase
 {
+    /**
+     * @var RedirectRepository
+     */
+    private $repository;
+
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->loadFixtures([
             LoadRedirects::class
         ]);
+
+        $this->repository = $this->getContainer()->get('oro_redirect.repository.redirect');
     }
 
-    public function testFindByFromWithoutWebsite()
+    public function testFindByUrlSuccessful()
     {
-        $result = $this->getContainer()->get('doctrine')->getRepository(Redirect::class)
-            ->findByFrom('/from-1');
-        
-        $this->assertEquals($this->getReference(LoadRedirects::REDIRECT_1), $result);
+        /** @var Redirect $redirect */
+        $redirect = $this->getReference(LoadRedirects::REDIRECT_2);
+
+        $fromUrl = $redirect->getFrom();
+        /** @var ScopeManager $scopeManager */
+        $scopeManager = $this->getContainer()->get('oro_scope.scope_manager');
+        /** @var Scope $scope */
+        $scope = $redirect->getScopes()->first();
+        $scopeCriteria = $scopeManager->getCriteriaByScope($scope, 'web_content');
+
+        $result = $this->repository->findByUrl($fromUrl, $scopeCriteria);
+
+        $this->assertEquals($redirect->getId(), $result->getId());
     }
 
-    /**
-     * @dataProvider findByFromWithoutWebsiteDataProvider
-     * @param string $website
-     * @param string $fromUrl
-     * @param string $redirect
-     */
-    public function testFindByFromWithWebsite($website, $fromUrl, $redirect)
+    public function testFindByUrlNoMatchedUrl()
     {
-        /** @var Website $website */
-        $website = $this->getReference($website);
+        /** @var Redirect $redirect */
+        $redirect = $this->getReference(LoadRedirects::REDIRECT_2);
 
-        $result = $this->getContainer()->get('doctrine')->getRepository(Redirect::class)
-            ->findByFrom($fromUrl, $website);
+        $fromUrl = $redirect->getFrom();
+        /** @var ScopeManager $scopeManager */
+        $scopeManager = $this->getContainer()->get('oro_scope.scope_manager');
+        /** @var Scope $scope */
+        $scope = $redirect->getScopes()->first();
+        $scopeCriteria = $scopeManager->getCriteriaByScope($scope, 'web_content');
 
-        $this->assertEquals($this->getReference($redirect), $result);
+        $result = $this->repository->findByUrl($fromUrl . '-unknown', $scopeCriteria);
+
+        $this->assertNull($result);
     }
 
-    /**
-     * @return array
-     */
-    public function findByFromWithoutWebsiteDataProvider()
+    public function testFindByUrlNotMatchingCriteria()
     {
-        return [
-            [
-                'website' => LoadWebsiteData::WEBSITE1,
-                'from_url' => '/from-2',
-                'redirect' => LoadRedirects::REDIRECT_2
-            ],
-            [
-                'website' => LoadWebsiteData::WEBSITE2,
-                'from_url' => '/from-3',
-                'redirect' => LoadRedirects::REDIRECT_3
-            ]
-        ];
+        /** @var Redirect $redirect1 */
+        $redirect1 = $this->getReference(LoadRedirects::REDIRECT_2);
+        /** @var Redirect $redirect2 */
+        $redirect2 = $this->getReference(LoadRedirects::REDIRECT_3);
+
+        $fromUrl = $redirect1->getFrom();
+        /** @var ScopeManager $scopeManager */
+        $scopeManager = $this->getContainer()->get('oro_scope.scope_manager');
+        /** @var Scope $scope */
+        $scope = $redirect2->getScopes()->first();
+        $scopeCriteria = $scopeManager->getCriteriaByScope($scope, 'web_content');
+
+        $result = $this->repository->findByUrl($fromUrl, $scopeCriteria);
+
+        $this->assertNull($result);
+    }
+
+    public function testFindByUrlEmptyScopes()
+    {
+        /** @var Redirect $redirect1 */
+        $redirect1 = $this->getReference(LoadRedirects::REDIRECT_1);
+        /** @var Redirect $redirect2 */
+        $redirect2 = $this->getReference(LoadRedirects::REDIRECT_2);
+
+        $fromUrl = $redirect1->getFrom();
+        /** @var ScopeManager $scopeManager */
+        $scopeManager = $this->getContainer()->get('oro_scope.scope_manager');
+        /** @var Scope $scope */
+        $scope = $redirect2->getScopes()->first();
+        $scopeCriteria = $scopeManager->getCriteriaByScope($scope, 'web_content');
+
+        $result = $this->repository->findByUrl($fromUrl, $scopeCriteria);
+
+        $this->assertEquals($redirect1->getId(), $result->getId());
+    }
+
+    public function testUpdateRedirectsBySlug()
+    {
+        /** @var Slug $slug */
+        $slug = $this->getReference(LoadSlugsData::SLUG_URL_ANONYMOUS);
+
+        $this->repository->updateRedirectsBySlug($slug);
+        /** @var Redirect $redirect */
+        $redirect = $this->getReference(LoadRedirects::REDIRECT_1);
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass(Redirect::class);
+        $em->refresh($redirect);
+        $this->assertEquals($slug->getUrl(), $redirect->getTo());
+    }
+
+    public function testDeleteCyclicRedirects()
+    {
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass(Redirect::class);
+        /** @var Redirect $redirect */
+        $redirect = $this->getReference(LoadRedirects::REDIRECT_1);
+        /** @var Slug $slug */
+        $slug = $this->getReference(LoadSlugsData::SLUG_URL_ANONYMOUS);
+
+        $redirect->setFrom($slug->getUrl());
+        $redirect->setTo($slug->getUrl());
+        $em->flush();
+
+        $this->repository->deleteCyclicRedirects($slug);
+
+        $this->assertNull($em->getRepository(Redirect::class)->findOneBy(['id' => $redirect->getId()]));
     }
 }

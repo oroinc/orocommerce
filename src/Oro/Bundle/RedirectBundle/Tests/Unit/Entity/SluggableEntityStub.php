@@ -3,6 +3,7 @@
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
 
@@ -13,7 +14,13 @@ class SluggableEntityStub implements SluggableInterface
     /**
      * @var int
      */
-    protected $id;
+    private $id;
+
+    /**
+     * @var LocalizedFallbackValue
+     *
+     */
+    private $defaultSlugPrototype;
 
     public function __construct()
     {
@@ -36,6 +43,25 @@ class SluggableEntityStub implements SluggableInterface
     public function setId($id)
     {
         $this->id = $id;
+
+        return $this;
+    }
+
+    /**
+     * @return LocalizedFallbackValue
+     */
+    public function getDefaultSlugPrototype()
+    {
+        return $this->defaultSlugPrototype;
+    }
+
+    /**
+     * @param LocalizedFallbackValue $slugPrototype
+     * @return $this
+     */
+    public function setDefaultSlugPrototype(LocalizedFallbackValue $slugPrototype)
+    {
+        $this->defaultSlugPrototype = $slugPrototype;
 
         return $this;
     }

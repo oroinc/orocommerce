@@ -8,10 +8,7 @@ use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 
 class FeaturedProductsProvider
 {
-    /**
-     * @var array
-     */
-    protected $data;
+    const DEFAULT_QUANTITY = 10;
 
     /**
      * @var ProductRepository
@@ -19,27 +16,30 @@ class FeaturedProductsProvider
     protected $productRepository;
 
     /**
-     * @var ProductManager $productManager
+     * @var ProductManager
      */
     protected $productManager;
 
     /**
      * @param ProductRepository $productRepository
-     * @param ProductManager $productManager
+     * @param ProductManager    $productManager
      */
     public function __construct(ProductRepository $productRepository, ProductManager $productManager)
     {
         $this->productRepository = $productRepository;
-        $this->productManager = $productManager;
+        $this->productManager    = $productManager;
     }
 
-    public function getAll()
+    /**
+     * @param int $quantity
+     *
+     * @return Product[]
+     */
+    public function getAll($quantity = self::DEFAULT_QUANTITY)
     {
-        $queryBuilder = $this->productRepository->getProductWithNamesQueryBuilder()
-            ->setMaxResults(10)
-            ->orderBy('product.id', 'ASC');
-        $this->productRepository->selectImages($queryBuilder);
+        $queryBuilder = $this->productRepository->getFeaturedProductsQueryBuilder($quantity);
         $this->productManager->restrictQueryBuilder($queryBuilder, []);
+
         return $queryBuilder->getQuery()->getResult();
     }
 }
