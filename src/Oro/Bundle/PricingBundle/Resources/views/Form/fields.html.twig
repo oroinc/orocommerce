@@ -55,19 +55,26 @@
     {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-item-collection grid-container price-list-grid-form' }) %}
     {% set id = id ~ '_collection' %}
     <div class="pricing-price-list" data-page-component-module="oropricing/js/app/components/price-lists-errors-handler">
-        <div class="row-oro">
+        {% import 'OroUIBundle::macros.html.twig' as UI %}
+        <div class="row-oro" {{ UI.renderPageComponentAttributes({
+            module: 'oroui/js/app/components/view-component',
+            options: {
+                view: 'oroui/js/drag-n-drop-sorting',
+                autoRender: true
+            }
+        }) }}>
             {% set prototype_name = form.vars.prototype_name %}
             <div {{ block('widget_container_attributes') }}>
                 <table class="grid table-hover table table-bordered">
                     <thead>
                     <tr>
                         <th><span>{{ 'oro.pricing.pricelist.entity_label'|trans }}</span></th>
-                        <th><span>{{ 'oro.pricing.pricelist.priority.label'|trans }}</span></th>
                         <th><span>{{ 'oro.pricing.pricelist.merge_allowed.label'|trans }}</span></th>
+                        <th></th>
                         <th></th>
                     </tr>
                     </thead>
-                    <tbody class="pricing-price-list-items" data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %} data-content>
+                    <tbody class="pricing-price-list-items sortable-wrapper" data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %} data-content>
                     {% if form.children|length %}
                         {% for child in form.children %}
                             {{ _self.oro_pricing_price_list_collection_prototype(child) }}
@@ -102,8 +109,12 @@
 
 {% block oro_pricing_price_list_select_with_priority_widget %}
     <td>{{ form_widget(form.priceList) }} {{ form_errors(form.priceList) }}</td>
-    <td>{{ form_widget(form.priority, { 'attr': {'class': 'priority'} }) }}{{ form_errors(form.priority) }}</td>
     <td>{{ form_widget(form.mergeAllowed, { 'attr': {'class': 'mergeAllowed'} }) }}{{ form_errors(form.mergeAllowed) }}</td>
+    <td>
+        {{ form_widget(form._position) }}
+        <span  class="add-on ui-sortable-handle" data-name="sortable-handle">
+            <i class="fa-arrows-v handle"></i></span>
+    </td>
 {% endblock %}
 
 {# --------------------------- Price List Schedule ------------------------------------------------------ #}
