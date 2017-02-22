@@ -2,8 +2,13 @@
 
 namespace Oro\Component\SEO\Model\DTO;
 
-interface UrlItemInterface extends SitemapItemInterface
+interface UrlItemInterface
 {
+    /**
+     * @return string
+     */
+    public function getLocation();
+
     /**
      * @return null|string
      */
@@ -13,4 +18,9 @@ interface UrlItemInterface extends SitemapItemInterface
      * @return null|float
      */
     public function getPriority();
+
+    /**
+     * @return null|string
+     */
+    public function getLastModification();
 }
