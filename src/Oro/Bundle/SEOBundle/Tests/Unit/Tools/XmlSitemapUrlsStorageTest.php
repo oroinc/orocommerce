@@ -23,19 +23,21 @@ XML;
     {
         $sitemapStorage = new XmlSitemapUrlsStorage();
         $sitemapStorage->addUrlItem(new UrlItem('http://somelocation.com/'));
-        $sitemapStorage->addUrlItem(new UrlItem('http://otherlocation.com/', new \DateTime('2017-01-01 17:33')));
-        $sitemapStorage->addUrlItem(
-            new UrlItem('http://anotherlocation.com/', new \DateTime('2017-05-03 15:45'), 'daily', '0.5')
-        );
+        $otherDateTime = new \DateTime('2017-01-01 17:33');
+        $sitemapStorage->addUrlItem(new UrlItem('http://otherlocation.com/', $otherDateTime));
+        $anotherDateTime = new \DateTime('2017-05-03 15:45');
+        $sitemapStorage->addUrlItem(new UrlItem('http://anotherlocation.com/', $anotherDateTime, 'daily', '0.5'));
 
+        $otherDateTimeString = $otherDateTime->format(\DateTime::W3C);
+        $anotherDateTimeString = $anotherDateTime->format(\DateTime::W3C);
         $expectedXml = <<<XML
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
 XML;
         $expectedXml .= '<url><loc>http://somelocation.com/</loc></url>';
-        $expectedXml .= '<url><loc>http://otherlocation.com/</loc><lastmod>2017-01-01T17:33:00+02:00</lastmod></url>';
+        $expectedXml .= "<url><loc>http://otherlocation.com/</loc><lastmod>$otherDateTimeString</lastmod></url>";
         $expectedXml .= '<url><loc>http://anotherlocation.com/</loc><changefreq>daily</changefreq>';
-        $expectedXml .= '<priority>0.5</priority><lastmod>2017-05-03T15:45:00+03:00</lastmod></url>';
+        $expectedXml .= "<priority>0.5</priority><lastmod>$anotherDateTimeString</lastmod></url>";
         $expectedXml .= '</urlset>';
 
         $this->assertEquals($expectedXml, $sitemapStorage->getContents());
