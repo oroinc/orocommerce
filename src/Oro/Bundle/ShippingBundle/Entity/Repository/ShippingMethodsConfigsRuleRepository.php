@@ -10,7 +10,9 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 
 class ShippingMethodsConfigsRuleRepository extends EntityRepository
 {
-    /** @var AclHelper */
+    /**
+     * @var AclHelper
+     */
     private $aclHelper;
 
     /**

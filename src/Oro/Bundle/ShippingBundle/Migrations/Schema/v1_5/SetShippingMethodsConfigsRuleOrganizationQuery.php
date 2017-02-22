@@ -45,6 +45,7 @@ class SetShippingMethodsConfigsRuleOrganizationQuery extends ParametrizedSqlMigr
     /**
      * @param LoggerInterface $logger
      * @param bool $dryRun
+     *
      * @throws \Exception
      */
     private function setDefaultOrganization(LoggerInterface $logger, $dryRun)
