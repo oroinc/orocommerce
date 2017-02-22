@@ -21,13 +21,11 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function choosePriceListInRow($priceListName, $rowNum)
     {
         $row = $this->getPriceListRow(--$rowNum);
-        $row->find('css', 'div.entity-create-or-select-container')->click();
-
-        /** @var NodeElement|null $priceList */
-        $priceList = null;
-        $this->spin(function (FeatureContext $context) use ($priceListName, &$priceList) {
-            $priceList = $this->getSession()->getPage()->find('named', ['content', $priceListName]);
-            return (bool)$priceList;
+        $row->find('css', 'button.entity-select-btn')->click();
+        $this->waitForAjax();
+        $priceList = $this->spin(function (FeatureContext $context) use ($priceListName) {
+            $priceList = $context->getPage()->find('named', ['content', $priceListName]);
+            return $priceList ? $priceList : false;
         });
         $priceList->click();
         $this->waitForAjax();
@@ -57,7 +55,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function iShouldNotSeeTextInPriceListCollection($text)
     {
         $priceLists = $this->elementFactory->createElement('PriceListCollection');
-        self::assertFalse($priceLists->has('named', ['content', $text]));
+        self::assertFalse(
+            $priceLists->has('named', ['content', $text]),
+            "There is no text '$text' in price lists table"
+        );
     }
 
     /**
@@ -66,7 +67,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function assertDragNDropIconOnPriceListLine()
     {
         $row = $this->getPriceListRow(0);
-        self::assertNotEmpty($row->find('css', 'i.handle'));
+        self::assertNotEmpty($row->find('css', 'i.handle'), 'There is no Drag-n-drop icon in first price list row');
     }
 
     /**
@@ -77,7 +78,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function assertPriceListNameInRow($priceListName, $rowNum)
     {
         $row = $this->getPriceListRow(--$rowNum);
-        self::assertTrue($row->has('named', ['content', $priceListName]));
+        self::assertTrue(
+            $row->has('named', ['content', $priceListName]),
+            "There is no price list with name '$priceListName' in price lists table"
+        );
     }
 
     /**
@@ -88,7 +92,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     {
         $priceLists = $this->elementFactory->createElement('PriceListCollection');
         $rows = $priceLists->findAll('css', 'tbody tr');
-        self::assertNotEmpty($rows[$rowNum]);
+        self::assertNotEmpty($rows[$rowNum], "There is no row '$rowNum' in price lists table");
         return $rows[$rowNum];
     }
 }
