@@ -10,7 +10,7 @@ class EnabledShippingMethodChoicesProviderDecorator implements ShippingMethodCho
      * @var ShippingMethodRegistry
      */
     protected $methodRegistry;
-    
+
     /**
      * @var ShippingMethodChoicesProviderInterface
      */

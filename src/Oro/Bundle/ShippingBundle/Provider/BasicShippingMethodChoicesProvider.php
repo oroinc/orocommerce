@@ -27,7 +27,7 @@ class BasicShippingMethodChoicesProvider implements ShippingMethodChoicesProvide
         $this->methodRegistry = $methodRegistry;
         $this->translator = $translator;
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -41,6 +41,7 @@ class BasicShippingMethodChoicesProvider implements ShippingMethodChoicesProvide
                     $label = $this->translator->trans($label);
                 }
                 $result[$method->getIdentifier()] = $label;
+
                 return $result;
             },
             []
