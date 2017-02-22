@@ -1,0 +1,3 @@
+ROLE_ACCOUNT_MANAGER:
+    permissions:
+        entity|Oro\Bundle\TaxBundle\Entity\CustomerTaxCode: [VIEW_SYSTEM, ASSIGN_SYSTEM]

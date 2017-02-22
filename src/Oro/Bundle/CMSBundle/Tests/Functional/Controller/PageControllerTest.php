@@ -4,14 +4,14 @@ namespace Oro\Bundle\CMSBundle\Tests\Functional\Controller;
 
 use Doctrine\ORM\EntityManager;
 
+use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CMSBundle\Entity\Page;
 
 /**
- * @group segfault
- *
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class PageControllerTest extends WebTestCase
@@ -39,8 +39,74 @@ class PageControllerTest extends WebTestCase
         $this->entityManager = $this->getContainer()->get('doctrine')->getManagerForClass('OroCMSBundle:Page');
     }
 
+    public function testGetChangedUrlsWhenSlugChanged()
+    {
+        $this->loadFixtures([LoadPageData::class]);
+        $localization = $this->getContainer()->get('oro_locale.manager.localization')->getDefaultLocalization(false);
+
+        /** @var Page $page */
+        $page = $this->getReference(LoadPageData::PAGE_1);
+        $page->setDefaultSlugPrototype('old-default-slug');
+        $slugPrototype = new LocalizedFallbackValue();
+        $slugPrototype->setString('old-english-slug')->setLocalization($localization);
+
+        $page->addSlugPrototype($slugPrototype);
+
+        $this->entityManager->persist($page);
+        $this->entityManager->flush();
+
+        $crawler = $this->client->request('GET', $this->getUrl('oro_cms_page_update', ['id' => $page->getId()]));
+        $form = $crawler->selectButton('Save and Close')->form();
+        $formValues = $form->getPhpValues();
+        $formValues['oro_cms_page']['slugPrototypesWithRedirect'] = [
+            'slugPrototypes' => [
+                'values' => [
+                    'default' => 'default-slug',
+                    'localizations' => [
+                        $localization->getId() => ['value' => 'english-slug']
+                    ]
+                ]
+            ]
+        ];
+
+        $this->client->request(
+            'POST',
+            $this->getUrl('oro_cms_page_get_changed_urls', ['id' => $page->getId()]),
+            $formValues
+        );
+
+        $expectedData = [
+            'Default Value' => ['before' => '/old-default-slug', 'after' => '/default-slug'],
+            'English' => ['before' => '/old-english-slug', 'after' => '/english-slug']
+        ];
+
+        $response = $this->client->getResponse();
+        $this->assertJsonStringEqualsJsonString(json_encode($expectedData), $response->getContent());
+    }
+
+    public function testGetChangedUrlsWhenNoSlugChanged()
+    {
+        $this->loadFixtures([LoadPageData::class]);
+
+        $page = $this->getReference(LoadPageData::PAGE_1);
+
+        $crawler = $this->client->request('GET', $this->getUrl('oro_cms_page_update', ['id' => $page->getId()]));
+        $form = $crawler->selectButton('Save and Close')->form();
+        $formValues = $form->getPhpValues();
+
+        $this->client->request(
+            'POST',
+            $this->getUrl('oro_cms_page_get_changed_urls', ['id' => $page->getId()]),
+            $formValues
+        );
+
+        $response = $this->client->getResponse();
+        $this->assertEquals('[]', $response->getContent());
+    }
+
     public function testIndex()
     {
+        $this->markTestSkipped('Due to BB-7566');
         $crawler = $this->client->request('GET', $this->getUrl('oro_cms_page_index'));
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -56,6 +122,7 @@ class PageControllerTest extends WebTestCase
      */
     public function testCreatePage()
     {
+        $this->markTestSkipped('Due to BB-7566');
         return $this->assertCreate(self::DEFAULT_PAGE_TITLE, self::DEFAULT_PAGE_SLUG_TEXT);
     }
 
@@ -126,8 +193,6 @@ class PageControllerTest extends WebTestCase
     public function testDelete($id)
     {
         $this->assertSlugs(self::DEFAULT_PAGE_SLUG_URL, array(self::UPDATED_DEFAULT_PAGE_SLUG_URL), $id);
-
-        $page = $this->entityManager->find('OroCMSBundle:Page', $id);
 
         $this->client->request(
             'GET',

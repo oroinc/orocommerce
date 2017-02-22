@@ -6,6 +6,7 @@ In this example we consider how to customize product with different product type
 - [Simple Product](#simple-product)
 - [Configurable Product](#configurable-product)
 - [Change Product Page by Category](#change-product-page-by-category)
+- [Product Page Templates](#product-page-templates)
 
 ### Getting started
 
@@ -79,7 +80,7 @@ layout:
 
         - '@setOption':
             id: page_title
-            optionName: text
+            optionName: defaultValue
             optionValue: '=data["locale"].getLocalizedValue(data["product"].getNames())'
 
         - '@move':
@@ -450,3 +451,83 @@ template:
 #### Attribute Groups
 
 @TODO
+
+### Product Page Templates
+
+Please see [Page Templates](https://github.com/orocrm/platform/tree/master/src/Oro/Bundle/LayoutBundle/Resources/doc/config_definition.md#page-templates) for more details.
+
+You can modify visual presentation of product view page for every product or choose some page template for all by default.
+First of all we need to create **config** for **page_templates** in our **theme**.
+
+```yml
+# src/Acme/Bundle/ProductBundle/Resources/views/layouts/default/config/page_templates.yml
+
+templates:
+    -
+        label: Custom page template
+        description: Custom page template description
+        route_name: oro_product_frontend_product_view
+        key: custom
+    -
+        label: Parent Additional page template
+        description: Additional page template description
+        route_name: oro_product_frontend_product_view
+        key: additional
+titles:
+    oro_product_frontend_product_view: Product Page
+```
+
+Next lets add some **layout updates**:
+
+```yml
+# src/Acme/Bundle/ProductBundle/Resources/views/layouts/default/oro_product_frontend_product_view/page_template/custom/layout.yml
+
+layout:
+    actions:
+        - '@remove':
+            id: product_view_attribute_group_images
+        - '@move':
+            id: product_view_specification_container
+            parentId: product_view_aside_container
+
+```
+
+```yml
+# src/Acme/Bundle/ProductBundle/Resources/views/layouts/default/oro_product_frontend_product_view/page_template/additional/layout.yml
+
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
+        - '@add':
+            id: product_view_banner
+            blockType: block
+            parentId: product_view_content_container
+
+```
+
+and **templates**:
+
+```twig
+{# src/Acme/Bundle/ProductBundle/Resources/views/layouts/default/oro_product_frontend_product_view/page_template/additional/layout.html.twig #}
+
+{% block _product_view_banner_widget %}
+    <div class="text-center">
+        <img src="{{ asset('/bundles/oroproduct/default/images/flashlights.png') }}"/>
+    </div>
+    <br />
+{% endblock %}
+
+```
+
+#### Global level
+
+To apply **custom page template** to all products, go to **System > Configuration > Commerce > Design > Theme**.
+In section **Page Templates** choose **Custom page template** in **Product Page** select. Result  of product view page:
+![Global Product View Page with Custom Page Template](./images/global_product_view_page_with_custom_page_template.png "Global Product View Page with Custom Page Template")
+
+#### Entity level
+
+To apply **custom page template** to selected products, go to **Products > Products** find your product and click **edit**.
+In section **Design** choose **Additional page template** in **Page Template** select. Result of product view page:
+![Entity Product View Page with Custom Page Template](./images/entity_product_view_page_with_custom_page_template.png "Entity Product View Page with Custom Page Template")
