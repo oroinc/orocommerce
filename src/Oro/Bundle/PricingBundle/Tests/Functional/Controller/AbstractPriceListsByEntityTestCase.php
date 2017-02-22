@@ -217,7 +217,7 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         $form = $this->getUpdateForm();
         $this->assertTrue($form->has($this->formExtensionPath));
         //Test remove one price list
-        $path = sprintf('[%s][priceListCollection][1]', $this->getDefaultWebsite()->getId());
+        $path = sprintf('[%s][priceListCollection][2]', $this->getDefaultWebsite()->getId());
         $form->remove($this->formExtensionPath . $path);
         $this->client->submit($form);
         $priceListsRelations = $this->getPriceListsByEntity();
