@@ -133,8 +133,8 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
                         'fallback' => 0,
                         'priceLists' => [
                             ['priceList' => 'price_list_1', 'sort_order' => 0, 'mergeAllowed' => false],
-                            ['priceList' => 'price_list_3', 'sort_order' => 0, 'mergeAllowed' => true],
                             ['priceList' => 'price_list_2', 'sort_order' => 0, 'mergeAllowed' => true],
+                            ['priceList' => 'price_list_3', 'sort_order' => 0, 'mergeAllowed' => true],
                         ],
                     ],
                 ],
