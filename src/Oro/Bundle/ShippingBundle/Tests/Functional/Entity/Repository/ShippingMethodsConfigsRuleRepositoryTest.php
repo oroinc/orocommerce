@@ -9,16 +9,18 @@ use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRules;
+use Oro\Bundle\ShippingBundle\Tests\Functional\Helper\FlatRateIntegrationTrait;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingAddressStub;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 /**
- * @dbIsolation
+ * @dbIsolationPerTest
  */
 class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
 {
     use EntityTrait;
+    use FlatRateIntegrationTrait;
 
     /**
      * @var ShippingMethodsConfigsRuleRepository
@@ -46,9 +48,10 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
 
     /**
      * @dataProvider getByDestinationAndCurrencyDataProvider
-     * @param array $shippingAddressData
-     * @param string $currency
-     * @param array|ShippingMethodsConfigsRule[] $expectedRules
+     *
+     * @param array                        $shippingAddressData
+     * @param string                       $currency
+     * @param ShippingMethodsConfigsRule[] $expectedRules
      */
     public function testGetByDestinationAndCurrency(array $shippingAddressData, $currency, array $expectedRules)
     {
@@ -128,8 +131,18 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
         static::assertCount(0, $enabledRulesWithoutShippingMethods);
     }
 
+    public function testGetRulesByMethod()
+    {
+        $rulesByExistingMethod = $this->repository->getRulesByMethod($this->getFlatRateIdentifier());
+        $rulesByNotExistingMethod = $this->repository->getRulesByMethod('not_existing_method');
+
+        static::assertCount(9, $rulesByExistingMethod);
+        static::assertCount(0, $rulesByNotExistingMethod);
+    }
+
     /**
      * @param array $rules
+     *
      * @return array
      */
     protected function getEntitiesByReferences(array $rules)
@@ -141,6 +154,7 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
 
     /**
      * @param array $data
+     *
      * @return AddressInterface|object
      */
     protected function createShippingAddress(array $data)

@@ -11,8 +11,9 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
 {
     /**
      * @param AddressInterface $shippingAddress
-     * @param string $currency
-     * @return array|ShippingMethodsConfigsRule[]
+     * @param string           $currency
+     *
+     * @return ShippingMethodsConfigsRule[]
      */
     public function getByDestinationAndCurrency(AddressInterface $shippingAddress, $currency)
     {
@@ -26,13 +27,13 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
             ->setParameter('country', $shippingAddress->getCountryIso2())
             ->setParameter('regionCode', $shippingAddress->getRegionCode())
             ->setParameter('postalCodes', explode(',', $shippingAddress->getPostalCode()))
-            ->getQuery()->execute()
-        ;
+            ->getQuery()->execute();
     }
 
     /**
      * @param string $currency
-     * @return array|ShippingMethodsConfigsRule[]
+     *
+     * @return ShippingMethodsConfigsRule[]
      */
     public function getByCurrencyWithoutDestination($currency)
     {
@@ -45,6 +46,7 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
 
     /**
      * @param bool $onlyEnabled
+     *
      * @return mixed
      */
     public function getRulesWithoutShippingMethods($onlyEnabled = false)
@@ -56,11 +58,11 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
         if ($onlyEnabled) {
             $qb->andWhere('rule.enabled = true');
         }
+
         return $qb
             ->having('COUNT(methodConfigs.id) = 0')
             ->groupBy('rule.id')
-            ->getQuery()->execute()
-        ;
+            ->getQuery()->execute();
     }
 
     public function disableRulesWithoutShippingMethods()
@@ -80,6 +82,7 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
 
     /**
      * @param string $currency
+     *
      * @return QueryBuilder
      */
     private function getByCurrencyQuery($currency)
@@ -89,7 +92,21 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
             ->leftJoin('methodsConfigsRule.methodConfigs', 'methodConfigs')
             ->leftJoin('methodConfigs.typeConfigs', 'typeConfigs')
             ->where('methodsConfigsRule.currency = :currency')
-            ->setParameter('currency', $currency)
-        ;
+            ->setParameter('currency', $currency);
+    }
+
+    /**
+     * @param string $method
+     *
+     * @return ShippingMethodsConfigsRule[]
+     */
+    public function getRulesByMethod($method)
+    {
+        return $this->createQueryBuilder('methodsConfigsRule')
+            ->leftJoin('methodsConfigsRule.methodConfigs', 'methodConfigs')
+            ->where('methodConfigs.method = :method')
+            ->setParameter('method', $method)
+            ->getQuery()
+            ->execute();
     }
 }
