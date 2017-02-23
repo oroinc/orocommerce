@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\PayPalBundle\DependencyInjection;
 
-use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader;
+use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 
 class OroPayPalExtension extends Extension
 {
@@ -13,6 +13,8 @@ class OroPayPalExtension extends Extension
 
     /**
      * {@inheritDoc}
+     *
+     * @throws \Exception
      */
     public function load(array $configs, ContainerBuilder $container)
     {
@@ -23,6 +25,10 @@ class OroPayPalExtension extends Extension
         $loader->load('block_types.yml');
         $loader->load('method.yml');
         $loader->load('listeners.yml');
+
+        if ($container->getParameter('kernel.environment') === 'test') {
+            $loader->load('payment_test.yml');
+        }
     }
 
     /**

@@ -24,7 +24,7 @@ class OroShippingBundleInstaller implements Installation, ActivityExtensionAware
      */
     public function getMigrationVersion()
     {
-        return 'v1_4';
+        return 'v1_5';
     }
 
     /**
@@ -79,6 +79,8 @@ class OroShippingBundleInstaller implements Installation, ActivityExtensionAware
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('rule_id', 'integer', ['notnull' => true]);
         $table->addColumn('currency', 'string', ['notnull' => true, 'length' => 3]);
+        $table->addColumn('organization_id', 'integer', ['notnull' => false]);
+
         $table->setPrimaryKey(['id']);
         $table->addIndex(['rule_id'], 'IDX_1FA57D60744E0351', []);
 
@@ -230,6 +232,12 @@ class OroShippingBundleInstaller implements Installation, ActivityExtensionAware
             ['rule_id'],
             ['id'],
             ['onDelete' => 'CASCADE', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_organization'),
+            ['organization_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
     }
 
