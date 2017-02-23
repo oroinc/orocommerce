@@ -34,7 +34,6 @@
 
 {% block content_data %}
     {% set id = 'price-list-edit' %}
-    {% set entities = oro_product_expression_autocomplete_data() %}
 
     {% set dataBlocks = [
         {
@@ -56,15 +55,7 @@
             'subblocks': [{
                 'title': '',
                 'data': [
-                    form_row(form.productAssignmentRule, {'attr': {
-                        'data-page-component-module': 'orofrontend/default/js/app/components/rule-editor-component',
-                        'data-page-component-options': {
-                            entities: entities,
-                            dataSource: {
-                                pricelist: form_widget(priceListSelect)
-                            }
-                        }|json_encode
-                    }})
+                    form_row(form.productAssignmentRule)
                 ]
             }]
         },

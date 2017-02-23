@@ -4,16 +4,13 @@ namespace Oro\Bundle\PricingBundle\Controller;
 
 use Oro\Bundle\PricingBundle\Async\NotificationMessages;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListType;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
 
 class PriceListController extends Controller
 {
@@ -131,17 +128,7 @@ class PriceListController extends Controller
                     'parameters' => ['id' => $priceList->getId()]
                 ];
             },
-            $this->get('translator')->trans('oro.pricing.controller.price_list.saved.message'),
-            null,
-            function (PriceList $priceList, FormInterface $form, Request $request) {
-                $formPriceList = $this->createForm(PriceListSelectType::NAME, null, ['create_enabled' => false]);
-                return [
-                    'form' => $form->createView(),
-                    'entity' => $priceList,
-                    'isWidgetContext' => (bool)$request->get('_wid', false),
-                    'priceListSelect' => $formPriceList->createView()
-                ];
-            }
+            $this->get('translator')->trans('oro.pricing.controller.price_list.saved.message')
         );
     }
 

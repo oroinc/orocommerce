@@ -94,9 +94,25 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_product.validator_constraints.expression_validator }
 
-    oro_product.autocomplete_fields_provider:
-        class: Oro\Bundle\ProductBundle\Expression\Autocomplete\AutocompleteFieldsProvider
+    oro_product.autocomplete_fields_provider.abstract:
+        class: Oro\Bundle\ProductBundle\Expression\Autocomplete\AbstractAutocompleteFieldsProvider
+        abstract: true
         arguments:
             - '@oro_product.expression.parser'
             - '@oro_product.expression.fields_provider'
             - '@translator'
+
+    oro_product.autocomplete_fields_provider:
+        class: Oro\Bundle\ProductBundle\Expression\Autocomplete\AutocompleteFieldsProvider
+        public: false
+        parent: oro_product.autocomplete_fields_provider.abstract
+
+    oro_product.autocomplete_fields_provider.currency:
+        class: Oro\Bundle\ProductBundle\Expression\Autocomplete\CurrencyFieldsProvider
+        public: false
+        parent: oro_product.autocomplete_fields_provider.abstract
+
+    oro_product.autocomplete_fields_provider.unit:
+        class: Oro\Bundle\ProductBundle\Expression\Autocomplete\UnitFieldsProvider
+        public: false
+        parent: oro_product.autocomplete_fields_provider.abstract

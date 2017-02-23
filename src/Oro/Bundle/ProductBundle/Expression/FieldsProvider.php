@@ -156,22 +156,34 @@ class FieldsProvider implements FieldsProviderInterface
             $this->entityFields[$cacheKey] = [];
             foreach ($fields as $field) {
                 $fieldName = $field['name'];
-                if ($this->isBlacklistedField($className, $fieldName)) {
+                if ($this->isBlacklistedField($className, $fieldName)
+                    || (!$this->isWhitelistedField($className, $fieldName)
+                        && $this->isSkippedField($field, $numericOnly, $withRelations)
+                    )
+                ) {
                     continue;
-                }
-                if (!$this->isWhitelistedField($className, $fieldName)) {
-                    if ($numericOnly && empty(self::$supportedNumericTypes[$field['type']])) {
-                        continue;
-                    }
-                    if ($withRelations && $this->isSupportedRelation($field)) {
-                        continue;
-                    }
                 }
                 $this->entityFields[$cacheKey][$fieldName] = $field;
             }
         }
 
         return $this->entityFields[$cacheKey];
+    }
+
+    /**
+     * @param array $field
+     * @param bool $numericOnly
+     * @param bool $withRelations
+     * @return bool
+     */
+    protected function isSkippedField(array $field, $numericOnly, $withRelations)
+    {
+        $isDisallowedNumeric = $numericOnly
+            && empty($field['relation_type'])
+            && empty(self::$supportedNumericTypes[$field['type']]);
+        $isDisallowedRelation = $withRelations && $this->isUnsupportedRelation($field);
+
+        return $isDisallowedNumeric || $isDisallowedRelation;
     }
 
     /**
@@ -212,7 +224,7 @@ class FieldsProvider implements FieldsProviderInterface
      * @param array $field
      * @return bool
      */
-    protected function isSupportedRelation(array $field)
+    protected function isUnsupportedRelation(array $field)
     {
         return array_key_exists('relation_type', $field)
             && empty(self::$supportedRelationTypes[$field['relation_type']]);

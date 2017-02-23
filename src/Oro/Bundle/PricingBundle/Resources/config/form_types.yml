@@ -1,4 +1,56 @@
 services:
+    oro_pricing.form.options_configurator.price_rule_editor_options_configurator:
+        class: Oro\Bundle\PricingBundle\Form\OptionsConfigurator\PriceRuleEditorOptionsConfigurator
+        public: false
+        arguments:
+            - '@oro_product.autocomplete_fields_provider'
+            - '@form.factory'
+            - '@twig'
+
+    oro_pricing.form.options_configurator.price_rule_editor_options_configurator.currency:
+        class: Oro\Bundle\PricingBundle\Form\OptionsConfigurator\PriceRuleEditorOptionsConfigurator
+        public: false
+        arguments:
+            - '@oro_product.autocomplete_fields_provider.currency'
+            - '@form.factory'
+            - '@twig'
+
+    oro_pricing.form.options_configurator.price_rule_editor_options_configurator.unit:
+        class: Oro\Bundle\PricingBundle\Form\OptionsConfigurator\PriceRuleEditorOptionsConfigurator
+        public: false
+        arguments:
+            - '@oro_product.autocomplete_fields_provider.unit'
+            - '@form.factory'
+            - '@twig'
+
+    oro_pricing.form.type.price_rule_editor:
+        class: Oro\Bundle\PricingBundle\Form\Type\PriceRuleEditorType
+        arguments:
+            - '@oro_pricing.form.options_configurator.price_rule_editor_options_configurator'
+        tags:
+            - { name: form.type, alias: oro_pricing_price_rule_editor }
+
+    oro_pricing.form.type.price_rule_editor_text:
+        class: Oro\Bundle\PricingBundle\Form\Type\PriceRuleEditorTextType
+        arguments:
+            - '@oro_pricing.form.options_configurator.price_rule_editor_options_configurator'
+        tags:
+            - { name: form.type, alias: oro_pricing_price_rule_editor_text }
+
+    oro_pricing.form.type.rule_editor_currency_expression:
+        class: Oro\Bundle\PricingBundle\Form\Type\RuleEditorCurrencyExpressionType
+        arguments:
+            - '@oro_pricing.form.options_configurator.price_rule_editor_options_configurator.currency'
+        tags:
+            - { name: form.type, alias: oro_pricing_price_rule_editor_currency }
+
+    oro_pricing.form.type.rule_editor_unit_expression:
+        class: Oro\Bundle\PricingBundle\Form\Type\RuleEditorUnitExpressionType
+        arguments:
+            - '@oro_pricing.form.options_configurator.price_rule_editor_options_configurator.unit'
+        tags:
+            - { name: form.type, alias: oro_pricing_price_rule_editor_unit }
+
     oro_pricing.form.type.price_list:
         class: 'Oro\Bundle\PricingBundle\Form\Type\PriceListType'
         tags:
@@ -135,7 +187,7 @@ services:
            - { name: form.type, alias: oro_pricing_product_attribute_price }
 
     oro_pricing.form.type.oro_pricing_price_rule:
-       class: Oro\Bundle\PricingBundle\Form\Type\PriceRuleType
-       public: true
-       tags:
-           - { name: form.type, alias: oro_pricing_price_rule }
+        class: Oro\Bundle\PricingBundle\Form\Type\PriceRuleType
+        public: true
+        tags:
+            - { name: form.type, alias: oro_pricing_price_rule }
