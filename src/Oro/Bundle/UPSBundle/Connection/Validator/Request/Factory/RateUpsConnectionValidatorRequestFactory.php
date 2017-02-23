@@ -8,7 +8,9 @@ use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 
 class RateUpsConnectionValidatorRequestFactory implements UpsConnectionValidatorRequestFactoryInterface
 {
-    /** @internal */
+    /**
+     * @internal
+     */
     const REQUEST_URL = 'Rate';
 
     /**
