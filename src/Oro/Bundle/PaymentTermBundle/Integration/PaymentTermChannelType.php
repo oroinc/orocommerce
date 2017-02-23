@@ -3,9 +3,8 @@
 namespace Oro\Bundle\PaymentTermBundle\Integration;
 
 use Oro\Bundle\IntegrationBundle\Provider\ChannelInterface;
-use Oro\Bundle\IntegrationBundle\Provider\IconAwareIntegrationInterface;
 
-class PaymentTermChannelType implements ChannelInterface, IconAwareIntegrationInterface
+class PaymentTermChannelType implements ChannelInterface
 {
     const TYPE = 'payment_term';
 
@@ -15,13 +14,5 @@ class PaymentTermChannelType implements ChannelInterface, IconAwareIntegrationIn
     public function getLabel()
     {
         return 'oro.paymentterm.channel_type.label';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getIcon()
-    {
-        return '';
     }
 }

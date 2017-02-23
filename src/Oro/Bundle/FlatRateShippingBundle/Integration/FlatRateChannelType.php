@@ -3,9 +3,8 @@
 namespace Oro\Bundle\FlatRateShippingBundle\Integration;
 
 use Oro\Bundle\IntegrationBundle\Provider\ChannelInterface;
-use Oro\Bundle\IntegrationBundle\Provider\IconAwareIntegrationInterface;
 
-class FlatRateChannelType implements ChannelInterface, IconAwareIntegrationInterface
+class FlatRateChannelType implements ChannelInterface
 {
     const TYPE = 'flat_rate';
 
@@ -15,15 +14,5 @@ class FlatRateChannelType implements ChannelInterface, IconAwareIntegrationInter
     public function getLabel()
     {
         return 'oro.flat_rate.channel_type.label';
-    }
-
-    /**
-     * TODO: add icon
-     *
-     * {@inheritdoc}
-     */
-    public function getIcon()
-    {
-        return 'bundles/oroflatrate/img/flat-logo.gif';
     }
 }

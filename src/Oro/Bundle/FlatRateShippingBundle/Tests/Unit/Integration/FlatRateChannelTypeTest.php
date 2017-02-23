@@ -18,9 +18,4 @@ class FlatRateChannelTypeTest extends \PHPUnit_Framework_TestCase
     {
         static::assertTrue(is_string($this->channel->getLabel()));
     }
-
-    public function testGetIconReturnsString()
-    {
-        static::assertTrue(is_string($this->channel->getIcon()));
-    }
 }

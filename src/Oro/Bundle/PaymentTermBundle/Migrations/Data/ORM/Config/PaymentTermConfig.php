@@ -93,7 +93,7 @@ class PaymentTermConfig
      */
     private function getFullConfigKey($key)
     {
-        return OroMoneyOrderExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . $key;
+        return OroPaymentTermExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . $key;
     }
 
     /**
