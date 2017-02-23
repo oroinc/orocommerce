@@ -296,7 +296,6 @@ services:
             - { name: oro_workflow.condition, alias: 'has_applicable_shipping_methods' }
             - { name: oro_action.condition, alias: 'has_applicable_shipping_methods' }
 
-
     oro_shipping.condition.shipping_method_has_shipping_rules:
         class: 'Oro\Bundle\ShippingBundle\Condition\ShippingMethodHasShippingRules'
         public: false
