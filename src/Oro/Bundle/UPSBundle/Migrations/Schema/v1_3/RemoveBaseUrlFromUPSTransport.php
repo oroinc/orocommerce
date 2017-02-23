@@ -2,21 +2,19 @@
 
 namespace Oro\Bundle\UPSBundle\Migrations\Schema\v1_3;
 
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
+use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class RemoveBaseUrlFromUPSTransport implements Migration, DependentFixtureInterface
+class RemoveBaseUrlFromUPSTransport implements Migration, OrderedMigrationInterface
 {
     /**
      * {@inheritDoc}
      */
-    public function getDependencies()
+    public function getOrder()
     {
-        return [
-            AddTestModeToUPSTransport::class
-        ];
+        return 20;
     }
 
     /**
