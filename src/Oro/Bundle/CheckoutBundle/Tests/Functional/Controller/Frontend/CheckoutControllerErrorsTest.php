@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
+use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -14,6 +14,7 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
+use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * @dbIsolationPerTest
@@ -139,8 +140,8 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         $this->enableAllShippingRules();
 
         //Order Review step
-        $crawler = $this->goToOrderReviewStepFromPayment($crawler); //order content has changed
-        $crawler = $this->goToOrderReviewStepFromPayment($crawler);
+        $crawler = $this->goToOrderReviewStepFromPaymentWithPaymentTerm($crawler); //order content has changed
+        $crawler = $this->goToOrderReviewStepFromPaymentWithPaymentTerm($crawler);
         static::assertContains(self::ORDER_REVIEW_SIGN, $crawler->html());
 
         $this->disableAllShippingRules();
@@ -193,7 +194,7 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         $this->enableAllPaymentRules();
 
         //Order Review step
-        $crawler = $this->goToOrderReviewStepFromPayment($crawler);
+        $crawler = $this->goToOrderReviewStepFromPaymentWithPaymentTerm($crawler);
         static::assertContains(self::ORDER_REVIEW_SIGN, $crawler->html());
 
         $this->disableAllPaymentRules();
@@ -269,11 +270,9 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
     }
 
     /**
-     * @param Crawler $crawler
-     *
-     * @return Crawler
+     * {@inheritDoc}
      */
-    private function goToOrderReviewStepFromPayment(Crawler $crawler)
+    protected function goToOrderReviewStepFromPaymentWithPaymentTerm(Crawler $crawler)
     {
         $form = $this->getTransitionForm($crawler);
         $values = $this->explodeArrayPaths($form->getValues());
