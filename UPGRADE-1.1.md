@@ -113,47 +113,30 @@ PaymentBundle
     - class `Oro\Bundle\PaymentBundle\ExpressionLanguage\DecoratedProductLineItemFactory` only dependency is now `Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory`
 
 PaymentTermBundle
-----------------
-* Added interfaces:
-    - `Oro/Bundle/PaymentTermBundle/Method/Config/Factory/Settings/PaymentTermConfigBySettingsFactoryInterface.php`
-    - `Oro/Bundle/PaymentTermBundle/Method/Config/Provider/PaymentTermConfigProviderInterface.php`
-    - `Oro/Bundle/PaymentTermBundle/Method/Factory/PaymentTermPaymentMethodFactoryInterface.php`
-    - `Oro/Bundle/PaymentTermBundle/Method/View/Factory/PaymentTermPaymentMethodViewFactoryInterface.php`
-* Removed classes:
-    - `Oro/Bundle/PaymentTermBundle/DependencyInjection/Configuration.php`
-        - it is useless because PaymentTerm payment methods settings were moved from system configuration to integrations
-    - `Oro/Bundle/PaymentTermBundle/Method/Config/PaymentTermConfig.php`
-* Added classes:
-    - `Oro/Bundle/PaymentTermBundle/Entity/PaymentTermSettings.php`
-        - here moved all settings from system configuration related to PaymentTerm payment methods
-    - `Oro/Bundle/PaymentTermBundle/Entity/Repository/PaymentTermSettingsRepository.php`
-        - added method findWithEnabledChannel()
-    - `Oro/Bundle/PaymentTermBundle/Form/Type/PaymentTermSettingsType.php`
-        - form type responsible for filling PaymentTerm payment methods settings
-    - `Oro/Bundle/PaymentTermBundle/Integration/PaymentTermChannelType.php`
-    - `Oro/Bundle/PaymentTermBundle/Integration/PaymentTermTransport.php`
-    - `Oro/Bundle/PaymentTermBundle/Method/Config/ParameterBag/Factory/Settings/ParameterBagPaymentTermConfigBySettingsFactory.php`
-    - `Oro/Bundle/PaymentTermBundle/Method/Config/ParameterBag/ParameterBagPaymentTermConfig.php`
-    - `Oro/Bundle/PaymentTermBundle/Method/Config/Provider/Basic/BasicPaymentTermConfigProvider.php`
-    - `Oro/Bundle/PaymentTermBundle/Method/Config/Provider/Cached/Memory/CachedMemoryPaymentTermConfigProvider.php`
-    - `Oro/Bundle/PaymentTermBundle/Method/Factory/PaymentTermPaymentMethodFactory.php`
-    - `Oro/Bundle/PaymentTermBundle/Method/Provider/PaymentTermMethodProvider.php `
-    - `Oro/Bundle/PaymentTermBundle/Method/View/Factory/PaymentTermPaymentMethodViewFactory.php`
-    - `Oro/Bundle/PaymentTermBundle/Method/View/Provider/PaymentTermMethodViewProvider.php`
-    - `Oro/Bundle/PaymentTermBundle/Migrations/Data/ORM/MoveConfigValuesToSettings.php`
-        - data migration responsible to move PaymentTerm payment methods settings from system configuration to integrations
-* Modified classes:
-    - `Oro/Bundle/PaymentTermBundle/Method/PaymentTerm.php`
-        - modified method getIdentifier (identifier is taken from PaymentTermConfig)
-    - `Oro/Bundle/PaymentTermBundle/Method/View/PaymentTermView.php`
-        - removed methods:
-            - getPaymentMethodType()
-        - added methods:
-            - getAdminLabel()
-            - getPaymentMethodIdentifier()
-    - `Oro\Bundle\PaymentTermBundle\Twig\DeleteMessageTextExtension`
-        - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
-        - removed property `protected $deleteMessageGenerator`
+-----------------
+- Class `Oro\Bundle\PaymentTermBundle\Twig\DeleteMessageTextExtension`
+    - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
+    - removed property `protected $deleteMessageGenerator`
+    
+* PaymentTerm implementation was changed using IntegrationBundle (refer to PaymentBundle and IntegrationBundle for details). Notable changes:
+    - Class `Oro\Bundle\PaymentTermBundle\DependencyInjection\Configuration` was removed and instead `Oro\Bundle\PaymentTermBundle\Entity\PaymentTermSettings` was created - entity that implements `Oro\Bundle\IntegrationBundle\Entity\Transport` to store payment integration properties
+    - Class `Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfig` was removed and instead simple parameter bag object `Oro\Bundle\PaymentTermBundle\Method\Config\ParameterBagPaymentTermConfig` is being used for holding payment integration properties that are stored in PaymentTermSettings
+    - Class `Oro\Bundle\PaymentTermBundle\Method\PaymentTerm` method getIdentifier now uses PaymentTermConfig to retrieve identifier of a concrete method
+    - Class `Oro\Bundle\PaymentTermBundle\Method\View\PaymentTermView` now has two additional methods due to implementing `Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface`
+        getAdminLabel() is used to display labels in admin panel
+        getPaymentMethodIdentifier() used to properly display different methods in frontend
+    Added multiple classes to implement payment through integration and most of them have interfaces, so they are extendable through composition:
+        - `Oro\Bundle\PaymentTermBundle\Entity\Repository\PaymentTermSettingsRepository`
+        - `Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermSettingsType`
+        - `Oro\Bundle\PaymentTermBundle\Integration\PaymentTermChannelType`
+        - `Oro\Bundle\PaymentTermBundle\Integration\PaymentTermTransport`
+        - `Oro\Bundle\PaymentTermBundle\Method\Config\ParameterBag\ParameterBagPaymentTermConfig`
+        - `Oro\Bundle\PaymentTermBundle\Method\Config\Provider\Basic\BasicPaymentTermConfigProvider`
+        - `Oro\Bundle\PaymentTermBundle\Method\Config\Provider\Cached\Memory\CachedMemoryPaymentTermConfigProvider`
+        - `Oro\Bundle\PaymentTermBundle\Method\Factory\PaymentTermPaymentMethodFactory`
+        - `Oro\Bundle\PaymentTermBundle\Method\Provider\PaymentTermMethodProvider`
+        - `Oro\Bundle\PaymentTermBundle\Method\View\Factory\PaymentTermPaymentMethodViewFactory`
+        - `Oro\Bundle\PaymentTermBundle\Method\View\Provider\PaymentTermMethodViewProvider`
 
 PricingBundle
 -------------
