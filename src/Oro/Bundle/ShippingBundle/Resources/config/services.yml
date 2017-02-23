@@ -109,6 +109,8 @@ services:
         parent: oro_entity.abstract_repository
         arguments:
             - 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule'
+        calls:
+            - [setAclHelper, ['@oro_security.acl_helper']]
 
     oro_shipping.repository.product_shipping_options:
         parent: oro_entity.abstract_repository
