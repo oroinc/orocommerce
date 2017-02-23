@@ -17,13 +17,20 @@ class SlugUrl
     protected $localization;
 
     /**
+     * @var string|null
+     */
+    protected $slug;
+
+    /**
      * @param string $url
      * @param Localization|null $localization
+     * @param string|null $slug
      */
-    public function __construct($url, Localization $localization = null)
+    public function __construct($url, Localization $localization = null, $slug = null)
     {
         $this->url = $url;
         $this->localization = $localization;
+        $this->slug = $slug;
     }
 
     /**
@@ -35,10 +42,29 @@ class SlugUrl
     }
 
     /**
+     * @param string $url
+     * @return $this
+     */
+    public function setUrl($url)
+    {
+        $this->url = $url;
+
+        return $this;
+    }
+
+    /**
      * @return Localization
      */
     public function getLocalization()
     {
         return $this->localization;
+    }
+
+    /**
+     * @return null|string
+     */
+    public function getSlug()
+    {
+        return $this->slug;
     }
 }

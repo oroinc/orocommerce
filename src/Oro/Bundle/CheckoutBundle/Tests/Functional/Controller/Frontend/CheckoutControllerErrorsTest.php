@@ -5,15 +5,18 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
+use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
+use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
 /**
- * @dbIsolation
+ * @dbIsolationPerTest
  */
 class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
 {
@@ -21,16 +24,16 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
     {
         $this->initClient(
             [],
-            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW),
-            true
+            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
         $this->loadFixtures([
             LoadCustomerAddresses::class,
             LoadProductUnitPrecisions::class,
             LoadShoppingListLineItems::class,
             LoadCombinedProductPrices::class,
+            LoadPaymentTermData::class,
             LoadPaymentMethodsConfigsRuleData::class
-        ], true);
+        ]);
         $this->registry = $this->getContainer()->get('doctrine');
     }
 
@@ -84,5 +87,184 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $noProductsError = $translator->trans('oro.checkout.workflow.condition.order_line_item_has_count.message');
         $this->assertContains($noProductsError, $crawler->html());
+    }
+
+    public function testCheckoutErrorsOnNotAvailableShippingMethods()
+    {
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
+
+        //Billing Information step
+        $this->startCheckout($shoppingList);
+        $crawler = $this->client->request('GET', self::$checkoutUrl);
+        $this->assertContains(self::BILLING_ADDRESS_SIGN, $crawler->html());
+
+        //Shipping Information step
+        $form = $this->getTransitionForm($crawler);
+        $crawler = $this->client->submit($form);
+        $this->assertContains(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
+
+        //Shipping Method step
+        $form = $this->getTransitionForm($crawler);
+        $crawler = $this->client->submit($form);
+        $this->assertContains(self::SHIPPING_METHOD_SIGN, $crawler->html());
+
+        $this->disableAllShippingRules();
+
+        //Shipping Method step with error for no shipping rules
+        $form = $this->getTransitionForm($crawler);
+        $crawler = $this->client->submit($form);
+        $this->assertContains('The selected shipping method is not available.', $crawler->html());
+        $this->assertContains(
+            'Please return to the shipping method selection step and select a different one.',
+            $crawler->html()
+        );
+
+        $this->enableAllShippingRules();
+
+        //Payment step
+        $crawler = $this->client->submit($form);
+        $this->assertContains(self::PAYMENT_METHOD_SIGN, $crawler->html());
+
+        $this->disableAllShippingRules();
+
+        //Payment step with error for no shipping rules
+        $form = $this->getTransitionForm($crawler);
+        $crawler = $this->client->submit($form);
+        $this->assertContains('The selected shipping method is not available.', $crawler->html());
+        $this->assertContains(
+            'Please return to the shipping method selection step and select a different one.',
+            $crawler->html()
+        );
+
+        $this->enableAllShippingRules();
+
+        //Order Review step
+        $crawler = $this->goToOrderReviewStepFromPayment($crawler, 'payment_term'); //order content has changed
+        $crawler = $this->goToOrderReviewStepFromPayment($crawler, 'payment_term');
+        $this->assertContains(self::ORDER_REVIEW_SIGN, $crawler->html());
+
+        $this->disableAllShippingRules();
+
+        //Order Review step with error for no shipping rules
+        $form = $this->getTransitionForm($crawler);
+        $crawler = $this->client->submit($form);
+        $this->assertContains('The selected shipping method is not available.', $crawler->html());
+        $this->assertContains(
+            'Please return to the shipping method selection step and select a different one.',
+            $crawler->html()
+        );
+    }
+
+    public function testCheckoutErrorsOnNotAvailablePaymentMethods()
+    {
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
+
+        //Billing Information step
+        $this->startCheckout($shoppingList);
+        $crawler = $this->client->request('GET', self::$checkoutUrl);
+        $this->assertContains(self::BILLING_ADDRESS_SIGN, $crawler->html());
+
+        //Shipping Information step
+        $form = $this->getTransitionForm($crawler);
+        $crawler = $this->client->submit($form);
+        $this->assertContains(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
+
+        //Shipping Method step
+        $form = $this->getTransitionForm($crawler);
+        $crawler = $this->client->submit($form);
+        $this->assertContains(self::SHIPPING_METHOD_SIGN, $crawler->html());
+
+        //Payment step
+        $form = $this->getTransitionForm($crawler);
+        $crawler = $this->client->submit($form);
+        $this->assertContains(self::PAYMENT_METHOD_SIGN, $crawler->html());
+
+        $this->disableAllPaymentRules();
+
+        //Payment step with error for no shipping rules
+        $form = $this->getTransitionForm($crawler);
+        $crawler = $this->client->submit($form);
+        $this->assertContains('The selected payment method is not available.', $crawler->html());
+        $this->assertContains(
+            'Please return to the payment method selection step and select a different one.',
+            $crawler->html()
+        );
+
+        $this->enableAllPaymentRules();
+
+        //Order Review step
+        $crawler = $this->goToOrderReviewStepFromPayment($crawler, 'payment_term');
+        $this->assertContains(self::ORDER_REVIEW_SIGN, $crawler->html());
+
+        $this->disableAllPaymentRules();
+
+        //Order Review step with error for no shipping rules
+        $form = $this->getTransitionForm($crawler);
+        $crawler = $this->client->submit($form);
+        $this->assertContains('The selected payment method is not available.', $crawler->html());
+        $this->assertContains(
+            'Please return to the payment method selection step and select a different one.',
+            $crawler->html()
+        );
+    }
+
+    private function disableAllShippingRules()
+    {
+        $shippingRules = $this->getAllShippingRules();
+
+        foreach ($shippingRules as $shippingRule) {
+            $shippingRule->getRule()->setEnabled(false);
+        }
+
+        $this->registry->getManager()->flush();
+    }
+
+    private function disableAllPaymentRules()
+    {
+        $paymentRules = $this->getAllPaymentRules();
+
+        foreach ($paymentRules as $paymentRule) {
+            $paymentRule->getRule()->setEnabled(false);
+        }
+
+        $this->registry->getManager()->flush();
+    }
+
+    private function enableAllShippingRules()
+    {
+        $shippingRules = $this->getAllShippingRules();
+
+        foreach ($shippingRules as $shippingRule) {
+            $shippingRule->getRule()->setEnabled(true);
+        }
+
+        $this->registry->getManager()->flush();
+    }
+
+    private function enableAllPaymentRules()
+    {
+        $paymentRules = $this->getAllPaymentRules();
+
+        foreach ($paymentRules as $paymentRule) {
+            $paymentRule->getRule()->setEnabled(true);
+        }
+
+        $this->registry->getManager()->flush();
+    }
+
+    /**
+     * @return ShippingMethodsConfigsRule[]
+     */
+    private function getAllShippingRules()
+    {
+        return $this->registry->getRepository(ShippingMethodsConfigsRule::class)->findAll();
+    }
+
+    /**
+     * @return PaymentMethodsConfigsRule[]
+     */
+    private function getAllPaymentRules()
+    {
+        return $this->registry->getRepository(PaymentMethodsConfigsRule::class)->findAll();
     }
 }

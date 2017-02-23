@@ -84,9 +84,7 @@ services:
         class: Oro\Bundle\ShippingBundle\Twig\ShippingOptionLabelExtension
         public: false
         arguments:
-            - '@oro_shipping.formatter.length_unit_label'
-            - '@oro_shipping.formatter.weight_unit_label'
-            - '@oro_shipping.formatter.freight_class_label'
+            - '@service_container'
         tags:
             - { name: twig.extension }
 
@@ -94,7 +92,7 @@ services:
         class: Oro\Bundle\ShippingBundle\Twig\WeightUnitValueExtension
         public: false
         arguments:
-            - '@oro_shipping.formatter.weight_unit_value'
+            - '@service_container'
         tags:
             - { name: twig.extension }
 
@@ -102,7 +100,7 @@ services:
         class: Oro\Bundle\ShippingBundle\Twig\DimensionsUnitValueExtension
         public: false
         arguments:
-            - '@oro_shipping.formatter.dimensions_unit_value'
+            - '@service_container'
         tags:
             - { name: twig.extension }
 
@@ -111,6 +109,8 @@ services:
         parent: oro_entity.abstract_repository
         arguments:
             - 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule'
+        calls:
+            - [setAclHelper, ['@oro_security.acl_helper']]
 
     oro_shipping.repository.product_shipping_options:
         parent: oro_entity.abstract_repository
@@ -264,22 +264,10 @@ services:
             - '@oro_config.global'
             - '@oro_shipping.factory.shipping_origin_model_factory'
 
-    oro_shipping.query_designer.select_query_converter:
-        class: 'Oro\Bundle\ShippingBundle\QueryDesigner\SelectQueryConverter'
-        arguments:
-            - '@oro_query_designer.query_designer.manager'
-            - '@oro_entity.virtual_field_provider.chain'
-            - '@doctrine'
-        calls:
-            - [setVirtualRelationProvider, ['@oro_entity.virtual_relation_provider.chain']]
-
     oro_shipping.expression_language.decorated_product_line_item_factory:
         class: 'Oro\Bundle\ShippingBundle\ExpressionLanguage\DecoratedProductLineItemFactory'
         arguments:
-            - '@oro_entity.entity_field_provider'
-            - '@oro_shipping.query_designer.select_query_converter'
-            - '@doctrine'
-            - '@oro_entity.helper.field_helper'
+            - '@oro_product.virtual_fields.decorator_factory'
 
     oro_shipping.condition.has_applicable_shipping_methods:
         class: 'Oro\Bundle\ShippingBundle\Condition\HasApplicableShippingMethods'
@@ -307,7 +295,7 @@ services:
         class: 'Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Basic\Factory\BasicShippingLineItemBuilderFactory'
 
     oro_shipping.datagrid.shipping_rule_actions_visibility_provider:
-        class: 'Oro\Bundle\ShippingBundle\Datagrid\ShippingRuleActionsVisibilityProvider'
+        parent: oro_rule.action.visibility_provider
 
     oro_shipping.converter.shipping_context_to_rule_values:
         class: 'Oro\Bundle\ShippingBundle\Converter\ShippingContextToRuleValuesConverter'

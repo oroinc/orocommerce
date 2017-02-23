@@ -13,33 +13,25 @@
       width: calc(50% - 5px);
       margin-left: 10px;
     }
-
-    .line_item_form_fields__form__row {
-      width: 50%;
-
-      + .line_item_form_fields__form__row {
-        width: calc(40% - 10px);
-        margin-right: 10px;
-      }
-    }
   }
 
-  .line_item_form_fields__form__row {
-    float: right;
-    width: calc(50% - 5px);
+  &__current-grid>div {
+    display: flex;
 
-    + .line_item_form_fields__form__row {
-      margin-right: 10px;
-    }
+    justify-content: space-between;
 
-    label {
-      display: none;
-    }
+    .form-row.line_item_form_fields {
+      width: calc(50% - 5px);
 
-    .unit-label {
-      @extend .label;
+      label {
+        display: none;
+      }
 
-      line-height: 40px;
+      .unit-label {
+        @extend .label;
+
+        line-height: 40px;
+      }
     }
   }
 
@@ -77,10 +69,14 @@
   .product-item__qty.product-item__qty_no-image-view {
     .product-item__qty__current-grid {
       width: 100%;
+
+      >div {
+        display: block;
+      }
     }
 
-    .line_item_form_fields__form__row + .line_item_form_fields__form__row {
-      max-width: inherit;
+    .form-row.line_item_form_fields {
+      width: 100%;
     }
 
     .add-product-from-view-component {

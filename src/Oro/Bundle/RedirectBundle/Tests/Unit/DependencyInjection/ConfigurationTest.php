@@ -32,7 +32,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'value' => 'system',
                     'scope' => 'app'
                 ],
-
+                'redirect_generation_strategy' => [
+                    'value' => 'ask',
+                    'scope' => 'app'
+                ],
             ]
         ];
 

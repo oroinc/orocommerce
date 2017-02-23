@@ -27,7 +27,7 @@ interface PaymentMethodInterface
     /**
      * @return string
      */
-    public function getType();
+    public function getIdentifier();
 
     /**
      * @param PaymentContextInterface $context

@@ -1,0 +1,20 @@
+services:
+    oro_rfp.api.processor.request_entity:
+        class: 'Oro\Bundle\RFPBundle\Api\Processor\RequestEntityProcessor'
+        tags:
+            - { name: oro.api.processor, action: create, group: load_data, priority: -50, class: '%oro_rfp.entity.request.class%' }
+            - { name: oro.api.processor, action: update, group: load_data, priority: -50, class: '%oro_rfp.entity.request.class%' }
+
+    oro_rfp.api.processor.request_product_item:
+        class: 'Oro\Bundle\RFPBundle\Api\Processor\RequestProductItemProcessor'
+        tags:
+            - { name: oro.api.processor, action: create, group: load_data, priority: -50, class: '%oro_rfp.entity.request_product_item.class%' }
+            - { name: oro.api.processor, action: update, group: load_data, priority: -50, class: '%oro_rfp.entity.request_product_item.class%' }
+
+    oro_rfp.api.processor.sort_included_data:
+        class: 'Oro\Bundle\RFPBundle\Api\Processor\SortIncludedDataProcessor'
+        arguments:
+            - '@oro_api.value_normalizer'
+        tags:
+            - { name: oro.api.processor, action: create, group: normalize_input, requestType: json_api, priority: -40, class: '%oro_rfp.entity.request.class%' }
+            - { name: oro.api.processor, action: update, group: normalize_input, requestType: json_api, priority: -40, class: '%oro_rfp.entity.request.class%' }

@@ -21,8 +21,6 @@ use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingList
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
- * @dbIsolation
- *
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class ShoppingListControllerTest extends WebTestCase
@@ -345,7 +343,7 @@ class ShoppingListControllerTest extends WebTestCase
             ->getRepository('OroShoppingListBundle:LineItem')
             ->findBy(['shoppingList' => $shoppingList], ['id' => 'DESC']);
 
-        $this->assertCount(3, $items);
+        $this->assertCount(2, $items);
         $item = $items[0];
 
         $this->assertEquals($sku, $item->getProductSku());

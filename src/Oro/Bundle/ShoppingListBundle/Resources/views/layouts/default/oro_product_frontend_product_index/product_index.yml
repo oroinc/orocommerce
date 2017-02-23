@@ -8,4 +8,3 @@ layout:
             id: product_datagrid_row_product_line_item_form_buttons_shopping_list
             optionName: productShoppingLists
             optionValue: 'undefined'
-

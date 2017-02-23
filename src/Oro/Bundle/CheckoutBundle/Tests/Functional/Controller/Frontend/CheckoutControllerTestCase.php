@@ -43,6 +43,10 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
     const PAYMENT_METHOD_SIGN = 'Payment - Open Order';
     const ORDER_REVIEW_SIGN = 'View Options for this Order';
     const FINISH_SIGN = 'Thank You For Your Purchase!';
+    const EDIT_BILLING_SIGN = 'Edit Billing Information';
+    const EDIT_SHIPPING_INFO_SIGN = 'Edit Shipping Information';
+    const EDIT_SHIPPING_METHOD_SIGN = 'Edit Shipping Method';
+    const EDIT_PAYMENT_SIGN = 'Edit Payment';
 
     const SHIPPING_ADDRESS = 'shipping_address';
     const BILLING_ADDRESS = 'billing_address';
@@ -72,6 +76,7 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
             LoadShoppingListLineItems::class,
             LoadCombinedProductPrices::class,
             LoadShippingMethodsConfigsRules::class,
+            '@OroInventoryBundle/Tests/Functional/DataFixtures/inventory_level.yml',
         ], $paymentFixtures));
         $this->registry = $this->getContainer()->get('doctrine');
     }
@@ -202,5 +207,28 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
     protected function getTransitionForm(Crawler $crawler)
     {
         return $crawler->filter(sprintf('form[name=%s]', CheckoutControllerTestCase::ORO_WORKFLOW_TRANSITION))->form();
+    }
+
+    /**
+     * @param Crawler $crawler
+     * @param string  $paymentMethodName
+     *
+     * @return Crawler
+     */
+    protected function goToOrderReviewStepFromPayment(Crawler $crawler, $paymentMethodName)
+    {
+        $form = $this->getTransitionForm($crawler);
+        $values = $this->explodeArrayPaths($form->getValues());
+        $values[self::ORO_WORKFLOW_TRANSITION]['payment_method'] = $paymentMethodName;
+        $values['_widgetContainer'] = 'ajax';
+        $values['_wid'] = 'ajax_checkout';
+
+        return $this->client->request(
+            'POST',
+            $form->getUri(),
+            $values,
+            [],
+            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
+        );
     }
 }

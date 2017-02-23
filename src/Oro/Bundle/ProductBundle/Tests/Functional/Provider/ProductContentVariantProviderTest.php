@@ -10,9 +10,6 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductContentVar
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-/**
- * @dbIsolation
- */
 class ProductContentVariantProviderTest extends WebTestCase
 {
     /** @var ProductContentVariantProvider */

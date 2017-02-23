@@ -10,9 +10,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-/**
- * @dbIsolation
- */
 class ManageInventoryFallbackTest extends WebTestCase
 {
     const VIEW_MANAGED_INVENTORY_XPATH =
@@ -179,6 +176,7 @@ class ManageInventoryFallbackTest extends WebTestCase
             $formValues['oro_catalog_category']['manageInventory']['fallback'] = $fallbackValue;
         }
 
+        $formValues['oro_catalog_category']['inventoryThreshold']['useFallback'] = '1';
         $formValues['oro_catalog_category']['_token'] =
             $this->getContainer()->get('security.csrf.token_manager')->getToken('category');
 

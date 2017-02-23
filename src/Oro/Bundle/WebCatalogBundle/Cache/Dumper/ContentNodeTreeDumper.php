@@ -78,6 +78,7 @@ class ContentNodeTreeDumper
         return [
             'id' => $resolvedNode->getId(),
             'identifier' => $resolvedNode->getIdentifier(),
+            'resolveVariantTitle' => $resolvedNode->isRewriteVariantTitle(),
             'titles' => $this->convertLocalizedValuesArray($resolvedNode->getTitles()),
             'contentVariant' => $this->convertResolvedContentVariant($resolvedNode->getResolvedContentVariant()),
             'childNodes' => $this->convertArray($resolvedNode->getChildNodes())

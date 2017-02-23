@@ -8,6 +8,8 @@ use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareInterface;
 use Oro\Bundle\AttachmentBundle\Migration\Extension\AttachmentExtensionAwareTrait;
+use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
+use Oro\Bundle\EntityBundle\Migration\AddFallbackRelationTrait;
 use Oro\Bundle\EntityConfigBundle\Entity\ConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
 use Oro\Bundle\EntityExtendBundle\Migration\ExtendOptionsManager;
@@ -29,6 +31,7 @@ class OroProductBundleInstaller implements
     SlugExtensionAwareInterface
 {
     use AttachmentExtensionAwareTrait;
+    use AddFallbackRelationTrait;
 
     const PRODUCT_TABLE_NAME = 'oro_product';
     const PRODUCT_UNIT_TABLE_NAME = 'oro_product_unit';
@@ -83,7 +86,7 @@ class OroProductBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_9';
+        return 'v1_10';
     }
 
     /**
@@ -117,6 +120,8 @@ class OroProductBundleInstaller implements
         $this->addAttachmentAssociations($schema);
         $this->addProductContentVariants($schema);
         $this->addAttributeFamilyField($schema);
+
+        $this->addPageTemplateField($schema);
     }
 
     /**
@@ -538,6 +543,25 @@ class OroProductBundleInstaller implements
             ['attribute_family_id'],
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'RESTRICT']
+        );
+    }
+
+    /**
+     * @param Schema $schema
+     */
+    public function addPageTemplateField(Schema $schema)
+    {
+        $this->addFallbackRelation(
+            $schema,
+            $this->extendExtension,
+            self::PRODUCT_TABLE_NAME,
+            'pageTemplate',
+            'oro.product.page_template.label',
+            [
+                SystemConfigFallbackProvider::FALLBACK_ID => [
+                    'configName' => 'oro_frontend.page_templates',
+                ],
+            ]
         );
     }
 }
