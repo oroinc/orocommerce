@@ -63,13 +63,16 @@ class PriceListRecalculateCommandTest extends WebTestCase
             $params[] = '--customer='.$this->getReference($customerName)->getId();
         }
 
-        if ($expectedCount > 0) {
+        if (false !== array_search('--disable-triggers', $params, true)) {
             $databaseTriggerManager = $this->createMock(EntityTriggerManager::class);
             $databaseTriggerManager->expects($this->once())
                 ->method('disable');
             $databaseTriggerManager->expects($this->once())
                 ->method('enable');
-            $this->getContainer()->set('oro_pricing.database_triggers.manager.cpp', $databaseTriggerManager);
+            $this->getContainer()->set(
+                'oro_pricing.database_triggers.manager.combined_prices',
+                $databaseTriggerManager
+            );
         }
 
         $result = $this->runCommand(PriceListRecalculateCommand::NAME, $params);
@@ -86,6 +89,11 @@ class PriceListRecalculateCommandTest extends WebTestCase
             'all' => [
                 'expected_message' => 'Start processing',
                 'params' => ['--all'],
+                'expectedCount' => 40 // 2 + 38 = config + website1
+            ],
+            'all with triggers off' => [
+                'expected_message' => 'Start processing',
+                'params' => ['--all', '--disable-triggers'],
                 'expectedCount' => 40 // 2 + 38 = config + website1
             ],
             'empty run' => [
