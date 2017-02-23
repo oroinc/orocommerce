@@ -200,3 +200,9 @@ RedirectBundle
 --------------
 - `Oro\Bundle\RedirectBundle\Entity\Redirect`
     - removed property `website` in favour of `scopes` collection using
+- Class `Oro\Bundle\RedirectBundle\DataProvider\CanonicalDataProvider`
+    - logic moved to the `\Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator`
+    - changed signature of `__construct` method, all arguments replaced with - `CanonicalUrlGenerator`
+- Following methods were added to `\Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface`:
+    - `getBaseSlug`
+    - `getSlugByLocalization`

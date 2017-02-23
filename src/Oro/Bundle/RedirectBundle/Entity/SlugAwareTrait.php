@@ -4,6 +4,7 @@ namespace Oro\Bundle\RedirectBundle\Entity;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 
 trait SlugAwareTrait
 {
@@ -67,5 +68,27 @@ trait SlugAwareTrait
     public function hasSlug(Slug $slug)
     {
         return $this->slugs->contains($slug);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBaseSlug()
+    {
+        return $this->getSlugByLocalization(null);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSlugByLocalization(Localization $localization = null)
+    {
+        foreach ($this->getSlugs() as $slug) {
+            if ($slug->getLocalization() === $localization) {
+                return $slug;
+            }
+        }
+
+        return null;
     }
 }

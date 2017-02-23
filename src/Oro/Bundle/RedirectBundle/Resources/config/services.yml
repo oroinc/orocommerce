@@ -209,13 +209,17 @@ services:
     oro_redirect.layout.data_provider.canonical_data:
         class: Oro\Bundle\RedirectBundle\DataProvider\CanonicalDataProvider
         arguments:
-            - '@router'
+            - '@oro_redirect.generator.canonical_url'
+        tags:
+            - { name: layout.data_provider, alias: canonical }
+
+    oro_redirect.generator.canonical_url:
+        class: Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator
+        arguments:
             - '@oro_config.manager'
             - '@request_stack'
             - '@oro_redirect.provider.routing_information_provider'
-            - '@oro_locale.helper.localization'
-        tags:
-            - { name: layout.data_provider, alias: canonical }
+            - '@oro_website.resolver.website_url_resolver'
 
     oro_redirect.cache.dumper.sluggable_url_dumper:
         class: Oro\Bundle\RedirectBundle\Cache\Dumper\SluggableUrlDumper
