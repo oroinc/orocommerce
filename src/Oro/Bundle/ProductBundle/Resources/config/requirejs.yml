@@ -31,7 +31,7 @@ config:
         'oroproduct/js/app/datagrid/map-custom-module-name': 'bundles/oroproduct/js/app/datagrid/map-custom-module-name'
         'oroproduct/js/app/datagrid/backend-pageable-collection': 'bundles/oroproduct/js/app/datagrid/backend-pageable-collection.js'
         'oroproduct/js/app/datagrid/sorting/backend-dropdown': 'bundles/oroproduct/js/app/datagrid/sorting/backend-dropdown.js'
-        'oroproduct/js/app/components/frontend-variant-field-component': 'bundles/oroproduct/js/app/components/frontend-variant-field-component.js'
+        'oroproduct/js/app/components/product-variant-field-component': 'bundles/oroproduct/js/app/components/product-variant-field-component.js'
 
 
     shim:
