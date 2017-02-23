@@ -67,6 +67,7 @@ services:
     oro_seo.event_listener.website_search_index:
         class: 'Oro\Bundle\SEOBundle\EventListener\ProductSearchIndexListener'
         arguments:
+            - '@oro_entity.doctrine_helper'
             - '@oro_website.provider.website_localization'
             - '@oro_website_search.manager.website_context_manager'
         tags:
