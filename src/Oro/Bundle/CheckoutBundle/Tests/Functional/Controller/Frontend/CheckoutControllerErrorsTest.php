@@ -14,7 +14,6 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
-use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * @dbIsolationPerTest
@@ -140,8 +139,8 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         $this->enableAllShippingRules();
 
         //Order Review step
-        $crawler = $this->goToOrderReviewStepFromPayment($crawler); //order content has changed
-        $crawler = $this->goToOrderReviewStepFromPayment($crawler);
+        $crawler = $this->goToOrderReviewStepFromPayment($crawler, 'payment_term'); //order content has changed
+        $crawler = $this->goToOrderReviewStepFromPayment($crawler, 'payment_term');
         $this->assertContains(self::ORDER_REVIEW_SIGN, $crawler->html());
 
         $this->disableAllShippingRules();
@@ -194,7 +193,7 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         $this->enableAllPaymentRules();
 
         //Order Review step
-        $crawler = $this->goToOrderReviewStepFromPayment($crawler);
+        $crawler = $this->goToOrderReviewStepFromPayment($crawler, 'payment_term');
         $this->assertContains(self::ORDER_REVIEW_SIGN, $crawler->html());
 
         $this->disableAllPaymentRules();
@@ -267,27 +266,5 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
     private function getAllPaymentRules()
     {
         return $this->registry->getRepository(PaymentMethodsConfigsRule::class)->findAll();
-    }
-
-    /**
-     * @param Crawler $crawler
-     *
-     * @return Crawler
-     */
-    private function goToOrderReviewStepFromPayment(Crawler $crawler)
-    {
-        $form = $this->getTransitionForm($crawler);
-        $values = $this->explodeArrayPaths($form->getValues());
-        $values[self::ORO_WORKFLOW_TRANSITION]['payment_method'] = 'payment_term';
-        $values['_widgetContainer'] = 'ajax';
-        $values['_wid'] = 'ajax_checkout';
-
-        return $this->client->request(
-            'POST',
-            $form->getUri(),
-            $values,
-            [],
-            ['HTTP_X-Requested-With' => 'XMLHttpRequest']
-        );
     }
 }

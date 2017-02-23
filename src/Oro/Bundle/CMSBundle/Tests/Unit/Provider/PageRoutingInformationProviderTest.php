@@ -4,6 +4,7 @@ namespace Oro\Bundle\CMSBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\CMSBundle\Provider\PageRoutingInformationProvider;
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProviderInterface;
 use Oro\Component\Routing\RouteData;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -17,9 +18,17 @@ class PageRoutingInformationProviderTest extends \PHPUnit_Framework_TestCase
      */
     protected $provider;
 
+    /**
+     * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $configManager;
+
     protected function setUp()
     {
-        $this->provider = new PageRoutingInformationProvider();
+        $this->configManager = $this->getMockBuilder(ConfigManager::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $this->provider = new PageRoutingInformationProvider($this->configManager);
     }
 
     public function testIsSupported()
@@ -34,7 +43,11 @@ class PageRoutingInformationProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetUrlPrefix()
     {
-        $this->assertSame('', $this->provider->getUrlPrefix(new Page()));
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with('oro_cms.landing_page_direct_url_prefix')
+            ->willReturn('prefix');
+        $this->assertSame('prefix', $this->provider->getUrlPrefix(new Page()));
     }
 
     public function testGetRouteData()

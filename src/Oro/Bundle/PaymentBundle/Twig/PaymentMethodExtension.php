@@ -2,49 +2,54 @@
 
 namespace Oro\Bundle\PaymentBundle\Twig;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 use Oro\Bundle\PaymentBundle\Event\PaymentMethodConfigDataEvent;
 use Oro\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter;
 use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class PaymentMethodExtension extends \Twig_Extension
 {
     const DEFAULT_METHOD_CONFIG_TEMPLATE =
         'OroPaymentBundle:PaymentMethodsConfigsRule:paymentMethodWithOptions.html.twig';
 
-    /**
-     * @var  PaymentTransactionProvider
-     */
-    protected $paymentTransactionProvider;
+    /** @var ContainerInterface */
+    protected $container;
 
-    /**
-     * @var PaymentMethodLabelFormatter
-     */
-    protected $paymentMethodLabelFormatter;
-
-    /**
-     * @var EventDispatcherInterface
-     */
-    protected $dispatcher;
-
-    /**
-     * @var array
-     */
+    /** @var array */
     protected $configCache = [];
 
     /**
-     * @param PaymentTransactionProvider $paymentTransactionProvider
-     * @param PaymentMethodLabelFormatter $paymentMethodLabelFormatter
-     * @param EventDispatcherInterface $dispatcher
+     * @param ContainerInterface $container
      */
-    public function __construct(
-        PaymentTransactionProvider $paymentTransactionProvider,
-        PaymentMethodLabelFormatter $paymentMethodLabelFormatter,
-        EventDispatcherInterface $dispatcher
-    ) {
-        $this->paymentTransactionProvider = $paymentTransactionProvider;
-        $this->paymentMethodLabelFormatter = $paymentMethodLabelFormatter;
-        $this->dispatcher = $dispatcher;
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
+
+    /**
+     * @return PaymentTransactionProvider
+     */
+    protected function getPaymentTransactionProvider()
+    {
+        return $this->container->get('oro_payment.provider.payment_transaction');
+    }
+
+    /**
+     * @return PaymentMethodLabelFormatter
+     */
+    protected function getPaymentMethodLabelFormatter()
+    {
+        return $this->container->get('oro_payment.formatter.payment_method_label');
+    }
+
+    /**
+     * @return EventDispatcherInterface
+     */
+    protected function getDispatcher()
+    {
+        return $this->container->get('event_dispatcher');
     }
 
     /**
@@ -56,11 +61,11 @@ class PaymentMethodExtension extends \Twig_Extension
             new \Twig_SimpleFunction('get_payment_methods', [$this, 'getPaymentMethods']),
             new \Twig_SimpleFunction(
                 'get_payment_method_label',
-                [$this->paymentMethodLabelFormatter, 'formatPaymentMethodLabel']
+                [$this, 'formatPaymentMethodLabel']
             ),
             new \Twig_SimpleFunction(
                 'get_payment_method_admin_label',
-                [$this->paymentMethodLabelFormatter, 'formatPaymentMethodAdminLabel'],
+                [$this, 'formatPaymentMethodAdminLabel'],
                 ['is_safe' => ['html']]
             ),
             new \Twig_SimpleFunction(
@@ -71,15 +76,36 @@ class PaymentMethodExtension extends \Twig_Extension
     }
 
     /**
+     * @param string $paymentMethod
+     * @param bool   $shortLabel
+     *
+     * @return string
+     */
+    public function formatPaymentMethodLabel($paymentMethod, $shortLabel = true)
+    {
+        return $this->getPaymentMethodLabelFormatter()->formatPaymentMethodLabel($paymentMethod, $shortLabel);
+    }
+
+    /**
+     * @param string $paymentMethod
+     *
+     * @return string
+     */
+    public function formatPaymentMethodAdminLabel($paymentMethod)
+    {
+        return $this->getPaymentMethodLabelFormatter()->formatPaymentMethodAdminLabel($paymentMethod);
+    }
+
+    /**
      * @param object $entity
      * @return array
      */
     public function getPaymentMethods($entity)
     {
-        $paymentTransactions = $this->paymentTransactionProvider->getPaymentTransactions($entity);
+        $paymentTransactions = $this->getPaymentTransactionProvider()->getPaymentTransactions($entity);
         $paymentMethods = [];
         foreach ($paymentTransactions as $paymentTransaction) {
-            $paymentMethods[] = $this->paymentMethodLabelFormatter
+            $paymentMethods[] = $this->getPaymentMethodLabelFormatter()
                 ->formatPaymentMethodLabel(
                     $paymentTransaction->getPaymentMethod(),
                     false
@@ -97,7 +123,7 @@ class PaymentMethodExtension extends \Twig_Extension
     {
         $event = new PaymentMethodConfigDataEvent($paymentMethodName);
         if (!array_key_exists($paymentMethodName, $this->configCache)) {
-            $this->dispatcher->dispatch(PaymentMethodConfigDataEvent::NAME, $event);
+            $this->getDispatcher()->dispatch(PaymentMethodConfigDataEvent::NAME, $event);
             $template = $event->getTemplate();
             $this->configCache[$paymentMethodName] = $template ?: static::DEFAULT_METHOD_CONFIG_TEMPLATE;
         }

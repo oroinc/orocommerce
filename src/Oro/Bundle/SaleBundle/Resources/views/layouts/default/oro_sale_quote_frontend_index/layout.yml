@@ -8,5 +8,5 @@ layout:
     actions:
         - '@setOption':
             id: page_title
-            optionName: text
+            optionName: defaultValue
             optionValue: 'oro.frontend.sale.quote.entity_plural_label'
