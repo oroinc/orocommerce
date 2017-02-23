@@ -12,17 +12,23 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 
 class FlatRateMethodProvider implements ShippingMethodProviderInterface
 {
-    /** @var DoctrineHelper */
+    /**
+     * @var DoctrineHelper
+     */
     private $doctrineHelper;
 
-    /** @var FlatRateMethodFromChannelBuilder */
+    /**
+     * @var FlatRateMethodFromChannelBuilder
+     */
     private $methodBuilder;
 
-    /** @var ShippingMethodInterface[]|array */
+    /**
+     * @var ShippingMethodInterface[]|array
+     */
     protected $methods;
 
     /**
-     * @param DoctrineHelper $doctrineHelper
+     * @param DoctrineHelper                   $doctrineHelper
      * @param FlatRateMethodFromChannelBuilder $methodBuilder
      */
     public function __construct(DoctrineHelper $doctrineHelper, FlatRateMethodFromChannelBuilder $methodBuilder)
@@ -33,7 +39,7 @@ class FlatRateMethodProvider implements ShippingMethodProviderInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getShippingMethods()
     {
@@ -49,7 +55,7 @@ class FlatRateMethodProvider implements ShippingMethodProviderInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getShippingMethod($name)
     {
@@ -61,7 +67,7 @@ class FlatRateMethodProvider implements ShippingMethodProviderInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function hasShippingMethod($name)
     {
@@ -73,11 +79,8 @@ class FlatRateMethodProvider implements ShippingMethodProviderInterface
      */
     private function addFlatRateMethod(Channel $channel)
     {
-        if ($channel->isEnabled()) {
-            $method = $this->methodBuilder->build($channel);
-
-            $this->methods[$method->getIdentifier()] = $method;
-        }
+        $method = $this->methodBuilder->build($channel);
+        $this->methods[$method->getIdentifier()] = $method;
     }
 
     /**

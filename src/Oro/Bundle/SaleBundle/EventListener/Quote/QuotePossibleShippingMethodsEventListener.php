@@ -5,7 +5,7 @@ namespace Oro\Bundle\SaleBundle\EventListener\Quote;
 use Oro\Bundle\OrderBundle\Converter\ShippingPricesConverter;
 use Oro\Bundle\SaleBundle\Event\QuoteEvent;
 use Oro\Bundle\SaleBundle\Quote\Shipping\Context\Factory\QuoteShippingContextFactoryInterface;
-use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
+use Oro\Bundle\ShippingBundle\Provider\Price\ShippingPriceProviderInterface;
 
 class QuotePossibleShippingMethodsEventListener
 {
@@ -18,7 +18,7 @@ class QuotePossibleShippingMethodsEventListener
     protected $quoteShippingContextFactory;
 
     /**
-     * @var ShippingPriceProvider
+     * @var ShippingPriceProviderInterface
      */
     protected $priceProvider;
 
@@ -30,12 +30,12 @@ class QuotePossibleShippingMethodsEventListener
     /**
      * @param QuoteShippingContextFactoryInterface $factory
      * @param ShippingPricesConverter $priceConverter
-     * @param ShippingPriceProvider $priceProvider
+     * @param ShippingPriceProviderInterface $priceProvider
      */
     public function __construct(
         QuoteShippingContextFactoryInterface $factory,
         ShippingPricesConverter $priceConverter,
-        ShippingPriceProvider $priceProvider
+        ShippingPriceProviderInterface $priceProvider
     ) {
         $this->quoteShippingContextFactory = $factory;
         $this->priceConverter = $priceConverter;
