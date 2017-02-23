@@ -60,16 +60,17 @@ class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
         $priceListWithPriorityType = new PriceListSelectWithPriorityType();
 
         return [
-            new PreloadedExtension([
-                $oroCollectionType::NAME => $oroCollectionType,
-                $priceListCollectionType::NAME => $priceListCollectionType,
-                $priceListWithPriorityType::NAME => $priceListWithPriorityType,
-                PriceListSelectType::NAME => new PriceListSelectTypeStub(),
-                $entityType->getName() => $entityType,
-            ],
+            new PreloadedExtension(
+                [
+                    $oroCollectionType::NAME => $oroCollectionType,
+                    $priceListCollectionType::NAME => $priceListCollectionType,
+                    $priceListWithPriorityType::NAME => $priceListWithPriorityType,
+                    PriceListSelectType::NAME => new PriceListSelectTypeStub(),
+                    $entityType->getName() => $entityType,
+                ],
                 ['form' => [new SortableExtension()]]
             ),
-            new ValidatorExtension(Validation::createValidator())
+            new ValidatorExtension(Validation::createValidator()),
         ];
     }
 
@@ -80,18 +81,20 @@ class PriceListSystemConfigTypeTest extends FormIntegrationTestCase
 
         $this->assertEquals($defaultData, $form->getData());
 
-        $form->submit([
+        $form->submit(
             [
-                'priceList' => 1,
-                '_position' => 100,
-                'mergeAllowed' => true
-            ],
-            [
-                'priceList' => 2,
-                '_position' => 200,
-                'mergeAllowed' => false
+                [
+                    'priceList' => 1,
+                    '_position' => 100,
+                    'mergeAllowed' => true,
+                ],
+                [
+                    'priceList' => 2,
+                    '_position' => 200,
+                    'mergeAllowed' => false,
+                ],
             ]
-        ]);
+        );
         $this->assertTrue($form->isValid());
 
         $this->assertEquals($this->testPriceListConfigs, $form->getData());
