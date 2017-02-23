@@ -10,7 +10,7 @@ operations:
         preactions:
             - '@assign_constant_value':
                 attribute: $.flatRateType
-                value: Oro\Bundle\FlatRateBundle\Integration\FlatRateChannelType::TYPE
+                value: Oro\Bundle\FlatRateShippingBundle\Integration\FlatRateChannelType::TYPE
             - '@call_service_method':
                 attribute: $.actionAllowed
                 service: oro_integration.utils.edit_mode
@@ -28,6 +28,9 @@ operations:
                 method_parameters:  [{'methodsConfigs': $.methodIdentifier}]
         preconditions:
             '@and':
+                - '@shipping_method_has_shipping_rules':
+                    parameters:
+                        method_identifier: $.methodIdentifier
                 - '@equal': [$type, $.flatRateType]
                 - '@equal': [$.actionAllowed, true]
                 - '@equal': [$.data.enabled, true]
@@ -40,6 +43,24 @@ operations:
                     linkGrid: $.linkGrid
                 component: oroui/js/standart-confirmation
 
+    oro_flat_rate_integration_deactivate_without_rules:
+        extends: oro_flat_rate_integration_deactivate
+        for_all_entities: false
+        for_all_datagrids: false
+        replace:
+            - preconditions
+            - frontend_options
+        preconditions:
+            '@and':
+                - '@not':
+                    - '@shipping_method_has_shipping_rules':
+                        parameters:
+                            method_identifier: $.methodIdentifier
+                - '@equal': [$type, $.flatRateType]
+                - '@equal': [$.actionAllowed, true]
+                - '@equal': [$.data.enabled, true]
+        frontend_options: ~
+
     oro_flat_rate_integration_delete:
         extends: oro_integration_delete
         for_all_entities: false
@@ -51,7 +72,7 @@ operations:
         preactions:
             - '@assign_constant_value':
                 attribute: $.flatRateType
-                value: Oro\Bundle\FlatRateBundle\Integration\FlatRateChannelType::TYPE
+                value: Oro\Bundle\FlatRateShippingBundle\Integration\FlatRateChannelType::TYPE
             - '@call_service_method':
                 service: oro_integration.utils.edit_mode
                 method: isEditAllowed
@@ -69,6 +90,9 @@ operations:
                 method_parameters:  [{'methodsConfigs': $.methodIdentifier}]
         preconditions:
             '@and':
+                - '@shipping_method_has_shipping_rules':
+                    parameters:
+                        method_identifier: $.methodIdentifier
                 - '@equal': [$type, $.flatRateType]
                 - '@equal': [$.actionAllowed, true]
         frontend_options:
@@ -79,3 +103,26 @@ operations:
                 message_parameters:
                     linkGrid: $.linkGrid
                 component: oroui/js/standart-confirmation
+
+    oro_flat_rate_integration_delete_without_rules:
+        extends: oro_flat_rate_integration_delete
+        for_all_entities: false
+        for_all_datagrids: false
+        replace:
+            - preconditions
+            - frontend_options
+        preconditions:
+            '@and':
+                - '@not':
+                    - '@shipping_method_has_shipping_rules':
+                        parameters:
+                            method_identifier: $.methodIdentifier
+                - '@equal': [$type, $.flatRateType]
+                - '@equal': [$.actionAllowed, true]
+        frontend_options:
+            title: oro.action.delete_entity
+            confirmation:
+                title: oro.action.delete_entity
+                message: oro.action.delete_confirm
+                message_parameters:
+                    entityLabel: $name
