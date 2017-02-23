@@ -1,13 +1,13 @@
 <?php
 
-namespace Oro\Bundle\CatalogBundle\Tests\Functional\Controller\Api\Rest;
+namespace Oro\Bundle\CatalogBundle\Tests\Functional\Action;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-class CategoryControllerTest extends WebTestCase
+class CategoryActionTest extends WebTestCase
 {
     protected function setUp()
     {
