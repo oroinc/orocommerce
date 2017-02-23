@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Form\Type;
 
+use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -66,6 +68,7 @@ class PriceListSelectWithPriorityType extends AbstractType
         $resolver->setDefaults([
             'sortable' => true,
             'sortable_property_path' =>  self::SORT_ORDER_FIELD,
+            'data_class' => BasePriceListRelation::class
         ]);
     }
 }

@@ -60,6 +60,8 @@ class RenamePriority implements Migration, RenameExtensionAwareInterface
                 self::NEW_COLUMN_NAME
             );
         }
+
+        $queries->addQuery(new RenameConfigPriorityQuery());
     }
 
     /**ccd

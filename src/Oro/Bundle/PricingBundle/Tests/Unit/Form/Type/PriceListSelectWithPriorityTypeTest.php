@@ -2,18 +2,19 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
-use Oro\Bundle\FormBundle\Form\Extension\SortableExtension;
 use Symfony\Component\Form\Extension\Validator\ValidatorExtension;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
 use Symfony\Component\Validator\Validation;
+use Symfony\Component\Form\Forms;
 
 use Oro\Component\Testing\Unit\Form\Type\Stub\EntityType;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectType;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType;
 use Oro\Bundle\PricingBundle\Tests\Unit\Form\Type\Stub\PriceListSelectTypeStub;
-use Symfony\Component\Form\Forms;
+use Oro\Bundle\FormBundle\Form\Extension\SortableExtension;
+use Oro\Bundle\PricingBundle\Entity\BasePriceListRelation;
 
 class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
 {
@@ -55,19 +56,13 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
 
     /**
      * @dataProvider submitDataProvider
-     * @param array $defaultData
+     * @param mixed $defaultData
      * @param array $submittedData
      * @param array $expectedData
      */
-    public function testSubmit(array $defaultData, array $submittedData, array $expectedData)
+    public function testSubmit($defaultData, array $submittedData, $expectedData)
     {
-        $options = [
-            'sortable' => true,
-            'sortable_property_path' => "[sort_order]",
-            'allow_extra_fields' => true,
-        ];
-
-        $form = $this->factory->create($this->formType, $defaultData, $options);
+        $form = $this->factory->create($this->formType, $defaultData, []);
 
         $this->assertEquals($defaultData, $form->getData());
 
@@ -88,62 +83,61 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
 
         return [
             'without default data' => [
-                'defaultData' => [],
+                'defaultData' => null,
                 'submittedData' => [
                     'priceList' => PriceListSelectTypeStub::PRICE_LIST_2,
                     '_position' => 100,
                     'mergeAllowed' => true,
                 ],
-                'expectedData' => [
-                    'priceList' => $expectedPriceList,
-                    'sort_order' => 100,
-                    'mergeAllowed' => true,
-                ],
+                'expectedData' => (new BasePriceListRelation())
+                    ->setSortOrder(100)
+                    ->setMergeAllowed(true)
+                    ->setPriceList($expectedPriceList),
             ],
             'without default data merge off' => [
-                'defaultData' => [],
+                'defaultData' => null,
                 'submittedData' => [
                     'priceList' => PriceListSelectTypeStub::PRICE_LIST_2,
                     '_position' => 100,
                     'mergeAllowed' => false,
                 ],
-                'expectedData' => [
-                    'priceList' => $expectedPriceList,
-                    'sort_order' => 100,
-                    'mergeAllowed' => false,
-                ],
+                'expectedData' => (new BasePriceListRelation())
+                    ->setSortOrder(100)
+                    ->setMergeAllowed(false)
+                    ->setPriceList($expectedPriceList),
             ],
             'with default data' => [
-                'defaultData' => [
-                    'priceList' => $existingPriceList,
-                    'mergeAllowed' => true,
-                ],
+                'defaultData' => (new BasePriceListRelation())
+                    ->setSortOrder(10)
+                    ->setMergeAllowed(true)
+                    ->setPriceList($existingPriceList),
+
                 'submittedData' => [
                     'priceList' => PriceListSelectTypeStub::PRICE_LIST_2,
                     '_position' => 100,
                     'mergeAllowed' => true,
                 ],
-                'expectedData' => [
-                    'priceList' => $expectedPriceList,
-                    'sort_order' => 100,
-                    'mergeAllowed' => true,
-                ],
+
+                'expectedData' => (new BasePriceListRelation())
+                    ->setSortOrder(100)
+                    ->setMergeAllowed(true)
+                    ->setPriceList($expectedPriceList),
             ],
             'with default data merge off' => [
-                'defaultData' => [
-                    'priceList' => $existingPriceList,
-                    'mergeAllowed' => false,
-                ],
+                'defaultData' => (new BasePriceListRelation())
+                    ->setSortOrder(10)
+                    ->setMergeAllowed(false)
+                    ->setPriceList($existingPriceList),
+
                 'submittedData' => [
                     'priceList' => PriceListSelectTypeStub::PRICE_LIST_2,
                     '_position' => 100,
                     'mergeAllowed' => false,
                 ],
-                'expectedData' => [
-                    'priceList' => $expectedPriceList,
-                    'sort_order' => 100,
-                    'mergeAllowed' => false,
-                ],
+                'expectedData' => (new BasePriceListRelation())
+                    ->setSortOrder(100)
+                    ->setMergeAllowed(false)
+                    ->setPriceList($expectedPriceList),
             ],
         ];
     }
