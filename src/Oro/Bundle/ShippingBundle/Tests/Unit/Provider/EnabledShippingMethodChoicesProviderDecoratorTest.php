@@ -3,7 +3,7 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
-use Oro\Bundle\ShippingBundle\Provider\BasicShippingMethodChoicesProvider;
+use Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProviderInterface;
 use Oro\Bundle\ShippingBundle\Provider\EnabledShippingMethodChoicesProviderDecorator;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodStub;
@@ -13,12 +13,12 @@ class EnabledShippingMethodChoicesProviderDecoratorTest extends \PHPUnit_Framewo
     use EntityTrait;
 
     /**
-     * @var ShippingMethodRegistry
+     * @var ShippingMethodRegistry|\PHPUnit_Framework_MockObject_MockObject phpdoc
      */
     protected $registry;
 
     /**
-     * @var BasicShippingMethodChoicesProvider
+     * @var ShippingMethodChoicesProviderInterface|\PHPUnit_Framework_MockObject_MockObject phpdoc
      */
     protected $choicesProvider;
 
@@ -30,7 +30,7 @@ class EnabledShippingMethodChoicesProviderDecoratorTest extends \PHPUnit_Framewo
     protected function setUp()
     {
         $this->registry = $this->createMock(ShippingMethodRegistry::class);
-        $this->choicesProvider = $this->createMock(BasicShippingMethodChoicesProvider::class);
+        $this->choicesProvider = $this->createMock(ShippingMethodChoicesProviderInterface::class);
         $this->enabledChoicesProvider = new EnabledShippingMethodChoicesProviderDecorator(
             $this->registry,
             $this->choicesProvider
@@ -38,9 +38,10 @@ class EnabledShippingMethodChoicesProviderDecoratorTest extends \PHPUnit_Framewo
     }
 
     /**
-     * @param array  $registryMap
-     * @param array  $choices
-     * @param array  $result
+     * @param array $registryMap
+     * @param array $choices
+     * @param array $result
+     *
      * @dataProvider methodsProvider
      */
     public function testGetMethods($registryMap, $choices, $result)
@@ -54,9 +55,10 @@ class EnabledShippingMethodChoicesProviderDecoratorTest extends \PHPUnit_Framewo
             ->willReturn($choices);
 
         $this->assertEquals($this->enabledChoicesProvider->getMethods(), $result);
-
     }
+
     /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      * @return array
      */
     public function methodsProvider()
@@ -67,124 +69,110 @@ class EnabledShippingMethodChoicesProviderDecoratorTest extends \PHPUnit_Framewo
                     [
                         'methods_map' =>
                             [
-                                ['flat_rate', $this->getEntity(
-                                    ShippingMethodStub::class,
-                                    [
-                                        'identifier' => 'flat_rate',
-                                        'sortOrder' => 1,
-                                        'label' => 'flat rate',
-                                        'isEnabled' => true,
-                                        'types' => []
-                                    ]
-                                )],
-                                ['ups', $this->getEntity(
-                                    ShippingMethodStub::class,
-                                    [
-                                        'identifier' => 'ups',
-                                        'sortOrder' => 1,
-                                        'label' => 'ups',
-                                        'isEnabled' => true,
-                                        'types' => []
-                                    ]
-                                ),
-                                ]
+                                [
+                                    'flat_rate',
+                                    $this->getEntity(
+                                        ShippingMethodStub::class,
+                                        [
+                                            'identifier' => 'flat_rate',
+                                            'sortOrder' => 1,
+                                            'label' => 'flat rate',
+                                            'isEnabled' => true,
+                                            'types' => [],
+                                        ]
+                                    ),
+                                ],
+                                [
+                                    'ups',
+                                    $this->getEntity(
+                                        ShippingMethodStub::class,
+                                        [
+                                            'identifier' => 'ups',
+                                            'sortOrder' => 1,
+                                            'label' => 'ups',
+                                            'isEnabled' => true,
+                                            'types' => [],
+                                        ]
+                                    ),
+                                ],
                             ],
                         'choices' => ['flat_rate' => 'flat rate', 'ups' => 'ups'],
-                        'result' => ['flat_rate' => 'flat rate', 'ups' => 'ups']
+                        'result' => ['flat_rate' => 'flat rate', 'ups' => 'ups'],
                     ],
                 'some_methods_disabled' =>
                     [
                         'methods_map' =>
                             [
-                                ['flat_rate', $this->getEntity(
-                                    ShippingMethodStub::class,
-                                    [
-                                        'identifier' => 'flat_rate',
-                                        'sortOrder' => 1,
-                                        'label' => 'flat rate',
-                                        'isEnabled' => true,
-                                        'types' => []
-                                    ]
-                                )],
-                                ['ups', $this->getEntity(
-                                    ShippingMethodStub::class,
-                                    [
-                                        'identifier' => 'ups',
-                                        'sortOrder' => 1,
-                                        'label' => 'ups',
-                                        'isEnabled' => false,
-                                        'types' => []
-                                    ]
-                                ),
-                                ]
-                            ],
-                        'choices' => ['flat_rate' => 'flat rate', 'ups' => 'ups'],
-                        'result' => ['flat_rate' => 'flat rate']
-                    ],
-                'some_methods_disabled' =>
-                    [
-                        'methods_map' =>
-                        [
-                            ['flat_rate', $this->getEntity(
-                                ShippingMethodStub::class,
                                 [
-                                    'identifier' => 'flat_rate',
-                                    'sortOrder' => 1,
-                                    'label' => 'flat rate',
-                                    'isEnabled' => true,
-                                    'types' => []
-                                ]
-                            )],
-                                ['ups', $this->getEntity(
-                                    ShippingMethodStub::class,
-                                    [
-                                        'identifier' => 'ups',
-                                        'sortOrder' => 1,
-                                        'label' => 'ups',
-                                        'isEnabled' => false,
-                                        'types' => []
-                                    ]
-                                ),
-                                ]
+                                    'flat_rate',
+                                    $this->getEntity(
+                                        ShippingMethodStub::class,
+                                        [
+                                            'identifier' => 'flat_rate',
+                                            'sortOrder' => 1,
+                                            'label' => 'flat rate',
+                                            'isEnabled' => true,
+                                            'types' => [],
+                                        ]
+                                    ),
+                                ],
+                                [
+                                    'ups',
+                                    $this->getEntity(
+                                        ShippingMethodStub::class,
+                                        [
+                                            'identifier' => 'ups',
+                                            'sortOrder' => 1,
+                                            'label' => 'ups',
+                                            'isEnabled' => false,
+                                            'types' => [],
+                                        ]
+                                    ),
+                                ],
                             ],
                         'choices' => ['flat_rate' => 'flat rate', 'ups' => 'ups'],
-                        'result' => ['flat_rate' => 'flat rate']
+                        'result' => ['flat_rate' => 'flat rate'],
                     ],
                 'all_disabled_methods' =>
                     [
                         'methods_map' =>
                             [
-                                ['flat_rate', $this->getEntity(
-                                    ShippingMethodStub::class,
-                                    [
-                                        'identifier' => 'flat_rate',
-                                        'sortOrder' => 1,
-                                        'label' => 'flat rate',
-                                        'isEnabled' => false,
-                                        'types' => []
-                                    ]
-                                )],
-                                ['ups', $this->getEntity(
-                                    ShippingMethodStub::class,
-                                    [
-                                        'identifier' => 'ups',
-                                        'sortOrder' => 1,
-                                        'label' => 'ups',
-                                        'isEnabled' => false,
-                                        'types' => []
-                                    ]
-                                ),
-                                ]
+                                [
+                                    'flat_rate',
+                                    $this->getEntity(
+                                        ShippingMethodStub::class,
+                                        [
+                                            'identifier' => 'flat_rate',
+                                            'sortOrder' => 1,
+                                            'label' => 'flat rate',
+                                            'isEnabled' => false,
+                                            'types' => [],
+                                        ]
+                                    ),
+                                ],
+                                [
+                                    'ups',
+                                    $this->getEntity(
+                                        ShippingMethodStub::class,
+                                        [
+                                            'identifier' => 'ups',
+                                            'sortOrder' => 1,
+                                            'label' => 'ups',
+                                            'isEnabled' => false,
+                                            'types' => [],
+                                        ]
+                                    ),
+                                ],
                             ],
                         'choices' => ['flat_rate' => 'flat rate', 'ups' => 'ups'],
-                        'result' => []
+                        'result' => [],
                     ],
                 'no_methods' =>
                     [
                         'methods' => [],
                         'choices' => [],
-                        'result' => []
-                    ]
+                        'result' => [],
+                    ],
             ];
     }
 }

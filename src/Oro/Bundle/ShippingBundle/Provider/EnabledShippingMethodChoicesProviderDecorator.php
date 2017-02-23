@@ -10,7 +10,7 @@ class EnabledShippingMethodChoicesProviderDecorator implements ShippingMethodCho
      * @var ShippingMethodRegistry
      */
     protected $methodRegistry;
-    
+
     /**
      * @var ShippingMethodChoicesProviderInterface
      */
@@ -38,7 +38,7 @@ class EnabledShippingMethodChoicesProviderDecorator implements ShippingMethodCho
         foreach ($methods as $methodId => $label) {
             $method = $this->methodRegistry->getShippingMethod($methodId);
             if ($method->isEnabled()) {
-                $enabledMethods[$methodId] =  $label;
+                $enabledMethods[$methodId] = $label;
             }
         }
 

@@ -9,7 +9,7 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Form\EventSubscriber\DestinationCollectionTypeSubscriber;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
-use Oro\Bundle\ShippingBundle\Provider\EnabledShippingMethodChoicesProviderDecorator;
+use Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProviderInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -38,8 +38,8 @@ class ShippingMethodsConfigsRuleType extends AbstractType
     protected $provider;
 
     /**
-     * @param ShippingMethodRegistry                        $methodRegistry
-     * @param TranslatorInterface                           $translator
+     * @param ShippingMethodRegistry                 $methodRegistry
+     * @param TranslatorInterface                    $translator
      * @param ShippingMethodChoicesProviderInterface $provider
      */
     public function __construct(
