@@ -792,7 +792,7 @@ workflows:
                     '@or':
                         message: "Pending approval"
                         parameters:
-                            - '@less_order_total_limit': [$checkout, $.data.order_approval_threshold.value]
+                            - '@less_order_total_limit': [$checkout, $.data.order_approval_threshold]
                             - '@equal': [$allowed, true]
                             - '@acl_granted': 'oro_alternativecheckout_checkout_approve'
                 conditions:
@@ -1087,7 +1087,7 @@ workflows:
                         - '@not':
                             - '@acl_granted': 'oro_alternativecheckout_checkout_approve'
                         - '@not':
-                            - '@less_order_total_limit': [$checkout, $.data.order_approval_threshold.value]
+                            - '@less_order_total_limit': [$checkout, $.data.order_approval_threshold]
                         - '@equal': [$allowed, false]
                 conditions:
                     '@or':
