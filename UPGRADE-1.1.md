@@ -28,6 +28,8 @@ CustomerBundle
 - Class `Oro\Bundle\CustomerBundle\Twig\CustomerExtension`
     - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
     - removed property `protected $securityProvider`
+- Added Configurable Permission `commerce` for View and Edit pages of Customer Role in backend area (see [configurable-permissions.md](../platform/src/Oro/Bundle/SecurityBundle/Resources/doc/configurable-permissions.md) for details.
+- Added Configurable Permission `commerce_frontend` for View and Edit pages of Customer Role in frontend area (see [configurable-permissions.md](../platform/src/Oro/Bundle/SecurityBundle/Resources/doc/configurable-permissions.md) for details.
 
 CheckoutBundle
 --------------
@@ -99,6 +101,16 @@ PaymentBundle
 - Class `Oro\Bundle\PaymentBundle\Twig\PaymentStatusExtension`
     - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
     - removed property `protected $paymentStatusLabelFormatter`
+- Abstracted and moved classes that relate to actions that disable/enable `Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule` to `RuleBundle` (refer to `RuleBundle` upgrade documentation)
+    - removed `Oro\Bundle\PaymentBundle\Datagrid\Extension\MassAction\Actions\StatusDisableMassAction` and switched definition to `Oro\Bundle\RuleBundle\Datagrid\Extension\MassAction\Actions\StatusEnableMassAction`
+    - removed `Oro\Bundle\PaymentBundle\Datagrid\Extension\MassAction\Actions\StatusEnableMassAction` and switched definition to `Oro\Bundle\RuleBundle\Datagrid\Extension\MassAction\Actions\StatusEnableMassAction`
+    - removed `Oro\Bundle\PaymentBundle\Datagrid\Extension\MassAction\StatusMassActionHandler` and switched definition to `Oro\Bundle\RuleBundle\Datagrid\Extension\MassAction\StatusMassActionHandler`
+    - removed `Oro\Bundle\PaymentBundle\Datagrid\PaymentRuleActionsVisibilityProvider` and switched definition to `Oro\Bundle\RuleBundle\Datagrid\RuleActionsVisibilityProvider`
+- Abstracted and moved classes that relate to decorating `Oro\Bundle\ProductBundle\Entity\Product` with virtual fields to `ProductBundle` (refer to `ProductBundle` upgrade documentation)
+    - removed `Oro\Bundle\PaymentBundle\QueryDesigner\SelectQueryConverter`
+    - removed `Oro\Bundle\PaymentBundle\QueryDesigner\PaymentProductQueryDesigner`
+    - removed `Oro\Bundle\PaymentBundle\ExpressionLanguage\ProductDecorator`
+    - class `Oro\Bundle\PaymentBundle\ExpressionLanguage\DecoratedProductLineItemFactory` only dependency is now `Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory`
 
 PaymentTermBundle
 -----------------
@@ -128,7 +140,6 @@ PricingBundle
 - Class `Oro\Bundle\PricingBundle\Entity\Repository\PriceListToWebsiteRepository`
     - changed the return type of `getWebsiteIteratorByDefaultFallback` method from `BufferedQueryResultIterator` to `BufferedQueryResultIteratorInterface`
 
-
 ProductBundle
 -------------
 - Class `Oro\Bundle\ProductBundle\Twig\ProductExtension`
@@ -145,6 +156,11 @@ ProductBundle
 - Class `Oro\Bundle\ProductBundle\Twig\UnitVisibilityExtension`
     - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
     - removed property `protected $unitVisibility`
+- Added classes that can decorate `Oro\Bundle\ProductBundle\Entity\Product` to have virtual fields
+    - `Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory` is the class that should be used to create a decorated `Product`
+    - `Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecorator` is the class that decorates `Product`
+    - `Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsSelectQueryConverter` this converter is used inside of `VirtualFieldsProductDecorator`
+    - `Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsProductQueryDesigner` this query designer is used inside of `VirtualFieldsProductDecorator`
 
 SaleBundle
 ----------
@@ -177,6 +193,28 @@ VisibilityBundle
 ----------------
 - Class `Oro\Bundle\VisibilityBundle\Driver\AbstractCustomerPartialUpdateDriver`
     - changed the return type of `getCustomerVisibilityIterator` method from `BufferedQueryResultIterator` to `BufferedQueryResultIteratorInterface`
+
+RuleBundle
+----------
+- Added `Oro\Bundle\RuleBundle\Entity\RuleInterface` this interface should now be used for injection instead of `Rule` in bundles that implement `RuleBundle` functionality
+- Added classes for handling enable/disable `Rule` actions - use them to define corresponding services
+    - `Oro\Bundle\RuleBundle\Datagrid\Extension\MassAction\StatusMassActionHandler`
+    - `Oro\Bundle\RuleBundle\Datagrid\Extension\MassAction\Actions\StatusEnableMassAction`
+    - `Oro\Bundle\RuleBundle\Datagrid\RuleActionsVisibilityProvider`
+- Added `RuleActionsVisibilityProvider` that should be used to define action visibility configuration in datagrids with `Rule` entity fields
+
+ShippingBundle
+--------------
+- Abstracted and moved classes that relate to actions that disable/enable `Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule` to `RuleBundle` (refer to `RuleBundle` upgrade documentation)
+    - removed `Oro\Bundle\ShippingBundle\Datagrid\Extension\MassAction\Actions\StatusDisableMassAction` and switched definition to `Oro\Bundle\RuleBundle\Datagrid\Extension\MassAction\Actions\StatusEnableMassAction`
+    - removed `Oro\Bundle\ShippingBundle\Datagrid\Extension\MassAction\Actions\StatusEnableMassAction` and switched definition to `Oro\Bundle\RuleBundle\Datagrid\Extension\MassAction\Actions\StatusEnableMassAction`
+    - removed `Oro\Bundle\ShippingBundle\Datagrid\Extension\MassAction\StatusMassActionHandler` and switched definition to `Oro\Bundle\RuleBundle\Datagrid\Extension\MassAction\StatusMassActionHandler`
+    - removed `Oro\Bundle\ShippingBundle\Datagrid\ShippingRuleActionsVisibilityProvider` and switched definition to `Oro\Bundle\RuleBundle\Datagrid\RuleActionsVisibilityProvider`
+- Abstracted and moved classes that relate to decorating `Oro\Bundle\ProductBundle\Entity\Product` with virtual fields to `ProductBundle` (refer to `ProductBundle` upgrade documentation)
+    - removed `Oro\Bundle\ShippingBundle\QueryDesigner\SelectQueryConverter`
+    - removed `Oro\Bundle\ShippingBundle\QueryDesigner\ShippingProductQueryDesigner`
+    - removed `Oro\Bundle\ShippingBundle\ExpressionLanguage\ProductDecorator`
+    - class `Oro\Bundle\PaymentBundle\ExpressionLanguage\DecoratedProductLineItemFactory` only dependency is now `Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory`
 
 WebCatalogBundle
 ----------------
