@@ -8,7 +8,8 @@ interface SitemapDumperInterface
 {
     /**
      * @param WebsiteInterface $website
+     * @param string $version
      * @param string $type
      */
-    public function dump(WebsiteInterface $website, $type = null);
+    public function dump(WebsiteInterface $website, $version, $type = null);
 }

@@ -19,6 +19,10 @@ class PageController extends Controller
      */
     public function viewAction(Page $page)
     {
+        $website = $this->get('oro_website.manager')->getCurrentWebsite();
+        $dumper = $this->get('oro_seo.tools.sitemap_dumper');
+        $dumper->dump($website);
+
         return ['data'=> ['page' => $page]];
     }
 }

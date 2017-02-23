@@ -43,7 +43,7 @@ class SitemapDumper implements SitemapDumperInterface
     /**
      * {@inheritdoc}
      */
-    public function dump(WebsiteInterface $website, $type = null)
+    public function dump(WebsiteInterface $website, $version, $type = null)
     {
         if ($type) {
             $providers[$type] = $this->providerRegistry->getProviderByName($type);
@@ -51,7 +51,6 @@ class SitemapDumper implements SitemapDumperInterface
             $providers = $this->providerRegistry->getProviders();
         }
 
-        $tmpDir = sprintf('%s/%s/%s', sys_get_temp_dir(), md5(microtime()), $website->getId());
         foreach ($providers as $providerType => $provider) {
             $urlsStorage = $this->sitemapStorageFactory->createUrlsStorage();
 
@@ -61,7 +60,7 @@ class SitemapDumper implements SitemapDumperInterface
                 if (!$itemAdded) {
                     $this->fileWriter->saveSitemap(
                         $urlsStorage,
-                        $this->createFileName($tmpDir, $providerType, $fileNumber++)
+                        $this->createFileName($providerType, $fileNumber++)
                     );
 
                     $urlsStorage = $this->sitemapStorageFactory->createUrlsStorage();
@@ -69,18 +68,17 @@ class SitemapDumper implements SitemapDumperInterface
                 }
             }
 
-            $this->fileWriter->saveSitemap($urlsStorage, $this->createFileName($tmpDir, $providerType, $fileNumber));
+            $this->fileWriter->saveSitemap($urlsStorage, $this->createFileName($providerType, $fileNumber));
         }
     }
 
     /**
-     * @param string $dirPath
      * @param string $providerType
      * @param string $fileNumber
      * @return string
      */
-    private function createFileName($dirPath, $providerType, $fileNumber)
+    private function createFileName($providerType, $fileNumber)
     {
-        return sprintf('%s/%s', $dirPath, sprintf(static::SITEMAP_FILENAME_TEMPLATE, $providerType, $fileNumber));
+        return sprintf(static::SITEMAP_FILENAME_TEMPLATE, $providerType, $fileNumber);
     }
 }

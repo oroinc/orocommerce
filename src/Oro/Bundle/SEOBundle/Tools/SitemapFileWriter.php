@@ -78,6 +78,10 @@ class SitemapFileWriter
      */
     private function saveAsZipFile(SitemapUrlsStorageInterface $sitemapStorage, $path)
     {
+        $fs = new Filesystem();
+        $dir = explode(DIRECTORY_SEPARATOR, $path);
+        array_pop($dir);
+        $fs->mkdir(implode(DIRECTORY_SEPARATOR, $dir));
         $zipFilePath = sprintf('%s.%s', $path, self::ARCHIVE_EXTENSION) ;
 
         if (!$this->zipArchive->open($zipFilePath, \ZipArchive::CREATE)) {

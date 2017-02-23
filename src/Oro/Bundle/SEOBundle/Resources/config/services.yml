@@ -88,6 +88,15 @@ services:
     oro_seo.provider.sitemap_url_provider_registry:
         class: Oro\Bundle\SEOBundle\Provider\SitemapUrlProviderRegistry
 
+    oro_seo.provider.sitemap_url_provider_dummy_1:
+        class: Oro\Bundle\SEOBundle\Provider\DummySitemapProvider
+        tags:
+            - { name: 'oro_seo.sitemap_url_provider', alias: 'test_one' }
+    oro_seo.provider.sitemap_url_provider_dummy_2:
+        class: Oro\Bundle\SEOBundle\Provider\DummySitemapProvider
+        tags:
+            - { name: 'oro_seo.sitemap_url_provider', alias: 'test_two' }
+
     oro_seo.tools.sitemap_dumper:
         class: Oro\Bundle\SEOBundle\Tools\SitemapDumper
         arguments:
