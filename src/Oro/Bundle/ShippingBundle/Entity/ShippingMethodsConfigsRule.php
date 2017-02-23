@@ -7,8 +7,9 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
+use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
-use Oro\Bundle\RuleBundle\Entity\Rule;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ShippingBundle\Model\ExtendShippingMethodsConfigsRule;
 
 /**
@@ -22,6 +23,11 @@ use Oro\Bundle\ShippingBundle\Model\ExtendShippingMethodsConfigsRule;
  *      routeCreate="oro_shipping_methods_configs_rule_create",
  *      routeUpdate="oro_shipping_methods_configs_rule_update",
  *      defaultValues={
+ *          "ownership"={
+ *              "owner_type"="ORGANIZATION",
+ *              "owner_field_name"="organization",
+ *              "owner_column_name"="organization_id"
+ *          },
  *          "dataaudit"={
  *              "auditable"=true
  *          },
@@ -51,7 +57,7 @@ class ShippingMethodsConfigsRule extends ExtendShippingMethodsConfigsRule implem
     private $id;
 
     /**
-     * @var Rule
+     * @var RuleInterface
      *
      * @ORM\ManyToOne(targetEntity="Oro\Bundle\RuleBundle\Entity\Rule", cascade={"persist", "remove"})
      * @ORM\JoinColumn(name="rule_id", referencedColumnName="id", nullable=false, onDelete="CASCADE")
@@ -112,6 +118,14 @@ class ShippingMethodsConfigsRule extends ExtendShippingMethodsConfigsRule implem
     private $currency;
 
     /**
+     * @var Organization
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\OrganizationBundle\Entity\Organization")
+     * @ORM\JoinColumn(name="organization_id", referencedColumnName="id", onDelete="SET NULL")
+     */
+    private $organization;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct()
@@ -131,7 +145,7 @@ class ShippingMethodsConfigsRule extends ExtendShippingMethodsConfigsRule implem
     }
 
     /**
-     * @return Rule
+     * @return RuleInterface
      */
     public function getRule()
     {
@@ -139,7 +153,8 @@ class ShippingMethodsConfigsRule extends ExtendShippingMethodsConfigsRule implem
     }
 
     /**
-     * @param Rule $rule
+     * @param RuleInterface $rule
+     *
      * @return $this
      */
     public function setRule($rule)
@@ -247,5 +262,25 @@ class ShippingMethodsConfigsRule extends ExtendShippingMethodsConfigsRule implem
         }
 
         return $this;
+    }
+
+    /**
+     * @param Organization $organization
+     *
+     * @return $this
+     */
+    public function setOrganization($organization)
+    {
+        $this->organization = $organization;
+
+        return $this;
+    }
+
+    /**
+     * @return Organization
+     */
+    public function getOrganization()
+    {
+        return $this->organization;
     }
 }

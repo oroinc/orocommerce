@@ -4,20 +4,24 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\PropertyAccess\PropertyAccess;
-use Symfony\Component\PropertyAccess\PropertyAccessor;
 
+use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
+use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
+use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantTypeHandlerRegistry;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\ProductVariant\Form\Type\FrontendVariantFiledType;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantTypeHandlerInterface;
 use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
+use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
 class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
 {
+    use EntityTrait;
+
     const FIELD_COLOR = 'testColor';
     const FIELD_NEW = 'testNew';
     const PRODUCT_CLASS = Product::class;
@@ -31,8 +35,8 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
     /** @var ProductVariantTypeHandlerRegistry|\PHPUnit_Framework_MockObject_MockObject */
     protected $productVariantTypeHandlerRegistry;
 
-    /** @var PropertyAccessor */
-    protected $propertyAccessor;
+    /** @var AttributeManager|\PHPUnit_Framework_MockObject_MockObject */
+    protected $attributeManager;
 
     /**
      * {@inheritdoc}
@@ -47,12 +51,13 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
 
         $this->productVariantTypeHandlerRegistry = $this->createMock(ProductVariantTypeHandlerRegistry::class);
 
-        $this->propertyAccessor = PropertyAccess::createPropertyAccessor();
+        $this->attributeManager = $this->createMock(AttributeManager::class);
 
         $this->type = new FrontendVariantFiledType(
             $this->productVariantAvailabilityProvider,
             $this->productVariantTypeHandlerRegistry,
-            $this->propertyAccessor,
+            $this->attributeManager,
+            $this->getPropertyAccessor(),
             self::PRODUCT_CLASS
         );
     }
@@ -75,12 +80,20 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
         $this->assertEquals('oro_product_product_variant_frontend_variant_field', $this->type->getBlockPrefix());
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     */
     public function testBuildFormConfigurableProduct()
     {
-        $parentProduct = new Product();
-        $parentProduct
-            ->setType(Product::TYPE_CONFIGURABLE)
-            ->setVariantFields([self::FIELD_COLOR, self::FIELD_NEW]);
+        $attributeColor = $this->getEntity(FieldConfigModel::class, ['fieldName' => self::FIELD_COLOR]);
+        $attributeNew = $this->getEntity(FieldConfigModel::class, ['fieldName' => self::FIELD_NEW]);
+        $attributeFamily = $this->getEntity(AttributeFamily::class);
+
+        $parentProduct = $this->getEntity(Product::class, [
+            'type' => Product::TYPE_CONFIGURABLE,
+            'variantFields' => [self::FIELD_COLOR, self::FIELD_NEW],
+            'attributeFamily' => $attributeFamily,
+        ]);
 
         $defaultVariant = new ProductStub();
         $defaultVariant->{self::FIELD_COLOR} = new StubEnumValue('id', 'name');
@@ -95,14 +108,28 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
             'green' => true
         ];
 
-        $enumHandler = $this->createTypeHandler(self::FIELD_COLOR, $enumAvailability, $defaultVariant);
+        $enumHandler = $this->createTypeHandler(
+            self::FIELD_COLOR,
+            $enumAvailability,
+            [
+                'data' => $defaultVariant->{self::FIELD_COLOR},
+                'label' => self::FIELD_COLOR,
+            ]
+        );
 
         $booleanAvailability = [
             0 => false,
             1 => true
         ];
 
-        $booleanHandler = $this->createTypeHandler(self::FIELD_NEW, $booleanAvailability, $defaultVariant);
+        $booleanHandler = $this->createTypeHandler(
+            self::FIELD_NEW,
+            $booleanAvailability,
+            [
+                'data' => $defaultVariant->{self::FIELD_NEW},
+                'label' => self::FIELD_NEW,
+            ]
+        );
 
         $this->productVariantTypeHandlerRegistry->expects($this->exactly(2))
             ->method('getVariantTypeHandler')
@@ -127,6 +154,19 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
                     1 => true
                 ]
             ]);
+
+        $this->attributeManager->expects($this->at(0))
+            ->method('getAttributesByFamily')
+            ->with($attributeFamily)
+            ->willReturn([$attributeColor, $attributeNew]);
+        $this->attributeManager->expects($this->at(1))
+            ->method('getAttributeLabel')
+            ->with($attributeColor)
+            ->willReturn(self::FIELD_COLOR);
+        $this->attributeManager->expects($this->at(2))
+            ->method('getAttributeLabel')
+            ->with($attributeNew)
+            ->willReturn(self::FIELD_NEW);
 
         $form = $this->factory->create($this->type, $defaultVariant, $options);
 
@@ -199,18 +239,18 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
     /**
      * @param string $fieldName
      * @param array $availability
-     * @param mixed $expectedData
+     * @param array $expectedOptions
      *
      * @return \PHPUnit_Framework_MockObject_MockObject
      */
-    private function createTypeHandler($fieldName, array $availability, $expectedData)
+    private function createTypeHandler($fieldName, array $availability, array $expectedOptions)
     {
         $form = $this->factory->createNamed($fieldName, FormType::class, null, ['auto_initialize' => false]);
 
         $handler = $this->createMock(ProductVariantTypeHandlerInterface::class);
         $handler->expects($this->once())
             ->method('createForm')
-            ->with($fieldName, $availability, ['data' => $expectedData->{$fieldName}])
+            ->with($fieldName, $availability, $expectedOptions)
             ->willReturn($form);
 
         return $handler;

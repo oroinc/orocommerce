@@ -4,40 +4,29 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\PaymentBundle\Formatter\PaymentStatusLabelFormatter;
 use Oro\Bundle\PaymentBundle\Twig\PaymentStatusExtension;
+use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
 class PaymentStatusExtensionTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var  PaymentStatusLabelFormatter|\PHPUnit_Framework_MockObject_MockObject
-     */
+    use TwigExtensionTestCaseTrait;
+
+    /** @var PaymentStatusLabelFormatter|\PHPUnit_Framework_MockObject_MockObject */
     protected $paymentStatusLabelFormatter;
 
-    /**
-     * @var PaymentStatusExtension
-     */
+    /** @var PaymentStatusExtension */
     protected $extension;
 
     public function setUp()
     {
-        $this->paymentStatusLabelFormatter = $this
-            ->getMockBuilder(PaymentStatusLabelFormatter::class)
+        $this->paymentStatusLabelFormatter = $this->getMockBuilder(PaymentStatusLabelFormatter::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->extension = new PaymentStatusExtension($this->paymentStatusLabelFormatter);
-    }
 
-    public function testGetFunctions()
-    {
-        $this->assertEquals(
-            [
-                new \Twig_SimpleFunction(
-                    'get_payment_status_label',
-                    [$this->paymentStatusLabelFormatter, 'formatPaymentStatusLabel'],
-                    ['is_safe' => ['html']]
-                )
-            ],
-            $this->extension->getFunctions()
-        );
+        $container = self::getContainerBuilder()
+            ->add('oro_payment.formatter.payment_status_label', $this->paymentStatusLabelFormatter)
+            ->getContainer($this);
+
+        $this->extension = new PaymentStatusExtension($container);
     }
 
     public function testGetName()

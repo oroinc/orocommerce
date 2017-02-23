@@ -27,7 +27,9 @@ class OroRedirectExtension extends Extension
         $this->addClassesToCompile(
             [
                 'Oro\Bundle\RedirectBundle\Security\Firewall',
-                'Oro\Bundle\RedirectBundle\Routing\SlugUrlMatcher'
+                'Oro\Bundle\RedirectBundle\Routing\SlugUrlMatcher',
+                'Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator',
+                'Oro\Bundle\RedirectBundle\Routing\Router'
             ]
         );
     }

@@ -3,6 +3,7 @@
 {% import 'OroProductBundle::image_macros.html.twig' as Image %}
 {% import 'OroEntityConfigBundle::macros.html.twig' as entityConfig %}
 {% import 'OroUIBundle::macros.html.twig' as UII %}
+{% import 'OroRedirectBundle::macros.html.twig' as Redirect %}
 
 {% oro_title_set({params : {"%sku%": entity.sku|default('N/A'|trans), "%name%": entity.defaultName.string|default('N/A'|trans) }}) %}
 
@@ -59,11 +60,8 @@
                     'data' : {
                         'sku': UI.renderProperty('oro.product.sku.label'|trans, entity.sku),
                         'names': UI.renderProperty('oro.product.names.label'|trans, entity.defaultName),
-                        'slugPrototypes': UI.renderProperty(
-                            'oro.product.slug_prototypes.label'|trans,
-                            entity.defaultSlugPrototype
-                        ),
-                        'info': productInfo
+                        'info': productInfo,
+                        'generatedSugs': Redirect.renderGeneratedSlugs(entity.slugs)
                     }
                 },
                 {'data' : {

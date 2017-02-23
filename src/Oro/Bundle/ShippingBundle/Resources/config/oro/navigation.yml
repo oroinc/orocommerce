@@ -4,8 +4,8 @@ navigation:
             shipping_rule:
                 label:           'oro.shipping.shippingmethodsconfigsrule.entity_plural_label'
                 route:           'oro_shipping_methods_configs_rule_index'
+                position:        100
                 extras:
-                    position:    100
                     routes:      ['/^oro_shipping_methods_configs_rule/']
                     description: 'oro.shipping.menu.shipping_rule.description'
 
@@ -18,8 +18,8 @@ navigation:
             frontend_shipping_rule:
                 label:           'oro.shipping.shippingmethodsconfigsrule.entity_plural_label'
                 route:           'oro_shipping_methods_configs_rule_index'
+                position:        200
                 extras:
-                    position:    200
                     description: 'oro.shipping.shippingrule.menu.shipping_rule.description'
 
         tree:

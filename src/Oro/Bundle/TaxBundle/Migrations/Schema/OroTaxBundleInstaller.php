@@ -17,7 +17,7 @@ class OroTaxBundleInstaller implements Installation
      */
     public function getMigrationVersion()
     {
-        return 'v1_4';
+        return 'v1_5';
     }
 
     /**
@@ -44,6 +44,7 @@ class OroTaxBundleInstaller implements Installation
         $this->addOroTaxProdTaxCodeProdForeignKeys($schema);
         $this->addOroTaxRuleForeignKeys($schema);
         $this->addOroTaxZipCodeForeignKeys($schema);
+        $this->addOroCustomerTaxCodeForeignKeys($schema);
     }
 
     /**
@@ -105,6 +106,8 @@ class OroTaxBundleInstaller implements Installation
         $table->addColumn('description', 'text', ['notnull' => false]);
         $table->addColumn('created_at', 'datetime', []);
         $table->addColumn('updated_at', 'datetime', []);
+        $table->addColumn('user_owner_id', 'integer', ['notnull' => false]);
+        $table->addColumn('organization_id', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addUniqueIndex(['code'], 'UNIQ_E98BB26B77153098');
     }
@@ -351,6 +354,27 @@ class OroTaxBundleInstaller implements Installation
             ['tax_jurisdiction_id'],
             ['id'],
             ['onDelete' => null, 'onUpdate' => null]
+        );
+    }
+
+    /**
+     * Add oro_tax_customer_tax_code foreign keys.
+     * @param Schema $schema
+     */
+    protected function addOroCustomerTaxCodeForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_tax_customer_tax_code');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_user'),
+            ['user_owner_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_organization'),
+            ['organization_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL', 'onUpdate' => null]
         );
     }
 }

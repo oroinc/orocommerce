@@ -2,19 +2,19 @@
 
 namespace Oro\Bundle\CatalogBundle\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\Request;
-
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CatalogBundle\Form\Handler\CategoryHandler;
 use Oro\Bundle\CatalogBundle\Form\Type\CategoryType;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\UIBundle\Form\Type\TreeMoveType;
 use Oro\Bundle\UIBundle\Model\TreeCollection;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 class CategoryController extends Controller
 {
@@ -28,14 +28,15 @@ class CategoryController extends Controller
      *      permission="CREATE"
      * )
      * @param Category $parentCategory
+     * @param Request $request
      * @return array|RedirectResponse
      */
-    public function createAction(Category $parentCategory)
+    public function createAction(Category $parentCategory, Request $request)
     {
         $category = new Category();
         $category->setParentCategory($parentCategory);
 
-        return $this->update($category);
+        return $this->update($category, $request);
     }
 
     /**
@@ -48,11 +49,12 @@ class CategoryController extends Controller
      *      permission="EDIT"
      * )
      * @param Category $category
+     * @param Request $request
      * @return array|RedirectResponse
      */
-    public function updateAction(Category $category)
+    public function updateAction(Category $category, Request $request)
     {
-        return $this->update($category);
+        return $this->update($category, $request);
     }
 
     /**
@@ -148,14 +150,15 @@ class CategoryController extends Controller
 
     /**
      * @param Category $category
+     * @param Request $request
      * @return array|RedirectResponse
      */
-    protected function update(Category $category)
+    protected function update(Category $category, Request $request)
     {
         $form = $this->createForm(CategoryType::NAME, $category);
         $handler = new CategoryHandler(
             $form,
-            $this->getRequest(),
+            $request,
             $this->getDoctrine()->getManagerForClass('OroCatalogBundle:Category'),
             $this->get('event_dispatcher')
         );
@@ -191,5 +194,19 @@ class CategoryController extends Controller
     protected function getMasterRootCategory()
     {
         return $this->getDoctrine()->getRepository('OroCatalogBundle:Category')->getMasterCatalogRoot();
+    }
+
+    /**
+     * @Route("/get-changed-urls/{id}", name="oro_catalog_category_get_changed_slugs", requirements={"id"="\d+"})
+     *
+     * @AclAncestor("oro_catalog_category_update")
+     *
+     * @param Category $category
+     * @return JsonResponse
+     */
+    public function getChangedSlugsAction(Category $category)
+    {
+        return new JsonResponse($this->get('oro_redirect.helper.changed_slugs_helper')
+            ->getChangedSlugsData($category, CategoryType::class));
     }
 }
