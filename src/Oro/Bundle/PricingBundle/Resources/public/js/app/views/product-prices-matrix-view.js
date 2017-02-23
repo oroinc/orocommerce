@@ -108,7 +108,6 @@ define(function(require) {
             );
         },
         setTotalColumn: function (event) {
-
             for (var i=2; i<8; i++) {
                 var totalColumn  = 0,
                     columnsTotal = $('.matrix-order-widget__grid-footer-total');
