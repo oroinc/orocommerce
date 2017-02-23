@@ -1,0 +1,71 @@
+<?php
+
+namespace Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub;
+
+use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
+use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
+
+class ContentNodeStub implements ContentNodeInterface
+{
+    /**
+     * @var int
+     */
+    private $id;
+
+    /**
+     * @var ContentVariantInterface
+     */
+    private $contentVariants;
+
+    /**
+     * @param $id
+     */
+    public function __construct($id)
+    {
+        $this->id = $id;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getContentVariants()
+    {
+        return $this->contentVariants;
+    }
+
+    /**
+     * @param ContentVariantInterface $contentVariant
+     *
+     * @return ContentNodeStub
+     */
+    public function addContentVariant(ContentVariantInterface $contentVariant)
+    {
+        $this->contentVariants[] = $contentVariant;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getTitles()
+    {
+        return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isRewriteVariantTitle()
+    {
+        return null;
+    }
+}

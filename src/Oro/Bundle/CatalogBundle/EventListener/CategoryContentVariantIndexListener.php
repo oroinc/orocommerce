@@ -12,7 +12,6 @@ use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ContentNodeFieldsC
 use Oro\Component\DoctrineUtils\ORM\FieldUpdatesChecker;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
-use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\CatalogBundle\Manager\ProductIndexScheduler;
 use Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType;
 use Oro\Bundle\CatalogBundle\Entity\Category;
@@ -83,17 +82,12 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
     public function onFlush(OnFlushEventArgs $event)
     {
         $unitOfWork = $event->getEntityManager()->getUnitOfWork();
-
         $categories = [];
-
         $updatedEntities = $unitOfWork->getScheduledEntityUpdates();
-        // @todo Will be used in BB-7734
-        $isAnyFieldChanged = false;
 
+        // @todo extract it and refactor this class a bit after all tasks will be merged
         foreach ($updatedEntities as $entity) {
-            if ($isAnyFieldChanged) {
-                break;
-            }
+            $isAnyFieldChanged = false;
 
             if (!$entity instanceof ContentNodeInterface) {
                 continue;
@@ -105,6 +99,11 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
                     break;
                 }
             }
+
+            // if any of configurable field of ContentNode has changed - reindex all products of related categories
+            if ($isAnyFieldChanged) {
+                $this->collectCategories($entity->getContentVariants(), $categories);
+            }
         }
 
         $this->collectCategories($unitOfWork->getScheduledEntityInsertions(), $categories, $unitOfWork);
@@ -113,25 +112,6 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
 
         if ($categories) {
              $this->indexScheduler->scheduleProductsReindex($categories);
-        }
-    }
-
-    /**
-     * @param AfterFormProcessEvent $event
-     */
-    public function onFormAfterFlush(AfterFormProcessEvent $event)
-    {
-        $node = $event->getData();
-        if (!$node instanceof ContentNodeInterface) {
-            return;
-        }
-
-        $categories = [];
-
-        $this->collectCategories($node->getContentVariants(), $categories);
-
-        if ($categories) {
-            $this->indexScheduler->scheduleProductsReindex($categories);
         }
     }
 

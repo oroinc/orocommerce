@@ -197,7 +197,6 @@ services:
             - '@oro_entity.doctrine.field_updates_checker'
         tags:
             - { name: doctrine.event_listener, event: onFlush }
-            - { name: kernel.event_listener, event: oro.form.update_handler.after_entity_flush, method: onFormAfterFlush }
 
     oro_catalog.visibility.default_product_options:
         class: 'Oro\Bundle\CatalogBundle\Visibility\BasicCategoryDefaultProductUnitOptionsVisibility'

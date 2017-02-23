@@ -9,6 +9,7 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\UnitOfWork;
 
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ContentNodeStub;
 use Oro\Component\DoctrineUtils\ORM\FieldUpdatesChecker;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
@@ -38,7 +39,7 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit_Framework_T
     /** @var AfterFormProcessEvent */
     private $afterFormProcessEvent;
 
-    /** @var FieldUpdatesChecker */
+    /** @var FieldUpdatesChecker|\PHPUnit_Framework_MockObject_MockObject */
     private $fieldUpdatesChecker;
 
     public function setUp()
@@ -51,7 +52,6 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit_Framework_T
             ->disableOriginalConstructor()
             ->getMock();
 
-        // @todo add test cases in BB-7734
         $this->eventListener = new ProductContentVariantReindexEventListener(
             $this->eventDispatcher,
             $this->fieldUpdatesChecker
@@ -247,34 +247,9 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit_Framework_T
         $this->eventListener->onFlush($this->onFlushEventArgs);
     }
 
-    public function testItDoesntReindexWhenNoProductsAfterFormFlush()
+    public function testProductsOfRelatedContentVariantWillBeReindexOnlyIfConfigurableFieldsHaveSomeChanges()
     {
-        $this->prepareMocksForOnFormFlush();
-
-        $this->eventDispatcher
-            ->expects($this->never())
-            ->method('dispatch');
-
-        $contentVariant = $this->generateContentVariant(ProductPageContentVariantType::TYPE);
-
-        $this->contentNode
-            ->method('getContentVariants')
-            ->willReturn([$contentVariant]);
-
-        $this->eventListener->onFormAfterFlush($this->afterFormProcessEvent);
-    }
-
-    public function testItReindexWithManyProductAfterFormFlush()
-    {
-        $this->prepareMocksForOnFormFlush();
-
-        $this->eventDispatcher
-            ->expects($this->once())
-            ->method('dispatch')
-            ->with(
-                ReindexationRequestEvent::EVENT_NAME,
-                new ReindexationRequestEvent([Product::class], [], [1, 2, 3, 4, 5, 6])
-            );
+        $this->prepareMocksForOnFlush();
 
         $contentVariant1 = $this->generateContentVariant(ProductPageContentVariantType::TYPE, 1);
         $contentVariant2 = $this->generateContentVariant(ProductPageContentVariantType::TYPE, 2);
@@ -283,40 +258,33 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit_Framework_T
         $contentVariant5 = $this->generateContentVariant(ProductPageContentVariantType::TYPE, 5);
         $contentVariant6 = $this->generateContentVariant(ProductPageContentVariantType::TYPE, 6);
 
-        $this->eventDispatcher
-            ->expects($this->once())
-            ->method('dispatch');
+        $contentNodeWithFieldChanges = (new ContentNodeStub(1))
+            ->addContentVariant($contentVariant1)
+            ->addContentVariant($contentVariant2)
+            ->addContentVariant($contentVariant3);
+        $contentNodeWithoutFieldChanges = (new ContentNodeStub(2))
+            ->addContentVariant($contentVariant4)
+            ->addContentVariant($contentVariant5)
+            ->addContentVariant($contentVariant6);
 
-        $this->contentNode
-            ->method('getContentVariants')
-            ->willReturn([
-                $contentVariant1,
-                $contentVariant2,
-                $contentVariant3,
-                $contentVariant4,
-                $contentVariant5,
-                $contentVariant6
+        $this->unitOfWork
+            ->method('getScheduledEntityInsertions')
+            ->willReturn([]);
+        $this->unitOfWork
+            ->method('getScheduledEntityDeletions')
+            ->willReturn([]);
+        $this->unitOfWork
+            ->method('getScheduledEntityUpdates')
+            ->willReturn([$contentNodeWithFieldChanges, $contentNodeWithoutFieldChanges, new \stdClass()]);
+
+        $this->fieldUpdatesChecker
+            ->method('isRelationFieldChanged')
+            ->willReturnMap([
+                [$contentNodeWithFieldChanges, 'titles', true],
+                [$contentNodeWithoutFieldChanges, 'titles', false],
             ]);
 
-        $this->eventListener->onFormAfterFlush($this->afterFormProcessEvent);
-    }
-
-    public function testItReindexEachProductOnlyOnceAfterFormFlush()
-    {
-        $this->prepareMocksForOnFormFlush();
-
-        $this->eventDispatcher
-            ->expects($this->once())
-            ->method('dispatch');
-
-        $contentVariant1 = $this->generateContentVariant(ProductPageContentVariantType::TYPE, 1);
-        $contentVariant2 = $this->generateContentVariant(ProductPageContentVariantType::TYPE, 2);
-        $contentVariant3 = $this->generateContentVariant(ProductPageContentVariantType::TYPE, 3);
-
-        $this->contentNode
-            ->method('getContentVariants')
-            ->willReturn([$contentVariant1, $contentVariant2, $contentVariant3]);
-
+        // only products from $contentNodeWithFieldChanges should be reindex
         $this->eventDispatcher
             ->expects($this->once())
             ->method('dispatch')
@@ -325,7 +293,7 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit_Framework_T
                 new ReindexationRequestEvent([Product::class], [], [1, 2, 3])
             );
 
-        $this->eventListener->onFormAfterFlush($this->afterFormProcessEvent);
+        $this->eventListener->onFlush($this->onFlushEventArgs);
     }
 
     /**

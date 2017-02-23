@@ -11,7 +11,6 @@ use Doctrine\ORM\Event\OnFlushEventArgs;
 use Oro\Component\DoctrineUtils\ORM\FieldUpdatesChecker;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
-use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ContentNodeFieldsChangesAwareInterface;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductPageContentVariantType;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -74,15 +73,11 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
     {
         $unitOfWork = $event->getEntityManager()->getUnitOfWork();
         $productIds = [];
-
         $updatedEntities = $unitOfWork->getScheduledEntityUpdates();
-        // @todo Will be used in BB-7734
-        $isAnyFieldChanged = false;
 
+        // @todo extract it and refactor this class a bit after all tasks will be merged
         foreach ($updatedEntities as $entity) {
-            if ($isAnyFieldChanged) {
-                break;
-            }
+            $isAnyFieldChanged = false;
 
             if (!$entity instanceof ContentNodeInterface) {
                 continue;
@@ -94,28 +89,16 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
                     break;
                 }
             }
+
+            // if any of configurable field of ContentNode has changed - reindex all products related to it
+            if ($isAnyFieldChanged) {
+                $this->collectProductIds($entity->getContentVariants(), $productIds);
+            }
         }
 
         $this->collectProductIds($unitOfWork->getScheduledEntityInsertions(), $productIds, $unitOfWork);
         $this->collectProductIds($updatedEntities, $productIds, $unitOfWork);
         $this->collectProductIds($unitOfWork->getScheduledEntityDeletions(), $productIds, $unitOfWork);
-
-        $this->triggerReindex($productIds);
-    }
-
-    /**
-     * @param AfterFormProcessEvent $event
-     */
-    public function onFormAfterFlush(AfterFormProcessEvent $event)
-    {
-        if (!$event->getData() instanceof ContentNodeInterface) {
-            return;
-        }
-        $productIds = [];
-
-        /** @var ContentNodeInterface $contentNode */
-        $contentNode = $event->getData();
-        $this->collectProductIds($contentNode->getContentVariants(), $productIds);
 
         $this->triggerReindex($productIds);
     }
