@@ -117,3 +117,11 @@ services:
         public: false
         arguments:
             - '@oro_payment_term.config.provider_basic'
+
+    oro_payment_term.repository.payment_term_settings:
+        class: 'Oro\Bundle\PaymentTermBundle\Entity\Repository\PaymentTermSettingsRepository'
+        parent: oro_entity.abstract_repository
+        arguments:
+            - 'Oro\Bundle\PaymentTermBundle\Entity\PaymentTermSettings'
+        calls:
+            - [setAclHelper, ['@oro_security.acl_helper']]

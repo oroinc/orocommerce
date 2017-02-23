@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Method\Config\Provider;
 
-use Oro\Bundle\PaymentBundle\Method\Provider\PaymentConfigProviderInterface;
 use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface;
 
-interface PaymentTermConfigProviderInterface extends PaymentConfigProviderInterface
+interface PaymentTermConfigProviderInterface
 {
     /**
      * @return PaymentTermConfigInterface[]

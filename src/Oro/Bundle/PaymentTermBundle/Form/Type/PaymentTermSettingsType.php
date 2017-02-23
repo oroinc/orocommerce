@@ -19,7 +19,7 @@ class PaymentTermSettingsType extends AbstractType
 
     /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      *
      * @throws ConstraintDefinitionException
      * @throws InvalidOptionsException
@@ -32,18 +32,18 @@ class PaymentTermSettingsType extends AbstractType
                 'labels',
                 LocalizedFallbackValueCollectionType::NAME,
                 [
-                    'label'    => 'oro.paymentterm.settings.labels.label',
+                    'label' => 'oro.paymentterm.settings.labels.label',
                     'required' => true,
-                    'options'  => ['constraints' => [new NotBlank()]],
+                    'options' => ['constraints' => [new NotBlank()]],
                 ]
             )
             ->add(
                 'shortLabels',
                 LocalizedFallbackValueCollectionType::NAME,
                 [
-                    'label'    => 'oro.paymentterm.settings.short_labels.label',
+                    'label' => 'oro.paymentterm.settings.short_labels.label',
                     'required' => true,
-                    'options'  => ['constraints' => [new NotBlank()]],
+                    'options' => ['constraints' => [new NotBlank()]],
                 ]
             );
     }
@@ -56,7 +56,7 @@ class PaymentTermSettingsType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'data_class' => PaymentTermSettings::class
+            'data_class' => PaymentTermSettings::class,
         ]);
     }
 

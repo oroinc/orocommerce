@@ -4,9 +4,23 @@ namespace Oro\Bundle\PaymentTermBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTermSettings;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 class PaymentTermSettingsRepository extends EntityRepository
 {
+    /**
+     * @var AclHelper
+     */
+    private $aclHelper;
+
+    /**
+     * @param AclHelper $aclHelper
+     */
+    public function setAclHelper(AclHelper $aclHelper)
+    {
+        $this->aclHelper = $aclHelper;
+    }
+
     /**
      * @return PaymentTermSettings[]
      */
@@ -19,6 +33,6 @@ class PaymentTermSettingsRepository extends EntityRepository
             ->where('ch.enabled = true')
             ->orderBy('pts.id');
 
-        return $qb->getQuery()->getResult();
+        return $this->aclHelper->apply($qb)->getResult();
     }
 }
