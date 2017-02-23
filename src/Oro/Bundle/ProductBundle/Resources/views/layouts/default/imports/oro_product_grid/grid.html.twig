@@ -111,3 +111,23 @@
         </div>
     {% endif %}
 {% endblock %}
+
+{% block __oro_product_grid__datagrid_toolbar_leftside_container_widget %}
+    {% set toolbarPosition = attr['data-grid-toolbar']|default('') %}
+
+    {% if toolbarPosition != 'bottom' %}
+        <div class="grid__toolbar-side" data-section="left-side">
+            {{ block_widget(block) }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block __oro_product_grid__datagrid_toolbar_rightside_container_widget %}
+    {% set toolbarPosition = attr['data-grid-toolbar']|default('') %}
+
+    {% if toolbarPosition != 'bottom' %}
+        <div class="grid__toolbar-rightside" data-section="right-side">
+            {{ block_widget(block) }}
+        </div>
+    {% endif %}
+{% endblock %}
