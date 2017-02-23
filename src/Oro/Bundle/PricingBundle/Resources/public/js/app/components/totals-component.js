@@ -6,7 +6,6 @@ define(function(require) {
     var _ = require('underscore');
     var routing = require('routing');
     var mediator = require('oroui/js/mediator');
-    var messenger =  require('oroui/js/messenger');
     var NumberFormatter = require('orolocale/js/formatter/number');
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     var BaseComponent = require('oroui/js/app/components/base/component');
@@ -178,8 +177,7 @@ define(function(require) {
         /**
          * @param {Object} totals
          */
-        triggerTotalsUpdateEvent: function(totals)
-        {
+        triggerTotalsUpdateEvent: function(totals) {
             if (!_.isUndefined(totals) && !_.isEmpty(totals)) {
                 mediator.trigger('totals:update', totals);
             }
@@ -212,15 +210,12 @@ define(function(require) {
                 url: routing.generate(this.options.route, params),
                 type: typeRequest,
                 data: data,
-                success: function (response) {
+                success: function(response) {
                     if (formData === self.formData && !self.disposed) {
                         //data doesn't change after ajax call
                         var totals = response || {};
                         callback(totals);
                     }
-                },
-                error: function(jqXHR) {
-                    messenger.showErrorMessage(_.__('Sorry, an unexpected error has occurred.'), jqXHR.responseJSON);
                 }
             });
         },
@@ -268,7 +263,7 @@ define(function(require) {
 
             item.formattedAmount = NumberFormatter.formatCurrency(item.amount, item.currency);
 
-            if(item.data && item.data.baseAmount && item.data.baseCurrency) {
+            if (item.data && item.data.baseAmount && item.data.baseCurrency) {
                 item.formattedBaseAmount = NumberFormatter.formatCurrency(
                     item.data.baseAmount,
                     item.data.baseCurrency

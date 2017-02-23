@@ -12,9 +12,6 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadCategoryMetaData;
 use Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadProductMetaData;
 
-/**
- * @dbIsolation
- */
 class ProductControllerTest extends WebTestCase
 {
     use SEOFrontendTrait;

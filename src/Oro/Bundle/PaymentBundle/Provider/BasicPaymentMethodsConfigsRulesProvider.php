@@ -44,6 +44,25 @@ class BasicPaymentMethodsConfigsRulesProvider implements PaymentMethodsConfigsRu
     /**
      * {@inheritDoc}
      */
+    public function getFilteredPaymentMethodsConfigsRegardlessDestination(PaymentContextInterface $context)
+    {
+        if (null === $context->getBillingAddress()) {
+            $rulesConfigs = $this->repository->getByCurrency($context->getCurrency());
+        } else {
+            $rulesConfigs = $this->repository->getByDestinationAndCurrency(
+                $context->getBillingAddress(),
+                $context->getCurrency()
+            );
+        }
+
+        $rulesContext = $this->paymentContextToRulesValueConverter->convert($context);
+
+        return $this->ruleFiltrationService->getFilteredRuleOwners($rulesConfigs, $rulesContext);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function getFilteredPaymentMethodsConfigs(PaymentContextInterface $context)
     {
         $rulesConfigs = $this->getRulesConfigs($context);

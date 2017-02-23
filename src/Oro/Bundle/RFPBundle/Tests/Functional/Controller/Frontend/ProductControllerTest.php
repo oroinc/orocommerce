@@ -10,9 +10,6 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Bundle\FrameworkBundle\Translation\Translator;
 
-/**
- * @dbIsolation
- */
 class ProductControllerTest extends WebTestCase
 {
     const RFP_PRODUCT_VISIBILITY_KEY = 'oro_rfp.frontend_product_visibility';

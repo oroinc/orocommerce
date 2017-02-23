@@ -2,7 +2,6 @@ workflows:
     b2b_flow_checkout:
         entity: Oro\Bundle\CheckoutBundle\Entity\Checkout
         entity_attribute: checkout
-        start_step: enter_billing_address
         steps_display_ordered: true
 
         defaults:
@@ -10,6 +9,8 @@ workflows:
         exclusive_record_groups:
             - b2b_checkout_flow
         priority: 200
+
+        applications: ['commerce']
 
         attributes:
             billing_address:
@@ -66,8 +67,6 @@ workflows:
                 type: entity
                 options:
                     class: Oro\Bundle\OrderBundle\Entity\Order
-            checkout_finished:
-                type: bool
         steps:
             enter_billing_address:
                 order: 10
@@ -94,7 +93,6 @@ workflows:
                     - back_to_shipping_method
             order_review:
                 order: 50
-                is_final: true
                 allowed_transitions:
                     - place_order
                     - verify_payment
@@ -105,7 +103,16 @@ workflows:
                     - back_to_shipping_method
                     - back_to_payment
                     - back_to_shipping_address_on_fail_address
+            order_created:
+                order: 60
+                is_final: true
+
         transitions:
+            __start__:
+                is_start: true
+                is_hidden: true
+                step_to: enter_billing_address
+                transition_definition: __start___definition
             start_from_shoppinglist:
                 is_start: true
                 step_to: enter_billing_address
@@ -312,6 +319,7 @@ workflows:
                 display_type: page
                 frontend_options:
                     is_checkout_continue: true
+                    is_checkout_show_errors: true
                 form_options:
                     form_init:
                         - '@generate_checkout_state_snapshot':
@@ -329,7 +337,7 @@ workflows:
                                 data: $internal_state_token
 
             finish_checkout:
-                step_to: order_review
+                step_to: order_created
                 transition_definition: finish_checkout_definition
                 is_hidden: true
 
@@ -360,16 +368,13 @@ workflows:
                             identifier: $init_context.entityId
                             attribute: $.result.shoppingList
                 preconditions:
-                    '@and':
-                        - '@has_elements': $.result.shoppingList.lineItems
-                        - '@has_price_in_shopping_line_items': $.result.shoppingList.lineItems
-                        - '@extendable':
-                            events: [extendable_condition.start_checkout]
+                    '@has_elements': $.result.shoppingList.lineItems
                 actions:
                     - '@run_action_group':
                         action_group: start_shoppinglist_checkout
                         parameters_mapping:
                             shoppingList: $.result.shoppingList
+                            showErrors: true
                         results:
                             data.checkout: $.checkout
                             result.redirectUrl: $.redirectUrl
@@ -389,7 +394,7 @@ workflows:
 
             back_to_billing_address_definition:
                 preconditions:
-                    '@not_equal': [$payment_in_progress, true]
+                    '@equal': [$checkout_finished, false]
                 actions:
                     - '@assign_value': [$billing_address_has_shipping, true]
                     - '@assign_value': [$payment_method, null]
@@ -432,7 +437,7 @@ workflows:
                     '@and':
                         - '@extendable':
                             events: [extendable_condition.checkout]
-                        - '@not_equal': [$payment_in_progress, true]
+                        - '@equal': [$checkout_finished, false]
                         - '@order_line_item_has_count':
                             message: oro.checkout.workflow.condition.order_line_item_has_count.message
                             parameters:
@@ -511,6 +516,10 @@ workflows:
 
             continue_to_shipping_method_definition:
                 preactions:
+                     - '@call_service_method':
+                         service: oro_checkout.action.default_shipping_method_setter
+                         method: setDefaultShippingMethod
+                         method_parameters: [$checkout]
                      - '@generate_checkout_state_snapshot':
                          entity: $checkout
                          attribute: $.result.currentCheckoutState
@@ -536,7 +545,7 @@ workflows:
                                  token: $state_token
                 preconditions:
                     '@and':
-                        - '@not_equal': [$payment_in_progress, true]
+                        - '@equal': [$checkout_finished, false]
                         - '@order_line_item_has_count':
                             message: oro.checkout.workflow.condition.order_line_item_has_count.message
                             parameters:
@@ -593,10 +602,6 @@ workflows:
 
             continue_to_payment_definition:
                 preactions:
-                    - '@call_service_method':
-                        service: oro_checkout.action.default_shipping_method_setter
-                        method: setDefaultShippingMethod
-                        method_parameters: [$checkout]
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
                         attribute: $.result.currentCheckoutState
@@ -632,6 +637,7 @@ workflows:
                             parameters:
                                 entity: $checkout
                         - '@checkout_has_applicable_shipping_methods':
+                            message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
                             checkout: $checkout
                 conditions:
                     '@and':
@@ -693,12 +699,16 @@ workflows:
                         attribute: $.result.paymentContext
                 preconditions:
                     '@and':
-                        - '@not_equal': [$payment_in_progress, true]
+                        - '@equal': [$checkout_finished, false]
                         - '@order_line_item_has_count':
                             message: oro.checkout.workflow.condition.order_line_item_has_count.message
                             parameters:
                                 entity: $checkout
+                        - '@checkout_has_applicable_shipping_methods':
+                            message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
+                            checkout: $checkout
                         - '@has_applicable_payment_methods':
+                            message: oro.checkout.workflow.condition.payment_method_is_not_applicable.message
                             context: $.result.paymentContext
                 conditions:
                     '@and':
@@ -764,7 +774,7 @@ workflows:
             verify_payment_definition:
                 preconditions:
                     '@and':
-                        - '@not_equal': [$payment_in_progress, true]
+                        - '@equal': [$checkout_finished, false]
                         - '@order_line_item_has_count':
                             message: oro.checkout.workflow.condition.order_line_item_has_count.message
                             parameters:
@@ -798,7 +808,7 @@ workflows:
                         conditions:
                             '@and':
                                 - '@equal': [$payment_in_progress, true]
-                                - '@equal': [$checkout_finished, false]
+                                - '@equal': [$checkout.completed, false]
                         message: oro.checkout.workflow.condition.payment_has_not_been_processed.message
                         type: 'warning'
                     - '@tree':
@@ -840,12 +850,18 @@ workflows:
                 preconditions:
                     '@and':
                         - '@not_empty': $.result.paymentContext
+                        - '@checkout_has_applicable_shipping_methods':
+                            message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
+                            checkout: $checkout
                         - '@payment_method_applicable':
-                            message: oro.checkout.workflow.condition.payment_method_is_not_applicable_please_return_to_payment_step.message
+                            message: oro.checkout.workflow.condition.payment_method_is_not_applicable.message
                             payment_method: $checkout.paymentMethod
                             context: $.result.paymentContext
                 conditions:
                     '@and':
+                        - '@extendable':
+                            message: 'oro.checkout.workflow.b2b_flow_checkout.transition.place_order.condition.extendable.message'
+                            events: ['extendable_condition.before_order_create']
                         - '@or':
                             - '@empty': $.result.savedCheckoutState
                             - '@check_checkout_states':
@@ -948,6 +964,8 @@ workflows:
                                     failureUrl: $.result.failureUrl
                                     failedShippingAddressUrl: $.result.failedShippingAddressUrl
                             - '@assign_value': [$payment_in_progress, true]
+                    - '@extendable':
+                        events: [extendable_action.finish_checkout]
                     - '@redirect':
                         conditions:
                             '@and':
@@ -1093,6 +1111,52 @@ workflows:
                             to: $order.customerUser.email
                             template: 'order_confirmation_email'
                             entity: $order
+
+                    - '@assign_value': [$checkout.completed, true]
+
+                    - '@tree':
+                        conditions:
+                            '@not_empty': $order
+                        actions:
+                            - '@count':
+                                value: $order.lineItems
+                                attribute: $checkout.completedData.itemsCount
+                            - '@assign_value': [$.result.orders, []]
+                            - '@get_class_name':
+                                object: $order
+                                attribute: $.result.orderClassName
+                            - '@call_service_method':
+                                service: oro_entity.entity_alias_resolver
+                                method: getAlias
+                                method_parameters: [$.result.orderClassName]
+                                attribute: $.result.orders[0].entityAlias
+                            - '@call_service_method':
+                                service: oro_entity.doctrine_helper
+                                method: getEntityIdentifier
+                                method_parameters: [$order]
+                                attribute: $.result.orders[0].entityId
+                            - '@assign_value': [$checkout.completedData.orders, $.result.orders]
+                    - '@assign_value': [$.result.sourceEntity, $checkout.sourceEntity]
+                    - '@tree':
+                        conditions:
+                            '@not_empty': $.result.sourceEntity
+                        actions:
+                            - '@assign_value':
+                                conditions:
+                                    '@instanceof': [$.result.sourceEntity, Oro\Bundle\SaleBundle\Entity\QuoteDemand]
+                                parameters:
+                                    attribute: $.result.sourceEntity
+                                    value: $.result.sourceEntity.quote
+                            - '@call_service_method':
+                                service: oro_entity.entity_name_resolver
+                                method: getName
+                                method_parameters: [$.result.sourceEntity]
+                                attribute: $checkout.completedData.startedFrom
+                            - '@assign_value':
+                                - [$checkout.completedData.currency, $order.currency]
+                                - [$checkout.completedData.subtotal, $order.subtotalObject.value]
+                                - [$checkout.completedData.total, $order.totalObject.value]
+
                     - '@remove_entity':
                         conditions:
                             '@or':
@@ -1101,19 +1165,12 @@ workflows:
                                     - '@equal': [$allow_manual_source_remove, true]
                                     - '@equal': [$remove_source, true]
                         parameters: [$checkout.sourceEntity]
-                    - '@remove_entity': $checkout.billingAddress
-                    - '@remove_entity': $checkout.shippingAddress
-                    - '@remove_entity': $checkout
-                    - '@assign_value': [$checkout_finished, true]
-                    - '@redirect':
-                        route: oro_order_frontend_success
-                        route_parameters:
-                            id: $order.id
 
             recalculate_state_definition:
                 preconditions:
-                    '@not_equal': [$payment_in_progress, true]
+                    '@equal': [$checkout_finished, false]
                 actions:
+                    - '@assign_value': [$payment_in_progress, false]
                     - '@run_action_group':
                         action_group: oro_update_shipping_price
                         parameters_mapping:
@@ -1129,9 +1186,10 @@ workflows:
 
             clear_payment_method_and_recalculate_state_definition:
                 preconditions:
-                    '@not_equal': [$payment_in_progress, true]
+                    '@equal': [$checkout_finished, false]
                 actions:
                     - '@assign_value': [$payment_method, null]
+                    - '@assign_value': [$payment_in_progress, false]
                     - '@assign_value': [$shipping_method, null]
                     - '@assign_value': [$checkout.shippingCost, null]
                     - '@generate_checkout_state_snapshot':

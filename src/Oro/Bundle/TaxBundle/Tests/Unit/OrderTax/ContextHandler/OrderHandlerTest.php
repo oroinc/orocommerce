@@ -2,31 +2,26 @@
 
 namespace Oro\Bundle\TaxBundle\Tests\Unit\OrderTax\ContextHandler;
 
-use Oro\Bundle\AddressBundle\Entity\Country;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\OrderBundle\Entity\OrderAddress;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TaxBundle\Entity\CustomerTaxCode;
-use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
-use Oro\Bundle\TaxBundle\Entity\Repository\AbstractTaxCodeRepository;
-use Oro\Bundle\TaxBundle\Entity\Repository\CustomerTaxCodeRepository;
 use Oro\Bundle\TaxBundle\Event\ContextEvent;
 use Oro\Bundle\TaxBundle\Model\Taxable;
 use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 use Oro\Bundle\TaxBundle\OrderTax\ContextHandler\OrderHandler;
-use Oro\Bundle\TaxBundle\OrderTax\ContextHandler\OrderLineItemHandler;
-use Oro\Bundle\TaxBundle\Provider\TaxationAddressProvider;
+use Oro\Bundle\TaxBundle\Provider\TaxCodeProvider;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class OrderHandlerTest extends \PHPUnit_Framework_TestCase
 {
+    use EntityTrait;
+
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var TaxCodeProvider|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $doctrineHelper;
+    protected $taxCodeProvider;
 
     /**
      * @var OrderHandler
@@ -35,12 +30,12 @@ class OrderHandlerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->doctrineHelper = $this
-            ->getMockBuilder(DoctrineHelper::class)
+        $this->taxCodeProvider = $this
+            ->getMockBuilder(TaxCodeProvider::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->handler = new OrderHandler($this->doctrineHelper);
+        $this->handler = new OrderHandler($this->taxCodeProvider);
     }
 
     public function testIncorrectOrderClass()
@@ -56,27 +51,33 @@ class OrderHandlerTest extends \PHPUnit_Framework_TestCase
     public function testOnContextEventCustomer()
     {
         $customer = new Customer();
-        $order = new Order();
+        $products = [
+            $this->getEntity(Product::class, ['id' => 1]),
+            $this->getEntity(Product::class, ['id' => 2])
+        ];
+
+        $order = $this->getEntity(Order::class, [
+            'lineItems' => [
+                $this->getEntity(OrderLineItem::class, ['id' => 1, 'product' => $products[0]]),
+                $this->getEntity(OrderLineItem::class, ['id' => 2, 'product' => $products[1]])
+            ]
+        ]);
         $order->setCustomer($customer);
         $event = new ContextEvent($order);
         $oldContext = clone $event->getContext();
-        
-        /** @var CustomerTaxCodeRepository|\PHPUnit_Framework_MockObject_MockObject $repository */
-        $repository = $this->getMockBuilder(CustomerTaxCodeRepository::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        
+
         $customerTaxCode = new CustomerTaxCode();
         $customerTaxCode->setCode('ACCOUNT_TAX_CODE');
-        $repository->expects($this->once())
-            ->method('findOneByEntity')
+        $this->taxCodeProvider->expects($this->once())
+            ->method('getTaxCode')
             ->with(TaxCodeInterface::TYPE_ACCOUNT, $customer)
             ->willReturn($customerTaxCode);
 
-        $this->doctrineHelper->expects($this->once())
-            ->method('getEntityRepositoryForClass')
-            ->with(CustomerTaxCode::class)
-            ->willReturn($repository);
+
+        $this->taxCodeProvider
+            ->expects($this->once())
+            ->method('preloadTaxCodes')
+            ->with(TaxCodeInterface::TYPE_PRODUCT, $products);
 
         $this->handler->onContextEvent($event);
         $this->assertNotEquals($oldContext, $event->getContext());

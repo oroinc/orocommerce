@@ -5,9 +5,6 @@ namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\Operation;
 use Oro\Bundle\ActionBundle\Tests\Functional\ActionTestCase;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadContentNodesData;
 
-/**
- * @dbIsolation
- */
 class ContentNodeDeleteOperationTest extends ActionTestCase
 {
     protected function setUp()

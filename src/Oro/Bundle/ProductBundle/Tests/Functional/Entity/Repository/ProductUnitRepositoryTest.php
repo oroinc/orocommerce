@@ -9,9 +9,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductUnitRepository;
 
-/**
- * @dbIsolation
- */
 class ProductUnitRepositoryTest extends WebTestCase
 {
     protected function setUp()

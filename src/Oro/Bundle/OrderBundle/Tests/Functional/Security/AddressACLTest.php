@@ -8,7 +8,6 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\OrderBundle\Entity\Order;
 
 /**
- * @dbIsolation
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
 class AddressACLTest extends AbstractAddressACLTest

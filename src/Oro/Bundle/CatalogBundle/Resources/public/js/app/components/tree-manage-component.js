@@ -13,6 +13,11 @@ define(function(require) {
      */
     TreeManageComponent = BasicTreeManageComponent.extend({
         /**
+         * @property {Boolean}
+         */
+        checkboxEnabled: true,
+
+        /**
          * Triggers after page move
          *
          * @param {Object} e
@@ -25,7 +30,7 @@ define(function(require) {
 
             if (data.parent === '#') {
                 this.rollback(data);
-                messenger.notificationFlashMessage('warning', __("oro.catalog.jstree.add_new_root_warning"));
+                messenger.notificationFlashMessage('warning', __('oro.catalog.jstree.add_new_root_warning'));
                 return;
             }
 

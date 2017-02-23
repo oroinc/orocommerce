@@ -1,0 +1,8 @@
+{% block _order_review_payment_methods_paypal_express_checkout_widget %}
+    {% if options.payment_method is defined %}
+        <div class="hidden"
+             data-page-component-module="oropaypal/js/app/components/payflow-express-checkout-component"
+             data-page-component-options="{{ {paymentMethod: options.payment_method}|json_encode }}">
+        </div>
+    {% endif %}
+{% endblock %}

@@ -51,12 +51,6 @@ class CallbackHandlerTest extends \PHPUnit_Framework_TestCase
         $this->paymentTransactionProvider->expects($this->once())->method('savePaymentTransaction')
             ->with($transaction);
 
-        $this->eventDispatcher->expects($this->exactly(2))->method('dispatch')
-            ->withConsecutive(
-                [CallbackReturnEvent::NAME, $event],
-                [CallbackReturnEvent::NAME . '.paymentMethod', $event]
-            );
-
         $result = $this->handler->handle($event);
         $this->assertEquals(Response::HTTP_FORBIDDEN, $result->getStatusCode());
     }
@@ -72,35 +66,6 @@ class CallbackHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->eventDispatcher->expects($this->once())->method('dispatch')
             ->with(CallbackReturnEvent::NAME, $event)
-            ->willReturnCallback(
-                function ($name, CallbackReturnEvent $event) {
-                    $event->markFailed();
-                }
-            );
-
-        $result = $this->handler->handle($event);
-        $this->assertEquals(Response::HTTP_FORBIDDEN, $result->getStatusCode());
-    }
-
-    public function testHandleEventFailedOnSecondDispatchNotSaved()
-    {
-        $event = new CallbackReturnEvent();
-        $transaction = new PaymentTransaction();
-        $transaction->setPaymentMethod('paymentMethod');
-        $event->setPaymentTransaction($transaction);
-
-        $this->paymentTransactionProvider->expects($this->never())->method('savePaymentTransaction');
-
-        $this->eventDispatcher->expects($this->at(0))->method('dispatch')
-            ->with(CallbackReturnEvent::NAME, $event)
-            ->willReturnCallback(
-                function ($name, CallbackReturnEvent $event) {
-                    $this->assertFalse($event->isPropagationStopped());
-                }
-            );
-
-        $this->eventDispatcher->expects($this->at(1))->method('dispatch')
-            ->with(CallbackReturnEvent::NAME . '.paymentMethod', $event)
             ->willReturnCallback(
                 function ($name, CallbackReturnEvent $event) {
                     $event->markFailed();

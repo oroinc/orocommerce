@@ -2,10 +2,14 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutValidateEvent;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
+use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
+use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Symfony\Component\DomCrawler\Crawler;
@@ -14,13 +18,14 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- * @dbIsolation
  */
 class CheckoutControllerTest extends CheckoutControllerTestCase
 {
     public function testStartCheckout()
     {
-        $this->startCheckout($this->getSourceEntity());
+        $shoppingList = $this->getSourceEntity();
+        $this->startCheckout($shoppingList);
+        $this->setProductInventoryLevels($shoppingList->getLineItems()[0]);
         $crawler = $this->client->request('GET', self::$checkoutUrl);
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
@@ -39,18 +44,22 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $values = $this->explodeArrayPaths($form->getValues());
         $data = $this->setFormData($values, self::BILLING_ADDRESS);
 
-        $this->client->reboot(false);
+        $this->client->disableReboot();
 
         /* @var $dispatcher EventDispatcherInterface */
         $dispatcher = $this->getContainer()->get('event_dispatcher');
-        $dispatcher->addListener(CheckoutValidateEvent::NAME, function (CheckoutValidateEvent $event) {
+        $listener = function (CheckoutValidateEvent $event) {
             $event->setIsCheckoutRestartRequired(true);
-        });
+        };
+        $dispatcher->addListener(CheckoutValidateEvent::NAME, $listener);
 
         $crawler = $this->client->request('POST', $form->getUri(), $data);
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertNotContains(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
         $this->assertContains(self::BILLING_ADDRESS_SIGN, $crawler->html());
+
+        $dispatcher->removeListener(CheckoutValidateEvent::NAME, $listener);
+        $this->client->enableReboot();
     }
 
     /**
@@ -180,7 +189,6 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $form = $this->getTransitionForm($crawler);
 
         $values = $this->explodeArrayPaths($form->getValues());
-        $values = $this->setShippingFormData($crawler, $values);
 
         $crawler = $this->client->request(
             'POST',
@@ -229,30 +237,6 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
      * @depends testShippingMethodToPaymentTransition
      * @return Crawler
      */
-    public function testPaymentToOrderReviewTransitionWithDisabledShippingRules()
-    {
-        $modifiedRules = $this->disableShippingRules();
-
-        $crawler = $this->makePaymentToOrderReviewTransition();
-
-        $this->assertNotContains(self::ORDER_REVIEW_SIGN, $crawler->html());
-        $this->assertContains(self::PAYMENT_METHOD_SIGN, $crawler->html());
-        $this->assertContains('There was a change to the contents of your order.', $crawler->html());
-
-        $this->enableShippingRules($modifiedRules);
-
-        $crawler = $this->submitPaymentTransitionForm($crawler);
-
-        $this->assertContains(self::PAYMENT_METHOD_SIGN, $crawler->html());
-        $this->assertContains('There was a change to the contents of your order.', $crawler->html());
-
-        return $crawler;
-    }
-
-    /**
-     * @depends testPaymentToOrderReviewTransitionWithDisabledShippingRules
-     * @return Crawler
-     */
     public function testPaymentToOrderReviewTransition()
     {
         $crawler = $this->makePaymentToOrderReviewTransition();
@@ -289,9 +273,39 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $this->client->followRedirects();
         $crawler = $this->client->request('GET', $data['responseData']['returnUrl']);
         $this->assertContains(self::FINISH_SIGN, $crawler->html());
-        $this->assertCount(0, $this->registry->getRepository('OroCheckoutBundle:CheckoutSource')->findAll());
-        $this->assertNull(
-            $this->registry->getRepository('OroShoppingListBundle:ShoppingList')->find($sourceEntityId)
+        $this->assertCount(1, $this->registry->getRepository('OroCheckoutBundle:CheckoutSource')->findAll());
+
+        $checkouts = $this->registry->getRepository('OroCheckoutBundle:Checkout')->findAll();
+
+        $this->assertCount(1, $checkouts);
+
+        $orders = $this->registry->getRepository('OroOrderBundle:Order')->findAll();
+
+        $this->assertCount(1, $orders);
+        $this->assertNull($this->registry->getRepository('OroShoppingListBundle:ShoppingList')->find($sourceEntityId));
+
+        /** @var Checkout $checkout */
+        $checkout = array_shift($checkouts);
+
+        /** @var Order $order */
+        $order = array_shift($orders);
+
+        $this->assertTrue($checkout->isCompleted());
+        $this->assertEquals(
+            [
+                'itemsCount' => count($order->getLineItems()),
+                'orders' => [
+                    [
+                        'entityAlias' => 'order',
+                        'entityId' => ['id' => $order->getId()]
+                    ]
+                ],
+                'startedFrom' => 'shopping_list_8_label',
+                'currency' => $order->getCurrency(),
+                'subtotal' => $order->getSubtotal(),
+                'total' => $order->getTotal()
+            ],
+            $checkout->getCompletedData()->getArrayCopy()
         );
     }
 
@@ -392,40 +406,26 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
      */
     protected function getSourceEntity()
     {
-        return $this->getReference(LoadShoppingLists::SHOPPING_LIST_1);
+        return $this->getReference(LoadShoppingLists::SHOPPING_LIST_8);
     }
 
     /**
-     * @return array
+     * @param LineItem $lineItem
+     * @return InventoryLevel
      */
-    protected function disableShippingRules()
+    protected function setProductInventoryLevels(LineItem $lineItem)
     {
-        $modifiedRules = [];
-        $shippingRules = $this->registry->getRepository(ShippingMethodsConfigsRule::class)->findAll();
-        /** @var ShippingMethodsConfigsRule $shippingRule */
-        foreach ($shippingRules as $shippingRule) {
-            if ($shippingRule->getRule()->isEnabled()) {
-                $modifiedRules[] = $shippingRule->getId();
-                $shippingRule->getRule()->setEnabled(false);
-            }
-        }
-        $this->registry->getManager()->flush();
-
-        return $modifiedRules;
-    }
-
-    /**
-     * @param array $modifiedRules
-     */
-    protected function enableShippingRules($modifiedRules)
-    {
-        $shippingRules = $this->registry->getRepository(ShippingMethodsConfigsRule::class)->findAll();
-        /** @var ShippingMethodsConfigsRule $shippingRule */
-        foreach ($shippingRules as $shippingRule) {
-            if (in_array($shippingRule->getId(), $modifiedRules, null)) {
-                $shippingRule->getRule()->setEnabled(true);
-            }
-        }
-        $this->registry->getManager()->flush();
+        $inventoryLevelEm = $this->registry->getManagerForClass(InventoryLevel::class);
+        $productUnitPrecisionEm = $this->registry->getManagerForClass(ProductUnitPrecision::class);
+        $productUnitPrecision = $productUnitPrecisionEm
+            ->getRepository(ProductUnitPrecision::class)
+            ->findOneBy(['product' => $lineItem->getProduct()]);
+        $inventoryLevel = new InventoryLevel();
+        $inventoryLevel->setProductUnitPrecision($productUnitPrecision);
+        $inventoryLevel->setQuantity(10);
+        $inventoryLevelEm->persist($inventoryLevel);
+        $productUnitPrecisionEm->persist($productUnitPrecision);
+        $inventoryLevelEm->flush();
+        return $inventoryLevel;
     }
 }

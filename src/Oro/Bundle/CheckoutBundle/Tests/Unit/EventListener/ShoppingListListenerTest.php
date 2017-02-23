@@ -130,4 +130,26 @@ class ShoppingListListenerTest extends \PHPUnit_Framework_TestCase
 
         $this->listener->preRemove($entity);
     }
+
+    public function testPreRemoveWithCheckoutSourceAndCompletedCheckout()
+    {
+        $entity = $this->getEntity(ShoppingList::class);
+        $checkout = $this->getEntity(Checkout::class, ['completed' => true]);
+        $checkoutSource = $this->getEntity(CheckoutSource::class);
+
+        $this->checkoutSourceRepository->expects($this->once())
+            ->method('findOneBy')
+            ->with(['shoppingList' => $entity])
+            ->willReturn($checkoutSource);
+
+        $this->checkoutRepository->expects($this->once())
+            ->method('findOneBy')
+            ->with(['source' => $checkoutSource])
+            ->willReturn($checkout);
+
+        $this->checkoutEntityManager->expects($this->never())->method('remove');
+        $this->checkoutEntityManager->expects($this->never())->method('flush');
+
+        $this->listener->preRemove($entity);
+    }
 }

@@ -31,7 +31,7 @@ define(function(require) {
          * Handle change select
          */
         onChange: function() {
-            if (this.$select.val() == '') {
+            if (String(this.$select.val()) === '') {
                 this.$input.val('').attr('disabled', true).removeClass('error');
                 this.$input.closest('td').find('span[class="validation-failed"]').hide();
             } else {

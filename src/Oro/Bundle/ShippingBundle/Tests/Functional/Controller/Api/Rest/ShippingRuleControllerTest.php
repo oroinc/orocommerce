@@ -7,7 +7,7 @@ use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
- * @dbIsolation
+ * @dbIsolationPerTest
  */
 class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
 {
@@ -39,13 +39,10 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
         static::assertEquals(false, $this->getReference('shipping_rule.1')->getRule()->isEnabled());
     }
 
-    /**
-     * @depends testDisableAction
-     */
     public function testEnableAction()
     {
         /** @var ShippingMethodsConfigsRule $shippingRule */
-        $shippingRule = $this->getReference('shipping_rule.1');
+        $shippingRule = $this->getReference('shipping_rule.3');
         $this->client->request(
             'GET',
             $this->getUrl('oro_api_enable_shippingrules', ['id' => $shippingRule->getId()]),
@@ -55,6 +52,6 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
         );
         $result = $this->client->getResponse();
         static::assertJsonResponseStatusCodeEquals($result, 200);
-        static::assertEquals(true, $this->getReference('shipping_rule.1')->getRule()->isEnabled());
+        static::assertEquals(true, $this->getReference('shipping_rule.3')->getRule()->isEnabled());
     }
 }

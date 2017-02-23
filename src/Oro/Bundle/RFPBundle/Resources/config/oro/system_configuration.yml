@@ -7,19 +7,10 @@ system_configuration:
             title: oro.rfp.system_configuration.groups.rfq.title
             icon: fa-file
             page_reload: true
-        rfp_requeststatus_settings:
-            priority: 200
-            title: oro.rfp.system_configuration.groups.requeststatus.title
         rfp_notifications:
             priority: 100
             title: oro.rfp.system_configuration.groups.notifications.title
     fields:
-        oro_rfp.default_request_status:
-            ui_only: true
-            data_type: string
-            type: oro_rfp_default_request_status
-            options:
-                label: oro.rfp.system_configuration.fields.requeststatus_default.title
         oro_rfp.backend_product_visibility:
             data_type: array
             type: oro_product_inventory_status_select
@@ -82,11 +73,6 @@ system_configuration:
                         children:
                             rfq:
                                 children:
-                                    rfp_requeststatus_settings:
-                                        children:
-                                            - oro_rfp.feature_enabled
-                                            - oro_rfp.frontend_feature_enabled
-                                            - oro_rfp.default_request_status
                                     rfp_notifications:
                                         children:
                                             - oro_rfp.notify_assigned_sales_reps_of_the_customer

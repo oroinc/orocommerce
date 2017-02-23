@@ -1,9 +1,11 @@
 <?php
 
-namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\RedirectBundle\Tests\Unit\Form\Type;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
+use Oro\Bundle\RedirectBundle\Helper\SlugifyFormHelper;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;
@@ -12,16 +14,21 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class LocalizedSlugTypeTest extends FormIntegrationTestCase
 {
     /**
+     * @var SlugifyFormHelper|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $slugifyFormHelper;
+
+    /**
      * @var LocalizedSlugType
      */
-    protected $formType;
+    private $formType;
 
     protected function setUp()
     {
         parent::setUp();
 
-        $registry = $this->createMock(ManagerRegistry::class);
-        $this->formType = new LocalizedSlugType($registry);
+        $this->slugifyFormHelper = $this->createMock(SlugifyFormHelper::class);
+        $this->formType = new LocalizedSlugType($this->slugifyFormHelper);
     }
 
     public function testGetName()
@@ -34,52 +41,51 @@ class LocalizedSlugTypeTest extends FormIntegrationTestCase
         $this->assertEquals(LocalizedSlugType::NAME, $this->formType->getBlockPrefix());
     }
 
+    public function testBuildForm()
+    {
+        /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
+        $builder = $this->createMock(FormBuilderInterface::class);
+        $builder->expects($this->once())
+            ->method('addEventListener')
+            ->with(
+                FormEvents::POST_SUBMIT,
+                function () {
+                }
+            );
+
+        $this->formType->buildForm($builder, []);
+    }
+
     public function testConfigureOptions()
     {
+        /** @var OptionsResolver|\PHPUnit_Framework_MockObject_MockObject $resolver */
         $resolver = $this->createMock(OptionsResolver::class);
         $resolver->expects($this->once())->method('setDefaults')->with(
             $this->callback(
                 function (array $options) {
-                    $this->assertEquals(
-                        $options['slugify_component'],
-                        'ororedirect/js/app/components/localized-field-slugify-component'
-                    );
-                    $this->assertEquals($options['slugify_route'], 'oro_api_slugify_slug');
+                    $this->assertEquals('oro_api_slugify_slug', $options['slugify_route']);
+                    $this->assertTrue($options['slug_suggestion_enabled']);
 
                     return true;
                 }
             )
         );
-        $resolver->expects($this->once())->method('setRequired')->with('source_field');
+        $resolver->expects($this->once())->method('setDefined')->with('source_field');
 
         $this->formType->configureOptions($resolver);
     }
 
     public function testBuildView()
     {
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
         $form = $this->createMock(FormInterface::class);
-
-        $viewParent = new FormView();
-        $viewParent->vars['full_name'] = 'form-name';
-        $view = new FormView($viewParent);
-        $view->vars['full_name'] = 'form-name[target-name]';
-        $options = [
-            'source_field' => 'source-name',
-            'slugify_component' => 'some-component-path',
-            'slugify_route' => 'some-route',
-        ];
+        $view = new FormView();
+        $options = ['someOptionName' => 'someOptionValue'];
+        
+        $this->slugifyFormHelper->expects($this->once())
+            ->method('addSlugifyOptionsLocalized')
+            ->with($view, $options);
 
         $this->formType->buildView($view, $form, $options);
-
-        $this->assertEquals('some-component-path', $view->vars['slugify_component']);
-        $this->assertEquals(
-            '[name^="form-name[source-name][values]"]',
-            $view->vars['slugify_component_options']['source']
-        );
-        $this->assertEquals(
-            '[name^="form-name[target-name][values]"]',
-            $view->vars['slugify_component_options']['target']
-        );
-        $this->assertEquals('some-route', $view->vars['slugify_component_options']['slugify_route']);
     }
 }

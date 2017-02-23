@@ -25,10 +25,15 @@ interface PaymentMethodViewInterface
     /**
      * @return string
      */
+    public function getAdminLabel();
+
+    /**
+     * @return string
+     */
     public function getShortLabel();
 
     /**
      * @return string
      */
-    public function getPaymentMethodType();
+    public function getPaymentMethodIdentifier();
 }
