@@ -168,50 +168,55 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider baseUrlDataProvider
+     * @dataProvider clientBaseOptionDataProvider
      *
      * @param bool   $testMode
-     * @param string $url
+     * @param string $expectedUrl
      */
-    public function testBaseUrl($testMode, $url)
+    public function testClientBaseUrl($testMode, $expectedUrl)
     {
-        /** @var PriceRequest|\PHPUnit_Framework_MockObject_MockObject $rateRequest * */
-        $rateRequest = $this->createMock(PriceRequest::class);
+        /** @var UPSSettings $transportEntity */
+        $transportEntity = $this->getEntity(
+            UPSSettings::class,
+            [
+                'id' => '123',
+                'testMode' => $testMode,
+            ]
+        );
 
         $integration = new Channel();
-        /** @var UPSSettings $transportEntity */
-        $transportEntity = $this->getEntity(UPSSettings::class, [
-            'id' => '123',
-            'testMode' => $testMode,
-        ]);
         $integration->setTransport($transportEntity);
-
-        $this->clientFactory->expects(static::once())
-            ->method('createRestClient')
-            ->with($url)
-            ->willReturn($this->client);
-
-        $restResponse = $this->createMock(RestResponseInterface::class);
-
-        $restResponse->expects(static::once())
-            ->method('json')
-            ->willReturn('some_json');
 
         $this->client->expects(static::once())
             ->method('post')
-            ->willReturn($restResponse);
+            ->willReturn(
+                $this->createMock(RestResponseInterface::class)
+            );
 
-        $this->transport->getPriceResponse($rateRequest, $transportEntity);
+        $this->clientFactory->expects(static::once())
+            ->method('createRestClient')
+            ->with($expectedUrl)
+            ->willReturn($this->client);
+
+        $this->transport->getPriceResponse($this->createRateRequestMock(), $transportEntity);
     }
 
     /**
      * @return array
      */
-    public function baseUrlDataProvider()
+    public function clientBaseOptionDataProvider()
     {
         return [
-            ['test_mode' => false, self::PRODUCTION_URL],
-            ['test_mode' => true, self::TEST_URL],
+            ['testMode' => false, 'expectedUrl' => self::PRODUCTION_URL],
+            ['testMode' => true, 'expectedUrl' => self::TEST_URL],
         ];
+    }
+
+    /**
+     * @return PriceRequest|\PHPUnit_Framework_MockObject_MockObject $rateRequest
+     */
+    private function createRateRequestMock()
+    {
+        return $this->createMock(PriceRequest::class);
     }
 }

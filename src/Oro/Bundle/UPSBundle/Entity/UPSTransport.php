@@ -149,7 +149,7 @@ class UPSTransport extends Transport
     }
 
     /**
-     * @return string
+     * @return bool
      */
     public function isTestMode()
     {
