@@ -6,6 +6,7 @@ use Oro\Bundle\IntegrationBundle\Entity\Transport;
 use Oro\Bundle\IntegrationBundle\Exception\InvalidConfigurationException;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Exception\RestException;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Transport\AbstractRestTransport;
+use Oro\Bundle\UPSBundle\Client\Url\Provider\UpsClientUrlProviderInterface;
 use Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingsType;
 use Oro\Bundle\UPSBundle\Model\PriceRequest;
 use Oro\Bundle\UPSBundle\Model\PriceResponse;
@@ -17,29 +18,22 @@ class UPSTransport extends AbstractRestTransport
     const API_RATES_PREFIX = 'Rate';
 
     /**
+     * @var UpsClientUrlProviderInterface
+     */
+    private $upsClientUrlProvider;
+
+    /**
      * @var LoggerInterface
      */
     private $logger;
 
     /**
-     * @var string
+     * @param UpsClientUrlProviderInterface $upsClientUrlProvider
+     * @param LoggerInterface               $logger
      */
-    private $productionUrl;
-
-    /**
-     * @var string
-     */
-    private $testUrl;
-
-    /**
-     * @param string          $productionUrl
-     * @param string          $testUrl
-     * @param LoggerInterface $logger
-     */
-    public function __construct($productionUrl, $testUrl, LoggerInterface $logger)
+    public function __construct(UpsClientUrlProviderInterface $upsClientUrlProvider, LoggerInterface $logger)
     {
-        $this->productionUrl = $productionUrl;
-        $this->testUrl = $testUrl;
+        $this->upsClientUrlProvider = $upsClientUrlProvider;
         $this->logger = $logger;
     }
 
@@ -51,10 +45,7 @@ class UPSTransport extends AbstractRestTransport
      */
     protected function getClientBaseUrl(ParameterBag $parameterBag)
     {
-        if ($parameterBag->get('test_mode')) {
-            return $this->testUrl;
-        }
-        return $this->productionUrl;
+        return $this->upsClientUrlProvider->getUpsUrl($parameterBag->get('test_mode'));
     }
 
     /**
