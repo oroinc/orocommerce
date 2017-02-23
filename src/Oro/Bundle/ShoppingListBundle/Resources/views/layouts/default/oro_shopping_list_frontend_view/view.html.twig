@@ -226,7 +226,7 @@
                             <div class="product-item product-item_in-cart">
                                 <div class="product-item__image-holder product-item__image-holder_in-cart">
                                     {% set productImage = mainProduct.getImagesByType('listing')|length > 0  ? mainProduct.getImagesByType('listing').first.image : null %}
-                                    <a href="{{ path('oro_product_frontend_product_view', {'id': mainProduct.id}) }}">{{ Image.image(productImage, 'product_small') }}</a>
+                                    <a href="{{ path('oro_product_frontend_product_view', {'id': mainProduct.id}) }}">{{ Image.product_image(productImage, 'product_small') }}</a>
                                 </div>
                                 <div class="product-item__desctiption product-item__desctiption_in-cart">
                                     <h3 class="product-item__title product-item__title_in-cart mb1-md">

@@ -21,7 +21,7 @@
     <div {{ block('block_attributes') }}>
         {% set productImage = product.imagesByType('main')|length > 0 ? product.imagesByType('main').first.image : null %}
         <a href="{{ path('oro_product_frontend_product_view', {id: product.id}) }}" class="view-product"
-           style="background-image: url('{{ Image.url(productImage, 'product_large') }}')">
+           style="background-image: url('{{ Image.product_image_url(productImage, 'product_large') }}')">
         </a>
     </div>
 {% endblock %}

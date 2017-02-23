@@ -139,13 +139,13 @@
                 <div class="product-gallery__image-item">
                     {% set productImage = product.imagesByType('main')|length > 0 ? product.imagesByType('main').first.image : null %}
                     <img class="product-gallery__image"
-                         src="{{ Image.url(productImage, 'product_extra_large') }}"
+                         src="{{ Image.product_image_url(productImage, 'product_extra_large') }}"
                          alt="{{ product.names|localized_value }}"
                          width="378"
                          height="378"
                          data-trigger-gallery-open
                             {% if productImage %}
-                                data-zoom-image="{{ Image.url(productImage, 'product_original') }}"
+                                data-zoom-image="{{ Image.product_image_url(productImage, 'product_original') }}"
                                 data-page-component-module="oroui/js/app/components/viewport-component"
                                 data-page-component-options="{{ zoomOptions|json_encode }}"
                             {% endif %}
@@ -159,16 +159,16 @@
                 {% for productImage in product.imagesByType('additional') %}
                     <div class="product-gallery__image-item" data-trigger-gallery-open>
                         <img class="product-gallery__image"
-                             data-url-zoom="{{ Image.url(productImage.image, 'product_original') }}"
+                             data-url-zoom="{{ Image.product_image_url(productImage.image, 'product_original') }}"
                                 {% if loop.first %}
                                     {% if productImage.image %}
-                                        src="{{ Image.url(productImage.image, 'product_extra_large') }}"
-                                        data-zoom-image="{{ Image.url(productImage.image, 'product_original') }}"
+                                        src="{{ Image.product_image_url(productImage.image, 'product_extra_large') }}"
+                                        data-zoom-image="{{ Image.product_image_url(productImage.image, 'product_original') }}"
                                         data-page-component-module="oroui/js/app/components/viewport-component"
                                         data-page-component-options="{{ zoomOptions|json_encode }}"
                                     {% endif %}
                                 {% else %}
-                                    data-lazy="{{ Image.url(productImage.image, 'product_extra_large') }}"
+                                    data-lazy="{{ Image.product_image_url(productImage.image, 'product_extra_large') }}"
                                 {% endif %}
                         />
                     </div>
@@ -181,7 +181,7 @@
                 {% for productImage in product.imagesByType('additional') %}
                     <div class="product-gallery__nav-item">
                         <img class="product-gallery__image"
-                             src="{{ Image.url(productImage.image, 'product_small') }}"/>
+                             src="{{ Image.product_image_url(productImage.image, 'product_small') }}"/>
                     </div>
                 {% endfor %}
             </div>
@@ -207,7 +207,7 @@
                  data-gallery-images>
                 {% for productImage in product.imagesByType('additional') %}
                     <div class="popup-gallery-widget__image">
-                        <img data-lazy="{{ Image.url(productImage.image, 'product_gallery_popup') }}"
+                        <img data-lazy="{{ Image.product_image_url(productImage.image, 'product_gallery_popup') }}"
                              width="100%"
                              height="100%"/>
                     </div>
@@ -219,7 +219,7 @@
                     {% for productImage in product.imagesByType('additional') %}
                         <div class="popup-gallery-widget__thumbnails-img">
                             <img
-                                 src="{{ Image.url(productImage.image, 'product_small') }}"
+                                 src="{{ Image.product_image_url(productImage.image, 'product_small') }}"
                                  width="80px"
                                  height="80px"/>
                         </div>
