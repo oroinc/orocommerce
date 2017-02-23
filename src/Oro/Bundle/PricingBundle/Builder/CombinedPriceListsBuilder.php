@@ -90,40 +90,40 @@ class CombinedPriceListsBuilder
     }
 
     /**
-     * @param bool $force
+     * @param int|null $forceTimestamp
      */
-    public function build($force = false)
+    public function build($forceTimestamp = null)
     {
         if (!$this->isBuilt()) {
-            $this->updatePriceListsOnCurrentLevel($force);
-            $this->websiteCombinedPriceListBuilder->build(null, $force);
+            $this->updatePriceListsOnCurrentLevel($forceTimestamp);
+            $this->websiteCombinedPriceListBuilder->build(null, $forceTimestamp);
             $this->garbageCollector->cleanCombinedPriceLists();
             $this->built = true;
         }
     }
 
     /**
-     * @param bool $force
+     * @param int|null $forceTimestamp
      */
-    protected function updatePriceListsOnCurrentLevel($force)
+    protected function updatePriceListsOnCurrentLevel($forceTimestamp = null)
     {
         $collection = $this->priceListCollectionProvider->getPriceListsByConfig();
         $fullCpl = $this->combinedPriceListProvider->getCombinedPriceList($collection);
-        $this->updateCombinedPriceListConnection($fullCpl, $force);
+        $this->updateCombinedPriceListConnection($fullCpl, $forceTimestamp);
     }
 
     /**
      * @param CombinedPriceList $cpl
-     * @param bool $force
+     * @param int|null $forceTimestamp
      */
-    protected function updateCombinedPriceListConnection(CombinedPriceList $cpl, $force = false)
+    protected function updateCombinedPriceListConnection(CombinedPriceList $cpl, $forceTimestamp = null)
     {
         $activeCpl = $this->scheduleResolver->getActiveCplByFullCPL($cpl);
         if ($activeCpl === null) {
             $activeCpl = $cpl;
         }
-        if ($force || !$activeCpl->isPricesCalculated()) {
-            $this->priceResolver->combinePrices($activeCpl);
+        if ($forceTimestamp !== null || !$activeCpl->isPricesCalculated()) {
+            $this->priceResolver->combinePrices($activeCpl, null, $forceTimestamp);
         }
         $actualCplConfigKey = Configuration::getConfigKeyToPriceList();
         $fullCplConfigKey = Configuration::getConfigKeyToFullPriceList();

@@ -21,7 +21,9 @@ class OroProductExtensionTest extends ExtensionTestCase
             'oro_product.form.type.product_step_one',
             'oro_product.provider.default_product_unit_provider.chain',
             'oro_product.provider.default_product_unit_provider.system',
-            'oro_product.service.single_unit_mode'
+            'oro_product.service.single_unit_mode',
+            'oro_product.virtual_fields.decorator_factory',
+            'oro_product.virtual_fields.select_query_converter',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 

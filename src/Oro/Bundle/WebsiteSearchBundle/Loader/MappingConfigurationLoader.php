@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebsiteSearchBundle\Loader;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 use Symfony\Component\Config\Definition\Processor;
 
+use Oro\Bundle\SearchBundle\DependencyInjection\Merger\SearchConfigMerger;
 use Oro\Bundle\WebsiteSearchBundle\DependencyInjection\MappingConfiguration;
 use Oro\Component\Config\Loader\CumulativeConfigLoader;
 use Oro\Component\Config\Loader\YamlCumulativeFileLoader;
@@ -29,12 +30,10 @@ class MappingConfigurationLoader implements ConfigurationLoaderInterface
     {
         $configs = [];
         foreach ($this->getResources() as $resource) {
-            $configs[] = ['mappings' => $resource->data];
+            $configs[] = $resource->data;
         }
 
-        $mappings = $this->processConfiguration(new MappingConfiguration(), $configs);
-
-        return $mappings['mappings'];
+        return $this->processConfiguration(new MappingConfiguration(), $configs);
     }
 
     /**

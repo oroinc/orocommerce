@@ -11,9 +11,6 @@ use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
 
-/**
- * @dbIsolation
- */
 class AjaxOrderControllerTest extends WebTestCase
 {
     protected function setUp()

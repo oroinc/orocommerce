@@ -21,14 +21,12 @@ services:
         class: 'Oro\Bundle\SaleBundle\Twig\QuoteExtension'
         public: false
         arguments:
-            - "@oro_sale.formatter.quote_product"
-            - "@oro_config.manager"
+            - "@service_container"
         tags:
             - { name: twig.extension }
 
     oro_sale.formatter.quote_product:
         class: 'Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter'
-        public: false
         arguments:
             - "@translator"
             - "@oro_locale.formatter.number"
@@ -171,3 +169,7 @@ services:
         class: 'Oro\Bundle\SaleBundle\Quote\Demand\Subtotals\Calculator\Basic\BasicQuoteDemandSubtotalsCalculator'
         arguments:
             - '@oro_pricing.subtotal_processor.total_processor_provider'
+
+    oro_sale.storage.return_route_storage:
+        class: 'Oro\Bundle\SaleBundle\Storage\ReturnRouteDataStorage'
+        parent: oro_product.storage.session_data_storage

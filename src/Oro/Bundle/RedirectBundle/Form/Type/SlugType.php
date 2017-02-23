@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\RedirectBundle\Form\Type;
 
+use Oro\Bundle\RedirectBundle\Helper\SlugifyFormHelper;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormInterface;
@@ -10,8 +12,20 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class SlugType extends AbstractType
 {
-
     const NAME = 'oro_redirect_slug';
+
+    /**
+     * @var SlugifyFormHelper
+     */
+    private $slugifyFormHelper;
+
+    /**
+     * @param SlugifyFormHelper $slugifyFormHelper
+     */
+    public function __construct(SlugifyFormHelper $slugifyFormHelper)
+    {
+        $this->slugifyFormHelper = $slugifyFormHelper;
+    }
 
     /**
      * {@inheritDoc}
@@ -43,10 +57,11 @@ class SlugType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'slugify_component' => 'ororedirect/js/app/components/text-field-slugify-component',
+            'slug_suggestion_enabled' => true,
             'slugify_route' => 'oro_api_slugify_slug',
         ]);
         $resolver->setRequired('source_field');
+        $resolver->setDefined('constraints');
     }
 
     /**
@@ -54,11 +69,6 @@ class SlugType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['slugify_component'] = $options['slugify_component'];
-        $view->vars['slugify_component_options'] = [
-            'source' => '[name="'.$view->parent->vars['full_name'].'['.$options['source_field'].']"]',
-            'target' => '[name="'.$view->vars['full_name'].'"]',
-            'slugify_route' => $options['slugify_route'],
-        ];
+        $this->slugifyFormHelper->addSlugifyOptions($view, $options);
     }
 }

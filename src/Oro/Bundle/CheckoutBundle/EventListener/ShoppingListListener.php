@@ -5,6 +5,7 @@ namespace Oro\Bundle\CheckoutBundle\EventListener;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityRepository;
+use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 
 class ShoppingListListener
 {
@@ -39,8 +40,9 @@ class ShoppingListListener
             return;
         }
 
+        /** @var Checkout $checkout */
         $checkout = $this->getRepository($this->checkoutClassName)->findOneBy(['source' => $checkoutSource]);
-        if (!$checkout) {
+        if (!$checkout || $checkout->isCompleted()) {
             return;
         }
 

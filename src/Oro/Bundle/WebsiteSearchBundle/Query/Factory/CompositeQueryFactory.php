@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Query\Factory;
 
-use Oro\Bundle\SearchBundle\Engine\EngineV2Interface;
 use Oro\Bundle\SearchBundle\Query\Factory\QueryFactoryInterface;
 
 class CompositeQueryFactory implements QueryFactoryInterface

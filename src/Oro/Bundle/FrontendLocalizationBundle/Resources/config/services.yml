@@ -1,4 +1,9 @@
 services:
+    oro_frontend_localization.extension.transtation_packages_provider:
+        class: 'Oro\Bundle\FrontendLocalizationBundle\Provider\TranslationPackagesProviderExtension'
+        tags:
+            - {name: oro_translation.extension.packages_provider}
+
     oro_frontend_localization.manager.user_localization:
         class: 'Oro\Bundle\FrontendLocalizationBundle\Manager\UserLocalizationManager'
         arguments:

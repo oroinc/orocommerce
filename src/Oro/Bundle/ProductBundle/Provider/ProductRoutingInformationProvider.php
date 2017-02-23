@@ -2,12 +2,26 @@
 
 namespace Oro\Bundle\ProductBundle\Provider;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProviderInterface;
 use Oro\Component\Routing\RouteData;
 
 class ProductRoutingInformationProvider implements RoutingInformationProviderInterface
 {
+    /**
+     * @var ConfigManager
+     */
+    private $configManager;
+
+    /**
+     * @param ConfigManager $configManager
+     */
+    public function __construct(ConfigManager $configManager)
+    {
+        $this->configManager = $configManager;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -31,6 +45,6 @@ class ProductRoutingInformationProvider implements RoutingInformationProviderInt
      */
     public function getUrlPrefix($entity)
     {
-        return '';
+        return $this->configManager->get('oro_product.product_direct_url_prefix');
     }
 }

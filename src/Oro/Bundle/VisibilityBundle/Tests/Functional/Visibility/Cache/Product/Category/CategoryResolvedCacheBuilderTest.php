@@ -16,9 +16,6 @@ use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\CategoryResolv
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\PositionChangeCategorySubtreeCacheBuilder;
 use Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\Category\Subtree\VisibilityChangeCategorySubtreeCacheBuilder;
 
-/**
- * @dbIsolation
- */
 class CategoryResolvedCacheBuilderTest extends AbstractProductResolvedCacheBuilderTest
 {
     /** @var CategoryResolvedCacheBuilder */

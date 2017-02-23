@@ -1,0 +1,46 @@
+{% block _category_picture_widget %}
+    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
+
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' category-picture__image',
+        alt: category.defaultTitle
+    }) %}
+
+    {% if category.largeImage %}
+        {% set attr = layout_attr_defaults(attr, {
+            src: Image.url(category.largeImage, 'product_original')
+        }) %}
+
+        <div class="category-picture">
+            <img {{ block('block_attributes') }}>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _category_breadcrumbs_container_widget %}
+    <div class="breadcrumbs" data-page-component-module="oroproduct/js/app/components/breadcrumbs-navigation-block">
+        <span class="breadcrumbs__item">
+            {{ block('container_widget') }}
+        </span>
+        <span class="filters-info"></span>
+    </div>
+{% endblock %}
+
+{% block _category_breadcrumbs_widget %}
+    {% for parentCategory in parentCategories %}
+        <a class="breadcrumbs__link" href="{{ path('oro_product_frontend_product_index', {'categoryId': parentCategory.id, 'includeSubcategories': app.request.get('includeSubcategories') }) }}">
+            {{ parentCategory.titles|localized_value }}
+        </a> /
+    {% endfor %}
+    {{ currentCategory.titles|localized_value }}
+{% endblock %}
+
+{% block _category_title_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' category-title'
+    }) %}
+
+    <h1 {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </h1>
+{% endblock %}

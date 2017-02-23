@@ -83,7 +83,7 @@ class PaymentMethodApplicable extends AbstractCondition implements ContextAccess
         $paymentContext = $this->resolveValue($context, $this->context, false);
         $methods = $this->paymentMethodProvider->getApplicablePaymentMethods($paymentContext);
         foreach ($methods as $method) {
-            if ($method->getType() === $paymentMethodName) {
+            if ($method->getIdentifier() === $paymentMethodName) {
                 return true;
             }
         }

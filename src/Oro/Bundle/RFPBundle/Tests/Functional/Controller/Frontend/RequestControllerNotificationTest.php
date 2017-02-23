@@ -13,7 +13,7 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 /**
- * @dbIsolation
+ * @dbIsolationPerTest
  */
 class RequestControllerNotificationTest extends WebTestCase
 {
@@ -39,7 +39,7 @@ class RequestControllerNotificationTest extends WebTestCase
      */
     protected function setUp()
     {
-        $this->initClient([], [], true);
+        $this->initClient();
         $this->client->useHashNavigation(true);
 
         $this->loadFixtures(
@@ -57,6 +57,11 @@ class RequestControllerNotificationTest extends WebTestCase
         $this->website = $this->getContainer()->get('oro_website.manager')->getDefaultWebsite();
 
         $this->configManager = $this->client->getContainer()->get('oro_config.manager');
+    }
+
+    protected function tearDown()
+    {
+        $this->getContainer()->get('swiftmailer.plugin.messagelogger')->clear();
     }
 
     public function testCreateRequestEmailNotification()

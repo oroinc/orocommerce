@@ -3,6 +3,7 @@
 namespace Oro\Bundle\RuleBundle\Tests\Unit\RuleFiltration;
 
 use Oro\Bundle\RuleBundle\Entity\Rule;
+use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\RuleBundle\Entity\RuleOwnerInterface;
 use Oro\Bundle\RuleBundle\RuleFiltration\EnabledRuleFiltrationServiceDecorator;
 use Oro\Bundle\RuleBundle\RuleFiltration\RuleFiltrationServiceInterface;
@@ -70,10 +71,11 @@ class EnabledRuleFiltrationServiceTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param Rule $rule
+     * @param RuleInterface $rule
+     *
      * @return RuleOwnerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private function createRuleOwner(Rule $rule)
+    private function createRuleOwner(RuleInterface $rule)
     {
         $ruleOwner = $this->createPartialMock(RuleOwnerInterface::class, ['getRule']);
         $ruleOwner->expects(static::any())

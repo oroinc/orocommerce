@@ -8,7 +8,6 @@ use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData as ProductFixture;
 
 /**
- * @dbIsolation
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class ProductRepositoryTest extends WebTestCase
@@ -390,5 +389,13 @@ class ProductRepositoryTest extends WebTestCase
     public function testFindByCaseInsensitiveWithInvalidCriteria()
     {
         $this->repository->findByCaseInsensitive(['testField' => new \DateTime()]);
+    }
+
+    public function testGetFeaturedProductsQueryBuilder()
+    {
+        $queryBuilder = $this->getRepository()->getFeaturedProductsQueryBuilder(2);
+        $result = $queryBuilder->getQuery()->getResult();
+        $this->assertCount(2, $result);
+        $this->assertInstanceOf(Product::class, $result[0]);
     }
 }

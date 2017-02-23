@@ -7,9 +7,6 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserD
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 
-/**
- * @dbIsolation
- */
 class AjaxProductUnitControllerTest extends WebTestCase
 {
     /**

@@ -2,19 +2,32 @@
 
 namespace Oro\Bundle\OrderBundle\Twig;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 use Oro\Bundle\ShippingBundle\Translator\ShippingMethodLabelTranslator;
 
 class OrderShippingExtension extends \Twig_Extension
 {
-    /** @var ShippingMethodLabelTranslator|null */
-    private $labelTranslator;
+    /** @var ContainerInterface */
+    protected $container;
 
     /**
-     * @param ShippingMethodLabelTranslator $labelTranslator
+     * @param ContainerInterface $container
      */
-    public function setShippingLabelFormatter(ShippingMethodLabelTranslator $labelTranslator)
+    public function __construct(ContainerInterface $container)
     {
-        $this->labelTranslator = $labelTranslator;
+        $this->container = $container;
+    }
+
+    /**
+     * @return ShippingMethodLabelTranslator|null
+     */
+    protected function getLabelTranslator()
+    {
+        return $this->container->get(
+            'oro_shipping.translator.shipping_method_label',
+            ContainerInterface::NULL_ON_INVALID_REFERENCE
+        );
     }
 
     /**
@@ -38,11 +51,12 @@ class OrderShippingExtension extends \Twig_Extension
      */
     public function getShippingMethodLabel($shippingMethodName, $shippingTypeName)
     {
-        if (!$this->labelTranslator) {
+        $labelTranslator = $this->getLabelTranslator();
+        if (null === $labelTranslator) {
             return $shippingMethodName . ', ' . $shippingTypeName;
         }
 
-        return $this->labelTranslator->getShippingMethodWithTypeLabel(
+        return $labelTranslator->getShippingMethodWithTypeLabel(
             $shippingMethodName,
             $shippingTypeName
         );

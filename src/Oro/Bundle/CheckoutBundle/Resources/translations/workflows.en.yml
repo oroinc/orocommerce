@@ -20,6 +20,8 @@ oro:
                     label: Payment
                 order_review:
                     label: 'Order Review'
+                order_created:
+                    label: 'Order Created'
             attribute:
                 billing_address_has_shipping:
                     label: 'If billing address also shipping'
@@ -69,9 +71,9 @@ oro:
                     label: 'Shipping method'
                 shipping_method_type:
                     label: 'Shipping method type'
-                checkout_finished:
-                    label: 'Flag indicates that checkout is finished'
             transition:
+                __start__:
+                    label: 'Create Order'
                 start_from_shoppinglist:
                     label: 'Create Order'
                 start_from_quickorderform:

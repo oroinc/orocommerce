@@ -9,9 +9,6 @@ use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 
-/**
- * @dbIsolation
- */
 class ShoppingListFrontendActionsTest extends FrontendActionTestCase
 {
     protected function setUp()

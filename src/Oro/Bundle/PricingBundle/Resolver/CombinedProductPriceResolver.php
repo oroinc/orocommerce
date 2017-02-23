@@ -43,6 +43,10 @@ class CombinedProductPriceResolver
      * @var CombinedProductPriceRepository
      */
     protected $combinedProductPriceRepository;
+    /**
+     * @var array
+     */
+    protected $builtList = [];
 
     /**
      * @param ManagerRegistry $registry
@@ -62,9 +66,17 @@ class CombinedProductPriceResolver
     /**
      * @param CombinedPriceList $combinedPriceList
      * @param Product $product
+     * @param int|null $startTimestamp
      */
-    public function combinePrices(CombinedPriceList $combinedPriceList, Product $product = null)
+    public function combinePrices(CombinedPriceList $combinedPriceList, Product $product = null, $startTimestamp = null)
     {
+        if ($product === null
+            && $startTimestamp !== null
+            && !empty($this->builtList[$startTimestamp][$combinedPriceList->getId()])
+        ) {
+            //this CPL was recalculated at this go
+            return;
+        }
         $priceListsRelations = $this->getCombinedPriceListRelationsRepository()
             ->getPriceListRelations(
                 $combinedPriceList,
@@ -88,6 +100,7 @@ class CombinedProductPriceResolver
         }
 
         $this->triggerHandler->processByProduct($combinedPriceList, $product);
+        $this->builtList[$startTimestamp][$combinedPriceList->getId()] = true;
     }
 
     /**
@@ -132,5 +145,15 @@ class CombinedProductPriceResolver
         }
 
         return $this->combinedProductPriceRepository;
+    }
+
+    /**
+     * @return $this
+     */
+    public function resetCache()
+    {
+        $this->builtList = [];
+
+        return $this;
     }
 }

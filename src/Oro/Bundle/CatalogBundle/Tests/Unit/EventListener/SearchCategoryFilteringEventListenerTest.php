@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
@@ -142,6 +143,16 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
             ->with(SearchCategoryFilteringEventListener::INCLUDE_CAT_CONFIG_PATH)
             ->willReturn(null);
 
+        $this->config->expects($this->once())
+            ->method('offsetAddToArrayByPath')
+            ->with(
+                SearchCategoryFilteringEventListener::VIEW_LINK_PARAMS_CONFIG_PATH,
+                [
+                    SluggableUrlGenerator::CONTEXT_TYPE => 'category',
+                    SluggableUrlGenerator::CONTEXT_DATA => $categoryId
+                ]
+            );
+
         $this->requestProductHandler
             ->method('getIncludeSubcategoriesChoice')
             ->willReturn(false);
@@ -208,6 +219,16 @@ class SearchCategoryFilteringEventListenerTest extends \PHPUnit_Framework_TestCa
             ->method('offsetGetByPath')
             ->with(SearchCategoryFilteringEventListener::INCLUDE_CAT_CONFIG_PATH)
             ->willReturn($subcategoryIds);
+
+        $this->config->expects($this->once())
+            ->method('offsetAddToArrayByPath')
+            ->with(
+                SearchCategoryFilteringEventListener::VIEW_LINK_PARAMS_CONFIG_PATH,
+                [
+                    SluggableUrlGenerator::CONTEXT_TYPE => 'category',
+                    SluggableUrlGenerator::CONTEXT_DATA => $categoryId
+                ]
+            );
 
         $this->repository->method('getChildrenIds')
             ->with($this->category)->willReturn($subcategoryIds);

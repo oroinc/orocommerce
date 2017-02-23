@@ -4,3 +4,9 @@ Oro\Bundle\TestBundle2\Entity\Page:
         -
             name: title_LOCALIZATION_ID
             type: text
+        -
+            name: test_first_repeating_field
+            type: integer
+        -
+            name: test_second_repeating_field
+            type: text

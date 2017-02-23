@@ -33,7 +33,6 @@ define(function(require) {
             this.removeInvalidationButton = $(this.options.removeInvalidationButton);
             this.form = $(this.$elem).find(this.options.form);
 
-
             $(this.removeInvalidationButton).on('click', _.bind(this.onRemoveInvalidationClick, this));
             $(this.invalidateType).on('change', _.bind(this.onSelectChange, this));
             $(this.invalidateType).trigger('change');
@@ -64,7 +63,7 @@ define(function(require) {
                 $(this.$elem).find('tr>td:gt(1)').hide();
                 $(this.removeInvalidationButton).hide();
 
-            } else if (value === 'scheduled'){
+            } else if (value === 'scheduled') {
                 $(this.invalidateNow).val('');
                 $(this.$elem).find('tr>td:gt(1)').show();
                 this.toggleRemoveInvalidationVisibility();

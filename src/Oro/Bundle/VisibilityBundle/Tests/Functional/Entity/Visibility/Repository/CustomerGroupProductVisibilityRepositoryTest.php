@@ -7,9 +7,6 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\Repository\CustomerGroupProduc
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-/**
- * @dbIsolation
- */
 class CustomerGroupProductVisibilityRepositoryTest extends AbstractProductVisibilityRepositoryTestCase
 {
     /** @var CustomerGroupProductVisibilityRepository */

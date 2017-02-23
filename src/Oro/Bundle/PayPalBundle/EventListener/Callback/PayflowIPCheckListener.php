@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PayPalBundle\EventListener\Callback;
 
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Symfony\Component\HttpFoundation\IpUtils;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -28,11 +29,18 @@ class PayflowIPCheckListener
     private $requestStack;
 
     /**
-     * @param RequestStack $requestStack
+     * @var PaymentMethodProviderInterface
      */
-    public function __construct(RequestStack $requestStack)
+    protected $paymentMethodProvider;
+
+    /**
+     * @param RequestStack $requestStack
+     * @param PaymentMethodProviderInterface $paymentMethodProvider
+     */
+    public function __construct(RequestStack $requestStack, PaymentMethodProviderInterface $paymentMethodProvider)
     {
         $this->requestStack = $requestStack;
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
@@ -40,6 +48,16 @@ class PayflowIPCheckListener
      */
     public function onNotify(AbstractCallbackEvent $event)
     {
+        $paymentTransaction = $event->getPaymentTransaction();
+
+        if (!$paymentTransaction) {
+            return;
+        }
+
+        if (false === $this->paymentMethodProvider->hasPaymentMethod($paymentTransaction->getPaymentMethod())) {
+            return;
+        }
+
         $masterRequest = $this->requestStack->getMasterRequest();
         if (null === $masterRequest) {
             $event->markFailed();

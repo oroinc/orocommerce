@@ -1,6 +1,8 @@
 services:
     oro_catalog.form.type.category:
         class: 'Oro\Bundle\CatalogBundle\Form\Type\CategoryType'
+        arguments:
+            - '@router'
         calls:
             - [setDataClass, ['%oro_catalog.entity.category.class%']]
             - [setProductClass, ['%oro_product.entity.product.class%']]
@@ -47,7 +49,5 @@ services:
 
     oro_catalog.form.type.category_page_content_variant:
         class: Oro\Bundle\CatalogBundle\Form\Type\CategoryPageVariantType
-        arguments:
-            - '@doctrine'
         tags:
             - { name: form.type, alias: oro_catalog_category_page_variant }

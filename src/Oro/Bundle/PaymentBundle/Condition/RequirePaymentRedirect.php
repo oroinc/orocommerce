@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\PaymentBundle\Condition;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
+use Oro\Bundle\PaymentBundle\Event\RequirePaymentRedirectEvent;
+use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
-use Oro\Bundle\PaymentBundle\Event\RequirePaymentRedirectEvent;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Check that the payment method requires method verification after page refresh
@@ -23,7 +22,7 @@ class RequirePaymentRedirect extends AbstractCondition implements ContextAccesso
     const NAME = 'require_payment_redirect';
 
     /**
-     * @var PaymentMethodRegistry
+     * @var PaymentMethodProvidersRegistryInterface
      */
     private $paymentMethodRegistry;
 
@@ -38,11 +37,13 @@ class RequirePaymentRedirect extends AbstractCondition implements ContextAccesso
     private $eventDispatcher;
 
     /**
-     * @param PaymentMethodRegistry $paymentMethodRegistry
+     * @param PaymentMethodProvidersRegistryInterface $paymentMethodRegistry
      * @param EventDispatcherInterface $eventDispatcher
      */
-    public function __construct(PaymentMethodRegistry $paymentMethodRegistry, EventDispatcherInterface $eventDispatcher)
-    {
+    public function __construct(
+        PaymentMethodProvidersRegistryInterface $paymentMethodRegistry,
+        EventDispatcherInterface $eventDispatcher
+    ) {
         $this->paymentMethodRegistry = $paymentMethodRegistry;
         $this->eventDispatcher = $eventDispatcher;
     }
@@ -74,17 +75,22 @@ class RequirePaymentRedirect extends AbstractCondition implements ContextAccesso
      */
     protected function isConditionAllowed($context)
     {
-        $paymentMethodName = $this->resolveValue($context, $this->paymentMethod);
-        $paymentMethod = $this->paymentMethodRegistry->getPaymentMethod($paymentMethodName);
+        $paymentMethodIdentifier = $this->resolveValue($context, $this->paymentMethod);
+        foreach ($this->paymentMethodRegistry->getPaymentMethodProviders() as $provider) {
+            if ($provider->hasPaymentMethod($paymentMethodIdentifier)) {
+                $paymentMethod = $provider->getPaymentMethod($paymentMethodIdentifier);
+                $event = new RequirePaymentRedirectEvent($paymentMethod);
+                $this->eventDispatcher->dispatch(RequirePaymentRedirectEvent::EVENT_NAME, $event);
+                $this->eventDispatcher->dispatch(
+                    sprintf('%s.%s', RequirePaymentRedirectEvent::EVENT_NAME, $paymentMethodIdentifier),
+                    $event
+                );
 
-        $event = new RequirePaymentRedirectEvent($paymentMethod);
-        $this->eventDispatcher->dispatch(RequirePaymentRedirectEvent::EVENT_NAME, $event);
-        $this->eventDispatcher->dispatch(
-            sprintf('%s.%s', RequirePaymentRedirectEvent::EVENT_NAME, $paymentMethodName),
-            $event
-        );
+                return $event->isRedirectRequired();
+            }
+        }
 
-        return $event->isRedirectRequired();
+        return false;
     }
 
     /**

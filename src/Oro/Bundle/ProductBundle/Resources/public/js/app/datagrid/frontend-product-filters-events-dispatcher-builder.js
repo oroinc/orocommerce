@@ -2,6 +2,7 @@ define(['jquery'], function($) {
     'use strict';
 
     var mediator = require('oroui/js/mediator');
+    var _ = require('underscore');
 
     var FiltersEventsDispatcher = function() {
         this.initialize.apply(this, arguments);
@@ -17,16 +18,17 @@ define(['jquery'], function($) {
          * @param {Object} [options.grid] grid instance
          * @param {Object} [options.options] grid initialization options
          */
-        initialize: function (options) {
+        initialize: function(options) {
             this.datagrid = options.grid;
 
             this.datagrid.collection.on('sync', $.proxy(this, 'triggerFiltersUpdateEvent'));
 
             // trigger for first rendering
-            this.triggerFiltersUpdateEvent();
+            // It's not this.triggerFiltersUpdateEvent(); because it will not pass datagrid.filterManager
+            this.datagrid.on('filterManager:connected', this.triggerFiltersUpdateEvent, this);
         },
 
-        triggerFiltersUpdateEvent: function () {
+        triggerFiltersUpdateEvent: function() {
             mediator.trigger('datagrid_filters:update', this.datagrid);
         }
     });

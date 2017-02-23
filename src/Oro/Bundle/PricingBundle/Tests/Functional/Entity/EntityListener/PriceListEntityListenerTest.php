@@ -10,9 +10,6 @@ use Oro\Bundle\PricingBundle\Model\PriceListTriggerFactory;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-/**
- * @dbIsolation
- */
 class PriceListEntityListenerTest extends WebTestCase
 {
     use MessageQueueTrait;
