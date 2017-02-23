@@ -14,7 +14,7 @@ use Oro\Bundle\ReminderBundle\Exception\MethodNotSupportedException;
 
 class InfinitePay implements PaymentMethodInterface
 {
-    const TYPE = 'infinite_pay';
+    const IDENTIFIER = 'infinite_pay';
 
     /** @var InfinitePayConfigInterface */
     protected $config;
@@ -66,9 +66,9 @@ class InfinitePay implements PaymentMethodInterface
     /**
      * @return string
      */
-    public function getType()
+    public function getIdentifier()
     {
-        return static::TYPE;
+        return static::IDENTIFIER;
     }
 
     /**
