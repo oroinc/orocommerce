@@ -47,7 +47,8 @@ class RenamePriority implements Migration, RenameExtensionAwareInterface
                 $queries,
                 $priceListToCustomer,
                 self::OLD_COLUMN_NAME,
-                self::NEW_COLUMN_NAME);
+                self::NEW_COLUMN_NAME
+            );
         }
 
         if ($priceListToWebsite->hasColumn(self::OLD_COLUMN_NAME)) {
@@ -56,7 +57,8 @@ class RenamePriority implements Migration, RenameExtensionAwareInterface
                 $queries,
                 $priceListToWebsite,
                 self::OLD_COLUMN_NAME,
-                self::NEW_COLUMN_NAME);
+                self::NEW_COLUMN_NAME
+            );
         }
     }
 
