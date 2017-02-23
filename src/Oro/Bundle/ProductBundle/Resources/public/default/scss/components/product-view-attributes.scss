@@ -1,8 +1,7 @@
 .product-view {
     &__attributes {
-        margin-bottom: $offset-y;
-
         border: 1px solid $product-view-attributes-tabs-border-color;
+        margin-bottom: $offset-y;
 
         border-radius: $product-view-attributes-tabs-border-radius;
 
@@ -47,12 +46,11 @@
         .nav-link {
             padding: $product-view-attributes-tab-link-offset-inner;
 
-            text-transform: uppercase;
-
             color: $product-view-attributes-tab-link-color;
             border: 0;
-
             border-radius: 0;
+
+            text-transform: uppercase;
 
             @include hover-focus {
                 background: none;
@@ -68,6 +66,51 @@
 
             p {
                 margin-bottom: $product-view-attributes-tab-content-attribute-offset-bottom;
+            }
+        }
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .product-view {
+        &__attributes {
+            margin-bottom: -25px;
+
+            border: 0;
+
+            .nav-tabs {
+                flex-direction: column;
+
+                margin: 0 -10px;
+            }
+
+            .nav-link {
+                background: none !important; //Need set empty bg for all state: active, :hover, etc.
+
+                @include fa-icon($fa-var-angle-right, after);
+
+                &:after {
+                    position: absolute;
+                    right: 20px;
+
+                    visibility: visible;
+                }
+            }
+
+            .nav-item {
+                position: relative;
+
+                border-top: 1px solid $product-view-attributes-tabs-border-color;
+
+                text-align: left;
+
+                & + .nav-item {
+                    border-left: 0;
+                }
+            }
+
+            .tab-content {
+                display: none !important; //Need always hide tab-content for mobile
             }
         }
     }
