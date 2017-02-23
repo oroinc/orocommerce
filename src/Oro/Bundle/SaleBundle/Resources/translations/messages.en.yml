@@ -84,6 +84,7 @@ oro:
 
             message:
                 quote.expire.success: 'Quote #%id% was successfully marked as expired'
+                quote.create.success: 'Quote successfully created'
 
             form:
                 address:

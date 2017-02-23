@@ -8,6 +8,9 @@ workflows:
         defaults: {active: true}
 
         exclusive_record_groups: ['b2b_quote_backoffice_flow']
+        disable_operations:
+            UPDATE:
+                - Oro\Bundle\SaleBundle\Entity\Quote
 
         start_step: draft
         force_autostart: true
@@ -44,6 +47,16 @@ workflows:
                 transition_definition: edit_transition_definition
                 frontend_options:
                     icon: 'fa-edit'
+                display_type: page
+                destination_page: view
+                form_type: oro_sale_quote
+                form_options:
+                    configuration:
+                        handler: default
+                        template: 'OroSaleBundle:Quote:update.html.twig'
+                        data_provider: quote_update
+                        data_attribute: quote
+
             clone_transition:
                 step_to: draft
                 transition_definition: clone_transition_definition
@@ -177,6 +190,9 @@ workflows:
                             quote: $quote
                         results:
                             result.quoteCopy: $.quoteCopy
+                    - '@flash_message':
+                        message: oro.sale.quote.message.quote.create.success
+                        type: 'info'
                     - '@redirect':
                         route: oro_sale_quote_update
                         route_parameters:
