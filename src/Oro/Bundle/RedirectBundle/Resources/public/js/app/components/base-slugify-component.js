@@ -1,13 +1,13 @@
-define(function (require) {
+define(function(require) {
     'use strict';
 
-    var SlugifyComponent,
-        $ = require('jquery'),
-        __ = require('orotranslation/js/translator'),
-        _ = require('underscore'),
-        routing = require('routing'),
-        messenger = require('oroui/js/messenger'),
-        BaseComponent = require('oroui/js/app/components/base/component');
+    var SlugifyComponent;
+    var $ = require('jquery');
+    var __ = require('orotranslation/js/translator');
+    var _ = require('underscore');
+    var routing = require('routing');
+    var messenger = require('oroui/js/messenger');
+    var BaseComponent = require('oroui/js/app/components/base/component');
 
     SlugifyComponent = BaseComponent.extend({
         /**
@@ -58,7 +58,7 @@ define(function (require) {
             $.ajax({
                 type: 'GET',
                 url: routing.generate(this.slugifyRoute, {'string': $source.val()}),
-                success: _.bind(function ($target, $source, result) {
+                success: _.bind(function($target, $source, result) {
                     if (result.slug) {
                         $target.val(result.slug);
                         $target.change();

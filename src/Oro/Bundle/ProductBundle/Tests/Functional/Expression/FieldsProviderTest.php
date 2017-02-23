@@ -6,9 +6,6 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Expression\FieldsProviderInterface;
 
-/**
- * @dbIsolation
- */
 class FieldsProviderTest extends WebTestCase
 {
     /**

@@ -73,7 +73,8 @@ class ContentNodeTreeResolver implements ContentNodeTreeResolverInterface
             $node->getId(),
             $this->getIdentifier($node),
             $node->getTitles(),
-            $resolvedContentVariant
+            $resolvedContentVariant,
+            $node->isRewriteVariantTitle()
         );
 
         foreach ($node->getChildNodes() as $childNode) {

@@ -21,7 +21,6 @@ use Oro\Bundle\VisibilityBundle\Tests\Functional\MessageQueueTrait;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- * @dbIsolation
  */
 class ProductVisibilityListenerTest extends WebTestCase
 {

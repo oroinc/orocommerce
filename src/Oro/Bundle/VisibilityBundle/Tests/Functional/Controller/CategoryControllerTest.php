@@ -21,9 +21,6 @@ use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\VisibilityTrait;
 
-/**
- * @dbIsolation
- */
 class CategoryControllerTest extends WebTestCase
 {
     use VisibilityTrait;
@@ -257,6 +254,7 @@ class CategoryControllerTest extends WebTestCase
         $parameters = $this->explodeArrayPaths($form->getValues());
         $token = $crawler->filterXPath('//input[@name="oro_catalog_category[_token]"]/@value')->text();
 
+        $parameters['oro_catalog_category']['inventoryThreshold']['scalarValue'] = 0;
         $parameters['oro_catalog_category'] = array_merge(
             $parameters['oro_catalog_category'],
             [

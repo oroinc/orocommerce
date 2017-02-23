@@ -2,6 +2,7 @@ parameters:
     oro_shopping_list.entity.shopping_list.class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingList
     oro_shopping_list.entity.shopping_list_total.class: Oro\Bundle\ShoppingListBundle\Entity\ShoppingListTotal
     oro_shopping_list.entity.line_item.class: Oro\Bundle\ShoppingListBundle\Entity\LineItem
+    oro_shopping_list.entity.matrix_collection.class: Oro\Bundle\ShoppingListBundle\Model\MatrixCollection
 
 services:
     oro_shopping_list.validator.line_item:
@@ -125,6 +126,16 @@ services:
         tags:
             - { name: layout.data_provider, alias: oro_shopping_list_shopping_list_form }
 
+    oro_shopping_list.layout.data_provider.matrix_order_form:
+            class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderFormProvider'
+            arguments:
+                - '@form.factory'
+                - '@router'
+            calls:
+                - [setMatrixOrderManager, ['@oro_shopping_list.provider.matrix_grid_order_manager']]
+            tags:
+                - { name: layout.data_provider, alias: oro_shopping_list_matrix_order_form }
+
     oro_shopping_list.layout.data_provider.product_unit_code_visibility:
         class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\ProductUnitCodeVisibilityProvider'
         arguments:
@@ -151,6 +162,16 @@ services:
             - '@oro_pricing.formatter.product_price_formatter'
         tags:
             - { name: layout.data_provider, alias: oro_shopping_list_products }
+
+    oro_shopping_list.layout.data_provider.matrix_grid_order:
+          class: 'Oro\Bundle\ShoppingListBundle\Layout\DataProvider\MatrixGridOrderProvider'
+          arguments:
+              - '@oro_shopping_list.provider.matrix_grid_order_manager'
+              - '@oro_product.provider.product_variant_availability_provider'
+              - '@oro_pricing.subtotal_processor.total_processor_provider'
+              - '@oro_currency.formatter.number'
+          tags:
+              - { name: layout.data_provider, alias: oro_shopping_list_matrix_grid_order }
 
     oro_shopping_list.data_provider.frontend_product_prices:
         class: 'Oro\Bundle\ShoppingListBundle\DataProvider\FrontendProductPricesDataProvider'
@@ -248,15 +269,11 @@ services:
         tags:
             - { name: oro_user.privilege_category}
 
-    oro_shopping_list.condition.has_price_in_shopping_line_items:
-        class: 'Oro\Bundle\ShoppingListBundle\Condition\HasPriceInShoppingLineItems'
+    oro_shopping_list.provider.matrix_grid_order_manager:
+        class: 'Oro\Bundle\ShoppingListBundle\Manager\MatrixGridOrderManager'
         arguments:
-            - '@oro_pricing.provider.combined_product_price'
-            - '@oro_security.security_facade'
-            - '@oro_pricing.user_currency_manager'
-            - '@oro_pricing.model.price_list_request_handler'
-        tags:
-            - { name: oro_action.condition, alias: 'has_price_in_shopping_line_items' }
+            - '@property_accessor'
+            - '@oro_product.provider.product_variant_availability_provider'
 
     oro_shopping_list.condition.rfp_allowed:
         class: 'Oro\Bundle\ShoppingListBundle\Condition\RfpAllowed'
@@ -277,3 +294,8 @@ services:
             - '@validator'
         tags:
             - { name: layout.data_provider, alias: oro_line_item_errors }
+
+    oro_shopping_list.validator.matrix_collection:
+        class: 'Oro\Bundle\ShoppingListBundle\Validator\Constraints\MatrixCollectionColumnValidator'
+        tags:
+            - { name: validator.constraint_validator }

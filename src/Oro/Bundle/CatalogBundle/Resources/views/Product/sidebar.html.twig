@@ -11,7 +11,14 @@
         'label': 'oro.catalog.category.entity_plural_label'|trans,
         'treeOptions': treeOptions
     },
-    ['expand', 'collapse']
+    {
+        'expand': 'expand',
+        'collapse': 'collapse',
+        'move': {
+            'view': 'oroui/js/app/views/jstree/move-action-view',
+            'routeName': 'oro_catalog_category_move_form'
+        }
+    }
 ) }}
 
 <div class="sidebar-item include-sub-categories-choice">{{ form_row(includeSubcategoriesForm) }}</div>

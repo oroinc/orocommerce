@@ -6,9 +6,6 @@ use Oro\Bundle\ActionBundle\Tests\Functional\ActionTestCase;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxes;
 use Oro\Bundle\TaxBundle\Tests\Functional\DataFixtures\LoadTaxJurisdictions;
 
-/**
- * @dbIsolation
- */
 class TaxJurisdictionDeleteOperationTest extends ActionTestCase
 {
     protected function setUp()

@@ -1,6 +1,8 @@
 services:
     oro_cms.form.type.page:
         class: 'Oro\Bundle\CMSBundle\Form\Type\PageType'
+        arguments:
+            - '@router'
         tags:
             - { name: form.type, alias: oro_cms_page }
 
@@ -16,7 +18,5 @@ services:
 
     oro_cms.form.type.cms_page_content_variant:
         class: Oro\Bundle\CMSBundle\Form\Type\CmsPageVariantType
-        arguments:
-            - '@doctrine'
         tags:
             - { name: form.type, alias: oro_cms_page_variant }

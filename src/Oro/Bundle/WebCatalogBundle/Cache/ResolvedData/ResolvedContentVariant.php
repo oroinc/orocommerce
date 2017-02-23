@@ -83,6 +83,16 @@ class ResolvedContentVariant implements ContentVariantInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
+    }
+
+    /**
      * @return Collection|LocalizedFallbackValue[]
      */
     public function getLocalizedUrls()

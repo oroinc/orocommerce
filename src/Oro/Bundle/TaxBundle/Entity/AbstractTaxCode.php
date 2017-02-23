@@ -4,6 +4,8 @@ namespace Oro\Bundle\TaxBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareInterface;
+use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
 
@@ -11,8 +13,10 @@ use Oro\Bundle\TaxBundle\Model\TaxCodeInterface;
  * @ORM\MappedSuperclass
  * @ORM\HasLifecycleCallbacks
  */
-abstract class AbstractTaxCode implements TaxCodeInterface
+abstract class AbstractTaxCode implements TaxCodeInterface, DatesAwareInterface
 {
+    use DatesAwareTrait;
+
     /**
      * @ORM\Id
      * @ORM\Column(type="integer")
@@ -28,6 +32,10 @@ abstract class AbstractTaxCode implements TaxCodeInterface
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
+     *          },
+     *          "importexport"={
+     *              "order"=10,
+     *              "identity"=true
      *          }
      *      }
      * )
@@ -49,35 +57,6 @@ abstract class AbstractTaxCode implements TaxCodeInterface
      * )
      */
     protected $description;
-
-    /**
-     * @ORM\Column(name="created_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.created_at"
-     *          }
-     *      }
-     * )
-     *
-     * @var \DateTime
-     */
-    protected $createdAt;
-
-    /**
-     *
-     * @ORM\Column(name="updated_at", type="datetime")
-     * @ConfigField(
-     *      defaultValues={
-     *          "entity"={
-     *              "label"="oro.ui.updated_at"
-     *          }
-     *      }
-     * )
-     *
-     * @var \DateTime
-     */
-    protected $updatedAt;
 
     /**
      * Get id
@@ -129,65 +108,6 @@ abstract class AbstractTaxCode implements TaxCodeInterface
     public function getDescription()
     {
         return $this->description;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getCreatedAt()
-    {
-        return $this->createdAt;
-    }
-
-    /**
-     * @param \DateTime $createdAt
-     * @return $this
-     */
-    public function setCreatedAt($createdAt)
-    {
-        $this->createdAt = $createdAt;
-
-        return $this;
-    }
-
-    /**
-     * @return \DateTime
-     */
-    public function getUpdatedAt()
-    {
-        return $this->updatedAt;
-    }
-
-    /**
-     * @param \DateTime $updatedAt
-     * @return $this
-     */
-    public function setUpdatedAt($updatedAt)
-    {
-        $this->updatedAt = $updatedAt;
-
-        return $this;
-    }
-
-    /**
-     * Pre persist event handler
-     *
-     * @ORM\PrePersist
-     */
-    public function prePersist()
-    {
-        $this->createdAt = new \DateTime('now', new \DateTimeZone('UTC'));
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
-    }
-
-    /**
-     * Pre update event handler
-     *
-     * @ORM\PreUpdate
-     */
-    public function preUpdate()
-    {
-        $this->updatedAt = new \DateTime('now', new \DateTimeZone('UTC'));
     }
 
     /**

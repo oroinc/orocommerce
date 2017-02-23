@@ -1,0 +1,24 @@
+Oro\Bundle\RuleBundle\Entity\Rule:
+    paymentRule1:
+        name: 'Payment Rule First'
+        enabled: true
+        sortOrder: 5
+        expression: 'true'
+        stopProcessing: false
+    paymentRule2:
+        name: 'Payment Rule Second'
+        enabled: true
+        sortOrder: 5
+        expression: 'true'
+        stopProcessing: false
+
+Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule:
+    payment_methods_configs_rule1:
+        rule: '@paymentRule1'
+        currency: 'USD'
+        organization: '@organization'
+    payment_methods_configs_rule2:
+        rule: '@paymentRule2'
+        currency: 'EUR'
+        organization: '@organization'
+

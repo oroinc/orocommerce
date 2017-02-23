@@ -2,14 +2,13 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Functional\Routing;
 
+use Oro\Bundle\CMSBundle\Entity\Page;
+use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Tests\Functional\DataFixtures\LoadSlugsData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-/**
- * @dbIsolation
- */
 class FrontendRoutingTest extends WebTestCase
 {
     protected function setUp()
@@ -25,6 +24,9 @@ class FrontendRoutingTest extends WebTestCase
 
     public function testSlugRouting()
     {
+        /** @var Page $page */
+        $page = $this->getReference(LoadPageData::PAGE_1);
+
         /** @var Slug $slug */
         $slug = $this->getReference(LoadSlugsData::SLUG_URL_ANONYMOUS);
 
@@ -35,6 +37,7 @@ class FrontendRoutingTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertResponseStatusCodeEquals($result, 200);
         $pageHtml = $crawler->html();
+        $this->assertContains($page->getContent(), $pageHtml);
 
         $crawler = $this->client->request(
             'GET',
@@ -44,7 +47,7 @@ class FrontendRoutingTest extends WebTestCase
         $this->assertResponseStatusCodeEquals($result, 200);
         $slugPageHtml = $crawler->html();
 
-        $this->assertEquals($pageHtml, $slugPageHtml);
+        $this->assertContains($page->getContent(), $slugPageHtml);
     }
 
     public function testSlugRoutingAuthentication()

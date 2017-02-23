@@ -32,7 +32,6 @@ define(function(require) {
          */
         $dependedEl: null,
 
-
         /**
          * @inheritDoc
          */

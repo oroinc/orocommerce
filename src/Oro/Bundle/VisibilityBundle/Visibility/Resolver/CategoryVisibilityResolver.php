@@ -7,6 +7,7 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerCategoryVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupCategoryVisibility;
@@ -224,7 +225,7 @@ class CategoryVisibilityResolver implements CategoryVisibilityResolverInterface
 
     /**
      * @param Customer $customer
-     * @return null|\Oro\Bundle\ScopeBundle\Entity\Scope
+     * @return null|Scope
      */
     protected function getGroupScopeByCustomer(Customer $customer)
     {

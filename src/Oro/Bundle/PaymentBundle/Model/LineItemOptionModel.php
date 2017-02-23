@@ -13,8 +13,14 @@ class LineItemOptionModel
     /** @var float */
     private $cost = 0.;
 
-    /** @var int */
-    private $qty = 0;
+    /** @var float */
+    private $qty = 0.;
+
+    /** @var string */
+    private $currency;
+
+    /** @var string */
+    private $unit;
 
     /**
      * @return string
@@ -30,7 +36,7 @@ class LineItemOptionModel
      */
     public function setName($name)
     {
-        $this->name = $this->truncateString($name, 36);
+        $this->name = $name;
 
         return $this;
     }
@@ -49,7 +55,7 @@ class LineItemOptionModel
      */
     public function setDescription($description)
     {
-        $this->description = $this->truncateString($description, 35);
+        $this->description = $description;
 
         return $this;
     }
@@ -74,7 +80,7 @@ class LineItemOptionModel
     }
 
     /**
-     * @return int
+     * @return float
      */
     public function getQty()
     {
@@ -82,23 +88,51 @@ class LineItemOptionModel
     }
 
     /**
-     * @param int $qty
+     * @param float $qty
      * @return $this
      */
     public function setQty($qty)
     {
-        $this->qty = (int)$qty;
+        $this->qty = $qty;
 
         return $this;
     }
 
     /**
-     * @param string $string
-     * @param int $length
      * @return string
      */
-    private function truncateString($string, $length)
+    public function getCurrency()
     {
-        return substr($string, 0, $length);
+        return $this->currency;
+    }
+
+    /**
+     * @param string $currency
+     * @return $this
+     */
+    public function setCurrency($currency)
+    {
+        $this->currency = $currency;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getUnit()
+    {
+        return $this->unit;
+    }
+
+    /**
+     * @param string $unit
+     * @return $this
+     */
+    public function setUnit($unit)
+    {
+        $this->unit = $unit;
+
+        return $this;
     }
 }

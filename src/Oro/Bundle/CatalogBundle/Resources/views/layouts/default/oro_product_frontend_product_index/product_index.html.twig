@@ -1,8 +1,0 @@
-{% block _category_breadcrumbs_widget %}
-    {% for parentCategory in parentCategories %}
-        <a href="{{ path('oro_product_frontend_product_index', {'categoryId': parentCategory.id, 'includeSubcategories': app.request.get('includeSubcategories') }) }}">
-            {{ parentCategory.titles|localized_value }}
-        </a> &gt;
-    {% endfor %}
-    {{ currentCategory.titles|localized_value }}
-{% endblock %}

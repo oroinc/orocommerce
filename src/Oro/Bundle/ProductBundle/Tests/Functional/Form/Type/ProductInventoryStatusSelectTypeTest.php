@@ -8,9 +8,6 @@ use Symfony\Component\Security\Csrf\CsrfTokenManagerInterface;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\ProductBundle\Form\Type\ProductInventoryStatusSelectType;
 
-/**
- * @dbIsolation
- */
 class ProductInventoryStatusSelectTypeTest extends WebTestCase
 {
     /**

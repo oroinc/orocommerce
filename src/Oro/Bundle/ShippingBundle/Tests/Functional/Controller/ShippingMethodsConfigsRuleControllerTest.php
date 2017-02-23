@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Functional\Controller;
 
 use Oro\Bundle\RuleBundle\Entity\Rule;
+use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRules;
@@ -16,7 +17,6 @@ use Symfony\Component\DomCrawler\Form;
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- * @dbIsolation
  * @group CommunityEdition
  */
 class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
@@ -540,7 +540,7 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
      */
     protected function getShippingMethodsConfigsRuleByName($name)
     {
-        /** @var Rule $rule */
+        /** @var RuleInterface $rule */
         $rule = $this->getEntityManager()
             ->getRepository('OroRuleBundle:Rule')
             ->findOneBy(['name' => $name]);

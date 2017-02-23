@@ -1,19 +1,20 @@
 <?php
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\Method\Config;
 
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\PaymentBundle\DependencyInjection\OroPaymentExtension;
+use Doctrine\Common\Collections\ArrayCollection;
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\PaymentBundle\Method\Config\PaymentConfigInterface;
-use Oro\Bundle\PaymentBundle\Tests\Unit\Method\ConfigTestTrait;
+use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 abstract class AbstractPaymentConfigTestCase extends \PHPUnit_Framework_TestCase
 {
-    use ConfigTestTrait;
-
-    /** @var PaymentConfigInterface */
+    /**
+     * @var PaymentConfigInterface
+     */
     protected $config;
 
     /**
@@ -21,43 +22,31 @@ abstract class AbstractPaymentConfigTestCase extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $this->config = $this->getPaymentConfig($this->configManager);
+        $this->config = $this->getPaymentConfig();
     }
 
     /**
-     * @param ConfigManager $configManager
      * @return PaymentConfigInterface
      */
-    abstract protected function getPaymentConfig(ConfigManager $configManager);
-
-    /**
-     * @return string
-     */
-    abstract protected function getConfigPrefix();
+    abstract protected function getPaymentConfig();
 
     public function testGetLabel()
     {
-        $returnValue = 'test label';
-        $this->setConfig($this->once(), $this->getConfigPrefix() . 'label', $returnValue);
-        $this->assertSame($returnValue, $this->config->getLabel());
+        $this->assertSame('test label', $this->config->getLabel());
     }
 
     public function testGetShortLabel()
     {
-        $returnValue = 'test short label';
-        $this->setConfig($this->once(), $this->getConfigPrefix() . 'short_label', $returnValue);
-        $this->assertSame($returnValue, $this->config->getShortLabel());
+        $this->assertSame('test short label', $this->config->getShortLabel());
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    protected function getExtensionAlias()
+    public function testGetAdminLabel()
     {
-        return OroPaymentExtension::ALIAS;
+        $this->assertSame('test admin label', $this->config->getAdminLabel());
+    }
+
+    public function testGetPaymentMethodIdentifier()
+    {
+        $this->assertSame('test_payment_method_identifier', $this->config->getPaymentMethodIdentifier());
     }
 }

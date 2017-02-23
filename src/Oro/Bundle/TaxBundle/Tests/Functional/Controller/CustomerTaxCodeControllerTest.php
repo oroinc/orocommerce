@@ -6,9 +6,6 @@ use Symfony\Component\DomCrawler\Crawler;
 
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-/**
- * @dbIsolation
- */
 class CustomerTaxCodeControllerTest extends WebTestCase
 {
     const ACCOUNT_TAX_CODE = 'unique';

@@ -64,6 +64,8 @@ define(function(require) {
             this.initProduct();
             this.initItemTotal();
             mediator.trigger('invoice-line-item:created', this.$el);
+
+            LineItemView.__super__.handleLayoutInit.apply(this, arguments);
         },
 
         initSubtotalListener: function() {

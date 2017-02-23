@@ -7,9 +7,6 @@ use Oro\Bundle\FrontendBundle\Tests\Functional\FrontendActionTestCase;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Symfony\Component\HttpFoundation\Response;
 
-/**
- * @dbIsolation
- */
 class OrderFrontendOperationTest extends FrontendActionTestCase
 {
     protected function setUp()
@@ -38,13 +35,13 @@ class OrderFrontendOperationTest extends FrontendActionTestCase
             $this->getContainer()->getParameter('oro_order.entity.order.class'),
             [],
             ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest'],
-            Response::HTTP_NOT_FOUND
+            Response::HTTP_FORBIDDEN
         );
 
         $this->assertEquals(
             [
                 'success' => false,
-                'message' => 'Operation with name "DELETE" not found',
+                'message' => '',
                 'messages' => [],
                 'refreshGrid' => null,
                 'flashMessages' => []

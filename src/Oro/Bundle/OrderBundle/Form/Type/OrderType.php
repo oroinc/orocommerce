@@ -9,7 +9,7 @@ use Oro\Bundle\CustomerBundle\Form\Type\CustomerSelectType;
 use Oro\Bundle\CustomerBundle\Form\Type\CustomerUserSelectType;
 use Oro\Bundle\FormBundle\Form\Type\OroDateType;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\OrderBundle\EventListener\Order\OrderPossibleShippingMethodsEventListener;
+use Oro\Bundle\OrderBundle\EventListener\PossibleShippingMethodEventListener;
 use Oro\Bundle\OrderBundle\Form\Type\EventListener\SubtotalSubscriber;
 use Oro\Bundle\OrderBundle\Handler\OrderCurrencyHandler;
 use Oro\Bundle\OrderBundle\Provider\OrderAddressSecurityProvider;
@@ -249,7 +249,7 @@ class OrderType extends AbstractType
     protected function addShippingFields(FormBuilderInterface $builder, Order $order)
     {
         $builder
-            ->add(OrderPossibleShippingMethodsEventListener::CALCULATE_SHIPPING_KEY, HiddenType::class, [
+            ->add(PossibleShippingMethodEventListener::CALCULATE_SHIPPING_KEY, HiddenType::class, [
                 'mapped' => false
             ])
             ->add('shippingMethod', HiddenType::class)

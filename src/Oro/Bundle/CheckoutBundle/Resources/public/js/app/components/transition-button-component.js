@@ -39,7 +39,7 @@ define(function(require) {
             }
             this.onReady();
         },
-        
+
         onReady: function() {
             if (this.options.enabled) {
                 this.$el.prop('disabled', false);
@@ -74,6 +74,7 @@ define(function(require) {
 
             data = data || {method: 'GET'};
             data.url = url;
+            data.errorHandlerMessage = false;
             $.ajax(data)
                 .done(_.bind(this.onSuccess, this))
                 .fail(_.bind(this.onFail, this));

@@ -4,17 +4,16 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 use Oro\Bundle\ProductBundle\Twig\ProductUnitLabelExtension;
+use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
 class ProductUnitLabelExtensionTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var ProductUnitLabelExtension
-     */
+    use TwigExtensionTestCaseTrait;
+
+    /** @var ProductUnitLabelExtension */
     protected $extension;
 
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitLabelFormatter
-     */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ProductUnitLabelFormatter */
     protected $formatter;
 
     /**
@@ -22,22 +21,15 @@ class ProductUnitLabelExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->formatter = $this->getMockBuilder('Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter')
+        $this->formatter = $this->getMockBuilder(ProductUnitLabelFormatter::class)
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->extension = new ProductUnitLabelExtension($this->formatter);
-    }
+        $container = self::getContainerBuilder()
+            ->add('oro_product.formatter.product_unit_label', $this->formatter)
+            ->getContainer($this);
 
-    public function testGetFilters()
-    {
-        /** @var \Twig_SimpleFilter[] $filters */
-        $filters = $this->extension->getFilters();
-
-        $this->assertCount(1, $filters);
-
-        $this->assertInstanceOf('Twig_SimpleFilter', $filters[0]);
-        $this->assertEquals('oro_format_product_unit_label', $filters[0]->getName());
+        $this->extension = new ProductUnitLabelExtension($container);
     }
 
     /**
@@ -55,7 +47,14 @@ class ProductUnitLabelExtensionTest extends \PHPUnit_Framework_TestCase
             ->with($unitCode, $isShort, $isPlural)
             ->willReturn($expected);
 
-        $this->assertEquals($expected, $this->extension->format($unitCode, $isShort, $isPlural));
+        $this->assertEquals(
+            $expected,
+            self::callTwigFilter(
+                $this->extension,
+                'oro_format_product_unit_label',
+                [$unitCode, $isShort, $isPlural]
+            )
+        );
     }
 
     /**

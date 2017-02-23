@@ -201,7 +201,7 @@ class CategoryRepository extends NestedTreeRepository
      * Creates product to category map, [product_id => Category, ...]
      * @param Product[] $products
      * @param Localization[] $localizations
-     * @return array
+     * @return Category[]
      */
     public function getCategoryMapByProducts(array $products, array $localizations = [])
     {

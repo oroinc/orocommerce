@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CheckoutBundle\Datagrid;
 
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
-use Oro\Component\Config\Common\ConfigObject;
 use Oro\Bundle\CustomerBundle\Security\CustomerUserProvider;
 
 class CheckoutGridCustomerUserNameListener
@@ -16,9 +15,8 @@ class CheckoutGridCustomerUserNameListener
     /**
      * @param CustomerUserProvider $customerUserProvider
      */
-    public function __construct(
-        CustomerUserProvider $customerUserProvider
-    ) {
+    public function __construct(CustomerUserProvider $customerUserProvider)
+    {
         $this->customerUserProvider = $customerUserProvider;
     }
 

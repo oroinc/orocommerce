@@ -59,6 +59,7 @@ oro:
             address.label: Address
             method_configs.label: Configurations
             currency.label: Currency
+            organization.label: Organization
         shippingmethodconfig:
             entity_label: Shipping Rule Method Config
             entity_plural_label: Shipping Rule Methods Configs

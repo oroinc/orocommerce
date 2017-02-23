@@ -86,9 +86,7 @@ services:
         class: Oro\Bundle\ShippingBundle\Twig\ShippingOptionLabelExtension
         public: false
         arguments:
-            - '@oro_shipping.formatter.length_unit_label'
-            - '@oro_shipping.formatter.weight_unit_label'
-            - '@oro_shipping.formatter.freight_class_label'
+            - '@service_container'
         tags:
             - { name: twig.extension }
 
@@ -96,7 +94,7 @@ services:
         class: Oro\Bundle\ShippingBundle\Twig\WeightUnitValueExtension
         public: false
         arguments:
-            - '@oro_shipping.formatter.weight_unit_value'
+            - '@service_container'
         tags:
             - { name: twig.extension }
 
@@ -104,7 +102,7 @@ services:
         class: Oro\Bundle\ShippingBundle\Twig\DimensionsUnitValueExtension
         public: false
         arguments:
-            - '@oro_shipping.formatter.dimensions_unit_value'
+            - '@service_container'
         tags:
             - { name: twig.extension }
 
@@ -113,6 +111,8 @@ services:
         parent: oro_entity.abstract_repository
         arguments:
             - 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule'
+        calls:
+            - [setAclHelper, ['@oro_security.acl_helper']]
 
     oro_shipping.repository.product_shipping_options:
         parent: oro_entity.abstract_repository
@@ -241,6 +241,14 @@ services:
             - '@oro_shipping.converter.shipping_context_to_rule_values'
             - '@oro_shipping.repository.shipping_methods_configs_rule'
 
+    oro_shipping.enabled_methods_configs_rules.provider:
+        class: 'Oro\Bundle\ShippingBundle\Provider\ShippingMethodsConfigsRulesProvider'
+        public: false
+        arguments:
+            - '@oro_rule.enabled_rule_filtration.service'
+            - '@oro_shipping.converter.shipping_context_to_rule_values'
+            - '@oro_shipping.repository.shipping_methods_configs_rule'
+
     oro_shipping.shipping_price.provider.cache:
         class: 'Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache'
         arguments:
@@ -274,22 +282,10 @@ services:
             - '@oro_config.global'
             - '@oro_shipping.factory.shipping_origin_model_factory'
 
-    oro_shipping.query_designer.select_query_converter:
-        class: 'Oro\Bundle\ShippingBundle\QueryDesigner\SelectQueryConverter'
-        arguments:
-            - '@oro_query_designer.query_designer.manager'
-            - '@oro_entity.virtual_field_provider.chain'
-            - '@doctrine'
-        calls:
-            - [setVirtualRelationProvider, ['@oro_entity.virtual_relation_provider.chain']]
-
     oro_shipping.expression_language.decorated_product_line_item_factory:
         class: 'Oro\Bundle\ShippingBundle\ExpressionLanguage\DecoratedProductLineItemFactory'
         arguments:
-            - '@oro_entity.entity_field_provider'
-            - '@oro_shipping.query_designer.select_query_converter'
-            - '@doctrine'
-            - '@oro_entity.helper.field_helper'
+            - '@oro_product.virtual_fields.decorator_factory'
 
     oro_shipping.condition.has_applicable_shipping_methods:
         class: 'Oro\Bundle\ShippingBundle\Condition\HasApplicableShippingMethods'
@@ -327,7 +323,7 @@ services:
         class: 'Oro\Bundle\ShippingBundle\Context\LineItem\Builder\Basic\Factory\BasicShippingLineItemBuilderFactory'
 
     oro_shipping.datagrid.shipping_rule_actions_visibility_provider:
-        class: 'Oro\Bundle\ShippingBundle\Datagrid\ShippingRuleActionsVisibilityProvider'
+        parent: oro_rule.action.visibility_provider
 
     oro_shipping.converter.shipping_context_to_rule_values:
         class: 'Oro\Bundle\ShippingBundle\Converter\ShippingContextToRuleValuesConverter'
@@ -404,6 +400,24 @@ services:
                 - '%oro_shipping.rule_grid_name%'
                 - '@oro_datagrid.helper.route'
 
+    oro_shipping.provider.basic_shipping_methos_choices:
+        class: Oro\Bundle\ShippingBundle\Provider\BasicShippingMethodChoicesProvider
+        arguments:
+        - '@oro_shipping.shipping_method.registry'
+        - '@translator'
+
+    oro_shipping.provider.shipping_method_choices:
+        parent: oro_shipping.provider.basic_shipping_methos_choices
+
+    oro_shipping.shipping_methods_choices_provider.enabled_methods_decorator:
+         class: 'Oro\Bundle\ShippingBundle\Provider\EnabledShippingMethodChoicesProviderDecorator'
+         public: false
+         decorates: oro_shipping.provider.shipping_method_choices
+         decoration_priority: 255
+         arguments:
+             - '@oro_shipping.shipping_method.registry'
+             - '@oro_shipping.shipping_methods_choices_provider.enabled_methods_decorator.inner'
+
     oro_shipping.checker.shipping_method_enabled:
         class: 'Oro\Bundle\ShippingBundle\Checker\ShippingMethodEnabledByIdentifierChecker'
         arguments:
@@ -413,3 +427,4 @@ services:
         class: 'Oro\Bundle\ShippingBundle\Checker\ShippingRuleEnabledChecker'
         arguments:
             - '@oro_shipping.checker.shipping_method_enabled'
+

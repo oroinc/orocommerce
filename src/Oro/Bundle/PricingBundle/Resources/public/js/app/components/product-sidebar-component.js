@@ -1,6 +1,6 @@
 /*jslint nomen:true*/
 /*global define*/
-define(function (require) {
+define(function(require) {
     'use strict';
 
     var ProductSidebarComponent;
@@ -10,7 +10,6 @@ define(function (require) {
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     var routing = require('routing');
     var mediator = require('oroui/js/mediator');
-    var messenger = require('oroui/js/messenger');
     var __ = require('orotranslation/js/translator');
 
     ProductSidebarComponent = BaseComponent.extend({
@@ -46,7 +45,7 @@ define(function (require) {
         /**
          * @inheritDoc
          */
-        initialize: function (options) {
+        initialize: function(options) {
             this.options = _.defaults(options || {}, this.options);
 
             this.loadingMaskView = new LoadingMaskView({container: this.options._sourceElement});
@@ -58,7 +57,7 @@ define(function (require) {
                 .on('change', this.options.showTierPricesSelector, _.bind(this.onShowTierPricesChange, this));
         },
 
-        onPriceListChange: function (e) {
+        onPriceListChange: function(e) {
             var value = e.target.value;
             var routeParams = $.extend({}, this.options.routingParams, {'id': value});
 
@@ -67,35 +66,30 @@ define(function (require) {
                 beforeSend: $.proxy(this._beforeSend, this),
                 success: $.proxy(this._success, this),
                 complete: $.proxy(this._complete, this),
-                error: _.bind(
-                    function (jqXHR) {
-                        messenger.showErrorMessage(__(this.options.errorMessage), jqXHR.responseJSON);
-                    },
-                    this
-                )
+                errorHandlerMessage: __(this.options.errorMessage)
             });
         },
 
-        onCurrenciesChange: function () {
+        onCurrenciesChange: function() {
             this.triggerSidebarChanged(true);
         },
 
-        onShowTierPricesChange: function () {
+        onShowTierPricesChange: function() {
             this.triggerSidebarChanged(false);
         },
 
         /**
          * @param {Boolean} widgetReload
          */
-        triggerSidebarChanged: function (widgetReload) {
+        triggerSidebarChanged: function(widgetReload) {
             var currencies = [];
-            _.each($(this.options.currenciesSelector + ' input'), function (input) {
+            _.each($(this.options.currenciesSelector + ' input'), function(input) {
                 var checked = input.checked;
                 var value = $(input).val();
                 if (checked) {
                     currencies.push(value);
                 }
-                this.currenciesState[value] = checked
+                this.currenciesState[value] = checked;
             }, this);
 
             if (_.isEmpty(currencies)) {
@@ -117,7 +111,7 @@ define(function (require) {
         /**
          * @private
          */
-        _beforeSend: function () {
+        _beforeSend: function() {
             this.loadingMaskView.show();
         },
 
@@ -126,7 +120,7 @@ define(function (require) {
          *
          * @private
          */
-        _success: function (data) {
+        _success: function(data) {
             var html = [];
             var index = 0;
             var template = _.template(this.options.currencyTemplate);
@@ -134,7 +128,7 @@ define(function (require) {
                 this.currenciesState = {};
             }
 
-            _.each(data, function (value, key) {
+            _.each(data, function(value, key) {
                 var checked = 'checked';
                 if (this.currenciesState.hasOwnProperty(key) && !this.currenciesState[key]) {
                     checked = '';
@@ -155,7 +149,7 @@ define(function (require) {
             this.triggerSidebarChanged(false);
         },
 
-        _hasActiveCurrencies: function (data) {
+        _hasActiveCurrencies: function(data) {
             for (var key in this.currenciesState) {
                 if (this.currenciesState.hasOwnProperty(key) && data.hasOwnProperty(key) && this.currenciesState[key]) {
                     return true;
@@ -167,11 +161,11 @@ define(function (require) {
         /**
          * @private
          */
-        _complete: function () {
+        _complete: function() {
             this.loadingMaskView.hide();
         },
 
-        dispose: function () {
+        dispose: function() {
             if (this.disposed) {
                 return;
             }

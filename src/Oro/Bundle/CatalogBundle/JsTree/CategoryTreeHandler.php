@@ -49,11 +49,7 @@ class CategoryTreeHandler extends AbstractTreeHandler
     }
 
     /**
-     * Move node processing
-     *
-     * @param int $entityId
-     * @param int $parentId
-     * @param int $position
+     * {@inheritdoc}
      */
     protected function moveProcessing($entityId, $parentId, $position)
     {
@@ -74,6 +70,8 @@ class CategoryTreeHandler extends AbstractTreeHandler
         } else {
             $this->getEntityRepository()->persistAsFirstChildOf($category, $parentCategory);
         }
+
+        return $category;
     }
 
     /**

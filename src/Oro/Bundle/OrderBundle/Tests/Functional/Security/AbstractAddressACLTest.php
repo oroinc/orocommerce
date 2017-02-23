@@ -13,7 +13,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\UserBundle\Entity\Role;
 
 /**
- * @dbIsolation
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
 abstract class AbstractAddressACLTest extends WebTestCase
