@@ -23,7 +23,6 @@ class OroRFPExtensionTest extends ExtensionTestCase
 
         $expectedParameters = [
             'oro_rfp.entity.request.class',
-            'oro_rfp.entity.request.status.class',
         ];
         $this->assertParametersLoaded($expectedParameters);
 

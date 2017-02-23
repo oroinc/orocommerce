@@ -48,20 +48,18 @@ oro:
         overridden_shipping_cost_amount.label: 'Overridden Shipping Cost Amount'
         total_currency.label: 'Total currency'
         total_value.label: 'Total'
-        total_base_currency.label: 'Total (%sign%)'
-        base_total_value.label: 'Total (%sign%)'
+        base_total_value.label: 'Total In Base Currency'
         subtotal_currency.label: 'Subtotal currency'
         subtotal_value.label: 'Subtotal'
-        subtotal_base_currency.label: 'Subtotal (%sign%)'
-        base_subtotal_value.label: 'Subtotal (%sign%)'
+        base_subtotal_value.label: 'Subtotal In Base Currency'
 
         subtotal:
             label: Subtotal
-            base.label: 'Subtotal (%sign%)'
+            base.label: 'Subtotal In Base Currency'
 
         total:
             label: Total
-            base.label: 'Total (%sign%)'
+            base.label: 'Total In Base Currency'
 
         # TODO: remove after resolving https://magecore.atlassian.net/browse/BAP-3940
         shipping_cost_amount.label: 'Shipping Cost Amount'
@@ -186,7 +184,8 @@ oro:
             shortcut_new_order.label: Create new order
             shortcut_new_order.description: Create new order item
             shortcut_order_list.description: Show list of existing orders
-
+            best_selling_list.label: Best Selling Products
+            best_selling_list.description: List of best selling products
         widgets:
             order_information: Order Information
             shipping_tracking: Shipping Tracking
@@ -242,12 +241,6 @@ oro:
             groups:
                 orders.title: 'Orders'
                 orders_history.title: 'Orders History'
-        success:
-            thank_you: 'Thank You For Your Purchase!'
-            order_number: 'Your order number is'
-            click_to_review: 'click here to review'
-            receive_email: 'You will receive a confirmation email with your order details.'
-            done: 'Done'
 
         privilege:
             category.orders.label: 'Orders'

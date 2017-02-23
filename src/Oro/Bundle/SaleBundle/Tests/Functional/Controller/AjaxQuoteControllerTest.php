@@ -8,9 +8,6 @@ use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
-/**
- * @dbIsolation
- */
 class AjaxQuoteControllerTest extends WebTestCase
 {
     protected function setUp()

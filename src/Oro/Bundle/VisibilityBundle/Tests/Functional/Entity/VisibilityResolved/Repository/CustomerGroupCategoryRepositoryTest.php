@@ -10,9 +10,6 @@ use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseCategoryVisibility
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CategoryVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\Repository\CustomerGroupCategoryRepository;
 
-/**
- * @dbIsolation
- */
 class CustomerGroupCategoryRepositoryTest extends AbstractCategoryRepositoryTest
 {
     /**

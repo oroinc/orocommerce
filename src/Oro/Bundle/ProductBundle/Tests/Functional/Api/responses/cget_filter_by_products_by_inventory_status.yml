@@ -1,0 +1,77 @@
+data:
+    -
+        type: products
+        id: '<toString(@product-2->id)>'
+        attributes:
+            sku: product-2
+            status: enabled
+            variantFields: {  }
+            createdAt: '@product-2->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@product-2->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            productType: simple
+        relationships:
+            owner:
+                data:
+                    type: businessunits
+                    id: '1'
+            organization:
+                data:
+                    type: organizations
+                    id: '1'
+            unitPrecisions:
+                data:
+                    -
+                        type: productunitprecisions
+                        id: '<toString(@product_unit_precision.product-2.box->id)>'
+                    -
+                        type: productunitprecisions
+                        id: '<toString(@product_unit_precision.product-2.bottle->id)>'
+                    -
+                        type: productunitprecisions
+                        id: '<toString(@product_unit_precision.product-2.liter->id)>'
+                    -
+                        type: productunitprecisions
+                        id: '<toString(@product_unit_precision.product-2.milliliter->id)>'
+            primaryUnitPrecision:
+                data:
+                    type: productunitprecisions
+                    id: '<toString(@product_unit_precision.product-2.milliliter->id)>'
+            inventory_status:
+                data:
+                    type: prodinventorystatuses
+                    id: in_stock
+    -
+        type: products
+        id: '<toString(@product-3->id)>'
+        attributes:
+            sku: product-3
+            status: enabled
+            variantFields: {  }
+            createdAt: '@product-3->createdAt->format("Y-m-d\TH:i:s\Z")'
+            updatedAt: '@product-3->updatedAt->format("Y-m-d\TH:i:s\Z")'
+            productType: simple
+        relationships:
+            owner:
+                data:
+                    type: businessunits
+                    id: '1'
+            organization:
+                data:
+                    type: organizations
+                    id: '1'
+            unitPrecisions:
+                data:
+                    -
+                        type: productunitprecisions
+                        id: '<toString(@product_unit_precision.product-3.liter->id)>'
+                    -
+                        type: productunitprecisions
+                        id: '<toString(@product_unit_precision.product-3.milliliter->id)>'
+            primaryUnitPrecision:
+                data:
+                    type: productunitprecisions
+                    id: '<toString(@product_unit_precision.product-3.milliliter->id)>'
+            inventory_status:
+                data:
+                    type: prodinventorystatuses
+                    id: out_of_stock

@@ -5,7 +5,7 @@ namespace Oro\Bundle\VisibilityBundle\Indexer;
 use Oro\Bundle\VisibilityBundle\Visibility\Provider\ProductVisibilityProvider;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
-use Oro\Bundle\WebsiteSearchBundle\Placeholder\CustomerIdPlaceholder;
+use Oro\Bundle\CustomerBundle\Placeholder\CustomerIdPlaceholder;
 
 class ProductVisibilityIndexer
 {
@@ -13,7 +13,7 @@ class ProductVisibilityIndexer
 
     const FIELD_VISIBILITY_NEW = 'visibility_new';
 
-    const FIELD_VISIBILITY_ACCOUNT = 'visibility_customer_ACCOUNT_ID';
+    const FIELD_VISIBILITY_ACCOUNT = 'visibility_customer_CUSTOMER_ID';
 
     const FIELD_IS_VISIBLE_BY_DEFAULT = 'is_visible_by_default';
 

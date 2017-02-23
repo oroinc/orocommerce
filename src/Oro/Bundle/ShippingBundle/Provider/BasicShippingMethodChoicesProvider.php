@@ -20,14 +20,14 @@ class BasicShippingMethodChoicesProvider implements ShippingMethodChoicesProvide
 
     /**
      * @param ShippingMethodRegistry $methodRegistry
-     * @param TranslatorInterface $translator
+     * @param TranslatorInterface    $translator
      */
     public function __construct(ShippingMethodRegistry $methodRegistry, TranslatorInterface $translator)
     {
         $this->methodRegistry = $methodRegistry;
         $this->translator = $translator;
     }
-    
+
     /**
      * {@inheritdoc}
      */
@@ -41,6 +41,7 @@ class BasicShippingMethodChoicesProvider implements ShippingMethodChoicesProvide
                     $label = $this->translator->trans($label);
                 }
                 $result[$method->getIdentifier()] = $label;
+
                 return $result;
             },
             []

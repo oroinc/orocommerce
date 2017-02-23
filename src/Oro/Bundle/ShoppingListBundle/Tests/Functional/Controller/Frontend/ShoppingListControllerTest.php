@@ -21,8 +21,6 @@ use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingList
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
- * @dbIsolation
- *
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class ShoppingListControllerTest extends WebTestCase
@@ -80,15 +78,9 @@ class ShoppingListControllerTest extends WebTestCase
      * @dataProvider testViewSelectedShoppingListDataProvider
      * @param string $shoppingList
      * @param string $expectedLineItemPrice
-     * @param bool $needToTestRequestQuote
-     * @param $expectedCreateOrderButtonVisible
      */
-    public function testViewSelectedShoppingListWithLineItemPrice(
-        $shoppingList,
-        $expectedLineItemPrice,
-        $needToTestRequestQuote,
-        $expectedCreateOrderButtonVisible
-    ) {
+    public function testViewSelectedShoppingListWithLineItemPrice($shoppingList, $expectedLineItemPrice)
+    {
         // assert selected shopping list
         /** @var ShoppingList $shoppingList1 */
         $shoppingList1 = $this->getReference($shoppingList);
@@ -107,13 +99,8 @@ class ShoppingListControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
         $this->assertContains($shoppingList1->getLabel(), $crawler->html());
 
-        $this->assertEquals((strpos($crawler->html(), 'Request Quote') !== false), $needToTestRequestQuote);
-
-        if ($expectedCreateOrderButtonVisible) {
-            $this->assertContains('Create Order', $crawler->html());
-        } else {
-            $this->assertNotContains('Create Order', $crawler->html());
-        }
+        $this->assertContains('Create Order', $crawler->html());
+        $this->assertContains('Request Quote', $crawler->html());
 
         $this->assertLineItemPriceEquals($expectedLineItemPrice, $crawler);
     }
@@ -126,32 +113,46 @@ class ShoppingListControllerTest extends WebTestCase
         return [
             'price defined' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_1,
-                'expectedLineItemPrice' => '$13.10',
-                'needToTestRequestQuote' => true,
-                'expectedCreateOrderButtonVisible' => true
-            ],
-            'no price for selected quantity' => [
-                'shoppingList' => LoadShoppingLists::SHOPPING_LIST_3,
-                'expectedLineItemPrice' => 'N/A',
-                'needToTestRequestQuote' => false,
-                'expectedCreateOrderButtonVisible' => false
+                'expectedLineItemPrice' => '$13.10'
             ],
             'zero price' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_4,
-                'expectedLineItemPrice' => '$0.00',
-                'needToTestRequestQuote' => true,
-                'expectedCreateOrderButtonVisible' => true
+                'expectedLineItemPrice' => '$0.00'
             ],
             'no price for selected unit' => [
                 'shoppingList' => LoadShoppingLists::SHOPPING_LIST_5,
                 'expectedLineItemPrice' => [
                     'N/A',
                     '$0.00',
-                ],
-                'needToTestRequestQuote' => true,
-                'expectedCreateOrderButtonVisible' => true
+                ]
             ],
         ];
+    }
+
+    public function testViewSelectedShoppingListWithoutLineItemPrice()
+    {
+        // assert selected shopping list
+        /** @var ShoppingList $shoppingList */
+        $shoppingList = $this->getReference(LoadShoppingLists::SHOPPING_LIST_3);
+
+        $crawler = $this->client->request(
+            'GET',
+            $this->getUrl('oro_shopping_list_frontend_view', ['id' => $shoppingList->getId()])
+        );
+
+        $inventoryStatusClassName = ExtendHelper::buildEnumValueClassName('prod_inventory_status');
+        $availableInventoryStatuses = [$this->getContainer()->get('doctrine')->getRepository($inventoryStatusClassName)
+            ->find(Product::INVENTORY_STATUS_IN_STOCK)];
+
+        $this->configManager->set(self::RFP_PRODUCT_VISIBILITY_KEY, $availableInventoryStatuses);
+        $this->configManager->flush();
+
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        $this->assertContains($shoppingList->getLabel(), $crawler->html());
+
+        $this->assertContains('Create Order', $crawler->html());
+
+        $this->assertLineItemPriceEquals('N/A', $crawler);
     }
 
     public function testQuickAdd()
@@ -342,7 +343,7 @@ class ShoppingListControllerTest extends WebTestCase
             ->getRepository('OroShoppingListBundle:LineItem')
             ->findBy(['shoppingList' => $shoppingList], ['id' => 'DESC']);
 
-        $this->assertCount(3, $items);
+        $this->assertCount(2, $items);
         $item = $items[0];
 
         $this->assertEquals($sku, $item->getProductSku());

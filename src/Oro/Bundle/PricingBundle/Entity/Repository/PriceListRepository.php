@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIteratorInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 
 class PriceListRepository extends BasePriceListRepository
@@ -88,7 +89,7 @@ class PriceListRepository extends BasePriceListRepository
     }
 
     /**
-     * @return BufferedQueryResultIterator|PriceList[]
+     * @return BufferedQueryResultIteratorInterface
      */
     public function getPriceListsWithRules()
     {

@@ -24,6 +24,8 @@ use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingMethodProviderStub;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroup;
 use Oro\Bundle\ShippingBundle\Validator\Constraints\EnabledTypeConfigsValidationGroupValidator;
+use Oro\Bundle\ShippingBundle\Validator\Constraints\ShippingRuleEnable;
+use Oro\Bundle\ShippingBundle\Validator\Constraints\ShippingRuleEnableValidator;
 use Oro\Bundle\TranslationBundle\Form\Type\TranslatableEntityType;
 use Oro\Component\Testing\Unit\Form\EventListener\Stub\AddressCountryAndRegionSubscriberStub;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
@@ -182,6 +184,7 @@ class MethodTypeConfigCollectionSubscriberTest extends FormIntegrationTestCase
 
         return [
             $constraint->validatedBy() => new EnabledTypeConfigsValidationGroupValidator(),
+            (new ShippingRuleEnable())->validatedBy() => $this->createMock(ShippingRuleEnableValidator::class),
         ];
     }
 

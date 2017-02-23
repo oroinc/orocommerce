@@ -4,7 +4,7 @@
 
 {% oro_title_set({params : {'%entityName%' : 'oro.sale.quote.entity_label'|trans, '%id%': entity.qid} }) %}
 
-{% set formAction = entity.id ? path('oro_sale_quote_update', { 'id': entity.id }) : path('oro_sale_quote_create')  %}
+{% set formAction = formAction|default(entity.id ? path('oro_sale_quote_update', { 'id': entity.id }) : path('oro_sale_quote_create')) %}
 
 {% block pageHeader %}
     {% if entity.id %}

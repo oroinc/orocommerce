@@ -71,7 +71,7 @@ class PaymentMethodApplicableTest extends \PHPUnit_Framework_TestCase
         /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
         $paymentMethod = $this->createMock(PaymentMethodInterface::class);
         $paymentMethod->expects(static::once())
-            ->method('getType')
+            ->method('getIdentifier')
             ->willReturn(self::METHOD);
 
         $this->paymentMethodProvider->expects(static::once())
@@ -90,7 +90,7 @@ class PaymentMethodApplicableTest extends \PHPUnit_Framework_TestCase
         /** @var PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject $paymentMethod */
         $paymentMethod = $this->createMock(PaymentMethodInterface::class);
         $paymentMethod->expects(static::once())
-            ->method('getType')
+            ->method('getIdentifier')
             ->willReturn('another_method');
 
         $this->paymentMethodProvider->expects(static::once())

@@ -19,16 +19,17 @@
             {% if entity.customerUser %}
                 {{ UI.renderHtmlProperty('oro.rfp.request.customer_user.label'|trans, UI.entityViewLink(entity.customerUser, entity.customerUser.fullName, 'oro_customer_customer_user_view')) }}
             {% endif %}
-            {{ UI.renderProperty('oro.rfp.request.status.label'|trans, entity.status.label) }}
-            {% if entity.status.name =='canceled' %}
-                {{ UI.renderHtmlProperty('oro.rfp.request.cancellation_reason.label'|trans,entity.cancellationReason ) }}
-            {% endif %}
+            {{ UI.renderProperty('oro.rfp.request.internal_status.label'|trans, entity.internalStatus.name|default('')) }}
+            {{ UI.renderProperty('oro.rfp.request.customer_status.label'|trans, entity.customerStatus.name|default('')) }}
             {% if entity.assignedUsers | length %}
                 {{ UI.renderHtmlProperty('oro.rfp.request.assigned_users.label'|trans, UI.entityViewLinks(entity.assignedUsers, 'fullName', 'oro_user_view')) }}
             {% endif %}
             {% if entity.assignedCustomerUsers | length %}
                 {{ UI.renderHtmlProperty('oro.rfp.request.assigned_customer_users.label'|trans, UI.entityViewLinks(entity.assignedCustomerUsers, 'fullName', 'oro_customer_customer_user_view')) }}
             {% endif %}
+        </div>
+        <div class="responsive-block">
+            {{ UI.renderHtmlProperty('oro.rfp.request.note.label'|trans, entity.note|nl2br) }}
 
             {{ entityConfig.renderDynamicFields(entity) }}
         </div>

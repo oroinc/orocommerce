@@ -45,7 +45,19 @@ class OroSaleExtensionTest extends ExtensionTestCase
             // twig extensions
             'oro_sale.twig.quote',
             // event listeners
-            'oro_sale.quote_event_listener.possible_shipping_methods'
+            'oro_sale.quote_event_listener.possible_shipping_methods',
+            // services
+            'oro_sale.quote_demand.subtotals_calculator_main',
+            'oro_sale.quote.selected_offers_shipping_context_factory',
+            'oro_sale.quote.first_offers_shipping_context_factory',
+            'oro_sale.quote.shipping_configuration_factory',
+            'oro_sale.quote.configured_shipping_price_provider',
+            'oro_sale.quote.configured_shipping_price_provider_overridden_decorator',
+            'oro_sale.quote.configured_shipping_price_provider_allow_unlisted_decorator',
+            'oro_sale.quote.configured_shipping_price_provider_method_locked_decorator',
+            'oro_sale.quote_demand.subtotals_calculator_shipping_cost_decorator',
+            'oro_sale.quote.shipping_line_items_converter_first_offers',
+            'oro_sale.quote.shipping_line_items_converter_selected_offers',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 

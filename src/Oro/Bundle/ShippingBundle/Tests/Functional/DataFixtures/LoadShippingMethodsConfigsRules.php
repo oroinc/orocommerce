@@ -7,8 +7,9 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-use Oro\Bundle\FlatRateBundle\Tests\Functional\DataFixtures\LoadFlatRateIntegration;
+use Oro\Bundle\FlatRateShippingBundle\Tests\Functional\DataFixtures\LoadFlatRateIntegration;
 use Oro\Bundle\RuleBundle\Entity\Rule;
+use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination;
@@ -70,12 +71,12 @@ class LoadShippingMethodsConfigsRules extends AbstractFixture implements Depende
     }
 
     /**
-     * @param Rule $rule
+     * @param RuleInterface $rule
      * @param array $data
      *
      * @return ShippingMethodsConfigsRule
      */
-    private function buildMethodsConfigsRule(Rule $rule, $data)
+    private function buildMethodsConfigsRule(RuleInterface $rule, $data)
     {
         $configRule = new ShippingMethodsConfigsRule();
 
@@ -90,7 +91,7 @@ class LoadShippingMethodsConfigsRules extends AbstractFixture implements Depende
      * @param string $reference
      * @param array $data
      *
-     * @return Rule
+     * @return RuleInterface
      */
     private function buildRule($reference, $data)
     {

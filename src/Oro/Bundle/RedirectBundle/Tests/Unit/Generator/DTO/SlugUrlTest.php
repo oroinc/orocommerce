@@ -15,4 +15,13 @@ class SlugUrlTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('test', $obj->getUrl());
         $this->assertEquals($localization, $obj->getLocalization());
     }
+
+    public function testSetUrl()
+    {
+        $expected = 'another';
+        $slugUrl = new SlugUrl('test');
+        $slugUrl->setUrl($expected);
+
+        $this->assertEquals($expected, $slugUrl->getUrl());
+    }
 }

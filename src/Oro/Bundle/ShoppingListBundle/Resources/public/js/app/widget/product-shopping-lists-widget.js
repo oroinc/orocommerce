@@ -67,7 +67,12 @@ define(function(require) {
 
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, _.pick(options, [
-                'dialogOptions', 'template', 'quantityComponentOptions', 'singleUnitMode', 'singleUnitModeCodeVisible', 'configDefaultUnit'
+                'dialogOptions',
+                'template',
+                'quantityComponentOptions',
+                'singleUnitMode',
+                'singleUnitModeCodeVisible',
+                'configDefaultUnit'
             ]));
 
             this.initModel(options);
@@ -163,7 +168,7 @@ define(function(require) {
             var shoppingLists = this.model.get('shopping_lists');
             shoppingLists = _.filter(shoppingLists, function(shoppingList, key) {
                 shoppingList.line_items = _.filter(shoppingList.line_items, function(lineItem) {
-                    return lineItem.id != deleteData.lineItemId;
+                    return lineItem.id !== deleteData.lineItemId;
                 });
                 return !_.isEmpty(shoppingList.line_items);
             }, this);

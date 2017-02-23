@@ -20,7 +20,6 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- * @dbIsolation
  */
 class PriceListToCustomerRepositoryTest extends WebTestCase
 {

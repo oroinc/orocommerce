@@ -12,9 +12,6 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecis
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRules;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 
-/**
- * @dbIsolation
- */
 class AjaxCheckoutControllerTest extends FrontendWebTestCase
 {
     public function setUp()

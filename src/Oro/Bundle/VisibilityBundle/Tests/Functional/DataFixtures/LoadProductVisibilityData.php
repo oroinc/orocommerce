@@ -12,6 +12,7 @@ use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomers;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadGroups;
 use Oro\Bundle\CustomerBundle\Migrations\Data\ORM\LoadAnonymousCustomerGroup;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
@@ -79,8 +80,7 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
         $productVisibility->setProduct($product)
             ->setVisibility($data['all']['visibility']);
 
-        $scope = $this->container->get('oro_scope.scope_manager')
-            ->findOrCreate(ProductVisibility::VISIBILITY_TYPE);
+        $scope = $this->getScopeForProductVisibilities();
         $productVisibility->setScope($scope);
 
         $manager->persist($productVisibility);
@@ -96,7 +96,7 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
      * @param string $groupReference
      * @return CustomerGroup
      */
-    private function getCustomerGroup($groupReference)
+    protected function getCustomerGroup($groupReference)
     {
         if ($groupReference === 'customer_group.anonymous') {
             $customerGroup = $this->container
@@ -130,11 +130,7 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
             $customerGroupProductVisibility->setProduct($product)
                 ->setVisibility($customerGroupData['visibility']);
 
-            $scopeManager = $this->container->get('oro_scope.scope_manager');
-            $scope = $scopeManager->findOrCreate(
-                CustomerGroupProductVisibility::VISIBILITY_TYPE,
-                ['customerGroup' => $customerGroup]
-            );
+            $scope = $this->getScopeForCustomerGroupVisibilities($customerGroup);
 
             $customerGroupProductVisibility->setScope($scope);
 
@@ -162,8 +158,7 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
             $customerProductVisibility->setProduct($product)
                 ->setVisibility($customerData['visibility']);
 
-            $scopeManager = $this->container->get('oro_scope.scope_manager');
-            $scope = $scopeManager->findOrCreate('customer_product_visibility', ['customer' => $customer]);
+            $scope = $this->getScopeForCustomerVisibilities($customer);
             $customerProductVisibility->setScope($scope);
 
             $manager->persist($customerProductVisibility);
@@ -180,5 +175,34 @@ class LoadProductVisibilityData extends AbstractFixture implements DependentFixt
         $fixturesFileName = __DIR__ . '/data/product_visibilities.yml';
 
         return Yaml::parse(file_get_contents($fixturesFileName));
+    }
+
+    /**
+     * @return Scope
+     */
+    protected function getScopeForProductVisibilities()
+    {
+        return $this->container->get('oro_scope.scope_manager')
+            ->findOrCreate(ProductVisibility::VISIBILITY_TYPE);
+    }
+
+    /**
+     * @param CustomerGroup $customerGroup
+     * @return Scope
+     */
+    protected function getScopeForCustomerGroupVisibilities(CustomerGroup $customerGroup)
+    {
+        return $this->container->get('oro_scope.scope_manager')
+            ->findOrCreate(CustomerGroupProductVisibility::VISIBILITY_TYPE, ['customerGroup' => $customerGroup]);
+    }
+
+    /**
+     * @param Customer $customer
+     * @return Scope
+     */
+    protected function getScopeForCustomerVisibilities(Customer $customer)
+    {
+        return $this->container->get('oro_scope.scope_manager')
+            ->findOrCreate('customer_product_visibility', ['customer' => $customer]);
     }
 }
