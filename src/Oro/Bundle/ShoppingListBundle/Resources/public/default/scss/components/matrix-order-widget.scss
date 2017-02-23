@@ -223,7 +223,7 @@
     }
 
     &-total{
-      color: #d7d7d7;
+      color: lighten(get-color('additional', 'dark'), .57);
       padding: 10px 0;
 
       &.selected{
