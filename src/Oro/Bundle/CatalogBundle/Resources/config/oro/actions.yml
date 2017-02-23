@@ -10,7 +10,6 @@ operations:
         extends: DELETE
         replace:
             - entities
-            - preconditions
             - acl_resource
             - for_all_datagrids
             - for_all_entities
@@ -19,5 +18,4 @@ operations:
         acl_resource: [DELETE, entity:Oro\Bundle\CatalogBundle\Entity\Category]
         preconditions:
             '@and':
-                '@not_blank': $.data
-                '@not_equal': [$parentCategory, null]
+                - '@not_equal': [$.data.parentCategory, null]

@@ -56,7 +56,7 @@ class ShoppingListController extends RestController implements ClassResourceInte
         }
         $manager->setCurrent($this->getUser(), $shoppingList);
 
-        return$this->buildResponse($view, self::ACTION_UPDATE, ['id' => $id, 'success' => $isProcessed]);
+        return $this->buildResponse($view, self::ACTION_UPDATE, ['id' => $id, 'success' => $isProcessed]);
     }
 
     /**

@@ -199,6 +199,26 @@ operations:
         exclude_datagrids:
             - shopping-list-grid
 
+    oro_shoppinglist_delete:
+        extends: DELETE
+        replace:
+            - for_all_datagrids
+            - for_all_entities
+            - preconditions
+            - routes
+            - entities
+        preconditions:
+            '@not_blank': $.data
+        routes:
+            - oro_shopping_list_frontend_view
+        entities:
+            - Oro\Bundle\ShoppingListBundle\Entity\ShoppingList
+        button_options:
+            class: btn--action
+        frontend_options:
+            confirmation:
+                title: oro.frontend.shoppinglist.messages.delete_title
+
     oro_shoppinglist_delete_line_item:
         extends: DELETE
         replace:

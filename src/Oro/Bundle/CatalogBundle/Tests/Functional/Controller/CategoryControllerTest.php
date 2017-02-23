@@ -2,16 +2,16 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Functional\Controller;
 
-use Symfony\Component\DomCrawler\Form;
-use Symfony\Component\HttpFoundation\File\UploadedFile;
-
-use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
-use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Form;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
@@ -200,44 +200,6 @@ class CategoryControllerTest extends WebTestCase
             $newLongDescription,
             $newUnitPrecision
         );
-    }
-
-    /**
-     * @depends testEditCategory
-     *
-     * @param int $id
-     */
-    public function testDelete($id)
-    {
-        $this->client->request(
-            'DELETE',
-            $this->getUrl('oro_api_delete_category', ['id' => $id]),
-            [],
-            [],
-            $this->generateWsseAuthHeader()
-        );
-
-        $result = $this->client->getResponse();
-        $this->assertEmptyResponseStatusCodeEquals($result, 204);
-
-        $this->client->request('GET', $this->getUrl('oro_catalog_category_update', ['id' => $id]));
-
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 404);
-    }
-
-    public function testDeleteRoot()
-    {
-        $this->client->request(
-            'DELETE',
-            $this->getUrl('oro_api_delete_category', ['id' => $this->masterCatalog->getId()]),
-            [],
-            [],
-            $this->generateWsseAuthHeader()
-        );
-
-        $result = $this->client->getResponse();
-        self::assertResponseStatusCodeEquals($result, 500);
     }
 
     public function testMove()
