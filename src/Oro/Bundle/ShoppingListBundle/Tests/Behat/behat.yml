@@ -1,0 +1,9 @@
+oro_behat_extension:
+  elements:
+    ShoppingList:
+      class: Oro\Bundle\ShoppingListBundle\Tests\Behat\Element\ShoppingList
+      selector: '#shopping_list_view_container_content'
+
+    ShoppingListTitle:
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+      selector: 'h1.cart__order-title span'

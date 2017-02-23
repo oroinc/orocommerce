@@ -2,115 +2,87 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Unit\EventListenerExpressionLanguage;
 
-use Oro\Bundle\EntityBundle\Helper\FieldHelper;
-use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItem;
 use Oro\Bundle\PaymentBundle\Context\PaymentLineItemInterface;
 use Oro\Bundle\PaymentBundle\ExpressionLanguage\DecoratedProductLineItemFactory;
-use Oro\Bundle\PaymentBundle\ExpressionLanguage\ProductDecorator;
-use Oro\Bundle\PaymentBundle\QueryDesigner\SelectQueryConverter;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
+use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
+use Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory;
 
 class DecoratedProductLineItemFactoryTest extends \PHPUnit_Framework_TestCase
 {
-    use EntityTrait;
-
-    /**
-     * @var EntityFieldProvider
-     */
-    protected $fieldProvider;
-
-    /**
-     * @var SelectQueryConverter
-     */
-    protected $converter;
-
-    /**
-     * @var ManagerRegistry
-     */
-    protected $doctrine;
-
-    /**
-     * @var FieldHelper
-     */
-    protected $fieldHelper;
-
     /**
      * @var DecoratedProductLineItemFactory
      */
-    protected $factory;
+    private $testedDecoratedProductLineItemFactory;
+
+    /**
+     * @var VirtualFieldsProductDecoratorFactory|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $virtualFieldsProductDecoratorFactory;
 
     public function setUp()
     {
-        $this->converter = $this->getMockBuilder(SelectQueryConverter::class)
-            ->disableOriginalConstructor()->getMock();
+        $this->virtualFieldsProductDecoratorFactory = $this->createMock(VirtualFieldsProductDecoratorFactory::class);
 
-        $this->doctrine = $this->getMockBuilder(ManagerRegistry::class)
-            ->disableOriginalConstructor()->getMockForAbstractClass();
-
-        $this->fieldProvider = $this->getMockBuilder(EntityFieldProvider::class)
-            ->disableOriginalConstructor()->getMock();
-
-        $this->fieldHelper = $this->getMockBuilder(FieldHelper::class)
-            ->disableOriginalConstructor()->getMock();
-
-        $this->factory = new DecoratedProductLineItemFactory(
-            $this->fieldProvider,
-            $this->converter,
-            $this->doctrine,
-            $this->fieldHelper
+        $this->testedDecoratedProductLineItemFactory = new DecoratedProductLineItemFactory(
+            $this->virtualFieldsProductDecoratorFactory
         );
+    }
+
+    /**
+     * @return Product|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createProductMock()
+    {
+        return $this->createMock(Product::class);
+    }
+
+    /**
+     * @return PaymentLineItemInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createPaymentLineItemMock()
+    {
+        return $this->createMock(PaymentLineItemInterface::class);
     }
 
     public function testCreateLineItemWithDecoratedProduct()
     {
-        /** @var Product $product */
-        $product = $this->getEntity(
-            Product::class,
-            [
-                'id' => 1,
-            ]
-        );
-        $copiedLineItem = new PaymentLineItem(
-            [
-                PaymentLineItem::FIELD_PRODUCT => $product,
-            ]
-        );
-        $lineItems = [$copiedLineItem];
+        $paymentLineItemParams = [
+            PaymentLineItem::FIELD_PRICE => $this->createMock(Price::class),
+            PaymentLineItem::FIELD_PRODUCT_UNIT => $this->createMock(ProductUnit::class),
+            PaymentLineItem::FIELD_PRODUCT_UNIT_CODE => 'each',
+            PaymentLineItem::FIELD_QUANTITY => 20,
+            PaymentLineItem::FIELD_PRODUCT_HOLDER => $this->createMock(ProductHolderInterface::class),
+            PaymentLineItem::FIELD_PRODUCT_SKU => 'sku',
+        ];
+        $paymentLineItemMocks = [
+            $this->createPaymentLineItemMock(),
+            $this->createPaymentLineItemMock(),
+            $this->createPaymentLineItemMock(),
+        ];
+        $decoratedProductMock = $this->createProductMock();
+        $productToDecorate = $this->createProductMock();
 
-        $actualLineItem = $this->factory->createLineItemWithDecoratedProductByLineItem(
-            $lineItems,
-            $copiedLineItem
-        );
+        $this->virtualFieldsProductDecoratorFactory
+            ->expects($this->once())
+            ->method('createDecoratedProductByProductHolders')
+            ->with($paymentLineItemMocks, $decoratedProductMock)
+            ->willReturn($decoratedProductMock);
 
-        $expectedDecoratedProduct = new ProductDecorator(
-            $this->fieldProvider,
-            $this->converter,
-            $this->doctrine,
-            $this->fieldHelper,
-            array_map(
-                function (PaymentLineItemInterface $lineItem) {
-                    return $lineItem->getProduct();
-                },
-                $lineItems
-            ),
-            $product
-        );
+        $paymentLineItemParams[PaymentLineItem::FIELD_PRODUCT] = $productToDecorate;
+        $paymentLineItemToDecorate = new PaymentLineItem($paymentLineItemParams);
 
-        $expectedLineItem = new PaymentLineItem(
-            [
-                PaymentLineItem::FIELD_PRICE => $copiedLineItem->getPrice(),
-                PaymentLineItem::FIELD_PRODUCT_UNIT => $copiedLineItem->getProductUnit(),
-                PaymentLineItem::FIELD_PRODUCT_UNIT_CODE => $copiedLineItem->getProductUnitCode(),
-                PaymentLineItem::FIELD_QUANTITY => $copiedLineItem->getQuantity(),
-                PaymentLineItem::FIELD_PRODUCT_HOLDER => $copiedLineItem->getProductHolder(),
-                PaymentLineItem::FIELD_PRODUCT_SKU => $copiedLineItem->getProductSku(),
-                PaymentLineItem::FIELD_PRODUCT => $expectedDecoratedProduct,
-            ]
+        $paymentLineItemParams[PaymentLineItem::FIELD_PRODUCT] = $decoratedProductMock;
+        $expectedPaymentLineItem = new PaymentLineItem($paymentLineItemParams);
+
+        $actualLineItem = $this->testedDecoratedProductLineItemFactory->createLineItemWithDecoratedProductByLineItem(
+            $paymentLineItemMocks,
+            $paymentLineItemToDecorate
         );
 
-        static::assertEquals($expectedLineItem, $actualLineItem);
+        static::assertEquals($expectedPaymentLineItem, $actualLineItem);
     }
 }

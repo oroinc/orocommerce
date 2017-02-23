@@ -12,6 +12,7 @@ Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
     shipping_methods_configs_rule1:
         rule: '@rule1'
         currency: 'EUR'
+        organization: '@organization'
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination:
     germany_destination:

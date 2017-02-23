@@ -112,8 +112,10 @@ class LoadFlatRateIntegration extends AbstractFixture implements DependentFixtur
             ->setSortOrder(1);
 
         $shippingRule = new ShippingMethodsConfigsRule();
-        $shippingRule->setRule($rule);
-        $shippingRule->setCurrency('USD')
+
+        $shippingRule->setRule($rule)
+            ->setOrganization($this->getOrganization($manager))
+            ->setCurrency('USD')
             ->addMethodConfig($methodConfig);
 
         $manager->persist($shippingRule);

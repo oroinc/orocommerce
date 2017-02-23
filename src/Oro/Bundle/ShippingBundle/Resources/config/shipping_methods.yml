@@ -9,7 +9,6 @@ services:
             - "@oro_shipping.shipping_method.registry"
 
     oro_shipping.translator.shipping_method_label:
-        public: false
         class: 'Oro\Bundle\ShippingBundle\Translator\ShippingMethodLabelTranslator'
         arguments:
             - "@oro_shipping.formatter.shipping_method_label"
@@ -19,7 +18,6 @@ services:
         class: 'Oro\Bundle\ShippingBundle\Twig\ShippingMethodExtension'
         public: false
         arguments:
-            - "@oro_shipping.formatter.shipping_method_label"
-            - '@event_dispatcher'
+            - "@service_container"
         tags:
             - { name: twig.extension }

@@ -4,23 +4,23 @@ navigation:
             marketing_tab:
                 label:           'oro.cms.menu.marketing_tab.label'
                 uri:             '#'
+                position:        400
                 extras:
                     icon:        fa-book
-                    position:    400
 
             page_list:
                 label:           'oro.cms.page.entity_plural_label'
                 route:           'oro_cms_page_index'
+                position:        100
                 extras:
-                    position:    100
                     routes:      ['/^oro_cms_page/']
                     description: 'oro.cms.menu.page_list.description'
 
             login_page_list:
                 label:           'oro.cms.loginpage.entity_plural_label'
                 route:           'oro_cms_loginpage_index'
+                position:        101
                 extras:
-                    position:    101
                     routes:      ['/^oro_cms_loginpage/']
                     description: 'oro.cms.menu.loginpage_list.description'
 

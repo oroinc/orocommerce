@@ -4,6 +4,8 @@ namespace Oro\Bundle\RedirectBundle\Form\Type;
 
 use Oro\Bundle\EntityBundle\EntityProperty\UpdatedAtAwareInterface;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use Oro\Bundle\RedirectBundle\Helper\SlugifyFormHelper;
+
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -15,6 +17,19 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class LocalizedSlugType extends AbstractType
 {
     const NAME = 'oro_redirect_localized_slug';
+
+    /**
+     * @var SlugifyFormHelper
+     */
+    private $slugifyFormHelper;
+
+    /**
+     * @param SlugifyFormHelper $slugifyFormHelper
+     */
+    public function __construct(SlugifyFormHelper $slugifyFormHelper)
+    {
+        $this->slugifyFormHelper = $slugifyFormHelper;
+    }
 
     /**
      * {@inheritDoc}
@@ -50,11 +65,13 @@ class LocalizedSlugType extends AbstractType
             FormEvents::POST_SUBMIT,
             function (FormEvent $event) {
                 $form = $event->getForm();
-                if ($form->getParent()) {
-                    $data = $form->getParent()->getData();
-                    if ($data instanceof UpdatedAtAwareInterface) {
-                        $data->setUpdatedAt(new \DateTime('now', new \DateTimeZone('UTC')));
-                    }
+                while ($form->getParent()) {
+                    $form = $form->getParent();
+                }
+
+                $data = $form->getData();
+                if ($data instanceof UpdatedAtAwareInterface) {
+                    $data->setUpdatedAt(new \DateTime('now', new \DateTimeZone('UTC')));
                 }
             }
         );
@@ -66,10 +83,10 @@ class LocalizedSlugType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults([
-            'slugify_component' => 'ororedirect/js/app/components/localized-field-slugify-component',
+            'slug_suggestion_enabled' => true,
             'slugify_route' => 'oro_api_slugify_slug',
         ]);
-        $resolver->setRequired('source_field');
+        $resolver->setDefined('source_field');
     }
 
     /**
@@ -77,11 +94,6 @@ class LocalizedSlugType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
-        $view->vars['slugify_component'] = $options['slugify_component'];
-        $view->vars['slugify_component_options'] = [
-            'source' => '[name^="'.$view->parent->vars['full_name'].'['.$options['source_field'].']'.'[values]"]',
-            'target' => '[name^="'.$view->vars['full_name'].'[values]"]',
-            'slugify_route' => $options['slugify_route'],
-        ];
+        $this->slugifyFormHelper->addSlugifyOptionsLocalized($view, $options);
     }
 }

@@ -176,6 +176,7 @@ class ManageInventoryFallbackTest extends WebTestCase
             $formValues['oro_catalog_category']['manageInventory']['fallback'] = $fallbackValue;
         }
 
+        $formValues['oro_catalog_category']['inventoryThreshold']['useFallback'] = '1';
         $formValues['oro_catalog_category']['_token'] =
             $this->getContainer()->get('security.csrf.token_manager')->getToken('category');
 

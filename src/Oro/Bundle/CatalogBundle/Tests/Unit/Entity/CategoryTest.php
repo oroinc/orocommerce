@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\CatalogBundle\Tests\Unit\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
+use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Bundle\CatalogBundle\Entity\CategoryDefaultProductOptions;
 use Oro\Bundle\CatalogBundle\Tests\Unit\Entity\Stub\Category;
@@ -39,7 +41,8 @@ class CategoryTest extends \PHPUnit_Framework_TestCase
             ['parentCategory', null],
             ['createdAt', $date, false],
             ['updatedAt', $date, false],
-            ['defaultProductOptions', new CategoryDefaultProductOptions()]
+            ['defaultProductOptions', new CategoryDefaultProductOptions()],
+            ['slugPrototypesWithRedirect', new SlugPrototypesWithRedirect(new ArrayCollection(), false), false],
         ];
 
         $this->assertPropertyAccessors(new Category(), $properties);
