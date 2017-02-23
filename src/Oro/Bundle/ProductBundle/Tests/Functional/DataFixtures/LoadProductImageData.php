@@ -36,7 +36,7 @@ class LoadProductImageData extends AbstractFixture implements DependentFixtureIn
      */
     public function load(ObjectManager $manager)
     {
-        foreach (self::$products as $productReference) {
+        foreach (static::$products as $productReference) {
             /** @var Product $product */
             $product = $this->getReference($productReference);
             $image = new File();
