@@ -125,7 +125,7 @@ PaymentTermBundle
     - Class `Oro\Bundle\PaymentTermBundle\Method\View\PaymentTermView` now has two additional methods due to implementing `Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface`
         getAdminLabel() is used to display labels in admin panel
         getPaymentMethodIdentifier() used to properly display different methods in frontend
-    Added multiple classes to implement payment through integration and most of them have interfaces, so they are extendable through composition:
+    - Added multiple classes to implement payment through integration and most of them have interfaces, so they are extendable through composition:
         - `Oro\Bundle\PaymentTermBundle\Entity\Repository\PaymentTermSettingsRepository`
         - `Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermSettingsType`
         - `Oro\Bundle\PaymentTermBundle\Integration\PaymentTermChannelType`
