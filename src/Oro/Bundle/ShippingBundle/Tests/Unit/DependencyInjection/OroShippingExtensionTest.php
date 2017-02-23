@@ -34,18 +34,13 @@ class OroShippingExtensionTest extends ExtensionTestCase
             'oro_shipping.formatter.shipping_method_label',
             'oro_shipping.twig.shipping_method_extension',
             'oro_shipping.shipping_price.provider',
-            'oro_shipping.shipping_price.provider_enabled_methods_decorator',
             'oro_shipping.provider.measure_units.conversion',
             'oro_shipping.condition.has_applicable_shipping_methods',
             'oro_shipping.method.view_factory',
             'oro_shipping.datagrid.shipping_rule_actions_visibility_provider',
             'oro_shipping.converter.shipping_context_to_rule_values',
             'oro_shipping.listener.shipping_rule',
-            'oro_shipping.helper.filtered_datagrid_route',
-            'oro_shipping.validator.shipping_rule_enabled',
-            'oro_shipping.checker.shipping_method_enabled',
-            'oro_shipping.checker.shipping_rule_enabled',
-            'oro_shipping.provider.shipping_method_choices'
+            'oro_shipping.helper.filtered_datagrid_route'
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 
