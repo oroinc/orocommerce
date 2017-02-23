@@ -14,18 +14,21 @@ define(function(require) {
 
         elements: {
             fields: '[data-name="field__quantity"]:enabled',
+            fieldsColumn: '[data-name="field__quantity"]:enabled',
             totalQty: '[data-role="total-quantity"]',
             totalPrice: '[data-role="total-price"]',
             submitButtons: '[data-shoppingList],[data-toggle="dropdown"]'
         },
 
         elementsEvents: {
-            'fields': ['input', 'setTotal']
+            'fields': ['input', 'setTotal'],
+            'fieldsColumn': ['input', 'setTotalColumn']
         },
 
         total: {
             price: 0,
-            quantity: 0
+            quantity: 0,
+            quantityColumn: 0
         },
 
         prices: null,
@@ -103,6 +106,27 @@ define(function(require) {
             this.getElement('totalPrice').text(
                 NumberFormatter.formatCurrency(this.total.price)
             );
+        },
+        setTotalColumn: function (event) {
+
+            for (var i=2; i<8; i++) {
+                var totalColumn  = 0,
+                    columnsTotal = $('.matrix-order-widget__grid-footer-total');
+
+                $('.matrix-order-widget__grid>tbody>tr>td:nth-child(' + i + ')').each(function(){
+                    totalColumn += parseInt($(this).find('input').val()) || 0;
+                });
+
+                $('.matrix-order-widget__grid>tfoot>tr>td:nth-child(' + i + ')').children(columnsTotal).html(totalColumn);
+
+                $(columnsTotal).each(function(){
+                    if ($(this).text() == 0) {
+                        $(this).removeClass('selected');
+                    } else {
+                        $(this).addClass('selected');
+                    }
+                });
+            }
         }
     }));
     return ProductPricesMatrixView;

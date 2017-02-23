@@ -32,5 +32,15 @@
             </tr>
         {% endfor %}
     </tbody>
+    <tfoot class="matrix-order-widget__grid-footer">
+        <tr>
+            <td>Qty</td>
+            {% for column in form.rows[0].columns %}
+            <td>
+                <div class="matrix-order-widget__grid-footer-total">0</div>
+            </td>
+            {% endfor %}
+        </tr>
+    </tfoot>
 </table>
 {% endblock %}

@@ -75,11 +75,14 @@
     justify-content: center;
   }
 
-  &__grid-body {
+  &__grid-body,
+  &__grid-footer{
     td {
       padding: 6px 26px 6px 0;
 
       border-top: 1px solid get-color('additional', 'light');
+
+      text-align: center;
 
       @include breakpoint('mobile-landscape') {
         padding-right: 5px;
@@ -88,11 +91,20 @@
       &:first-child {
         padding-left: 11px;
         padding-right: 20px;
+        text-align: left;
 
         @include breakpoint('mobile-landscape') {
           padding-left: 5px;
           padding-right: 5px;
         }
+      }
+
+      .input{
+        padding-left: 5px;
+        padding-right: 5px;
+        min-width: 30px;
+
+        text-align: center;
       }
     }
 
@@ -201,6 +213,22 @@
 
     .ui-dialog-titlebar-close {
       font-size: 0;
+    }
+  }
+  &__grid-footer {
+    background: get-color('additional', 'base');
+
+    td {
+      text-transform: uppercase;
+    }
+
+    &-total{
+      color: #d7d7d7;
+      padding: 10px 0;
+
+      &.selected{
+        color: get-color('additional', 'dark');
+      }
     }
   }
 }
