@@ -34,8 +34,7 @@ oro:
             variable:
                 order_approval_threshold:
                     label: 'Order Approval Threshold'
-                    tooltip:
-                        label: 'Orders with subtotals exceeding the specified value will have to be reviewed and approved by users with the "Approve orders that exceed the allowable amount" permission.'
+                    tooltip: 'Orders with subtotals exceeding the specified value will have to be reviewed and approved by users with the "Approve orders that exceed the allowable amount" permission.'
             attribute:
                 request_approval_notes:
                     label: Notes
