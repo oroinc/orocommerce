@@ -112,3 +112,21 @@ services:
             - '@event_dispatcher'
             - '@oro_entity.doctrine_helper'
             - '@oro_featuretoggle.checker.feature_checker'
+
+    oro_seo.provider.product_url_items_provider:
+        class: Oro\Bundle\SEOBundle\Provider\ProductUrlItemsProvider
+        parent: oro_seo.provider.abstract_url_items_provider
+        tags:
+            - { name: oro_seo.sitemap_url_provider }
+
+    oro_seo.provider.category_url_items_provider:
+        class: Oro\Bundle\SEOBundle\Provider\CategoryUrlItemsProvider
+        parent: oro_seo.provider.abstract_url_items_provider
+        tags:
+            - { name: oro_seo.sitemap_url_provider }
+
+    oro_seo.provider.cms_page_url_items_provider:
+        class: Oro\Bundle\SEOBundle\Provider\CmsPageUrlItemsProvider
+        parent: oro_seo.provider.abstract_url_items_provider
+        tags:
+            - { name: oro_seo.sitemap_url_provider }
