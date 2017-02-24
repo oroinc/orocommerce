@@ -5,6 +5,16 @@ Tree Component
 --------------
 - `Oro\Component\Tree\Handler\AbstractTreeHandler`:
     - added method `getTreeItemList`
+    
+WebCatalog Component
+-------------
+- Interface `Oro\Component\WebCatalog\Entity\ContentNodeInterface`
+    - add `getWebCatalog` method
+- Interface `Oro\Component\WebCatalog\Entity\ContentVariantInterface`
+    - add `getNode` method
+- New Interface `Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface`
+    - provide information about assigned WebCatalogs to given entities (passed as an argument)
+    - provide information about usage of WebCatalog by id
 
 CatalogBundle
 -------------
