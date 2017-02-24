@@ -145,6 +145,6 @@ class LoadFlatRateIntegration extends AbstractFixture implements
      */
     private function getFlatRateIdentifier(Channel $channel)
     {
-        return $this->container->get('oro_flat_rate.method.identifier_generator.method')->generateIdentifier($channel);
+        return $this->container->get('oro_flat_rate_shipping.method.identifier_generator.method')->generateIdentifier($channel);
     }
 }

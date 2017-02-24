@@ -5,10 +5,24 @@ namespace Oro\Bundle\ShippingBundle\Entity\Repository;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 
 class ShippingMethodsConfigsRuleRepository extends EntityRepository
 {
+    /**
+     * @var AclHelper
+     */
+    private $aclHelper;
+
+    /**
+     * @param AclHelper $aclHelper
+     */
+    public function setAclHelper(AclHelper $aclHelper)
+    {
+        $this->aclHelper = $aclHelper;
+    }
+
     /**
      * @param AddressInterface $shippingAddress
      * @param string $currency
@@ -16,7 +30,7 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
      */
     public function getByDestinationAndCurrency(AddressInterface $shippingAddress, $currency)
     {
-        return $this->getByCurrencyQuery($currency)
+        $query = $this->getByCurrencyQuery($currency)
             ->leftJoin('methodsConfigsRule.destinations', 'destination')
             ->leftJoin('destination.region', 'region')
             ->leftJoin('destination.postalCodes', 'postalCode')
@@ -26,8 +40,20 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
             ->setParameter('country', $shippingAddress->getCountryIso2())
             ->setParameter('regionCode', $shippingAddress->getRegionCode())
             ->setParameter('postalCodes', explode(',', $shippingAddress->getPostalCode()))
-            ->getQuery()->execute()
         ;
+
+        return $this->aclHelper->apply($query)->getResult();
+    }
+
+    /**
+     * @param string $currency
+     * @return array|ShippingMethodsConfigsRule[]
+     */
+    public function getByCurrency($currency)
+    {
+        $query = $this->getByCurrencyQuery($currency);
+
+        return $this->aclHelper->apply($query)->getResult();
     }
 
     /**
@@ -36,11 +62,12 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
      */
     public function getByCurrencyWithoutDestination($currency)
     {
-        return $this->getByCurrencyQuery($currency)
+        $query = $this->getByCurrencyQuery($currency)
             ->leftJoin('methodsConfigsRule.destinations', 'destination')
             ->andWhere('destination.id is null')
-            ->getQuery()
-            ->execute();
+        ;
+
+        return $this->aclHelper->apply($query)->getResult();
     }
 
     /**
@@ -84,12 +111,15 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
      */
     private function getByCurrencyQuery($currency)
     {
-        return $this->createQueryBuilder('methodsConfigsRule')
+        $queryBuilder = $this->createQueryBuilder('methodsConfigsRule');
+
+        return $queryBuilder
             ->addSelect('methodConfigs', 'typeConfigs')
             ->leftJoin('methodsConfigsRule.methodConfigs', 'methodConfigs')
             ->leftJoin('methodConfigs.typeConfigs', 'typeConfigs')
             ->where('methodsConfigsRule.currency = :currency')
             ->setParameter('currency', $currency)
+            ->orderBy($queryBuilder->expr()->asc('methodsConfigsRule.id'))
         ;
     }
 }

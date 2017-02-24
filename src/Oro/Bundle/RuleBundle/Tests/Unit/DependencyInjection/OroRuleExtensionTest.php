@@ -28,6 +28,7 @@ class OroRuleExtensionTest extends ExtensionTestCase
             'oro_rule.rule_filtration.enabled_decorator',
             'oro_rule.rule_filtration.stop_processing_decorator',
             'oro_rule.rule_filtration.expression_language_decorator',
+            'oro_rule.action.visibility_provider',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }

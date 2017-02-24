@@ -11,9 +11,6 @@ use Oro\Bundle\ShippingBundle\Form\Extension\ProductFormExtension;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Form;
 
-/**
- * @dbIsolation
- */
 class ProductControllerTest extends WebTestCase
 {
     protected function setUp()

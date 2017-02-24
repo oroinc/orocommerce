@@ -8,9 +8,6 @@ use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
-/**
- * @dbIsolation
- */
 class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerTest
 {
     /**

@@ -26,7 +26,6 @@ use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\Intl\Intl;
 
 /**
- * @dbIsolation
  * @group CommunityEdition
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  * @group CommunityEdition

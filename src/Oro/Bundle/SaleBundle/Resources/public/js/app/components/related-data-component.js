@@ -33,8 +33,7 @@ define(function(require) {
         /**
          * @param accountUser
          */
-        onAccountUserChange: function(accountUser)
-        {
+        onAccountUserChange: function(accountUser) {
             this.loadRelatedData(accountUser);
 
             mediator.trigger('entry-point:quote:trigger');

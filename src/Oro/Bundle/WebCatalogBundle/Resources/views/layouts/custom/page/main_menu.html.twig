@@ -1,0 +1,51 @@
+{% block _web_catalog_menu_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~data-page-component-options': {
+            viewport: {
+                maxScreenType: 'any'
+            }
+        }
+    }) %}
+
+    {{ parent_block_widget(block, {attr: attr}) }}
+{% endblock %}
+
+{% block _web_catalog_menu_second_level_item_head_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        viewport: {
+            maxScreenType: 'any'
+        }
+    }) %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
+{% block _web_catalog_menu_second_level_sale_head_widget %}
+    {% set attr = layout_attr_defaults({
+        viewport: {
+            maxScreenType: 'any'
+        }
+    }, attr) %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
+{% block _web_catalog_menu_second_level_sale_mega_widget %}
+    {% set attr = layout_attr_defaults({
+        viewport: {
+            maxScreenType: 'any'
+        }
+    }, attr) %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
+{% block _web_catalog_menu_second_level_item_mega_widget %}
+    {% set attr = layout_attr_defaults({
+        viewport: {
+            maxScreenType: 'any'
+        }
+    }, attr) %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}

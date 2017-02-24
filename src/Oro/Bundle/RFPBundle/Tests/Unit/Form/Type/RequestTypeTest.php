@@ -23,7 +23,6 @@ use Oro\Bundle\RFPBundle\Form\Type\RequestType;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductType;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductCollectionType;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductItemCollectionType;
-use Oro\Bundle\RFPBundle\Form\Type\RequestStatusSelectType;
 
 class RequestTypeTest extends AbstractTest
 {
@@ -453,13 +452,6 @@ class RequestTypeTest extends AbstractTest
             CustomerUserSelectType::NAME
         );
 
-        $requestStatusSelectType = new StubEntityType(
-            [
-                1 => $this->getEntity('Oro\Bundle\RFPBundle\Entity\RequestStatus', 1),
-            ],
-            RequestStatusSelectType::NAME
-        );
-
         $requestProductType = new RequestProductType($productUnitLabelFormatter);
         $requestProductType->setDataClass('Oro\Bundle\RFPBundle\Entity\RequestProduct');
 
@@ -479,7 +471,6 @@ class RequestTypeTest extends AbstractTest
                     $customerUserSelectType->getName()       => $customerUserSelectType,
                     $currencySelectionType->getName()       => $currencySelectionType,
                     $requestProductItemType->getName()      => $requestProductItemType,
-                    $requestStatusSelectType->getName()     => $requestStatusSelectType,
                     $productUnitSelectionType->getName()    => $productUnitSelectionType,
                     $customerMultiSelectType->getName()      => $customerMultiSelectType,
                     QuantityTypeTrait::$name                => $this->getQuantityType(),

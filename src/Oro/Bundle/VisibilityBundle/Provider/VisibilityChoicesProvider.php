@@ -6,6 +6,7 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 use Doctrine\Bundle\DoctrineBundle\Registry;
 
+use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 class VisibilityChoicesProvider
@@ -65,7 +66,7 @@ class VisibilityChoicesProvider
 
     /**
      * @param Product $product
-     * @return null|\Oro\Bundle\CatalogBundle\Entity\Category
+     * @return null|Category
      */
     protected function getProductCategory(Product $product)
     {

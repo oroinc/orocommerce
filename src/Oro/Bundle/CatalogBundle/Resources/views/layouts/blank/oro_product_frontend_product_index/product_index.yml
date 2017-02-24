@@ -1,0 +1,26 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'product_index.html.twig'
+        - '@addTree':
+            items:
+                breadcrumbs:
+                    blockType: breadcrumbs
+                    options:
+                        breadcrumbs: '=data["category"].getBreadcrumbs()'
+                breadcrumbs_filters:
+                    blockType: block
+                category_picture:
+                    blockType: category
+                    options:
+                        category: '=data["category"].getCurrentCategory()'
+                category_title:
+                    blockType: text
+                    options:
+                        text: '=data["locale"].getLocalizedValue(data["category"].getCurrentCategory().getTitles())'
+            tree:
+                page_main_header:
+                    category_picture: ~
+                    breadcrumbs:
+                        breadcrumbs_filters: ~
+                    category_title: ~

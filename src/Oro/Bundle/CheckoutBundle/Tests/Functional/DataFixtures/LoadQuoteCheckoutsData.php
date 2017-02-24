@@ -4,13 +4,14 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
-use Oro\Bundle\PaymentTermBundle\Method\PaymentTerm;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteProductDemandData;
 
 class LoadQuoteCheckoutsData extends AbstractLoadCheckouts
 {
     const CHECKOUT_1 = 'checkout.1';
     const CHECKOUT_2 = 'checkout.2';
+
+    const PAYMENT_METHOD = 'payment_term';
 
     /**
      * {@inheritDoc}
@@ -21,12 +22,12 @@ class LoadQuoteCheckoutsData extends AbstractLoadCheckouts
             self::CHECKOUT_1 => [
                 'customerUser' => LoadCustomerUserData::EMAIL,
                 'source' => LoadQuoteProductDemandData::QUOTE_DEMAND_1,
-                'checkout' => ['payment_method' => PaymentTerm::TYPE]
+                'checkout' => ['payment_method' => self::PAYMENT_METHOD]
             ],
             self::CHECKOUT_2 => [
                 'customerUser' => LoadCustomerUserData::LEVEL_1_EMAIL,
                 'source' => LoadQuoteProductDemandData::QUOTE_DEMAND_2,
-                'checkout' => ['payment_method' => PaymentTerm::TYPE]
+                'checkout' => ['payment_method' => self::PAYMENT_METHOD]
             ]
         ];
     }
@@ -56,7 +57,7 @@ class LoadQuoteCheckoutsData extends AbstractLoadCheckouts
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getDependencies()
     {

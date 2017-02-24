@@ -6,6 +6,9 @@ use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
@@ -16,8 +19,11 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 
 class LoadCheckoutACLData extends AbstractFixture implements
     FixtureInterface,
+    ContainerAwareInterface,
     DependentFixtureInterface
 {
+    use ContainerAwareTrait;
+
     const CHECKOUT_ACC_1_USER_LOCAL = 'checkout_customer1_user_local';
     const CHECKOUT_ACC_1_USER_BASIC = 'checkout_customer1_user_basic';
     const CHECKOUT_ACC_1_USER_DEEP = 'checkout_customer1_user_deep';
@@ -66,17 +72,21 @@ class LoadCheckoutACLData extends AbstractFixture implements
      */
     public function load(ObjectManager $manager)
     {
-        foreach (self::$checkouts as $name => $checkout) {
-            $this->createOrder($manager, $name, $checkout);
-        }
+        /* @var $workflowManager WorkflowManager */
+        $workflowManager = $this->container->get('oro_workflow.manager');
 
-        $manager->flush();
+        foreach (self::$checkouts as $name => $checkout) {
+            $checkout = $this->createOrder($manager, $name, $checkout);
+
+            $workflowManager->startWorkflow('b2b_flow_checkout', $checkout);
+        }
     }
 
     /**
      * @param ObjectManager $manager
      * @param string $name
      * @param array $checkoutData
+     * @return Checkout
      */
     protected function createOrder(ObjectManager $manager, $name, array $checkoutData)
     {
@@ -102,6 +112,9 @@ class LoadCheckoutACLData extends AbstractFixture implements
             ->setCustomer($customerUser->getCustomer())
             ->setCustomerUser($customerUser);
         $manager->persist($checkout);
+        $manager->flush();
         $this->addReference($name, $checkout);
+
+        return $checkout;
     }
 }

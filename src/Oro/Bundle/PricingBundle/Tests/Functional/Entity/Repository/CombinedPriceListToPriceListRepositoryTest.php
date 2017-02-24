@@ -8,9 +8,6 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
-/**
- * @dbIsolation
- */
 class CombinedPriceListToPriceListRepositoryTest extends WebTestCase
 {
     protected function setUp()

@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\AlternativeCheckoutBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Bundle\AlternativeCheckoutBundle\Tests\Functional\DataFixtures\LoadAlternativeCheckouts;
+use Oro\Bundle\AlternativeCheckoutBundle\Tests\Functional\DataFixtures\LoadQuoteCheckoutsData;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadShoppingListsCheckoutsData;
 use Oro\Bundle\DataGridBundle\Extension\Sorter\OrmSorterExtension;
@@ -15,9 +15,6 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPr
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 
-/**
- * @dbIsolation
- */
 class OrderControllerTest extends FrontendWebTestCase
 {
     const GRID_NAME      = 'frontend-checkouts-grid';
@@ -41,7 +38,7 @@ class OrderControllerTest extends FrontendWebTestCase
         $this->loadFixtures(
             [
                 LoadOrders::class,
-                LoadAlternativeCheckouts::class,
+                LoadQuoteCheckoutsData::class,
                 LoadShoppingListsCheckoutsData::class,
                 LoadShoppingListLineItems::class,
                 LoadCombinedProductPrices::class
@@ -54,7 +51,7 @@ class OrderControllerTest extends FrontendWebTestCase
         $this->client->request('GET', '/'); // any page to authorize a user
 
         $checkouts = $this->getDatagridData(self::GRID_NAME);
-        $this->assertCount(5, $checkouts);
+        $this->assertCount(4, $checkouts);
     }
 
     /**
@@ -90,15 +87,15 @@ class OrderControllerTest extends FrontendWebTestCase
                     /** @var Subtotal $subtotal */
                     $subtotal = $propertyAccessor->getValue($sourceEntity, $columnName);
 
-                    $formattedPrice = $container->get('oro_locale.twig.number')->formatCurrency(
+                    $formattedPrice = $container->get('oro_locale.formatter.number')->formatCurrency(
                         $subtotal->getAmount(),
-                        ['currency' => $subtotal->getCurrency()]
+                        $subtotal->getCurrency()
                     );
                 } else {
                     $currencyField  = property_exists($sourceEntity, 'currency') ? 'currency' : 'totalCurrency';
-                    $formattedPrice = $container->get('oro_locale.twig.number')->formatCurrency(
+                    $formattedPrice = $container->get('oro_locale.formatter.number')->formatCurrency(
                         $propertyAccessor->getValue($sourceEntity, $columnName),
-                        ['currency' => $propertyAccessor->getValue($sourceEntity, $currencyField)]
+                        $propertyAccessor->getValue($sourceEntity, $currencyField)
                     );
                 }
 
@@ -118,7 +115,7 @@ class OrderControllerTest extends FrontendWebTestCase
                 'columnName'        => 'subtotal',
                 'value'             => self::SUBTOTAL_VALUE,
                 'filterType'        => NumberFilterTypeInterface::TYPE_GREATER_THAN,
-                'expectedCheckouts' => ['checkout.1', 'alternative.checkout.1', 'alternative.checkout.2']
+                'expectedCheckouts' => ['checkout.1', 'alternative.checkout.2']
             ]
         ];
     }

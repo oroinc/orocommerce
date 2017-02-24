@@ -6,15 +6,15 @@ use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 
-use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
-use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIteratorInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerGroupFallback;
 
 class PriceListCustomerGroupFallbackRepository extends EntityRepository
 {
     /**
      * @param int $websiteId
-     * @return BufferedQueryResultIterator|array
+     * @return BufferedQueryResultIteratorInterface|array
      */
     public function getCustomerIdentityByWebsite($websiteId)
     {
@@ -41,7 +41,7 @@ class PriceListCustomerGroupFallbackRepository extends EntityRepository
         ->setParameter('website', $websiteId)
         ->setParameter('fallbackGroup', PriceListCustomerGroupFallback::WEBSITE);
         
-        $iterator = new BufferedQueryResultIterator($qb);
+        $iterator = new BufferedIdentityQueryResultIterator($qb);
         $iterator->setHydrationMode(Query::HYDRATE_SCALAR);
 
         return $iterator;

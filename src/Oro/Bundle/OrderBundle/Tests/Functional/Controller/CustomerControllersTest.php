@@ -8,9 +8,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
 
-/**
- * @dbIsolation
- */
 class CustomerControllersTest extends WebTestCase
 {
     /** @var $customerUser CustomerUser */

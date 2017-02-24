@@ -2,11 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\ImportExport;
 
-use Akeneo\Bundle\BatchBundle\Job\DoctrineJobRepository as BatchJobRepository;
-
-use Symfony\Component\DomCrawler\Form;
-
 use Oro\Bundle\ImportExportBundle\Async\ExportMessageProcessor;
+
 use Oro\Bundle\ImportExportBundle\Processor\ProcessorRegistry;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueExtension;
 use Oro\Bundle\NotificationBundle\Async\Topics;
@@ -14,9 +11,9 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\MessageQueue\Transport\Null\NullMessage;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
+use Symfony\Component\DomCrawler\Form;
 
 /**
- * @dbIsolation
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class ImportExportTest extends WebTestCase
@@ -47,35 +44,6 @@ class ImportExportTest extends WebTestCase
         $this->priceList = $this->getReference('price_list_1');
     }
 
-    /**
-     * Delete data required because there is commit to job repository in import/export controller action
-     * Please use
-     *   $this->getContainer()->get('akeneo_batch.job_repository')->getJobManager()->beginTransaction();
-     *   $this->getContainer()->get('akeneo_batch.job_repository')->getJobManager()->rollback();
-     *   $this->getContainer()->get('akeneo_batch.job_repository')->getJobManager()->getConnection()->clear();
-     * if you don't use controller
-     */
-    protected function tearDown()
-    {
-        // clear DB from separate connection
-        $batchJobManager = $this->getBatchJobManager();
-        $batchJobManager->createQuery('DELETE AkeneoBatchBundle:JobInstance')->execute();
-        $batchJobManager->createQuery('DELETE AkeneoBatchBundle:JobExecution')->execute();
-        $batchJobManager->createQuery('DELETE AkeneoBatchBundle:StepExecution')->execute();
-        
-        parent::tearDown();
-    }
-
-    /**
-     * @return \Doctrine\ORM\EntityManager
-     */
-    protected function getBatchJobManager()
-    {
-        /** @var BatchJobRepository $batchJobRepository */
-        $batchJobRepository = $this->getContainer()->get('akeneo_batch.job_repository');
-        return $batchJobRepository->getJobManager();
-    }
-
     public function testShouldExportData()
     {
         $this->client->followRedirects(false);
@@ -97,13 +65,9 @@ class ImportExportTest extends WebTestCase
         $this->assertCount(1, $data);
         $this->assertTrue($data['success']);
 
-        $filePath = $this->processExportMessage();
-
-        $content = file_get_contents($filePath);
+        $content = $this->processExportMessage();
         $content = str_getcsv($content, "\n", '"', '"');
         $this->assertCount(9, $content);
-
-        unlink($filePath); // remove trash
     }
 
     public function testShouldExportCorrectDataWithRelations()
@@ -131,7 +95,6 @@ class ImportExportTest extends WebTestCase
         $this->assertTrue($data['success']);
 
         $filePath = $this->processExportMessage();
-
         $locator = $this->getContainer()->get('file_locator');
         $this->assertFileEquals(
             $locator->locate(
@@ -209,7 +172,7 @@ class ImportExportTest extends WebTestCase
         $this->assertErrors(
             $strategy,
             '@OroPricingBundle/Tests/Functional/ImportExport/data/invalid_product_unit.csv',
-            'Error in row #1. Unit Code: Unit "box" is not allowed for product "product-1".'
+            'Error in row #1. Unit Code: Unit "box" is not allowed for product "product.1".'
         );
     }
 
@@ -409,7 +372,6 @@ class ImportExportTest extends WebTestCase
     {
         $sentMessages = $this->getSentMessages();
         $exportMessageData = reset($sentMessages);
-        $this->tearDownMessageCollector();
 
         $message = new NullMessage();
         $message->setMessageId('abc');
@@ -443,13 +405,9 @@ class ImportExportTest extends WebTestCase
         $result = $this->client->getResponse();
 
         $this->assertResponseStatusCodeEquals($result, 200);
-        $this->assertResponseContentTypeEquals($result, 'text/csv');
-        $this->assertStringStartsWith(
-            'attachment; filename="oro_pricing_product_price_',
-            $result->headers->get('Content-Disposition')
-        );
+        $this->assertResponseContentTypeEquals($result, 'text/csv; charset=UTF-8');
 
-        return $result->getFile()->getPathname();
+        return $result->getContent();
     }
 
     /**

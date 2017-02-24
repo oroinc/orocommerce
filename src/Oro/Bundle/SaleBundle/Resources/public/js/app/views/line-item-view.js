@@ -9,7 +9,6 @@ define(function(require) {
     var LoadingMaskView = require('oroui/js/app/views/loading-mask-view');
     var mediator = require('oroui/js/mediator');
     var routing = require('routing');
-    var messenger = require('oroui/js/messenger');
     require('jquery.validate');
 
     /**
@@ -229,8 +228,7 @@ define(function(require) {
             this.$addItemButton.toggle(enabled);
         },
 
-        removeOfferRow: function()
-        {
+        removeOfferRow: function() {
             mediator.trigger('entry-point:quote:trigger');
         },
 
@@ -246,7 +244,7 @@ define(function(require) {
          */
         entryPointTriggers: function(fields) {
             _.each(fields, function(fields) {
-                _.each(fields, function(field){
+                _.each(fields, function(field) {
                     $(field).attr('data-entry-point-trigger', true);
                 });
             });
@@ -333,10 +331,7 @@ define(function(require) {
                     complete: function() {
                         self.loadingMask.hide();
                     },
-                    error: function(xhr) {
-                        self.loadingMask.hide();
-                        messenger.showErrorMessage(__(self.options.errorMessage), xhr.responseJSON);
-                    }
+                    errorHandlerMessage: __(this.options.errorMessage)
                 });
             }
         },

@@ -1,0 +1,3 @@
+BUYER:
+    permissions:
+        entity|Oro\Bundle\CheckoutBundle\Entity\Checkout: [VIEW_BASIC, CREATE_BASIC, EDIT_BASIC, DELETE_BASIC]

@@ -1,0 +1,39 @@
+{% block _category_picture_widget %}
+    {% import 'OroProductBundle::image_macros.html.twig' as Image %}
+
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' category-picture__image',
+        alt: category.defaultTitle
+    }) %}
+
+    {% if category.largeImage %}
+        {% set attr = layout_attr_defaults(attr, {
+            src: Image.url(category.largeImage, 'product_original')
+        }) %}
+
+        <div class="category-picture">
+            <img {{ block('block_attributes') }}>
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block _breadcrumbs_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~data-page-component-module': ' oroproduct/js/app/components/breadcrumbs-navigation-block'
+    }) %}
+    {{ block_widget(block) }}
+{% endblock %}
+
+{% block _breadcrumbs_filters_widget %}
+    <span class="filters-info"></span>
+{% endblock %}
+
+{% block _category_title_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' category-title'
+    }) %}
+
+    <h1 {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </h1>
+{% endblock %}

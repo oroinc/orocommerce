@@ -7,8 +7,6 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SaleBundle\EventListener\CustomerViewListener;
@@ -16,6 +14,9 @@ use Oro\Bundle\SaleBundle\EventListener\CustomerViewListener;
 class CustomerViewListenerTest extends FormViewListenerTestCase
 {
     const RENDER_HTML = 'test';
+
+    const CUSTOMER_VIEW_TEMPLATE = CustomerViewListener::CUSTOMER_VIEW_TEMPLATE;
+    const CUSTOMER_USER_VIEW_TEMPLATE = CustomerViewListener::CUSTOMER_USER_VIEW_TEMPLATE;
 
     /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject */
     protected $requestStack;
@@ -31,9 +32,6 @@ class CustomerViewListenerTest extends FormViewListenerTestCase
 
     /** @var BeforeListRenderEvent|\PHPUnit_Framework_MockObject_MockObject */
     protected $event;
-
-    /** @var WebsiteProviderInterface|\PHPUnit_Framework_MockObject_MockObject */
-    protected $websiteProvider;
 
     protected function setUp()
     {
@@ -60,12 +58,6 @@ class CustomerViewListenerTest extends FormViewListenerTestCase
             $this->doctrineHelper,
             $this->requestStack
         );
-
-        $this->websiteProvider = $this->getMockBuilder(WebsiteProviderInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $website = new Website();
-        $this->websiteProvider->method('getWebsites')->willReturn([$website]);
     }
 
     public function testOnCustomerViewGetsIgnoredIfNoRequest()
@@ -113,7 +105,7 @@ class CustomerViewListenerTest extends FormViewListenerTestCase
             ->method('getEnvironment');
         $this->env->expects($this->once())
             ->method('render')
-            ->with('OroSaleBundle:Customer:quote_view.html.twig', ['entity' => $customer]);
+            ->with(static::CUSTOMER_VIEW_TEMPLATE, ['entity' => $customer]);
         $scrollData = $this->getScrollData();
         $scrollData->expects($this->once())
             ->method('addSubBlockData')
@@ -137,7 +129,7 @@ class CustomerViewListenerTest extends FormViewListenerTestCase
             ->method('getEnvironment');
         $this->env->expects($this->once())
             ->method('render')
-            ->with('OroSaleBundle:CustomerUser:quote_view.html.twig', ['entity' => $customerUser]);
+            ->with(static::CUSTOMER_USER_VIEW_TEMPLATE, ['entity' => $customerUser]);
         $scrollData = $this->getScrollData();
         $scrollData->expects($this->once())
             ->method('addSubBlockData')

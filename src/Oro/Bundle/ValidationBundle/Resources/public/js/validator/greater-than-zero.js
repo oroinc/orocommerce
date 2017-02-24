@@ -1,6 +1,6 @@
 /*global define*/
 define(['underscore', 'orotranslation/js/translator', 'orolocale/js/formatter/number'
-], function (_, __, numberFormatter) {
+], function(_, __, numberFormatter) {
     'use strict';
 
     var defaultParam = {
@@ -12,13 +12,13 @@ define(['underscore', 'orotranslation/js/translator', 'orolocale/js/formatter/nu
      */
     return [
         'Oro\\Bundle\\ValidationBundle\\Validator\\Constraints\\GreaterThanZero',
-        function (value, element) {
+        function(value, element) {
             value = numberFormatter.unformat(value);
             return this.optional(element) || value > 0;
         },
-        function (param, element) {
-            var value = this.elementValue(element),
-                placeholders = { compared_value: 0 };
+        function(param, element) {
+            var value = this.elementValue(element);
+            var placeholders = {compared_value: 0};
             param = _.extend({}, defaultParam, param);
             placeholders.value = value;
             return __(param.message, placeholders);

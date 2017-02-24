@@ -10,9 +10,12 @@ use Oro\Bundle\DataGridBundle\Event\BuildBefore;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
+use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 
 class ProductVariantCustomFieldsDatagridListener
 {
+    const FORM_SELECTED_VARIANTS = 'selectedVariantFields';
+
     /**
      * @var DoctrineHelper
      */
@@ -59,7 +62,6 @@ class ProductVariantCustomFieldsDatagridListener
     public function onBuildBeforeHideUnsuitable(BuildBefore $event)
     {
         $parameters = $event->getDatagrid()->getParameters();
-
         if (!$parameters->has('parentProduct')) {
             return;
         }
@@ -74,22 +76,24 @@ class ProductVariantCustomFieldsDatagridListener
 
         $config = $event->getConfig();
         $query = $config->getOrmQuery();
-        $variantFields = $parentProduct->getVariantFields();
 
-        // Don't show any product variants if there are no variant fields specified in the configurable product
-        if (!$variantFields) {
+        $variantFields = $this->getVariantFields(
+            $parentProduct->getVariantFields(),
+            $parameters->get(ParameterBag::ADDITIONAL_PARAMETERS, [])
+        );
+
+        if ($variantFields) {
+            $rootEntityAlias = $this->getRootAlias($config);
+
+            $variantAndWherePart = [];
+            foreach ($variantFields as $variantFieldName) {
+                $variantAndWherePart[] = sprintf('%s.%s IS NOT NULL', $rootEntityAlias, $variantFieldName);
+            }
+            $query->addAndWhere($variantAndWherePart);
+        } else {
+            // Don't show any product variants if there are no variant fields specified in the configurable product
             $query->addAndWhere('1 = 0');
-
-            return;
         }
-
-        $rootEntityAlias = $this->getRootAlias($config);
-
-        $variantAndWherePart = [];
-        foreach ($variantFields as $variantFieldName) {
-            $variantAndWherePart[] = sprintf('%s.%s IS NOT NULL', $rootEntityAlias, $variantFieldName);
-        }
-        $query->addAndWhere($variantAndWherePart);
 
         // Show all linked variants
         $variantLinkLeftJoin = $this->getVariantLinkLeftJoin($config);
@@ -106,9 +110,13 @@ class ProductVariantCustomFieldsDatagridListener
 
         /** @var Product $parentProduct */
         $parentProduct = $productRepository->find($event->getDatagrid()->getParameters()->get('parentProduct'));
-
         $allCustomFields = $this->customFieldProvider->getEntityCustomFields($this->productClass);
-        $variantFields = $parentProduct->getVariantFields();
+        $parameters = $event->getDatagrid()->getParameters();
+
+        $variantFields = $this->getVariantFields(
+            $parentProduct->getVariantFields(),
+            $parameters->get(ParameterBag::ADDITIONAL_PARAMETERS, [])
+        );
 
         foreach ($allCustomFields as $customField) {
             $customFieldName = $customField['name'];
@@ -121,6 +129,22 @@ class ProductVariantCustomFieldsDatagridListener
     }
 
     /**
+     * @param array $productVariantFields
+     * @param array $dynamicGridParams
+     * @return array
+     */
+    private function getVariantFields(array $productVariantFields, array $dynamicGridParams)
+    {
+        if (array_key_exists(self::FORM_SELECTED_VARIANTS, $dynamicGridParams)) {
+            $productVariantFields = !empty($dynamicGridParams[self::FORM_SELECTED_VARIANTS])
+                ? $dynamicGridParams[self::FORM_SELECTED_VARIANTS]
+                : [];
+        }
+
+        return $productVariantFields;
+    }
+
+    /**
      * @return EntityRepository
      */
     private function getProductRepository()
@@ -130,7 +154,7 @@ class ProductVariantCustomFieldsDatagridListener
 
     /**
      * @param DatagridConfiguration $config
-     * @return array
+     * @return string
      */
     private function getRootAlias(DatagridConfiguration $config)
     {

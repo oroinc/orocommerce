@@ -13,9 +13,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\Client;
 
-/**
- * @dbIsolation
- */
 class OrderControllerTest extends WebTestCase
 {
     const ORDER_PO_NUMBER = 'PO-NUMBER';
@@ -62,8 +59,8 @@ class OrderControllerTest extends WebTestCase
 
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('frontend-orders-grid', $crawler->html());
-        $this->assertContains('Open Orders', $crawler->filter('h2.user-page-title')->first()->html());
-        $this->assertContains('Past Orders', $crawler->filter('h2.user-page-title')->last()->html());
+        $this->assertContains('Open Orders', $crawler->filter('.page-subtitle__text')->first()->html());
+        $this->assertContains('Past Orders', $crawler->filter('.page-subtitle__text')->last()->html());
     }
 
     public function testOrdersGrid()

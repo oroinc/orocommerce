@@ -25,6 +25,7 @@ use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
 {
@@ -51,7 +52,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         /** @var ShippingMethodsConfigsRule $shippingRule */
         $shippingRule = $repository->findOneBy(['rule' => $rule]);
         $methodConfigs = $shippingRule->getMethodConfigs();
-        $methods = $this->getContainer()->get('oro_flat_rate.method.provider')->getShippingMethods();
+        $methods = $this->getContainer()->get('oro_flat_rate_shipping.method.provider')->getShippingMethods();
         /** @var ShippingMethodInterface $method */
         $method = reset($methods);
         foreach ($methodConfigs as $methodConfig) {
@@ -116,8 +117,9 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function shippingTypeFlatRateIsShownForBuyerSelection($shippingType)
     {
         $element= $this->createElement('CheckoutFormRow');
-        self::assertNotFalse(
-            strpos($element->getText(), $shippingType),
+        self::assertContains(
+            $shippingType,
+            $element->getText(),
             "Shipping type '$shippingType' not found on checkout form"
         );
     }
@@ -133,6 +135,23 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
             $this->createElement('CheckoutTotalTrigger')->click();
         }
         self::assertEquals($total, $totalElement->getText());
+    }
+
+    /**
+     * @Then Flash message appears that there is no shipping methods available
+     */
+    public function flashMessageAppearsThatThereIsNoShippingMethodsAvailable()
+    {
+        $flashMessages = $this->createElement('CreateOrderFlashMessage');
+
+        self::assertTrue(
+            $flashMessages->isValid(),
+            'Flash message is not found, or found more then one'
+        );
+        self::assertEquals(
+            'No shipping methods are available, please contact us to complete the order submission.',
+            $flashMessages->getText()
+        );
     }
 
     /**
@@ -238,6 +257,15 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $this->waitForAjax();
         $this->getSession('second_session')->stop();
         $this->getMink()->setDefaultSessionName('first_session');
+    }
+
+    /**
+     * @When Buyer is on view shopping list :shoppingListName page and clicks create order button
+     * @param string $shoppingListName
+     */
+    public function buyerIsOnViewShoppingListPageAndClicksCreateOrderButton($shoppingListName)
+    {
+        $this->createOrderFromShoppingList($shoppingListName);
     }
 
     /**

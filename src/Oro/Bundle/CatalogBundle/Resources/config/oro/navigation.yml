@@ -4,8 +4,8 @@ navigation:
             master_catalog:
                 label:           'oro.catalog.menu.master_catalog.label'
                 route:           'oro_catalog_category_index'
+                position:        10
                 extras:
-                    position:    10
                     routes:      ['/^oro_catalog_category/']
                     description: 'oro.catalog.menu.master_catalog.description'
 

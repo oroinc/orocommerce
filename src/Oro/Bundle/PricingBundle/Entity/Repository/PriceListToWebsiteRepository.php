@@ -5,7 +5,9 @@ namespace Oro\Bundle\PricingBundle\Entity\Repository;
 use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIteratorInterface;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToWebsite;
@@ -48,7 +50,7 @@ class PriceListToWebsiteRepository extends EntityRepository
 
     /**
      * @param int $fallback
-     * @return BufferedQueryResultIterator|Website[]
+     * @return BufferedQueryResultIteratorInterface|Website[]
      */
     public function getWebsiteIteratorByDefaultFallback($fallback)
     {
@@ -83,7 +85,7 @@ class PriceListToWebsiteRepository extends EntityRepository
                 ->setParameter('websiteFallback', $fallback);
         }
 
-        return new BufferedQueryResultIterator($qb->getQuery());
+        return new BufferedIdentityQueryResultIterator($qb->getQuery());
     }
 
     /**
@@ -99,7 +101,10 @@ class PriceListToWebsiteRepository extends EntityRepository
         )
             ->where('priceListToWebsite.priceList = :priceList')
             ->groupBy('priceListToWebsite.website')
-            ->setParameter('priceList', $priceList);
+            ->setParameter('priceList', $priceList)
+            // order required for BufferedIdentityQueryResultIterator on PostgreSql
+            ->orderBy('priceListToWebsite.website')
+        ;
 
         return new BufferedQueryResultIterator($qb);
     }

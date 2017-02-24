@@ -9,9 +9,6 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 
-/**
- * @dbIsolation
- */
 class WebsiteReindexationOnCreateDeleteListenerTest extends WebTestCase
 {
     /**

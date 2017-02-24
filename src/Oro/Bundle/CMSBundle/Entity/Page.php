@@ -14,6 +14,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\AuditableOrganizationAwareTrait;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Entity\SluggableTrait;
+use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 
 /**
  * @ORM\Table(name="oro_cms_page")
@@ -142,6 +143,7 @@ class Page extends ExtendPage implements DatesAwareInterface, SluggableInterface
         $this->slugPrototypes = new ArrayCollection();
         $this->slugs = new ArrayCollection();
         $this->titles = new ArrayCollection();
+        $this->slugPrototypesWithRedirect = new SlugPrototypesWithRedirect($this->slugPrototypes);
     }
 
     /**

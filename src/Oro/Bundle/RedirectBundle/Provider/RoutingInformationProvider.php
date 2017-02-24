@@ -13,10 +13,11 @@ class RoutingInformationProvider implements RoutingInformationProviderInterface
 
     /**
      * @param RoutingInformationProviderInterface $provider
+     * @param string $entityClass
      */
-    public function registerProvider(RoutingInformationProviderInterface $provider)
+    public function registerProvider(RoutingInformationProviderInterface $provider, $entityClass)
     {
-        $this->providers[] = $provider;
+        $this->providers[$entityClass] = $provider;
     }
 
     /**
@@ -47,6 +48,14 @@ class RoutingInformationProvider implements RoutingInformationProviderInterface
     public function getUrlPrefix($entity)
     {
         return $this->getProviderForEntity($entity)->getUrlPrefix($entity);
+    }
+
+    /**
+     * @return array|string[]
+     */
+    public function getEntityClasses()
+    {
+        return array_keys($this->providers);
     }
 
     /**

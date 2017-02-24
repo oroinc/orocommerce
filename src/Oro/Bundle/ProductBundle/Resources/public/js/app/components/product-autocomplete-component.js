@@ -98,9 +98,8 @@ define(function(require) {
                         self.product.sku = val;
                         self.product.name = response[val].name;
                     }
-                    self.updateProduct();
                 },
-                error: function() {
+                complete: function() {
                     self.updateProduct();
                 }
             });

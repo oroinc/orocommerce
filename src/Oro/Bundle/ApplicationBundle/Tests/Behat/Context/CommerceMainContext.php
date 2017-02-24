@@ -3,24 +3,31 @@
 namespace Oro\Bundle\ApplicationBundle\Tests\Behat\Context;
 
 use Behat\Gherkin\Node\TableNode;
+use Behat\Symfony2Extension\Context\KernelAwareContext;
+use Behat\Symfony2Extension\Context\KernelDictionary;
 use Oro\Bundle\FormBundle\Tests\Behat\Element\OroForm;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
-class CommerceMainContext extends OroFeatureContext implements OroPageObjectAware
+class CommerceMainContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
 {
-    use PageObjectDictionary;
+    use PageObjectDictionary, KernelDictionary;
 
     /**
      * This step used for login bayer from frontend of commerce
-     * Example: Given I login as AmandaRCole@example.org buyer
+     * Example1: Given I login as AmandaRCole@example.org buyer
+     * Example2: Given I signed in as AmandaRCole@example.org on the store frontend$/
      *
      * @Given /^I login as (?P<email>\S+) buyer$/
+     * @Given /^I signed in as (?P<email>\S+) on the store frontend$/
+     *
+     * @param string $email
      */
     public function loginAsBuyer($email)
     {
-        $this->visitPath('customer/user/login');
+        $this->visitPath($this->getUrl('oro_customer_customer_user_security_logout'));
+        $this->visitPath($this->getUrl('oro_customer_customer_user_security_login'));
         $this->waitForAjax();
         /** @var OroForm $form */
         $form = $this->createElement('OroForm');
@@ -31,5 +38,14 @@ class CommerceMainContext extends OroFeatureContext implements OroPageObjectAwar
         $form->fill($table);
         $form->pressButton('Sign In');
         $this->waitForAjax();
+    }
+
+    /**
+     * @param string $path
+     * @return string
+     */
+    protected function getUrl($path)
+    {
+        return $this->getContainer()->get('router')->generate($path);
     }
 }

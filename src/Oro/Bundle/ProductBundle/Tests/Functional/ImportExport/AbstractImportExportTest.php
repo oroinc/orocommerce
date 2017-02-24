@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\ImportExport;
 
-use Akeneo\Bundle\BatchBundle\Job\DoctrineJobRepository as BatchJobRepository;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\ImportExportBundle\Job\JobExecutor;
@@ -18,36 +17,6 @@ abstract class AbstractImportExportTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-    }
-
-    /**
-     * Delete data required because there is commit to job repository in import/export controller action
-     * Please use
-     *   $this->getContainer()->get('akeneo_batch.job_repository')->getJobManager()->beginTransaction();
-     *   $this->getContainer()->get('akeneo_batch.job_repository')->getJobManager()->rollback();
-     *   $this->getContainer()->get('akeneo_batch.job_repository')->getJobManager()->getConnection()->clear();
-     * if you don't use controller
-     */
-    protected function tearDown()
-    {
-        // clear DB from separate connection
-        $batchJobManager = $this->getBatchJobManager();
-        $batchJobManager->createQuery('DELETE AkeneoBatchBundle:JobInstance')->execute();
-        $batchJobManager->createQuery('DELETE AkeneoBatchBundle:JobExecution')->execute();
-        $batchJobManager->createQuery('DELETE AkeneoBatchBundle:StepExecution')->execute();
-
-        parent::tearDown();
-    }
-
-    /**
-     * @return \Doctrine\ORM\EntityManager
-     */
-    protected function getBatchJobManager()
-    {
-        /** @var BatchJobRepository $batchJobRepository */
-        $batchJobRepository = $this->getContainer()->get('akeneo_batch.job_repository');
-
-        return $batchJobRepository->getJobManager();
     }
 
     /**

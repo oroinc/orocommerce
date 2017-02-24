@@ -15,9 +15,6 @@ use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProduct;
 use Oro\Bundle\TestFrameworkBundle\Entity\TestProductType;
 
-/**
- * @dbIsolation
- */
 class IndexationRequestListenerTest extends WebTestCase
 {
     use UserUtilityTrait;

@@ -1,0 +1,48 @@
+layout:
+    imports:
+        -
+            id: line_item_buttons
+            root: form_actions
+    actions:
+        - '@setBlockTheme':
+            themes: 'order.html.twig'
+        - '@setFormTheme':
+            themes: 'order_form.html.twig'
+        - '@addTree':
+            items:
+                matrix_order_wrapper:
+                    blockType: matrix_grid_prices
+                    options:
+                        productPrices: '=data["frontend_product_prices"].getByProducts(data["products"])'
+                        unit: '=data["oro_shopping_list_matrix_order_form"].getMatrixOrderForm(data["product"]).getData().unit.getCode()'
+                form_start:
+                    blockType: form_start
+                    options:
+                        form: '=data["oro_shopping_list_matrix_order_form"].getMatrixOrderFormView(data["product"])'
+                        form_route_name: 'oro_shopping_list_frontend_matrix_grid_order'
+                        form_route_parameters: { productId: '=data["product"].getId()' }
+                form_fields:
+                    blockType: form_fields
+                    options:
+                        form: '=data["oro_shopping_list_matrix_order_form"].getMatrixOrderFormView(data["product"])'
+                form_end:
+                    blockType: form_end
+                    options:
+                        form: '=data["oro_shopping_list_matrix_order_form"].getMatrixOrderFormView(data["product"])'
+                form_summary:
+                    blockType: matrix_order_form_summary
+                    options:
+                        totalQuantity: '=data["oro_shopping_list_matrix_grid_order"].getTotalQuantity(data["product"])'
+                        totalPrice: '=data["oro_shopping_list_matrix_grid_order"].getTotalPriceFormatted(data["product"])'
+                form_actions:
+                    blockType: container
+                form_buttons:
+                    blockType: container
+            tree:
+                widget_content:
+                    matrix_order_wrapper:
+                        form_start: ~
+                        form_fields: ~
+                        form_summary: ~
+                        form_actions: ~
+                        form_end: ~
