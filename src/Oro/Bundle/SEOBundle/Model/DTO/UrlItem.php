@@ -28,15 +28,15 @@ class UrlItem implements UrlItemInterface
 
     /**
      * @param string $location
+     * @param \DateTime $lastModification
      * @param string $changeFrequency
      * @param float $priority
-     * @param \DateTime $lastModification
      */
     public function __construct(
         $location,
+        \DateTime $lastModification = null,
         $changeFrequency = null,
-        $priority = null,
-        \DateTime $lastModification = null
+        $priority = null
     ) {
         $this->location = $location;
         $this->changeFrequency = $changeFrequency;
