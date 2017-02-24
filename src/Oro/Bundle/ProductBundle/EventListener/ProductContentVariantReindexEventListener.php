@@ -8,7 +8,9 @@ use Doctrine\ORM\UnitOfWork;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 
+use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Component\DoctrineUtils\ORM\FieldUpdatesChecker;
+use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ContentNodeFieldsChangesAwareInterface;
@@ -18,10 +20,14 @@ use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 
 class ProductContentVariantReindexEventListener implements ContentNodeFieldsChangesAwareInterface
 {
-    /**
-     * @var EventDispatcherInterface
-     */
+    /** @var EventDispatcherInterface */
     private $eventDispatcher;
+
+    /** @var FieldUpdatesChecker */
+    private $fieldUpdatesChecker;
+
+    /** @var WebCatalogUsageProviderInterface */
+    private $webCatalogUsageProvider;
 
     /**
      * List of fields of ContentNode that this class will listen to changes.
@@ -32,17 +38,17 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
     protected $fieldsChangesListenTo = ['titles'];
 
     /**
-     * @var FieldUpdatesChecker
-     */
-    private $fieldUpdatesChecker;
-
-    /**
      * @param EventDispatcherInterface $eventDispatcher
      * @param FieldUpdatesChecker      $fieldUpdatesChecker
+     * @param WebCatalogUsageProviderInterface|null $webCatalogUsageProvider
      */
-    public function __construct(EventDispatcherInterface $eventDispatcher, FieldUpdatesChecker $fieldUpdatesChecker)
-    {
+    public function __construct(
+        EventDispatcherInterface $eventDispatcher,
+        FieldUpdatesChecker $fieldUpdatesChecker,
+        WebCatalogUsageProviderInterface $webCatalogUsageProvider = null
+    ) {
         $this->eventDispatcher = $eventDispatcher;
+        $this->webCatalogUsageProvider = $webCatalogUsageProvider;
         $this->fieldUpdatesChecker = $fieldUpdatesChecker;
     }
 
@@ -73,7 +79,11 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
     {
         $unitOfWork = $event->getEntityManager()->getUnitOfWork();
         $productIds = [];
+        $websiteIds = [];
+
         $updatedEntities = $unitOfWork->getScheduledEntityUpdates();
+        $insertedEntities = $unitOfWork->getScheduledEntityInsertions();
+        $deletedEntities = $unitOfWork->getScheduledEntityDeletions();
 
         // @todo extract it and refactor this class a bit after all tasks will be merged
         foreach ($updatedEntities as $entity) {
@@ -93,14 +103,19 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
             // if any of configurable field of ContentNode has changed - reindex all products related to it
             if ($isAnyFieldChanged) {
                 $this->collectProductIds($entity->getContentVariants(), $productIds);
+                $this->collectWebsiteIds($entity->getContentVariants(), $websiteIds);
             }
         }
 
-        $this->collectProductIds($unitOfWork->getScheduledEntityInsertions(), $productIds, $unitOfWork);
+        $this->collectProductIds($insertedEntities, $productIds, $unitOfWork);
         $this->collectProductIds($updatedEntities, $productIds, $unitOfWork);
-        $this->collectProductIds($unitOfWork->getScheduledEntityDeletions(), $productIds, $unitOfWork);
+        $this->collectProductIds($deletedEntities, $productIds, $unitOfWork);
 
-        $this->triggerReindex($productIds);
+        $this->collectWebsiteIds($updatedEntities, $websiteIds);
+        $this->collectWebsiteIds($insertedEntities, $websiteIds);
+        $this->collectWebsiteIds($deletedEntities, $websiteIds);
+
+        $this->triggerReindex($productIds, $websiteIds);
     }
 
     /**
@@ -134,12 +149,46 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
     }
 
     /**
-     * @param array $productIds
+     * @param array|Collection $entities
+     * @param array|null &$websitesId
      */
-    private function triggerReindex(array $productIds)
+    private function collectWebsiteIds($entities, &$websitesId)
+    {
+        if ($this->webCatalogUsageProvider === null) {
+            return;
+        }
+
+        $assignedWebCatalogs = $this->webCatalogUsageProvider->getAssignedWebCatalogs();
+        foreach ($entities as $entity) {
+            if (!$entity instanceof ContentVariantInterface
+                || $entity->getType() !== ProductPageContentVariantType::TYPE) {
+                continue;
+            }
+            $webCatalogId = $entity->getNode()->getWebCatalog()->getId();
+            if (count($assignedWebCatalogs) === 1 && array_key_exists('0', $assignedWebCatalogs)) {
+                $websitesId = [];
+                return;
+            }
+            $relatedWebsiteIds = array_filter(
+                $assignedWebCatalogs,
+                function ($relatedWebsiteWebCatalogId) use ($webCatalogId) {
+                    return $webCatalogId == $relatedWebsiteWebCatalogId;
+                }
+            );
+            if (!empty($relatedWebsiteIds)) {
+                $websitesId = array_unique(array_merge($websitesId, array_keys($relatedWebsiteIds)));
+            }
+        }
+    }
+
+    /**
+     * @param array $productIds
+     * @param array $websiteIds
+     */
+    private function triggerReindex(array $productIds, $websiteIds)
     {
         if ($productIds) {
-            $event = new ReindexationRequestEvent([Product::class], [], $productIds);
+            $event = new ReindexationRequestEvent([Product::class], $websiteIds, $productIds);
             $this->eventDispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $event);
         }
     }

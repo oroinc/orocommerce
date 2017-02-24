@@ -3,6 +3,8 @@
 namespace Oro\Component\WebCatalog\Test\Unit\Form\Type;
 
 use Doctrine\Common\Collections\ArrayCollection;
+
+use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Component\WebCatalog\Entity\ContentNodeAwareInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
@@ -17,6 +19,9 @@ abstract class AbstractContentVariantStub implements ContentVariantInterface, Co
      * @var ArrayCollection
      */
     protected $scopes;
+
+    /** @var ContentNode */
+    protected $node;
 
     /**
      * @var bool
@@ -93,7 +98,15 @@ abstract class AbstractContentVariantStub implements ContentVariantInterface, Co
      */
     public function getNode()
     {
-        return null;
+        return $this->node;
+    }
+
+    /**
+     * @param ContentNode $node
+     */
+    public function setNode(ContentNode $node)
+    {
+        $this->node = $node;
     }
 
     /**

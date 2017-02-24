@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\UnitOfWork;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 
+use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
+use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ContentNodeFieldsChangesAwareInterface;
 use Oro\Component\DoctrineUtils\ORM\FieldUpdatesChecker;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
@@ -18,19 +20,16 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 
 class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwareInterface
 {
-    /**
-     * @var ProductIndexScheduler
-     */
+    /** @var ProductIndexScheduler */
     private $indexScheduler;
 
-    /**
-     * @var PropertyAccessorInterface
-     */
+    /** @var PropertyAccessorInterface */
     private $accessor;
 
-    /**
-     * @var FieldUpdatesChecker
-     */
+    /** @var WebCatalogUsageProviderInterface */
+    private $webCatalogUsageProvider;
+
+    /** @var FieldUpdatesChecker */
     private $fieldUpdatesChecker;
 
     /**
@@ -42,18 +41,21 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
     protected $fieldsChangesListenTo = ['titles'];
 
     /**
-     * @param ProductIndexScheduler     $indexScheduler
+     * @param ProductIndexScheduler $indexScheduler
      * @param PropertyAccessorInterface $accessor
      * @param FieldUpdatesChecker       $fieldUpdatesChecker
+     * @param WebCatalogUsageProviderInterface $webCatalogUsageProvider
      */
     public function __construct(
         ProductIndexScheduler $indexScheduler,
         PropertyAccessorInterface $accessor,
-        FieldUpdatesChecker $fieldUpdatesChecker
+        FieldUpdatesChecker $fieldUpdatesChecker,
+        WebCatalogUsageProviderInterface $webCatalogUsageProvider
     ) {
         $this->indexScheduler = $indexScheduler;
         $this->accessor = $accessor;
         $this->fieldUpdatesChecker = $fieldUpdatesChecker;
+        $this->webCatalogUsageProvider = $webCatalogUsageProvider;
     }
 
     /**
@@ -83,7 +85,11 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
     {
         $unitOfWork = $event->getEntityManager()->getUnitOfWork();
         $categories = [];
+        $websiteIds = [];
+
+        $insertedEntities = $unitOfWork->getScheduledEntityInsertions();
         $updatedEntities = $unitOfWork->getScheduledEntityUpdates();
+        $deletedEntities = $unitOfWork->getScheduledEntityDeletions();
 
         // @todo extract it and refactor this class a bit after all tasks will be merged
         foreach ($updatedEntities as $entity) {
@@ -103,15 +109,20 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
             // if any of configurable field of ContentNode has changed - reindex all products of related categories
             if ($isAnyFieldChanged) {
                 $this->collectCategories($entity->getContentVariants(), $categories);
+                $this->collectWebsiteIds($entity->getContentVariants(), $websiteIds);
             }
         }
 
-        $this->collectCategories($unitOfWork->getScheduledEntityInsertions(), $categories, $unitOfWork);
+        $this->collectCategories($insertedEntities, $categories, $unitOfWork);
         $this->collectCategories($updatedEntities, $categories, $unitOfWork);
-        $this->collectCategories($unitOfWork->getScheduledEntityDeletions(), $categories, $unitOfWork);
+        $this->collectCategories($deletedEntities, $categories, $unitOfWork);
+
+        $this->collectWebsiteIds($insertedEntities, $websiteIds);
+        $this->collectWebsiteIds($updatedEntities, $websiteIds);
+        $this->collectWebsiteIds($deletedEntities, $websiteIds);
 
         if ($categories) {
-             $this->indexScheduler->scheduleProductsReindex($categories);
+            $this->scheduleProductsReindex($categories, $websiteIds);
         }
     }
 
@@ -120,7 +131,7 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
      * @param Category[] &$categories
      * @param UnitOfWork $unitOfWork
      */
-    protected function collectCategories($entities, array &$categories, $unitOfWork = null)
+    private function collectCategories($entities, array &$categories, $unitOfWork = null)
     {
         foreach ($entities as $entity) {
             if ($entity instanceof ContentVariantInterface
@@ -149,14 +160,64 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
     }
 
     /**
+     * @param array|Collection $entities
+     * @param array|null &$websitesId
+     */
+    private function collectWebsiteIds($entities, &$websitesId)
+    {
+        if ($this->webCatalogUsageProvider === null) {
+            return;
+        }
+
+        $assignedWebCatalogs = $this->webCatalogUsageProvider->getAssignedWebCatalogs();
+        foreach ($entities as $entity) {
+            if (!$entity instanceof ContentVariantInterface
+                || $entity->getType() !== CategoryPageContentVariantType::TYPE) {
+                continue;
+            }
+            $webCatalogId = $entity->getNode()->getWebCatalog()->getId();
+            if (count($assignedWebCatalogs) === 1 && array_key_exists('0', $assignedWebCatalogs)) {
+                $websitesId = [];
+                return;
+            }
+            $relatedWebsiteIds = array_filter(
+                $assignedWebCatalogs,
+                function ($relatedWebsiteWebCatalogId) use ($webCatalogId) {
+                    return $webCatalogId == $relatedWebsiteWebCatalogId;
+                }
+            );
+            if (!empty($relatedWebsiteIds)) {
+                $websitesId = array_unique(array_merge($websitesId, array_keys($relatedWebsiteIds)));
+            }
+        }
+    }
+
+    /**
      * @param Category[] &$categories
      * @param Category $category
      */
-    protected function addCategory(array &$categories, Category $category)
+    private function addCategory(array &$categories, Category $category)
     {
         $categoryId = $category->getId();
         if ($categoryId && !array_key_exists($categoryId, $categories)) {
             $categories[$categoryId] = $category;
+        }
+    }
+
+    /**
+     * @param array $categories
+     * @param array $websiteIds
+     */
+    private function scheduleProductsReindex(array $categories, array $websiteIds = [])
+    {
+        if (count($websiteIds) === 0) {
+            $this->indexScheduler->scheduleProductsReindex($categories);
+
+            return;
+        }
+
+        foreach ($websiteIds as $websiteId) {
+            $this->indexScheduler->scheduleProductsReindex($categories, $websiteId);
         }
     }
 }

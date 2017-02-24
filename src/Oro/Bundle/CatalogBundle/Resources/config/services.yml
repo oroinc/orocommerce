@@ -195,6 +195,7 @@ services:
             - '@oro_catalog.manager.product_index_scheduler'
             - '@property_accessor'
             - '@oro_entity.doctrine.field_updates_checker'
+            - '@?oro_web_catalog.provider.web_catalog_usage_provider'
         tags:
             - { name: doctrine.event_listener, event: onFlush }
 
