@@ -18,7 +18,7 @@ layout:
         - '@add':
             id: checkouts_title
             parentId: checkouts_container
-            blockType: text
+            blockType: page_subtitle
             siblingId: ~
             prepend: true
             options:
