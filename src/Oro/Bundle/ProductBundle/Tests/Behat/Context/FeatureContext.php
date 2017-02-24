@@ -13,16 +13,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     use PageObjectDictionary, KernelDictionary;
 
     /**
-     * @When I create product and click continue
-     */
-    public function createProductAndClickContinue()
-    {
-        $this->visitPath('admin/product/create');
-        $this->getSession()->getPage()->pressButton('Continue');
-        $this->waitForAjax();
-    }
-
-    /**
      * @When I fill product name field with :productName value
      * @param string $productName
      */
