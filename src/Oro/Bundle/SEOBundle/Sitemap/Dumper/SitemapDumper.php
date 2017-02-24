@@ -1,15 +1,17 @@
 <?php
 
-namespace Oro\Bundle\SEOBundle\Tools;
+namespace Oro\Bundle\SEOBundle\Sitemap\Dumper;
 
 use Oro\Bundle\SEOBundle\Provider\UrlItemsProviderRegistry;
+use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFilesystemAdapter;
+use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageFactory;
+use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageInterface;
 use Oro\Component\SEO\Tools\SitemapDumperInterface;
 use Oro\Component\Website\WebsiteInterface;
 
 class SitemapDumper implements SitemapDumperInterface
 {
     const SITEMAP_FILENAME_TEMPLATE = 'sitemap-%s-%s.xml';
-    const SITEMAPS_TEMP_DIR = 'sitemaps';
 
     /**
      * @var UrlItemsProviderRegistry
@@ -22,31 +24,23 @@ class SitemapDumper implements SitemapDumperInterface
     private $sitemapStorageFactory;
 
     /**
-     * @var SitemapFileWriterInterface
+     * @var SitemapFilesystemAdapter
      */
-    private $sitemapFileWriter;
-
-    /**
-     * @var string
-     */
-    private $kernelRootDir;
+    private $filesystemAdapter;
 
     /**
      * @param UrlItemsProviderRegistry $providerRegistry
      * @param SitemapStorageFactory $sitemapStorageFactory
-     * @param SitemapFileWriterInterface $sitemapFileWriter
-     * @param string $kernelRootDir
+     * @param SitemapFilesystemAdapter $filesystemAdapter
      */
     public function __construct(
         UrlItemsProviderRegistry $providerRegistry,
         SitemapStorageFactory $sitemapStorageFactory,
-        SitemapFileWriterInterface $sitemapFileWriter,
-        $kernelRootDir
+        SitemapFilesystemAdapter $filesystemAdapter
     ) {
         $this->providerRegistry = $providerRegistry;
         $this->sitemapStorageFactory = $sitemapStorageFactory;
-        $this->sitemapFileWriter = $sitemapFileWriter;
-        $this->kernelRootDir = $kernelRootDir;
+        $this->filesystemAdapter = $filesystemAdapter;
     }
 
     /**
@@ -60,50 +54,49 @@ class SitemapDumper implements SitemapDumperInterface
             $providers = $this->providerRegistry->getProviders();
         }
 
-        $tmpDir = $this->getSitemapsTmpDir($website);
         foreach ($providers as $providerType => $provider) {
-            $urlsStorage = $this->sitemapStorageFactory->createUrlsStorage();
+            $urlsStorage = $this->createUrlsStorage();
 
             $fileNumber = 1;
             foreach ($provider->getUrlItems($website) as $urlItem) {
                 $itemAdded = $urlsStorage->addUrlItem($urlItem);
                 if (!$itemAdded) {
-                    $this->sitemapFileWriter->saveSitemap(
-                        $urlsStorage->getContents(),
-                        $this->createFileName($tmpDir, $providerType, $fileNumber++)
+                    $this->filesystemAdapter->dumpSitemapStorage(
+                        $this->createFileName($providerType, $fileNumber++),
+                        $website,
+                        $version,
+                        $urlsStorage
                     );
 
-                    $urlsStorage = $this->sitemapStorageFactory->createUrlsStorage();
+                    $urlsStorage = $this->createUrlsStorage();
                     $urlsStorage->addUrlItem($urlItem);
                 }
             }
 
-            $this->sitemapFileWriter->saveSitemap(
-                $urlsStorage->getContents(),
-                $this->createFileName($tmpDir, $providerType, $fileNumber)
+            $this->filesystemAdapter->dumpSitemapStorage(
+                $this->createFileName($providerType, $fileNumber),
+                $website,
+                $version,
+                $urlsStorage
             );
         }
-
-        return $tmpDir;
     }
 
     /**
-     * @param WebsiteInterface $website
-     * @return string
-     */
-    private function getSitemapsTmpDir(WebsiteInterface $website)
-    {
-        return sprintf('%s/%s/%s', $this->kernelRootDir, self::SITEMAPS_TEMP_DIR, $website->getId());
-    }
-
-    /**
-     * @param string $dirPath
      * @param string $providerType
      * @param string $fileNumber
      * @return string
      */
-    private function createFileName($dirPath, $providerType, $fileNumber)
+    private function createFileName($providerType, $fileNumber)
     {
-        return sprintf('%s/%s', $dirPath, sprintf(static::SITEMAP_FILENAME_TEMPLATE, $providerType, $fileNumber));
+        return sprintf(static::SITEMAP_FILENAME_TEMPLATE, $providerType, $fileNumber);
+    }
+
+    /**
+     * @return SitemapStorageInterface
+     */
+    private function createUrlsStorage()
+    {
+        return $this->sitemapStorageFactory->createUrlsStorage(SitemapStorageFactory::TYPE_SITEMAP);
     }
 }

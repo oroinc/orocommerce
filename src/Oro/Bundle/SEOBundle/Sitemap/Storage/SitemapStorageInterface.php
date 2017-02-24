@@ -1,10 +1,10 @@
 <?php
 
-namespace Oro\Bundle\SEOBundle\Tools;
+namespace Oro\Bundle\SEOBundle\Sitemap\Storage;
 
 use Oro\Component\SEO\Model\DTO\UrlItemInterface;
 
-interface SitemapUrlsStorageInterface
+interface SitemapStorageInterface
 {
     /**
      * Add $urlItem to the storage.

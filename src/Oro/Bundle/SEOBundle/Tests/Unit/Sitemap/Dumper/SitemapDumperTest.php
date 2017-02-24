@@ -1,24 +1,19 @@
 <?php
 
-namespace Oro\Bundle\SEOBundle\Tests\Unit\Tools;
+namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\Dumper;
 
 use Oro\Bundle\SEOBundle\Model\DTO\UrlItem;
 use Oro\Bundle\SEOBundle\Provider\UrlItemsProviderRegistry;
-use Oro\Bundle\SEOBundle\Tools\SitemapDumper;
-use Oro\Bundle\SEOBundle\Tools\SitemapFileWriterInterface;
-use Oro\Bundle\SEOBundle\Tools\SitemapStorageFactory;
-use Oro\Bundle\SEOBundle\Tools\SitemapUrlsStorageInterface;
+use Oro\Bundle\SEOBundle\Sitemap\Dumper\SitemapDumper;
+use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFilesystemAdapter;
+use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageFactory;
+use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageInterface;
 use Oro\Component\SEO\Provider\UrlItemsProviderInterface;
 use Oro\Component\Website\WebsiteInterface;
 
 class SitemapDumperTest extends \PHPUnit_Framework_TestCase
 {
     const PRODUCT_PROVIDER_TYPE = 'product';
-    const KERNER_ROOT_DIR = '/kernel_root';
-    const STORAGE_CONTENTS = <<<XML
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"/><url><loc>http://some.com/uri</loc></url></urlset>
-XML;
 
     /**
      * @var UrlItemsProviderRegistry|\PHPUnit_Framework_MockObject_MockObject
@@ -26,9 +21,9 @@ XML;
     private $providerRegistry;
 
     /**
-     * @var SitemapFileWriterInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var SitemapFilesystemAdapter|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $sitemapFileWriter;
+    private $filesystemAdapter;
 
     /**
      * @var SitemapStorageFactory|\PHPUnit_Framework_MockObject_MockObject
@@ -50,13 +45,14 @@ XML;
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->sitemapFileWriter = $this->createMock(SitemapFileWriterInterface::class);
+        $this->filesystemAdapter = $this->getMockBuilder(SitemapFilesystemAdapter::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->dumper = new SitemapDumper(
             $this->providerRegistry,
             $this->sitemapStorageFactory,
-            $this->sitemapFileWriter,
-            self::KERNER_ROOT_DIR
+            $this->filesystemAdapter
         );
     }
 
@@ -64,6 +60,7 @@ XML;
     {
         /** @var WebsiteInterface $website */
         $website = $this->createMock(WebsiteInterface::class);
+        $version = 1;
 
         $productProvider = $this->createMock(UrlItemsProviderInterface::class);
         $urlItem = new UrlItem('http://somedomain.com/firsturi');
@@ -78,31 +75,38 @@ XML;
             ->method('getProviderByName')
             ->willReturn($productProvider);
 
-        $urlsStorage = $this->configureUrlsStorageToAcceptOneUrlItemAndReturnContents($urlItem, self::STORAGE_CONTENTS);
+        /** @var SitemapStorageInterface|\PHPUnit_Framework_MockObject_MockObject $urlsStorage */
+        $urlsStorage = $this->createMock(SitemapStorageInterface::class);
+
+        $urlsStorage
+            ->expects($this->once())
+            ->method('addUrlItem')
+            ->withConsecutive($urlItem)
+            ->willReturnOnConsecutiveCalls(true);
 
         $this->sitemapStorageFactory
             ->expects($this->once())
             ->method('createUrlsStorage')
             ->willReturnOnConsecutiveCalls($urlsStorage);
 
-        $this->sitemapFileWriter
+        $this->filesystemAdapter
             ->expects($this->once())
-            ->method('saveSitemap')
+            ->method('dumpSitemapStorage')
             ->with(
-                self::STORAGE_CONTENTS,
-                $this->stringEndsWith(sprintf('sitemap-%s-1.xml', self::PRODUCT_PROVIDER_TYPE))
+                $this->stringEndsWith(sprintf('sitemap-%s-1.xml', self::PRODUCT_PROVIDER_TYPE)),
+                $website,
+                $version,
+                $urlsStorage
             );
 
-        $this->assertStringStartsWith(
-            $this->getSitemapsDir(),
-            $this->dumper->dump($website, self::PRODUCT_PROVIDER_TYPE)
-        );
+        $this->dumper->dump($website, $version, self::PRODUCT_PROVIDER_TYPE);
     }
 
     public function testDumpWithOneProviderWhenFilesystemExceptionWasThrown()
     {
         /** @var WebsiteInterface $website */
         $website = $this->createMock(WebsiteInterface::class);
+        $version = 1;
 
         $productProvider = $this->createMock(UrlItemsProviderInterface::class);
         $urlItem = new UrlItem('http://somedomain.com/firsturi');
@@ -117,8 +121,8 @@ XML;
             ->method('getProviderByName')
             ->willReturn($productProvider);
 
-        /** @var SitemapUrlsStorageInterface|\PHPUnit_Framework_MockObject_MockObject $urlsStorage */
-        $urlsStorage = $this->configureUrlsStorageToAcceptOneUrlItemAndReturnContents($urlItem, self::STORAGE_CONTENTS);
+        /** @var SitemapStorageInterface|\PHPUnit_Framework_MockObject_MockObject $urlsStorage */
+        $urlsStorage = $this->createMock(SitemapStorageInterface::class);
 
         $urlsStorage
             ->expects($this->once())
@@ -133,28 +137,22 @@ XML;
 
         $exceptionMessage = 'Some message';
         $exception = new \Exception($exceptionMessage);
-        $this->sitemapFileWriter
+        $this->filesystemAdapter
             ->expects($this->once())
-            ->method('saveSitemap')
-            ->with(
-                self::STORAGE_CONTENTS,
-                $this->stringEndsWith(sprintf('sitemap-%s-1.xml', self::PRODUCT_PROVIDER_TYPE))
-            )
+            ->method('dumpSitemapStorage')
             ->willThrowException($exception);
 
         $this->expectException(\Exception::class);
         $this->expectExceptionMessage($exceptionMessage);
 
-        $this->assertStringStartsWith(
-            $this->getSitemapsDir(),
-            $this->dumper->dump($website, self::PRODUCT_PROVIDER_TYPE)
-        );
+        $this->dumper->dump($website, $version, self::PRODUCT_PROVIDER_TYPE);
     }
 
     public function testDumpWithOneProviderWhenSeveralSitemapFileCreated()
     {
         /** @var WebsiteInterface $website */
         $website = $this->createMock(WebsiteInterface::class);
+        $version = 1;
 
         $productProvider = $this->createMock(UrlItemsProviderInterface::class);
         $firstUrlItem = new UrlItem('http://somedomain.com/firsturi');
@@ -171,7 +169,7 @@ XML;
             ->method('getProviderByName')
             ->willReturn($productProvider);
 
-        $firstUrlsStorage = $this->createMock(SitemapUrlsStorageInterface::class);
+        $firstUrlsStorage = $this->createMock(SitemapStorageInterface::class);
 
         $firstUrlsStorage
             ->expects($this->exactly(3))
@@ -179,16 +177,7 @@ XML;
             ->withConsecutive([$firstUrlItem], [$secondUrlItem], [$thirdUrlItem])
             ->willReturnOnConsecutiveCalls(true, true, false);
 
-        $firstContents = <<<XML
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"/><url><loc>http::/some.com/first_uri</loc></url></urlset>
-XML;
-        $firstUrlsStorage
-            ->expects($this->once())
-            ->method('getContents')
-            ->willReturn($firstContents);
-
-        $secondUrlsStorage = $this->createMock(SitemapUrlsStorageInterface::class);
+        $secondUrlsStorage = $this->createMock(SitemapStorageInterface::class);
 
         $secondUrlsStorage
             ->expects($this->once())
@@ -196,44 +185,37 @@ XML;
             ->withConsecutive([$thirdUrlItem])
             ->willReturnOnConsecutiveCalls(true);
 
-        $secondContents = <<<XML
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"/><url><loc>http::/some.com/second_uri</loc></url></urlset>
-XML;
-        $secondUrlsStorage
-            ->expects($this->once())
-            ->method('getContents')
-            ->willReturn($secondContents);
-
         $this->sitemapStorageFactory
             ->expects($this->exactly(2))
             ->method('createUrlsStorage')
             ->willReturnOnConsecutiveCalls($firstUrlsStorage, $secondUrlsStorage);
 
-        $this->sitemapFileWriter
+        $this->filesystemAdapter
             ->expects($this->exactly(2))
-            ->method('saveSitemap')
+            ->method('dumpSitemapStorage')
             ->withConsecutive(
                 [
-                    $firstContents,
-                    $this->stringEndsWith(sprintf('sitemap-%s-1.xml', self::PRODUCT_PROVIDER_TYPE))
+                    $this->stringEndsWith(sprintf('sitemap-%s-1.xml', self::PRODUCT_PROVIDER_TYPE)),
+                    $website,
+                    $version,
+                    $firstUrlsStorage
                 ],
                 [
-                    $secondContents,
-                    $this->stringEndsWith(sprintf('sitemap-%s-2.xml', self::PRODUCT_PROVIDER_TYPE))
+                    $this->stringEndsWith(sprintf('sitemap-%s-2.xml', self::PRODUCT_PROVIDER_TYPE)),
+                    $website,
+                    $version,
+                    $secondUrlsStorage
                 ]
             );
 
-        $this->assertStringStartsWith(
-            $this->getSitemapsDir(),
-            $this->dumper->dump($website, self::PRODUCT_PROVIDER_TYPE)
-        );
+        $this->dumper->dump($website, $version, self::PRODUCT_PROVIDER_TYPE);
     }
 
     public function testDumpWithAllProviders()
     {
         /** @var WebsiteInterface $website */
         $website = $this->createMock(WebsiteInterface::class);
+        $version = 1;
 
         $productProvider = $this->createMock(UrlItemsProviderInterface::class);
         $productUrlItem = new UrlItem('http://somedomain.com/producturi');
@@ -257,91 +239,43 @@ XML;
             ->method('getProviders')
             ->willReturn([self::PRODUCT_PROVIDER_TYPE => $productProvider, $pageProviderType => $pageProvider]);
 
-        $productUrlsStorage = $this->createMock(SitemapUrlsStorageInterface::class);
-
+        $productUrlsStorage = $this->createMock(SitemapStorageInterface::class);
         $productUrlsStorage
             ->expects($this->once())
             ->method('addUrlItem')
             ->with($productUrlItem)
             ->willReturn(true);
 
-        $productContents = <<<XML
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"/><url><loc>http::/some.com/product_uri</loc></url></urlset>
-XML;
-        $productUrlsStorage
-            ->expects($this->once())
-            ->method('getContents')
-            ->willReturn($productContents);
-
-        $pageUrlsStorage = $this->createMock(SitemapUrlsStorageInterface::class);
-
+        $pageUrlsStorage = $this->createMock(SitemapStorageInterface::class);
         $pageUrlsStorage
             ->expects($this->once())
             ->method('addUrlItem')
             ->with($pageUrlItem)
             ->willReturn(true);
 
-        $pageContents = <<<XML
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"/><url><loc>http::/some.com/page_uri</loc></url></urlset>
-XML;
-        $pageUrlsStorage
-            ->expects($this->once())
-            ->method('getContents')
-            ->willReturn($pageContents);
-
         $this->sitemapStorageFactory
             ->expects($this->exactly(2))
             ->method('createUrlsStorage')
             ->willReturnOnConsecutiveCalls($productUrlsStorage, $pageUrlsStorage);
 
-        $this->sitemapFileWriter
+        $this->filesystemAdapter
             ->expects($this->exactly(2))
-            ->method('saveSitemap')
+            ->method('dumpSitemapStorage')
             ->withConsecutive(
                 [
-                    $productContents,
-                    $this->stringEndsWith(sprintf('sitemap-%s-1.xml', self::PRODUCT_PROVIDER_TYPE))
+                    $this->stringEndsWith(sprintf('sitemap-%s-1.xml', self::PRODUCT_PROVIDER_TYPE)),
+                    $website,
+                    $version,
+                    $productUrlsStorage
                 ],
                 [
-                    $pageContents,
-                    $this->stringEndsWith(sprintf('sitemap-%s-1.xml', $pageProviderType))
+                    $this->stringEndsWith(sprintf('sitemap-%s-1.xml', $pageProviderType)),
+                    $website,
+                    $version,
+                    $pageUrlsStorage
                 ]
             );
 
-        $this->assertStringStartsWith($this->getSitemapsDir(), $this->dumper->dump($website));
-    }
-
-    /**
-     * @return string
-     */
-    private function getSitemapsDir()
-    {
-        return sprintf('%s/%s/', self::KERNER_ROOT_DIR, 'sitemaps');
-    }
-
-    /**
-     * @param UrlItem $urlItem
-     * @param string $content
-     * @return SitemapUrlsStorageInterface
-     */
-    private function configureUrlsStorageToAcceptOneUrlItemAndReturnContents(UrlItem $urlItem, $content)
-    {
-        /** @var SitemapUrlsStorageInterface|\PHPUnit_Framework_MockObject_MockObject $urlsStorage */
-        $urlsStorage = $this->createMock(SitemapUrlsStorageInterface::class);
-
-        $urlsStorage
-            ->expects($this->once())
-            ->method('addUrlItem')
-            ->withConsecutive($urlItem)
-            ->willReturnOnConsecutiveCalls(true);
-
-        $urlsStorage
-            ->expects($this->once())
-            ->method('getContents')
-            ->willReturnOnConsecutiveCalls($content);
-
-        return $urlsStorage;
+        $this->dumper->dump($website, $version);
     }
 }

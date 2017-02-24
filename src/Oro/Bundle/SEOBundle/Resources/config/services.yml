@@ -88,22 +88,33 @@ services:
     oro_seo.provider.url_items_provider_registry:
         class: Oro\Bundle\SEOBundle\Provider\UrlItemsProviderRegistry
 
-    oro_seo.provider.sitemap_url_provider_dummy_1:
-        class: Oro\Bundle\SEOBundle\Provider\DummySitemapProvider
-        tags:
-            - { name: 'oro_seo.sitemap_url_provider', alias: 'test_one' }
-    oro_seo.provider.sitemap_url_provider_dummy_2:
-        class: Oro\Bundle\SEOBundle\Provider\DummySitemapProvider
-        tags:
-            - { name: 'oro_seo.sitemap_url_provider', alias: 'test_two' }
+    oro_seo.sitemap.provider.sitemap_files_provider:
+        class: Oro\Bundle\SEOBundle\Sitemap\Provider\SitemapFilesProvider
+        arguments:
+            - '@oro_seo.sitemap.filesystem_adapter'
+            - '@oro_redirect.generator.canonical_url'
+            - '/web/sitemaps'
 
-    oro_seo.tools.sitemap_dumper:
-        class: Oro\Bundle\SEOBundle\Tools\SitemapDumper
+    oro_seo.sitemap.filesystem_adapter:
+        class: Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFilesystemAdapter
+        arguments:
+            - '@filesystem'
+            - '@oro_seo.sitemap.sitemap_file_writer'
+            - '%kernel.root_dir'
+
+    oro_seo.sitemap.sitemap_url_dumper:
+        class: Oro\Bundle\SEOBundle\Sitemap\Dumper\SitemapDumper
         arguments:
             - '@oro_seo.provider.url_items_provider_registry'
-            - '@oro_seo.tools.sitemap_storage_factory'
-            - '@oro_seo.tools.sitemap_file_writer'
-            - '%kernel.root_dir%'
+            - '@oro_seo.sitemap.sitemap_storage_factory'
+            - '@oro_seo.sitemap.filesystem_adapter'
+
+    oro_seo.sitemap.sitemap_index_dumper:
+        class: Oro\Bundle\SEOBundle\Sitemap\Dumper\SitemapIndexDumper
+        arguments:
+            - '@oro_seo.sitemap.provider.sitemap_files_provider'
+            - '@oro_seo.sitemap.sitemap_storage_factory'
+            - '@oro_seo.sitemap.filesystem_adapter'
 
     oro_seo.form.type.sitemap_changefreq:
         class: Oro\Bundle\SEOBundle\Form\Type\SitemapChangefreqType
@@ -142,12 +153,13 @@ services:
         parent: oro_seo.provider.abstract_url_items_provider
         tags:
             - { name: oro_seo.sitemap_url_provider }
-    oro_seo.tools.sitemap_storage_factory:
-        public: false
-        class: Oro\Bundle\SEOBundle\Tools\SitemapStorageFactory
 
-    oro_seo.tools.sitemap_file_writer:
-        class: Oro\Bundle\SEOBundle\Tools\SitemapFileWriter
+    oro_seo.sitemap.sitemap_storage_factory:
+        public: false
+        class: Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageFactory
+
+    oro_seo.sitemap.sitemap_file_writer:
+        class: Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFileWriter
         arguments:
             - '@filesystem'
             - '@logger'

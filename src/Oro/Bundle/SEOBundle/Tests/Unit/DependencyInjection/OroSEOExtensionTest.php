@@ -29,7 +29,7 @@ class OroSEOExtensionTest extends ExtensionTestCase
 
         $this->loadExtension(new OroSEOExtension());
         $expectedDefinitions = [
-            'oro_seo.tools.gzip_sitemap_file_writer'
+            'oro_seo.sitemap.gzip_sitemap_file_writer'
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }

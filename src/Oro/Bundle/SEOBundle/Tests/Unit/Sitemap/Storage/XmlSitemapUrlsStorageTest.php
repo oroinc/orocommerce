@@ -1,9 +1,9 @@
 <?php
 
-namespace Oro\Bundle\SEOBundle\Tests\Unit\Tools;
+namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\Storage;
 
 use Oro\Bundle\SEOBundle\Model\DTO\UrlItem;
-use Oro\Bundle\SEOBundle\Tools\XmlSitemapUrlsStorage;
+use Oro\Bundle\SEOBundle\Sitemap\Storage\XmlSitemapUrlsStorage;
 
 class XmlSitemapUrlsStorageTest extends \PHPUnit_Framework_TestCase
 {

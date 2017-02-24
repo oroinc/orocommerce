@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\SEOBundle\Tools\Exception;
+namespace Oro\Bundle\SEOBundle\Sitemap\Exception;
 
 class SitemapFileWriterException extends \Exception
 {

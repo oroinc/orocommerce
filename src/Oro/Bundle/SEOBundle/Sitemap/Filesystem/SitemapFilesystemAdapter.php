@@ -1,13 +1,16 @@
 <?php
 
-namespace Oro\Bundle\SEOBundle\Tools;
+namespace Oro\Bundle\SEOBundle\Sitemap\Filesystem;
 
+use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageInterface;
 use Oro\Component\Website\WebsiteInterface;
 use Symfony\Component\Filesystem\Filesystem;
+use Symfony\Component\Finder\Finder;
 
 class SitemapFilesystemAdapter
 {
     const ACTUAL_VERSION = 'actual';
+    const VERSION_FILE_NAME = 'version';
 
     /**
      * @var Filesystem
@@ -43,13 +46,13 @@ class SitemapFilesystemAdapter
      * @param string $filename
      * @param WebsiteInterface $website
      * @param string $version
-     * @param SitemapUrlsStorageInterface $sitemapUrlsStorage
+     * @param SitemapStorageInterface $sitemapUrlsStorage
      */
     public function dumpSitemapStorage(
         $filename,
         WebsiteInterface $website,
         $version,
-        SitemapUrlsStorageInterface $sitemapUrlsStorage
+        SitemapStorageInterface $sitemapUrlsStorage
     ) {
         $path = $this->getVersionedPath($website, $version);
         $this->filesystem->mkdir($path);
@@ -66,26 +69,58 @@ class SitemapFilesystemAdapter
         $actualVersionPath = $this->getVersionedPath($website, self::ACTUAL_VERSION);
         $this->filesystem->remove($actualVersionPath);
         $this->filesystem->rename($this->getVersionedPath($website, $version), $actualVersionPath);
+        $this->filesystem->dumpFile(self::VERSION_FILE_NAME, $version);
     }
 
     /**
      * @param WebsiteInterface $website
      * @param string $version
-     * @param string|null $regex
-     * @return \Iterator
+     * @return bool
      */
-    public function getSitemapFiles(WebsiteInterface $website, $version, $regex = null)
+    public function makeNewerVersionActual(WebsiteInterface $website, $version)
     {
-        $iterator = new \FilesystemIterator(
-            $this->getVersionedPath($website, $version),
-            \FilesystemIterator::SKIP_DOTS
-        );
+        if ($version > $this->getActualVersionNumber($website)) {
+            $this->makeActual($website, $version);
 
-        if ($regex) {
-            $iterator = new \RegexIterator($iterator, $regex);
+            return true;
         }
 
-        return $iterator;
+        return false;
+    }
+
+    /**
+     * @param WebsiteInterface $website
+     * @return int
+     */
+    public function getActualVersionNumber(WebsiteInterface $website)
+    {
+        $actualVersionPath = $this->getVersionedPath($website, self::ACTUAL_VERSION);
+        $versionFilePath = $actualVersionPath . DIRECTORY_SEPARATOR . self::VERSION_FILE_NAME;
+        if ($this->filesystem->exists($versionFilePath)) {
+            return (int)file_get_contents($versionFilePath);
+        }
+
+        return 0;
+    }
+
+    /**
+     * @param WebsiteInterface $website
+     * @param string $version
+     * @param string|null $pattern
+     * @return \Traversable
+     */
+    public function getSitemapFiles(WebsiteInterface $website, $version, $pattern = null)
+    {
+        $finder = Finder::create();
+        $files = $finder->files()
+            ->in($this->getVersionedPath($website, $version))
+            ->notName(self::VERSION_FILE_NAME);
+
+        if ($pattern) {
+            $files->name($pattern);
+        }
+
+        return $files;
     }
 
     /**

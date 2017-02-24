@@ -1,7 +1,10 @@
 <?php
 
-namespace Oro\Bundle\SEOBundle\Tools;
+namespace Oro\Bundle\SEOBundle\Sitemap\Dumper;
 
+use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFilesystemAdapter;
+use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageFactory;
+use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageInterface;
 use Oro\Component\SEO\Provider\UrlItemsProviderInterface;
 use Oro\Component\SEO\Provider\VersionAwareInterface;
 use Oro\Component\SEO\Tools\SitemapDumperInterface;
@@ -46,7 +49,7 @@ class SitemapIndexDumper implements SitemapDumperInterface
      */
     public function dump(WebsiteInterface $website, $version, $type = null)
     {
-        $urlsStorage = $this->sitemapStorageFactory->createUrlsStorage();
+        $urlsStorage = $this->createUrlsStorage();
         if ($this->provider instanceof VersionAwareInterface) {
             $this->provider->setVersion($version);
         }
@@ -62,7 +65,7 @@ class SitemapIndexDumper implements SitemapDumperInterface
                     $urlsStorage
                 );
 
-                $urlsStorage = $this->sitemapStorageFactory->createUrlsStorage();
+                $urlsStorage = $this->createUrlsStorage();
                 $urlsStorage->addUrlItem($urlItem);
             }
         }
@@ -82,5 +85,13 @@ class SitemapIndexDumper implements SitemapDumperInterface
     private function createFileName($fileNumber)
     {
         return sprintf('sitemap-index-%d.xml', $fileNumber);
+    }
+
+    /**
+     * @return SitemapStorageInterface
+     */
+    private function createUrlsStorage()
+    {
+        return $this->sitemapStorageFactory->createUrlsStorage(SitemapStorageFactory::TYPE_SITEMAP_INDEX);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\SEOBundle\Tools;
+namespace Oro\Bundle\SEOBundle\Sitemap\Filesystem;
 
 class GzipSitemapFileWriter implements SitemapFileWriterInterface
 {

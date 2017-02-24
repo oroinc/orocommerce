@@ -1,15 +1,15 @@
 <?php
 
-namespace Oro\Bundle\SEOBundle\Provider;
+namespace Oro\Bundle\SEOBundle\Sitemap\Provider;
 
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\SEOBundle\Model\DTO\UrlItem;
-use Oro\Bundle\SEOBundle\Tools\SitemapFilesystemAdapter;
+use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFilesystemAdapter;
 use Oro\Component\SEO\Provider\UrlItemsProviderInterface;
 use Oro\Component\SEO\Provider\VersionAwareInterface;
 use Oro\Component\Website\WebsiteInterface;
 
-class SitemapIndexProvider implements UrlItemsProviderInterface, VersionAwareInterface
+class SitemapFilesProvider implements UrlItemsProviderInterface, VersionAwareInterface
 {
     /**
      * @var SitemapFilesystemAdapter
