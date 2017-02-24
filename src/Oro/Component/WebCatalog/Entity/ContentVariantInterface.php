@@ -19,4 +19,9 @@ interface ContentVariantInterface
      * @return $this
      */
     public function setType($type);
+
+    /**
+     * @return ContentNodeInterface
+     */
+    public function getNode();
 }

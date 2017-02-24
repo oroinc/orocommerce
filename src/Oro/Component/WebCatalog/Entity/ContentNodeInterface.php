@@ -12,7 +12,7 @@ interface ContentNodeInterface
     public function getId();
 
     /**
-     * @return ContentNodeInterface[]
+     * @return ContentVariantInterface[]
      */
     public function getContentVariants();
 
@@ -25,4 +25,9 @@ interface ContentNodeInterface
      * @return boolean
      */
     public function isRewriteVariantTitle();
+
+    /**
+     * @return WebCatalogInterface
+     */
+    public function getWebCatalog();
 }
