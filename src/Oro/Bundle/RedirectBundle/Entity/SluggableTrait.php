@@ -4,6 +4,6 @@ namespace Oro\Bundle\RedirectBundle\Entity;
 
 trait SluggableTrait
 {
-    use LocalizedSlugPrototypeAwareTrait;
+    use LocalizedSlugPrototypeWithRedirectAwareTrait;
     use SlugAwareTrait;
 }

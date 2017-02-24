@@ -8,9 +8,6 @@ use Oro\Bundle\SEOBundle\Tests\Functional\DataFixtures\LoadPageMetaData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Symfony\Component\DomCrawler\Crawler;
 
-/**
- * @group segfault
- */
 class PageControllerTest extends WebTestCase
 {
     protected function setUp()
@@ -29,6 +26,7 @@ class PageControllerTest extends WebTestCase
 
     public function testEditLandingPage()
     {
+        $this->markTestSkipped('Due to BB-7722');
         $crawler = $this->client->request('GET', $this->getUrl('oro_cms_page_update', ['id' => $this->getPageId()]));
 
         $this->checkSeoSectionExistence($crawler);

@@ -2,9 +2,15 @@
 
 namespace Oro\Bundle\WebCatalogBundle\EventListener;
 
+use Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository;
+use Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 
+/**
+ * Set used web catalog scope to request attribute _web_content_scope
+ * Used in menu data provider.
+ */
 class ScopeRequestListener
 {
     /**
@@ -13,11 +19,28 @@ class ScopeRequestListener
     protected $scopeManager;
 
     /**
-     * @param ScopeManager $scopeManager
+     * @var SlugRepository
      */
-    public function __construct(ScopeManager $scopeManager)
-    {
+    private $slugRepository;
+
+    /**
+     * @var MatchedUrlDecisionMaker
+     */
+    private $matchedUrlDecisionMaker;
+
+    /**
+     * @param ScopeManager $scopeManager
+     * @param SlugRepository $slugRepository
+     * @param MatchedUrlDecisionMaker $matchedUrlDecisionMaker
+     */
+    public function __construct(
+        ScopeManager $scopeManager,
+        SlugRepository $slugRepository,
+        MatchedUrlDecisionMaker $matchedUrlDecisionMaker
+    ) {
         $this->scopeManager = $scopeManager;
+        $this->slugRepository = $slugRepository;
+        $this->matchedUrlDecisionMaker = $matchedUrlDecisionMaker;
     }
 
     /**
@@ -29,9 +52,12 @@ class ScopeRequestListener
         if (!$event->isMasterRequest() || $request->attributes->has('_web_content_scope')) {
             return;
         }
+        if (!$this->matchedUrlDecisionMaker->matches($request->getPathInfo())) {
+            return;
+        }
 
         $scope = $this->scopeManager->findMostSuitable('web_content');
-        if ($scope) {
+        if ($scope && $this->slugRepository->isScopeAttachedToSlug($scope)) {
             $request->attributes->set('_web_content_scope', $scope);
         }
     }

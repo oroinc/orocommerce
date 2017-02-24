@@ -35,7 +35,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
     public function testCgetEntity(array $parameters, $expectedContentFile)
     {
         $entityType = $this->getEntityType(InventoryLevel::class);
-        $response = $this->get('oro_rest_api_cget', ['entity' => $entityType], $parameters);
+        $response = $this->cget(['entity' => $entityType], $parameters);
         $this->assertResponseContains($expectedContentFile, $response);
     }
 

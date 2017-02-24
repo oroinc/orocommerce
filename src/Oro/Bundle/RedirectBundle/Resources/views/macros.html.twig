@@ -1,0 +1,13 @@
+{% macro renderGeneratedSlugs(entitySlugs) %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
+    {% set slugs %}
+        {% if entitySlugs is empty %}
+            {{ 'N/A'|trans }}
+        {% else %}
+            {{ UI.renderList(entitySlugs) }}
+        {% endif %}
+    {% endset %}
+
+    {{ UI.renderHtmlProperty('oro.redirect.slug.entity_plural_label'|trans, slugs) }}
+{% endmacro %}
