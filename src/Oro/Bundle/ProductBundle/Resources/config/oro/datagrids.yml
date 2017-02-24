@@ -7,7 +7,7 @@ datagrids:
             type:         orm
             query:
                 select:
-                    - product.id
+                    - product.id as id
                     - product.sku
                     - product.createdAt
                     - product.updatedAt
@@ -28,6 +28,13 @@ datagrids:
                 label:         oro.product.sku.label
             productName:
                 label:         oro.product.names.label
+                inline_editing:
+                    enable: true
+                    save_api_accessor:
+                        route: oro_product_ajax_edit_name
+                        query_parameter_names:
+                            - id
+                            - productName
             inventoryStatus:
                 label:         oro.product.inventory_status.label
                 type:          twig
