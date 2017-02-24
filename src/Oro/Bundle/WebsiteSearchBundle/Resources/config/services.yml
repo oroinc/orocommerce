@@ -170,10 +170,10 @@ services:
         arguments:
             - '@oro_website_search.indexer'
         tags:
-            - { name: 'oro_message_queue.client.message_processor', 'topicName': 'oro.website.search.indexer.save' }
-            - { name: 'oro_message_queue.client.message_processor', 'topicName': 'oro.website.search.indexer.delete' }
-            - { name: 'oro_message_queue.client.message_processor', 'topicName': 'oro.website.search.indexer.reset_index' }
-            - { name: 'oro_message_queue.client.message_processor', 'topicName': 'oro.website.search.indexer.reindex' }
+            - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.website.search.indexer.save' }
+            - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.website.search.indexer.delete' }
+            - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.website.search.indexer.reset_index' }
+            - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.website.search.indexer.reindex' }
 
     oro_website_search.reindex_request.listener:
         class: 'Oro\Bundle\WebsiteSearchBundle\EventListener\ReindexRequestListener'

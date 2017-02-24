@@ -2,14 +2,32 @@
 
 namespace Oro\Bundle\CatalogBundle\Twig;
 
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class CategoryExtension extends \Twig_Extension implements ContainerAwareInterface
+use Oro\Bundle\CatalogBundle\JsTree\CategoryTreeHandler;
+
+class CategoryExtension extends \Twig_Extension
 {
-    use ContainerAwareTrait;
-
     const NAME = 'oro_catalog_category_extension';
+
+    /** @var ContainerInterface */
+    protected $container;
+
+    /**
+     * @param ContainerInterface $container
+     */
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
+
+    /**
+     * @return CategoryTreeHandler
+     */
+    protected function getCategoryTreeHandler()
+    {
+        return $this->container->get('oro_catalog.category_tree_handler');
+    }
 
     /**
      * {@inheritdoc}
@@ -25,17 +43,22 @@ class CategoryExtension extends \Twig_Extension implements ContainerAwareInterfa
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction(
-                'oro_category_list',
-                function ($rootLabel = null) {
-                    $tree = $this->container->get('oro_catalog.category_tree_handler')->createTree();
-                    if ($rootLabel && array_key_exists(0, $tree)) {
-                        $tree[0]['text'] = $rootLabel;
-                    }
-
-                    return $tree;
-                }
-            ),
+            new \Twig_SimpleFunction('oro_category_list', [$this, 'getCategoryList']),
         ];
+    }
+
+    /**
+     * @param string|null $rootLabel
+     *
+     * @return array
+     */
+    public function getCategoryList($rootLabel = null)
+    {
+        $tree = $this->getCategoryTreeHandler()->createTree();
+        if ($rootLabel && array_key_exists(0, $tree)) {
+            $tree[0]['text'] = $rootLabel;
+        }
+
+        return $tree;
     }
 }
