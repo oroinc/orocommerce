@@ -8,7 +8,7 @@ use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
-use Oro\Bundle\FlatRateBundle\Method\FlatRateMethodType;
+use Oro\Bundle\FlatRateShippingBundle\Method\FlatRateMethodType;
 use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
 use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository;

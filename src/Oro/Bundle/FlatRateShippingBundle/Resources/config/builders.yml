@@ -1,0 +1,7 @@
+services:
+    oro_flat_rate.builder.flat_rate_method_from_channel:
+        class: 'Oro\Bundle\FlatRateShippingBundle\Builder\FlatRateMethodFromChannelBuilder'
+        public: false
+        arguments:
+            - '@oro_flat_rate.method.identifier_generator.method'
+            - '@oro_locale.helper.localization'
