@@ -10,7 +10,6 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
-use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
@@ -75,13 +74,14 @@ class QuoteController extends Controller
 
         if ($request->get(self::REDIRECT_BACK_FLAG, false)) {
             return $this->handleRequestAndRedirectBack(
+                $request,
                 $quote,
                 'OroSaleBundle:Quote:createWithReturn.html.twig'
             );
         }
 
         if (!$request->get(ProductDataStorage::STORAGE_KEY, false)) {
-            return $this->update($quote);
+            return $this->update($quote, $request);
         }
 
         $quote->setWebsite($this->get('oro_website.manager')->getDefaultWebsite());
@@ -109,12 +109,13 @@ class QuoteController extends Controller
      * @ParamConverter("quote", options={"repository_method" = "getQuote"})
      *
      * @param Quote $quote
+     * @param Request $request
      *
      * @return array|RedirectResponse
      */
-    public function updateAction(Quote $quote)
+    public function updateAction(Quote $quote, Request $request)
     {
-        return $this->update($quote);
+        return $this->update($quote, $request);
     }
 
     /**
@@ -134,16 +135,17 @@ class QuoteController extends Controller
 
     /**
      * @param Quote $quote
+     * @param Request $request
      * @return array|RedirectResponse
      */
-    protected function update(Quote $quote)
+    protected function update(Quote $quote, Request $request)
     {
-        /* @var $handler UpdateHandler */
-        $handler = $this->get('oro_form.model.update_handler');
+        $handler = $this->get('oro_form.update_handler');
         return $handler->update(
             $quote,
             $this->createForm(QuoteType::NAME, $quote),
             $this->get('translator')->trans('oro.sale.controller.quote.saved.message'),
+            $request,
             null,
             'quote_update'
         );
@@ -152,15 +154,16 @@ class QuoteController extends Controller
     /**
      * Handles request which requires get back after Quote creating
      *
+     * @param Request $request
      * @param Quote $quote
      * @param string $template
      *
      * @return RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    private function handleRequestAndRedirectBack(Quote $quote, $template)
+    private function handleRequestAndRedirectBack(Request $request, Quote $quote, $template)
     {
         // Handle form validate and fetch pre-response
-        $updateResponse = $this->update($quote);
+        $updateResponse = $this->update($quote, $request);
 
         /** @var ReturnRouteDataStorage $redirectStorage */
         $redirectStorage = $this->get('oro_sale.storage.return_route_storage');

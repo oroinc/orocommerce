@@ -1,6 +1,8 @@
 services:
     oro_catalog.form.type.category:
         class: 'Oro\Bundle\CatalogBundle\Form\Type\CategoryType'
+        arguments:
+            - '@router'
         calls:
             - [setDataClass, ['%oro_catalog.entity.category.class%']]
             - [setProductClass, ['%oro_product.entity.product.class%']]

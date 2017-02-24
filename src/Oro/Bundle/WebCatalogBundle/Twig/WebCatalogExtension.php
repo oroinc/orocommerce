@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Twig;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler;
@@ -10,26 +12,31 @@ class WebCatalogExtension extends \Twig_Extension
 {
     const NAME = 'oro_web_catalog_extension';
 
-    /**
-     * @var ContentNodeTreeHandler
-     */
-    protected $treeHandler;
+    /** @var ContainerInterface */
+    protected $container;
 
     /**
-     * @var ContentVariantTypeRegistry
+     * @param ContainerInterface $container
      */
-    protected $contentVariantTypeRegistry;
+    public function __construct(ContainerInterface $container)
+    {
+        $this->container = $container;
+    }
 
     /**
-     * @param ContentNodeTreeHandler $treeHandler
-     * @param ContentVariantTypeRegistry $contentVariantTypeRegistry
+     * @return ContentNodeTreeHandler
      */
-    public function __construct(
-        ContentNodeTreeHandler $treeHandler,
-        ContentVariantTypeRegistry $contentVariantTypeRegistry
-    ) {
-        $this->treeHandler = $treeHandler;
-        $this->contentVariantTypeRegistry = $contentVariantTypeRegistry;
+    protected function getTreeHandler()
+    {
+        return $this->container->get('oro_web_catalog.content_node_tree_handler');
+    }
+
+    /**
+     * @return ContentVariantTypeRegistry
+     */
+    protected function getContentVariantTypeRegistry()
+    {
+        return $this->container->get('oro_web_catalog.content_variant_type.registry');
     }
 
     /**
@@ -57,9 +64,10 @@ class WebCatalogExtension extends \Twig_Extension
      */
     public function getNodesTree(WebCatalog $webCatalog)
     {
-        $root = $this->treeHandler->getTreeRootByWebCatalog($webCatalog);
+        $treeHandler = $this->getTreeHandler();
+        $root = $treeHandler->getTreeRootByWebCatalog($webCatalog);
 
-        return $this->treeHandler->createTree($root, true);
+        return $treeHandler->createTree($root, true);
     }
 
     /**
@@ -68,7 +76,7 @@ class WebCatalogExtension extends \Twig_Extension
      */
     public function getContentVariantTitle($typeName)
     {
-        $type = $this->contentVariantTypeRegistry->getContentVariantType($typeName);
+        $type = $this->getContentVariantTypeRegistry()->getContentVariantType($typeName);
 
         return $type->getTitle();
     }

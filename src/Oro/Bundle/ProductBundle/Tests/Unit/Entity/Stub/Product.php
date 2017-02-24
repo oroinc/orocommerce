@@ -6,6 +6,7 @@ use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\LocaleBundle\Tests\Unit\Entity\Stub\LocalizedEntityTrait;
 use Oro\Bundle\ProductBundle\Entity\Product as BaseProduct;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Component\PropertyAccess\PropertyAccessor;
 
 use Symfony\Component\PropertyAccess\PropertyAccess;
@@ -209,5 +210,13 @@ class Product extends BaseProduct
     public function setPageTemplate(EntityFieldFallbackValue $pageTemplate)
     {
         $this->pageTemplate = $pageTemplate;
+    }
+
+    /**
+     * @param ProductUnitPrecision $primaryUnitPrecision
+     */
+    public function setDirectlyPrimaryUnitPrecision(ProductUnitPrecision $primaryUnitPrecision)
+    {
+        $this->primaryUnitPrecision = $primaryUnitPrecision;
     }
 }

@@ -96,8 +96,7 @@ class ProductUpdateHandlerTest extends UpdateHandlerTest
             $this->session,
             $this->router,
             $this->doctrineHelper,
-            $this->formHandler,
-            $this->formTemplateDataProviderRegistry
+            $this->formHandler
         );
         $this->handler->setTranslator($this->translator);
         $this->handler->setActionGroupRegistry($this->actionGroupRegistry);
