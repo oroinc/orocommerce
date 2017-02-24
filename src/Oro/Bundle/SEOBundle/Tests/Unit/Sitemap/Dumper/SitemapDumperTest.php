@@ -52,7 +52,8 @@ class SitemapDumperTest extends \PHPUnit_Framework_TestCase
         $this->dumper = new SitemapDumper(
             $this->providerRegistry,
             $this->sitemapStorageFactory,
-            $this->filesystemAdapter
+            $this->filesystemAdapter,
+            'url'
         );
     }
 

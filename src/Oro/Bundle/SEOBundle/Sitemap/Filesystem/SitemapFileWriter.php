@@ -38,7 +38,7 @@ class SitemapFileWriter implements SitemapFileWriterInterface
     public function saveSitemap($sitemapContents, $path)
     {
         try {
-            $this->filesystem->dumpFile($path, $sitemapContents, 0755);
+            $this->filesystem->dumpFile($path, $sitemapContents);
         } catch (IOExceptionInterface $e) {
             $this->logger->debug($e->getMessage());
 

@@ -57,7 +57,7 @@ class SitemapFilesystemAdapter
         $path = $this->getVersionedPath($website, $version);
         $this->filesystem->mkdir($path);
 
-        $this->fileWriter->saveSitemap($sitemapUrlsStorage, $path . DIRECTORY_SEPARATOR . $filename);
+        $this->fileWriter->saveSitemap($sitemapUrlsStorage->getContents(), $path . DIRECTORY_SEPARATOR . $filename);
     }
 
     /**
@@ -69,7 +69,7 @@ class SitemapFilesystemAdapter
         $actualVersionPath = $this->getVersionedPath($website, self::ACTUAL_VERSION);
         $this->filesystem->remove($actualVersionPath);
         $this->filesystem->rename($this->getVersionedPath($website, $version), $actualVersionPath);
-        $this->filesystem->dumpFile(self::VERSION_FILE_NAME, $version);
+        $this->filesystem->dumpFile($actualVersionPath . DIRECTORY_SEPARATOR . self::VERSION_FILE_NAME, $version);
     }
 
     /**
@@ -107,13 +107,18 @@ class SitemapFilesystemAdapter
      * @param WebsiteInterface $website
      * @param string $version
      * @param string|null $pattern
-     * @return \Traversable
+     * @return \Traversable|null
      */
     public function getSitemapFiles(WebsiteInterface $website, $version, $pattern = null)
     {
+        $path = $this->getVersionedPath($website, $version);
+        if (!is_readable($path)) {
+            return null;
+        }
+
         $finder = Finder::create();
         $files = $finder->files()
-            ->in($this->getVersionedPath($website, $version))
+            ->in($path)
             ->notName(self::VERSION_FILE_NAME);
 
         if ($pattern) {

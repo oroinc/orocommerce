@@ -1,3 +1,6 @@
+parameters:
+    oro_seo.sitemap_directory: 'sitemaps'
+
 services:
     #EventListeners
     oro_seo.event_listener.product_form_view:
@@ -93,14 +96,14 @@ services:
         arguments:
             - '@oro_seo.sitemap.filesystem_adapter'
             - '@oro_redirect.generator.canonical_url'
-            - '/web/sitemaps'
+            - '/%oro_seo.sitemap_directory%'
 
     oro_seo.sitemap.filesystem_adapter:
         class: Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFilesystemAdapter
         arguments:
             - '@filesystem'
             - '@oro_seo.sitemap.sitemap_file_writer'
-            - '%kernel.root_dir'
+            - '%kernel.root_dir%/../web/%oro_seo.sitemap_directory%'
 
     oro_seo.sitemap.sitemap_url_dumper:
         class: Oro\Bundle\SEOBundle\Sitemap\Dumper\SitemapDumper
@@ -108,13 +111,20 @@ services:
             - '@oro_seo.provider.url_items_provider_registry'
             - '@oro_seo.sitemap.sitemap_storage_factory'
             - '@oro_seo.sitemap.filesystem_adapter'
+            - 'sitemap'
+
+    oro_seo.provider.url_items_provider_registry_index:
+        parent: oro_seo.provider.url_items_provider_registry
+        calls:
+            - ['addProvider', ['@oro_seo.sitemap.provider.sitemap_files_provider', 'index']]
 
     oro_seo.sitemap.sitemap_index_dumper:
-        class: Oro\Bundle\SEOBundle\Sitemap\Dumper\SitemapIndexDumper
+        class: Oro\Bundle\SEOBundle\Sitemap\Dumper\SitemapDumper
         arguments:
-            - '@oro_seo.sitemap.provider.sitemap_files_provider'
+            - '@oro_seo.provider.url_items_provider_registry_index'
             - '@oro_seo.sitemap.sitemap_storage_factory'
             - '@oro_seo.sitemap.filesystem_adapter'
+            - 'index'
 
     oro_seo.form.type.sitemap_changefreq:
         class: Oro\Bundle\SEOBundle\Form\Type\SitemapChangefreqType
@@ -140,19 +150,19 @@ services:
         class: Oro\Bundle\SEOBundle\Provider\ProductUrlItemsProvider
         parent: oro_seo.provider.abstract_url_items_provider
         tags:
-            - { name: oro_seo.sitemap_url_provider }
+            - { name: oro_seo.url_items_provider, alias: 'product' }
 
     oro_seo.provider.category_url_items_provider:
         class: Oro\Bundle\SEOBundle\Provider\CategoryUrlItemsProvider
         parent: oro_seo.provider.abstract_url_items_provider
         tags:
-            - { name: oro_seo.sitemap_url_provider }
+            - { name: oro_seo.url_items_provider, alias: 'category' }
 
     oro_seo.provider.cms_page_url_items_provider:
         class: Oro\Bundle\SEOBundle\Provider\CmsPageUrlItemsProvider
         parent: oro_seo.provider.abstract_url_items_provider
         tags:
-            - { name: oro_seo.sitemap_url_provider }
+            - { name: oro_seo.url_items_provider, alias: 'page' }
 
     oro_seo.sitemap.sitemap_storage_factory:
         public: false

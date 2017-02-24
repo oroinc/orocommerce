@@ -29,18 +29,35 @@ class SitemapDumper implements SitemapDumperInterface
     private $filesystemAdapter;
 
     /**
+     * @var string
+     */
+    private $storageType;
+
+    /**
      * @param UrlItemsProviderRegistry $providerRegistry
      * @param SitemapStorageFactory $sitemapStorageFactory
      * @param SitemapFilesystemAdapter $filesystemAdapter
+     * @param string $storageType
      */
     public function __construct(
         UrlItemsProviderRegistry $providerRegistry,
         SitemapStorageFactory $sitemapStorageFactory,
-        SitemapFilesystemAdapter $filesystemAdapter
+        SitemapFilesystemAdapter $filesystemAdapter,
+        $storageType
     ) {
         $this->providerRegistry = $providerRegistry;
         $this->sitemapStorageFactory = $sitemapStorageFactory;
         $this->filesystemAdapter = $filesystemAdapter;
+        $this->storageType = $storageType;
+    }
+
+    /**
+     * @param string $type
+     * @return string
+     */
+    public static function getFilenamePattern($type = '*')
+    {
+        return self::createFileName($type, '*') . '*';
     }
 
     /**
@@ -58,7 +75,7 @@ class SitemapDumper implements SitemapDumperInterface
             $urlsStorage = $this->createUrlsStorage();
 
             $fileNumber = 1;
-            foreach ($provider->getUrlItems($website) as $urlItem) {
+            foreach ($provider->getUrlItems($website, $version) as $urlItem) {
                 $itemAdded = $urlsStorage->addUrlItem($urlItem);
                 if (!$itemAdded) {
                     $this->filesystemAdapter->dumpSitemapStorage(
@@ -87,7 +104,7 @@ class SitemapDumper implements SitemapDumperInterface
      * @param string $fileNumber
      * @return string
      */
-    private function createFileName($providerType, $fileNumber)
+    private static function createFileName($providerType, $fileNumber)
     {
         return sprintf(static::SITEMAP_FILENAME_TEMPLATE, $providerType, $fileNumber);
     }
@@ -97,6 +114,6 @@ class SitemapDumper implements SitemapDumperInterface
      */
     private function createUrlsStorage()
     {
-        return $this->sitemapStorageFactory->createUrlsStorage(SitemapStorageFactory::TYPE_SITEMAP);
+        return $this->sitemapStorageFactory->createUrlsStorage($this->storageType);
     }
 }

@@ -71,10 +71,9 @@ abstract class AbstractUrlItemsProvider implements UrlItemsProviderInterface
     }
 
     /**
-     * @param WebsiteInterface $website
-     * @return \Generator|UrlItem[]
+     * {@inheritdoc}
      */
-    public function getUrlItems(WebsiteInterface $website)
+    public function getUrlItems(WebsiteInterface $website, $version)
     {
         $queryBuilder = $this->entityManager->createQueryBuilder()
             ->select(str_replace('entityAlias', $this->getType(), 'entityAlias.id, entityAlias.updatedAt'))
@@ -189,9 +188,9 @@ abstract class AbstractUrlItemsProvider implements UrlItemsProviderInterface
         if ($systemUrl) {
             return new UrlItem(
                 $systemUrl,
+                $updatedAt,
                 $this->getEntityChangeFrequency(),
-                $this->getEntitySitemapPriority(),
-                $updatedAt
+                $this->getEntitySitemapPriority()
             );
         }
 

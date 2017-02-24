@@ -4,12 +4,13 @@ namespace Oro\Bundle\SEOBundle\Sitemap\Provider;
 
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\SEOBundle\Model\DTO\UrlItem;
+use Oro\Bundle\SEOBundle\Sitemap\Dumper\SitemapDumper;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFilesystemAdapter;
 use Oro\Component\SEO\Provider\UrlItemsProviderInterface;
-use Oro\Component\SEO\Provider\VersionAwareInterface;
 use Oro\Component\Website\WebsiteInterface;
+use Symfony\Component\Finder\Finder;
 
-class SitemapFilesProvider implements UrlItemsProviderInterface, VersionAwareInterface
+class SitemapFilesProvider implements UrlItemsProviderInterface
 {
     /**
      * @var SitemapFilesystemAdapter
@@ -25,11 +26,6 @@ class SitemapFilesProvider implements UrlItemsProviderInterface, VersionAwareInt
      * @var string
      */
     private $webPath;
-
-    /**
-     * @var string
-     */
-    private $version;
 
     /**
      * @param SitemapFilesystemAdapter $filesystemAdapter
@@ -49,21 +45,18 @@ class SitemapFilesProvider implements UrlItemsProviderInterface, VersionAwareInt
     /**
      * {@inheritdoc}
      */
-    public function setVersion($version)
+    public function getUrlItems(WebsiteInterface $website, $version)
     {
-        $this->version = $version;
-    }
+        $files = $this->filesystemAdapter->getSitemapFiles($website, $version);
+        if ($files instanceof Finder) {
+            $files->notName(SitemapDumper::getFilenamePattern('index'));
+        }
 
-    /**
-     * @param WebsiteInterface $website
-     * @return \Generator
-     */
-    public function getUrlItems(WebsiteInterface $website)
-    {
-        foreach ($this->filesystemAdapter->getSitemapFiles($website, $this->version) as $file) {
-            $url = $this->canonicalUrlGenerator->getAbsoluteUrl($this->webPath . '/' . $file, $website);
+        foreach ($files as $file) {
+            $url = sprintf('%s/%d/%d/%s', $this->webPath, $website->getId(), $version, $file->getFilename());
 
-            yield new UrlItem($url);
+            $mTime = \DateTime::createFromFormat('U', $file->getMTime(), new \DateTimeZone('UTC'));
+            yield new UrlItem($this->canonicalUrlGenerator->getAbsoluteUrl($url, $website), $mTime);
         }
     }
 }
