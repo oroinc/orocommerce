@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Generator;
 
+use Doctrine\Common\Cache\CacheProvider;
 use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
@@ -25,6 +26,11 @@ class CanonicalUrlGeneratorTest extends \PHPUnit_Framework_TestCase
      * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $configManager;
+
+    /**
+     * @var CacheProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $cacheProvider;
 
     /**
      * @var RequestStack|\PHPUnit_Framework_MockObject_MockObject
@@ -51,12 +57,14 @@ class CanonicalUrlGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->configManager = $this->getMockBuilder(ConfigManager::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->cacheProvider = $this->createMock(CacheProvider::class);
         $this->requestStack = $this->createMock(RequestStack::class);
         $this->routingInformationProvider = $this->createMock(RoutingInformationProvider::class);
 
         $this->websiteUrlResolver = $this->createMock(WebsiteUrlResolver::class);
         $this->canonicalUrlGenerator = new CanonicalUrlGenerator(
             $this->configManager,
+            $this->cacheProvider,
             $this->requestStack,
             $this->routingInformationProvider,
             $this->websiteUrlResolver
@@ -140,12 +148,23 @@ class CanonicalUrlGeneratorTest extends \PHPUnit_Framework_TestCase
         $routeParameters = ['param' => 42];
         $routeData = new RouteData($route, $routeParameters);
 
+        $this->cacheProvider->expects($this->any())
+            ->method('contains')
+            ->willReturn(false);
+
+        $this->cacheProvider->expects($this->any())
+            ->method('fetch')
+            ->willReturnMap([
+                ['oro_redirect.canonical_url_type', Configuration::SYSTEM_URL],
+                ['oro_redirect.canonical_url_security_type', Configuration::INSECURE]
+            ]);
+
         $this->configManager->expects($this->any())
             ->method('get')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 ['oro_redirect.canonical_url_type', false, false, null, Configuration::SYSTEM_URL],
                 ['oro_redirect.canonical_url_security_type', false, false, null, Configuration::INSECURE]
-            ]));
+            ]);
 
         $this->routingInformationProvider->expects($this->once())
             ->method('getRouteData')
@@ -172,12 +191,23 @@ class CanonicalUrlGeneratorTest extends \PHPUnit_Framework_TestCase
         $routeParameters = ['param' => 42];
         $routeData = new RouteData($route, $routeParameters);
 
+        $this->cacheProvider->expects($this->any())
+            ->method('contains')
+            ->willReturn(false);
+
+        $this->cacheProvider->expects($this->any())
+            ->method('fetch')
+            ->willReturnMap([
+                ['oro_redirect.canonical_url_type', Configuration::DIRECT_URL],
+                ['oro_redirect.canonical_url_security_type', Configuration::SECURE]
+            ]);
+
         $this->configManager->expects($this->any())
             ->method('get')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 ['oro_redirect.canonical_url_type', false, false, null, Configuration::SYSTEM_URL],
                 ['oro_redirect.canonical_url_security_type', false, false, null, Configuration::SECURE]
-            ]));
+            ]);
 
         $this->routingInformationProvider->expects($this->once())
             ->method('getRouteData')
@@ -200,12 +230,21 @@ class CanonicalUrlGeneratorTest extends \PHPUnit_Framework_TestCase
             ->method('getSlugs')
             ->willReturn(new ArrayCollection([]));
 
-        $this->configManager->expects($this->any())
-            ->method('get')
-            ->will($this->returnValueMap([
-                ['oro_redirect.canonical_url_type', false, false, null, Configuration::DIRECT_URL],
-                ['oro_redirect.canonical_url_security_type', false, false, null, Configuration::INSECURE]
-            ]));
+        $this->cacheProvider->expects($this->any())
+            ->method('contains')
+            ->willReturnMap([
+                ['oro_redirect.canonical_url_type', Configuration::DIRECT_URL],
+                ['oro_redirect.canonical_url_security_type', Configuration::INSECURE]
+            ]);
+
+        $this->cacheProvider->expects($this->any())
+            ->method('fetch')
+            ->willReturnMap([
+                ['oro_redirect.canonical_url_type', Configuration::DIRECT_URL],
+                ['oro_redirect.canonical_url_security_type', Configuration::INSECURE]
+            ]);
+
+        $this->configManager->expects($this->never())->method('get');
 
         $expectedUrl = 'http://example.com/canonical';
 
@@ -258,12 +297,23 @@ class CanonicalUrlGeneratorTest extends \PHPUnit_Framework_TestCase
             ->method('getSlugByLocalization')
             ->willReturn($slug);
 
+        $this->cacheProvider->expects($this->any())
+            ->method('contains')
+            ->willReturn(false);
+
+        $this->cacheProvider->expects($this->any())
+            ->method('fetch')
+            ->willReturnMap([
+                ['oro_redirect.canonical_url_type', Configuration::DIRECT_URL],
+                ['oro_redirect.canonical_url_security_type', $urlSecurityType]
+            ]);
+
         $this->configManager->expects($this->any())
             ->method('get')
-            ->will($this->returnValueMap([
+            ->willReturnMap([
                 ['oro_redirect.canonical_url_type', false, false, null, Configuration::DIRECT_URL],
                 ['oro_redirect.canonical_url_security_type', false, false, null, $urlSecurityType]
-            ]));
+            ]);
 
         /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
         $request = $this->createMock(Request::class);

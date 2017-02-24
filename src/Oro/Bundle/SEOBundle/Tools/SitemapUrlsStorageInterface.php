@@ -9,6 +9,7 @@ interface SitemapUrlsStorageInterface
     /**
      * Add $urlItem to the storage.
      * Returns true if operation is successful, returns false otherwise if limits have been reached.
+     *
      * @param UrlItemInterface $urlItem
      * @return bool
      */
@@ -16,6 +17,7 @@ interface SitemapUrlsStorageInterface
 
     /**
      * Returns formatted urls sitemap xml.
+     *
      * @return string
      */
     public function getContents();

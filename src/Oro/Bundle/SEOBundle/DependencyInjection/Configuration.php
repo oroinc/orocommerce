@@ -17,6 +17,8 @@ class Configuration implements ConfigurationInterface
     const CHANGEFREQ_YEARLY = 'yearly';
     const CHANGEFREQ_NEVER = 'never';
 
+    const DEFAULT_PRIORITY = 0.5;
+
     /**
      * {@inheritDoc}
      */
@@ -30,11 +32,11 @@ class Configuration implements ConfigurationInterface
             [
                 'sitemap_changefreq_default' => ['value' => self::CHANGEFREQ_DAILY],
                 'sitemap_changefreq_product' => ['value' => self::CHANGEFREQ_DAILY],
-                'sitemap_priority_product' => ['value' => 0.5],
+                'sitemap_priority_product' => ['value' => self::DEFAULT_PRIORITY],
                 'sitemap_changefreq_category' => ['value' => self::CHANGEFREQ_DAILY],
-                'sitemap_priority_category' => ['value' => 0.5],
+                'sitemap_priority_category' => ['value' => self::DEFAULT_PRIORITY],
                 'sitemap_changefreq_page' => ['value' => self::CHANGEFREQ_DAILY],
-                'sitemap_priority_page' => ['value' => 0.5],
+                'sitemap_priority_page' => ['value' => self::DEFAULT_PRIORITY],
             ]
         );
 

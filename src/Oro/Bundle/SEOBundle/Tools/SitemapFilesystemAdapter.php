@@ -15,9 +15,9 @@ class SitemapFilesystemAdapter
     private $filesystem;
 
     /**
-     * @var SitemapFileWriterFactory
+     * @var SitemapFileWriterInterface
      */
-    private $fileWriterFactory;
+    private $fileWriter;
 
     /**
      * @var string
@@ -25,22 +25,17 @@ class SitemapFilesystemAdapter
     private $path;
 
     /**
-     * @var SitemapFileWriter
-     */
-    private $fileWriter;
-
-    /**
      * @param Filesystem $filesystem
-     * @param SitemapFileWriterFactory $fileWriterFactory
+     * @param SitemapFileWriterInterface $fileWriter
      * @param string $path
      */
     public function __construct(
         Filesystem $filesystem,
-        SitemapFileWriterFactory $fileWriterFactory,
+        SitemapFileWriterInterface $fileWriter,
         $path
     ) {
         $this->filesystem = $filesystem;
-        $this->fileWriterFactory = $fileWriterFactory;
+        $this->fileWriter = $fileWriter;
         $this->path = $path;
     }
 
@@ -59,7 +54,7 @@ class SitemapFilesystemAdapter
         $path = $this->getVersionedPath($website, $version);
         $this->filesystem->mkdir($path);
 
-        $this->getFileWriter()->saveSitemap($sitemapUrlsStorage, $path . DIRECTORY_SEPARATOR . $filename);
+        $this->fileWriter->saveSitemap($sitemapUrlsStorage, $path . DIRECTORY_SEPARATOR . $filename);
     }
 
     /**
@@ -91,18 +86,6 @@ class SitemapFilesystemAdapter
         }
 
         return $iterator;
-    }
-
-    /**
-     * @return SitemapFileWriter
-     */
-    private function getFileWriter()
-    {
-        if (!$this->fileWriter) {
-            $this->fileWriter = $this->fileWriterFactory->create();
-        }
-
-        return $this->fileWriter;
     }
 
     /**

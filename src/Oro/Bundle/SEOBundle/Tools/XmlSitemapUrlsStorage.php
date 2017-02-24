@@ -10,24 +10,24 @@ class XmlSitemapUrlsStorage implements SitemapUrlsStorageInterface
     const FILE_SIZE_LIMIT = 10485760; // 10 MB
 
     /**
-     * @var integer
+     * @var int
      */
     private $urlsNumberLimit;
 
     /**
-     * @var integer
+     * @var int
      */
     private $fileSizeLimit;
 
     /**
-     * @var integer
+     * @var int
      */
     private $fileSize;
 
     /**
-     * @var integer
+     * @var int
      */
-    private $urlItemsCount;
+    private $urlItemsCount = 0;
 
     /**
      * @var \XMLWriter
@@ -84,6 +84,14 @@ class XmlSitemapUrlsStorage implements SitemapUrlsStorageInterface
     }
 
     /**
+     * Appends url item xml:
+     * <url>
+     *   <loc>http://somelocation</loc>
+     *   <changefreq>daily</changefreq>
+     *   <priority>1</priority>
+     *   <lastmod>2017-05-03T15:45:00+03:00</lastmod>
+     * </url>
+     *
      * @param UrlItemInterface $urlItem
      * @return bool
      */
@@ -118,6 +126,9 @@ class XmlSitemapUrlsStorage implements SitemapUrlsStorageInterface
     }
 
     /**
+     * Produces following xml part:
+     * <elementName>$elementValue</elementName>
+     *
      * @param \XMLWriter $writer
      * @param string $elementName
      * @param string|int $elementValue
@@ -132,6 +143,10 @@ class XmlSitemapUrlsStorage implements SitemapUrlsStorageInterface
     }
 
     /**
+     * Produces following xml part:
+     * <?xml version="1.0" encoding="UTF-8"?>
+     * <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+     *
      * @param \XMLWriter $xmlWriter
      */
     private function startXmlTemplate(\XMLWriter $xmlWriter)
@@ -148,27 +163,29 @@ class XmlSitemapUrlsStorage implements SitemapUrlsStorageInterface
     }
 
     /**
+     * Produces following xml part:
+     * </urlset>
+     *
      * @param \XMLWriter $xmlWriter
      */
     private function finishXmlTemplate(\XMLWriter $xmlWriter)
     {
         if (!$this->locked) {
             $xmlWriter->endElement();
-            $xmlWriter->endElement();
         }
     }
 
     private function calculateTemplateSize()
     {
-        $dummyElement = '<dummy />';
         $xmlWriter = new \XMLWriter();
 
         $this->startXmlTemplate($xmlWriter);
 
+        $dummyElement = '';
         $xmlWriter->writeRaw($dummyElement);
 
         $this->finishXmlTemplate($xmlWriter);
 
-        $this->fileSize = strlen($xmlWriter->outputMemory()) - strlen($dummyElement);
+        $this->fileSize = strlen($xmlWriter->outputMemory());
     }
 }

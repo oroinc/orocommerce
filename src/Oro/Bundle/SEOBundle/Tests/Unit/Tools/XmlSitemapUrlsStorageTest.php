@@ -16,7 +16,7 @@ class XmlSitemapUrlsStorageTest extends \PHPUnit_Framework_TestCase
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"/>
 XML;
 
-        $this->assertEquals($expectedXml, $sitemapStorage->getContents());
+        $this->assertXmlStringEqualsXmlString($expectedXml, $sitemapStorage->getContents());
     }
 
     public function testStorageWhenUrlItemsWereAdded()
@@ -40,7 +40,7 @@ XML;
         $expectedXml .= "<priority>0.5</priority><lastmod>$anotherDateTimeString</lastmod></url>";
         $expectedXml .= '</urlset>';
 
-        $this->assertEquals($expectedXml, $sitemapStorage->getContents());
+        $this->assertXmlStringEqualsXmlString($expectedXml, $sitemapStorage->getContents());
     }
 
     public function testStorageWhenCountLimitReached()
@@ -73,6 +73,7 @@ XML;
         $expectedXml .= '</urlset>';
 
         $this->assertEquals(200, strlen($sitemapStorage->getContents()));
-        $this->assertEquals($expectedXml, $sitemapStorage->getContents());
+
+        $this->assertXmlStringEqualsXmlString($expectedXml, $sitemapStorage->getContents());
     }
 }

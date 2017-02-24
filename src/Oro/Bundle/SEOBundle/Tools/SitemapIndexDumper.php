@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\SEOBundle\Tools;
 
-use Oro\Component\SEO\Provider\SitemapUrlProviderInterface;
+use Oro\Component\SEO\Provider\UrlItemsProviderInterface;
 use Oro\Component\SEO\Provider\VersionAwareInterface;
 use Oro\Component\SEO\Tools\SitemapDumperInterface;
 use Oro\Component\Website\WebsiteInterface;
@@ -12,7 +12,7 @@ class SitemapIndexDumper implements SitemapDumperInterface
     const SITEMAP_FILENAME_TEMPLATE = '';
 
     /**
-     * @var SitemapUrlProviderInterface
+     * @var UrlItemsProviderInterface
      */
     private $provider;
 
@@ -27,12 +27,12 @@ class SitemapIndexDumper implements SitemapDumperInterface
     private $filesystemAdapter;
 
     /**
-     * @param SitemapUrlProviderInterface $provider
+     * @param UrlItemsProviderInterface $provider
      * @param SitemapStorageFactory $sitemapStorageFactory
      * @param SitemapFilesystemAdapter $filesystemAdapter
      */
     public function __construct(
-        SitemapUrlProviderInterface $provider,
+        UrlItemsProviderInterface $provider,
         SitemapStorageFactory $sitemapStorageFactory,
         SitemapFilesystemAdapter $filesystemAdapter
     ) {

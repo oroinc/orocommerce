@@ -85,8 +85,8 @@ services:
         tags:
             - { name: oro_web_catalog.content_variant_provider }
 
-    oro_seo.provider.sitemap_url_provider_registry:
-        class: Oro\Bundle\SEOBundle\Provider\SitemapUrlProviderRegistry
+    oro_seo.provider.url_items_provider_registry:
+        class: Oro\Bundle\SEOBundle\Provider\UrlItemsProviderRegistry
 
     oro_seo.provider.sitemap_url_provider_dummy_1:
         class: Oro\Bundle\SEOBundle\Provider\DummySitemapProvider
@@ -100,9 +100,10 @@ services:
     oro_seo.tools.sitemap_dumper:
         class: Oro\Bundle\SEOBundle\Tools\SitemapDumper
         arguments:
-            - '@oro_seo.provider.sitemap_url_provider_registry'
+            - '@oro_seo.provider.url_items_provider_registry'
             - '@oro_seo.tools.sitemap_storage_factory'
             - '@oro_seo.tools.sitemap_file_writer'
+            - '%kernel.root_dir%'
 
     oro_seo.form.type.sitemap_changefreq:
         class: Oro\Bundle\SEOBundle\Form\Type\SitemapChangefreqType
@@ -114,16 +115,39 @@ services:
         tags:
             - { name: form.type, alias: oro_sitemap_priority }
 
+    oro_seo.provider.abstract_url_items_provider:
+        class: Oro\Bundle\SEOBundle\Provider\AbstractUrlItemsProvider
+        abstract: true
+        arguments:
+            - '@oro_redirect.generator.canonical_url'
+            - '@oro_config.manager'
+            - '@event_dispatcher'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_featuretoggle.checker.feature_checker'
+
+    oro_seo.provider.product_url_items_provider:
+        class: Oro\Bundle\SEOBundle\Provider\ProductUrlItemsProvider
+        parent: oro_seo.provider.abstract_url_items_provider
+        tags:
+            - { name: oro_seo.sitemap_url_provider }
+
+    oro_seo.provider.category_url_items_provider:
+        class: Oro\Bundle\SEOBundle\Provider\CategoryUrlItemsProvider
+        parent: oro_seo.provider.abstract_url_items_provider
+        tags:
+            - { name: oro_seo.sitemap_url_provider }
+
+    oro_seo.provider.cms_page_url_items_provider:
+        class: Oro\Bundle\SEOBundle\Provider\CmsPageUrlItemsProvider
+        parent: oro_seo.provider.abstract_url_items_provider
+        tags:
+            - { name: oro_seo.sitemap_url_provider }
     oro_seo.tools.sitemap_storage_factory:
         public: false
         class: Oro\Bundle\SEOBundle\Tools\SitemapStorageFactory
 
-    oro_seo.tools.sitemap_file_writer_factory:
-        class: Oro\Bundle\SEOBundle\Tools\SitemapFileWriterFactory
+    oro_seo.tools.sitemap_file_writer:
+        class: Oro\Bundle\SEOBundle\Tools\SitemapFileWriter
         arguments:
             - '@filesystem'
             - '@logger'
-
-    oro_seo.tools.sitemap_file_writer:
-        class: Oro\Bundle\SEOBundle\Tools\SitemapFileWriter
-        factory: 'oro_seo.tools.sitemap_file_writer_factory:create'

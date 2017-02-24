@@ -5,11 +5,11 @@ namespace Oro\Bundle\SEOBundle\Provider;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\SEOBundle\Model\DTO\UrlItem;
 use Oro\Bundle\SEOBundle\Tools\SitemapFilesystemAdapter;
-use Oro\Component\SEO\Provider\SitemapUrlProviderInterface;
+use Oro\Component\SEO\Provider\UrlItemsProviderInterface;
 use Oro\Component\SEO\Provider\VersionAwareInterface;
 use Oro\Component\Website\WebsiteInterface;
 
-class SitemapIndexProvider implements SitemapUrlProviderInterface, VersionAwareInterface
+class SitemapIndexProvider implements UrlItemsProviderInterface, VersionAwareInterface
 {
     /**
      * @var SitemapFilesystemAdapter
@@ -56,7 +56,6 @@ class SitemapIndexProvider implements SitemapUrlProviderInterface, VersionAwareI
 
     /**
      * @param WebsiteInterface $website
-     * @param string $version
      * @return \Generator
      */
     public function getUrlItems(WebsiteInterface $website)

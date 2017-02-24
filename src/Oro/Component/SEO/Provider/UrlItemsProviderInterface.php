@@ -5,7 +5,7 @@ namespace Oro\Component\SEO\Provider;
 use Oro\Component\SEO\Model\DTO\UrlItemInterface;
 use Oro\Component\Website\WebsiteInterface;
 
-interface SitemapUrlProviderInterface
+interface UrlItemsProviderInterface
 {
     /**
      * @param WebsiteInterface $website

@@ -1,0 +1,6 @@
+services:
+    oro_seo.tools.gzip_sitemap_file_writer:
+        class: Oro\Bundle\SEOBundle\Tools\GzipSitemapFileWriter
+        decorates: oro_seo.tools.sitemap_file_writer
+        arguments:
+            - '@oro_seo.tools.gzip_sitemap_file_writer.inner'
