@@ -4,7 +4,9 @@ namespace Oro\Bundle\WebCatalogBundle\Cache\ResolvedData;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
 class ResolvedContentVariant implements ContentVariantInterface
@@ -128,5 +130,13 @@ class ResolvedContentVariant implements ContentVariantInterface
         $this->data = $data;
 
         return $this;
+    }
+
+    /**
+     * @return ContentNodeInterface
+     */
+    public function getNode()
+    {
+        return $this->node;
     }
 }

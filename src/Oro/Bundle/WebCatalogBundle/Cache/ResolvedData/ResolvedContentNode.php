@@ -4,7 +4,9 @@ namespace Oro\Bundle\WebCatalogBundle\Cache\ResolvedData;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
+use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
 
 class ResolvedContentNode implements ContentNodeInterface
 {
@@ -37,6 +39,11 @@ class ResolvedContentNode implements ContentNodeInterface
      * @var bool
      */
     protected $rewriteVariantTitle = true;
+
+    /**
+     * @var WebCatalogInterface
+     */
+    protected $webCatalog;
 
     /**
      * @param int $id
@@ -122,5 +129,13 @@ class ResolvedContentNode implements ContentNodeInterface
     public function isRewriteVariantTitle()
     {
         return $this->rewriteVariantTitle;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getWebCatalog()
+    {
+        return $this->webCatalog;
     }
 }

@@ -4,6 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub;
 
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
+use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
 
 class ContentNodeStub implements ContentNodeInterface
 {
@@ -16,6 +17,11 @@ class ContentNodeStub implements ContentNodeInterface
      * @var ContentVariantInterface
      */
     private $contentVariants;
+
+    /**
+     * @var WebCatalogInterface
+     */
+    private $webCatalog;
 
     /**
      * @param $id
@@ -67,5 +73,13 @@ class ContentNodeStub implements ContentNodeInterface
     public function isRewriteVariantTitle()
     {
         return null;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getWebCatalog()
+    {
+        return $this->webCatalog;
     }
 }
