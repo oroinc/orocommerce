@@ -144,10 +144,10 @@ define(function(require) {
         },
 
         setUnitLabel: function(price) {
-            if (!price || price.unit_changed) {
+            if (!price || price.unit_with_price) {
                 return price;
             }
-            price.formatted_unit = _.__('oro.pricing.price.formatted.unit', {
+            price.unit_with_price = _.__('oro.pricing.price.formatted.unit', {
                 formattedUnit: _(price.formatted_unit).capitalize(),
                 formattedPrice: price.formatted_price
             });

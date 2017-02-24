@@ -6,7 +6,10 @@ services:
                 - setOptionsConfig
                 -
                     -
+                        product: {default: null}
                         productPrices: {required: true}
+                        productPriceMode: {default: null}
+                        changeUnitLabel: {default: false}
                         productUnitSelectionVisible: ~
             - [setName, ['product_prices']]
         tags:

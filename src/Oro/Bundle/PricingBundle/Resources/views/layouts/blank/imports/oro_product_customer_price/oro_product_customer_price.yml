@@ -1,0 +1,19 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'oro_product_customer_price.html.twig'
+        - '@addTree':
+            items:
+                __product_customer_price:
+                      blockType: container
+                __product_customer_price_value:
+                    blockType: block
+                __product_customer_price_not_found:
+                    blockType: block
+            tree:
+                __root:
+                    __product_customer_price:
+                        __product_customer_price_value: ~
+                        __product_customer_price_not_found: ~
+
+    conditions: 'context["is_logged_in"]'

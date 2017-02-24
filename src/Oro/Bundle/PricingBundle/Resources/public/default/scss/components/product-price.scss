@@ -1,0 +1,42 @@
+// @theme: default
+
+.product-price {
+    &__value {
+        color: get-color('ui', 'normal');
+    }
+
+    &__main-box {
+        font-size: $base-font-size--large;
+    }
+
+    &__hint {
+        display: inline-block;
+    }
+
+    //Modifier for simple view(only main price)
+    &--simple & {
+        &__label {
+            font-size: 0;
+        }
+
+        &__value {
+            font-size: $base-font-size--l;
+        }
+
+        &__listed-value {
+            color: get-color('ui', 'normal');
+        }
+    }
+}
+
+@include breakpoint('tablet') {
+    .product-price {
+        &--simple {
+            display: block;
+
+            margin-top: -5px;
+
+            text-align: center;
+        }
+    }
+}

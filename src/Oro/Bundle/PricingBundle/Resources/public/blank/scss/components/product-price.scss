@@ -1,0 +1,15 @@
+// @theme: blank
+
+.product-price {
+    display: inline-block;
+    overflow: hidden;
+
+    &__main {
+        margin-top: 5px;
+    }
+
+    &__hint {
+        margin-bottom: -10px;
+        padding-bottom: 20px;
+    }
+}

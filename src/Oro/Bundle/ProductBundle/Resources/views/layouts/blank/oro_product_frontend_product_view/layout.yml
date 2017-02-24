@@ -1,7 +1,30 @@
 layout:
+    imports:
+        -
+            id: oro_product_price
+            root: product_view_specification_container
+        -
+            id: oro_product_variant_form
+            root: product_view_variant_field_container
     actions:
         - '@setBlockTheme':
             themes: 'layout.html.twig'
+        - '@setOption':
+            id: product_price_container
+            optionName: productPrices
+            optionValue: '=data["frontend_product_prices"].getByProduct(product)'
+        - '@setOption':
+            id: product_price_container
+            optionName: product
+            optionValue: '=data["product"]'
+        - '@setOption': 
+            id: product_price_container 
+            optionName: changeUnitLabel 
+            optionValue: true
+        - '@setOption': 
+            id: product_price_container 
+            optionName: productPriceMode 
+            optionValue: 'simple'
         - '@setOption':
             id: title
             optionName: params
@@ -84,8 +107,3 @@ layout:
             id: product_view_attribute_group_general_attribute_localized_fallback_names
             parentId: product_view_primary_container
             prepend: true
-
-    imports:
-        -
-            id: oro_product_variant_form
-            root: product_view_variant_field_container

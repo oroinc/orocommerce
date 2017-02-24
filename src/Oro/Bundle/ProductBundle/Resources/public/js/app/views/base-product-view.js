@@ -104,7 +104,7 @@ define(function(require) {
                 return;
             }
             var price = this.model.get('price');
-            $unit.find(':selected').text(price.formatted_unit);
+            $unit.find(':selected').text(price.unit_with_price);
             $unit.inputWidget().refresh();
         },
 
