@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\SEOBundle;
 
-use Oro\Bundle\SEOBundle\DependencyInjection\Compiler\SitemapUrlProviderCompilerPass;
+use Oro\Bundle\SEOBundle\DependencyInjection\Compiler\UrlItemsProviderCompilerPass;
 
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
@@ -29,6 +29,6 @@ class OroSEOBundle extends Bundle
                 'Oro\Bundle\CatalogBundle\Entity\Category' => $fields,
                 'Oro\Bundle\CMSBundle\Entity\Page' => $fields,
             ]));
-        $container->addCompilerPass(new SitemapUrlProviderCompilerPass());
+        $container->addCompilerPass(new UrlItemsProviderCompilerPass());
     }
 }

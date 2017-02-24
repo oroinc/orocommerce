@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Generator;
 
+use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
@@ -36,18 +37,26 @@ class CanonicalUrlGenerator
     protected $websiteUrlResolver;
 
     /**
+     * @var CacheProvider
+     */
+    private $cacheProvider;
+
+    /**
      * @param ConfigManager $configManager
+     * @param CacheProvider $cacheProvider
      * @param RequestStack $requestStack
      * @param RoutingInformationProvider $routingInformationProvider
      * @param WebsiteUrlResolver $websiteUrlResolver
      */
     public function __construct(
         ConfigManager $configManager,
+        CacheProvider $cacheProvider,
         RequestStack $requestStack,
         RoutingInformationProvider $routingInformationProvider,
         WebsiteUrlResolver $websiteUrlResolver
     ) {
         $this->configManager = $configManager;
+        $this->cacheProvider = $cacheProvider;
         $this->requestStack = $requestStack;
         $this->routingInformationProvider = $routingInformationProvider;
         $this->websiteUrlResolver = $websiteUrlResolver;
@@ -64,7 +73,7 @@ class CanonicalUrlGenerator
     {
         $url = '';
 
-        if ($this->configManager->get('oro_redirect.canonical_url_type') === Configuration::DIRECT_URL) {
+        if ($this->getCanonicalUrlType() === Configuration::DIRECT_URL) {
             $url = $this->getDirectUrl($entity, $localization, $website);
         }
 
@@ -105,15 +114,13 @@ class CanonicalUrlGenerator
      */
     public function getAbsoluteUrl($slugUrl, Website $website = null)
     {
-        $baseUrl = $this->requestStack->getMasterRequest()->getBaseUrl();
-
-        if ($this->getCanonicalUrlSecurityType() === Configuration::SECURE) {
-            $secureDomainUrl = $this->websiteUrlResolver->getWebsiteSecureUrl($website);
-            $url = rtrim($secureDomainUrl, ' /') . $baseUrl . $slugUrl;
+        if ($this->getCanonicalUrlSecurityType()=== Configuration::SECURE) {
+            $domainUrl = $this->websiteUrlResolver->getWebsiteSecureUrl($website);
         } else {
             $domainUrl = $this->websiteUrlResolver->getWebsiteUrl($website);
-            $url = rtrim($domainUrl, ' /') . $baseUrl . $slugUrl;
         }
+
+        $url = $this->createUrl($domainUrl, $slugUrl);
 
         return $url;
     }
@@ -148,9 +155,27 @@ class CanonicalUrlGenerator
     /**
      * @return string
      */
-    protected function getCanonicalUrlSecurityType()
+    public function getCanonicalUrlType()
     {
-        return $this->configManager->get('oro_redirect.canonical_url_security_type');
+        $configKey = 'oro_redirect.' . Configuration::CANONICAL_URL_TYPE;
+        if (!$this->cacheProvider->contains($configKey)) {
+            $this->cacheProvider->save($configKey, $this->configManager->get($configKey));
+        }
+
+        return $this->cacheProvider->fetch($configKey);
+    }
+
+    /**
+     * @return string
+     */
+    public function getCanonicalUrlSecurityType()
+    {
+        $configKey = 'oro_redirect.' . Configuration::CANONICAL_URL_SECURITY_TYPE;
+        if (!$this->cacheProvider->contains($configKey)) {
+            $this->cacheProvider->save($configKey, $this->configManager->get($configKey));
+        }
+
+        return $this->cacheProvider->fetch($configKey);
     }
 
     /**
@@ -168,5 +193,24 @@ class CanonicalUrlGenerator
         }
 
         return $slug;
+    }
+
+    /**
+     * @param string $domainUrl
+     * @param string $url
+     * @return string
+     */
+    private function createUrl($domainUrl, $url)
+    {
+        $baseUrl = $this->requestStack->getMasterRequest()->getBaseUrl();
+        $baseUrl = trim($baseUrl, '/');
+
+        $urlParts = [rtrim($domainUrl, ' /') ];
+        if ($baseUrl) {
+             $urlParts[] = $baseUrl;
+        }
+
+        $urlParts[] = ltrim($url, '/');
+        return  implode('/', $urlParts);
     }
 }

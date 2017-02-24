@@ -217,9 +217,16 @@ services:
         class: Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator
         arguments:
             - '@oro_config.manager'
+            - '@oro_redirect.canonical_url_configs.cache'
             - '@request_stack'
             - '@oro_redirect.provider.routing_information_provider'
             - '@oro_website.resolver.website_url_resolver'
+
+    oro_redirect.canonical_url_configs.cache:
+        public: false
+        parent: doctrine_cache.abstract.array
+        calls:
+            - [ setNamespace, [ 'oro_redirect_canonical_url_configs' ] ]
 
     oro_redirect.cache.dumper.sluggable_url_dumper:
         class: Oro\Bundle\RedirectBundle\Cache\Dumper\SluggableUrlDumper

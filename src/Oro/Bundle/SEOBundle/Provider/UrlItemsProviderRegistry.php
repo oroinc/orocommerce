@@ -2,26 +2,26 @@
 
 namespace Oro\Bundle\SEOBundle\Provider;
 
-use Oro\Component\SEO\Provider\SitemapUrlProviderInterface;
+use Oro\Component\SEO\Provider\UrlItemsProviderInterface;
 
-class SitemapUrlProviderRegistry
+class UrlItemsProviderRegistry
 {
     /**
-     * @var array|SitemapUrlProviderInterface[]
+     * @var array|UrlItemsProviderInterface[]
      */
     private $providers = [];
 
     /**
-     * @param SitemapUrlProviderInterface $provider
+     * @param UrlItemsProviderInterface $provider
      * @param string $name
      */
-    public function addProvider(SitemapUrlProviderInterface $provider, $name)
+    public function addProvider(UrlItemsProviderInterface $provider, $name)
     {
         $this->providers[$name] = $provider;
     }
 
     /**
-     * @return array|SitemapUrlProviderInterface[]
+     * @return array|UrlItemsProviderInterface[]
      */
     public function getProviders()
     {
@@ -38,7 +38,8 @@ class SitemapUrlProviderRegistry
 
     /**
      * @param string $name
-     * @return null|SitemapUrlProviderInterface
+     *
+     * @return null|UrlItemsProviderInterface
      */
     public function getProviderByName($name)
     {

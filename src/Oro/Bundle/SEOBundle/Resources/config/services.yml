@@ -85,13 +85,13 @@ services:
         tags:
             - { name: oro_web_catalog.content_variant_provider }
 
-    oro_seo.provider.sitemap_url_provider_registry:
-        class: Oro\Bundle\SEOBundle\Provider\SitemapUrlProviderRegistry
+    oro_seo.provider.url_items_provider_registry:
+        class: Oro\Bundle\SEOBundle\Provider\UrlItemsProviderRegistry
 
     oro_seo.tools.sitemap_dumper:
         class: Oro\Bundle\SEOBundle\Tools\SitemapDumper
         arguments:
-            - '@oro_seo.provider.sitemap_url_provider_registry'
+            - '@oro_seo.provider.url_items_provider_registry'
 
     oro_seo.form.type.sitemap_changefreq:
         class: Oro\Bundle\SEOBundle\Form\Type\SitemapChangefreqType
@@ -102,3 +102,13 @@ services:
         class: Oro\Bundle\SEOBundle\Form\Type\SitemapPriorityType
         tags:
             - { name: form.type, alias: oro_sitemap_priority }
+
+    oro_seo.provider.abstract_url_items_provider:
+        class: Oro\Bundle\SEOBundle\Provider\AbstractUrlItemsProvider
+        abstract: true
+        arguments:
+            - '@oro_redirect.generator.canonical_url'
+            - '@oro_config.manager'
+            - '@event_dispatcher'
+            - '@oro_entity.doctrine_helper'
+            - '@oro_featuretoggle.checker.feature_checker'

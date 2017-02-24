@@ -2,19 +2,19 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Provider;
 
-use Oro\Bundle\SEOBundle\Provider\SitemapUrlProviderRegistry;
-use Oro\Component\SEO\Provider\SitemapUrlProviderInterface;
+use Oro\Bundle\SEOBundle\Provider\UrlItemsProviderRegistry;
+use Oro\Component\SEO\Provider\UrlItemsProviderInterface;
 
-class SitemapUrlProviderRegistryTest extends \PHPUnit_Framework_TestCase
+class UrlItemsProviderRegistryTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var SitemapUrlProviderRegistry
+     * @var UrlItemsProviderRegistry
      */
     private $registry;
 
     protected function setUp()
     {
-        $this->registry = new SitemapUrlProviderRegistry();
+        $this->registry = new UrlItemsProviderRegistry();
     }
 
     public function testGetProviders()
@@ -67,10 +67,10 @@ class SitemapUrlProviderRegistryTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return SitemapUrlProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @return UrlItemsProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private function getProviderMock()
     {
-        return $this->createMock(SitemapUrlProviderInterface::class);
+        return $this->createMock(UrlItemsProviderInterface::class);
     }
 }

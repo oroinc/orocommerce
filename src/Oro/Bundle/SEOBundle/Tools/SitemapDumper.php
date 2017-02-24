@@ -2,21 +2,21 @@
 
 namespace Oro\Bundle\SEOBundle\Tools;
 
-use Oro\Bundle\SEOBundle\Provider\SitemapUrlProviderRegistry;
+use Oro\Bundle\SEOBundle\Provider\UrlItemsProviderRegistry;
 use Oro\Component\SEO\Tools\SitemapDumperInterface;
 use Oro\Component\Website\WebsiteInterface;
 
 class SitemapDumper implements SitemapDumperInterface
 {
     /**
-     * @var SitemapUrlProviderRegistry
+     * @var UrlItemsProviderRegistry
      */
     private $providerRegistry;
 
     /**
-     * @param SitemapUrlProviderRegistry $providerRegistry
+     * @param UrlItemsProviderRegistry $providerRegistry
      */
-    public function __construct(SitemapUrlProviderRegistry $providerRegistry)
+    public function __construct(UrlItemsProviderRegistry $providerRegistry)
     {
         $this->providerRegistry = $providerRegistry;
     }
