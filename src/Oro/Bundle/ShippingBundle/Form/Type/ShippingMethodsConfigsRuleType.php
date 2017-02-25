@@ -6,7 +6,6 @@ use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\RuleBundle\Form\Type\RuleType;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
-use Oro\Bundle\ShippingBundle\Form\EventSubscriber\DestinationCollectionTypeSubscriber;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProviderInterface;
@@ -76,8 +75,6 @@ class ShippingMethodsConfigsRuleType extends AbstractType
                 'mapped' => false,
                 'choices' => $this->provider->getMethods()
             ]);
-
-        $builder->addEventSubscriber(new DestinationCollectionTypeSubscriber());
     }
 
     /**

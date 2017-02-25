@@ -7,7 +7,6 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\FlatRateShippingBundle\Entity\FlatRateSettings;
 use Oro\Bundle\FlatRateShippingBundle\Integration\FlatRateChannelType;
-use Oro\Bundle\FlatRateShippingBundle\Method\FlatRateMethod;
 use Oro\Bundle\FlatRateShippingBundle\Method\FlatRateMethodType;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
@@ -23,9 +22,7 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class LoadFlatRateIntegration extends AbstractFixture implements
-    DependentFixtureInterface,
-    ContainerAwareInterface
+class LoadFlatRateIntegration extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
     /** @var ContainerInterface */
     protected $container;
@@ -115,8 +112,10 @@ class LoadFlatRateIntegration extends AbstractFixture implements
             ->setSortOrder(1);
 
         $shippingRule = new ShippingMethodsConfigsRule();
-        $shippingRule->setRule($rule);
-        $shippingRule->setCurrency('USD')
+
+        $shippingRule->setRule($rule)
+            ->setOrganization($this->getOrganization($manager))
+            ->setCurrency('USD')
             ->addMethodConfig($methodConfig);
 
         $manager->persist($shippingRule);
@@ -145,6 +144,8 @@ class LoadFlatRateIntegration extends AbstractFixture implements
      */
     private function getFlatRateIdentifier(Channel $channel)
     {
-        return $this->container->get('oro_flat_rate_shipping.method.identifier_generator.method')->generateIdentifier($channel);
+        return $this->container
+            ->get('oro_flat_rate_shipping.method.identifier_generator.method')
+            ->generateIdentifier($channel);
     }
 }

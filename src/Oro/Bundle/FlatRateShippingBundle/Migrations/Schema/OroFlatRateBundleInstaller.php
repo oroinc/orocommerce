@@ -10,7 +10,7 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.ExcessiveClassLength)
  */
-class OroFlatRateShippingBundleInstaller implements Installation
+class OroFlatRateBundleInstaller implements Installation
 {
     /**
      * {@inheritdoc}
@@ -39,12 +39,14 @@ class OroFlatRateShippingBundleInstaller implements Installation
      */
     protected function createOroFlatRateTransportLabelTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_flat_rate_transport_label');
-        $table->addColumn('transport_id', 'integer', []);
-        $table->addColumn('localized_value_id', 'integer', []);
-        $table->addUniqueIndex(['localized_value_id'], 'oro_flat_rate_transport_label_localized_value_id');
-        $table->setPrimaryKey(['transport_id', 'localized_value_id']);
-        $table->addIndex(['transport_id'], 'oro_flat_rate_transport_label_transport_id', []);
+        if (!$schema->hasTable('oro_flat_rate_transport_label')) {
+            $table = $schema->createTable('oro_flat_rate_transport_label');
+            $table->addColumn('transport_id', 'integer', []);
+            $table->addColumn('localized_value_id', 'integer', []);
+            $table->addUniqueIndex(['localized_value_id'], 'oro_flat_rate_transport_label_localized_value_id');
+            $table->setPrimaryKey(['transport_id', 'localized_value_id']);
+            $table->addIndex(['transport_id'], 'oro_flat_rate_transport_label_transport_id', []);
+        }
     }
 
     /**
@@ -55,17 +57,22 @@ class OroFlatRateShippingBundleInstaller implements Installation
     protected function addOroFlatRateTransportLabelForeignKeys(Schema $schema)
     {
         $table = $schema->getTable('oro_flat_rate_transport_label');
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_integration_transport'),
-            ['transport_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
-        );
-        $table->addForeignKeyConstraint(
-            $schema->getTable('oro_fallback_localization_val'),
-            ['localized_value_id'],
-            ['id'],
-            ['onUpdate' => null, 'onDelete' => 'CASCADE']
-        );
+        if (!$table->hasForeignKey('transport_id')) {
+            $table->addForeignKeyConstraint(
+                $schema->getTable('oro_integration_transport'),
+                ['transport_id'],
+                ['id'],
+                ['onUpdate' => null, 'onDelete' => 'CASCADE']
+            );
+        }
+
+        if (!$table->hasForeignKey('localized_value_id')) {
+            $table->addForeignKeyConstraint(
+                $schema->getTable('oro_fallback_localization_val'),
+                ['localized_value_id'],
+                ['id'],
+                ['onUpdate' => null, 'onDelete' => 'CASCADE']
+            );
+        }
     }
 }
