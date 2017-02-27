@@ -6,6 +6,7 @@ use Oro\Bundle\IntegrationBundle\Generator\Prefixed\PrefixedIntegrationIdentifie
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
 use Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadUserData;
+use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadChannelData;
 use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TranslationBundle\Translation\Translator;
@@ -44,7 +45,7 @@ class PaymentMethodsConfigsRuleControllerTest extends WebTestCase
                 $currentBundleDataFixturesNameSpace.'\Entity\DataFixtures\LoadPaymentMethodsConfigsRuleData',
                 $currentBundleDataFixturesNameSpace.'\Entity\DataFixtures\LoadPaymentMethodsConfigsRuleDestinationData',
                 $currentBundleDataFixturesNameSpace.'\DataFixtures\LoadUserData',
-                'Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadChannelData'
+                LoadChannelData::class
             ]
         );
     }

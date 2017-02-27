@@ -18,4 +18,12 @@ class PaymentTermChannelTypeTest extends \PHPUnit_Framework_TestCase
     {
         static::assertSame('oro.paymentterm.channel_type.label', $this->channel->getLabel());
     }
+
+    public function testGetIcon()
+    {
+        static::assertSame(
+            'bundles/oropaymentterm/img/payment-term-logo.png',
+            $this->channel->getIcon()
+        );
+    }
 }

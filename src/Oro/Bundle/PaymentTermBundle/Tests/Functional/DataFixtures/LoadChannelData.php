@@ -7,6 +7,9 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
+use Oro\Bundle\UserBundle\Entity\User;
+use Oro\Bundle\UserBundle\Entity\UserInterface;
+use Oro\Bundle\UserBundle\Entity\UserManager;
 use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -59,8 +62,8 @@ class LoadChannelData extends AbstractFixture implements DependentFixtureInterfa
     public function load(ObjectManager $manager)
     {
         $userManager = $this->container->get('oro_user.manager');
-        $admin = $userManager->findUserByEmail(LoadAdminUserData::DEFAULT_ADMIN_EMAIL);
-        $organization = $manager->getRepository('OroOrganizationBundle:Organization')->getFirst();
+        $admin = $this->getUser($userManager);
+        $organization = $admin->getOrganization();
 
         foreach (self::$channelData as $data) {
             $entity = new Channel();
@@ -71,7 +74,6 @@ class LoadChannelData extends AbstractFixture implements DependentFixtureInterfa
                 ->findOneBy(['id' => $transportId]);
             $entity->setName($data['name']);
             $entity->setType($data['type']);
-            $entity->setDefaultUserOwner($admin);
             $entity->setOrganization($organization);
             $entity->setTransport($transport);
             $entity->setEnabled($data['enabled']);
@@ -90,5 +92,21 @@ class LoadChannelData extends AbstractFixture implements DependentFixtureInterfa
         return [
             __NAMESPACE__ . '\LoadPaymentTermSettingsData'
         ];
+    }
+
+    /**
+     * @param UserManager $userManager
+     *
+     * @return User|UserInterface
+     */
+    protected function getUser(UserManager $userManager)
+    {
+        $user = $userManager->findUserByEmail(LoadAdminUserData::DEFAULT_ADMIN_EMAIL);
+
+        if (!$user) {
+            throw new \LogicException('There are no users in system');
+        }
+
+        return $user;
     }
 }
