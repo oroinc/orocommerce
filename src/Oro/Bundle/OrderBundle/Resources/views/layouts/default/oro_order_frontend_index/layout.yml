@@ -24,6 +24,6 @@ layout:
             parentId: orders_container
             siblingId: orders_datagrid
             prepend: true
-            blockType: text
+            blockType: page_subtitle
             options:
                 text: 'oro.frontend.order.past_orders.label'
