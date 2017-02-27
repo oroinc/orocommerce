@@ -108,7 +108,7 @@ operations:
             confirmation:
                 title: oro.ups.rule.deactivate.title
                 okText: oro.ups.rule.deactivate.button.okText
-                message: oro.ups.rule.deactivate.massage
+                message: oro.ups.rule.deactivate.message
                 message_parameters:
                     linkGrid: $.linkGrid
                 component: oroui/js/standart-confirmation
