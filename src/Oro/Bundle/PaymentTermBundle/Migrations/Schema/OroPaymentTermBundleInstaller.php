@@ -67,7 +67,7 @@ class OroPaymentTermBundleInstaller implements
      */
     public function getMigrationVersion()
     {
-        return 'v1_1';
+        return 'v1_2';
     }
 
     /**
@@ -101,7 +101,12 @@ class OroPaymentTermBundleInstaller implements
 
         $this->activityExtension->addActivityAssociation($schema, 'oro_note', self::TABLE_NAME);
 
-        $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_customer');
+        $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_customer', [
+            'importexport' => [
+                'full' => true,
+                'header' => 'Payment term',
+            ]
+        ]);
         $this->paymentTermExtension->addPaymentTermAssociation($schema, 'oro_customer_group');
     }
 
