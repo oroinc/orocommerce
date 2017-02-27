@@ -20,9 +20,6 @@ datagrids:
                 join:
                     left:
                         - { join: product.inventory_status, alias: productInventoryStatus}
-        inline_editing:
-            enable: true
-            behaviour: enable_selected
         columns:
             sku:
                 label:         oro.product.sku.label
@@ -37,8 +34,6 @@ datagrids:
                 label:         oro.product.status.label
                 frontend_type: select
                 choices:       "@oro_product.provider.product_status_provider->getAvailableProductStatuses"
-                inline_editing:
-                    enable: true
             type:
                 label:         oro.product.type.label
                 frontend_type: select
@@ -131,6 +126,13 @@ datagrids:
                 icon:          eye
                 acl_resource:  oro_product_view
                 rowAction:     true
+        inline_editing:
+            enable: true
+            behaviour: enable_selected
+        columns:
+            status:
+                inline_editing:
+                    enable: true
 
     product-product-variants-base:
         acl_resource: oro_product_view
