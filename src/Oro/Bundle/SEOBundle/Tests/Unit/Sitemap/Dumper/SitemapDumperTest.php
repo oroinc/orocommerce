@@ -279,4 +279,14 @@ class SitemapDumperTest extends \PHPUnit_Framework_TestCase
 
         $this->dumper->dump($website, $version);
     }
+
+    public function testGetFilenamePatternAllTypes()
+    {
+        $this->assertEquals('sitemap-*-*.xml*', SitemapDumper::getFilenamePattern());
+    }
+
+    public function testGetFilenamePatternSpecificType()
+    {
+        $this->assertEquals('sitemap-index-*.xml*', SitemapDumper::getFilenamePattern('index'));
+    }
 }

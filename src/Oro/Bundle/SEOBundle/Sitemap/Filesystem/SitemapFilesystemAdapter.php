@@ -65,13 +65,21 @@ class SitemapFilesystemAdapter
     /**
      * @param WebsiteInterface $website
      * @param string $version
+     * @return bool
      */
     public function makeActual(WebsiteInterface $website, $version)
     {
-        $actualVersionPath = $this->getVersionedPath($website, self::ACTUAL_VERSION);
-        $this->filesystem->remove($actualVersionPath);
-        $this->filesystem->rename($this->getVersionedPath($website, $version), $actualVersionPath);
-        $this->filesystem->dumpFile($actualVersionPath . DIRECTORY_SEPARATOR . self::VERSION_FILE_NAME, $version);
+        $versionPath = $this->getVersionedPath($website, $version);
+        if ($this->filesystem->exists($versionPath)) {
+            $actualVersionPath = $this->getVersionedPath($website, self::ACTUAL_VERSION);
+            $this->filesystem->remove($actualVersionPath);
+            $this->filesystem->rename($versionPath, $actualVersionPath);
+            $this->filesystem->dumpFile($actualVersionPath . DIRECTORY_SEPARATOR . self::VERSION_FILE_NAME, $version);
+
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -82,9 +90,7 @@ class SitemapFilesystemAdapter
     public function makeNewerVersionActual(WebsiteInterface $website, $version)
     {
         if ($version > $this->getActualVersionNumber($website)) {
-            $this->makeActual($website, $version);
-
-            return true;
+            return $this->makeActual($website, $version);
         }
 
         return false;
@@ -109,13 +115,13 @@ class SitemapFilesystemAdapter
      * @param WebsiteInterface $website
      * @param string $version
      * @param string|null $pattern
-     * @return \Traversable|null
+     * @return \Traversable|\SplFileInfo[]
      */
     public function getSitemapFiles(WebsiteInterface $website, $version, $pattern = null)
     {
         $path = $this->getVersionedPath($website, $version);
         if (!is_readable($path)) {
-            return null;
+            return new \ArrayIterator();
         }
 
         $finder = Finder::create();
