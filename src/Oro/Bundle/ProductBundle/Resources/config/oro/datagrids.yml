@@ -35,6 +35,8 @@ datagrids:
                         query_parameter_names:
                             - id
                             - productName
+                    validation_rules:
+                        NotBlank: true
             inventoryStatus:
                 label:         oro.product.inventory_status.label
                 type:          twig
