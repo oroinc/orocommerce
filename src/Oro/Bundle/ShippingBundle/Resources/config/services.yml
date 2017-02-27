@@ -417,4 +417,3 @@ services:
         class: 'Oro\Bundle\ShippingBundle\Checker\ShippingRuleEnabledChecker'
         arguments:
             - '@oro_shipping.checker.shipping_method_enabled'
-
