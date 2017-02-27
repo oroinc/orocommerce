@@ -66,6 +66,20 @@ class UrlItemsProviderRegistryTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($this->registry->getProviderByName('some_other_name'));
     }
 
+    public function testHasProviderByNameWhenNoProviderExists()
+    {
+        $this->assertFalse($this->registry->hasProviderByName('non_existing_provider'));
+    }
+
+    public function testHasProviderByNameWhenProviderExists()
+    {
+        $providerName = 'existing_provider';
+        $providerMock = $this->getProviderMock();
+        $this->registry->addProvider($providerMock, $providerName);
+
+        $this->assertTrue($this->registry->hasProviderByName($providerName));
+    }
+
     /**
      * @return UrlItemsProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
