@@ -9,7 +9,7 @@ layout:
                 title:
                     blockType: title
                     options:
-                        value: '=data["title_provider"].getTitle(context["route_name"], params)'
+                        value: '=data["title_provider"].getTitle(params, context["route_name"])'
                         params:
                             '%step_label%': '=data["translator"].getTrans(data["workflowStep"].getLabel(),[],"workflows")'
                 body:
