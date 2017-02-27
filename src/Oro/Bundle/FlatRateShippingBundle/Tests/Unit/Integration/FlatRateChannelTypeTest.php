@@ -14,8 +14,16 @@ class FlatRateChannelTypeTest extends \PHPUnit_Framework_TestCase
         $this->channel = new FlatRateChannelType();
     }
 
-    public function testGetLabelReturnsString()
+    public function testGetLabel()
     {
-        static::assertTrue(is_string($this->channel->getLabel()));
+        static::assertSame('oro.flat_rate.channel_type.label', $this->channel->getLabel());
+    }
+
+    public function testGetIcon()
+    {
+        static::assertSame(
+            'bundles/oroflatrateshipping/img/flat-rate-logo.png',
+            $this->channel->getIcon()
+        );
     }
 }

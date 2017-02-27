@@ -9,10 +9,18 @@ class FlatRateChannelType implements ChannelInterface
     const TYPE = 'flat_rate';
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getLabel()
     {
         return 'oro.flat_rate.channel_type.label';
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getIcon()
+    {
+        return 'bundles/oroflatrateshipping/img/flat-rate-logo.png';
     }
 }
