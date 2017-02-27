@@ -18,7 +18,7 @@ operations:
                 method_parameters: [$.data.editMode]
             - '@call_service_method':
                 attribute: $.methodIdentifier
-                service: oro_flat_rate.method.identifier_generator.method
+                service: oro_flat_rate_shipping.method.identifier_generator.method
                 method: generateIdentifier
                 method_parameters: [$.data]
             - '@call_service_method':
@@ -38,7 +38,7 @@ operations:
             confirmation:
                 title: oro.flat_rate.rule.deactivate.title
                 okText: oro.flat_rate.rule.deactivate.button.okText
-                message: oro.flat_rate.rule.deactivate.massage
+                message: oro.flat_rate.rule.deactivate.message
                 message_parameters:
                     linkGrid: $.linkGrid
                 component: oroui/js/standart-confirmation
@@ -80,7 +80,7 @@ operations:
                 attribute: $.actionAllowed
             - '@call_service_method':
                 attribute: $.methodIdentifier
-                service: oro_flat_rate.method.identifier_generator.method
+                service: oro_flat_rate_shipping.method.identifier_generator.method
                 method: generateIdentifier
                 method_parameters: [$.data]
             - '@call_service_method':
@@ -99,7 +99,7 @@ operations:
             confirmation:
                 title: oro.flat_rate.rule.delete.title
                 okText: oro.flat_rate.rule.delete.button.okText
-                message: oro.flat_rate.rule.delete.massage
+                message: oro.flat_rate.rule.delete.message
                 message_parameters:
                     linkGrid: $.linkGrid
                 component: oroui/js/standart-confirmation
