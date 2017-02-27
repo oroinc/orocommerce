@@ -148,7 +148,7 @@ operations:
             confirmation:
                 title: oro.ups.rule.delete.title
                 okText: oro.ups.rule.delete.button.okText
-                message: oro.ups.rule.delete.massage
+                message: oro.ups.rule.delete.message
                 message_parameters:
                     linkGrid: $.linkGrid
                 component: oroui/js/standart-confirmation

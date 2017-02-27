@@ -23,6 +23,6 @@ oro:
                 title: Disabling linked shipping rules and methods.
                 button.okText: Deactivate
             delete:
-                massage: Some shipping methods in <a href="{{ linkGrid }}" target="_blank">these</a> shipping rules depend on the integration that is being deleted. The affected shipping methods will be disabled. Shipping rule will also be disabled if none of its shipping methods remain enabled.
+                message: Some shipping methods in <a href="{{ linkGrid }}" target="_blank">these</a> shipping rules depend on the integration that is being deleted. The affected shipping methods will be disabled. Shipping rule will also be disabled if none of its shipping methods remain enabled.
                 title: Deleting linked shipping rules and methods.
                 button.okText: Delete
