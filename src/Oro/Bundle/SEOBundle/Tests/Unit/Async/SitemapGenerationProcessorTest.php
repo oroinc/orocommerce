@@ -15,12 +15,16 @@ use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\Website\WebsiteInterface;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
+use Symfony\Component\OptionsResolver\Exception\MissingOptionsException;
 
 class SitemapGenerationProcessorTest extends \PHPUnit_Framework_TestCase
 {
     const JOB_ID = 123;
     const WEBSITE_ID = 7;
     const TYPE = 'someType';
+
+    const INVALID_MESSAGE_ERROR = '[SitemapGenerationProcessor] Got invalid message';
 
     /**
      * @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -99,9 +103,9 @@ class SitemapGenerationProcessorTest extends \PHPUnit_Framework_TestCase
      * @dataProvider badMessageDataProvider
      *
      * @param array $messageBody
-     * @param string $expectedError
+     * @param \Exception $expectedException
      */
-    public function testProcessWhenSomeOptionsAreMissing(array $messageBody, $expectedError)
+    public function testProcessWhenSomeOptionsAreMissing(array $messageBody, $expectedException)
     {
         /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
         $message = $this->createMock(MessageInterface::class);
@@ -116,10 +120,10 @@ class SitemapGenerationProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->logger
             ->expects($this->once())
-            ->method('critical')
+            ->method('error')
             ->with(
-                $expectedError,
-                ['message' => json_encode($messageBody)]
+                self::INVALID_MESSAGE_ERROR,
+                ['message' => json_encode($messageBody), 'exception' => $expectedException]
             );
 
         $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process($message, $this->session));
@@ -130,29 +134,24 @@ class SitemapGenerationProcessorTest extends \PHPUnit_Framework_TestCase
      */
     public function badMessageDataProvider()
     {
-        $allMissingErrorMessage = <<<ERROR
-[SitemapGenerationProcessor] Got invalid message: The required options "jobId", "type", "websiteId" are missing.
-ERROR;
-
         return [
             'all options are missing' => [
                 'messageBody' => [],
-                'expectedError' => $allMissingErrorMessage
+                'expectedException' => new MissingOptionsException(
+                    'The required options "jobId", "type", "websiteId" are missing.'
+                )
             ],
             'websiteId option is missing' => [
                 'messageBody' => ['jobId' => self::JOB_ID, 'type' => self::TYPE],
-                'expectedError' =>
-                    '[SitemapGenerationProcessor] Got invalid message: The required option "websiteId" is missing.'
+                'expectedException' => new MissingOptionsException('The required option "websiteId" is missing.')
             ],
             'type option is missing' => [
                 'messageBody' => ['jobId' => self::JOB_ID, 'websiteId' => self::WEBSITE_ID],
-                'expectedError' =>
-                    '[SitemapGenerationProcessor] Got invalid message: The required option "type" is missing.'
+                'expectedException' => new MissingOptionsException('The required option "type" is missing.')
             ],
             'jobId option is missing' => [
                 'messageBody' => ['websiteId' => self::WEBSITE_ID, 'type' => self::TYPE],
-                'expectedError' =>
-                    '[SitemapGenerationProcessor] Got invalid message: The required option "jobId" is missing.'
+                'expectedException' => new MissingOptionsException('The required option "jobId" is missing.')
             ],
         ];
     }
@@ -174,13 +173,13 @@ ERROR;
             ->expects($this->never())
             ->method('runDelayed');
 
-        $expectedError = '[SitemapGenerationProcessor] Got invalid message: No website exists with id "7"';
+        $expectedException = new InvalidOptionsException('No website exists with id "7"');
         $this->logger
             ->expects($this->once())
-            ->method('critical')
+            ->method('error')
             ->with(
-                $expectedError,
-                ['message' => json_encode($messageBody)]
+                self::INVALID_MESSAGE_ERROR,
+                ['message' => json_encode($messageBody), 'exception' => $expectedException]
             );
 
         $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process($message, $this->session));
@@ -205,14 +204,13 @@ ERROR;
             ->expects($this->never())
             ->method('runDelayed');
 
-        $expectedError =
-            '[SitemapGenerationProcessor] Got invalid message: No url item provider exists with name "someType"';
+        $expectedException = new InvalidOptionsException('No url item provider exists with name "someType"');
         $this->logger
             ->expects($this->once())
-            ->method('critical')
+            ->method('error')
             ->with(
-                $expectedError,
-                ['message' => json_encode($messageBody)]
+                self::INVALID_MESSAGE_ERROR,
+                ['message' => json_encode($messageBody), 'exception' => $expectedException]
             );
 
         $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process($message, $this->session));
@@ -246,9 +244,45 @@ ERROR;
 
         $this->logger
             ->expects($this->never())
-            ->method('critical');
+            ->method('error');
 
         $this->assertEquals($expectedResult, $this->processor->process($message, $this->session));
+    }
+
+    public function testProcessWhenMessageOptionsAreValidAndJobRunnerThrowsException()
+    {
+        $messageBody = ['jobId' => self::JOB_ID, 'websiteId' => self::WEBSITE_ID, 'type' => self::TYPE];
+
+        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        $message = $this->createMock(MessageInterface::class);
+        $message
+            ->expects($this->any())
+            ->method('getBody')
+            ->willReturn(json_encode($messageBody));
+
+        $this->expectWebsiteExists(true);
+
+        $this->expectProviderExists(true);
+
+        $exception = new \Exception('Some exception message');
+        $this->jobRunner
+            ->expects($this->once())
+            ->method('runDelayed')
+            ->willThrowException($exception);
+
+        $this->logger
+            ->expects($this->once())
+            ->method('error')
+            ->with(
+                'Unexpected exception occurred during queue message processing',
+                [
+                    'message' => json_encode($messageBody),
+                    'exception' => $exception,
+                    'topic' => Topics::GENERATE_SITEMAP_BY_WEBSITE_AND_TYPE
+                ]
+            );
+
+        $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process($message, $this->session));
     }
 
     /**
@@ -288,22 +322,23 @@ ERROR;
 
         $this->expectProviderExists(true);
 
-        $exceptionMessage = 'Some message';
+        $exception = new SitemapFileWriterException('Some message');
         $this->sitemapDumper
             ->expects($this->once())
             ->method('dump')
             ->with($website, self::TYPE)
-            ->willThrowException(new SitemapFileWriterException($exceptionMessage));
+            ->willThrowException($exception);
 
         $this->logger
             ->expects($this->once())
-            ->method('critical')
+            ->method('error')
             ->with(
-                sprintf(
-                    'SitemapGenerationProcessor job has failed due to SitemapFileWriter exception %s',
-                    $exceptionMessage
-                ),
-                ['message' => json_encode($messageBody)]
+                'Unexpected exception occurred during queue message processing',
+                [
+                    'message' => json_encode($messageBody),
+                    'exception' => $exception,
+                    'topic' => Topics::GENERATE_SITEMAP_BY_WEBSITE_AND_TYPE
+                ]
             );
 
         $this->createProcessorWithTestJobRunner();
@@ -338,7 +373,7 @@ ERROR;
 
         $this->logger
             ->expects($this->never())
-            ->method('critical');
+            ->method('error');
 
         $this->createProcessorWithTestJobRunner();
 

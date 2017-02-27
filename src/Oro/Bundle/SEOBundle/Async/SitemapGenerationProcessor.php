@@ -4,7 +4,6 @@ namespace Oro\Bundle\SEOBundle\Async;
 
 use Oro\Bundle\SEOBundle\Provider\UrlItemsProviderRegistry;
 use Oro\Bundle\SEOBundle\Sitemap\Dumper\SitemapDumper;
-use Oro\Bundle\SEOBundle\Sitemap\Exception\SitemapFileWriterException;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
@@ -76,34 +75,38 @@ class SitemapGenerationProcessor implements MessageProcessorInterface, TopicSubs
         try {
             $data = $this->resolveOptions($data);
         } catch (\Exception $exception) {
-            $this->logger->critical(
-                sprintf('[SitemapGenerationProcessor] Got invalid message: %s', $exception->getMessage()),
-                ['message' => $message->getBody()]
+            $this->logger->error(
+                '[SitemapGenerationProcessor] Got invalid message',
+                [
+                    'message' => $message->getBody(),
+                    'exception' => $exception
+                ]
             );
 
             return self::REJECT;
         }
 
-        $result = $this->jobRunner->runDelayed($data['jobId'], function () use ($data, $message) {
-            try {
+        try {
+            $result = $this->jobRunner->runDelayed($data['jobId'], function () use ($data, $message) {
                 /** @var Website $website */
                 $website = $this->websiteRepository->find($data['websiteId']);
 
                 $this->sitemapDumper->dump($website, $data['type']);
-            } catch (SitemapFileWriterException $exception) {
-                $this->logger->critical(
-                    sprintf(
-                        'SitemapGenerationProcessor job has failed due to SitemapFileWriter exception %s',
-                        $exception->getMessage()
-                    ),
-                    ['message' => $message->getBody()]
-                );
 
-                return false;
-            }
+                return true;
+            });
+        } catch (\Exception $exception) {
+            $this->logger->error(
+                'Unexpected exception occurred during queue message processing',
+                [
+                    'message' => $message->getBody(),
+                    'exception' => $exception,
+                    'topic' => Topics::GENERATE_SITEMAP_BY_WEBSITE_AND_TYPE
+                ]
+            );
 
-            return true;
-        });
+            return self::REJECT;
+        }
 
         return $result ? self::ACK : self::REJECT;
     }
@@ -111,6 +114,7 @@ class SitemapGenerationProcessor implements MessageProcessorInterface, TopicSubs
     /**
      * @param array $options
      * @return array
+     * @throws InvalidOptionsException
      */
     private function resolveOptions(array $options)
     {
