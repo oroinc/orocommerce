@@ -92,6 +92,12 @@ services:
             - '@oro_ups.shipping_units_mapper'
             - '@oro_security.encoder.mcrypt'
 
+    oro_ups.factory.connection_validation.result_factory:
+        class: 'Oro\Bundle\UPSBundle\Connection\Validator\Result\Factory\UpsConnectionValidatorResultFactory'
+        public: false
+        arguments:
+            - '@translator.default'
+
     oro_ups.shipping_units_mapper:
         class: 'Oro\Bundle\UPSBundle\Provider\UnitsMapper'
         public: false

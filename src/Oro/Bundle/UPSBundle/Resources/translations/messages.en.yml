@@ -47,3 +47,7 @@ oro:
             invalidate_cache.type:
                 immediate: Now
                 scheduled: Schedule Invalidation
+
+        connection_validation:
+            result:
+                not_authentication_error.message: Authentication settings are correct but there was error not related to authentication
