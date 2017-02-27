@@ -9,7 +9,7 @@ oro_behat_extension:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     CheckoutFormRow:
-      selector: '.grid__row'
+      selector: '.checkout__form span.custom-radio__text'
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
 
     Shipping Rule:
