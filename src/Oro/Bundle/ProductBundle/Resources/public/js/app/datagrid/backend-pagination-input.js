@@ -33,6 +33,7 @@ define(function(require) {
          */
         render: function() {
             var state = this.collection.state;
+            var totalPages = state.totalPages || 1;
 
             // prevent render if data is not loaded yet
             if (state.totalRecords === null) {
@@ -41,15 +42,17 @@ define(function(require) {
 
             this.makeHandles();
 
-            this.$el.find('[data-grid-pagination-pages]').text(state.totalPages || 1);
+            this.$el.find('[data-grid-pagination-pages]').text(totalPages);
             this.$el.find('[data-grid-pagination-records]').text(state.totalRecords);
             this.$('input')
                 .val(state.firstPage === 0 ? state.currentPage + 1 : state.currentPage)
                 .attr('disabled', !this.enabled || !state.totalRecords)
                 .numeric({decimal: false, negative: false});
 
-            if (this.hidden) {
+            if (this.hidden || totalPages === 1) {
                 this.$el.hide();
+            } else {
+                this.$el.show();
             }
 
             return this;
