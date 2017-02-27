@@ -25,15 +25,6 @@ datagrids:
                 label:         oro.product.sku.label
             productName:
                 label:         oro.product.names.label
-                inline_editing:
-                    enable: true
-                    save_api_accessor:
-                        route: oro_product_ajax_edit_name
-                        query_parameter_names:
-                            - id
-                            - productName
-                    validation_rules:
-                        NotBlank: true
             inventoryStatus:
                 label:         oro.product.inventory_status.label
                 type:          twig
@@ -139,6 +130,16 @@ datagrids:
             enable: true
             behaviour: enable_selected
         columns:
+            productName:
+                inline_editing:
+                    enable: true
+                    save_api_accessor:
+                        route: oro_product_ajax_edit_name
+                        query_parameter_names:
+                            - id
+                            - productName
+                    validation_rules:
+                        NotBlank: true
             status:
                 inline_editing:
                     enable: true
