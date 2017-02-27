@@ -48,7 +48,7 @@ class MethodConfigSubscriberTest extends FormIntegrationTestCase
     /**
      * @var MethodConfigSubscriberProxy
      */
-    protected $methodConfigSubscriber;
+    protected $subscriber;
 
     /**
      * @var ShippingMethodRegistry
@@ -60,24 +60,23 @@ class MethodConfigSubscriberTest extends FormIntegrationTestCase
         $this->methodRegistry = new ShippingMethodRegistry();
         $this->methodTypeConfigCollectionSubscriber = new MethodTypeConfigCollectionSubscriberProxy();
         $this->methodConfigCollectionSubscriber = new MethodConfigCollectionSubscriberProxy();
-        $this->methodConfigSubscriber = new MethodConfigSubscriberProxy();
+        $this->subscriber = new MethodConfigSubscriberProxy();
         parent::setUp();
-        $this->methodTypeConfigCollectionSubscriber->setFactory($this->factory)
-            ->setMethodRegistry($this->methodRegistry);
-        $this->methodConfigCollectionSubscriber->setFactory($this->factory)
-            ->setMethodRegistry($this->methodRegistry);
-        $this->methodConfigSubscriber->setFactory($this->factory)
-            ->setMethodRegistry($this->methodRegistry);
+        $this->methodTypeConfigCollectionSubscriber
+            ->setFactory($this->factory)->setMethodRegistry($this->methodRegistry);
+        $this->methodConfigCollectionSubscriber
+            ->setFactory($this->factory)->setMethodRegistry($this->methodRegistry);
+        $this->subscriber->setFactory($this->factory)->setMethodRegistry($this->methodRegistry);
     }
 
-    public function testGetSubscribedEvents()
+    public function test()
     {
         $this->assertEquals(
             [
                 FormEvents::PRE_SET_DATA => 'preSet',
                 FormEvents::PRE_SUBMIT => 'preSubmit'
             ],
-            MethodConfigSubscriberProxy::getSubscribedEvents()
+            MethodTypeConfigCollectionSubscriberProxy::getSubscribedEvents()
         );
     }
 
@@ -231,7 +230,7 @@ class MethodConfigSubscriberTest extends FormIntegrationTestCase
                     ShippingMethodConfigCollectionType::class
                     => new ShippingMethodConfigCollectionType($this->methodConfigCollectionSubscriber),
                     ShippingMethodConfigType::class
-                    => new ShippingMethodConfigType($this->methodConfigSubscriber, $this->methodRegistry),
+                    => new ShippingMethodConfigType($this->subscriber, $this->methodRegistry),
                     ShippingMethodTypeConfigCollectionType::class =>
                         new ShippingMethodTypeConfigCollectionType($this->methodTypeConfigCollectionSubscriber),
                     CurrencySelectionType::NAME => new CurrencySelectionType(
