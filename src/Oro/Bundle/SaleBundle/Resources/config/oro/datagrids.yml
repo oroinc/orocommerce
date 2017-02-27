@@ -17,7 +17,6 @@ datagrids:
                     - quote.createdAt
                     - quote.updatedAt
                     - quote.validUntil
-                    - quote.locked
                     - quote.expired
                 from:
                     - { table: %oro_sale.entity.quote.class%, alias: quote }
@@ -29,9 +28,6 @@ datagrids:
                 label:         oro.sale.quote.qid.label
             ownerName:
                 label:         oro.sale.quote.owner.label
-            locked:
-                label:         oro.sale.quote.locked.label
-                frontend_type: boolean
             expired:
                 label:         oro.sale.quote.expired.label
                 frontend_type: boolean
@@ -61,8 +57,6 @@ datagrids:
                     data_name: quote.qid
                 ownerName:
                     data_name: ownerName
-                locked:
-                    data_name: quote.locked
                 expired:
                     data_name: quote.expired
                 poNumber:
@@ -120,9 +114,6 @@ datagrids:
                 ownerName:
                     type:      string
                     data_name: ownerName
-                locked:
-                    type:      boolean
-                    data_name: quote.locked
                 expired:
                     type:      boolean
                     data_name: quote.expired
@@ -159,9 +150,6 @@ datagrids:
                 ownerName:
                     type:      string
                     data_name: ownerName
-                locked:
-                    type:      boolean
-                    data_name: quote.locked
                 expired:
                     type:      boolean
                     data_name: quote.expired
@@ -243,9 +231,6 @@ datagrids:
                     type:      enum
                     data_name: customerStatusId
                     enum_code: quote_customer_status
-                locked:
-                    type:      boolean
-                    data_name: quote.locked
                 expired:
                     type:      boolean
                     data_name: quote.expired

@@ -86,19 +86,10 @@ class NotificationHelper extends Controller
 
     /**
      * @param Email $emailModel
-     * @param Quote $quote
      */
-    public function send(Email $emailModel, Quote $quote)
+    public function send(Email $emailModel)
     {
         $this->emailProcessor->process($emailModel);
-
-        if (!$quote->isLocked()) {
-            $quote->setLocked(true);
-
-            $manager = $this->getManager($this->quoteClassName);
-            $manager->persist($quote);
-            $manager->flush();
-        }
     }
 
     /**

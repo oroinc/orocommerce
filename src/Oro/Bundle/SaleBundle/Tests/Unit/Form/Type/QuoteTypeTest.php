@@ -108,7 +108,6 @@ class QuoteTypeTest extends AbstractTest
      * @param int $customerUserId
      * @param int $customerId
      * @param QuoteProduct[] $items
-     * @param bool $locked
      * @param string $poNumber
      * @param string $shipUntil
      * @param bool $shippingMethodLocked
@@ -120,7 +119,6 @@ class QuoteTypeTest extends AbstractTest
         $customerUserId = null,
         $customerId = null,
         array $items = [],
-        $locked = false,
         $poNumber = null,
         $shipUntil = null,
         $shippingMethodLocked = false,
@@ -169,7 +167,6 @@ class QuoteTypeTest extends AbstractTest
         foreach ($items as $item) {
             $quote->addQuoteProduct($item);
         }
-        $quote->setLocked($locked);
 
         if (null !== $poNumber) {
             $quote->setPoNumber($poNumber);
@@ -210,7 +207,6 @@ class QuoteTypeTest extends AbstractTest
                     'owner' => 1,
                     'customerUser' => 1,
                     'customer' => 2,
-                    'locked' => false,
                     'poNumber'  => null,
                     'shipUntil' => null,
                     'quoteProducts' => [
@@ -240,7 +236,6 @@ class QuoteTypeTest extends AbstractTest
                     1,
                     2,
                     [$quoteProduct],
-                    false,
                     null,
                     null,
                     true,
@@ -251,7 +246,6 @@ class QuoteTypeTest extends AbstractTest
                     1,
                     2,
                     [$quoteProduct],
-                    false,
                     null,
                     null
                 ),
@@ -262,7 +256,6 @@ class QuoteTypeTest extends AbstractTest
                     'owner' => 1,
                     'customerUser' => 1,
                     'customer' => 2,
-                    'locked' => false,
                     'poNumber'  => 'poNumber',
                     'shipUntil' => $date,
                     'quoteProducts' => [
@@ -299,7 +292,6 @@ class QuoteTypeTest extends AbstractTest
                     1,
                     2,
                     [$quoteProduct],
-                    false,
                     'poNumber',
                     new \DateTime($date . 'T00:00:00+0000')
                 )
@@ -315,7 +307,6 @@ class QuoteTypeTest extends AbstractTest
                     1,
                     2,
                     [$quoteProduct],
-                    false,
                     'poNumber',
                     new \DateTime($date . 'T00:00:00+0000')
                 )->addAssignedUser($this->getUser(1))
@@ -327,7 +318,6 @@ class QuoteTypeTest extends AbstractTest
                         1,
                         2,
                         [$quoteProduct],
-                        false,
                         'poNumber',
                         new \DateTime($date . 'T00:00:00+0000')
                     )->addAssignedUser($this->getUser(1))

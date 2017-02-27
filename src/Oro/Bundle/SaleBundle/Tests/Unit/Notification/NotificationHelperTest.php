@@ -86,42 +86,16 @@ class NotificationHelperTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @dataProvider sendDataProvider
-     *
-     * @param Quote $quote
-     */
-    public function testSend(Quote $quote)
+    public function testSend()
     {
+        /** @var Quote $quote */
+        $quote = $this->getEntity(self::QUOTE_CLASS_NAME, ['id' => 42]);
         $emailModel = $this->createEmailModel($quote, 'test@example.com', 'stdClass', 42);
 
         $this->emailProcessor->expects($this->once())->method('process')->with($emailModel);
+        $this->registry->expects($this->never())->method($this->anything());
 
-        if ($quote->isLocked()) {
-            $this->registry->expects($this->never())->method($this->anything());
-        } else {
-            $manager = $this->assertManagerCalled(self::QUOTE_CLASS_NAME);
-            $manager->expects($this->once())
-                ->method('persist')
-                ->with($quote);
-            $manager->expects($this->once())
-                ->method('flush');
-        }
-
-        $this->helper->send($emailModel, $quote);
-
-        $this->assertTrue($quote->isLocked());
-    }
-
-    /**
-     * @return array
-     */
-    public function sendDataProvider()
-    {
-        return [
-            'locked quote' => [$this->getEntity(self::QUOTE_CLASS_NAME, ['id' => 42, 'locked' => true])],
-            'not locked quote' => [$this->getEntity(self::QUOTE_CLASS_NAME, ['id' => 42, 'locked' => false])]
-        ];
+        $this->helper->send($emailModel);
     }
 
     /**

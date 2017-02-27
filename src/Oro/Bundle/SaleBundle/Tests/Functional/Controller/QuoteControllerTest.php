@@ -256,30 +256,6 @@ class QuoteControllerTest extends WebTestCase
      * @depends testView
      * @param int $id
      */
-    public function testLockedFieldAndBadge($id)
-    {
-        $crawler = $this->client->request('GET', $this->getUrl('oro_sale_quote_view', ['id' => $id]));
-
-        $this->assertContains('Not Locked', $crawler->html(), 'By default Quote shouldn\'t be locked');
-
-        $crawler = $this->client->request('GET', $this->getUrl('oro_sale_quote_update', ['id' => $id]));
-
-        /* @var $form Form */
-        $form = $crawler->selectButton('Save and Close')->form();
-        $form['oro_sale_quote[locked]'] = true;
-
-        $this->client->followRedirects(true);
-        $crawler = $this->client->submit($form);
-
-        $result = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Locked', $crawler->html());
-    }
-
-    /**
-     * @depends testView
-     * @param int $id
-     */
     public function testDelete($id)
     {
         $this->client->request(

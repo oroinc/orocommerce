@@ -193,20 +193,6 @@ class Quote extends ExtendQuote implements
     /**
      * @var bool
      *
-     * @ORM\Column(type="boolean")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $locked = false;
-
-    /**
-     * @var bool
-     *
      * @ORM\Column(type="boolean", options={"default"=false})
      * @ConfigField(
      *      defaultValues={
@@ -480,26 +466,6 @@ class Quote extends ExtendQuote implements
     public function getRequest()
     {
         return $this->request;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isLocked()
-    {
-        return $this->locked;
-    }
-
-    /**
-     * @param bool $locked
-     *
-     * @return Quote
-     */
-    public function setLocked($locked)
-    {
-        $this->locked = (bool)$locked;
-
-        return $this;
     }
 
     /**

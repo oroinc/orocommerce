@@ -168,6 +168,7 @@ SaleBundle
     - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
     - removed property `protected $quoteProductFormatter`
     - removed property `protected $configManager`
+- Removed property `locked` from entity class `Oro\Bundle\SaleBundle\Entity\Quote` with related methods
 
 ShoppingListBundle
 ------------------

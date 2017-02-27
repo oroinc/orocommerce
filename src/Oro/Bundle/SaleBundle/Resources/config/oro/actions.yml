@@ -84,7 +84,6 @@ operations:
             - '@run_action_group':
                 action_group: oro_sale_notify_customer_by_email
                 parameters_mapping:
-                    data: $.data
                     email: $.email
 
 action_groups:
@@ -156,8 +155,6 @@ action_groups:
 
     oro_sale_notify_customer_by_email:
         parameters:
-            data:
-                type: Oro\Bundle\SaleBundle\Entity\Quote
             email:
                 type: Oro\Bundle\EmailBundle\Form\Model\Email
         acl_resource: oro_email_email_create
@@ -165,7 +162,7 @@ action_groups:
             - '@call_service_method':
                 service: oro_sale.helper.notification
                 method: send
-                method_parameters: [$.email, $.data]
+                method_parameters: [$.email]
 
     oro_sale_send_no_quote_alert:
         parameters:
