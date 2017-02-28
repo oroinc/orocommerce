@@ -1,9 +1,9 @@
 <?php
 
-namespace Oro\Bundle\SEOBundle\Tests\Unit\Tools;
+namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\Filesystem;
 
-use Oro\Bundle\SEOBundle\Tools\SitemapFileWriter;
-use Oro\Bundle\SEOBundle\Tools\Exception\SitemapFileWriterException;
+use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFileWriter;
+use Oro\Bundle\SEOBundle\Sitemap\Exception\SitemapFileWriterException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;

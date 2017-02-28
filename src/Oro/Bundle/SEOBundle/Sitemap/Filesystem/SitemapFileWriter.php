@@ -1,8 +1,8 @@
 <?php
 
-namespace Oro\Bundle\SEOBundle\Tools;
+namespace Oro\Bundle\SEOBundle\Sitemap\Filesystem;
 
-use Oro\Bundle\SEOBundle\Tools\Exception\SitemapFileWriterException;
+use Oro\Bundle\SEOBundle\Sitemap\Exception\SitemapFileWriterException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
@@ -38,7 +38,7 @@ class SitemapFileWriter implements SitemapFileWriterInterface
     public function saveSitemap($sitemapContents, $path)
     {
         try {
-            $this->filesystem->dumpFile($path, $sitemapContents, 0755);
+            $this->filesystem->dumpFile($path, $sitemapContents);
         } catch (IOExceptionInterface $e) {
             $this->logger->debug($e->getMessage());
 

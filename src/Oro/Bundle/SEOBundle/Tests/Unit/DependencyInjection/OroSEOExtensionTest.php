@@ -13,7 +13,8 @@ class OroSEOExtensionTest extends ExtensionTestCase
         $expectedDefinitions = [
             // Services
             'oro_seo.block_type.localized_links_container',
-            'oro_seo.tools.sitemap_dumper',
+            'oro_seo.sitemap.sitemap_url_dumper',
+            'oro_seo.sitemap.sitemap_index_dumper',
             'oro_seo.layout.data_provider.seo_data'
         ];
 
@@ -31,7 +32,7 @@ class OroSEOExtensionTest extends ExtensionTestCase
 
         $this->loadExtension(new OroSEOExtension());
         $expectedDefinitions = [
-            'oro_seo.tools.gzip_sitemap_file_writer'
+            'oro_seo.sitemap.gzip_sitemap_file_writer'
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }

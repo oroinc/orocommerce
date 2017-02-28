@@ -1,10 +1,10 @@
 <?php
 
-namespace Oro\Bundle\SEOBundle\Tools;
+namespace Oro\Bundle\SEOBundle\Sitemap\Storage;
 
 use Oro\Component\SEO\Model\DTO\UrlItemInterface;
 
-class XmlSitemapUrlsStorage implements SitemapUrlsStorageInterface
+abstract class AbstractXmlSitemapStorage implements SitemapStorageInterface
 {
     const URL_NUMBER_LIMIT = 50000;
     const FILE_SIZE_LIMIT = 10485760; // 10 MB
@@ -58,7 +58,7 @@ class XmlSitemapUrlsStorage implements SitemapUrlsStorageInterface
      */
     public function addUrlItem(UrlItemInterface $urlItem)
     {
-        if ($this->urlItemsCount === $this->urlsNumberLimit || !$this->appendUrlItem($urlItem)) {
+        if ($this->urlItemsCount === $this->urlsNumberLimit || !$this->appendItem($urlItem)) {
             return false;
         }
 
@@ -84,6 +84,38 @@ class XmlSitemapUrlsStorage implements SitemapUrlsStorageInterface
     }
 
     /**
+     * Produces following xml part:
+     * <?xml version="1.0" encoding="UTF-8"?>
+     * <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+     *
+     * @param \XMLWriter $xmlWriter
+     */
+    abstract protected function startXmlTemplate(\XMLWriter $xmlWriter);
+
+    /**
+     * @param \XMLWriter $urlItemWriter
+     * @param UrlItemInterface $urlItem
+     */
+    abstract protected function fillItem(\XMLWriter $urlItemWriter, UrlItemInterface $urlItem);
+
+    /**
+     * Produces following xml part:
+     * <elementName>$elementValue</elementName>
+     *
+     * @param \XMLWriter $writer
+     * @param string $elementName
+     * @param string|int $elementValue
+     */
+    protected function appendElementIfNotEmpty(\XMLWriter $writer, $elementName, $elementValue)
+    {
+        if ($elementValue) {
+            $writer->startElement($elementName);
+            $writer->text($elementValue);
+            $writer->endElement();
+        }
+    }
+
+    /**
      * Appends url item xml:
      * <url>
      *   <loc>http://somelocation</loc>
@@ -95,7 +127,7 @@ class XmlSitemapUrlsStorage implements SitemapUrlsStorageInterface
      * @param UrlItemInterface $urlItem
      * @return bool
      */
-    private function appendUrlItem(UrlItemInterface $urlItem)
+    private function appendItem(UrlItemInterface $urlItem)
     {
         if ($this->locked) {
             return false;
@@ -103,15 +135,7 @@ class XmlSitemapUrlsStorage implements SitemapUrlsStorageInterface
 
         $urlItemWriter = new \XMLWriter();
         $urlItemWriter->openMemory();
-        $urlItemWriter->startElement('url');
-
-        $this->appendElementIfNotEmpty($urlItemWriter, 'loc', $urlItem->getLocation());
-        $this->appendElementIfNotEmpty($urlItemWriter, 'changefreq', $urlItem->getChangeFrequency());
-        $this->appendElementIfNotEmpty($urlItemWriter, 'priority', $urlItem->getPriority());
-        $this->appendElementIfNotEmpty($urlItemWriter, 'lastmod', $urlItem->getLastModification());
-
-        $urlItemWriter->endElement();
-
+        $this->fillItem($urlItemWriter, $urlItem);
         $urlItemXml = $urlItemWriter->outputMemory();
 
         $urlItemXmlSize = strlen($urlItemXml);
@@ -123,43 +147,6 @@ class XmlSitemapUrlsStorage implements SitemapUrlsStorageInterface
         $this->xmlWriter->writeRaw($urlItemXml);
 
         return true;
-    }
-
-    /**
-     * Produces following xml part:
-     * <elementName>$elementValue</elementName>
-     *
-     * @param \XMLWriter $writer
-     * @param string $elementName
-     * @param string|int $elementValue
-     */
-    private function appendElementIfNotEmpty(\XMLWriter $writer, $elementName, $elementValue)
-    {
-        if ($elementValue) {
-            $writer->startElement($elementName);
-            $writer->text($elementValue);
-            $writer->endElement();
-        }
-    }
-
-    /**
-     * Produces following xml part:
-     * <?xml version="1.0" encoding="UTF-8"?>
-     * <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-     *
-     * @param \XMLWriter $xmlWriter
-     */
-    private function startXmlTemplate(\XMLWriter $xmlWriter)
-    {
-        $xmlWriter->openMemory();
-
-        $xmlWriter->startDocument('1.0', 'UTF-8');
-
-        $xmlWriter->startElement('urlset');
-
-        $xmlWriter->startAttribute('xmlns');
-        $xmlWriter->text('http://www.sitemaps.org/schemas/sitemap/0.9');
-        $xmlWriter->endAttribute();
     }
 
     /**

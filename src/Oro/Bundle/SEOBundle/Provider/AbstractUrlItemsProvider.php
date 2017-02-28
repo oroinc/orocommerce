@@ -71,8 +71,7 @@ abstract class AbstractUrlItemsProvider implements UrlItemsProviderInterface
     }
 
     /**
-     * @param WebsiteInterface $website
-     * @return \Generator|UrlItem[]
+     * {@inheritdoc}
      */
     public function getUrlItems(WebsiteInterface $website)
     {
@@ -189,9 +188,9 @@ abstract class AbstractUrlItemsProvider implements UrlItemsProviderInterface
         if ($systemUrl) {
             return new UrlItem(
                 $systemUrl,
+                $updatedAt,
                 $this->getEntityChangeFrequency(),
-                $this->getEntitySitemapPriority(),
-                $updatedAt
+                $this->getEntitySitemapPriority()
             );
         }
 

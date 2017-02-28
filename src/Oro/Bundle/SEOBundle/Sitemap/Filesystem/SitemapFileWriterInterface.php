@@ -1,8 +1,8 @@
 <?php
 
-namespace Oro\Bundle\SEOBundle\Tools;
+namespace Oro\Bundle\SEOBundle\Sitemap\Filesystem;
 
-use Oro\Bundle\SEOBundle\Tools\Exception\SitemapFileWriterException;
+use Oro\Bundle\SEOBundle\Sitemap\Exception\SitemapFileWriterException;
 
 interface SitemapFileWriterInterface
 {

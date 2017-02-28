@@ -1,9 +1,9 @@
 <?php
 
-namespace Oro\Bundle\SEOBundle\Tests\Unit\Tools;
+namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\Filesystem;
 
-use Oro\Bundle\SEOBundle\Tools\GzipSitemapFileWriter;
-use Oro\Bundle\SEOBundle\Tools\SitemapFileWriterInterface;
+use Oro\Bundle\SEOBundle\Sitemap\Filesystem\GzipSitemapFileWriter;
+use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFileWriterInterface;
 
 class GzipSitemapFileWriterTest extends \PHPUnit_Framework_TestCase
 {
