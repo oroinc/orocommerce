@@ -68,7 +68,9 @@ class MoneyOrderSettings extends Transport
      */
     private $shortLabels;
 
-    /** @var ParameterBag */
+    /**
+     * @var ParameterBag
+     */
     private $settings;
 
     public function __construct()
@@ -195,11 +197,13 @@ class MoneyOrderSettings extends Transport
     public function getSettingsBag()
     {
         if (null === $this->settings) {
-            $this->settings = new ParameterBag([
-                'pay_to' => $this->getPayTo(),
-                'send_to' => $this->getSendTo(),
-                'labels' => $this->getLabels()->toArray(),
-            ]);
+            $this->settings = new ParameterBag(
+                [
+                    'pay_to' => $this->getPayTo(),
+                    'send_to' => $this->getSendTo(),
+                    'labels' => $this->getLabels()->toArray(),
+                ]
+            );
         }
 
         return $this->settings;

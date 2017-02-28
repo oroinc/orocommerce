@@ -20,7 +20,8 @@ class OroMoneyOrderExtensionTest extends ExtensionTestCase
             'oro_money_order.factory.money_order_config',
             'oro_money_order.generator.money_order_config_identifier',
             'oro_money_order.factory.method.money_order',
-            'oro_money_order.factory.method_view.money_order'
+            'oro_money_order.factory.method_view.money_order',
+            'oro_money_order.repository.money_settings',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 

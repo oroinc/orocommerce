@@ -50,7 +50,7 @@ class MoneyOrderConfig extends ParameterBag implements MoneyOrderConfigInterface
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
     public function getPayTo()
     {
@@ -58,7 +58,7 @@ class MoneyOrderConfig extends ParameterBag implements MoneyOrderConfigInterface
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
     public function getSendTo()
     {

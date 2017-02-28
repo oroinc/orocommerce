@@ -10,14 +10,14 @@ use Oro\Bundle\MoneyOrderBundle\Form\Type\MoneyOrderSettingsType;
 class MoneyOrderTransport implements TransportInterface
 {
     /**
-     * @param Transport $transportEntity
+     * {@inheritDoc}
      */
     public function init(Transport $transportEntity)
     {
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getSettingsFormType()
     {
@@ -25,7 +25,7 @@ class MoneyOrderTransport implements TransportInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getSettingsEntityFQCN()
     {
@@ -33,7 +33,7 @@ class MoneyOrderTransport implements TransportInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getLabel()
     {

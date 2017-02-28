@@ -16,6 +16,7 @@ class MoneyOrderChannelType implements ChannelInterface, IconAwareIntegrationInt
     {
         return 'oro.money_order.channel_type.label';
     }
+
     /**
      * {@inheritdoc}
      */

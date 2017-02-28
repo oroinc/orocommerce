@@ -4,9 +4,23 @@ namespace Oro\Bundle\MoneyOrderBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\MoneyOrderBundle\Entity\MoneyOrderSettings;
+use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
 
 class MoneyOrderSettingsRepository extends EntityRepository
 {
+    /**
+     * @var AclHelper
+     */
+    private $aclHelper;
+
+    /**
+     * @param AclHelper $aclHelper
+     */
+    public function setAclHelper(AclHelper $aclHelper)
+    {
+        $this->aclHelper = $aclHelper;
+    }
+
     /**
      * @return MoneyOrderSettings[]
      */
@@ -19,6 +33,6 @@ class MoneyOrderSettingsRepository extends EntityRepository
             ->where('ch.enabled = true')
             ->orderBy('mos.id');
 
-        return $qb->getQuery()->getResult();
+        return $this->aclHelper->apply($qb)->getResult();
     }
 }

@@ -21,7 +21,7 @@ class MoneyOrderSettingsType extends AbstractType
 
     /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      *
      * @throws ConstraintDefinitionException
      * @throws InvalidOptionsException
@@ -34,29 +34,36 @@ class MoneyOrderSettingsType extends AbstractType
                 'labels',
                 LocalizedFallbackValueCollectionType::NAME,
                 [
-                    'label'    => 'oro.money_order.settings.labels.label',
+                    'label' => 'oro.money_order.settings.labels.label',
                     'required' => true,
-                    'options'  => ['constraints' => [new NotBlank()]],
+                    'options' => ['constraints' => [new NotBlank()]],
                 ]
             )
             ->add(
                 'shortLabels',
                 LocalizedFallbackValueCollectionType::NAME,
                 [
-                    'label'    => 'oro.money_order.settings.short_labels.label',
+                    'label' => 'oro.money_order.settings.short_labels.label',
                     'required' => true,
-                    'options'  => ['constraints' => [new NotBlank()]],
+                    'options' => ['constraints' => [new NotBlank()]],
                 ]
             )
-            ->add('payTo', TextType::class, [
-                'label'    => 'oro.money_order.settings.pay_to.label',
-                'required' => true,
-            ])
-            ->add('sendTo', TextareaType::class, [
-                'label'    => 'oro.money_order.settings.send_to.label',
-                'required' => true,
-            ])
-        ;
+            ->add(
+                'payTo',
+                TextType::class,
+                [
+                    'label' => 'oro.money_order.settings.pay_to.label',
+                    'required' => true,
+                ]
+            )
+            ->add(
+                'sendTo',
+                TextareaType::class,
+                [
+                    'label' => 'oro.money_order.settings.send_to.label',
+                    'required' => true,
+                ]
+            );
     }
 
     /**
@@ -66,9 +73,11 @@ class MoneyOrderSettingsType extends AbstractType
      */
     public function configureOptions(OptionsResolver $resolver)
     {
-        $resolver->setDefaults([
-            'data_class' => MoneyOrderSettings::class
-        ]);
+        $resolver->setDefaults(
+            [
+                'data_class' => MoneyOrderSettings::class,
+            ]
+        );
     }
 
     /**

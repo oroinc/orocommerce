@@ -7,7 +7,6 @@ use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterfa
 use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\MoneyOrderBundle\Entity\MoneyOrderSettings;
 use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig;
-use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigInterface;
 
 class MoneyOrderConfigFactory implements MoneyOrderConfigFactoryInterface
 {
@@ -22,7 +21,7 @@ class MoneyOrderConfigFactory implements MoneyOrderConfigFactoryInterface
     private $identifierGenerator;
 
     /**
-     * @param LocalizationHelper $localizationHelper
+     * @param LocalizationHelper                      $localizationHelper
      * @param IntegrationIdentifierGeneratorInterface $identifierGenerator
      */
     public function __construct(
@@ -34,14 +33,13 @@ class MoneyOrderConfigFactory implements MoneyOrderConfigFactoryInterface
     }
 
     /**
-     * @param MoneyOrderSettings $settings
-     * @return MoneyOrderConfigInterface
+     * {@inheritDoc}
      */
     public function create(MoneyOrderSettings $settings)
     {
         $params = [];
         $channel = $settings->getChannel();
-        
+
         $params[MoneyOrderConfig::LABEL_KEY] = $this->getLocalizedValue($settings->getLabels());
         $params[MoneyOrderConfig::SHORT_LABEL_KEY] = $this->getLocalizedValue($settings->getShortLabels());
         $params[MoneyOrderConfig::ADMIN_LABEL_KEY] = $channel->getName();
@@ -55,6 +53,7 @@ class MoneyOrderConfigFactory implements MoneyOrderConfigFactoryInterface
 
     /**
      * @param Collection $values
+     *
      * @return string
      */
     private function getLocalizedValue(Collection $values)

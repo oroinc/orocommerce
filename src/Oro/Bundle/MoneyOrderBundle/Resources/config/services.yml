@@ -7,3 +7,11 @@ services:
         public: true
         arguments:
             - '%oro_money_order.method.identifier_prefix.money_order%'
+
+    oro_money_order.repository.money_settings:
+        class: 'Oro\Bundle\MoneyOrderBundle\Entity\Repository\MoneyOrderSettingsRepository'
+        parent: oro_entity.abstract_repository
+        arguments:
+            - 'Oro\Bundle\MoneyOrderBundle\Entity\MoneyOrderSettings'
+        calls:
+            - [setAclHelper, ['@oro_security.acl_helper']]
