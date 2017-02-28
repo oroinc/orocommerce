@@ -126,4 +126,13 @@ class PaymentTermViewTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals('short label', $this->methodView->getShortLabel());
     }
+
+    public function testGetPaymentMethodIdentifier()
+    {
+        $this->paymentConfig->expects($this->once())
+            ->method('getPaymentMethodIdentifier')
+            ->willReturn('identifier');
+
+        $this->assertEquals('identifier', $this->methodView->getPaymentMethodIdentifier());
+    }
 }

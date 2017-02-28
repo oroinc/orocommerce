@@ -1,5 +1,6 @@
 parameters:
     oro_payment_term.entity.payment_term.class: Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm
+    oro_payment_term.type: 'payment_term'
 
 services:
     oro_payment_term.payment_term.manager.api:
@@ -20,7 +21,6 @@ services:
 
     oro_payment_term.payment_term.delete_message_generator:
         class: 'Oro\Bundle\PaymentTermBundle\Twig\DeleteMessageTextGenerator'
-        public: false
         arguments:
             - "@router"
             - "@twig"
@@ -36,7 +36,7 @@ services:
         class: 'Oro\Bundle\PaymentTermBundle\Twig\DeleteMessageTextExtension'
         public: false
         arguments:
-            - "@oro_payment_term.payment_term.delete_message_generator"
+            - "@service_container"
         tags:
             - { name: twig.extension }
 
@@ -85,3 +85,43 @@ services:
             - '@router'
         tags:
             - { name: kernel.event_listener, event: oro.entity_extend_event.before_value_render, method: beforeValueRender }
+
+    oro_payment_term.config.integration_method_identifier_generator:
+        class: 'Oro\Bundle\IntegrationBundle\Generator\Prefixed\PrefixedIntegrationIdentifierGenerator'
+        public: true
+        arguments:
+            - '%oro_payment_term.type%'
+
+    oro_payment_term.config.by_settings_factory_parameter_bag:
+        class: 'Oro\Bundle\PaymentTermBundle\Method\Config\ParameterBag\Factory\Settings\ParameterBagPaymentTermConfigBySettingsFactory'
+        public: false
+        arguments:
+            - '@oro_locale.helper.localization'
+            - '@oro_payment_term.config.integration_method_identifier_generator'
+
+    oro_payment_term.config.provider:
+        parent: oro_payment_term.config.provider_basic_memory_cached
+
+    # use oro_payment_term.config.provider in general
+    oro_payment_term.config.provider_basic:
+        class: 'Oro\Bundle\PaymentTermBundle\Method\Config\Provider\Basic\BasicPaymentTermConfigProvider'
+        public: false
+        arguments:
+            - '@doctrine'
+            - '@logger'
+            - '@oro_payment_term.config.by_settings_factory_parameter_bag'
+
+    # use oro_payment_term.config.provider in general
+    oro_payment_term.config.provider_basic_memory_cached:
+        class: 'Oro\Bundle\PaymentTermBundle\Method\Config\Provider\Cached\Memory\CachedMemoryPaymentTermConfigProvider'
+        public: false
+        arguments:
+            - '@oro_payment_term.config.provider_basic'
+
+    oro_payment_term.repository.payment_term_settings:
+        class: 'Oro\Bundle\PaymentTermBundle\Entity\Repository\PaymentTermSettingsRepository'
+        parent: oro_entity.abstract_repository
+        arguments:
+            - 'Oro\Bundle\PaymentTermBundle\Entity\PaymentTermSettings'
+        calls:
+            - [setAclHelper, ['@oro_security.acl_helper']]

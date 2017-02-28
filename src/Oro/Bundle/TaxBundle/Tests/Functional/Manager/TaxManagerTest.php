@@ -4,11 +4,9 @@ namespace Oro\Bundle\TaxBundle\Tests\Functional\Manager;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
-use Symfony\Component\Finder\Finder;
-use Symfony\Component\Finder\SplFileInfo;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
-use Symfony\Component\Yaml\Yaml;
 
+use Oro\Component\Testing\Unit\LoadTestCaseDataTrait;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\TaxBundle\Tests\ResultComparatorTrait;
@@ -18,6 +16,7 @@ use Oro\Bundle\TaxBundle\Tests\ResultComparatorTrait;
  */
 class TaxManagerTest extends WebTestCase
 {
+    use LoadTestCaseDataTrait;
     use ResultComparatorTrait;
 
     /** @var ConfigManager */
@@ -43,13 +42,6 @@ class TaxManagerTest extends WebTestCase
         $this->configManager = $this->getContainer()->get('oro_config.global');
         $this->propertyAccessor = $this->getContainer()->get('property_accessor');
         $this->doctrine = $this->getContainer()->get('doctrine');
-    }
-
-    protected function tearDown()
-    {
-        $this->configManager->reload();
-
-        parent::tearDown();
     }
 
     /**
@@ -85,21 +77,7 @@ class TaxManagerTest extends WebTestCase
      */
     public function methodsDataProvider()
     {
-        $finder = new Finder();
-
-        $finder
-            ->files()
-            ->in(__DIR__)
-            ->name('*.yml');
-
-        $cases = [];
-
-        /** @var SplFileInfo $file */
-        foreach ($finder as $file) {
-            $cases[$file->getRelativePathname()] = Yaml::parse($file->getContents());
-        }
-
-        return $cases;
+        return $this->getTestCaseData(__DIR__);
     }
 
     /**

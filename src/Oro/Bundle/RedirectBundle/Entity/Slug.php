@@ -11,7 +11,11 @@ use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 
 /**
- * @ORM\Table(name="oro_redirect_slug", indexes={@ORM\Index(name="oro_redirect_slug_url_hash", columns={"url_hash"})})
+ * @ORM\Table(name="oro_redirect_slug", indexes={
+ *     @ORM\Index(name="oro_redirect_slug_url_hash", columns={"url_hash"}),
+ *     @ORM\Index(name="oro_redirect_slug_slug", columns={"slug_prototype"}),
+ *     @ORM\Index(name="oro_redirect_slug_route", columns={"route_name"})
+ * })
  * @ORM\Entity(repositoryClass="Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository")
  * @Config(
  *      defaultValues={
@@ -41,9 +45,16 @@ class Slug
     /**
      * @var string
      *
-     * @ORM\Column(type="string", length=1024)
+     * @ORM\Column(name="url", type="string", length=1024)
      */
     protected $url;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(name="slug_prototype", type="string", length=255, nullable=true)
+     */
+    protected $slugPrototype;
 
     /**
      * @var string
@@ -55,7 +66,7 @@ class Slug
     /**
      * @var string
      *
-     * @ORM\Column(name="route_name", type="string", length=255, nullable=true)
+     * @ORM\Column(name="route_name", type="string", length=255)
      */
     protected $routeName;
 
@@ -127,20 +138,6 @@ class Slug
     public function getUrl()
     {
         return $this->url;
-    }
-
-    /**
-     * @return string
-     */
-    public function getSlugUrl()
-    {
-        $latestSlash = strrpos($this->url, self::DELIMITER);
-
-        if ($latestSlash !== false) {
-            return substr($this->url, $latestSlash + 1);
-        } else {
-            return $this->url;
-        }
     }
 
     /**
@@ -299,6 +296,25 @@ class Slug
     public function setLocalization(Localization $localization = null)
     {
         $this->localization = $localization;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getSlugPrototype()
+    {
+        return $this->slugPrototype;
+    }
+
+    /**
+     * @param string $slugPrototype
+     * @return Slug
+     */
+    public function setSlugPrototype($slugPrototype)
+    {
+        $this->slugPrototype = $slugPrototype;
 
         return $this;
     }

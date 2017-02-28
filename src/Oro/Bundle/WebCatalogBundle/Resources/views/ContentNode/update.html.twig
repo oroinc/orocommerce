@@ -31,7 +31,7 @@
                     'indexLabel': web_catalog.name
                 }
             ],
-            'entityTitle': 'oro.webcatalog.contentnode.entity_plural_label'|trans
+            'entityTitle': entity.defaultTitle.string|default('N/A'|trans)
         } %}
         {{ parent() }}
     {% endif %}
@@ -92,8 +92,8 @@
         {% endset %}
     {% endif %}
 
-    {% if form.slugPrototypes is defined %}
-        {% set formRows = formRows|merge([form_row(form.slugPrototypes)]) %}
+    {% if form.slugPrototypesWithRedirect is defined %}
+        {% set formRows = formRows|merge([form_row(form.slugPrototypesWithRedirect)]) %}
     {% endif %}
 
     {% set dataBlocks = [
@@ -147,19 +147,16 @@
                 'onRootSelectRoute': 'oro_content_node_update',
                 'onSelectRoute' : 'oro_content_node_update',
                 'onMoveRoute' : 'oro_content_node_move',
-                'nodeId': nodeId
+                'nodeId': nodeId,
+                'view': 'orowebcatalog/js/app/views/web-catalog-tree-view'
             } %}
             {{ UI.renderJsTree(
                 {
-                    'module': 'orowebcatalog/js/app/components/web-catalog-tree-component',
                     'label': 'oro.webcatalog.contentnode.entity_plural_label'|trans,
                     'treeOptions': treeOptions
                 },
                 {
-                    'expand': 'expand',
-                    'collapse': 'collapse',
                     'move': {
-                        'view': 'oroui/js/app/views/jstree/move-action-view',
                         'routeName': 'oro_web_catalog_move',
                         'routeParams': {'id': web_catalog.id}
                     }
