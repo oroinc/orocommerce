@@ -13,4 +13,9 @@ interface UpsConnectionValidatorResultFactoryInterface
      * @return UpsConnectionValidatorResultInterface
      */
     public function createResultByUpsClientResponse(RestResponseInterface $response);
+
+    /**
+     * @return UpsConnectionValidatorResultInterface
+     */
+    public function createExceptionResult();
 }

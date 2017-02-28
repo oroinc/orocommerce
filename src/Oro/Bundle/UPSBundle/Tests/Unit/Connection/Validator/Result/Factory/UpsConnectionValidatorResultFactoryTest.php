@@ -56,6 +56,22 @@ class UpsConnectionValidatorResultFactoryTest extends \PHPUnit_Framework_TestCas
         );
     }
 
+    public function testCreateExceptionResult()
+    {
+        $message = 'message';
+        $this->translator->expects(static::once())
+            ->method('trans')
+            ->willReturn($message);
+
+        $expected = new UpsConnectionValidatorResult([
+            UpsConnectionValidatorResult::STATUS_KEY => false,
+            UpsConnectionValidatorResult::ERROR_SEVERITY_KEY => UpsConnectionValidatorResult::WARNING_SEVERITY,
+            UpsConnectionValidatorResult::ERROR_MESSAGE_KEY => $message,
+        ]);
+
+        static::assertEquals($expected, $this->connectionValidatorResultFactory->createExceptionResult());
+    }
+
     /**
      * @return array
      */
