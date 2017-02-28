@@ -5,6 +5,7 @@ namespace Oro\Bundle\UPSBundle\Tests\Unit\Provider;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestClientFactoryInterface;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestResponseInterface;
+use Oro\Bundle\UPSBundle\Client\Url\Provider\UpsClientUrlProviderInterface;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport as UPSSettings;
 use Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingsType;
 use Oro\Bundle\UPSBundle\Model\PriceRequest;
@@ -35,6 +36,11 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
     protected $transport;
 
     /**
+     * @var UpsClientUrlProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $upsClientUrlProviderMock;
+
+    /**
      * @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $logger;
@@ -49,7 +55,9 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
 
         $this->logger = $this->createMock(LoggerInterface::class);
 
-        $this->transport = new UPSTransport(self::PRODUCTION_URL, self::TEST_URL, $this->logger);
+        $this->upsClientUrlProviderMock = $this->createMock(UpsClientUrlProviderInterface::class);
+
+        $this->transport = new UPSTransport($this->upsClientUrlProviderMock, $this->logger);
         $this->transport->setRestClientFactory($this->clientFactory);
     }
 
@@ -192,6 +200,12 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
             ->willReturn(
                 $this->createMock(RestResponseInterface::class)
             );
+
+        $this->upsClientUrlProviderMock
+            ->expects($this->once())
+            ->method('getUpsUrl')
+            ->with($testMode)
+            ->willReturn($expectedUrl);
 
         $this->clientFactory->expects(static::once())
             ->method('createRestClient')
