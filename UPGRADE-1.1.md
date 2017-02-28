@@ -11,6 +11,8 @@ CatalogBundle
 - Class `Oro\Bundle\CatalogBundle\Twig\CategoryExtension`
     - the construction signature of was changed. Now the constructor has `ContainerInterface $container` parameter
     - removed method `setContainer`
+- Removed constructor of `Oro\Bundle\CatalogBundle\Form\Type\CategoryPageVariantType`. 
+    - corresponding logic moved to `Oro\Bundle\WebCatalogBundle\Form\Extension\PageVariantTypeExtension`
 
 
 CustomerBundle
@@ -90,6 +92,10 @@ OrderBundle
 - Class `Oro\Bundle\OrderBundle\Twig\OrderShippingExtension`
     - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
     - removed method `setShippingLabelFormatter`
+- Class `Oro\Bundle\OrderBundle\EventListener\Order\OrderPossibleShippingMethodsEventListener` 
+    - renamed and moved to `Oro\Bundle\OrderBundle\EventListener\PossibleShippingMethodEventListener`
+    - constructor accepts `Oro\Bundle\ShippingBundle\Context\ShippingContextFactoryInterface` instead of `Oro\Bundle\OrderBundle\Factory\OrderShippingContextFactory`
+    - method `onOrderEvent` renamed to `onEvent` and it accepts `Oro\Bundle\ShippingBundle\EventListener\EntityDataAwareEventInterface`
 
 PaymentBundle
 -------------
@@ -181,6 +187,8 @@ ProductBundle
     - `Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecorator` is the class that decorates `Product`
     - `Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsSelectQueryConverter` this converter is used inside of `VirtualFieldsProductDecorator`
     - `Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsProductQueryDesigner` this query designer is used inside of `VirtualFieldsProductDecorator`
+- Removed constructor of `Oro\Bundle\ProductBundle\Form\Type\ProductPageVariantType`.
+    - corresponding logic moved to `Oro\Bundle\WebCatalogBundle\Form\Extension\PageVariantTypeExtension`
 
 SaleBundle
 ----------
@@ -188,6 +196,8 @@ SaleBundle
     - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
     - removed property `protected $quoteProductFormatter`
     - removed property `protected $configManager`
+- Class `Oro\Bundle\SaleBundle\EventListener\Quote\QuotePossibleShippingMethodsEventListener` removed. 
+    - `Oro\Bundle\OrderBundle\EventListener\PossibleShippingMethodEventListener` must be used instead.
 
 ShoppingListBundle
 ------------------
@@ -256,3 +266,8 @@ RedirectBundle
 --------------
 - `Oro\Bundle\RedirectBundle\Entity\Redirect`
     - removed property `website` in favour of `scopes` collection using
+
+CMSBundle
+---------
+- Removed constructor of `Oro\Bundle\CMSBundle\Form\Type\CmsPageVariantType`.
+    - corresponding logic moved to `Oro\Bundle\WebCatalogBundle\Form\Extension\PageVariantTypeExtension`
