@@ -53,12 +53,12 @@ class BasePriceListRelation implements WebsiteAwareInterface, PriceListAwareInte
     }
 
     /**
-     * @param int $priority
+     * @param int $sortOrder
      * @return $this
      */
-    public function setSortOrder($priority)
+    public function setSortOrder($sortOrder)
     {
-        $this->sortOrder = $priority;
+        $this->sortOrder = (int)$sortOrder;
 
         return $this;
     }
