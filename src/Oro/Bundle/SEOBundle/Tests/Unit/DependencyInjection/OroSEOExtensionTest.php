@@ -11,13 +11,16 @@ class OroSEOExtensionTest extends ExtensionTestCase
     {
         $this->loadExtension(new OroSEOExtension());
         $expectedDefinitions = [
+            // Services
+            'oro_seo.block_type.localized_links_container',
+            'oro_seo.sitemap.sitemap_url_dumper',
+            'oro_seo.sitemap.sitemap_index_dumper',
             'oro_seo.layout.data_provider.seo_data'
         ];
-        $this->assertDefinitionsLoaded($expectedDefinitions);
 
-        $expectedExtensionConfigs = [
-            'oro_seo',
-        ];
+        $this->assertDefinitionsLoaded($expectedDefinitions);
+             
+        $expectedExtensionConfigs = ['oro_seo'];
         $this->assertExtensionConfigsLoaded($expectedExtensionConfigs);
     }
 

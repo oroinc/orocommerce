@@ -1,16 +1,19 @@
 <?php
 
-namespace Oro\Bundle\PaymentTermBundle\Method;
+namespace Oro\Bundle\PaymentTermBundle\Method\Factory;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
+use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface;
+use Oro\Bundle\PaymentTermBundle\Method\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
+use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 
-class PaymentTermMethodProvider implements PaymentMethodProviderInterface
+class PaymentTermPaymentMethodFactory implements PaymentTermPaymentMethodFactoryInterface
 {
+    use LoggerAwareTrait;
+
     /**
      * @var PaymentTermProvider
      */
@@ -25,11 +28,6 @@ class PaymentTermMethodProvider implements PaymentMethodProviderInterface
      * @var DoctrineHelper
      */
     protected $doctrineHelper;
-
-    /**
-     * @var LoggerInterface
-     */
-    private $logger;
 
     /**
      * @param PaymentTermProvider $paymentTermProvider
@@ -50,39 +48,18 @@ class PaymentTermMethodProvider implements PaymentMethodProviderInterface
     }
 
     /**
-     * @return PaymentMethodInterface[]
+     * {@inheritdoc}
      */
-    public function getPaymentMethods()
+    public function create(PaymentTermConfigInterface $config)
     {
         $paymentMethod = new PaymentTerm(
             $this->paymentTermProvider,
             $this->paymentTermAssociationProvider,
             $this->doctrineHelper,
-            $this->logger
+            $config
         );
-        return [$paymentMethod->getIdentifier() => $paymentMethod];
-    }
+        $paymentMethod->setLogger($this->logger);
 
-    /**
-     * @param string $identifier
-     * @return PaymentMethodInterface
-     */
-    public function getPaymentMethod($identifier)
-    {
-        if ($this->hasPaymentMethod($identifier)) {
-            return $this->getPaymentMethods()[$identifier];
-        }
-        return null;
-    }
-
-    /**
-     * @param string $identifier
-     * @return bool
-     */
-    public function hasPaymentMethod($identifier)
-    {
-        $paymentMethods = $this->getPaymentMethods();
-
-        return isset($paymentMethods[$identifier]);
+        return $paymentMethod;
     }
 }

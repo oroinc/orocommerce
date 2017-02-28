@@ -66,7 +66,8 @@ class SitemapFilesProviderTest extends \PHPUnit_Framework_TestCase
         $this->canonicalUrlGenerator->expects($this->never())
             ->method($this->anything());
 
-        $this->assertEquals([], iterator_to_array($this->provider->getUrlItems($website, $version)));
+        $this->provider->setVersion($version);
+        $this->assertEquals([], iterator_to_array($this->provider->getUrlItems($website)));
     }
 
     public function testGetUrlItems()
@@ -108,7 +109,8 @@ class SitemapFilesProviderTest extends \PHPUnit_Framework_TestCase
             ->with('/sitemaps/1/0/test.xml', $website)
             ->willReturn($absoluteUrl);
 
-        $actual = iterator_to_array($this->provider->getUrlItems($website, $version));
+        $this->provider->setVersion($version);
+        $actual = iterator_to_array($this->provider->getUrlItems($website));
         $this->assertCount(1, $actual);
         /** @var UrlItem $urlItem */
         $urlItem = reset($actual);

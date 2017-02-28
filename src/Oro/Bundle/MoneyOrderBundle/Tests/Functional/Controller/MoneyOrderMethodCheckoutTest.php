@@ -50,13 +50,6 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
         return LoadPaymentMethodsConfigsRuleData::class;
     }
 
-    protected function tearDown()
-    {
-        $this->configManager->reload();
-
-        parent::tearDown();
-    }
-
     /**
      * @return Crawler
      */

@@ -53,7 +53,7 @@ class SitemapFilesystemAdapterTest extends \PHPUnit_Framework_TestCase
         $website = $this->getConfiguredWebsite();
 
         $content = 'test';
-        /** @var SitemapStorageInterface||\PHPUnit_Framework_MockObject_MockObject $storage */
+        /** @var SitemapStorageInterface|\PHPUnit_Framework_MockObject_MockObject $storage */
         $storage = $this->createMock(SitemapStorageInterface::class);
         $storage->expects($this->once())
             ->method('getContents')
@@ -227,6 +227,8 @@ class SitemapFilesystemAdapterTest extends \PHPUnit_Framework_TestCase
             'sitemap-page-2.xml',
             'sitemap-product-1.xml',
         ];
+        sort($expectedFiles);
+        sort($actualFileNames);
         $this->assertEquals($expectedFiles, $actualFileNames);
     }
 
