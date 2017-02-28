@@ -11,6 +11,8 @@ CatalogBundle
 - Class `Oro\Bundle\CatalogBundle\Twig\CategoryExtension`
     - the construction signature of was changed. Now the constructor has `ContainerInterface $container` parameter
     - removed method `setContainer`
+- Removed constructor of `Oro\Bundle\CatalogBundle\Form\Type\CategoryPageVariantType`. 
+    - corresponding logic moved to `Oro\Bundle\WebCatalogBundle\Form\Extension\PageVariantTypeExtension`
 
 
 CustomerBundle
@@ -90,6 +92,10 @@ OrderBundle
 - Class `Oro\Bundle\OrderBundle\Twig\OrderShippingExtension`
     - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
     - removed method `setShippingLabelFormatter`
+- Class `Oro\Bundle\OrderBundle\EventListener\Order\OrderPossibleShippingMethodsEventListener` 
+    - renamed and moved to `Oro\Bundle\OrderBundle\EventListener\PossibleShippingMethodEventListener`
+    - constructor accepts `Oro\Bundle\ShippingBundle\Context\ShippingContextFactoryInterface` instead of `Oro\Bundle\OrderBundle\Factory\OrderShippingContextFactory`
+    - method `onOrderEvent` renamed to `onEvent` and it accepts `Oro\Bundle\ShippingBundle\EventListener\EntityDataAwareEventInterface`
 
 PaymentBundle
 -------------
@@ -117,6 +123,26 @@ PaymentTermBundle
 - Class `Oro\Bundle\PaymentTermBundle\Twig\DeleteMessageTextExtension`
     - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
     - removed property `protected $deleteMessageGenerator`
+    
+* PaymentTerm implementation was changed using IntegrationBundle (refer to PaymentBundle and IntegrationBundle for details). Notable changes:
+    - Class `Oro\Bundle\PaymentTermBundle\DependencyInjection\Configuration` was removed and instead `Oro\Bundle\PaymentTermBundle\Entity\PaymentTermSettings` was created - entity that implements `Oro\Bundle\IntegrationBundle\Entity\Transport` to store payment integration properties
+    - Class `Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfig` was removed and instead simple parameter bag object `Oro\Bundle\PaymentTermBundle\Method\Config\ParameterBagPaymentTermConfig` is being used for holding payment integration properties that are stored in PaymentTermSettings
+    - Class `Oro\Bundle\PaymentTermBundle\Method\PaymentTerm` method getIdentifier now uses PaymentTermConfig to retrieve identifier of a concrete method
+    - Class `Oro\Bundle\PaymentTermBundle\Method\View\PaymentTermView` now has two additional methods due to implementing `Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface`
+        getAdminLabel() is used to display labels in admin panel
+        getPaymentMethodIdentifier() used to properly display different methods in frontend
+    - Added multiple classes to implement payment through integration and most of them have interfaces, so they are extendable through composition:
+        - `Oro\Bundle\PaymentTermBundle\Entity\Repository\PaymentTermSettingsRepository`
+        - `Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermSettingsType`
+        - `Oro\Bundle\PaymentTermBundle\Integration\PaymentTermChannelType`
+        - `Oro\Bundle\PaymentTermBundle\Integration\PaymentTermTransport`
+        - `Oro\Bundle\PaymentTermBundle\Method\Config\ParameterBag\ParameterBagPaymentTermConfig`
+        - `Oro\Bundle\PaymentTermBundle\Method\Config\Provider\Basic\BasicPaymentTermConfigProvider`
+        - `Oro\Bundle\PaymentTermBundle\Method\Config\Provider\Cached\Memory\CachedMemoryPaymentTermConfigProvider`
+        - `Oro\Bundle\PaymentTermBundle\Method\Factory\PaymentTermPaymentMethodFactory`
+        - `Oro\Bundle\PaymentTermBundle\Method\Provider\PaymentTermMethodProvider`
+        - `Oro\Bundle\PaymentTermBundle\Method\View\Factory\PaymentTermPaymentMethodViewFactory`
+        - `Oro\Bundle\PaymentTermBundle\Method\View\Provider\PaymentTermMethodViewProvider`
 
 PricingBundle
 -------------
@@ -161,6 +187,8 @@ ProductBundle
     - `Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecorator` is the class that decorates `Product`
     - `Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsSelectQueryConverter` this converter is used inside of `VirtualFieldsProductDecorator`
     - `Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsProductQueryDesigner` this query designer is used inside of `VirtualFieldsProductDecorator`
+- Removed constructor of `Oro\Bundle\ProductBundle\Form\Type\ProductPageVariantType`.
+    - corresponding logic moved to `Oro\Bundle\WebCatalogBundle\Form\Extension\PageVariantTypeExtension`
 
 SaleBundle
 ----------
@@ -168,6 +196,8 @@ SaleBundle
     - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
     - removed property `protected $quoteProductFormatter`
     - removed property `protected $configManager`
+- Class `Oro\Bundle\SaleBundle\EventListener\Quote\QuotePossibleShippingMethodsEventListener` removed. 
+    - `Oro\Bundle\OrderBundle\EventListener\PossibleShippingMethodEventListener` must be used instead.
 
 ShoppingListBundle
 ------------------
@@ -236,3 +266,8 @@ RedirectBundle
 --------------
 - `Oro\Bundle\RedirectBundle\Entity\Redirect`
     - removed property `website` in favour of `scopes` collection using
+
+CMSBundle
+---------
+- Removed constructor of `Oro\Bundle\CMSBundle\Form\Type\CmsPageVariantType`.
+    - corresponding logic moved to `Oro\Bundle\WebCatalogBundle\Form\Extension\PageVariantTypeExtension`

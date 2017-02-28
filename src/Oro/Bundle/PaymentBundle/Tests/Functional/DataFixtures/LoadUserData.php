@@ -28,16 +28,28 @@ class LoadUserData extends AbstractLoadMultipleUserData implements ContainerAwar
                 'class' => 'oro_rule.entity.rule.class',
                 'acls'  => ['VIEW_SYSTEM'],
             ],
+            [
+                'class' => 'oro_integration.entity.class',
+                'acls'  => ['VIEW_SYSTEM'],
+            ],
         ],
         self::ROLE_EDIT => [
             [
                 'class' => 'oro_payment.entity.payment_methods_configs_rule.class',
                 'acls'  => ['EDIT_SYSTEM'],
             ],
+            [
+                'class' => 'oro_integration.entity.class',
+                'acls'  => ['EDIT_SYSTEM'],
+            ],
         ],
         self::ROLE_CREATE => [
             [
                 'class' => 'oro_payment.entity.payment_methods_configs_rule.class',
+                'acls'  => ['CREATE_SYSTEM'],
+            ],
+            [
+                'class' => 'oro_integration.entity.class',
                 'acls'  => ['CREATE_SYSTEM'],
             ],
         ],
