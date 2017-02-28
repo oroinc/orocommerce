@@ -16,7 +16,7 @@
                     data-page-component-module="oroups/js/app/components/ups-connection-validator-component"
                     data-page-component-options="{{ {
                         'formSelector': '[name="oro_integration_channel_form"]',
-                        'backendUrl': path('oro_ups_validate_connection')
+                        'backendUrl': path('oro_ups_validate_connection', {'channelId': form.vars.value.id|default(0) })
                     }|json_encode }}"
             >
                 Validate

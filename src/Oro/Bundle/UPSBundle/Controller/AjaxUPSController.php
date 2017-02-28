@@ -40,16 +40,20 @@ class AjaxUPSController extends Controller
     }
 
     /**
-     * @Route("/validate-connection/", name="oro_ups_validate_connection")
+     * @Route("/validate-connection/{channelId}/", name="oro_ups_validate_connection")
+     * @ParamConverter("channel", class="OroIntegrationBundle:Channel", options={"id" = "channelId"})
      * @Method("POST")
      *
-     * @param Request $request
+     * @param Request      $request
+     * @param Channel|null $channel
      *
      * @return JsonResponse
      */
-    public function validateConnection(Request $request)
+    public function validateConnection(Request $request, Channel $channel = null)
     {
-        $channel = new Channel();
+        if (!$channel) {
+            $channel = new Channel();
+        }
 
         $form = $this->createForm(
             $this->get('oro_integration.form.type.channel'),
