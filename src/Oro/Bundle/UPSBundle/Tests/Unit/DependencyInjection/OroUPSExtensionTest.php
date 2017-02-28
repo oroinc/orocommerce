@@ -39,7 +39,7 @@ class OroUPSExtensionTest extends ExtensionTestCase
             'oro_ups.client.factory_basic',
             'oro_ups.connection.validator.request.factory.rate_request',
             'oro_ups.connection.validator.result.factory',
-            'oro_ups.connection.validator'
+            'oro_ups.connection.validator',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }
