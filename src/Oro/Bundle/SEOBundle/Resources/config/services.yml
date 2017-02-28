@@ -48,6 +48,16 @@ services:
         tags:
             - { name: layout.data_provider, alias: seo }
 
+    oro_seo.layout.data_provider.localized_urls_data:
+        class: Oro\Bundle\SEOBundle\Layout\DataProvider\LocalizedLinksDataProvider
+        arguments:
+            - '@oro_redirect.generator.canonical_url'
+            - '@oro_config.manager'
+            - '@oro_frontend_localization.manager.user_localization'
+            - '@validator'
+        tags:
+            - { name: layout.data_provider, alias: seo_localized_links }
+
     #Forms
     oro_seo.form.extension.page_type:
         class: 'Oro\Bundle\SEOBundle\Form\Extension\PageFormExtension'

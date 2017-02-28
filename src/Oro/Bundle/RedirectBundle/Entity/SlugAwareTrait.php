@@ -84,7 +84,11 @@ trait SlugAwareTrait
     public function getSlugByLocalization(Localization $localization = null)
     {
         foreach ($this->getSlugs() as $slug) {
-            if ($slug->getLocalization() === $localization) {
+            if (null === $localization) {
+                if (null === $slug->getLocalization()) {
+                    return $slug;
+                }
+            } elseif ($slug->getLocalization() && $slug->getLocalization()->getId() === $localization->getId()) {
                 return $slug;
             }
         }
