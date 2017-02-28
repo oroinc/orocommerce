@@ -253,6 +253,13 @@ services:
         tags:
             - { name: layout.data_provider, alias: web_catalog_menu }
 
+    oro_web_catalog.layout.data_provider.content_variant:
+        class: Oro\Bundle\WebCatalogBundle\Layout\DataProvider\ContentVariantDataProvider
+        arguments:
+            - '@request_stack'
+        tags:
+            - { name: layout.data_provider, alias: web_catalog_content_variant }
+
     oro_web_catalog.layout.context_configurator.web_catalog:
         class: Oro\Bundle\WebCatalogBundle\Layout\Extension\WebCatalogContextConfigurator
         arguments:
