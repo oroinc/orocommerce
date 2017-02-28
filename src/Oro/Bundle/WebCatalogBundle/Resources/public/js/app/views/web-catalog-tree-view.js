@@ -1,7 +1,7 @@
 define(function(require) {
     'use strict';
 
-    var WebCatalogTreeComponent;
+    var WebCatalogTreeView;
     var _ = require('underscore');
     var __ = require('orotranslation/js/translator');
     var $ = require('jquery');
@@ -9,10 +9,9 @@ define(function(require) {
     var messenger = require('oroui/js/messenger');
     var widgetManager = require('oroui/js/widget-manager');
     var ConfirmSlugChangeModal = require('ororedirect/js/confirm-slug-change-modal');
-    var BasicTreeManageComponent = require('oroui/js/app/components/basic-tree-manage-component');
+    var BaseTreeManageView = require('oroui/js/app/views/jstree/base-tree-manage-view');
 
-    WebCatalogTreeComponent = BasicTreeManageComponent.extend({
-
+    WebCatalogTreeView = BaseTreeManageView.extend({
         /**
          * @property {Object}
          */
@@ -22,11 +21,6 @@ define(function(require) {
          * @property {Object}
          */
         confirmModal: null,
-
-        /**
-         * @property {Boolean}
-         */
-        checkboxEnabled: true,
 
         /**
          * @property {Boolean}
@@ -160,9 +154,9 @@ define(function(require) {
 
             this._removeConfirmModal();
 
-            WebCatalogTreeComponent.__super__.dispose.call(this);
+            WebCatalogTreeView.__super__.dispose.call(this);
         }
     });
 
-    return WebCatalogTreeComponent;
+    return WebCatalogTreeView;
 });
