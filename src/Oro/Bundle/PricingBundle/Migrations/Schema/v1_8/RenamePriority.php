@@ -23,6 +23,14 @@ class RenamePriority implements Migration, RenameExtensionAwareInterface
     /**
      * {@inheritdoc}
      */
+    public function setRenameExtension(RenameExtension $renameExtension)
+    {
+        $this->renameExtension = $renameExtension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function up(Schema $schema, QueryBag $queries)
     {
         $extension = $this->renameExtension;
@@ -62,13 +70,5 @@ class RenamePriority implements Migration, RenameExtensionAwareInterface
         }
 
         $queries->addQuery(new RenameConfigPriorityQuery());
-    }
-
-    /**ccd
-     * {@inheritdoc}
-     */
-    public function setRenameExtension(RenameExtension $renameExtension)
-    {
-        $this->renameExtension = $renameExtension;
     }
 }

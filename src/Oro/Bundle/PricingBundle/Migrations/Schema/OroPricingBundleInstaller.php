@@ -948,8 +948,8 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
         $table->addColumn('currency', 'string', ['notnull' => false, 'length' => 3]);
         $table->addColumn('quantity', 'float', ['notnull' => false]);
         $table->addColumn('rule_condition', 'text', ['notnull' => false]);
-        $table->addColumn('priority', 'integer', []);
         $table->addColumn('rule', 'text', ['notnull' => true]);
+        $table->addColumn('priority', 'integer', []);
         $table->addColumn('quantity_expression', 'text', ['notnull' => false]);
         $table->addColumn('currency_expression', 'text', ['notnull' => false]);
         $table->addColumn('product_unit_expression', 'text', ['notnull' => false]);

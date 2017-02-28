@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\EventListener;
 
-use Doctrine\Common\Collections\Criteria;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
@@ -37,7 +37,7 @@ class CustomerFormViewListener extends AbstractCustomerFormViewListener
         $websites = $this->websiteProvider->getWebsites();
         $priceLists = $this->doctrineHelper
             ->getEntityRepository('OroPricingBundle:PriceListToCustomer')
-            ->findBy(['customer' => $customer, 'website' => $websites], ['sortOrder' => Criteria::ASC]);
+            ->findBy(['customer' => $customer, 'website' => $websites], ['sortOrder' => PriceListCollectionType::DEFAULT_ORDER]);
 
         /** @var PriceListCustomerFallback $fallbackEntity */
         $fallbackEntity = $this->doctrineHelper
