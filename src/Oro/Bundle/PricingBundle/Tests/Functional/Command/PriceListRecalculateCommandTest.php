@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Command;
 
+use Oro\Bundle\EntityBundle\Manager\Db\EntityTriggerManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PricingBundle\Command\PriceListRecalculateCommand;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings;
@@ -48,6 +49,7 @@ class PriceListRecalculateCommandTest extends WebTestCase
         $this->getContainer()->get('oro_pricing.builder.website_combined_price_list_builder')->resetCache();
         $this->getContainer()->get('oro_pricing.builder.customer_group_combined_price_list_builder')->resetCache();
         $this->getContainer()->get('oro_pricing.builder.customer_combined_price_list_builder')->resetCache();
+        $this->getContainer()->get('oro_pricing.resolver.combined_product_price_resolver')->resetCache();
 
         foreach ($websites as $websiteName) {
             $params[] = '--website='.$this->getReference($websiteName)->getId();
@@ -59,6 +61,18 @@ class PriceListRecalculateCommandTest extends WebTestCase
 
         foreach ($customers as $customerName) {
             $params[] = '--customer='.$this->getReference($customerName)->getId();
+        }
+
+        if (false !== array_search('--disable-triggers', $params, true)) {
+            $databaseTriggerManager = $this->createMock(EntityTriggerManager::class);
+            $databaseTriggerManager->expects($this->once())
+                ->method('disable');
+            $databaseTriggerManager->expects($this->once())
+                ->method('enable');
+            $this->getContainer()->set(
+                'oro_pricing.database_triggers.manager.combined_prices',
+                $databaseTriggerManager
+            );
         }
 
         $result = $this->runCommand(PriceListRecalculateCommand::NAME, $params);
@@ -77,10 +91,15 @@ class PriceListRecalculateCommandTest extends WebTestCase
                 'params' => ['--all'],
                 'expectedCount' => 40 // 2 + 38 = config + website1
             ],
+            'all with triggers off' => [
+                'expected_message' => 'Start processing',
+                'params' => ['--all', '--disable-triggers'],
+                'expectedCount' => 40 // 2 + 38 = config + website1
+            ],
             'empty run' => [
                 'expected_message' => 'ATTENTION',
                 'params' => [],
-                'expectedCount' => 0
+                'expectedCount' => 0,
             ],
             'website 1' => [
                 'expected_message' => 'Start processing',

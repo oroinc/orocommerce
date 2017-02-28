@@ -1,13 +1,10 @@
-parameters:
-    oro_product.form.type.product_primary_unit_precision.class: 'Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType'
-    oro_product.form.type.product_unit_selection.class: 'Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType'
-
 services:
     # Product form types
     oro_product.form.type.product:
         class: 'Oro\Bundle\ProductBundle\Form\Type\ProductType'
         arguments:
             - "@oro_product.provider.default_product_unit_provider.chain"
+            - "@router"
         calls:
             - [setDataClass, ['%oro_product.entity.product.class%']]
         tags:
@@ -30,7 +27,7 @@ services:
             - { name: form.type, alias: oro_product_row_collection }
 
     oro_product.form.type.product_unit_selection:
-        class: '%oro_product.form.type.product_unit_selection.class%'
+        class: 'Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType'
         arguments:
             - "@oro_product.formatter.product_unit_label"
             - "@translator"
@@ -48,7 +45,7 @@ services:
             - { name: form.type, alias: oro_quantity }
 
     oro_product.form.type.product_primary_unit_precision:
-        class: '%oro_product.form.type.product_primary_unit_precision.class%'
+        class: 'Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType'
         public: true
         calls:
             - [setDataClass, ['%oro_product.entity.product_unit_precision.class%']]
@@ -173,8 +170,6 @@ services:
 
     oro_product.form.type.product_page_content_variant:
         class: Oro\Bundle\ProductBundle\Form\Type\ProductPageVariantType
-        arguments:
-            - '@doctrine'
         tags:
             - { name: form.type, alias: oro_product_page_variant }
 
@@ -183,6 +178,7 @@ services:
         arguments:
             - '@oro_product.provider.product_variant_availability_provider'
             - '@oro_product.product_variant.registry.product_variant_type_handler_factory'
+            - '@oro_entity_config.manager.attribute_manager'
             - '@property_accessor'
             - '%oro_product.entity.product.class%'
         tags:
@@ -192,7 +188,14 @@ services:
         class: 'Oro\Bundle\ProductBundle\Form\Extension\ChoicesProductPrimaryUnitSelectionOwnerTypeExtension'
         arguments:
             - 'unit'
-            - '%oro_product.form.type.product_primary_unit_precision.class%'
+            - 'Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType'
             - "@oro_product.visibility.product_unit_fields_settings"
         tags:
-            - { name: form.type_extension, extended_type: '%oro_product.form.type.product_primary_unit_precision.class%' }
+            - { name: form.type_extension, extended_type: 'Oro\Bundle\ProductBundle\Form\Type\ProductPrimaryUnitPrecisionType' }
+
+    oro_product.form.type.extension.enum_value_for_product:
+        class: 'Oro\Bundle\ProductBundle\Form\Extension\EnumValueForProductExtension'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+        tags:
+            - { name: form.type_extension, extended_type: 'Oro\Bundle\EntityExtendBundle\Form\Type\EnumValueType' }

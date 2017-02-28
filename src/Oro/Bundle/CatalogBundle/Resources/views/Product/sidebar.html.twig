@@ -2,16 +2,15 @@
 
 {% set treeOptions = {
     'data' : oro_category_list(),
-    'defaultCategoryId': defaultCategoryId
+    'defaultCategoryId': defaultCategoryId,
+    'view' : 'orocatalog/js/app/views/product-sidebar-view'
 } %}
 
 {{ UI.renderJsTree(
     {
-        'module': 'orocatalog/js/app/components/product-sidebar-component',
         'label': 'oro.catalog.category.entity_plural_label'|trans,
         'treeOptions': treeOptions
-    },
-    ['expand', 'collapse']
+    }
 ) }}
 
 <div class="sidebar-item include-sub-categories-choice">{{ form_row(includeSubcategoriesForm) }}</div>

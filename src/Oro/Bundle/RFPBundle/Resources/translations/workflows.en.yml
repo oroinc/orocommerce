@@ -1,0 +1,73 @@
+oro:
+    workflow:
+        b2b_rfq_backoffice_default:
+            label: 'RFQ Backoffice'
+            step:
+                open:
+                    label: 'Open'
+                processed:
+                    label: 'Processed'
+                more_info_requested:
+                    label: 'More Information Requested'
+                declined:
+                    label: 'Declined'
+                cancelled:
+                    label: 'Cancelled'
+                deleted:
+                    label: 'Deleted'
+            attribute:
+                notes:
+                    label: 'Notes'
+                internal_status_before_deletion:
+                    label: 'Internal Status Before Deletion'
+            transition:
+                __start__:
+                    label: 'Open'
+                process_transition:
+                    label: 'Mark as Processed'
+                request_more_information_transition:
+                    label: 'Request More Information'
+                decline_transition:
+                    label: 'Decline'
+                delete_transition:
+                    label: 'Delete'
+                cancel_transition:
+                    label: 'Cancel'
+                info_provided_transition:
+                    label: 'Info Provided'
+                reprocess_transition:
+                    label: 'Reprocess'
+                undelete_to_cancelled_transition:
+                    label: 'Undelete'
+                undelete_to_open_transition:
+                    label: 'Undelete'
+                undelete_to_more_information_requested_transition:
+                    label: 'Undelete'
+
+        b2b_rfq_frontoffice_default:
+            label: 'RFQ Frontoffice'
+            step:
+                submitted:
+                    label: 'Submitted'
+                requires_attention:
+                    label: 'Requires Attention'
+                cancelled:
+                    label: 'Cancelled'
+            attribute:
+                notes:
+                    label: 'Notes'
+            transition:
+                __start__:
+                    label: 'Submit'
+                more_information_requested_transition:
+                    label: 'Request More Information'
+                provide_more_information_transition:
+                    label: 'Provide More Information'
+                cancel_transition:
+                    label: 'Cancel'
+                decline_transition:
+                    label: 'Decline'
+                resubmit_transition:
+                    label: 'Resubmit'
+                reopen_transition:
+                    label: 'Reopen'

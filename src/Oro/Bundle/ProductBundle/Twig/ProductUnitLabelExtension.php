@@ -2,23 +2,31 @@
 
 namespace Oro\Bundle\ProductBundle\Twig;
 
+use Symfony\Component\DependencyInjection\ContainerInterface;
+
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
 
 class ProductUnitLabelExtension extends \Twig_Extension
 {
     const NAME = 'oro_product_unit_label';
 
-    /**
-     * @var ProductUnitLabelFormatter
-     */
-    protected $formatter;
+    /** @var ContainerInterface */
+    protected $container;
 
     /**
-     * @param ProductUnitLabelFormatter $formatter
+     * @param ContainerInterface $container
      */
-    public function __construct(ProductUnitLabelFormatter $formatter)
+    public function __construct(ContainerInterface $container)
     {
-        $this->formatter = $formatter;
+        $this->container = $container;
+    }
+
+    /**
+     * @return ProductUnitLabelFormatter
+     */
+    protected function getFormatter()
+    {
+        return $this->container->get('oro_product.formatter.product_unit_label');
     }
 
     /**
@@ -43,7 +51,7 @@ class ProductUnitLabelExtension extends \Twig_Extension
      */
     public function format($unitCode, $isShort = false, $isPlural = false)
     {
-        return $this->formatter->format($unitCode, $isShort, $isPlural);
+        return $this->getFormatter()->format($unitCode, $isShort, $isPlural);
     }
 
     /**

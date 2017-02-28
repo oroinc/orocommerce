@@ -2,56 +2,27 @@
 
 namespace Oro\Bundle\ShippingBundle\ExpressionLanguage;
 
-use Oro\Bundle\EntityBundle\Helper\FieldHelper;
-use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
-use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItemInterface;
-use Oro\Bundle\ShippingBundle\QueryDesigner\SelectQueryConverter;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class DecoratedProductLineItemFactory
 {
     /**
-     * @var EntityFieldProvider
+     * @var VirtualFieldsProductDecoratorFactory
      */
-    protected $entityFieldProvider;
+    private $virtualFieldsProductDecoratorFactory;
 
     /**
-     * @var SelectQueryConverter
+     * @param VirtualFieldsProductDecoratorFactory $virtualFieldsProductDecoratorFactory
      */
-    protected $converter;
-
-    /**
-     * @var ManagerRegistry
-     */
-    protected $doctrine;
-
-    /**
-     * @var FieldHelper
-     */
-    protected $fieldHelper;
-
-    /**
-     * @param EntityFieldProvider $entityFieldProvider
-     * @param SelectQueryConverter $converter
-     * @param ManagerRegistry $doctrine
-     * @param FieldHelper $fieldHelper
-     */
-    public function __construct(
-        EntityFieldProvider $entityFieldProvider,
-        SelectQueryConverter $converter,
-        ManagerRegistry $doctrine,
-        FieldHelper $fieldHelper
-    ) {
-        $this->entityFieldProvider = $entityFieldProvider;
-        $this->converter = $converter;
-        $this->doctrine = $doctrine;
-        $this->fieldHelper = $fieldHelper;
+    public function __construct(VirtualFieldsProductDecoratorFactory $virtualFieldsProductDecoratorFactory)
+    {
+        $this->virtualFieldsProductDecoratorFactory = $virtualFieldsProductDecoratorFactory;
     }
 
     /**
-     * @param array $lineItems
+     * @param ShippingLineItemInterface[] $lineItems
      * @param ShippingLineItemInterface $lineItem
      *
      * @return ShippingLineItem
@@ -59,6 +30,10 @@ class DecoratedProductLineItemFactory
     public function createLineItemWithDecoratedProductByLineItem(array $lineItems, ShippingLineItemInterface $lineItem)
     {
         $product = $lineItem->getProduct();
+
+        $decoratedProduct = $product
+            ? $this->virtualFieldsProductDecoratorFactory->createDecoratedProductByProductHolders($lineItems, $product)
+            : null;
 
         return new ShippingLineItem(
             [
@@ -70,32 +45,8 @@ class DecoratedProductLineItemFactory
                 ShippingLineItem::FIELD_PRODUCT_SKU => $lineItem->getProductSku(),
                 ShippingLineItem::FIELD_WEIGHT => $lineItem->getWeight(),
                 ShippingLineItem::FIELD_DIMENSIONS => $lineItem->getDimensions(),
-                ShippingLineItem::FIELD_PRODUCT
-                    => $product ? $this->createDecoratedProduct($lineItems, $product) : null,
+                ShippingLineItem::FIELD_PRODUCT => $decoratedProduct,
             ]
-        );
-    }
-
-    /**
-     * @param array $lineItems
-     * @param Product $product
-     *
-     * @return ProductDecorator
-     */
-    private function createDecoratedProduct(array $lineItems, Product $product)
-    {
-        return new ProductDecorator(
-            $this->entityFieldProvider,
-            $this->converter,
-            $this->doctrine,
-            $this->fieldHelper,
-            array_map(
-                function (ShippingLineItemInterface $lineItem) {
-                    return $lineItem->getProduct();
-                },
-                $lineItems
-            ),
-            $product
         );
     }
 }

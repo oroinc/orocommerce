@@ -34,6 +34,8 @@ oro.tax:
         description.label: 'Description'
         customer_group.view.label: 'Defined for Customer Group'
         customer_groups.label: 'Customer Groups'
+        organization.label: 'Organization'
+        owner.label: 'Owner'
 
     taxrule:
         entity_label: 'Tax Rule'
@@ -128,6 +130,11 @@ oro.tax:
             shipping_tax_code.tooltip: 'Selected product tax class will be used to calculate tax on shipping.'
             shipping_rates_include_tax.label: 'Shipping Rates Include Tax'
             shipping_rates_include_tax.tooltip: 'Use to avoid charging taxes on shipping twice if the shipping rates provided by the shipping carrier(s) or entered manually in the management console already include tax.'
+            address_resolver_granularity:
+                label: 'Address Resolver Granularity'
+                country.label: 'Country'
+                region.label: 'Region'
+                zip.label: 'Zip code'
 
     providers:
         built_in.label: Built-In Table Rates

@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShoppingListBundle\Tests\Unit\Processor;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Doctrine\ORM\EntityManager;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 use Oro\Bundle\ShoppingListBundle\Generator\MessageGenerator;
 use Oro\Bundle\ShoppingListBundle\Handler\ShoppingListLineItemHandler;
@@ -25,6 +26,9 @@ abstract class AbstractQuickAddProcessorTest extends \PHPUnit_Framework_TestCase
 
     /** @var \PHPUnit_Framework_MockObject_MockObject|ProductRepository */
     protected $productRepository;
+
+    /** @var EntityManager|\PHPUnit_Framework_MockObject_MockObject */
+    protected $em;
 
     abstract public function getProcessorName();
 
@@ -48,10 +52,10 @@ abstract class AbstractQuickAddProcessorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')->disableOriginalConstructor()->getMock();
+        $this->em = $this->getMockBuilder('Doctrine\ORM\EntityManager')->disableOriginalConstructor()->getMock();
 
-        $this->registry->expects($this->any())->method('getManagerForClass')->willReturn($em);
-        $em->expects($this->any())->method('getRepository')->willReturn($this->productRepository);
+        $this->registry->expects($this->any())->method('getManagerForClass')->willReturn($this->em);
+        $this->em->expects($this->any())->method('getRepository')->willReturn($this->productRepository);
 
         $this->processor = new QuickAddProcessor($this->handler, $this->registry, $this->messageGenerator);
         $this->processor->setProductClass('Oro\Bundle\ProductBundle\Entity\Product');

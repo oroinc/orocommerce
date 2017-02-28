@@ -179,16 +179,15 @@ oro:
 
         workflow.condition:
             order_line_item_has_count.message: No products can be added to this order. Please create an RFQ to request price.
+            shipping_method_is_not_available.message: |-
+                The selected shipping method is not available.
+                Please return to the shipping method selection step and select a different one.
             payment_has_not_been_processed.message: |-
                 Payment has not been processed. If you have already submitted this order and believe it is a mistake,
                 please contact us for assistance. Otherwise, please click on "Submit" to proceed with the order submission.
             payment_method_is_not_applicable.message: |
-                Selected payment method is disabled or not applicable.
-                Please choose another payment method.
-            payment_method_is_not_applicable_please_return_to_payment_step.message: |
-                Selected payment method is disabled or not applicable.
-                Please return to the payment method selection step
-                and choose another payment method.
+                The selected payment method is not available.
+                Please return to the payment method selection step and select a different one.
             content_of_order_was_changed.message: |-
                 There was a change to the contents of your order.
                 Please review the order information before proceeding to the next step.

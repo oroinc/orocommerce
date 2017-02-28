@@ -115,7 +115,7 @@ class UserLocalizationManager
         }
 
         $allowedLocalizations = $this->getEnabledLocalizations();
-        if (!$localization || !in_array($localization, $allowedLocalizations, true)) {
+        if (!$localization || !array_key_exists($localization->getId(), $allowedLocalizations)) {
             $localization = $this->getDefaultLocalization();
         }
 

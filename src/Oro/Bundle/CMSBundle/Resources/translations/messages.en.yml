@@ -40,3 +40,7 @@ oro.cms:
         logo_image.label: 'Logo'
         background_image.label: 'Background image'
         save.message: 'Login form has been saved'
+
+    system_configuration:
+        fields:
+            landing_page_direct_url_prefix.label: 'Landing Page URL prefix'

@@ -6,14 +6,16 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
+use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
-use Psr\Log\LoggerAwareInterface;
+use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 
-class PaymentTerm implements PaymentMethodInterface, LoggerAwareInterface
+class PaymentTerm implements PaymentMethodInterface
 {
+    use LoggerAwareTrait;
+
     const TYPE = 'payment_term';
 
     /** @var PaymentTermProvider */
@@ -25,21 +27,25 @@ class PaymentTerm implements PaymentMethodInterface, LoggerAwareInterface
     /** @var DoctrineHelper */
     protected $doctrineHelper;
 
-    use LoggerAwareTrait;
+    /** @var PaymentTermConfigInterface */
+    protected $config;
 
     /**
      * @param PaymentTermProvider $paymentTermProvider
      * @param PaymentTermAssociationProvider $paymentTermAssociationProvider
      * @param DoctrineHelper $doctrineHelper
+     * @param PaymentTermConfigInterface $config
      */
     public function __construct(
         PaymentTermProvider $paymentTermProvider,
         PaymentTermAssociationProvider $paymentTermAssociationProvider,
-        DoctrineHelper $doctrineHelper
+        DoctrineHelper $doctrineHelper,
+        PaymentTermConfigInterface $config
     ) {
         $this->paymentTermProvider = $paymentTermProvider;
         $this->paymentTermAssociationProvider = $paymentTermAssociationProvider;
         $this->doctrineHelper = $doctrineHelper;
+        $this->config = $config;
     }
 
     /** {@inheritdoc} */
@@ -86,9 +92,9 @@ class PaymentTerm implements PaymentMethodInterface, LoggerAwareInterface
     }
 
     /** {@inheritdoc} */
-    public function getType()
+    public function getIdentifier()
     {
-        return self::TYPE;
+        return $this->config->getPaymentMethodIdentifier();
     }
 
     /**

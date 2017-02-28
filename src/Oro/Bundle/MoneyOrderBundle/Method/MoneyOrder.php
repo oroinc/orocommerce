@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\MoneyOrderBundle\Method;
 
+use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
@@ -9,6 +10,19 @@ use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 class MoneyOrder implements PaymentMethodInterface
 {
     const TYPE = 'money_order';
+
+    /**
+     * @var MoneyOrderConfigInterface
+     */
+    protected $config;
+
+    /**
+     * @param MoneyOrderConfigInterface $config
+     */
+    public function __construct(MoneyOrderConfigInterface $config)
+    {
+        $this->config = $config;
+    }
 
     /**
      * {@inheritdoc}
@@ -23,9 +37,9 @@ class MoneyOrder implements PaymentMethodInterface
     /**
      * {@inheritdoc}
      */
-    public function getType()
+    public function getIdentifier()
     {
-        return self::TYPE;
+        return $this->config->getPaymentMethodIdentifier();
     }
 
     /**
