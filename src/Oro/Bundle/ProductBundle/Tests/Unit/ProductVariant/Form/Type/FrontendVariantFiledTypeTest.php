@@ -116,6 +116,8 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
             [
                 'data' => $defaultVariant->{self::FIELD_COLOR},
                 'label' => self::FIELD_COLOR,
+                'placeholder' => 'oro.product.type.please_select_option',
+                'empty_data' => null
             ]
         );
 
@@ -130,6 +132,8 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
             [
                 'data' => $defaultVariant->{self::FIELD_NEW},
                 'label' => self::FIELD_NEW,
+                'placeholder' => 'oro.product.type.please_select_option',
+                'empty_data' => null
             ]
         );
 
