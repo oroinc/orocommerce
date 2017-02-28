@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\SEOBundle\Sitemap\Filesystem;
 
-use Oro\Bundle\SEOBundle\Sitemap\Exception\SitemapFileWriterException;
 use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageInterface;
+use Oro\Component\SEO\Tools\Exception\SitemapFileWriterException;
 use Oro\Component\Website\WebsiteInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;

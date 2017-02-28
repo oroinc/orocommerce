@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\SEOBundle\Sitemap\Storage;
 
-use Oro\Bundle\SEOBundle\Tools\Exception\UnsupportedStorageTypeException;
+use Oro\Bundle\SEOBundle\Sitemap\Exception\UnsupportedStorageTypeException;
 
 class SitemapStorageFactory
 {

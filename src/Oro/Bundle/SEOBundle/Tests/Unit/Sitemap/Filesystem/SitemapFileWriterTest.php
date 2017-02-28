@@ -3,10 +3,10 @@
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\Filesystem;
 
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFileWriter;
-use Oro\Bundle\SEOBundle\Sitemap\Exception\SitemapFileWriterException;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Filesystem\Exception\IOException;
 use Symfony\Component\Filesystem\Filesystem;
+use Oro\Component\SEO\Tools\Exception\SitemapFileWriterException;
 
 class SitemapFileWriterTest extends \PHPUnit_Framework_TestCase
 {

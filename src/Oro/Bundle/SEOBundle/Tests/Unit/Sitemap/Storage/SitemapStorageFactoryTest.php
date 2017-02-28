@@ -5,7 +5,7 @@ namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\Storage;
 use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageFactory;
 use Oro\Bundle\SEOBundle\Sitemap\Storage\XmlSitemapIndexStorage;
 use Oro\Bundle\SEOBundle\Sitemap\Storage\XmlSitemapUrlsStorage;
-use Oro\Bundle\SEOBundle\Tools\Exception\UnsupportedStorageTypeException;
+use Oro\Bundle\SEOBundle\Sitemap\Exception\UnsupportedStorageTypeException;
 
 class SitemapStorageFactoryTest extends \PHPUnit_Framework_TestCase
 {

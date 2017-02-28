@@ -2,7 +2,7 @@
 
 namespace Oro\Component\SEO\Tools;
 
-use Oro\Bundle\SEOBundle\Sitemap\Exception\SitemapFileWriterException;
+use Oro\Component\SEO\Tools\Exception\SitemapFileWriterException;
 use Oro\Component\Website\WebsiteInterface;
 
 interface SitemapDumperInterface
