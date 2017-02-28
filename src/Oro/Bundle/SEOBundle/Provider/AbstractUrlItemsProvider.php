@@ -73,7 +73,7 @@ abstract class AbstractUrlItemsProvider implements UrlItemsProviderInterface
     /**
      * {@inheritdoc}
      */
-    public function getUrlItems(WebsiteInterface $website, $version)
+    public function getUrlItems(WebsiteInterface $website)
     {
         $queryBuilder = $this->entityManager->createQueryBuilder()
             ->select(str_replace('entityAlias', $this->getType(), 'entityAlias.id, entityAlias.updatedAt'))
