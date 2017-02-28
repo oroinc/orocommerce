@@ -13,7 +13,6 @@ services:
 
     oro_ups.connection.validator:
         class: 'Oro\Bundle\UPSBundle\Connection\Validator\UpsConnectionValidator'
-        public: false
         arguments:
             - '@oro_ups.connection.validator.request.factory.rate_request'
             - '@oro_ups.client.factory_basic'
