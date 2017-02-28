@@ -31,13 +31,15 @@ class OroUPSExtensionTest extends ExtensionTestCase
             'oro_ups.provider.transport',
             'oro_ups.form.type.transport_settings',
             'oro_ups.factory.price_request_factory',
-            'oro_ups.factory.connection_validation.result_factory',
             'oro_ups.validator.remove_used_shipping_service',
             'oro_ups.entity_listener.channel',
             'oro_ups.entity_listener.transport',
             'oro_ups.shipping_units_mapper',
             'oro_ups.client.url_provider_basic',
-            'oro_ups.client.factory_basic'
+            'oro_ups.client.factory_basic',
+            'oro_ups.connection.validator.request.factory.rate_request',
+            'oro_ups.connection.validator.result.factory',
+            'oro_ups.connection.validator'
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }
