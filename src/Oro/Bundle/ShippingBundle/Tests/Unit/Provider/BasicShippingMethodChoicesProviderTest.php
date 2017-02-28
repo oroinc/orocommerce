@@ -57,7 +57,6 @@ class BasicShippingMethodChoicesProviderTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnValueMap($translation));
 
         $this->assertEquals($result, $this->choicesProvider->getMethods($translate));
-
     }
 
     /**
