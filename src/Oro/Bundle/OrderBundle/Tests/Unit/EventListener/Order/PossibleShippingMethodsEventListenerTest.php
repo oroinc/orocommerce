@@ -10,6 +10,7 @@ use Oro\Bundle\OrderBundle\EventListener\PossibleShippingMethodEventListener;
 use Oro\Bundle\OrderBundle\Factory\OrderShippingContextFactory;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodViewCollection;
+use Oro\Bundle\ShippingBundle\Provider\Price\ShippingPriceProviderInterface;
 use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
 use Symfony\Component\Form\FormInterface;
 
@@ -21,7 +22,7 @@ class PossibleShippingMethodEventListenerTest extends \PHPUnit_Framework_TestCas
     protected $factory;
 
     /**
-     * @var ShippingPriceProvider|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingPriceProviderInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $priceProvider;
 
@@ -40,7 +41,7 @@ class PossibleShippingMethodEventListenerTest extends \PHPUnit_Framework_TestCas
         $this->factory = $this->getMockBuilder(OrderShippingContextFactory::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->priceProvider = $this->getMockBuilder(ShippingPriceProvider::class)
+        $this->priceProvider = $this->getMockBuilder(ShippingPriceProviderInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->priceConverter = $this->getMockBuilder(ShippingPricesConverter::class)
