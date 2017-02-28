@@ -40,7 +40,7 @@ define(function(require) {
 
             var optionsPagination = _.defaults({collection: this.collection}, options.pagination);
             var optionsPageSize = _.defaults({collection: this.collection}, options.pageSize);
-            var optionsSorting =  _.defaults(
+            var optionsSorting = _.defaults(
                 {collection: this.collection, columns: options.columns},
                 options.sortingDropdown
             );
@@ -62,24 +62,34 @@ define(function(require) {
         render: function() {
             var $pagination;
 
-            $pagination = this.subviews.pagination.render().$el;
-            $pagination.attr('class', this.$(this.selector.pagination).attr('class'));
+            if (this.subviews.pagination) {
+                $pagination = this.subviews.pagination.render().$el;
+                $pagination.attr('class', this.$(this.selector.pagination).attr('class'));
+                this.$(this.selector.pagination).replaceWith($pagination);
+            }
 
-            this.$(this.selector.pagination).replaceWith($pagination);
-            this.$(this.selector.pagesize).append(this.subviews.pageSize.render().$el);
-            this.$(this.selector.actionsPanel).append(this.subviews.actionsPanel.render().$el);
+            if (this.subviews.pageSize) {
+                this.$(this.selector.pagesize).append(this.subviews.pageSize.render().$el);
+            }
 
-            this.$(this.selector.itemsCounter).replaceWith(this.subviews.itemsCounter.render().$el);
-            this.subviews.itemsCounter.$el.hide();
+            if (this.subviews.actionsPanel) {
+                this.$(this.selector.actionsPanel).append(this.subviews.actionsPanel.render().$el);
+            }
+
+            if (this.subviews.itemsCounter) {
+                this.$(this.selector.itemsCounter).append(this.subviews.itemsCounter.render().$el);
+            }
 
             if (this.subviews.sortingDropdown) {
                 this.$(this.selector.sortingDropdown).append(this.subviews.sortingDropdown.render().$el);
             }
 
-            if (this.subviews.extraActionsPanel.haveActions()) {
-                this.$(this.selector.extraActionsPanel).append(this.subviews.extraActionsPanel.render().$el);
-            } else {
-                this.$(this.selector.extraActionsPanel).hide();
+            if (this.subviews.extraActionsPanel) {
+                if (this.subviews.extraActionsPanel.haveActions()) {
+                    this.$(this.selector.extraActionsPanel).append(this.subviews.extraActionsPanel.render().$el);
+                } else {
+                    this.$(this.selector.extraActionsPanel).hide();
+                }
             }
 
             return this;

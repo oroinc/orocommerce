@@ -49,7 +49,7 @@ workflows:
                     icon: 'fa-edit'
                 display_type: page
                 destination_page: view
-                form_type: oro_sale_quote
+                form_type: 'Oro\Bundle\SaleBundle\Form\Type\QuoteType'
                 form_options:
                     configuration:
                         handler: default
