@@ -1,4 +1,13 @@
 operations:
+    oro_integration_deactivate:
+        preactions:
+            - '@assign_constant_value':
+                attribute: $.flatRateType
+                value: Oro\Bundle\FlatRateShippingBundle\Integration\FlatRateChannelType::TYPE
+        preconditions:
+            '@and':
+                - '@not_equal': [$type, $.flatRateType]
+
     oro_flat_rate_integration_deactivate:
         extends: oro_integration_deactivate
         for_all_entities: false

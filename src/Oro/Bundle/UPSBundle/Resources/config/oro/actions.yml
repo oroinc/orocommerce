@@ -1,4 +1,13 @@
 operations:
+    oro_integration_deactivate:
+        preactions:
+            - '@assign_constant_value':
+                attribute: $.upsType
+                value: Oro\Bundle\UPSBundle\Provider\ChannelType::TYPE
+        preconditions:
+            '@and':
+                - '@not_equal': [$type, $.upsType]
+
     oro_integration_invalidate_cache:
         label: oro.ups.form.invalidate_cache.label
         routes:
