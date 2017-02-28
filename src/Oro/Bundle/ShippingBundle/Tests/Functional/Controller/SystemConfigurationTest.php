@@ -19,14 +19,6 @@ class SystemConfigurationTest extends WebTestCase
         $this->configManager = static::getContainer()->get('oro_config.global');
     }
 
-    protected function tearDown()
-    {
-        $this->configManager->reset('oro_shipping.shipping_origin');
-        $this->configManager->flush();
-
-        parent::tearDown();
-    }
-
     public function testConfig()
     {
         $crawler = $this->client->request(

@@ -1,3 +1,4 @@
+@fixture-PaymentTermIntegration.yml
 @fixture-Checkout.yml
 Feature: Checkout workflow
   Scenario: Create order from Shopping List 1
