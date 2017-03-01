@@ -69,7 +69,7 @@ class UpsConnectionValidatorResultFactory implements UpsConnectionValidatorResul
     /**
      * {@inheritDoc}
      */
-    public function createExceptionResult()
+    public function createExceptionResult(RestException $exception)
     {
         $message = $this->translator->trans('oro.ups.connection_validation.result.server_error.message');
 

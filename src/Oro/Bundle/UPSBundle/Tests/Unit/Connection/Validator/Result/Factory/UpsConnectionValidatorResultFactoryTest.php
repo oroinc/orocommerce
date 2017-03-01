@@ -3,6 +3,7 @@
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Connection\Validator\Result\Factory;
 
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestResponseInterface;
+use Oro\Bundle\IntegrationBundle\Provider\Rest\Exception\RestException;
 use Oro\Bundle\UPSBundle\Connection\Validator\Result\Factory\UpsConnectionValidatorResultFactory;
 use Oro\Bundle\UPSBundle\Connection\Validator\Result\Factory\UpsConnectionValidatorResultFactoryInterface;
 use Oro\Bundle\UPSBundle\Connection\Validator\Result\UpsConnectionValidatorResult;
@@ -69,7 +70,10 @@ class UpsConnectionValidatorResultFactoryTest extends \PHPUnit_Framework_TestCas
             UpsConnectionValidatorResult::ERROR_MESSAGE_KEY => $message,
         ]);
 
-        static::assertEquals($expected, $this->connectionValidatorResultFactory->createExceptionResult());
+        static::assertEquals(
+            $expected,
+            $this->connectionValidatorResultFactory->createExceptionResult(new RestException())
+        );
     }
 
     /**

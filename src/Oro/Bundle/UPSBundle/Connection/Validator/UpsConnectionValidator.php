@@ -62,7 +62,7 @@ class UpsConnectionValidator implements UpsConnectionValidatorInterface
         } catch (RestException $e) {
             $this->logger->error($e->getMessage());
 
-            return $this->resultFactory->createExceptionResult();
+            return $this->resultFactory->createExceptionResult($e);
         }
 
         return $this->resultFactory->createResultByUpsClientResponse($response);
