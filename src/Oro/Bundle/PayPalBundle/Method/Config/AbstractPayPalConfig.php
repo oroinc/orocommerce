@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\PayPalBundle\Method\Config;
 
-use Symfony\Component\HttpFoundation\ParameterBag;
+use Oro\Bundle\PaymentBundle\Method\Config\ParameterBag\AbstractParameterBagPaymentConfig;
 
-abstract class AbstractPayPalConfig extends ParameterBag implements PayPalConfigInterface
+abstract class AbstractPayPalConfig extends AbstractParameterBagPaymentConfig implements PayPalConfigInterface
 {
     const LABEL_KEY = 'label';
     const SHORT_LABEL_KEY = 'short_label';
@@ -20,34 +20,6 @@ abstract class AbstractPayPalConfig extends ParameterBag implements PayPalConfig
     public function __construct(array $parameters)
     {
         parent::__construct($parameters);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getLabel()
-    {
-        return (string)$this->get(self::LABEL_KEY);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getShortLabel()
-    {
-        return (string)$this->get(self::SHORT_LABEL_KEY);
-    }
-
-    /** {@inheritdoc} */
-    public function getAdminLabel()
-    {
-        return (string)$this->get(self::ADMIN_LABEL_KEY);
-    }
-
-    /** {@inheritdoc} */
-    public function getPaymentMethodIdentifier()
-    {
-        return (string)$this->get(self::PAYMENT_METHOD_IDENTIFIER_KEY);
     }
 
     /**
