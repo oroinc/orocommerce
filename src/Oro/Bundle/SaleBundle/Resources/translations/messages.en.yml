@@ -81,7 +81,13 @@ oro:
 
             message:
                 quote.expire.success: 'Quote #%id% was successfully marked as expired'
-                quote.create.success: 'Quote successfully created'
+                quote.create.success: 'Quote #%id% successfully created'
+                quote.edit.success: 'Quote #%id% successfully updated'
+                quote.delete.success: 'Quote #%id% successfully deleted'
+                quote.undelete.success: 'Quote #%id% successfully undeleted'
+                quote.sent.success: 'Quote #%id% successfully sent to customer'
+                quote.cancel.success: 'Quote #%id% successfully cancelled'
+                quote.decline.success: 'Quote #%id% successfully declined'
 
             form:
                 address:

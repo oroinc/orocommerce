@@ -105,6 +105,10 @@ action_groups:
                 attribute: $.quoteCopy
                 settings:
                     - [[setNull], [propertyName, [id]]]
+                    - [[setNull], [propertyName, [qid]]]
+                    - [[setNull], [propertyName, [demands]]]
+                    - [[setNull], [propertyName, [internal_status]]]
+                    - [[setNull], [propertyName, [customer_status]]]
                     - [[keep], [propertyName, [customerUser]]]
                     - [[keep], [propertyName, [customer]]]
                     - [[keep], [propertyName, [organization]]]
@@ -113,9 +117,6 @@ action_groups:
                     - [[keep], [propertyName, [request]]]
                     - [[keep], [propertyName, [assignedUsers]]]
                     - [[keep], [propertyName, [assignedCustomerUsers]]]
-                    - [[setNull], [propertyName, [demands]]]
-                    - [[setNull], [propertyName, [internal_status]]]
-                    - [[setNull], [propertyName, [customer_status]]]
                     - [[keep], [property, ['%oro_sale.entity.quote_address.class%', country]]]
                     - [[keep], [property, ['%oro_sale.entity.quote_address.class%', region]]]
                     - [[keep], [property, ['%oro_sale.entity.quote_address.class%', customerAddress]]]
@@ -124,6 +125,7 @@ action_groups:
                     - [[keep], [propertyType, ['%oro_product.entity.product_unit.class%']]]
                     - [[keep], [propertyType, ['%oro_payment_term.entity.payment_term.class%']]]
                     - [[collection], [propertyType, ['Doctrine\Common\Collections\Collection']]]
+            - '@assign_value': [$.quoteCopy.expired, false]
             - '@assign_value': [$.quoteCopy.createdAt, $.currentDatetime]
             - '@assign_value': [$.quoteCopy.updatedAt, $.currentDatetime]
 

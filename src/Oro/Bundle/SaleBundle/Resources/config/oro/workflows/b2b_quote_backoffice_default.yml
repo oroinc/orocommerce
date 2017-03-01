@@ -9,7 +9,11 @@ workflows:
 
         exclusive_record_groups: ['b2b_quote_backoffice_flow']
         disable_operations:
+            oro_sale_notify_customer_by_email: ~
+            oro_sale_expire_quote: ~
             UPDATE:
+                - Oro\Bundle\SaleBundle\Entity\Quote
+            DELETE:
                 - Oro\Bundle\SaleBundle\Entity\Quote
 
         start_step: draft
@@ -41,6 +45,22 @@ workflows:
                 allowed_transitions:
                     - undelete_transition
 
+        attributes:
+            copy_notes:
+                type: bool
+            expire_quote:
+                type: string
+            original_quote:
+                type: entity
+                options:
+                    class: 'Oro\Bundle\SaleBundle\Entity\Quote'
+            email:
+                type: object
+                options:
+                    class: 'Oro\Bundle\EmailBundle\Form\Model\Email'
+            appendSignature:
+                type: bool
+
         transitions:
             edit_transition:
                 step_to: draft
@@ -48,7 +68,6 @@ workflows:
                 frontend_options:
                     icon: 'fa-edit'
                 display_type: page
-                destination_page: view
                 form_type: 'Oro\Bundle\SaleBundle\Form\Type\QuoteType'
                 form_options:
                     configuration:
@@ -75,8 +94,33 @@ workflows:
             send_to_customer_transition:
                 step_to: sent_to_customer
                 transition_definition: send_to_customer_transition_definition
+                dialog_template: 'OroSaleBundle:Workflow:emailNotification.html.twig'
                 frontend_options:
                     icon: 'fa-envelope'
+                    options:
+                        allowMaximize: true
+                        allowMinimize: true
+                        dblclick: maximize
+                        maximizedHeightDecreaseBy: minimize-bar
+                        width: 1000
+                form_options:
+                    attribute_fields:
+                        email:
+                            form_type: oro_email_email
+                            options:
+                                translation_domain: messages
+                    form_init:
+                        - '@call_service_method':
+                            attribute: $email
+                            service: oro_sale.helper.notification
+                            method: getEmailModel
+                            method_parameters: [$quote]
+                        - '@call_service_method':
+                            attribute: $appendSignature
+                            service: oro_config.manager
+                            method: get
+                            method_parameters: ['oro_email.append_signature']
+
             cancel_transition:
                 step_to: closed
                 transition_definition: cancel_transition_definition
@@ -87,11 +131,28 @@ workflows:
                 transition_definition: expire_transition_definition
                 frontend_options:
                     icon: 'fa-clock-o'
+                    confirmation:
+                        message: oro.sale.quote.actions.quote_expire_confirm
+                        okText: oro.sale.quote.actions.mark_as_expired
             create_new_quote_transition:
-                step_to: draft
+                step_to: sent_to_customer
                 transition_definition: create_new_quote_transition_definition
                 frontend_options:
                     icon: 'fa-plus'
+                form_options:
+                    attribute_fields:
+                        copy_notes:
+                            form_type: checkbox
+                            options:
+                                data: true
+                        expire_quote:
+                            form_type: choice
+                            options:
+                                required: true
+                                choices:
+                                    no: oro.workflow.b2b_quote_backoffice_default.attribute.expire_quote.no.label
+                                    yes: oro.workflow.b2b_quote_backoffice_default.attribute.expire_quote.yes.label
+                                    after_accept: oro.workflow.b2b_quote_backoffice_default.attribute.expire_quote.after_accept.label
             accept_transition:
                 step_to: closed
                 transition_definition: accept_transition_definition
@@ -130,32 +191,81 @@ workflows:
                         enum_code: 'quote_internal_status'
                         attribute: $quote.internalStatus
                         identifier: 'draft'
-            edit_transition_definition: ~
-            clone_transition_definition: ~
+            edit_transition_definition:
+                actions:
+                    - '@flash_message':
+                        message: oro.sale.quote.message.quote.edit.success
+                        type: 'info'
+                        message_parameters:
+                            id: $quote.qid
+            clone_transition_definition:
+                actions:
+                    - '@run_action_group':
+                        action_group: oro_sale_quote_duplicate
+                        parameters_mapping:
+                            quote: $quote
+                        results:
+                            result.quoteCopy: $.quoteCopy
+                    - '@flash_message':
+                        message: oro.sale.quote.message.quote.create.success
+                        type: 'info'
+                        message_parameters:
+                            id: $.result.quoteCopy.qid
+                    - '@redirect':
+                        route: oro_sale_quote_view
+                        route_parameters:
+                            id: $.result.quoteCopy.id
             delete_transition_definition:
                 actions:
                     - '@request_enum_entity':
                         enum_code: 'quote_internal_status'
                         attribute: $quote.internalStatus
                         identifier: 'deleted'
+                    - '@flash_message':
+                        message: oro.sale.quote.message.quote.delete.success
+                        type: 'info'
+                        message_parameters:
+                            id: $quote.qid
             undelete_transition_definition:
                 actions:
                     - '@request_enum_entity':
                         enum_code: 'quote_internal_status'
                         attribute: $quote.internalStatus
                         identifier: 'draft'
+                    - '@flash_message':
+                        message: oro.sale.quote.message.quote.undelete.success
+                        type: 'info'
+                        message_parameters:
+                            id: $quote.qid
             send_to_customer_transition_definition:
                 actions:
                     - '@request_enum_entity':
                         enum_code: 'quote_internal_status'
                         attribute: $quote.internalStatus
                         identifier: 'sent_to_customer'
+                    - '@run_action_group':
+                        action_group: oro_sale_notify_customer_by_email
+                        parameters_mapping:
+                            data: $quote
+                            email: $email
+                    - '@unset_value': $email
+                    - '@unset_value': $appendSignature
+                    - '@flash_message':
+                        message: oro.sale.quote.message.quote.sent.success
+                        type: 'info'
+                        message_parameters:
+                            id: $quote.qid
             cancel_transition_definition:
                 actions:
                     - '@request_enum_entity':
                         enum_code: 'quote_internal_status'
                         attribute: $quote.internalStatus
                         identifier: 'cancelled'
+                    - '@flash_message':
+                        message: oro.sale.quote.message.quote.cancel.success
+                        type: 'info'
+                        message_parameters:
+                            id: $quote.qid
             expire_transition_definition:
                 actions:
                     - '@request_enum_entity':
@@ -163,13 +273,72 @@ workflows:
                         attribute: $quote.internalStatus
                         identifier: 'expired'
                     - '@assign_value': [$quote.expired, true]
-            create_new_quote_transition_definition: ~
+                    - '@flash_message':
+                        message: oro.sale.quote.message.quote.expire.success
+                        type: 'info'
+                        message_parameters:
+                            id: $quote.qid
+            create_new_quote_transition_definition:
+                actions:
+                    - '@run_action_group':
+                        action_group: oro_sale_quote_duplicate
+                        parameters_mapping:
+                            quote: $quote
+                            copy_notes: $copy_notes
+                        results:
+                            result.quoteCopy: $.quoteCopy
+                    - '@tree':
+                        conditions:
+                            '@equal': ['yes', $expire_quote]
+                        actions:
+                            - '@run_action_group':
+                                action_group: transit_workflow_by_record_group
+                                parameters_mapping:
+                                    entity: $quote
+                                    recordGroup: b2b_quote_backoffice_flow
+                                    transition: expire_transition
+                    - '@tree':
+                        conditions:
+                            '@equal': ['after_accept', $expire_quote]
+                        actions:
+                            - '@run_action_group':
+                                action_group: update_workflow_item_by_record_group
+                                parameters_mapping:
+                                    entity: $.result.quoteCopy
+                                    recordGroup: b2b_quote_backoffice_flow
+                                    data:
+                                        original_quote: $quote
+                                        expire_quote: $expire_quote
+                                    
+                    - '@unset_value': $expire_quote
+                    - '@unset_value': $copy_notes
+                    - '@flash_message':
+                        message: oro.sale.quote.message.quote.create.success
+                        type: 'info'
+                        message_parameters:
+                            id: $.result.quoteCopy.qid
+                    - '@redirect':
+                        route: oro_sale_quote_view
+                        route_parameters:
+                            id: $.result.quoteCopy.id
             accept_transition_definition:
                 actions:
                     - '@request_enum_entity':
                         enum_code: 'quote_internal_status'
                         attribute: $quote.internalStatus
                         identifier: 'accepted'
+                    - '@tree':
+                        conditions:
+                            '@equal': ['after_accept', $expire_quote]
+                        actions:
+                            - '@run_action_group':
+                                action_group: transit_workflow_by_record_group
+                                parameters_mapping:
+                                    entity: $original_quote
+                                    recordGroup: b2b_quote_backoffice_flow
+                                    transition: expire_transition
+                            - '@unset_value': $expire_quote
+                            - '@unset_value': $original_quote
             decline_transition_definition:
                 actions:
                     - '@request_enum_entity':
@@ -182,6 +351,11 @@ workflows:
                         enum_code: 'quote_internal_status'
                         attribute: $quote.internalStatus
                         identifier: 'declined'
+                    - '@flash_message':
+                        message: oro.sale.quote.message.quote.decline.success
+                        type: 'info'
+                        message_parameters:
+                            id: $quote.qid
             reopen_transition_definition:
                 actions:
                     - '@run_action_group':
@@ -193,7 +367,9 @@ workflows:
                     - '@flash_message':
                         message: oro.sale.quote.message.quote.create.success
                         type: 'info'
+                        message_parameters:
+                            id: $.result.quoteCopy.qid
                     - '@redirect':
-                        route: oro_sale_quote_update
+                        route: oro_sale_quote_view
                         route_parameters:
                             id: $.result.quoteCopy.id

@@ -10,6 +10,19 @@ oro.workflow:
                 label: 'Closed'
             deleted:
                 label: 'Deleted'
+        attribute:
+            copy_notes.label: 'Copy All Notes'
+            expire_quote:
+                label: 'Expire Existing Quote'
+                no.label: 'Do Not Expire'
+                yes.label: 'Immediately'
+                after_accept.label: 'Upon Acceptance'
+            original_quote:
+                label: 'Original Quote'
+            email:
+                label: 'Email'
+            appendSignature:
+                label: 'Append Email Signature'
         transition:
             edit_transition:
                 label: 'Edit'
@@ -42,7 +55,7 @@ oro.workflow:
                 label: 'Decline'
                 warning_message: ''
             decline_by_customer_transition:
-                label: 'Decline by Customer'
+                label: 'Declined by Customer'
                 warning_message: ''
             reopen_transition:
                 label: 'Reopen'
