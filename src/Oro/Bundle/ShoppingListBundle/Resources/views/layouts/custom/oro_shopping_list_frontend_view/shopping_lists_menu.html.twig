@@ -53,7 +53,6 @@
     {% set currentClass = 'shopping-list-links__item--current' %}
     {% if shoppingLists|length > 6 %}
     {% set attr = layout_attr_defaults(attr, {
-        'data-page-component-module': 'oroshoppinglist/js/app/views/shoppinglist-widget-view',
         'data-page-component-options': {
             'currentClass': currentClass
         },
