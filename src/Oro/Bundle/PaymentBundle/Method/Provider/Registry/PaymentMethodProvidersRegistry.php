@@ -4,6 +4,11 @@ namespace Oro\Bundle\PaymentBundle\Method\Provider\Registry;
 
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 
+/**
+ * @deprecated since 1.1
+ *
+ * @see Oro\Bundle\PaymentBundle\Method\Provider\CompositePaymentMethodProvider
+ */
 class PaymentMethodProvidersRegistry implements PaymentMethodProvidersRegistryInterface
 {
     /**
@@ -20,7 +25,7 @@ class PaymentMethodProvidersRegistry implements PaymentMethodProvidersRegistryIn
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getPaymentMethodProviders()
     {

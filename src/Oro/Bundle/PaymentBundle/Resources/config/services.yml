@@ -193,6 +193,10 @@ services:
         class: 'Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistry'
         public: false
 
+    oro_payment.payment_method.composite_provider:
+        class: 'Oro\Bundle\PaymentBundle\Method\Provider\CompositePaymentMethodProvider'
+        public: false
+
     oro_payment.payment_method_view.composite_provider:
         class: 'Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider'
         public: false
