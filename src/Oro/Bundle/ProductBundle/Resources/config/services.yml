@@ -201,6 +201,13 @@ services:
         tags:
             - { name: kernel.event_listener, event: product_grid.render, method: onWidgetRender }
 
+    oro_product.event_listener.product_flush:
+        class: 'Oro\Bundle\ProductBundle\EventListener\ProductFlushEventListener'
+        arguments:
+            - "@oro_inventory.manager.inventory_manager"
+        tags:
+            - { name: doctrine.event_listener, event: onFlush, method: onFlush }
+
     oro_product.menu.frontend.quick_add:
         class: 'Oro\Bundle\ProductBundle\Menu\Frontend\QuickAddMenuBuilder'
         public: false
