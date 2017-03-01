@@ -1,5 +1,5 @@
 {% block __product_shopping_lists__shopping_lists_widget %}
-    {% import 'OroFrontendBundle:layouts/default:utils.html.twig' as utils %}
+    {% import 'OroFrontendBundle:layouts/blank:utils.html.twig' as utils %}
     {% set shoppingListsTemplate %}
         {% spaceless %}
             {{ block_widget(block) }}
@@ -72,7 +72,7 @@
 {% endblock %}
 
 {% block __product_shopping_lists__shopping_lists_popup_widget %}
-    {% import 'OroFrontendBundle:layouts/default:utils.html.twig' as utils %}
+    {% import 'OroFrontendBundle:layouts/blank:utils.html.twig' as utils %}
     {% set shoppingListsTemplate %}
         {% spaceless %}
             {{ block_widget(block) }}
@@ -102,7 +102,7 @@
 
 {% block __product_shopping_lists__shopping_lists_popup_template_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
-    {% import 'OroFrontendBundle:layouts/default:utils.html.twig' as utils %}
+    {% import 'OroFrontendBundle:layouts/blank:utils.html.twig' as utils %}
     <div class="shopping-lists-outer">
         <table class="shopping-lists-popup">
             <thead class="shopping-lists-popup__headline">

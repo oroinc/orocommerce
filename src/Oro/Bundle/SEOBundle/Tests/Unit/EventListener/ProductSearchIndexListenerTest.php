@@ -2,6 +2,9 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit\EventListener;
 
+use Oro\Bundle\CatalogBundle\Entity\Category;
+use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\LocalizationIdPlaceholder;
 use Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
@@ -9,15 +12,19 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SEOBundle\EventListener\ProductSearchIndexListener;
 use Oro\Bundle\WebsiteSearchBundle\Event\IndexEntityEvent;
 use Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager;
+use Oro\Bundle\CatalogBundle\Entity\Category as BaseCategory;
 
 class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @SuppressWarnings(ExcessiveMethodLength)
+     */
     public function testOnWebsiteSearchIndex()
     {
         $entityIds     = [1, 2];
         $localizations = $this->getLocalizations();
         $entities      = $this->getProductEntities($entityIds, $localizations);
-
+        /** @var IndexEntityEvent|\PHPUnit_Framework_MockObject_MockObject $event */
         $event = $this->getMockBuilder(IndexEntityEvent::class)
             ->disableOriginalConstructor()->getMock();
 
@@ -28,7 +35,7 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
         $event->expects($this->once())
             ->method('getContext')
             ->willReturn([]);
-
+        /** @var AbstractWebsiteLocalizationProvider|\PHPUnit_Framework_MockObject_MockObject $localizationProvider */
         $localizationProvider = $this->getMockBuilder(AbstractWebsiteLocalizationProvider::class)
             ->disableOriginalConstructor()->getMock();
 
@@ -36,7 +43,7 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getLocalizationsByWebsiteId')
             ->willReturn($localizations);
 
-        $event->expects($this->exactly(8))
+        $event->expects($this->exactly(16))
             ->method('addPlaceholderField')
             ->withConsecutive(
                 [
@@ -54,6 +61,18 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
                 [
                     1,
                     'all_text_LOCALIZATION_ID',
+                    'Polish Category meta description',
+                    [LocalizationIdPlaceholder::NAME => 1],
+                ],
+                [
+                    1,
+                    'all_text_LOCALIZATION_ID',
+                    'Polish Category meta keywords',
+                    [LocalizationIdPlaceholder::NAME => 1],
+                ],
+                [
+                    1,
+                    'all_text_LOCALIZATION_ID',
                     'English meta description',
                     [LocalizationIdPlaceholder::NAME => 2],
                 ],
@@ -64,27 +83,15 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
                     [LocalizationIdPlaceholder::NAME => 2],
                 ],
                 [
-                    2,
+                    1,
                     'all_text_LOCALIZATION_ID',
-                    'Polish meta description',
-                    [LocalizationIdPlaceholder::NAME => 1],
-                ],
-                [
-                    2,
-                    'all_text_LOCALIZATION_ID',
-                    'Polish meta keywords',
-                    [LocalizationIdPlaceholder::NAME => 1],
-                ],
-                [
-                    2,
-                    'all_text_LOCALIZATION_ID',
-                    'English meta description',
+                    'English Category meta description',
                     [LocalizationIdPlaceholder::NAME => 2],
                 ],
                 [
-                    2,
+                    1,
                     'all_text_LOCALIZATION_ID',
-                    'English meta keywords',
+                    'English Category meta keywords',
                     [LocalizationIdPlaceholder::NAME => 2],
                 ]
             );
@@ -93,10 +100,30 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
         $websiteContextManager = $this->getMockBuilder(WebsiteContextManager::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $category = $this->prepareCategory(777, $localizations);
+        /** @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject $doctrineHelper */
+        $doctrineHelper = $this->getMockBuilder(DoctrineHelper::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $repository = $this->getMockBuilder(CategoryRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $repository
+            ->expects($this->once())
+            ->method('getCategoryMapByProducts')
+            ->willReturn([
+                $entities[0]->getId() => $category,
+                $entities[1]->getId() => $category,
+            ]);
+        $doctrineHelper->expects($this->once())
+            ->method('getEntityRepository')
+            ->with(BaseCategory::class)
+            ->willReturn($repository);
 
         $websiteContextManager->expects($this->once())->method('getWebsiteId')->with([])->willReturn(1);
 
         $testable = new ProductSearchIndexListener(
+            $doctrineHelper,
             $localizationProvider,
             $websiteContextManager
         );
@@ -170,5 +197,40 @@ class ProductSearchIndexListenerTest extends \PHPUnit_Framework_TestCase
             'PL' => $polishLocalization,
             'EN' => $englishLocalization
         ];
+    }
+
+    /**
+     * @param integer $categoryId
+     * @param array $localizations
+     * @return Category|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function prepareCategory($categoryId, $localizations)
+    {
+        $category = $this->getMockBuilder(Category::class)
+            ->disableOriginalConstructor()
+            ->setMethods(['getId', 'getMetaDescription', 'getMetaKeyword'])
+            ->getMock();
+
+        $category->expects($this->any())
+            ->method('getId')
+            ->willReturn($categoryId);
+
+        $category->expects($this->any())
+            ->method('getMetaDescription')
+            ->willReturnMap(
+                [
+                    [$localizations['PL'], 'Polish Category meta description'],
+                    [$localizations['EN'], "\tEnglish Category meta\r\n description"],
+                ]
+            );
+        $category->expects($this->any())
+            ->method('getMetaKeyword')
+            ->willReturnMap(
+                [
+                    [$localizations['PL'], 'Polish Category meta keywords'],
+                    [$localizations['EN'], 'English Category meta keywords'],
+                ]
+            );
+        return $category;
     }
 }

@@ -946,7 +946,7 @@ services:
         tags:
             - { name: oro_entity_config.layout.attribute_block_type_mapper }
 
-    oro_pricing.database_triggers.manager.cpp:
+    oro_pricing.database_triggers.manager.combined_prices:
         parent: oro_entity.database_triggers.manager.abstract
         arguments:
             - '@oro_entity.doctrine_helper'

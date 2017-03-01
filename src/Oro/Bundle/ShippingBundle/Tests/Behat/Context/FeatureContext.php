@@ -117,8 +117,9 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function shippingTypeFlatRateIsShownForBuyerSelection($shippingType)
     {
         $element= $this->createElement('CheckoutFormRow');
-        self::assertNotFalse(
-            strpos($element->getText(), $shippingType),
+        self::assertContains(
+            $shippingType,
+            $element->getText(),
             "Shipping type '$shippingType' not found on checkout form"
         );
     }
