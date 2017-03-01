@@ -30,9 +30,7 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
     {
         $this->formType = new PriceListSelectWithPriorityType();
 
-        $this->factory = Forms::createFormFactoryBuilder()
-            ->addExtensions($this->getExtensions())
-            ->getFormFactory();
+        parent::setUp();
     }
 
     /**

@@ -84,14 +84,12 @@ class CustomerFormExtensionTest extends FormIntegrationTestCase
                             [
                                 0 => [
                                     PriceListSelectWithPriorityType::PRICE_LIST_FIELD
-                                    => (string)PriceListSelectTypeStub::PRICE_LIST_1,
-                                    '_position' => '200',
+                                        => (string)PriceListSelectTypeStub::PRICE_LIST_1, '_position' => '200',
                                     PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD => true,
                                 ],
                                 1 => [
                                     PriceListSelectWithPriorityType::PRICE_LIST_FIELD
-                                    => (string)PriceListSelectTypeStub::PRICE_LIST_2,
-                                    '_position' => '100',
+                                        => (string)PriceListSelectTypeStub::PRICE_LIST_2, '_position' => '100',
                                     PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD => false,
                                 ]
                             ],

@@ -208,7 +208,7 @@ class LoadPriceListRelations extends AbstractFixture implements DependentFixture
     ) {
         /** @var PriceList $priceList */
         $priceList = $this->getReference($priceListData['priceList']);
-        $priceListToWebsite ->setSortOrder($priceListData['sort_order']);
+        $priceListToWebsite->setSortOrder($priceListData['sort_order']);
         $priceListToWebsite->setMergeAllowed($priceListData['mergeAllowed']);
         $priceListToWebsite->setWebsite($website);
         $priceListToWebsite->setPriceList($priceList);
