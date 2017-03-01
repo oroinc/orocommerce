@@ -43,6 +43,7 @@ oro.pricing:
         owner.label: 'Owner'
         organization.label: 'Organization'
         assigned_products.label: 'Assigned Products'
+        options.label: Options
         form:
             pricelist_required: Please select a price list first...
         status:
