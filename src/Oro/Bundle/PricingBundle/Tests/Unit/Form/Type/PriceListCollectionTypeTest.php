@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Extension\SortableExtension;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 
@@ -77,22 +78,22 @@ class PriceListCollectionTypeTest extends FormIntegrationTestCase
                 'submitted' => [
                     [
                         PriceListSelectWithPriorityType::PRICE_LIST_FIELD => '3',
-                        '_position' => '500',
+                        SortableExtension::POSITION_FIELD_NAME => '500',
                         PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD => true
                     ],
                     [
                         PriceListSelectWithPriorityType::PRICE_LIST_FIELD => '1',
-                        '_position' => '400',
+                        SortableExtension::POSITION_FIELD_NAME => '400',
                         PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD => false
                     ],
                     [
                         PriceListSelectWithPriorityType::PRICE_LIST_FIELD => '2',
-                        '_position' => '600',
+                        SortableExtension::POSITION_FIELD_NAME => '600',
                         PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD => true
                     ],
                     [
                         PriceListSelectWithPriorityType::PRICE_LIST_FIELD => '',
-                        '_position' => '',
+                        SortableExtension::POSITION_FIELD_NAME => '',
                         PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD => true
                     ]
                 ],

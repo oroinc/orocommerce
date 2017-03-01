@@ -8,17 +8,17 @@ use Oro\Bundle\PricingBundle\Entity\PriceListAwareInterface;
 class PriceListConfig implements PriceListAwareInterface
 {
     /**
-     * @var PriceList
+     * @var PriceList|null
      */
     protected $priceList;
 
     /**
-     * @var $integer
+     * @var int|null
      */
     protected $sortOrder;
 
     /**
-     * @var boolean
+     * @var boolean|null
      */
     protected $mergeAllowed;
 
@@ -54,7 +54,7 @@ class PriceListConfig implements PriceListAwareInterface
     }
 
     /**
-     * @return int
+     * @return int|null
      */
     public function getSortOrder()
     {
@@ -62,18 +62,18 @@ class PriceListConfig implements PriceListAwareInterface
     }
 
     /**
-     * @param int $sortOrder
+     * @param int|null $sortOrder
      * @return $this
      */
     public function setSortOrder($sortOrder)
     {
-        $this->sortOrder = (int)$sortOrder;
+        $this->sortOrder = $sortOrder;
 
         return $this;
     }
 
     /**
-     * @return boolean
+     * @return boolean|null
      */
     public function isMergeAllowed()
     {
@@ -81,7 +81,7 @@ class PriceListConfig implements PriceListAwareInterface
     }
 
     /**
-     * @param boolean $mergeAllowed
+     * @param boolean|null $mergeAllowed
      */
     public function setMergeAllowed($mergeAllowed)
     {

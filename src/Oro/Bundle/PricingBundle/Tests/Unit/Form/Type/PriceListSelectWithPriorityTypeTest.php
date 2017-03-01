@@ -60,12 +60,13 @@ class PriceListSelectWithPriorityTypeTest extends FormIntegrationTestCase
      */
     public function testSubmit($defaultData, array $submittedData, $expectedData)
     {
-        $form = $this->factory->create($this->formType, $defaultData, []);
+        $form = $this->factory->create($this->formType, $defaultData);
 
         $this->assertEquals($defaultData, $form->getData());
 
         $form->submit($submittedData);
         $this->assertTrue($form->isValid());
+        $this->assertTrue($form->isSynchronized());
         $this->assertEquals($expectedData, $form->getData());
     }
 

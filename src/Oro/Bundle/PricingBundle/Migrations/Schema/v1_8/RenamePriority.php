@@ -12,7 +12,6 @@ use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 class RenamePriority implements Migration, RenameExtensionAwareInterface
 {
     const OLD_COLUMN_NAME = 'priority';
-
     const NEW_COLUMN_NAME = 'sort_order';
 
     /**
@@ -33,42 +32,28 @@ class RenamePriority implements Migration, RenameExtensionAwareInterface
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $extension = $this->renameExtension;
-
-        $priceListToCusGroup = $schema->getTable('oro_price_list_to_cus_group');
-        $priceListToCustomer = $schema->getTable('oro_price_list_to_customer');
-        $priceListToWebsite = $schema->getTable('oro_price_list_to_website');
-
-        if ($priceListToCusGroup->hasColumn(self::OLD_COLUMN_NAME)) {
-            $extension->renameColumn(
-                $schema,
-                $queries,
-                $priceListToCusGroup,
-                self::OLD_COLUMN_NAME,
-                self::NEW_COLUMN_NAME
-            );
-        }
-
-        if ($priceListToCustomer->hasColumn(self::OLD_COLUMN_NAME)) {
-            $extension->renameColumn(
-                $schema,
-                $queries,
-                $priceListToCustomer,
-                self::OLD_COLUMN_NAME,
-                self::NEW_COLUMN_NAME
-            );
-        }
-
-        if ($priceListToWebsite->hasColumn(self::OLD_COLUMN_NAME)) {
-            $extension->renameColumn(
-                $schema,
-                $queries,
-                $priceListToWebsite,
-                self::OLD_COLUMN_NAME,
-                self::NEW_COLUMN_NAME
-            );
-        }
+        $this->renamePriorityColumn($schema, $queries, 'oro_price_list_to_cus_group');
+        $this->renamePriorityColumn($schema, $queries, 'oro_price_list_to_customer');
+        $this->renamePriorityColumn($schema, $queries, 'oro_price_list_to_website');
 
         $queries->addQuery(new RenameConfigPriorityQuery());
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     * @param string $tableName
+     */
+    protected function renamePriorityColumn(Schema $schema, QueryBag $queries, $tableName)
+    {
+        $table = $schema->getTable($tableName);
+
+        $this->renameExtension->renameColumn(
+            $schema,
+            $queries,
+            $table,
+            self::OLD_COLUMN_NAME,
+            self::NEW_COLUMN_NAME
+        );
     }
 }

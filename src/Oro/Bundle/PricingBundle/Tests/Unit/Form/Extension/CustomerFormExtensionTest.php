@@ -82,14 +82,16 @@ class CustomerFormExtensionTest extends FormIntegrationTestCase
                         PriceListsSettingsType::FALLBACK_FIELD => '0',
                         PriceListsSettingsType::PRICE_LIST_COLLECTION_FIELD =>
                             [
-                                0 => [
+                                [
                                     PriceListSelectWithPriorityType::PRICE_LIST_FIELD
-                                        => (string)PriceListSelectTypeStub::PRICE_LIST_1, '_position' => '200',
+                                        => (string)PriceListSelectTypeStub::PRICE_LIST_1,
+                                    SortableExtension::POSITION_FIELD_NAME => '200',
                                     PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD => true,
                                 ],
-                                1 => [
+                                [
                                     PriceListSelectWithPriorityType::PRICE_LIST_FIELD
-                                        => (string)PriceListSelectTypeStub::PRICE_LIST_2, '_position' => '100',
+                                        => (string)PriceListSelectTypeStub::PRICE_LIST_2,
+                                    SortableExtension::POSITION_FIELD_NAME => '100',
                                     PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD => false,
                                 ]
                             ],
@@ -100,11 +102,11 @@ class CustomerFormExtensionTest extends FormIntegrationTestCase
                         PriceListsSettingsType::FALLBACK_FIELD => 0,
                         PriceListsSettingsType::PRICE_LIST_COLLECTION_FIELD =>
                             [
-                                0 => (new PriceListToCustomer())
+                                (new PriceListToCustomer())
                                     ->setPriceList($this->getPriceList(PriceListSelectTypeStub::PRICE_LIST_1))
                                     ->setSortOrder(200)
                                     ->setMergeAllowed(true),
-                                1 => (new PriceListToCustomer())
+                                (new PriceListToCustomer())
                                     ->setPriceList($this->getPriceList(PriceListSelectTypeStub::PRICE_LIST_2))
                                     ->setSortOrder(100)
                                     ->setMergeAllowed(false)
@@ -121,7 +123,7 @@ class CustomerFormExtensionTest extends FormIntegrationTestCase
      */
     protected function getPriceList($id)
     {
-        return $this->getEntity('Oro\Bundle\PricingBundle\Entity\PriceList', [
+        return $this->getEntity(PriceList::class, [
             'id' => $id
         ]);
     }

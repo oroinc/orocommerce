@@ -36,6 +36,10 @@ class RenameConfigPriorityQuery extends ParametrizedMigrationQuery
         $this->renamePriorityInConfigValues($logger, $dryRun);
     }
 
+    /**
+     * @param LoggerInterface $logger
+     * @param bool $dryRun
+     */
     protected function renamePriorityInConfigValues(LoggerInterface $logger, $dryRun = false)
     {
         $selectQuery = 'SELECT id, array_value FROM oro_config_value WHERE name = :name AND section = :section LIMIT 1';
@@ -46,8 +50,8 @@ class RenameConfigPriorityQuery extends ParametrizedMigrationQuery
         ];
 
         $selectQueryTypes = [
-            'name' => 'string',
-            'section' => 'string',
+            'name' => Type::STRING,
+            'section' => Type::STRING,
         ];
 
         $this->logQuery($logger, $selectQuery, $selectQueryParameters, $selectQueryTypes);
@@ -58,30 +62,30 @@ class RenameConfigPriorityQuery extends ParametrizedMigrationQuery
 
         $defaultPriceLists = $arrayType->convertToPHPValue($result['array_value'], $platform);
 
-        if (count($defaultPriceLists) > 0) {
-            foreach ($defaultPriceLists as $key => $priceList) {
-                if (array_key_exists(RenamePriority::OLD_COLUMN_NAME, $priceList)) {
-                    $priceList[RenamePriority::NEW_COLUMN_NAME] = $priceList[RenamePriority::OLD_COLUMN_NAME];
-                    unset($priceList[RenamePriority::OLD_COLUMN_NAME]);
+        if (!$defaultPriceLists) {
+            return;
+        }
 
-                    $defaultPriceLists[$key] = $priceList;
-                }
-            }
+        foreach ($defaultPriceLists as $key => $priceList) {
+            $priceList[RenamePriority::NEW_COLUMN_NAME] = $priceList[RenamePriority::OLD_COLUMN_NAME];
+            unset($priceList[RenamePriority::OLD_COLUMN_NAME]);
 
-            $updateQuery = 'UPDATE oro_config_value SET array_value = :array_value WHERE id = :id';
-            $updateQueryParameters = [
-                'array_value' => $defaultPriceLists,
-                'id' => $result['id'],
-            ];
-            $updateQueryTypes = [
-                'array_value' => 'array',
-                'id' => 'integer',
-            ];
+            $defaultPriceLists[$key] = $priceList;
+        }
 
-            $this->logQuery($logger, $updateQuery, $updateQueryParameters, $updateQueryTypes);
-            if (!$dryRun) {
-                $this->connection->executeUpdate($updateQuery, $updateQueryParameters, $updateQueryTypes);
-            }
+        $updateQuery = 'UPDATE oro_config_value SET array_value = :array_value WHERE id = :id';
+        $updateQueryParameters = [
+            'array_value' => $defaultPriceLists,
+            'id' => $result['id'],
+        ];
+        $updateQueryTypes = [
+            'array_value' => Type::TARRAY,
+            'id' => Type::INTEGER,
+        ];
+
+        $this->logQuery($logger, $updateQuery, $updateQueryParameters, $updateQueryTypes);
+        if (!$dryRun) {
+            $this->connection->executeUpdate($updateQuery, $updateQueryParameters, $updateQueryTypes);
         }
     }
 }

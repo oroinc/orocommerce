@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\FormBundle\Form\Extension\SortableExtension;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListsSettingsType;
@@ -73,12 +74,12 @@ class PriceListsSettingsTypeTest extends FormIntegrationTestCase
             PriceListsSettingsType::PRICE_LIST_COLLECTION_FIELD => [
                 [
                     PriceListSelectWithPriorityType::PRICE_LIST_FIELD => '2',
-                    '_position' => '300',
+                    SortableExtension::POSITION_FIELD_NAME => '300',
                     PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD => false
                 ],
                 [
                     PriceListSelectWithPriorityType::PRICE_LIST_FIELD => '1',
-                    '_position' => '400',
+                    SortableExtension::POSITION_FIELD_NAME => '400',
                     PriceListSelectWithPriorityType::MERGE_ALLOWED_FIELD => true
                 ],
             ]

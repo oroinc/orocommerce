@@ -33,15 +33,15 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @When I drag :rowNum row on top in price lists table
+     * @When I drag :rowNum row to the top in price lists table
      * @param int $rowNum
      */
-    public function dragPriceListOnTop($rowNum)
+    public function dragPriceListToTop($rowNum)
     {
         --$rowNum;
         $this->getPriceListRow($rowNum);
         $this->getSession()->executeScript('
-            $(document).ready(function(){
+            $(document).ready(function() {
                 var lastRow = $("div.pricing-price-list tbody tr.pricing-price-list-item").eq(' . $rowNum . ');
                 $("div.pricing-price-list tbody").prepend(lastRow);
                 $("div.pricing-price-list .sortable-wrapper").sortable("option", "stop")();
@@ -58,17 +58,17 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $priceLists = $this->elementFactory->createElement('PriceListCollection');
         self::assertFalse(
             $priceLists->has('named', ['content', $text]),
-            "There is no text '$text' in price lists table"
+            "There is text '$text' presents in price lists table"
         );
     }
 
     /**
-     * @Then I should see Drag-n-Drop icon present on price list line
+     * @Then I should see drag-n-drop icon present on price list line
      */
     public function assertDragNDropIconOnPriceListLine()
     {
         $row = $this->getPriceListRow(0);
-        self::assertNotEmpty($row->find('css', 'i.handle'), 'There is no Drag-n-drop icon in first price list row');
+        self::assertNotEmpty($row->find('css', 'i.handle'), 'There is no drag-n-drop icon in first price list row');
     }
 
     /**

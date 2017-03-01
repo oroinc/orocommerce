@@ -67,7 +67,7 @@ class PriceListSelectWithPriorityType extends AbstractType
     {
         $resolver->setDefaults([
             'sortable' => true,
-            'sortable_property_path' =>  self::SORT_ORDER_FIELD,
+            'sortable_property_path' => self::SORT_ORDER_FIELD,
             'data_class' => BasePriceListRelation::class
         ]);
     }
