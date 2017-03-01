@@ -17,6 +17,18 @@ oro.cms:
         form.choose:            'Choose a Landing Page...'
         content_variant_type.label: 'Landing Page'
 
+    contentblock:
+        entity_label: Content Block
+        entity_plural_label: Content Blocks
+        id.label: Id
+        alias.label: Alias
+        content_variants.label: Content Variant
+        organization.label: Organization
+        owner.label: Owner
+        titles.label: Titles
+        scopes.label: Restrictions
+        enabled.label: Enabled
+
     controller:
         page.saved.message: 'Page has been saved'
 
