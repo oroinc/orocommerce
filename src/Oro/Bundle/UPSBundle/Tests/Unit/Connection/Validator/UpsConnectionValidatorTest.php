@@ -85,12 +85,13 @@ class UpsConnectionValidatorTest extends \PHPUnit_Framework_TestCase
         static::assertSame($result, $this->validator->validateConnectionByUpsSettings($transport));
     }
 
-    public function testValidateConnectionByUpsSettingsThrowsException()
+    public function testValidateConnectionByUpsSettingsServerError()
     {
         $transport= new UPSTransport();
 
         $request = $this->createMock(UpsClientRequestInterface::class);
         $client = $this->createMock(RestClientInterface::class);
+        $result = $this->createMock(UpsConnectionValidatorResultInterface::class);
 
         $this->requestFactory->expects(static::once())
             ->method('createByTransport')
@@ -105,6 +106,10 @@ class UpsConnectionValidatorTest extends \PHPUnit_Framework_TestCase
             ->method('post')
             ->willThrowException(new RestException);
 
-        static::assertNull($this->validator->validateConnectionByUpsSettings($transport));
+        $this->resultFactory->expects(static::once())
+            ->method('createExceptionResult')
+            ->willReturn($result);
+
+        static::assertSame($result, $this->validator->validateConnectionByUpsSettings($transport));
     }
 }

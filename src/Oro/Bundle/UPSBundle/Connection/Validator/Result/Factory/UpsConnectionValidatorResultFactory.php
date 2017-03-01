@@ -67,6 +67,20 @@ class UpsConnectionValidatorResultFactory implements UpsConnectionValidatorResul
     }
 
     /**
+     * {@inheritDoc}
+     */
+    public function createExceptionResult(RestException $exception)
+    {
+        $message = $this->translator->trans('oro.ups.connection_validation.result.server_error.message');
+
+        return new UpsConnectionValidatorResult([
+            UpsConnectionValidatorResult::STATUS_KEY => false,
+            UpsConnectionValidatorResult::ERROR_SEVERITY_KEY => UpsConnectionValidatorResult::WARNING_SEVERITY,
+            UpsConnectionValidatorResult::ERROR_MESSAGE_KEY => $message,
+        ]);
+    }
+
+    /**
      * @param array $data
      *
      * @return array

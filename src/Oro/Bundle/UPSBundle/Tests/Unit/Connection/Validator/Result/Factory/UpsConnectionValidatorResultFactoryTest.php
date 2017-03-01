@@ -3,6 +3,7 @@
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Connection\Validator\Result\Factory;
 
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Client\RestResponseInterface;
+use Oro\Bundle\IntegrationBundle\Provider\Rest\Exception\RestException;
 use Oro\Bundle\UPSBundle\Connection\Validator\Result\Factory\UpsConnectionValidatorResultFactory;
 use Oro\Bundle\UPSBundle\Connection\Validator\Result\Factory\UpsConnectionValidatorResultFactoryInterface;
 use Oro\Bundle\UPSBundle\Connection\Validator\Result\UpsConnectionValidatorResult;
@@ -53,6 +54,25 @@ class UpsConnectionValidatorResultFactoryTest extends \PHPUnit_Framework_TestCas
         static::assertEquals(
             $expectedResult,
             $this->connectionValidatorResultFactory->createResultByUpsClientResponse($response)
+        );
+    }
+
+    public function testCreateExceptionResult()
+    {
+        $message = 'message';
+        $this->translator->expects(static::once())
+            ->method('trans')
+            ->willReturn($message);
+
+        $expected = new UpsConnectionValidatorResult([
+            UpsConnectionValidatorResult::STATUS_KEY => false,
+            UpsConnectionValidatorResult::ERROR_SEVERITY_KEY => UpsConnectionValidatorResult::WARNING_SEVERITY,
+            UpsConnectionValidatorResult::ERROR_MESSAGE_KEY => $message,
+        ]);
+
+        static::assertEquals(
+            $expected,
+            $this->connectionValidatorResultFactory->createExceptionResult(new RestException())
         );
     }
 

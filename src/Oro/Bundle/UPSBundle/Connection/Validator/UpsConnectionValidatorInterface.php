@@ -10,7 +10,7 @@ interface UpsConnectionValidatorInterface
     /**
      * @param UPSTransport $transport
      *
-     * @return UpsConnectionValidatorResultInterface|null
+     * @return UpsConnectionValidatorResultInterface
      */
     public function validateConnectionByUpsSettings(UPSTransport $transport);
 }
