@@ -37,7 +37,10 @@ class CustomerFormViewListener extends AbstractCustomerFormViewListener
         $websites = $this->websiteProvider->getWebsites();
         $priceLists = $this->doctrineHelper
             ->getEntityRepository('OroPricingBundle:PriceListToCustomer')
-            ->findBy(['customer' => $customer, 'website' => $websites], ['sortOrder' => PriceListCollectionType::DEFAULT_ORDER]);
+            ->findBy(
+                ['customer' => $customer, 'website' => $websites],
+                ['sortOrder' => PriceListCollectionType::DEFAULT_ORDER]
+            );
 
         /** @var PriceListCustomerFallback $fallbackEntity */
         $fallbackEntity = $this->doctrineHelper
