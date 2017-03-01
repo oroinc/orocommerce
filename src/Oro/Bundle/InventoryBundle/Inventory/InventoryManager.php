@@ -29,6 +29,7 @@ class InventoryManager
         if (!$productUnitPrecision->getProduct() instanceof Product) {
             return null;
         }
+
         $inventoryLevel = new InventoryLevel();
         $inventoryLevel->setProductUnitPrecision($productUnitPrecision);
         $inventoryLevel->setQuantity(0);
