@@ -24,7 +24,7 @@ class PriceListConfig implements PriceListAwareInterface
 
     /**
      * @param PriceList|null $priceList
-     * @param int|string|null $sortOrder
+     * @param int|null $sortOrder
      * @param null|boolean $mergeAllowed
      */
     public function __construct(PriceList $priceList = null, $sortOrder = null, $mergeAllowed = null)
@@ -54,7 +54,7 @@ class PriceListConfig implements PriceListAwareInterface
     }
 
     /**
-     * @return mixed
+     * @return int
      */
     public function getSortOrder()
     {
@@ -62,7 +62,7 @@ class PriceListConfig implements PriceListAwareInterface
     }
 
     /**
-     * @param int|string $sortOrder
+     * @param int $sortOrder
      * @return $this
      */
     public function setSortOrder($sortOrder)
