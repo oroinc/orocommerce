@@ -1,26 +1,13 @@
 define(function(require) {
     'use strict';
 
-    var ProductSidebarComponent;
+    var ProductSidebarView;
     var $ = require('jquery');
     var _ = require('underscore');
     var mediator = require('oroui/js/mediator');
-    var BasicTreeComponent = require('oroui/js/app/components/basic-tree-component');
+    var BaseTreeView = require('oroui/js/app/views/jstree/base-tree-view');
 
-    /**
-     * Options:
-     * - defaultCategoryId - default selected category id
-     *
-     * @export orocatalog/js/app/components/product-sidebar-component
-     * @extends orocatalog.app.components.BasicTreeComponent
-     * @class orocatalog.app.components.ProductSidebarComponent
-     */
-    ProductSidebarComponent = BasicTreeComponent.extend({
-        /**
-         * @property {Boolean}
-         */
-        checkboxEnabled: true,
-
+    ProductSidebarView = BaseTreeView.extend({
         /**
          * @property {Object}
          */
@@ -44,21 +31,17 @@ define(function(require) {
          * @param {Object} options
          */
         initialize: function(options) {
-            ProductSidebarComponent.__super__.initialize.call(this, options);
+            ProductSidebarView.__super__.initialize.call(this, options);
             if (!this.$tree) {
                 return;
             }
 
-            this.$tree.on('ready.jstree', _.bind(function() {
-                this.selectedCategoryId = String(options.defaultCategoryId);
-                this.$tree.jstree('select_node', this.selectedCategoryId);
-                this.$tree.on('select_node.jstree', _.bind(this.onCategorySelect, this));
-            }, this));
+            this.selectedCategoryId = String(options.defaultCategoryId);
+            this.$tree.jstree('select_node', this.selectedCategoryId);
+            this.$tree.on('select_node.jstree', _.bind(this.onCategorySelect, this));
 
             this.subcategoriesSelector = $(this.options.includeSubcategoriesSelector);
             this.subcategoriesSelector.on('change', _.bind(this.onIncludeSubcategoriesChange, this));
-
-            this._fixContainerHeight();
         },
 
         /**
@@ -67,7 +50,7 @@ define(function(require) {
          * @returns {Object}
          */
         customizeTreeConfig: function(options, config) {
-            ProductSidebarComponent.__super__.customizeTreeConfig.call(this, options, config);
+            ProductSidebarView.__super__.customizeTreeConfig.call(this, options, config);
             if (options.updateAllowed) {
                 config.plugins.push('dnd');
                 config.dnd = {
@@ -122,9 +105,9 @@ define(function(require) {
                 .off('ready.jstree');
 
             this.subcategoriesSelector.off('change');
-            ProductSidebarComponent.__super__.dispose.call(this);
+            ProductSidebarView.__super__.dispose.call(this);
         }
     });
 
-    return ProductSidebarComponent;
+    return ProductSidebarView;
 });
