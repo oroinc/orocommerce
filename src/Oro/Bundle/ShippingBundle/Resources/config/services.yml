@@ -427,3 +427,16 @@ services:
         arguments:
             - '@oro_shipping.checker.shipping_method_enabled'
 
+    oro_shipping.method_disable_handler.basic:
+        class: 'Oro\Bundle\ShippingBundle\Method\Handler\BasicShippingMethodDisableHandler'
+        public: false
+
+    oro_shipping.method_disable_handler.decorator:
+        class: 'Oro\Bundle\ShippingBundle\Method\Handler\RulesShippingMethodDisableHandlerDecorator'
+        decorates: oro_shipping.method_disable_handler.basic
+        decoration_priority: 255
+        public: false
+        arguments:
+            - '@oro_shipping.method_disable_handler.decorator.inner'
+            - '@oro_shipping.repository.shipping_methods_configs_rule'
+            - '@oro_shipping.shipping_method.registry'

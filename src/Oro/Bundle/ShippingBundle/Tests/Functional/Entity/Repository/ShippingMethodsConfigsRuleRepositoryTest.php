@@ -113,6 +113,12 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
         $this->assertEquals($this->getEntitiesIds($expectedRules), $this->getEntitiesIds($actualRules));
     }
 
+    public function testConfigsWithEnabledRuleAndMethod()
+    {
+        $rulesWithMethod = $this->repository->getConfigsWithEnabledRuleAndMethod($this->getFlatRateIdentifier());
+        static::assertCount(8, $rulesWithMethod);
+    }
+
     public function testGetRulesWithoutShippingMethods()
     {
         $rulesWithoutShippingMethods = $this->repository->getRulesWithoutShippingMethods();
