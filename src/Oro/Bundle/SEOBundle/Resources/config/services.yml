@@ -183,3 +183,12 @@ services:
         arguments:
             - '@filesystem'
             - '@logger'
+
+    oro_seo.async.sitemap_generation:
+        class: Oro\Bundle\SEOBundle\Async\SitemapGenerationProcessor
+        arguments:
+            - '@oro_message_queue.job.runner'
+            - '@logger'
+            - '@oro_seo.sitemap.sitemap_url_dumper'
+            - '@oro_website.repository.website'
+            - '@oro_seo.provider.url_items_provider_registry'

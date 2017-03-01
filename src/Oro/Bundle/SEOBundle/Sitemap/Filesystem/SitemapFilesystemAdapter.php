@@ -3,6 +3,7 @@
 namespace Oro\Bundle\SEOBundle\Sitemap\Filesystem;
 
 use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageInterface;
+use Oro\Component\SEO\Tools\Exception\SitemapFileWriterException;
 use Oro\Component\Website\WebsiteInterface;
 use Symfony\Component\Filesystem\Filesystem;
 use Symfony\Component\Finder\Finder;
@@ -47,6 +48,7 @@ class SitemapFilesystemAdapter
      * @param WebsiteInterface $website
      * @param string $version
      * @param SitemapStorageInterface $sitemapUrlsStorage
+     * @throws SitemapFileWriterException
      */
     public function dumpSitemapStorage(
         $filename,
