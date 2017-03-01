@@ -8,7 +8,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\UnitOfWork;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 
-use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
+use Oro\Component\DoctrineUtils\ORM\ChangedEntityGeneratorTrait;
 use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ContentNodeFieldsChangesAwareInterface;
 use Oro\Component\DoctrineUtils\ORM\FieldUpdatesChecker;
@@ -20,6 +20,8 @@ use Oro\Bundle\CatalogBundle\Entity\Category;
 
 class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwareInterface
 {
+    use ChangedEntityGeneratorTrait;
+
     /** @var ProductIndexScheduler */
     private $indexScheduler;
 
@@ -44,13 +46,13 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
      * @param ProductIndexScheduler $indexScheduler
      * @param PropertyAccessorInterface $accessor
      * @param FieldUpdatesChecker       $fieldUpdatesChecker
-     * @param WebCatalogUsageProviderInterface $webCatalogUsageProvider
+     * @param WebCatalogUsageProviderInterface|null $webCatalogUsageProvider
      */
     public function __construct(
         ProductIndexScheduler $indexScheduler,
         PropertyAccessorInterface $accessor,
         FieldUpdatesChecker $fieldUpdatesChecker,
-        WebCatalogUsageProviderInterface $webCatalogUsageProvider
+        WebCatalogUsageProviderInterface $webCatalogUsageProvider = null
     ) {
         $this->indexScheduler = $indexScheduler;
         $this->accessor = $accessor;
@@ -87,12 +89,7 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
         $categories = [];
         $websiteIds = [];
 
-        $insertedEntities = $unitOfWork->getScheduledEntityInsertions();
-        $updatedEntities = $unitOfWork->getScheduledEntityUpdates();
-        $deletedEntities = $unitOfWork->getScheduledEntityDeletions();
-
-        // @todo extract it and refactor this class a bit after all tasks will be merged
-        foreach ($updatedEntities as $entity) {
+        foreach ($this->getUpdatedEntities($unitOfWork) as $entity) {
             $isAnyFieldChanged = false;
 
             if (!$entity instanceof ContentNodeInterface) {
@@ -113,13 +110,10 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
             }
         }
 
-        $this->collectCategories($insertedEntities, $categories, $unitOfWork);
-        $this->collectCategories($updatedEntities, $categories, $unitOfWork);
-        $this->collectCategories($deletedEntities, $categories, $unitOfWork);
-
-        $this->collectWebsiteIds($insertedEntities, $websiteIds);
-        $this->collectWebsiteIds($updatedEntities, $websiteIds);
-        $this->collectWebsiteIds($deletedEntities, $websiteIds);
+        foreach ($this->getChangedEntities($unitOfWork) as $entity) {
+            $this->collectCategories([$entity], $categories, $unitOfWork);
+            $this->collectWebsiteIds([$entity], $websiteIds);
+        }
 
         if ($categories) {
             $this->scheduleProductsReindex($categories, $websiteIds);

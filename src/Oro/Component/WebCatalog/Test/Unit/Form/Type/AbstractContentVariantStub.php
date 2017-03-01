@@ -4,8 +4,8 @@ namespace Oro\Component\WebCatalog\Test\Unit\Form\Type;
 
 use Doctrine\Common\Collections\ArrayCollection;
 
-use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Component\WebCatalog\Entity\ContentNodeAwareInterface;
+use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
 abstract class AbstractContentVariantStub implements ContentVariantInterface, ContentNodeAwareInterface
@@ -20,7 +20,7 @@ abstract class AbstractContentVariantStub implements ContentVariantInterface, Co
      */
     protected $scopes;
 
-    /** @var ContentNode */
+    /** @var ContentNodeInterface */
     protected $node;
 
     /**
@@ -102,9 +102,9 @@ abstract class AbstractContentVariantStub implements ContentVariantInterface, Co
     }
 
     /**
-     * @param ContentNode $node
+     * @param ContentNodeInterface $node
      */
-    public function setNode(ContentNode $node)
+    public function setNode(ContentNodeInterface $node)
     {
         $this->node = $node;
     }

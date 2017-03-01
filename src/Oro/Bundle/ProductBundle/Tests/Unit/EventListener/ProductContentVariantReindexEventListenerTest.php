@@ -12,7 +12,6 @@ use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ContentNodeStub;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\DoctrineUtils\ORM\FieldUpdatesChecker;
 use Oro\Bundle\CatalogBundle\ContentVariantType\CategoryPageContentVariantType;
-use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 use Oro\Bundle\ProductBundle\ContentVariantType\ProductPageContentVariantType;
 use Oro\Bundle\ProductBundle\EventListener\ProductContentVariantReindexEventListener;
@@ -258,11 +257,7 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit_Framework_T
         $webCatalogMock->method('getId')
             ->willReturn($webCatalogId);
 
-        $contentNodeMock = $this->createMock(ContentNode::class);
-        $contentNodeMock->method('getWebCatalog')
-            ->willReturn($webCatalogMock);
-
-        $contentVariant->setNode($contentNodeMock);
+        $contentVariant->setNode((new ContentNodeStub(1))->setWebCatalog($webCatalogMock));
 
         return $contentVariant;
     }
@@ -297,13 +292,13 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit_Framework_T
             ->disableOriginalConstructor()
             ->getMock();
 
-        $unitOfWork->expects($this->once())
+        $unitOfWork->expects($this->any())
             ->method('getScheduledEntityInsertions')
             ->willReturn($insertions);
-        $unitOfWork->expects($this->once())
+        $unitOfWork->expects($this->any())
             ->method('getScheduledEntityUpdates')
             ->willReturn($updates);
-        $unitOfWork->expects($this->once())
+        $unitOfWork->expects($this->any())
             ->method('getScheduledEntityDeletions')
             ->willReturn($deletions);
         $unitOfWork
