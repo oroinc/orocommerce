@@ -82,4 +82,16 @@ class ContentNodeStub implements ContentNodeInterface
     {
         return $this->webCatalog;
     }
+
+    /**
+     * @param WebCatalogInterface $webCatalog
+     *
+     * @return ContentNodeStub
+     */
+    public function setWebCatalog(WebCatalogInterface $webCatalog)
+    {
+        $this->webCatalog = $webCatalog;
+
+        return $this;
+    }
 }

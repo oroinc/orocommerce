@@ -8,7 +8,7 @@ use Doctrine\ORM\UnitOfWork;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 
-use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
+use Oro\Component\DoctrineUtils\ORM\ChangedEntityGeneratorTrait;
 use Oro\Component\DoctrineUtils\ORM\FieldUpdatesChecker;
 use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
@@ -20,6 +20,8 @@ use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
 
 class ProductContentVariantReindexEventListener implements ContentNodeFieldsChangesAwareInterface
 {
+    use ChangedEntityGeneratorTrait;
+
     /** @var EventDispatcherInterface */
     private $eventDispatcher;
 
@@ -81,12 +83,7 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
         $productIds = [];
         $websiteIds = [];
 
-        $updatedEntities = $unitOfWork->getScheduledEntityUpdates();
-        $insertedEntities = $unitOfWork->getScheduledEntityInsertions();
-        $deletedEntities = $unitOfWork->getScheduledEntityDeletions();
-
-        // @todo extract it and refactor this class a bit after all tasks will be merged
-        foreach ($updatedEntities as $entity) {
+        foreach ($this->getUpdatedEntities($unitOfWork) as $entity) {
             $isAnyFieldChanged = false;
 
             if (!$entity instanceof ContentNodeInterface) {
@@ -107,13 +104,10 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
             }
         }
 
-        $this->collectProductIds($insertedEntities, $productIds, $unitOfWork);
-        $this->collectProductIds($updatedEntities, $productIds, $unitOfWork);
-        $this->collectProductIds($deletedEntities, $productIds, $unitOfWork);
-
-        $this->collectWebsiteIds($updatedEntities, $websiteIds);
-        $this->collectWebsiteIds($insertedEntities, $websiteIds);
-        $this->collectWebsiteIds($deletedEntities, $websiteIds);
+        foreach ($this->getChangedEntities($unitOfWork) as $entity) {
+            $this->collectProductIds([$entity], $productIds, $unitOfWork);
+            $this->collectWebsiteIds([$entity], $websiteIds);
+        }
 
         $this->triggerReindex($productIds, $websiteIds);
     }

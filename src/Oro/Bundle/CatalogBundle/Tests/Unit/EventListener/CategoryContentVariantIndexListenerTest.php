@@ -9,8 +9,7 @@ use Doctrine\ORM\Event\OnFlushEventArgs;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\UnitOfWork;
 
-use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
-use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
+use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
 use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\DoctrineUtils\ORM\FieldUpdatesChecker;
@@ -286,8 +285,10 @@ class CategoryContentVariantIndexListenerTest extends \PHPUnit_Framework_TestCas
     {
         $node = null;
         if ($webCatalogId) {
-            $webCatalog = $this->getEntity(WebCatalog::class, ['id' => $webCatalogId]);
-            $node = $this->getEntity(ContentNode::class, ['webCatalog' => $webCatalog]);
+            $webCatalogMock = $this->createMock(WebCatalogInterface::class);
+            $webCatalogMock->method('getId')
+                ->willReturn($webCatalogId);
+            $node = (new ContentNodeStub(1))->setWebCatalog($webCatalogMock);
         }
 
         return $this->getEntity(
@@ -312,13 +313,13 @@ class CategoryContentVariantIndexListenerTest extends \PHPUnit_Framework_TestCas
             ->disableOriginalConstructor()
             ->getMock();
 
-        $unitOfWork->expects($this->once())
+        $unitOfWork->expects($this->any())
             ->method('getScheduledEntityInsertions')
             ->willReturn($insertions);
-        $unitOfWork->expects($this->once())
+        $unitOfWork->expects($this->any())
             ->method('getScheduledEntityUpdates')
             ->willReturn($updates);
-        $unitOfWork->expects($this->once())
+        $unitOfWork->expects($this->any())
             ->method('getScheduledEntityDeletions')
             ->willReturn($deletions);
 
