@@ -7,7 +7,6 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\EmailBundle\Builder\EmailModelBuilder;
 use Oro\Bundle\EmailBundle\Entity\EmailTemplate;
@@ -26,9 +25,6 @@ class NotificationHelper extends Controller
     /** @var Processor */
     protected $emailProcessor;
 
-    /** @var Request */
-    protected $request;
-
     /** @var string */
     protected $quoteClassName;
 
@@ -37,18 +33,15 @@ class NotificationHelper extends Controller
 
     /**
      * @param ManagerRegistry $registry
-     * @param Request $request
      * @param EmailModelBuilder $emailModelBuilder
      * @param Processor $emailProcessor
      */
     public function __construct(
         ManagerRegistry $registry,
-        Request $request,
         EmailModelBuilder $emailModelBuilder,
         Processor $emailProcessor
     ) {
         $this->registry = $registry;
-        $this->request = $request;
         $this->emailModelBuilder = $emailModelBuilder;
         $this->emailProcessor = $emailProcessor;
     }

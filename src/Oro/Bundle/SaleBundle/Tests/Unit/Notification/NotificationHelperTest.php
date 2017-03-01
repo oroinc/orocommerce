@@ -4,9 +4,7 @@ namespace Oro\Bundle\SaleBundle\Tests\Unit\Notification;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
-
 use Doctrine\Common\Persistence\ObjectRepository;
-use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\EmailBundle\Builder\EmailModelBuilder;
 use Oro\Bundle\EmailBundle\Form\Model\Email;
@@ -27,9 +25,6 @@ class NotificationHelperTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry */
     protected $registry;
 
-    /** @var Request */
-    protected $request;
-
     /** @var \PHPUnit_Framework_MockObject_MockObject|EmailModelBuilder */
     protected $emailModelBuilder;
 
@@ -42,7 +37,6 @@ class NotificationHelperTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
-        $this->request = new Request();
 
         $this->emailModelBuilder = $this->getMockBuilder('Oro\Bundle\EmailBundle\Builder\EmailModelBuilder')
             ->disableOriginalConstructor()
@@ -54,7 +48,6 @@ class NotificationHelperTest extends \PHPUnit_Framework_TestCase
 
         $this->helper = new NotificationHelper(
             $this->registry,
-            $this->request,
             $this->emailModelBuilder,
             $this->emailProcessor
         );
