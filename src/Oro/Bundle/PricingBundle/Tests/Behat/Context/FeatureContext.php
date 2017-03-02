@@ -78,10 +78,10 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     public function assertPriceListNameInRow($priceListName, $rowNum)
     {
-        $row = $this->getPriceListRow(--$rowNum);
+        $row = $this->getPriceListRow($rowNum - 1);
         self::assertTrue(
             $row->has('named', ['content', $priceListName]),
-            "There is no price list with name '$priceListName' in price lists table"
+            "There is no price list with name '$priceListName' in the $rowNum row of price lists table"
         );
     }
 

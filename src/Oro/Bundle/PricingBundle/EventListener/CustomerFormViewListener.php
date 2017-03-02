@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\EventListener;
 
-use Oro\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
 use Oro\Bundle\UIBundle\Event\BeforeListRenderEvent;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomer;
+use Oro\Bundle\PricingBundle\Form\Type\PriceListCollectionType;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 
 class CustomerFormViewListener extends AbstractCustomerFormViewListener

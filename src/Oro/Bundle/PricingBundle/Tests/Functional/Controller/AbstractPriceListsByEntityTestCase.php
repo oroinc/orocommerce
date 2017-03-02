@@ -121,9 +121,9 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
                     1 => [
                         'fallback' => 0,
                         'priceLists' => [
-                            ['priceList' => 'price_list_3', '_position' => 3, 'mergeAllowed' => true],
-                            ['priceList' => 'price_list_1', '_position' => 1, 'mergeAllowed' => false],
-                            ['priceList' => 'price_list_2', '_position' => 2, 'mergeAllowed' => true],
+                            ['priceList' => 'price_list_1', '_position' => 3, 'mergeAllowed' => false],
+                            ['priceList' => 'price_list_2', '_position' => 23, 'mergeAllowed' => true],
+                            ['priceList' => 'price_list_3', '_position' => 22, 'mergeAllowed' => true],
                         ],
                     ],
                 ],
@@ -132,9 +132,9 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
                     1 => [
                         'fallback' => 0,
                         'priceLists' => [
-                            ['priceList' => 'price_list_1', '_position' => 1, 'mergeAllowed' => false],
-                            ['priceList' => 'price_list_2', '_position' => 2, 'mergeAllowed' => true],
-                            ['priceList' => 'price_list_3', '_position' => 3, 'mergeAllowed' => true],
+                            ['priceList' => 'price_list_1', '_position' => 3, 'mergeAllowed' => false],
+                            ['priceList' => 'price_list_3', '_position' => 22, 'mergeAllowed' => true],
+                            ['priceList' => 'price_list_2', '_position' => 23, 'mergeAllowed' => true],
                         ],
                     ],
                 ],
@@ -217,7 +217,7 @@ abstract class AbstractPriceListsByEntityTestCase extends WebTestCase
         $form = $this->getUpdateForm();
         $this->assertTrue($form->has($this->formExtensionPath));
         //Test remove one price list
-        $path = sprintf('[%s][priceListCollection][2]', $this->getDefaultWebsite()->getId());
+        $path = sprintf('[%s][priceListCollection][1]', $this->getDefaultWebsite()->getId());
         $form->remove($this->formExtensionPath . $path);
         $this->client->submit($form);
         $priceListsRelations = $this->getPriceListsByEntity();
