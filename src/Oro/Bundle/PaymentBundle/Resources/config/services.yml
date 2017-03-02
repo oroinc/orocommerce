@@ -100,11 +100,18 @@ services:
         calls:
             - ['setLogger', ['@logger']]
 
+    # @deprecated since 1.1 Use oro_payment.action.capture_payment_transaction to capture a concrete transaction
     oro_payment.action.capture:
         class: 'Oro\Bundle\PaymentBundle\Action\CaptureAction'
         parent: oro_payment.action.payment_method_action.abstract
         tags:
             - { name: oro_action.action, alias: payment_capture }
+
+    oro_payment.action.capture_payment_transaction:
+        class: 'Oro\Bundle\PaymentBundle\Action\PaymentTransactionCaptureAction'
+        parent: oro_payment.action.payment_method_action.abstract
+        tags:
+            - { name: oro_action.action, alias: payment_transaction_capture }
 
     oro_payment.action.purchase:
         class: 'Oro\Bundle\PaymentBundle\Action\PurchaseAction'

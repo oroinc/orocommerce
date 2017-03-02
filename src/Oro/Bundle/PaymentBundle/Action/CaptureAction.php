@@ -4,6 +4,10 @@ namespace Oro\Bundle\PaymentBundle\Action;
 
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
+/**
+ * @deprecated since 1.1 Use Oro\Bundle\PaymentBundle\Action\PaymentTransactionCaptureAction
+ * to capture a concrete transaction
+ */
 class CaptureAction extends AbstractPaymentMethodAction
 {
     /** {@inheritdoc} */
