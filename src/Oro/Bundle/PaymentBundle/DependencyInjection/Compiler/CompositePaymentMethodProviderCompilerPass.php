@@ -6,9 +6,9 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-class PaymentMethodProviderPass implements CompilerPassInterface
+class CompositePaymentMethodProviderCompilerPass implements CompilerPassInterface
 {
-    const REGISTRY_SERVICE = 'oro_payment.payment_method.composite_provider';
+    const COMPOSITE_SERVICE = 'oro_payment.payment_method.composite_provider';
     const TAG = 'oro_payment.payment_method_provider';
 
     /**
@@ -16,7 +16,7 @@ class PaymentMethodProviderPass implements CompilerPassInterface
      */
     public function process(ContainerBuilder $container)
     {
-        if (!$container->hasDefinition(self::REGISTRY_SERVICE)) {
+        if (!$container->hasDefinition(self::COMPOSITE_SERVICE)) {
             return;
         }
 
@@ -25,10 +25,10 @@ class PaymentMethodProviderPass implements CompilerPassInterface
             return;
         }
 
-        $registryDefinition = $container->getDefinition(self::REGISTRY_SERVICE);
+        $compiledServiceDefinition = $container->getDefinition(self::COMPOSITE_SERVICE);
 
         foreach ($taggedServices as $method => $value) {
-            $registryDefinition->addMethodCall('addProvider', [new Reference($method)]);
+            $compiledServiceDefinition->addMethodCall('addProvider', [new Reference($method)]);
         }
     }
 }

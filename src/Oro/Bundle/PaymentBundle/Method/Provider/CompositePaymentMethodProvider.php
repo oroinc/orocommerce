@@ -7,7 +7,7 @@ class CompositePaymentMethodProvider implements PaymentMethodProviderInterface
     /**
      * @var PaymentMethodProviderInterface[]
      */
-    protected $providers = [];
+    private $providers = [];
 
     /**
      * @param PaymentMethodProviderInterface $provider
@@ -40,6 +40,7 @@ class CompositePaymentMethodProvider implements PaymentMethodProviderInterface
                 return $provider->getPaymentMethod($identifier);
             }
         }
+        
         throw new \InvalidArgumentException('There is no payment method for "' . $identifier . '" identifier');
     }
 

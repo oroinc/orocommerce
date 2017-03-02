@@ -15,55 +15,79 @@ class CompositePaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @var CompositePaymentMethodProvider
      */
-    protected $registry;
-
-    /**
-     * @var PaymentMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $methodProvider;
+    private $compositeProvider;
 
     /**
      * @var array
      */
-    protected $methods;
+    private $methods;
+
+    /**
+     * @var PaymentMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $firstProvider;
+
+    /**
+     * @var PaymentMethodProviderInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $secondProvider;
 
     protected function setUp()
     {
-        $this->registry = new CompositePaymentMethodProvider();
+        $this->compositeProvider = new CompositePaymentMethodProvider();
 
-        $this->methods = [
-            self::IDENTIFIER1 => $this->getMethodMock(self::IDENTIFIER1),
-            self::IDENTIFIER2 => $this->getMethodMock(self::IDENTIFIER2),
-        ];
+        $this->methods =
+            [
+                self::IDENTIFIER1 => $this->getMethodMock(self::IDENTIFIER1),
+                self::IDENTIFIER2 => $this->getMethodMock(self::IDENTIFIER2),
+            ];
 
-        $this->methodProvider = $this->createMock(PaymentMethodProviderInterface::class);
-        $this->methodProvider->expects(static::any())->method('getPaymentMethods')
-            ->will(static::returnValue($this->methods));
-        $this->methodProvider->expects(static::any())->method('getPaymentMethod')
-            ->willReturnMap([
-                [self::IDENTIFIER1, $this->methods[self::IDENTIFIER1]],
-                [self::IDENTIFIER2, $this->methods[self::IDENTIFIER2]],
-            ]);
-        $this->methodProvider->expects(static::any())->method('hasPaymentMethod')
-            ->willReturnMap([
-                [self::IDENTIFIER1, true],
-                [self::IDENTIFIER2, true],
-            ]);
+        $this->firstProvider = $this->createMock(PaymentMethodProviderInterface::class);
+        $this->secondProvider = $this->createMock(PaymentMethodProviderInterface::class);
 
-        $this->registry->addProvider($this->methodProvider);
+        $this->compositeProvider->addProvider($this->firstProvider);
+        $this->compositeProvider->addProvider($this->secondProvider);
     }
 
     public function testGetPaymentMethods()
     {
-        $methods = $this->registry->getPaymentMethods();
+        $this->firstProvider
+            ->expects(static::once())
+            ->method('getPaymentMethods')
+            ->willReturn([self::IDENTIFIER1 => $this->methods[self::IDENTIFIER1]]);
+        $this->secondProvider
+            ->expects(static::once())
+            ->method('getPaymentMethods')
+            ->willReturn([self::IDENTIFIER2 => $this->methods[self::IDENTIFIER2]]);
+
+        $methods = $this->compositeProvider->getPaymentMethods();
         static::assertCount(2, $methods);
         static::assertEquals($this->methods, $methods);
     }
 
     public function testGetPaymentMethod()
     {
-        static::assertEquals($this->methods[self::IDENTIFIER1], $this->registry->getPaymentMethod(self::IDENTIFIER1));
-        static::assertEquals($this->methods[self::IDENTIFIER2], $this->registry->getPaymentMethod(self::IDENTIFIER2));
+        $this->mockHasPaymentMethodBehaviour();
+
+        $this->firstProvider
+            ->expects(static::once())
+            ->method('getPaymentMethod')
+            ->with(self::IDENTIFIER1)
+            ->willReturn($this->methods[self::IDENTIFIER1]);
+        $this->secondProvider
+            ->expects(static::once())
+            ->method('getPaymentMethod')
+            ->with(self::IDENTIFIER2)
+            ->willReturn($this->methods[self::IDENTIFIER2]);
+
+        static::assertEquals(
+            $this->methods[self::IDENTIFIER1],
+            $this->compositeProvider->getPaymentMethod(self::IDENTIFIER1)
+        );
+        static::assertEquals(
+            $this->methods[self::IDENTIFIER2],
+            $this->compositeProvider->getPaymentMethod(self::IDENTIFIER2)
+        );
     }
 
     /**
@@ -72,14 +96,15 @@ class CompositePaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetPaymentMethodExceptionTriggered()
     {
-        $this->registry->getPaymentMethod(self::WRONG_IDENTIFIER);
+        $this->compositeProvider->getPaymentMethod(self::WRONG_IDENTIFIER);
     }
-
 
     public function testHasPaymentMethod()
     {
-        static::assertEquals(true, $this->registry->hasPaymentMethod(self::IDENTIFIER1));
-        static::assertEquals(true, $this->registry->hasPaymentMethod(self::IDENTIFIER2));
+        $this->mockHasPaymentMethodBehaviour();
+
+        static::assertEquals(true, $this->compositeProvider->hasPaymentMethod(self::IDENTIFIER1));
+        static::assertEquals(true, $this->compositeProvider->hasPaymentMethod(self::IDENTIFIER2));
     }
 
     /**
@@ -87,11 +112,35 @@ class CompositePaymentMethodProviderTest extends \PHPUnit_Framework_TestCase
      *
      * @return PaymentMethodInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected function getMethodMock($identifier)
+    private function getMethodMock($identifier)
     {
-        $method = $this->createMock(PaymentMethodInterface::class);
-        $method->expects(static::any())->method('getIdentifier')->will(static::returnValue($identifier));
+        $method = $this->createMock(PaymentMethodInterface::class)
+            ->expects(static::any())
+            ->method('getIdentifier')
+            ->will(static::returnValue($identifier));
 
         return $method;
+    }
+
+    private function mockHasPaymentMethodBehaviour()
+    {
+        $this->firstProvider
+            ->expects(static::any())
+            ->method('hasPaymentMethod')
+            ->willReturnMap(
+                [
+                    [self::IDENTIFIER1, true],
+                    [self::IDENTIFIER2, false],
+                ]
+            );
+        $this->secondProvider
+            ->expects(static::any())
+            ->method('hasPaymentMethod')
+            ->willReturnMap(
+                [
+                    [self::IDENTIFIER1, false],
+                    [self::IDENTIFIER2, true],
+                ]
+            );
     }
 }
