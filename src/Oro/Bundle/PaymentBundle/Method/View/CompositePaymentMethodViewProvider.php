@@ -7,7 +7,7 @@ class CompositePaymentMethodViewProvider implements PaymentMethodViewProviderInt
     /**
      * @var PaymentMethodViewProviderInterface[]
      */
-    protected $providers = [];
+    private $providers = [];
 
     /**
      * Add payment method type to the registry
@@ -42,6 +42,7 @@ class CompositePaymentMethodViewProvider implements PaymentMethodViewProviderInt
                 return $provider->getPaymentMethodView($identifier);
             }
         }
+        
         throw new \InvalidArgumentException('There is no payment method view for "'.$identifier.'"');
     }
 
