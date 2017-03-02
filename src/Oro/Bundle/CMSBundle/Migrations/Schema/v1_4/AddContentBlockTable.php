@@ -42,6 +42,7 @@ class AddContentBlockTable implements
         /** Foreign keys generation **/
         $this->addOroCmsContentBlockTitleForeignKeys($schema);
         $this->addOroCmsContentBlockScopeForeignKeys($schema);
+        $this->addOrganizationForeignKeys($schema);
 
         /** Associations */
         $this->addOroCmsContentBlockScopeAssociations($schema);
@@ -143,5 +144,27 @@ class AddContentBlockTable implements
     protected function addOroCmsContentBlockScopeAssociations(Schema $schema)
     {
         $this->scopeExtension->addScopeAssociation($schema, 'contentBlock', 'oro_cms_content_block', 'alias');
+    }
+
+    /**
+     * Add oro_cms_content_block foreign keys.
+     *
+     * @param Schema $schema
+     */
+    protected function addOrganizationForeignKeys(Schema $schema)
+    {
+        $table = $schema->getTable('oro_cms_content_block');
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_organization'),
+            ['organization_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL']
+        );
+        $table->addForeignKeyConstraint(
+            $schema->getTable('oro_business_unit'),
+            ['business_unit_owner_id'],
+            ['id'],
+            ['onDelete' => 'SET NULL']
+        );
     }
 }
