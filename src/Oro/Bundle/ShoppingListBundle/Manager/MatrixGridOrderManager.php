@@ -179,7 +179,6 @@ class MatrixGridOrderManager
             /** @var MatrixCollectionColumn $column */
             foreach ($row->columns as $column) {
                 if ($column->product && $column->quantity) {
-
                     $lineItem = new LineItem();
                     $lineItem->setProduct($column->product);
                     $lineItem->setQuantity($column->quantity);
