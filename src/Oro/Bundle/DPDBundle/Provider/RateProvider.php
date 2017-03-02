@@ -7,7 +7,6 @@ use Oro\Bundle\DPDBundle\Entity\Rate;
 use Oro\Bundle\DPDBundle\Entity\Repository\RateRepository;
 use Oro\Bundle\DPDBundle\Entity\ShippingService;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
-use Oro\Bundle\ShippingBundle\Model\Weight;
 use Oro\Bundle\ShippingBundle\Provider\MeasureUnitConversion;
 use Oro\Bundle\DPDBundle\Entity\DPDTransport as DPDTransportEntity;
 
@@ -37,15 +36,13 @@ class RateProvider
      * @param DPDTransportEntity $transport
      * @param ShippingService    $shippingService
      * @param AddressInterface   $shippingAddress
-     * @param $weight weight in kg
      *
      * @return null|string
      */
     public function getRateValue(
         DPDTransportEntity $transport,
         ShippingService $shippingService,
-        AddressInterface $shippingAddress,
-        $weight
+        AddressInterface $shippingAddress
     ) {
         $rateValue = null;
         if ($transport->getRatePolicy() === DPDTransportEntity::FLAT_RATE_POLICY) {

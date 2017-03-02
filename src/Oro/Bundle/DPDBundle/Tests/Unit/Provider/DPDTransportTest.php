@@ -202,7 +202,7 @@ class DPDTransportTest extends \PHPUnit_Framework_TestCase
             ->method('error')
             ->with(
                 sprintf(
-                    'ZipCodeRules REST request failed for transport #%s. %s',
+                    'zipCodeRules REST request failed for transport #%s. %s',
                     $transportEntity->getId(),
                     '404'
                 )

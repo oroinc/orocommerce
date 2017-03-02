@@ -19,14 +19,14 @@ interface DPDHandlerInterface
      *
      * @return null|SetOrderResponse
      */
-    public function shipOrder(Order $order, \DateTime $shipDate = null);
+    public function shipOrder(Order $order, \DateTime $shipDate);
 
     /**
-     * @param \DateTime|null $shipDate
+     * @param \DateTime $shipDate
      *
      * @return \DateTime
      */
-    public function getNextPickupDay(\DateTime $shipDate = null);
+    public function getNextPickupDay(\DateTime $shipDate);
 
     /**
      * @return ZipCodeRulesResponse

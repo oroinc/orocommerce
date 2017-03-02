@@ -12,7 +12,6 @@ use Oro\Bundle\DPDBundle\Provider\PackageProvider;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\DPDBundle\Entity\DPDTransport as DPDSettings;
 use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
-use Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGeneratorInterface;
 
 class DPDHandlerFactory implements DPDHandlerFactoryInterface
 {
@@ -20,11 +19,6 @@ class DPDHandlerFactory implements DPDHandlerFactoryInterface
      * @var DPDMethodTypeIdentifierGeneratorInterface
      */
     private $typeIdentifierGenerator;
-
-    /**
-     * @var IntegrationMethodIdentifierGeneratorInterface
-     */
-    private $methodIdentifierGenerator;
 
     /**
      * @var DPDTransport
@@ -52,17 +46,15 @@ class DPDHandlerFactory implements DPDHandlerFactoryInterface
     private $shippingLineItemConverter;
 
     /**
-     * @param DPDMethodTypeIdentifierGeneratorInterface     $typeIdentifierGenerator
-     * @param IntegrationMethodIdentifierGeneratorInterface $methodIdentifierGenerator
-     * @param DPDTransport                                  $transport
-     * @param PackageProvider                               $packageProvider
-     * @param DPDRequestFactory                             $dpdRequestFactory
-     * @param ZipCodeRulesCache                             $zipCodeRulesCache
-     * @param OrderShippingLineItemConverterInterface       $shippingLineItemConverter
+     * @param DPDMethodTypeIdentifierGeneratorInterface $typeIdentifierGenerator
+     * @param DPDTransport                              $transport
+     * @param PackageProvider                           $packageProvider
+     * @param DPDRequestFactory                         $dpdRequestFactory
+     * @param ZipCodeRulesCache                         $zipCodeRulesCache
+     * @param OrderShippingLineItemConverterInterface   $shippingLineItemConverter
      */
     public function __construct(
         DPDMethodTypeIdentifierGeneratorInterface $typeIdentifierGenerator,
-        IntegrationMethodIdentifierGeneratorInterface $methodIdentifierGenerator,
         DPDTransport $transport,
         PackageProvider $packageProvider,
         DPDRequestFactory $dpdRequestFactory,
@@ -70,7 +62,6 @@ class DPDHandlerFactory implements DPDHandlerFactoryInterface
         OrderShippingLineItemConverterInterface $shippingLineItemConverter
     ) {
         $this->typeIdentifierGenerator = $typeIdentifierGenerator;
-        $this->methodIdentifierGenerator = $methodIdentifierGenerator;
         $this->transport = $transport;
         $this->packageProvider = $packageProvider;
         $this->dpdRequestFactory = $dpdRequestFactory;
@@ -88,7 +79,6 @@ class DPDHandlerFactory implements DPDHandlerFactoryInterface
     {
         return new DPDHandler(
             $this->getIdentifier($channel, $service),
-            $this->methodIdentifierGenerator->generateIdentifier($channel),
             $service,
             $this->getSettings($channel),
             $this->transport,

@@ -92,6 +92,7 @@ class OroDPDBundle implements Migration
         $table = $schema->createTable('oro_dpd_shipping_service');
         $table->addColumn('code', 'string', ['length' => 30]);
         $table->addColumn('description', 'string', ['length' => 255]);
+        $table->addColumn('is_express', 'boolean', ['default' => false]);
         $table->setPrimaryKey(['code']);
     }
 

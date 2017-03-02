@@ -54,6 +54,9 @@ class OrderShippingDPDHandler
     public function shipOrder(Order $order, FormInterface $form)
     {
         $shipDate = $form->get('shipDate')->getData();
+        if (!$shipDate) {
+            return null;
+        }
 
         $result = [];
         $shippingMethod = $this->shippingMethodProvider->getShippingMethod($order->getShippingMethod());

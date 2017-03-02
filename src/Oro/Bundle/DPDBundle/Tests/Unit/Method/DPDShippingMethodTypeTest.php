@@ -132,7 +132,7 @@ class DPDShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
         $lineItems = $this->createMock(ShippingLineItemCollectionInterface::class);
         $context->expects(self::once())->method('getLineItems')->willReturn($lineItems);
         $shippingAddress = $this->createMock(AddressInterface::class);
-        $context->expects(self::once())->method('getShippingAddress')->willReturn($shippingAddress);
+        $context->expects(self::any())->method('getShippingAddress')->willReturn($shippingAddress);
         $context->expects(self::once())->method('getCurrency')->willReturn('USD');
 
         $methodOptions = ['handling_fee' => $methodHandlingFee];

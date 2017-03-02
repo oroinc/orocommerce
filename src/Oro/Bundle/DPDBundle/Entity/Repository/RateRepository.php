@@ -17,7 +17,7 @@ class RateRepository extends EntityRepository
      *
      * @return \Doctrine\ORM\Query
      */
-    public function findRatesByServiceAndDestinationQuery(
+    private function findRatesByServiceAndDestinationQuery(
         DPDTransport $transport,
         ShippingService $shippingService,
         AddressInterface $shippingAddress

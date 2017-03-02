@@ -18,7 +18,8 @@ class LoadShippingServices extends AbstractFixture
             $entity = new ShippingService();
             $entity
                 ->setCode($data['code'])
-                ->setDescription($data['description']);
+                ->setDescription($data['description'])
+                ->setExpressService($data['express']);
 
             $manager->persist($entity);
 

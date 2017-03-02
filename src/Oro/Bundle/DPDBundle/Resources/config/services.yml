@@ -69,7 +69,6 @@ services:
         public: false
         arguments:
             - '@oro_dpd.method.identifier_generator.type'
-            - '@oro_dpd.method.identifier_generator.method'
             - '@oro_dpd.provider.transport'
             - '@oro_dpd.provider.package'
             - '@oro_dpd.factory.dpd_request_factory'
