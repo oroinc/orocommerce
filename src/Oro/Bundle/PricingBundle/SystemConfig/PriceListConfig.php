@@ -67,7 +67,7 @@ class PriceListConfig implements PriceListAwareInterface
      */
     public function setSortOrder($sortOrder)
     {
-        $this->sortOrder = $sortOrder;
+        $this->sortOrder = (int)$sortOrder;
 
         return $this;
     }
