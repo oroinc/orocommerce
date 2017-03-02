@@ -7,7 +7,7 @@ use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 /**
  * @deprecated since 1.1
  *
- * @see Oro\Bundle\PaymentBundle\Method\Provider\CompositePaymentMethodProvider
+ * @see \Oro\Bundle\PaymentBundle\Method\Provider\CompositePaymentMethodProvider
  */
 class PaymentMethodProvidersRegistry implements PaymentMethodProvidersRegistryInterface
 {
