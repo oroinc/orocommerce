@@ -6,6 +6,7 @@ use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityConfigBundle\Migration\RemoveFieldQuery;
 use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
@@ -32,8 +33,7 @@ class OroSaleBundle implements Migration, ExtendExtensionAwareInterface
      */
     public function up(Schema $schema, QueryBag $queries)
     {
-        $table = $schema->getTable('oro_sale_quote');
-        $table->dropColumn('locked');
+        $this->dropLockedColumn($schema, $queries);
 
         $this->addQuoteCustomerStatusField($schema);
         $this->addQuoteInternalStatusField($schema);
@@ -80,10 +80,16 @@ class OroSaleBundle implements Migration, ExtendExtensionAwareInterface
     }
 
     /**
+     * @param Schema $schema
      * @param QueryBag $queries
      */
-    protected function removeUnusedTranslationKeys(QueryBag $queries)
+    protected function dropLockedColumn(Schema $schema, QueryBag $queries)
     {
+        $table = $schema->getTable('oro_sale_quote');
+        $table->dropColumn('locked');
+
+        $queries->addPostQuery(new RemoveFieldQuery('Oro\Bundle\SaleBundle\Entity\Quote', 'locked'));
+
         $data = [
             'messages' => [
                 'oro.sale.quote.locked.label',
