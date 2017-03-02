@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Migrations\Schema\v1_8;
 
 use Doctrine\DBAL\Schema\Schema;
 
+use Oro\Bundle\ConfigBundle\Migration\RenameConfigArrayKeyQuery;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
@@ -36,7 +37,12 @@ class RenamePriority implements Migration, RenameExtensionAwareInterface
         $this->renamePriorityColumn($schema, $queries, 'oro_price_list_to_customer');
         $this->renamePriorityColumn($schema, $queries, 'oro_price_list_to_website');
 
-        $queries->addQuery(new RenameConfigPriorityQuery());
+        $queries->addQuery(new RenameConfigArrayKeyQuery(
+            'default_price_lists',
+            'oro_pricing',
+            self::OLD_COLUMN_NAME,
+            self::NEW_COLUMN_NAME
+        ));
     }
 
     /**
