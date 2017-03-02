@@ -951,3 +951,8 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '%oro_pricing.entity.combined_product_price.class%'
+
+    oro_pricing.shard_manager:
+        class: 'Oro\Bundle\PricingBundle\Sharding\ShardManager'
+        arguments:
+            - '@doctrine'
