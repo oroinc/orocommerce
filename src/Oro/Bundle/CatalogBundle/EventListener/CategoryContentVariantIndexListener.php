@@ -174,6 +174,7 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
                 continue;
             }
             $webCatalogId = $entity->getNode()->getWebCatalog()->getId();
+            // filter for only those websites which have current `$webCatalogId` assigned
             $relatedWebsiteIds = array_filter(
                 $assignedWebCatalogs,
                 function ($relatedWebsiteWebCatalogId) use ($webCatalogId) {
