@@ -5,14 +5,14 @@ namespace Oro\Bundle\DPDBundle\Method;
 interface DPDHandledShippingMethodAwareInterface
 {
     /**
-     * @return DPDHandler[]
+     * @return DPDHandlerInterface[]
      */
     public function getDPDHandlers();
 
     /**
      * @param string $identifier
      *
-     * @return DPDHandler|null
+     * @return DPDHandlerInterface|null
      */
     public function getDPDHandler($identifier);
 }

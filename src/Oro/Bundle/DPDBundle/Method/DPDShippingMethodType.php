@@ -117,6 +117,10 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
      */
     public function calculatePrice(ShippingContextInterface $context, array $methodOptions, array $typeOptions)
     {
+        if (!$context->getShippingAddress()) {
+            return null;
+        }
+
         $packageList = $this->packageProvider->createPackages($context->getLineItems());
         if (!$packageList || count($packageList) !== 1) { //TODO: implement multi package support
             return null;
@@ -125,8 +129,7 @@ class DPDShippingMethodType implements ShippingMethodTypeInterface
         $rateValue = $this->rateProvider->getRateValue(
             $this->transport,
             $this->shippingService,
-            $context->getShippingAddress(),
-            reset($packageList)->getWeight()
+            $context->getShippingAddress()
         );
 
         if ($rateValue === null) {

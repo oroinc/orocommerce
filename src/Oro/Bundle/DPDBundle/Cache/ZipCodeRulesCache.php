@@ -97,18 +97,16 @@ class ZipCodeRulesCache
     /**
      * @param DPDTransport        $transport
      * @param ZipCodeRulesRequest $zipCodeRulesRequest
-     * @param string              $methodId
      *
      * @return ZipCodeRulesCacheKey
      */
     public function createKey(
         DPDTransport $transport,
-        ZipCodeRulesRequest $zipCodeRulesRequest,
-        $methodId
+        ZipCodeRulesRequest $zipCodeRulesRequest
     ) {
-        return (new ZipCodeRulesCacheKey())->setTransport($transport)
-            ->setZipCodeRulesRequest($zipCodeRulesRequest)
-            ->setMethodId($methodId);
+        return (new ZipCodeRulesCacheKey())
+            ->setTransport($transport)
+            ->setZipCodeRulesRequest($zipCodeRulesRequest);
     }
 
     /**

@@ -20,11 +20,6 @@ class DPDHandler implements DPDHandlerInterface
     protected $identifier;
 
     /**
-     * @var string
-     */
-    protected $methodId;
-
-    /**
      * @var DPDSettings
      */
     protected $transport;
@@ -64,7 +59,6 @@ class DPDHandler implements DPDHandlerInterface
 
     /**
      * @param $identifier
-     * @param string                                  $methodId
      * @param ShippingService                         $shippingService
      * @param DPDSettings                             $transport
      * @param DPDTransportProvider                    $transportProvider
@@ -76,7 +70,6 @@ class DPDHandler implements DPDHandlerInterface
      */
     public function __construct(
         $identifier,
-        $methodId,
         ShippingService $shippingService,
         DPDSettings $transport,
         DPDTransportProvider $transportProvider,
@@ -87,7 +80,6 @@ class DPDHandler implements DPDHandlerInterface
         \DateTime $today = null
     ) {
         $this->identifier = $identifier;
-        $this->methodId = $methodId;
         $this->shippingService = $shippingService;
         $this->transport = $transport;
         $this->transportProvider = $transportProvider;
@@ -110,12 +102,12 @@ class DPDHandler implements DPDHandlerInterface
     }
 
     /**
-     * @param Order          $order
-     * @param \DateTime|null $shipDate
+     * @param Order     $order
+     * @param \DateTime $shipDate
      *
      * @return null|SetOrderResponse
      */
-    public function shipOrder(Order $order, \DateTime $shipDate = null)
+    public function shipOrder(Order $order, \DateTime $shipDate)
     {
         $convertedLineItems = $this->shippingLineItemConverter->convertLineItems($order->getLineItems());
         $packageList = $this->packageProvider->createPackages($convertedLineItems);
@@ -134,12 +126,7 @@ class DPDHandler implements DPDHandlerInterface
             $packageList
         );
 
-        try {
-            $setOrderResponse =
-                $this->transportProvider->getSetOrderResponse($setOrderRequest, $this->transport);
-        } catch (\InvalidArgumentException $e) {
-            return null;
-        }
+        $setOrderResponse = $this->transportProvider->getSetOrderResponse($setOrderRequest, $this->transport);
 
         return $setOrderResponse;
     }
@@ -149,7 +136,7 @@ class DPDHandler implements DPDHandlerInterface
      *
      * @return \DateTime
      */
-    public function getNextPickupDay(\DateTime $shipDate = null)
+    public function getNextPickupDay(\DateTime $shipDate)
     {
         while (($addHint = $this->checkShipDate($shipDate)) !== 0) {
             $shipDate->add(new \DateInterval('P'.$addHint.'D'));
@@ -178,9 +165,9 @@ class DPDHandler implements DPDHandlerInterface
             list($cutOffHour, $cutOffMin) =
                 explode(
                     ':',
-                    $this->shippingService->isClassicService() ?
-                        $zipCodeRulesResponse->getClassicCutOff() :
-                        $zipCodeRulesResponse->getExpressCutOff()
+                    $this->shippingService->isExpressService() ?
+                        $zipCodeRulesResponse->getExpressCutOff() :
+                        $zipCodeRulesResponse->getClassicCutOff()
                 );
             $cutOffDate->setTime((int) $cutOffHour, $cutOffMin);
             if ($shipDate > $cutOffDate) {
@@ -211,7 +198,7 @@ class DPDHandler implements DPDHandlerInterface
     public function fetchZipCodeRules()
     {
         $zipCodeRulesRequest = $this->dpdRequestFactory->createZipCodeRulesRequest();
-        $cacheKey = $this->zipCodeRulesCache->createKey($this->transport, $zipCodeRulesRequest, $this->methodId);
+        $cacheKey = $this->zipCodeRulesCache->createKey($this->transport, $zipCodeRulesRequest);
 
         if ($this->zipCodeRulesCache->containsZipCodeRules($cacheKey)) {
             return $this->zipCodeRulesCache->fetchZipCodeRules($cacheKey);

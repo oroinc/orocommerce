@@ -29,6 +29,13 @@ class ShippingService
     protected $description;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="is_express", type="boolean")
+     */
+    protected $expressService;
+
+    /**
      * @return string
      */
     public function getCode()
@@ -69,11 +76,15 @@ class ShippingService
     }
 
     /**
-     * @return bool
+     * @param bool $isExpressService
+     *
+     * @return $this
      */
-    public function isClassicService()
+    public function setExpressService($isExpressService)
     {
-        return substr($this->code, 0, strlen(static::CLASSIC_SERVICE_SUBSTR)) === static::CLASSIC_SERVICE_SUBSTR;
+        $this->expressService = $isExpressService;
+
+        return $this;
     }
 
     /**
@@ -81,7 +92,7 @@ class ShippingService
      */
     public function isExpressService()
     {
-        return substr($this->code, 0, strlen(static::EXPRESS_SERVICE_SUBSTR)) === static::EXPRESS_SERVICE_SUBSTR;
+        return $this->expressService;
     }
 
     /**

@@ -2,7 +2,7 @@
     {% spaceless %}
         {{ form_widget(form) }}
         {% set transportId = form.parent.vars.value.id %}
-        {% if transportId is not null %}
+        {% if transportId is not null and form.vars.rates_count is defined and form.vars.rates_count > 0 %}
         <div class="oro_attachment_file">
             <a href="{{ path('oro_dpd_rates_download', {id: transportId}) }}" class="no-hash filename" download>
                 {{ form.vars.download_csv_label|trans }}

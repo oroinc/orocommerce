@@ -61,7 +61,8 @@ class LoadShippingServicesData extends AbstractFixture implements ContainerAware
             $shippingService = new ShippingService();
             $shippingService
                 ->setCode($row['code'])
-                ->setDescription($row['description']);
+                ->setDescription($row['description'])
+                ->setExpressService((bool) $row['is_express']);
 
             $manager->persist($shippingService);
         }

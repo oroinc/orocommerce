@@ -14,6 +14,7 @@ class ShippingServiceTest extends \PHPUnit_Framework_TestCase
         static::assertPropertyAccessors(new ShippingService(), [
             ['code', 'some code'],
             ['description', 'some description'],
+            ['expressService', false],
         ]);
     }
 
@@ -24,17 +25,13 @@ class ShippingServiceTest extends \PHPUnit_Framework_TestCase
         static::assertEquals('DPD Classic', (string) $entity);
     }
 
-    public function testIsClassic()
-    {
-        $entity = new ShippingService();
-        $entity->setCode('Classic')->setDescription('DPD Classic');
-        static::assertTrue($entity->isClassicService());
-    }
-
     public function testIsExpress()
     {
         $entity = new ShippingService();
-        $entity->setCode('Express_830')->setDescription('DPD Express');
+        $entity
+            ->setCode('Express_830')
+            ->setDescription('DPD Express')
+            ->setExpressService(true);
         static::assertTrue($entity->isExpressService());
     }
 }

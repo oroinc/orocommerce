@@ -7,7 +7,6 @@ use Oro\Bundle\DPDBundle\Method\Factory\DPDHandlerFactory;
 use Oro\Bundle\DPDBundle\Provider\PackageProvider;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\OrderBundle\Converter\OrderShippingLineItemConverterInterface;
-use Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGeneratorInterface;
 use Oro\Bundle\DPDBundle\Cache\ZipCodeRulesCache;
 use Oro\Bundle\DPDBundle\Entity\ShippingService;
 use Oro\Bundle\DPDBundle\Entity\DPDTransport as DPDSettings;
@@ -22,11 +21,6 @@ class DPDHandlerFactoryTest extends \PHPUnit_Framework_TestCase
      * @var DPDMethodTypeIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $typeIdentifierGenerator;
-
-    /**
-     * @var IntegrationMethodIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $methodIdentifierGenerator;
 
     /**
      * @var DPDTransport|\PHPUnit_Framework_MockObject_MockObject
@@ -61,7 +55,6 @@ class DPDHandlerFactoryTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->typeIdentifierGenerator = $this->createMock(DPDMethodTypeIdentifierGeneratorInterface::class);
-        $this->methodIdentifierGenerator = $this->createMock(IntegrationMethodIdentifierGeneratorInterface::class);
         $this->transport = $this->createMock(DPDTransport::class);
         $this->packageProvider = $this->createMock(PackageProvider::class);
         $this->dpdRequestFactory = $this->createMock(DPDRequestFactory::class);
@@ -70,7 +63,6 @@ class DPDHandlerFactoryTest extends \PHPUnit_Framework_TestCase
 
         $this->factory = new DPDHandlerFactory(
             $this->typeIdentifierGenerator,
-            $this->methodIdentifierGenerator,
             $this->transport,
             $this->packageProvider,
             $this->dpdRequestFactory,
@@ -96,11 +88,6 @@ class DPDHandlerFactoryTest extends \PHPUnit_Framework_TestCase
         /** @var ShippingService|\PHPUnit_Framework_MockObject_MockObject $service */
         $service = $this->createMock(ShippingService::class);
 
-        $this->methodIdentifierGenerator->expects($this->once())
-            ->method('generateIdentifier')
-            ->with($channel)
-            ->willReturn($methodId);
-
         $this->typeIdentifierGenerator->expects($this->once())
             ->method('generateIdentifier')
             ->with($channel, $service)
@@ -108,7 +95,6 @@ class DPDHandlerFactoryTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals(new DPDHandler(
             $identifier,
-            $methodId,
             $service,
             $settings,
             $this->transport,

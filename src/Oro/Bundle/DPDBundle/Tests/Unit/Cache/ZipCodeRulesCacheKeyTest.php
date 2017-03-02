@@ -18,7 +18,6 @@ class ZipCodeRulesCacheKeyTest extends \PHPUnit_Framework_TestCase
         self::assertPropertyAccessors(new ZipCodeRulesCacheKey(), [
             ['transport', $this->getEntity(DPDTransport::class, ['id' => 1])],
             ['zipCodeRulesRequest', new ZipCodeRulesRequest()],
-            ['methodId', 'method'],
         ]);
     }
 
@@ -31,13 +30,6 @@ class ZipCodeRulesCacheKeyTest extends \PHPUnit_Framework_TestCase
         $request2 = new ZipCodeRulesRequest();
         $key2->setZipCodeRulesRequest($request2);
 
-        $this->assertKeysEquals($key1, $key2);
-
-        $key1->setMethodId('method1');
-        $this->assertKeysNotEquals($key1, $key2);
-        $key2->setMethodId('method2');
-        $this->assertKeysNotEquals($key1, $key2);
-        $key2->setMethodId('method1');
         $this->assertKeysEquals($key1, $key2);
 
         $key1->setTransport($this->getEntity(DPDTransport::class, ['id' => 1]));

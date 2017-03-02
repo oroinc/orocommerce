@@ -39,11 +39,6 @@ class DPDHandlerTest extends \PHPUnit_Framework_TestCase
     const LABEL = 'service_code_label';
 
     /**
-     * @var string
-     */
-    protected $methodId = 'shipping_method';
-
-    /**
      * @var DPDTransport|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $transport;
@@ -115,7 +110,6 @@ class DPDHandlerTest extends \PHPUnit_Framework_TestCase
 
         $this->dpdHandler = new DPDHandler(
             self::IDENTIFIER,
-            $this->methodId,
             $this->shippingService,
             $this->transport,
             $this->transportProvider,
@@ -194,12 +188,11 @@ class DPDHandlerTest extends \PHPUnit_Framework_TestCase
 
         $cacheKey = (new ZipCodeRulesCacheKey())
             ->setTransport($this->transport)
-            ->setZipCodeRulesRequest($request)
-            ->setMethodId($this->methodId);
+            ->setZipCodeRulesRequest($request);
 
         $this->cache->expects(static::once())
             ->method('createKey')
-            ->with($this->transport, $request, $this->methodId)
+            ->with($this->transport, $request)
             ->willReturn($cacheKey);
 
         $this->cache->expects(static::once())
@@ -216,7 +209,7 @@ class DPDHandlerTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param $shipDate
-     * @param $isClassicService
+     * @param $isExpressService
      * @param $classicCutOff
      * @param $expressCutOff
      * @param $noPickupDays
@@ -225,7 +218,7 @@ class DPDHandlerTest extends \PHPUnit_Framework_TestCase
      */
     public function testGetNextPickupDay(
         $shipDate,
-        $isClassicService,
+        $isExpressService,
         $classicCutOff,
         $expressCutOff,
         $noPickupDays,
@@ -233,8 +226,8 @@ class DPDHandlerTest extends \PHPUnit_Framework_TestCase
     ) {
         $this->shippingService
             ->expects(self::any())
-            ->method('isClassicService')
-            ->willReturn($isClassicService);
+            ->method('isExpressService')
+            ->willReturn($isExpressService);
 
         /** @var ZipCodeRulesRequest|\PHPUnit_Framework_MockObject_MockObject $request */
         $request = $this->createMock(ZipCodeRulesRequest::class);
@@ -262,12 +255,11 @@ class DPDHandlerTest extends \PHPUnit_Framework_TestCase
 
         $cacheKey = (new ZipCodeRulesCacheKey())
             ->setTransport($this->transport)
-            ->setZipCodeRulesRequest($request)
-            ->setMethodId($this->methodId);
+            ->setZipCodeRulesRequest($request);
 
         $this->cache->expects(static::any())
             ->method('createKey')
-            ->with($this->transport, $request, $this->methodId)
+            ->with($this->transport, $request)
             ->willReturn($cacheKey);
 
         $this->cache->expects(static::any())
@@ -288,7 +280,7 @@ class DPDHandlerTest extends \PHPUnit_Framework_TestCase
         return [
             'classic_today_before_cutoff' => [
                 'shipDate' => new \DateTime('2017-01-30 00:00'),
-                'isClassicService' => true,
+                'isExpressService' => false,
                 'classicCutOff' => '18:00',
                 'expressCutOff' => null,
                 'noPickupDays' => [],
@@ -296,7 +288,7 @@ class DPDHandlerTest extends \PHPUnit_Framework_TestCase
             ],
             'classic_today_after_cutoff' => [
                 'shipDate' => new \DateTime('2017-01-30 19:00'),
-                'isClassicService' => true,
+                'isExpressService' => false,
                 'classicCutOff' => '18:00',
                 'expressCutOff' => null,
                 'noPickupDays' => [],
@@ -304,15 +296,31 @@ class DPDHandlerTest extends \PHPUnit_Framework_TestCase
             ],
             'classic_today_after_cutoff_next_day_no_pickup' => [
                 'shipDate' => new \DateTime('2017-01-30 19:00'),
-                'isClassicService' => true,
+                'isExpressService' => false,
                 'classicCutOff' => '18:00',
                 'expressCutOff' => null,
                 'noPickupDays' => ['2017-01-31'],
                 'expectedResult' => new \DateTime('2017-02-01 19:00'),
             ],
+            'express_today_before_cutoff' => [
+                'shipDate' => new \DateTime('2017-01-30 00:00'),
+                'isExpressService' => true,
+                'classicCutOff' => '18:00',
+                'expressCutOff' => '18:00',
+                'noPickupDays' => [],
+                'expectedResult' => new \DateTime('2017-01-30 00:00'),
+            ],
+            'express_today_after_cutoff' => [
+                'shipDate' => new \DateTime('2017-01-30 19:00'),
+                'isExpressService' => true,
+                'classicCutOff' => '18:00',
+                'expressCutOff' => '18:00',
+                'noPickupDays' => [],
+                'expectedResult' => new \DateTime('2017-01-31 19:00'),
+            ],
             'pickup_day' => [
                 'shipDate' => new \DateTime('2017-01-31 00:00'),
-                'isClassicService' => true,
+                'isExpressService' => false,
                 'classicCutOff' => null,
                 'expressCutOff' => null,
                 'noPickupDays' => [],
@@ -320,7 +328,7 @@ class DPDHandlerTest extends \PHPUnit_Framework_TestCase
             ],
             'no_pickup_day' => [
                 'shipDate' => new \DateTime('2017-01-31 00:00'),
-                'isClassicService' => true,
+                'isExpressService' => false,
                 'classicCutOff' => null,
                 'expressCutOff' => null,
                 'noPickupDays' => ['2017-01-31'],
@@ -328,7 +336,7 @@ class DPDHandlerTest extends \PHPUnit_Framework_TestCase
             ],
             'saturday' => [
                 'shipDate' => new \DateTime('2017-02-04 00:00'),
-                'isClassicService' => true,
+                'isExpressService' => false,
                 'classicCutOff' => null,
                 'expressCutOff' => null,
                 'noPickupDays' => [],
@@ -336,7 +344,7 @@ class DPDHandlerTest extends \PHPUnit_Framework_TestCase
             ],
             'saturday_then_monday_no_pickup' => [
                 'shipDate' => new \DateTime('2017-02-04 00:00'),
-                'isClassicService' => true,
+                'isExpressService' => false,
                 'classicCutOff' => null,
                 'expressCutOff' => null,
                 'noPickupDays' => ['2017-02-06'],
@@ -344,7 +352,7 @@ class DPDHandlerTest extends \PHPUnit_Framework_TestCase
             ],
             'sunday' => [
                 'shipDate' => new \DateTime('2017-02-05 00:00'),
-                'isClassicService' => true,
+                'isExpressService' => false,
                 'classicCutOff' => null,
                 'expressCutOff' => null,
                 'noPickupDays' => [],

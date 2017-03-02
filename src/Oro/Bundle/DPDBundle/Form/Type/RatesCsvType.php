@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\DPDBundle\Form\Type;
 
+use Oro\Bundle\DPDBundle\Entity\DPDTransport;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\FormInterface;
@@ -19,6 +20,9 @@ class RatesCsvType extends AbstractType
      */
     public function buildView(FormView $view, FormInterface $form, array $options)
     {
+        $transportSettings = $form->getParent()->getData();
+        $view->vars['rates_count'] =
+            ($transportSettings instanceof DPDTransport) ? count($transportSettings->getRates()) : 0;
         $view->vars['download_csv_label'] = $options['download_csv_label'];
     }
 

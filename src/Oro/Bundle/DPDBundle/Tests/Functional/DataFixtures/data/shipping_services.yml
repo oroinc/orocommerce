@@ -1,11 +1,14 @@
 dpd.shipping_service.1:
     code: 'Classic'
     description: 'DPD Classic'
+    express: 0
 
 dpd.shipping_service.2:
     code: 'Express_830'
     description: 'DPD Express 8:30'
+    express: 1
 
 dpd.shipping_service.3:
     code: 'Express_1200'
     description: 'DPD Express 12:00'
+    express: 1

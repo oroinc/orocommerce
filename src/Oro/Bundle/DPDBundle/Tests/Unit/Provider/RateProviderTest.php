@@ -64,7 +64,7 @@ class RateProviderTest extends \PHPUnit_Framework_TestCase
 
         static::assertEquals(
             '1.0',
-            $this->rateProvider->getRateValue($this->transport, new ShippingService(), new OrderAddress(), null)
+            $this->rateProvider->getRateValue($this->transport, new ShippingService(), new OrderAddress())
         );
     }
 
@@ -85,7 +85,7 @@ class RateProviderTest extends \PHPUnit_Framework_TestCase
 
         static::assertEquals(
             '1.0',
-            $this->rateProvider->getRateValue($this->transport, new ShippingService(), new OrderAddress(), null)
+            $this->rateProvider->getRateValue($this->transport, new ShippingService(), new OrderAddress())
         );
     }
 }

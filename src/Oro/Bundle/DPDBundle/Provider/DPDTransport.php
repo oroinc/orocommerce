@@ -104,8 +104,6 @@ class DPDTransport extends AbstractRestTransport
      * @param Transport       $transportEntity
      *
      * @return null|SetOrderResponse
-     *
-     * @throws \InvalidArgumentException
      */
     public function getSetOrderResponse(SetOrderRequest $setOrderRequest, Transport $transportEntity)
     {
@@ -134,6 +132,14 @@ class DPDTransport extends AbstractRestTransport
                     $restException->getMessage()
                 )
             );
+        } catch (\InvalidArgumentException $e) {
+            $this->logger->error(
+                sprintf(
+                    'setOrder REST request failed for transport #%s. %s',
+                    $transportEntity->getId(),
+                    $e->getMessage()
+                )
+            );
         }
 
         return null;
@@ -143,8 +149,6 @@ class DPDTransport extends AbstractRestTransport
      * @param Transport $transportEntity
      *
      * @return null|ZipCodeRulesResponse
-     *
-     * @throws \InvalidArgumentException
      */
     public function getZipCodeRulesResponse(Transport $transportEntity)
     {
@@ -167,9 +171,17 @@ class DPDTransport extends AbstractRestTransport
         } catch (RestException $restException) {
             $this->logger->error(
                 sprintf(
-                    'ZipCodeRules REST request failed for transport #%s. %s',
+                    'zipCodeRules REST request failed for transport #%s. %s',
                     $transportEntity->getId(),
                     $restException->getMessage()
+                )
+            );
+        } catch (\InvalidArgumentException $e) {
+            $this->logger->error(
+                sprintf(
+                    'zipCodeRules REST request failed for transport #%s. %s',
+                    $transportEntity->getId(),
+                    $e->getMessage()
                 )
             );
         }
