@@ -8,6 +8,8 @@ use Doctrine\ORM\UnitOfWork;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 
+use Oro\Component\WebCatalog\Entity\ContentNodeAwareInterface;
+use Oro\Component\WebCatalog\Entity\WebCatalogAwareInterface;
 use Oro\Component\DoctrineUtils\ORM\ChangedEntityGeneratorTrait;
 use Oro\Component\DoctrineUtils\ORM\FieldUpdatesChecker;
 use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
@@ -153,16 +155,16 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
         }
 
         $assignedWebCatalogs = $this->webCatalogUsageProvider->getAssignedWebCatalogs();
+
+        if (count($assignedWebCatalogs) === 0) {
+            return;
+        }
+
         foreach ($entities as $entity) {
-            if (!$entity instanceof ContentVariantInterface
-                || $entity->getType() !== ProductPageContentVariantType::TYPE) {
+            if (!$this->isValidContentVariantEntity($entity)) {
                 continue;
             }
             $webCatalogId = $entity->getNode()->getWebCatalog()->getId();
-            if (count($assignedWebCatalogs) === 1 && array_key_exists('0', $assignedWebCatalogs)) {
-                $websitesId = [];
-                return;
-            }
             $relatedWebsiteIds = array_filter(
                 $assignedWebCatalogs,
                 function ($relatedWebsiteWebCatalogId) use ($webCatalogId) {
@@ -176,15 +178,38 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
     }
 
     /**
+     * @param mixed $entity
+     * @return bool
+     */
+    private function isValidContentVariantEntity($entity)
+    {
+        if (!$entity instanceof ContentVariantInterface
+            || !$entity instanceof ContentNodeAwareInterface
+            || $entity->getType() !== ProductPageContentVariantType::TYPE) {
+            return false;
+        }
+
+        $contentNode = $entity->getNode();
+
+        if (!$contentNode instanceof WebCatalogAwareInterface) {
+            return false;
+        }
+
+        return true;
+    }
+
+    /**
      * @param array $productIds
      * @param array $websiteIds
      */
-    private function triggerReindex(array $productIds, $websiteIds)
+    private function triggerReindex(array $productIds, array $websiteIds)
     {
-        if ($productIds) {
-            $event = new ReindexationRequestEvent([Product::class], $websiteIds, $productIds);
-            $this->eventDispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $event);
+        if (count($productIds) === 0 || count($websiteIds) === 0) {
+            return;
         }
+
+        $event = new ReindexationRequestEvent([Product::class], $websiteIds, $productIds);
+        $this->eventDispatcher->dispatch(ReindexationRequestEvent::EVENT_NAME, $event);
     }
 
     /**

@@ -2,7 +2,11 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Provider;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
+use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
 use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
 
@@ -16,11 +20,18 @@ class WebCatalogUsageProvider implements WebCatalogUsageProviderInterface
     protected $configManager;
 
     /**
-     * @param ConfigManager     $configManager
+     * @var ManagerRegistry
      */
-    public function __construct(ConfigManager $configManager)
+    protected $managerRegistry;
+
+    /**
+     * @param ConfigManager   $configManager
+     * @param ManagerRegistry $managerRegistry
+     */
+    public function __construct(ConfigManager $configManager, ManagerRegistry $managerRegistry)
     {
         $this->configManager = $configManager;
+        $this->managerRegistry = $managerRegistry;
     }
 
     /**
@@ -38,8 +49,23 @@ class WebCatalogUsageProvider implements WebCatalogUsageProviderInterface
      */
     public function getAssignedWebCatalogs(array $entities = [])
     {
+        $webCatalogId = (int)$this->configManager->get(static::SETTINGS_KEY);
+
+        if (!$webCatalogId) {
+            return [];
+        }
+
         return [
-            0 => (int)$this->configManager->get(static::SETTINGS_KEY)
+            $this->getWebsiteRepository()->getDefaultWebsite()->getId() => $webCatalogId
         ];
+    }
+
+    /**
+     * @return WebsiteRepository
+     */
+    protected function getWebsiteRepository()
+    {
+        /** @var WebsiteRepository $websiteRepository */
+        return $this->managerRegistry->getManagerForClass(Website::class)->getRepository(Website::class);
     }
 }

@@ -25,9 +25,4 @@ interface ContentNodeInterface
      * @return boolean
      */
     public function isRewriteVariantTitle();
-
-    /**
-     * @return WebCatalogInterface
-     */
-    public function getWebCatalog();
 }

@@ -8,6 +8,8 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\UnitOfWork;
 use Doctrine\ORM\Event\OnFlushEventArgs;
 
+use Oro\Component\WebCatalog\Entity\ContentNodeAwareInterface;
+use Oro\Component\WebCatalog\Entity\WebCatalogAwareInterface;
 use Oro\Component\DoctrineUtils\ORM\ChangedEntityGeneratorTrait;
 use Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface;
 use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ContentNodeFieldsChangesAwareInterface;
@@ -115,9 +117,7 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
             $this->collectWebsiteIds([$entity], $websiteIds);
         }
 
-        if ($categories) {
-            $this->scheduleProductsReindex($categories, $websiteIds);
-        }
+        $this->scheduleProductsReindex($categories, $websiteIds);
     }
 
     /**
@@ -164,16 +164,16 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
         }
 
         $assignedWebCatalogs = $this->webCatalogUsageProvider->getAssignedWebCatalogs();
+
+        if (count($assignedWebCatalogs) === 0) {
+            return;
+        }
+
         foreach ($entities as $entity) {
-            if (!$entity instanceof ContentVariantInterface
-                || $entity->getType() !== CategoryPageContentVariantType::TYPE) {
+            if (!$this->isValidContentVariantEntity($entity)) {
                 continue;
             }
             $webCatalogId = $entity->getNode()->getWebCatalog()->getId();
-            if (count($assignedWebCatalogs) === 1 && array_key_exists('0', $assignedWebCatalogs)) {
-                $websitesId = [];
-                return;
-            }
             $relatedWebsiteIds = array_filter(
                 $assignedWebCatalogs,
                 function ($relatedWebsiteWebCatalogId) use ($webCatalogId) {
@@ -184,6 +184,27 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
                 $websitesId = array_unique(array_merge($websitesId, array_keys($relatedWebsiteIds)));
             }
         }
+    }
+
+    /**
+     * @param mixed $entity
+     * @return bool
+     */
+    private function isValidContentVariantEntity($entity)
+    {
+        if (!$entity instanceof ContentVariantInterface
+            || !$entity instanceof ContentNodeAwareInterface
+            || $entity->getType() !== CategoryPageContentVariantType::TYPE) {
+            return false;
+        }
+
+        $contentNode = $entity->getNode();
+
+        if (!$contentNode instanceof WebCatalogAwareInterface) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -204,9 +225,7 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
      */
     private function scheduleProductsReindex(array $categories, array $websiteIds = [])
     {
-        if (count($websiteIds) === 0) {
-            $this->indexScheduler->scheduleProductsReindex($categories);
-
+        if (count($categories) === 0 || count($websiteIds) === 0) {
             return;
         }
 

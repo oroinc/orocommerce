@@ -4,9 +4,10 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub;
 
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
+use Oro\Component\WebCatalog\Entity\WebCatalogAwareInterface;
 use Oro\Component\WebCatalog\Entity\WebCatalogInterface;
 
-class ContentNodeStub implements ContentNodeInterface
+class ContentNodeStub implements ContentNodeInterface, WebCatalogAwareInterface
 {
     /**
      * @var int

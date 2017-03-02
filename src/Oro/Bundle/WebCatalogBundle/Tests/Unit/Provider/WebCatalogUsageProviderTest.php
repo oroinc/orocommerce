@@ -2,9 +2,13 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Provider;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Provider\WebCatalogUsageProvider;
+use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class WebCatalogUsageProviderTest extends \PHPUnit_Framework_TestCase
@@ -14,12 +18,17 @@ class WebCatalogUsageProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $configManager;
+    private $configManager;
 
     /**
      * @var WebCatalogUsageProvider
      */
-    protected $provider;
+    private $provider;
+
+    /**
+     * @var WebsiteRepository|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $repository;
 
     protected function setUp()
     {
@@ -27,7 +36,27 @@ class WebCatalogUsageProviderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->provider = new WebCatalogUsageProvider($this->configManager);
+        $this->repository = $this->getMockBuilder(WebsiteRepository::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $doctrine = $this->getMockBuilder(ManagerRegistry::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $entityManager = $this->getMockBuilder(EntityManagerInterface::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $doctrine->method('getManagerForClass')
+            ->with(Website::class)
+            ->willReturn($entityManager);
+
+        $entityManager->method('getRepository')
+            ->with(Website::class)
+            ->willReturn($this->repository);
+
+        $this->provider = new WebCatalogUsageProvider($this->configManager, $doctrine);
     }
 
     /**
@@ -46,6 +75,11 @@ class WebCatalogUsageProviderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($isInUse, $this->provider->isInUse($webCatalog));
     }
 
+    public function testNoWebCatalogsAssigned()
+    {
+        $this->assertEquals([], $this->provider->getAssignedWebCatalogs());
+    }
+
     /**
      * @dataProvider getAssignedWebCatalogsDataProvider
      * @param int|null $configuredCatalogId
@@ -57,7 +91,11 @@ class WebCatalogUsageProviderTest extends \PHPUnit_Framework_TestCase
             ->with(WebCatalogUsageProvider::SETTINGS_KEY)
             ->willReturn($configuredCatalogId);
 
-        $this->assertEquals([0 => $configuredCatalogId], $this->provider->getAssignedWebCatalogs());
+        $this->repository->expects($this->any())
+            ->method('getDefaultWebsite')
+            ->willReturn($this->getEntity(Website::class, ['id' => 1]));
+
+        $this->assertEquals([1 => $configuredCatalogId], $this->provider->getAssignedWebCatalogs());
     }
 
     /**
@@ -100,7 +138,7 @@ class WebCatalogUsageProviderTest extends \PHPUnit_Framework_TestCase
     public function getAssignedWebCatalogsDataProvider()
     {
         return [
-            [2], [null], [false]
+            [2], [1]
         ];
     }
 }
