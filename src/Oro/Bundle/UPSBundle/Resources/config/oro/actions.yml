@@ -107,7 +107,7 @@ operations:
                 attribute: $.linkGrid
                 service: oro_shipping.helper.filtered_datagrid_route
                 method: generate
-                method_parameters:  [{'methodsConfigs': $.methodIdentifier}]
+                method_parameters:  [{'methodConfigs': $.methodIdentifier}]
         preconditions:
             '@and':
                 - '@equal': [$type, $.upsType]

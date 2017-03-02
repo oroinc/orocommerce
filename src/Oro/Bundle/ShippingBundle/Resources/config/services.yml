@@ -296,6 +296,15 @@ services:
             - { name: oro_workflow.condition, alias: 'has_applicable_shipping_methods' }
             - { name: oro_action.condition, alias: 'has_applicable_shipping_methods' }
 
+    oro_shipping.condition.shipping_method_has_shipping_rules:
+        class: 'Oro\Bundle\ShippingBundle\Condition\ShippingMethodHasShippingRules'
+        public: false
+        arguments:
+            - '@oro_shipping.repository.shipping_methods_configs_rule'
+        tags:
+            - { name: oro_workflow.condition, alias: 'shipping_method_has_shipping_rules' }
+            - { name: oro_action.condition, alias: 'shipping_method_has_shipping_rules' }
+
     oro_shipping.shipping_context.cache_key_generator:
         class: 'Oro\Bundle\ShippingBundle\Context\ShippingContextCacheKeyGenerator'
         public: false
@@ -417,3 +426,17 @@ services:
         class: 'Oro\Bundle\ShippingBundle\Checker\ShippingRuleEnabledChecker'
         arguments:
             - '@oro_shipping.checker.shipping_method_enabled'
+
+    oro_shipping.method_disable_handler.basic:
+        class: 'Oro\Bundle\ShippingBundle\Method\Handler\BasicShippingMethodDisableHandler'
+        public: false
+
+    oro_shipping.method_disable_handler.decorator:
+        class: 'Oro\Bundle\ShippingBundle\Method\Handler\RulesShippingMethodDisableHandlerDecorator'
+        decorates: oro_shipping.method_disable_handler.basic
+        decoration_priority: 255
+        public: false
+        arguments:
+            - '@oro_shipping.method_disable_handler.decorator.inner'
+            - '@oro_shipping.repository.shipping_methods_configs_rule'
+            - '@oro_shipping.shipping_method.registry'
