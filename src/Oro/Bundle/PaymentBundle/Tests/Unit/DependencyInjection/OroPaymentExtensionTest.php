@@ -30,6 +30,7 @@ class OroPaymentExtensionTest extends ExtensionTestCase
             'oro_payment.mass_action.status.enable',
             'oro_payment.mass_action.status.disable',
             'oro_payment.mass_action.status_handler',
+            'oro_payment.action.capture_payment_transaction'
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }

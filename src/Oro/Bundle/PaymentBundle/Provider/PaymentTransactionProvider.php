@@ -126,7 +126,7 @@ class PaymentTransactionProvider
         /** @var PaymentTransactionRepository $repository */
         $repository = $this->doctrineHelper->getEntityRepository(PaymentTransaction::class);
         $methods = $repository->getPaymentMethods($className, [$identifier]);
-        
+
         return isset($methods[$identifier]) ? $methods[$identifier] : [];
     }
 
@@ -188,14 +188,33 @@ class PaymentTransactionProvider
         $className = $this->doctrineHelper->getEntityClass($object);
         $identifier = $this->doctrineHelper->getSingleEntityIdentifier($object);
 
-        /** @var PaymentTransaction $paymentTransaction */
-        $paymentTransaction = new $this->paymentTransactionClass;
-        $paymentTransaction
+        $paymentTransaction = $this->createEmptyPaymentTransaction()
             ->setPaymentMethod($paymentMethod)
             ->setAction($type)
             ->setEntityClass($className)
             ->setEntityIdentifier($identifier)
             ->setFrontendOwner($this->getLoggedCustomerUser());
+
+        return $paymentTransaction;
+    }
+
+    /**
+     * @param string             $action
+     * @param PaymentTransaction $paymentTransaction
+     *
+     * @return PaymentTransaction
+     */
+    public function createPaymentTransactionByParentTransaction($action, PaymentTransaction $paymentTransaction)
+    {
+        $paymentTransaction = $this->createEmptyPaymentTransaction()
+            ->setAction($action)
+            ->setPaymentMethod($paymentTransaction->getPaymentMethod())
+            ->setEntityClass($paymentTransaction->getEntityClass())
+            ->setEntityIdentifier($paymentTransaction->getEntityIdentifier())
+            ->setAmount($paymentTransaction->getAmount())
+            ->setCurrency($paymentTransaction->getCurrency())
+            ->setFrontendOwner($this->getLoggedCustomerUser())
+            ->setSourcePaymentTransaction($paymentTransaction);
 
         return $paymentTransaction;
     }
@@ -222,5 +241,13 @@ class PaymentTransactionProvider
                 $this->logger->error($e->getMessage(), $e->getTrace());
             }
         }
+    }
+
+    /**
+     * @return PaymentTransaction
+     */
+    private function createEmptyPaymentTransaction()
+    {
+        return new $this->paymentTransactionClass();
     }
 }
