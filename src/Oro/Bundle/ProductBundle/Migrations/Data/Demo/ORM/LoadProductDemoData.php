@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
+use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
@@ -13,6 +14,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 use Oro\Bundle\RedirectBundle\Async\Topics;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
@@ -114,6 +116,12 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
                 ->addDescription($description)
                 ->addShortDescription($shortDescription)
                 ->setType($row['type']);
+
+            if (isset($row['page_template'])) {
+                $fallbackValue = (new EntityFieldFallbackValue())
+                    ->setArrayValue([ProductType::PAGE_TEMPLATE_ROUTE_NAME => $row['page_template']]);
+                $product->setPageTemplate($fallbackValue);
+            }
 
             $slugPrototype = new LocalizedFallbackValue();
             $slugPrototype->setString($slugGenerator->slugify($row['name']));
