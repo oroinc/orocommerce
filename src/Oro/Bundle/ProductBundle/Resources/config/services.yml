@@ -7,6 +7,7 @@ parameters:
     oro_product.entity.product_image_type.class: Oro\Bundle\ProductBundle\Entity\ProductImageType
     oro_product.event_listener.scoped_product_db_query_restriction.common_class: Oro\Bundle\ProductBundle\EventListener\ScopedProductDBQueryRestrictionEventListener
     oro_product.event_listener.scoped_product_search_query_restriction.common_class: Oro\Bundle\ProductBundle\EventListener\ScopedProductSearchQueryRestrictionEventListener
+    oro_product.event_listener.product_flush.class: Oro\Bundle\ProductBundle\EventListener\ProductFlushEventListener
 
 services:
     oro_product.product.manager.api:
@@ -202,7 +203,7 @@ services:
             - { name: kernel.event_listener, event: product_grid.render, method: onWidgetRender }
 
     oro_product.event_listener.product_flush:
-        class: 'Oro\Bundle\ProductBundle\EventListener\ProductFlushEventListener'
+        class: '%oro_product.event_listener.product_flush.class%'
         arguments:
             - "@oro_inventory.manager.inventory_manager"
         tags:
