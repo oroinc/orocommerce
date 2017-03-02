@@ -116,7 +116,7 @@ operations:
                 attribute: $.linkGrid
                 service: oro_shipping.helper.filtered_datagrid_route
                 method: generate
-                method_parameters:  [{'methodsConfigs': $.methodIdentifier}]
+                method_parameters:  [{'methodConfigs': $.methodIdentifier}]
         preconditions:
             '@and':
                 - '@shipping_method_has_shipping_rules':
@@ -178,7 +178,7 @@ operations:
                 attribute: $.linkGrid
                 service: oro_shipping.helper.filtered_datagrid_route
                 method: generate
-                method_parameters:  [{'methodsConfigs': $.methodIdentifier}]
+                method_parameters:  [{'methodConfigs': $.methodIdentifier}]
         preconditions:
             '@and':
                 - '@shipping_method_has_shipping_rules':
