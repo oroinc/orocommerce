@@ -12,15 +12,17 @@ operations:
     oro_payment_term_delete:
         extends: DELETE
         replace:
+            - exclude_entities
+            - exclude_datagrids
             - for_all_datagrids
             - for_all_entities
             - datagrids
             - preconditions
             - entities
             - preactions
-            - acl_resource
             - frontend_options
-        acl_resource: [DELETE, entity:Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm]
+        for_all_datagrids: false
+        for_all_entities: false
         preactions:
             - '@call_service_method':
                  service: oro_payment_term.payment_term.delete_message_generator

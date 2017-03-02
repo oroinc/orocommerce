@@ -1,4 +1,5 @@
 <?php
+
 namespace Oro\Bundle\PaymentTermBundle\Tests\Functional\Action;
 
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
@@ -18,18 +19,19 @@ class PaymentTermActionTest extends WebTestCase
 
     public function testDelete()
     {
-        /** @var PaymentTerm $inventoryLevel */
-        $inventoryLevel = $this->getReference(
+        /** @var PaymentTerm $paymentTerm */
+        $paymentTerm = $this->getReference(
             LoadPaymentTermData::PAYMENT_TERM_REFERENCE_PREFIX . LoadPaymentTermData::TERM_LABEL_NET_10
         );
+        $termId = $paymentTerm->getId();
 
         $this->client->request(
             'GET',
             $this->getUrl(
                 'oro_action_operation_execute',
                 [
-                    'operationName' => 'oro_inventory_level_order_delete',
-                    'entityId' => $inventoryLevel->getId(),
+                    'operationName' => 'oro_payment_term_delete',
+                    'entityId' => $termId,
                     'entityClass' => PaymentTerm::class,
                 ]
             ),
@@ -38,5 +40,14 @@ class PaymentTermActionTest extends WebTestCase
             ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']
         );
         static::assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
+
+        static::getContainer()->get('doctrine')->getManagerForClass(PaymentTerm::class)->clear();
+
+        $removedTerm = static::getContainer()
+            ->get('doctrine')
+            ->getRepository('OroPaymentTermBundle:PaymentTerm')
+            ->find($termId);
+
+        static::assertNull($removedTerm);
     }
 }

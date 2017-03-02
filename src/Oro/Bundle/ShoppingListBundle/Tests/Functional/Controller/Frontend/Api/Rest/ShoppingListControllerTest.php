@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShoppingListBundle\Tests\Functional\Controller\Frontend\Api\Rest;
 
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListACLData;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListUserACLData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -85,6 +86,17 @@ class ShoppingListControllerTest extends WebTestCase
             ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']
         );
         static::assertJsonResponseStatusCodeEquals($this->client->getResponse(), $status);
+
+        if ($status === 200) {
+            static::getContainer()->get('doctrine')->getManagerForClass(ShoppingList::class)->clear();
+
+            $removedShoppingList = static::getContainer()
+                ->get('doctrine')
+                ->getRepository('OroShoppingListBundle:ShoppingList')
+                ->find($shoppingList->getId());
+
+            static::assertNull($removedShoppingList);
+        }
     }
 
     /**

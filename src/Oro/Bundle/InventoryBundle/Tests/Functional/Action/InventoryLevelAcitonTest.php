@@ -1,4 +1,5 @@
 <?php
+
 namespace Oro\Bundle\InventoryBundle\Tests\Functional\Action;
 
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
@@ -22,6 +23,7 @@ class InventoryLevelAcitonTest extends WebTestCase
                 'product_unit_precision.product-1.liter'
             )
         );
+        $levelId = $inventoryLevel->getId();
 
         $this->client->request(
             'GET',
@@ -29,7 +31,7 @@ class InventoryLevelAcitonTest extends WebTestCase
                 'oro_action_operation_execute',
                 [
                     'operationName' => 'oro_inventory_level_order_delete',
-                    'entityId' => $inventoryLevel->getId(),
+                    'entityId' => $levelId,
                     'entityClass' => InventoryLevel::class,
                 ]
             ),
@@ -38,5 +40,14 @@ class InventoryLevelAcitonTest extends WebTestCase
             ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest']
         );
         static::assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
+
+        static::getContainer()->get('doctrine')->getManagerForClass(InventoryLevel::class)->clear();
+
+        $removedLevel = static::getContainer()
+            ->get('doctrine')
+            ->getRepository('OroInventoryBundle:InventoryLevel')
+            ->find($levelId);
+
+        static::assertNull($removedLevel);
     }
 }

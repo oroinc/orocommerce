@@ -34,13 +34,15 @@ class CustomerGroupChangesListenerTest extends WebTestCase
      */
     protected function sendDeleteCustomerGroupRequest(CustomerGroup $group)
     {
+        $groupId = $group->getId();
+
         $this->client->request(
             'GET',
             $this->getUrl(
                 'oro_action_operation_execute',
                 [
                     'operationName' => 'oro_customer_groups_delete',
-                    'entityId[id]' => $group->getId(),
+                    'entityId[id]' => $groupId,
                     'entityClass' => $this->getContainer()->getParameter('oro_customer.entity.customer_group.class'),
                 ]
             ),
@@ -50,6 +52,15 @@ class CustomerGroupChangesListenerTest extends WebTestCase
         );
 
         $this->assertJsonResponseStatusCodeEquals($this->client->getResponse(), 200);
+
+        static::getContainer()->get('doctrine')->getManagerForClass(CustomerGroup::class)->clear();
+
+        $removedGroup = static::getContainer()
+            ->get('doctrine')
+            ->getRepository('OroCustomerBundle:CustomerGroup')
+            ->find($groupId);
+
+        static::assertNull($removedGroup);
     }
 
     public function testDeleteCustomerGroupWithAssignedCustomer()

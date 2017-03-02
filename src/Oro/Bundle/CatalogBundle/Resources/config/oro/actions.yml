@@ -9,13 +9,14 @@ operations:
     oro_catalog_category_delete:
         extends: DELETE
         replace:
+            - exclude_entities
             - entities
-            - acl_resource
             - for_all_datagrids
             - for_all_entities
+        for_all_datagrids: false
+        for_all_entities: false
         entities:
             - Oro\Bundle\CatalogBundle\Entity\Category
-        acl_resource: [DELETE, entity:Oro\Bundle\CatalogBundle\Entity\Category]
         preconditions:
             '@and':
                 - '@not_equal': [$.data.parentCategory, null]
