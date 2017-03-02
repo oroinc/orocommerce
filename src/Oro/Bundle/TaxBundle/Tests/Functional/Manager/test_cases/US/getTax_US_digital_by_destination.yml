@@ -93,4 +93,4 @@ databaseAfter:
         -
             entityClass: 'Oro\Bundle\OrderBundle\Entity\OrderLineItem'
             entityId: { reference: 'order_line_item_2' }
-            address: '  ,    Nevada , United States '
+            address: 'Nevada , United States'
