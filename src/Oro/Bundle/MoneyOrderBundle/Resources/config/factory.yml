@@ -1,0 +1,15 @@
+services:
+    oro_money_order.factory.money_order_config:
+        class: 'Oro\Bundle\MoneyOrderBundle\Method\Config\Factory\MoneyOrderConfigFactory'
+        public: false
+        arguments:
+            - '@oro_locale.helper.localization'
+            - '@oro_money_order.generator.money_order_config_identifier'
+
+    oro_money_order.factory.method.money_order:
+        class: 'Oro\Bundle\MoneyOrderBundle\Method\Factory\MoneyOrderPaymentMethodFactory'
+        public: false
+
+    oro_money_order.factory.method_view.money_order:
+        class: 'Oro\Bundle\MoneyOrderBundle\Method\View\Factory\MoneyOrderPaymentMethodViewFactory'
+        public: false

@@ -31,7 +31,7 @@ class PaymentTermControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $html = $crawler->html();
-        $this->assertContains("payment-terms-grid", $html);
+        $this->assertContains('payment-terms-grid', $html);
         $this->assertContains(LoadPaymentTermData::TERM_LABEL_NET_10, $html);
         $this->assertContains(LoadPaymentTermData::TERM_LABEL_NET_20, $html);
         $this->assertContains(LoadPaymentTermData::TERM_LABEL_NET_30, $html);

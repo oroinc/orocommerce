@@ -1,5 +1,11 @@
 oro:
     paymentterm:
+        channel_type:
+            label: Payment Term
+        settings:
+            label: Payment Term Settings
+            labels.label: Label
+            short_labels.label: 'Short Label'
         menu:
             payment_terms.label:       Payment terms
             payment_terms.description: List of payment terms
@@ -30,10 +36,6 @@ oro:
 
         methods:
             term_method.label: 'Payment Term'
-
-        system_configuration:
-            groups:
-                payment_terms.title: 'Payment Terms'
 
         payment_terms:
             label: 'Terms: %paymentTerm%'

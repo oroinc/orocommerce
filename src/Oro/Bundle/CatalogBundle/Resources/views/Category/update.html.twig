@@ -134,6 +134,7 @@
                 </div>
             </div>
             {% set treeOptions = {
+                'view' : 'orocatalog/js/app/views/tree-manage-view',
                 'key' : 'commerce-category',
                 'data' : oro_category_list(),
                 'nodeId' : entityId ? entityId : parentCategoryId,
@@ -144,15 +145,11 @@
 
             {{ UI.renderJsTree(
                 {
-                    'module': 'orocatalog/js/app/components/tree-manage-component',
                     'label': 'oro.catalog.category.entity_plural_label'|trans,
                     'treeOptions': treeOptions
                 },
                 {
-                    'expand': 'expand',
-                    'collapse': 'collapse',
                     'move': {
-                        'view': 'oroui/js/app/views/jstree/move-action-view',
                         'routeName': 'oro_catalog_category_move_form'
                     }
                 }

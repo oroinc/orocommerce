@@ -54,7 +54,7 @@ abstract class AbstractRequestApiTest extends RestJsonApiTestCase
                 $expectedContent,
                 $content['included']
             );
-            $this->assertIsContained($expectedContent, $content['data']);
+            self::assertArrayContains($expectedContent, $content['data']);
         }
     }
 
@@ -127,7 +127,7 @@ abstract class AbstractRequestApiTest extends RestJsonApiTestCase
                     if ($included['type'] == $relationship['data']['type']
                         && $included['id'] == $relationship['data']['id']
                     ) {
-                        $this->assertIsContained($relationship['included'], $included);
+                        self::assertArrayContains($relationship['included'], $included);
                     }
                 }
                 unset($relationships[$relationshipKey]['included']);
