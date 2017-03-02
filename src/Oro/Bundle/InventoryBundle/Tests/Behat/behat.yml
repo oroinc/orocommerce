@@ -1,0 +1,5 @@
+oro_behat_extension:
+  suites:
+    OroInventoryBundle:
+      contexts: []
+      paths: []

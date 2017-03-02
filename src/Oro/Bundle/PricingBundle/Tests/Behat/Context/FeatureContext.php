@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Behat\Context;
 
-use Behat\Mink\Element\NodeElement;
+use Behat\Mink\Exception\ElementNotFoundException;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
 
+use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Table;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
@@ -14,18 +15,20 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
 {
     use PageObjectDictionary, KernelDictionary;
 
+    //@codingStandardsIgnoreStart
     /**
-     * @When I choose a price list :priceListName in :rowNum row
-     * @param string $priceListName
-     * @param int $rowNum
+     * @When /^I choose (?P<tableContent>([\w\s]+)) "(?P<value>([\w\s]+))" in (?P<rowNum>([\d]+)) row$/
      */
-    public function choosePriceListInRow($priceListName, $rowNum)
+    //@codingStandardsIgnoreEnd
+    public function chooseValueInRow($tableContent, $value, $rowNum)
     {
-        $row = $this->getPriceListRow(--$rowNum);
+        /** @var Table $table */
+        $table = $this->findElementContains('Table', $tableContent);
+        $row = $table->getRowByNumber($rowNum);
         $row->find('css', 'button.entity-select-btn')->click();
         $this->waitForAjax();
-        $priceList = $this->spin(function (FeatureContext $context) use ($priceListName) {
-            $priceList = $context->getPage()->find('named', ['content', $priceListName]);
+        $priceList = $this->spin(function (FeatureContext $context) use ($value) {
+            $priceList = $context->getPage()->find('named', ['content', $value]);
             return $priceList ? $priceList : false;
         });
         $priceList->click();
@@ -33,67 +36,55 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @When I drag :rowNum row to the top in price lists table
-     * @param int $rowNum
+     * @When /^I drag (?P<rowNum>([\d]+)) row on top in "(?P<tableContent>([\w\s]+))" table$/
      */
-    public function dragPriceListToTop($rowNum)
+    public function dragRowOnTop($rowNum, $tableContent)
     {
-        --$rowNum;
-        $this->getPriceListRow($rowNum);
+        /** @var Table $table */
+        $table = $this->findElementContains('Table', $tableContent);
+        $table->getRowByNumber($rowNum);
+        $class = str_replace(' ', '.', $table->getAttribute('class'));
         $this->getSession()->executeScript('
-            $(document).ready(function() {
-                var lastRow = $("div.pricing-price-list tbody tr.pricing-price-list-item").eq(' . $rowNum . ');
-                $("div.pricing-price-list tbody").prepend(lastRow);
-                $("div.pricing-price-list .sortable-wrapper").sortable("option", "stop")();
+            $(document).ready(function(){
+                var table = $("table.' . $class . ' .sortable-wrapper").closest("table");
+                var lastRow = table.find("tbody tr").eq(' . ($rowNum - 1) . ');
+                table.find("tbody").prepend(lastRow);
+                table.find(".sortable-wrapper").sortable("option", "stop")();
             })
         ');
     }
 
     /**
-     * @Then I should not see :text in price lists table
-     * @param string $text
+     * @Then I should see drag-n-drop icon present in :tableContent table
      */
-    public function iShouldNotSeeTextInPriceListCollection($text)
+    public function assertDragNDropIconOnTableLine($tableContent)
     {
-        $priceLists = $this->elementFactory->createElement('PriceListCollection');
-        self::assertFalse(
-            $priceLists->has('named', ['content', $text]),
-            "There is text '$text' presents in price lists table"
-        );
-    }
-
-    /**
-     * @Then I should see drag-n-drop icon present on price list line
-     */
-    public function assertDragNDropIconOnPriceListLine()
-    {
-        $row = $this->getPriceListRow(0);
-        self::assertNotEmpty($row->find('css', 'i.handle'), 'There is no drag-n-drop icon in first price list row');
-    }
-
-    /**
-     * @Then I should see that :priceListName price list is in :rowNum row
-     * @param string $priceListName
-     * @param int $rowNum
-     */
-    public function assertPriceListNameInRow($priceListName, $rowNum)
-    {
-        $row = $this->getPriceListRow($rowNum - 1);
+        /** @var Table $table */
+        $table = $this->findElementContains('Table', $tableContent);
         self::assertTrue(
-            $row->has('named', ['content', $priceListName]),
-            "There is no price list with name '$priceListName' in the $rowNum row of price lists table"
+            $table->has('css', 'tbody tr i.handle'),
+            "There is no Drag-n-drop icon among rows in '$tableContent' table"
         );
     }
 
     /**
-     * @param int $rowNum
-     * @return NodeElement
+     * Click on button or link on left panel in configuration menu
+     * Example: Given I click "Edit" on left panel
+     * Example: When I click "Save and Close" on left panel
+     *
+     * @When /^(?:|I )click "(?P<button>(?:[^"]|\\")*)" on left panel$/
      */
-    protected function getPriceListRow($rowNum)
+    public function pressButtonOnLeftPanel($button)
     {
-        $priceLists = $this->elementFactory->createElement('PriceListCollection');
-        $rows = $priceLists->findAll('css', 'tbody tr');
-        self::assertNotEmpty($rows[$rowNum], "There is no row '$rowNum' in price lists table");
-        return $rows[$rowNum];
+        $leftPanel = $this->getPage()->find('css', 'div.left-panel');
+        try {
+            $leftPanel->pressButton($button);
+        } catch (ElementNotFoundException $e) {
+            if ($this->getSession()->getPage()->hasLink($button)) {
+                $leftPanel->clickLink($button);
+            } else {
+                throw $e;
+            }
+        }
     }
 }
