@@ -18,9 +18,9 @@
 
             $nav-tabs-link-inner-offset: $product-view-attributes-tab-link-offset-inner,
             $nav-tabs-link-color: $product-view-attributes-tab-link-color,
-            $nav-tabs-link-border: 0,
+            $nav-tabs-link-border-width: 0,
 
-            $nav-tabs-link-hover-background: none,
+            $nav-tabs-link-hover-background: none
         ) {
             .nav-tabs {
                 border-top-left-radius: $product-view-attributes-tabs-border-radius;
