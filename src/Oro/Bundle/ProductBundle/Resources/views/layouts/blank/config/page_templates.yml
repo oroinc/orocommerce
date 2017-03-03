@@ -1,10 +1,5 @@
 templates:
     -
-        label: Default page template
-        description: Default page template description
-        route_name: oro_product_frontend_product_view
-        key: default
-    -
         label: Simple page template
         description: Simple page template description
         route_name: oro_product_frontend_product_view
