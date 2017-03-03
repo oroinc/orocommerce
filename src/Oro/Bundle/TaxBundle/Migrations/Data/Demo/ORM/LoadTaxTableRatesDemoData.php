@@ -2,19 +2,21 @@
 
 namespace Oro\Bundle\TaxBundle\Migrations\Data\Demo\ORM;
 
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareTrait;
+
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\AddressBundle\Entity\Region;
-use Oro\Bundle\CustomerBundle\Entity\Customer;
-use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TaxBundle\Migrations\TaxEntitiesFactory;
 
-class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixtureInterface
+class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
+    use ContainerAwareTrait;
+
     /**
      * @var TaxEntitiesFactory
      */
@@ -44,7 +46,8 @@ class LoadTaxTableRatesDemoData extends AbstractFixture implements DependentFixt
      */
     public function load(ObjectManager $manager)
     {
-        $data = require __DIR__ . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'tax_table_rates.php';
+        $locator = $this->container->get('file_locator');
+        $data = require $locator->locate('@OroTaxBundle/Migrations/Data/Demo/ORM/data/tax_table_rates.php');
 
         $this->loadCustomerTaxCodes($manager, $data['customer_tax_codes']);
         $this->loadProductTaxCodes($manager, $data['product_tax_codes']);

@@ -147,19 +147,16 @@
                 'onRootSelectRoute': 'oro_content_node_update',
                 'onSelectRoute' : 'oro_content_node_update',
                 'onMoveRoute' : 'oro_content_node_move',
-                'nodeId': nodeId
+                'nodeId': nodeId,
+                'view': 'orowebcatalog/js/app/views/web-catalog-tree-view'
             } %}
             {{ UI.renderJsTree(
                 {
-                    'module': 'orowebcatalog/js/app/components/web-catalog-tree-component',
                     'label': 'oro.webcatalog.contentnode.entity_plural_label'|trans,
                     'treeOptions': treeOptions
                 },
                 {
-                    'expand': 'expand',
-                    'collapse': 'collapse',
                     'move': {
-                        'view': 'oroui/js/app/views/jstree/move-action-view',
                         'routeName': 'oro_web_catalog_move',
                         'routeParams': {'id': web_catalog.id}
                     }
