@@ -202,8 +202,11 @@ class CanonicalUrlGenerator
      */
     private function createUrl($domainUrl, $url)
     {
-        $baseUrl = $this->requestStack->getMasterRequest()->getBaseUrl();
-        $baseUrl = trim($baseUrl, '/');
+        $baseUrl = '';
+        if ($masterRequest = $this->requestStack->getMasterRequest()) {
+            $baseUrl = $masterRequest->getBaseUrl();
+            $baseUrl = trim($baseUrl, '/');
+        }
 
         $urlParts = [rtrim($domainUrl, ' /') ];
         if ($baseUrl) {

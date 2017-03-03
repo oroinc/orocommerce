@@ -320,7 +320,7 @@ class CanonicalUrlGeneratorTest extends \PHPUnit_Framework_TestCase
         $request->expects($this->any())
             ->method('getBaseUrl')
             ->willReturn($expectedBaseUrl);
-        $this->requestStack->expects($this->once())
+        $this->requestStack->expects($this->atMost(1))
             ->method('getMasterRequest')
             ->willReturn($request);
 

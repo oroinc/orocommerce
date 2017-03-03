@@ -184,11 +184,54 @@ services:
             - '@filesystem'
             - '@logger'
 
-    oro_seo.async.sitemap_generation:
-        class: Oro\Bundle\SEOBundle\Async\SitemapGenerationProcessor
+    oro_seo.model.sitemap_message_factory.abstract:
+        class: Oro\Bundle\SEOBundle\Model\AbstractSitemapMessageFactory
+        abstract: true
+        arguments:
+            - '@oro_website.repository.website'
+
+    oro_seo.model.sitemap_message_factory:
+        class: Oro\Bundle\SEOBundle\Model\SitemapMessageFactory
+        parent: oro_seo.model.sitemap_message_factory.abstract
+        public: false
+        calls:
+            - ['setProviderRegistry', ['@oro_seo.provider.url_items_provider_registry']]
+
+    oro_seo.model.sitemap_index_message_factory:
+        class: Oro\Bundle\SEOBundle\Model\SitemapIndexMessageFactory
+        parent: oro_seo.model.sitemap_message_factory.abstract
+        public: false
+
+    oro_seo.async.generate_sitemap_processor:
+        class: Oro\Bundle\SEOBundle\Async\GenerateSitemapProcessor
+        arguments:
+            - '@oro_message_queue.job.runner'
+            - '@oro_message_queue.job.dependent_job_service'
+            - '@oro_message_queue.client.message_producer'
+            - '@oro_seo.provider.url_items_provider_registry'
+            - '@oro_website.website.provider'
+            - '@oro_seo.model.sitemap_index_message_factory'
+            - '@oro_seo.model.sitemap_message_factory'
+            - '@monolog.logger'
+        tags:
+            - { name: oro_message_queue.client.message_processor }
+
+    oro_seo.async.generate_sitemap_index_processor:
+        class: Oro\Bundle\SEOBundle\Async\GenerateSitemapIndexProcessor
+        arguments:
+            - '@oro_seo.model.sitemap_index_message_factory'
+            - '@oro_seo.sitemap.sitemap_index_dumper'
+            - '@monolog.logger'
+            - '@oro_seo.sitemap.filesystem_adapter'
+        tags:
+            - { name: oro_message_queue.client.message_processor }
+
+    oro_seo.async.generate_sitemap_by_website_and_type:
+        class: Oro\Bundle\SEOBundle\Async\GenerateSitemapByWebsiteAndTypeProcessor
         arguments:
             - '@oro_message_queue.job.runner'
             - '@logger'
             - '@oro_seo.sitemap.sitemap_url_dumper'
-            - '@oro_website.repository.website'
-            - '@oro_seo.provider.url_items_provider_registry'
+            - '@oro_seo.model.sitemap_message_factory'
+        tags:
+            - { name: oro_message_queue.client.message_processor }

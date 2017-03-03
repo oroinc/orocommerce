@@ -45,13 +45,4 @@ class UrlItemsProviderRegistry
     {
         return isset($this->providers[$name]) ? $this->providers[$name] : null;
     }
-
-    /**
-     * @param string $name
-     * @return bool
-     */
-    public function hasProviderByName($name)
-    {
-        return isset($this->providers[$name]);
-    }
 }
