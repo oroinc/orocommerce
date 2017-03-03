@@ -19,6 +19,8 @@ class Configuration implements ConfigurationInterface
 
     const DEFAULT_PRIORITY = 0.5;
 
+    const DEFAULT_CRON_DEFINITION = '0 0 * * *';
+
     /**
      * {@inheritDoc}
      */
@@ -37,6 +39,7 @@ class Configuration implements ConfigurationInterface
                 'sitemap_priority_category' => ['value' => self::DEFAULT_PRIORITY],
                 'sitemap_changefreq_page' => ['value' => self::CHANGEFREQ_DAILY],
                 'sitemap_priority_page' => ['value' => self::DEFAULT_PRIORITY],
+                'sitemap_cron_definition' => ['value' => self::DEFAULT_CRON_DEFINITION],
             ]
         );
 
