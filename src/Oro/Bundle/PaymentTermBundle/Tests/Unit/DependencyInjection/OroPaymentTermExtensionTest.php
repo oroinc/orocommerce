@@ -18,7 +18,6 @@ class OroPaymentTermExtensionTest extends ExtensionTestCase
         $this->assertParametersLoaded($expectedParameters);
 
         $expectedDefinitions = [
-            'oro_payment_term.payment_term.manager.api',
             'oro_payment_term.form.type.payment_term',
             'oro_payment_term.integration.channel',
             'oro_payment_term.integration.transport',
@@ -30,7 +29,8 @@ class OroPaymentTermExtensionTest extends ExtensionTestCase
             'oro_payment_term.payment_method_provider.payment_term',
             'oro_payment_term.method.factory.payment_term',
             'oro_payment_term.payment_method_view_provider.payment_term',
-            'oro_payment_term.method.view.factory.payment_term'
+            'oro_payment_term.method.view.factory.payment_term',
+            'oro_payment_term.repository.payment_term_settings',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }
