@@ -121,7 +121,7 @@ Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
         customer: '@customer1'
         pricelist: '@pricelist_shipping'
         website: '@website1'
-        priority: 200
+        sortOrder: 200
 
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     productPrice1:
