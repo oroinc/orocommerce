@@ -43,6 +43,7 @@ class ShardManager
             throw new \Exception(sprintf("Required attribute '%s' for generation of shard name missing.", "priceList"));
         }
 
+        // todo: investigate best way to pass attributes and validate
         /** @var PriceList $priceList */
         $priceList = $attributes['priceList'];
         $shardName = sprintf("%s_%s", $baseTableName, $priceList->getId());
@@ -108,14 +109,14 @@ class ShardManager
 
     /**
      * @param string $className
-     * @return string ClassMetadata
+     * @return string
      */
     protected function getBaseTableName($className)
     {
         $em = $this->registry->getManagerForClass($className);
-        $metadata = $em->getClassMetadata($className);
 
-        /** @var ClassMetadata $baseTableName */
+        /** @var ClassMetadata $metadata */
+        $metadata = $em->getClassMetadata($className);
         $baseTableName = $metadata->getTableName();
 
         return $baseTableName;
