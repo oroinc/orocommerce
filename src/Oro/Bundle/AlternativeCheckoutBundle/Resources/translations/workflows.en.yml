@@ -84,6 +84,8 @@ oro:
                     label: 'Shipping method'
                 shipping_method_type:
                     label: 'Shipping method type'
+                order:
+                    label: 'Order'
             transition:
                 __start__:
                     label: 'Create Order'
