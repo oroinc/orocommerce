@@ -21,16 +21,6 @@ class SystemConfigurationTest extends WebTestCase
         $this->configManager = $this->getContainer()->get('oro_config.global');
     }
 
-    protected function tearDown()
-    {
-        $this->configManager->reset('oro_tax.tax_enable');
-        $this->configManager->reset('oro_tax.tax_provider');
-        $this->configManager->reset('oro_tax.origin_address');
-        $this->configManager->flush();
-
-        parent::tearDown();
-    }
-
     public function testConfig()
     {
         $this->assertTrue($this->configManager->get('oro_tax.tax_enable'));
