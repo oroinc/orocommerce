@@ -1,3 +1,0 @@
-oro_catalog_api:
-    resource: "@OroCatalogBundle/Controller/Api/Rest/CategoryController.php"
-    type:     rest

@@ -25,13 +25,6 @@ services:
         arguments:
             - '%oro_catalog.entity.category.class%'
 
-    oro_catalog.category.manager.api:
-        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
-        parent: oro_soap.manager.entity_manager.abstract
-        arguments:
-            - '%oro_catalog.entity.category.class%'
-            - "@doctrine.orm.entity_manager"
-
     oro_catalog.event_listener.form_view:
         class: 'Oro\Bundle\CatalogBundle\EventListener\FormViewListener'
         arguments:
@@ -214,6 +207,7 @@ services:
     oro_catalog.config.event_listener.direct_url_prefix_change:
         class: Oro\Bundle\RedirectBundle\EventListener\ConfigRegenerateDirectUrlListener
         arguments:
+            - '@oro_config.manager'
             - '@oro_message_queue.client.message_producer'
             - '@oro_redirect.form.storage.redirect_storage'
             - '@oro_redirect.direct_url_message_factory'
