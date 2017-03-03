@@ -2,11 +2,11 @@
 
 namespace Oro\Bundle\PaymentTermBundle\Tests\Functional\Controller;
 
-use Symfony\Component\DomCrawler\Form;
-
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
+
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Form;
 
 class PaymentTermControllerTest extends WebTestCase
 {
@@ -31,7 +31,7 @@ class PaymentTermControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $html = $crawler->html();
-        $this->assertContains("payment-terms-grid", $html);
+        $this->assertContains('payment-terms-grid', $html);
         $this->assertContains(LoadPaymentTermData::TERM_LABEL_NET_10, $html);
         $this->assertContains(LoadPaymentTermData::TERM_LABEL_NET_20, $html);
         $this->assertContains(LoadPaymentTermData::TERM_LABEL_NET_30, $html);
@@ -107,29 +107,6 @@ class PaymentTermControllerTest extends WebTestCase
         $this->assertContains(self::TERM_LABEL_UPDATED, $crawler->html());
 
         return $paymentTermId;
-    }
-
-    /**
-     * @depends testView
-     * @param int $paymentTermId
-     */
-    public function testDelete($paymentTermId)
-    {
-        $this->client->request(
-            'DELETE',
-            $this->getUrl('oro_api_delete_paymentterm', ['id' => $paymentTermId]),
-            [],
-            [],
-            $this->generateWsseAuthHeader()
-        );
-
-        $result = $this->client->getResponse();
-        $this->assertEmptyResponseStatusCodeEquals($result, 204);
-
-        $this->client->request('GET', $this->getUrl('oro_payment_term_view', ['id' => $paymentTermId]));
-
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 404);
     }
 
     /**

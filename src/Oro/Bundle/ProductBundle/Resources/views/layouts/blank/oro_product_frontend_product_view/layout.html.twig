@@ -110,7 +110,9 @@
     <!-- START Product Gallery -->
     <div class="product-gallery">
         {% set zoomOptions = {
-            screenType: 'desktop',
+            viewport: {
+                minScreenType: 'desktop'
+            },
             component: 'oroui/js/app/components/jquery-widget-component',
             widgetModule: 'oroproduct/js/widget/zoom-widget'
         } %}

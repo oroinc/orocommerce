@@ -89,10 +89,6 @@ datagrids:
             productName:
                 type: localized_value
                 data_name: product.names
-            delete_link:
-                type: url
-                route: oro_api_inventory_delete_inventory_level
-                params: [ id ]
         inline_editing:
             enable: true
         save_api_accessor:
@@ -171,14 +167,6 @@ datagrids:
                         field_options:
                             choices: "@oro_product.provider.product_units_provider->getAvailableProductUnits"
                             multiple: true
-        actions:
-            delete:
-                type:          delete
-                label:         oro.grid.action.delete
-                link:          delete_link
-                icon:          trash
-                acl_resource:  oro_inventory_level_delete
-                mass_action:   true
         options:
             requireJSModules:
                 - oroinventory/js/datagrid/builder/inventory-status-builder
