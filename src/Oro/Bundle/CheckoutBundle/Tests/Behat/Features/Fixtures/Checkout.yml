@@ -6,7 +6,7 @@ Oro\Bundle\RuleBundle\Entity\Rule:
 
 Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig:
     paymentMethodConfig:
-        type: 'payment_term'
+        type: '<("payment_term_" . @paymentTermIntegration->id)>'
 
 Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule:
     paymentMethodsConfigsRule:
@@ -111,7 +111,7 @@ Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
         customer: '@customer'
         pricelist: '@pricelistShipping'
         website: '@website1'
-        priority: 200
+        sortOrder: 200
 
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     productPrice:

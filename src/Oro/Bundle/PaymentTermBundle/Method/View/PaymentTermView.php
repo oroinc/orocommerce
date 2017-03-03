@@ -89,6 +89,6 @@ class PaymentTermView implements PaymentMethodViewInterface
     /** {@inheritdoc} */
     public function getPaymentMethodIdentifier()
     {
-        return $this->getPaymentMethodType();
+        return $this->config->getPaymentMethodIdentifier();
     }
 }

@@ -40,6 +40,11 @@ class PaymentTerm extends ExtendPaymentTerm
      * @ORM\Id
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
+     * @ConfigField(
+     *      importexport={
+     *          "excluded"=true
+     *      }
+     * )
      */
     protected $id;
 
