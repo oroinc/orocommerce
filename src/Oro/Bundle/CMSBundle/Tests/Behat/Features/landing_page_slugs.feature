@@ -1,5 +1,6 @@
-Feature: Landing Page should have Slug Prototypes which are used for Slugs creation
-  As Administrator
+Feature: Slug Prototypes for Landing Page
+  In order to be sure that every landing page is accessible for it's own url
+  As administrator
   I need to be able to create Landing Page with Slug Prototypes
 
   Scenario: Create New Landing Page with empty Slug Prototypes
