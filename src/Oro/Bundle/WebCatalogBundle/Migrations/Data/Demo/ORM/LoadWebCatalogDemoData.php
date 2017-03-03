@@ -219,7 +219,8 @@ class LoadWebCatalogDemoData extends AbstractFixture implements ContainerAwareIn
      */
     protected function getWebCatalogData()
     {
-        $fileName = __DIR__ . '/data/web_catalog_data.yml';
+        $locator = $this->container->get('file_locator');
+        $fileName = $locator->locate('@OroWebCatalogBundle/Migrations/Data/Demo/ORM/data/web_catalog_data.yml');
 
         return Yaml::parse(file_get_contents($fileName));
     }

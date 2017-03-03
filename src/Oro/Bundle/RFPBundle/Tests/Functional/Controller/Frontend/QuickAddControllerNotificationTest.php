@@ -109,10 +109,4 @@ class QuickAddControllerNotificationTest extends WebTestCase
             ],
         ];
     }
-
-    protected function tearDown()
-    {
-        $this->configManager->reset(self::RFP_PRODUCT_VISIBILITY_KEY);
-        $this->configManager->flush();
-    }
 }
