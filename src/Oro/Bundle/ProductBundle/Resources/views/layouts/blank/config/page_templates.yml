@@ -1,2 +1,18 @@
+templates:
+    -
+        label: Simple page template
+        description: Simple page template description
+        route_name: oro_product_frontend_product_view
+        key: simple
+    -
+        label: Specs page template
+        description: Specs page template description
+        route_name: oro_product_frontend_product_view
+        key: specs
+    -
+        label: Detailed page template
+        description: Detailed page template description
+        route_name: oro_product_frontend_product_view
+        key: detailed
 titles:
-    oro_product_frontend_product_view: Product View
+    oro_product_frontend_product_view: Product Page
