@@ -251,7 +251,19 @@ PricingBundle
     - changed the return type of `getIteratorByPriceList` method from `BufferedQueryResultIterator` to `BufferedQueryResultIteratorInterface`
 - Class `Oro\Bundle\PricingBundle\Entity\Repository\PriceListToWebsiteRepository`
     - changed the return type of `getWebsiteIteratorByDefaultFallback` method from `BufferedQueryResultIterator` to `BufferedQueryResultIteratorInterface`
-
+- Class `Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType`
+    - field `priority` was removed. Field `_position` from `Oro\Bundle\FormBundle\Form\Extension\SortableExtension` will be used instead.
+- Class `Oro\Bundle\PricingBundle\Entity\BasePriceListRelation`
+    - property `$priority` was renamed to `$sortOrder`
+    - methods `getPriority` and `setPriority` were renamed to `getSortOrder` and `setSortOrder` accordingly
+- Class `Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig`
+    - property `$priority` was renamed to `$sortOrder`
+    - methods `getPriority` and `setPriority` were renamed to `getSortOrder` and `setSortOrder` accordingly
+- Interface `Oro\Bundle\PricingBundle\Entity\PriceListAwareInterface`
+    - method `getPriority` was renamed to `getSortOrder`
+- Class `Oro\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter`
+    - constant `PRIORITY_KEY` was renamed to `SORT_ORDER_KEY`
+    
 ProductBundle
 -------------
 - Class `Oro\Bundle\ProductBundle\Twig\ProductExtension`

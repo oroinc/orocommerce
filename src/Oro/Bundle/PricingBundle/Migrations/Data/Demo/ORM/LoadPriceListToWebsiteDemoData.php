@@ -33,7 +33,7 @@ class LoadPriceListToWebsiteDemoData extends LoadBasePriceListRelationDemoData
             $priceListToCustomer = new PriceListToWebsite();
             $priceListToCustomer->setWebsite($website)
                 ->setPriceList($priceList)
-                ->setPriority($row['priority'])
+                ->setSortOrder($row['sort_order'])
                 ->setMergeAllowed((boolean)$row['mergeAllowed']);
             $manager->persist($priceListToCustomer);
         }
