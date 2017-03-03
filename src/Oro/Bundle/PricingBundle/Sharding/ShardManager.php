@@ -54,6 +54,8 @@ class ShardManager
     /**
      * @param string $className
      * @param string $shardName
+     *
+     * @todo investigate collisions with parallel processes
      */
     public function create($className, $shardName)
     {

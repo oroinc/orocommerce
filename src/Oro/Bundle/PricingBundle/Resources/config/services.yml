@@ -956,3 +956,11 @@ services:
         class: 'Oro\Bundle\PricingBundle\Sharding\ShardManager'
         arguments:
             - '@doctrine'
+
+    oro_pricing.entity_listener.price_list_sharding:
+            class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListShardingListener'
+            arguments:
+                - '@oro_pricing.shard_manager'
+            tags:
+                - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_list.class%', event: postPersist }
+                - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_list.class%', event: preRemove }
