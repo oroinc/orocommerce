@@ -84,8 +84,8 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
             ],
         ];
         $converted = [
-            ['priceList' => 1, 'priority' => 100],
-            ['priceList' => 2, 'priority' => 200],
+            ['priceList' => 1, 'sort_order' => 100],
+            ['priceList' => 2, 'sort_order' => 200],
         ];
         $expected = [
             'oro_pricing.default_price_lists' => [
@@ -116,8 +116,8 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
     public function testUpdateAfter($changeSet, $dispatch, $key)
     {
         $converted = [
-            ['priceList' => 1, 'priority' => 100],
-            ['priceList' => 2, 'priority' => 200],
+            ['priceList' => 1, 'sort_order' => 100],
+            ['priceList' => 2, 'sort_order' => 200],
         ];
         $values = $this->createConfigs(2);
         $configManager = $this->getConfigManager();
