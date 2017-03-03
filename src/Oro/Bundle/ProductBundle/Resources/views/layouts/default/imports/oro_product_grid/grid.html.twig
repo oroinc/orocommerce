@@ -21,14 +21,26 @@
         class: attr.class|default('') ~ " catalog__filter-controls__item sorting form-horizontal action-selectbox_custom_in-pager",
         'data-grid-sorting': ''
     }) %}
+    {% set toolbarPosition = attr['data-grid-toolbar']|default('') %}
 
-    <div{{ block('block_attributes') }}></div>
+    {% if toolbarPosition != 'bottom' %}
+        <div{{ block('block_attributes') }}></div>
+    {% endif %}
 {% endblock %}
 
 {% block __oro_product_grid__datagrid_toolbar_pagination_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' catalog__filter-controls__item oro-pagination',
         'data-grid-pagination': ''
+    }) %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
+{% block __oro_product_grid__datagrid_items_counter_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' catalog__filter-controls__item',
+        'data-grid-items-counter': ''
     }) %}
 
     {{ parent_block_widget(block) }}
@@ -60,39 +72,62 @@
         },
         class: attr.class|default('') ~ " catalog__filter-controls__item display-options pull-right"
     }) %}
+    {% set toolbarPosition = attr['data-grid-toolbar']|default('') %}
 
-    <div{{ block('block_attributes') }}>
-        {% set row_view_key = constant('Oro\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::GRID_THEME_PARAM_NAME') %}
-        <span class="fs14 va-m_md hidden-sm hidden-xs">Display: &nbsp;</span>
-        <div class="buttons-group">
-            {% set url_prefix = app.request.baseUrl ~ app.request.pathInfo %}
-            {% set query_parameters = app.request.query.all() %}
+    {% if toolbarPosition != 'bottom' %}
+        <div{{ block('block_attributes') }}>
+            {% set row_view_key = constant('Oro\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::GRID_THEME_PARAM_NAME') %}
+            <span class="fs14 va-m_md hidden-sm hidden-xs">Display: &nbsp;</span>
+            <div class="buttons-group">
+                {% set url_prefix = app.request.baseUrl ~ app.request.pathInfo %}
+                {% set query_parameters = app.request.query.all() %}
 
-            {% set row_view = constant('Oro\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::VIEW_TILES') %}
-            {% set view_trigger = {
-                'row-view': 'gallery-view'
-            } %}
-            <a href="{{ url_prefix ~ '?' ~ query_parameters|merge({'frontend-product-search-grid': {(row_view_key): row_view}})|url_encode }}"
-               class="buttons-group__el {% if current_row_view == row_view %}current{% endif %}" data-catalog-view-trigger="{{ view_trigger|json_encode }}">
-                    <i class="fa-th fa--no-offset"></i>
-            </a>
-            {% set row_view = constant('Oro\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::VIEW_GRID') %}
-            {% set view_trigger = {
-                'row-view': 'list-view'
-            } %}
-            <a href="{{ url_prefix ~ '?' ~ query_parameters|merge({'frontend-product-search-grid': {(row_view_key): row_view}})|url_encode }}"
-               class="buttons-group__el {% if current_row_view == row_view %}current{% endif %}"
-               data-catalog-view-trigger="{{ view_trigger|json_encode }}">
-                    <i class="fa-th-list fa--no-offset"></i>
-            </a>
-            {% set row_view = constant('Oro\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::VIEW_LIST') %}
-            {% set view_trigger = {
-                'row-view': 'no-image-view'
-            } %}
-            <a href="{{ url_prefix ~ '?' ~ query_parameters|merge({'frontend-product-search-grid': {(row_view_key): row_view}})|url_encode }}"
-               class="buttons-group__el {% if current_row_view == row_view %}current{% endif %}" data-catalog-view-trigger="{{ view_trigger|json_encode }}">
-                    <i class="fa-bars fa--no-offset"></i>
-            </a>
+                {% set row_view = constant('Oro\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::VIEW_TILES') %}
+                {% set view_trigger = {
+                    'row-view': 'gallery-view'
+                } %}
+                <a href="{{ url_prefix ~ '?' ~ query_parameters|merge({'frontend-product-search-grid': {(row_view_key): row_view}})|url_encode }}"
+                   class="buttons-group__el {% if current_row_view == row_view %}current{% endif %}" data-catalog-view-trigger="{{ view_trigger|json_encode }}">
+                        <i class="fa-th fa--no-offset"></i>
+                </a>
+                {% set row_view = constant('Oro\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::VIEW_GRID') %}
+                {% set view_trigger = {
+                    'row-view': 'list-view'
+                } %}
+                <a href="{{ url_prefix ~ '?' ~ query_parameters|merge({'frontend-product-search-grid': {(row_view_key): row_view}})|url_encode }}"
+                   class="buttons-group__el {% if current_row_view == row_view %}current{% endif %}"
+                   data-catalog-view-trigger="{{ view_trigger|json_encode }}">
+                        <i class="fa-th-list fa--no-offset"></i>
+                </a>
+                {% set row_view = constant('Oro\\Bundle\\ProductBundle\\DataGrid\\DataGridThemeHelper::VIEW_LIST') %}
+                {% set view_trigger = {
+                    'row-view': 'no-image-view'
+                } %}
+                <a href="{{ url_prefix ~ '?' ~ query_parameters|merge({'frontend-product-search-grid': {(row_view_key): row_view}})|url_encode }}"
+                   class="buttons-group__el {% if current_row_view == row_view %}current{% endif %}" data-catalog-view-trigger="{{ view_trigger|json_encode }}">
+                        <i class="fa-bars fa--no-offset"></i>
+                </a>
+            </div>
         </div>
-    </div>
+    {% endif %}
+{% endblock %}
+
+{% block __oro_product_grid__datagrid_toolbar_leftside_container_widget %}
+    {% set toolbarPosition = attr['data-grid-toolbar']|default('') %}
+
+    {% if toolbarPosition != 'bottom' %}
+        <div class="grid__toolbar-side" data-section="left-side">
+            {{ block_widget(block) }}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block __oro_product_grid__datagrid_toolbar_rightside_container_widget %}
+    {% set toolbarPosition = attr['data-grid-toolbar']|default('') %}
+
+    {% if toolbarPosition != 'bottom' %}
+        <div class="grid__toolbar-rightside" data-section="right-side">
+            {{ block_widget(block) }}
+        </div>
+    {% endif %}
 {% endblock %}

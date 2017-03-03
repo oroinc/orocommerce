@@ -68,7 +68,7 @@ class QuoteFrontendOperationsTest extends FrontendActionTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $title = $crawler->filter('.page-main__content .page-title__text');
-        $this->assertEquals('<h3>Open Order</h3>', $title->html());
+        $this->assertEquals('Open Order', $title->html());
 
         $form = $crawler->filter('form[name=oro_workflow_transition]');
         $this->assertEquals(1, $form->count());
