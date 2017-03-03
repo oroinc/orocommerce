@@ -393,7 +393,7 @@ services:
             - { name: kernel.event_listener, event: oro_shipping.method_type_removal, method: onMethodTypeRemove }
 
     oro_shipping.helper.filtered_datagrid_route:
-        class: 'Oro\Bundle\DataGridBundle\Tools\FilteredDatagridRouteHelper'
+        class: 'Oro\Bundle\ShippingBundle\Tools\FilteredDatagridRouteHelper'
         arguments:
                 - '%oro_shipping.rule_grid_route_name%'
                 - '%oro_shipping.rule_grid_name%'
