@@ -61,26 +61,26 @@ navigation:
 
     titles:
         oro_tax_product_tax_code_index: ~
-        oro_tax_product_tax_code_view:   '%%taxCode%% - oro.ui.view'
-        oro_tax_product_tax_code_update: '%%taxCode%% - oro.ui.edit'
+        oro_tax_product_tax_code_view:   '%taxCode% - oro.ui.view'
+        oro_tax_product_tax_code_update: '%taxCode% - oro.ui.edit'
         oro_tax_product_tax_code_create: 'oro.ui.create_entity'
 
         oro_tax_customer_tax_code_index: ~
-        oro_tax_customer_tax_code_view:   '%%taxCode%% - oro.ui.view'
-        oro_tax_customer_tax_code_update: '%%taxCode%% - oro.ui.edit'
+        oro_tax_customer_tax_code_view:   '%taxCode% - oro.ui.view'
+        oro_tax_customer_tax_code_update: '%taxCode% - oro.ui.edit'
         oro_tax_customer_tax_code_create: 'oro.ui.create_entity'
 
         oro_tax_index: ~
-        oro_tax_view:   '%%taxCode%% - oro.ui.view'
-        oro_tax_update: '%%taxCode%% - oro.ui.edit'
+        oro_tax_view:   '%taxCode% - oro.ui.view'
+        oro_tax_update: '%taxCode% - oro.ui.edit'
         oro_tax_create: 'oro.ui.create_entity'
 
         oro_tax_rule_index: ~
-        oro_tax_rule_view:   '%%id%% - oro.ui.view'
-        oro_tax_rule_update: '%%id%% - oro.ui.edit'
+        oro_tax_rule_view:   '%id% - oro.ui.view'
+        oro_tax_rule_update: '%id% - oro.ui.edit'
         oro_tax_rule_create: 'oro.ui.create_entity'
 
         oro_tax_jurisdiction_index: ~
-        oro_tax_jurisdiction_view:   '%%taxCode%% - oro.ui.view'
-        oro_tax_jurisdiction_update: '%%taxCode%% - oro.ui.edit'
+        oro_tax_jurisdiction_view:   '%taxCode% - oro.ui.view'
+        oro_tax_jurisdiction_update: '%taxCode% - oro.ui.edit'
         oro_tax_jurisdiction_create: 'oro.ui.create_entity'
