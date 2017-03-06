@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\SEOBundle\Sitemap\Dumper;
 
-use Oro\Bundle\SEOBundle\Provider\UrlItemsProviderRegistry;
+use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistry;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFilesystemAdapter;
 use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageFactory;
 use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageInterface;

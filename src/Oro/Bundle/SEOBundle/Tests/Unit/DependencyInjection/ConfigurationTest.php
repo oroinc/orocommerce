@@ -45,11 +45,11 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'value' => 0.5,
                     'scope' => 'app',
                 ],
-                'sitemap_changefreq_page' => [
+                'sitemap_changefreq_cms_page' => [
                     'value' => Configuration::CHANGEFREQ_DAILY,
                     'scope' => 'app',
                 ],
-                'sitemap_priority_page' => [
+                'sitemap_priority_cms_page' => [
                     'value' => 0.5,
                     'scope' => 'app',
                 ],

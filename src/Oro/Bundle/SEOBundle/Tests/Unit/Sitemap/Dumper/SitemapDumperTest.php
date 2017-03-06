@@ -3,7 +3,7 @@
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\Dumper;
 
 use Oro\Bundle\SEOBundle\Model\DTO\UrlItem;
-use Oro\Bundle\SEOBundle\Provider\UrlItemsProviderRegistry;
+use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistry;
 use Oro\Bundle\SEOBundle\Sitemap\Dumper\SitemapDumper;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFilesystemAdapter;
 use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageFactory;

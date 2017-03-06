@@ -4,7 +4,7 @@ namespace Oro\Bundle\RedirectBundle\Tests\Unit\Model;
 
 use Oro\Bundle\MessageQueueBundle\Entity\Job;
 use Oro\Bundle\SEOBundle\Model\SitemapMessageFactory;
-use Oro\Bundle\SEOBundle\Provider\UrlItemsProviderRegistry;
+use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistry;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\SEOBundle\Provider;
+namespace Oro\Bundle\SEOBundle\Sitemap\Provider;
 
 use Oro\Component\SEO\Provider\UrlItemsProviderInterface;
 

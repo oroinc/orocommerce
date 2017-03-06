@@ -11,7 +11,7 @@ use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerGroupProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\CustomerProductVisibility;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Component\Website\WebsiteInterface;
 
 class VisibilityScopeProvider
 {
@@ -26,20 +26,20 @@ class VisibilityScopeProvider
     }
 
     /**
-     * @param Website $website
+     * @param WebsiteInterface $website
      * @return Scope
      */
-    public function getProductVisibilityScope(Website $website)
+    public function getProductVisibilityScope(WebsiteInterface $website)
     {
         return $this->scopeManager->findOrCreate(ProductVisibility::getScopeType());
     }
 
     /**
      * @param Customer $customer
-     * @param Website $website
+     * @param WebsiteInterface $website
      * @return Scope
      */
-    public function getCustomerProductVisibilityScope(Customer $customer, Website $website)
+    public function getCustomerProductVisibilityScope(Customer $customer, WebsiteInterface $website)
     {
         return $this->scopeManager->findOrCreate(
             CustomerProductVisibility::getScopeType(),
@@ -51,10 +51,10 @@ class VisibilityScopeProvider
 
     /**
      * @param CustomerGroup $customerGroup
-     * @param Website $website
+     * @param WebsiteInterface $website
      * @return Scope
      */
-    public function getCustomerGroupProductVisibilityScope(CustomerGroup $customerGroup, Website $website)
+    public function getCustomerGroupProductVisibilityScope(CustomerGroup $customerGroup, WebsiteInterface $website)
     {
         return $this->scopeManager->findOrCreate(
             CustomerGroupProductVisibility::getScopeType(),

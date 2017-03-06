@@ -11,8 +11,8 @@ class UrlItemsProviderCompilerPass implements CompilerPassInterface
 {
     use TaggedServicesCompilerPassTrait;
     
-    const PROVIDER_REGISTRY = 'oro_seo.provider.url_items_provider_registry';
-    const TAG = 'oro_seo.url_items_provider';
+    const PROVIDER_REGISTRY = 'oro_seo.sitemap.provider.url_items_provider_registry';
+    const TAG = 'oro_seo.sitemap.url_items_provider';
 
     /**
      * {@inheritDoc}

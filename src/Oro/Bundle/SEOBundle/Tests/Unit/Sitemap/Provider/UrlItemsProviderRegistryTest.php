@@ -1,8 +1,8 @@
 <?php
 
-namespace Oro\Bundle\SEOBundle\Tests\Unit\Provider;
+namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\Provider;
 
-use Oro\Bundle\SEOBundle\Provider\UrlItemsProviderRegistry;
+use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistry;
 use Oro\Component\SEO\Provider\UrlItemsProviderInterface;
 
 class UrlItemsProviderRegistryTest extends \PHPUnit_Framework_TestCase

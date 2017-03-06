@@ -1,5 +1,6 @@
 parameters:
     oro_seo.sitemap_directory: 'sitemaps'
+    oro_seo.sitemap.provider.url_items_provider.class: Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProvider
 
 services:
     #EventListeners
@@ -98,8 +99,8 @@ services:
         tags:
             - { name: oro_web_catalog.content_variant_provider }
 
-    oro_seo.provider.url_items_provider_registry:
-        class: Oro\Bundle\SEOBundle\Provider\UrlItemsProviderRegistry
+    oro_seo.sitemap.provider.url_items_provider_registry:
+        class: Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistry
 
     oro_seo.sitemap.provider.sitemap_files_provider:
         class: Oro\Bundle\SEOBundle\Sitemap\Provider\SitemapFilesProvider
@@ -118,20 +119,20 @@ services:
     oro_seo.sitemap.sitemap_url_dumper:
         class: Oro\Bundle\SEOBundle\Sitemap\Dumper\SitemapDumper
         arguments:
-            - '@oro_seo.provider.url_items_provider_registry'
+            - '@oro_seo.sitemap.provider.url_items_provider_registry'
             - '@oro_seo.sitemap.sitemap_storage_factory'
             - '@oro_seo.sitemap.filesystem_adapter'
             - 'sitemap'
 
-    oro_seo.provider.url_items_provider_registry_index:
-        parent: oro_seo.provider.url_items_provider_registry
+    oro_seo.sitemap.provider.url_items_provider_registry_index:
+        parent: oro_seo.sitemap.provider.url_items_provider_registry
         calls:
             - ['addProvider', ['@oro_seo.sitemap.provider.sitemap_files_provider', 'index']]
 
     oro_seo.sitemap.sitemap_index_dumper:
         class: Oro\Bundle\SEOBundle\Sitemap\Dumper\SitemapDumper
         arguments:
-            - '@oro_seo.provider.url_items_provider_registry_index'
+            - '@oro_seo.sitemap.provider.url_items_provider_registry_index'
             - '@oro_seo.sitemap.sitemap_storage_factory'
             - '@oro_seo.sitemap.filesystem_adapter'
             - 'index'
@@ -146,33 +147,41 @@ services:
         tags:
             - { name: form.type, alias: oro_sitemap_priority }
 
-    oro_seo.provider.abstract_url_items_provider:
-        class: Oro\Bundle\SEOBundle\Provider\AbstractUrlItemsProvider
+    oro_seo.sitemap.provider.url_items_provider:
         abstract: true
         arguments:
             - '@oro_redirect.generator.canonical_url'
             - '@oro_config.manager'
             - '@event_dispatcher'
             - '@oro_entity.doctrine_helper'
-            - '@oro_featuretoggle.checker.feature_checker'
 
-    oro_seo.provider.product_url_items_provider:
-        class: Oro\Bundle\SEOBundle\Provider\ProductUrlItemsProvider
-        parent: oro_seo.provider.abstract_url_items_provider
+    oro_seo.sitemap.provider.product_url_items_provider:
+        class: '%oro_seo.sitemap.provider.url_items_provider.class%'
+        parent: oro_seo.sitemap.provider.url_items_provider
+        arguments:
+            - 'product'
+            - '%oro_product.entity.product.class%'
         tags:
-            - { name: oro_seo.url_items_provider, alias: 'product' }
+            - { name: oro_seo.sitemap.url_items_provider, alias: 'product' }
 
-    oro_seo.provider.category_url_items_provider:
-        class: Oro\Bundle\SEOBundle\Provider\CategoryUrlItemsProvider
-        parent: oro_seo.provider.abstract_url_items_provider
+    oro_seo.sitemap.provider.category_url_items_provider:
+        class: '%oro_seo.sitemap.provider.url_items_provider.class%'
+        parent: oro_seo.sitemap.provider.url_items_provider
+        arguments:
+            - 'category'
+            - '%oro_catalog.entity.category.class%'
         tags:
-            - { name: oro_seo.url_items_provider, alias: 'category' }
+            - { name: oro_seo.sitemap.url_items_provider, alias: 'category' }
+            - { name: oro_featuretogle.feature, feature: frontend_master_catalog }
 
-    oro_seo.provider.cms_page_url_items_provider:
-        class: Oro\Bundle\SEOBundle\Provider\CmsPageUrlItemsProvider
-        parent: oro_seo.provider.abstract_url_items_provider
+    oro_seo.sitemap.provider.cms_page_url_items_provider:
+        class: '%oro_seo.sitemap.provider.url_items_provider.class%'
+        parent: oro_seo.sitemap.provider.url_items_provider
+        arguments:
+            - 'cms_page'
+            - '%oro_cms.entity.page.class%'
         tags:
-            - { name: oro_seo.url_items_provider, alias: 'page' }
+            - { name: oro_seo.sitemap.url_items_provider, alias: 'page' }
 
     oro_seo.sitemap.sitemap_storage_factory:
         public: false
@@ -195,7 +204,7 @@ services:
         parent: oro_seo.model.sitemap_message_factory.abstract
         public: false
         calls:
-            - ['setProviderRegistry', ['@oro_seo.provider.url_items_provider_registry']]
+            - ['setProviderRegistry', ['@oro_seo.sitemap.provider.url_items_provider_registry']]
 
     oro_seo.model.sitemap_index_message_factory:
         class: Oro\Bundle\SEOBundle\Model\SitemapIndexMessageFactory
@@ -208,7 +217,7 @@ services:
             - '@oro_message_queue.job.runner'
             - '@oro_message_queue.job.dependent_job_service'
             - '@oro_message_queue.client.message_producer'
-            - '@oro_seo.provider.url_items_provider_registry'
+            - '@oro_seo.sitemap.provider.url_items_provider_registry'
             - '@oro_website.website.provider'
             - '@oro_seo.model.sitemap_index_message_factory'
             - '@oro_seo.model.sitemap_message_factory'
@@ -242,3 +251,15 @@ services:
             - '@oro_cron.deferred_scheduler'
         tags:
             - { name: kernel.event_listener, event: oro_config.update_after, method: onUpdateAfter }
+
+    oro_seo.event_listener.restrict_sitemap_product_by_visibility:
+        class: 'Oro\Bundle\SEOBundle\EventListener\RestrictSitemapProductByVisibilityListener'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_config.manager'
+        calls:
+            - [setProductVisibilitySystemConfigurationPath, ['oro_visibility.product_visibility']]
+            - [setCategoryVisibilitySystemConfigurationPath, ['oro_visibility.category_visibility']]
+            - [setVisibilityScopeProvider, ['@oro_visibility.provider.visibility_scope_provider']]
+        tags:
+            - { name: kernel.event_listener, event: oro_seo.event.restrict_sitemap_entity.product, method: restrictQueryBuilder }

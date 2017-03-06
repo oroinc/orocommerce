@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\SEOBundle\Model;
 
-use Oro\Bundle\SEOBundle\Provider\UrlItemsProviderRegistry;
+use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistry;
 use Oro\Component\MessageQueue\Job\Job;
 use Oro\Component\Website\WebsiteInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;

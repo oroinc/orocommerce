@@ -22,6 +22,6 @@ class ReindexCommandTest extends WebTestCase
 
         $traces = self::getMessageCollector()->getTopicSentMessages(Topics::GENERATE_SITEMAP);
         $this->assertCount(1, $traces);
-        $this->assertEquals(['topic' => Topics::GENERATE_SITEMAP, 'message' => []], $traces[0]);
+        $this->assertEquals(['topic' => Topics::GENERATE_SITEMAP, 'message' => ''], $traces[0]);
     }
 }

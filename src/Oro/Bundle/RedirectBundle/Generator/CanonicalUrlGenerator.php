@@ -210,7 +210,7 @@ class CanonicalUrlGenerator
 
         $urlParts = [rtrim($domainUrl, ' /') ];
         if ($baseUrl) {
-             $urlParts[] = $baseUrl;
+            $urlParts[] = $baseUrl;
         }
 
         $urlParts[] = ltrim($url, '/');

@@ -321,6 +321,14 @@ VisibilityBundle
 ----------------
 - Class `Oro\Bundle\VisibilityBundle\Driver\AbstractCustomerPartialUpdateDriver`
     - changed the return type of `getCustomerVisibilityIterator` method from `BufferedQueryResultIterator` to `BufferedQueryResultIteratorInterface`
+- Class `\Oro\Bundle\VisibilityBundle\Provider\VisibilityScopeProvider`
+    - changed signature of `getProductVisibilityScope` method, replaced `\Oro\Bundle\WebsiteBundle\Entity\Website` with `\Oro\Component\Website\WebsiteInterface`
+    - changed signature of `getCustomerProductVisibilityScope` method, replaced `\Oro\Bundle\WebsiteBundle\Entity\Website` with `\Oro\Component\Website\WebsiteInterface`
+    - changed signature of `getCustomerGroupProductVisibilityScope` method, replaced `\Oro\Bundle\WebsiteBundle\Entity\Website` with `\Oro\Component\Website\WebsiteInterface`
+- Trait `\Oro\Bundle\VisibilityBundle\Visibility\ProductVisibilityTrait`
+    - changed signature of `getCustomerGroupProductVisibilityResolvedTermByWebsite` method, replaced `\Oro\Bundle\WebsiteBundle\Entity\Website` with `\Oro\Component\Website\WebsiteInterface`
+    - changed signature of `getCustomerProductVisibilityResolvedTermByWebsite` method, replaced `\Oro\Bundle\WebsiteBundle\Entity\Website` with `\Oro\Component\Website\WebsiteInterface`
+    - changed signature of `getProductVisibilityResolvedTermByWebsite` method, replaced `\Oro\Bundle\WebsiteBundle\Entity\Website` with `\Oro\Component\Website\WebsiteInterface`
 
 RuleBundle
 ----------
@@ -362,7 +370,7 @@ WebsiteBundle
 
 RedirectBundle
 --------------
-- `Oro\Bundle\RedirectBundle\Entity\Redirect`
+- Class `Oro\Bundle\RedirectBundle\Entity\Redirect`
     - removed property `website` in favour of `scopes` collection using
 - Class `Oro\Bundle\RedirectBundle\DataProvider\CanonicalDataProvider`
     - logic moved to the `\Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator`
