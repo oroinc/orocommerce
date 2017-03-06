@@ -10,54 +10,47 @@
             display: none;
         }
 
-        .nav-tabs {
-            display: flex;
+        @include nav-tabs(
+            $nav-tabs-background: $product-view-attributes-tabs-bg,
+            $nav-tabs-border-color: $product-view-attributes-tabs-border-color,
 
-            background: $product-view-attributes-tabs-bg;
-            border-bottom-color: $product-view-attributes-tabs-border-color;
+            $nav-tabs-item-flex: 1 0 auto,
 
-            border-top-left-radius: $product-view-attributes-tabs-border-radius;
-            border-top-right-radius: $product-view-attributes-tabs-border-radius;
-        }
+            $nav-tabs-link-inner-offset: $product-view-attributes-tab-link-offset-inner,
+            $nav-tabs-link-color: $product-view-attributes-tab-link-color,
+            $nav-tabs-link-border-width: 0,
 
-        .nav-item {
-            text-align: center;
-
-            flex-grow: 1;
-
-            & + .nav-item {
-                margin-left: 0;
-
-                border-left: 1px solid $product-view-attributes-tabs-border-color;
+            $nav-tabs-link-hover-background: none
+        ) {
+            .nav-tabs {
+                border-top-left-radius: $product-view-attributes-tabs-border-radius;
+                border-top-right-radius: $product-view-attributes-tabs-border-radius;
             }
 
-            &:first-child {
-                .nav-link {
-                    border-top-left-radius: $product-view-attributes-tabs-border-radius;
+            .nav-item {
+                & + .nav-item {
+                    border-left: 1px solid $product-view-attributes-tabs-border-color;
+                }
+                
+                &:first-child {
+                    .nav-link {
+                        border-top-left-radius: $product-view-attributes-tabs-border-radius;
+                    }
+                }
+                
+                &:last-child {
+                    .nav-link {
+                        border-top-right-radius: $product-view-attributes-tabs-border-radius;
+                    }
                 }
             }
 
-            &:last-child {
-                .nav-link {
-                    border-top-right-radius: $product-view-attributes-tabs-border-radius;
-                }
+            .nav-link {
+                text-transform: uppercase;
+
+                border-radius: 0;
             }
-        }
-
-        .nav-link {
-            padding: $product-view-attributes-tab-link-offset-inner;
-
-            text-transform: uppercase;
-
-            color: $product-view-attributes-tab-link-color;
-            border: 0;
-
-            border-radius: 0;
-
-            @include hover-focus {
-                background: none;
-            }
-        }
+        };
 
         .tab-content {
             padding: $product-view-attributes-tab-content-offset-inner;
