@@ -1,0 +1,3 @@
+layout:
+    actions: []
+    conditions: 'context["is_mobile"]==false'

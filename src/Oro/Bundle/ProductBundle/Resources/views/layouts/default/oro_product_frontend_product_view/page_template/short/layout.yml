@@ -1,0 +1,5 @@
+layout:
+    actions:
+        - '@remove':
+            id: product_view_attributes_container
+    conditions: 'context["is_mobile"]==false'
