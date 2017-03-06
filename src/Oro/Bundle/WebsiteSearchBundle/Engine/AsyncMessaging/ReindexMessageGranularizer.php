@@ -17,6 +17,10 @@ class ReindexMessageGranularizer
      * @param array|string $entities
      * @param array $websites
      * @param array $context
+     * $context = [
+     *     'entityIds' int[] Array of entities ids to reindex
+     * ]
+     *
      * @return array
      */
     public function process($entities, array $websites, array $context)

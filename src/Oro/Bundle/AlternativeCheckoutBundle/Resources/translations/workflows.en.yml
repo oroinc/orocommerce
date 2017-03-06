@@ -1,15 +1,3 @@
-"Alternative Checkout: Order Approval": "Alternative Checkout: Order Approval"
-"Alternative Checkout: Billing Information": "Alternative Checkout: Billing Information"
-"Alternative Checkout: Payment": "Alternative Checkout: Payment"
-"Alternative Checkout: Shipping Information": "Alternative Checkout: Shipping Information"
-"Alternative Checkout: Shipping Method": "Alternative Checkout: Shipping Method"
-"Alternative Checkout: Order Review": "Alternative Checkout: Order Review"
-"Alternative Checkout: Request Approval": "Alternative Checkout: Request Approval"
-"Checkout: Billing Information": "Checkout: Billing Information"
-"Checkout: Payment": "Checkout: Payment"
-"Checkout: Shipping Information": "Checkout: Shipping Information"
-"Checkout: Shipping Method": "Checkout: Shipping Method"
-"Checkout: Order Review": "Checkout: Order Review"
 oro:
     workflow:
         b2b_flow_alternative_checkout:

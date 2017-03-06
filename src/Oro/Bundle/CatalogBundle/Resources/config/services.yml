@@ -25,13 +25,6 @@ services:
         arguments:
             - '%oro_catalog.entity.category.class%'
 
-    oro_catalog.category.manager.api:
-        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
-        parent: oro_soap.manager.entity_manager.abstract
-        arguments:
-            - '%oro_catalog.entity.category.class%'
-            - "@doctrine.orm.entity_manager"
-
     oro_catalog.event_listener.form_view:
         class: 'Oro\Bundle\CatalogBundle\EventListener\FormViewListener'
         arguments:
