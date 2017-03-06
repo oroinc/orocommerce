@@ -2,8 +2,10 @@
 
 namespace Oro\Bundle\RedirectBundle\EventListener;
 
+use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\ConfigBundle\Event\ConfigUpdateEvent;
 use Oro\Bundle\RedirectBundle\Async\Topics;
+use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
 use Oro\Bundle\RedirectBundle\Form\Storage\RedirectStorage;
 use Oro\Bundle\RedirectBundle\Model\MessageFactoryInterface;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
@@ -13,6 +15,11 @@ use Oro\Component\MessageQueue\Client\MessageProducerInterface;
  */
 class ConfigRegenerateDirectUrlListener
 {
+    /**
+     * @var ConfigManager
+     */
+    private $configManager;
+
     /**
      * @var MessageProducerInterface
      */
@@ -39,6 +46,7 @@ class ConfigRegenerateDirectUrlListener
     private $entityClass;
 
     /**
+     * @param ConfigManager $configManager
      * @param MessageProducerInterface $messageProducer
      * @param RedirectStorage $redirectStorage
      * @param MessageFactoryInterface $messageFactory
@@ -46,12 +54,14 @@ class ConfigRegenerateDirectUrlListener
      * @param string $entityClass
      */
     public function __construct(
+        ConfigManager $configManager,
         MessageProducerInterface $messageProducer,
         RedirectStorage $redirectStorage,
         MessageFactoryInterface $messageFactory,
         $configParameter,
         $entityClass
     ) {
+        $this->configManager = $configManager;
         $this->messageProducer = $messageProducer;
         $this->redirectStorage = $redirectStorage;
         $this->messageFactory = $messageFactory;
@@ -65,10 +75,23 @@ class ConfigRegenerateDirectUrlListener
     public function onUpdateAfter(ConfigUpdateEvent $event)
     {
         if ($event->isChanged($this->configParameter)) {
-            $createRedirect = $this->redirectStorage->getPrefixByKey($this->configParameter)->getCreateRedirect();
+            $prefixWithRedirect = $this->redirectStorage->getPrefixByKey($this->configParameter);
+            if ($prefixWithRedirect) {
+                $createRedirect = $prefixWithRedirect->getCreateRedirect();
+            } else {
+                $createRedirect = $this->getUseDefaultCreateRedirect();
+            }
 
             $message = $this->messageFactory->createMassMessage($this->entityClass, [], $createRedirect);
             $this->messageProducer->send(Topics::REGENERATE_DIRECT_URL_FOR_ENTITY_TYPE, $message);
         }
+    }
+
+    /**
+     * @return bool
+     */
+    private function getUseDefaultCreateRedirect()
+    {
+        return $this->configManager->get('oro_redirect.redirect_generation_strategy') !== Configuration::STRATEGY_NEVER;
     }
 }

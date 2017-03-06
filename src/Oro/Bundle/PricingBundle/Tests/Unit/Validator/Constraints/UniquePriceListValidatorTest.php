@@ -76,7 +76,7 @@ class UniquePriceListValidatorTest extends \PHPUnit_Framework_TestCase
 
         $value = array_map(function ($item) {
             /** @var PriceListConfig $item */
-            return ['priceList' => $item->getPriceList(), 'priority' => $item->getPriority()];
+            return ['priceList' => $item->getPriceList(), 'sortOrder' => $item->getSortOrder()];
         }, array_merge($this->createConfigs(2), $this->createConfigs(1)));
         $this->validator->validate($value, $this->constraint);
     }
