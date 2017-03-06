@@ -38,13 +38,20 @@ class ShardManager
     public function getShardName($className, array $attributes)
     {
         $baseTableName = $this->getBaseTableName($className);
-        if (!isset($attributes['priceList']) || !is_a($attributes['priceList'], PriceList::class)) {
+
+        if (!isset($attributes['priceList'])) {
             throw new \Exception(sprintf("Required attribute '%s' for generation of shard name missing.", "priceList"));
+        } elseif (is_a($attributes['priceList'], PriceList::class)) {
+            /** @var PriceList $priceList */
+            $priceList = $attributes['priceList'];
+            $id = $priceList->getId();
+        } elseif (is_int($attributes['priceList'])) {
+            $id = $attributes['priceList'];
+        } else {
+            throw new \Exception(sprintf("Wrong type of '%s' to generate shard name.", "priceList"));
         }
 
-        /** @var PriceList $priceList */
-        $priceList = $attributes['priceList'];
-        $shardName = sprintf("%s_%s", $baseTableName, $priceList->getId());
+        $shardName = sprintf("%s_%s", $baseTableName, $id);
 
         return $shardName;
     }
@@ -65,6 +72,9 @@ class ShardManager
         $search = [$baseTableName];
         $replace = [$shardName];
         foreach ($table->getIndexes() as $index) {
+            if ($index->getName() == 'PRIMARY') {
+                continue;
+            }
             $search[] = $index->getName();
             $replace[] = $this->generateIdentifierName($shardName, $index);
         }

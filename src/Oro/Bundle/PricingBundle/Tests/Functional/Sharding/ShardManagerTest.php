@@ -24,11 +24,29 @@ class ShardManagerTest extends WebTestCase
         $this->manager = $this->getContainer()->get('oro_pricing.shard_manager');
     }
 
-    public function testGetShardName()
+    /**
+     * @dataProvider getShardNameDataProvider
+     * @param array $attributes
+     */
+    public function testGetShardName(array $attributes)
     {
-        $priceList = $this->getEntity(PriceList::class, ['id' => 1]);
-        $actual = $this->manager->getShardName(ProductPrice::class, ['priceList' => $priceList]);
+        $actual = $this->manager->getShardName(ProductPrice::class, $attributes);
         $this->assertSame('oro_price_product_1', $actual);
+    }
+
+    /**
+     * @return array
+     */
+    public function getShardNameDataProvider()
+    {
+        return [
+            'object' => [
+                'attributes' => ['priceList' => $this->getEntity(PriceList::class, ['id' => 1])],
+            ],
+            'id' => [
+                'attributes' => ['priceList' => 1],
+            ],
+        ];
     }
 
     /**
@@ -42,7 +60,7 @@ class ShardManagerTest extends WebTestCase
 
     /**
      * @expectedException \Exception
-     * @expectedExceptionMessage Required attribute 'priceList' for generation of shard name missing.
+     * @expectedExceptionMessage Wrong type of 'priceList' to generate shard name.
      */
     public function testGetShardNameExceptionWhenParamNotValid()
     {
