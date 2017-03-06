@@ -1,5 +1,9 @@
 oro_behat_extension:
-  elements:
-    PriceListCollection:
-        selector: "div.pricing-price-list"
-        class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+  suites:
+    OroPricingBundle:
+      contexts:
+        - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
+        - Oro\Bundle\FormBundle\Tests\Behat\Context\FeatureContext
+        - OroDataGridBundle::GridContext
+      paths:
+        - '@OroPricingBundle/Tests/Behat/Features'
