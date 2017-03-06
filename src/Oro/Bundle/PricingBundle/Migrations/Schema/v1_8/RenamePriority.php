@@ -38,8 +38,8 @@ class RenamePriority implements Migration, RenameExtensionAwareInterface
         $this->renamePriorityColumn($schema, $queries, 'oro_price_list_to_website');
 
         $queries->addQuery(new RenameConfigArrayKeyQuery(
-            'default_price_lists',
             'oro_pricing',
+            'default_price_lists',
             self::OLD_COLUMN_NAME,
             self::NEW_COLUMN_NAME
         ));
