@@ -25,8 +25,9 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
 
     /**
      * @param AddressInterface $shippingAddress
-     * @param string $currency
-     * @return array|ShippingMethodsConfigsRule[]
+     * @param string           $currency
+     *
+     * @return ShippingMethodsConfigsRule[]
      */
     public function getByDestinationAndCurrency(AddressInterface $shippingAddress, $currency)
     {
@@ -39,15 +40,15 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
             ->andWhere('postalCode.name in (:postalCodes) or postalCode.name is null')
             ->setParameter('country', $shippingAddress->getCountryIso2())
             ->setParameter('regionCode', $shippingAddress->getRegionCode())
-            ->setParameter('postalCodes', explode(',', $shippingAddress->getPostalCode()))
-        ;
+            ->setParameter('postalCodes', explode(',', $shippingAddress->getPostalCode()));
 
         return $this->aclHelper->apply($query)->getResult();
     }
 
     /**
      * @param string $currency
-     * @return array|ShippingMethodsConfigsRule[]
+     *
+     * @return ShippingMethodsConfigsRule[]
      */
     public function getByCurrency($currency)
     {
@@ -58,20 +59,38 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
 
     /**
      * @param string $currency
-     * @return array|ShippingMethodsConfigsRule[]
+     *
+     * @return ShippingMethodsConfigsRule[]
      */
     public function getByCurrencyWithoutDestination($currency)
     {
         $query = $this->getByCurrencyQuery($currency)
             ->leftJoin('methodsConfigsRule.destinations', 'destination')
-            ->andWhere('destination.id is null')
-        ;
+            ->andWhere('destination.id is null');
+
+        return $this->aclHelper->apply($query)->getResult();
+    }
+
+    /**
+     * @param string $methodId
+     *
+     * @return ShippingMethodsConfigsRule[]
+     */
+    public function getConfigsWithEnabledRuleAndMethod($methodId)
+    {
+        $query = $this->createQueryBuilder('methodsConfigsRule')
+            ->innerJoin('methodsConfigsRule.methodConfigs', 'methodConfigs')
+            ->innerJoin('methodsConfigsRule.rule', 'rule')
+            ->andWhere('rule.enabled = true')
+            ->andWhere('methodConfigs.method = :methodId')
+            ->setParameter('methodId', $methodId);
 
         return $this->aclHelper->apply($query)->getResult();
     }
 
     /**
      * @param bool $onlyEnabled
+     *
      * @return mixed
      */
     public function getRulesWithoutShippingMethods($onlyEnabled = false)
@@ -83,11 +102,11 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
         if ($onlyEnabled) {
             $qb->andWhere('rule.enabled = true');
         }
+
         return $qb
             ->having('COUNT(methodConfigs.id) = 0')
             ->groupBy('rule.id')
-            ->getQuery()->execute()
-        ;
+            ->getQuery()->execute();
     }
 
     public function disableRulesWithoutShippingMethods()
@@ -107,6 +126,7 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
 
     /**
      * @param string $currency
+     *
      * @return QueryBuilder
      */
     private function getByCurrencyQuery($currency)
@@ -119,7 +139,21 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
             ->leftJoin('methodConfigs.typeConfigs', 'typeConfigs')
             ->where('methodsConfigsRule.currency = :currency')
             ->setParameter('currency', $currency)
-            ->orderBy($queryBuilder->expr()->asc('methodsConfigsRule.id'))
-        ;
+            ->orderBy($queryBuilder->expr()->asc('methodsConfigsRule.id'));
+    }
+
+    /**
+     * @param string $method
+     *
+     * @return ShippingMethodsConfigsRule[]
+     */
+    public function getRulesByMethod($method)
+    {
+        $query = $this->createQueryBuilder('methodsConfigsRule')
+            ->innerJoin('methodsConfigsRule.methodConfigs', 'methodConfigs')
+            ->where('methodConfigs.method = :method')
+            ->setParameter('method', $method);
+
+        return $this->aclHelper->apply($query)->getResult();
     }
 }

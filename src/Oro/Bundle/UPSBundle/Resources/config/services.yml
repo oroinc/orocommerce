@@ -116,3 +116,11 @@ services:
     oro_ups.cache.shipping_price:
         public: false
         parent: oro.cache.abstract
+
+    oro_ups.disable_integration_listener:
+        class: 'Oro\Bundle\UPSBundle\EventListener\ShippingMethodDisableIntegrationListener'
+        arguments:
+            - '@oro_ups.method.identifier_generator.method'
+            - '@oro_shipping.method_disable_handler.decorator'
+        tags:
+            - { name: kernel.event_listener, event: oro_integration.channel_disable, method: onIntegrationDisable }

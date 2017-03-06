@@ -3,14 +3,13 @@
 namespace Oro\Bundle\FlatRateShippingBundle\Integration;
 
 use Oro\Bundle\IntegrationBundle\Provider\ChannelInterface;
-use Oro\Bundle\IntegrationBundle\Provider\IconAwareIntegrationInterface;
 
-class FlatRateChannelType implements ChannelInterface, IconAwareIntegrationInterface
+class FlatRateChannelType implements ChannelInterface
 {
     const TYPE = 'flat_rate';
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getLabel()
     {
@@ -18,12 +17,10 @@ class FlatRateChannelType implements ChannelInterface, IconAwareIntegrationInter
     }
 
     /**
-     * TODO: add icon
-     *
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getIcon()
     {
-        return 'bundles/oroflatrate/img/flat-logo.gif';
+        return 'bundles/oroflatrateshipping/img/flat-rate-logo.png';
     }
 }
