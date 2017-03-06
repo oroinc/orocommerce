@@ -1,12 +1,12 @@
 <?php
 
-namespace Oro\Bundle\PaymentBundle\Method\Event;
+namespace Oro\Bundle\ShippingBundle\Method\Event;
 
 use Symfony\Component\EventDispatcher\Event;
 
 class MethodRenamingEvent extends Event
 {
-    const NAME = 'oro_payment.method_renaming';
+    const NAME = 'oro_shipping.method_renaming';
 
     /**
      * @var string
@@ -29,7 +29,7 @@ class MethodRenamingEvent extends Event
     }
 
     /**
-     * @return string
+     * @return int|string
      */
     public function getOldMethodIdentifier()
     {
@@ -37,7 +37,7 @@ class MethodRenamingEvent extends Event
     }
 
     /**
-     * @return string
+     * @return int|string
      */
     public function getNewMethodIdentifier()
     {
