@@ -20,10 +20,15 @@
             margin-top: 0;
 
             text-align: center;
+
+            .page-title {
+                font-size: $base-font-size--l - 1;
+                line-height: 1.2;
+            }
         }
 
         &__description {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
 
             border-bottom: 1px solid get-color('additional', 'light');
         }
