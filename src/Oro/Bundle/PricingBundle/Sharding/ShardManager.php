@@ -13,7 +13,6 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-// todo: investigate how transactions work in MySQL(implicit commit) new connection may be required
 class ShardManager
 {
     /**
@@ -43,7 +42,6 @@ class ShardManager
             throw new \Exception(sprintf("Required attribute '%s' for generation of shard name missing.", "priceList"));
         }
 
-        // todo: investigate best way to pass attributes and validate
         /** @var PriceList $priceList */
         $priceList = $attributes['priceList'];
         $shardName = sprintf("%s_%s", $baseTableName, $priceList->getId());
@@ -64,14 +62,13 @@ class ShardManager
         /** @var Table $table */
         $table = $sm->listTableDetails($baseTableName);
 
-        // in PostgreSQL index and fk names should be unique in schema
         $search = [$baseTableName];
         $replace = [$shardName];
         foreach ($table->getIndexes() as $index) {
             $search[] = $index->getName();
             $replace[] = $this->generateIdentifierName($shardName, $index);
         }
-        foreach ($table->getIndexes() as $foreignKey) {
+        foreach ($table->getForeignKeys() as $foreignKey) {
             $search[] = $foreignKey->getName();
             $replace[] = $this->generateIdentifierName($shardName, $foreignKey);
         }
@@ -92,9 +89,6 @@ class ShardManager
     public function exists($className, $shardName)
     {
         $connection = $this->getConnection($className);
-
-        // tableExists fetches full list of tables on every call
-        // @todo: investigate if it should be refactored
         return $connection->getSchemaManager()->tablesExist($shardName);
     }
 
