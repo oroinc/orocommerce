@@ -13,7 +13,6 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-// todo: investigate how transactions work in MySQL(implicit commit) new connection may be required
 class ShardManager
 {
     /**
@@ -39,14 +38,20 @@ class ShardManager
     public function getShardName($className, array $attributes)
     {
         $baseTableName = $this->getBaseTableName($className);
-        if (!isset($attributes['priceList']) || !is_a($attributes['priceList'], PriceList::class)) {
+
+        if (!isset($attributes['priceList'])) {
             throw new \Exception(sprintf("Required attribute '%s' for generation of shard name missing.", "priceList"));
+        } elseif (is_a($attributes['priceList'], PriceList::class)) {
+            /** @var PriceList $priceList */
+            $priceList = $attributes['priceList'];
+            $id = $priceList->getId();
+        } elseif (is_int($attributes['priceList'])) {
+            $id = $attributes['priceList'];
+        } else {
+            throw new \Exception(sprintf("Wrong type of '%s' to generate shard name.", "priceList"));
         }
 
-        // todo: investigate best way to pass attributes and validate
-        /** @var PriceList $priceList */
-        $priceList = $attributes['priceList'];
-        $shardName = sprintf("%s_%s", $baseTableName, $priceList->getId());
+        $shardName = sprintf("%s_%s", $baseTableName, $id);
 
         return $shardName;
     }
@@ -66,14 +71,16 @@ class ShardManager
         /** @var Table $table */
         $table = $sm->listTableDetails($baseTableName);
 
-        // in PostgreSQL index and fk names should be unique in schema
         $search = [$baseTableName];
         $replace = [$shardName];
         foreach ($table->getIndexes() as $index) {
+            if ($index->getName() == 'PRIMARY') {
+                continue;
+            }
             $search[] = $index->getName();
             $replace[] = $this->generateIdentifierName($shardName, $index);
         }
-        foreach ($table->getIndexes() as $foreignKey) {
+        foreach ($table->getForeignKeys() as $foreignKey) {
             $search[] = $foreignKey->getName();
             $replace[] = $this->generateIdentifierName($shardName, $foreignKey);
         }
@@ -94,9 +101,6 @@ class ShardManager
     public function exists($className, $shardName)
     {
         $connection = $this->getConnection($className);
-
-        // tableExists fetches full list of tables on every call
-        // @todo: investigate if it should be refactored
         return $connection->getSchemaManager()->tablesExist($shardName);
     }
 
