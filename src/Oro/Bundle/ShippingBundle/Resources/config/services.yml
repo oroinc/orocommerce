@@ -392,7 +392,7 @@ services:
             - { name: kernel.event_listener, event: oro_shipping.method_type_removal, method: onMethodTypeRemove }
 
     oro_shipping.helper.filtered_datagrid_route:
-        class: 'Oro\Bundle\DataGridBundle\Tools\FilteredDatagridRouteHelper'
+        class: 'Oro\Bundle\ShippingBundle\Tools\FilteredDatagridRouteHelper'
         arguments:
                 - '%oro_shipping.rule_grid_route_name%'
                 - '%oro_shipping.rule_grid_name%'
@@ -425,3 +425,17 @@ services:
         class: 'Oro\Bundle\ShippingBundle\Checker\ShippingRuleEnabledChecker'
         arguments:
             - '@oro_shipping.checker.shipping_method_enabled'
+
+    oro_shipping.method_disable_handler.basic:
+        class: 'Oro\Bundle\ShippingBundle\Method\Handler\BasicShippingMethodDisableHandler'
+        public: false
+
+    oro_shipping.method_disable_handler.decorator:
+        class: 'Oro\Bundle\ShippingBundle\Method\Handler\RulesShippingMethodDisableHandlerDecorator'
+        decorates: oro_shipping.method_disable_handler.basic
+        decoration_priority: 255
+        public: false
+        arguments:
+            - '@oro_shipping.method_disable_handler.decorator.inner'
+            - '@oro_shipping.repository.shipping_methods_configs_rule'
+            - '@oro_shipping.shipping_method.registry'

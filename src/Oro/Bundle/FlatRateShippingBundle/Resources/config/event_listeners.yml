@@ -13,3 +13,11 @@ services:
             - '@oro_shipping.method.event.dispatcher.method_removal'
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\IntegrationBundle\Entity\Channel', event: preRemove }
+
+    oro_flat_rate_shipping.disable_integration_listener:
+         class: 'Oro\Bundle\FlatRateShippingBundle\EventListener\ShippingMethodDisableIntegrationListener'
+         arguments:
+             - '@oro_flat_rate_shipping.method.identifier_generator.method'
+             - '@oro_shipping.method_disable_handler.decorator'
+         tags:
+             - { name: kernel.event_listener, event: oro_integration.channel_disable, method: onIntegrationDisable }
