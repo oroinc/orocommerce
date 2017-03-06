@@ -86,28 +86,13 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
         $websiteIds = [];
 
         foreach ($this->getUpdatedEntities($unitOfWork) as $entity) {
-            $isAnyFieldChanged = false;
-
-            if (!$entity instanceof ContentNodeInterface) {
-                continue;
-            }
-
-            foreach ($this->getFields() as $fieldName) {
-                if ($this->fieldUpdatesChecker->isRelationFieldChanged($entity, $fieldName)) {
-                    $isAnyFieldChanged = true;
-                    break;
-                }
-            }
-
-            // if any of configurable field of ContentNode has changed - reindex all products related to it
-            if ($isAnyFieldChanged) {
-                $this->collectProductIds($entity->getContentVariants(), $productIds);
-                $this->collectWebsiteIds($entity->getContentVariants(), $websiteIds);
-            }
+            $this->collectChangedProductIds([$entity], $productIds, $unitOfWork);
+            $this->collectWebsiteIds([$entity], $websiteIds);
+            $this->collectChangedFields($entity, $productIds, $websiteIds);
         }
 
-        foreach ($this->getChangedEntities($unitOfWork) as $entity) {
-            $this->collectProductIds([$entity], $productIds, $unitOfWork);
+        foreach ($this->getCreatedAndDeletedEntities($unitOfWork) as $entity) {
+            $this->collectProductIds([$entity], $productIds);
             $this->collectWebsiteIds([$entity], $websiteIds);
         }
 
@@ -116,29 +101,45 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
 
     /**
      * @param array|Collection $entities
-     * @param array &$productIds
-     * @param UnitOfWork $unitOfWork
+     * @param array            &$productIds
      */
-    private function collectProductIds($entities, array &$productIds, UnitOfWork $unitOfWork = null)
+    private function collectProductIds($entities, array &$productIds)
     {
         foreach ($entities as $entity) {
             if (!$entity instanceof ContentVariantInterface
                 || $entity->getType() !== ProductPageContentVariantType::TYPE
-                || !$entity->getProductPageProduct()) {
+                || !$entity->getProductPageProduct()
+            ) {
                 continue;
             }
 
             $this->addProduct($entity->getProductPageProduct(), $productIds);
-            if ($unitOfWork) {
-                $entityChangeSet = $unitOfWork->getEntityChangeSet($entity);
-                if (!array_key_exists('product_page_product', $entityChangeSet)) {
-                    continue;
-                }
-                if (!empty($entityChangeSet['product_page_product'][0])) {
-                    $this->addProduct($entityChangeSet['product_page_product'][0], $productIds);
-                }
-                if (!empty($entityChangeSet['product_page_product'][1])) {
-                    $this->addProduct($entityChangeSet['product_page_product'][1], $productIds);
+        }
+    }
+
+    /**
+     * @param array|Collection $entities
+     * @param array            &$productIds
+     * @param UnitOfWork       $unitOfWork
+     */
+    private function collectChangedProductIds($entities, array &$productIds, UnitOfWork $unitOfWork)
+    {
+        foreach ($entities as $entity) {
+            if (!$entity instanceof ContentVariantInterface
+                || $entity->getType() !== ProductPageContentVariantType::TYPE
+                || !$entity->getProductPageProduct()
+            ) {
+                continue;
+            }
+
+            $entityChangeSet = $unitOfWork->getEntityChangeSet($entity);
+            if (!array_key_exists('product_page_product', $entityChangeSet)) {
+                continue;
+            }
+
+            foreach ($entityChangeSet['product_page_product'] as $product) {
+                if (!empty($product)) {
+                    $this->addProduct($product, $productIds);
                 }
             }
         }
@@ -175,6 +176,33 @@ class ProductContentVariantReindexEventListener implements ContentNodeFieldsChan
             if (!empty($relatedWebsiteIds)) {
                 $websitesId = array_unique(array_merge($websitesId, array_keys($relatedWebsiteIds)));
             }
+        }
+    }
+
+    /**
+     * @param mixed $entity
+     * @param array $productIds
+     * @param array $websiteIds
+     */
+    private function collectChangedFields($entity, array &$productIds, array &$websiteIds)
+    {
+        $isAnyFieldChanged = false;
+
+        if (!$entity instanceof ContentNodeInterface) {
+            return;
+        }
+
+        foreach ($this->getFields() as $fieldName) {
+            if ($this->fieldUpdatesChecker->isRelationFieldChanged($entity, $fieldName)) {
+                $isAnyFieldChanged = true;
+                break;
+            }
+        }
+
+        // if any of configurable field of ContentNode has changed - reindex all products related to it
+        if ($isAnyFieldChanged) {
+            $this->collectProductIds($entity->getContentVariants(), $productIds);
+            $this->collectWebsiteIds($entity->getContentVariants(), $websiteIds);
         }
     }
 

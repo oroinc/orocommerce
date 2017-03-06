@@ -92,28 +92,13 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
         $websiteIds = [];
 
         foreach ($this->getUpdatedEntities($unitOfWork) as $entity) {
-            $isAnyFieldChanged = false;
-
-            if (!$entity instanceof ContentNodeInterface) {
-                continue;
-            }
-
-            foreach ($this->getFields() as $fieldName) {
-                if ($this->fieldUpdatesChecker->isRelationFieldChanged($entity, $fieldName)) {
-                    $isAnyFieldChanged = true;
-                    break;
-                }
-            }
-
-            // if any of configurable field of ContentNode has changed - reindex all products of related categories
-            if ($isAnyFieldChanged) {
-                $this->collectCategories($entity->getContentVariants(), $categories);
-                $this->collectWebsiteIds($entity->getContentVariants(), $websiteIds);
-            }
+            $this->collectChangedCategories([$entity], $categories, $unitOfWork);
+            $this->collectWebsiteIds([$entity], $websiteIds);
+            $this->collectChangedFields($entity, $categories, $websiteIds);
         }
 
-        foreach ($this->getChangedEntities($unitOfWork) as $entity) {
-            $this->collectCategories([$entity], $categories, $unitOfWork);
+        foreach ($this->getCreatedAndDeletedEntities($unitOfWork) as $entity) {
+            $this->collectCategories([$entity], $categories);
             $this->collectWebsiteIds([$entity], $websiteIds);
         }
 
@@ -123,9 +108,8 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
     /**
      * @param array|Collection $entities
      * @param Category[] &$categories
-     * @param UnitOfWork $unitOfWork
      */
-    private function collectCategories($entities, array &$categories, $unitOfWork = null)
+    private function collectCategories($entities, array &$categories)
     {
         foreach ($entities as $entity) {
             if ($entity instanceof ContentVariantInterface
@@ -136,17 +120,29 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
                 if ($category) {
                     $this->addCategory($categories, $category);
                 }
+            }
+        }
+    }
 
-                if ($unitOfWork) {
-                    $changeSet = $unitOfWork->getEntityChangeSet($entity);
-                    if (!array_key_exists('category_page_category', $changeSet)) {
-                        continue;
-                    }
-                    if (!empty($changeSet['category_page_category'][0])) {
-                        $this->addCategory($categories, $changeSet['category_page_category'][0]);
-                    }
-                    if (!empty($changeSet['category_page_category'][1])) {
-                        $this->addCategory($categories, $changeSet['category_page_category'][1]);
+    /**
+     * @param array|Collection $entities
+     * @param Category[] &$categories
+     * @param UnitOfWork $unitOfWork
+     */
+    private function collectChangedCategories($entities, array &$categories, UnitOfWork $unitOfWork)
+    {
+        foreach ($entities as $entity) {
+            if ($entity instanceof ContentVariantInterface
+                && $entity->getType() === CategoryPageContentVariantType::TYPE
+            ) {
+                $changeSet = $unitOfWork->getEntityChangeSet($entity);
+                if (!array_key_exists('category_page_category', $changeSet)) {
+                    continue;
+                }
+
+                foreach ($changeSet['category_page_category'] as $category) {
+                    if (!empty($category)) {
+                        $this->addCategory($categories, $category);
                     }
                 }
             }
@@ -189,6 +185,33 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
 
     /**
      * @param mixed $entity
+     * @param Category[] $categories
+     * @param array $websiteIds
+     */
+    private function collectChangedFields($entity, array &$categories, array &$websiteIds)
+    {
+        $isAnyFieldChanged = false;
+
+        if (!$entity instanceof ContentNodeInterface) {
+            return;
+        }
+
+        foreach ($this->getFields() as $fieldName) {
+            if ($this->fieldUpdatesChecker->isRelationFieldChanged($entity, $fieldName)) {
+                $isAnyFieldChanged = true;
+                break;
+            }
+        }
+
+        // if any of configurable field of ContentNode has changed - reindex all products related to it
+        if ($isAnyFieldChanged) {
+            $this->collectCategories($entity->getContentVariants(), $categories);
+            $this->collectWebsiteIds($entity->getContentVariants(), $websiteIds);
+        }
+    }
+
+    /**
+     * @param mixed $entity
      * @return bool
      */
     private function isValidContentVariantEntity($entity)
@@ -221,7 +244,7 @@ class CategoryContentVariantIndexListener implements ContentNodeFieldsChangesAwa
     }
 
     /**
-     * @param array $categories
+     * @param Category[] $categories
      * @param array $websiteIds
      */
     private function scheduleProductsReindex(array $categories, array $websiteIds = [])

@@ -73,7 +73,7 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit_Framework_T
         $this->eventListener->onFlush(new OnFlushEventArgs($entityManager));
     }
 
-    public function testItReindexWithManyProductsAfterFlush()
+    public function testCreatedAndDeletedProductsOfContentVariantsWillBeReindexButNoProductsWithoutChangeSet()
     {
         $contentVariant1 = $this->generateContentVariant(1);
         $contentVariant2 = $this->generateContentVariant(2);
@@ -93,7 +93,7 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit_Framework_T
             ->method('getAssignedWebCatalogs')
             ->willReturn([1 => 1]);
 
-        $this->assertReindexEvent([1, 2, 3, 4, 5, 6], [1]);
+        $this->assertReindexEvent([1, 2, 5, 6], [1]);
         $this->eventListener->onFlush(new OnFlushEventArgs($entityManager));
     }
 
@@ -118,10 +118,9 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit_Framework_T
         $this->eventListener->onFlush(new OnFlushEventArgs($entityManager));
     }
 
-    public function testItReindexWithManyProductsAfterFlushWithChangeSet()
+    public function testProductIdsOfChangedContentVariantsWillBeTriggered()
     {
         $contentVariant1 = $this->generateContentVariant(1);
-        $contentVariant2 = $this->generateContentVariant(2);
         $oldProduct = $contentVariant1->getProductPageProduct();
         $newProduct = $this->generateProduct(3);
         $contentVariant1->setProductPageProduct($newProduct);
@@ -129,8 +128,8 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit_Framework_T
         $entityChangeSet = ['product_page_product' => [$oldProduct, $newProduct]];
         $entityManager = $this->entityManagerMockBuilder->getEntityManager(
             $this,
-            [$contentVariant1, $contentVariant2],
             [],
+            [$contentVariant1],
             [],
             $entityChangeSet
         );
@@ -139,7 +138,7 @@ class ProductContentVariantReindexEventListenerTest extends \PHPUnit_Framework_T
             ->method('getAssignedWebCatalogs')
             ->willReturn([1 => 1]);
 
-        $this->assertReindexEvent([3, 1, 2], [1]);
+        $this->assertReindexEvent([1, 3], [1]);
         $this->eventListener->onFlush(new OnFlushEventArgs($entityManager));
     }
 

@@ -153,26 +153,6 @@ class CategoryContentVariantIndexListenerTest extends \PHPUnit_Framework_TestCas
         $this->listener->onFlush(new OnFlushEventArgs($entityManager));
     }
 
-    public function testOnFlushWithCategoriesWithEmptyChangeSet()
-    {
-        $variant = $this->generateContentVariant(1, 1);
-
-        $entityManager = $this->entityManagerMockBuilder->getEntityManager(
-            $this,
-            [],
-            [$variant],
-            [],
-            ['category_page_category' => [0 => null, 1 => null]]
-        );
-        $this->provider
-            ->method('getAssignedWebCatalogs')
-            ->willReturn([2 => 1]);
-
-        $this->assertCategoriesReindexationScheduled([1 => $variant->getCategoryPageCategory()], [2]);
-
-        $this->listener->onFlush(new OnFlushEventArgs($entityManager));
-    }
-
     public function testProductsOfRelatedContentVariantWillBeReindexOnlyIfConfigurableFieldsHaveSomeChanges()
     {
         $contentVariant1 = $this->generateContentVariant(1, 1);
