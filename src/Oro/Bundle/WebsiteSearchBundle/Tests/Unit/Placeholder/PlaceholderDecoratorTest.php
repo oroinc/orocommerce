@@ -6,7 +6,7 @@ use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderDecorator;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderInterface;
 use Oro\Bundle\WebsiteSearchBundle\Placeholder\PlaceholderRegistry;
 
-class PlaceholderTest extends \PHPUnit_Framework_TestCase
+class PlaceholderDecoratorTest extends \PHPUnit_Framework_TestCase
 {
     /** @var PlaceholderDecorator */
     protected $placeholder;
@@ -14,11 +14,22 @@ class PlaceholderTest extends \PHPUnit_Framework_TestCase
     /** @var PlaceholderRegistry|\PHPUnit_Framework_MockObject_MockObject */
     protected $registry;
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
         $this->registry = $this->createMock(PlaceholderRegistry::class);
 
         $this->placeholder = new PlaceholderDecorator($this->registry);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function tearDown()
+    {
+        unset($this->registry, $this->placeholder);
     }
 
     /**
