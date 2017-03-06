@@ -4,6 +4,7 @@ oro_behat_extension:
       contexts:
         - Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext
         - Oro\Bundle\FormBundle\Tests\Behat\Context\FeatureContext
+        - Oro\Bundle\ConfigBundle\Tests\Behat\Context\FeatureContext
         - OroDataGridBundle::GridContext
       paths:
         - '@OroPricingBundle/Tests/Behat/Features'
