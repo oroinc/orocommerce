@@ -117,7 +117,7 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
                 ->addShortDescription($shortDescription)
                 ->setType($row['type']);
 
-            $product->setPageTemplate($this->getPageTemplate($row));
+            $this->setPageTemplate($product, $row);
 
             $slugPrototype = new LocalizedFallbackValue();
             $slugPrototype->setString($slugGenerator->slugify($row['name']));
@@ -238,18 +238,19 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
     }
 
     /**
-     * @param array $row
-     * @return null|EntityFieldFallbackValue
+     * @param Product $product
+     * @param array   $row
+     * @return LoadProductDemoData
      */
-    private function getPageTemplate(array $row)
+    private function setPageTemplate(Product $product, array $row)
     {
-        if (isset($row['page_template'])) {
+        if (!empty($row['page_template'])) {
             $entityFallbackValue = new EntityFieldFallbackValue();
-            $fallbackValue = $entityFallbackValue
-                ->setArrayValue([ProductType::PAGE_TEMPLATE_ROUTE_NAME => $row['page_template']]);
-            return $fallbackValue;
+            $entityFallbackValue->setArrayValue([ProductType::PAGE_TEMPLATE_ROUTE_NAME => $row['page_template']]);
+
+            $product->setPageTemplate($entityFallbackValue);
         }
 
-        return null;
+        return $this;
     }
 }
