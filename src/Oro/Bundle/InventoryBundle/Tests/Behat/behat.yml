@@ -1,3 +1,5 @@
+# WarehouseBundle inherits InventoryBundle.
+# We need to have this file to not run tests from WarehouseBundle twice
 oro_behat_extension:
   suites:
     OroInventoryBundle:
