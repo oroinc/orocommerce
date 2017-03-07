@@ -440,3 +440,21 @@ services:
             - '@oro_shipping.method_disable_handler.decorator.inner'
             - '@oro_shipping.repository.shipping_methods_configs_rule'
             - '@oro_shipping.shipping_method.registry'
+
+    oro_shipping.repository.shipping_method_config:
+        class: 'Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodConfigRepository'
+        parent: oro_entity.abstract_repository
+        arguments:
+            - 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig'
+
+    oro_shipping.method.event_listener.method_renaming:
+        class: 'Oro\Bundle\ShippingBundle\Method\EventListener\MethodRenamingListener'
+        arguments:
+            - '@oro_shipping.repository.shipping_method_config'
+        tags:
+            - { name: kernel.event_listener, event: oro_shipping.method_renaming, method: onMethodRename}
+
+    oro_shipping.method.event.dispatcher.method_renaming:
+        class: 'Oro\Bundle\ShippingBundle\Method\Event\BasicMethodRenamingEventDispatcher'
+        arguments:
+            - '@event_dispatcher'

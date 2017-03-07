@@ -7,7 +7,6 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\TestFrameworkBundle\Test\DataFixtures\AbstractFixture;
-use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\UserBundle\Entity\UserInterface;
 use Oro\Bundle\UserBundle\Entity\UserManager;
@@ -16,8 +15,6 @@ use Symfony\Component\Yaml\Yaml;
 
 class LoadPaymentMethodsConfigsRuleData extends AbstractFixture implements DependentFixtureInterface
 {
-    use UserUtilityTrait;
-
     /**
      * {@inheritDoc}
      */

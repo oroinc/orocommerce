@@ -40,6 +40,8 @@ oro:
         payment_terms:
             label: 'Terms: %paymentTerm%'
 
+        delete.message.placeholder: '%confirmationMessage%'
+
     payment:
         admin:
             payment_term.label: 'Payment Terms'

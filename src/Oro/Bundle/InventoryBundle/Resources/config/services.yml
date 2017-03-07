@@ -2,13 +2,6 @@ parameters:
     oro_inventory.entity.inventory_level.class: Oro\Bundle\InventoryBundle\Entity\InventoryLevel
 
 services:
-    oro_inventory.inventory_level.manager.api:
-        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
-        parent: oro_soap.manager.entity_manager.abstract
-        arguments:
-            - '%oro_inventory.entity.inventory_level.class%'
-            - "@doctrine.orm.entity_manager"
-
     oro_inventory.api.processor.product_id.normalize_input:
         class: 'Oro\Bundle\ProductBundle\Api\Processor\NormalizeProductId'
         tags:
