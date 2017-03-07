@@ -1,3 +1,5 @@
+@skip
+# TODO: unskip when BB-8036 will be resolved
 @fixture-ShippingMethodsConfigsRule.yml
 Feature: Applying shipping rules
   In order to decrease shipping cost for buyers

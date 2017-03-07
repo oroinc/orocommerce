@@ -1,0 +1,12 @@
+services:
+    oro_payment_term.integration.channel:
+        class: 'Oro\Bundle\PaymentTermBundle\Integration\PaymentTermChannelType'
+        public: true
+        tags:
+            - { name: oro_integration.channel, type: payment_term }
+
+    oro_payment_term.integration.transport:
+        class: 'Oro\Bundle\PaymentTermBundle\Integration\PaymentTermTransport'
+        public: false
+        tags:
+            - { name: oro_integration.transport, type: payment_term, channel_type: payment_term }

@@ -1,7 +1,8 @@
 .product-view {
     &__attributes {
-        border: 1px solid $product-view-attributes-tabs-border-color;
         margin-bottom: $offset-y;
+
+        border: 1px solid $product-view-attributes-tabs-border-color;
 
         border-radius: $product-view-attributes-tabs-border-radius;
 
@@ -46,11 +47,12 @@
         .nav-link {
             padding: $product-view-attributes-tab-link-offset-inner;
 
+            text-transform: uppercase;
+
             color: $product-view-attributes-tab-link-color;
             border: 0;
-            border-radius: 0;
 
-            text-transform: uppercase;
+            border-radius: 0;
 
             @include hover-focus {
                 background: none;

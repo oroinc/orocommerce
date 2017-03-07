@@ -8,7 +8,7 @@ use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
-use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRules;
+use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRulesWithConfigs;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingAddressStub;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -33,7 +33,7 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
         $this->client->useHashNavigation(true);
 
         $this->loadFixtures([
-            LoadShippingMethodsConfigsRules::class,
+            LoadShippingMethodsConfigsRulesWithConfigs::class,
         ]);
 
         $this->em = static::getContainer()->get('doctrine')

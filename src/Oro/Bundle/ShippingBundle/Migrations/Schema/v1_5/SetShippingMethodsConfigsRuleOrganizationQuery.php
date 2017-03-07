@@ -58,12 +58,10 @@ class SetShippingMethodsConfigsRuleOrganizationQuery extends ParametrizedSqlMigr
         ';
         $this->logQuery($logger, $sql);
 
-        $organizations = $this->connection->query($sql)->fetch();
-        if (empty($organizations)) {
+        $organizationId = $this->connection->query($sql)->fetchColumn(0);
+        if (!$organizationId) {
             throw new \Exception('No organizations found in system');
         }
-
-        $organizationId = $organizations[0]['id'];
 
         $sql = '
             UPDATE oro_ship_method_configs_rule

@@ -155,20 +155,26 @@ class MatrixGridOrderManagerTest extends \PHPUnit_Framework_TestCase
         $collection->unit = $productUnit;
         $collection->rows = [$rowSmall, $rowMedium];
 
+        /** @var Product $product */
+        $product = $this->getEntity(Product::class);
+        $product->setType(Product::TYPE_CONFIGURABLE);
+
         $lineItem1 = $this->getEntity(LineItem::class, [
             'product' => $simpleProductSmallRed,
             'unit' => $productUnit,
             'quantity' => 1,
+            'parentProduct' => $product
         ]);
         $lineItem2 = $this->getEntity(LineItem::class, [
             'product' => $simpleProductMediumGreen,
             'unit' => $productUnit,
             'quantity' => 4,
+            'parentProduct' => $product
         ]);
 
         $this->assertEquals(
             [$lineItem1, $lineItem2],
-            $this->manager->convertMatrixIntoLineItems($collection)
+            $this->manager->convertMatrixIntoLineItems($collection, $product)
         );
     }
 }
