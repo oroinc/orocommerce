@@ -4,7 +4,7 @@ dependencies:
 Oro\Bundle\InventoryBundle\Entity\InventoryLevel:
   inventory_level.product_unit_precision.product-1.liter:
     productUnitPrecision: @product_unit_precision.product-1.liter
-    quantity: 10
+    quantity: 11
   inventory_level.product_unit_precision.product-1.bottle:
     productUnitPrecision: @product_unit_precision.product-1.bottle
     quantity: 99
@@ -19,4 +19,4 @@ Oro\Bundle\InventoryBundle\Entity\InventoryLevel:
     quantity: 42
   inventory_level.product_unit_precision.product-1.primary_unit:
     productUnitPrecision: @product-1->primaryUnitPrecision
-    quantity: 10
+    quantity: 15
