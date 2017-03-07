@@ -104,6 +104,27 @@ MoneyOrderBundle
         - `Oro\Bundle\MoneyOrderBundle\Method\Factory\MoneyOrderPaymentMethodFactory`
         - `Oro\Bundle\MoneyOrderBundle\Method\View\Factory\MoneyOrderPaymentMethodViewFactory`
 
+NavigationBundle
+----------------
+
+* Chaged placeholders format for `navigation.yml` files. Please use `%` instead of `%%`
+* Removed class `Oro\Bundle\FrontendBundle\Menu\BreadcrumbManager`. From now menu name used to build breadcrumbs is set directly in `Oro\Bundle\NavigationBundle\Layout\DataProvider\NavigationTitleProvider::getTitle`:
+* `Oro\Bundle\NavigationBundle\Provider\TitleServiceInterface`:
+    - Changed signature of loadByRoute to `($route, $menuName = null)` to provide ability to set menu that will be used to build title
+* Removed title db cache:
+    - Removed command `oro:navigation:init` it is not needed, titles are generated and cached on fly
+    - Removed repository `Oro\Bundle\NavigationBundle\Entity\Repository`
+    - Removed entity `Oro\Bundle\NavigationBundle\Entity\Title`
+* Added `Oro\Bundle\NavigationBundle\Title\TitleReader\TitleReaderRegistry`:
+    - Added service tag `oro_navigation.title_reader` to register custom title template reader
+* Added `Oro\Bundle\NavigationBundle\Provider\ConfigurationProvider`. It contains logic that was previously in NavigationExtension 
+* Removed `Oro\Bundle\NavigationBundle\Event\RequestTitleListener`
+* Removed `Oro\Bundle\NavigationBundle\Provider\TitleProvider`
+* Changed `Oro\Bundle\NavigationBundle\Title\TitleReader\AnnotationsReader` constructor signature to `__construct(RequestStack $requestStack, Reader $reader)`
+* Changed `Oro\Bundle\NavigationBundle\Title\TranslationExtractor` constructor signature to `__construct(TitleReaderRegistry $titleReaderRegistry, RouterInterface $router)`
+* Changed `Oro\Bundle\NavigationBundle\ContentProvider\NavigationElementsContentProvider` constructor signature to `__construct(ConfigurationProvider $configurationProvider)`
+* Changed `Oro\Bundle\NavigationBundle\Config\MenuConfiguration` constructor signature to `__construct(ConfigurationProvider $configurationProvider)`
+
 OrderBundle
 -----------
 - Class `Oro\Bundle\OrderBundle\Twig\OrderExtension`
@@ -251,7 +272,19 @@ PricingBundle
     - changed the return type of `getIteratorByPriceList` method from `BufferedQueryResultIterator` to `BufferedQueryResultIteratorInterface`
 - Class `Oro\Bundle\PricingBundle\Entity\Repository\PriceListToWebsiteRepository`
     - changed the return type of `getWebsiteIteratorByDefaultFallback` method from `BufferedQueryResultIterator` to `BufferedQueryResultIteratorInterface`
-
+- Class `Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType`
+    - field `priority` was removed. Field `_position` from `Oro\Bundle\FormBundle\Form\Extension\SortableExtension` will be used instead.
+- Class `Oro\Bundle\PricingBundle\Entity\BasePriceListRelation`
+    - property `$priority` was renamed to `$sortOrder`
+    - methods `getPriority` and `setPriority` were renamed to `getSortOrder` and `setSortOrder` accordingly
+- Class `Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig`
+    - property `$priority` was renamed to `$sortOrder`
+    - methods `getPriority` and `setPriority` were renamed to `getSortOrder` and `setSortOrder` accordingly
+- Interface `Oro\Bundle\PricingBundle\Entity\PriceListAwareInterface`
+    - method `getPriority` was renamed to `getSortOrder`
+- Class `Oro\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter`
+    - constant `PRIORITY_KEY` was renamed to `SORT_ORDER_KEY`
+    
 ProductBundle
 -------------
 - Class `Oro\Bundle\ProductBundle\Twig\ProductExtension`

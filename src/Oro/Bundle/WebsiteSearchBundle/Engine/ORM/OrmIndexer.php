@@ -14,6 +14,11 @@ class OrmIndexer extends AbstractIndexer
 
     /**
      * {@inheritdoc}
+     *
+     * @param array $context
+     * $context = [
+     *     'currentWebsiteId' int Current website id. Should not be passed manually. It is computed from 'websiteIds'
+     * ]
      */
     public function delete($entities, array $context = [])
     {
@@ -45,6 +50,12 @@ class OrmIndexer extends AbstractIndexer
 
     /**
      * {@inheritdoc}
+     *
+     * @param array $context
+     * $context = [
+     *     'entityIds' int[] Array of entities ids to index
+     *     'currentWebsiteId' int Current website id. Should not be passed manually. It is computed from 'websiteIds'
+     * ]
      */
     protected function saveIndexData(
         $entityClass,
@@ -96,6 +107,11 @@ class OrmIndexer extends AbstractIndexer
 
     /**
      * {@inheritdoc}
+     *
+     * @param array $context
+     * $context = [
+     *     'currentWebsiteId' int Current website id. Should not be passed manually. It is computed from 'websiteIds'
+     * ]
      */
     public function resetIndex($class = null, array $context = [])
     {

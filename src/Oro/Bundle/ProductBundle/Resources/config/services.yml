@@ -763,6 +763,7 @@ services:
     oro_product.config.event_listener.direct_url_prefix_change:
         class: Oro\Bundle\RedirectBundle\EventListener\ConfigRegenerateDirectUrlListener
         arguments:
+            - '@oro_config.manager'
             - '@oro_message_queue.client.message_producer'
             - '@oro_redirect.form.storage.redirect_storage'
             - '@oro_redirect.direct_url_message_factory'

@@ -45,7 +45,7 @@ class PriceListToCustomerGroupRepository extends EntityRepository implements Pri
             ->where($qb->expr()->eq('relation.customerGroup', ':customerGroup'))
             ->andWhere($qb->expr()->eq('relation.website', ':website'))
             ->andWhere($qb->expr()->eq('priceList.active', ':active'))
-            ->orderBy('relation.priority', $sortOrder)
+            ->orderBy('relation.sortOrder', $sortOrder)
             ->setParameters(['customerGroup' => $customerGroup, 'website' => $website, 'active' => true]);
 
         return $qb->getQuery()->getResult();
@@ -150,7 +150,7 @@ class PriceListToCustomerGroupRepository extends EntityRepository implements Pri
             ->where($qb->expr()->in('relation.customerGroup', ':groups'))
             ->orderBy('relation.customerGroup')
             ->addOrderBy('relation.website')
-            ->addOrderBy('relation.priority')
+            ->addOrderBy('relation.sortOrder')
             ->setParameter('groups', $holdersIds);
 
         return $qb->getQuery()->getResult();

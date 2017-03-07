@@ -33,6 +33,11 @@ class IndexerInputValidator
     /**
      * @param string|array $classOrClasses
      * @param array $context
+     * $context = [
+     *     'entityIds' int[] Array of entities ids to reindex
+     *     'websiteIds' int[] Array of websites ids to reindex
+     * ]
+     *
      * @return array
      */
     public function validateReindexRequest(
@@ -85,6 +90,10 @@ class IndexerInputValidator
 
     /**
      * @param array $context
+     * $context = [
+     *     'websiteIds' int[] Array of websites ids to reindex
+     * ]
+     *
      * @return array
      */
     private function getWebsiteIdsToIndex(array $context)
