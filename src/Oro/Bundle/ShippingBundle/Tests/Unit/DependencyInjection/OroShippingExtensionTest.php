@@ -68,9 +68,6 @@ class OroShippingExtensionTest extends ExtensionTestCase
             'oro_shipping.expression_language.decorated_product_line_item_factory',
             'oro_shipping.listener.shipping_rule',
             'oro_shipping.layout.block_type.shipping_methods',
-            'oro_shipping.repository.shipping_method_config',
-            'oro_shipping.method.event_listener.method_renaming',
-            'oro_shipping.method.event.dispatcher.method_renaming',
             'oro_shipping.helper.filtered_datagrid_route',
             'oro_shipping.helper.filtered_datagrid_route',
             'oro_shipping.validator.shipping_rule_enabled',
@@ -79,6 +76,9 @@ class OroShippingExtensionTest extends ExtensionTestCase
             'oro_shipping.method_disable_handler.decorator',
             'oro_shipping.method_disable_handler.basic',
             'oro_shipping.provider.shipping_method_choices',
+            'oro_shipping.repository.shipping_method_config',
+            'oro_shipping.method.event_listener.method_renaming',
+            'oro_shipping.method.event.dispatcher.method_renaming',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 
