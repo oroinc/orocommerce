@@ -1,0 +1,23 @@
+{% block _product_view_attributes_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+    '~class': ' product-view__attribute-box-wrapper'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block attribute_group_rest_widget %}
+    {{ block_widget(block) }}
+{%- endblock %}
+
+{% block attribute_group_rest_attribute_group_widget %}
+    <section {{ block('block_attributes') }} class="product-view__attribute-box">
+        {{ block_widget(block) }}
+    </section>
+{% endblock %}
+
+{% block attribute_label_widget %}
+    <h2 class="product-view__attribute-box-title">{{ label }}</h2>
+{% endblock %}

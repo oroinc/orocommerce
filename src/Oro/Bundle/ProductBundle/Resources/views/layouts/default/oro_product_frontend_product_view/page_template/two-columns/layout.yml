@@ -1,3 +1,5 @@
 layout:
-    actions: []
+    actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
     conditions: 'context["is_mobile"]==false'

@@ -1,5 +1,6 @@
 styles:
     inputs:
+        - 'bundles/oroproduct/blank/scss/variables/product-view-attribute-box-config.scss'
         - 'bundles/oroproduct/blank/scss/variables/product-view-layout-config.scss'
         - 'bundles/oroproduct/blank/scss/variables/product-view-desc-config.scss'
         - 'bundles/oroproduct/blank/scss/variables/product-view-desc-list-config.scss'
