@@ -19,7 +19,8 @@ define(function(require) {
         },
 
         elementsEvents: {
-            '$el': ['options:set:productModel', 'optionsSetProductModel']
+            '$el': ['options:set:productModel', 'optionsSetProductModel'],
+            'quantity': ['input', 'filterQuantityField']
         },
 
         modelElements: {
@@ -31,7 +32,11 @@ define(function(require) {
             id: 0,
             quantity: 0,
             unit: '',
-            line_item_form_enable: true
+            line_item_form_enable: true,
+            precision: {
+                'item': 5,
+                'set': 3
+            }
         },
 
         modelEvents: {
@@ -117,6 +122,17 @@ define(function(require) {
         disableLineItemForm: function() {
             this.getElement('lineItemFields').prop('disabled', true).inputWidget('refresh');
             this.getElement('lineItem').addClass('disabled');
+        },
+
+        filterQuantityField: function(event) {
+            var precision = this.model.get('product_units')[this.model.get('unit')] || 0;
+            var value = event.target.value.replace(/[^0-9\.]/g, '');
+            var match = value.match(
+                new RegExp('(\\d*' + (precision > 0 ? '\\.' : '') + ')?\\d{0,' + precision + '}', 'g')
+            );
+
+            value = match[0].indexOf('.') === -1 ? match.join('') : match[0];
+            event.target.value = value;
         },
 
         dispose: function() {
