@@ -2,29 +2,3 @@ operations:
     UPDATE:
         exclude_datagrids:
             - inventory-level-grid
-
-    oro_inventory_level_order_delete:
-        extends: DELETE
-        replace:
-            - for_all_datagrids
-            - for_all_entities
-            - datagrids
-            - datagrid_options
-            - preconditions
-            - acl_resource
-        acl_resource: [DELETE, entity:Oro\Bundle\InventoryBundle\Entity\InventoryLevel]
-        for_all_datagrids: false
-        for_all_entities: false
-        preconditions:
-            '@not_blank': $.data
-        datagrids:
-            - inventory-grid
-        datagrid_options:
-            mass_action:
-                entity_name: Oro\Bundle\InventoryBundle\Entity\InventoryLevel
-                data_identifier: inventory.id
-                type: delete
-                label: oro.grid.action.delete
-                link: delete_link
-                icon: trash-o
-
