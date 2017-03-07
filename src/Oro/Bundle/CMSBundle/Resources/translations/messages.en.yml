@@ -16,6 +16,10 @@ oro.cms:
             singular_label:     'Slug Prototype'
         form.choose:            'Choose a Landing Page...'
         content_variant_type.label: 'Landing Page'
+        enabled.label:          'Enabled'
+        alias.label:            'Alias'
+        text_content_variants.label: 'Text Content Variants'
+        default.label: Default
 
     contentblock:
         entity_label: Content Block
