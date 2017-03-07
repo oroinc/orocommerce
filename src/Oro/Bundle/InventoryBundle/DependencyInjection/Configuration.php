@@ -43,10 +43,10 @@ class Configuration implements ConfigurationInterface
         SettingsBuilder::append(
             $rootNode,
             [
-                self::MANAGE_INVENTORY => ['type' => 'boolean', 'value' => false],
+                self::MANAGE_INVENTORY => ['type' => 'boolean', 'value' => true],
                 self::INVENTORY_THRESHOLD => ['type' => 'decimal', 'value' => 0],
                 self::BACKORDERS => ['type' => 'boolean', 'value' => false],
-                self::DECREMENT_INVENTORY => ['type' => 'boolean', 'value' => false],
+                self::DECREMENT_INVENTORY => ['type' => 'boolean', 'value' => true],
                 self::MINIMUM_QUANTITY_TO_ORDER => ['type' => 'decimal', 'value' => null],
                 self::MAXIMUM_QUANTITY_TO_ORDER => [
                     'type' => 'decimal',
