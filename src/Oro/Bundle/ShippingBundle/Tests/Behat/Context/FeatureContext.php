@@ -326,4 +326,121 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $form->fill($table);
         $this->getSession()->getPage()->pressButton('Continue');
     }
+
+
+    /**
+     * Feature_bundle DisablingShippingIntegration
+     *
+     * Setting Shipping Integration type on Create Integration page
+     *
+     * Example: I set Type value to "Flat Rate Shipping"
+     *
+     * @When /^I set Type value to "(?P<step>[\w\s]+)"$/
+     *
+     */
+    public function ISetTypeValue($value)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * Feature_bundle DisablingShippingIntegration
+     *
+     * Setting Shipping integration name on Create Integration page
+     *
+     * Example: I set Name value to "New Flat Rate"
+     *
+     * @When /^I set Name value to "(?P<step>[\w\s]+)"$/
+     *
+     */
+    public function ISetNameValue($value)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     *  Feature_bundle DisablingShippingIntegration
+     *
+     * Setting Shipping integration label on Create Integration page
+     *
+     * Example: I set Label value to "New Flat Rate"
+     *
+     * @When /^I set Label value to "(?P<step>[\w\s]+)"$/
+     *
+     */
+    public function ISetLabelValue($value)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * Click on selected integration in the grid
+     *
+     * Example: I select integration by name "Flat Rate"
+     *
+     * @When /^I select integration by "(?P<step>[\w\s]+)" name$/
+     *
+     */
+    public function ISelectIntegrationByName($name)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * Feature_bundle DisablingShippingIntegration
+     *
+     * Verify that Existing Shipping Rules popup appears
+     *
+     * Example: I should see Existing Shipping Rules popup
+     *
+     * @When /^I should see Existing Shipping Rules popup$/
+     *
+     */
+    public function IShouldSeeExistingShippingRulesPopup()
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * Feature_bundle DisablingShippingIntegration
+     *
+     * Verify that Shipping Rule has information about disabled integration
+     *
+     * Example: I should see "1. Flat rate (Price: $x.00) (disabled)" text in configuration column
+     *
+     * @When /^I should see "(.*)" text in configuration column$/
+     *
+     */
+    public function CheckIfConfigurationTextIsPresent()
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * Click on selected shipping rule in the grid
+     *
+     * Example: I select shipping rule by name "Default"
+     *
+     * @When /^I select shipping rule by "(?P<step>[\w\s]+)" name$/
+     *
+     */
+    public function ISelectShippingRulenByName($name)
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * Feature_bundle DisablingShippingIntegration
+     *
+     * Verify that Method dropdown contains "Default Flat Rate disabled" method
+     *
+     * Example: I should see "Default Flat Rate disabled" method in Method dropdown
+     *
+     * @When /^I should see "(?P<step>[\w\s]+)" method in Method dropdown$/
+     *
+     */
+    public function CheckMethodDropdown()
+    {
+        throw new PendingException();
+    }
 }
