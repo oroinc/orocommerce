@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Unit\EventListener;
 
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 
@@ -28,6 +29,12 @@ class QuoteUpdateHandlerEventListenerTest extends \PHPUnit_Framework_TestCase
     /** @var RequestStack|\PHPUnit_Framework_MockObject_MockObject */
     private $requestStack;
 
+    /** @var FormProcessEvent */
+    private $event;
+
+    /** @var Quote */
+    private $quote;
+
     protected function setUp()
     {
         $this->websiteManager = $this->createMock(WebsiteManager::class);
@@ -39,86 +46,67 @@ class QuoteUpdateHandlerEventListenerTest extends \PHPUnit_Framework_TestCase
             $this->quoteRequestHandler,
             $this->requestStack
         );
+
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->createMock(FormInterface::class);
+
+        $this->quote = new Quote();
+        $this->event = new FormProcessEvent($form, $this->quote);
     }
 
     public function testEnsureWebsite()
     {
-        $quote = new Quote();
-
-        $formProcessEvent = $this->createFormProcessEvent($quote);
-
         $website = new Website();
 
         $this->websiteManager->expects($this->once())->method('getDefaultWebsite')->willReturn($website);
 
-        $this->listener->ensureWebsite($formProcessEvent);
+        $this->listener->ensureWebsite($this->event);
 
-        $this->assertSame($website, $quote->getWebsite());
+        $this->assertSame($website, $this->quote->getWebsite());
     }
 
     public function testEnsureWebsiteAlreadySet()
     {
-        $quote = new Quote();
-
-        $formProcessEvent = $this->createFormProcessEvent($quote);
-
         $website = new Website();
 
-        $quote->setWebsite($website);
+        $this->quote->setWebsite($website);
 
         $this->websiteManager->expects($this->never())->method('getDefaultWebsite');
 
-        $this->listener->ensureWebsite($formProcessEvent);
+        $this->listener->ensureWebsite($this->event);
 
-        $this->assertSame($website, $quote->getWebsite());
+        $this->assertSame($website, $this->quote->getWebsite());
     }
 
     public function testEnsureCustomer()
     {
-        $quote = new Quote();
-
-        $formProcessEvent = $this->createFormProcessEvent($quote);
-
         $customer = new Customer;
         $customerUser = new CustomerUser;
 
         $request = $this->createMock(Request::class);
-        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
         $request->expects($this->once())->method('getMethod')->willReturn('POST');
+
+        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
 
         $this->quoteRequestHandler->expects($this->once())->method('getCustomer')->willReturn($customer);
         $this->quoteRequestHandler->expects($this->once())->method('getCustomerUser')->willReturn($customerUser);
 
-        $this->listener->ensureCustomer($formProcessEvent);
+        $this->listener->ensureCustomer($this->event);
 
-        $this->assertSame($customer, $quote->getCustomer());
-        $this->assertSame($customerUser, $quote->getCustomerUser());
+        $this->assertSame($customer, $this->quote->getCustomer());
+        $this->assertSame($customerUser, $this->quote->getCustomerUser());
     }
 
     public function testEnsureCustomerOtherRequests()
     {
-        $quote = new Quote();
-
-        $formProcessEvent = $this->createFormProcessEvent($quote);
-
         $request = $this->createMock(Request::class);
-        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
         $request->expects($this->once())->method('getMethod')->willReturn('GET'); //not our case
+
+        $this->requestStack->expects($this->once())->method('getCurrentRequest')->willReturn($request);
 
         $this->quoteRequestHandler->expects($this->never())->method('getCustomer');
         $this->quoteRequestHandler->expects($this->never())->method('getCustomerUser');
 
-        $this->listener->ensureCustomer($formProcessEvent);
-    }
-
-    /**
-     * @param Quote $quote
-     * @return FormProcessEvent|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private function createFormProcessEvent(Quote $quote)
-    {
-        $formProcessEvent = $this->createMock(FormProcessEvent::class);
-        $formProcessEvent->expects($this->any())->method('getData')->willReturn($quote);
-        return $formProcessEvent;
+        $this->listener->ensureCustomer($this->event);
     }
 }
