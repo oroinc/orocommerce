@@ -355,3 +355,18 @@ services:
             - '@oro_product.layout.data_provider.configurable_products'
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.order-line-items-grid-frontend, method: onResultAfter }
+
+    oro_order.order_api.totals_processor:
+        class: 'Oro\Bundle\OrderBundle\Api\Processor\Order\TotalsOrderApiProcessor'
+        arguments:
+            - '@oro_order.order.total.total_helper'
+            - '@oro_api.doctrine_helper'
+        tags:
+            - { name: oro.api.processor, action: update, group: save_data, priority: -50, class: '%oro_order.entity.order.class%' }
+            - { name: oro.api.processor, action: create, group: save_data, priority: -50, class: '%oro_order.entity.order.class%' }
+
+    oro_order.order_api.order_line_item_price_processor:
+        class: 'Oro\Bundle\ProductBundle\Api\Processor\ProductLineItemPriceProcessor'
+        tags:
+            - { name: oro.api.processor, action: update, group: load_data, priority: -50, class: '%oro_order.entity.order_line_item.class%' }
+            - { name: oro.api.processor, action: create, group: load_data, priority: -50, class: '%oro_order.entity.order_line_item.class%' }

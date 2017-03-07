@@ -1,0 +1,45 @@
+api:
+    entities:
+        Oro\Bundle\OrderBundle\Entity\Order:
+            actions:
+                create:
+                  fields:
+                      subtotalValue:
+                          exclude: true
+                      totalValue:
+                          exclude: true
+                      totalDiscountsAmount:
+                          exclude: true
+                update:
+                    fields:
+                        subtotalValue:
+                            exclude: true
+                        totalValue:
+                            exclude: true
+                        totalDiscountsAmount:
+                            exclude: true
+
+        Oro\Bundle\OrderBundle\Entity\OrderLineItem:
+            fields:
+                # this is added in order to properly handle "price" parameter that is created out of these values
+                # which are not present in validations.yml and so are not handled by api
+                value:
+                    form_options:
+                        mapped: false
+                        constraints:
+                            - NotBlank: ~
+                currency:
+                    form_options:
+                        mapped: false
+                        constraints:
+                            - NotBlank: ~
+                # there is already a productUnit required property in entity
+                productUnitCode:
+                    exclude: true
+                # copy-paste from rfq api
+                productSku:
+                    exclude: true
+
+        Oro\Bundle\OrderBundle\Entity\OrderAddress: ~
+        Oro\Bundle\OrderBundle\Entity\OrderDiscount: ~
+        Oro\Bundle\OrderBundle\Entity\OrderShippingTracking: ~
