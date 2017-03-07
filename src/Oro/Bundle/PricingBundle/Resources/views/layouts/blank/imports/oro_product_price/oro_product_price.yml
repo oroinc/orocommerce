@@ -15,6 +15,7 @@ layout:
                     blockType: product_prices
                     options:
                         productPrices: []
+                        attributeFamily: '=context.offsetExists("attribute_family") ? context["attribute_family"] : null'
                 __product_price_listed:
                     blockType: block
                 __product_price_msrp:

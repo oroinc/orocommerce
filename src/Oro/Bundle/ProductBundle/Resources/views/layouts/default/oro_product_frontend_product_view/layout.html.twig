@@ -2,8 +2,10 @@
     {% set dom_relocation_options =  {
         responsive: [
             {
-                screenType: 'tablet',
-                moveTo: '[data-product-view-description]'
+                viewport: {
+                maxScreenType: 'tablet',
+            },
+            moveTo: '[data-product-view-description]'
             }
         ]
     }|json_encode %}
