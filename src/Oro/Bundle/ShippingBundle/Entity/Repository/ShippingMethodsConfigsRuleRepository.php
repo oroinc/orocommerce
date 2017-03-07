@@ -150,7 +150,7 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
     public function getRulesByMethod($method)
     {
         $query = $this->createQueryBuilder('methodsConfigsRule')
-            ->leftJoin('methodsConfigsRule.methodConfigs', 'methodConfigs')
+            ->innerJoin('methodsConfigsRule.methodConfigs', 'methodConfigs')
             ->where('methodConfigs.method = :method')
             ->setParameter('method', $method);
 
