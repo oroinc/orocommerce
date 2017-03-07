@@ -6,14 +6,16 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
-class AjaxProductControllerTest extends WebTestCase
+class InlineEditProductControllerTest extends WebTestCase
 {
     const NEW_PRODUCT_NAME = 'New default product-1 name';
 
+    /**
+     * {@inheritdoc}
+     */
     protected function setUp()
     {
-        $this->initClient([], $this->generateBasicAuthHeader());
-        $this->client->useHashNavigation(true);
+        $this->initClient([], $this->generateWsseAuthHeader());
 
         $this->loadFixtures([LoadProductData::class]);
     }
@@ -26,28 +28,15 @@ class AjaxProductControllerTest extends WebTestCase
 
         $this->client->request(
             'PATCH',
-            $this->getUrl('oro_product_ajax_edit_name'),
+            $this->getUrl('oro_api_patch_productinlineedit_edit_name', ['id' => $product1->getId()]),
             [
-                'id' => $product1->getId(),
-                'productName' => self::NEW_PRODUCT_NAME,
+                'productName' => self::NEW_PRODUCT_NAME
             ]
         );
         $result = $this->client->getResponse();
 
         $this->assertJsonResponseStatusCodeEquals($result, 200);
         $this->assertEquals(self::NEW_PRODUCT_NAME, $product1->getName());
-    }
-
-    public function testProductEditNameEmptyParameters()
-    {
-        $this->client->request(
-            'PATCH',
-            $this->getUrl('oro_product_ajax_edit_name'),
-            []
-        );
-        $result = $this->client->getResponse();
-
-        $this->assertJsonResponseStatusCodeEquals($result, 400);
     }
 
     public function testProductEditNameMissingProduct()
@@ -58,14 +47,28 @@ class AjaxProductControllerTest extends WebTestCase
 
         $this->client->request(
             'PATCH',
-            $this->getUrl('oro_product_ajax_edit_name'),
+            $this->getUrl('oro_api_patch_productinlineedit_edit_name', ['id' => $id]),
             [
-                'id' => $id,
-                'productName' => self::NEW_PRODUCT_NAME,
+                'productName' => self::NEW_PRODUCT_NAME
             ]
         );
         $result = $this->client->getResponse();
 
-        $this->assertJsonResponseStatusCodeEquals($result, 400);
+        $this->assertJsonResponseStatusCodeEquals($result, 404);
+    }
+
+    public function testProductEditNameMissingProductName()
+    {
+        /** @var Product $product8 */
+        $product8 = $this->getReference(LoadProductData::PRODUCT_8);
+        $id = $product8->getId() + 999999;
+
+        $this->client->request(
+            'PATCH',
+            $this->getUrl('oro_api_patch_productinlineedit_edit_name', ['id' => $id])
+        );
+        $result = $this->client->getResponse();
+
+        $this->assertJsonResponseStatusCodeEquals($result, 404);
     }
 }

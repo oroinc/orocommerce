@@ -1,0 +1,3 @@
+oro_product_edit_name_api:
+    resource: '@OroProductBundle/Controller/Api/Rest/InlineEditProductController.php'
+    type: rest
