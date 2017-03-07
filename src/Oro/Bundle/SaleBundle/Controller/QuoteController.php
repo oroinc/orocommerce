@@ -99,7 +99,7 @@ class QuoteController extends Controller
 
     /**
      * @Route("/update/{id}", name="oro_sale_quote_update", requirements={"id"="\d+"})
-     * @Template("OroSaleBundle:Quote:update.html.twig")
+     * @Template
      * @Acl(
      *     id="oro_sale_quote_update",
      *     type="entity",
@@ -143,7 +143,7 @@ class QuoteController extends Controller
         $handler = $this->get('oro_form.update_handler');
         return $handler->update(
             $quote,
-            $this->createForm(QuoteType::NAME, $quote),
+            QuoteType::NAME,
             $this->get('translator')->trans('oro.sale.controller.quote.saved.message'),
             $request,
             null,
