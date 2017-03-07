@@ -298,7 +298,6 @@ services:
 
     oro_shipping.condition.shipping_method_has_shipping_rules:
         class: 'Oro\Bundle\ShippingBundle\Condition\ShippingMethodHasShippingRules'
-        public: false
         arguments:
             - '@oro_shipping.repository.shipping_methods_configs_rule'
         tags:
