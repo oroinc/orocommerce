@@ -6,6 +6,8 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 
+use Symfony\Component\HttpFoundation\Request;
+
 use Oro\Bundle\EmailBundle\Builder\EmailModelBuilder;
 use Oro\Bundle\EmailBundle\Form\Model\Email;
 use Oro\Bundle\EmailBundle\Mailer\Processor;
@@ -57,14 +59,19 @@ class NotificationHelperTest extends \PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
-        unset($this->helper, $this->registry, $this->request, $this->emailModelBuilder, $this->emailProcessor);
+        unset($this->helper, $this->registry, $this->emailModelBuilder, $this->emailProcessor);
     }
 
     public function testGetEmailModel()
     {
+        $request = new Request(['entityClass' => self::QUOTE_CLASS_NAME, 'entityId' => 42]);
+        $request->setMethod('GET');
+
         $this->emailModelBuilder->expects($this->once())
             ->method('createEmailModel')
             ->willReturn(new Email());
+
+        $this->emailModelBuilder->expects($this->once())->method('setRequest')->with($request);
 
         $customerUser = new CustomerUser();
         $customerUser->setEmail('test@example.com');

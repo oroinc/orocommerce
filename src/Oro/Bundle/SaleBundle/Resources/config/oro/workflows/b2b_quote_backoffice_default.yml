@@ -48,18 +48,26 @@ workflows:
         attributes:
             copy_notes:
                 type: bool
+                options:
+                    virtual: true
             expire_quote:
                 type: string
+                options:
+                    virtual: true
             original_quote:
                 type: entity
                 options:
                     class: 'Oro\Bundle\SaleBundle\Entity\Quote'
+                    virtual: true
             email:
                 type: object
                 options:
                     class: 'Oro\Bundle\EmailBundle\Form\Model\Email'
+                    virtual: true
             appendSignature:
                 type: bool
+                options:
+                    virtual: true
 
         transitions:
             edit_transition:
@@ -97,12 +105,14 @@ workflows:
                 dialog_template: 'OroSaleBundle:Workflow:emailNotification.html.twig'
                 frontend_options:
                     icon: 'fa-envelope'
-                    options:
-                        allowMaximize: true
-                        allowMinimize: true
-                        dblclick: maximize
-                        maximizedHeightDecreaseBy: minimize-bar
-                        width: 1000
+                    dialog:
+                        dialogOptions:
+                            allowMaximize: true
+                            allowMinimize: true
+                            dblclick: maximize
+                            maximizedHeightDecreaseBy: minimize-bar
+                            width: 1000
+                            height: 600
                 form_options:
                     attribute_fields:
                         email:
@@ -248,8 +258,6 @@ workflows:
                         parameters_mapping:
                             data: $quote
                             email: $email
-                    - '@unset_value': $email
-                    - '@unset_value': $appendSignature
                     - '@flash_message':
                         message: oro.sale.quote.message.quote.sent.success
                         type: 'info'
@@ -310,8 +318,6 @@ workflows:
                                         original_quote: $quote
                                         expire_quote: $expire_quote
                                     
-                    - '@unset_value': $expire_quote
-                    - '@unset_value': $copy_notes
                     - '@flash_message':
                         message: oro.sale.quote.message.quote.create.success
                         type: 'info'
@@ -337,8 +343,6 @@ workflows:
                                     entity: $original_quote
                                     recordGroup: b2b_quote_backoffice_flow
                                     transition: expire_transition
-                            - '@unset_value': $expire_quote
-                            - '@unset_value': $original_quote
             decline_transition_definition:
                 actions:
                     - '@request_enum_entity':
