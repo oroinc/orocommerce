@@ -93,7 +93,7 @@ class UrlItemsProvider implements UrlItemsProviderInterface
             ->select(str_replace('entityAlias', $this->type, 'entityAlias.id, entityAlias.updatedAt'))
             ->from($this->entityClass, $this->type);
 
-        $canonicalUrlType = $this->canonicalUrlGenerator->getCanonicalUrlType();
+        $canonicalUrlType = $this->canonicalUrlGenerator->getCanonicalUrlType($website);
         if ($canonicalUrlType === Configuration::DIRECT_URL) {
             $queryBuilder->addSelect('slugs.url');
             $queryBuilder->leftJoin(sprintf('%s.slugs', $this->type), 'slugs');

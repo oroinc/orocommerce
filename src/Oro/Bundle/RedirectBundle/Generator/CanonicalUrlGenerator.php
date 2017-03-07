@@ -34,7 +34,7 @@ class CanonicalUrlGenerator
     /**
      * @var WebsiteUrlResolver
      */
-    protected $websiteUrlResolver;
+    protected $websiteSystemUrlResolver;
 
     /**
      * @var CacheProvider
@@ -46,20 +46,20 @@ class CanonicalUrlGenerator
      * @param CacheProvider $cacheProvider
      * @param RequestStack $requestStack
      * @param RoutingInformationProvider $routingInformationProvider
-     * @param WebsiteUrlResolver $websiteUrlResolver
+     * @param WebsiteUrlResolver $websiteSystemUrlResolver
      */
     public function __construct(
         ConfigManager $configManager,
         CacheProvider $cacheProvider,
         RequestStack $requestStack,
         RoutingInformationProvider $routingInformationProvider,
-        WebsiteUrlResolver $websiteUrlResolver
+        WebsiteUrlResolver $websiteSystemUrlResolver
     ) {
         $this->configManager = $configManager;
         $this->cacheProvider = $cacheProvider;
         $this->requestStack = $requestStack;
         $this->routingInformationProvider = $routingInformationProvider;
-        $this->websiteUrlResolver = $websiteUrlResolver;
+        $this->websiteSystemUrlResolver = $websiteSystemUrlResolver;
     }
 
     /**
@@ -73,7 +73,7 @@ class CanonicalUrlGenerator
     {
         $url = '';
 
-        if ($this->getCanonicalUrlType() === Configuration::DIRECT_URL) {
+        if ($this->getCanonicalUrlType($website) === Configuration::DIRECT_URL) {
             $url = $this->getDirectUrl($entity, $localization, $website);
         }
 
@@ -114,10 +114,10 @@ class CanonicalUrlGenerator
      */
     public function getAbsoluteUrl($slugUrl, Website $website = null)
     {
-        if ($this->getCanonicalUrlSecurityType()=== Configuration::SECURE) {
-            $domainUrl = $this->websiteUrlResolver->getWebsiteSecureUrl($website);
+        if ($this->getCanonicalUrlSecurityType($website)=== Configuration::SECURE) {
+            $domainUrl = $this->websiteSystemUrlResolver->getWebsiteSecureUrl($website);
         } else {
-            $domainUrl = $this->websiteUrlResolver->getWebsiteUrl($website);
+            $domainUrl = $this->websiteSystemUrlResolver->getWebsiteUrl($website);
         }
 
         $url = $this->createUrl($domainUrl, $slugUrl);
@@ -135,14 +135,14 @@ class CanonicalUrlGenerator
     {
         $routeData = $this->routingInformationProvider->getRouteData($entity);
 
-        if ($this->getCanonicalUrlSecurityType() === Configuration::SECURE) {
-            $url = $this->websiteUrlResolver->getWebsiteSecurePath(
+        if ($this->getCanonicalUrlSecurityType($website) === Configuration::SECURE) {
+            $url = $this->websiteSystemUrlResolver->getWebsiteSecurePath(
                 $routeData->getRoute(),
                 $routeData->getRouteParameters(),
                 $website
             );
         } else {
-            $url = $this->websiteUrlResolver->getWebsitePath(
+            $url = $this->websiteSystemUrlResolver->getWebsitePath(
                 $routeData->getRoute(),
                 $routeData->getRouteParameters(),
                 $website
@@ -153,26 +153,30 @@ class CanonicalUrlGenerator
     }
 
     /**
+     * @param Website $website
+     *
      * @return string
      */
-    public function getCanonicalUrlType()
+    public function getCanonicalUrlType(Website $website = null)
     {
         $configKey = 'oro_redirect.' . Configuration::CANONICAL_URL_TYPE;
         if (!$this->cacheProvider->contains($configKey)) {
-            $this->cacheProvider->save($configKey, $this->configManager->get($configKey));
+            $this->cacheProvider->save($configKey, $this->configManager->get($configKey, false, false, $website));
         }
 
         return $this->cacheProvider->fetch($configKey);
     }
 
     /**
+     * @param Website $website
+     *
      * @return string
      */
-    public function getCanonicalUrlSecurityType()
+    public function getCanonicalUrlSecurityType(Website $website = null)
     {
         $configKey = 'oro_redirect.' . Configuration::CANONICAL_URL_SECURITY_TYPE;
         if (!$this->cacheProvider->contains($configKey)) {
-            $this->cacheProvider->save($configKey, $this->configManager->get($configKey));
+            $this->cacheProvider->save($configKey, $this->configManager->get($configKey, false, false, $website));
         }
 
         return $this->cacheProvider->fetch($configKey);

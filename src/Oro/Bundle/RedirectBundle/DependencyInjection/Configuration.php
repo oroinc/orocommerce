@@ -39,7 +39,7 @@ class Configuration implements ConfigurationInterface
                 self::CANONICAL_URL_TYPE => ['value' => self::SYSTEM_URL],
                 self::REDIRECT_GENERATION_STRATEGY => ['value' => self::STRATEGY_ASK],
                 self::CANONICAL_URL_TYPE => ['value' => self::SYSTEM_URL],
-                self::CANONICAL_URL_SECURITY_TYPE => ['value' => self::INSECURE]
+                self::CANONICAL_URL_SECURITY_TYPE => ['value' => self::SECURE]
             ]
         );
 

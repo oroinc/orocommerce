@@ -311,8 +311,8 @@ class CanonicalUrlGeneratorTest extends \PHPUnit_Framework_TestCase
         $this->configManager->expects($this->any())
             ->method('get')
             ->willReturnMap([
-                ['oro_redirect.canonical_url_type', false, false, null, Configuration::DIRECT_URL],
-                ['oro_redirect.canonical_url_security_type', false, false, null, $urlSecurityType]
+                ['oro_redirect.canonical_url_type', false, false, $website, Configuration::DIRECT_URL],
+                ['oro_redirect.canonical_url_security_type', false, false, $website, $urlSecurityType]
             ]);
 
         /** @var Request|\PHPUnit_Framework_MockObject_MockObject $request */
