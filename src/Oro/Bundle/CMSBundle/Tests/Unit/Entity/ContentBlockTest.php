@@ -2,11 +2,13 @@
 
 namespace Oro\Bundle\CMSBundle\Tests\Unit\Entity;
 
+use Oro\Bundle\CMSBundle\Entity\TextContentVariant;
 use Oro\Bundle\CMSBundle\Tests\Unit\Entity\Stub\ContentBlock;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 
 class ContentBlockTest extends \PHPUnit_Framework_TestCase
@@ -28,8 +30,7 @@ class ContentBlockTest extends \PHPUnit_Framework_TestCase
         $this->assertPropertyCollections(new ContentBlock(), [
             ['titles', new LocalizedFallbackValue()],
             ['scopes', new Scope()],
-//            TODO: Uncomment in BB-7981
-//            ['contentVariants', new TextContentVariant()],
+            ['contentVariants', new TextContentVariant()],
         ]);
     }
 

@@ -48,7 +48,7 @@ class ContentBlock extends ExtendContentBlock implements
     use DatesAwareTrait;
 
     /**
-     * @var integer
+     * @var int
      *
      * @ORM\Column(type="integer")
      * @ORM\Id
@@ -114,18 +114,17 @@ class ContentBlock extends ExtendContentBlock implements
      */
     protected $scopes;
 
-//    TODO: Uncomment in BB-7981
-//    /**
-//     * @var ArrayCollection|TextContentVariant[]
-//     *
-//     * @ORM\OneToMany(
-//     *     targetEntity="Oro\Bundle\CMSBundle\Entity\TextContentVariant",
-//     *     mappedBy="contentBlock",
-//     *     cascade={"ALL"},
-//     *     fetch="EAGER",
-//     *     orphanRemoval=true
-//     * )
-//     */
+    /**
+     * @var ArrayCollection|TextContentVariant[]
+     *
+     * @ORM\OneToMany(
+     *     targetEntity="Oro\Bundle\CMSBundle\Entity\TextContentVariant",
+     *     mappedBy="contentBlock",
+     *     cascade={"ALL"},
+     *     fetch="EAGER",
+     *     orphanRemoval=true
+     * )
+     */
     protected $contentVariants;
 
     /**
