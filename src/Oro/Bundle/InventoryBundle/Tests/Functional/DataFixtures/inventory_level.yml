@@ -1,22 +1,30 @@
-dependencies:
-  - Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions
-
-Oro\Bundle\InventoryBundle\Entity\InventoryLevel:
-  inventory_level.product_unit_precision.product-1.liter:
-    productUnitPrecision: @product_unit_precision.product-1.liter
-    quantity: 10
-  inventory_level.product_unit_precision.product-1.bottle:
-    productUnitPrecision: @product_unit_precision.product-1.bottle
-    quantity: 99
-  inventory_level.product_unit_precision.product-2.liter:
-    productUnitPrecision: @product_unit_precision.product-2.liter
-    quantity: 12.345
-  inventory_level.product_unit_precision.product-2.bottle:
-    productUnitPrecision: @product_unit_precision.product-2.bottle
-    quantity: 98
-  inventory_level.product_unit_precision.product-2.box:
-    productUnitPrecision: @product_unit_precision.product-2.box
-    quantity: 42
-  inventory_level.product_unit_precision.product-1.primary_unit:
-    productUnitPrecision: @product-1->primaryUnitPrecision
-    quantity: 10
+inventory_level.product_unit_precision.product-1.liter:
+  unit: liter
+  product: product-1
+  productUnitPrecision: @product_unit_precision.product-1.liter
+  quantity: 10
+inventory_level.product_unit_precision.product-1.bottle:
+  unit: bottle
+  product: product-1
+  productUnitPrecision: @product_unit_precision.product-1.bottle
+  quantity: 99
+inventory_level.product_unit_precision.product-2.liter:
+  unit: liter
+  product: product-2
+  productUnitPrecision: @product_unit_precision.product-2.liter
+  quantity: 12.345
+inventory_level.product_unit_precision.product-2.bottle:
+  unit: bottle
+  product: product-2
+  productUnitPrecision: @product_unit_precision.product-2.bottle
+  quantity: 98
+inventory_level.product_unit_precision.product-2.box:
+  unit: box
+  product: product-2
+  productUnitPrecision: @product_unit_precision.product-2.box
+  quantity: 42
+inventory_level.product_unit_precision.product-1.primary_unit:
+  isPrimary: true
+  product: product-1
+  productUnitPrecision: @product-1->primaryUnitPrecision
+  quantity: 10
