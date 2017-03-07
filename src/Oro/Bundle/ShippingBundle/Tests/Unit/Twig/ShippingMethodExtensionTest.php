@@ -2,26 +2,24 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Twig;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+
 use Oro\Bundle\ShippingBundle\Event\ShippingMethodConfigDataEvent;
 use Oro\Bundle\ShippingBundle\Formatter\ShippingMethodLabelFormatter;
 use Oro\Bundle\ShippingBundle\Twig\ShippingMethodExtension;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
 class ShippingMethodExtensionTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var ShippingMethodLabelFormatter|\PHPUnit_Framework_MockObject_MockObject
-     */
+    use TwigExtensionTestCaseTrait;
+
+    /** @var ShippingMethodLabelFormatter|\PHPUnit_Framework_MockObject_MockObject */
     protected $shippingMethodLabelFormatter;
 
-    /**
-     * @var ShippingMethodExtension
-     */
+    /** @var ShippingMethodExtension */
     protected $extension;
 
-    /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject */
     protected $dispatcher;
 
     public function setUp()
@@ -34,35 +32,13 @@ class ShippingMethodExtensionTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder(EventDispatcherInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->extension = new ShippingMethodExtension(
-            $this->shippingMethodLabelFormatter,
-            $this->dispatcher
-        );
-    }
 
-    public function testGetFunctions()
-    {
-        $this->assertEquals(
-            [
-                new \Twig_SimpleFunction(
-                    'get_shipping_method_label',
-                    [$this->shippingMethodLabelFormatter, 'formatShippingMethodLabel']
-                ),
-                new \Twig_SimpleFunction(
-                    'get_shipping_method_type_label',
-                    [$this->shippingMethodLabelFormatter, 'formatShippingMethodTypeLabel']
-                ),
-                new \Twig_SimpleFunction(
-                    'oro_shipping_method_with_type_label',
-                    [$this->shippingMethodLabelFormatter, 'formatShippingMethodWithTypeLabel']
-                ),
-                new \Twig_SimpleFunction(
-                    'oro_shipping_method_config_template',
-                    [$this->extension, 'getShippingMethodConfigRenderData']
-                )
-            ],
-            $this->extension->getFunctions()
-        );
+        $container = self::getContainerBuilder()
+            ->add('oro_shipping.formatter.shipping_method_label', $this->shippingMethodLabelFormatter)
+            ->add('event_dispatcher', $this->dispatcher)
+            ->getContainer($this);
+
+        $this->extension = new ShippingMethodExtension($container);
     }
 
     public function testGetName()
@@ -85,13 +61,13 @@ class ShippingMethodExtensionTest extends \PHPUnit_Framework_TestCase
 
         self::assertEquals(
             ShippingMethodExtension::DEFAULT_METHOD_CONFIG_TEMPLATE,
-            $this->extension->getShippingMethodConfigRenderData($methodName)
+            self::callTwigFunction($this->extension, 'oro_shipping_method_config_template', [$methodName])
         );
 
         //test cache
         self::assertEquals(
             ShippingMethodExtension::DEFAULT_METHOD_CONFIG_TEMPLATE,
-            $this->extension->getShippingMethodConfigRenderData($methodName)
+            self::callTwigFunction($this->extension, 'oro_shipping_method_config_template', [$methodName])
         );
     }
 
@@ -111,6 +87,9 @@ class ShippingMethodExtensionTest extends \PHPUnit_Framework_TestCase
                 }
             ));
 
-        self::assertEquals($template, $this->extension->getShippingMethodConfigRenderData($methodName));
+        self::assertEquals(
+            $template,
+            self::callTwigFunction($this->extension, 'oro_shipping_method_config_template', [$methodName])
+        );
     }
 }

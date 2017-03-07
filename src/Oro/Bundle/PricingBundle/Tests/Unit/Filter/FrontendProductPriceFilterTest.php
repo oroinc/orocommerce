@@ -2,6 +2,13 @@
 
 namespace Oro\Bundle\SearchBundle\Tests\Unit\Datagrid\Filter;
 
+use Doctrine\Common\Collections\Expr\CompositeExpression;
+use Doctrine\Common\Collections\Expr\Comparison as BaseComparison;
+use Doctrine\Common\Collections\Expr\Value;
+use Doctrine\Common\Collections\Expr\Comparison as CommonComparision;
+
+use Symfony\Component\Form\FormFactoryInterface;
+
 use Oro\Bundle\FilterBundle\Datasource\FilterDatasourceAdapterInterface;
 use Oro\Bundle\FilterBundle\Filter\FilterUtility;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType;
@@ -10,8 +17,6 @@ use Oro\Bundle\PricingBundle\Filter\FrontendProductPriceFilter;
 use Oro\Bundle\SearchBundle\Datagrid\Filter\Adapter\SearchFilterDatasourceAdapter;
 use Oro\Bundle\SearchBundle\Datagrid\Filter\SearchNumberRangeFilter;
 use Oro\Bundle\SearchBundle\Query\Criteria\Comparison;
-use Doctrine\Common\Collections\Expr\Comparison as BaseComparison;
-use Symfony\Component\Form\FormFactoryInterface;
 
 class FrontendProductPriceFilterTest extends \PHPUnit_Framework_TestCase
 {
@@ -92,19 +97,24 @@ class FrontendProductPriceFilterTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $ds->expects($this->exactly(2))
+        $ds->expects($this->exactly(1))
             ->method('addRestriction')
-            ->withConsecutive(
-                [
-                    new BaseComparison("decimal.minimal_price_CPL_ID_CURRENCY_kg", Comparison::LTE, 100),
-                    FilterUtility::CONDITION_AND,
-                    false,
-                ],
-                [
-                    new BaseComparison("decimal.minimal_price_CPL_ID_CURRENCY_kg", Comparison::GTE, 150),
-                    FilterUtility::CONDITION_AND,
-                    false,
-                ]
+            ->with(
+                new CompositeExpression(
+                    FilterUtility::CONDITION_OR,
+                    [
+                        new CommonComparision(
+                            'decimal.minimal_price_CPL_ID_CURRENCY_kg',
+                            Comparison::LTE,
+                            new Value(100)
+                        ),
+                        new CommonComparision(
+                            'decimal.minimal_price_CPL_ID_CURRENCY_kg',
+                            Comparison::GTE,
+                            new Value(150)
+                        ),
+                    ]
+                )
             );
 
         $this->filter->init('test', [FilterUtility::DATA_NAME_KEY => 'minimal_price_CPL_ID_CURRENCY_UNIT']);

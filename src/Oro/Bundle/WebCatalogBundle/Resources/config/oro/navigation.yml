@@ -2,11 +2,11 @@ navigation:
     menu_config:
         items:
             web_catalog_list:
-                label:    'oro.webcatalog.entity_plural_label'
-                route:    'oro_web_catalog_index'
+                label: 'oro.webcatalog.entity_plural_label'
+                route: 'oro_web_catalog_index'
                 position: 100
                 extras:
-                    routes: ['/^oro_web_catalog/']
+                    routes: ['/^oro_web_catalog/', '/^oro_content_node/']
                     description: 'oro.webcatalog.entity_description'
 
             shortcut_new_web_catalog:
@@ -35,9 +35,9 @@ navigation:
 
     titles:
         oro_web_catalog_index: ~
-        oro_web_catalog_view: '%%entityLabel%%'
-        oro_web_catalog_update: '%%entityLabel%%'
-        oro_web_catalog_create: oro.ui.create_entity
-        oro_content_node_update_root: '%%webCatalogName%%'
-        oro_content_node_create: '%%webCatalogName%%'
-        oro_content_node_update: '%%webCatalogName%%'
+        oro_web_catalog_view: '%entityLabel%'
+        oro_web_catalog_update: '%entityLabel%'
+        oro_web_catalog_create: 'oro.ui.create_entity'
+        oro_content_node_update_root: '%webCatalogName%'
+        oro_content_node_create: '%webCatalogName%'
+        oro_content_node_update: '%webCatalogName%'

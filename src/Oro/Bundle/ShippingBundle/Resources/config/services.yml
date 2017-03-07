@@ -84,9 +84,7 @@ services:
         class: Oro\Bundle\ShippingBundle\Twig\ShippingOptionLabelExtension
         public: false
         arguments:
-            - '@oro_shipping.formatter.length_unit_label'
-            - '@oro_shipping.formatter.weight_unit_label'
-            - '@oro_shipping.formatter.freight_class_label'
+            - '@service_container'
         tags:
             - { name: twig.extension }
 
@@ -94,7 +92,7 @@ services:
         class: Oro\Bundle\ShippingBundle\Twig\WeightUnitValueExtension
         public: false
         arguments:
-            - '@oro_shipping.formatter.weight_unit_value'
+            - '@service_container'
         tags:
             - { name: twig.extension }
 
@@ -102,7 +100,7 @@ services:
         class: Oro\Bundle\ShippingBundle\Twig\DimensionsUnitValueExtension
         public: false
         arguments:
-            - '@oro_shipping.formatter.dimensions_unit_value'
+            - '@service_container'
         tags:
             - { name: twig.extension }
 
@@ -111,6 +109,8 @@ services:
         parent: oro_entity.abstract_repository
         arguments:
             - 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule'
+        calls:
+            - [setAclHelper, ['@oro_security.acl_helper']]
 
     oro_shipping.repository.product_shipping_options:
         parent: oro_entity.abstract_repository
@@ -364,3 +364,21 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_shipping.method_removal, method: onMethodRemove }
             - { name: kernel.event_listener, event: oro_shipping.method_type_removal, method: onMethodTypeRemove }
+
+    oro_shipping.repository.shipping_method_config:
+        class: 'Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodConfigRepository'
+        parent: oro_entity.abstract_repository
+        arguments:
+            - 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig'
+
+    oro_shipping.method.event_listener.method_renaming:
+        class: 'Oro\Bundle\ShippingBundle\Method\EventListener\MethodRenamingListener'
+        arguments:
+            - '@oro_shipping.repository.shipping_method_config'
+        tags:
+            - { name: kernel.event_listener, event: oro_shipping.method_renaming, method: onMethodRename}
+
+    oro_shipping.method.event.dispatcher.method_renaming:
+        class: 'Oro\Bundle\ShippingBundle\Method\Event\BasicMethodRenamingEventDispatcher'
+        arguments:
+            - '@event_dispatcher'

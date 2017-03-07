@@ -80,7 +80,7 @@ layout:
 
         - '@setOption':
             id: page_title
-            optionName: text
+            optionName: defaultValue
             optionValue: '=data["locale"].getLocalizedValue(data["product"].getNames())'
 
         - '@move':

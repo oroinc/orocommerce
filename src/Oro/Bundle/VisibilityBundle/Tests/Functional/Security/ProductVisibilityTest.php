@@ -89,11 +89,4 @@ class ProductVisibilityTest extends WebTestCase
             ],
         ];
     }
-
-    protected function tearDown()
-    {
-        $configManager = $this->getClientInstance()->getContainer()->get('oro_config.global');
-        $configManager->set(self::VISIBILITY_SYSTEM_CONFIGURATION_PATH, ProductVisibility::VISIBLE);
-        $configManager->flush();
-    }
 }

@@ -5,7 +5,9 @@ Feature: Slug generations based on product name
 
   Scenario: "Product slug 1A" > CREATE PRODUCT WITH SLUG VIEW PERMISSION. PRIORITY - MAJOR
     Given I login as administrator
-    When I create product and click continue
+    And go to Products/ Products
+    And click "Create Product"
+    When I press "Continue"
     And I fill product name field with "Some Product" value
     Then I should see slug prototypes field filled with "some-product" value
 
