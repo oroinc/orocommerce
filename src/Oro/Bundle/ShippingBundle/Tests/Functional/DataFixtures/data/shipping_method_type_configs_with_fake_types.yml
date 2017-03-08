@@ -1,0 +1,11 @@
+shipping_rule.1.method_config.1.type_config_1:
+    method_config: shipping_rule.1.method_config.1
+    type: 3day
+
+shipping_rule.2.method_config.1.type_config_1:
+    method_config: shipping_rule.2.method_config.1
+    type: primary
+
+shipping_rule.3.method_config.1.type_config_1:
+    method_config: shipping_rule.3.method_config.1
+    type: classic

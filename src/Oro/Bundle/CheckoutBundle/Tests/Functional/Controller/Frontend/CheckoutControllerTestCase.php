@@ -11,7 +11,7 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
-use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRules;
+use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRulesWithConfigs;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
@@ -75,7 +75,7 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
             LoadProductUnitPrecisions::class,
             LoadShoppingListLineItems::class,
             LoadCombinedProductPrices::class,
-            LoadShippingMethodsConfigsRules::class,
+            LoadShippingMethodsConfigsRulesWithConfigs::class,
             '@OroInventoryBundle/Tests/Functional/DataFixtures/inventory_level.yml',
         ], $paymentFixtures));
         $this->registry = $this->getContainer()->get('doctrine');
