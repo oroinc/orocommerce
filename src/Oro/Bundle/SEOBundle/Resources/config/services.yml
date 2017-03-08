@@ -263,3 +263,12 @@ services:
             - [setVisibilityScopeProvider, ['@oro_visibility.provider.visibility_scope_provider']]
         tags:
             - { name: kernel.event_listener, event: oro_seo.event.restrict_sitemap_entity.product, method: restrictQueryBuilder }
+
+    oro_seo.event_listener.restrict_sitemap_cms_page_by_web_catalog:
+        class: 'Oro\Bundle\SEOBundle\EventListener\RestrictSitemapCmsPageByWebCatalogListener'
+        arguments:
+            - '@oro_config.manager'
+            - '@oro_scope.scope_manager'
+        tags:
+            - { name: kernel.event_listener, event: oro_seo.event.restrict_sitemap_entity.cms_page , method: restrictQueryBuilder }
+            - { name: oro_featuretogle.feature, feature: frontend_master_catalog }

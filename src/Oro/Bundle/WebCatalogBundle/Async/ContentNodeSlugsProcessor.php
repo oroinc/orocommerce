@@ -84,6 +84,7 @@ class ContentNodeSlugsProcessor implements MessageProcessorInterface, TopicSubsc
         try {
             $body = JSON::decode($message->getBody());
             $contentNode = $this->messageFactory->getEntityFromMessage($body);
+
             $createRedirect = $this->messageFactory->getCreateRedirectFromMessage($body);
 
             $this->defaultVariantScopesResolver->resolve($contentNode);
