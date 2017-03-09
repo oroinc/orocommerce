@@ -32,8 +32,6 @@ Oro\Bundle\OrderBundle\Entity\Order:
                 maxMessage: 'oro.order.subtotal.max.error.label'
         customer:
             - NotBlank: ~
-        website:
-            - NotBlank: ~
         lineItems:
             - Count:
                 min: 1
