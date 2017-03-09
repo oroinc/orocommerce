@@ -390,3 +390,7 @@ CMSBundle
 ---------
 - Removed constructor of `Oro\Bundle\CMSBundle\Form\Type\CmsPageVariantType`.
     - corresponding logic moved to `Oro\Bundle\WebCatalogBundle\Form\Extension\PageVariantTypeExtension`
+    
+UPSBundle
+---------
+- "Check UPS Connection" button was added on UPS integration page. Please, see [documentation](package/commerce/src/Oro/Bundle/UPSBundle/Resources/doc/credentials-validation.md) fro more information.
