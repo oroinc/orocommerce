@@ -8,13 +8,15 @@ use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
+use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
 use Oro\Bundle\ScopeBundle\Migration\Extension\ScopeExtensionAwareInterface;
 use Oro\Bundle\ScopeBundle\Migration\Extension\ScopeExtensionAwareTrait;
 
 class AddContentBlockTable implements
     Migration,
     ExtendExtensionAwareInterface,
-    ScopeExtensionAwareInterface
+    ScopeExtensionAwareInterface,
+    OrderedMigrationInterface
 {
     use ScopeExtensionAwareTrait;
 
@@ -166,5 +168,13 @@ class AddContentBlockTable implements
             ['id'],
             ['onDelete' => 'SET NULL']
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getOrder()
+    {
+        return 1;
     }
 }
