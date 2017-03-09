@@ -2,15 +2,17 @@
 
 namespace Oro\Bundle\DPDBundle\Migrations\Data\ORM;
 
-
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\DPDBundle\Entity\ShippingService;
 
 abstract class AbstractShippingServiceFixture extends AbstractFixture
 {
-    protected function addUpdateShippingServices(ObjectManager $manager, array $shippingServices, $setReferences = false)
-    {
+    protected function addUpdateShippingServices(
+        ObjectManager $manager,
+        array $shippingServices,
+        $setReferences = false
+    ) {
         $repository = $manager->getRepository('OroDPDBundle:ShippingService');
         foreach ($shippingServices as $ref => $shippingService) {
             $entity = $repository->find(['code' => $shippingService['code']]);
@@ -20,7 +22,7 @@ abstract class AbstractShippingServiceFixture extends AbstractFixture
 
             $entity->setCode($shippingService['code']);
             $entity->setDescription($shippingService['description']);
-            $entity->setExpressService((bool)$shippingService['express']);
+            $entity->setExpressService((bool) $shippingService['express']);
             $manager->persist($entity);
 
             if ($setReferences) {
