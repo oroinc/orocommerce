@@ -44,13 +44,6 @@ class TaxManagerTest extends WebTestCase
         $this->doctrine = $this->getContainer()->get('doctrine');
     }
 
-    protected function tearDown()
-    {
-        $this->configManager->reload();
-
-        parent::tearDown();
-    }
-
     /**
      * @dataProvider methodsDataProvider
      * @param string $method

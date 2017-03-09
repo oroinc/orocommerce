@@ -154,8 +154,6 @@ services:
     oro_website_search.async.indexer.message_granularizer.reindex:
         class: 'Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\ReindexMessageGranularizer'
         public: false
-        arguments:
-            - '@oro_entity.doctrine_helper'
 
     oro_website_search.async.indexer:
         class: Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer

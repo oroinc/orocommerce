@@ -43,7 +43,12 @@ oro_product_frontend_quick_add:
     options:
         frontend: true
 
-oro_product_ajax:
-    resource:     "@OroProductBundle/Controller/AjaxProductController.php"
-    type:         annotation
-    prefix:       /product
+oro_product_inline_edit_api:
+    resource:     "@OroProductBundle/Resources/config/oro/routing_api.yml"
+    type:         rest
+    prefix:       api/rest/{version}
+    requirements:
+        version:  latest|v1
+        _format:  json
+    defaults:
+        version:  latest
