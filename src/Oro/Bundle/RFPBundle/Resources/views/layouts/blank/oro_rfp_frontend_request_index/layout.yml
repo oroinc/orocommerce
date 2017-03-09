@@ -1,7 +1,5 @@
 layout:
     imports:
         -
-            id: oro_customer_menu
-            root: page_sidebar
-
+            id: oro_customer_page
     actions: []

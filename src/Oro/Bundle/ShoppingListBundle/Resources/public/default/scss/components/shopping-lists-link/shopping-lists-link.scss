@@ -8,3 +8,11 @@
 
     font-size: $base-font-size--s;
 }
+
+.mass-action-controls {
+    .btn-group.full {
+        .add-to-shopping-list-button {
+            width: auto;
+        }
+    }
+}

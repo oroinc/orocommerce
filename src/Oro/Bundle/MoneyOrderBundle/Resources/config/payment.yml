@@ -1,20 +1,25 @@
 services:
-    oro_money_order.payment_method.money_order.config:
-        class: 'Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig'
+    oro_money_order.payment_method_provider.money_order:
+        class: 'Oro\Bundle\MoneyOrderBundle\Method\Provider\MoneyOrderMethodProvider'
         public: false
         arguments:
-            - '@oro_config.global'
-
-    oro_money_order.payment_method.money_order:
-        class: 'Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder'
-        public: false
+            - '@oro_money_order.payment_method.config.provider'
+            - '@oro_money_order.factory.method.money_order'
         tags:
-            - { name: oro_payment.payment_method }
+            - { name: oro_payment.payment_method_provider }
 
-    oro_money_order.payment_method.view.money_order:
-        class: 'Oro\Bundle\MoneyOrderBundle\Method\View\MoneyOrderView'
+    oro_money_order.payment_method_view_provider.money_order:
+        class: 'Oro\Bundle\MoneyOrderBundle\Method\View\Provider\MoneyOrderMethodViewProvider'
         public: false
         arguments:
-            - '@oro_money_order.payment_method.money_order.config'
+            - '@oro_money_order.payment_method.config.provider'
+            - '@oro_money_order.factory.method_view.money_order'
         tags:
-            - { name: oro_payment.payment_method_view }
+            - { name: oro_payment.payment_method_view_provider }
+
+    oro_money_order.payment_method.config.provider:
+        class: 'Oro\Bundle\MoneyOrderBundle\Method\Config\Provider\MoneyOrderConfigProvider'
+        arguments:
+            - '@doctrine'
+            - '@logger'
+            - '@oro_money_order.factory.money_order_config'

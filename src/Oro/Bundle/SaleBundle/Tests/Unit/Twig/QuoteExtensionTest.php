@@ -3,43 +3,31 @@
 namespace Oro\Bundle\SaleBundle\Tests\Unit\Twig;
 
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
-
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\Product as StubProduct;
-
 use Oro\Bundle\SaleBundle\Twig\QuoteExtension;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductRequest;
 use Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter;
-
-use Symfony\Component\Translation\TranslatorInterface;
+use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
+use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 
 /**
  * @SuppressWarnings(PHPMD.NPathComplexity)
  */
 class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
 {
+    use TwigExtensionTestCaseTrait;
+
     const FRONTEND_SYSTEM_CONFIG_PATH = 'oro_rfp.frontend_product_visibility';
 
-    /**
-     * @var QuoteExtension
-     */
+    /** @var QuoteExtension */
     protected $extension;
 
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
-     */
-    protected $translator;
-
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|QuoteProductFormatter
-     */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|QuoteProductFormatter */
     protected $quoteProductFormatter;
 
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager
-     */
+    /** @var \PHPUnit_Framework_MockObject_MockObject|ConfigManager */
     protected $configManager;
 
     /**
@@ -47,56 +35,19 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
      */
     protected function setUp()
     {
-        $this->translator = $this->getMockBuilder('Symfony\Component\Translation\TranslatorInterface')
+        $this->quoteProductFormatter = $this->getMockBuilder(QuoteProductFormatter::class)
             ->disableOriginalConstructor()
-            ->getMock()
-        ;
-
-        $this->quoteProductFormatter = $this->getMockBuilder(
-            'Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter'
-        )
+            ->getMock();
+        $this->configManager = $this->getMockBuilder(ConfigManager::class)
             ->disableOriginalConstructor()
-            ->getMock()
-        ;
+            ->getMock();
 
-        $this->configManager = $this->getMockBuilder(
-            'Oro\Bundle\ConfigBundle\Config\ConfigManager'
-        )
-            ->disableOriginalConstructor()
-            ->getMock()
-        ;
+        $container = self::getContainerBuilder()
+            ->add('oro_sale.formatter.quote_product', $this->quoteProductFormatter)
+            ->add('oro_config.manager', $this->configManager)
+            ->getContainer($this);
 
-        $this->extension = new QuoteExtension(
-            $this->quoteProductFormatter,
-            $this->configManager
-        );
-    }
-
-    public function testGetFilters()
-    {
-        /* @var $filters \Twig_SimpleFilter[] */
-        $filters = $this->extension->getFilters();
-
-        $this->assertCount(3, $filters);
-
-        $this->assertInstanceOf('Twig_SimpleFilter', $filters[0]);
-        $this->assertEquals('oro_format_sale_quote_product_offer', $filters[0]->getName());
-
-        $this->assertInstanceOf('Twig_SimpleFilter', $filters[1]);
-        $this->assertEquals('oro_format_sale_quote_product_type', $filters[1]->getName());
-
-        $this->assertInstanceOf('Twig_SimpleFilter', $filters[2]);
-        $this->assertEquals('oro_format_sale_quote_product_request', $filters[2]->getName());
-    }
-
-    public function testGetFunctions()
-    {
-        $this->assertEquals(
-            [
-                new \Twig_SimpleFunction('is_quote_visible', [$this->extension, 'isQuoteVisible'])
-            ],
-            $this->extension->getFunctions()
-        );
+        $this->extension = new QuoteExtension($container);
     }
 
     public function testGetName()
@@ -106,32 +57,50 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
 
     public function testFormatProductType()
     {
+        $type = 123;
+        $expected = 'result';
+
         $this->quoteProductFormatter->expects($this->once())
             ->method('formatType')
-            ->with(123)
-        ;
+            ->with($type)
+            ->willReturn($expected);
 
-        $this->extension->formatProductType(123);
+        self::assertEquals(
+            $expected,
+            self::callTwigFilter($this->extension, 'oro_format_sale_quote_product_type', [$type])
+        );
     }
 
     public function testFormatProductOffer()
     {
+        $item = new QuoteProductOffer();
+        $expected = 'result';
+
         $this->quoteProductFormatter->expects($this->once())
             ->method('formatOffer')
-            ->with(new QuoteProductOffer())
-        ;
+            ->with(self::identicalTo($item))
+            ->willReturn($expected);
 
-        $this->extension->formatProductOffer(new QuoteProductOffer());
+        self::assertEquals(
+            $expected,
+            self::callTwigFilter($this->extension, 'oro_format_sale_quote_product_offer', [$item])
+        );
     }
 
     public function testFormatProductRequest()
     {
+        $item = new QuoteProductRequest();
+        $expected = 'result';
+
         $this->quoteProductFormatter->expects($this->once())
             ->method('formatRequest')
-            ->with(new QuoteProductRequest())
-        ;
+            ->with(self::identicalTo($item))
+            ->willReturn($expected);
 
-        $this->extension->formatProductRequest(new QuoteProductRequest());
+        self::assertEquals(
+            $expected,
+            self::callTwigFilter($this->extension, 'oro_format_sale_quote_product_request', [$item])
+        );
     }
 
     /**
@@ -144,8 +113,7 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
         $this->configManager->expects($this->any())
             ->method('get')
             ->with(self::FRONTEND_SYSTEM_CONFIG_PATH)
-            ->willReturn([Product::INVENTORY_STATUS_OUT_OF_STOCK])
-        ;
+            ->willReturn([Product::INVENTORY_STATUS_OUT_OF_STOCK]);
 
         $product = new StubProduct();
 
@@ -154,7 +122,10 @@ class QuoteExtensionTest extends \PHPUnit_Framework_TestCase
             $product->setInventoryStatus($productInventoryStatus);
         }
 
-        $this->assertEquals($expectedResult, $this->extension->isQuoteVisible($product));
+        self::assertEquals(
+            $expectedResult,
+            self::callTwigFunction($this->extension, 'is_quote_visible', [$product])
+        );
     }
 
     /**

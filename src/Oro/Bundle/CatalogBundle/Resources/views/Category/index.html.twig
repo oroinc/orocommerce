@@ -24,7 +24,7 @@
         widgetContainer: '.content'
     } %}
 
-    <div class="left-panel-container"
+    <div class="left-panel-container tree-component-container"
          data-page-component-module="orodatagrid/js/app/components/grid-sidebar-component"
          data-page-component-options="{{ componentOptions|json_encode }}">
         <div class="placeholder">
@@ -40,6 +40,7 @@
                     </div>
                     <div class="category">
                         {% set treeOptions = {
+                            'view' : 'orocatalog/js/app/views/tree-manage-view',
                             'data' : oro_category_list(),
                             'updateAllowed' : resource_granted('oro_catalog_category_update'),
                             'onSelectRoute' : 'oro_catalog_category_update',
@@ -48,11 +49,14 @@
 
                         {{ UI.renderJsTree(
                             {
-                                'module': 'orocatalog/js/app/components/tree-manage-component',
                                 'label': 'oro.catalog.category.entity_plural_label'|trans,
                                 'treeOptions': treeOptions
                             },
-                            ['expand', 'collapse']
+                            {
+                                'move': {
+                                    'routeName': 'oro_catalog_category_move_form'
+                                }
+                            }
                         ) }}
                     </div>
                 </div>

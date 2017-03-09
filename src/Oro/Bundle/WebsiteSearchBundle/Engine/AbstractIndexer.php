@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\WebsiteSearchBundle\Engine;
 
-use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\SearchBundle\Engine\IndexerInterface;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
@@ -17,15 +17,9 @@ abstract class AbstractIndexer implements IndexerInterface
 {
     use ContextTrait;
 
-    const CONTEXT_CURRENT_WEBSITE_ID_KEY = 'current_website_id';
+    const CONTEXT_CURRENT_WEBSITE_ID_KEY = 'currentWebsiteId';
     const CONTEXT_ENTITIES_IDS_KEY = 'entityIds';
     const CONTEXT_WEBSITE_IDS = 'websiteIds';
-
-    /** @var DoctrineHelper */
-    protected $doctrineHelper;
-
-    /** @var WebsiteSearchMappingProvider */
-    protected $mappingProvider;
 
     /** @var EntityDependenciesResolverInterface */
     protected $entityDependenciesResolver;
@@ -36,6 +30,15 @@ abstract class AbstractIndexer implements IndexerInterface
     /** @var PlaceholderInterface */
     protected $placeholder;
 
+    /** @var DoctrineHelper */
+    protected $doctrineHelper;
+
+    /** @var WebsiteSearchMappingProvider */
+    protected $mappingProvider;
+
+    /** @var IndexerInputValidator */
+    protected $inputValidator;
+
     /** @var int */
     private $batchSize = 100;
 
@@ -45,19 +48,22 @@ abstract class AbstractIndexer implements IndexerInterface
      * @param EntityDependenciesResolverInterface $entityDependenciesResolver
      * @param IndexDataProvider $indexDataProvider
      * @param PlaceholderInterface $placeholder
+     * @param IndexerInputValidator $indexerInputValidator
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         WebsiteSearchMappingProvider $mappingProvider,
         EntityDependenciesResolverInterface $entityDependenciesResolver,
         IndexDataProvider $indexDataProvider,
-        PlaceholderInterface $placeholder
+        PlaceholderInterface $placeholder,
+        IndexerInputValidator $indexerInputValidator
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->mappingProvider = $mappingProvider;
         $this->entityDependenciesResolver = $entityDependenciesResolver;
         $this->indexDataProvider = $indexDataProvider;
         $this->placeholder = $placeholder;
+        $this->inputValidator = $indexerInputValidator;
     }
 
     /**
@@ -85,18 +91,25 @@ abstract class AbstractIndexer implements IndexerInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @param array $context
+     * $context = [
+     *     'entityIds' int[] Array of entities ids to reindex
+     *     'websiteIds' int[] Array of websites ids to reindex
+     *     'currentWebsiteId' int Current website id. Should not be passed manually. It is computed from 'websiteIds'
+     * ]
      */
     public function reindex($classOrClasses = null, array $context = [])
     {
-        if (is_array($classOrClasses) && count($classOrClasses) !== 1 && $this->getContextEntityIds($context)) {
-            throw new \LogicException('Entity ids passed into context. Please provide single class of entity');
-        }
-
-        $entityClassesToIndex = $this->getEntitiesToIndex($classOrClasses);
-        $websiteIdsToIndex = $this->getWebsiteIdsToIndex($context);
-        $handledItems = 0;
+        list($entityClassesToIndex, $websiteIdsToIndex) =
+            $this->inputValidator->validateReindexRequest(
+                $classOrClasses,
+                $context
+            );
 
         $entityClassesToIndex = $this->getClassesForReindex($entityClassesToIndex);
+
+        $handledItems = 0;
 
         foreach ($websiteIdsToIndex as $websiteId) {
             if (!$this->ensureWebsiteExists($websiteId)) {
@@ -116,39 +129,9 @@ abstract class AbstractIndexer implements IndexerInterface
     }
 
     /**
-     * @param $websiteId
-     * @return bool
-     */
-    private function ensureWebsiteExists($websiteId)
-    {
-        /** @var WebsiteRepository $websiteRepository */
-        $websiteRepository = $this->doctrineHelper->getEntityRepository(Website::class);
-        $website = $websiteRepository->checkWebsiteExists($websiteId);
-
-        //Tries to reset index for not existing website
-        if (!$website) {
-            $context = $this->setContextCurrentWebsite([], $websiteId);
-            $this->resetIndex(null, $context);
-
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * @param string $class
-     * @throws \InvalidArgumentException
-     */
-    private function ensureEntityClassIsSupported($class)
-    {
-        if (!$this->mappingProvider->isClassSupported($class)) {
-            throw new \InvalidArgumentException('There is no such entity in mapping config.');
-        }
-    }
-
-    /**
      * {@inheritdoc}
+     *
+     * @param array $context Not used here, only to comply with the interface
      */
     public function getClassesForReindex($class = null, array $context = [])
     {
@@ -156,25 +139,13 @@ abstract class AbstractIndexer implements IndexerInterface
     }
 
     /**
-     * @param string $class
-     * @return array
-     */
-    private function getEntitiesToIndex($class = null)
-    {
-        $entityClasses = (array)$class;
-        if ($entityClasses) {
-            foreach ($entityClasses as $entityClass) {
-                $this->ensureEntityClassIsSupported($entityClass);
-            }
-        } else {
-            $entityClasses = $this->mappingProvider->getEntityClasses();
-        }
-
-        return $entityClasses;
-    }
-
-    /**
      * {@inheritdoc}
+     *
+     * @param array $context
+     * $context = [
+     *     'websiteIds' int[] Array of websites ids to index
+     *     'currentWebsiteId' int Current website id. Should not be passed manually. It is computed from 'websiteIds'
+     * ]
      */
     public function save($entityOrEntities, array $context = [])
     {
@@ -196,25 +167,29 @@ abstract class AbstractIndexer implements IndexerInterface
     }
 
     /**
-     * @param array $context
-     * @return array
+     * @param int $batchSize
      */
-    protected function getWebsiteIdsToIndex(array $context)
+    public function setBatchSize($batchSize)
     {
-        $websiteIds = $this->getContextWebsiteIds($context);
-        if ($websiteIds) {
-            return $websiteIds;
-        }
+        $this->batchSize = $batchSize;
+    }
 
-        /** @var WebsiteRepository $websiteRepository */
-        $websiteRepository = $this->doctrineHelper->getEntityRepository(Website::class);
-
-        return $websiteRepository->getWebsiteIdentifiers();
+    /**
+     * @return int
+     */
+    public function getBatchSize()
+    {
+        return $this->batchSize;
     }
 
     /**
      * @param string $entityClass
      * @param array $context
+     * $context = [
+     *     'entityIds' int[] Array of entities ids to reindex
+     *     'currentWebsiteId' int Current website id. Should not be passed manually. It is computed from 'websiteIds'
+     * ]
+     *
      * @return int
      */
     protected function reindexEntityClass($entityClass, array $context)
@@ -241,7 +216,7 @@ abstract class AbstractIndexer implements IndexerInterface
             $queryBuilder->where($queryBuilder->expr()->in("entity.$identifierName", $contextEntityIds));
         }
 
-        $iterator = new BufferedQueryResultIterator($queryBuilder);
+        $iterator = new BufferedIdentityQueryResultIterator($queryBuilder);
         $iterator->setBufferSize($this->getBatchSize());
 
         $itemsCount = 0;
@@ -271,25 +246,14 @@ abstract class AbstractIndexer implements IndexerInterface
     }
 
     /**
-     * @param int $batchSize
-     */
-    public function setBatchSize($batchSize)
-    {
-        $this->batchSize = $batchSize;
-    }
-
-    /**
-     * @return int
-     */
-    public function getBatchSize()
-    {
-        return $this->batchSize;
-    }
-
-    /**
      * @param string $entityClass
      * @param array $entityIds
      * @param array $context
+     * $context = [
+     *     'currentWebsiteId' int Current website id. Should not be passed manually. It is computed from 'websiteIds'
+     *     'entityIds' int[] Array of entities ids to index
+     * ]
+     *
      * @param string $aliasToSave
      * @return int
      */
@@ -315,6 +279,10 @@ abstract class AbstractIndexer implements IndexerInterface
     /**
      * @param array $entityIds
      * @param array $context
+     * $context = [
+     *     'currentWebsiteId' int Current website id. Should not be passed manually. It is computed from 'websiteIds'
+     * ]
+     *
      * @param string $entityClass
      * @return array
      */
@@ -342,6 +310,10 @@ abstract class AbstractIndexer implements IndexerInterface
     /**
      * @param string $entityClass
      * @param array $context
+     * $context = [
+     *     'currentWebsiteId' int Current website id. Should not be passed manually. It is computed from 'websiteIds'
+     * ]
+     *
      * @return string|null
      */
     protected function getEntityAlias($entityClass, array $context)
@@ -354,5 +326,26 @@ abstract class AbstractIndexer implements IndexerInterface
         }
 
         return null;
+    }
+
+    /**
+     * @param $websiteId
+     * @return bool
+     */
+    protected function ensureWebsiteExists($websiteId)
+    {
+        /** @var WebsiteRepository $websiteRepository */
+        $websiteRepository = $this->doctrineHelper->getEntityRepository(Website::class);
+        $website           = $websiteRepository->checkWebsiteExists($websiteId);
+
+        //Tries to reset index for not existing website
+        if (!$website) {
+            $context = $this->setContextCurrentWebsite([], $websiteId);
+            $this->resetIndex(null, $context);
+
+            return false;
+        }
+
+        return true;
     }
 }

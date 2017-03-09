@@ -6,8 +6,10 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIteratorInterface;
+use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToCustomerGroup;
@@ -43,7 +45,7 @@ class PriceListToCustomerGroupRepository extends EntityRepository implements Pri
             ->where($qb->expr()->eq('relation.customerGroup', ':customerGroup'))
             ->andWhere($qb->expr()->eq('relation.website', ':website'))
             ->andWhere($qb->expr()->eq('priceList.active', ':active'))
-            ->orderBy('relation.priority', $sortOrder)
+            ->orderBy('relation.sortOrder', $sortOrder)
             ->setParameters(['customerGroup' => $customerGroup, 'website' => $website, 'active' => true]);
 
         return $qb->getQuery()->getResult();
@@ -52,7 +54,7 @@ class PriceListToCustomerGroupRepository extends EntityRepository implements Pri
     /**
      * @param Website $website
      * @param int|null $fallback
-     * @return BufferedQueryResultIterator|CustomerGroup[]
+     * @return BufferedQueryResultIteratorInterface|CustomerGroup[]
      */
     public function getCustomerGroupIteratorByDefaultFallback(Website $website, $fallback = null)
     {
@@ -92,12 +94,12 @@ class PriceListToCustomerGroupRepository extends EntityRepository implements Pri
                 ->setParameter('fallbackToWebsite', $fallback);
         }
 
-        return new BufferedQueryResultIterator($qb->getQuery());
+        return new BufferedIdentityQueryResultIterator($qb->getQuery());
     }
 
     /**
      * @param PriceList $priceList
-     * @return BufferedQueryResultIterator
+     * @return BufferedQueryResultIteratorInterface
      */
     public function getIteratorByPriceList(PriceList $priceList)
     {
@@ -109,7 +111,10 @@ class PriceListToCustomerGroupRepository extends EntityRepository implements Pri
         )
             ->where('PriceListToCustomerGroup.priceList = :priceList')
             ->groupBy('PriceListToCustomerGroup.customerGroup', 'PriceListToCustomerGroup.website')
-            ->setParameter('priceList', $priceList);
+            ->setParameter('priceList', $priceList)
+            // order required for BufferedIdentityQueryResultIterator on PostgreSql
+            ->orderBy('PriceListToCustomerGroup.customerGroup, PriceListToCustomerGroup.website')
+        ;
 
         return new BufferedQueryResultIterator($qb);
     }
@@ -145,7 +150,7 @@ class PriceListToCustomerGroupRepository extends EntityRepository implements Pri
             ->where($qb->expr()->in('relation.customerGroup', ':groups'))
             ->orderBy('relation.customerGroup')
             ->addOrderBy('relation.website')
-            ->addOrderBy('relation.priority')
+            ->addOrderBy('relation.sortOrder')
             ->setParameter('groups', $holdersIds);
 
         return $qb->getQuery()->getResult();

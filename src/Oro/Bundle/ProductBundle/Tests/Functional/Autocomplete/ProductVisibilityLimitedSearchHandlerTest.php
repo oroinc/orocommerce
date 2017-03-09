@@ -30,6 +30,23 @@ class ProductVisibilityLimitedSearchHandlerTest extends WebTestCase
         $this->client->getContainer()->set('test_service', $this);
     }
 
+    public function testFrontendVisibilityWithZeroValue()
+    {
+        $url = $this->getUrl(
+            'oro_frontend_autocomplete_search',
+            [
+                'per_page' => 10,
+                'query' => '0',
+                'name' => 'oro_product_visibility_limited'
+            ]
+        );
+
+        $this->client->request('GET', $url);
+        $result = $this->client->getResponse();
+
+        $this->assertJsonResponseStatusCodeEquals($result, 200);
+    }
+
     public function testFrontendVisibility()
     {
         $url = $this->getUrl(

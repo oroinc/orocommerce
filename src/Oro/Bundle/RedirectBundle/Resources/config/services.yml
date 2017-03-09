@@ -1,5 +1,6 @@
 parameters:
     oro_redirect.entity.slug.class: Oro\Bundle\RedirectBundle\Entity\Slug
+    oro_redirect.entity.redirect.class: Oro\Bundle\RedirectBundle\Entity\Redirect
 
 services:
     oro_redirect.routing.matched_url_decision_maker:
@@ -10,18 +11,22 @@ services:
         calls:
             - [addSkippedUrlPattern, ['/_profiler']]
             - [addSkippedUrlPattern, ['/_wdt']]
+            - [addSkippedUrlPattern, ['/_fragment']]
+            - [addSkippedUrlPattern, ['/js/']]
             - [addSkippedUrlPattern, ['/api/']]
 
-    oro_redirect.routing.slug_url_mathcer:
+    oro_redirect.routing.slug_url_matcher:
         class: Oro\Bundle\RedirectBundle\Routing\SlugUrlMatcher
         arguments:
-            - '@router'
-            - '@router'
-            - '@doctrine'
+            - '@router.default'
+            - '@oro_redirect.repository.slug'
             - '@oro_scope.scope_manager'
             - '@oro_redirect.routing.matched_url_decision_maker'
         calls:
             - [addUrlToMatchSlugFirst, ['/']]
+
+    oro_redirect.routing.slug_url_mathcer:
+        alias: oro_redirect.routing.slug_url_matcher
 
     oro_redirect.slug.manager:
         class: 'Oro\Bundle\RedirectBundle\Manager\SlugManager'
@@ -58,6 +63,11 @@ services:
 
     oro_redirect.provider.routing_information_provider:
         class: Oro\Bundle\RedirectBundle\Provider\RoutingInformationProvider
+        public: false
+
+    oro_redirect.provider.context_url_provider_registry:
+        class: Oro\Bundle\RedirectBundle\Provider\ContextUrlProviderRegistry
+        public: false
 
     oro_redirect.event_listener.slug_prototype_change:
         class: Oro\Bundle\RedirectBundle\EventListener\SluggableEntityListener
@@ -70,15 +80,46 @@ services:
             - { name: doctrine.event_listener, event: onFlush }
             - { name: doctrine.event_listener, event: postPersist }
 
+    oro_redirect.event_listener.slug_change:
+        class: Oro\Bundle\RedirectBundle\EventListener\SlugListener
+        public: false
+        arguments:
+            - '@doctrine'
+            - '@oro_message_queue.client.message_producer'
+        tags:
+            - { name: doctrine.event_listener, event: onFlush }
+
     oro_redirect.generator.slug_entity:
         class: Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator
+        public: false
         arguments:
             - '@oro_redirect.provider.routing_information_provider'
+            - '@oro_redirect.generator.unique_slug_resolver'
+            - '@oro_redirect.generator.redirect'
+            - '@oro_redirect.url_storage_cache'
+
+    oro_redirect.generator.redirect:
+        class: Oro\Bundle\RedirectBundle\Generator\RedirectGenerator
+        arguments:
+            - '@doctrine'
+
+    oro_redirect.generator.slug_url_differ:
+        class: Oro\Bundle\RedirectBundle\Generator\SlugUrlDiffer
+        arguments:
+            - '@oro_locale.helper.localization'
+            - '@translator'
+
+    oro_redirect.generator.unique_slug_resolver:
+        class: Oro\Bundle\RedirectBundle\Generator\UniqueSlugResolver
+        public: false
+        arguments:
+            - "@oro_redirect.repository.slug"
 
     oro_redirect.direct_url_message_factory:
         class: Oro\Bundle\RedirectBundle\Model\DirectUrlMessageFactory
         arguments:
             - '@doctrine'
+            - '@oro_config.manager'
 
     oro_redirect.async.direct_url_processor:
         class: Oro\Bundle\RedirectBundle\Async\DirectUrlProcessor
@@ -88,8 +129,82 @@ services:
             - '@oro_redirect.direct_url_message_factory'
             - '@oro_entity.database_exception_helper'
             - '@logger'
+            - '@oro_redirect.url_storage_cache'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
+
+    oro_redirect.async.direct_url_processor.job_runner:
+        class: Oro\Bundle\RedirectBundle\Async\DelayedJobRunnerDecoratingProcessor
+        arguments:
+            - '@oro_message_queue.job.runner'
+            - '@oro_redirect.async.direct_url_processor'
+        tags:
+            - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.redirect.job.generate_direct_url.entity' }
+
+    oro_redirect.async.sluggable_entities_processor:
+        class: Oro\Bundle\RedirectBundle\Async\SluggableEntitiesProcessor
+        arguments:
+           - '@doctrine'
+           - '@oro_message_queue.job.runner'
+           - '@oro_message_queue.client.message_producer'
+           - '@monolog.logger'
+           - '@oro_redirect.direct_url_message_factory'
+        tags:
+            - { name: 'oro_message_queue.client.message_processor' }
+
+    oro_redirect.async.sync_slug_redirects_processor:
+        class: Oro\Bundle\RedirectBundle\Async\SyncSlugRedirectsProcessor
+        arguments:
+           - '@doctrine'
+           - '@logger'
+           - '@oro_entity.database_exception_helper'
+        tags:
+            - { name: 'oro_message_queue.client.message_processor' }
+
+    oro_redirect.async.direct_url_remove:
+        class: Oro\Bundle\RedirectBundle\Async\DirectUrlRemoveProcessor
+        arguments:
+           - '@doctrine'
+           - '@monolog.logger'
+           - '@oro_message_queue.client.message_producer'
+        tags:
+            - { name: 'oro_message_queue.client.message_processor' }
+
+    oro_redirect.async.url_cache_mass_job_processor:
+        class: Oro\Bundle\RedirectBundle\Async\UrlCacheMassJobProcessor
+        arguments:
+           - '@oro_message_queue.job.runner'
+           - '@oro_message_queue.client.message_producer'
+           - '@oro_redirect.repository.slug'
+           - '@monolog.logger'
+           - '@oro_redirect.url_storage_cache'
+        tags:
+            - { name: 'oro_message_queue.client.message_processor' }
+
+    oro_redirect.async.url_cache_job_processor:
+        class: Oro\Bundle\RedirectBundle\Async\UrlCacheProcessor
+        arguments:
+           - '@oro_redirect.cache.dumper.sluggable_url_dumper'
+           - '@monolog.logger'
+        tags:
+            - { name: 'oro_message_queue.client.message_processor' }
+
+    oro_redirect.async.url_cache_job_processor.job_runner:
+        class: Oro\Bundle\RedirectBundle\Async\DelayedJobRunnerDecoratingProcessor
+        arguments:
+            - '@oro_message_queue.job.runner'
+            - '@oro_redirect.async.url_cache_job_processor'
+        tags:
+            - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.redirect.calculate_cache.process_job' }
+
+    oro_redirect.config.event_listener.enable_direct_url_change:
+        class: Oro\Bundle\RedirectBundle\EventListener\ConfigEnableDirectUrlListener
+        arguments:
+            - '@oro_message_queue.client.message_producer'
+            - '@oro_redirect.provider.routing_information_provider'
+            - '@oro_redirect.direct_url_message_factory'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.update_after, method: onUpdateAfter }
 
     oro_redirect.layout.data_provider.canonical_data:
         class: Oro\Bundle\RedirectBundle\DataProvider\CanonicalDataProvider
@@ -101,3 +216,82 @@ services:
             - '@oro_locale.helper.localization'
         tags:
             - { name: layout.data_provider, alias: canonical }
+
+    oro_redirect.cache.dumper.sluggable_url_dumper:
+        class: Oro\Bundle\RedirectBundle\Cache\Dumper\SluggableUrlDumper
+        public: false
+        arguments:
+            - '@oro_redirect.repository.slug'
+            - '@oro_redirect.url_storage_cache'
+
+    oro_redirect.routing.sluggable_url_generator:
+        class: Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator
+        arguments:
+            - '@oro_redirect.url_storage_cache'
+            - '@oro_redirect.provider.context_url_provider_registry'
+
+    oro_redirect.routing.router:
+        class: Oro\Bundle\RedirectBundle\Routing\Router
+        parent: router.default
+        decorates: router
+        calls:
+            - [ 'setFrontendHelper', ['@oro_frontend.request.frontend_helper'] ]
+            - [ 'setContainer', ['@service_container'] ]
+        tags:
+            - { name: 'monolog.logger', channel: 'router' }
+
+    oro_redirect.slug_url.cache.persistent:
+        class: Oro\Bundle\CacheBundle\Provider\PhpFileCache
+        public: false
+        arguments:
+            - '%kernel.cache_dir%/oro_data'
+        calls:
+            - [ setNamespace, [ 'oro_slug_url' ] ]
+
+    oro_redirect.slug_url.cache.local:
+        parent: doctrine_cache.abstract.array
+        public: false
+
+    oro_redirect.url_storage_cache:
+        class: Oro\Bundle\RedirectBundle\Cache\UrlStorageCache
+        public: false
+        arguments:
+            - '@oro_redirect.slug_url.cache.persistent'
+            - '@oro_redirect.slug_url.cache.local'
+            - '@filesystem'
+
+    oro_redirect.cache.slug_url_cache_warmer:
+        class: Oro\Bundle\RedirectBundle\Cache\SlugUrlCacheWarmer
+        arguments:
+            - '@oro_message_queue.client.message_producer'
+        tags:
+            - { name: 'kernel.cache_warmer' }
+
+    oro_redirect.repository.slug:
+        class: Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository
+        parent: oro_entity.abstract_repository
+        arguments:
+            - '%oro_redirect.entity.slug.class%'
+
+    oro_redirect.helper.changed_slugs_helper:
+        class: Oro\Bundle\RedirectBundle\Helper\ChangedSlugsHelper
+        arguments:
+            - '@form.factory'
+            - '@request_stack'
+            - '@oro_redirect.generator.slug_entity'
+            - '@oro_redirect.generator.slug_url_differ'
+
+    oro_redirect.repository.redirect:
+        class: Oro\Bundle\RedirectBundle\Entity\Repository\RedirectRepository
+        parent: oro_entity.abstract_repository
+        arguments:
+            - '%oro_redirect.entity.redirect.class%'
+
+    oro_redirect.event_listener.redirect_exception_listener:
+        class: Oro\Bundle\RedirectBundle\EventListener\RedirectExceptionListener
+        arguments:
+            - '@oro_redirect.repository.redirect'
+            - '@oro_scope.scope_manager'
+            - '@oro_redirect.routing.matched_url_decision_maker'
+        tags:
+            - { name: kernel.event_listener, event: kernel.exception }

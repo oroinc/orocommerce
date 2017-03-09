@@ -12,6 +12,7 @@ parameters:
     oro_tax.model.address.class: Oro\Bundle\TaxBundle\Model\Address
 
     oro_tax.event.resolver_event_connector.common_class: Oro\Bundle\TaxBundle\Event\ResolverEventConnector
+    oro_tax.event_subscriber.import_export_tax_subscriber.class: Oro\Bundle\TaxBundle\EventSubscriber\CustomerTaxCodeImportExportSubscriber
 
 services:
     oro_tax.form.autocomplete.product_tax_code.search_handler:
@@ -286,9 +287,7 @@ services:
         class: 'Oro\Bundle\TaxBundle\OrderTax\ContextHandler\OrderLineItemHandler'
         arguments:
             - "@oro_tax.provider.taxation_address_provider"
-            - "@oro_entity.doctrine_helper"
-            - '%oro_tax.entity.product_tax_code.class%'
-            - '%oro_tax.entity.customer_tax_code.class%'
+            - "@oro_tax.provider.tax_code"
             - '%oro_order.entity.order_line_item.class%'
         tags:
             - { name: kernel.event_listener, event: oro_tax.mapper.context, method: onContextEvent }
@@ -296,7 +295,7 @@ services:
     oro_tax.order_tax.context_handler.order_handler:
         class: 'Oro\Bundle\TaxBundle\OrderTax\ContextHandler\OrderHandler'
         arguments:
-            - "@oro_entity.doctrine_helper"
+            - '@oro_tax.provider.tax_code'
         tags:
             - { name: kernel.event_listener, event: oro_tax.mapper.context, method: onContextEvent }
 
@@ -314,29 +313,47 @@ services:
         arguments:
             - "@oro_tax.provider.taxation_settings_provider"
 
+    oro_tax.provider.address_resolver_settings_provider:
+        class: 'Oro\Bundle\TaxBundle\Provider\AddressResolverSettingsProvider'
+        public: false
+        arguments:
+            - '@oro_config.global'
+
     oro_tax.abstract.matcher:
         abstract: true
+        public: false
         arguments:
             - "@oro_entity.doctrine_helper"
             - '%oro_tax.entity.tax_rule.class%'
 
     oro_tax.matcher.country_matcher:
         class: 'Oro\Bundle\TaxBundle\Matcher\CountryMatcher'
-        public: false
         parent: oro_tax.abstract.matcher
+        tags:
+            - { name: oro_tax.address_matcher, type: country }
 
     oro_tax.matcher.region_matcher:
         class: 'Oro\Bundle\TaxBundle\Matcher\RegionMatcher'
-        public: false
         parent: oro_tax.abstract.matcher
         calls:
             - [setCountryMatcher,  ["@oro_tax.matcher.country_matcher"]]
+        tags:
+            - { name: oro_tax.address_matcher, type: region }
 
     oro_tax.matcher.zip_code_matcher:
         parent: oro_tax.abstract.matcher
         class: 'Oro\Bundle\TaxBundle\Matcher\ZipCodeMatcher'
         calls:
             - [setRegionMatcher,  ["@oro_tax.matcher.region_matcher"]]
+        tags:
+            - { name: oro_tax.address_matcher, type: zip_code}
+
+    oro_tax.matcher.resolvable_matcher:
+        class: 'Oro\Bundle\TaxBundle\Matcher\ResolvableMatcher'
+        public: false
+        arguments:
+            - "@oro_tax.address_matcher_registry"
+            - "@oro_tax.provider.address_resolver_settings_provider"
 
     oro_tax.calculator:
         class: 'Oro\Bundle\TaxBundle\Calculator\Calculator'
@@ -405,7 +422,7 @@ services:
         arguments:
             - "@oro_tax.resolver.unit"
             - "@oro_tax.resolver.row_total"
-            - "@oro_tax.matcher.zip_code_matcher"
+            - "@oro_tax.matcher.resolvable_matcher"
         tags:
             - { name: oro_tax.resolver, event: oro_tax.resolve, priority: -32 }
 
@@ -503,3 +520,50 @@ services:
             - '@oro_tax.factory.tax'
         tags:
             - { name: oro_pricing.subtotal_provider, priority: 20 }
+
+    oro_tax.address_matcher_registry:
+        class: 'Oro\Bundle\TaxBundle\Matcher\AddressMatcherRegistry'
+        public: false
+
+    oro_tax.repository.product_tax_code:
+        class: 'Oro\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository'
+        parent: oro_entity.abstract_repository
+        arguments: ['Oro\Bundle\TaxBundle\Entity\ProductTaxCode']
+
+    oro_tax.repository.customer_tax_code:
+        class: 'Oro\Bundle\TaxBundle\Entity\Repository\CustomerTaxCodeRepository'
+        parent: oro_entity.abstract_repository
+        arguments: ['Oro\Bundle\TaxBundle\Entity\CustomerTaxCode']
+
+    oro_tax.provider.tax_code:
+        class: 'Oro\Bundle\TaxBundle\Provider\TaxCodeProvider'
+        arguments:
+            - '@oro_tax.repository.product_tax_code'
+            - '@oro_tax.repository.customer_tax_code'
+            - '@oro_tax.cache.tax_codes'
+
+    oro_tax.cache.tax_codes:
+        class: 'Oro\Bundle\TaxBundle\Cache\TaxCodesCache'
+        arguments:
+            - '@oro_tax.tax_codes.cache'
+            - '@oro_entity.doctrine_helper'
+
+    oro_tax.tax_codes.cache:
+        public: false
+        parent: doctrine_cache.abstract.array
+        calls:
+            - [ setNamespace, [ 'oro_tax_tax_codes' ] ]
+
+    oro_tax.manager.oro.customer_tax_code_manager:
+        public: false:
+        class: 'Oro\Bundle\TaxBundle\Helper\CustomerTaxCodeImportExportHelper'
+        arguments:
+            - "@oro_entity.doctrine_helper"
+
+    oro_tax.event_listener.import_export_tax_subscriber:
+        class: %oro_tax.event_subscriber.import_export_tax_subscriber.class%
+        arguments:
+            - '@oro_tax.manager.oro.customer_tax_code_manager'
+            - '%oro_customer.entity.customer.class%'
+        tags:
+            - { name: kernel.event_subscriber }

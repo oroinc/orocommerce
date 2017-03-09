@@ -7,9 +7,11 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\ORM\EntityRepository;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIteratorInterface;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
-use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListCustomerFallback;
@@ -48,7 +50,7 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
             ->where($qb->expr()->eq('relation.customer', ':customer'))
             ->andWhere($qb->expr()->eq('relation.website', ':website'))
             ->andWhere($qb->expr()->eq('priceList.active', ':active'))
-            ->orderBy('relation.priority', $sortOrder)
+            ->orderBy('relation.sortOrder', $sortOrder)
             ->setParameters(['customer' => $customer, 'website' => $website, 'active' => true]);
 
         return $qb->getQuery()->getResult();
@@ -58,7 +60,7 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
      * @param CustomerGroup $customerGroup
      * @param Website $website
      * @param int|null $fallback
-     * @return BufferedQueryResultIterator|Customer[]
+     * @return BufferedQueryResultIteratorInterface|Customer[]
      */
     public function getCustomerIteratorByDefaultFallback(
         CustomerGroup $customerGroup,
@@ -103,12 +105,12 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
                 ->setParameter('fallbackToGroup', $fallback);
         }
 
-        return new BufferedQueryResultIterator($qb->getQuery());
+        return new BufferedIdentityQueryResultIterator($qb->getQuery());
     }
 
     /**
      * @param CustomerGroup $customerGroup
-     * @return BufferedQueryResultIterator
+     * @return BufferedQueryResultIteratorInterface
      */
     public function getCustomerWebsitePairsByCustomerGroupIterator(CustomerGroup $customerGroup)
     {
@@ -130,14 +132,16 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
             )
             ->where($qb->expr()->eq('acc.group', ':customerGroup'))
             ->groupBy('PriceListToCustomer.customer', 'PriceListToCustomer.website')
-            ->setParameter('customerGroup', $customerGroup);
+            ->setParameter('customerGroup', $customerGroup)
+            // order required for BufferedIdentityQueryResultIterator on PostgreSql
+            ->orderBy('PriceListToCustomer.customer, PriceListToCustomer.website');
 
         return new BufferedQueryResultIterator($qb);
     }
 
     /**
      * @param PriceList $priceList
-     * @return BufferedQueryResultIterator
+     * @return BufferedQueryResultIteratorInterface
      */
     public function getIteratorByPriceList(PriceList $priceList)
     {
@@ -151,7 +155,9 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
             ->leftJoin('priceListToCustomer.customer', 'acc')
             ->where('priceListToCustomer.priceList = :priceList')
             ->groupBy('priceListToCustomer.customer', 'acc.group', 'priceListToCustomer.website')
-            ->setParameter('priceList', $priceList);
+            ->setParameter('priceList', $priceList)
+            // order required for BufferedIdentityQueryResultIterator on PostgreSql
+            ->orderBy('priceListToCustomer.customer');
 
 
         return new BufferedQueryResultIterator($qb);
@@ -219,7 +225,7 @@ class PriceListToCustomerRepository extends EntityRepository implements PriceLis
             ->where($qb->expr()->in('relation.customer', ':customers'))
             ->orderBy('relation.customer')
             ->addOrderBy('relation.website')
-            ->addOrderBy('relation.priority')
+            ->addOrderBy('relation.sortOrder')
             ->setParameter('customers', $holdersIds);
 
         return $qb->getQuery()->getResult();

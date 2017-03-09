@@ -5,7 +5,6 @@ namespace Oro\Bundle\ShoppingListBundle\Controller\Frontend;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -13,7 +12,7 @@ use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 
-class MatrixGridOrderController extends Controller
+class MatrixGridOrderController extends AbstractLineItemController
 {
     /**
      * @Route("/{productId}", name="oro_shopping_list_frontend_matrix_grid_order")
@@ -43,10 +42,18 @@ class MatrixGridOrderController extends Controller
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $lineItems = $matrixGridOrderManager->convertMatrixIntoLineItems($form->getData());
+            $lineItems = $matrixGridOrderManager->convertMatrixIntoLineItems(
+                $form->getData(),
+                $product
+            );
 
             foreach ($lineItems as $lineItem) {
                 $shoppingListManager->addLineItem($lineItem, $shoppingList, true, true);
+            }
+
+            if ($lineItems) {
+                $message = $this->getSuccessMessage($shoppingList, 'oro.shoppinglist.product.added.label');
+                $this->get('session')->getFlashBag()->add('success', $message);
             }
 
             if ($request->isXmlHttpRequest()) {

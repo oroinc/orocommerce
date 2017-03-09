@@ -1,15 +1,3 @@
-"Alternative Checkout: Order Approval": "Alternative Checkout: Order Approval"
-"Alternative Checkout: Billing Information": "Alternative Checkout: Billing Information"
-"Alternative Checkout: Payment": "Alternative Checkout: Payment"
-"Alternative Checkout: Shipping Information": "Alternative Checkout: Shipping Information"
-"Alternative Checkout: Shipping Method": "Alternative Checkout: Shipping Method"
-"Alternative Checkout: Order Review": "Alternative Checkout: Order Review"
-"Alternative Checkout: Request Approval": "Alternative Checkout: Request Approval"
-"Checkout: Billing Information": "Checkout: Billing Information"
-"Checkout: Payment": "Checkout: Payment"
-"Checkout: Shipping Information": "Checkout: Shipping Information"
-"Checkout: Shipping Method": "Checkout: Shipping Method"
-"Checkout: Order Review": "Checkout: Order Review"
 oro:
     workflow:
         b2b_flow_alternative_checkout:
@@ -31,6 +19,10 @@ oro:
                     label: 'Order Approval'
                 order_created:
                     label: 'Order Created'
+            variable:
+                order_approval_threshold:
+                    label: 'Order Approval Threshold'
+                    tooltip: 'Orders with subtotals exceeding the specified value will have to be reviewed and approved by users with the "Approve orders that exceed the allowable amount" permission.'
             attribute:
                 request_approval_notes:
                     label: Notes
@@ -80,9 +72,13 @@ oro:
                     label: 'Shipping method'
                 shipping_method_type:
                     label: 'Shipping method type'
+                order:
+                    label: 'Order'
             transition:
+                __start__:
+                    label: 'Create Order'
                 start_from_shoppinglist:
-                    label: Create Order
+                    label: 'Create Order'
                 start_from_quickorderform:
                     label: 'Create Order'
                 continue_to_shipping_address:

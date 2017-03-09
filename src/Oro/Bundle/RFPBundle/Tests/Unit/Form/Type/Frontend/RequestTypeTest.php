@@ -3,10 +3,7 @@
 namespace Oro\Bundle\RFPBundle\Tests\Unit\Form\Type\Frontend;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectRepository;
-use Doctrine\Common\Persistence\ObjectManager;
 
-use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\PreloadedExtension;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -25,8 +22,6 @@ use Oro\Bundle\ProductBundle\Form\Type\ProductUnitSelectionType;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\Stub\ProductUnitSelectionTypeStub;
 use Oro\Bundle\ProductBundle\Tests\Unit\Form\Type\QuantityTypeTrait;
 
-use Oro\Bundle\RFPBundle\Entity\Request;
-use Oro\Bundle\RFPBundle\Entity\RequestStatus;
 use Oro\Bundle\RFPBundle\Form\Type\RequestProductType;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductCollectionType;
 use Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestProductType as FrontendRequestProductType;
@@ -39,7 +34,6 @@ class RequestTypeTest extends AbstractTest
     use QuantityTypeTrait;
 
     const DATA_CLASS = 'Oro\Bundle\RFPBundle\Entity\Request';
-    const REQUEST_STATUS_CLASS = 'Oro\Bundle\RFPBundle\Entity\RequestStatus';
 
     /**
      * @var RequestType
@@ -51,52 +45,18 @@ class RequestTypeTest extends AbstractTest
      */
     protected function setUp()
     {
-        $requestStatus = new RequestStatus();
-        $requestStatus->setName(RequestStatus::OPEN);
-
-        /* @var $repository ObjectRepository|\PHPUnit_Framework_MockObject_MockObject */
-        $repository = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $repository->expects(static::any())
-            ->method('findOneBy')
-            ->with(['name' => RequestStatus::OPEN])
-            ->willReturn($requestStatus);
-
-        /* @var $manager ObjectManager|\PHPUnit_Framework_MockObject_MockObject */
-        $manager = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $manager->expects(static::any())
-            ->method('getRepository')
-            ->with(self::REQUEST_STATUS_CLASS)
-            ->willReturn($repository);
-
         /* @var $registry ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject */
         $registry = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
             ->disableOriginalConstructor()
             ->getMock();
-
-        $registry->expects(static::any())
-            ->method('getManagerForClass')
-            ->with(self::REQUEST_STATUS_CLASS)
-            ->willReturn($manager);
 
         /* @var $configManager ConfigManager|\PHPUnit_Framework_MockObject_MockObject */
         $configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
             ->disableOriginalConstructor()
             ->getMock();
 
-        $configManager->expects(static::any())
-            ->method('get')
-            ->with('oro_rfp.default_request_status')
-            ->willReturn(RequestStatus::OPEN);
-
         $this->formType = new RequestType($configManager, $registry);
         $this->formType->setDataClass(self::DATA_CLASS);
-        $this->formType->setRequestStatusClass(self::REQUEST_STATUS_CLASS);
 
         parent::setUp();
     }
@@ -126,22 +86,6 @@ class RequestTypeTest extends AbstractTest
     public function testGetName()
     {
         static::assertEquals(RequestType::NAME, $this->formType->getName());
-    }
-
-    /**
-     * Test postSubmit
-     */
-    public function testPostSubmit()
-    {
-        $request = new Request();
-        $form = $this->factory->create($this->formType, $request);
-
-        static::assertEmpty($request->getStatus());
-
-        $this->formType->postSubmit(new FormEvent($form, $request));
-
-        static::assertNotNull($request->getStatus());
-        static::assertEquals(RequestStatus::OPEN, $request->getStatus()->getName());
     }
 
     /**
@@ -197,9 +141,7 @@ class RequestTypeTest extends AbstractTest
                         'poNumber',
                         $dateObj
                     )
-                    ->addRequestProduct($requestProduct)->setStatus(
-                        (new RequestStatus())->setName(RequestStatus::OPEN)
-                    )
+                    ->addRequestProduct($requestProduct)
                     ->addAssignedCustomerUser($this->getCustomerUser(10)),
                 'defaultData'  => $this
                     ->getRequest(
@@ -213,9 +155,7 @@ class RequestTypeTest extends AbstractTest
                         'poNumber',
                         $dateObj
                     )
-                    ->addRequestProduct($requestProduct)->setStatus(
-                        (new RequestStatus())->setName(RequestStatus::OPEN)
-                    ),
+                    ->addRequestProduct($requestProduct),
             ],
             'empty PO number' => [
                 'isValid'       => true,
@@ -255,9 +195,7 @@ class RequestTypeTest extends AbstractTest
                         null,
                         null
                     )
-                    ->addRequestProduct($requestProduct)->setStatus(
-                        (new RequestStatus())->setName(RequestStatus::OPEN)
-                    ),
+                    ->addRequestProduct($requestProduct),
                 'defaultData'  => $this
                     ->getRequest(
                         'FirstName',
@@ -270,9 +208,7 @@ class RequestTypeTest extends AbstractTest
                         null,
                         null
                     )
-                    ->addRequestProduct($requestProduct)->setStatus(
-                        (new RequestStatus())->setName(RequestStatus::OPEN)
-                    ),
+                    ->addRequestProduct($requestProduct),
             ],
         ];
     }

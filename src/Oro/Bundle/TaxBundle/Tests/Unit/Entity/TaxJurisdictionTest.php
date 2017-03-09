@@ -50,21 +50,6 @@ class TaxJurisdictionTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($textRegionName, $taxJurisdiction->getRegionName());
     }
 
-    public function testPreUpdate()
-    {
-        $taxJurisdiction = $this->createTaxJurisdiction();
-        $taxJurisdiction->preUpdate();
-        $this->assertInstanceOf('\DateTime', $taxJurisdiction->getUpdatedAt());
-    }
-
-    public function testPrePersist()
-    {
-        $taxJurisdiction = $this->createTaxJurisdiction();
-        $taxJurisdiction->prePersist();
-        $this->assertInstanceOf('\DateTime', $taxJurisdiction->getUpdatedAt());
-        $this->assertInstanceOf('\DateTime', $taxJurisdiction->getCreatedAt());
-    }
-
     /**
      * @return TaxJurisdiction
      */

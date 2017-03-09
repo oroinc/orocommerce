@@ -1,0 +1,5 @@
+acls:
+    oro_frontend_action_test:
+        label: oro.frontend_action_test
+        type: action
+        group_name: "commerce"

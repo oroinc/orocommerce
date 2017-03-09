@@ -25,13 +25,6 @@ services:
         arguments:
             - '%oro_catalog.entity.category.class%'
 
-    oro_catalog.category.manager.api:
-        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
-        parent: oro_soap.manager.entity_manager.abstract
-        arguments:
-            - '%oro_catalog.entity.category.class%'
-            - "@doctrine.orm.entity_manager"
-
     oro_catalog.event_listener.form_view:
         class: 'Oro\Bundle\CatalogBundle\EventListener\FormViewListener'
         arguments:
@@ -169,8 +162,20 @@ services:
 
     oro_catalog.provider.routing_information_provider:
         class: Oro\Bundle\CatalogBundle\Provider\CategoryRoutingInformationProvider
+        public: false
+        arguments:
+            - '@oro_config.global'
         tags:
-            - { name: oro_redirect.routing_information_provider }
+            - { name: oro_redirect.routing_information_provider, alias: '%oro_catalog.entity.category.class%' }
+
+    oro_catalog.provider.catalog_context_url_provider:
+        class: Oro\Bundle\CatalogBundle\Provider\CategoryContextUrlProvider
+        public: false
+        arguments:
+            - '@request_stack'
+            - '@oro_redirect.url_storage_cache'
+        tags:
+            - { name: oro_redirect.context_url_provider, alias: 'category' }
 
     oro_catalog.provider.products_content_variant_provider:
         class: Oro\Bundle\CatalogBundle\Provider\ProductsContentVariantProvider
@@ -197,3 +202,15 @@ services:
         arguments:
             - '@oro_catalog.visibility.single_unit_default_product_options_decorator.inner'
             - '@oro_product.service.single_unit_mode'
+
+    oro_catalog.config.event_listener.direct_url_prefix_change:
+        class: Oro\Bundle\RedirectBundle\EventListener\ConfigRegenerateDirectUrlListener
+        arguments:
+            - '@oro_config.manager'
+            - '@oro_message_queue.client.message_producer'
+            - '@oro_redirect.form.storage.redirect_storage'
+            - '@oro_redirect.direct_url_message_factory'
+            - 'oro_catalog.category_direct_url_prefix'
+            - '%oro_catalog.entity.category.class%'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.update_after, method: onUpdateAfter }

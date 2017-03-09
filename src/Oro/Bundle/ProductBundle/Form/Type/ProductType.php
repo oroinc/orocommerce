@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
+use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
+use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -9,19 +11,23 @@ use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccess;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugType;
-use Oro\Bundle\ValidationBundle\Validator\Constraints\UrlSafe;
+use Oro\Bundle\EntityBundle\Form\Type\EntityFieldFallbackValueType;
 use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
+use Oro\Bundle\FrontendBundle\Form\DataTransformer\PageTemplateEntityFieldFallbackValueTransformer;
+use Oro\Bundle\FrontendBundle\Form\Type\PageTemplateType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\DefaultProductUnitProviderInterface;
+use Oro\Bundle\RedirectBundle\Form\Type\LocalizedSlugWithRedirectType;
 
 class ProductType extends AbstractType
 {
     const NAME = 'oro_product';
+    const PAGE_TEMPLATE_ROUTE_NAME = 'oro_product_frontend_product_view';
 
     /**
      * @var string
@@ -34,11 +40,18 @@ class ProductType extends AbstractType
     private $provider;
 
     /**
-     * @param DefaultProductUnitProviderInterface $provider
+     * @var UrlGeneratorInterface
      */
-    public function __construct(DefaultProductUnitProviderInterface $provider)
+    private $urlGenerator;
+
+    /**
+     * @param DefaultProductUnitProviderInterface $provider
+     * @param UrlGeneratorInterface $urlGenerator
+     */
+    public function __construct(DefaultProductUnitProviderInterface $provider, UrlGeneratorInterface $urlGenerator)
     {
         $this->provider = $provider;
+        $this->urlGenerator = $urlGenerator;
     }
 
     /**
@@ -56,6 +69,14 @@ class ProductType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        $product = $builder->getData();
+
+        if (!$product->getPageTemplate()) {
+            $entityFallback = new EntityFieldFallbackValue();
+            $entityFallback->setFallback(SystemConfigFallbackProvider::FALLBACK_ID);
+            $product->setPageTemplate($entityFallback);
+        }
+
         $builder
             ->add('sku', 'text', ['required' => true, 'label' => 'oro.product.sku.label'])
             ->add('status', ProductStatusType::NAME, ['label' => 'oro.product.status.label'])
@@ -141,6 +162,7 @@ class ProductType extends AbstractType
                 [
                     'label' => 'oro.product.variant_fields.label',
                     'tooltip' => 'oro.product.form.tooltip.variant_fields',
+                    'required' => false,
                 ]
             )
             ->add(
@@ -148,20 +170,32 @@ class ProductType extends AbstractType
                 ProductImageCollectionType::NAME,
                 ['required' => false]
             )
+            ->add(
+                'pageTemplate',
+                EntityFieldFallbackValueType::class,
+                [
+                    'value_type' => PageTemplateType::class,
+                    'value_options' => [
+                        'route_name' => self::PAGE_TEMPLATE_ROUTE_NAME
+                    ]
+                ]
+            )
             ->add('type', HiddenType::class)
             ->add(
-                'slugPrototypes',
-                LocalizedSlugType::NAME,
+                'slugPrototypesWithRedirect',
+                LocalizedSlugWithRedirectType::NAME,
                 [
                     'label'    => 'oro.product.slug_prototypes.label',
                     'required' => false,
-                    'options'  => ['constraints' => [new UrlSafe()]],
-                    'source_field' => 'names',
+                    'source_field' => 'names'
                 ]
             )
             ->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener'])
             ->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetDataListener'])
             ->addEventListener(FormEvents::SUBMIT, [$this, 'submitListener']);
+
+        $builder->get('pageTemplate')
+            ->addModelTransformer(new PageTemplateEntityFieldFallbackValueTransformer(self::PAGE_TEMPLATE_ROUTE_NAME));
     }
 
     /**
@@ -184,6 +218,21 @@ class ProductType extends AbstractType
                     'error_bubbling' => false,
                     'required'       => true,
                     'data'           => $this->provider->getDefaultProductUnitPrecision()
+                ]
+            );
+        }
+
+        if ($product->getId()) {
+            $url = $this->urlGenerator->generate('oro_product_get_changed_slugs', ['id' => $product->getId()]);
+
+            $form->add(
+                'slugPrototypesWithRedirect',
+                LocalizedSlugWithRedirectType::NAME,
+                [
+                    'label'    => 'oro.product.slug_prototypes.label',
+                    'required' => false,
+                    'source_field' => 'names',
+                    'get_changed_slugs_url' => $url
                 ]
             );
         }

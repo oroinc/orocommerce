@@ -4,7 +4,8 @@ namespace Oro\Bundle\PaymentBundle\Form\EventSubscriber;
 
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -12,14 +13,14 @@ use Symfony\Component\Form\FormEvents;
 class RuleMethodConfigCollectionSubscriber implements EventSubscriberInterface
 {
     /**
-     * @var PaymentMethodRegistry
+     * @var PaymentMethodProvidersRegistryInterface
      */
     protected $methodRegistry;
 
     /**
-     * @param PaymentMethodRegistry $methodRegistry
+     * @param PaymentMethodProvidersRegistryInterface $methodRegistry
      */
-    public function __construct(PaymentMethodRegistry $methodRegistry)
+    public function __construct(PaymentMethodProvidersRegistryInterface $methodRegistry)
     {
         $this->methodRegistry = $methodRegistry;
     }
@@ -49,9 +50,7 @@ class RuleMethodConfigCollectionSubscriber implements EventSubscriberInterface
         }
 
         foreach ($data as $index => $methodConfig) {
-            try {
-                $this->methodRegistry->getPaymentMethod($methodConfig->getType());
-            } catch (\InvalidArgumentException $e) {
+            if (!$this->getPaymentMethodForConfig($methodConfig->getType())) {
                 $data->remove($index);
                 $form->remove($index);
             }
@@ -74,12 +73,7 @@ class RuleMethodConfigCollectionSubscriber implements EventSubscriberInterface
 
         $filteredSubmittedData = [];
         foreach ($submittedData as $index => $itemData) {
-            try {
-                $paymentMethod = $this->methodRegistry->getPaymentMethod($itemData['type']);
-            } catch (\InvalidArgumentException $e) {
-                $paymentMethod = null;
-            }
-            if (array_key_exists('type', $itemData) && $paymentMethod !== null) {
+            if (array_key_exists('type', $itemData) && $this->getPaymentMethodForConfig($itemData['type']) !== null) {
                 $filteredSubmittedData[$index] = $itemData;
             } else {
                 $form->remove($index);
@@ -87,5 +81,23 @@ class RuleMethodConfigCollectionSubscriber implements EventSubscriberInterface
         }
 
         $event->setData($filteredSubmittedData);
+    }
+
+    /**
+     * @param string $methodConfigType
+     * @return PaymentMethodInterface|null
+     */
+    protected function getPaymentMethodForConfig($methodConfigType)
+    {
+        try {
+            foreach ($this->methodRegistry->getPaymentMethodProviders() as $provider) {
+                if ($provider->hasPaymentMethod($methodConfigType)) {
+                    return $provider->getPaymentMethod($methodConfigType);
+                }
+            }
+            return null;
+        } catch (\InvalidArgumentException $e) {
+            return null;
+        }
     }
 }

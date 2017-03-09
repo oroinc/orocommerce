@@ -4,8 +4,8 @@ navigation:
             payment_methods_configs_rule:
                 label:           'oro.payment.menu.paymentmethodsconfigsrule.label'
                 route:           'oro_payment_methods_configs_rule_index'
+                position:        100
                 extras:
-                    position:    100
                     routes:      ['/^oro_payment_methods_configs_rule/']
                     description: 'oro.payment.menu.paymentmethodsconfigsrule.description'
 
@@ -27,6 +27,6 @@ navigation:
 
     titles:
         oro_payment_methods_configs_rule_index: ~
-        oro_payment_methods_configs_rule_view:  '%%label%%'
-        oro_payment_methods_configs_rule_update: 'Payment Rule %%id%% - Edit'
+        oro_payment_methods_configs_rule_view:  '%label%'
+        oro_payment_methods_configs_rule_update: 'Payment Rule %id% - Edit'
         oro_payment_methods_configs_rule_create: 'Create Payment Rule'

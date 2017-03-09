@@ -15,7 +15,7 @@ layout:
             optionValue: 'customer'
         - '@setOption':
             id: page_title
-            optionName: text
+            optionName: defaultValue
             optionValue:
                 label: 'oro.frontend.rfp.request.title.label'
                 parameters:
@@ -24,9 +24,9 @@ layout:
             items:
                 rfp_request_view_page:
                     blockType: container
-                rfp_request_view_top:
+                rfp_request_view_toolbar:
                     blockType: container
-                rfp_request_view_top_actions:
+                rfp_request_view_toolbar_actions:
                     blockType: line_buttons
                     options:
                         visible: '=data["entity"]!=null'
@@ -35,10 +35,20 @@ layout:
                     blockType: block
                     options:
                         visible: false
+                rfp_request_view_customer_status:
+                    blockType: text
+                    options:
+                        visible: '=data["entity"].getCustomerStatus()!=null'
+                        text: '=data["entity"].getCustomerStatus().getName()'
                 rfp_request_view_information:
                     blockType: rfp_request_information
                     options:
                         request: '=data["entity"]'
+                rfp_request_view_additional_notes:
+                    blockType: rfp_additional_notes
+                    options:
+                        visible: '=data["entity"].getRequestAdditionalNotes().count()>0'
+                        requestAdditionalNotes: '=data["entity"].getRequestAdditionalNotes()'
                 rfp_request_view_line_items:
                     blockType: rfp_request_line_items
                     options:
@@ -47,15 +57,6 @@ layout:
                     blockType: rfp_request_line_items
                     options:
                         requestProducts: '=data["entity"].getRequestProducts()'
-                rfp_request_view_notes_container:
-                    blockType: container
-                    options:
-                        visible: '=data["entity"].getNote()!=null'
-                rfp_request_view_notes:
-                    blockType: text
-                    options:
-                        visible: '=data["entity"].getNote()!=null'
-                        text: '=data["entity"].getNote()'
                 rfp_request_view_bottom:
                     blockType: container
                 rfp_request_view_back_btn:
@@ -66,13 +67,13 @@ layout:
             tree:
                 page_content:
                     rfp_request_view_page:
-                        rfp_request_view_top:
-                            rfp_request_view_top_actions: ~
+                        rfp_request_view_toolbar:
+                            rfp_request_view_customer_status: ~
+                            rfp_request_view_toolbar_actions: ~
                         rfp_request_view_controls_list: ~
                         rfp_request_view_information: ~
+                        rfp_request_view_additional_notes: ~
                         rfp_request_view_line_items: ~
                         rfp_request_view_line_items_mobile: ~
-                        rfp_request_view_notes_container:
-                            rfp_request_view_notes: ~
                         rfp_request_view_bottom:
                             rfp_request_view_back_btn: ~
