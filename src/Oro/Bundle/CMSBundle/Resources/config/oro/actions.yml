@@ -4,3 +4,46 @@ operations:
             - Oro\Bundle\CMSBundle\Entity\LoginPage
         exclude_datagrids:
             - cms-login-page-grid
+            - cms-content-block-grid
+    UPDATE:
+        exclude_datagrids:
+            - cms-content-block-grid
+
+    oro_cms_content_block_delete:
+        extends: DELETE
+        for_all_entities: false
+        for_all_datagrids: false
+        replace:
+            - datagrids
+            - preconditions
+            - exclude_datagrids
+        datagrids:
+            - cms-content-block-grid
+        preconditions:
+            '@and':
+                - '@not_blank': $.data
+                - '@or':
+                    - '@blank': $.requestRoute
+                    - '@and':
+                        - '@not_blank': $.routes[name]
+                - '@or':
+                    - '@not_blank': $.routes[name]
+                    - '@not_blank': $.gridName
+    oro_cms_content_block_update:
+        extends: UPDATE
+        for_all_entities: false
+        for_all_datagrids: false
+        replace:
+            - datagrids
+            - preconditions
+            - exclude_datagrids
+        datagrids:
+            - cms-content-block-grid
+        preconditions:
+            '@and':
+                - '@not_blank': $.data
+                - '@not_blank': $.routes[update]
+                - '@or':
+                    - '@blank': $.requestRoute
+                    - '@and':
+                        - '@not_blank': $.routes[name]

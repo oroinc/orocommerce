@@ -115,3 +115,100 @@ datagrids:
                 title:
                     type: string
                     data_name: title
+
+    cms-content-block-grid:
+        extended_entity_name: Oro\Bundle\CMSBundle\Entity\ContentBlock
+        source:
+            type: orm
+            query:
+                select:
+                    - block.id
+                    - block.alias
+                    - block.enabled
+                    - block.createdAt
+                    - block.updatedAt
+                from:
+                    - { table: OroCMSBundle:ContentBlock, alias: block }
+                groupBy: block.alias, block.enabled, block.createdAt, block.updatedAt
+        columns:
+            alias:
+                label: oro.cms.contentblock.alias.label
+            title:
+                label: oro.cms.contentblock.titles.singular_label
+            enabled:
+                label: oro.cms.contentblock.enabled.label
+                frontend_type: select
+                choices:
+                   - Disabled
+                   - Enabled
+            createdAt:
+                label: oro.cms.contentblock.createdat.label
+                frontend_type: datetime
+            updatedAt:
+                label: oro.cms.contentblock.updatedat.label
+                frontend_type: datetime
+        sorters:
+            columns:
+                alias:
+                    data_name: block.alias
+                title:
+                    data_name: title
+                enabled:
+                    data_name: block.enabled
+                createdAt:
+                    data_name: block.createdAt
+                updatedAt:
+                    data_name: block.updatedAt
+            default:
+                updatedAt: DESC
+        filters:
+            columns:
+                alias:
+                    type: string
+                    data_name: block.alias
+                title:
+                    type: string
+                    data_name: title
+                enabled:
+                    type: boolean
+                    data_name: block.enabled
+                    options:
+                        field_options:
+                            choices:
+                                1: Enabled
+                                2: Disabled
+                createdAt:
+                    type: datetime
+                    data_name: block.createdAt
+                updatedAt:
+                    type: datetime
+                    data_name: block.updatedAt
+        properties:
+            id: ~
+            title:
+                type: localized_value
+                data_name: block.titles
+#            update_link:
+#                type: url
+#                route: issue.update
+#                params:
+#                    - id
+            view_link:
+                type: url
+                route: oro_cms_content_block_view
+                params:
+                    - id
+        actions:
+            view:
+                type:          navigate
+                label:         oro.grid.action.view
+                link:          view_link
+                icon:          eye
+                acl_resource:  oro_cms_contentblock_view
+                rowAction:     true
+#            update:
+#                type:          navigate
+#                label:         oro.actions.issue.update.label
+#                link:          update_link
+#                icon:          edit
+#                acl_resource:  issue_update

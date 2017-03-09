@@ -1,0 +1,36 @@
+{% extends 'OroUIBundle:actions:view.html.twig' %}
+{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+
+{% oro_title_set({params : {"%title%": 'oro.cms.contentblock.entity_label'|trans } }) %}
+
+{% block pageHeader %}
+    {% set breadcrumbs = {
+        'entity': entity,
+        'indexPath': path('oro_cms_content_block_index'),
+        'indexLabel': 'oro.cms.contentblock.entity_plural_label'|trans,
+        'entityTitle': entity.titles|localized_value
+    } %}
+
+    {{ parent() }}
+{% endblock pageHeader %}
+
+{% block content_data %}
+    {% set dataBlocks = [{
+        'title': 'oro.cms.sections.general'|trans,
+        'class': 'active',
+        'subblocks': [
+            {'data' : [
+                UI.renderProperty('oro.cms.contentblock.alias.label'|trans, entity.alias),
+                UI.renderProperty('oro.cms.contentblock.enabled.label'|trans, entity.enabled ?
+                'oro.cms.contentblock.enabled_yes.label'|trans
+                :
+                'oro.cms.contentblock.enabled_no.label'|trans )
+            ]}
+        ]
+    }] %}
+
+    {% set id = 'contentblock-page-view' %}
+    {% set data = {'dataBlocks': dataBlocks} %}
+
+    {{ parent() }}
+{% endblock content_data %}
