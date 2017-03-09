@@ -7,8 +7,9 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Oro\Bundle\DPDBundle\Entity\ShippingService;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Yaml\Yaml;
 
-class LoadShippingServicesData extends AbstractFixture implements ContainerAwareInterface
+class LoadShippingServicesData extends AbstractShippingServiceFixture implements ContainerAwareInterface
 {
     /**
      * @var array
@@ -35,39 +36,15 @@ class LoadShippingServicesData extends AbstractFixture implements ContainerAware
      */
     public function load(ObjectManager $manager)
     {
-        $this->loadServices($manager);
+        $this->addUpdateShippingServices($manager, $this->getShippingServicesData());
+        $manager->flush();
     }
 
     /**
-     * @param ObjectManager $manager
-     *
-     * @throws \InvalidArgumentException
+     * @return array
      */
-    public function loadServices(ObjectManager $manager)
+    protected function getShippingServicesData()
     {
-        $locator = $this->container->get('file_locator');
-        $filePath = $locator->locate('@OroDPDBundle/Migrations/Data/ORM/data/dpd_services.csv');
-
-        if (is_array($filePath)) {
-            $filePath = current($filePath);
-        }
-
-        $handler = fopen($filePath, 'rb');
-        $headers = fgetcsv($handler, 1000, ',');
-
-        while (($data = fgetcsv($handler, 1000, ',')) !== false) {
-            $row = array_combine($headers, array_values($data));
-
-            $shippingService = new ShippingService();
-            $shippingService
-                ->setCode($row['code'])
-                ->setDescription($row['description'])
-                ->setExpressService((bool) $row['is_express']);
-
-            $manager->persist($shippingService);
-        }
-        fclose($handler);
-
-        $manager->flush();
+        return Yaml::parse(file_get_contents(__DIR__.'/data/dpd_services.yml'));
     }
 }

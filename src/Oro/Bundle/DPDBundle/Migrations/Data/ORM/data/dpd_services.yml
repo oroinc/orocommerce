@@ -1,0 +1,4 @@
+dpd.shipping_service.1:
+    code: 'Classic'
+    description: 'DPD Classic'
+    express: 0

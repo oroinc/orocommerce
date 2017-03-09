@@ -2,30 +2,18 @@
 
 namespace Oro\Bundle\DPDBundle\Tests\Functional\DataFixtures;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\DPDBundle\Entity\ShippingService;
+use Oro\Bundle\DPDBundle\Migrations\Data\ORM\AbstractShippingServiceFixture;
 use Symfony\Component\Yaml\Yaml;
 
-class LoadShippingServices extends AbstractFixture
+class LoadShippingServices extends AbstractShippingServiceFixture
 {
     /**
      * {@inheritdoc}
      */
     public function load(ObjectManager $manager)
     {
-        foreach ($this->getShippingServicesData() as $reference => $data) {
-            $entity = new ShippingService();
-            $entity
-                ->setCode($data['code'])
-                ->setDescription($data['description'])
-                ->setExpressService($data['express']);
-
-            $manager->persist($entity);
-
-            $this->setReference($reference, $entity);
-        }
-
+        $this->addUpdateShippingServices($manager, $this->getShippingServicesData(), true);
         $manager->flush();
     }
 

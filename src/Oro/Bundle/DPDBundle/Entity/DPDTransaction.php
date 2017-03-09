@@ -20,8 +20,8 @@ class DPDTransaction
      * @var string
      *
      * @ORM\Id
-     * @ORM\Column(type="string", length=36)
-     * @ORM\GeneratedValue(strategy="UUID")
+     * @ORM\Column(name="id", type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
      */
     protected $id;
 
