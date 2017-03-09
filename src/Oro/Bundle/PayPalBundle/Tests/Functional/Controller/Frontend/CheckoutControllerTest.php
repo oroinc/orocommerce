@@ -6,7 +6,6 @@ use Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend\CheckoutContr
 use Oro\Bundle\PayPalBundle\Tests\Functional\DataFixtures\LoadPayPalMethodsConfigsRuleData;
 use Oro\Bundle\PayPalBundle\Tests\Functional\Stub\Method\ExpressCheckoutMethodStub;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
-use Oro\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadAvailableWarehouseConfig;
 
 class CheckoutControllerTest extends CheckoutControllerTestCase
 {
@@ -16,8 +15,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
     protected function getPaymentFixtures()
     {
         return [
-            LoadPayPalMethodsConfigsRuleData::class,
-            LoadAvailableWarehouseConfig::class
+            LoadPayPalMethodsConfigsRuleData::class
         ];
     }
 

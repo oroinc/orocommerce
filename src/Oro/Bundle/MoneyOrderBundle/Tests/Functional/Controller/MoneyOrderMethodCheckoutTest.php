@@ -13,7 +13,6 @@ use Oro\Bundle\MoneyOrderBundle\Tests\Functional\DataFixtures\LoadMoneyOrderSett
 use Oro\Bundle\MoneyOrderBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
-use Oro\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadAvailableWarehouseConfig;
 
 class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
 {
@@ -23,8 +22,7 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
     protected function getPaymentFixtures()
     {
         return [
-            LoadPaymentMethodsConfigsRuleData::class,
-            LoadAvailableWarehouseConfig::class
+            LoadPaymentMethodsConfigsRuleData::class
         ];
     }
 

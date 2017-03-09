@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
+use Symfony\Component\DomCrawler\Crawler;
+
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
@@ -16,7 +18,6 @@ use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsC
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
-use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * @dbIsolationPerTest
@@ -40,6 +41,7 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
                 LoadPaymentTermData::class,
                 LoadPaymentMethodsConfigsRuleData::class,
                 LoadShippingMethodsConfigsRulesWithConfigs::class,
+                '@OroInventoryBundle/Tests/Functional/DataFixtures/inventory_level.yml',
             ]
         );
         $this->registry = static::getContainer()->get('doctrine');
