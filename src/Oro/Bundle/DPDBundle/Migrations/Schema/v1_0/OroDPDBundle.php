@@ -104,7 +104,7 @@ class OroDPDBundle implements Migration
     protected function createOroDpdShippingTransactionTable(Schema $schema)
     {
         $table = $schema->createTable('oro_dpd_shipping_transaction');
-        $table->addColumn('id', 'string', ['length' => 36]);
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('order_id', 'integer', ['notnull' => false]);
         $table->addColumn('file_id', 'integer', ['notnull' => false]);
         $table->addColumn('parcel_numbers', 'array', ['comment' => '(DC2Type:array)']);
