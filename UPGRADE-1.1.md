@@ -25,3 +25,7 @@ WebsiteSearchBundle
 FrontendTestFrameworkBundle
 ---------------------------
 - 'Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase' method `tearDown` renamed to `afterFrontendTest`
+
+LayoutBundle
+---------------------------
+- `isApplicable(ThemeImageTypeDimension $dimension)` method added to `Oro\Bundle\LayoutBundle\Provider\CustomImageFilterProviderInterface`
