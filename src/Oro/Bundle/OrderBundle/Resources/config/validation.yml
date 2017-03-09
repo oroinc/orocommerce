@@ -94,6 +94,8 @@ Oro\Bundle\OrderBundle\Entity\OrderAddress:
                 max: 255
 
 Oro\Bundle\OrderBundle\Entity\OrderDiscount:
+    constraints:
+        - Oro\Bundle\OrderBundle\Validator\Constraints\DiscountType: ~
     properties:
         percent:
             - NotBlank: ~
@@ -108,6 +110,9 @@ Oro\Bundle\OrderBundle\Entity\OrderDiscount:
             - Range:
                 min: 0
                 max: 999999999999999999
+        type:
+            - Type:
+                type: string
 
 Oro\Bundle\OrderBundle\Entity\OrderShippingTracking:
     properties:
