@@ -5,6 +5,7 @@ define(function(require) {
     var BaseView = require('oroui/js/app/views/base/view');
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var BaseModel = require('oroui/js/app/models/base/model');
+    var viewportManager = require('oroui/js/viewport-manager');
     var mediator = require('oroui/js/mediator');
     var routing = require('routing');
     var $ = require('jquery');
@@ -46,6 +47,7 @@ define(function(require) {
         initialize: function(options) {
             BaseProductView.__super__.initialize.apply(this, arguments);
 
+            this.viewport = options.viewport || {};
             this.rowId = this.$el.parent().data('row-id');
             this.initModel(options);
             this.initializeElements(options);
@@ -100,7 +102,9 @@ define(function(require) {
 
         changeUnitLabel: function() {
             var $unit = this.getElement('unit');
-            if (!this.model.get('price') || !$unit.inputWidget()) {
+            if (!this.model.get('price') ||
+                !$unit.inputWidget() ||
+                !viewportManager.isApplicable(this.viewport)) {
                 return;
             }
             var price = this.model.get('price');

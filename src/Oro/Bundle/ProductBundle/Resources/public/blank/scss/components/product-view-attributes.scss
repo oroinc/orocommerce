@@ -1,0 +1,47 @@
+// @theme: blank
+.product-view {
+    &__attributes {
+        .nav-tabs {
+            display: flex;
+        }
+
+        .tab-content {
+            padding-top: 20px;
+        }
+
+        .nav-item {
+            text-align: center;
+
+            flex-grow: 1;
+
+            & + .nav-item {
+                margin-left: 0;
+            }
+        }
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .product-view {
+        &__attributes {
+            .nav-tabs {
+                flex-direction: column;
+
+                margin: 0 -10px;
+            }
+
+            //Need always hide and reset styles of tab-content for mobile
+            //display: none, doest't not work correctly with js logic of tabs
+            .tab-content {
+                visibility: hidden;
+                opacity: 0;
+                height: 0;
+                padding: 0 !important;
+            }
+
+            .nav-item {
+                text-align: left;
+            }
+        }
+    }
+}
