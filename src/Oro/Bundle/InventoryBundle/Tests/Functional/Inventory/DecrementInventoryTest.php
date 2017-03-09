@@ -4,10 +4,10 @@ namespace Oro\Bundle\InventoryBundle\Tests\Inventory;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend\CheckoutControllerTestCase;
-use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
+use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\Traits\EnabledPaymentMethodIdentifierTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
@@ -18,9 +18,12 @@ use Symfony\Component\DomCrawler\Crawler;
 /**
  * @dbIsolationPerTest
  * @group CommunityEdition
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class DecrementInventoryTest extends CheckoutControllerTestCase
 {
+    use EnabledPaymentMethodIdentifierTrait;
+
     const CHECKOUT_STEP_LABEL = "//h2[contains(@class, 'checkout__title')]";
     const PRODUCT_ERROR_TEXT = "There is not enough quantity for this product";
 
@@ -216,9 +219,7 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
         $form = $this->getTransitionForm($crawler);
         $values = $this->explodeArrayPaths($form->getValues());
         $values[self::ORO_WORKFLOW_TRANSITION]['payment_method'] =
-            LoadPaymentMethodsConfigsRuleData::getPaymentMethodIdentifier(
-                $this->getReference('payment_term:channel_1')
-            );
+            $this->getPaymentMethodIdentifier($this->getContainer());
         $values['_widgetContainer'] = 'ajax';
         $values['_wid'] = 'ajax_checkout';
 

@@ -16,8 +16,6 @@ class PaymentTerm implements PaymentMethodInterface
 {
     use LoggerAwareTrait;
 
-    const TYPE = 'payment_term';
-
     /** @var PaymentTermProvider */
     protected $paymentTermProvider;
 

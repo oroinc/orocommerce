@@ -4,11 +4,11 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutValidateEvent;
-use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\Traits\EnabledPaymentMethodIdentifierTrait;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -18,10 +18,13 @@ use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
+ * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
  */
 class CheckoutControllerTest extends CheckoutControllerTestCase
 {
+    use EnabledPaymentMethodIdentifierTrait;
+
     public function testStartCheckout()
     {
         $shoppingList = $this->getSourceEntity();
@@ -222,9 +225,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $form = $this->getTransitionForm($crawler);
         $values = $this->explodeArrayPaths($form->getValues());
         $values[self::ORO_WORKFLOW_TRANSITION]['payment_method'] =
-            LoadPaymentMethodsConfigsRuleData::getPaymentMethodIdentifier(
-                $this->getReference('payment_term:channel_1')
-            );
+            $this->getPaymentMethodIdentifier($this->getContainer());
         $values['_widgetContainer'] = 'ajax';
         $values['_wid'] = 'ajax_checkout';
 

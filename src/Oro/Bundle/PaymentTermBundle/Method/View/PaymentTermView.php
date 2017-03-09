@@ -5,7 +5,6 @@ namespace Oro\Bundle\PaymentTermBundle\Method\View;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface;
-use Oro\Bundle\PaymentTermBundle\Method\PaymentTerm as PaymentTermMethod;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -78,12 +77,6 @@ class PaymentTermView implements PaymentMethodViewInterface
     public function getAdminLabel()
     {
         return $this->config->getAdminLabel();
-    }
-
-    /** {@inheritdoc} */
-    public function getPaymentMethodType()
-    {
-        return PaymentTermMethod::TYPE;
     }
 
     /** {@inheritdoc} */

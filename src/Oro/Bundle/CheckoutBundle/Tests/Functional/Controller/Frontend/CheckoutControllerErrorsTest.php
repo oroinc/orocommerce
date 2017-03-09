@@ -7,6 +7,7 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserD
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
+use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\Traits\EnabledPaymentMethodIdentifierTrait;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
@@ -21,6 +22,8 @@ use Symfony\Component\DomCrawler\Crawler;
  */
 class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
 {
+    use EnabledPaymentMethodIdentifierTrait;
+
     public function setUp()
     {
         $this->initClient(
@@ -277,9 +280,7 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         $form = $this->getTransitionForm($crawler);
         $values = $this->explodeArrayPaths($form->getValues());
         $values[self::ORO_WORKFLOW_TRANSITION]['payment_method'] =
-            LoadPaymentMethodsConfigsRuleData::getPaymentMethodIdentifier(
-                $this->getReference('payment_term:channel_1')
-            );
+            $this->getPaymentMethodIdentifier($this->getContainer());
         $values['_widgetContainer'] = 'ajax';
         $values['_wid'] = 'ajax_checkout';
 

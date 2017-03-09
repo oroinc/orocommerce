@@ -6,11 +6,15 @@ use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\OrderBundle\Tests\Functional\DataFixtures\LoadOrders;
-use Oro\Bundle\PaymentTermBundle\Method\PaymentTerm;
+use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
+use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
+use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\Traits\EnabledPaymentMethodIdentifierTrait;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadQuoteProductDemandData;
 
 class LoadQuoteCompletedCheckoutsData extends AbstractLoadCheckouts
 {
+    use EnabledPaymentMethodIdentifierTrait;
+
     const CHECKOUT_1 = 'checkout.1';
 
     /**
@@ -25,7 +29,7 @@ class LoadQuoteCompletedCheckoutsData extends AbstractLoadCheckouts
             self::CHECKOUT_1 => [
                 'customerUser' => LoadCustomerUserData::LEVEL_1_EMAIL,
                 'source' => LoadQuoteProductDemandData::QUOTE_DEMAND_2,
-                'checkout' => ['payment_method' => PaymentTerm::TYPE],
+                'checkout' => ['payment_method' => $this->getPaymentMethodIdentifier($this->container)],
                 'completed' => true,
                 'completedData' => [
                     'itemsCount' => count($order->getLineItems()),
@@ -75,7 +79,12 @@ class LoadQuoteCompletedCheckoutsData extends AbstractLoadCheckouts
     {
         return array_merge(
             parent::getDependencies(),
-            [LoadQuoteProductDemandData::class, LoadOrders::class]
+            [
+                LoadQuoteProductDemandData::class,
+                LoadOrders::class,
+                LoadPaymentTermData::class,
+                LoadPaymentMethodsConfigsRuleData::class,
+            ]
         );
     }
 }
