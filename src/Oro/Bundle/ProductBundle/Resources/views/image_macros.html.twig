@@ -6,14 +6,6 @@
     {% endif %}
 {%- endmacro -%}
 
-{% macro product_image_url(file, filter) -%}
-    {%- if file is not null %}
-        {{- filtered_product_image_url(file, filter) -}}
-    {% else %}
-        {{- _self.urlFromString('', filter) -}}
-    {% endif %}
-{%- endmacro -%}
-
 {% macro urlFromString(file, filter) -%}
     {%- if file is empty %}
         {% set file = '/bundles/oroproduct/default/images/no_image.png' %}
@@ -23,10 +15,6 @@
 
 {% macro image(file, filter) -%}
     <img src="{{ _self.url(file, filter) }}"/>
-{%- endmacro -%}
-
-{% macro product_image(file, filter) -%}
-    <img src="{{ _self.product_image_url(file, filter) }}"/>
 {%- endmacro -%}
 
 {% macro renderProductImages(productImages, imageTypes) %}

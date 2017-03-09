@@ -28,7 +28,7 @@
         '~class': " product-item__image-holder product-item__image-holder_{{ class_prefix }}"
     }) %}
 
-    {% set noImageUrl = Image.product_image_url(null, 'product_large') %}
+    {% set noImageUrl = Image.url(null, 'product_large') %}
     <div {{ block('block_attributes') }}>
         {% set image = product.image is defined ? product.image : noImageUrl %}
         <a href="{{ product.view_link }}" class="view-product" style="background-image: url('{{ image }}')"></a>

@@ -121,12 +121,12 @@ and template:
                 <div class="product-gallery__image-holder__carousel" data-product-gallery>
                     <div class="product-gallery__image-holder__container">
                         {% set productImage = product.imagesByType('main')|length > 0 ? product.imagesByType('main').first.image : null %}
-                        <img src="{{ Image.product_image_url(productImage, 'product_extra_large') }}"
+                        <img src="{{ Image.url(productImage, 'product_extra_large') }}"
                              alt="{{ product.names|localized_value }}"
                              width="378"
                              height="378"
                                 {% if productImage and isDesktopVersion() %}
-                                    data-zoom-image="{{ Image.product_image_url(productImage, 'product_original') }}"
+                                    data-zoom-image="{{ Image.url(productImage, 'product_original') }}"
                                     {% set options = {
                                     widgetModule: 'jquery-elevatezoom',
                                     widgetName: 'elevateZoom',
@@ -145,7 +145,7 @@ and template:
                         />
                     </div>
                     {% for productImage in product.imagesByType('additional') %}
-                        <img src="{{ Image.product_image_url(productImage.image, 'product_small') }}" width="82"  height="82"/>
+                        <img src="{{ Image.url(productImage.image, 'product_small') }}" width="82"  height="82"/>
                     {% endfor %}
                 </div>
             </div>
