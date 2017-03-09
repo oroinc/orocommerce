@@ -2,29 +2,29 @@
 
 .product-price {
     &__value {
-        color: get-color('ui', 'normal');
+        color: $product-price-value-color;
     }
 
     &__main-box {
-        font-size: $base-font-size--large;
+        font-size: $product-price-main-box-font-size;
     }
 
     &__hint {
-        display: inline-block;
+        display: $product-price-hint-display;
     }
 
     //Modifier for simple view(only main price)
     &--simple & {
         &__label {
-            font-size: 0;
+            font-size: $product-price-simple-label-font-size;
         }
 
         &__value {
-            font-size: $base-font-size--l + 1;
+            font-size: $product-price-simple-value-font-size;
         }
 
         &__listed-value {
-            color: get-color('ui', 'normal');
+            color: $product-price-simple-listed-value-color;
         }
     }
 }
@@ -32,11 +32,11 @@
 @include breakpoint('tablet') {
     .product-price {
         &--simple {
-            display: block;
+            display: $product-price-simple-display-tablet;
 
-            margin-top: -5px;
+            margin-top: $product-price-simple-margin-top-tablet;
 
-            text-align: center;
+            text-align: $product-price-simple-text-align-tablet;
         }
     }
 }
