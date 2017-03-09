@@ -19,6 +19,10 @@ oro:
                     label: 'Order Approval'
                 order_created:
                     label: 'Order Created'
+            variable:
+                order_approval_threshold:
+                    label: 'Order Approval Threshold'
+                    tooltip: 'Orders with subtotals exceeding the specified value will have to be reviewed and approved by users with the "Approve orders that exceed the allowable amount" permission.'
             attribute:
                 request_approval_notes:
                     label: Notes
@@ -68,6 +72,8 @@ oro:
                     label: 'Shipping method'
                 shipping_method_type:
                     label: 'Shipping method type'
+                order:
+                    label: 'Order'
             transition:
                 __start__:
                     label: 'Create Order'

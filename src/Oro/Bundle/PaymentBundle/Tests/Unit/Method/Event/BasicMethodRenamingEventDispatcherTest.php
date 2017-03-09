@@ -6,7 +6,7 @@ use Oro\Bundle\PaymentBundle\Method\Event\BasicMethodRenamingEventDispatcher;
 use Oro\Bundle\PaymentBundle\Method\Event\MethodRenamingEvent;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class BasicMethodRemovalEventDispatcherTest extends \PHPUnit_Framework_TestCase
+class BasicMethodRenamingEventDispatcherTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
