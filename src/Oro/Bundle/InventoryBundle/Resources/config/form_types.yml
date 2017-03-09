@@ -17,46 +17,6 @@ services:
         tags:
             - { name: form.type_extension, alias: oro_importexport_export_template }
 
-    oro_inventory.form.type.extension.product_manage_inventory_extension:
-        class: Oro\Bundle\InventoryBundle\Form\Extension\ProductManageInventoryFormExtension
-        tags:
-            - { name: form.type_extension, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType }
-
-    oro_inventory.form.type.extension.category_manage_inventory_extension:
-        class: Oro\Bundle\InventoryBundle\Form\Extension\CategoryManageInventoryFormExtension
-        tags:
-            - { name: form.type_extension, extended_type: Oro\Bundle\CatalogBundle\Form\Type\CategoryType }
-
-    oro_inventory.form.type.extension.product_inventory_threshold_extension:
-        class: Oro\Bundle\InventoryBundle\Form\Extension\ProductInventoryThresholdFormExtension
-        tags:
-            - { name: form.type_extension, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType }
-
-    oro_inventory.form.type.extension.category_inventory_threshold_extension:
-        class: Oro\Bundle\InventoryBundle\Form\Extension\CategoryInventoryThresholdFormExtension
-        tags:
-            - { name: form.type_extension, extended_type: Oro\Bundle\CatalogBundle\Form\Type\CategoryType }
-
-    oro_inventory.form.type.extension.product_back_order_extension:
-        class: Oro\Bundle\InventoryBundle\Form\Extension\ProductBackOrderFormExtension
-        tags:
-            - { name: form.type_extension, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType }
-
-    oro_inventory.form.type.extension.product_decrement_quantity_extension:
-        class: Oro\Bundle\InventoryBundle\Form\Extension\ProductDecrementQuantityFormExtension
-        tags:
-            - { name: form.type_extension, extended_type: Oro\Bundle\ProductBundle\Form\Type\ProductType }
-
-    oro_inventory.form.type.extension.category_inventory_decrement_extension:
-        class: Oro\Bundle\InventoryBundle\Form\Extension\CategoryInventoryDecrementFormExtension
-        tags:
-            - { name: form.type_extension, extended_type: Oro\Bundle\CatalogBundle\Form\Type\CategoryType }
-
-    oro_inventory.form.type.extension.category_inventory_backorder_extension:
-        class: Oro\Bundle\InventoryBundle\Form\Extension\CategoryInventoryBackOrderFormExtension
-        tags:
-            - { name: form.type_extension, extended_type: Oro\Bundle\CatalogBundle\Form\Type\CategoryType }
-
     oro_inventory.form.type.extension.category_quantity_to_order_type_extension:
         class: Oro\Bundle\InventoryBundle\Form\Extension\CategoryQuantityToOrderFormExtension
         tags:

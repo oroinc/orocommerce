@@ -1,8 +1,5 @@
 system_configuration:
     groups:
-        product_options:
-            title: oro.inventory.system_configuration.groups.product_options.title
-            icon: 'fa-cogs'
         product_inventory_options:
             title: oro.inventory.system_configuration.groups.product_inventory_options.title
         limitations:
@@ -12,44 +9,6 @@ system_configuration:
             title: oro.inventory.system_configuration.groups.product_quantity_limitations.title
 
     fields:
-        oro_inventory.manage_inventory:
-            data_type: boolean
-            type: choice
-            options:
-                label: oro.inventory.system_configuration.fields.manage_inventory.label
-                choice_translation_domain: messages
-                choices:
-                    false: oro.inventory.manage_inventory.choice.false
-                    true: oro.inventory.manage_inventory.choice.true
-        oro_inventory.backorders:
-            data_type: boolean
-            type: choice
-            options:
-                label: oro.inventory.system_configuration.fields.backorders.label
-                choice_translation_domain: messages
-                choices:
-                    false: oro.inventory.backorders.choice.false
-                    true: oro.inventory.backorders.choice.true
-        oro_inventory.decrement_inventory:
-            data_type: boolean
-            type: choice
-            options:
-                tooltip: oro.inventory.system_configuration.fields.decrement_inventory.tooltip
-                label: oro.inventory.system_configuration.fields.decrement_inventory.label
-                choice_translation_domain: messages
-                choices:
-                    false: oro.inventory.decrement_inventory.choice.false
-                    true: oro.inventory.decrement_inventory.choice.true
-        oro_inventory.inventory_threshold:
-            data_type: decimal
-            type: number
-            options:
-                label: oro.inventory.system_configuration.fields.inventory_threshold.label
-                required: true
-                scale: 1
-                constraints:
-                    - NotBlank: ~
-                    - Oro\Bundle\ValidationBundle\Validator\Constraints\Decimal: ~
         oro_inventory.minimum_quantity_to_order:
             data_type: decimal
             type: number
@@ -78,15 +37,6 @@ system_configuration:
                 children:
                     product_inventory:
                         children:
-                            product_options:
-                                priority: 90
-                                children:
-                                    product_inventory_options:
-                                        children:
-                                            - oro_inventory.manage_inventory
-                                            - oro_inventory.inventory_threshold
-                                            - oro_inventory.backorders
-                                            - oro_inventory.decrement_inventory
                             limitations:
                                 priority: 80
                                 children:

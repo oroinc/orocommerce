@@ -25,22 +25,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $expected = [
             'settings' => [
                 'resolved' => true,
-                'manage_inventory' => [
-                    'value' => false,
-                    'scope' => 'app'
-                ],
-                'inventory_threshold' => [
-                    'value' => false,
-                    'scope' => 'app'
-                ],
-                'backorders' => [
-                    'value' => false,
-                    'scope' => 'app'
-                ],
-                'decrement_inventory' => [
-                    'value' => false,
-                    'scope' => 'app'
-                ],
                 'minimum_quantity_to_order' => [
                     'scope' => 'app',
                     'value' => null,
