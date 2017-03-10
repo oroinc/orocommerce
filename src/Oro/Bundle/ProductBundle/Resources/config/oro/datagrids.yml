@@ -142,10 +142,9 @@ datagrids:
                 inline_editing:
                     enable: true
                     save_api_accessor:
-                        route: oro_product_ajax_edit_inventory_status
+                        route: oro_api_patch_productinlineedit_edit_inventory_status
                         query_parameter_names:
                             - id
-                            - inventoryStatusId
             status:
                 inline_editing:
                     enable: true

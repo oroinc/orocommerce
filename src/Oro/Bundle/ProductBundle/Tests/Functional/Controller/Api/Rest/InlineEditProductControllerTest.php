@@ -83,10 +83,9 @@ class InlineEditProductControllerTest extends WebTestCase
 
         $this->client->request(
             'PATCH',
-            $this->getUrl('oro_product_ajax_edit_inventory_status'),
+            $this->getUrl('oro_api_patch_productinlineedit_edit_inventory_status', ['id' => $product1->getId()]),
             [
-                'id' => $product1->getId(),
-                'inventoryStatusId' => self::NEW_INVENTORY_STATUS_ID,
+                'inventoryStatusId' => self::NEW_INVENTORY_STATUS_ID
             ]
         );
         $result = $this->client->getResponse();
@@ -97,10 +96,12 @@ class InlineEditProductControllerTest extends WebTestCase
 
     public function testProductEditInventoryStatusEmptyParameters()
     {
+        /** @var Product $product1 */
+        $product1 = $this->getReference(LoadProductData::PRODUCT_1);
+
         $this->client->request(
             'PATCH',
-            $this->getUrl('oro_product_ajax_edit_inventory_status'),
-            []
+            $this->getUrl('oro_api_patch_productinlineedit_edit_inventory_status', ['id' => $product1->getId()])
         );
         $result = $this->client->getResponse();
 
@@ -115,15 +116,11 @@ class InlineEditProductControllerTest extends WebTestCase
 
         $this->client->request(
             'PATCH',
-            $this->getUrl('oro_product_ajax_edit_inventory_status'),
-            [
-                'id' => $id,
-                'inventoryStatusId' => self::NEW_INVENTORY_STATUS_ID,
-            ]
+            $this->getUrl('oro_api_patch_productinlineedit_edit_inventory_status', ['id' => $id])
         );
         $result = $this->client->getResponse();
 
-        $this->assertJsonResponseStatusCodeEquals($result, 400);
+        $this->assertJsonResponseStatusCodeEquals($result, 404);
     }
 
     public function testProductEditUnknownInventoryStatus()
@@ -133,14 +130,13 @@ class InlineEditProductControllerTest extends WebTestCase
 
         $this->client->request(
             'PATCH',
-            $this->getUrl('oro_product_ajax_edit_inventory_status'),
+            $this->getUrl('oro_api_patch_productinlineedit_edit_inventory_status', ['id' => $product1->getId()]),
             [
-                'id' => $product1->getId(),
                 'inventoryStatusId' => 'unknown_inventory_status',
             ]
         );
         $result = $this->client->getResponse();
 
-        $this->assertJsonResponseStatusCodeEquals($result, 400);
+        $this->assertJsonResponseStatusCodeEquals($result, 404);
     }
 }

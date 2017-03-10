@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\ProductBundle\Controller\Api\Rest;
 
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
@@ -35,6 +37,36 @@ class InlineEditProductController extends FOSRestController
         }
 
         $product->setDefaultName($productName);
+        $this->getDoctrine()->getManagerForClass(Product::class)->flush();
+
+        return parent::handleView($this->view([], Codes::HTTP_OK));
+    }
+
+    /**
+     * @Patch("inline-edit/product/{id}/inventory-status/patch")
+     *
+     * @param Request $request
+     * @param Product $product
+     * @return Response
+     */
+    public function patchEditInventoryStatusAction(Request $request, Product $product)
+    {
+        $inventoryStatusId = $request->get('inventoryStatusId');
+
+        if ($inventoryStatusId === null) {
+            return parent::handleView($this->view([], Codes::HTTP_BAD_REQUEST));
+        }
+
+        /** @var AbstractEnumValue $inventoryStatus */
+        $inventoryStatus = $this->getDoctrine()
+            ->getRepository(ExtendHelper::buildEnumValueClassName('prod_inventory_status'))
+            ->find($inventoryStatusId);
+
+        if (!$inventoryStatus) {
+            return parent::handleView($this->view([], Codes::HTTP_NOT_FOUND));
+        }
+
+        $product->setInventoryStatus($inventoryStatus);
         $this->getDoctrine()->getManagerForClass(Product::class)->flush();
 
         return parent::handleView($this->view([], Codes::HTTP_OK));
