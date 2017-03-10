@@ -94,19 +94,14 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
             return;
         }
 
-        array_map(
-            [$event, 'addHeader'],
-            [
-                [
-                    'value' => sprintf('tax_code%scode', $event->getConvertDelimiter()),
-                    'order' => PHP_INT_MAX,
-                ]
-            ]
-        );
+        $event->addHeader([
+            'value' => sprintf('tax_code%scode', $event->getConvertDelimiter()),
+            'order' => 200,
+        ]);
 
         $event->setRule('Tax code', [
             'value' => sprintf('tax_code%scode', $event->getConvertDelimiter()),
-            'order' => PHP_INT_MAX,
+            'order' => 200,
         ]);
     }
 

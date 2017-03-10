@@ -1,9 +1,20 @@
 // @theme: default
 
-$product-view-attributes-tabs-bg: get-color('additional', 'base');
-$product-view-attributes-tabs-border-color: get-color('additional', 'light');
-$product-view-attributes-tabs-border-radius: 5px;
+// Attributes containers
+$product-view-attributes-containers-border-color: get-color('additional', 'light');
+$product-view-attributes-container-border-radius: 5px;
+
+// Attributes tabs
+$product-view-attributes-tabs: '.product-attributes-tabs';
+$product-view-attributes-tabs-item: '.product-attributes-tabs__item';
+$product-view-attributes-tabs-link: '.product-attributes-tabs__link';
 $product-view-attributes-tab-link-offset-inner: $offset-y;
+$product-view-attributes-tabs-bg: get-color('additional', 'base');
 $product-view-attributes-tab-link-color: get-color('additional', 'dark');
+$product-view-attributes-tab-link-active-bg: get-color('additional', 'ultra');
+$product-view-attributes-tabs-border-color: $product-view-attributes-containers-border-color;
+$product-view-attributes-tabs-border-radius: $product-view-attributes-container-border-radius;
+
+// Attributes tab content
 $product-view-attributes-tab-content-offset-inner: 40px;
 $product-view-attributes-tab-content-attribute-offset-bottom: 1rem;

@@ -47,7 +47,28 @@ class TaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
                         'from' => [['alias' => 'customer']],
                     ],
                 ],
-                'columns' => ['taxCode' => ['label' => 'oro.tax.taxcode.label']],
+                'columns' => [
+                    'taxCode' => [
+                        'label' => 'oro.tax.taxcode.label',
+                        'inline_editing' => [
+                            'enable' => true,
+                            'editor' => [
+                                'view' => 'orotax/js/app/views/editor/product-tax-code-editor-view',
+                                'view_options' => [
+                                    'value_field_name' => 'taxCode',
+                                ]
+                            ],
+                            'autocomplete_api_accessor' => [
+                                'entity_name' => 'Oro\Bundle\TaxBundle\Entity\ProductTaxCode',
+                                'field_name' => 'code'
+                            ],
+                            'save_api_accessor' => [
+                                'route' => 'oro_api_patch_product_tax_code',
+                                'query_parameter_names' => ['id', 'taxCode']
+                            ]
+                        ]
+                    ]
+                ],
                 'sorters' => ['columns' => ['taxCode' => ['data_name' => 'taxCode']]],
                 'filters' => ['columns' => ['taxCode' => ['data_name' => 'taxCode', 'type' => 'string']]],
                 'name' => 'customers-grid',
