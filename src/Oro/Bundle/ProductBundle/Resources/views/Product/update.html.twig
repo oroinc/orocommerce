@@ -46,13 +46,18 @@
     } %}
 
     {% if entity.isConfigurable %}
+        {% set productsVariantSelector %}
+            <div data-page-component-module="oroproduct/js/app/components/product-variant-component">
+              {{ form_row(form.variantFields) }}
+            </div>
+        {% endset %}
         {% set generalData = generalData|merge([
-            form_row(form.variantFields)
+            productsVariantSelector
         ]) %}
     {% endif %}
 
     {% set generalData = generalData|merge([
-        form_row(form.slugPrototypes),
+        form_row(form.slugPrototypesWithRedirect),
         form_row(form.status)
     ]) %}
 
@@ -122,6 +127,19 @@
                 'title': '',
                 'data': {
                     'images': form_row(form.images)
+                }
+            }]
+        }
+    }) %}
+
+    {% set dataBlocks = dataBlocks|merge({
+        'design': {
+            'title': 'oro.product.sections.design'|trans,
+            'priority': 0,
+            'subblocks': [{
+                'title': '',
+                'data': {
+                    'pageTemplate': form_row(form.pageTemplate)
                 }
             }]
         }

@@ -1,28 +1,34 @@
 services:
-    oro_payment_term.payment_method.payment_term.config:
-        class: 'Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfig'
+    oro_payment_term.payment_method_provider.payment_term:
+        class: 'Oro\Bundle\PaymentTermBundle\Method\Provider\PaymentTermMethodProvider'
         public: false
         arguments:
-           - '@oro_config.global'
+            - '@oro_payment_term.config.provider'
+            - '@oro_payment_term.method.factory.payment_term'
+        tags:
+            - { name: oro_payment.payment_method_provider }
 
-    oro_payment_term.payment_method.payment_term:
-        class: 'Oro\Bundle\PaymentTermBundle\Method\PaymentTerm'
+    oro_payment_term.payment_method_view_provider.payment_term:
+        class: 'Oro\Bundle\PaymentTermBundle\Method\View\Provider\PaymentTermMethodViewProvider'
+        public: false
+        arguments:
+            - '@oro_payment_term.method.view.factory.payment_term'
+            - '@oro_payment_term.config.provider'
+        tags:
+            - { name: oro_payment.payment_method_view_provider }
+
+    oro_payment_term.method.factory.payment_term:
+        class: 'Oro\Bundle\PaymentTermBundle\Method\Factory\PaymentTermPaymentMethodFactory'
         public: false
         arguments:
             - '@oro_payment_term.provider.payment_term'
             - '@oro_payment_term.provider.payment_term_association'
             - '@oro_entity.doctrine_helper'
-        tags:
-            - { name: oro_payment.payment_method }
-        calls:
-            - [setLogger,  ["@logger"]]
+            - '@logger'
 
-    oro_payment_term.payment_method.view.payment_term:
-        class: 'Oro\Bundle\PaymentTermBundle\Method\View\PaymentTermView'
+    oro_payment_term.method.view.factory.payment_term:
+        class: 'Oro\Bundle\PaymentTermBundle\Method\View\Factory\PaymentTermPaymentMethodViewFactory'
         public: false
         arguments:
             - '@oro_payment_term.provider.payment_term'
             - '@translator'
-            - '@oro_payment_term.payment_method.payment_term.config'
-        tags:
-            - { name: oro_payment.payment_method_view }

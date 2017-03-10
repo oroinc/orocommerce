@@ -24,12 +24,6 @@ abstract class AbstractScopedProductSelectTypeTest extends AbstractProductSelect
         $this->configManager = $this->getContainer()->get('oro_config.manager');
     }
 
-    protected function tearDown()
-    {
-        $this->configManager->reset($this->configPath, $this->configScope);
-        $this->configManager->flush($this->configScope);
-    }
-
     public function setUpBeforeRestriction()
     {
         list($availableInventoryStatuses) = func_get_args();

@@ -73,9 +73,22 @@ class PaymentTermView implements PaymentMethodViewInterface
         return $this->config->getShortLabel();
     }
 
+
+    /** {@inheritdoc} */
+    public function getAdminLabel()
+    {
+        return $this->config->getAdminLabel();
+    }
+
     /** {@inheritdoc} */
     public function getPaymentMethodType()
     {
         return PaymentTermMethod::TYPE;
+    }
+
+    /** {@inheritdoc} */
+    public function getPaymentMethodIdentifier()
+    {
+        return $this->config->getPaymentMethodIdentifier();
     }
 }

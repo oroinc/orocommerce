@@ -48,3 +48,6 @@ services:
         decorates: oro_rule.enabled_rule_filtration.service
         arguments:
             - '@oro_rule.rule_filtration.enabled_decorator.inner'
+
+    oro_rule.action.visibility_provider:
+        class: 'Oro\Bundle\RuleBundle\Datagrid\RuleActionsVisibilityProvider'

@@ -30,12 +30,9 @@ class ReindexCommandTest extends WebTestCase
             ]
         );
 
-        $expectedOutput = <<<COUT
-Starting reindex task for Oro\Bundle\TestFrameworkBundle\Entity\TestProduct and website ID 123...
-Reindex finished successfully.
-
-COUT;
-
-        $this->assertEquals($expectedOutput, $result);
+        $expectedOutput = 'Starting reindex task for Oro\Bundle\TestFrameworkBundle\Entity\TestProduct ' .
+            'and website ID 123...';
+        $this->assertContains($expectedOutput, $result);
+        $this->assertContains('Reindex finished successfully.', $result);
     }
 }

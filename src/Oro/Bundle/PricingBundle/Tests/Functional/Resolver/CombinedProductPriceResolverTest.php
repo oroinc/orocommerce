@@ -3,6 +3,7 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Resolver;
 
 use Doctrine\ORM\EntityManager;
+
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
@@ -10,6 +11,8 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
 use Oro\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPricesForCombination;
 use Oro\Bundle\PricingBundle\Tests\Functional\Entity\EntityListener\MessageQueueTrait;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -35,8 +38,8 @@ class CombinedProductPriceResolverTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPricesForCombination',
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists'
+                LoadProductPricesForCombination::class,
+                LoadCombinedPriceLists::class
             ]
         );
         $this->resolver = $this->getContainer()->get('oro_pricing.resolver.combined_product_price_resolver');
@@ -53,7 +56,11 @@ class CombinedProductPriceResolverTest extends WebTestCase
         $collector->clear();
         /** @var CombinedPriceList $combinedPriceList */
         $combinedPriceList = $this->getReference($combinedPriceList);
-        $this->resolver->combinePrices($combinedPriceList);
+        $now = new \DateTime();
+
+        // second call to check avoiding of same recalculation
+        $this->resolver->combinePrices($combinedPriceList, null, $now->getTimestamp());
+        $this->resolver->combinePrices($combinedPriceList, null, $now->getTimestamp());
 
         $actualPrices = $this->getCombinedPrices($combinedPriceList);
         $this->assertEquals($expectedPrices, $actualPrices);

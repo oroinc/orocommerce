@@ -650,7 +650,6 @@ services:
 
     oro_pricing.subtotal_processor.provider.subtotal_line_item:
         class: 'Oro\Bundle\PricingBundle\SubtotalProcessor\Provider\LineItemSubtotalProvider'
-        public: false
         arguments:
             - '@translator'
             - '@oro_currency.rounding.price_rounding_service'
@@ -946,3 +945,9 @@ services:
             - [addBlockTypeByFieldName, ['productPriceAttributesPrices', 'attribute_prices']]
         tags:
             - { name: oro_entity_config.layout.attribute_block_type_mapper }
+
+    oro_pricing.database_triggers.manager.combined_prices:
+        parent: oro_entity.database_triggers.manager.abstract
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '%oro_pricing.entity.combined_product_price.class%'

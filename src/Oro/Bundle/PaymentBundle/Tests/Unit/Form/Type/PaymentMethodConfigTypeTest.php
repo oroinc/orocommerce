@@ -4,9 +4,9 @@ namespace Oro\Bundle\PaymentBundle\Tests\Unit\Form\Type;
 
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigType;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
+use Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface;
+use Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider;
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
-use Symfony\Component\Translation\TranslatorInterface;
 
 class PaymentMethodConfigTypeTest extends FormIntegrationTestCase
 {
@@ -15,21 +15,24 @@ class PaymentMethodConfigTypeTest extends FormIntegrationTestCase
      */
     protected $formType;
 
-    /** @var PaymentMethodRegistry|\PHPUnit_Framework_MockObject_MockObject */
-    protected $paymentMethodRegistry;
+    /**
+     * @var PaymentMethodProvidersRegistryInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $paymentMethodProvidersRegistry;
 
-    /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject */
-    protected $translator;
+    /**
+     * @var CompositePaymentMethodViewProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $paymentMethodViewProvider;
 
     protected function setUp()
     {
-        $this->paymentMethodRegistry = $this->getMockBuilder('Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->translator = $translator = $this->getMockBuilder(TranslatorInterface::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->formType = new PaymentMethodConfigType($this->paymentMethodRegistry, $this->translator);
+        $this->paymentMethodProvidersRegistry = $this->createMock(PaymentMethodProvidersRegistryInterface::class);
+        $this->paymentMethodViewProvider = $this->createMock(CompositePaymentMethodViewProvider::class);
+        $this->formType = new PaymentMethodConfigType(
+            $this->paymentMethodProvidersRegistry,
+            $this->paymentMethodViewProvider
+        );
 
         parent::setUp();
     }

@@ -71,7 +71,7 @@
                     form_widget(form.removeProducts, {'id': 'categoryRemoveProducts'}),
                     form_row(form.parentCategory),
                     form_row(form.titles),
-                    form_row(form.slugPrototypes),
+                    form_row(form.slugPrototypesWithRedirect),
                     form_row(form.shortDescriptions),
                     form_row(form.longDescriptions),
                     form_row(form.smallImage),
@@ -147,6 +147,7 @@
                 </div>
             </div>
             {% set treeOptions = {
+                'view' : 'orocatalog/js/app/views/tree-manage-view',
                 'key' : 'commerce-category',
                 'data' : oro_category_list(),
                 'nodeId' : entityId ? entityId : parentCategoryId,
@@ -157,11 +158,14 @@
 
             {{ UI.renderJsTree(
                 {
-                    'module': 'orocatalog/js/app/components/tree-manage-component',
                     'label': 'oro.catalog.category.entity_plural_label'|trans,
                     'treeOptions': treeOptions
                 },
-                ['expand', 'collapse']
+                {
+                    'move': {
+                        'routeName': 'oro_catalog_category_move_form'
+                    }
+                }
             ) }}
         </div>
     </div>

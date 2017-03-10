@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional;
 
-use Oro\Bundle\CheckoutBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
+use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as LoadBaseCustomerUserData;
 use Oro\Bundle\FrontendBundle\Tests\Functional\FrontendActionTestCase;
@@ -47,7 +47,7 @@ class ShoppingListFrontendActionsTest extends FrontendActionTestCase
     public function testCreateOrdersFromSingleShoppingList()
     {
         // start checkout from first user
-        $this->authUser(LoadCustomerUserData::LEVEL_1_1_EMAIL, LoadCustomerUserData::LEVEL_1_1_PASSWORD);
+        $this->authUser(LoadCustomerUserData::EMAIL, LoadCustomerUserData::PASSWORD);
         $firstData = $this->startCheckout($this->getReference(LoadShoppingLists::SHOPPING_LIST_7));
         // continue checkout from first user
         $secondData = $this->startCheckout($this->getReference(LoadShoppingLists::SHOPPING_LIST_7));

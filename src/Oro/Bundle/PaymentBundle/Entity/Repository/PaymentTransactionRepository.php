@@ -3,12 +3,14 @@
 namespace Oro\Bundle\PaymentBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 
 class PaymentTransactionRepository extends EntityRepository
 {
     /**
      * @param string $entityClass
-     * @param array $entityIds
+     * @param array  $entityIds
+     *
      * @return array
      */
     public function getPaymentMethods($entityClass, array $entityIds)
@@ -30,5 +32,17 @@ class PaymentTransactionRepository extends EntityRepository
         }
 
         return $groupedResult;
+    }
+
+    /**
+     * @param $paymentMethod
+     *
+     * @return PaymentTransaction[]
+     */
+    public function findByPaymentMethod($paymentMethod)
+    {
+        return $this->findBy([
+            'paymentMethod' => $paymentMethod,
+        ]);
     }
 }

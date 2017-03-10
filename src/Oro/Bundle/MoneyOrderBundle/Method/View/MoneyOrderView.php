@@ -3,7 +3,6 @@
 namespace Oro\Bundle\MoneyOrderBundle\Method\View;
 
 use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigInterface;
-use Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 
@@ -60,8 +59,14 @@ class MoneyOrderView implements PaymentMethodViewInterface
     /**
      * {@inheritdoc}
      */
-    public function getPaymentMethodType()
+    public function getAdminLabel()
     {
-        return MoneyOrder::TYPE;
+        return $this->config->getAdminLabel();
+    }
+
+    /** {@inheritdoc} */
+    public function getPaymentMethodIdentifier()
+    {
+        return $this->config->getPaymentMethodIdentifier();
     }
 }

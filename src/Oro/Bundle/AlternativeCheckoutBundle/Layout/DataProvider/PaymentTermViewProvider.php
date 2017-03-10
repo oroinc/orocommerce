@@ -3,55 +3,81 @@
 namespace Oro\Bundle\AlternativeCheckoutBundle\Layout\DataProvider;
 
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
-use Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry;
-use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry;
-use Oro\Bundle\PaymentTermBundle\Method\PaymentTerm;
+use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
+use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
 
 class PaymentTermViewProvider
 {
     /**
-     * @var PaymentMethodViewRegistry
+     * @var PaymentMethodViewProviderInterface
      */
-    protected $paymentMethodViewRegistry;
+    protected $paymentMethodViewProvider;
 
     /**
-     * @var PaymentMethodRegistry
+     * @var PaymentMethodProviderInterface
      */
-    private $paymentMethodRegistry;
+    private $paymentMethodProvider;
 
     /**
-     * @param PaymentMethodViewRegistry $paymentMethodViewRegistry
-     * @param PaymentMethodRegistry $paymentMethodRegistry
+     * @param PaymentMethodViewProviderInterface $paymentMethodViewProvider
+     * @param PaymentMethodProviderInterface $paymentMethodProvider
      */
     public function __construct(
-        PaymentMethodViewRegistry $paymentMethodViewRegistry,
-        PaymentMethodRegistry $paymentMethodRegistry
+        PaymentMethodViewProviderInterface $paymentMethodViewProvider,
+        PaymentMethodProviderInterface $paymentMethodProvider
     ) {
-        $this->paymentMethodViewRegistry = $paymentMethodViewRegistry;
-        $this->paymentMethodRegistry = $paymentMethodRegistry;
+        $this->paymentMethodViewProvider = $paymentMethodViewProvider;
+        $this->paymentMethodProvider = $paymentMethodProvider;
     }
 
     /**
      * @param PaymentContextInterface $context
+     *
      * @return array|null
      */
     public function getView(PaymentContextInterface $context)
     {
         try {
-            $paymentMethod = $this->paymentMethodRegistry->getPaymentMethod(PaymentTerm::TYPE);
-            if (!$paymentMethod->isApplicable($context)) {
+            $paymentMethods = [];
+            foreach ($this->paymentMethodProvider->getPaymentMethods() as $paymentMethod) {
+                if ($paymentMethod->isApplicable($context)) {
+                    $paymentMethods[] = $paymentMethod->getIdentifier();
+                }
+            }
+            if (count($paymentMethods) === 0) {
                 return null;
             }
 
-            $view = $this->paymentMethodViewRegistry->getPaymentMethodView(PaymentTerm::TYPE);
+            $views = $this->paymentMethodViewProvider->getPaymentMethodViews($paymentMethods);
         } catch (\InvalidArgumentException $e) {
             return null;
         }
 
-        return [
-            'label' => $view->getLabel(),
-            'block' => $view->getBlock(),
-            'options' => $view->getOptions($context),
-        ];
+        if (0 === count($views)) {
+            return null;
+        }
+
+        return $this->formatPaymentViews($views, $context);
+    }
+
+    /**
+     * @param PaymentMethodViewInterface[] $views
+     * @param PaymentContextInterface      $context
+     *
+     * @return array
+     */
+    protected function formatPaymentViews($views, PaymentContextInterface $context)
+    {
+        $paymentMethodViews = [];
+        foreach ($views as $view) {
+            $paymentMethodViews[$view->getPaymentMethodIdentifier()] = [
+                'label' => $view->getLabel(),
+                'block' => $view->getBlock(),
+                'options' => $view->getOptions($context),
+            ];
+        }
+
+        return $paymentMethodViews;
     }
 }

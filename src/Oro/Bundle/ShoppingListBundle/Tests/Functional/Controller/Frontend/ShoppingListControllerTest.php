@@ -22,6 +22,7 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @dbIsolationPerTest
  */
 class ShoppingListControllerTest extends WebTestCase
 {
@@ -343,7 +344,7 @@ class ShoppingListControllerTest extends WebTestCase
             ->getRepository('OroShoppingListBundle:LineItem')
             ->findBy(['shoppingList' => $shoppingList], ['id' => 'DESC']);
 
-        $this->assertCount(3, $items);
+        $this->assertCount(2, $items);
         $item = $items[0];
 
         $this->assertEquals($sku, $item->getProductSku());
@@ -362,11 +363,5 @@ class ShoppingListControllerTest extends WebTestCase
         foreach ($prices as $value) {
             $this->assertContains(trim($value->nodeValue), $expected);
         }
-    }
-
-    protected function tearDown()
-    {
-        $this->configManager->reset(self::RFP_PRODUCT_VISIBILITY_KEY);
-        $this->configManager->flush();
     }
 }

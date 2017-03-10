@@ -7,7 +7,6 @@ layout:
                 shopping_lists_menu:
                     blockType: shopping_lists_menu
                     options:
-                        visible: '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingLists() != null'
                         shoppingLists: '=data["oro_shopping_list_customer_user_shopping_lists"].getShoppingLists()'
                         selectedShoppingList: '=data["entity"]'
                 shopping_lists_menu_item:

@@ -112,17 +112,17 @@ class FrontendVariantFiledType extends AbstractType
 
             $subFormData = $this->propertyAccessor->getValue($data, $fieldName);
 
-            $subForm = $variantTypeHandler
-                ->createForm(
-                    $fieldName,
-                    $variantAvailability[$fieldName],
-                    [
-                        'data' => $subFormData,
-                        'placeholder' => 'oro.product.type.please_select_option',
-                        'empty_data'  => null,
-                        'configs'   => ['allowClear' => true]
-                    ]
-                );
+            $subForm = $variantTypeHandler->createForm(
+                $fieldName,
+                $variantAvailability[$fieldName],
+                [
+                    'data' => $subFormData,
+                    'label' => $labels[$fieldName],
+                    'placeholder' => 'oro.product.type.please_select_option',
+                    'empty_data'  => null,
+                    'configs'   => ['allowClear' => true]
+                ]
+            );
 
             $form->add($subForm);
         }

@@ -147,6 +147,10 @@ class QuickAddCheckoutProcessor extends AbstractShoppingListQuickAddProcessor
                 foreach ($errors as $error) {
                     $session->getFlashBag()->add('error', $error);
                 }
+
+                $em->rollback();
+
+                return false;
             }
         } else {
             $session->getFlashBag()->add('error', $this->messageGenerator->getFailedMessage());
