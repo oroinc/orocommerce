@@ -30,6 +30,7 @@ class RestrictSitemapCmsPageByWebCatalogListenerTest extends WebTestCase
 
     public function testRestrictDisabled()
     {
+        $version = '1';
         $this->configManager->set('oro_web_catalog.web_catalog', null);
         $this->configManager->flush();
 
@@ -37,7 +38,7 @@ class RestrictSitemapCmsPageByWebCatalogListenerTest extends WebTestCase
             ->getRepository(Page::class)
             ->createQueryBuilder('page');
 
-        $event = new RestrictSitemapEntitiesEvent($qb);
+        $event = new RestrictSitemapEntitiesEvent($qb, $version);
         $this->getContainer()->get('event_dispatcher')
             ->dispatch('oro_seo.event.restrict_sitemap_entity.cms_page', $event);
 
@@ -60,6 +61,7 @@ class RestrictSitemapCmsPageByWebCatalogListenerTest extends WebTestCase
 
     public function testRestrictQueryBuilder()
     {
+        $version = '1';
         /** @var WebCatalog $webCatalog */
         $webCatalog = $this->getReference(LoadWebCatalogData::CATALOG_1);
         $this->configManager->set('oro_web_catalog.web_catalog', $webCatalog->getId());
@@ -69,7 +71,7 @@ class RestrictSitemapCmsPageByWebCatalogListenerTest extends WebTestCase
             ->getRepository(Page::class)
             ->createQueryBuilder('page');
 
-        $event = new RestrictSitemapEntitiesEvent($qb);
+        $event = new RestrictSitemapEntitiesEvent($qb, $version);
         $this->getContainer()->get('event_dispatcher')
             ->dispatch('oro_seo.event.restrict_sitemap_entity.cms_page', $event);
 

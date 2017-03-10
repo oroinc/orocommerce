@@ -9,7 +9,8 @@ interface UrlItemsProviderInterface
 {
     /**
      * @param WebsiteInterface $website
+     * @param int $version
      * @return array|UrlItemInterface[]
      */
-    public function getUrlItems(WebsiteInterface $website);
+    public function getUrlItems(WebsiteInterface $website, $version);
 }

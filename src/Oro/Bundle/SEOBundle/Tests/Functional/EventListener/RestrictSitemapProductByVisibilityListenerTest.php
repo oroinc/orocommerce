@@ -73,8 +73,9 @@ class RestrictSitemapProductByVisibilityListenerTest extends WebTestCase
             $this->getContainer()->get('oro_visibility.provider.visibility_scope_provider')
         );
 
+        $version = '1';
         $website =  $this->getContainer()->get('oro_website.manager')->getDefaultWebsite();
-        $event = new RestrictSitemapEntitiesEvent($this->queryBuilder, $website);
+        $event = new RestrictSitemapEntitiesEvent($this->queryBuilder, $version, $website);
         $listener->restrictQueryBuilder($event);
 
         $resultAfterRestriction = $this->queryBuilder->getQuery()->getArrayResult();
@@ -103,8 +104,9 @@ class RestrictSitemapProductByVisibilityListenerTest extends WebTestCase
             $this->getContainer()->get('oro_visibility.provider.visibility_scope_provider')
         );
 
+        $version = '1';
         $website =  $this->getContainer()->get('oro_website.manager')->getDefaultWebsite();
-        $event = new RestrictSitemapEntitiesEvent($this->queryBuilder, $website);
+        $event = new RestrictSitemapEntitiesEvent($this->queryBuilder, $version, $website);
         $listener->restrictQueryBuilder($event);
 
         $resultAfterRestriction = $this->queryBuilder->getQuery()->getArrayResult();

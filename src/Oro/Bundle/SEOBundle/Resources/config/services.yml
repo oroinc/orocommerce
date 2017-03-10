@@ -299,3 +299,32 @@ services:
             - { name: kernel.event_listener, event: oro_seo.event.restrict_sitemap_entity.cms_page , method: restrictQueryBuilder }
             - { name: oro_featuretogle.feature, feature: frontend_master_catalog }
 
+    oro_seo.limiter.web_catalog_product_limiter:
+        class: 'Oro\Bundle\SEOBundle\Limiter\WebCatalogProductLimiter'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_config.manager'
+            - '@oro_scope.scope_manager'
+
+    oro_seo.event_listener.url_items_provider_start:
+        class: 'Oro\Bundle\SEOBundle\EventListener\ProductUrlItemsProviderStartListener'
+        arguments:
+            - '@oro_seo.limiter.web_catalog_product_limiter'
+        tags:
+            - { name: kernel.event_listener, event: oro_seo.event.url_items_provider_start.product, method: onStart }
+
+    oro_seo.event_listener.url_items_provider_end:
+        class: 'Oro\Bundle\SEOBundle\EventListener\ProductUrlItemsProviderEndListener'
+        arguments:
+            - '@oro_seo.limiter.web_catalog_product_limiter'
+        tags:
+            - { name: kernel.event_listener, event: oro_seo.event.url_items_provider_end.product, method: onEnd }
+
+    oro_seo.event_listener.restrict_sitemap_product_by_web_catalog:
+        class: 'Oro\Bundle\SEOBundle\EventListener\RestrictSitemapProductByWebCatalogListener'
+        arguments:
+            - '@oro_config.manager'
+            - '@oro_scope.scope_manager'
+        tags:
+            - { name: kernel.event_listener, event: oro_seo.event.restrict_sitemap_entity.product , method: restrictQueryBuilder }
+            - { name: oro_featuretogle.feature, feature: frontend_master_catalog }

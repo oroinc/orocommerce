@@ -2,23 +2,12 @@
 
 namespace Oro\Bundle\SEOBundle\Event;
 
-use Doctrine\ORM\QueryBuilder;
 use Oro\Component\Website\WebsiteInterface;
 use Symfony\Component\EventDispatcher\Event;
 
-class RestrictSitemapEntitiesEvent extends Event
+class UrlItemsProviderEndEvent extends Event
 {
-    const NAME = 'oro_seo.event.restrict_sitemap_entity';
-
-    /**
-     * @var QueryBuilder
-     */
-    protected $queryBuilder;
-
-    /**
-     * @var int
-     */
-    protected $version;
+    const NAME = 'oro_seo.event.url_items_provider_end';
 
     /**
      * @var WebsiteInterface
@@ -26,23 +15,18 @@ class RestrictSitemapEntitiesEvent extends Event
     protected $website;
 
     /**
-     * @param QueryBuilder $qb
-     * @param int $version
-     * @param WebsiteInterface $website
+     * @var int
      */
-    public function __construct(QueryBuilder $qb, $version, WebsiteInterface $website = null)
-    {
-        $this->queryBuilder = $qb;
-        $this->version = $version;
-        $this->website = $website;
-    }
+    protected $version;
 
     /**
-     * @return QueryBuilder
+     * @param $version
+     * @param WebsiteInterface $website
      */
-    public function getQueryBuilder()
+    public function __construct($version, WebsiteInterface $website = null)
     {
-        return $this->queryBuilder;
+        $this->version = $version;
+        $this->website = $website;
     }
 
     /**

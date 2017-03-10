@@ -12,6 +12,8 @@ use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\SEOBundle\DependencyInjection\Configuration as SeoConfiguration;
 use Oro\Bundle\SEOBundle\Event\RestrictSitemapEntitiesEvent;
+use Oro\Bundle\SEOBundle\Event\UrlItemsProviderEndEvent;
+use Oro\Bundle\SEOBundle\Event\UrlItemsProviderStartEvent;
 use Oro\Bundle\SEOBundle\Model\DTO\UrlItem;
 use Oro\Component\SEO\Provider\UrlItemsProviderInterface;
 use Oro\Component\Website\WebsiteInterface;
@@ -81,16 +83,23 @@ class UrlItemsProvider implements UrlItemsProviderInterface
 
     /**
      * @param WebsiteInterface $website
+     * @param int $version
+     *
      * @return \Generator|UrlItem[]
      */
-    public function getUrlItems(WebsiteInterface $website)
+    public function getUrlItems(WebsiteInterface $website, $version)
     {
         if (!$this->isFeaturesEnabled()) {
             return;
         }
 
+        $this->eventDispatcher->dispatch(
+            sprintf('%s.%s', UrlItemsProviderStartEvent::NAME, $this->type),
+            new UrlItemsProviderStartEvent($version, $website)
+        );
+
         $queryBuilder = $this->entityManager->createQueryBuilder()
-            ->select(str_replace('entityAlias', $this->type, 'entityAlias.id, entityAlias.updatedAt'))
+            ->select(str_replace('entityAlias', $this->type, 'DISTINCT entityAlias.id, entityAlias.updatedAt'))
             ->from($this->entityClass, $this->type);
 
         $canonicalUrlType = $this->canonicalUrlGenerator->getCanonicalUrlType($website);
@@ -99,10 +108,9 @@ class UrlItemsProvider implements UrlItemsProviderInterface
             $queryBuilder->leftJoin(sprintf('%s.slugs', $this->type), 'slugs');
         }
 
-        $event = new RestrictSitemapEntitiesEvent($queryBuilder, $website);
         $this->eventDispatcher->dispatch(
             sprintf('%s.%s', RestrictSitemapEntitiesEvent::NAME, $this->type),
-            $event
+            new RestrictSitemapEntitiesEvent($queryBuilder, $version, $website)
         );
 
         $entityChangeFrequency = $this->getEntityChangeFrequency($website);
@@ -121,6 +129,11 @@ class UrlItemsProvider implements UrlItemsProviderInterface
                 yield $entityUrlItem;
             }
         }
+
+        $this->eventDispatcher->dispatch(
+            sprintf('%s.%s', UrlItemsProviderEndEvent::NAME, $this->type),
+            new UrlItemsProviderEndEvent($version, $website)
+        );
     }
 
     /**

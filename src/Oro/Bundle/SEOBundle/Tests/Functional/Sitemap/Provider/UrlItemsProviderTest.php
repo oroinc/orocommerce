@@ -8,6 +8,8 @@ use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\RedirectBundle\Tests\Functional\DataFixtures\LoadSlugsData;
 use Oro\Bundle\SEOBundle\Event\RestrictSitemapEntitiesEvent;
+use Oro\Bundle\SEOBundle\Event\UrlItemsProviderEndEvent;
+use Oro\Bundle\SEOBundle\Event\UrlItemsProviderStartEvent;
 use Oro\Bundle\SEOBundle\Model\DTO\UrlItem;
 use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProvider;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -36,6 +38,11 @@ class UrlItemsProviderTest extends WebTestCase
     private $website;
 
     /**
+     * @var integer
+     */
+    private $version;
+
+    /**
      * @var string
      */
     private $providerType = 'cms_page';
@@ -54,6 +61,7 @@ class UrlItemsProviderTest extends WebTestCase
         $this->canonicalUrlGenerator = $this->getContainer()->get('oro_redirect.generator.canonical_url');
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
         $this->website = new Website();
+        $this->version = '1';
     }
 
     public function testItYieldsSystemUrls()
@@ -73,7 +81,7 @@ class UrlItemsProviderTest extends WebTestCase
         );
 
         $urlItems = [];
-        foreach ($provider->getUrlItems($this->website) as $urlItem) {
+        foreach ($provider->getUrlItems($this->website, $this->version) as $urlItem) {
             $urlItems[] = $urlItem;
         }
 
@@ -107,7 +115,7 @@ class UrlItemsProviderTest extends WebTestCase
         );
 
         $urlItems = [];
-        foreach ($provider->getUrlItems($this->website) as $urlItem) {
+        foreach ($provider->getUrlItems($this->website, $this->version) as $urlItem) {
             $urlItems[] = $urlItem;
         }
 
@@ -123,7 +131,7 @@ class UrlItemsProviderTest extends WebTestCase
         $this->assertContains($expectedUrlItem, $urlItems, '', false, false);
     }
 
-    public function testItDispatchEvent()
+    public function testItDispatchEvents()
     {
         $doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
         /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject $configManager */
@@ -137,15 +145,25 @@ class UrlItemsProviderTest extends WebTestCase
             $this->providerEntityClass
         );
 
-        $this->eventDispatcher->expects($this->once())
+        $this->eventDispatcher->expects($this->exactly(3))
             ->method('dispatch')
-            ->with(
-                RestrictSitemapEntitiesEvent::NAME.'.cms_page',
-                new \PHPUnit_Framework_Constraint_IsInstanceOf(RestrictSitemapEntitiesEvent::class)
+            ->withConsecutive(
+                [
+                    UrlItemsProviderStartEvent::NAME.'.cms_page',
+                    new \PHPUnit_Framework_Constraint_IsInstanceOf(UrlItemsProviderStartEvent::class)
+                ],
+                [
+                    RestrictSitemapEntitiesEvent::NAME.'.cms_page',
+                    new \PHPUnit_Framework_Constraint_IsInstanceOf(RestrictSitemapEntitiesEvent::class)
+                ],
+                [
+                    UrlItemsProviderEndEvent::NAME.'.cms_page',
+                    new \PHPUnit_Framework_Constraint_IsInstanceOf(UrlItemsProviderEndEvent::class)
+                ]
             );
 
         $urlItems = [];
-        foreach ($provider->getUrlItems($this->website) as $urlItem) {
+        foreach ($provider->getUrlItems($this->website, $this->version) as $urlItem) {
             $urlItems[] = $urlItem;
         }
 
@@ -170,7 +188,7 @@ class UrlItemsProviderTest extends WebTestCase
             ->method('get');
 
         $urlItems = [];
-        foreach ($provider->getUrlItems($this->website) as $urlItem) {
+        foreach ($provider->getUrlItems($this->website, $this->version) as $urlItem) {
             $urlItems[] = $urlItem;
         }
 

@@ -9,12 +9,7 @@ use Oro\Component\Website\WebsiteInterface;
 
 class RestrictSitemapEntitiesEventTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var QueryBuilder|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $qb;
-
-    /**
+     /**
      * @var RestrictSitemapEntitiesEvent
      */
     protected $restrictSitemapEntitiesEvent;
@@ -26,13 +21,16 @@ class RestrictSitemapEntitiesEventTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $version = 1;
+
         /** @var WebsiteInterface $website */
         $website = $this->createMock(WebsiteInterface::class);
 
-        $event = new RestrictSitemapEntitiesEvent($qb, $website);
+        $event = new RestrictSitemapEntitiesEvent($qb, $version, $website);
 
         $this->assertInstanceOf('Symfony\Component\EventDispatcher\Event', $event);
         $this->assertEquals($qb, $event->getQueryBuilder());
+        $this->assertEquals($version, $event->getVersion());
         $this->assertEquals($website, $event->getWebsite());
     }
 
@@ -43,10 +41,13 @@ class RestrictSitemapEntitiesEventTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $event = new RestrictSitemapEntitiesEvent($qb);
+        $version = 1;
+
+        $event = new RestrictSitemapEntitiesEvent($qb, $version);
 
         $this->assertInstanceOf('Symfony\Component\EventDispatcher\Event', $event);
         $this->assertEquals($qb, $event->getQueryBuilder());
+        $this->assertEquals($version, $event->getVersion());
         $this->assertNull($event->getWebsite());
     }
 }

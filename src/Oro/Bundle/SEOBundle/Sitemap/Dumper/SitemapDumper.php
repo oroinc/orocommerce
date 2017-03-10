@@ -7,7 +7,6 @@ use Oro\Bundle\SEOBundle\Sitemap\Event\OnSitemapDumpFinishEvent;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFilesystemAdapter;
 use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageFactory;
 use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageInterface;
-use Oro\Component\SEO\Provider\VersionAwareInterface;
 use Oro\Component\SEO\Tools\SitemapDumperInterface;
 use Oro\Component\Website\WebsiteInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
@@ -83,13 +82,10 @@ class SitemapDumper implements SitemapDumperInterface
         }
 
         foreach ($providers as $providerType => $provider) {
-            if ($provider instanceof VersionAwareInterface) {
-                $provider->setVersion($version);
-            }
             $urlsStorage = $this->createUrlsStorage();
 
             $fileNumber = 1;
-            foreach ($provider->getUrlItems($website) as $urlItem) {
+            foreach ($provider->getUrlItems($website, $version) as $urlItem) {
                 $itemAdded = $urlsStorage->addUrlItem($urlItem);
                 if (!$itemAdded) {
                     $this->filesystemAdapter->dumpSitemapStorage(

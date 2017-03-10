@@ -10,7 +10,6 @@ use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFilesystemAdapter;
 use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageFactory;
 use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageInterface;
 use Oro\Component\SEO\Provider\UrlItemsProviderInterface;
-use Oro\Component\SEO\Provider\VersionAwareUrlItemsProviderInterface;
 use Oro\Component\Website\WebsiteInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -187,16 +186,13 @@ class SitemapDumperTest extends \PHPUnit_Framework_TestCase
         $website = $this->createMock(WebsiteInterface::class);
         $version = 1;
 
-        $productProvider = $this->createMock(VersionAwareUrlItemsProviderInterface::class);
+        $productProvider = $this->createMock(UrlItemsProviderInterface::class);
         $productUrlItem = new UrlItem('http://somedomain.com/producturi');
         $productProvider
             ->expects($this->once())
             ->method('getUrlItems')
             ->with($website)
             ->willReturn([$productUrlItem]);
-        $productProvider->expects($this->once())
-            ->method('setVersion')
-            ->with($version);
 
         $pageProvider = $this->createMock(UrlItemsProviderInterface::class);
         $pageUrlItem = new UrlItem('http://somedomain.com/pageuri');
