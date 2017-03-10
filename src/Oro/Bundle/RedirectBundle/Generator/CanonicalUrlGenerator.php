@@ -12,6 +12,7 @@ use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProvider;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Resolver\WebsiteUrlResolver;
+use Oro\Component\Website\WebsiteInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 
 class CanonicalUrlGenerator
@@ -108,11 +109,11 @@ class CanonicalUrlGenerator
 
     /**
      * @param string $slugUrl
-     * @param Website|null $website
+     * @param WebsiteInterface|null $website
      *
      * @return string
      */
-    public function getAbsoluteUrl($slugUrl, Website $website = null)
+    public function getAbsoluteUrl($slugUrl, WebsiteInterface $website = null)
     {
         if ($this->getCanonicalUrlSecurityType($website)=== Configuration::SECURE) {
             $domainUrl = $this->websiteSystemUrlResolver->getWebsiteSecureUrl($website);

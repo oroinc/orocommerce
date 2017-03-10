@@ -4,7 +4,6 @@ namespace Oro\Bundle\SEOBundle\Async;
 
 use Oro\Bundle\SEOBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\SEOBundle\Model\SitemapIndexMessageFactory;
-use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFilesystemAdapter;
 use Oro\Component\MessageQueue\Client\TopicSubscriberInterface;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
@@ -32,26 +31,18 @@ class GenerateSitemapIndexProcessor implements MessageProcessorInterface, TopicS
     private $logger;
 
     /**
-     * @var SitemapFilesystemAdapter
-     */
-    private $filesystemAdapter;
-
-    /**
      * @param SitemapIndexMessageFactory $messageFactory
      * @param SitemapDumperInterface $dumper
      * @param LoggerInterface $logger
-     * @param SitemapFilesystemAdapter $filesystemAdapter
      */
     public function __construct(
         SitemapIndexMessageFactory $messageFactory,
         SitemapDumperInterface $dumper,
-        LoggerInterface $logger,
-        SitemapFilesystemAdapter $filesystemAdapter
+        LoggerInterface $logger
     ) {
         $this->messageFactory = $messageFactory;
         $this->dumper = $dumper;
         $this->logger = $logger;
-        $this->filesystemAdapter = $filesystemAdapter;
     }
 
     /**
@@ -66,7 +57,6 @@ class GenerateSitemapIndexProcessor implements MessageProcessorInterface, TopicS
             $version = $this->messageFactory->getVersionFromMessage($messageBody);
 
             $this->dumper->dump($website, $version);
-            $this->filesystemAdapter->makeNewerVersionActual($website, $version);
         } catch (InvalidArgumentException $e) {
             $this->logger->error(
                 'Queue Message is invalid',

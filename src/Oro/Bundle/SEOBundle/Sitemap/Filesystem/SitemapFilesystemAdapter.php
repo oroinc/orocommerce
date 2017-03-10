@@ -115,7 +115,7 @@ class SitemapFilesystemAdapter
      * @param WebsiteInterface $website
      * @param string $version
      * @param string|null $pattern
-     * @return \Traversable|\SplFileInfo[]
+     * @return \Traversable|\SplFileInfo[]|Finder
      */
     public function getSitemapFiles(WebsiteInterface $website, $version, $pattern = null)
     {

@@ -3,12 +3,14 @@
 namespace Oro\Bundle\SEOBundle\Sitemap\Dumper;
 
 use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistry;
+use Oro\Bundle\SEOBundle\Sitemap\Event\OnSitemapDumpFinishEvent;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFilesystemAdapter;
 use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageFactory;
 use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageInterface;
 use Oro\Component\SEO\Provider\VersionAwareInterface;
 use Oro\Component\SEO\Tools\SitemapDumperInterface;
 use Oro\Component\Website\WebsiteInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class SitemapDumper implements SitemapDumperInterface
 {
@@ -30,6 +32,11 @@ class SitemapDumper implements SitemapDumperInterface
     private $filesystemAdapter;
 
     /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
+    /**
      * @var string
      */
     private $storageType;
@@ -38,17 +45,20 @@ class SitemapDumper implements SitemapDumperInterface
      * @param UrlItemsProviderRegistry $providerRegistry
      * @param SitemapStorageFactory $sitemapStorageFactory
      * @param SitemapFilesystemAdapter $filesystemAdapter
+     * @param EventDispatcherInterface $eventDispatcher
      * @param string $storageType
      */
     public function __construct(
         UrlItemsProviderRegistry $providerRegistry,
         SitemapStorageFactory $sitemapStorageFactory,
         SitemapFilesystemAdapter $filesystemAdapter,
+        EventDispatcherInterface $eventDispatcher,
         $storageType
     ) {
         $this->providerRegistry = $providerRegistry;
         $this->sitemapStorageFactory = $sitemapStorageFactory;
         $this->filesystemAdapter = $filesystemAdapter;
+        $this->eventDispatcher = $eventDispatcher;
         $this->storageType = $storageType;
     }
 
@@ -83,7 +93,7 @@ class SitemapDumper implements SitemapDumperInterface
                 $itemAdded = $urlsStorage->addUrlItem($urlItem);
                 if (!$itemAdded) {
                     $this->filesystemAdapter->dumpSitemapStorage(
-                        $this->createFileName($providerType, $fileNumber++),
+                        static::createFileName($providerType, $fileNumber++),
                         $website,
                         $version,
                         $urlsStorage
@@ -95,12 +105,18 @@ class SitemapDumper implements SitemapDumperInterface
             }
 
             $this->filesystemAdapter->dumpSitemapStorage(
-                $this->createFileName($providerType, $fileNumber),
+                static::createFileName($providerType, $fileNumber),
                 $website,
                 $version,
                 $urlsStorage
             );
         }
+
+        $event = new OnSitemapDumpFinishEvent($website, $version);
+        $this->eventDispatcher->dispatch(
+            sprintf('%s.%s', OnSitemapDumpFinishEvent::EVENT_NAME, $this->storageType),
+            $event
+        );
     }
 
     /**

@@ -5,16 +5,19 @@ namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\Dumper;
 use Oro\Bundle\SEOBundle\Model\DTO\UrlItem;
 use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistry;
 use Oro\Bundle\SEOBundle\Sitemap\Dumper\SitemapDumper;
+use Oro\Bundle\SEOBundle\Sitemap\Event\OnSitemapDumpFinishEvent;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFilesystemAdapter;
 use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageFactory;
 use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageInterface;
 use Oro\Component\SEO\Provider\UrlItemsProviderInterface;
 use Oro\Component\SEO\Provider\VersionAwareUrlItemsProviderInterface;
 use Oro\Component\Website\WebsiteInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class SitemapDumperTest extends \PHPUnit_Framework_TestCase
 {
     const PRODUCT_PROVIDER_TYPE = 'product';
+    const STORAGE_TYPE = 'url';
 
     /**
      * @var UrlItemsProviderRegistry|\PHPUnit_Framework_MockObject_MockObject
@@ -30,6 +33,11 @@ class SitemapDumperTest extends \PHPUnit_Framework_TestCase
      * @var SitemapStorageFactory|\PHPUnit_Framework_MockObject_MockObject
      */
     private $sitemapStorageFactory;
+
+    /**
+     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $eventDispatcher;
 
     /**
      * @var SitemapDumper
@@ -50,11 +58,14 @@ class SitemapDumperTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+
         $this->dumper = new SitemapDumper(
             $this->providerRegistry,
             $this->sitemapStorageFactory,
             $this->filesystemAdapter,
-            'url'
+            $this->eventDispatcher,
+            self::STORAGE_TYPE
         );
     }
 
@@ -99,6 +110,8 @@ class SitemapDumperTest extends \PHPUnit_Framework_TestCase
                 $version,
                 $urlsStorage
             );
+
+        $this->expectDispatchDumpFinishEvent($website, $version);
 
         $this->dumper->dump($website, $version, self::PRODUCT_PROVIDER_TYPE);
     }
@@ -162,6 +175,8 @@ class SitemapDumperTest extends \PHPUnit_Framework_TestCase
                     $secondUrlsStorage
                 ]
             );
+
+        $this->expectDispatchDumpFinishEvent($website, $version);
 
         $this->dumper->dump($website, $version, self::PRODUCT_PROVIDER_TYPE);
     }
@@ -234,6 +249,8 @@ class SitemapDumperTest extends \PHPUnit_Framework_TestCase
                 ]
             );
 
+        $this->expectDispatchDumpFinishEvent($website, $version);
+
         $this->dumper->dump($website, $version);
     }
 
@@ -245,5 +262,24 @@ class SitemapDumperTest extends \PHPUnit_Framework_TestCase
     public function testGetFilenamePatternSpecificType()
     {
         $this->assertEquals('sitemap-index-*.xml*', SitemapDumper::getFilenamePattern('index'));
+    }
+
+    /**
+     * @param WebsiteInterface $website
+     * @param string $version
+     */
+    private function expectDispatchDumpFinishEvent($website, $version)
+    {
+        $event = new OnSitemapDumpFinishEvent($website, $version);
+        $this->eventDispatcher->expects($this->once())
+            ->method('dispatch')
+            ->with(
+                sprintf(
+                    '%s.%s',
+                    OnSitemapDumpFinishEvent::EVENT_NAME,
+                    self::STORAGE_TYPE
+                ),
+                $event
+            );
     }
 }

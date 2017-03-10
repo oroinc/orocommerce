@@ -122,6 +122,7 @@ services:
             - '@oro_seo.sitemap.provider.url_items_provider_registry'
             - '@oro_seo.sitemap.sitemap_storage_factory'
             - '@oro_seo.sitemap.filesystem_adapter'
+            - '@event_dispatcher'
             - 'sitemap'
 
     oro_seo.sitemap.provider.url_items_provider_registry_index:
@@ -135,6 +136,7 @@ services:
             - '@oro_seo.sitemap.provider.url_items_provider_registry_index'
             - '@oro_seo.sitemap.sitemap_storage_factory'
             - '@oro_seo.sitemap.filesystem_adapter'
+            - '@event_dispatcher'
             - 'index'
 
     oro_seo.form.type.sitemap_changefreq:
@@ -264,6 +266,30 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_seo.event.restrict_sitemap_entity.product, method: restrictQueryBuilder }
 
+    oro_seo.manager.robots_txt:
+        class: Oro\Bundle\SEOBundle\Manager\RobotsTxtManager
+        arguments:
+            - '@logger'
+            - '@filesystem'
+            - '%kernel.root_dir%/../web'
+
+    oro_seo.sitemap.event_listener.dump_robots_txt:
+        class: Oro\Bundle\SEOBundle\Sitemap\EventListener\DumpRobotsTxtListener
+        arguments:
+            - '@oro_seo.manager.robots_txt'
+            - '@oro_redirect.generator.canonical_url'
+            - '@oro_seo.sitemap.filesystem_adapter'
+            - '%oro_seo.sitemap_directory%'
+        tags:
+            - { name: kernel.event_listener, event: oro_seo.sitemap.event.on_sitemap_dump_finish.index, method: onSitemapDumpStorage, priority: -255 }
+
+    oro_seo.sitemap.event_listener.make_version_actual_listener:
+        class: Oro\Bundle\SEOBundle\Sitemap\EventListener\MakeVersionActualListener
+        arguments:
+            - '@oro_seo.sitemap.filesystem_adapter'
+        tags:
+            - { name: kernel.event_listener, event: oro_seo.sitemap.event.on_sitemap_dump_finish.index, method: onSitemapDumpStorage }
+
     oro_seo.event_listener.restrict_sitemap_cms_page_by_web_catalog:
         class: 'Oro\Bundle\SEOBundle\EventListener\RestrictSitemapCmsPageByWebCatalogListener'
         arguments:
@@ -272,3 +298,4 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_seo.event.restrict_sitemap_entity.cms_page , method: restrictQueryBuilder }
             - { name: oro_featuretogle.feature, feature: frontend_master_catalog }
+

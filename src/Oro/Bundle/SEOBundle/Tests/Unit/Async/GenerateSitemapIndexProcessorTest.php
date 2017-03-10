@@ -7,7 +7,6 @@ use Oro\Bundle\SEOBundle\Async\GenerateSitemapIndexProcessor;
 use Oro\Bundle\SEOBundle\Async\Topics;
 use Oro\Bundle\SEOBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\SEOBundle\Model\SitemapIndexMessageFactory;
-use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFilesystemAdapter;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
@@ -33,11 +32,6 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit_Framework_TestCase
     private $logger;
 
     /**
-     * @var SitemapFilesystemAdapter|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $filesystemAdapter;
-
-    /**
      * @var GenerateSitemapIndexProcessor
      */
     private $processor;
@@ -49,15 +43,11 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $this->dumper = $this->createMock(SitemapDumperInterface::class);
         $this->logger = $this->createMock(LoggerInterface::class);
-        $this->filesystemAdapter = $this->getMockBuilder(SitemapFilesystemAdapter::class)
-            ->disableOriginalConstructor()
-            ->getMock();
 
         $this->processor = new GenerateSitemapIndexProcessor(
             $this->messageFactory,
             $this->dumper,
-            $this->logger,
-            $this->filesystemAdapter
+            $this->logger
         );
     }
 
@@ -123,8 +113,6 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('dump')
             ->with($website, $version)
             ->willThrowException($exception);
-        $this->filesystemAdapter->expects($this->never())
-            ->method('makeNewerVersionActual');
         $this->logger->expects($this->once())
             ->method('error')
             ->with(
@@ -166,9 +154,6 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit_Framework_TestCase
 
         $this->dumper->expects($this->once())
             ->method('dump')
-            ->with($website, $version);
-        $this->filesystemAdapter->expects($this->once())
-            ->method('makeNewerVersionActual')
             ->with($website, $version);
 
         $this->assertEquals(UrlCacheProcessor::ACK, $this->processor->process($message, $session));

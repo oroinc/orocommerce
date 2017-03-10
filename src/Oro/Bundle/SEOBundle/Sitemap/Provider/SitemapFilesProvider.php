@@ -6,6 +6,7 @@ use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\SEOBundle\Model\DTO\UrlItem;
 use Oro\Bundle\SEOBundle\Sitemap\Dumper\SitemapDumper;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFilesystemAdapter;
+use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageFactory;
 use Oro\Component\SEO\Provider\VersionAwareUrlItemsProviderInterface;
 use Oro\Component\Website\WebsiteInterface;
 use Symfony\Component\Finder\Finder;
@@ -62,7 +63,7 @@ class SitemapFilesProvider implements VersionAwareUrlItemsProviderInterface
     {
         $files = $this->filesystemAdapter->getSitemapFiles($website, $this->version);
         if ($files instanceof Finder) {
-            $files->notName(SitemapDumper::getFilenamePattern('index'));
+            $files->notName(SitemapDumper::getFilenamePattern(SitemapStorageFactory::TYPE_SITEMAP_INDEX));
         }
 
         foreach ($files as $file) {
