@@ -16,30 +16,29 @@ oro.cms:
             singular_label:     'Slug Prototype'
         form.choose:            'Choose a Landing Page...'
         content_variant_type.label: 'Landing Page'
+        enabled.label:          'Enabled'
+        alias.label:            'Alias'
+        text_content_variants.label: 'Text Content Variants'
+        default.label: Default
 
     contentblock:
         entity_label: Content Block
         entity_plural_label: Content Blocks
         id.label: Id
         alias.label: Alias
-        content_variants.label: Content Variant
+        content_variants:
+            label: Content Variant
+            default.label: Default Variant
         organization.label: Organization
         owner.label: Owner
-        titles:
-            label: Titles
-            singular_label: Title
+        titles.label: Titles
         scopes.label: Restrictions
         enabled.label: Enabled
-        createdat.label: Created At
-        updatedat.label: Updated At
-        enabled_yes:
-            label: Yes
-        enabled_no:
-              label: No
+        form:
+            add_variant.label: Add Content
 
     controller:
         page.saved.message: 'Page has been saved'
-        contentblock.saved.message: 'Content block has been saved'
 
     menu:
         marketing_tab.label: 'Marketing'

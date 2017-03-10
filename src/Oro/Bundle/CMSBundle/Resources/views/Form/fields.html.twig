@@ -1,3 +1,102 @@
 {% block oro_cms_page_variant_widget %}
     {{ form_row(form.cmsPage) }}
 {% endblock %}
+
+{% block oro_cms_text_content_variant_collection_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+
+    {% spaceless %}
+        {% set attr = attr|merge({'class': (attr.class is defined ? attr.class ~ ' ' : '') ~ 'oro-content-variant-collection' }) %}
+        <div {{ block('widget_container_attributes') }}
+                data-role="content-variant-collection"
+                data-page-component-module="orocms/js/app/components/content-variant-collection-component"
+                data-last-index="{{ form.children|length}}"
+                data-prototype-name="{{ prototype_name }}"
+                {{ _self.oro_cms_content_variant_attributes(form) }}
+        >
+            <input type="hidden" name="validate_{{ full_name }}" data-collection-name="{{ full_name }}" data-name="collection-validation" disabled data-validate-element>
+
+            <div class="content-variant-add-btn-container clearfix-oro">
+                <div class="btn-group pull-right">
+                    {{ UI.button({
+                        'path': 'javascript: void(0);',
+                        'label': 'oro.cms.contentblock.form.add_variant.label'|trans,
+                        'data': {
+                            'role': 'variant-button'
+                        }
+                    }) }}
+                </div>
+            </div>
+
+            <div class="variant-collection" data-role="collection-container"
+                 data-page-component-module="oroui/js/app/components/view-component"
+                 data-page-component-options="{{ {
+                     view: 'orocms/js/app/views/default-variant-collection-view',
+                     defaultSelector: '[name$="[default]"]'
+                 }|json_encode }}"
+            >
+                {% if form.children|length %}
+                    {% for child in form.children %}
+                        {{ _self.oro_cms_content_variant_collection_item(child, child.vars.full_name, form.vars.disabled) }}
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+
+        <div {{ UI.renderPageComponentAttributes({
+            module: 'oroui/js/app/components/view-component',
+            options: {
+                _sourceElement: '#' ~ _context.id,
+                view: 'orocms/js/app/views/variants-collection-view'
+            }
+        }) }}></div>
+    {% endspaceless %}
+{% endblock %}
+
+{% macro oro_cms_content_variant_collection_item(form, name, disabled) %}
+    {% spaceless %}
+        <div data-content="{{ name }}"
+             data-validation-optional-group
+             data-role="content-variant-item"
+             class="content-variant-item {% if form.default.vars.data %}content-variant-item-default{% endif %}"
+                {% if form.vars.attr['data-validation-optional-group-handler'] is defined %}
+                    data-validation-optional-group-handler="{{ form.vars.attr['data-validation-optional-group-handler'] }}"
+                {% endif %}
+             data-page-component-module="oroui/js/app/components/view-component"
+             data-page-component-options="{{ {
+                 view: 'oroscope/js/app/views/scope-toggle-view',
+                 selectors: {
+                     useParentScopeSelector: '#' ~ form.default.vars.id,
+                     scopesSelector: '.scope-elements'
+                 }
+             }|json_encode }}"
+        >
+            <h5 class="content-variant-item-title">
+                {{ form_widget(form.default) }}
+                <span class="label label-info content-variant-item-default-label">{{ "oro.cms.contentblock.content_variants.default.label"|trans }}</span>
+            </h5>
+
+            {{ form_widget(form, {disabled: disabled}) }}
+
+            <div class="scope-elements">
+                <h5>{{ form.scopes.vars.label|trans }}</h5>
+                {{ form_widget(form.scopes) }}
+            </div>
+
+            <div class="hide">
+                {{ form_rest(form) }}
+            </div>
+
+            <button class="removeVariantBtn btn btn-action btn-link" type="button" data-related="{{ name }}" data-action="remove">×</button>
+        </div>
+    {% endspaceless %}
+{% endmacro %}
+
+{% macro oro_cms_content_variant_attributes(form) %}
+    {% set prototype = _self.oro_cms_content_variant_collection_item(
+        form.vars.prototype,
+        form.vars.prototype.vars.name,
+        form.vars.disabled
+    ) %}
+    data-prototype="{{ prototype|escape }}"
+{% endmacro %}

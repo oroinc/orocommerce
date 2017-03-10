@@ -2,3 +2,13 @@ Oro\Bundle\CMSBundle\Entity\Page:
     properties:
         organization:
             - NotBlank: ~
+
+Oro\Bundle\CMSBundle\Entity\ContentBlock:
+    properties:
+        alias:
+            - NotBlank: ~
+            - Regex:
+                pattern: '/^[a-zA-Z0-9_\-]*$/'
+                message: "This value should contain only alphabetic symbols, underscore, hyphen and numbers."
+        titles:
+            - NotBlank: ~

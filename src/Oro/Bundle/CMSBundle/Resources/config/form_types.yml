@@ -20,3 +20,18 @@ services:
         class: Oro\Bundle\CMSBundle\Form\Type\CmsPageVariantType
         tags:
             - { name: form.type, alias: oro_cms_page_variant }
+
+    oro_cms.form.type.text_content_variant:
+        class: 'Oro\Bundle\CMSBundle\Form\Type\TextContentVariantType'
+        tags:
+            - { name: form.type, alias: oro_cms_text_content_variant }
+
+    oro_cms.form.type.text_content_variant_collection:
+        class: 'Oro\Bundle\CMSBundle\Form\Type\TextContentVariantCollectionType'
+        tags:
+            - { name: form.type, alias: oro_cms_text_content_variant_collection }
+
+    oro_cms.form.type.content_block:
+        class: 'Oro\Bundle\CMSBundle\Form\Type\ContentBlockType'
+        tags:
+            - { name: form.type, alias: oro_cms_content_block }
