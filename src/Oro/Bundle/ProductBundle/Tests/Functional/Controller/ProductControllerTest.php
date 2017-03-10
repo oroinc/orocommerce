@@ -8,6 +8,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFeaturedProductData;
+use Oro\Bundle\ProductBundle\Tests\Functional\Helper\ProductTestHelper;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use Symfony\Component\DomCrawler\Crawler;
@@ -20,51 +21,6 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
  */
 class ProductControllerTest extends WebTestCase
 {
-    const TEST_SKU = 'SKU-001';
-    const UPDATED_SKU = 'SKU-001-updated';
-    const FIRST_DUPLICATED_SKU = 'SKU-001-updated-1';
-    const SECOND_DUPLICATED_SKU = 'SKU-001-updated-2';
-
-    const STATUS = 'Disabled';
-    const UPDATED_STATUS = 'Enabled';
-
-    const TYPE = 'Simple';
-
-    const INVENTORY_STATUS = 'In Stock';
-    const UPDATED_INVENTORY_STATUS = 'Out of Stock';
-
-    const FIRST_UNIT_CODE = 'each';
-    const FIRST_UNIT_FULL_NAME = 'each';
-    const FIRST_UNIT_PRECISION = '0';
-
-    const SECOND_UNIT_CODE = 'kg';
-    const SECOND_UNIT_FULL_NAME = 'kilogram';
-    const SECOND_UNIT_PRECISION = '1';
-
-    const THIRD_UNIT_CODE = 'piece';
-    const THIRD_UNIT_FULL_NAME = 'piece';
-    const THIRD_UNIT_PRECISION = '0';
-
-    const DEFAULT_NAME = 'default name';
-    const DEFAULT_NAME_ALTERED = 'altered default name';
-    const DEFAULT_DESCRIPTION = 'default description';
-    const DEFAULT_SHORT_DESCRIPTION = 'default short description';
-
-    const CATEGORY_ID = 1;
-    const CATEGORY_MENU_NAME = 'Master Catalog';
-    const CATEGORY_NAME = 'Products Categories';
-
-    const FIRST_IMAGE_FILENAME = 'image1.gif';
-    const SECOND_IMAGE_FILENAME = 'image2.gif';
-
-    const IMAGES_VIEW_BODY_SELECTOR = 'div.image-collection table tbody tr';
-    const IMAGES_VIEW_HEAD_SELECTOR = 'div.image-collection table thead tr th';
-    const IMAGE_TYPE_CHECKED_TAG = 'i';
-    const IMAGE_TYPE_CHECKED_CLASS = 'fa-check-square-o';
-    const IMAGE_FILENAME_ATTR = 'title';
-
-    const ATTRIBUTE_FAMILY_ID = 1;
-
     /**
      * @var array
      */
@@ -94,7 +50,7 @@ class ProductControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_create'));
         $this->assertEquals(
             1,
-            $crawler->filterXPath("//li/a[contains(text(),'".self::CATEGORY_MENU_NAME."')]")->count()
+            $crawler->filterXPath("//li/a[contains(text(),'".ProductTestHelper::CATEGORY_MENU_NAME."')]")->count()
         );
 
         $this->assertEquals(
@@ -110,9 +66,9 @@ class ProductControllerTest extends WebTestCase
         $form = $crawler->selectButton('Continue')->form();
         $formValues = $form->getPhpValues();
         $formValues['input_action'] = 'oro_product_create';
-        $formValues['oro_product_step_one']['category'] = self::CATEGORY_ID;
+        $formValues['oro_product_step_one']['category'] = ProductTestHelper::CATEGORY_ID;
         $formValues['oro_product_step_one']['type'] = Product::TYPE_SIMPLE;
-        $formValues['oro_product_step_one']['attributeFamily'] = self::ATTRIBUTE_FAMILY_ID;
+        $formValues['oro_product_step_one']['attributeFamily'] = ProductTestHelper::ATTRIBUTE_FAMILY_ID;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->request(
@@ -125,25 +81,25 @@ class ProductControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertEquals(
             0,
-            $crawler->filterXPath("//li/a[contains(text(),'".self::CATEGORY_MENU_NAME."')]")->count()
+            $crawler->filterXPath("//li/a[contains(text(),'".ProductTestHelper::CATEGORY_MENU_NAME."')]")->count()
         );
-        $this->assertContains("Category: ".self::CATEGORY_NAME, $crawler->html());
+        $this->assertContains("Category: ".ProductTestHelper::CATEGORY_NAME, $crawler->html());
 
         $form = $crawler->selectButton('Save and Close')->form();
         $this->assertDefaultProductUnit($form);
 
         $formValues = $form->getPhpValues();
-        $formValues['oro_product']['sku'] = self::TEST_SKU;
+        $formValues['oro_product']['sku'] = ProductTestHelper::TEST_SKU;
         $formValues['oro_product']['owner'] = $this->getBusinessUnitId();
         $formValues['oro_product']['inventory_status'] = Product::INVENTORY_STATUS_IN_STOCK;
         $formValues['oro_product']['status'] = Product::STATUS_DISABLED;
-        $formValues['oro_product']['names']['values']['default'] = self::DEFAULT_NAME;
-        $formValues['oro_product']['descriptions']['values']['default'] = self::DEFAULT_DESCRIPTION;
-        $formValues['oro_product']['shortDescriptions']['values']['default'] = self::DEFAULT_SHORT_DESCRIPTION;
+        $formValues['oro_product']['names']['values']['default'] = ProductTestHelper::DEFAULT_NAME;
+        $formValues['oro_product']['descriptions']['values']['default'] = ProductTestHelper::DEFAULT_DESCRIPTION;
+        $formValues['oro_product']['shortDescriptions']['values']['default'] = ProductTestHelper::DEFAULT_SHORT_DESCRIPTION;
         $formValues['oro_product']['type'] = Product::TYPE_SIMPLE;
         $formValues['oro_product']['additionalUnitPrecisions'][] = [
-            'unit' => self::FIRST_UNIT_CODE,
-            'precision' => self::FIRST_UNIT_PRECISION,
+            'unit' => ProductTestHelper::FIRST_UNIT_CODE,
+            'precision' => ProductTestHelper::FIRST_UNIT_PRECISION,
             'conversionRate' => 10,
             'sell' => true,
         ];
@@ -156,7 +112,7 @@ class ProductControllerTest extends WebTestCase
 
         $filesData['oro_product']['images'][] = [
             'image' => [
-                'file' => $this->createUploadedFile(self::FIRST_IMAGE_FILENAME)
+                'file' => $this->createUploadedFile(ProductTestHelper::FIRST_IMAGE_FILENAME)
             ]
         ];
 
@@ -168,14 +124,14 @@ class ProductControllerTest extends WebTestCase
 
         $html = $crawler->html();
         $this->assertContains('Product has been saved', $html);
-        $this->assertContains(self::TEST_SKU, $html);
-        $this->assertContains(self::INVENTORY_STATUS, $html);
-        $this->assertContains(self::STATUS, $html);
-        $this->assertContains(self::FIRST_UNIT_CODE, $html);
+        $this->assertContains(ProductTestHelper::TEST_SKU, $html);
+        $this->assertContains(ProductTestHelper::INVENTORY_STATUS, $html);
+        $this->assertContains(ProductTestHelper::STATUS, $html);
+        $this->assertContains(ProductTestHelper::FIRST_UNIT_CODE, $html);
 
         $expectedProductImageMatrix = [
             self::$expectedProductImageMatrixHeaders,
-            [self::FIRST_IMAGE_FILENAME, 1, 1, 1],
+            [ProductTestHelper::FIRST_IMAGE_FILENAME, 1, 1, 1],
         ];
 
         $parsedProductImageMatrix = $this->parseProductImages($crawler);
@@ -194,7 +150,7 @@ class ProductControllerTest extends WebTestCase
      */
     public function testUpdate()
     {
-        $product = $this->getProductDataBySku(self::TEST_SKU);
+        $product = $this->getProductDataBySku(ProductTestHelper::TEST_SKU);
         $id = $product->getId();
         $localization = $this->getLocalization();
         $localizedName = $this->getLocalizedName($product, $localization);
@@ -202,7 +158,7 @@ class ProductControllerTest extends WebTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $id]));
         $this->assertEquals(
             1,
-            $crawler->filterXPath("//li/a[contains(text(),'".self::CATEGORY_MENU_NAME."')]")->count()
+            $crawler->filterXPath("//li/a[contains(text(),'".ProductTestHelper::CATEGORY_MENU_NAME."')]")->count()
         );
         /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
@@ -212,37 +168,44 @@ class ProductControllerTest extends WebTestCase
             'input_action' => 'save_and_stay',
             'oro_product' => array_merge($data, [
                 '_token' => $form['oro_product[_token]']->getValue(),
-                'sku' => self::UPDATED_SKU,
+                'sku' => ProductTestHelper::UPDATED_SKU,
                 'owner' => $this->getBusinessUnitId(),
                 'inventory_status' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
                 'status' => Product::STATUS_ENABLED,
                 'type' => Product::TYPE_SIMPLE,
                 'primaryUnitPrecision' => [
-                    'unit' => self::FIRST_UNIT_CODE, 'precision' => self::FIRST_UNIT_PRECISION,
+                    'unit' => ProductTestHelper::FIRST_UNIT_CODE,
+                    'precision' => ProductTestHelper::FIRST_UNIT_PRECISION,
                 ],
                 'additionalUnitPrecisions' => [
-                    ['unit' => self::SECOND_UNIT_CODE, 'precision' => self::SECOND_UNIT_PRECISION,
-                     'conversionRate' => 2, 'sell' => false],
-                    ['unit' => self::THIRD_UNIT_CODE, 'precision' => self::THIRD_UNIT_PRECISION,
-                     'conversionRate' => 3, 'sell' => true]
+                    [
+                        'unit' => ProductTestHelper::SECOND_UNIT_CODE,
+                        'precision' => ProductTestHelper::SECOND_UNIT_PRECISION,
+                        'conversionRate' => 2, 'sell' => false
+                    ],
+                    [
+                        'unit' => ProductTestHelper::THIRD_UNIT_CODE,
+                        'precision' => ProductTestHelper::THIRD_UNIT_PRECISION,
+                        'conversionRate' => 3, 'sell' => true
+                    ]
                 ],
                 'names' => [
                     'values' => [
-                        'default' => self::DEFAULT_NAME_ALTERED,
+                        'default' => ProductTestHelper::DEFAULT_NAME_ALTERED,
                         'localizations' => [$localization->getId() => ['fallback' => FallbackType::SYSTEM]],
                     ],
                     'ids' => [$localization->getId() => $localizedName->getId()],
                 ],
                 'descriptions' => [
                     'values' => [
-                        'default' => self::DEFAULT_DESCRIPTION,
+                        'default' => ProductTestHelper::DEFAULT_DESCRIPTION,
                         'localizations' => [$localization->getId() => ['fallback' => FallbackType::SYSTEM]],
                     ],
                     'ids' => [$localization->getId() => $localizedName->getId()],
                 ],
                 'shortDescriptions' => [
                     'values' => [
-                        'default' => self::DEFAULT_SHORT_DESCRIPTION,
+                        'default' => ProductTestHelper::DEFAULT_SHORT_DESCRIPTION,
                         'localizations' => [$localization->getId() => ['fallback' => FallbackType::SYSTEM]],
                     ],
                     'ids' => [$localization->getId() => $localizedName->getId()],
@@ -264,7 +227,7 @@ class ProductControllerTest extends WebTestCase
                 'images' => [
                     1 => [
                         'image' => [
-                            'file' => $this->createUploadedFile(self::SECOND_IMAGE_FILENAME)
+                            'file' => $this->createUploadedFile(ProductTestHelper::SECOND_IMAGE_FILENAME)
                         ]
                     ],
                 ]
@@ -284,10 +247,16 @@ class ProductControllerTest extends WebTestCase
             $this->getActualAdditionalUnitPrecision($crawler, 1),
         ];
         $expectedAdditionalUnitPrecisions = [
-            ['unit' => self::SECOND_UNIT_FULL_NAME, 'precision' => self::SECOND_UNIT_PRECISION,
-                'conversionRate' => 2, 'sell' => false],
-            ['unit' => self::THIRD_UNIT_FULL_NAME, 'precision' => self::THIRD_UNIT_PRECISION,
-                'conversionRate' => 3, 'sell' => true],
+            [
+                'unit' => ProductTestHelper::SECOND_UNIT_FULL_NAME,
+                'precision' => ProductTestHelper::SECOND_UNIT_PRECISION,
+                'conversionRate' => 2, 'sell' => false
+            ],
+            [
+                'unit' => ProductTestHelper::THIRD_UNIT_FULL_NAME,
+                'precision' => ProductTestHelper::THIRD_UNIT_PRECISION,
+                'conversionRate' => 3, 'sell' => true
+            ],
         ];
 
         $this->assertEquals(
@@ -311,19 +280,23 @@ class ProductControllerTest extends WebTestCase
 
         $html = $crawler->html();
         $this->assertContains(
-            self::UPDATED_SKU . ' - ' . self::DEFAULT_NAME_ALTERED . ' - Products - Products',
+            ProductTestHelper::UPDATED_SKU . ' - ' . ProductTestHelper::DEFAULT_NAME_ALTERED . ' - Products - Products',
             $html
         );
-        $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
-        $this->assertContains(self::UPDATED_STATUS, $html);
-        $this->assertContains(self::TYPE, $html);
-        $this->assertProductPrecision($id, self::SECOND_UNIT_CODE, self::SECOND_UNIT_PRECISION);
-        $this->assertProductPrecision($id, self::THIRD_UNIT_CODE, self::THIRD_UNIT_PRECISION);
+        $this->assertContains(ProductTestHelper::UPDATED_INVENTORY_STATUS, $html);
+        $this->assertContains(ProductTestHelper::UPDATED_STATUS, $html);
+        $this->assertContains(ProductTestHelper::TYPE, $html);
+        $this->assertProductPrecision(
+            $id,
+            ProductTestHelper::SECOND_UNIT_CODE,
+            ProductTestHelper::SECOND_UNIT_PRECISION
+        );
+        $this->assertProductPrecision($id, ProductTestHelper::THIRD_UNIT_CODE, ProductTestHelper::THIRD_UNIT_PRECISION);
 
         $expectedProductImageMatrix = [
             self::$expectedProductImageMatrixHeaders,
-            [self::FIRST_IMAGE_FILENAME, 1, 1, 0],
-            [self::SECOND_IMAGE_FILENAME, 0, 0, 1]
+            [ProductTestHelper::FIRST_IMAGE_FILENAME, 1, 1, 0],
+            [ProductTestHelper::SECOND_IMAGE_FILENAME, 0, 0, 1]
         ];
 
         $parsedProductImageMatrix = $this->parseProductImages($crawler);
@@ -357,23 +330,33 @@ class ProductControllerTest extends WebTestCase
         $html = $crawler->html();
         $this->assertContains('Product has been duplicated', $html);
         $this->assertContains(
-            self::FIRST_DUPLICATED_SKU . ' - ' . self::DEFAULT_NAME_ALTERED . ' - Products - Products',
+            ProductTestHelper::FIRST_DUPLICATED_SKU . ' - ' .
+            ProductTestHelper::DEFAULT_NAME_ALTERED . ' - Products - Products',
             $html
         );
-        $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
-        $this->assertContains(self::STATUS, $html);
+        $this->assertContains(ProductTestHelper::UPDATED_INVENTORY_STATUS, $html);
+        $this->assertContains(ProductTestHelper::STATUS, $html);
 
         $this->assertContains(
-            $this->createPrimaryUnitPrecisionString(self::FIRST_UNIT_FULL_NAME, self::FIRST_UNIT_PRECISION),
+            $this->createPrimaryUnitPrecisionString(
+                ProductTestHelper::FIRST_UNIT_FULL_NAME,
+                ProductTestHelper::FIRST_UNIT_PRECISION
+            ),
             $html
         );
-        $this->assertContainsAdditionalUnitPrecision(self::SECOND_UNIT_FULL_NAME, self::SECOND_UNIT_PRECISION, $html);
-        $this->assertContainsAdditionalUnitPrecision(self::THIRD_UNIT_FULL_NAME, self::THIRD_UNIT_PRECISION, $html);
+        $this->assertContainsAdditionalUnitPrecision(
+            ProductTestHelper::SECOND_UNIT_FULL_NAME,
+            ProductTestHelper::SECOND_UNIT_PRECISION, $html
+        );
+        $this->assertContainsAdditionalUnitPrecision(
+            ProductTestHelper::THIRD_UNIT_FULL_NAME,
+            ProductTestHelper::THIRD_UNIT_PRECISION, $html
+        );
 
         $expectedProductImageMatrix = [
             self::$expectedProductImageMatrixHeaders,
-            [self::FIRST_IMAGE_FILENAME, 1, 1, 0],
-            [self::SECOND_IMAGE_FILENAME, 0, 0, 1]
+            [ProductTestHelper::FIRST_IMAGE_FILENAME, 1, 1, 0],
+            [ProductTestHelper::SECOND_IMAGE_FILENAME, 0, 0, 1]
         ];
 
         $parsedProductImageMatrix = $this->parseProductImages($crawler);
@@ -383,7 +366,7 @@ class ProductControllerTest extends WebTestCase
 
         $this->assertEquals($expectedProductImageMatrix, $parsedProductImageMatrix);
 
-        $product = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
+        $product = $this->getProductDataBySku(ProductTestHelper::FIRST_DUPLICATED_SKU);
 
         return $product->getId();
     }
@@ -395,7 +378,7 @@ class ProductControllerTest extends WebTestCase
      */
     public function testSaveAndDuplicate()
     {
-        $product = $this->getProductDataBySku(self::FIRST_DUPLICATED_SKU);
+        $product = $this->getProductDataBySku(ProductTestHelper::FIRST_DUPLICATED_SKU);
         $id = $product->getId();
         $localization = $this->getLocalization();
         $localizedName = $this->getLocalizedName($product, $localization);
@@ -410,7 +393,7 @@ class ProductControllerTest extends WebTestCase
             'input_action' => 'save_and_duplicate',
             'oro_product' => array_merge($data, [
                 '_token' => $form['oro_product[_token]']->getValue(),
-                'sku' => self::FIRST_DUPLICATED_SKU,
+                'sku' => ProductTestHelper::FIRST_DUPLICATED_SKU,
                 'owner' => $this->getBusinessUnitId(),
                 'inventory_status' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
                 'status' => Product::STATUS_ENABLED,
@@ -419,21 +402,21 @@ class ProductControllerTest extends WebTestCase
                 'additionalUnitPrecisions' => $form->getPhpValues()['oro_product']['additionalUnitPrecisions'],
                 'names' => [
                     'values' => [
-                        'default' => self::DEFAULT_NAME_ALTERED,
+                        'default' => ProductTestHelper::DEFAULT_NAME_ALTERED,
                         'localizations' => [$localization->getId() => ['fallback' => FallbackType::SYSTEM]],
                     ],
                     'ids' => [$localization->getId() => $localizedName->getId()],
                 ],
                 'descriptions' => [
                     'values' => [
-                        'default' => self::DEFAULT_DESCRIPTION,
+                        'default' => ProductTestHelper::DEFAULT_DESCRIPTION,
                         'localizations' => [$localization->getId() => ['fallback' => FallbackType::SYSTEM]],
                     ],
                     'ids' => [$localization->getId() => $localizedName->getId()],
                 ],
                 'shortDescriptions' => [
                     'values' => [
-                        'default' => self::DEFAULT_SHORT_DESCRIPTION,
+                        'default' => ProductTestHelper::DEFAULT_SHORT_DESCRIPTION,
                         'localizations' => [$localization->getId() => ['fallback' => FallbackType::SYSTEM]],
                     ],
                     'ids' => [$localization->getId() => $localizedName->getId()],
@@ -451,22 +434,34 @@ class ProductControllerTest extends WebTestCase
         $html = $crawler->html();
         $this->assertContains('Product has been saved and duplicated', $html);
         $this->assertContains(
-            self::SECOND_DUPLICATED_SKU . ' - ' . self::DEFAULT_NAME_ALTERED . ' - Products - Products',
+            ProductTestHelper::SECOND_DUPLICATED_SKU . ' - ' .
+            ProductTestHelper::DEFAULT_NAME_ALTERED . ' - Products - Products',
             $html
         );
-        $this->assertContains(self::UPDATED_INVENTORY_STATUS, $html);
-        $this->assertContains(self::STATUS, $html);
+        $this->assertContains(ProductTestHelper::UPDATED_INVENTORY_STATUS, $html);
+        $this->assertContains(ProductTestHelper::STATUS, $html);
 
         $this->assertContains(
-            $this->createPrimaryUnitPrecisionString(self::FIRST_UNIT_FULL_NAME, self::FIRST_UNIT_PRECISION),
+            $this->createPrimaryUnitPrecisionString(
+                ProductTestHelper::FIRST_UNIT_FULL_NAME,
+                ProductTestHelper::FIRST_UNIT_PRECISION
+            ),
             $html
         );
-        $this->assertContainsAdditionalUnitPrecision(self::SECOND_UNIT_FULL_NAME, self::SECOND_UNIT_PRECISION, $html);
-        $this->assertContainsAdditionalUnitPrecision(self::THIRD_UNIT_FULL_NAME, self::THIRD_UNIT_PRECISION, $html);
+        $this->assertContainsAdditionalUnitPrecision(
+            ProductTestHelper::SECOND_UNIT_FULL_NAME,
+            ProductTestHelper::SECOND_UNIT_PRECISION,
+            $html
+        );
+        $this->assertContainsAdditionalUnitPrecision(
+            ProductTestHelper::THIRD_UNIT_FULL_NAME,
+            ProductTestHelper::THIRD_UNIT_PRECISION,
+            $html
+        );
 
         $this->assertEmpty($this->parseProductImages($crawler));
 
-        $product = $this->getProductDataBySku(self::UPDATED_SKU);
+        $product = $this->getProductDataBySku(ProductTestHelper::UPDATED_SKU);
 
         return $product->getId();
     }
@@ -477,7 +472,7 @@ class ProductControllerTest extends WebTestCase
      */
     public function testPrimaryPrecisionAdditionalPrecisionSwap()
     {
-        $product = $this->getProductDataBySku(self::UPDATED_SKU);
+        $product = $this->getProductDataBySku(ProductTestHelper::UPDATED_SKU);
         $id = $product->getId();
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $id]));
         /** @var Form $form */
@@ -518,12 +513,15 @@ class ProductControllerTest extends WebTestCase
             $this->getActualAdditionalUnitPrecision($crawler, 1),
         ];
         $expectedUnitPrecisions = [
-            ['unit' => self::THIRD_UNIT_FULL_NAME, 'precision' => self::THIRD_UNIT_PRECISION,
+            ['unit' => ProductTestHelper::THIRD_UNIT_FULL_NAME, 'precision' => ProductTestHelper::THIRD_UNIT_PRECISION,
              'conversionRate' => 1, 'sell' => true],
-            ['unit' => self::FIRST_UNIT_FULL_NAME, 'precision' => self::FIRST_UNIT_PRECISION,
+            ['unit' => ProductTestHelper::FIRST_UNIT_FULL_NAME, 'precision' => ProductTestHelper::FIRST_UNIT_PRECISION,
              'conversionRate' => 1, 'sell' => true],
-            ['unit' => self::SECOND_UNIT_FULL_NAME, 'precision' => self::SECOND_UNIT_PRECISION,
-             'conversionRate' => 2, 'sell' => false],
+            [
+                'unit' => ProductTestHelper::SECOND_UNIT_FULL_NAME,
+                'precision' => ProductTestHelper::SECOND_UNIT_PRECISION,
+                'conversionRate' => 2, 'sell' => false
+            ],
         ];
         $this->assertEquals(
             $expectedUnitPrecisions,
@@ -538,7 +536,7 @@ class ProductControllerTest extends WebTestCase
      */
     public function testRemoveAddSameAdditionalPrecision()
     {
-        $product = $this->getProductDataBySku(self::UPDATED_SKU);
+        $product = $this->getProductDataBySku(ProductTestHelper::UPDATED_SKU);
         $id = $product->getId();
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $id]));
         /** @var Form $form */
@@ -560,10 +558,13 @@ class ProductControllerTest extends WebTestCase
             $this->getActualAdditionalUnitPrecision($crawler, 1),
         ];
         $expectedUnitPrecisions = [
-            ['unit' => self::FIRST_UNIT_FULL_NAME, 'precision' => self::FIRST_UNIT_PRECISION,
+            ['unit' => ProductTestHelper::FIRST_UNIT_FULL_NAME, 'precision' => ProductTestHelper::FIRST_UNIT_PRECISION,
                 'conversionRate' => 1, 'sell' => true],
-            ['unit' => self::SECOND_UNIT_FULL_NAME, 'precision' => self::SECOND_UNIT_PRECISION,
-                'conversionRate' => 2, 'sell' => false],
+            [
+                'unit' => ProductTestHelper::SECOND_UNIT_FULL_NAME,
+                'precision' => ProductTestHelper::SECOND_UNIT_PRECISION,
+                'conversionRate' => 2, 'sell' => false
+            ],
         ];
         $this->assertEquals(
             $expectedUnitPrecisions,
@@ -578,7 +579,7 @@ class ProductControllerTest extends WebTestCase
     public function testGetChangedUrlsWhenNoSlugChanged()
     {
         /** @var Product $product */
-        $product = $this->getProductDataBySku(self::UPDATED_SKU);
+        $product = $this->getProductDataBySku(ProductTestHelper::UPDATED_SKU);
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $product->getId()]));
         $form = $crawler->selectButton('Save')->form();
@@ -603,7 +604,7 @@ class ProductControllerTest extends WebTestCase
             ->getDefaultLocalization(false);
 
         /** @var Product $product */
-        $product = $this->getProductDataBySku(self::UPDATED_SKU);
+        $product = $this->getProductDataBySku(ProductTestHelper::UPDATED_SKU);
 
         $product->getSlugPrototypes()->clear();
 
@@ -871,24 +872,24 @@ class ProductControllerTest extends WebTestCase
     {
         $result = [];
 
-        $children = $crawler->filter(self::IMAGES_VIEW_HEAD_SELECTOR);
+        $children = $crawler->filter(ProductTestHelper::IMAGES_VIEW_HEAD_SELECTOR);
         /** @var \DOMElement $child */
         foreach ($children as $child) {
             $result[0][] = $child->textContent;
         }
 
-        $crawler->filter(self::IMAGES_VIEW_BODY_SELECTOR)->each(
+        $crawler->filter(ProductTestHelper::IMAGES_VIEW_BODY_SELECTOR)->each(
             function (Crawler $node) use (&$result) {
                 $data = [];
-                $data[] = $node->filter('a')->first()->attr(self::IMAGE_FILENAME_ATTR);
+                $data[] = $node->filter('a')->first()->attr(ProductTestHelper::IMAGE_FILENAME_ATTR);
 
                 /** @var \DOMElement $child */
                 foreach ($node->children()->nextAll() as $child) {
-                    $icon = $child->getElementsByTagName(self::IMAGE_TYPE_CHECKED_TAG)->item(0);
+                    $icon = $child->getElementsByTagName(ProductTestHelper::IMAGE_TYPE_CHECKED_TAG)->item(0);
                     $checked = false;
                     if ($icon) {
                         $iconClass = $icon->attributes->getNamedItem('class')->nodeValue;
-                        $checked = $iconClass == self::IMAGE_TYPE_CHECKED_CLASS;
+                        $checked = $iconClass == ProductTestHelper::IMAGE_TYPE_CHECKED_CLASS;
                     }
                     $data[] = (int) $checked;
                 }
