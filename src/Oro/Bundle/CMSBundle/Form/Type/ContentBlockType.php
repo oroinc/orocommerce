@@ -2,10 +2,6 @@
 
 namespace Oro\Bundle\CMSBundle\Form\Type;
 
-use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
-use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
-use Oro\Bundle\CMSBundle\Entity\ContentBlock;
-
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -13,13 +9,16 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use Oro\Bundle\ScopeBundle\Form\Type\ScopeCollectionType;
+use Oro\Bundle\CMSBundle\Entity\ContentBlock;
+
 class ContentBlockType extends AbstractType
 {
     const NAME = 'oro_cms_content_block';
 
     /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
+     * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -54,9 +53,11 @@ class ContentBlockType extends AbstractType
                 ScopeCollectionType::NAME,
                 [
                     'label' => 'oro.cms.page.content.label',
+                    'entry_options' => [
+                        'scope_type' => 'cms_content_block'
+                    ],
                 ]
-            )
-            ->add(
+            )->add(
                 'contentVariants',
                 TextContentVariantCollectionType::NAME,
                 [
@@ -72,13 +73,13 @@ class ContentBlockType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class' => ContentBlock::class,
+                'data_class' => ContentBlock::class
             ]
         );
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getName()
     {

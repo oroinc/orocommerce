@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WebCatalogBundle\Model;
+namespace Oro\Component\WebCatalog\Model;
 
 use Symfony\Component\Form\FormInterface;
 
@@ -18,9 +18,9 @@ class ContentVariantFormPrototype
 
     /**
      * @param FormInterface $form
-     * @param string $title
+     * @param string|null   $title
      */
-    public function __construct(FormInterface $form, $title)
+    public function __construct(FormInterface $form, $title = null)
     {
         $this->form = $form;
         $this->title = $title;

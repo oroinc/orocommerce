@@ -16,17 +16,17 @@ class TextContentVariantType extends AbstractType
     const NAME = 'oro_cms_text_content_variant';
 
     /**
-     * @param FormBuilderInterface $builder
-     * @param array $options
+     * {@inheritdoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
             ->add(
-                'scopes',
-                ScopeCollectionType::NAME,
+                'default',
+                CheckboxType::class,
                 [
-                'label' => 'oro.cms.page.content.label',
+                    'label' => 'oro.cms.page.default.label',
+                    'required' => false
                 ]
             )
             ->add(
@@ -42,11 +42,13 @@ class TextContentVariantType extends AbstractType
                 ]
             )
             ->add(
-                'default',
-                CheckboxType::class,
+                'scopes',
+                ScopeCollectionType::NAME,
                 [
-                    'label' => 'oro.cms.page.default.label',
-                    'required' => false
+                    'label' => 'oro.cms.page.content.label',
+                    'entry_options' => [
+                        'scope_type' => 'cms_content_block'
+                    ],
                 ]
             );
     }
@@ -64,7 +66,7 @@ class TextContentVariantType extends AbstractType
     }
 
     /**
-     * @return string
+     * {@inheritdoc}
      */
     public function getName()
     {

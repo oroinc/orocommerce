@@ -26,12 +26,16 @@ oro.cms:
         entity_plural_label: Content Blocks
         id.label: Id
         alias.label: Alias
-        content_variants.label: Content Variant
+        content_variants:
+            label: Content Variant
+            default.label: Default Variant
         organization.label: Organization
         owner.label: Owner
         titles.label: Titles
         scopes.label: Restrictions
         enabled.label: Enabled
+        form:
+            add_variant.label: Add Content
 
     controller:
         page.saved.message: 'Page has been saved'

@@ -3,9 +3,14 @@
 namespace Oro\Bundle\CMSBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
+
+use Oro\Component\WebCatalog\Model\ContentVariantFormPrototype;
 
 class TextContentVariantCollectionType extends AbstractType
 {
@@ -27,14 +32,28 @@ class TextContentVariantCollectionType extends AbstractType
         $resolver->setDefaults(
             [
                 'type' => TextContentVariantType::NAME,
-                'show_form_when_empty' => false,
-                'error_bubbling' => false,
-                'cascade_validation' => true,
-                'prototype_name' => '__textcontentvariantitem__',
-                'prototype' => true,
-                'handle_primary' => false
+                'prototype_name' => '__variant_idx__',
             ]
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildView(FormView $view, FormInterface $form, array $options)
+    {
+        $formConfig = $form->getConfig();
+
+        $view->vars['prototype_name'] = $options['prototype_name'];
+        $view->vars['formPrototype'] = $formConfig->getAttribute('formPrototype');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function buildForm(FormBuilderInterface $builder, array $options)
+    {
+        $this->initializeContentVariantForm($builder, $options);
     }
 
     /**
@@ -51,5 +70,19 @@ class TextContentVariantCollectionType extends AbstractType
     public function getBlockPrefix()
     {
         return self::NAME;
+    }
+
+    /**
+     * @param FormBuilderInterface $builder
+     * @param array                $options
+     */
+    protected function initializeContentVariantForm(FormBuilderInterface $builder, array $options)
+    {
+        $prototypeOptions = array_replace(['required' => $options['required']], $options['entry_options']);
+        $prototypeForm = $builder
+            ->create($options['prototype_name'], TextContentVariantType::class, $prototypeOptions)
+            ->getForm();
+
+        $builder->setAttribute('formPrototype', new ContentVariantFormPrototype($prototypeForm));
     }
 }

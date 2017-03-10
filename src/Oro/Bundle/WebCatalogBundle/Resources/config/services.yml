@@ -180,6 +180,7 @@ services:
         tags:
             - { name: oro_service_link, service: oro_web_catalog.web_catalog_scope_criteria_provider }
             - { name: oro_scope.provider, scopeType: web_content, priority: 10000 }
+            - { name: oro_scope.provider, scopeType: cms_content_block, priority: 10000 }
 
     oro_web_catalog.form.extension.web_catalog_scope:
         class: Oro\Bundle\WebCatalogBundle\Form\Extension\WebCatalogScopeExtension

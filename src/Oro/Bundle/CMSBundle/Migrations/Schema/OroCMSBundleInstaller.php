@@ -408,13 +408,13 @@ class OroCMSBundleInstaller implements
     }
 
     /**
-     * Create oro_cms_text_content_variant_scope table
+     * Create oro_cms_txt_cont_variant_scope table
      *
      * @param Schema $schema
      */
     protected function createOroCmsTextContentVariantScopeTable(Schema $schema)
     {
-        $table = $schema->createTable('oro_cms_text_content_variant_scope');
+        $table = $schema->createTable('oro_cms_txt_cont_variant_scope');
         $table->addColumn('variant_id', 'integer', []);
         $table->addColumn('scope_id', 'integer', []);
         $table->setPrimaryKey(['variant_id', 'scope_id']);
@@ -439,13 +439,13 @@ class OroCMSBundleInstaller implements
     }
 
     /**
-     * Add oro_cms_text_content_variant_scope foreign keys.
+     * Add oro_cms_txt_cont_variant_scope foreign keys.
      *
      * @param Schema $schema
      */
     protected function addOroCmsTextContentVariantScopeForeignKeys(Schema $schema)
     {
-        $table = $schema->getTable('oro_cms_text_content_variant_scope');
+        $table = $schema->getTable('oro_cms_txt_cont_variant_scope');
         $table->addForeignKeyConstraint(
             $schema->getTable('oro_cms_text_content_variant'),
             ['variant_id'],

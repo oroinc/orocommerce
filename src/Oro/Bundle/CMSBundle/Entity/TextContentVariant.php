@@ -44,7 +44,7 @@ class TextContentVariant implements
      * @ORM\ManyToMany(
      *      targetEntity="Oro\Bundle\ScopeBundle\Entity\Scope"
      * )
-     * @ORM\JoinTable(name="oro_cms_text_content_variant_scope",
+     * @ORM\JoinTable(name="oro_cms_txt_cont_variant_scope",
      *      joinColumns={
      *          @ORM\JoinColumn(name="variant_id", referencedColumnName="id", onDelete="CASCADE")
      *      },
