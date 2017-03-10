@@ -27,5 +27,5 @@ navigation:
 
     titles:
         oro_catalog_category_index:  ~
-        oro_catalog_category_update: '%%title%% - Edit'
+        oro_catalog_category_update: '%title% - Edit'
         oro_catalog_category_create: 'Create Category'
