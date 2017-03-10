@@ -188,11 +188,6 @@ datagrids:
             title:
                 type: localized_value
                 data_name: block.titles
-#            update_link:
-#                type: url
-#                route: issue.update
-#                params:
-#                    - id
             view_link:
                 type: url
                 route: oro_cms_content_block_view
@@ -206,9 +201,3 @@ datagrids:
                 icon:          eye
                 acl_resource:  oro_cms_contentblock_view
                 rowAction:     true
-#            update:
-#                type:          navigate
-#                label:         oro.actions.issue.update.label
-#                link:          update_link
-#                icon:          edit
-#                acl_resource:  issue_update

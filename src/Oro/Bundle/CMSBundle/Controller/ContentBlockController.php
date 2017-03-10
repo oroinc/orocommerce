@@ -93,7 +93,7 @@ class ContentBlockController extends Controller
         return $this->get('oro_form.model.update_handler')->update(
             $contentBlock,
             $this->createForm(ContentBlockType::NAME, $contentBlock),
-            $this->get('translator')->trans('oro_cms.controller.contentblock.saved.message')
+            $this->get('translator')->trans('oro.cms.controller.contentblock.saved.message')
         );
     }
 }

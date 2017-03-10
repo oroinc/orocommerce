@@ -1,5 +1,5 @@
 {% extends 'OroUIBundle:actions:view.html.twig' %}
-{% import 'OroDataGridBundle::macros.html.twig' as dataGrid %}
+{% import 'OroUIBundle::macros.html.twig' as UI %}
 
 {% oro_title_set({params : {"%title%": 'oro.cms.contentblock.entity_label'|trans } }) %}
 
@@ -14,20 +14,100 @@
     {{ parent() }}
 {% endblock pageHeader %}
 
-{% block content_data %}
-    {% set dataBlocks = [{
-        'title': 'oro.cms.sections.general'|trans,
-        'class': 'active',
-        'subblocks': [
-            {'data' : [
-                UI.renderProperty('oro.cms.contentblock.alias.label'|trans, entity.alias),
-                UI.renderProperty('oro.cms.contentblock.enabled.label'|trans, entity.enabled ?
-                'oro.cms.contentblock.enabled_yes.label'|trans
+{% set restrictionsData %}
+    {% if entity.scopes|length %}
+        <table class="grid table table-bordered table-condensed quote-line-items">
+            <thead>
+            <tr>
+                <th><span>{{ 'oro.cms.contentblock.scopes.localization.label'|trans }}</span></th>
+                <th><span>{{ 'oro.cms.contentblock.scopes.website.label'|trans }}</span></th>
+                <th><span>{{ 'oro.cms.contentblock.scopes.customer_group.label'|trans }}</span></th>
+                <th><span>{{ 'oro.cms.contentblock.scopes.customer.label'|trans }}</span></th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for scope in entity.scopes %}
+                {{ dump(scope) }}
+                    <tr>
+                        <td>{{ scope.localization }}</td>
+                        <td>{{ scope.website }}</td>
+                        <td>{{ scope.customerGroup }}</td>
+                        <td>{{ scope.customer }}</td>
+                    </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        {{ 'oro.cms.contentblock.no_restrictions.label'|trans }}
+    {% endif %}
+{% endset %}
+
+{% set contentVariantsData %}
+    {% if entity.contentVariants|length %}
+            {% for variant in entity.contentVariants %}
+                {{ UI.renderProperty('oro.cms.contentblock.content_variants.default.label'|trans, variant.default ?
+                'oro.cms.contentblock.content_variants.default_yes.label'|trans
                 :
-                'oro.cms.contentblock.enabled_no.label'|trans )
-            ]}
-        ]
-    }] %}
+                'oro.cms.contentblock.content_variants.default_no.label'|trans) }}
+                {{ UI.renderHtmlProperty('oro.cms.contentblock.content_variants.content.label'|trans, variant.content) }}
+                {% if variant.scopes|length %}
+                    <table class="grid table table-bordered table-condensed quote-line-items">
+                        <thead>
+                        <tr>
+                            <th><span>{{ 'oro.cms.contentblock.scopes.localization.label'|trans }}</span></th>
+                            <th><span>{{ 'oro.cms.contentblock.scopes.website.label'|trans }}</span></th>
+                            <th><span>{{ 'oro.cms.contentblock.scopes.customer_group.label'|trans }}</span></th>
+                            <th><span>{{ 'oro.cms.contentblock.scopes.customer.label'|trans }}</span></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {% for variantScope in variant.scopes %}
+                            <tr>
+                                <td>{{ variantScope.localization }}</td>
+                                <td>{{ variantScope.website }}</td>
+                                <td>{{ variantScope.customerGroup }}</td>
+                                <td>{{ variantScope.customer }}</td>
+                            </tr>
+                        {% endfor %}
+                        </tbody>
+                    </table>
+                {% else %}
+                    {{ 'oro.cms.contentblock.no_restrictions.label'|trans }}
+                {% endif %}
+            {% endfor %}
+    {% else %}
+        {{ 'oro.cms.contentblock.content_variants.no_content_variants.label'|trans }}
+    {% endif %}
+{% endset %}
+
+{% block content_data %}
+    {% set dataBlocks = [
+        {
+            'title': 'oro.cms.contentblock.sections.general.label'|trans,
+            'class': 'active',
+            'subblocks': [{
+                'data' : [
+                    UI.renderProperty('oro.cms.contentblock.alias.label'|trans, entity.alias),
+                    UI.renderProperty('oro.cms.contentblock.enabled.label'|trans, entity.enabled ?
+                    'oro.cms.contentblock.enabled_yes.label'|trans
+                    :
+                    'oro.cms.contentblock.enabled_no.label'|trans)
+                ]
+            }]
+        },
+        {
+            'title': 'oro.cms.contentblock.sections.use_for.label'|trans,
+            'subblocks': [{
+                'data' : [restrictionsData]
+            }]
+        },
+        {
+            'title': 'oro.cms.contentblock.content_variants.entity_plural_label'|trans,
+            'subblocks': [{
+                'data' : [contentVariantsData]
+            }]
+        }
+    ] %}
 
     {% set id = 'contentblock-page-view' %}
     {% set data = {'dataBlocks': dataBlocks} %}
