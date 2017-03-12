@@ -45,7 +45,7 @@ class TextContentVariantType extends AbstractType
                 'scopes',
                 ScopeCollectionType::NAME,
                 [
-                    'label' => 'oro.cms.page.content.label',
+                    'label' => 'oro.cms.contentblock.scopes.label',
                     'entry_options' => [
                         'scope_type' => 'cms_content_block'
                     ],

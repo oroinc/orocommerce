@@ -15,66 +15,57 @@
 {% endblock pageHeader %}
 
 {% set restrictionsData %}
-    {% if entity.scopes|length %}
-        <table class="grid table table-bordered table-condensed quote-line-items">
-            <thead>
-            <tr>
-                <th><span>{{ 'oro.cms.contentblock.scopes.localization.label'|trans }}</span></th>
-                <th><span>{{ 'oro.cms.contentblock.scopes.website.label'|trans }}</span></th>
-                <th><span>{{ 'oro.cms.contentblock.scopes.customer_group.label'|trans }}</span></th>
-                <th><span>{{ 'oro.cms.contentblock.scopes.customer.label'|trans }}</span></th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for scope in entity.scopes %}
-                {{ dump(scope) }}
-                    <tr>
-                        <td>{{ scope.localization }}</td>
-                        <td>{{ scope.website }}</td>
-                        <td>{{ scope.customerGroup }}</td>
-                        <td>{{ scope.customer }}</td>
-                    </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        {{ 'oro.cms.contentblock.no_restrictions.label'|trans }}
-    {% endif %}
+    <table class="grid table table-bordered table-condensed quote-line-items">
+        <thead>
+        <tr>
+            <th><span>{{ 'oro.cms.contentblock.scopes.localization.label'|trans }}</span></th>
+            <th><span>{{ 'oro.cms.contentblock.scopes.website.label'|trans }}</span></th>
+            <th><span>{{ 'oro.cms.contentblock.scopes.customer_group.label'|trans }}</span></th>
+            <th><span>{{ 'oro.cms.contentblock.scopes.customer.label'|trans }}</span></th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for scope in entity.scopes %}
+                <tr>
+                    <td>{{ scope.localization|default('N/A'|trans) }}</td>
+                    <td>{{ scope.website|default('N/A'|trans) }}</td>
+                    <td>{{ scope.customerGroup|default('N/A'|trans) }}</td>
+                    <td>{{ scope.customer|default('N/A'|trans) }}</td>
+                </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endset %}
 
 {% set contentVariantsData %}
     {% if entity.contentVariants|length %}
-            {% for variant in entity.contentVariants %}
-                {{ UI.renderProperty('oro.cms.contentblock.content_variants.default.label'|trans, variant.default ?
-                'oro.cms.contentblock.content_variants.default_yes.label'|trans
-                :
-                'oro.cms.contentblock.content_variants.default_no.label'|trans) }}
-                {{ UI.renderHtmlProperty('oro.cms.contentblock.content_variants.content.label'|trans, variant.content) }}
-                {% if variant.scopes|length %}
-                    <table class="grid table table-bordered table-condensed quote-line-items">
-                        <thead>
-                        <tr>
-                            <th><span>{{ 'oro.cms.contentblock.scopes.localization.label'|trans }}</span></th>
-                            <th><span>{{ 'oro.cms.contentblock.scopes.website.label'|trans }}</span></th>
-                            <th><span>{{ 'oro.cms.contentblock.scopes.customer_group.label'|trans }}</span></th>
-                            <th><span>{{ 'oro.cms.contentblock.scopes.customer.label'|trans }}</span></th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {% for variantScope in variant.scopes %}
-                            <tr>
-                                <td>{{ variantScope.localization }}</td>
-                                <td>{{ variantScope.website }}</td>
-                                <td>{{ variantScope.customerGroup }}</td>
-                                <td>{{ variantScope.customer }}</td>
-                            </tr>
-                        {% endfor %}
-                        </tbody>
-                    </table>
-                {% else %}
-                    {{ 'oro.cms.contentblock.no_restrictions.label'|trans }}
-                {% endif %}
-            {% endfor %}
+        {% for variant in entity.contentVariants %}
+            {{ UI.renderProperty('oro.cms.contentblock.content_variants.default.label'|trans, variant.default ?
+            'oro.cms.contentblock.content_variants.default.yes.label'|trans
+            :
+            'oro.cms.contentblock.content_variants.default.no.label'|trans) }}
+            {{ UI.renderHtmlProperty('oro.cms.page.content.label'|trans, variant.content) }}
+            <table class="grid table table-bordered table-condensed quote-line-items">
+                <thead>
+                <tr>
+                    <th><span>{{ 'oro.cms.contentblock.scopes.localization.label'|trans }}</span></th>
+                    <th><span>{{ 'oro.cms.contentblock.scopes.website.label'|trans }}</span></th>
+                    <th><span>{{ 'oro.cms.contentblock.scopes.customer_group.label'|trans }}</span></th>
+                    <th><span>{{ 'oro.cms.contentblock.scopes.customer.label'|trans }}</span></th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for variantScope in variant.scopes %}
+                    <tr>
+                        <td>{{ variantScope.localization|default('N/A'|trans) }}</td>
+                        <td>{{ variantScope.website|default('N/A'|trans) }}</td>
+                        <td>{{ variantScope.customerGroup|default('N/A'|trans) }}</td>
+                        <td>{{ variantScope.customer|default('N/A'|trans) }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endfor %}
     {% else %}
         {{ 'oro.cms.contentblock.content_variants.no_content_variants.label'|trans }}
     {% endif %}
@@ -89,9 +80,9 @@
                 'data' : [
                     UI.renderProperty('oro.cms.contentblock.alias.label'|trans, entity.alias),
                     UI.renderProperty('oro.cms.contentblock.enabled.label'|trans, entity.enabled ?
-                    'oro.cms.contentblock.enabled_yes.label'|trans
+                    'oro.cms.contentblock.enabled.yes.label'|trans
                     :
-                    'oro.cms.contentblock.enabled_no.label'|trans)
+                    'oro.cms.contentblock.enabled.no.label'|trans)
                 ]
             }]
         },

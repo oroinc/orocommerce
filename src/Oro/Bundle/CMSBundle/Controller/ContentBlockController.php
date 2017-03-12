@@ -10,14 +10,15 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\CMSBundle\Form\Type\ContentBlockType;
-use Oro\Bundle\FormBundle\Model\UpdateHandler;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 class ContentBlockController extends Controller
 {
     /**
      * @Route("/", name="oro_cms_content_block_index")
      * @Template
+     * @AclAncestor("oro_cms_content_block_view")
      *
      * @return array
      */

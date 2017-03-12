@@ -26,19 +26,41 @@ oro.cms:
         entity_plural_label: Content Blocks
         id.label: Id
         alias.label: Alias
+        createdat.label: Created At
+        updatedat.label: Updated At
         content_variants:
             label: Content Variant
-            default.label: Default Variant
+            entity_plural_label: Content Variants
+            no_content_variants.label: No content variants
+            default:
+                label: Default Variant
+                yes.label: Yes
+                no.label: No
         organization.label: Organization
         owner.label: Owner
-        titles.label: Titles
-        scopes.label: Restrictions
-        enabled.label: Enabled
+        titles:
+            label: Titles
+            singular_label: Title
+        scopes:
+            label: Restrictions
+            localization.label: Localization
+            website.label: Website
+            customer_group.label: Customer Group
+            customer.label: Customer
+        enabled:
+            label: Enabled
+            yes.label: Yes
+            no.label: No
+        no_restrictions.label: No restrictions
         form:
             add_variant.label: Add Content
+        sections:
+            general.label: General
+            use_for.label: Restrictions
 
     controller:
         page.saved.message: 'Page has been saved'
+        contentblock.saved.message: 'Content block has been saved'
 
     menu:
         marketing_tab.label: 'Marketing'
