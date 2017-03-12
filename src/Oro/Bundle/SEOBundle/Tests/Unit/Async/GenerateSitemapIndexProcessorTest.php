@@ -7,15 +7,17 @@ use Oro\Bundle\SEOBundle\Async\GenerateSitemapIndexProcessor;
 use Oro\Bundle\SEOBundle\Async\Topics;
 use Oro\Bundle\SEOBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\SEOBundle\Model\SitemapIndexMessageFactory;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Oro\Component\SEO\Tools\SitemapDumperInterface;
+use Oro\Component\Website\WebsiteInterface;
 use Psr\Log\LoggerInterface;
 
 class GenerateSitemapIndexProcessorTest extends \PHPUnit_Framework_TestCase
 {
+    const INDEX_FILE_PROVIDER_NAME = 'index';
+
     /**
      * @var SitemapIndexMessageFactory|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -96,7 +98,7 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('getBody')
             ->willReturn(JSON::encode($data));
 
-        $website = new Website();
+        $website = $this->createMock(WebsiteInterface::class);
         $this->messageFactory->expects($this->once())
             ->method('getWebsiteFromMessage')
             ->with($data)
@@ -111,7 +113,7 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit_Framework_TestCase
         $exception = new \Exception();
         $this->dumper->expects($this->once())
             ->method('dump')
-            ->with($website, $version)
+            ->with($website, $version, self::INDEX_FILE_PROVIDER_NAME)
             ->willThrowException($exception);
         $this->logger->expects($this->once())
             ->method('error')
@@ -140,7 +142,7 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('getBody')
             ->willReturn(JSON::encode($data));
 
-        $website = new Website();
+        $website = $this->createMock(WebsiteInterface::class);
         $this->messageFactory->expects($this->once())
             ->method('getWebsiteFromMessage')
             ->with($data)
@@ -153,7 +155,7 @@ class GenerateSitemapIndexProcessorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($version);
 
         $this->dumper->expects($this->once())
-            ->method('dump')
+            ->method('dump', self::INDEX_FILE_PROVIDER_NAME)
             ->with($website, $version);
 
         $this->assertEquals(UrlCacheProcessor::ACK, $this->processor->process($message, $session));

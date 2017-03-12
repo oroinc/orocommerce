@@ -10,7 +10,6 @@ use Oro\Bundle\SEOBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\SEOBundle\Model\SitemapIndexMessageFactory;
 use Oro\Bundle\SEOBundle\Model\SitemapMessageFactory;
 use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistry;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Provider\WebsiteProviderInterface;
 use Oro\Component\MessageQueue\Client\MessageProducerInterface;
 use Oro\Component\MessageQueue\Job\DependentJobContext;
@@ -230,11 +229,12 @@ class GenerateSitemapProcessorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return Website
+     * @return WebsiteInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private function getWebsite()
     {
-        $website = $this->getEntity(Website::class, ['id' => 777]);
+        $website = $this->createWebsiteMock(777);
+
         $this->websiteProvider->expects($this->once())
             ->method('getWebsites')
             ->willReturn([$website]);
@@ -243,19 +243,33 @@ class GenerateSitemapProcessorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return Website[]
+     * @return WebsiteInterface[]|\PHPUnit_Framework_MockObject_MockObject[]
      */
     private function getWebsites()
     {
         $websites = [
-            $this->getEntity(Website::class, ['id' => 777]),
-            $this->getEntity(Website::class, ['id' => 888]),
+            $this->createWebsiteMock(777),
+            $this->createWebsiteMock(888),
         ];
         $this->websiteProvider->expects($this->once())
             ->method('getWebsites')
             ->willReturn($websites);
 
         return $websites;
+    }
+
+    /**
+     * @param int $websiteId
+     * @return WebsiteInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createWebsiteMock($websiteId)
+    {
+        $website = $this->createMock(WebsiteInterface::class);
+        $website->expects($this->any())
+            ->method('getId')
+            ->willReturn($websiteId);
+
+        return $website;
     }
 
     /**
@@ -296,7 +310,7 @@ class GenerateSitemapProcessorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param array|Website[] $websites
+     * @param array|WebsiteInterface[] $websites
      * @param array $providerNames
      */
     private function expectCreateDelayed(array $websites, array $providerNames)

@@ -6,7 +6,6 @@ use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\SEOBundle\Model\DTO\UrlItem;
 use Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFilesystemAdapter;
 use Oro\Bundle\SEOBundle\Sitemap\Provider\SitemapFilesProvider;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Component\Website\WebsiteInterface;
 use Symfony\Component\Finder\Finder;
@@ -71,8 +70,11 @@ class SitemapFilesProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetUrlItems()
     {
-        /** @var Website $website */
-        $website = $this->getEntity(Website::class, ['id' => 1]);
+        /** @var WebsiteInterface|\PHPUnit_Framework_MockObject_MockObject $website */
+        $website = $this->createMock(WebsiteInterface::class);
+        $website->expects($this->any())
+            ->method('getId')
+            ->willReturn(1);
         $version = 'actual';
 
         $fileName = 'test.xml';

@@ -56,7 +56,7 @@ class GenerateSitemapIndexProcessor implements MessageProcessorInterface, TopicS
             $website = $this->messageFactory->getWebsiteFromMessage($messageBody);
             $version = $this->messageFactory->getVersionFromMessage($messageBody);
 
-            $this->dumper->dump($website, $version);
+            $this->dumper->dump($website, $version, 'index');
         } catch (InvalidArgumentException $e) {
             $this->logger->error(
                 'Queue Message is invalid',

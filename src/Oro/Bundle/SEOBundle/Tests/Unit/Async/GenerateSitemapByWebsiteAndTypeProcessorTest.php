@@ -6,7 +6,6 @@ use Oro\Bundle\SEOBundle\Async\GenerateSitemapByWebsiteAndTypeProcessor;
 use Oro\Bundle\SEOBundle\Async\Topics;
 use Oro\Bundle\SEOBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\SEOBundle\Model\SitemapMessageFactory;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\MessageQueue\Consumption\MessageProcessorInterface;
 use Oro\Component\MessageQueue\Job\JobRunner;
 use Oro\Component\MessageQueue\Test\JobRunner as TestJobRunner;
@@ -14,6 +13,7 @@ use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Oro\Component\SEO\Tools\SitemapDumperInterface;
+use Oro\Component\Website\WebsiteInterface;
 use Psr\Log\LoggerInterface;
 
 class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit_Framework_TestCase
@@ -136,7 +136,7 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit_Framework_Te
             ->willReturn(JSON::encode($messageBody));
 
         $exception = new \Exception();
-        $website = new Website();
+        $website = $this->createMock(WebsiteInterface::class);
         $this->assertMessageFactoryCalled($messageBody, $website);
 
         $this->sitemapDumper->expects($this->once())
@@ -176,7 +176,7 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit_Framework_Te
             ->method('getBody')
             ->willReturn(JSON::encode($messageBody));
 
-        $website = new Website();
+        $website = $this->createMock(WebsiteInterface::class);
         $this->assertMessageFactoryCalled($messageBody, $website);
 
         $this->sitemapDumper->expects($this->once())
@@ -202,9 +202,9 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit_Framework_Te
 
     /**
      * @param array $messageBody
-     * @param Website $website
+     * @param WebsiteInterface $website
      */
-    private function assertMessageFactoryCalled(array $messageBody, Website $website = null)
+    private function assertMessageFactoryCalled(array $messageBody, WebsiteInterface $website = null)
     {
         $this->messageFactory->expects($this->once())
             ->method('getJobIdFromMessage')

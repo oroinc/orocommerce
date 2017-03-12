@@ -21,6 +21,7 @@ class GzipSitemapFileWriter implements SitemapFileWriterInterface
 
     /**
      * @param string $siteMapContents
+     * @param string $path
      * @return string
      */
     public function saveSitemap($siteMapContents, $path)

@@ -2,10 +2,11 @@
 
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\Model;
 
+use Oro\Bundle\SEOBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\SEOBundle\Model\SitemapIndexMessageFactory;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Website\WebsiteInterface;
 
 class SitemapIndexMessageFactoryTest extends \PHPUnit_Framework_TestCase
 {
@@ -33,14 +34,13 @@ class SitemapIndexMessageFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $version = time();
         $websiteId = 777;
-        /** @var Website $website */
-        $website = $this->getEntity(Website::class, ['id' => $websiteId]);
+        $website = $this->createWebsiteMock($websiteId);
         $this->websiteRepository->expects($this->once())
             ->method('checkWebsiteExists')
             ->with($websiteId)
             ->willReturn(false);
 
-        $this->expectException('InvalidArgumentException');
+        $this->expectException(InvalidArgumentException::class);
         $this->factory->createMessage($website, $version);
     }
 
@@ -48,8 +48,7 @@ class SitemapIndexMessageFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $version = time();
         $websiteId = 777;
-        /** @var Website $website */
-        $website = $this->getEntity(Website::class, ['id' => $websiteId]);
+        $website = $this->createWebsiteMock($websiteId);
         $this->websiteRepository->expects($this->once())
             ->method('checkWebsiteExists')
             ->with($websiteId)
@@ -77,7 +76,7 @@ class SitemapIndexMessageFactoryTest extends \PHPUnit_Framework_TestCase
             ->with($websiteId)
             ->willReturn(true);
 
-        $website = new Website();
+        $website = $this->createWebsiteMock($websiteId);
         $this->websiteRepository->expects($this->once())
             ->method('find')
             ->with($websiteId)
@@ -100,5 +99,19 @@ class SitemapIndexMessageFactoryTest extends \PHPUnit_Framework_TestCase
             ->willReturn(true);
 
         $this->assertEquals($version, $this->factory->getVersionFromMessage($message));
+    }
+
+    /**
+     * @param int $websiteId
+     * @return WebsiteInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createWebsiteMock($websiteId)
+    {
+        $website = $this->createMock(WebsiteInterface::class);
+        $website->expects($this->any())
+            ->method('getId')
+            ->willReturn($websiteId);
+
+        return $website;
     }
 }

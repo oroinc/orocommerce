@@ -13,7 +13,6 @@ use Oro\Bundle\SEOBundle\Event\UrlItemsProviderStartEvent;
 use Oro\Bundle\SEOBundle\Model\DTO\UrlItem;
 use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProvider;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Website\WebsiteInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -60,7 +59,7 @@ class UrlItemsProviderTest extends WebTestCase
 
         $this->canonicalUrlGenerator = $this->getContainer()->get('oro_redirect.generator.canonical_url');
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
-        $this->website = new Website();
+        $this->website = $this->createMock(WebsiteInterface::class);
         $this->version = '1';
     }
 

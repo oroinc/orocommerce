@@ -21,4 +21,9 @@ interface SitemapStorageInterface
      * @return string
      */
     public function getContents();
+
+    /**
+     * @return integer
+     */
+    public function getUrlItemsCount();
 }

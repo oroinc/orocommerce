@@ -10,7 +10,6 @@ use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProvider;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Resolver\WebsiteUrlResolver;
 use Oro\Component\Website\WebsiteInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -65,13 +64,16 @@ class CanonicalUrlGenerator
 
     /**
      * @param SluggableInterface $entity
-     * @param Localization $localization
-     * @param Website $website
+     * @param Localization|null $localization
+     * @param WebsiteInterface|null $website
      *
      * @return string
      */
-    public function getUrl(SluggableInterface $entity, Localization $localization = null, Website $website = null)
-    {
+    public function getUrl(
+        SluggableInterface $entity,
+        Localization $localization = null,
+        WebsiteInterface $website = null
+    ) {
         $url = '';
 
         if ($this->getCanonicalUrlType($website) === Configuration::DIRECT_URL) {
@@ -88,14 +90,14 @@ class CanonicalUrlGenerator
     /**
      * @param SlugAwareInterface $entity
      * @param Localization|null $localization
-     * @param Website|null $website
+     * @param WebsiteInterface|null $website
      *
      * @return string
      */
     public function getDirectUrl(
         SlugAwareInterface $entity,
         Localization $localization = null,
-        Website $website = null
+        WebsiteInterface $website = null
     ) {
         $url = '';
         $slug = $this->getDirectUrlSlug($entity, $localization);
@@ -128,11 +130,11 @@ class CanonicalUrlGenerator
 
     /**
      * @param SluggableInterface $entity
-     * @param Website $website
+     * @param WebsiteInterface|null $website
      *
      * @return string
      */
-    public function getSystemUrl(SluggableInterface $entity, Website $website = null)
+    public function getSystemUrl(SluggableInterface $entity, WebsiteInterface $website = null)
     {
         $routeData = $this->routingInformationProvider->getRouteData($entity);
 
@@ -154,11 +156,11 @@ class CanonicalUrlGenerator
     }
 
     /**
-     * @param Website $website
+     * @param WebsiteInterface|null $website
      *
      * @return string
      */
-    public function getCanonicalUrlType(Website $website = null)
+    public function getCanonicalUrlType(WebsiteInterface $website = null)
     {
         $configKey = 'oro_redirect.' . Configuration::CANONICAL_URL_TYPE;
         if (!$this->cacheProvider->contains($configKey)) {
@@ -169,11 +171,11 @@ class CanonicalUrlGenerator
     }
 
     /**
-     * @param Website $website
+     * @param WebsiteInterface|null $website
      *
      * @return string
      */
-    public function getCanonicalUrlSecurityType(Website $website = null)
+    public function getCanonicalUrlSecurityType(WebsiteInterface $website = null)
     {
         $configKey = 'oro_redirect.' . Configuration::CANONICAL_URL_SECURITY_TYPE;
         if (!$this->cacheProvider->contains($configKey)) {

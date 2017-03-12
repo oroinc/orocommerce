@@ -6,8 +6,8 @@ use Oro\Bundle\MessageQueueBundle\Entity\Job;
 use Oro\Bundle\SEOBundle\Model\SitemapMessageFactory;
 use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProviderRegistry;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Component\Website\WebsiteInterface;
 
 class SitemapMessageFactoryTest extends \PHPUnit_Framework_TestCase
 {
@@ -44,8 +44,7 @@ class SitemapMessageFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $version = time();
         $websiteId = 777;
-        /** @var Website $website */
-        $website = $this->getEntity(Website::class, ['id' => $websiteId]);
+        $website = $this->createWebsiteMock($websiteId);
         $this->websiteRepository->expects($this->once())
             ->method('checkWebsiteExists')
             ->with($websiteId)
@@ -68,8 +67,7 @@ class SitemapMessageFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $version = time();
         $websiteId = 777;
-        /** @var Website $website */
-        $website = $this->getEntity(Website::class, ['id' => $websiteId]);
+        $website = $this->createWebsiteMock($websiteId);
         $this->websiteRepository->expects($this->once())
             ->method('checkWebsiteExists')
             ->with($websiteId)
@@ -108,8 +106,8 @@ class SitemapMessageFactoryTest extends \PHPUnit_Framework_TestCase
         $this->providerRegistry->expects($this->once())
             ->method('getProviderNames')
             ->willReturn([$type]);
-        
-        $website = new Website();
+
+        $website = $this->createWebsiteMock($websiteId);
         $this->websiteRepository->expects($this->once())
             ->method('find')
             ->with($websiteId)
@@ -190,5 +188,19 @@ class SitemapMessageFactoryTest extends \PHPUnit_Framework_TestCase
             SitemapMessageFactory::JOB_ID => $jobId,
         ];
         $this->assertEquals($version, $this->factory->getVersionFromMessage($message));
+    }
+
+    /**
+     * @param int $websiteId
+     * @return WebsiteInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createWebsiteMock($websiteId)
+    {
+        $website = $this->createMock(WebsiteInterface::class);
+        $website->expects($this->any())
+            ->method('getId')
+            ->willReturn($websiteId);
+
+        return $website;
     }
 }

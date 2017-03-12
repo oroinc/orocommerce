@@ -58,6 +58,9 @@ class SitemapFilesystemAdapterTest extends \PHPUnit_Framework_TestCase
         $storage->expects($this->once())
             ->method('getContents')
             ->willReturn($content);
+        $storage->expects($this->once())
+            ->method('getUrlItemsCount')
+            ->willReturn(1);
 
         $filename = 'sitemap-test-1.xml';
         $version = 'actual';
@@ -70,6 +73,24 @@ class SitemapFilesystemAdapterTest extends \PHPUnit_Framework_TestCase
             ->with($content, $testPath . DIRECTORY_SEPARATOR . $filename);
 
         $this->adapter->dumpSitemapStorage($filename, $website, $version, $storage);
+    }
+
+    public function testDumpSitemapStorageWithoutItems()
+    {
+        /** @var SitemapStorageInterface|\PHPUnit_Framework_MockObject_MockObject $storage */
+        $storage = $this->createMock(SitemapStorageInterface::class);
+        $storage->expects($this->once())
+            ->method('getUrlItemsCount')
+            ->willReturn(0);
+
+        $storage->expects($this->never())
+            ->method('getContents');
+        $this->filesystem->expects($this->never())
+            ->method('mkdir');
+        $this->fileWriter->expects($this->never())
+            ->method('saveSitemap');
+
+        $this->adapter->dumpSitemapStorage('sitemap-test-1.xml', $this->getConfiguredWebsite(), 'actual', $storage);
     }
 
     public function testMakeActualNonExistingVersion()

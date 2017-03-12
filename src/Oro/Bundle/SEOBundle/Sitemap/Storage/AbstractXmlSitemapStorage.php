@@ -78,6 +78,14 @@ abstract class AbstractXmlSitemapStorage implements SitemapStorageInterface
         return $this->xmlWriter->outputMemory(false);
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getUrlItemsCount()
+    {
+        return $this->urlItemsCount;
+    }
+
     public function __destruct()
     {
         $this->xmlWriter->flush();

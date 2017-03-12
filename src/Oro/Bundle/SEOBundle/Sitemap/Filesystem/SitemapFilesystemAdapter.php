@@ -56,10 +56,12 @@ class SitemapFilesystemAdapter
         $version,
         SitemapStorageInterface $sitemapUrlsStorage
     ) {
-        $path = $this->getVersionedPath($website, $version);
-        $this->filesystem->mkdir($path);
+        if ($sitemapUrlsStorage->getUrlItemsCount() > 0) {
+            $path = $this->getVersionedPath($website, $version);
+            $this->filesystem->mkdir($path);
 
-        $this->fileWriter->saveSitemap($sitemapUrlsStorage->getContents(), $path . DIRECTORY_SEPARATOR . $filename);
+            $this->fileWriter->saveSitemap($sitemapUrlsStorage->getContents(), $path . DIRECTORY_SEPARATOR . $filename);
+        }
     }
 
     /**
