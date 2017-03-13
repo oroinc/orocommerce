@@ -54,7 +54,7 @@ class ShardManager implements \Serializable
             /** @var PriceList $priceList */
             $priceList = $attributes['priceList'];
             $id = $priceList->getId();
-        } elseif (is_int($attributes['priceList'])) {
+        } elseif (is_int($attributes['priceList']) || is_string($attributes['priceList'])) {
             $id = $attributes['priceList'];
         } else {
             throw new \Exception(sprintf("Wrong type of '%s' to generate shard name.", "priceList"));

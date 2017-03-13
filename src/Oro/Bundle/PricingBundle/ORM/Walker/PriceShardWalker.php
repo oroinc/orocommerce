@@ -10,6 +10,7 @@ use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 class PriceShardWalker extends SqlWalker
 {
     const ORO_PRICING_SHARD_MANAGER = 'oro_pricing.shard_manager';
+    const HINT_PRICE_SHARD = 'HINT_PRICE_SHARD';
 
     /**
      * @var \Doctrine\ORM\Query\ParserResult
@@ -81,7 +82,7 @@ class PriceShardWalker extends SqlWalker
                 }
                 $tableMap[$alias] = $shardManager->getShardName(
                     $entityClass,
-                    ['priceList' => (int)$discriminationValue]
+                    ['priceList' => $discriminationValue]
                 );
             }
             $sql = $this->replaceTables($sql, $tableMap, $baseTableName);

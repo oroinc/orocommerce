@@ -6,6 +6,9 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 
+/**
+ * @deprecated use Currency Manager from platform
+ */
 class CurrencyProvider
 {
     /**
