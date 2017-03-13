@@ -213,8 +213,7 @@ class CreateInventoryLevelsTest extends WebTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        // Check product unit precisions
-        $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $id]));
+        $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $id]));
         $this->assertInventoryLevelsCreated();
     }
 
