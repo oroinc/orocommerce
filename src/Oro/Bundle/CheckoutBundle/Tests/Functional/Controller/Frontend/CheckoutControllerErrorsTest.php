@@ -11,6 +11,7 @@ use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPr
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
+use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRulesWithConfigs;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
@@ -27,14 +28,17 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
             [],
             static::generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
-        $this->loadFixtures([
-            LoadCustomerAddresses::class,
-            LoadProductUnitPrecisions::class,
-            LoadShoppingListLineItems::class,
-            LoadCombinedProductPrices::class,
-            LoadPaymentTermData::class,
-            LoadPaymentMethodsConfigsRuleData::class
-        ]);
+        $this->loadFixtures(
+            [
+                LoadCustomerAddresses::class,
+                LoadProductUnitPrecisions::class,
+                LoadShoppingListLineItems::class,
+                LoadCombinedProductPrices::class,
+                LoadPaymentTermData::class,
+                LoadPaymentMethodsConfigsRuleData::class,
+                LoadShippingMethodsConfigsRulesWithConfigs::class,
+            ]
+        );
         $this->registry = static::getContainer()->get('doctrine');
     }
 

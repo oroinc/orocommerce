@@ -155,6 +155,7 @@ oro:
                     notes: 'Notes'
                     add: 'Add Another Product'
                     qty: 'QTY'
+
         feature:
             label: 'Request For Quote'
             description: 'Request For Quote allows users to place Requests for chosen products'
@@ -169,7 +170,7 @@ oro:
         rfp:
             list: 'RFQs'
             request:
-                create.label: 'Create Request For Quote'
+                create.label: 'New Quote'
                 entity_label: 'Request For Quote'
                 entity_label_short: 'Request'
                 entity_plural_label: 'Requests For Quote'
