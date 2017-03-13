@@ -86,10 +86,12 @@ class ProductTest extends \PHPUnit_Framework_TestCase
 
         $unitPrecision = new ProductUnitPrecision();
         $unitPrecision->setUnit((new ProductUnit())->setCode('kg'));
+        $unitPrecision->setPrecision(3);
+
         $product->setPrimaryUnitPrecision($unitPrecision);
         $product->addName((new LocalizedFallbackValue())->setString('1234'));
 
-        $this->assertEquals('{"id":123,"product_units":["kg"],"name":"1234"}', json_encode($product));
+        $this->assertEquals('{"id":123,"product_units":{"kg":3},"name":"1234"}', json_encode($product));
     }
 
     public function testPrePersist()
@@ -204,6 +206,24 @@ class ProductTest extends \PHPUnit_Framework_TestCase
         $product->setPrimaryUnitPrecision($unitPrecision);
 
         $this->assertEquals(['kg'], $product->getAvailableUnitCodes());
+    }
+
+    public function testGetAvailableUnitsPrecision()
+    {
+        $kgUnit = new ProductUnit();
+        $kgUnit->setCode('kg')->setDefaultPrecision(3);
+        $itemUnit = new ProductUnit();
+        $itemUnit->setCode('item')->setDefaultPrecision(0);
+
+        $kgPrecision = new ProductUnitPrecision();
+        $kgPrecision->setUnit($kgUnit)->setPrecision(1);
+        $itemPrecision = new ProductUnitPrecision();
+        $itemPrecision->setUnit($itemUnit)->setPrecision(0);
+
+        $product = new Product();
+        $product->setPrimaryUnitPrecision($kgPrecision)->addUnitPrecision($itemPrecision);
+
+        $this->assertEquals(['kg' => 1, 'item' => 0], $product->getAvailableUnitsPrecision());
     }
 
     public function testGetAvailableUnits()

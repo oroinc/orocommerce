@@ -298,15 +298,15 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                         'id' => 1,
                         'image' => 1,
                         'expectedUnits' => [
-                            'item',
-                            'pack'
+                            'item' => 0,
+                            'pack' => 0
                         ]
                     ],
                     [
                         'id' => 2,
                         'image' => null,
                         'expectedUnits' => [
-                            'bottle'
+                            'bottle' => 0
                         ]
                     ],
                     [
@@ -316,8 +316,13 @@ class FrontendProductDatagridListenerTest extends \PHPUnit_Framework_TestCase
                     ],
                 ],
                 'units' => [
-                    1 => ['item', 'pack'],
-                    2 => ['bottle']
+                    1 => [
+                        'item' => 0,
+                        'pack' => 0
+                    ],
+                    2 => [
+                        'bottle' => 0
+                    ]
                 ]
             ],
             [

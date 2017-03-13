@@ -116,8 +116,13 @@ class FrontendShoppingListProductsUnitsProviderTest extends \PHPUnit_Framework_T
             [
                 'entity' => $shoppingList,
                 'expected' => [
-                    '123' => ['liter', 'bottle'],
-                    '321' => ['piece' ]
+                    '123' => [
+                        'liter' => 1,
+                        'bottle' => 0
+                    ],
+                    '321' => [
+                        'piece' => 0
+                    ]
                 ]
             ],
             [

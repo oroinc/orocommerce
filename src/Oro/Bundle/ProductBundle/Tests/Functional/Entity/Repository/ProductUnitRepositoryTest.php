@@ -96,9 +96,21 @@ class ProductUnitRepositoryTest extends WebTestCase
                     'product-3',
                 ],
                 'expectedData' => [
-                    'product-1' => ['milliliter', 'bottle', 'liter'],
-                    'product-2' => ['milliliter', 'bottle', 'box', 'liter'],
-                    'product-3' => ['milliliter', 'liter']
+                    'product-1' => [
+                        'milliliter' => 0,
+                        'bottle' => 2,
+                        'liter' => 3,
+                    ],
+                    'product-2' => [
+                        'milliliter' => 0,
+                        'bottle' => 1,
+                        'box' => 1,
+                        'liter' => 3,
+                    ],
+                    'product-3' => [
+                        'milliliter' => 0,
+                        'liter' => 3,
+                    ]
                 ],
             ],
         ];

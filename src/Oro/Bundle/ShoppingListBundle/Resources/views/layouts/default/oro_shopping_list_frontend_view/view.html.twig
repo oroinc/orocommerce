@@ -158,6 +158,7 @@
     {% import 'OroProductBundle::image_macros.html.twig' as Image %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {# TODO: Pass default currency from provider. BB-2218 #}
+    {# TODO: fix 'productsUnits' according to new format: productsUnits[code][precision] #}
     {% set defaultCurrency = 'USD' %}
 
         {% set attr = attr|merge({ class: attr.class|default('') ~ " cart-table cart-table_b-bordered cart-table__verticalp-enlarged mt1-md"}) %}

@@ -1136,13 +1136,9 @@ class Product extends ExtendProduct implements
      */
     public function jsonSerialize()
     {
-        $units = $this->getAvailableUnitsPrecision();
-        foreach ($units as $code => $precision) {
-            $units[$code] = $precision;
-        }
         return [
             'id' => $this->getId(),
-            'product_units' => $units,
+            'product_units' => $this->getAvailableUnitsPrecision(),
             'name' => $this->getDefaultName() ? $this->getDefaultName()->getString() : '',
         ];
     }

@@ -220,8 +220,8 @@ class FrontendProductDatagridListener
             $units = [];
             $productId = $record->getValue('id');
             if (array_key_exists($productId, $productUnits)) {
-                foreach ($productUnits[$productId] as $unitCode) {
-                    $units[] = $unitCode;
+                foreach ($productUnits[$productId] as $unitCode => $precision) {
+                    $units[$unitCode] = $precision;
                 }
             }
             $record->addData([self::COLUMN_PRODUCT_UNITS => $units]);
