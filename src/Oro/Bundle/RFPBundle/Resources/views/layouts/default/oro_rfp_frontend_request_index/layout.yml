@@ -11,8 +11,14 @@ layout:
 
         - '@setOption':
             id: page_title
-            optionName: text
+            optionName: defaultValue
             optionValue: 'oro.frontend.rfp.request.entity_plural_label'
+
+        - '@appendOption':
+            id: requests_datagrid
+            optionName: grid_render_parameters.toolbarOptions.itemsCounter
+            optionValue:
+                transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.rfq'
 
         - '@setOption':
             id: datagrid_toolbar_button_container

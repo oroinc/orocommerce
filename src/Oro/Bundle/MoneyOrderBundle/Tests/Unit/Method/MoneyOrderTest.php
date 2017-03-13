@@ -3,7 +3,7 @@
 namespace Oro\Bundle\MoneyOrderBundle\Tests\Unit\Method;
 
 use Oro\Bundle\MoneyOrderBundle\DependencyInjection\OroMoneyOrderExtension;
-use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig;
+use Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfigInterface;
 use Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
@@ -16,14 +16,14 @@ class MoneyOrderTest extends \PHPUnit_Framework_TestCase
     /** @var MoneyOrder */
     protected $method;
 
+    /** @var MoneyOrderConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
+    private $config;
+
     protected function setUp()
     {
-        $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->config = $this->createMock(MoneyOrderConfigInterface::class);
 
-        $config = new MoneyOrderConfig($this->configManager);
-        $this->method = new MoneyOrder($config);
+        $this->method = new MoneyOrder($this->config);
     }
 
     public function testExecute()
@@ -35,9 +35,15 @@ class MoneyOrderTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($transaction->isSuccessful());
     }
 
-    public function testGetType()
+    public function testGetIdentifier()
     {
-        $this->assertEquals(MoneyOrder::TYPE, $this->method->getType());
+        $identifier = 'id';
+
+        $this->config->expects(static::once())
+            ->method('getPaymentMethodIdentifier')
+            ->willReturn($identifier);
+
+        $this->assertEquals($identifier, $this->method->getIdentifier());
     }
 
     /**

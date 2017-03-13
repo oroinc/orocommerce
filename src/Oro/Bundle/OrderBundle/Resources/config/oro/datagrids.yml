@@ -680,12 +680,17 @@ datagrids:
                             conditionType: WITH
                             condition: CAST(calendarDate.date as DATE) = CAST(orderAlias.createdAt as DATE)
                         -
-                            join: orderAlias.lineItems
+                            join: %oro_order.entity.order_line_item.class%
                             alias: lineitem
+                            conditionType: WITH
+                            condition: orderAlias.id = lineitem.order
                         -
-                            join: lineitem.product
+                            join: %oro_product.entity.product.class%
                             alias: product
-                groupBy: product.id, unitCode
+                            conditionType: WITH
+                            condition: lineitem.product = product.id
+
+                groupBy: cDate, sku, product.id, unitCode, createdAt
         properties:
             productName:
                 type: localized_value
@@ -727,7 +732,7 @@ datagrids:
                     data_name: calendarDate.date
                 sku:
                     type:      string
-                    data_name: product.sku
+                    data_name: sku
                 productName:
                     type:      string
                     data_name: productName
@@ -749,3 +754,14 @@ datagrids:
                     value: day
                 skip_empty_periods:
                     value: 1
+
+    order-payment-transactions-grid:
+        extends:  payment-transactions-grid
+        source:
+            query:
+                where:
+                    and:
+                        - payment_transaction.entityClass = '%oro_order.entity.order.class%'
+                        - payment_transaction.entityIdentifier = :order_id
+            bind_parameters:
+                - order_id

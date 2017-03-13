@@ -4,10 +4,9 @@ namespace Oro\Bundle\CheckoutBundle\Entity\Repository;
 
 use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityRepository;
-
-use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Entity\CheckoutSource;
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\WorkflowBundle\Helper\WorkflowQueryTrait;
 
@@ -21,6 +20,7 @@ class CheckoutRepository extends EntityRepository
      * per Checkout.
      *
      * @param array $checkoutIds
+     *
      * @return array
      */
     public function countItemsPerCheckout(array $checkoutIds)
@@ -46,6 +46,7 @@ class CheckoutRepository extends EntityRepository
      * Returning the source information of the checkouts.
      *
      * @param array $checkoutIds
+     *
      * @return array ['<id>' => '<CheckoutSourceEntityInterface>', ...]
      */
     public function getSourcePerCheckout(array $checkoutIds)
@@ -74,6 +75,7 @@ class CheckoutRepository extends EntityRepository
      * and making an associative array out of it.
      *
      * @param $results
+     *
      * @return array
      */
     private function extractCheckoutItemsCounts($results)
@@ -84,7 +86,7 @@ class CheckoutRepository extends EntityRepository
             return $result;
         }
 
-        $ids        = array_column($results, 'id');
+        $ids = array_column($results, 'id');
         $itemCounts = array_column($results, 'itemsCount');
 
         $result = array_combine(
@@ -96,8 +98,9 @@ class CheckoutRepository extends EntityRepository
     }
 
     /**
-     * @param Quote $quote
+     * @param Quote        $quote
      * @param CustomerUser $customerUser
+     *
      * @return Checkout
      */
     public function getCheckoutByQuote(Quote $quote, CustomerUser $customerUser)
@@ -123,8 +126,9 @@ class CheckoutRepository extends EntityRepository
 
     /**
      * @param CustomerUser $customerUser
-     * @param array $sourceCriteria [shoppingList => ShoppingList, deleted => false]
-     * @param string $workflowName
+     * @param array        $sourceCriteria [shoppingList => ShoppingList, deleted => false]
+     * @param string       $workflowName
+     *
      * @return array
      */
     public function findCheckoutByCustomerUserAndSourceCriteria(
@@ -186,5 +190,17 @@ class CheckoutRepository extends EntityRepository
             ->setParameter('checkoutSources', array_column($checkouts, 'checkoutSourceId'))
             ->getQuery()
             ->execute();
+    }
+
+    /**
+     * @param $paymentMethod
+     *
+     * @return Checkout[]
+     */
+    public function findByPaymentMethod($paymentMethod)
+    {
+        return $this->findBy([
+            'paymentMethod' => $paymentMethod
+        ]);
     }
 }

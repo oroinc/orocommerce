@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\RuleBundle\Entity\Rule;
+use Oro\Bundle\RuleBundle\Entity\RuleInterface;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
-use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRules;
+use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRulesWithConfigs;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\ShippingBundle\Tests\Functional\Helper\FlatRateIntegrationTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -36,7 +36,10 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
-        $this->loadFixtures([LoadShippingMethodsConfigsRules::class, LoadUserData::class]);
+        $this->loadFixtures([
+            LoadShippingMethodsConfigsRulesWithConfigs::class,
+            LoadUserData::class
+        ]);
         $this->registry = static::getContainer()->get('oro_shipping.shipping_method.registry');
         $this->translator = static::getContainer()->get('translator');
     }
@@ -539,7 +542,7 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
      */
     protected function getShippingMethodsConfigsRuleByName($name)
     {
-        /** @var Rule $rule */
+        /** @var RuleInterface $rule */
         $rule = $this->getEntityManager()
             ->getRepository('OroRuleBundle:Rule')
             ->findOneBy(['name' => $name]);

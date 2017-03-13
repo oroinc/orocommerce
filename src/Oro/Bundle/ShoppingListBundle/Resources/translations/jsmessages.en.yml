@@ -1,6 +1,6 @@
 oro:
     shoppinglist:
-        entity_label: Shopping list
+        entity_label: Shopping List
         line_item_save:
             flash:
                 success: Line Item has been saved
@@ -18,3 +18,7 @@ oro:
             in_shopping_lists: In Shopping Lists ({{ count }})
             update_shopping_list: Update {{ shoppingList }}
             shopping_list_set_as_default: Shopping list {{ shoppingList }} has been set as default.
+    frontend:
+        shoppinglist:
+            messages:
+                delete_title: Delete Confirmation

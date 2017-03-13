@@ -2,9 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Controller;
 
-use Oro\Bundle\SaleBundle\Event\QuoteEvent;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -12,19 +10,16 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
-use Oro\Bundle\AddressBundle\Entity\AddressType;
-use Oro\Bundle\FormBundle\Model\UpdateHandler;
+use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\ProductBundle\Storage\ProductDataStorage;
-
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
-use Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider;
-use Oro\Bundle\SaleBundle\Provider\QuoteAddressSecurityProvider;
+use Oro\Bundle\SaleBundle\Storage\ReturnRouteDataStorage;
 
 class QuoteController extends Controller
 {
+    const REDIRECT_BACK_FLAG = 'redirect_back';
     /**
      * @Route("/view/{id}", name="oro_sale_quote_view", requirements={"id"="\d+"})
      * @Template
@@ -76,11 +71,20 @@ class QuoteController extends Controller
     public function createAction(Request $request)
     {
         $quote = new Quote();
-        $quote->setWebsite($this->get('oro_website.manager')->getDefaultWebsite());
+
+        if ($request->get(self::REDIRECT_BACK_FLAG, false)) {
+            return $this->handleRequestAndRedirectBack(
+                $request,
+                $quote,
+                'OroSaleBundle:Quote:createWithReturn.html.twig'
+            );
+        }
 
         if (!$request->get(ProductDataStorage::STORAGE_KEY, false)) {
             return $this->update($quote, $request);
         }
+
+        $quote->setWebsite($this->get('oro_website.manager')->getDefaultWebsite());
 
         $this->createForm(QuoteType::NAME, $quote);
 
@@ -136,69 +140,58 @@ class QuoteController extends Controller
      */
     protected function update(Quote $quote, Request $request)
     {
-        if (in_array($request->getMethod(), ['POST', 'PUT'], true)) {
-            $quote->setCustomer($this->getQuoteHandler()->getCustomer());
-            $quote->setCustomerUser($this->getQuoteHandler()->getCustomerUser());
-        }
-
-        /* @var $handler UpdateHandler */
-        $handler = $this->get('oro_form.model.update_handler');
-        return $handler->handleUpdate(
+        $handler = $this->get('oro_form.update_handler');
+        return $handler->update(
             $quote,
-            $this->createForm(QuoteType::NAME, $quote),
-            function (Quote $quote) {
-                return [
-                    'route'         => 'oro_sale_quote_update',
-                    'parameters'    => ['id' => $quote->getId()]
-                ];
-            },
-            function (Quote $quote) {
-                return [
-                    'route'         => 'oro_sale_quote_view',
-                    'parameters'    => ['id' => $quote->getId()]
-                ];
-            },
+            QuoteType::NAME,
             $this->get('translator')->trans('oro.sale.controller.quote.saved.message'),
+            $request,
             null,
-            function (Quote $quote, FormInterface $form, Request $request) {
-                $submittedData = $request->get($form->getName());
-                $event = new QuoteEvent($form, $form->getData(), $submittedData);
-                $this->get('event_dispatcher')->dispatch(QuoteEvent::NAME, $event);
-                $quoteData = $event->getData()->getArrayCopy();
-
-                return [
-                    'form' => $form->createView(),
-                    'tierPrices' => $this->getQuoteProductPriceProvider()->getTierPrices($quote),
-                    'matchedPrices' => $this->getQuoteProductPriceProvider()->getMatchedPrices($quote),
-                    'isShippingAddressGranted' => $this->getQuoteAddressSecurityProvider()
-                        ->isAddressGranted($quote, AddressType::TYPE_SHIPPING),
-                    'quoteData' => $quoteData
-                ];
-            }
+            'quote_update'
         );
     }
 
     /**
-     * @return QuoteProductPriceProvider
+     * Handles request which requires get back after Quote creating
+     *
+     * @param Request $request
+     * @param Quote $quote
+     * @param string $template
+     *
+     * @return RedirectResponse|\Symfony\Component\HttpFoundation\Response
      */
-    protected function getQuoteProductPriceProvider()
+    private function handleRequestAndRedirectBack(Request $request, Quote $quote, $template)
     {
-        return $this->get('oro_sale.provider.quote_product_price');
+        // Handle form validate and fetch pre-response
+        $updateResponse = $this->update($quote, $request);
+
+        /** @var ReturnRouteDataStorage $redirectStorage */
+        $redirectStorage = $this->get('oro_sale.storage.return_route_storage');
+        $routeToRedirectBack = $redirectStorage->get();
+
+        if ($this->isRequestHandledSuccessfully($updateResponse)) {
+            // We don't need storage data anymore, so clean it and return user to route which we have to
+            $redirectStorage->remove();
+            return $this->redirectToRoute($routeToRedirectBack['route'], $routeToRedirectBack['parameters']);
+        } else {
+            // Render form with limited number of actions because we will redirect back
+            return $this->render(
+                $template,
+                array_merge($updateResponse, [
+                    'return_route' => $routeToRedirectBack
+                ])
+            );
+        }
     }
 
     /**
-     * @return QuoteAddressSecurityProvider
+     * Returns if request is checked by handler
+     *
+     * @param $updateResponse
+     * @return bool
      */
-    protected function getQuoteAddressSecurityProvider()
+    private function isRequestHandledSuccessfully($updateResponse)
     {
-        return $this->get('oro_sale.provider.quote_address_security');
-    }
-
-    /**
-     * @return \Oro\Bundle\SaleBundle\Model\QuoteRequestHandler
-     */
-    protected function getQuoteHandler()
-    {
-        return $this->get('oro_sale.service.quote_request_handler');
+        return $updateResponse instanceof RedirectResponse;
     }
 }

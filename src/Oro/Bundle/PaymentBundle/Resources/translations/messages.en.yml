@@ -69,6 +69,7 @@ oro:
             rule.label: Rule
             destinations.label: Destinations
             currency.label: Currency
+            organization.label: Organization
 
             notification:
                 enabled: Payment rule has been enabled successfully
@@ -90,6 +91,20 @@ oro:
             id.label: Id
             name.label: Name
             destination.label: Destination
+
+        paymenttransaction:
+            id.label: Id
+            paymentMethod.label: Payment Method
+            action.label: Type
+            amount.label: Amount
+            active.label: Active
+            successful.label: Successful
+            types:
+                authorize.label: Authorize
+                charge.label: Charge
+                validate.label: Validate
+                capture.label: Capture
+                purchase.label: Purchase
 
         sections:
             general: 'General Information'

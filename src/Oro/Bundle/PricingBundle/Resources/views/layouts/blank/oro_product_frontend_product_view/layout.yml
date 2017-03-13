@@ -5,6 +5,8 @@ layout:
         - '@add':
             id: product_view_price_container
             parentId: product_view_specification_container
+            siblingId: product_view_variant_field_container
+            prepend: true
             blockType: container
         - '@add':
             id: product_prices_subtree_update

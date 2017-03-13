@@ -5,6 +5,8 @@ namespace Oro\Bundle\CatalogBundle\Migrations\Data\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
+use Oro\Bundle\RedirectBundle\Async\Topics;
+use Oro\Component\MessageQueue\Util\JSON;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -53,6 +55,11 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
         $this->addCategories($root, $this->categories, $this->categoryImages, $manager);
 
         $manager->flush();
+
+        $this->container->get('oro_message_queue.client.message_producer')->send(
+            Topics::REGENERATE_DIRECT_URL_FOR_ENTITY_TYPE,
+            JSON::encode(Category::class)
+        );
     }
 
     /**
@@ -67,12 +74,18 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
             return;
         }
 
+        $slugGenerator = $this->container->get('oro_entity_config.slug.generator');
         foreach ($categories as $title => $nestedCategories) {
             $categoryTitle = new LocalizedFallbackValue();
             $categoryTitle->setString($title);
 
             $category = new Category();
             $category->addTitle($categoryTitle);
+
+            $slugPrototype = new LocalizedFallbackValue();
+            $slugPrototype->setString($slugGenerator->slugify($title));
+            $category->addSlugPrototype($slugPrototype);
+
             if (!empty($images[$title])) {
                 if (isset($images[$title]['small'])) {
                     $category->setSmallImage($this->getCategoryImage($manager, $images[$title]['small']));

@@ -139,8 +139,8 @@ define(function(require) {
 
         getProduct: function() {
             var $fieldProduct = this.getElement('fieldProduct');
-            var selectedData = $fieldProduct.data('selectedData') || [];
-            return $fieldProduct.inputWidget('data') || selectedData[0] || null;
+            var selectedData = $fieldProduct.data('selected-data') || {};
+            return $fieldProduct.inputWidget('data') || selectedData || null;
         },
 
         validate: function() {

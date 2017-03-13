@@ -12,6 +12,7 @@ Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
     shipping_methods_configs_rule1:
         rule: '@rule1'
         currency: 'EUR'
+        organization: '@organization'
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination:
     germany_destination:
@@ -120,7 +121,7 @@ Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
         customer: '@customer1'
         pricelist: '@pricelist_shipping'
         website: '@website1'
-        priority: 200
+        sortOrder: 200
 
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     productPrice1:

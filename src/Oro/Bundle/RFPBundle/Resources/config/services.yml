@@ -61,7 +61,6 @@ services:
     oro_rfp.service.request_update_handler:
         class: 'Oro\Bundle\RFPBundle\Form\Handler\RequestUpdateHandler'
         parent: oro_form.model.update_handler
-        scope: request
         calls:
             - [setRepresentativesNotifier, ['@oro_rfp.mailer.request_representatives_notifier']]
 

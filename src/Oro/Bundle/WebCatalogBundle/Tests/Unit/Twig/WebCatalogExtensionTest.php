@@ -7,23 +7,20 @@ use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler;
 use Oro\Bundle\WebCatalogBundle\Twig\WebCatalogExtension;
+use Oro\Component\Testing\Unit\TwigExtensionTestCaseTrait;
 use Oro\Component\WebCatalog\ContentVariantTypeInterface;
 
 class WebCatalogExtensionTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var ContentNodeTreeHandler|\PHPUnit_Framework_MockObject_MockObject
-     */
+    use TwigExtensionTestCaseTrait;
+
+    /** @var ContentNodeTreeHandler|\PHPUnit_Framework_MockObject_MockObject */
     protected $treeHandler;
 
-    /**
-     * @var ContentVariantTypeRegistry|\PHPUnit_Framework_MockObject_MockObject
-     */
+    /** @var ContentVariantTypeRegistry|\PHPUnit_Framework_MockObject_MockObject */
     protected $contentVariantTypeRegistry;
 
-    /**
-     * @var WebCatalogExtension
-     */
+    /** @var WebCatalogExtension */
     protected $extension;
 
     protected function setUp()
@@ -34,24 +31,18 @@ class WebCatalogExtensionTest extends \PHPUnit_Framework_TestCase
         $this->contentVariantTypeRegistry = $this->getMockBuilder(ContentVariantTypeRegistry::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->extension = new WebCatalogExtension($this->treeHandler, $this->contentVariantTypeRegistry);
+
+        $container = self::getContainerBuilder()
+            ->add('oro_web_catalog.content_node_tree_handler', $this->treeHandler)
+            ->add('oro_web_catalog.content_variant_type.registry', $this->contentVariantTypeRegistry)
+            ->getContainer($this);
+
+        $this->extension = new WebCatalogExtension($container);
     }
 
     public function testGetName()
     {
         $this->assertEquals(WebCatalogExtension::NAME, $this->extension->getName());
-    }
-
-    public function testGetFunctions()
-    {
-        $expected = [
-            new \Twig_SimpleFunction('oro_web_catalog_tree', [$this->extension, 'getNodesTree']),
-            new \Twig_SimpleFunction(
-                'oro_web_catalog_content_variant_title',
-                [$this->extension, 'getContentVariantTitle']
-            ),
-        ];
-        $this->assertEquals($expected, $this->extension->getFunctions());
     }
 
     public function testGetNodesTree()
@@ -60,6 +51,7 @@ class WebCatalogExtensionTest extends \PHPUnit_Framework_TestCase
         $node = new ContentNode();
         $nodes = [$root, $node];
         $webCatalog = new WebCatalog();
+
         $this->treeHandler->expects($this->once())
             ->method('getTreeRootByWebCatalog')
             ->willReturn($root);
@@ -67,7 +59,11 @@ class WebCatalogExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('createTree')
             ->with($root, true)
             ->willReturn($nodes);
-        $this->assertEquals($nodes, $this->extension->getNodesTree($webCatalog));
+
+        $this->assertEquals(
+            $nodes,
+            self::callTwigFunction($this->extension, 'oro_web_catalog_tree', [$webCatalog])
+        );
     }
 
     public function testGetContentVariantTitle()
@@ -85,6 +81,9 @@ class WebCatalogExtensionTest extends \PHPUnit_Framework_TestCase
             ->with($typeName)
             ->willReturn($type);
 
-        $this->assertEquals($title, $this->extension->getContentVariantTitle($typeName));
+        $this->assertEquals(
+            $title,
+            self::callTwigFunction($this->extension, 'oro_web_catalog_content_variant_title', [$typeName])
+        );
     }
 }
