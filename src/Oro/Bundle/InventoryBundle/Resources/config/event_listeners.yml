@@ -1,5 +1,3 @@
-parameters:
-    oro_inventory.event_listener.product_flush.class: Oro\Bundle\InventoryBundle\EventListener\ProductFlushEventListener
 services:
     oro_inventory.event_listener.product_manage_inventory_form_view_listener:
         class: 'Oro\Bundle\InventoryBundle\EventListener\ProductManageInventoryFormViewListener'
