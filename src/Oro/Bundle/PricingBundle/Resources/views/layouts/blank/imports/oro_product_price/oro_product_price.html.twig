@@ -6,19 +6,16 @@
         }) %}
     {% endif %}
 
-    {% set modifierClass = productPriceMode ? ' product-price--' ~ productPriceMode : '' %}
-
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'oroui/js/app/components/view-component',
         '~data-page-component-options': {
             view: 'oropricing/js/app/views/base-product-prices-view',
             changeQuantity: true,
-            changeUnitLabel: changeUnitLabel,
             modelAttr: {
                 prices: productPrices
             }
         },
-        '~class': ' product-price' ~ modifierClass
+        '~class': ' product-price'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -32,6 +29,51 @@
             {{ block_widget(block) }}
         </div>
     </div>
+{% endblock %}
+
+{% block __oro_product_price__product_price_widget %}
+    {% set buttonsId = id|replace({'_price': ''}) ~ '_line_item_form_buttons' %}
+    {% if blocks[buttonsId] is defined and blocks[buttonsId].children is not empty %}
+    {% if productPrices %}
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' product-price__main'
+        }) %}
+        <div {{ block('block_attributes') }}>
+            {{ block_widget(block) }}
+        </div>
+    {% endif %}
+    {% endif %}
+{% endblock %}
+
+{% block __oro_product_price__product_price_value_widget %}
+    <div {{ block('block_attributes') }}
+            data-name="price">
+        {% if not is_configurable_product_type(product.type) %}
+            <span class="product-price__label">{{ 'oro.pricing.frontend.pricelist.index.your_price'|trans }}</span>
+            {% set firstPrice = productPrices|first %}
+            <span class="product-price__main-box">
+                <span class="product-price__value" data-name="price-value">{{ firstPrice ? firstPrice.formatted_price }}</span>
+                <span> / </span>
+                <span data-name="unit">{{ firstPrice ? firstPrice.formatted_unit }}</span>
+            </span>
+        {% endif %}
+    </div>
+{% endblock %}
+
+{% block __oro_product_price__product_price_not_found_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' hidden'
+    }) %}
+    {% if not is_configurable_product_type(product.type) %}
+        <div {{ block('block_attributes') }}
+                data-name="price-not-found">
+            {% if productPrices %}
+                {{ 'oro.pricing.frontend.product_prices.price_not_found'|trans }}
+            {% else %}
+                {{ 'oro.pricing.frontend.product_prices.empty_prices'|trans }}
+            {% endif %}
+        </div>
+    {% endif %}
 {% endblock %}
 
 {% block __oro_product_price__product_price_hint_widget %}
@@ -66,6 +108,35 @@
             {% endfor %}
             </tbody>
         </table>
+    </div>
+{% endblock %}
+
+{% block __oro_product_price__product_price_listed_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-price__listed'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {% if productPrices %}
+            {{ 'oro.pricing.frontend.pricelist.index.listed_price'|trans }}
+            <span>
+                {% set pricesPerUnits = [] %}
+                {% for price in productPrices %}
+                    {% set unit = price.unit %}
+                    {% if pricesPerUnits[unit] is not defined or price.quantity < pricesPerUnits[unit].quantity %}
+                        {% set pricesPerUnits = pricesPerUnits|merge({
+                            (unit): price
+                        }) %}
+                    {% endif %}
+                {% endfor %}
+                {% for price in pricesPerUnits %}
+                    <span title="{{ 'oro.pricing.productprice.applicable_from'|trans({'%amount%': price.quantity})|raw }}">
+                        <span class="product-price__listed-value">{{ price.formatted_price }}</span>
+                        <span> / </span>
+                        <span>{{ price.formatted_unit}}</span>
+                    </span>
+                {% endfor %}
+            </span>
+        {% endif %}
     </div>
 {% endblock %}
 

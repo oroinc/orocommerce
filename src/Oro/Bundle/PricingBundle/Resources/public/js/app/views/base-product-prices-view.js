@@ -11,6 +11,12 @@ define(function(require) {
     var $ = require('jquery');
 
     BaseProductPricesView = BaseView.extend(_.extend({}, ElementsHelper, {
+        keepElement: true,
+
+        optionNames: BaseView.prototype.optionNames.concat([
+            'changeQuantity', 'changeUnitLabel'
+        ]),
+
         options: {
             defaultQuantity: 1
         },
@@ -48,9 +54,6 @@ define(function(require) {
 
         initialize: function(options) {
             BaseProductPricesView.__super__.initialize.apply(this, arguments);
-
-            $.extend(this, _.pick(options, ['changeQuantity', 'changeUnitLabel']));
-
             this.deferredInitializeCheck(options, ['productModel']);
         },
 
@@ -67,6 +70,7 @@ define(function(require) {
             delete this.modelAttr;
             delete this.prices;
             delete this.foundPrice;
+            this.setUnitLabel(true);
             this.disposeElements();
             BaseProductPricesView.__super__.dispose.apply(this, arguments);
         },
@@ -125,17 +129,16 @@ define(function(require) {
             this.foundPrice = {};
 
             if (!this.rendered) {
-                this.rendered = true;
                 this.setFoundPrice(true);
+                if (!this.rendered) {
+                    this.updateUI();
+                }
             } else {
                 this.setFoundPrice();
             }
         },
 
         onQuantityChange: function(options) {
-            if (options.manually) {
-                this.changeQuantity = false;
-            }
             this.setFoundPrice();
         },
 
@@ -143,16 +146,21 @@ define(function(require) {
             this.setFoundPrice(options.manually || false);
         },
 
-        setUnitLabel: function(price) {
-            if (!price || price.unit_with_price) {
-                return price;
+        setUnitLabel: function(clear) {
+            if (!this.changeUnitLabel) {
+                return;
             }
-            price.unit_with_price = _.__('oro.pricing.price.formatted.unit', {
-                formattedUnit: _(price.formatted_unit).capitalize(),
-                formattedPrice: price.formatted_price
-            });
-            price.unit_changed = true;
-            return price;
+
+            var price = this.model.get('price');
+            var unit_label = null;
+            if (!clear && price) {
+                unit_label = _.__('oro.pricing.price.formatted.unit', {
+                    formattedUnit: _(price.formatted_unit).capitalize(),
+                    formattedPrice: price.formatted_price
+                });
+            }
+
+            this.model.set('unit_label', unit_label);
         },
 
         setFoundPrice: function(changeQuantity) {
@@ -160,11 +168,15 @@ define(function(require) {
         },
 
         setPriceValue: function(price) {
-            price = this.changeUnitLabel ? this.setUnitLabel(price) : price;
             this.model.set('price', price);
+            this.setUnitLabel();
         },
 
         findPrice: function(changeQuantity) {
+            if (this.model.get('quantity_changed_manually')) {
+                this.changeQuantity = false;
+            }
+
             var quantity = this.model.get('quantity');
             var unit = this.model.get('unit');
             changeQuantity = changeQuantity && this.changeQuantity;
@@ -198,6 +210,7 @@ define(function(require) {
         },
 
         updateUI: function() {
+            this.rendered = true;
             var price = this.model.get('price');
             if (price === null) {
                 this.getElement('price').addClass('hidden');

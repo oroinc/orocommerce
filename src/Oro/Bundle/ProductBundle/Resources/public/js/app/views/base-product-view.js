@@ -5,7 +5,6 @@ define(function(require) {
     var BaseView = require('oroui/js/app/views/base/view');
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var BaseModel = require('oroui/js/app/models/base/model');
-    var viewportManager = require('oroui/js/viewport-manager');
     var mediator = require('oroui/js/mediator');
     var routing = require('routing');
     var $ = require('jquery');
@@ -39,7 +38,7 @@ define(function(require) {
         modelEvents: {
             'id': ['change', 'onProductChanged'],
             'line_item_form_enable': ['change', 'onLineItemFormEnableChanged'],
-            'price updateUI': ['change', 'changeUnitLabel']
+            'unit_label': ['change', 'changeUnitLabel']
         },
 
         originalProductId: null,
@@ -47,7 +46,6 @@ define(function(require) {
         initialize: function(options) {
             BaseProductView.__super__.initialize.apply(this, arguments);
 
-            this.viewport = options.viewport || {};
             this.rowId = this.$el.parent().data('row-id');
             this.initModel(options);
             this.initializeElements(options);
@@ -102,14 +100,21 @@ define(function(require) {
 
         changeUnitLabel: function() {
             var $unit = this.getElement('unit');
-            if (!this.model.get('price') ||
-                !$unit.inputWidget() ||
-                !viewportManager.isApplicable(this.viewport)) {
-                return;
-            }
-            var price = this.model.get('price');
-            $unit.find(':selected').text(price.unit_with_price);
-            $unit.inputWidget().refresh();
+            var unitLabel = this.model.get('unit_label');
+
+            $unit.find('option').each(function() {
+                var $option = $(this);
+                if (!$option.data('originalText')) {
+                    $option.data('originalText', this.text);
+                }
+
+                if (unitLabel && this.selected) {
+                    this.text = unitLabel;
+                } else {
+                    this.text = $option.data('originalText');
+                }
+            });
+            $unit.inputWidget('refresh');
         },
 
         afterProductChanged: function() {
