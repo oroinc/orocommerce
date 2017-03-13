@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\WebCatalogBundle\EventListener;
 
+use Doctrine\ORM\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorageInterface;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
@@ -81,11 +82,16 @@ class ContentNodeListener
 
     /**
      * @param ContentNode $contentNode
+     * @param LifecycleEventArgs $args
      */
-    public function postRemove(ContentNode $contentNode)
+    public function postRemove(ContentNode $contentNode, LifecycleEventArgs $args)
     {
         if ($contentNode->getParentNode()) {
-            $this->scheduleContentNodeRecalculation($contentNode->getParentNode());
+            if (!$args->getEntityManager()->getUnitOfWork()->isScheduledForDelete($contentNode->getParentNode())) {
+                $this->scheduleContentNodeRecalculation($contentNode->getParentNode());
+            }
+        } else {
+            $this->messageProducer->send(Topics::CALCULATE_WEB_CATALOG_CACHE, $contentNode->getWebCatalog()->getId());
         }
     }
 
