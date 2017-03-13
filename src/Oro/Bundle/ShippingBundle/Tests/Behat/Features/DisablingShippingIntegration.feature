@@ -1,4 +1,4 @@
-@not-automated
+@fixture-ShippingMethodsConfigsRule.yml
 Feature: Shipping Method Configurations disappear when removing integration
   #If integration will be disabled, then during saving we need to inform (show pop-up) admin about existing shipping rules which will be disabled/modified after this integration will be disabled. We also have to provide link to the grid with list of such rules in this pop-up.
   #If administrator wants to disable integration temporary, and if shipping rule contain other enabled methods. After integration will be disabled, we have to change shipping rule and mark disabled methods with label “disabled”. If shipping rule contains only one method which was disabled, then we have to disable this rule.
@@ -11,35 +11,32 @@ Feature: Shipping Method Configurations disappear when removing integration
     Given I login as administrator
     And I go to System/ Integration/ Manage Integration
     And I press "Create Integration"
-    And I fill "Integration form" with:
+    And I fill "Integration Form" with:
       | Type | Flat Rate Shipping |
+    And I fill "Integration Form" with:
       | Name | New Flat Rate      |
       | Label| Flat Rate New      |
     And I save and close form
     And I go to System/ Shipping Rules
     And I press "Create Shipping Rule"
-    And I fill "Create Shipping Rule form" with:
+    And I fill "Shipping Rule" with:
       |Enabled   |true             |
-      |Name      |New Shippimg Rule|
+      |Name      |New Shipping Rule|
       |Sort Order|1                |
       |Currency  |$                |
       |Method    |Flat Rate New    |
-    And I press "Add"
-    And I fill "Shipping Method Configuration from" with:
-      |Price|25|
+    And I press "Add" in "Shipping Method Configurations" section
+    And I fill "Shipping Rule" with:
+      |Price     |25               |
     And I save and close form
     And I go to System/ Integration/ Manage Integration
-    And I select integration by "New Flat Rate" name
+    And I click edit New Flat Rate in grid
     When I press "Deactivate"
     Then I should see Existing Shipping Rules popup
+    And I click on "Deactivate Integration Confirm Button"
     And I go to System/ Shipping Rules
-    And I should see "1. New Flat rate (Price: $25.00) (disabled)" text in configuration column
+    And I should see New Shipping Rule in grid with following data:
+      |Configurations|Flat Rate New (Price: $25.00)             Disabled|
     And I click edit New Shipping Rule in grid
-    And I should see "Default Flat Rate disabled" method in Method dropdown
+    And I should see Disabled Shipping Method Configuration
     And I click Logout in user menu
-
-
-
-
-
-
