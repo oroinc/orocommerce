@@ -102,6 +102,7 @@ operations:
         acl_resource: [CREATE, entity:commerce@Oro\Bundle\RFPBundle\Entity\Request]
         button_options:
             class: btn--info
+            icon: fa-plus fa--small
         order: 10
         actions:
             - '@redirect':
