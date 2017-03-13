@@ -14,7 +14,7 @@ class InventoryStatusEnumStub extends AbstractEnumValue
     }
 
     /**
-     * @param $name
+     * @param string $name
      */
     public function setName($name)
     {
@@ -22,7 +22,7 @@ class InventoryStatusEnumStub extends AbstractEnumValue
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getName()
     {

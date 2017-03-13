@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\InventoryBundle\Tests\Unit\Inventory\Stub;
 
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductStub extends Product
@@ -17,9 +18,9 @@ class ProductStub extends Product
     }
 
     /**
-     * @param mixed $inventoryStatus
+     * @param AbstractEnumValue $inventoryStatus
      */
-    public function setInventoryStatus($inventoryStatus)
+    public function setInventoryStatus(AbstractEnumValue $inventoryStatus)
     {
         $this->inventoryStatus = $inventoryStatus;
     }

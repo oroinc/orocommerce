@@ -99,6 +99,10 @@ class ProductFlushEventListenerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @param bool $insertEntities
+     * @param bool $deleteEntities
+     * @param bool $hasProduct
+     *
      * @return OnFlushEventArgs
      */
     protected function prepareEvent($insertEntities = true, $deleteEntities = true, $hasProduct = true)
