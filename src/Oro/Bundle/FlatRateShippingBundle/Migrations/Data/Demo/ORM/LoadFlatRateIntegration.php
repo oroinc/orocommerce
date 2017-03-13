@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\FlatRateShippingBundle\Migrations\Data\ORM;
+namespace Oro\Bundle\FlatRateShippingBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -80,6 +80,7 @@ class LoadFlatRateIntegration extends AbstractFixture implements DependentFixtur
     private function isFixtureAlreadyLoaded()
     {
         $fixtures = $this->getDataFixtureRepository()->findByClassName(static::PREVIOUS_CLASS_NAME);
+
         return count($fixtures) > 0;
     }
 
@@ -168,6 +169,7 @@ class LoadFlatRateIntegration extends AbstractFixture implements DependentFixtur
 
     /**
      * @param Channel $channel
+     *
      * @return int|string
      */
     private function getFlatRateIdentifier(Channel $channel)
