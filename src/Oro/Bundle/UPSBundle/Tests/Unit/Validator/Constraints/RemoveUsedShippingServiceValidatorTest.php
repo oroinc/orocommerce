@@ -2,231 +2,160 @@
 
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Validator\Constraints;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
+use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
+use Oro\Bundle\ShippingBundle\Method\Event\MethodTypeChangeEvent;
+use Oro\Bundle\ShippingBundle\Method\Factory\MethodTypeChangeEventFactoryInterface;
+use Oro\Bundle\UPSBundle\Entity\Repository\ShippingServiceRepository;
 use Oro\Bundle\UPSBundle\Entity\ShippingService;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
-use Oro\Bundle\UPSBundle\Method\UPSShippingMethod;
 use Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingService;
 use Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceValidator;
-use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Component\Validator\Constraint;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
+use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
+ */
 class RemoveUsedShippingServiceValidatorTest extends \PHPUnit_Framework_TestCase
 {
-    use EntityTrait;
-    
     /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var IntegrationIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $doctrine;
+    private $identifierGenerator;
 
     /**
-     * @var ShippingMethodRegistry|\PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $registry;
+    private $dispatcher;
 
     /**
-     * @var RemoveUsedShippingService
+     * @var ShippingServiceRepository|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $constraint;
+    private $serviceRepository;
 
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|ExecutionContextInterface
+     * @var MethodTypeChangeEventFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $context;
+    private $typeChangeEventFactory;
+
+    /**
+     * @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $context;
 
     /**
      * @var RemoveUsedShippingServiceValidator
      */
-    protected $validator;
+    private $validator;
+
+    /**
+     * @var RemoveUsedShippingService
+     */
+    private $constraint;
+
+    /**
+     * @var Country
+     */
+    private $country;
 
     protected function setUp()
     {
-        $this->doctrine = $this->createMock(ManagerRegistry::class);
-        $this->registry = $this->createMock(ShippingMethodRegistry::class);
-
-        $this->constraint = new RemoveUsedShippingService();
+        $this->identifierGenerator = $this->createMock(IntegrationIdentifierGeneratorInterface::class);
+        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
+        $this->serviceRepository = $this->createMock(ShippingServiceRepository::class);
+        $this->typeChangeEventFactory = $this->createMock(MethodTypeChangeEventFactoryInterface::class);
         $this->context = $this->createMock(ExecutionContextInterface::class);
 
-        $this->validator =
-            new RemoveUsedShippingServiceValidator($this->doctrine, $this->registry);
-        $this->validator->initialize($this->context);
-    }
-
-    public function testConfiguration()
-    {
-        static::assertEquals(
-            RemoveUsedShippingServiceValidator::ALIAS,
-            $this->constraint->validatedBy()
+        $this->validator = new RemoveUsedShippingServiceValidator(
+            $this->identifierGenerator,
+            $this->dispatcher,
+            $this->serviceRepository,
+            $this->typeChangeEventFactory
         );
-        static::assertEquals(Constraint::PROPERTY_CONSTRAINT, $this->constraint->getTargets());
+        $this->validator->initialize($this->context);
+
+        $this->constraint = new RemoveUsedShippingService();
+        $this->country = new Country('US');
     }
 
-    /**
-     * @param array $configured
-     * @param array $submitted
-     * @param int $violations
-     *
-     * @dataProvider validateDataProvider
-     */
-    public function testValidate($configured, $submitted, $violations)
+    public function testValidateNoErrors()
     {
-        $value = $this->createShippingServices($submitted);
-        /** @var Constraint|\PHPUnit_Framework_MockObject_MockObject $constraint **/
-        $constraint = $this->getMockBuilder(Constraint::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $selectedServiceCodes = ['11', '2'];
 
-        $country = new Country('US');
-        $transport = (new UPSTransport())->setCountry($country);
-        $transportForm = $this->createForm($transport, 'upstransport');
-        $channel = $this->getEntity(Channel::class, ['id' => 1]);
-        $channelForm = $this->createForm($channel, 'upstransport');
-        
-        $transportForm->expects(static::once())
-            ->method('getParent')
-            ->willReturn($channelForm);
+        $transport = new UPSTransport();
+        $transport->setCountry($this->country)
+            ->setChannel(new Channel());
 
-        $this->context->expects(static::any())
-            ->method('getPropertyPath')
-            ->willReturn('[upstransport]');
-        $this->context->expects(static::any())
-            ->method('getRoot')
-            ->willReturn($transportForm);
+        $event = new MethodTypeChangeEvent($selectedServiceCodes, 'id');
 
-        $upsShippingMethod = $this
-            ->getMockBuilder(UPSShippingMethod::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $this->typeChangeEventFactory->expects(static::once())
+            ->method('create')
+            ->willReturn($event);
 
-        $this->registry->expects(static::once())
-            ->method('getShippingMethod')
-            ->willReturn($upsShippingMethod);
+        $this->context->expects(static::never())
+            ->method('buildViolation');
 
-        $repository1 = $this
-            ->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $repository1->expects(static::any())
-            ->method('findBy')
-            ->willReturn([$this->createShippingMethodsConfigsRule($configured)]);
+        $this->validator->validate($transport, $this->constraint);
 
-        $enabledTypes = [];
-        foreach ($configured as $v) {
-            if ($v['enabled'] === true) {
-                $enabledTypes[] = $v['code'];
-            }
-        }
-        $repository2 = $this->getMockBuilder('Doctrine\ORM\EntityRepository')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $repository2->expects(static::any())
-            ->method('findBy')
-            ->willReturn($this->createShippingServices(array_diff($enabledTypes, $submitted), true));
+        static::assertFalse($event->hasErrors());
+    }
 
-        $manager = $this->createMock('Doctrine\ORM\EntityManagerInterface');
-        $manager->expects(static::any())
-            ->method('getRepository')
-            ->willReturnMap([
-                ['OroShippingBundle:ShippingMethodConfig', $repository1],
-                ['OroUPSBundle:ShippingService', $repository2],
+    public function testValidateWithErrors()
+    {
+        $selectedServiceCodes = ['11', '2'];
+
+        $transport = new UPSTransport();
+        $transport->setCountry($this->country)
+            ->setChannel(new Channel());
+
+        $event = new MethodTypeChangeEvent($selectedServiceCodes, 'id');
+        $event->addErrorType('3');
+        $event->addErrorType('4');
+
+        $this->typeChangeEventFactory->expects(static::once())
+            ->method('create')
+            ->willReturn($event);
+
+        $this->serviceRepository->expects(static::once())
+            ->method('getShippingServicesByCountry')
+            ->willReturn([
+                $this->getShippingService('3', 'name3')
             ]);
 
-        $this->doctrine->expects(static::any())
-            ->method('getManagerForClass')
-            ->willReturn($manager);
-        
-        $this->context->expects(static::exactly($violations))
-            ->method('addViolation');
+        $violationBuilder = $this->createMock(ConstraintViolationBuilderInterface::class);
+        $violationBuilder->expects(static::once())
+            ->method('setParameter')
+            ->willReturn($violationBuilder);
+        $violationBuilder->expects(static::once())
+            ->method('setTranslationDomain')
+            ->willReturn($violationBuilder);
+        $violationBuilder->expects(static::once())
+            ->method('atPath')
+            ->willReturn($violationBuilder);
 
-        $this->validator->validate($value, $constraint);
+        $this->context->expects(static::once())
+            ->method('buildViolation')
+            ->willReturn($violationBuilder);
+
+        $this->validator->validate($transport, $this->constraint);
     }
 
     /**
-     * @return array
+     * @param string $code
+     * @param string $description
+     *
+     * @return ShippingService
      */
-    public function validateDataProvider()
+    private function getShippingService($code, $description)
     {
-        return [
-            'NotValid' => [
-                'configured' => [
-                    ['code' => '01', 'enabled' =>false],
-                    ['code' => '02', 'enabled' =>true],
-                    ['code' => '03', 'enabled' =>true],
-                ],
-                'submitted' => ['01', '02'],
-                'violations' => 1,
-            ],
-            'Valid' => [
-                'configured' => [
-                    ['code' => '01', 'enabled' =>false],
-                    ['code' => '02', 'enabled' =>true],
-                    ['code' => '03', 'enabled' =>true],
-                ],
-                'submitted' => ['02', '03'],
-                'violations' => 0
-            ]
-        ];
-    }
+        $service = new ShippingService();
 
-    /**
-     * @param array $codes
-     * @param bool $toArray
-     * @return ArrayCollection
-     */
-    protected function createShippingServices($codes, $toArray = false)
-    {
-        $collection = new ArrayCollection();
-        foreach ($codes as $code) {
-            $service = (new ShippingService())->setCode($code);
-            $collection->add($service);
-        }
-        if ($toArray) {
-            return $collection->toArray();
-        } else {
-            return $collection;
-        }
-    }
+        $service->setCode($code)
+            ->setDescription($description);
 
-    /**
-     * @param array $codes
-     * @return ShippingMethodConfig
-     */
-    protected function createShippingMethodsConfigsRule($codes)
-    {
-        $method = new ShippingMethodConfig();
-        foreach ($codes as $code) {
-            $type = (new ShippingMethodTypeConfig())->setType($code['code'])->setEnabled($code['enabled']);
-            $method->addTypeConfig($type);
-        }
-        return $method;
-    }
-
-    /**
-     * @param object $data
-     * @param string $path
-     * @return \PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function createForm($data, $path)
-    {
-        $form = $this->createMock('Symfony\Component\Form\FormInterface');
-        $form->expects(static::any())
-            ->method('offsetExists')
-            ->with($path)
-            ->willReturn(true);
-
-        $form->expects(static::any())
-            ->method('offsetGet')
-            ->with($path)
-            ->willReturn($form);
-        $form->expects(static::any())->method('getData')->willReturn($data);
-        return $form;
+        return $service;
     }
 }

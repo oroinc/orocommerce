@@ -33,6 +33,8 @@ class OroUPSExtensionTest extends ExtensionTestCase
             'oro_ups.entity_listener.channel',
             'oro_ups.entity_listener.transport',
             'oro_ups.shipping_units_mapper',
+            'oro_ups.config.integration_method_identifier_generator',
+            'oro_ups.repository.shipping_service',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }

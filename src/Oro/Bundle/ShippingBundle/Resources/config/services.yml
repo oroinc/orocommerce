@@ -112,6 +112,12 @@ services:
         calls:
             - [setAclHelper, ['@oro_security.acl_helper']]
 
+    oro_shipping.repository.shipping_method_type_config:
+        class: 'Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodTypeConfigRepository'
+        parent: oro_entity.abstract_repository
+        arguments:
+            - 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig'
+
     oro_shipping.repository.product_shipping_options:
         parent: oro_entity.abstract_repository
         arguments:
@@ -378,7 +384,18 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_shipping.method_renaming, method: onMethodRename}
 
+    oro_shipping.event_listener.method_type.change:
+        class: 'Oro\Bundle\ShippingBundle\Method\EventListener\MethodTypeChangeListener'
+        arguments:
+            - '@oro_shipping.repository.shipping_method_type_config'
+        tags:
+            - { name: kernel.event_listener, event: oro_shipping_method_type.change, method: addErrorTypes }
+
     oro_shipping.method.event.dispatcher.method_renaming:
         class: 'Oro\Bundle\ShippingBundle\Method\Event\BasicMethodRenamingEventDispatcher'
         arguments:
             - '@event_dispatcher'
+
+    oro_shipping.method.factory.method_type_change_event:
+        class: 'Oro\Bundle\ShippingBundle\Method\Factory\MethodTypeChangeEventFactory'
+        public: false

@@ -7,15 +7,18 @@ use Symfony\Component\Validator\Constraint;
 class RemoveUsedShippingService extends Constraint
 {
     /**
-     * @var string
-     */
-    public $message = 'oro.ups.transport.shipping_service.used';
-
-    /**
      * {@inheritDoc}
      */
     public function validatedBy()
     {
         return RemoveUsedShippingServiceValidator::ALIAS;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getTargets()
+    {
+        return self::CLASS_CONSTRAINT;
     }
 }

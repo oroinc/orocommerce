@@ -1,3 +1,6 @@
+parameters:
+    oro_ups.type: 'ups'
+
 services:
     # Providers
     oro_ups.provider.channel:
@@ -55,8 +58,10 @@ services:
     oro_ups.validator.remove_used_shipping_service:
         class: 'Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceValidator'
         arguments:
-            - "@doctrine"
-            - "@oro_shipping.shipping_method.registry"
+            - "@oro_ups.config.integration_method_identifier_generator"
+            - "@event_dispatcher"
+            - "@oro_ups.repository.shipping_service"
+            - "@oro_shipping.method.factory.method_type_change_event"
         tags:
             - { name: validator.constraint_validator, alias: oro_ups_remove_used_shipping_service_validator }
 
@@ -116,3 +121,15 @@ services:
     oro_ups.cache.shipping_price:
         public: false
         parent: oro.cache.abstract
+
+    oro_ups.config.integration_method_identifier_generator:
+        class: 'Oro\Bundle\IntegrationBundle\Generator\Prefixed\PrefixedIntegrationIdentifierGenerator'
+        public: false
+        arguments:
+            - '%oro_ups.type%'
+
+    oro_ups.repository.shipping_service:
+        class: 'Oro\Bundle\UPSBundle\Entity\Repository\ShippingServiceRepository'
+        parent: oro_entity.abstract_repository
+        arguments:
+            - 'Oro\Bundle\UPSBundle\Entity\ShippingService'

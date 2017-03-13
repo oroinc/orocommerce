@@ -63,4 +63,11 @@ class ShippingMethodTypeConfigRepositoryTest extends WebTestCase
 
         static::assertEmpty($this->repository->findBy(['id' => $ids]));
     }
+
+    public function testFindEnabledByMethodIdentifier()
+    {
+        $actual = $this->repository->findEnabledByMethodIdentifier('per_item');
+
+        echo '1';
+    }
 }

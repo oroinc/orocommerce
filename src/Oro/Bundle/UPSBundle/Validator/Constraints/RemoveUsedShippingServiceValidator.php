@@ -2,201 +2,163 @@
 
 namespace Oro\Bundle\UPSBundle\Validator\Constraints;
 
-use Doctrine\Common\Collections\Collection;
-use Doctrine\Common\Persistence\ManagerRegistry;
 use Oro\Bundle\AddressBundle\Entity\Country;
-use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
-use Oro\Bundle\UPSBundle\Entity\ShippingService;
+use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
+use Oro\Bundle\ShippingBundle\Method\Event\MethodTypeChangeEvent;
+use Oro\Bundle\ShippingBundle\Method\Factory\MethodTypeChangeEventFactoryInterface;
+use Oro\Bundle\UPSBundle\Entity\Repository\ShippingServiceRepository;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
-use Oro\Bundle\UPSBundle\Method\UPSShippingMethod;
-use Oro\Component\PropertyAccess\PropertyAccessor;
-use Symfony\Component\Form\FormInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 class RemoveUsedShippingServiceValidator extends ConstraintValidator
 {
     const ALIAS = 'oro_ups_remove_used_shipping_service_validator';
-   
-    /**
-     * @var ManagerRegistry
-     */
-    protected $doctrine;
 
     /**
-     * @var ShippingMethodRegistry
+     * @var IntegrationIdentifierGeneratorInterface
      */
-    protected $registry;
+    private $identifierGenerator;
 
     /**
-     * @var PropertyAccessor
+     * @var EventDispatcherInterface
      */
-    protected $propertyAccessor;
+    private $dispatcher;
 
     /**
-     * @param ManagerRegistry $doctrine
-     * @param ShippingMethodRegistry $registry
+     * @var ShippingServiceRepository
      */
-    public function __construct(ManagerRegistry $doctrine, ShippingMethodRegistry $registry)
-    {
-        $this->doctrine = $doctrine;
-        $this->registry = $registry;
+    private $serviceRepository;
+
+    /**
+     * @var MethodTypeChangeEventFactoryInterface
+     */
+    private $typeChangeEventFactory;
+
+    /**
+     * @param IntegrationIdentifierGeneratorInterface $identifierGenerator
+     * @param EventDispatcherInterface                $dispatcher
+     * @param ShippingServiceRepository               $serviceRepository
+     * @param MethodTypeChangeEventFactoryInterface   $typeChangeEventFactory
+     */
+    public function __construct(
+        IntegrationIdentifierGeneratorInterface $identifierGenerator,
+        EventDispatcherInterface $dispatcher,
+        ShippingServiceRepository $serviceRepository,
+        MethodTypeChangeEventFactoryInterface $typeChangeEventFactory
+    ) {
+        $this->identifierGenerator = $identifierGenerator;
+        $this->dispatcher = $dispatcher;
+        $this->serviceRepository = $serviceRepository;
+        $this->typeChangeEventFactory = $typeChangeEventFactory;
     }
 
     /**
-     * @param Collection $value
+     * @param UPSTransport                         $value
      * @param Constraint|RemoveUsedShippingService $constraint
-     * @throws \UnexpectedValueException
-     * @throws \InvalidArgumentException
      */
     public function validate($value, Constraint $constraint)
     {
-        if ($value) {
-            $upsTypeIds = $this->getUpsTypesIds($value);
+        if (!$value instanceof UPSTransport) {
+            return;
+        }
 
-            $channelId = $this->getChannelId();
-            if (null !== $channelId) {
-                $methodIdentifier = UPSShippingMethod::IDENTIFIER . '_' . $channelId;
-                $shippingMethod = $this->registry->getShippingMethod($methodIdentifier);
-                if (null !== $shippingMethod) {
-                    $configuredMethods = $this
-                        ->doctrine
-                        ->getManagerForClass('OroShippingBundle:ShippingMethodConfig')
-                        ->getRepository('OroShippingBundle:ShippingMethodConfig')
-                        ->findBy(['method' => $methodIdentifier]);
-                    if (count($configuredMethods) > 0) {
-                        /** @var ShippingMethodConfig $configuredMethod */
-                        foreach ($configuredMethods as $configuredMethod) {
-                            $configuredTypes = $configuredMethod->getTypeConfigs()->toArray();
-                            $enabledTypes = $this->getEnabledTypes($configuredTypes);
-                            $diff = array_diff($enabledTypes, $upsTypeIds);
-                            if (0 < count($diff) && (count($enabledTypes) >= count($upsTypeIds))) {
-                                $missingServices = $this
-                                    ->doctrine
-                                    ->getManagerForClass('OroUPSBundle:ShippingService')
-                                    ->getRepository('OroUPSBundle:ShippingService')
-                                    ->findBy(['code' => $diff, 'country' => $this->getCountry()]);
+        $event = $this->buildMethodTypeChangeEvent($value);
+        $this->dispatcher->dispatch(MethodTypeChangeEvent::NAME, $event);
 
-                                $this->addViolations($missingServices, $constraint->message);
-                                break;
-                            }
-                        }
-                    }
-                }
+        if ($event->hasErrors()) {
+            $this->handleErrors($event, $value);
+        }
+    }
+
+    /**
+     * @param MethodTypeChangeEvent $event
+     * @param UPSTransport          $transport
+     */
+    private function handleErrors(MethodTypeChangeEvent $event, UPSTransport $transport)
+    {
+        $serviceDescriptions = $this->getAllServiceDescriptions($transport->getCountry());
+
+        $errorDescriptions = [];
+        foreach ($event->getErrorTypes() as $type) {
+            if (!array_key_exists($type, $serviceDescriptions)) {
+                continue;
             }
+
+            $errorDescriptions[] = $serviceDescriptions[$type];
         }
+
+        $this->addViolation(
+            $event->getErrorMessagePlaceholder(),
+            implode(', ', $errorDescriptions)
+        );
     }
 
     /**
-     * @param Collection $value
-     * @return array
+     * @param string $messagePlaceholder
+     * @param string $errorTypes
      */
-    protected function getUpsTypesIds($value)
+    private function addViolation($messagePlaceholder, $errorTypes)
     {
-        $upsTypesIds = [];
-        /** @var ShippingService $upsService */
-        foreach ($value->toArray() as $upsService) {
-            $upsTypesIds[] = $upsService->getCode();
+        /** @var ExecutionContextInterface $context */
+        $context = $this->context;
+
+        $context->buildViolation($messagePlaceholder)
+            ->setParameter('%types%', $errorTypes)
+            ->setTranslationDomain(null)
+            ->atPath('applicableShippingServices')
+            ->addViolation();
+    }
+
+    /**
+     * @param UPSTransport $transport
+     *
+     * @return MethodTypeChangeEvent
+     */
+    private function buildMethodTypeChangeEvent(UPSTransport $transport)
+    {
+        $selectedServiceCodes = $this->getSelectedServiceCodes($transport);
+
+        $methodIdentifier = $this->identifierGenerator->generateIdentifier(
+            $transport->getChannel()
+        );
+
+        return $this->typeChangeEventFactory->create($selectedServiceCodes, $methodIdentifier);
+    }
+
+    /**
+     * @param Country $country
+     *
+     * @return array<code => description>
+     */
+    private function getAllServiceDescriptions(Country $country)
+    {
+        $shippingServices = $this->serviceRepository->getShippingServicesByCountry($country);
+
+        $names = [];
+        foreach ($shippingServices as $service) {
+            $names[$service->getCode()] = $service->getDescription();
         }
-        return $upsTypesIds;
+
+        return $names;
     }
 
     /**
-     * @param array $configuredTypes
-     * @return array
+     * @param UPSTransport $transport
+     *
+     * @return string[]
      */
-    protected function getEnabledTypes($configuredTypes)
+    private function getSelectedServiceCodes(UPSTransport $transport)
     {
-        $enabledTypes = [];
-        /** @var ShippingMethodTypeConfig $confType */
-        foreach ($configuredTypes as $confType) {
-            if ($confType->isEnabled()) {
-                $enabledTypes[] = $confType->getType();
-            }
+        $selectedServices = $transport->getApplicableShippingServices();
+
+        $codes = [];
+        foreach ($selectedServices as $service) {
+            $codes[] = $service->getCode();
         }
-        return $enabledTypes;
-    }
-    
-    /**
-     * @param array $missingServices
-     * @param string $message
-     */
-    protected function addViolations($missingServices, $message)
-    {
-        /** @var ShippingService $service */
-        foreach ($missingServices as $service) {
-            $this->context->addViolation($message, [
-                '{{ service }}' => $service->getDescription()
-            ]);
-        }
-    }
 
-    /**
-     * @return PropertyAccessor
-     */
-    protected function getPropertyAccessor()
-    {
-        if (!$this->propertyAccessor) {
-            $this->propertyAccessor = new PropertyAccessor();
-        }
-        return $this->propertyAccessor;
-    }
-
-    /**
-     * @return string|null
-     */
-    protected function getChannelId()
-    {
-        $id = null;
-
-        $form = $this->getForm();
-        while ($form) {
-            if ($form->getData() instanceof Channel) {
-                $id = $form->getData()->getId();
-                break;
-            }
-            $form = $form->getParent();
-        }
-        return $id;
-    }
-
-    /**
-     * @return Country|null
-     */
-    protected function getCountry()
-    {
-        $country = null;
-
-        $form = $this->getForm();
-        while ($form) {
-            if ($form->getData() instanceof UPSTransport) {
-                $country = $form->getData()->getCountry();
-                break;
-            }
-            $form = $form->getParent();
-        }
-        return $country;
-    }
-
-    /**
-     * @return FormInterface
-     */
-    protected function getForm()
-    {
-        return $this->getPropertyAccessor()->getValue($this->context->getRoot(), $this->getFormPath());
-    }
-
-    /**
-     * @return string
-     */
-    protected function getFormPath()
-    {
-        $path = $this->context->getPropertyPath();
-        $path = str_replace(['children', '.'], '', $path);
-        $path = preg_replace('/\][^\]]*$/', ']', $path);
-        return $path;
+        return $codes;
     }
 }
