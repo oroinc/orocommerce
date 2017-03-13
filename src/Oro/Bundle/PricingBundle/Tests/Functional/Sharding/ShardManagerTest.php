@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PricingBundle\Tests\FunctionalSharding;
+namespace Oro\Bundle\PricingBundle\Tests\Functional\Sharding;
 
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
@@ -78,5 +78,14 @@ class ShardManagerTest extends WebTestCase
 
         $this->manager->delete(ProductPrice::class, $shardName);
         $this->assertFalse($this->manager->exists(ProductPrice::class, $shardName));
+    }
+
+    public function testSerialization()
+    {
+        $this->manager->addEntityForShard(ProductPrice::class);
+        $result = serialize($this->manager);
+        /** @var ShardManager $newManager */
+        $newManager = unserialize($result);
+        $this->assertEquals($this->manager->getShardMap(), $newManager->getShardMap());
     }
 }

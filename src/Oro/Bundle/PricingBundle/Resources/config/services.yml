@@ -752,7 +752,7 @@ services:
         class: 'Oro\Bundle\PricingBundle\Builder\ProductPriceBuilder'
         arguments:
             - '@doctrine'
-            - '@oro_entity.orm.insert_from_select_query_executor'
+            - '@oro_pricing.orm.insert_from_select_query_executor'
             - '@oro_pricing.compiler.price_list_rule_compiler'
             - '@oro_pricing.price_list_trigger_handler'
 
@@ -954,13 +954,36 @@ services:
 
     oro_pricing.shard_manager:
         class: 'Oro\Bundle\PricingBundle\Sharding\ShardManager'
-        arguments:
-            - '@doctrine'
+        calls:
+            - [setRegistry, ['@doctrine']]
+            - [addEntityForShard, [%oro_pricing.entity.product_price.class%]]
 
     oro_pricing.entity_listener.price_list_sharding:
-            class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListShardingListener'
-            arguments:
-                - '@oro_pricing.shard_manager'
-            tags:
-                - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_list.class%', event: postPersist }
-                - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_list.class%', event: preRemove }
+        class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListShardingListener'
+        arguments:
+            - '@oro_pricing.shard_manager'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_list.class%', event: postPersist }
+            - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.price_list.class%', event: preRemove }
+
+    oro_pricing.orm.insert_from_select_query_executor:
+        class: Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor
+        arguments:
+            - '@oro_entity.orm.native_query_executor_helper'
+            - '@oro_pricing.shard_manager'
+
+    oro_pricing.orm_walker.price_shard_walker_hint_provider:
+        class: Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalkerHintProvider
+        arguments:
+            - '@oro_pricing.shard_manager'
+
+    oro_pricing.query_hint.price_shard:
+        public: false
+        abstract: true
+        tags:
+            -
+                name: oro_entity.query_hint
+                hint: oro_pricing.price_shard
+                alias: HINT_PRICE_SHARD
+                output_walker: Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker
+                walker_hint_provider: oro_pricing.orm_walker.price_shard_walker_hint_provider

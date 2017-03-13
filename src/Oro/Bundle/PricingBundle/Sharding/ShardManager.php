@@ -13,7 +13,7 @@ use Doctrine\ORM\Mapping\ClassMetadata;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
-class ShardManager
+class ShardManager implements \Serializable
 {
     /**
      * @var RegistryInterface
@@ -21,23 +21,32 @@ class ShardManager
     private $registry;
 
     /**
-     * @param RegistryInterface $registry
+     * @var array
      */
-    public function __construct(RegistryInterface $registry)
+    protected $shardMap = [];
+
+    /**
+     * @var array
+     */
+    protected $shardList = [];
+
+    /**
+     * @param array $shardList
+     */
+    public function __construct(array $shardList = [])
     {
-        $this->registry = $registry;
+        $this->shardList = $shardList;
     }
 
     /**
-     * @param string $className
+     * @param $className
      * @param array $attributes
      * @return string
-     *
      * @throws \Exception
      */
     public function getShardName($className, array $attributes)
     {
-        $baseTableName = $this->getBaseTableName($className);
+        $baseTableName = $this->getEntityBaseTable($className);
 
         if (!isset($attributes['priceList'])) {
             throw new \Exception(sprintf("Required attribute '%s' for generation of shard name missing.", "priceList"));
@@ -54,6 +63,15 @@ class ShardManager
         $shardName = sprintf("%s_%s", $baseTableName, $id);
 
         return $shardName;
+    }
+
+    /**
+     * @param $className
+     * @return bool
+     */
+    public function isEntitySharded($className)
+    {
+        return in_array($className, $this->getShardMap());
     }
 
     /**
@@ -74,7 +92,7 @@ class ShardManager
         $search = [$baseTableName];
         $replace = [$shardName];
         foreach ($table->getIndexes() as $index) {
-            if ($index->getName() == 'PRIMARY') {
+            if ($index->getName() === 'PRIMARY') {
                 continue;
             }
             $search[] = $index->getName();
@@ -101,7 +119,7 @@ class ShardManager
     public function exists($className, $shardName)
     {
         $connection = $this->getConnection($className);
-        return $connection->getSchemaManager()->tablesExist($shardName);
+        return $connection->getSchemaManager()->tablesExist([$shardName]);
     }
 
     /**
@@ -161,5 +179,87 @@ class ShardManager
         }
 
         return substr(strtoupper($prefix . "_" . $hash), 0, 30);
+    }
+
+    /**
+     * @param $className
+     */
+    public function addEntityForShard($className)
+    {
+        $this->shardList[] = $className;
+        $this->shardMap = [];
+    }
+
+    /**
+     * @param $className
+     * @return mixed
+     * @throws \Exception
+     */
+    public function getEntityBaseTable($className)
+    {
+        if (!array_key_exists($className, $this->getShardMap())) {
+            throw new \Exception('Entity ' . $className . ' wasn\'t registered for sharding');
+        }
+
+        return $this->getShardMap()[$className];
+    }
+
+    /**
+     * @return array
+     */
+    public function getShardMap()
+    {
+        if (empty($this->shardMap) && !empty($this->shardList)) {
+            foreach ($this->shardList as $className) {
+                $this->shardMap[$className] = $this->getBaseTableName($className);
+            }
+        }
+
+        return $this->shardMap;
+    }
+
+    /**
+     * @param $className
+     * @return string
+     */
+    public function getDiscriminationField($className)
+    {
+        //TODO: get from annotations
+        return 'priceList';
+    }
+
+    /**
+     * @param $className
+     * @return string
+     */
+    public function getDiscriminationColumn($className)
+    {
+        //TODO: get from annotations
+        return 'price_list_id';
+    }
+
+    /**
+     * @return string
+     */
+    public function serialize()
+    {
+        return serialize($this->shardList);
+    }
+
+    /**
+     * @param string $serialized
+     */
+    public function unserialize($serialized)
+    {
+        $shardList = unserialize($serialized);
+        $this->shardList = $shardList;
+    }
+
+    /**
+     * @param RegistryInterface $registry
+     */
+    public function setRegistry(RegistryInterface $registry)
+    {
+        $this->registry = $registry;
     }
 }

@@ -8,10 +8,6 @@ use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
-use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
-use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer;
-use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomerGroup;
-use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -164,7 +160,9 @@ abstract class BaseProductPriceRepository extends EntityRepository
             $orderBy
         );
 
-        return $qb->getQuery()->getResult();
+        $query = $qb->getQuery();
+
+        return $query->getResult();
     }
 
     /**
@@ -264,7 +262,9 @@ abstract class BaseProductPriceRepository extends EntityRepository
                 ->setParameter('currencies', $currencies);
         }
 
-        return $qb->getQuery()->getArrayResult();
+        $query = $qb->getQuery();
+
+        return $query->getArrayResult();
     }
 
     /**
@@ -277,8 +277,9 @@ abstract class BaseProductPriceRepository extends EntityRepository
     public function getProductUnitsByPriceList(BasePriceList $priceList, Product $product, $currency = null)
     {
         $qb = $this->getProductUnitsByPriceListQueryBuilder($priceList, $product, $currency);
+        $query = $qb->getQuery();
 
-        return $qb->getQuery()->getResult();
+        return $query->getResult();
     }
 
     /**
@@ -331,8 +332,8 @@ abstract class BaseProductPriceRepository extends EntityRepository
                 'priceList' => $priceList,
                 'currency' => $currency,
             ]);
-
-        $productsUnits = $qb->getQuery()->getResult();
+        $query = $qb->getQuery();
+        $productsUnits = $query->getResult();
 
         $result = [];
         foreach ($productsUnits as $unit) {
@@ -400,14 +401,20 @@ abstract class BaseProductPriceRepository extends EntityRepository
         if (empty($priceLists)) {
             return [];
         }
+        $products = [];
+        foreach ($priceLists as $priceList) {
+            $qb = $this->createQueryBuilder('price');
+            $qb->select('DISTINCT IDENTITY(price.product) AS product')
+                ->where($qb->expr()->eq('price.priceList', ':priceLists'))
+                ->setParameter('priceLists', $priceList);
 
-        $qb = $this->createQueryBuilder('price');
-        $qb->select('DISTINCT IDENTITY(price.product) AS product')
-            ->where($qb->expr()->in('price.priceList', ':priceLists'))
-            ->setParameter('priceLists', $priceLists);
+            $query = $qb->getQuery();
+            $result = $query->getScalarResult();
+            $ids = array_column($result, 'product');
+            $products = array_merge($products, $ids);
+            $products = array_unique($products);
+        }
 
-        $result = $qb->getQuery()->getScalarResult();
-
-        return array_column($result, 'product');
+        return $products;
     }
 }
