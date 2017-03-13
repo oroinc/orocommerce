@@ -126,7 +126,7 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.inventory-grid, method: onBuildBefore }
 
     oro_inventory.event_listener.product_flush:
-        class: '%oro_inventory.event_listener.product_flush.class%'
+        class: Oro\Bundle\InventoryBundle\EventListener\ProductFlushEventListener
         arguments:
             - "@oro_inventory.manager.inventory_manager"
         tags:

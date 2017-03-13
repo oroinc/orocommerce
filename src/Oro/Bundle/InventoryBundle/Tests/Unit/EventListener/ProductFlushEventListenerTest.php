@@ -12,6 +12,9 @@ use Oro\Bundle\InventoryBundle\Inventory\InventoryManager;
 use Oro\Bundle\InventoryBundle\EventListener\ProductFlushEventListener;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
+/**
+ * @group CommunityEdition
+ */
 class ProductFlushEventListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
@@ -55,7 +58,8 @@ class ProductFlushEventListenerTest extends \PHPUnit_Framework_TestCase
         $this->inventoryManager->expects($this->once())
             ->method('deleteInventoryLevel');
         $this->entityManager->expects($this->once())
-            ->method('persist');
+            ->method('persist')
+            ->with($inventoryLevel);
         $this->entityManager->expects($this->once())
             ->method('getClassMetadata')
             ->willReturn($classMetaData);

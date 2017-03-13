@@ -6,6 +6,8 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Entity\Repository\InventoryLevelRepository;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryManager;
+use Oro\Bundle\InventoryBundle\Tests\Unit\Inventory\Stub\InventoryStatusStub;
+use Oro\Bundle\InventoryBundle\Tests\Unit\Inventory\Stub\ProductStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
@@ -35,15 +37,21 @@ class InventoryManagerTest extends \PHPUnit_Framework_TestCase
 
     public function testCreateInventoryLevel()
     {
-        $product = $this->createMock(Product::class);
+        $product = new ProductStub();
+        $product->setInventoryStatus(new InventoryStatusStub(1, Product::INVENTORY_STATUS_OUT_OF_STOCK));
         $productUnitPrecision = $this->createMock(ProductUnitPrecision::class);
         $productUnitPrecision->expects($this->exactly(2))
             ->method('getProduct')
             ->willReturn($product);
 
+        /** @var InventoryLevel $result */
         $result = $this->inventoryManager->createInventoryLevel($productUnitPrecision);
 
         $this->assertInstanceOf(InventoryLevel::class, $result);
+        $this->assertEquals(
+            Product::INVENTORY_STATUS_OUT_OF_STOCK,
+            $result->getProduct()->getInventoryStatus()->getName()
+        );
     }
 
     public function testCreateInventoryLevelNoProduct()
@@ -69,10 +77,12 @@ class InventoryManagerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $inventoryRepository->expects($this->once())
-            ->method('deleteInventoryLevelByProductAndProductUnitPrecision');
+            ->method('deleteInventoryLevelByProductAndProductUnitPrecision')
+            ->with($product, $productUnitPrecision);
         $this->doctrineHelper->expects($this->once())
             ->method('getEntityRepositoryForClass')
-            ->willReturn($inventoryRepository);
+            ->willReturn($inventoryRepository)
+            ->with(InventoryLevel::class);
 
         $this->inventoryManager->deleteInventoryLevel($productUnitPrecision);
     }
