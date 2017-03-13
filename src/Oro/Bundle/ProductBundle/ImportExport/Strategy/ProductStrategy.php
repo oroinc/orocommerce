@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\ImportExport\Strategy;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Util\ClassUtils;
+use Oro\Bundle\BatchBundle\Item\Support\ClosableInterface;
 use Oro\Bundle\LocaleBundle\ImportExport\Strategy\LocalizedFallbackValueAwareStrategy;
 use Oro\Bundle\OrganizationBundle\Entity\BusinessUnit;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -12,7 +13,7 @@ use Oro\Bundle\ProductBundle\ImportExport\Event\ProductStrategyEvent;
 use Oro\Bundle\SecurityBundle\SecurityFacade;
 use Oro\Bundle\UserBundle\Entity\User;
 
-class ProductStrategy extends LocalizedFallbackValueAwareStrategy
+class ProductStrategy extends LocalizedFallbackValueAwareStrategy implements ClosableInterface
 {
     /**
      * @var SecurityFacade
@@ -33,6 +34,19 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
      * @var string
      */
     protected $productClass;
+
+    /**
+     * @var array|Product[]
+     */
+    protected $processedProducts = [];
+
+    /**
+     * {@inheritdoc}
+     */
+    public function close()
+    {
+        $this->processedProducts = [];
+    }
 
     /**
      * @param SecurityFacade $securityFacade
@@ -89,7 +103,11 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
         $event = new ProductStrategyEvent($entity, $this->context->getValue('itemData'));
         $this->eventDispatcher->dispatch(ProductStrategyEvent::PROCESS_AFTER, $event);
 
-        return parent::afterProcessEntity($entity);
+        /** @var Product $entity */
+        $entity = parent::afterProcessEntity($entity);
+        $this->processedProducts[$entity->getSku()] = $entity;
+
+        return $entity;
     }
 
     /**
@@ -214,6 +232,25 @@ class ProductStrategy extends LocalizedFallbackValueAwareStrategy
             }
         }
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function processEntity(
+        $entity,
+        $isFullData = false,
+        $isPersistNew = false,
+        $itemData = null,
+        array $searchContext = [],
+        $entityIsRelation = false
+    ) {
+        if ($entity instanceof Product && array_key_exists($entity->getSku(), $this->processedProducts)) {
+            return $this->processedProducts[$entity->getSku()];
+        }
+
+        return parent::processEntity($entity, $isFullData, $isPersistNew, $itemData, $searchContext, $entityIsRelation);
+    }
+
 
     /**
      * Get additional search parameter name to find only related entities
