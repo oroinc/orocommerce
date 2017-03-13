@@ -95,7 +95,8 @@ class ProductControllerTest extends WebTestCase
         $formValues['oro_product']['status'] = Product::STATUS_DISABLED;
         $formValues['oro_product']['names']['values']['default'] = ProductTestHelper::DEFAULT_NAME;
         $formValues['oro_product']['descriptions']['values']['default'] = ProductTestHelper::DEFAULT_DESCRIPTION;
-        $formValues['oro_product']['shortDescriptions']['values']['default'] = ProductTestHelper::DEFAULT_SHORT_DESCRIPTION;
+        $formValues['oro_product']['shortDescriptions']['values']['default'] =
+            ProductTestHelper::DEFAULT_SHORT_DESCRIPTION;
         $formValues['oro_product']['type'] = Product::TYPE_SIMPLE;
         $formValues['oro_product']['additionalUnitPrecisions'][] = [
             'unit' => ProductTestHelper::FIRST_UNIT_CODE,
@@ -192,23 +193,40 @@ class ProductControllerTest extends WebTestCase
                 'names' => [
                     'values' => [
                         'default' => ProductTestHelper::DEFAULT_NAME_ALTERED,
-                        'localizations' => [$localization->getId() => ['fallback' => FallbackType::SYSTEM]],
+                        'localizations' => [
+                            $localization->getId() => [
+                                'fallback' => FallbackType::SYSTEM
+                            ]
+                        ],
                     ],
-                    'ids' => [$localization->getId() => $localizedName->getId()],
+                    'ids' => [
+                        $localization->getId() => $localizedName->getId()
+                    ],
                 ],
                 'descriptions' => [
                     'values' => [
                         'default' => ProductTestHelper::DEFAULT_DESCRIPTION,
-                        'localizations' => [$localization->getId() => ['fallback' => FallbackType::SYSTEM]],
+                        'localizations' => [
+                            $localization->getId() => ['fallback' => FallbackType::SYSTEM
+                            ]
+                        ],
                     ],
-                    'ids' => [$localization->getId() => $localizedName->getId()],
+                    'ids' => [
+                        $localization->getId() => $localizedName->getId()
+                    ],
                 ],
                 'shortDescriptions' => [
                     'values' => [
                         'default' => ProductTestHelper::DEFAULT_SHORT_DESCRIPTION,
-                        'localizations' => [$localization->getId() => ['fallback' => FallbackType::SYSTEM]],
+                        'localizations' => [
+                            $localization->getId() => [
+                                'fallback' => FallbackType::SYSTEM
+                            ]
+                        ],
                     ],
-                    'ids' => [$localization->getId() => $localizedName->getId()],
+                    'ids' => [
+                        $localization->getId() => $localizedName->getId()
+                    ],
                 ],
                 'images' => [
                     0 => [
@@ -346,11 +364,13 @@ class ProductControllerTest extends WebTestCase
         );
         $this->assertContainsAdditionalUnitPrecision(
             ProductTestHelper::SECOND_UNIT_FULL_NAME,
-            ProductTestHelper::SECOND_UNIT_PRECISION, $html
+            ProductTestHelper::SECOND_UNIT_PRECISION,
+            $html
         );
         $this->assertContainsAdditionalUnitPrecision(
             ProductTestHelper::THIRD_UNIT_FULL_NAME,
-            ProductTestHelper::THIRD_UNIT_PRECISION, $html
+            ProductTestHelper::THIRD_UNIT_PRECISION,
+            $html
         );
 
         $expectedProductImageMatrix = [
@@ -403,23 +423,41 @@ class ProductControllerTest extends WebTestCase
                 'names' => [
                     'values' => [
                         'default' => ProductTestHelper::DEFAULT_NAME_ALTERED,
-                        'localizations' => [$localization->getId() => ['fallback' => FallbackType::SYSTEM]],
+                        'localizations' => [
+                            $localization->getId() => [
+                                'fallback' => FallbackType::SYSTEM
+                            ]
+                        ],
                     ],
-                    'ids' => [$localization->getId() => $localizedName->getId()],
+                    'ids' => [
+                        $localization->getId() => $localizedName->getId()
+                    ],
                 ],
                 'descriptions' => [
                     'values' => [
                         'default' => ProductTestHelper::DEFAULT_DESCRIPTION,
-                        'localizations' => [$localization->getId() => ['fallback' => FallbackType::SYSTEM]],
+                        'localizations' => [
+                            $localization->getId() => [
+                                'fallback' => FallbackType::SYSTEM
+                            ]
+                        ],
                     ],
-                    'ids' => [$localization->getId() => $localizedName->getId()],
+                    'ids' => [
+                        $localization->getId() => $localizedName->getId()
+                    ],
                 ],
                 'shortDescriptions' => [
                     'values' => [
                         'default' => ProductTestHelper::DEFAULT_SHORT_DESCRIPTION,
-                        'localizations' => [$localization->getId() => ['fallback' => FallbackType::SYSTEM]],
+                        'localizations' => [
+                            $localization->getId() => [
+                                'fallback' => FallbackType::SYSTEM
+                            ]
+                        ],
                     ],
-                    'ids' => [$localization->getId() => $localizedName->getId()],
+                    'ids' => [
+                        $localization->getId() => $localizedName->getId()
+                    ],
                 ],
                 'images' => []//remove all images
             ]),
@@ -482,11 +520,12 @@ class ProductControllerTest extends WebTestCase
 
         $additionalUnit = array_pop($formValues['oro_product']['additionalUnitPrecisions']);
         $primaryUnit = $formValues['oro_product']['primaryUnitPrecision'];
-        $formValues['oro_product']['additionalUnitPrecisions'][2] =
-            $primaryUnit;
+        $formValues['oro_product']['additionalUnitPrecisions'][2] = $primaryUnit;
 
-        $formValues['oro_product']['primaryUnitPrecision'] =
-            ['unit' => $additionalUnit['unit'], 'precision' => $additionalUnit['precision']];
+        $formValues['oro_product']['primaryUnitPrecision'] = [
+            'unit' => $additionalUnit['unit'],
+            'precision' => $additionalUnit['precision']
+        ];
 
         $this->client->request($form->getMethod(), $form->getUri(), $formValues);
 
@@ -513,10 +552,16 @@ class ProductControllerTest extends WebTestCase
             $this->getActualAdditionalUnitPrecision($crawler, 1),
         ];
         $expectedUnitPrecisions = [
-            ['unit' => ProductTestHelper::THIRD_UNIT_FULL_NAME, 'precision' => ProductTestHelper::THIRD_UNIT_PRECISION,
-             'conversionRate' => 1, 'sell' => true],
-            ['unit' => ProductTestHelper::FIRST_UNIT_FULL_NAME, 'precision' => ProductTestHelper::FIRST_UNIT_PRECISION,
-             'conversionRate' => 1, 'sell' => true],
+            [
+                'unit' => ProductTestHelper::THIRD_UNIT_FULL_NAME,
+                'precision' => ProductTestHelper::THIRD_UNIT_PRECISION,
+                'conversionRate' => 1, 'sell' => true
+            ],
+            [
+                'unit' => ProductTestHelper::FIRST_UNIT_FULL_NAME,
+                'precision' => ProductTestHelper::FIRST_UNIT_PRECISION,
+                'conversionRate' => 1, 'sell' => true
+            ],
             [
                 'unit' => ProductTestHelper::SECOND_UNIT_FULL_NAME,
                 'precision' => ProductTestHelper::SECOND_UNIT_PRECISION,
@@ -558,7 +603,9 @@ class ProductControllerTest extends WebTestCase
             $this->getActualAdditionalUnitPrecision($crawler, 1),
         ];
         $expectedUnitPrecisions = [
-            ['unit' => ProductTestHelper::FIRST_UNIT_FULL_NAME, 'precision' => ProductTestHelper::FIRST_UNIT_PRECISION,
+            [
+                'unit' => ProductTestHelper::FIRST_UNIT_FULL_NAME,
+                'precision' => ProductTestHelper::FIRST_UNIT_PRECISION,
                 'conversionRate' => 1, 'sell' => true],
             [
                 'unit' => ProductTestHelper::SECOND_UNIT_FULL_NAME,
@@ -566,10 +613,8 @@ class ProductControllerTest extends WebTestCase
                 'conversionRate' => 2, 'sell' => false
             ],
         ];
-        $this->assertEquals(
-            $expectedUnitPrecisions,
-            $actualUnitPrecisions
-        );
+        $this->assertEquals($expectedUnitPrecisions, $actualUnitPrecisions);
+
         return $id;
     }
 
@@ -626,7 +671,9 @@ class ProductControllerTest extends WebTestCase
                 'values' => [
                     'default' => 'default-slug',
                     'localizations' => [
-                        $englishLocalization->getId() => ['value' => 'english-slug'],
+                        $englishLocalization->getId() => [
+                            'value' => 'english-slug'
+                        ],
                     ]
                 ]
             ]
