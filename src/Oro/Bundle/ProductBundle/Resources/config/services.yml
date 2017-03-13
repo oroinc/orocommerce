@@ -771,3 +771,9 @@ services:
             - '%oro_product.entity.product.class%'
         tags:
             - { name: kernel.event_listener, event: oro_config.update_after, method: onUpdateAfter }
+
+    oro_product.twig.product_image_extension:
+        class: Oro\Bundle\ProductBundle\Twig\ProductImageExtension
+        public: false
+        tags:
+            - { name: twig.extension }
