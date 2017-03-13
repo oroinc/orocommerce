@@ -138,6 +138,8 @@ OrderBundle
     - renamed and moved to `Oro\Bundle\OrderBundle\EventListener\PossibleShippingMethodEventListener`
     - constructor accepts `Oro\Bundle\ShippingBundle\Context\ShippingContextFactoryInterface` instead of `Oro\Bundle\OrderBundle\Factory\OrderShippingContextFactory`
     - method `onOrderEvent` renamed to `onEvent` and it accepts `Oro\Bundle\ShippingBundle\EventListener\EntityDataAwareEventInterface`
+- Payment history section was added to order view page with payment transactions for current order
+- `VIEW_PAYMENT_HISTORY` permission was added for viewing payment history section
 
 PaymentBundle
 -------------
