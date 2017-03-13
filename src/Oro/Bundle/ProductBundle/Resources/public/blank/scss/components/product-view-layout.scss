@@ -18,6 +18,14 @@
 
         width: $product-view-primary-width;
         margin-bottom: $product-view-primary-offset-bottom;
+
+        border-bottom: 1px solid get-color('additional', 'light');
+
+        .page-title {
+            margin: 0 0 5px;
+
+            font-size: $base-font-size--xl;
+        }
     }
 
     &__main {
@@ -65,6 +73,14 @@
             float: $product-view-primary-tablet-state;
 
             width: $product-view-primary-tablet-width;
+
+            .page-title {
+                font-size: $base-font-size--l;
+            }
+
+            .sku {
+                font-size: $base-font-size - 1;
+            }
         }
 
         &__main {
@@ -77,7 +93,6 @@
 
         &__specification {
             width: $product-view-tablet-specification-width;
-            margin: $product-view-tablet-specification-offset;
             padding: $product-view-specification-tablet-inner-offset;
         }
 

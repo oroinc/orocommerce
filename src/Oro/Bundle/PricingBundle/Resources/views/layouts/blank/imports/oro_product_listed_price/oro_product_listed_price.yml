@@ -1,0 +1,11 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'oro_product_listed_price.html.twig'
+        - '@addTree':
+            items:
+                __product_price_listed:
+                    blockType: block
+            tree:
+                __root:
+                    __product_price_listed: ~

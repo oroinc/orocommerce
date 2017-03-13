@@ -42,12 +42,14 @@ define(function(require) {
 
         changeQuantity: false,
 
+        changeUnitLabel: false,
+
         rendered: false,
 
         initialize: function(options) {
             BaseProductPricesView.__super__.initialize.apply(this, arguments);
 
-            $.extend(this, _.pick(options, ['changeQuantity']));
+            $.extend(this, _.pick(options, ['changeQuantity', 'changeUnitLabel']));
 
             this.deferredInitializeCheck(options, ['productModel']);
         },
@@ -141,11 +143,24 @@ define(function(require) {
             this.setFoundPrice(options.manually || false);
         },
 
+        setUnitLabel: function(price) {
+            if (!price || price.unit_with_price) {
+                return price;
+            }
+            price.unit_with_price = _.__('oro.pricing.price.formatted.unit', {
+                formattedUnit: _(price.formatted_unit).capitalize(),
+                formattedPrice: price.formatted_price
+            });
+            price.unit_changed = true;
+            return price;
+        },
+
         setFoundPrice: function(changeQuantity) {
             this.setPriceValue(this.findPrice(changeQuantity));
         },
 
         setPriceValue: function(price) {
+            price = this.changeUnitLabel ? this.setUnitLabel(price) : price;
             this.model.set('price', price);
         },
 

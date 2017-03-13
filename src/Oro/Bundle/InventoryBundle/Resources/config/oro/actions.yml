@@ -1,8 +1,4 @@
 operations:
     UPDATE:
-      exclude_datagrids:
-          - inventory-level-grid
-
-    DELETE:
-      exclude_datagrids:
-          - inventory-level-grid
+        exclude_datagrids:
+            - inventory-level-grid

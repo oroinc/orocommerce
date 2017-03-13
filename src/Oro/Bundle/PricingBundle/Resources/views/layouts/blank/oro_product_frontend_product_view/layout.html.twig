@@ -18,14 +18,6 @@
 {% block attribute_prices_widget %}
     {% set productPrices = value %}
     {% set attr = layout_attr_defaults(attr, {
-        'data-page-component-module': 'oroui/js/app/components/view-component',
-        '~data-page-component-options': {
-            view: 'oropricing/js/app/views/base-product-prices-view',
-            changeQuantity: true,
-            modelAttr: {
-                prices: productPrices
-            }
-        },
         '~class': ' product-prices__tbody'
     }) %}
 

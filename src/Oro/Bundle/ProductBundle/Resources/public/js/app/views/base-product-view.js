@@ -5,6 +5,7 @@ define(function(require) {
     var BaseView = require('oroui/js/app/views/base/view');
     var ElementsHelper = require('orofrontend/js/app/elements-helper');
     var BaseModel = require('oroui/js/app/models/base/model');
+    var viewportManager = require('oroui/js/viewport-manager');
     var mediator = require('oroui/js/mediator');
     var routing = require('routing');
     var $ = require('jquery');
@@ -19,7 +20,8 @@ define(function(require) {
         },
 
         elementsEvents: {
-            '$el': ['options:set:productModel', 'optionsSetProductModel']
+            '$el': ['options:set:productModel', 'optionsSetProductModel'],
+            'quantity': ['keyup', 'onQuantityChange']
         },
 
         modelElements: {
@@ -36,7 +38,8 @@ define(function(require) {
 
         modelEvents: {
             'id': ['change', 'onProductChanged'],
-            'line_item_form_enable': ['change', 'onLineItemFormEnableChanged']
+            'line_item_form_enable': ['change', 'onLineItemFormEnableChanged'],
+            'price updateUI': ['change', 'changeUnitLabel']
         },
 
         originalProductId: null,
@@ -44,6 +47,7 @@ define(function(require) {
         initialize: function(options) {
             BaseProductView.__super__.initialize.apply(this, arguments);
 
+            this.viewport = options.viewport || {};
             this.rowId = this.$el.parent().data('row-id');
             this.initModel(options);
             this.initializeElements(options);
@@ -90,6 +94,22 @@ define(function(require) {
                 }),
                 layoutSubtreeCallback: _.bind(this.afterProductChanged, this)
             });
+        },
+
+        onQuantityChange: function(e) {
+            this.setModelValueFromElement(e, 'quantity', 'quantity');
+        },
+
+        changeUnitLabel: function() {
+            var $unit = this.getElement('unit');
+            if (!this.model.get('price') ||
+                !$unit.inputWidget() ||
+                !viewportManager.isApplicable(this.viewport)) {
+                return;
+            }
+            var price = this.model.get('price');
+            $unit.find(':selected').text(price.unit_with_price);
+            $unit.inputWidget().refresh();
         },
 
         afterProductChanged: function() {

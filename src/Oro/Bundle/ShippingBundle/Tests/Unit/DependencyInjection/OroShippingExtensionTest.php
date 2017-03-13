@@ -64,7 +64,9 @@ class OroShippingExtensionTest extends ExtensionTestCase
             'oro_shipping.expression_language.decorated_product_line_item_factory',
             'oro_shipping.listener.shipping_rule',
             'oro_shipping.layout.block_type.shipping_methods',
-
+            'oro_shipping.repository.shipping_method_config',
+            'oro_shipping.method.event_listener.method_renaming',
+            'oro_shipping.method.event.dispatcher.method_renaming',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
 

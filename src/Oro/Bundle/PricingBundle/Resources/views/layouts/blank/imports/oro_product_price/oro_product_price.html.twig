@@ -1,0 +1,79 @@
+{% block __oro_product_price__product_price_container_widget %}
+    {% if productPrices %}
+        {% do block|merge_context({
+            productPrices: productPrices,
+            product: product
+        }) %}
+    {% endif %}
+
+    {% set modifierClass = productPriceMode ? ' product-price--' ~ productPriceMode : '' %}
+
+    {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-module': 'oroui/js/app/components/view-component',
+        '~data-page-component-options': {
+            view: 'oropricing/js/app/views/base-product-prices-view',
+            changeQuantity: true,
+            changeUnitLabel: changeUnitLabel,
+            modelAttr: {
+                prices: productPrices
+            }
+        },
+        '~class': ' product-price' ~ modifierClass
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        <div class="product-price__hint"
+             data-name="prices-hint"
+             data-placement="bottom"
+             data-close="false"
+             data-trigger="hover"
+             data-container="body"
+             data-class="prices-hint-content">
+            {{ block_widget(block) }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block __oro_product_price__product_price_hint_widget %}
+    <div data-name="prices-hint-content" class="hidden">
+        <table class="table">
+            <thead>
+            <tr>
+                <th class="text-uppercase">qty</th>
+                <th >Unit Price</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% set shownUnit = '' %}
+            {% for price in productPrices %}
+                {% if shownUnit != price.unit %}
+                    {% set shownUnit = price.unit %}
+                    <tr>
+                        <td colspan="2" class="text-center">
+                            {% if loop.index > 1 %}<br/>{% endif %}
+                            <strong>{{ shownUnit|oro_format_product_unit_label|capitalize }}</strong>
+                        </td>
+                    </tr>
+                {% endif %}
+                <tr>
+                    <td>
+                        {{ price.quantity }}
+                    </td>
+                    <td>
+                        {{ price.formatted_price }}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock %}
+
+{% block __oro_product_price__product_price_msrp_widget %}
+    {% set attr = layout_attr_defaults({
+        '~class': ' product-price__mspr product-price__mspr_{{ class_prefix }}'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ 'oro.pricing.frontend.pricelist.index.msrp'|trans }} <span>$24.99</span>
+    </div>
+{% endblock %}

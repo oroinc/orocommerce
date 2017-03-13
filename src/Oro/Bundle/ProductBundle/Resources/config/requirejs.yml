@@ -7,6 +7,7 @@ config:
         'oroproduct/js/app/components/quick-add-component': 'bundles/oroproduct/js/app/components/quick-add-component.js'
         'oroproduct/js/app/components/product-autocomplete-component': 'bundles/oroproduct/js/app/components/product-autocomplete-component.js'
         'oroproduct/js/app/components/quick-add-form-button-component': 'bundles/oroproduct/js/app/components/quick-add-form-button-component.js'
+        'oroproduct/js/app/components/fullscreen-attribute-group-tab-content-component': 'bundles/oroproduct/js/app/components/fullscreen-attribute-group-tab-content-component.js'
         'tinymce/plugins/fullscreen/plugin.min': 'empty:'
         'oro/quick-add-import-widget': 'bundles/oroproduct/js/app/widget/quick-add-import-widget.js'
         'oroproduct/js/app/components/quick-add-copy-paste-form-component': 'bundles/oroproduct/js/app/components/quick-add-copy-paste-form-component.js'

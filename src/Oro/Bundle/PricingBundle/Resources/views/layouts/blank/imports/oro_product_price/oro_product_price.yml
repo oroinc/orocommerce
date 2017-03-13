@@ -1,0 +1,35 @@
+layout:
+    imports:
+        -
+            id: oro_product_customer_price
+            root: __product_price_container
+        -
+            id: oro_product_listed_price
+            root: __product_price_container
+    actions:
+        - '@setBlockTheme':
+            themes: 'oro_product_price.html.twig'
+        - '@addTree':
+            items:
+                __product_price_container:
+                    blockType: product_prices
+                    options:
+                        productPrices: []
+                        attributeFamily: '=context.offsetExists("attribute_family") ? context["attribute_family"] : null'
+                __product_price_listed:
+                    blockType: block
+                __product_price_msrp:
+                    blockType: block
+                    options:
+                        visible: false
+                __product_price_hint:
+                    blockType: block
+            tree:
+                __root:
+                    __product_price_container:
+                        __product_price_hint: ~
+                        __product_price_msrp: ~
+        - '@move':
+            id: __product_price_listed
+            siblingId: __product_price_hint
+
