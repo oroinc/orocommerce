@@ -16,6 +16,7 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
 
     const AUTHORIZE_TRANSACTION = 'authorize_transaction';
     const CHARGE_TRANSACTION = 'charge_transaction';
+    const CHARGE_TRANSACTION_FAILED = 'charge_transaction_failed';
     const VALIDATE_TRANSACTION = 'validate_transaction';
     const AUTHORIZE_ACTIVE_TRANSACTION = 'authorize_active_transaction';
     const CHARGED_AUTHORIZE_TRANSACTION = 'charged_authorize_transaction';
@@ -104,6 +105,22 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
             'entityIdentifier' => 1,
             'active' => true,
             'successful' => true,
+            'paymentMethod' => self::PAYMENT_METHOD,
+            'entityClass' => PaymentTransaction::class,
+            'frontendOwner' => LoadCustomerUserData::EMAIL,
+            'response' => [
+                'SECURETOKEN' => 'SECURETOKEN',
+                'SECURETOKENID' => 'SECURETOKENID',
+            ],
+            'sourcePaymentTransactionReference' => self::CHARGED_AUTHORIZE_TRANSACTION
+        ],
+        self::CHARGE_TRANSACTION_FAILED => [
+            'amount' => '1000.00',
+            'currency' => 'USD',
+            'action' => PaymentMethodInterface::CHARGE,
+            'entityIdentifier' => 1,
+            'active' => true,
+            'successful' => false,
             'paymentMethod' => self::PAYMENT_METHOD,
             'entityClass' => PaymentTransaction::class,
             'frontendOwner' => LoadCustomerUserData::EMAIL,

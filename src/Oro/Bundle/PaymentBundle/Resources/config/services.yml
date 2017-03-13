@@ -100,13 +100,6 @@ services:
         calls:
             - ['setLogger', ['@logger']]
 
-    # @deprecated since 1.1 Use oro_payment.action.capture_payment_transaction to capture a concrete transaction
-    oro_payment.action.capture:
-        class: 'Oro\Bundle\PaymentBundle\Action\CaptureAction'
-        parent: oro_payment.action.payment_method_action.abstract
-        tags:
-            - { name: oro_action.action, alias: payment_capture }
-
     oro_payment.action.capture_payment_transaction:
         class: 'Oro\Bundle\PaymentBundle\Action\PaymentTransactionCaptureAction'
         parent: oro_payment.action.payment_method_action.abstract
@@ -147,6 +140,13 @@ services:
             - '@oro_payment.method.provider.method_provider'
         tags:
             - { name: oro_action.condition, alias: 'has_applicable_payment_methods' }
+
+    oro_payment.condition.payment_transaction_was_charged:
+        class: 'Oro\Bundle\PaymentBundle\Condition\PaymentTransactionWasCharged'
+        arguments:
+            - '@oro_payment.repository.payment_transaction'
+        tags:
+            - { name: oro_action.condition, alias: 'payment_transaction_was_charged' }
 
     oro_payment.provider.address_extractor:
         class: 'Oro\Bundle\PaymentBundle\Provider\AddressExtractor'
@@ -203,7 +203,6 @@ services:
 
     oro_payment.payment_method.composite_provider:
         class: 'Oro\Bundle\PaymentBundle\Method\Provider\CompositePaymentMethodProvider'
-        public: false
 
     oro_payment.payment_method_view.composite_provider:
         class: 'Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider'

@@ -140,6 +140,9 @@ OrderBundle
     - method `onOrderEvent` renamed to `onEvent` and it accepts `Oro\Bundle\ShippingBundle\EventListener\EntityDataAwareEventInterface`
 - Payment history section was added to order view page with payment transactions for current order
 - `VIEW_PAYMENT_HISTORY` permission was added for viewing payment history section
+- `CHARGE_AUTHORIZED_PAYMENTS` permission was added for possibility to charge payment transaction
+- Capture button for payment authorize transactions was added in Payment History section, Capture button for order was removed
+- `oro_order_capture` operation was removed, `oro_order_payment_transaction_capture` should be used instead
 
 PaymentBundle
 -------------
@@ -190,6 +193,7 @@ PaymentBundle
         - added methods:
             - getAdminLabel()
             - getPaymentMethodIdentifier()
+- Class `Oro\Bundle\PaymentBundle\Action\CaptureAction` was removed, `Oro\Bundle\PaymentBundle\Action\PaymentTransactionCaptureAction` should be used instead
 
 PaymentTermBundle
 -----------------

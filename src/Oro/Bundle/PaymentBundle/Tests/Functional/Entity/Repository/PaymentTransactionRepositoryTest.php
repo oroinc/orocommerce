@@ -48,16 +48,16 @@ class PaymentTransactionRepositoryTest extends WebTestCase
      * @param string $sourceTransactionReference
      * @param array  $expectedRelatedTransactionsReferences
      *
-     * @dataProvider findRelatedTransactionByActionDataProvider
+     * @dataProvider findSuccessfulRelatedTransactionsByActionDataProvider
      */
-    public function testFindRelatedTransactionByAction(
+    public function findSuccessfulRelatedTransactionsByAction(
         $sourceTransactionReference,
         array $expectedRelatedTransactionsReferences
     ) {
         $authorizationTransaction = $this->getReference($sourceTransactionReference);
 
-        $actualRelatedTransactions = $this->repository->findRelatedTransactionByAction(
-            $authorizationTransaction->getId(),
+        $actualRelatedTransactions = $this->repository->findSuccessfulRelatedTransactionsByAction(
+            $authorizationTransaction,
             PaymentMethodInterface::CHARGE
         );
 
@@ -72,7 +72,7 @@ class PaymentTransactionRepositoryTest extends WebTestCase
     /**
      * @return array
      */
-    public function findRelatedTransactionByActionDataProvider()
+    public function findSuccessfulRelatedTransactionsByActionDataProvider()
     {
         return [
             [

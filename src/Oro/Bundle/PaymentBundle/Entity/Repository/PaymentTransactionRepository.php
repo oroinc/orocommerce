@@ -45,17 +45,20 @@ class PaymentTransactionRepository extends EntityRepository
     }
 
     /**
-     * @param int    $transactionID
-     * @param string $action
+     * @param PaymentTransaction $transaction
+     * @param string             $action
      *
      * @return PaymentTransaction[]
      */
-    public function findRelatedTransactionByAction($transactionID, $action)
-    {
+    public function findSuccessfulRelatedTransactionsByAction(
+        PaymentTransaction $transaction,
+        $action
+    ) {
         return $this->findBy(
             [
-                'sourcePaymentTransaction' => $transactionID,
+                'sourcePaymentTransaction' => $transaction,
                 'action' => $action,
+                'successful' => true
             ]
         );
     }
