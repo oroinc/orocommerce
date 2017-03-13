@@ -81,8 +81,10 @@ class ProductImagesConfigurationListenerTest extends \PHPUnit_Framework_TestCase
     {
         $flashBag = $this->prophesize(FlashBag::class);
         $flashBag
-            ->add('info', self::MESSAGE.' <code>'.ProductImagesConfigurationListener::COMMAND.'</code>')
-            ->shouldBeCalledTimes(1);
+            ->add(
+                ProductImagesConfigurationListener::MESSAGE_TYPE,
+                self::MESSAGE.' <code>'.ProductImagesConfigurationListener::COMMAND.'</code>'
+            )->shouldBeCalledTimes(1);
 
         return $flashBag;
     }
