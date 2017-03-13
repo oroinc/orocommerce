@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\EventListener;
+namespace Oro\Bundle\InventoryBundle\EventListener;
 
 use Doctrine\ORM\Event\OnFlushEventArgs;
 
