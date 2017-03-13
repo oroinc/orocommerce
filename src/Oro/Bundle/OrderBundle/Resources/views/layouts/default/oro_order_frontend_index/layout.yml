@@ -9,13 +9,18 @@ layout:
         - '@setBlockTheme':
             themes: 'OroOrderBundle:layouts:default/oro_order_frontend_index/layout.html.twig'
 
-        - '@setOption':
+        - '@appendOption':
             id: orders_datagrid
-            optionName: grid_render_parameters
+            optionName: grid_render_parameters.themeOptions
             optionValue:
-                themeOptions:
-                    cellLauncherOptions:
-                        launcherMode: 'text-only'
+                cellLauncherOptions:
+                    launcherMode: 'text-only'
+
+        - '@appendOption':
+            id: orders_datagrid
+            optionName: grid_render_parameters.toolbarOptions.itemsCounter
+            optionValue:
+                transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.orders'
 
         - '@setOption':
             id: page_content
