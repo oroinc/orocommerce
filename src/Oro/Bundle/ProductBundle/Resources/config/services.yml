@@ -111,7 +111,6 @@ services:
     oro_product.service.product_update_handler:
         class: 'Oro\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler'
         parent: oro_form.model.update_handler
-        scope: request
         calls:
             - [setActionGroupRegistry, ['@oro_action.action_group_registry']]
             - [setTranslator, ['@translator']]
@@ -763,6 +762,7 @@ services:
     oro_product.config.event_listener.direct_url_prefix_change:
         class: Oro\Bundle\RedirectBundle\EventListener\ConfigRegenerateDirectUrlListener
         arguments:
+            - '@oro_config.manager'
             - '@oro_message_queue.client.message_producer'
             - '@oro_redirect.form.storage.redirect_storage'
             - '@oro_redirect.direct_url_message_factory'

@@ -2,22 +2,14 @@
 
 {% set treeOptions = {
     'data' : oro_category_list(),
-    'defaultCategoryId': defaultCategoryId
+    'defaultCategoryId': defaultCategoryId,
+    'view' : 'orocatalog/js/app/views/product-sidebar-view'
 } %}
 
 {{ UI.renderJsTree(
     {
-        'module': 'orocatalog/js/app/components/product-sidebar-component',
         'label': 'oro.catalog.category.entity_plural_label'|trans,
         'treeOptions': treeOptions
-    },
-    {
-        'expand': 'expand',
-        'collapse': 'collapse',
-        'move': {
-            'view': 'oroui/js/app/views/jstree/move-action-view',
-            'routeName': 'oro_catalog_category_move_form'
-        }
     }
 ) }}
 

@@ -95,7 +95,7 @@ class ContentNode extends ExtendContentNode implements
     /**
      * @var Collection|ContentNode[]
      *
-     * @ORM\OneToMany(targetEntity="ContentNode", mappedBy="parentNode", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="ContentNode", mappedBy="parentNode", cascade={"persist"})
      * @ORM\OrderBy({"left" = "ASC"})
      * @ConfigField(
      *      defaultValues={

@@ -4,6 +4,7 @@ namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
 use Oro\Bundle\CheckoutBundle\Event\CheckoutValidateEvent;
+use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerAddress;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
@@ -28,10 +29,10 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $this->setProductInventoryLevels($shoppingList->getLineItems()[0]);
         $crawler = $this->client->request('GET', self::$checkoutUrl);
         $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        static::assertHtmlResponseStatusCodeEquals($result, 200);
         $selectedAddressId = $this->getSelectedAddressId($crawler, self::BILLING_ADDRESS);
-        $this->assertContains(self::BILLING_ADDRESS_SIGN, $crawler->html());
-        $this->assertEquals($selectedAddressId, $this->getReference(self::DEFAULT_BILLING_ADDRESS)->getId());
+        static::assertContains(self::BILLING_ADDRESS_SIGN, $crawler->html());
+        static::assertEquals($selectedAddressId, $this->getReference(self::DEFAULT_BILLING_ADDRESS)->getId());
     }
 
     /**
@@ -47,16 +48,16 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $this->client->disableReboot();
 
         /* @var $dispatcher EventDispatcherInterface */
-        $dispatcher = $this->getContainer()->get('event_dispatcher');
+        $dispatcher = static::getContainer()->get('event_dispatcher');
         $listener = function (CheckoutValidateEvent $event) {
             $event->setIsCheckoutRestartRequired(true);
         };
         $dispatcher->addListener(CheckoutValidateEvent::NAME, $listener);
 
         $crawler = $this->client->request('POST', $form->getUri(), $data);
-        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
-        $this->assertNotContains(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
-        $this->assertContains(self::BILLING_ADDRESS_SIGN, $crawler->html());
+        static::assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
+        static::assertNotContains(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
+        static::assertContains(self::BILLING_ADDRESS_SIGN, $crawler->html());
 
         $dispatcher->removeListener(CheckoutValidateEvent::NAME, $listener);
         $this->client->enableReboot();
@@ -71,7 +72,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $form = $this->getTransitionForm($crawler);
         $this->setCustomerAddress(self::MANUAL_ADDRESS, $form, self::BILLING_ADDRESS);
         $crawler = $this->client->submit($form);
-        $this->assertContains(self::BILLING_ADDRESS_SIGN, $crawler->html());
+        static::assertContains(self::BILLING_ADDRESS_SIGN, $crawler->html());
         $invalidFields = $this->getRequiredFields(self::BILLING_ADDRESS);
         $this->checkValidationErrors($invalidFields, $crawler);
     }
@@ -86,7 +87,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $values = $this->explodeArrayPaths($form->getValues());
         $data = $this->setFormData($values, self::BILLING_ADDRESS);
         $crawler = $this->client->request('POST', $form->getUri(), $data);
-        $this->assertContains(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
+        static::assertContains(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
     }
 
     /**
@@ -95,7 +96,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
     public function testBackToBillingAddressAndSelectExistingAddress()
     {
         $crawler = $this->getTransitionPage(self::TRANSITION_BACK_TO_BILLING_ADDRESS);
-        $this->assertContains(self::BILLING_ADDRESS_SIGN, $crawler->html());
+        static::assertContains(self::BILLING_ADDRESS_SIGN, $crawler->html());
         $this->checkDataPreSet($crawler);
         $form = $this->getTransitionForm($crawler);
         $this->setCustomerAddress(
@@ -104,7 +105,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
             self::BILLING_ADDRESS
         );
         $crawler = $this->client->submit($form);
-        $this->assertContains(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
+        static::assertContains(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
     }
 
     /**
@@ -114,8 +115,8 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
     {
         $crawler = $this->getTransitionPage(self::TRANSITION_BACK_TO_BILLING_ADDRESS);
         $selectedAddressId = $this->getSelectedAddressId($crawler, self::BILLING_ADDRESS);
-        $this->assertContains(self::BILLING_ADDRESS_SIGN, $crawler->html());
-        $this->assertEquals($selectedAddressId, $this->getReference(self::ANOTHER_ACCOUNT_ADDRESS)->getId());
+        static::assertContains(self::BILLING_ADDRESS_SIGN, $crawler->html());
+        static::assertEquals($selectedAddressId, $this->getReference(self::ANOTHER_ACCOUNT_ADDRESS)->getId());
     }
 
     /**
@@ -129,7 +130,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $form = $this->getTransitionForm($crawler);
         $this->setCustomerAddress(self::MANUAL_ADDRESS, $form, self::SHIPPING_ADDRESS);
         $crawler = $this->client->submit($form);
-        $this->assertContains(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
+        static::assertContains(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
         $invalidFields = $this->getRequiredFields(self::SHIPPING_ADDRESS);
         $this->checkValidationErrors($invalidFields, $crawler);
     }
@@ -144,7 +145,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $values = $this->explodeArrayPaths($form->getValues());
         $data = $this->setFormData($values, self::SHIPPING_ADDRESS);
         $crawler = $this->client->request('POST', $form->getUri(), $data);
-        $this->assertContains(self::SHIPPING_METHOD_SIGN, $crawler->html());
+        static::assertContains(self::SHIPPING_METHOD_SIGN, $crawler->html());
     }
 
     /**
@@ -153,7 +154,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
     public function testBackToShippingAddressAndSelectExistingAddress()
     {
         $crawler = $this->getTransitionPage(self::TRANSITION_BACK_TO_SHIPPING_ADDRESS);
-        $this->assertContains(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
+        static::assertContains(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
         $this->checkDataPreSet($crawler);
         $form = $this->getTransitionForm($crawler);
         $this->setCustomerAddress(
@@ -162,7 +163,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
             self::SHIPPING_ADDRESS
         );
         $crawler = $this->client->submit($form);
-        $this->assertContains(self::SHIPPING_METHOD_SIGN, $crawler->html());
+        static::assertContains(self::SHIPPING_METHOD_SIGN, $crawler->html());
     }
 
     /**
@@ -172,8 +173,8 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
     {
         $crawler = $this->getTransitionPage(self::TRANSITION_BACK_TO_SHIPPING_ADDRESS);
         $selectedAddressId = $this->getSelectedAddressId($crawler, self::SHIPPING_ADDRESS);
-        $this->assertContains(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
-        $this->assertEquals($selectedAddressId, $this->getReference(self::ANOTHER_ACCOUNT_ADDRESS)->getId());
+        static::assertContains(self::SHIPPING_ADDRESS_SIGN, $crawler->html());
+        static::assertEquals($selectedAddressId, $this->getReference(self::ANOTHER_ACCOUNT_ADDRESS)->getId());
     }
 
     /**
@@ -185,7 +186,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         $form = $this->getTransitionForm($crawler);
         $crawler = $this->client->submit($form);
 
-        $this->assertContains(self::SHIPPING_METHOD_SIGN, $crawler->html());
+        static::assertContains(self::SHIPPING_METHOD_SIGN, $crawler->html());
         $form = $this->getTransitionForm($crawler);
 
         $values = $this->explodeArrayPaths($form->getValues());
@@ -198,7 +199,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
             ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
 
-        $this->assertContains(self::PAYMENT_METHOD_SIGN, $crawler->html());
+        static::assertContains(self::PAYMENT_METHOD_SIGN, $crawler->html());
     }
 
     /**
@@ -207,7 +208,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
     protected function makePaymentToOrderReviewTransition()
     {
         $crawler = $this->client->request('GET', self::$checkoutUrl);
-        $this->assertContains(self::PAYMENT_METHOD_SIGN, $crawler->html());
+        static::assertContains(self::PAYMENT_METHOD_SIGN, $crawler->html());
 
         return $this->submitPaymentTransitionForm($crawler);
     }
@@ -220,7 +221,10 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
     {
         $form = $this->getTransitionForm($crawler);
         $values = $this->explodeArrayPaths($form->getValues());
-        $values[self::ORO_WORKFLOW_TRANSITION]['payment_method'] = 'payment_term';
+        $values[self::ORO_WORKFLOW_TRANSITION]['payment_method'] =
+            LoadPaymentMethodsConfigsRuleData::getPaymentMethodIdentifier(
+                $this->getReference('payment_term:channel_1')
+            );
         $values['_widgetContainer'] = 'ajax';
         $values['_wid'] = 'ajax_checkout';
 
@@ -241,7 +245,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
     {
         $crawler = $this->makePaymentToOrderReviewTransition();
 
-        $this->assertContains(self::ORDER_REVIEW_SIGN, $crawler->html());
+        static::assertContains(self::ORDER_REVIEW_SIGN, $crawler->html());
 
         return $crawler;
     }
@@ -258,7 +262,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
             ->getRepository('OroCheckoutBundle:CheckoutSource')
             ->findBy(['shoppingList' => $sourceEntity]);
 
-        $this->assertCount(1, $checkoutSources);
+        static::assertCount(1, $checkoutSources);
         $form = $crawler->selectButton('Submit Order')->form();
         $this->client->request(
             $form->getMethod(),
@@ -267,22 +271,22 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
             $form->getPhpFiles(),
             ['HTTP_X-Requested-With' => 'XMLHttpRequest']
         );
-        $data = $this->getJsonResponseContent($this->client->getResponse(), 200);
-        $this->assertArrayHasKey('successUrl', $data['responseData']);
-        $this->assertNotEmpty($data['responseData']['successUrl']);
+        $data = static::getJsonResponseContent($this->client->getResponse(), 200);
+        static::assertArrayHasKey('successUrl', $data['responseData']);
+        static::assertNotEmpty($data['responseData']['successUrl']);
         $this->client->followRedirects();
         $crawler = $this->client->request('GET', $data['responseData']['returnUrl']);
-        $this->assertContains(self::FINISH_SIGN, $crawler->html());
-        $this->assertCount(1, $this->registry->getRepository('OroCheckoutBundle:CheckoutSource')->findAll());
+        static::assertContains(self::FINISH_SIGN, $crawler->html());
+        static::assertCount(1, $this->registry->getRepository('OroCheckoutBundle:CheckoutSource')->findAll());
 
         $checkouts = $this->registry->getRepository('OroCheckoutBundle:Checkout')->findAll();
 
-        $this->assertCount(1, $checkouts);
+        static::assertCount(1, $checkouts);
 
         $orders = $this->registry->getRepository('OroOrderBundle:Order')->findAll();
 
-        $this->assertCount(1, $orders);
-        $this->assertNull($this->registry->getRepository('OroShoppingListBundle:ShoppingList')->find($sourceEntityId));
+        static::assertCount(1, $orders);
+        static::assertNull($this->registry->getRepository('OroShoppingListBundle:ShoppingList')->find($sourceEntityId));
 
         /** @var Checkout $checkout */
         $checkout = array_shift($checkouts);
@@ -290,8 +294,8 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
         /** @var Order $order */
         $order = array_shift($orders);
 
-        $this->assertTrue($checkout->isCompleted());
-        $this->assertEquals(
+        static::assertTrue($checkout->isCompleted());
+        static::assertEquals(
             [
                 'itemsCount' => count($order->getLineItems()),
                 'orders' => [
@@ -322,7 +326,7 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
                 ->parents()
                 ->parents()
                 ->html();
-            $this->assertContains('This value should not be blank.', $fieldData);
+            static::assertContains('This value should not be blank.', $fieldData);
         }
     }
 
@@ -332,12 +336,12 @@ class CheckoutControllerTest extends CheckoutControllerTestCase
     protected function checkDataPreSet(Crawler $crawler)
     {
         $html = $crawler->html();
-        $this->assertContains(self::FIRST_NAME, $html);
-        $this->assertContains(self::LAST_NAME, $html);
-        $this->assertContains(self::STREET, $html);
-        $this->assertContains(self::POSTAL_CODE, $html);
-        $this->assertContains(self::COUNTRY, $html);
-        $this->assertContains(self::REGION, $html);
+        static::assertContains(self::FIRST_NAME, $html);
+        static::assertContains(self::LAST_NAME, $html);
+        static::assertContains(self::STREET, $html);
+        static::assertContains(self::POSTAL_CODE, $html);
+        static::assertContains(self::COUNTRY, $html);
+        static::assertContains(self::REGION, $html);
     }
 
     /**

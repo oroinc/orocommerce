@@ -11,6 +11,8 @@ CatalogBundle
 - Class `Oro\Bundle\CatalogBundle\Twig\CategoryExtension`
     - the construction signature of was changed. Now the constructor has `ContainerInterface $container` parameter
     - removed method `setContainer`
+- Removed constructor of `Oro\Bundle\CatalogBundle\Form\Type\CategoryPageVariantType`. 
+    - corresponding logic moved to `Oro\Bundle\WebCatalogBundle\Form\Extension\PageVariantTypeExtension`
 
 
 CustomerBundle
@@ -81,6 +83,48 @@ RFPBundle
     - `Oro\Bundle\RFPBundle\Form\Type\RequestStatusWithDeletedSelectType`
 * The methods `setRequestStatusClass` and `postSubmit` was removed from class `Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType`
 
+MoneyOrderBundle
+----------------
+* MoneyOrder implementation was changed using IntegrationBundle (refer to PaymentBundle and IntegrationBundle for details). Notable changes:
+    - Class `Oro\Bundle\MoneyOrderBundle\DependencyInjection\Configuration` was removed and instead `Oro\Bundle\MoneyOrderBundle\Entity\MoneyOrderSettings` was created - entity that implements `Oro\Bundle\IntegrationBundle\Entity\Transport` to store payment integration properties
+    - Class `Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig` was realized as ParameterBag and is being used for holding payment integration properties that are stored in MoneyOrderSettings
+    - Class `Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder` method getIdentifier now uses MoneyOrderConfig to retrieve identifier of a concrete method
+    - Class `Oro\Bundle\MoneyOrderBundle\Method\View\MoneyOrderView` now has two additional methods due to implementing `Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface`
+        - getAdminLabel() is used to display labels in admin panel
+        - getPaymentMethodIdentifier() used to properly display different methods in frontend
+    - According to changes in PaymentBundle were added:
+        - `Oro\Bundle\MoneyOrderBundle\Method\Provider\MoneyOrderMethodProvider` for providing *Money Order Payment Methods*
+        - `Oro\Bundle\MoneyOrderBundle\Method\View\Provider\MoneyOrderMethodViewProvider` for providing *Money Order Payment Method Views*
+    - Added multiple classes to implement payment through integration and most of them have interfaces, so they are extendable through composition:
+        - `Oro\Bundle\MoneyOrderBundle\Form\Type\MoneyOrderSettingsType`
+        - `Oro\Bundle\MoneyOrderBundle\Integration\MoneyOrderChannelType`
+        - `Oro\Bundle\MoneyOrderBundle\Integration\MoneyOrderTransport`
+        - `Oro\Bundle\MoneyOrderBundle\Method\Config\Factory\MoneyOrderConfigFactory`
+        - `Oro\Bundle\MoneyOrderBundle\Method\Config\Provider\MoneyOrderConfigProvider`
+        - `Oro\Bundle\MoneyOrderBundle\Method\Factory\MoneyOrderPaymentMethodFactory`
+        - `Oro\Bundle\MoneyOrderBundle\Method\View\Factory\MoneyOrderPaymentMethodViewFactory`
+
+NavigationBundle
+----------------
+
+* Chaged placeholders format for `navigation.yml` files. Please use `%` instead of `%%`
+* Removed class `Oro\Bundle\FrontendBundle\Menu\BreadcrumbManager`. From now menu name used to build breadcrumbs is set directly in `Oro\Bundle\NavigationBundle\Layout\DataProvider\NavigationTitleProvider::getTitle`:
+* `Oro\Bundle\NavigationBundle\Provider\TitleServiceInterface`:
+    - Changed signature of loadByRoute to `($route, $menuName = null)` to provide ability to set menu that will be used to build title
+* Removed title db cache:
+    - Removed command `oro:navigation:init` it is not needed, titles are generated and cached on fly
+    - Removed repository `Oro\Bundle\NavigationBundle\Entity\Repository`
+    - Removed entity `Oro\Bundle\NavigationBundle\Entity\Title`
+* Added `Oro\Bundle\NavigationBundle\Title\TitleReader\TitleReaderRegistry`:
+    - Added service tag `oro_navigation.title_reader` to register custom title template reader
+* Added `Oro\Bundle\NavigationBundle\Provider\ConfigurationProvider`. It contains logic that was previously in NavigationExtension 
+* Removed `Oro\Bundle\NavigationBundle\Event\RequestTitleListener`
+* Removed `Oro\Bundle\NavigationBundle\Provider\TitleProvider`
+* Changed `Oro\Bundle\NavigationBundle\Title\TitleReader\AnnotationsReader` constructor signature to `__construct(RequestStack $requestStack, Reader $reader)`
+* Changed `Oro\Bundle\NavigationBundle\Title\TranslationExtractor` constructor signature to `__construct(TitleReaderRegistry $titleReaderRegistry, RouterInterface $router)`
+* Changed `Oro\Bundle\NavigationBundle\ContentProvider\NavigationElementsContentProvider` constructor signature to `__construct(ConfigurationProvider $configurationProvider)`
+* Changed `Oro\Bundle\NavigationBundle\Config\MenuConfiguration` constructor signature to `__construct(ConfigurationProvider $configurationProvider)`
+
 OrderBundle
 -----------
 - Class `Oro\Bundle\OrderBundle\Twig\OrderExtension`
@@ -90,6 +134,12 @@ OrderBundle
 - Class `Oro\Bundle\OrderBundle\Twig\OrderShippingExtension`
     - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
     - removed method `setShippingLabelFormatter`
+- Class `Oro\Bundle\OrderBundle\EventListener\Order\OrderPossibleShippingMethodsEventListener` 
+    - renamed and moved to `Oro\Bundle\OrderBundle\EventListener\PossibleShippingMethodEventListener`
+    - constructor accepts `Oro\Bundle\ShippingBundle\Context\ShippingContextFactoryInterface` instead of `Oro\Bundle\OrderBundle\Factory\OrderShippingContextFactory`
+    - method `onOrderEvent` renamed to `onEvent` and it accepts `Oro\Bundle\ShippingBundle\EventListener\EntityDataAwareEventInterface`
+- Payment history section was added to order view page with payment transactions for current order
+- `VIEW_PAYMENT_HISTORY` permission was added for viewing payment history section
 
 PaymentBundle
 -------------
@@ -111,12 +161,97 @@ PaymentBundle
     - removed `Oro\Bundle\PaymentBundle\QueryDesigner\PaymentProductQueryDesigner`
     - removed `Oro\Bundle\PaymentBundle\ExpressionLanguage\ProductDecorator`
     - class `Oro\Bundle\PaymentBundle\ExpressionLanguage\DecoratedProductLineItemFactory` only dependency is now `Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory`
+- Entity `Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule`
+    - added ownership type *organization*
+
+* In order to have possibility to create more than one payment method of same type PaymentBundle was significantly changed **with breaking backwards compatibility**.
+    - To realize this was added `Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface` which should be implemented in any class(payment method provider) which is responsible for providing of any payment method.
+    - Also was added `Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface` which should be implemented in any class(payment method view provider) which is responsible for providing of any payment method view.
+    - Class `Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry` was changed to `Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistry` which implements `Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface` and this registry is responsible for collecting data from all payment method providers
+    - Class `Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry` was changed to `Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider` which implements `Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface` this composite provider is single point to provide data from all payment method view providers
+    - Any payment method provider should be registered in service definitions with tag *oro_payment.payment_method_provider*
+    - Any payment method view provider should be registered in service definitions with tag *oro_payment.payment_method_view_provider*
+    - Each payment method provider should provide payment method(one or many) which should implement `Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface`.
+    - Each payment method view provider should provide payment method view(one or many) which should implement `Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface`.
+    - In order to keep all common logic of all payment method providers was created `Oro\Bundle\PaymentBundle\Method\Provider\AbstractPaymentMethodProvider` which should be extended by any payment method provider
+    - In order to keep all common logic of all payment method view providers was created `Oro\Bundle\PaymentBundle\Method\View\AbstractPaymentMethodViewProvider` which should be extended by any payment method view provider
+    - Class`Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface` was modified:
+        - removed methods:
+            - getType()
+        - added methods:
+            - getIdentifier()
+    - Class`Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface` was modified:
+        - removed methods:
+            - getPaymentMethodType()
+        - added methods:
+            - getAdminLabel()
+            - getPaymentMethodIdentifier()
+    - Class`Oro\Bundle\PaymentBundle\Method\Config\PaymentConfigInterface` was modified:
+        - added methods:
+            - getAdminLabel()
+            - getPaymentMethodIdentifier()
 
 PaymentTermBundle
 -----------------
 - Class `Oro\Bundle\PaymentTermBundle\Twig\DeleteMessageTextExtension`
     - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
     - removed property `protected $deleteMessageGenerator`
+    
+* PaymentTerm implementation was changed using IntegrationBundle (refer to PaymentBundle and IntegrationBundle for details). Notable changes:
+    - Class `Oro\Bundle\PaymentTermBundle\DependencyInjection\Configuration` was removed and instead `Oro\Bundle\PaymentTermBundle\Entity\PaymentTermSettings` was created - entity that implements `Oro\Bundle\IntegrationBundle\Entity\Transport` to store payment integration properties
+    - Class `Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfig` was removed and instead simple parameter bag object `Oro\Bundle\PaymentTermBundle\Method\Config\ParameterBagPaymentTermConfig` is being used for holding payment integration properties that are stored in PaymentTermSettings
+    - Class `Oro\Bundle\PaymentTermBundle\Method\PaymentTerm` method getIdentifier now uses PaymentTermConfig to retrieve identifier of a concrete method
+    - Class `Oro\Bundle\PaymentTermBundle\Method\View\PaymentTermView` now has two additional methods due to implementing `Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface`
+        getAdminLabel() is used to display labels in admin panel
+        getPaymentMethodIdentifier() used to properly display different methods in frontend
+    - Added multiple classes to implement payment through integration and most of them have interfaces, so they are extendable through composition:
+        - `Oro\Bundle\PaymentTermBundle\Entity\Repository\PaymentTermSettingsRepository`
+        - `Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermSettingsType`
+        - `Oro\Bundle\PaymentTermBundle\Integration\PaymentTermChannelType`
+        - `Oro\Bundle\PaymentTermBundle\Integration\PaymentTermTransport`
+        - `Oro\Bundle\PaymentTermBundle\Method\Config\ParameterBag\ParameterBagPaymentTermConfig`
+        - `Oro\Bundle\PaymentTermBundle\Method\Config\Provider\Basic\BasicPaymentTermConfigProvider`
+        - `Oro\Bundle\PaymentTermBundle\Method\Config\Provider\Cached\Memory\CachedMemoryPaymentTermConfigProvider`
+        - `Oro\Bundle\PaymentTermBundle\Method\Factory\PaymentTermPaymentMethodFactory`
+        - `Oro\Bundle\PaymentTermBundle\Method\Provider\PaymentTermMethodProvider`
+        - `Oro\Bundle\PaymentTermBundle\Method\View\Factory\PaymentTermPaymentMethodViewFactory`
+        - `Oro\Bundle\PaymentTermBundle\Method\View\Provider\PaymentTermMethodViewProvider`
+
+PayPalBundle
+-------------
+* PayPalBundle implementation was changed using IntegrationBundle (refer to PaymentBundle and IntegrationBundle for details). Notable changes:
+    - Class `Oro\Bundle\PayPalBundle\DependencyInjection\Configuration` was removed and instead `Oro\Bundle\PayPalBundle\Entity\PayPalSettings` was created - entity that implements `Oro\Bundle\IntegrationBundle\Entity\Transport` to store paypal payment integration properties
+    - Classes `Oro\Bundle\PayPalBundle\Method\Config\PayflowExpressCheckoutConfig`, `Oro\Bundle\PayPalBundle\Method\Config\PayPalPaymentsProExpressCheckoutConfig` were removed and instead simple parameter bag object `Oro\Bundle\PayPalBundle\Method\Config\PayPalExpressCheckoutConfig` is being used for holding payment integration properties that are stored in PayPalSettings
+    - Classes `Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfig`, `Oro\Bundle\PayPalBundle\Method\Config\PayPalPaymentsProConfig` were removed and instead simple parameter bag object `Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfig` is being used for holding payment integration properties that are stored in PayPalSettings
+    - Classes `Oro\Bundle\PayPalBundle\Method\PayflowExpressCheckout`, `Oro\Bundle\PayPalBundle\Method\PayPalPaymentsProExpressCheckout` were removed and instead was added `Oro\Bundle\PayPalBundle\Method\PayPalExpressCheckoutPaymentMethod`
+    - Classes `Oro\Bundle\PayPalBundle\Method\PayflowGateway`, `Oro\Bundle\PayPalBundle\Method\PayPalPaymentsPro` were removed and instead was added `Oro\Bundle\PayPalBundle\Method\PayPalCreditCardPaymentMethod`
+    - Classes `Oro\Bundle\PayPalBundle\Method\View\PayflowExpressCheckout`, `Oro\Bundle\PayPalBundle\Method\View\PayPalPaymentsProExpressCheckout` were removed and instead was added `Oro\Bundle\PayPalBundle\Method\View\PayPalExpressCheckoutPaymentMethodView`
+    - Classes `Oro\Bundle\PayPalBundle\Method\View\PayflowGateway`, `Oro\Bundle\PayPalBundle\Method\View\PayPalPaymentsPro` were removed and instead was added `Oro\Bundle\PayPalBundle\Method\View\PayPalCreditCardPaymentMethodView`
+    - According to changes in PaymentBundle were added:
+        - `Oro\Bundle\PayPalBundle\Method\Provider\CreditCardMethodProvider` for providing *PayPal Credit Card Payment Methods*
+        - `Oro\Bundle\PayPalBundle\Method\View\Provider\CreditCardMethodViewProvider` for providing *PayPal Credit Card Payment Method Views*
+        - `Oro\Bundle\PayPalBundle\Method\Provider\ExpressCheckoutMethodProvider` for providing *PayPal Express Checkout Payment Methods*
+        - `Oro\Bundle\PayPalBundle\Method\View\Provider\ExpressCheckoutMethodViewProvider` for providing *PayPal Express Checkout Payment Method Views*
+    - Added multiple classes to implement payment through integration and most of them have interfaces, so they are extendable through composition:
+        - `Oro\Bundle\PayPalBundle\Form\Type\PayPalSettingsType`
+        - `Oro\Bundle\PayPalBundle\Integration\PayPalPayflowGatewayChannelType`
+        - `Oro\Bundle\PayPalBundle\Integration\PayPalPayflowGatewayTransport`
+        - `Oro\Bundle\PayPalBundle\Integration\PayPalPaymentsProChannelType`
+        - `Oro\Bundle\PayPalBundle\Integration\PayPalPaymentsProTransport`
+        - `Oro\Bundle\PayPalBundle\Method\Config\AbstractPayPalConfig`
+        - `Oro\Bundle\PayPalBundle\Method\Config\PayPalCreditCardConfig`
+        - `Oro\Bundle\PayPalBundle\Method\Config\Factory\AbstractPayPalConfigFactory`
+        - `Oro\Bundle\PayPalBundle\Method\Config\Factory\PayPalCreditCardConfigFactory`
+        - `Oro\Bundle\PayPalBundle\Method\Config\Factory\PayPalExpressCheckoutConfigFactory`
+        - `Oro\Bundle\PayPalBundle\Method\Config\Provider\AbstractPayPalConfigProvider`
+        - `Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalCreditCardConfigProvider`
+        - `Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalExpressCheckoutConfigProvider`
+        - `Oro\Bundle\PayPalBundle\Method\Factory\BasicPayPalCreditCardPaymentMethodFactory`
+        - `Oro\Bundle\PayPalBundle\Method\Factory\BasicPayPalExpressCheckoutPaymentMethodFactory`
+        - `Oro\Bundle\PayPalBundle\Method\View\Factory\BasicPayPalCreditCardPaymentMethodViewFactory`
+        - `Oro\Bundle\PayPalBundle\Method\View\Factory\BasicPayPalExpressCheckoutPaymentMethodViewFactory`
+        - `Oro\Bundle\PayPalBundle\Settings\DataProvider\BasicCardTypesDataProvider`
+        - `Oro\Bundle\PayPalBundle\Settings\DataProvider\BasicPaymentActionsDataProvider`
 
 PricingBundle
 -------------
@@ -139,7 +274,19 @@ PricingBundle
     - changed the return type of `getIteratorByPriceList` method from `BufferedQueryResultIterator` to `BufferedQueryResultIteratorInterface`
 - Class `Oro\Bundle\PricingBundle\Entity\Repository\PriceListToWebsiteRepository`
     - changed the return type of `getWebsiteIteratorByDefaultFallback` method from `BufferedQueryResultIterator` to `BufferedQueryResultIteratorInterface`
-
+- Class `Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType`
+    - field `priority` was removed. Field `_position` from `Oro\Bundle\FormBundle\Form\Extension\SortableExtension` will be used instead.
+- Class `Oro\Bundle\PricingBundle\Entity\BasePriceListRelation`
+    - property `$priority` was renamed to `$sortOrder`
+    - methods `getPriority` and `setPriority` were renamed to `getSortOrder` and `setSortOrder` accordingly
+- Class `Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig`
+    - property `$priority` was renamed to `$sortOrder`
+    - methods `getPriority` and `setPriority` were renamed to `getSortOrder` and `setSortOrder` accordingly
+- Interface `Oro\Bundle\PricingBundle\Entity\PriceListAwareInterface`
+    - method `getPriority` was renamed to `getSortOrder`
+- Class `Oro\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter`
+    - constant `PRIORITY_KEY` was renamed to `SORT_ORDER_KEY`
+    
 ProductBundle
 -------------
 - Class `Oro\Bundle\ProductBundle\Twig\ProductExtension`
@@ -161,6 +308,8 @@ ProductBundle
     - `Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecorator` is the class that decorates `Product`
     - `Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsSelectQueryConverter` this converter is used inside of `VirtualFieldsProductDecorator`
     - `Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsProductQueryDesigner` this query designer is used inside of `VirtualFieldsProductDecorator`
+- Removed constructor of `Oro\Bundle\ProductBundle\Form\Type\ProductPageVariantType`.
+    - corresponding logic moved to `Oro\Bundle\WebCatalogBundle\Form\Extension\PageVariantTypeExtension`
 
 SaleBundle
 ----------
@@ -168,6 +317,8 @@ SaleBundle
     - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
     - removed property `protected $quoteProductFormatter`
     - removed property `protected $configManager`
+- Class `Oro\Bundle\SaleBundle\EventListener\Quote\QuotePossibleShippingMethodsEventListener` removed. 
+    - `Oro\Bundle\OrderBundle\EventListener\PossibleShippingMethodEventListener` must be used instead.
 
 ShoppingListBundle
 ------------------
@@ -236,3 +387,8 @@ RedirectBundle
 --------------
 - `Oro\Bundle\RedirectBundle\Entity\Redirect`
     - removed property `website` in favour of `scopes` collection using
+
+CMSBundle
+---------
+- Removed constructor of `Oro\Bundle\CMSBundle\Form\Type\CmsPageVariantType`.
+    - corresponding logic moved to `Oro\Bundle\WebCatalogBundle\Form\Extension\PageVariantTypeExtension`
