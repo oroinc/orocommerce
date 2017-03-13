@@ -15,7 +15,6 @@ oro_cms_login_page:
     type:         annotation
     prefix:       /cms/login-page
 
-
 oro_cms_contentblock:
     resource:     "@OroCMSBundle/Controller/ContentBlockController.php"
     type:         annotation

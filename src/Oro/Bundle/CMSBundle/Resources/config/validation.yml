@@ -12,3 +12,10 @@ Oro\Bundle\CMSBundle\Entity\ContentBlock:
                 message: "This value should contain only alphabetic symbols, underscore, hyphen and numbers."
         titles:
             - NotBlank: ~
+        scopes:
+            - Oro\Bundle\CustomerBundle\Validator\Constraints\ScopeWithCustomerGroupAndCustomer: ~
+
+Oro\Bundle\CMSBundle\Entity\TextContentVariant:
+    properties:
+        scopes:
+            - Oro\Bundle\CustomerBundle\Validator\Constraints\ScopeWithCustomerGroupAndCustomer: ~
