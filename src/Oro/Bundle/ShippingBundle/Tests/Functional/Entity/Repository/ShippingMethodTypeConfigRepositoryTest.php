@@ -4,6 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodTypeConfigRepository;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
+use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRulesWithConfigs;
 use Oro\Bundle\ShippingBundle\Tests\Functional\Helper\FlatRateIntegrationTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -66,8 +67,24 @@ class ShippingMethodTypeConfigRepositoryTest extends WebTestCase
 
     public function testFindEnabledByMethodIdentifier()
     {
-        $actual = $this->repository->findEnabledByMethodIdentifier('per_item');
+        $method = $this->getFlatRateIdentifier();
 
-        echo '1';
+        $actual = $this->repository->findEnabledByMethodIdentifier($method);
+
+        static::assertContains($this->getFirstType('shipping_rule.3'), $actual);
+        static::assertContains($this->getFirstType('shipping_rule.4'), $actual);
+    }
+
+    /**
+     * @param string $ruleReference
+     *
+     * @return ShippingMethodTypeConfig
+     */
+    private function getFirstType($ruleReference)
+    {
+        /** @var ShippingMethodConfig $methodConfig */
+        $methodConfig = $this->getReference($ruleReference)->getMethodConfigs()->first();
+
+        return $methodConfig->getTypeConfigs()->first();
     }
 }

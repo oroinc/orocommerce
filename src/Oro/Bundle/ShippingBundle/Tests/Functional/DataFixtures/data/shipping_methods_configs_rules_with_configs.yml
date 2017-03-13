@@ -8,6 +8,7 @@ shipping_rule.1:
          -
             typeConfigs:
                 -
+                    enabled: false
                     options:
                         type: 'per_order'
                         price: 10
@@ -28,6 +29,7 @@ shipping_rule.2:
          -
             typeConfigs:
                 -
+                    enabled: false
                     options:
                         type: 'per_item'
                         price: 10
@@ -47,6 +49,7 @@ shipping_rule.3:
          -
             typeConfigs:
                 -
+                    enabled: true
                     options:
                         type: 'per_item'
                         price: 10
@@ -66,6 +69,7 @@ shipping_rule.4:
          -
             typeConfigs:
                 -
+                    enabled: true
                     options:
                         type: 'per_item'
                         price: 10
@@ -88,6 +92,7 @@ shipping_rule.5:
          -
             typeConfigs:
                 -
+                    enabled: false
                     options:
                         type: 'per_item'
                         price: 10
@@ -101,6 +106,7 @@ shipping_rule.6:
          -
             typeConfigs:
                 -
+                    enabled: false
                     options:
                         type: 'per_item'
                         price: 10
@@ -117,6 +123,7 @@ shipping_rule.7:
          -
             typeConfigs:
                 -
+                    enabled: false
                     options:
                         type: 'per_item'
                         price: 10
@@ -147,6 +154,7 @@ shipping_rule.9:
          -
             typeConfigs:
                 -
+                    enabled: false
                     options:
                         type: 'per_order'
                         price: 10
