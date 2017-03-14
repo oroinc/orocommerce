@@ -69,7 +69,7 @@ class ShardManagerTest extends WebTestCase
 
     public function testCreateAndDeleteNewShard()
     {
-        $shardName = 'oro_price_product_1';
+        $shardName = 'oro_price_product_0';
 
         $this->assertFalse($this->manager->exists(ProductPrice::class, $shardName));
 
@@ -86,6 +86,7 @@ class ShardManagerTest extends WebTestCase
         $result = serialize($this->manager);
         /** @var ShardManager $newManager */
         $newManager = unserialize($result);
+        $newManager->setRegistry($this->getContainer()->get('doctrine'));
         $this->assertEquals($this->manager->getShardMap(), $newManager->getShardMap());
     }
 
