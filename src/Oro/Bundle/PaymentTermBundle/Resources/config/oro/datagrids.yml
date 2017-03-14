@@ -27,13 +27,6 @@ datagrids:
                 type: url
                 route: oro_payment_term_update
                 params: [ id ]
-            delete_link:
-                type: url
-                route: oro_api_delete_paymentterm
-                params: [ id ]
-            payment_delete_message:
-                type: twig
-                template: 'OroPaymentTermBundle:PaymentTerm:deleteMessageDatagrid.html.twig'
         sorters:
             columns:
                 label:
@@ -59,12 +52,6 @@ datagrids:
                 link:          update_link
                 icon:          edit
                 acl_resource:  oro_payment_term_update
-            delete:
-                type:          payment-delete
-                label:         oro.grid.action.delete
-                link:          delete_link
-                icon:          trash
-                acl_resource:  oro_payment_term_delete
 
     payment-terms-select-grid:
         acl_resource: oro_payment_term_view

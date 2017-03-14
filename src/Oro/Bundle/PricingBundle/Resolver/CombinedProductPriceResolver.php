@@ -3,8 +3,11 @@
 namespace Oro\Bundle\PricingBundle\Resolver;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Doctrine\ORM\EntityManager;
+
+use Symfony\Component\Console\Helper\ProgressBar;
+use Symfony\Component\Console\Output\OutputInterface;
+
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
@@ -49,6 +52,11 @@ class CombinedProductPriceResolver
     protected $builtList = [];
 
     /**
+     * @var OutputInterface
+     */
+    protected $output;
+
+    /**
      * @param ManagerRegistry $registry
      * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
      * @param CombinedPriceListTriggerHandler $triggerHandler
@@ -61,6 +69,22 @@ class CombinedProductPriceResolver
         $this->registry = $registry;
         $this->insertFromSelectQueryExecutor = $insertFromSelectQueryExecutor;
         $this->triggerHandler = $triggerHandler;
+    }
+
+    /**
+     * @param OutputInterface $output
+     */
+    public function setOutput(OutputInterface $output)
+    {
+        $this->output = $output;
+    }
+
+    /**
+     * @return bool
+     */
+    protected function isOutputEnabled()
+    {
+        return $this->output !== null && $this->output->getVerbosity() >= OutputInterface::VERBOSITY_VERBOSE;
     }
 
     /**
@@ -83,9 +107,25 @@ class CombinedProductPriceResolver
                 $product
             );
 
+        if ($this->isOutputEnabled()) {
+            $this->output->writeln(
+                'Processing combined price list id: '.$combinedPriceList->getId().' - '.$combinedPriceList->getName(),
+                OutputInterface::VERBOSITY_VERBOSE
+            );
+            $progressBar = new ProgressBar($this->output, count($priceListsRelations));
+        }
         $combinedPriceRepository = $this->getCombinedProductPriceRepository();
         $combinedPriceRepository->deleteCombinedPrices($combinedPriceList, $product);
-        foreach ($priceListsRelations as $priceListRelation) {
+        foreach ($priceListsRelations as $i => $priceListRelation) {
+            if ($this->isOutputEnabled()) {
+                $progressBar->setProgress($i);
+                $progressBar->clear();
+                $this->output->writeln(
+                    'Processing price list: '.$priceListRelation->getPriceList()->getName(),
+                    OutputInterface::VERBOSITY_VERY_VERBOSE
+                );
+                $progressBar->display();
+            }
             $combinedPriceRepository->insertPricesByPriceList(
                 $this->insertFromSelectQueryExecutor,
                 $combinedPriceList,
@@ -97,6 +137,14 @@ class CombinedProductPriceResolver
         if (!$product) {
             $combinedPriceList->setPricesCalculated(true);
             $this->getManager()->flush($combinedPriceList);
+        }
+
+        if ($this->isOutputEnabled()) {
+            $progressBar->finish();
+            $this->output->writeln(
+                '<info> - Finished processing combined price list id: '.$combinedPriceList->getId().'</info>',
+                OutputInterface::VERBOSITY_VERBOSE
+            );
         }
 
         $this->triggerHandler->processByProduct($combinedPriceList, $product);

@@ -18,5 +18,5 @@ interface PriceListAwareInterface
     /**
      * @return int
      */
-    public function getPriority();
+    public function getSortOrder();
 }

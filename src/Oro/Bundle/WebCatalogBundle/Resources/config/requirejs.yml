@@ -1,6 +1,6 @@
 config:
     paths:
-        'orowebcatalog/js/app/components/web-catalog-tree-component': 'bundles/orowebcatalog/js/app/components/web-catalog-tree-component.js'
+        'orowebcatalog/js/app/views/web-catalog-tree-view': 'bundles/orowebcatalog/js/app/views/web-catalog-tree-view.js'
         'orowebcatalog/js/app/components/content-variant-collection-component': 'bundles/orowebcatalog/js/app/components/content-variant-collection-component.js'
         'orowebcatalog/js/app/views/scope-toggle-view': 'bundles/orowebcatalog/js/app/views/scope-toggle-view.js'
         'orowebcatalog/js/app/views/variants-collection-view': 'bundles/orowebcatalog/js/app/views/variants-collection-view.js'

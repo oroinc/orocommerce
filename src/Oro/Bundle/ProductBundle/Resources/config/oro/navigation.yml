@@ -70,9 +70,9 @@ navigation:
 
     titles:
         oro_product_index: ~
-        oro_product_view:   '%%sku%% - %%name%%'
-        oro_product_update: '%%sku%% - %%name%% - Edit'
+        oro_product_view:   '%sku% - %name%'
+        oro_product_update: '%sku% - %name% - Edit'
         oro_product_create: 'Create Product'
         oro_product_frontend_product_index: ~
-        oro_product_frontend_product_view: '%%name%%'
+        oro_product_frontend_product_view: '%name%'
         oro_product_frontend_quick_add: 'oro.product.frontend.quick_add.title'
