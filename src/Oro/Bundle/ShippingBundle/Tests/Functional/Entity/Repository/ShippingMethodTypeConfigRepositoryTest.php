@@ -71,8 +71,10 @@ class ShippingMethodTypeConfigRepositoryTest extends WebTestCase
 
         $actual = $this->repository->findEnabledByMethodIdentifier($method);
 
-        static::assertContains($this->getFirstType('shipping_rule.3'), $actual);
         static::assertContains($this->getFirstType('shipping_rule.4'), $actual);
+        static::assertContains($this->getFirstType('shipping_rule.9'), $actual);
+        static::assertNotContains($this->getFirstType('shipping_rule_without_type_configs'), $actual);
+        static::assertNotContains($this->getFirstType('shipping_rule_with_disabled_type_configs'), $actual);
     }
 
     /**
