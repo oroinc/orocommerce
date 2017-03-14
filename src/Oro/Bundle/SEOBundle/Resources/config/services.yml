@@ -257,12 +257,7 @@ services:
     oro_seo.event_listener.restrict_sitemap_product_by_visibility:
         class: 'Oro\Bundle\SEOBundle\EventListener\RestrictSitemapProductByVisibilityListener'
         arguments:
-            - '@oro_entity.doctrine_helper'
-            - '@oro_config.manager'
-        calls:
-            - [setProductVisibilitySystemConfigurationPath, ['oro_visibility.product_visibility']]
-            - [setCategoryVisibilitySystemConfigurationPath, ['oro_visibility.category_visibility']]
-            - [setVisibilityScopeProvider, ['@oro_visibility.provider.visibility_scope_provider']]
+            - '@oro_visibility.model.product_visibility_query_builder_modifier'
         tags:
             - { name: kernel.event_listener, event: oro_seo.event.restrict_sitemap_entity.product, method: restrictQueryBuilder }
 
