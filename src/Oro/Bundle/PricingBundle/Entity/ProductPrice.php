@@ -27,6 +27,9 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *              "type"="ACL",
  *              "group_name"="commerce",
  *              "category"="shopping"
+ *          },
+ *          "sharding"={
+ *              "discrimination_field"="priceList"
  *          }
  *      }
  * )

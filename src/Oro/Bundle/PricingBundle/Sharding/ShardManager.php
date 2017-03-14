@@ -10,8 +10,9 @@ use Doctrine\DBAL\Schema\Index;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Symfony\Bridge\Doctrine\RegistryInterface;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 
 class ShardManager implements \Serializable
 {
@@ -19,6 +20,11 @@ class ShardManager implements \Serializable
      * @var RegistryInterface
      */
     private $registry;
+
+    /**
+     * @var ConfigProvider
+     */
+    protected $configProvider;
 
     /**
      * @var array
@@ -224,8 +230,8 @@ class ShardManager implements \Serializable
      */
     public function getDiscriminationField($className)
     {
-        //TODO: get from annotations
-        return 'priceList';
+        return $this->configProvider->getConfig($className)
+            ->get('discrimination_field');
     }
 
     /**
@@ -234,8 +240,18 @@ class ShardManager implements \Serializable
      */
     public function getDiscriminationColumn($className)
     {
-        //TODO: get from annotations
-        return 'price_list_id';
+        $fieldName = $this->getDiscriminationField($className);
+        $columnName = $fieldName;
+        $em = $this->registry->getManagerForClass($className);
+        /** @var ClassMetadata $metadata */
+        $metadata = $em->getClassMetadata($className);
+        if (isset($metadata->columnNames[$fieldName])) {
+            $columnName = $metadata->columnNames[$fieldName];
+        } elseif (isset($metadata->associationMappings[$fieldName])) {
+            $columnName = $metadata->associationMappings[$fieldName]['joinColumns'][0]['name'];
+        }
+
+        return $columnName;
     }
 
     /**
@@ -261,5 +277,13 @@ class ShardManager implements \Serializable
     public function setRegistry(RegistryInterface $registry)
     {
         $this->registry = $registry;
+    }
+
+    /**
+     * @param ConfigProvider $configProvider
+     */
+    public function setConfigProvider($configProvider)
+    {
+        $this->configProvider = $configProvider;
     }
 }

@@ -88,4 +88,16 @@ class ShardManagerTest extends WebTestCase
         $newManager = unserialize($result);
         $this->assertEquals($this->manager->getShardMap(), $newManager->getShardMap());
     }
+
+    public function testGetDiscriminationField()
+    {
+        $discriminationFieldName = 'priceList';
+        $this->assertEquals($this->manager->getDiscriminationField(ProductPrice::class), $discriminationFieldName);
+    }
+
+    public function testGetDiscriminationColumn()
+    {
+        $discriminationColumnName = 'price_list_id';
+        $this->assertEquals($this->manager->getDiscriminationColumn(ProductPrice::class), $discriminationColumnName);
+    }
 }
