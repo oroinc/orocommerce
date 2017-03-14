@@ -3,14 +3,13 @@
 namespace Oro\Bundle\SEOBundle\Tests\Unit\DependencyInjection\Compiler;
 
 use Oro\Bundle\SEOBundle\DependencyInjection\Compiler\UrlItemsProviderCompilerPass;
-use Oro\Component\DependencyInjection\Tests\Unit\Compiler\AssertTaggedServicesCompilerPass;
+use Oro\Component\DependencyInjection\Tests\Unit\Compiler\TaggedServicesCompilerPassCase;
 
-class UrlItemsProviderCompilerPassTest extends \PHPUnit_Framework_TestCase
+class UrlItemsProviderCompilerPassTest extends TaggedServicesCompilerPassCase
 {
     public function testProcess()
     {
-        $assertTaggedServicesCompilerPass = new AssertTaggedServicesCompilerPass();
-        $assertTaggedServicesCompilerPass->assertTaggedServicesRegistered(
+        $this->assertTaggedServicesRegistered(
             new UrlItemsProviderCompilerPass(),
             UrlItemsProviderCompilerPass::PROVIDER_REGISTRY,
             UrlItemsProviderCompilerPass::TAG,
