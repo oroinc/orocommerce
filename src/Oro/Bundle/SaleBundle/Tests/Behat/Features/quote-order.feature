@@ -5,7 +5,7 @@ Feature: Start checkout for a quote
   I need to be able to start checkout for a quote
 
   Scenario: "Quote 1" > START CHECKOUT ON A QUOTE BASED ON CREATED RFQ. PRIORITY - CRITICAL
-    Given I login as AmandaRCole@example.org buyer
+    Given I signed in as AmandaRCole@example.org on the store frontend
     And I request a quote from shopping list "Shopping List 1" with data:
       | PO Number | PONUMBER1 |
 

@@ -21,7 +21,7 @@ Feature: Quote Backoffice Default
       | Internal Status | Draft |
       | Customer Status | N/A |
 
-    Given I login as AmandaRCole@example.org buyer
+    Given I signed in as AmandaRCole@example.org on the store frontend
     And click "Quotes"
     Then there is no "PO11" in grid
 
@@ -42,7 +42,7 @@ Feature: Quote Backoffice Default
       | Internal Status | Draft |
       | Customer Status | N/A |
 
-    Given I login as AmandaRCole@example.org buyer
+    Given I signed in as AmandaRCole@example.org on the store frontend
     And click "Quotes"
     Then there is no "PO31" in grid
 
@@ -63,7 +63,7 @@ Feature: Quote Backoffice Default
       | Internal Status | Deleted |
       | Customer Status | N/A |
 
-    Given I login as AmandaRCole@example.org buyer
+    Given I signed in as AmandaRCole@example.org on the store frontend
     And click "Quotes"
     Then there is no "PO12" in grid
 
@@ -84,7 +84,7 @@ Feature: Quote Backoffice Default
       | Internal Status | Draft |
       | Customer Status | N/A |
 
-    Given I login as AmandaRCole@example.org buyer
+    Given I signed in as AmandaRCole@example.org on the store frontend
     And click "Quotes"
     Then there is no "PO12" in grid
 
@@ -106,7 +106,7 @@ Feature: Quote Backoffice Default
       | Internal Status | Sent to Customer |
       | Customer Status | N/A |
 
-    Given I login as AmandaRCole@example.org buyer
+    Given I signed in as AmandaRCole@example.org on the store frontend
     And click "Quotes"
     And click View PO13 in grid
     Then I should see Quote on front store with data:
@@ -131,7 +131,7 @@ Feature: Quote Backoffice Default
       | Internal Status | Cancelled |
       | Customer Status | N/A |
 
-    Given I login as AmandaRCole@example.org buyer
+    Given I signed in as AmandaRCole@example.org on the store frontend
     And click "Quotes"
     And click View PO14 in grid
     Then I should see Quote on front store with data:
@@ -156,7 +156,7 @@ Feature: Quote Backoffice Default
       | Internal Status | Expired |
       | Customer Status | N/A |
 
-    Given I login as AmandaRCole@example.org buyer
+    Given I signed in as AmandaRCole@example.org on the store frontend
     And click "Quotes"
     And click View PO15 in grid
     Then I should see Quote on front store with data:
@@ -181,7 +181,7 @@ Feature: Quote Backoffice Default
       | Internal Status | Deleted |
       | Customer Status | N/A |
 
-    Given I login as AmandaRCole@example.org buyer
+    Given I signed in as AmandaRCole@example.org on the store frontend
     And I click "Quotes"
     Then there is no "PO16" in grid
 
@@ -219,7 +219,7 @@ Feature: Quote Backoffice Default
       | Internal Status | Sent to customer |
       | Customer Status | N/A |
 
-    Given I login as AmandaRCole@example.org buyer
+    Given I signed in as AmandaRCole@example.org on the store frontend
     And click "Quotes"
     Then there is no "PO32" in grid
     When I click View PO17 in grid
@@ -266,7 +266,7 @@ Feature: Quote Backoffice Default
       | Internal Status | Expired |
       | Customer Status | N/A |
 
-    Given I login as AmandaRCole@example.org buyer
+    Given I signed in as AmandaRCole@example.org on the store frontend
     And click "Quotes"
     Then there is no "PO33" in grid
     When I click View PO18 in grid
@@ -295,7 +295,7 @@ Feature: Quote Backoffice Default
       | Internal Status | Declined |
       | Customer Status | N/A |
 
-    Given I login as AmandaRCole@example.org buyer
+    Given I signed in as AmandaRCole@example.org on the store frontend
     And click "Quotes"
     And click View PO19 in grid
     Then I should see Quote on front store with data:
@@ -322,7 +322,7 @@ Feature: Quote Backoffice Default
       | PO Number | PO34 |
     And click "Submit"
 
-    Given I login as AmandaRCole@example.org buyer
+    Given I signed in as AmandaRCole@example.org on the store frontend
     When I click "Quotes"
     Then there is no "PO34" in grid
 
@@ -347,12 +347,12 @@ Feature: Quote Backoffice Default
       | PO Number | PO35 |
     And click "Submit"
 
-    Given I login as AmandaRCole@example.org buyer
+    Given I signed in as AmandaRCole@example.org on the store frontend
     When I click "Quotes"
     Then there is no "PO35" in grid
 
   Scenario: Create a Quote #36 from RFQ. Internal status: Draft, customer status: N/A, invisible for customer
-    Given I login as AmandaRCole@example.org buyer
+    Given I signed in as AmandaRCole@example.org on the store frontend
     And request a quote from shopping list "Shopping List 1" with data:
       | PO Number | PO36 |
 
@@ -364,6 +364,6 @@ Feature: Quote Backoffice Default
       | Internal Status | Draft |
       | Customer Status | N/A |
 
-    Given I login as AmandaRCole@example.org buyer
+    Given I signed in as AmandaRCole@example.org on the store frontend
     And click "Quotes"
     Then there is no "PO36" in grid
