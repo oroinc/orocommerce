@@ -21,7 +21,7 @@ oro.workflow:
                 label: 'Original Quote'
             email:
                 label: 'Email'
-            appendSignature:
+            append_signature:
                 label: 'Append Email Signature'
         transition:
             edit_transition:
