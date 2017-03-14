@@ -506,6 +506,21 @@ class Product extends ExtendProduct implements
     protected $attributeFamily;
 
     /**
+     * @var bool
+     *
+     * @ORM\Column(name="is_featured", type="boolean")
+     * @ConfigField(
+     *      defaultValues={
+     *          "attribute"={
+     *              "is_attribute"=true,
+     *              "visible"=false
+     *          }
+     *      }
+     *  )
+     */
+    protected $featured = false;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct()
@@ -1227,5 +1242,24 @@ class Product extends ExtendProduct implements
     public function getAttributeFamily()
     {
         return $this->attributeFamily;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getFeatured()
+    {
+        return $this->featured;
+    }
+
+    /**
+     * @param bool $featured
+     * @return $this
+     */
+    public function setFeatured($featured)
+    {
+        $this->featured = (bool)$featured;
+
+        return $this;
     }
 }

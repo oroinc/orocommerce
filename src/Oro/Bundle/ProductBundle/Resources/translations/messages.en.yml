@@ -33,6 +33,10 @@ oro:
         images.label: Images
         anything.label: Any Text
         featured_products.label: Featured Products
+        featured:
+            label: Is Featured
+            yes: Yes
+            no: No
         time_period.label: Time Period
         page_template.label: Page Template
         slugs:
