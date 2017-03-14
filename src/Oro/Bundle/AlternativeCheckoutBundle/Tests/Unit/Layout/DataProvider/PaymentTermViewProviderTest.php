@@ -8,14 +8,13 @@ use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface;
-use Oro\Bundle\PaymentTermBundle\Method\PaymentTerm;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class PaymentTermViewProviderTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
 
-    const METHOD = PaymentTerm::TYPE;
+    const METHOD = 'payment_term';
 
     /**
      * @var PaymentMethodViewProviderInterface|\PHPUnit_Framework_MockObject_MockObject
