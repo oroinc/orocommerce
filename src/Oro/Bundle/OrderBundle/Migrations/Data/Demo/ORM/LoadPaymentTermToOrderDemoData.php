@@ -33,7 +33,7 @@ class LoadPaymentTermToOrderDemoData extends AbstractFixture implements
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getDependencies()
     {
@@ -45,7 +45,7 @@ class LoadPaymentTermToOrderDemoData extends AbstractFixture implements
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function load(ObjectManager $manager)
     {

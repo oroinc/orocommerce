@@ -165,8 +165,8 @@ class DecrementInventoryTest extends CheckoutControllerTestCase
 
     /**
      * @param Product $product
-     * @param string $decrementQuantity
-     * @param string $allowBackOrder
+     * @param string  $decrementQuantity
+     * @param string  $allowBackOrder
      */
     protected function initProductDecrementFallback(Product $product, $decrementQuantity = '1', $allowBackOrder = '0')
     {

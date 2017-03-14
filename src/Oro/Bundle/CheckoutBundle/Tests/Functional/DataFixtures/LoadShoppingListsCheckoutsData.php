@@ -71,7 +71,7 @@ class LoadShoppingListsCheckoutsData extends AbstractLoadCheckouts
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getDependencies()
     {

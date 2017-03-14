@@ -51,7 +51,7 @@ class LoadChannelData extends AbstractFixture implements DependentFixtureInterfa
     protected $container;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function setContainer(ContainerInterface $container = null)
     {
@@ -59,7 +59,7 @@ class LoadChannelData extends AbstractFixture implements DependentFixtureInterfa
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function load(ObjectManager $manager)
     {
@@ -87,12 +87,12 @@ class LoadChannelData extends AbstractFixture implements DependentFixtureInterfa
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getDependencies()
     {
         return [
-            __NAMESPACE__ . '\LoadPaymentTermSettingsData'
+            LoadPaymentTermSettingsData::class
         ];
     }
 

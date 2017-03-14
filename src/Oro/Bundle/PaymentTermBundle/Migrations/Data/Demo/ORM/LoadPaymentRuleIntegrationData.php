@@ -26,7 +26,7 @@ class LoadPaymentRuleIntegrationData extends AbstractFixture implements Containe
     protected $container;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function setContainer(ContainerInterface $container = null)
     {

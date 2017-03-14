@@ -13,16 +13,24 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 class PaymentTermViewTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var PaymentTermProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /**
+     * @var PaymentTermProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
     protected $paymentTermProvider;
 
-    /** @var TranslatorInterface */
+    /**
+     * @var TranslatorInterface
+     */
     protected $translator;
 
-    /** @var PaymentTermView */
+    /**
+     * @var PaymentTermView
+     */
     protected $methodView;
 
-    /** @var PaymentTermConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /**
+     * @var PaymentTermConfigInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
     protected $paymentConfig;
 
     protected function setUp()

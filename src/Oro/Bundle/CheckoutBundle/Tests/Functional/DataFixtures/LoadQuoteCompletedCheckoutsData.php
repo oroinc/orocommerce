@@ -73,7 +73,7 @@ class LoadQuoteCompletedCheckoutsData extends AbstractLoadCheckouts
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getDependencies()
     {
