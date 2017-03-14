@@ -35,6 +35,8 @@ class ContentNodeController extends Controller
             $rootNode->setWebCatalog($webCatalog);
         }
 
+        $rootNode->setUpdatedAt(new \DateTime());
+
         return $this->updateTreeNode($rootNode);
     }
 
