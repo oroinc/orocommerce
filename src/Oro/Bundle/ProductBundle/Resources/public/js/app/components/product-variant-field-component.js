@@ -35,7 +35,7 @@ define(function(require) {
         /**
          * Hierarchy stack of product variants
          */
-        _hierarchy: null,
+        _hierarchy: [],
 
         /**
          * Current state
@@ -50,6 +50,8 @@ define(function(require) {
             ProductVariantFieldComponent.__super__.initialize.apply(this, arguments);
 
             this.$el = this.options._sourceElement;
+
+            this._prepareProductVariants();
 
             this.deferredInit.done(_.bind(this._initVariantInstances, this));
         },
@@ -128,6 +130,7 @@ define(function(require) {
 
                     this.filteredOptions = this.filteredOptions.concat(
                         $select.find('option').get().filter(function(option) {
+                            option.value = option.value !== '' ? normalizeName + '_' + option.value : '';
                             return !option.disabled && option.value !== '';
                         })
                     );
@@ -139,7 +142,20 @@ define(function(require) {
             }
 
             this._resolveVariantFieldsChain(this.options.simpleProductVariants);
-            this.$el.on('change', this.$el.find('select'), onChangeHandler);
+            this.$el.on('change', 'select', onChangeHandler);
+        },
+
+        /**
+         * Fix case where attributes similar value
+         * make attribute unique value
+         * @private
+         */
+        _prepareProductVariants: function() {
+            _.each(this.options.simpleProductVariants, function(variant) {
+                _.each(variant, function(attr, key, list) {
+                    list[key] = key + '_' + attr;
+                });
+            });
         },
 
         /**
@@ -151,10 +167,6 @@ define(function(require) {
         _appendToHierarchy: function(newOne) {
             if (!_.isString(newOne)) {
                 return error.showErrorInConsole(newOne + ' should be string');
-            }
-
-            if (!this._hierarchy) {
-                this._hierarchy = [];
             }
 
             if (this._hierarchy.indexOf(newOne) === -1) {
@@ -211,7 +223,11 @@ define(function(require) {
                     simpleProductVariants :
                     _.where(simpleProductVariants, this._prepareFoundKeyValue(parentField));
 
-                result = result.concat(_.uniq(_.pluck(simpleProductVariants, field)));
+                result = result.concat(
+                    _.uniq(
+                        _.pluck(simpleProductVariants, field)
+                    )
+                );
             }, this));
 
             return result;
@@ -243,6 +259,12 @@ define(function(require) {
             this.view.updateProductInfo(this.foundProductId);
         },
 
+        _prefixArray: function(arr, prefix) {
+            return arr.map(function(a) {
+                return prefix + '_' + a;
+            });
+        },
+
         /**
          * Helper method for normalize field name from 'form__name' to 'Name'
          *
@@ -252,7 +274,11 @@ define(function(require) {
          */
         _extractName: function(name) {
             name = name.split('__').slice(-1)[0];
-            return name[0].toUpperCase() + name.slice(1);
+            name = name.split('-').reduce(function(str, n) {
+                str += n[0].toUpperCase() + n.slice(1);
+                return str;
+            }, '');
+            return name;
         }
     });
 
