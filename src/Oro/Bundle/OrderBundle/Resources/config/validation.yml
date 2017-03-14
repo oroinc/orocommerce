@@ -65,6 +65,9 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
         price:
             - NotBlank: ~
             - Valid: ~
+        freeFormProduct:
+            - Length:
+                max: 255
 
 Oro\Bundle\OrderBundle\Entity\OrderAddress:
     properties:
@@ -113,6 +116,8 @@ Oro\Bundle\OrderBundle\Entity\OrderDiscount:
         type:
             - Type:
                 type: string
+        order:
+            - Oro\Bundle\OrderBundle\Validator\Constraints\Discounts: ~
 
 Oro\Bundle\OrderBundle\Entity\OrderShippingTracking:
     properties:

@@ -47,12 +47,16 @@ api:
                         mapped: false
                         constraints:
                             - NotBlank: ~
-                # there is already a productUnit required property in entity
-                productUnitCode:
-                    exclude: true
-                # copy-paste from rfq api
-                productSku:
-                    exclude: true
+            # there is already a productUnit required property in entity
+            actions:
+                create:
+                    fields:
+                        productUnitCode:
+                            exclude: true
+                update:
+                    fields:
+                        productUnitCode:
+                            exclude: true
 
         Oro\Bundle\OrderBundle\Entity\OrderAddress: ~
         Oro\Bundle\OrderBundle\Entity\OrderDiscount: ~

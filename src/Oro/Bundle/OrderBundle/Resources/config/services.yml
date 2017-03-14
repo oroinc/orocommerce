@@ -345,7 +345,6 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.order-line-items-grid, method: onBuildBefore }
 
-
     oro_order.converter.shipping_prices:
         class: 'Oro\Bundle\OrderBundle\Converter\ShippingPricesConverter'
 
@@ -357,16 +356,41 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.orm_datasource.result.after.order-line-items-grid-frontend, method: onResultAfter }
 
     oro_order.order_api.totals_processor:
-        class: 'Oro\Bundle\OrderBundle\Api\Processor\Order\TotalsOrderApiProcessor'
+        class: 'Oro\Bundle\OrderBundle\Api\Processor\Order\DiscountOrderApiProcessor'
         arguments:
             - '@oro_order.order.total.total_helper'
             - '@oro_api.doctrine_helper'
         tags:
-            - { name: oro.api.processor, action: update, group: save_data, priority: -50, class: '%oro_order.entity.order.class%' }
-            - { name: oro.api.processor, action: create, group: save_data, priority: -50, class: '%oro_order.entity.order.class%' }
+            - { name: oro.api.processor, action: update, group: transform_data, priority: 90, class: '%oro_order.entity.order_discount_item.class%' }
+            - { name: oro.api.processor, action: create, group: transform_data, priority: 90, class: '%oro_order.entity.order_discount_item.class%' }
+
+    oro_order.order_api.website_processor:
+        class: 'Oro\Bundle\OrderBundle\Api\Processor\Order\WebsiteOrderApiProcessor'
+        arguments:
+            - '@oro_website.manager'
+            - '@oro_api.doctrine_helper'
+        tags:
+            - { name: oro.api.processor, action: create, group: load_data, priority: -50, class: '%oro_order.entity.order.class%' }
+            - { name: oro.api.processor, action: update, group: load_data, priority: -50, class: '%oro_order.entity.order.class%' }
 
     oro_order.order_api.order_line_item_price_processor:
         class: 'Oro\Bundle\ProductBundle\Api\Processor\ProductLineItemPriceProcessor'
         tags:
             - { name: oro.api.processor, action: update, group: load_data, priority: -50, class: '%oro_order.entity.order_line_item.class%' }
             - { name: oro.api.processor, action: create, group: load_data, priority: -50, class: '%oro_order.entity.order_line_item.class%' }
+
+    oro_order.order_api.line_item_product_processor:
+        class: 'Oro\Bundle\OrderBundle\Api\Processor\Order\OrderLineItemProductProcessor'
+        arguments:
+            - '@oro_api.doctrine_helper'
+        tags:
+            - { name: oro.api.processor, action: create, group: load_data, priority: -255, class: '%oro_order.entity.order_line_item.class%' }
+            - { name: oro.api.processor, action: update, group: load_data, priority: -255, class: '%oro_order.entity.order_line_item.class%' }
+
+    oro_order.order_api.form_builder_totals_processor:
+        class: 'Oro\Bundle\OrderBundle\Api\Form\ApiOrderFormBuilderTotalsProcessor'
+        arguments:
+            - '@oro_order.form.type.event_listener.subtotals_subscriber'
+        tags:
+            - { name: oro.api.processor, action: create, group: transform_data, priority: 90, class: '%oro_order.entity.order.class%' }
+            - { name: oro.api.processor, action: update, group: transform_data, priority: 90, class: '%oro_order.entity.order.class%' }

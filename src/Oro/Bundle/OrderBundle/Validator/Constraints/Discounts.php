@@ -16,6 +16,6 @@ class Discounts extends Constraint
      */
     public function getTargets()
     {
-        return self::CLASS_CONSTRAINT;
+        return [self::CLASS_CONSTRAINT, self::PROPERTY_CONSTRAINT];
     }
 }
