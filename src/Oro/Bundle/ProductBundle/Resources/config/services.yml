@@ -111,7 +111,6 @@ services:
     oro_product.service.product_update_handler:
         class: 'Oro\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler'
         parent: oro_form.model.update_handler
-        scope: request
         calls:
             - [setActionGroupRegistry, ['@oro_action.action_group_registry']]
             - [setTranslator, ['@translator']]
@@ -351,9 +350,10 @@ services:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductContentVariantReindexEventListener'
         arguments:
             - "@event_dispatcher"
+            - '@oro_entity.doctrine.field_updates_checker'
+            - "@?oro_web_catalog.provider.web_catalog_usage_provider"
         tags:
             - { name: doctrine.event_listener, event: onFlush }
-            - { name: kernel.event_listener, event: oro.form.update_handler.after_entity_flush, method: onFormAfterFlush }
 
     oro_product.model.product_visibility_query_builder_modifier:
         class: 'Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier'

@@ -5,6 +5,14 @@ Tree Component
 --------------
 - `Oro\Component\Tree\Handler\AbstractTreeHandler`:
     - added method `getTreeItemList`
+    
+WebCatalog Component
+-------------
+- New Interface `Oro\Component\WebCatalog\Entity\WebCatalogAwareInterface`
+    - for entities which are aware of WebCatalogs
+- New Interface `Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface`
+    - provide information about assigned WebCatalogs to given entities (passed as an argument)
+    - provide information about usage of WebCatalog by id
 
 CatalogBundle
 -------------
@@ -104,6 +112,27 @@ MoneyOrderBundle
         - `Oro\Bundle\MoneyOrderBundle\Method\Factory\MoneyOrderPaymentMethodFactory`
         - `Oro\Bundle\MoneyOrderBundle\Method\View\Factory\MoneyOrderPaymentMethodViewFactory`
 
+NavigationBundle
+----------------
+
+* Chaged placeholders format for `navigation.yml` files. Please use `%` instead of `%%`
+* Removed class `Oro\Bundle\FrontendBundle\Menu\BreadcrumbManager`. From now menu name used to build breadcrumbs is set directly in `Oro\Bundle\NavigationBundle\Layout\DataProvider\NavigationTitleProvider::getTitle`:
+* `Oro\Bundle\NavigationBundle\Provider\TitleServiceInterface`:
+    - Changed signature of loadByRoute to `($route, $menuName = null)` to provide ability to set menu that will be used to build title
+* Removed title db cache:
+    - Removed command `oro:navigation:init` it is not needed, titles are generated and cached on fly
+    - Removed repository `Oro\Bundle\NavigationBundle\Entity\Repository`
+    - Removed entity `Oro\Bundle\NavigationBundle\Entity\Title`
+* Added `Oro\Bundle\NavigationBundle\Title\TitleReader\TitleReaderRegistry`:
+    - Added service tag `oro_navigation.title_reader` to register custom title template reader
+* Added `Oro\Bundle\NavigationBundle\Provider\ConfigurationProvider`. It contains logic that was previously in NavigationExtension 
+* Removed `Oro\Bundle\NavigationBundle\Event\RequestTitleListener`
+* Removed `Oro\Bundle\NavigationBundle\Provider\TitleProvider`
+* Changed `Oro\Bundle\NavigationBundle\Title\TitleReader\AnnotationsReader` constructor signature to `__construct(RequestStack $requestStack, Reader $reader)`
+* Changed `Oro\Bundle\NavigationBundle\Title\TranslationExtractor` constructor signature to `__construct(TitleReaderRegistry $titleReaderRegistry, RouterInterface $router)`
+* Changed `Oro\Bundle\NavigationBundle\ContentProvider\NavigationElementsContentProvider` constructor signature to `__construct(ConfigurationProvider $configurationProvider)`
+* Changed `Oro\Bundle\NavigationBundle\Config\MenuConfiguration` constructor signature to `__construct(ConfigurationProvider $configurationProvider)`
+
 OrderBundle
 -----------
 - Class `Oro\Bundle\OrderBundle\Twig\OrderExtension`
@@ -117,6 +146,8 @@ OrderBundle
     - renamed and moved to `Oro\Bundle\OrderBundle\EventListener\PossibleShippingMethodEventListener`
     - constructor accepts `Oro\Bundle\ShippingBundle\Context\ShippingContextFactoryInterface` instead of `Oro\Bundle\OrderBundle\Factory\OrderShippingContextFactory`
     - method `onOrderEvent` renamed to `onEvent` and it accepts `Oro\Bundle\ShippingBundle\EventListener\EntityDataAwareEventInterface`
+- Payment history section was added to order view page with payment transactions for current order
+- `VIEW_PAYMENT_HISTORY` permission was added for viewing payment history section
 
 PaymentBundle
 -------------

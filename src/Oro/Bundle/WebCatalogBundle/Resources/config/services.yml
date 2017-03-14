@@ -6,8 +6,7 @@ parameters:
 services:
     oro_web_catalog.provider.web_catalog_usage_provider:
         class: Oro\Bundle\WebCatalogBundle\Provider\WebCatalogUsageProvider
-        arguments:
-            - '@oro_config.global'
+        arguments: ['@oro_config.manager', '@doctrine']
 
     oro_web_catalog.acl.voter.web_catalog:
         class: Oro\Bundle\WebCatalogBundle\Acl\Voter\WebCatalogVoter

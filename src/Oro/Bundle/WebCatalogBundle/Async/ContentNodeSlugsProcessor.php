@@ -5,6 +5,7 @@ namespace Oro\Bundle\WebCatalogBundle\Async;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
+use Oro\Bundle\WebCatalogBundle\Exception\InvalidArgumentException;
 use Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator;
 use Oro\Bundle\WebCatalogBundle\Model\ResolveNodeSlugsMessageFactory;
 use Oro\Bundle\WebCatalogBundle\Resolver\DefaultVariantScopesResolver;
@@ -84,7 +85,9 @@ class ContentNodeSlugsProcessor implements MessageProcessorInterface, TopicSubsc
         try {
             $body = JSON::decode($message->getBody());
             $contentNode = $this->messageFactory->getEntityFromMessage($body);
-
+            if (!$contentNode) {
+                throw new InvalidArgumentException('Content Node not found');
+            }
             $createRedirect = $this->messageFactory->getCreateRedirectFromMessage($body);
 
             $this->defaultVariantScopesResolver->resolve($contentNode);
