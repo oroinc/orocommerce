@@ -22,23 +22,43 @@ class LoadUserData extends AbstractLoadMultipleUserData implements ContainerAwar
         self::ROLE_VIEW => [
             [
                 'class' => 'oro_shipping.entity.shipping_methods_configs_rule.class',
-                'acls'  => ['VIEW_SYSTEM'],
+                'acls'  => [
+                    [
+                        AbstractLoadMultipleUserData::ACL_PERMISSION => 'VIEW',
+                        AbstractLoadMultipleUserData::ACL_LEVEL => 'SYSTEM',
+                    ],
+                ],
             ],
             [
                 'class' => 'oro_rule.entity.rule.class',
-                'acls'  => ['VIEW_SYSTEM'],
+                'acls'  => [
+                    [
+                        AbstractLoadMultipleUserData::ACL_PERMISSION => 'VIEW',
+                        AbstractLoadMultipleUserData::ACL_LEVEL => 'SYSTEM',
+                    ],
+                ],
             ],
         ],
         self::ROLE_EDIT => [
             [
                 'class' => 'oro_shipping.entity.shipping_methods_configs_rule.class',
-                'acls'  => ['EDIT_SYSTEM'],
+                'acls'  => [
+                    [
+                        AbstractLoadMultipleUserData::ACL_PERMISSION => 'EDIT',
+                        AbstractLoadMultipleUserData::ACL_LEVEL => 'SYSTEM',
+                    ],
+                ],
             ],
         ],
         self::ROLE_CREATE => [
             [
                 'class' => 'oro_shipping.entity.shipping_methods_configs_rule.class',
-                'acls'  => ['CREATE_SYSTEM'],
+                'acls'  => [
+                    [
+                        AbstractLoadMultipleUserData::ACL_PERMISSION => 'CREATE',
+                        AbstractLoadMultipleUserData::ACL_LEVEL => 'SYSTEM',
+                    ],
+                ],
             ],
         ],
     ];

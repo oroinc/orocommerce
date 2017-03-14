@@ -1,0 +1,9 @@
+oro_permissions:
+    VIEW_PAYMENT_HISTORY:
+        label: oro.order.permission.view_payment_history.label
+        description: View Payment History
+        apply_to_all: false
+        apply_to_entities:
+            - 'Oro\Bundle\OrderBundle\Entity\Order'
+        group_names:
+            - 'default'

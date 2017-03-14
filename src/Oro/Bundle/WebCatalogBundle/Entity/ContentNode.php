@@ -19,6 +19,7 @@ use Oro\Bundle\ScopeBundle\Entity\ScopeCollectionAwareInterface;
 use Oro\Bundle\WebCatalogBundle\Model\ExtendContentNode;
 use Oro\Component\Tree\Entity\TreeTrait;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
+use Oro\Component\WebCatalog\Entity\WebCatalogAwareInterface;
 
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository")
@@ -61,7 +62,8 @@ class ContentNode extends ExtendContentNode implements
     ContentNodeInterface,
     DatesAwareInterface,
     LocalizedSlugPrototypeWithRedirectAwareInterface,
-    ScopeCollectionAwareInterface
+    ScopeCollectionAwareInterface,
+    WebCatalogAwareInterface
 {
     use TreeTrait;
     use DatesAwareTrait;

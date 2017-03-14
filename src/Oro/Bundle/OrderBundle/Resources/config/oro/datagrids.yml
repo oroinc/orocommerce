@@ -757,3 +757,14 @@ datagrids:
                     value: day
                 skip_empty_periods:
                     value: 1
+
+    order-payment-transactions-grid:
+        extends:  payment-transactions-grid
+        source:
+            query:
+                where:
+                    and:
+                        - payment_transaction.entityClass = '%oro_order.entity.order.class%'
+                        - payment_transaction.entityIdentifier = :order_id
+            bind_parameters:
+                - order_id
