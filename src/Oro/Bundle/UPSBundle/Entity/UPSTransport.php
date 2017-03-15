@@ -30,7 +30,7 @@ class UPSTransport extends Transport
     /**
      * @var bool
      *
-     * @ORM\Column(name="ups_test_mode", type="boolean", nullable=false)
+     * @ORM\Column(name="ups_test_mode", type="boolean", nullable=false, options={"default"=false})
      */
     protected $testMode = false;
 

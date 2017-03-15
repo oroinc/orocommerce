@@ -4,7 +4,6 @@ define(function(require) {
     'use strict';
 
     var $ = require('jquery');
-    var _ = require('underscore');
 
     var UPSConnectionValidatorComponent;
     var BaseComponent = require('oroui/js/app/components/base/component');
@@ -12,7 +11,7 @@ define(function(require) {
     var messenger = require('oroui/js/messenger');
 
     UPSConnectionValidatorComponent = BaseComponent.extend({
-        
+
         /**
          * @property {jquery} $button
          */
@@ -90,7 +89,7 @@ define(function(require) {
             if (this.disposed) {
                 return;
             }
-            
+
             this.$button.off('click');
 
             UPSConnectionValidatorComponent.__super__.dispose.call(this);

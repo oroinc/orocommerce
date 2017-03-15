@@ -8,17 +8,9 @@ use Oro\Bundle\UPSBundle\Connection\Validator\Result\Factory\UpsConnectionValida
 use Oro\Bundle\UPSBundle\Connection\Validator\Result\Factory\UpsConnectionValidatorResultFactoryInterface;
 use Oro\Bundle\UPSBundle\Connection\Validator\Result\UpsConnectionValidatorResult;
 use Oro\Bundle\UPSBundle\Connection\Validator\Result\UpsConnectionValidatorResultInterface;
-use Symfony\Component\Translation\TranslatorInterface;
 
 class UpsConnectionValidatorResultFactoryTest extends \PHPUnit_Framework_TestCase
 {
-    const TRANSLATED_MESSAGE = 'Error not related to authentication';
-
-    /**
-     * @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $translator;
-
     /**
      * @var UpsConnectionValidatorResultFactoryInterface
      */
@@ -26,8 +18,7 @@ class UpsConnectionValidatorResultFactoryTest extends \PHPUnit_Framework_TestCas
 
     protected function setUp()
     {
-        $this->translator = $this->createMock(TranslatorInterface::class);
-        $this->connectionValidatorResultFactory = new UpsConnectionValidatorResultFactory($this->translator);
+        $this->connectionValidatorResultFactory = new UpsConnectionValidatorResultFactory();
     }
 
     /**
@@ -46,11 +37,6 @@ class UpsConnectionValidatorResultFactoryTest extends \PHPUnit_Framework_TestCas
             ->method('json')
             ->willReturn($upsResponse);
 
-        $this->translator->expects(static::any())
-            ->method('trans')
-            ->with('oro.ups.connection_validation.result.not_authentication_error.message')
-            ->willReturn(self::TRANSLATED_MESSAGE);
-
         static::assertEquals(
             $expectedResult,
             $this->connectionValidatorResultFactory->createResultByUpsClientResponse($response)
@@ -59,20 +45,18 @@ class UpsConnectionValidatorResultFactoryTest extends \PHPUnit_Framework_TestCas
 
     public function testCreateExceptionResult()
     {
-        $message = 'message';
-        $this->translator->expects(static::once())
-            ->method('trans')
-            ->willReturn($message);
+        $message = 'error message';
 
         $expected = new UpsConnectionValidatorResult([
             UpsConnectionValidatorResult::STATUS_KEY => false,
-            UpsConnectionValidatorResult::ERROR_SEVERITY_KEY => UpsConnectionValidatorResult::WARNING_SEVERITY,
+            UpsConnectionValidatorResult::ERROR_SEVERITY_KEY
+                => UpsConnectionValidatorResultFactory::SERVER_SEVERITY,
             UpsConnectionValidatorResult::ERROR_MESSAGE_KEY => $message,
         ]);
 
         static::assertEquals(
             $expected,
-            $this->connectionValidatorResultFactory->createExceptionResult(new RestException())
+            $this->connectionValidatorResultFactory->createExceptionResult(new RestException($message))
         );
     }
 
@@ -110,7 +94,8 @@ class UpsConnectionValidatorResultFactoryTest extends \PHPUnit_Framework_TestCas
                 ),
                 'expectedResult' => new UpsConnectionValidatorResult([
                     UpsConnectionValidatorResult::STATUS_KEY => false,
-                    UpsConnectionValidatorResult::ERROR_SEVERITY_KEY => UpsConnectionValidatorResult::FAULT_SEVERITY,
+                    UpsConnectionValidatorResult::ERROR_SEVERITY_KEY
+                        => UpsConnectionValidatorResultFactory::MEASUREMENT_SYSTEM_SEVERITY,
                     UpsConnectionValidatorResult::ERROR_MESSAGE_KEY =>
                         'This measurement system is not valid for the selected country.'
                 ])
@@ -123,7 +108,8 @@ class UpsConnectionValidatorResultFactoryTest extends \PHPUnit_Framework_TestCas
                 ),
                 'expectedResult' => new UpsConnectionValidatorResult([
                     UpsConnectionValidatorResult::STATUS_KEY => false,
-                    UpsConnectionValidatorResult::ERROR_SEVERITY_KEY => UpsConnectionValidatorResult::FAULT_SEVERITY,
+                    UpsConnectionValidatorResult::ERROR_SEVERITY_KEY
+                        => UpsConnectionValidatorResultFactory::AUTHENTICATION_SEVERITY,
                     UpsConnectionValidatorResult::ERROR_MESSAGE_KEY => 'Invalid Authentication Information.'
                 ])
             ],
@@ -135,8 +121,10 @@ class UpsConnectionValidatorResultFactoryTest extends \PHPUnit_Framework_TestCas
                 ),
                 'expectedResult' => new UpsConnectionValidatorResult([
                     UpsConnectionValidatorResult::STATUS_KEY => false,
-                    UpsConnectionValidatorResult::ERROR_SEVERITY_KEY => UpsConnectionValidatorResult::WARNING_SEVERITY,
-                    UpsConnectionValidatorResult::ERROR_MESSAGE_KEY => self::TRANSLATED_MESSAGE
+                    UpsConnectionValidatorResult::ERROR_SEVERITY_KEY
+                        => UpsConnectionValidatorResultFactory::UNEXPECTED_SEVERITY,
+                    UpsConnectionValidatorResult::ERROR_MESSAGE_KEY
+                        => 'The requested service may not guarantee Second Day arrival to the selected location.'
                 ])
             ]
         ];

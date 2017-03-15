@@ -4,6 +4,8 @@ namespace Oro\Bundle\UPSBundle\Controller;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
+use Oro\Bundle\UPSBundle\Connection\Validator\Result\Factory\UpsConnectionValidatorResultFactory;
+use Oro\Bundle\UPSBundle\Connection\Validator\Result\UpsConnectionValidatorResultInterface;
 use Oro\Bundle\UPSBundle\Entity\Repository\ShippingServiceRepository;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
@@ -68,7 +70,7 @@ class AjaxUPSController extends Controller
         if (!$result->getStatus()) {
             return new JsonResponse([
                 'success' => false,
-                'message' => $result->getErrorMessage(),
+                'message' => $this->getErrorMessageByValidatorResult($result),
             ]);
         }
 
@@ -76,5 +78,30 @@ class AjaxUPSController extends Controller
             'success' => true,
             'message' => $this->get('translator')->trans('oro.ups.connection_validation.result.success.message'),
         ]);
+    }
+
+    /**
+     * @param UpsConnectionValidatorResultInterface $result
+     *
+     * @return string
+     */
+    private function getErrorMessageByValidatorResult(UpsConnectionValidatorResultInterface $result)
+    {
+        $message = 'oro.ups.connection_validation.result.unexpected_error.message';
+        $parameters = [
+            '%error_message%' => trim($result->getErrorMessage(), '.')
+        ];
+        switch ($result->getErrorSeverity()) {
+            case UpsConnectionValidatorResultFactory::AUTHENTICATION_SEVERITY:
+                $message = 'oro.ups.connection_validation.result.authentication.message';
+                break;
+            case UpsConnectionValidatorResultFactory::MEASUREMENT_SYSTEM_SEVERITY:
+                $message = 'oro.ups.connection_validation.result.measurement_system.message';
+                break;
+            case UpsConnectionValidatorResultFactory::SERVER_SEVERITY:
+                $message = 'oro.ups.connection_validation.result.server_error.message';
+                break;
+        }
+        return $this->get('translator')->trans($message, $parameters);
     }
 }

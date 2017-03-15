@@ -49,8 +49,10 @@ oro:
                 scheduled: Schedule Invalidation
 
         connection_validation:
-            button.label: Validate UPS Connection
+            button.text: Check UPS Connection
             result:
-                not_authentication_error.message: Authentication settings are correct but there was error not related to authentication
+                authentication.message: Authentication error has occurred: %error_message%
+                measurement_system.message: Measurement error has occurred: %error_message%
+                unexpected_error.message: Unexpected error has occurred: %error_message%. Please, contact system administrator
                 success.message: UPS Connection is valid
-                server_error.message: Could not connect to server, try again later
+                server_error.message: Connection error has occurred: %error_message%. Please, try again later

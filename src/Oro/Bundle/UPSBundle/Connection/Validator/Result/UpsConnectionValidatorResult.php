@@ -10,9 +10,6 @@ class UpsConnectionValidatorResult extends ParameterBag implements UpsConnection
     const ERROR_SEVERITY_KEY = 'error_severity';
     const ERROR_MESSAGE_KEY = 'error_message';
 
-    const FAULT_SEVERITY = 'fault';
-    const WARNING_SEVERITY = 'warning';
-
     /**
      * {@inheritDoc}
      */

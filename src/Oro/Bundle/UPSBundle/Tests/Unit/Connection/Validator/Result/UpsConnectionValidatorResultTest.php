@@ -20,7 +20,7 @@ class UpsConnectionValidatorResultTest extends \PHPUnit_Framework_TestCase
     {
         $this->parameters = [
             'status' => true,
-            'error_severity' => UpsConnectionValidatorResult::WARNING_SEVERITY,
+            'error_severity' => 'error_severity',
             'error_message' => 'Wrong Password'
         ];
         $this->connectionValidationResult = new UpsConnectionValidatorResult($this->parameters);

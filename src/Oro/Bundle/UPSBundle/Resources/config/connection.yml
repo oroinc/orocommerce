@@ -8,8 +8,6 @@ services:
     oro_ups.connection.validator.result.factory:
         class: 'Oro\Bundle\UPSBundle\Connection\Validator\Result\Factory\UpsConnectionValidatorResultFactory'
         public: false
-        arguments:
-            - '@translator.default'
 
     oro_ups.connection.validator:
         class: 'Oro\Bundle\UPSBundle\Connection\Validator\UpsConnectionValidator'
