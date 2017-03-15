@@ -59,6 +59,11 @@ FlatRateBundle
 -------------------
 - Change name of the bundle to FlatRateShippingBundle
 
+InventoryBundle
+---------------
+- REST API resource `/api/inventorylevels`
+    - the filter `productUnitPrecision.unit.code` was marked as deprecated. The `productUnitPrecision.unit.id` filter should be used instead
+
 WebsiteSearchBundle
 -------------------
 - Driver::writeItem() and Driver::flushWrites() should be used instead of Driver::saveItems()
@@ -327,6 +332,9 @@ SaleBundle
     - removed property `protected $configManager`
 - Class `Oro\Bundle\SaleBundle\EventListener\Quote\QuotePossibleShippingMethodsEventListener` removed. 
     - `Oro\Bundle\OrderBundle\EventListener\PossibleShippingMethodEventListener` must be used instead.
+- Removed property `locked` from entity class `Oro\Bundle\SaleBundle\Entity\Quote` with related methods
+- Class `Oro\Bundle\SaleBundle\Notification\NotificationHelper`
+    - removed parameter `request` from constructor
 
 ShoppingListBundle
 ------------------
