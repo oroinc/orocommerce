@@ -5,6 +5,7 @@ namespace Oro\Bundle\SEOBundle\Tests\Unit;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\KernelInterface;
 
+use Oro\Bundle\ProductBundle\DependencyInjection\CompilerPass\ContentNodeFieldsChangesCompilerPass;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\CMSBundle\Entity\Page;
 use Oro\Bundle\LocaleBundle\DependencyInjection\Compiler\DefaultFallbackExtensionPass;
@@ -32,6 +33,14 @@ class OroSEOBundleTest extends \PHPUnit_Framework_TestCase
                     Category::class => $fields,
                     Page::class => $fields,
                 ]),
+                new ContentNodeFieldsChangesCompilerPass(
+                    array_values($fields),
+                    'oro_product.event_listener.product_content_variant_reindex'
+                ),
+                new ContentNodeFieldsChangesCompilerPass(
+                    array_values($fields),
+                    'oro_catalog.event_listener.category_content_variant_index'
+                ),
             ],
             $container->getCompiler()->getPassConfig()->getBeforeOptimizationPasses()
         );

@@ -2,12 +2,13 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Filter;
 
+use Symfony\Component\HttpFoundation\Request;
+
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\DataGridBundle\Extension\Sorter\AbstractSorterExtension;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberRangeFilterType;
 use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
-use Symfony\Component\HttpFoundation\Request;
 
 class FrontendProductPriceFilterTest extends FrontendWebTestCase
 {

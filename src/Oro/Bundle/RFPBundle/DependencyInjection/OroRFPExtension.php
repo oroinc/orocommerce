@@ -23,7 +23,6 @@ class OroRFPExtension extends Extension
         $loader->load('api.yml');
         $loader->load('services.yml');
         $loader->load('form_types.yml');
-        $loader->load('actions.yml');
         $loader->load('block_types.yml');
 
         $container->prependExtensionConfig($this->getAlias(), array_intersect_key($config, array_flip(['settings'])));

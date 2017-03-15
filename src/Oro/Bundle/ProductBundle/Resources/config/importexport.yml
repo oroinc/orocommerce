@@ -43,6 +43,7 @@ services:
     oro_product.importexport.processor.import.product:
         public: false
         parent: oro_importexport.processor.import_abstract
+        class: Oro\Bundle\ProductBundle\ImportExport\Processor\ProductImportProcessor
         calls:
             - [setDataConverter, ['@oro_product.importexport.data_converter.product']]
             - [setStrategy, ['@oro_product.importexport.strategy.product']]

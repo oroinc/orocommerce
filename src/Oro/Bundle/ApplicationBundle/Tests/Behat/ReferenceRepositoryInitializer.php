@@ -45,6 +45,10 @@ class ReferenceRepositoryInitializer extends BaseInitializer
         $buyer = $repository->findOneBy(['role' => 'ROLE_FRONTEND_BUYER']);
         $this->referenceRepository->set('buyer', $buyer);
 
+        /** @var CustomerUserRole $administrator */
+        $administrator = $repository->findOneBy(['role' => 'ROLE_FRONTEND_ADMINISTRATOR']);
+        $this->referenceRepository->set('front_admin', $administrator);
+
         /** @var ProductUnitRepository $repository */
         $repository = $this->getEntityManager()->getRepository('OroProductBundle:ProductUnit');
         /** @var ProductUnit item*/
