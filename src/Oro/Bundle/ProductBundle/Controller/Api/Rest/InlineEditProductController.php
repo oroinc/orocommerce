@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Controller\Api\Rest;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\Controller\Annotations\Patch;
@@ -23,6 +24,7 @@ class InlineEditProductController extends FOSRestController
 {
     /**
      * @Patch("inline-edit/product/{id}/name/patch")
+     * @AclAncestor("oro_product_update")
      *
      * @param Request $request
      * @param Product $product
@@ -44,6 +46,7 @@ class InlineEditProductController extends FOSRestController
 
     /**
      * @Patch("inline-edit/product/{id}/inventory-status/patch")
+     * @AclAncestor("oro_product_update")
      *
      * @param Request $request
      * @param Product $product

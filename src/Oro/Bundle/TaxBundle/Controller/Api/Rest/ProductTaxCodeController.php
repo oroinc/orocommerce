@@ -13,6 +13,7 @@ use FOS\RestBundle\Controller\Annotations\RouteResource;
 use FOS\RestBundle\Controller\FOSRestController;
 use FOS\RestBundle\Util\Codes;
 
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\TaxBundle\Entity\Repository\ProductTaxCodeRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TaxBundle\Entity\ProductTaxCode;
@@ -25,6 +26,7 @@ class ProductTaxCodeController extends FOSRestController
 {
     /**
      * @Patch("taxcode/product/{id}/patch")
+     * @AclAncestor("oro_product_update")
      *
      * @param Request $request
      * @param Product $product
