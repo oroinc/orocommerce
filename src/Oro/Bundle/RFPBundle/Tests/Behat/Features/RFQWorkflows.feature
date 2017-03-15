@@ -169,6 +169,7 @@ Feature: Default RFQ Workflows
     And I fill "Request More Information Popup Form" with:
       | Notes | Answer for manager |
     And I click "Submit"
+    And I reload the page
     Then I should see that "Request Notes Block" contains "Answer for manager"
     And I should see RFQ status is "Submitted"
     When I continue as the Manager
