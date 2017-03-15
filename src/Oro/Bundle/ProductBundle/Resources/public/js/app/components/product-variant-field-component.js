@@ -49,6 +49,7 @@ define(function(require) {
             this.options = _.defaults(options || {}, this.options);
             ProductVariantFieldComponent.__super__.initialize.apply(this, arguments);
 
+            // _sourceElement is a form element which contains selects
             this.$el = this.options._sourceElement;
 
             this._prepareProductVariants();
@@ -223,11 +224,7 @@ define(function(require) {
                     simpleProductVariants :
                     _.where(simpleProductVariants, this._prepareFoundKeyValue(parentField));
 
-                result = result.concat(
-                    _.uniq(
-                        _.pluck(simpleProductVariants, field)
-                    )
-                );
+                result = result.concat(_.uniq(_.pluck(simpleProductVariants, field)));
             }, this));
 
             return result;
