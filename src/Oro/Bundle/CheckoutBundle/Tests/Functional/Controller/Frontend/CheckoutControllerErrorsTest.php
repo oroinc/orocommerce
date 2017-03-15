@@ -7,10 +7,12 @@ use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserD
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
+use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\Traits\EnabledPaymentMethodIdentifierTrait;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
+use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRulesWithConfigs;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
@@ -21,20 +23,25 @@ use Symfony\Component\DomCrawler\Crawler;
  */
 class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
 {
+    use EnabledPaymentMethodIdentifierTrait;
+
     public function setUp()
     {
         $this->initClient(
             [],
             static::generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
-        $this->loadFixtures([
-            LoadCustomerAddresses::class,
-            LoadProductUnitPrecisions::class,
-            LoadShoppingListLineItems::class,
-            LoadCombinedProductPrices::class,
-            LoadPaymentTermData::class,
-            LoadPaymentMethodsConfigsRuleData::class
-        ]);
+        $this->loadFixtures(
+            [
+                LoadCustomerAddresses::class,
+                LoadProductUnitPrecisions::class,
+                LoadShoppingListLineItems::class,
+                LoadCombinedProductPrices::class,
+                LoadPaymentTermData::class,
+                LoadPaymentMethodsConfigsRuleData::class,
+                LoadShippingMethodsConfigsRulesWithConfigs::class,
+            ]
+        );
         $this->registry = static::getContainer()->get('doctrine');
     }
 
@@ -277,9 +284,7 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
         $form = $this->getTransitionForm($crawler);
         $values = $this->explodeArrayPaths($form->getValues());
         $values[self::ORO_WORKFLOW_TRANSITION]['payment_method'] =
-            LoadPaymentMethodsConfigsRuleData::getPaymentMethodIdentifier(
-                $this->getReference('payment_term:channel_1')
-            );
+            $this->getPaymentMethodIdentifier($this->getContainer());
         $values['_widgetContainer'] = 'ajax';
         $values['_wid'] = 'ajax_checkout';
 

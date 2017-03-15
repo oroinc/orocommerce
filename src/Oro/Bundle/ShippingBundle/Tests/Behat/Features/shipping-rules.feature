@@ -1,3 +1,4 @@
+@fixture-../../../../../FlatRateShippingBundle/Tests/Behat/Features/Fixtures/FlatRateIntegration.yml
 @fixture-ShippingMethodsConfigsRule.yml
 Feature: Applying shipping rules
   In order to decrease shipping cost for buyers

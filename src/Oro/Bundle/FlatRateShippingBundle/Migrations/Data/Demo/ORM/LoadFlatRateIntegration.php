@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\FlatRateShippingBundle\Migrations\Data\ORM;
+namespace Oro\Bundle\FlatRateShippingBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
@@ -10,6 +10,8 @@ use Oro\Bundle\FlatRateShippingBundle\Integration\FlatRateChannelType;
 use Oro\Bundle\FlatRateShippingBundle\Method\FlatRateMethodType;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\MigrationBundle\Entity\DataFixture;
+use Oro\Bundle\MigrationBundle\Entity\Repository\DataFixtureRepository;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\OrganizationBundle\Migrations\Data\ORM\LoadOrganizationAndBusinessUnitData;
 use Oro\Bundle\RuleBundle\Entity\Rule;
@@ -19,12 +21,16 @@ use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class LoadFlatRateIntegration extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
-    /** @var ContainerInterface */
+    /**
+     * @internal
+     */
+    const PREVIOUS_CLASS_NAME = 'Oro\Bundle\FlatRateBundle\Migrations\Data\ORM\LoadFlatRateIntegration';
+
+    /**
+     * @var ContainerInterface
+     */
     protected $container;
 
     /**
@@ -58,9 +64,32 @@ class LoadFlatRateIntegration extends AbstractFixture implements DependentFixtur
             return;
         }
 
+        // Migration could be loaded before renaming of FlatRateBundle to FlatRateShippingBundle
+        if ($this->isFixtureAlreadyLoaded()) {
+            return;
+        }
+
         $channel = $this->loadIntegration($manager);
 
         $this->loadShippingRule($manager, $channel);
+    }
+
+    /**
+     * @return bool
+     */
+    private function isFixtureAlreadyLoaded()
+    {
+        $fixtures = $this->getDataFixtureRepository()->findByClassName(static::PREVIOUS_CLASS_NAME);
+
+        return count($fixtures) > 0;
+    }
+
+    /**
+     * @return DataFixtureRepository|\Doctrine\ORM\EntityRepository
+     */
+    private function getDataFixtureRepository()
+    {
+        return $this->container->get('oro_entity.doctrine_helper')->getEntityRepository(DataFixture::class);
     }
 
     /**
@@ -140,6 +169,7 @@ class LoadFlatRateIntegration extends AbstractFixture implements DependentFixtur
 
     /**
      * @param Channel $channel
+     *
      * @return int|string
      */
     private function getFlatRateIdentifier(Channel $channel)
