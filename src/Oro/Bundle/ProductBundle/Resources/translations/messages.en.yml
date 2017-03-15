@@ -37,7 +37,7 @@ oro:
             label:              'Slugs'
             singular_label:     'Slug'
         slug_prototypes:
-            label:              'Slug Prototypes'
+            label:              'URL Slug'
             singular_label:     'Slug Prototype'
 
         content_variant:
