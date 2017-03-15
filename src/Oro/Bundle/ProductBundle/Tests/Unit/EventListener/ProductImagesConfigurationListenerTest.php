@@ -45,7 +45,10 @@ class ProductImagesConfigurationListenerTest extends \PHPUnit_Framework_TestCase
     public function testBeforeSaveAddsMessageForProductImagesSection()
     {
         $flashBag = $this->prophesize(FlashBag::class);
-        $flashBag->add('info', self::MESSAGE)->shouldBeCalledTimes(1);
+        $flashBag->add(
+            ProductImagesConfigurationListener::MESSAGE_TYPE,
+            self::MESSAGE
+        )->shouldBeCalledTimes(1);
 
         $this->translator->trans(Argument::type('string'))->willReturn(self::MESSAGE);
         $this->session->getFlashBag()->willReturn($flashBag->reveal());
