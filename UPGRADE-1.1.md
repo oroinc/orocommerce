@@ -59,6 +59,11 @@ FlatRateBundle
 -------------------
 - Change name of the bundle to FlatRateShippingBundle
 
+InventoryBundle
+---------------
+- REST API resource `/api/inventorylevels`
+    - the filter `productUnitPrecision.unit.code` was marked as deprecated. The `productUnitPrecision.unit.id` filter should be used instead
+
 WebsiteSearchBundle
 -------------------
 - Driver::writeItem() and Driver::flushWrites() should be used instead of Driver::saveItems()

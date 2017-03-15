@@ -16,25 +16,31 @@ class PaymentTerm implements PaymentMethodInterface
 {
     use LoggerAwareTrait;
 
-    const TYPE = 'payment_term';
-
-    /** @var PaymentTermProvider */
+    /**
+     * @var PaymentTermProvider
+     */
     protected $paymentTermProvider;
 
-    /** @var PaymentTermAssociationProvider */
+    /**
+     * @var PaymentTermAssociationProvider
+     */
     protected $paymentTermAssociationProvider;
 
-    /** @var DoctrineHelper */
+    /**
+     * @var DoctrineHelper
+     */
     protected $doctrineHelper;
 
-    /** @var PaymentTermConfigInterface */
+    /**
+     * @var PaymentTermConfigInterface
+     */
     protected $config;
 
     /**
-     * @param PaymentTermProvider $paymentTermProvider
+     * @param PaymentTermProvider            $paymentTermProvider
      * @param PaymentTermAssociationProvider $paymentTermAssociationProvider
-     * @param DoctrineHelper $doctrineHelper
-     * @param PaymentTermConfigInterface $config
+     * @param DoctrineHelper                 $doctrineHelper
+     * @param PaymentTermConfigInterface     $config
      */
     public function __construct(
         PaymentTermProvider $paymentTermProvider,
@@ -48,7 +54,9 @@ class PaymentTerm implements PaymentMethodInterface
         $this->config = $config;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritDoc}
+     */
     public function execute($action, PaymentTransaction $paymentTransaction)
     {
         $entity = $this->doctrineHelper->getEntityReference(
@@ -91,24 +99,29 @@ class PaymentTerm implements PaymentMethodInterface
         return [];
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritDoc}
+     */
     public function getIdentifier()
     {
         return $this->config->getPaymentMethodIdentifier();
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function isApplicable(PaymentContextInterface $context)
     {
         if ($context->getCustomer()) {
             return (bool)$this->paymentTermProvider->getPaymentTerm($context->getCustomer());
         }
+
         return false;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritDoc}
+     */
     public function supports($actionName)
     {
         return $actionName === self::PURCHASE;

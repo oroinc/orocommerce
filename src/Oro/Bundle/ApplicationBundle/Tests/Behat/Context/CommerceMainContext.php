@@ -7,12 +7,17 @@ use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
 use Oro\Bundle\FormBundle\Tests\Behat\Element\OroForm;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
+use Oro\Bundle\TestFrameworkBundle\Behat\Context\SessionAliasProviderAwareInterface;
+use Oro\Bundle\TestFrameworkBundle\Behat\Context\SessionAliasProviderAwareTrait;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
-class CommerceMainContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
+class CommerceMainContext extends OroFeatureContext implements
+    OroPageObjectAware,
+    KernelAwareContext,
+    SessionAliasProviderAwareInterface
 {
-    use PageObjectDictionary, KernelDictionary;
+    use PageObjectDictionary, KernelDictionary, SessionAliasProviderAwareTrait;
 
     /**
      * This step used for login bayer from frontend of commerce
@@ -38,6 +43,24 @@ class CommerceMainContext extends OroFeatureContext implements OroPageObjectAwar
         $form->fill($table);
         $form->pressButton('Sign In');
         $this->waitForAjax();
+    }
+
+    /**
+     * This step used for login bayer from frontend of commerce with given session alias to able to switch to later
+     *
+     * Example: Given I login as AmandaRCole@example.org the "Buyer" at "other_session"
+     *
+     * @Given /^(?:|I )login as (?P<email>\S+) the "(?P<sessionAlias>[^"]*)" at "(?P<sessionName>\w+)" session$/
+     *
+     * @param string $email
+     * @param string $sessionName
+     * @param string $sessionAlias
+     */
+    public function loginAsBuyerOnNamedSession($email, $sessionName, $sessionAlias)
+    {
+        $this->sessionAliasProvider->setSessionAlias($this->getMink(), $sessionName, $sessionAlias);
+        $this->sessionAliasProvider->switchSessionByAlias($this->getMink(), $sessionAlias);
+        $this->loginAsBuyer($email);
     }
 
     /**
