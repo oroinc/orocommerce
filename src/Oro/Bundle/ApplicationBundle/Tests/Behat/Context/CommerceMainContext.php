@@ -5,7 +5,9 @@ namespace Oro\Bundle\ApplicationBundle\Tests\Behat\Context;
 use Behat\Gherkin\Node\TableNode;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
+use Oro\Bundle\DataGridBundle\Tests\Behat\Element\TableRow;
 use Oro\Bundle\FormBundle\Tests\Behat\Element\OroForm;
+use Oro\Bundle\TestFrameworkBundle\Behat\Element\Form;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\SessionAliasProviderAwareInterface;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\SessionAliasProviderAwareTrait;
@@ -61,6 +63,37 @@ class CommerceMainContext extends OroFeatureContext implements
         $this->sessionAliasProvider->setSessionAlias($this->getMink(), $sessionName, $sessionAlias);
         $this->sessionAliasProvider->switchSessionByAlias($this->getMink(), $sessionAlias);
         $this->loginAsBuyer($email);
+    }
+
+    /**
+     * Assert text by label in page.
+     * Example: Then I should see call on front store with data:
+     *            | Subject             | Proposed Charlie to star in new film |
+     *            | Additional comments | Charlie was in a good mood           |
+     *            | Call date & time    | Aug 24, 2017, 11:00 AM               |
+     *            | Phone number        | (310) 475-0859                       |
+     *            | Direction           | Outgoing                             |
+     *            | Duration            | 5:30                                 |
+     *
+     * @Then /^(?:|I )should see (?P<entity>[\w\s]+) on front store with data:$/
+     */
+    public function assertValuesByLabels($entity, TableNode $table)
+    {
+        foreach ($table->getRows() as $row) {
+            list($label, $value) = $row;
+            /* @var $rowElement TableRow */
+            $rowElement = $this->findElementContains('TableRow', $label);
+
+            if (!$rowElement->isIsset()) {
+                self::fail(sprintf('Can\'t find "%s" label', $label));
+            }
+
+            if ($rowElement->getCellByNumber(1)->getText() === Form::normalizeValue($value)) {
+                continue;
+            }
+
+            self::fail(sprintf('Found "%s" label but no has "%s" value', $label, $value));
+        }
     }
 
     /**

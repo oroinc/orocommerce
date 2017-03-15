@@ -1,14 +1,16 @@
-{% extends 'OroActionBundle:Operation:form.html.twig' %}
+{% extends 'OroWorkflowBundle:Widget:widget/transitionForm.html.twig' %}
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 
-{% block widget_content %}
+{% block transition_widget %}
     <div class="widget-content email-form">
-        {{ block('widget_content_inner') }}
+        {{ parent() }}
     </div>
 {% endblock %}
 
-{% block form %}
+{% block transition_form %}
     {% form_theme form with ['OroFormBundle:Form:fields.html.twig', 'OroEmailBundle:Form:fields.html.twig'] %}
+    
+    {% set context = workflowItem.data %}
 
     <div class="form-container">
         <form id="{{ form.vars.id}}" name="{{ form.vars.name }}" method="post" action="{{ app.request.uri }}" enctype="multipart/form-data">
@@ -22,9 +24,9 @@
                 isSignatureEditable: resource_granted('oro_user_user_update')
             } %}
             <fieldset class="form-horizontal"
-                      data-page-component-module="oroemail/js/app/components/email-editor-component"
-                      data-page-component-options="{{ emailEditorOptions | json_encode }}"
-                      data-layout="separate"
+                data-page-component-module="oroemail/js/app/components/email-editor-component"
+                data-page-component-options="{{ emailEditorOptions | json_encode }}"
+                data-layout="separate"
             >
                 {{ form_row(form.email.gridName) }}
                 {{ form_row(form.email.from) }}
