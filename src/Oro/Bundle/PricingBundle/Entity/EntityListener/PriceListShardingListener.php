@@ -30,7 +30,7 @@ class PriceListShardingListener
     public function postPersist(PriceList $priceList)
     {
         $shardName = $this->shardManager->getShardName(ProductPrice::class, ['priceList' => $priceList]);
-        if (!$this->shardManager->exists(ProductPrice::class, $shardName)) {
+        if (!$this->shardManager->exists($shardName)) {
             $this->shardManager->create(ProductPrice::class, $shardName);
         }
     }
@@ -41,6 +41,6 @@ class PriceListShardingListener
     public function preRemove(PriceList $priceList)
     {
         $shardName = $this->shardManager->getShardName(ProductPrice::class, ['priceList' => $priceList]);
-        $this->shardManager->delete(ProductPrice::class, $shardName);
+        $this->shardManager->delete($shardName);
     }
 }

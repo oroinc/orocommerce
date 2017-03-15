@@ -39,11 +39,11 @@ class PriceListShardingListenerTest extends WebTestCase
         $this->em->flush($priceList);
         $shardName = $this->shardManager->getShardName(ProductPrice::class, ['priceList' => $priceList]);
 
-        $this->assertTrue($this->shardManager->exists(ProductPrice::class, $shardName));
+        $this->assertTrue($this->shardManager->exists($shardName));
 
         $this->em->remove($priceList);
         $this->em->flush($priceList);
 
-        $this->assertFalse($this->shardManager->exists(ProductPrice::class, $shardName));
+        $this->assertFalse($this->shardManager->exists($shardName));
     }
 }

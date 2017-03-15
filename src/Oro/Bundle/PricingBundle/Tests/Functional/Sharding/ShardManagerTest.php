@@ -69,15 +69,15 @@ class ShardManagerTest extends WebTestCase
 
     public function testCreateAndDeleteNewShard()
     {
-        $shardName = 'oro_price_product_0';
+        $shardName = 'oro_price_product_1';
 
-        $this->assertFalse($this->manager->exists(ProductPrice::class, $shardName));
+        $this->assertFalse($this->manager->exists($shardName));
 
         $this->manager->create(ProductPrice::class, $shardName);
-        $this->assertTrue($this->manager->exists(ProductPrice::class, $shardName));
+        $this->assertTrue($this->manager->exists($shardName));
 
-        $this->manager->delete(ProductPrice::class, $shardName);
-        $this->assertFalse($this->manager->exists(ProductPrice::class, $shardName));
+        $this->manager->delete($shardName);
+        $this->assertFalse($this->manager->exists($shardName));
     }
 
     public function testSerialization()
@@ -86,7 +86,7 @@ class ShardManagerTest extends WebTestCase
         $result = serialize($this->manager);
         /** @var ShardManager $newManager */
         $newManager = unserialize($result);
-        $newManager->setRegistry($this->getContainer()->get('doctrine'));
+        $newManager->setPriceManager($this->getContainer()->get('doctrine.orm.price_entity_manager'));
         $this->assertEquals($this->manager->getShardMap(), $newManager->getShardMap());
     }
 

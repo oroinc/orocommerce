@@ -8,18 +8,17 @@ use Doctrine\DBAL\Schema\Constraint;
 use Doctrine\DBAL\Schema\ForeignKeyConstraint;
 use Doctrine\DBAL\Schema\Index;
 use Doctrine\DBAL\Schema\Table;
-use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
-use Symfony\Bridge\Doctrine\RegistryInterface;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 
 class ShardManager implements \Serializable
 {
     /**
-     * @var RegistryInterface
+     * @var OroEntityManager
      */
-    private $registry;
+    private $entityManager;
 
     /**
      * @var ConfigProvider
@@ -89,7 +88,7 @@ class ShardManager implements \Serializable
     public function create($className, $shardName)
     {
         $baseTableName = $this->getBaseTableName($className);
-        $connection = $this->getConnection($className);
+        $connection = $this->getConnection();
         $sm = $connection->getSchemaManager();
 
         /** @var Table $table */
@@ -118,23 +117,21 @@ class ShardManager implements \Serializable
     }
 
     /**
-     * @param string $className
      * @param string $shardName
      * @return bool
      */
-    public function exists($className, $shardName)
+    public function exists($shardName)
     {
-        $connection = $this->getConnection($className);
+        $connection = $this->getConnection();
         return $connection->getSchemaManager()->tablesExist([$shardName]);
     }
 
     /**
-     * @param string $className
      * @param string $shardName
      */
-    public function delete($className, $shardName)
+    public function delete($shardName)
     {
-        $this->getConnection($className)->getSchemaManager()->dropTable($shardName);
+        $this->getConnection()->getSchemaManager()->dropTable($shardName);
     }
 
     /**
@@ -143,26 +140,19 @@ class ShardManager implements \Serializable
      */
     protected function getBaseTableName($className)
     {
-        $em = $this->registry->getManagerForClass($className);
-
         /** @var ClassMetadata $metadata */
-        $metadata = $em->getClassMetadata($className);
+        $metadata = $this->entityManager->getClassMetadata($className);
         $baseTableName = $metadata->getTableName();
 
         return $baseTableName;
     }
 
     /**
-     * @param $className
      * @return Connection
      */
-    protected function getConnection($className)
+    protected function getConnection()
     {
-        /** @var EntityManager $em */
-        $em = $this->registry->getManagerForClass($className);
-        $connection = $em->getConnection();
-
-        return $connection;
+        return $this->entityManager->getConnection();
     }
 
     /**
@@ -242,9 +232,8 @@ class ShardManager implements \Serializable
     {
         $fieldName = $this->getDiscriminationField($className);
         $columnName = $fieldName;
-        $em = $this->registry->getManagerForClass($className);
         /** @var ClassMetadata $metadata */
-        $metadata = $em->getClassMetadata($className);
+        $metadata = $this->entityManager->getClassMetadata($className);
         if (isset($metadata->columnNames[$fieldName])) {
             $columnName = $metadata->columnNames[$fieldName];
         } elseif (isset($metadata->associationMappings[$fieldName])) {
@@ -272,11 +261,11 @@ class ShardManager implements \Serializable
     }
 
     /**
-     * @param RegistryInterface $registry
+     * @param OroEntityManager $entityManager
      */
-    public function setRegistry(RegistryInterface $registry)
+    public function setPriceManager(OroEntityManager $entityManager)
     {
-        $this->registry = $registry;
+        $this->entityManager = $entityManager;
     }
 
     /**
