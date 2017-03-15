@@ -4,8 +4,8 @@ namespace Oro\Bundle\SaleBundle\Tests\Unit\Notification;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
-
 use Doctrine\Common\Persistence\ObjectRepository;
+
 use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\EmailBundle\Builder\EmailModelBuilder;
@@ -27,9 +27,6 @@ class NotificationHelperTest extends \PHPUnit_Framework_TestCase
     /** @var \PHPUnit_Framework_MockObject_MockObject|ManagerRegistry */
     protected $registry;
 
-    /** @var Request */
-    protected $request;
-
     /** @var \PHPUnit_Framework_MockObject_MockObject|EmailModelBuilder */
     protected $emailModelBuilder;
 
@@ -42,7 +39,6 @@ class NotificationHelperTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
-        $this->request = new Request();
 
         $this->emailModelBuilder = $this->getMockBuilder('Oro\Bundle\EmailBundle\Builder\EmailModelBuilder')
             ->disableOriginalConstructor()
@@ -54,7 +50,6 @@ class NotificationHelperTest extends \PHPUnit_Framework_TestCase
 
         $this->helper = new NotificationHelper(
             $this->registry,
-            $this->request,
             $this->emailModelBuilder,
             $this->emailProcessor
         );
@@ -64,14 +59,19 @@ class NotificationHelperTest extends \PHPUnit_Framework_TestCase
 
     protected function tearDown()
     {
-        unset($this->helper, $this->registry, $this->request, $this->emailModelBuilder, $this->emailProcessor);
+        unset($this->helper, $this->registry, $this->emailModelBuilder, $this->emailProcessor);
     }
 
     public function testGetEmailModel()
     {
+        $request = new Request(['entityClass' => self::QUOTE_CLASS_NAME, 'entityId' => 42]);
+        $request->setMethod('GET');
+
         $this->emailModelBuilder->expects($this->once())
             ->method('createEmailModel')
             ->willReturn(new Email());
+
+        $this->emailModelBuilder->expects($this->once())->method('setRequest')->with($request);
 
         $customerUser = new CustomerUser();
         $customerUser->setEmail('test@example.com');
@@ -86,42 +86,16 @@ class NotificationHelperTest extends \PHPUnit_Framework_TestCase
         );
     }
 
-    /**
-     * @dataProvider sendDataProvider
-     *
-     * @param Quote $quote
-     */
-    public function testSend(Quote $quote)
+    public function testSend()
     {
+        /** @var Quote $quote */
+        $quote = $this->getEntity(self::QUOTE_CLASS_NAME, ['id' => 42]);
         $emailModel = $this->createEmailModel($quote, 'test@example.com', 'stdClass', 42);
 
         $this->emailProcessor->expects($this->once())->method('process')->with($emailModel);
+        $this->registry->expects($this->never())->method($this->anything());
 
-        if ($quote->isLocked()) {
-            $this->registry->expects($this->never())->method($this->anything());
-        } else {
-            $manager = $this->assertManagerCalled(self::QUOTE_CLASS_NAME);
-            $manager->expects($this->once())
-                ->method('persist')
-                ->with($quote);
-            $manager->expects($this->once())
-                ->method('flush');
-        }
-
-        $this->helper->send($emailModel, $quote);
-
-        $this->assertTrue($quote->isLocked());
-    }
-
-    /**
-     * @return array
-     */
-    public function sendDataProvider()
-    {
-        return [
-            'locked quote' => [$this->getEntity(self::QUOTE_CLASS_NAME, ['id' => 42, 'locked' => true])],
-            'not locked quote' => [$this->getEntity(self::QUOTE_CLASS_NAME, ['id' => 42, 'locked' => false])]
-        ];
+        $this->helper->send($emailModel);
     }
 
     /**
