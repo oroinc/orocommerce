@@ -508,7 +508,7 @@ class Product extends ExtendProduct implements
     /**
      * @var bool
      *
-     * @ORM\Column(name="is_featured", type="boolean")
+     * @ORM\Column(name="is_featured", type="boolean", options={"default"=false})
      * @ConfigField(
      *      defaultValues={
      *          "attribute"={
