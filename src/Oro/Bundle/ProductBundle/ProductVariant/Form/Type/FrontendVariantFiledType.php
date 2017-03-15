@@ -119,8 +119,7 @@ class FrontendVariantFiledType extends AbstractType
                     'data' => $subFormData,
                     'label' => $labels[$fieldName],
                     'placeholder' => 'oro.product.type.please_select_option',
-                    'empty_data'  => null,
-                    'configs'   => ['allowClear' => true]
+                    'empty_data'  => null
                 ]
             );
 
@@ -196,7 +195,10 @@ class FrontendVariantFiledType extends AbstractType
     {
         if (!isset($view->vars['attr']['data-page-component-options']['simpleProductVariants'])) {
             $view->vars['attr']['data-page-component-options'] = json_encode(
-                ['simpleProductVariants' => $this->getSimpleProductVariants($options['parentProduct']), 'view' => 'oroproduct/js/app/views/base-product-variants-view']
+                [
+                    'simpleProductVariants' => $this->getSimpleProductVariants($options['parentProduct']),
+                    'view' => 'oroproduct/js/app/views/base-product-variants-view'
+                ]
             );
         }
     }
