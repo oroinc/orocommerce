@@ -86,23 +86,25 @@ class ProductFormExtension extends AbstractTypeExtension
         }
 
         $submittedData = $event->getData();
-        /** @var array $submittedPrices */
-        $submittedPrices = $submittedData['prices'];
 
-        if ($product->getId()) {
-            $replacedPrices = [];
-            $existingPrices = $this->getProductPriceRepository()->getPricesByProduct($product);
-            foreach ($submittedPrices as $key => $submittedPrice) {
-                foreach ($existingPrices as $k => $existingPrice) {
-                    if ($key !== $k && $this->assertUniqueAttributes($submittedPrice, $existingPrice)) {
-                        $replacedPrices[$k] = $submittedPrice;
-                        break;
+        if (array_key_exists('prices', $submittedData)) {
+            $submittedPrices = $submittedData['prices'];
+
+            if ($product->getId()) {
+                $replacedPrices = [];
+                $existingPrices = $this->getProductPriceRepository()->getPricesByProduct($product);
+                foreach ($submittedPrices as $key => $submittedPrice) {
+                    foreach ($existingPrices as $k => $existingPrice) {
+                        if ($key !== $k && $this->assertUniqueAttributes($submittedPrice, $existingPrice)) {
+                            $replacedPrices[$k] = $submittedPrice;
+                            break;
+                        }
                     }
                 }
+                $correctPrices = array_replace($submittedPrices, $replacedPrices);
+                $submittedData['prices'] = $correctPrices;
+                $event->setData($submittedData);
             }
-            $correctPrices = array_replace($submittedPrices, $replacedPrices);
-            $submittedData['prices'] = $correctPrices;
-            $event->setData($submittedData);
         }
     }
 
