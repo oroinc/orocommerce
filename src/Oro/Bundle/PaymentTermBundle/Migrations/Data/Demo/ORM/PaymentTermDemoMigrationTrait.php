@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PaymentTermBundle\Migrations\Data\Demo\ORM;
 
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
-use Oro\Bundle\PaymentTermBundle\Migrations\Data\Demo\ORM\LoadPaymentTermDemoData;
 
 trait PaymentTermDemoMigrationTrait
 {

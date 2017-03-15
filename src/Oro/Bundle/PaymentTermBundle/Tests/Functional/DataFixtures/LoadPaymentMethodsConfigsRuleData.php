@@ -3,27 +3,16 @@
 namespace Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures;
 
 use Doctrine\Common\Persistence\ObjectManager;
-use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\IntegrationBundle\Generator\Prefixed\PrefixedIntegrationIdentifierGenerator;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\PaymentBundle\Tests\Functional\Entity\DataFixtures\LoadPaymentMethodsConfigsRuleData
     as BasicLoadPaymentMethodsConfigsRuleData;
-use Oro\Bundle\PaymentTermBundle\Integration\PaymentTermChannelType;
+use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\Traits\EnabledPaymentMethodIdentifierTrait;
 
 class LoadPaymentMethodsConfigsRuleData extends BasicLoadPaymentMethodsConfigsRuleData
 {
-    /**
-     * @param Channel $channel
-     *
-     * @return string
-     */
-    public static function getPaymentMethodIdentifier(Channel $channel)
-    {
-        return (new PrefixedIntegrationIdentifierGenerator(PaymentTermChannelType::TYPE))
-            ->generateIdentifier($channel);
-    }
-    
+    use EnabledPaymentMethodIdentifierTrait;
+
     /**
      * {@inheritDoc}
      */
@@ -32,9 +21,7 @@ class LoadPaymentMethodsConfigsRuleData extends BasicLoadPaymentMethodsConfigsRu
         parent::load($manager);
 
         $methodConfig = new PaymentMethodConfig();
-        /** @var Channel $channel */
-        $channel = $this->getReference('payment_term:channel_1');
-        $methodConfig->setType(self::getPaymentMethodIdentifier($channel));
+        $methodConfig->setType($this->getPaymentMethodIdentifier($this->container));
 
         /** @var PaymentMethodsConfigsRule $methodsConfigsRule */
         $methodsConfigsRule = $this->getReference('payment.payment_methods_configs_rule.1');
@@ -50,7 +37,7 @@ class LoadPaymentMethodsConfigsRuleData extends BasicLoadPaymentMethodsConfigsRu
     {
         return array_merge(
             parent::getDependencies(),
-            ['Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadChannelData']
+            [LoadChannelData::class]
         );
     }
 }
