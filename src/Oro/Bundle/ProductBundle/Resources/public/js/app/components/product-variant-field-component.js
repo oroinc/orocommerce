@@ -152,10 +152,11 @@ define(function(require) {
          * @private
          */
         _prepareProductVariants: function() {
-            _.each(this.options.simpleProductVariants, function(variant) {
-                _.each(variant, function(attr, key, list) {
-                    list[key] = key + '_' + attr;
-                });
+            this.options.simpleProductVariants = _.mapObject(this.options.simpleProductVariants, function(variant) {
+                return _.reduce(variant, function(memo, attr, key) {
+                    memo[key.toLowerCase()] = (key + '_' + attr).toLowerCase();
+                    return memo;
+                }, {});
             });
         },
 
@@ -256,12 +257,6 @@ define(function(require) {
             this.view.updateProductInfo(this.foundProductId);
         },
 
-        _prefixArray: function(arr, prefix) {
-            return arr.map(function(a) {
-                return prefix + '_' + a;
-            });
-        },
-
         /**
          * Helper method for normalize field name from 'form__name' to 'Name'
          *
@@ -270,11 +265,8 @@ define(function(require) {
          * @private
          */
         _extractName: function(name) {
-            name = name.split('__').slice(-1)[0];
-            name = name.split('-').reduce(function(str, n) {
-                str += n[0].toUpperCase() + n.slice(1);
-                return str;
-            }, '');
+            name = name.toLowerCase().split('__').slice(-1)[0];
+            name = name.replace(/[-_]/g, '');
             return name;
         }
     });
