@@ -4,6 +4,7 @@ namespace Oro\Bundle\OrderBundle\Api\Processor\Order;
 
 use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
@@ -14,12 +15,12 @@ class WebsiteOrderApiProcessor implements ProcessorInterface
     /**
      * @var WebsiteManager
      */
-    private $websiteManager;
+    protected $websiteManager;
 
     /**
      * @var DoctrineHelper
      */
-    private $doctrineHelper;
+    protected $doctrineHelper;
 
     /**
      * @param WebsiteManager $websiteManager
@@ -36,33 +37,50 @@ class WebsiteOrderApiProcessor implements ProcessorInterface
      */
     public function process(ContextInterface $context)
     {
-        if (!$context instanceof FormContext) {
+        if (false === $this->isWebsiteProcessorApplicable($context)) {
             return;
+        }
+
+        $website = $this->websiteManager->getDefaultWebsite();
+        /** @var Order $order */
+        $order = $context->getResult();
+
+        $order->setWebsite($website);
+        $context->setResult($order);
+    }
+
+    /**
+     * @param ContextInterface $context
+     *
+     * @return bool
+     */
+    protected function isWebsiteProcessorApplicable(ContextInterface $context)
+    {
+        if (!$context instanceof FormContext) {
+            return false;
         }
 
         $order = $context->getResult();
 
         if (!$order instanceof Order) {
-            return;
+            return false;
         }
 
         if (null !== $order->getWebsite()) {
-            return;
+            return false;
         }
 
         $requestData = $context->getRequestData();
         if (array_key_exists('website', $requestData)) {
-            return;
+            return false;
         }
 
         $website = $this->websiteManager->getDefaultWebsite();
 
         if (null === $website) {
-            return;
+            return false;
         }
 
-        $order->setWebsite($website);
-
-        $context->setResult($order);
+        return true;
     }
 }
