@@ -426,34 +426,4 @@ class ProductControllerTest extends WebTestCase
             ],
         ];
     }
-
-    /**
-     * @param Crawler $crawler
-     * @param int     $position
-     *
-     * @return array
-     */
-    protected function getActualProductPrice(Crawler $crawler, $position)
-    {
-        return [
-            'priceList' => $crawler
-                ->filter('input[name="oro_product[prices][' . $position . '][priceList]"]')
-                ->extract('value')[0],
-            'unit' => $crawler
-                ->filter('select[name="oro_product[prices][' . $position . '][unit]"] :selected')
-                ->extract('value')[0],
-            'quantity' => $crawler
-                ->filter('input[name="oro_product[prices][' . $position . '][quantity]"]')
-                ->extract('value')[0],
-            'price' =>
-                [
-                    'value' => $crawler
-                        ->filter('input[name="oro_product[prices][' . $position . '][price][value]"]')
-                        ->extract('value')[0],
-                    'currency' => $crawler
-                        ->filter('select[name="oro_product[prices][' . $position . '][price][currency]"] :selected')
-                        ->extract('value')[0],
-                ]
-        ];
-    }
 }
