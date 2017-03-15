@@ -4,6 +4,7 @@ namespace Oro\Bundle\SEOBundle\Tests\Unit\Async;
 
 use Oro\Bundle\MessageQueueBundle\Entity\Job;
 use Oro\Bundle\RedirectBundle\Async\UrlCacheProcessor;
+use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\SEOBundle\Async\GenerateSitemapProcessor;
 use Oro\Bundle\SEOBundle\Async\Topics;
 use Oro\Bundle\SEOBundle\Model\Exception\InvalidArgumentException;
@@ -67,6 +68,11 @@ class GenerateSitemapProcessorTest extends \PHPUnit_Framework_TestCase
     private $logger;
 
     /**
+     * @var CanonicalUrlGenerator|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $canonicalUrlGenerator;
+
+    /**
      * @var GenerateSitemapProcessor
      */
     private $processor;
@@ -89,6 +95,9 @@ class GenerateSitemapProcessorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->logger = $this->createMock(LoggerInterface::class);
+        $this->canonicalUrlGenerator = $this->getMockBuilder(CanonicalUrlGenerator::class)
+            ->disableOriginalConstructor()
+            ->getMock();
 
         $this->processor = new GenerateSitemapProcessor(
             $this->jobRunner,
@@ -98,7 +107,8 @@ class GenerateSitemapProcessorTest extends \PHPUnit_Framework_TestCase
             $this->websiteProvider,
             $this->indexMessageFactory,
             $this->messageFactory,
-            $this->logger
+            $this->logger,
+            $this->canonicalUrlGenerator
         );
     }
 
@@ -317,9 +327,15 @@ class GenerateSitemapProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $this->jobRunner->expects($this->exactly(count($providerNames)*count($websites)))
             ->method('createDelayed');
+        $this->canonicalUrlGenerator->expects($this->exactly(count($websites)))
+            ->method('clearCache');
 
         $count = 0;
-        foreach ($websites as $website) {
+        foreach ($websites as $key => $website) {
+            $this->canonicalUrlGenerator->expects($this->at($key))
+                ->method('clearCache')
+                ->with($website);
+
             foreach ($providerNames as $providerName) {
                 $this->jobRunner->expects($this->at($count))
                     ->method('createDelayed')

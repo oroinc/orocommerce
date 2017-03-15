@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SEOBundle\Async;
 
+use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\SEOBundle\Model\Exception\InvalidArgumentException;
 use Oro\Bundle\SEOBundle\Model\SitemapIndexMessageFactory;
 use Oro\Bundle\SEOBundle\Model\SitemapMessageFactory;
@@ -61,6 +62,11 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
     private $logger;
 
     /**
+     * @var CanonicalUrlGenerator
+     */
+    private $canonicalUrlGenerator;
+
+    /**
      * @var int
      */
     private $version;
@@ -74,6 +80,7 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
      * @param SitemapIndexMessageFactory $indexMessageFactory
      * @param SitemapMessageFactory $messageFactory
      * @param LoggerInterface $logger
+     * @param CanonicalUrlGenerator $canonicalUrlGenerator
      */
     public function __construct(
         JobRunner $jobRunner,
@@ -83,7 +90,8 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
         WebsiteProviderInterface $websiteProvider,
         SitemapIndexMessageFactory $indexMessageFactory,
         SitemapMessageFactory $messageFactory,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        CanonicalUrlGenerator $canonicalUrlGenerator
     ) {
         $this->jobRunner = $jobRunner;
         $this->dependentJobService = $dependentJobService;
@@ -93,6 +101,7 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
         $this->indexMessageFactory = $indexMessageFactory;
         $this->messageFactory = $messageFactory;
         $this->logger = $logger;
+        $this->canonicalUrlGenerator = $canonicalUrlGenerator;
     }
 
     /**
@@ -112,6 +121,7 @@ class GenerateSitemapProcessor implements MessageProcessorInterface, TopicSubscr
                 function (JobRunner $jobRunner, Job $job) use ($providerNames, $websites) {
                     $context = $this->dependentJobService->createDependentJobContext($job->getRootJob());
                     foreach ($websites as $website) {
+                        $this->canonicalUrlGenerator->clearCache($website);
                         foreach ($providerNames as $type) {
                             $this->scheduleGeneratingSitemapForWebsiteAndType($jobRunner, $website, $type);
                         }

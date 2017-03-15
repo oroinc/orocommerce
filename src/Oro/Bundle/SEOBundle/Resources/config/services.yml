@@ -224,6 +224,7 @@ services:
             - '@oro_seo.model.sitemap_index_message_factory'
             - '@oro_seo.model.sitemap_message_factory'
             - '@monolog.logger'
+            - '@oro_redirect.generator.canonical_url'
         tags:
             - { name: oro_message_queue.client.message_processor }
 

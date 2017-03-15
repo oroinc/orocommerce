@@ -6,6 +6,7 @@ use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
+use Oro\Bundle\RedirectBundle\DependencyInjection\OroRedirectExtension;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
@@ -162,12 +163,13 @@ class CanonicalUrlGenerator
      */
     public function getCanonicalUrlType(WebsiteInterface $website = null)
     {
-        $configKey = 'oro_redirect.' . Configuration::CANONICAL_URL_TYPE;
-        if (!$this->cacheProvider->contains($configKey)) {
-            $this->cacheProvider->save($configKey, $this->configManager->get($configKey, false, false, $website));
+        $configKey = $this->getConfigKey(Configuration::CANONICAL_URL_TYPE);
+        $cacheKey = $this->getCacheKey($configKey, $website);
+        if (!$this->cacheProvider->contains($cacheKey)) {
+            $this->cacheProvider->save($cacheKey, $this->configManager->get($configKey, false, false, $website));
         }
 
-        return $this->cacheProvider->fetch($configKey);
+        return $this->cacheProvider->fetch($cacheKey);
     }
 
     /**
@@ -177,12 +179,28 @@ class CanonicalUrlGenerator
      */
     public function getCanonicalUrlSecurityType(WebsiteInterface $website = null)
     {
-        $configKey = 'oro_redirect.' . Configuration::CANONICAL_URL_SECURITY_TYPE;
-        if (!$this->cacheProvider->contains($configKey)) {
-            $this->cacheProvider->save($configKey, $this->configManager->get($configKey, false, false, $website));
+        $configKey = $this->getConfigKey(Configuration::CANONICAL_URL_SECURITY_TYPE);
+        $cacheKey = $this->getCacheKey($configKey, $website);
+        if (!$this->cacheProvider->contains($cacheKey)) {
+            $this->cacheProvider->save($cacheKey, $this->configManager->get($configKey, false, false, $website));
         }
 
-        return $this->cacheProvider->fetch($configKey);
+        return $this->cacheProvider->fetch($cacheKey);
+    }
+
+    /**
+     * @param WebsiteInterface|null $website
+     */
+    public function clearCache(WebsiteInterface $website = null)
+    {
+        $this->cacheProvider->delete($this->getCacheKey(
+            $this->getConfigKey(Configuration::CANONICAL_URL_TYPE),
+            $website
+        ));
+        $this->cacheProvider->delete($this->getCacheKey(
+            $this->getConfigKey(Configuration::CANONICAL_URL_SECURITY_TYPE),
+            $website
+        ));
     }
 
     /**
@@ -222,5 +240,24 @@ class CanonicalUrlGenerator
 
         $urlParts[] = ltrim($url, '/');
         return  implode('/', $urlParts);
+    }
+
+    /**
+     * @param string $configField
+     * @return string
+     */
+    private function getConfigKey($configField)
+    {
+        return sprintf('%s.%s', OroRedirectExtension::ALIAS, $configField);
+    }
+
+    /**
+     * @param string $configKey
+     * @param WebsiteInterface|null $website
+     * @return string
+     */
+    private function getCacheKey($configKey, WebsiteInterface $website = null)
+    {
+        return $website ? sprintf('%s.%s', $configKey, $website->getId()) : $configKey;
     }
 }
