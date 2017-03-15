@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Validator\Constraints;
 
+use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
@@ -23,7 +24,10 @@ class DiscountsTest extends \PHPUnit_Framework_TestCase
 
     public function testGetTargets()
     {
-        $this->assertEquals(Discounts::CLASS_CONSTRAINT, $this->constraint->getTargets());
+        $this->assertEquals(
+            [Constraint::CLASS_CONSTRAINT, Constraint::PROPERTY_CONSTRAINT],
+            $this->constraint->getTargets()
+        );
     }
 
     /**

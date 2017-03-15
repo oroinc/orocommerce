@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\OrderBundle\Api\Form;
+namespace Oro\Bundle\OrderBundle\Api\Processor\Order;
 
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
@@ -27,7 +27,10 @@ class ApiOrderFormBuilderTotalsProcessor implements ProcessorInterface
      */
     public function process(ContextInterface $context)
     {
-        /** @var FormContext $context */
+        if (!$context instanceof FormContext) {
+            return;
+        }
+
         if (false === $context->hasFormBuilder()) {
             return;
         }

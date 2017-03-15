@@ -2,9 +2,7 @@
 
 namespace Oro\Bundle\OrderBundle\Api\Processor\Order;
 
-use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\OrderBundle\Entity\Order;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Manager\WebsiteManager;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
@@ -18,18 +16,11 @@ class WebsiteOrderApiProcessor implements ProcessorInterface
     protected $websiteManager;
 
     /**
-     * @var DoctrineHelper
-     */
-    protected $doctrineHelper;
-
-    /**
      * @param WebsiteManager $websiteManager
-     * @param DoctrineHelper $doctrineHelper
      */
-    public function __construct(WebsiteManager $websiteManager, DoctrineHelper $doctrineHelper)
+    public function __construct(WebsiteManager $websiteManager)
     {
         $this->websiteManager = $websiteManager;
-        $this->doctrineHelper = $doctrineHelper;
     }
 
     /**

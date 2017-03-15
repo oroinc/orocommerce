@@ -7,22 +7,23 @@ use Oro\Bundle\OrderBundle\Total\TotalHelper;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 use Oro\Bundle\ApiBundle\Processor\FormContext;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
 class DiscountOrderApiProcessor implements ProcessorInterface
 {
     /**
-     * @var TotalHelper
+     * @var EventSubscriberInterface
      */
-    private $totalHelper;
+    private $eventSubscriber;
 
     /**
-     * @param TotalHelper $totalHelper
+     * @param EventSubscriberInterface $eventSubscriber
      */
-    public function __construct(TotalHelper $totalHelper)
+    public function __construct(EventSubscriberInterface $eventSubscriber)
     {
-        $this->totalHelper = $totalHelper;
+        $this->eventSubscriber = $eventSubscriber;
     }
 
     /**
@@ -36,15 +37,6 @@ class DiscountOrderApiProcessor implements ProcessorInterface
 
         $context
             ->getFormBuilder()
-            ->addEventListener(
-                FormEvents::SUBMIT,
-                function (FormEvent $event) {
-                    /** @var OrderDiscount $data */
-                    $data = $event->getData();
-
-                    $data->getOrder()->addDiscount($data);
-                    $this->totalHelper->fillDiscounts($data->getOrder());
-                }
-            );
+            ->addEventSubscriber($this->eventSubscriber);
     }
 }
