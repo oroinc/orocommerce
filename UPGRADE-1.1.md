@@ -332,6 +332,9 @@ SaleBundle
     - removed property `protected $configManager`
 - Class `Oro\Bundle\SaleBundle\EventListener\Quote\QuotePossibleShippingMethodsEventListener` removed. 
     - `Oro\Bundle\OrderBundle\EventListener\PossibleShippingMethodEventListener` must be used instead.
+- Removed property `locked` from entity class `Oro\Bundle\SaleBundle\Entity\Quote` with related methods
+- Class `Oro\Bundle\SaleBundle\Notification\NotificationHelper`
+    - removed parameter `request` from constructor
 
 ShoppingListBundle
 ------------------

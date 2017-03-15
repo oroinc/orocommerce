@@ -6,12 +6,14 @@ use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
 use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
+use Oro\Bundle\EntityConfigBundle\Migration\RemoveFieldQuery;
 use Oro\Bundle\EntityExtendBundle\Migration\OroOptions;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Migrations\Data\ORM\LoadQuoteCustomerStatuses;
 use Oro\Bundle\SaleBundle\Migrations\Data\ORM\LoadQuoteInternalStatuses;
+use Oro\Bundle\TranslationBundle\Migration\DeleteTranslationKeysQuery;
 
 class OroSaleBundle implements Migration, ExtendExtensionAwareInterface
 {
@@ -31,6 +33,8 @@ class OroSaleBundle implements Migration, ExtendExtensionAwareInterface
      */
     public function up(Schema $schema, QueryBag $queries)
     {
+        $this->dropLockedColumn($schema, $queries);
+
         $this->addQuoteCustomerStatusField($schema);
         $this->addQuoteInternalStatusField($schema);
     }
@@ -73,5 +77,30 @@ class OroSaleBundle implements Migration, ExtendExtensionAwareInterface
             ['dataaudit' => ['auditable' => true]]
         );
         $internalStatusEnumTable->addOption(OroOptions::KEY, $internalStatusOptions);
+    }
+
+    /**
+     * @param Schema $schema
+     * @param QueryBag $queries
+     */
+    protected function dropLockedColumn(Schema $schema, QueryBag $queries)
+    {
+        $table = $schema->getTable('oro_sale_quote');
+        $table->dropColumn('locked');
+
+        $queries->addPostQuery(new RemoveFieldQuery('Oro\Bundle\SaleBundle\Entity\Quote', 'locked'));
+
+        $data = [
+            'messages' => [
+                'oro.sale.quote.locked.label',
+                'oro.sale.quote.not_locked.label',
+                'oro.sale.quote.notify_customer.by_email.notify_and_lock_warning',
+                'oro.sale.btn.notify_and_lock'
+            ]
+        ];
+
+        foreach ($data as $domain => $keys) {
+            $queries->addQuery(new DeleteTranslationKeysQuery($domain, $keys));
+        }
     }
 }
