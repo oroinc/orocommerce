@@ -32,7 +32,7 @@ class InlineEditProductControllerTest extends WebTestCase
 
         $this->client->request(
             'PATCH',
-            $this->getUrl('oro_api_patch_productinlineedit_edit_name', ['id' => $product1->getId()]),
+            $this->getUrl('oro_api_patch_product_inline_edit_name', ['id' => $product1->getId()]),
             [
                 'productName' => self::NEW_PRODUCT_NAME
             ]
@@ -51,7 +51,7 @@ class InlineEditProductControllerTest extends WebTestCase
 
         $this->client->request(
             'PATCH',
-            $this->getUrl('oro_api_patch_productinlineedit_edit_name', ['id' => $id]),
+            $this->getUrl('oro_api_patch_product_inline_edit_name', ['id' => $id]),
             [
                 'productName' => self::NEW_PRODUCT_NAME
             ]
@@ -69,12 +69,13 @@ class InlineEditProductControllerTest extends WebTestCase
 
         $this->client->request(
             'PATCH',
-            $this->getUrl('oro_api_patch_productinlineedit_edit_name', ['id' => $id])
+            $this->getUrl('oro_api_patch_product_inline_edit_name', ['id' => $id])
         );
         $result = $this->client->getResponse();
 
         $this->assertJsonResponseStatusCodeEquals($result, 404);
     }
+
     public function testProductEditInventoryStatus()
     {
         /** @var Product $product1 */
@@ -83,7 +84,7 @@ class InlineEditProductControllerTest extends WebTestCase
 
         $this->client->request(
             'PATCH',
-            $this->getUrl('oro_api_patch_productinlineedit_edit_inventory_status', ['id' => $product1->getId()]),
+            $this->getUrl('oro_api_patch_product_inline_edit_inventory_status', ['id' => $product1->getId()]),
             [
                 'inventoryStatusId' => self::NEW_INVENTORY_STATUS_ID
             ]
@@ -101,7 +102,7 @@ class InlineEditProductControllerTest extends WebTestCase
 
         $this->client->request(
             'PATCH',
-            $this->getUrl('oro_api_patch_productinlineedit_edit_inventory_status', ['id' => $product1->getId()])
+            $this->getUrl('oro_api_patch_product_inline_edit_inventory_status', ['id' => $product1->getId()])
         );
         $result = $this->client->getResponse();
 
@@ -116,7 +117,7 @@ class InlineEditProductControllerTest extends WebTestCase
 
         $this->client->request(
             'PATCH',
-            $this->getUrl('oro_api_patch_productinlineedit_edit_inventory_status', ['id' => $id])
+            $this->getUrl('oro_api_patch_product_inline_edit_inventory_status', ['id' => $id])
         );
         $result = $this->client->getResponse();
 
@@ -130,7 +131,7 @@ class InlineEditProductControllerTest extends WebTestCase
 
         $this->client->request(
             'PATCH',
-            $this->getUrl('oro_api_patch_productinlineedit_edit_inventory_status', ['id' => $product1->getId()]),
+            $this->getUrl('oro_api_patch_product_inline_edit_inventory_status', ['id' => $product1->getId()]),
             [
                 'inventoryStatusId' => 'unknown_inventory_status',
             ]

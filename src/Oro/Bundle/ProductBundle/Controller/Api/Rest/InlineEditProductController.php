@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * @RouteResource("productinlineedit")
+ * @RouteResource("product_inline_edit")
  * @NamePrefix("oro_api_")
  */
 class InlineEditProductController extends FOSRestController
@@ -28,7 +28,7 @@ class InlineEditProductController extends FOSRestController
      * @param Product $product
      * @return Response
      */
-    public function patchEditNameAction(Request $request, Product $product)
+    public function patchNameAction(Request $request, Product $product)
     {
         $productName = $request->get('productName');
 
@@ -49,7 +49,7 @@ class InlineEditProductController extends FOSRestController
      * @param Product $product
      * @return Response
      */
-    public function patchEditInventoryStatusAction(Request $request, Product $product)
+    public function patchInventoryStatusAction(Request $request, Product $product)
     {
         $inventoryStatusId = $request->get('inventoryStatusId');
 
