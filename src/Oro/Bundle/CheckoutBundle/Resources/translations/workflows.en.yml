@@ -41,6 +41,8 @@ oro:
                     label: 'Label for remove source'
                 edit_order_link:
                     label: 'Edit Order Link'
+                user_input:
+                    label: 'User Input'
                 payment_in_progress:
                     label: 'Flag indicates that payment is in progress'
                 payment_validate:
