@@ -2,21 +2,27 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Layout\DataProvider;
 
-use Oro\Component\Testing\Unit\EntityTrait;
+use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
+use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
 use Oro\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider;
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
-use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
+use Oro\Component\Testing\Unit\EntityTrait;
 
 class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
+
+    /**
+     * @var QueryHintResolverInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $hintResolver;
 
     /**
      * @var FrontendProductPricesProvider
@@ -60,12 +66,14 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder('Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter')
             ->disableOriginalConstructor()
             ->getMock();
+        $this->hintResolver = $this->createMock(QueryHintResolverInterface::class);
 
         $this->provider = new FrontendProductPricesProvider(
             $this->doctrineHelper,
             $this->priceListRequestHandler,
             $this->userCurrencyManager,
-            $this->productPriceFormatter
+            $this->productPriceFormatter,
+            $this->hintResolver
         );
     }
 
@@ -106,7 +114,7 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
 
         $repo->expects($this->once())
             ->method('findByPriceListIdAndProductIds')
-            ->with($priceListId, [$productId], true, 'EUR', null, $priceSorting)
+            ->with($this->hintResolver, $priceListId, [$productId], true, 'EUR', null, $priceSorting)
             ->willReturn($prices);
 
         $this->doctrineHelper->expects($this->once())

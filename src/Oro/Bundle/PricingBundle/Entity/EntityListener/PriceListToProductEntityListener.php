@@ -12,11 +12,17 @@ use Oro\Bundle\PricingBundle\Event\AssignmentBuilderBuildEvent;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\PriceRuleLexemeTriggerHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
 
 class PriceListToProductEntityListener
 {
     const FIELD_PRICE_LIST = 'priceList';
     const FIELD_PRODUCT = 'product';
+
+    /**
+     * @var QueryHintResolverInterface
+     */
+    protected $hintResolver;
 
     /**
      * @var PriceListTriggerHandler
@@ -31,13 +37,16 @@ class PriceListToProductEntityListener
     /**
      * @param PriceListTriggerHandler $priceListTriggerHandler
      * @param PriceRuleLexemeTriggerHandler $priceRuleLexemeTriggerHandler
+     * @param QueryHintResolverInterface $hintResolver
      */
     public function __construct(
         PriceListTriggerHandler $priceListTriggerHandler,
-        PriceRuleLexemeTriggerHandler $priceRuleLexemeTriggerHandler
+        PriceRuleLexemeTriggerHandler $priceRuleLexemeTriggerHandler,
+        QueryHintResolverInterface $hintResolver
     ) {
         $this->priceListTriggerHandler = $priceListTriggerHandler;
         $this->priceRuleLexemeTriggerHandler = $priceRuleLexemeTriggerHandler;
+        $this->hintResolver = $hintResolver;
     }
 
     /**
@@ -68,7 +77,11 @@ class PriceListToProductEntityListener
 
         $event->getEntityManager()
             ->getRepository(ProductPrice::class)
-            ->deleteByPriceList($priceListToProduct->getPriceList(), $priceListToProduct->getProduct());
+            ->deleteByPriceList(
+                $this->hintResolver,
+                $priceListToProduct->getPriceList(),
+                $priceListToProduct->getProduct()
+            );
     }
 
     /**

@@ -8,17 +8,18 @@ use Doctrine\DBAL\Schema\Constraint;
 use Doctrine\DBAL\Schema\ForeignKeyConstraint;
 use Doctrine\DBAL\Schema\Index;
 use Doctrine\DBAL\Schema\Table;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
-use Oro\Bundle\EntityBundle\ORM\OroEntityManager;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class ShardManager implements \Serializable
 {
     /**
-     * @var OroEntityManager
+     * @var RegistryInterface
      */
-    private $entityManager;
+    private $registry;
 
     /**
      * @var ConfigProvider
@@ -83,7 +84,6 @@ class ShardManager implements \Serializable
      * @param string $className
      * @param string $shardName
      *
-     * @todo investigate collisions with parallel processes
      */
     public function create($className, $shardName)
     {
@@ -140,8 +140,10 @@ class ShardManager implements \Serializable
      */
     protected function getBaseTableName($className)
     {
+        $em = $this->registry->getManagerForClass($className);
+
         /** @var ClassMetadata $metadata */
-        $metadata = $this->entityManager->getClassMetadata($className);
+        $metadata = $em->getClassMetadata($className);
         $baseTableName = $metadata->getTableName();
 
         return $baseTableName;
@@ -152,7 +154,11 @@ class ShardManager implements \Serializable
      */
     protected function getConnection()
     {
-        return $this->entityManager->getConnection();
+        /** @var EntityManager $em */
+        $em = $this->registry->getManager('price');
+        $connection = $em->getConnection();
+
+        return $connection;
     }
 
     /**
@@ -232,8 +238,9 @@ class ShardManager implements \Serializable
     {
         $fieldName = $this->getDiscriminationField($className);
         $columnName = $fieldName;
+        $em = $this->registry->getManagerForClass($className);
         /** @var ClassMetadata $metadata */
-        $metadata = $this->entityManager->getClassMetadata($className);
+        $metadata = $em->getClassMetadata($className);
         if (isset($metadata->columnNames[$fieldName])) {
             $columnName = $metadata->columnNames[$fieldName];
         } elseif (isset($metadata->associationMappings[$fieldName])) {
@@ -261,11 +268,11 @@ class ShardManager implements \Serializable
     }
 
     /**
-     * @param OroEntityManager $entityManager
+     * @param RegistryInterface $registry
      */
-    public function setPriceManager(OroEntityManager $entityManager)
+    public function setRegistry(RegistryInterface $registry)
     {
-        $this->entityManager = $entityManager;
+        $this->registry = $registry;
     }
 
     /**

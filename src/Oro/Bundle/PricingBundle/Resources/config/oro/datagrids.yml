@@ -20,6 +20,8 @@ datagrids:
                         - { join: '%oro_pricing.entity.price_list_schedule.class%', alias: schedule, conditionType: 'WITH', condition: '(schedule.priceList = priceList) AND ((schedule.activeAt IS NOT NULL AND schedule.deactivateAt IS NOT NULL AND :now BETWEEN schedule.activeAt AND schedule.deactivateAt) OR (schedule.activeAt IS NULL AND :now < schedule.deactivateAt) OR (schedule.deactivateAt IS NULL AND :now > schedule.activeAt))'}
             bind_parameters:
                 - now
+            hints:
+                - HINT_PRICE_SHARD
 
         columns:
             name:
@@ -128,6 +130,8 @@ datagrids:
                         - priceList.id = :price_list_id
             bind_parameters:
                 - price_list_id
+            hints:
+                - HINT_PRICE_SHARD
         properties:
             id: ~
             view_link:
@@ -243,6 +247,8 @@ datagrids:
                       END) as has_price_list
             bind_parameters:
                 - price_list_id
+            hints:
+                - HINT_PRICE_SHARD
         columns:
             has_price_list:
                 label:          oro.pricing.pricelist.has_price_list.label
@@ -384,6 +390,7 @@ datagrids:
                     - productPrice.value
                     - productPrice.currency
                     - CASE WHEN productPrice.priceRule IS NULL THEN 'manual' ELSE 'generated' END as ruleId
+                    - IDENTITY(productPrice.priceList) as priceListId
                 from:
                     - { table: %oro_pricing.entity.product_price.class%, alias: productPrice }
                 join:
@@ -394,6 +401,8 @@ datagrids:
                         - IDENTITY(productPrice.priceList) = :price_list_id
             bind_parameters:
                 - price_list_id
+            hints:
+                - HINT_PRICE_SHARD
         columns:
             productSku:
                 label:         oro.pricing.productprice.product_sku.label
@@ -469,6 +478,7 @@ datagrids:
         properties:
             id: ~
             productId: ~
+            priceListId: ~
             productName:
                 type: localized_value
                 data_name: product.names
@@ -480,7 +490,9 @@ datagrids:
             update_link:
                 type: url
                 route: oro_product_price_update_widget
-                params: [ id ]
+                params:
+                    priceList: priceListId
+                    id: id
         actions:
             view_product:
                 type:          navigate
@@ -525,6 +537,7 @@ datagrids:
                         - IDENTITY(productPrice.product) = :product_id
             bind_parameters:
                 - product_id
+
         columns:
             priceListName:
                 label:         oro.pricing.pricelist.entity_label

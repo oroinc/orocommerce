@@ -5,9 +5,15 @@ namespace Oro\Bundle\PricingBundle\ImportExport\Strategy;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
 
 class ProductPriceResetStrategy extends ProductPriceImportStrategy
 {
+    /**
+     * @var QueryHintResolverInterface
+     */
+    protected $hintResolver;
+
     /**
      * @var array
      */
@@ -24,12 +30,13 @@ class ProductPriceResetStrategy extends ProductPriceImportStrategy
             $priceList = $entity->getPriceList();
             $identifier = $this->databaseHelper->getIdentifier($priceList);
             if ($identifier && empty($this->processedPriceLists[$identifier])) {
-                $recordsToDelete = $this->getProductPriceRepository()->countByPriceList($priceList);
+                $recordsToDelete = $this->getProductPriceRepository()
+                    ->countByPriceList($this->hintResolver, $priceList);
                 if ($recordsToDelete) {
                     $this->context->incrementDeleteCount($recordsToDelete);
                 }
 
-                $this->getProductPriceRepository()->deleteByPriceList($priceList);
+                $this->getProductPriceRepository()->deleteByPriceList($this->hintResolver, $priceList);
 
                 $this->processedPriceLists[$identifier] = true;
             }
@@ -69,5 +76,13 @@ class ProductPriceResetStrategy extends ProductPriceImportStrategy
     protected function updateContextCounters($entity)
     {
         $this->context->incrementAddCount();
+    }
+
+    /**
+     * @param QueryHintResolverInterface $hintResolver
+     */
+    public function setHintResolver(QueryHintResolverInterface $hintResolver)
+    {
+        $this->hintResolver = $hintResolver;
     }
 }

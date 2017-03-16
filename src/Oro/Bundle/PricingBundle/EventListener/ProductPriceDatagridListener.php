@@ -2,10 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\EventListener;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Doctrine\ORM\Query\Expr;
-
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datasource\ResultRecord;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
@@ -16,9 +13,16 @@ use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class ProductPriceDatagridListener
 {
+    /**
+     * @var QueryHintResolverInterface
+     */
+    protected $hintResolver;
+
     /**
      * @var TranslatorInterface
      */
@@ -43,15 +47,18 @@ class ProductPriceDatagridListener
      * @param TranslatorInterface $translator
      * @param PriceListRequestHandler $priceListRequestHandler
      * @param DoctrineHelper $doctrineHelper
+     * @param QueryHintResolverInterface $hintResolver
      */
     public function __construct(
         TranslatorInterface $translator,
         PriceListRequestHandler $priceListRequestHandler,
-        DoctrineHelper $doctrineHelper
+        DoctrineHelper $doctrineHelper,
+        QueryHintResolverInterface $hintResolver
     ) {
         $this->translator = $translator;
         $this->priceListRequestHandler = $priceListRequestHandler;
         $this->doctrineHelper = $doctrineHelper;
+        $this->hintResolver = $hintResolver;
     }
 
     /**
@@ -261,7 +268,12 @@ class ProductPriceDatagridListener
         }, $records);
 
         $priceList = $this->getPriceList();
-        return $priceRepository->findByPriceListIdAndProductIds($priceList->getId(), $productIds, $showTierPrices);
+        return $priceRepository->findByPriceListIdAndProductIds(
+            $this->hintResolver,
+            $priceList->getId(),
+            $productIds,
+            $showTierPrices
+        );
     }
 
     /**

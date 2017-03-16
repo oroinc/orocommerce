@@ -17,6 +17,7 @@ class ProductPriceDeleteOperationTest extends ActionTestCase
 
     public function testDelete()
     {
+        $this->markTestSkipped('BB-8276');
         /** @var ProductPrice $productPrice */
         $productPrice = $this->getReference('product_price.1');
 

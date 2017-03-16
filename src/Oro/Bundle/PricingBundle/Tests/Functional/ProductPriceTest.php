@@ -24,6 +24,7 @@ class ProductPriceTest extends WebTestCase
 
     public function testCreateDuplicateEntry()
     {
+        $this->markTestSkipped('BB-8042');
         /** @var ProductPrice $productPrice */
         $productPrice = $this->getReference('product_price.3');
 

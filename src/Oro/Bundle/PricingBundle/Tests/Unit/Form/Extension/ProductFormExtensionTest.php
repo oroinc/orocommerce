@@ -4,25 +4,29 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
-
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\Form\FormEvent;
-use Symfony\Component\Form\FormEvents;
-use Symfony\Component\Form\FormInterface;
-
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Form\Extension\ProductFormExtension;
 use Oro\Bundle\PricingBundle\Form\Type\ProductPriceCollectionType;
 use Oro\Bundle\PricingBundle\Validator\Constraints\UniqueProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
-use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
-use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  */
 class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var QueryHintResolverInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $hintResolver;
+
     /**
      * @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -57,8 +61,8 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->with('OroPricingBundle:ProductPrice')
             ->willReturn($this->priceManager);
-
-        $this->extension = new ProductFormExtension($registry);
+        $this->hintResolver = $this->createMock(QueryHintResolverInterface::class);
+        $this->extension = new ProductFormExtension($registry, $this->hintResolver);
     }
 
     public function testGetExtendedType()
@@ -112,7 +116,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
 
             $this->priceRepository->expects($this->once())
                 ->method('getPricesByProduct')
-                ->with($product)
+                ->with($this->hintResolver, $product)
                 ->willReturn($prices);
 
             /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $pricesForm */
@@ -207,9 +211,9 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('getPricesByProduct')
             ->will($this->returnValue([$removedPrice]));
 
-        $this->priceManager->expects($this->once())
+        $this->priceRepository->expects($this->once())
             ->method('remove')
-            ->with($removedPrice);
+            ->with($this->hintResolver, $removedPrice);
 
         $this->extension->onPostSubmit($event);
 
@@ -288,7 +292,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('getData')
             ->will($this->returnValue($prices));
 
-        $this->priceManager->expects($this->exactly(count($prices)))
+        $this->priceRepository->expects($this->exactly(count($prices)))
             ->method('persist');
     }
 }

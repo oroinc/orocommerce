@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
+use Doctrine\ORM\Event\LifecycleEventArgs;
+use Doctrine\ORM\Event\PostFlushEventArgs;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
@@ -17,6 +19,16 @@ class PriceListShardingListener
     protected $shardManager;
 
     /**
+     * @var array
+     */
+    protected $priceListsCreate = [];
+
+    /**
+     * @var array
+     */
+    protected $priceListsDelete = [];
+
+    /**
      * @param ShardManager $shardManager
      */
     public function __construct(ShardManager $shardManager)
@@ -25,22 +37,44 @@ class PriceListShardingListener
     }
 
     /**
-     * @param PriceList $priceList
+     * @param LifecycleEventArgs $args
      */
-    public function postPersist(PriceList $priceList)
+    public function postPersist(LifecycleEventArgs $args)
     {
-        $shardName = $this->shardManager->getShardName(ProductPrice::class, ['priceList' => $priceList]);
-        if (!$this->shardManager->exists($shardName)) {
-            $this->shardManager->create(ProductPrice::class, $shardName);
+        $entity = $args->getEntity();
+        if ($entity instanceof PriceList) {
+            $this->priceListsCreate[] = $entity->getId();
         }
     }
 
     /**
-     * @param PriceList $priceList
+     * @param LifecycleEventArgs $args
      */
-    public function preRemove(PriceList $priceList)
+    public function preRemove(LifecycleEventArgs $args)
     {
-        $shardName = $this->shardManager->getShardName(ProductPrice::class, ['priceList' => $priceList]);
-        $this->shardManager->delete($shardName);
+        $entity = $args->getEntity();
+        if ($entity instanceof PriceList) {
+            $this->priceListsDelete[] = $entity->getId();
+        }
+    }
+
+    /**
+     * @param PostFlushEventArgs $args
+     */
+    public function postFlush(PostFlushEventArgs $args)
+    {
+        foreach ($this->priceListsCreate as $priceList) {
+            $shardName = $this->shardManager->getShardName(ProductPrice::class, ['priceList' => $priceList]);
+            if (!$this->shardManager->exists($shardName)) {
+                $this->shardManager->create(ProductPrice::class, $shardName);
+            }
+        }
+        foreach ($this->priceListsDelete as $priceList) {
+            $shardName = $this->shardManager->getShardName(ProductPrice::class, ['priceList' => $priceList]);
+            $this->shardManager->delete($shardName);
+        }
+
+        $this->priceListsCreate = [];
+        $this->priceListsDelete = [];
     }
 }

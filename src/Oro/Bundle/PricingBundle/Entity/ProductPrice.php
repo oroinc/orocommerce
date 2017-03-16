@@ -33,6 +33,7 @@ use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
  *          }
  *      }
  * )
+ * @method PriceList getPriceList()
  */
 class ProductPrice extends BaseProductPrice
 {

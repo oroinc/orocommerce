@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
@@ -18,9 +16,16 @@ use Oro\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var QueryHintResolverInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $hintResolver;
+
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
      */
@@ -62,6 +67,8 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
             ->getMock();
+        $this->hintResolver = $this->createMock(QueryHintResolverInterface::class);
+
         $this->listener = $this->createListener();
     }
 
@@ -73,7 +80,8 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
         return new ProductPriceDatagridListener(
             $this->translator,
             $this->priceListRequestHandler,
-            $this->doctrineHelper
+            $this->doctrineHelper,
+            $this->hintResolver
         );
     }
 
@@ -288,7 +296,7 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
             $this->setUpRepository()
                 ->expects($this->any())
                 ->method('findByPriceListIdAndProductIds')
-                ->with($priceListId, $productIds)
+                ->with($this->hintResolver, $priceListId, $productIds)
                 ->willReturn($prices);
         }
 

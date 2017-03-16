@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
@@ -11,10 +10,16 @@ use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
 use Oro\Bundle\PricingBundle\Provider\ProductPriceProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
 
 class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
 {
     const CLASS_NAME = '\stdClass';
+
+    /**
+     * @var QueryHintResolverInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $hintResolver;
 
     /**
      * @var ProductPriceProvider
@@ -29,8 +34,8 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
-
-        $this->provider = new ProductPriceProvider($this->registry);
+        $this->hintResolver = $this->createMock(QueryHintResolverInterface::class);
+        $this->provider = new ProductPriceProvider($this->registry, $this->hintResolver);
         $this->provider->setClassName('\stdClass');
     }
 
@@ -54,7 +59,7 @@ class ProductPriceProviderTest extends \PHPUnit_Framework_TestCase
 
         $repository->expects($this->once())
             ->method('findByPriceListIdAndProductIds')
-            ->with($priceListId, $productIds, true, null)
+            ->with($this->hintResolver, $priceListId, $productIds, true, null)
             ->willReturn($prices);
 
         $manager = $this->getMockBuilder('Doctrine\Common\Persistence\ObjectManager')

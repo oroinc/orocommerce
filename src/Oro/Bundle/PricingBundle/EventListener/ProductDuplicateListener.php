@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\EventListener;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
+use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
 
 class ProductDuplicateListener
 {
@@ -17,6 +18,11 @@ class ProductDuplicateListener
      * @var string
      */
     protected $productPriceClass;
+
+    /**
+     * @var QueryHintResolverInterface
+     */
+    protected $hintResolver;
 
     /**
      * @param DoctrineHelper $doctrineHelper
@@ -44,13 +50,13 @@ class ProductDuplicateListener
         $product = $event->getProduct();
         $sourceProduct = $event->getSourceProduct();
 
-        $productPrices = $this->getProductPriceRepository()->getPricesByProduct($sourceProduct);
+        $productPrices = $this->getProductPriceRepository()->getPricesByProduct($this->hintResolver, $sourceProduct);
         $objectManager = $this->doctrineHelper->getEntityManager($this->productPriceClass);
 
         foreach ($productPrices as $productPrice) {
             $productPriceCopy = clone $productPrice;
             $productPriceCopy->setProduct($product);
-            $objectManager->persist($productPriceCopy);
+            $this->getProductPriceRepository()->persist($this->hintResolver, $productPriceCopy);
         }
 
         $objectManager->flush();
@@ -62,5 +68,13 @@ class ProductDuplicateListener
     protected function getProductPriceRepository()
     {
         return $this->doctrineHelper->getEntityRepository($this->productPriceClass);
+    }
+
+    /**
+     * @param QueryHintResolverInterface $hintResolver
+     */
+    public function setHintResolver(QueryHintResolverInterface $hintResolver)
+    {
+        $this->hintResolver = $hintResolver;
     }
 }

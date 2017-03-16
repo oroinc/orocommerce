@@ -2,14 +2,12 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Duplicator;
 
-use Symfony\Bridge\Doctrine\ManagerRegistry;
-
 use Doctrine\Common\Persistence\ObjectManager;
-
-use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
-use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Duplicator\ProductPriceDuplicator;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
+use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class ProductPriceDuplicatorTest extends \PHPUnit_Framework_TestCase
 {
@@ -24,7 +22,7 @@ class ProductPriceDuplicatorTest extends \PHPUnit_Framework_TestCase
     protected $priceDuplicator;
 
     /**
-     * @var InsertFromSelectQueryExecutor|\PHPUnit_Framework_MockObject_MockObject
+     * @var InsertFromSelectShardQueryExecutor|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $insertExecutor;
 
@@ -42,7 +40,7 @@ class ProductPriceDuplicatorTest extends \PHPUnit_Framework_TestCase
     {
         $this->registry = $this->getMockWithoutConstructor('Symfony\Bridge\Doctrine\ManagerRegistry');
         $this->insertExecutor = $this
-            ->getMockWithoutConstructor('Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor');
+            ->getMockWithoutConstructor(InsertFromSelectShardQueryExecutor::class);
         $this->manager = $this->getMockWithoutConstructor('Doctrine\Common\Persistence\ObjectManager');
 
         $this->priceDuplicator = new ProductPriceDuplicator(

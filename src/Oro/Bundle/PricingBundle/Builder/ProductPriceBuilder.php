@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PricingBundle\Builder;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Compiler\PriceListRuleCompiler;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -11,17 +10,24 @@ use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
+use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
 
 class ProductPriceBuilder
 {
+    /**
+     * @var QueryHintResolverInterface
+     */
+    protected $hintResolver;
+
     /**
      * @var ManagerRegistry
      */
     protected $registry;
 
     /**
-     * @var InsertFromSelectQueryExecutor
+     * @var InsertFromSelectShardQueryExecutor
      */
     protected $insertFromSelectQueryExecutor;
 
@@ -42,20 +48,23 @@ class ProductPriceBuilder
 
     /**
      * @param ManagerRegistry $registry
-     * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
+     * @param InsertFromSelectShardQueryExecutor $insertFromSelectQueryExecutor
      * @param PriceListRuleCompiler $ruleCompiler
      * @param PriceListTriggerHandler $priceListTriggerHandler
+     * @param QueryHintResolverInterface $hintResolver
      */
     public function __construct(
         ManagerRegistry $registry,
-        InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor,
+        InsertFromSelectShardQueryExecutor $insertFromSelectQueryExecutor,
         PriceListRuleCompiler $ruleCompiler,
-        PriceListTriggerHandler $priceListTriggerHandler
+        PriceListTriggerHandler $priceListTriggerHandler,
+        QueryHintResolverInterface $hintResolver
     ) {
         $this->registry = $registry;
         $this->insertFromSelectQueryExecutor = $insertFromSelectQueryExecutor;
         $this->ruleCompiler = $ruleCompiler;
         $this->priceListTriggerHandler = $priceListTriggerHandler;
+        $this->hintResolver = $hintResolver;
     }
 
     /**
@@ -64,7 +73,7 @@ class ProductPriceBuilder
      */
     public function buildByPriceList(PriceList $priceList, Product $product = null)
     {
-        $this->getProductPriceRepository()->deleteGeneratedPrices($priceList, $product);
+        $this->getProductPriceRepository()->deleteGeneratedPrices($this->hintResolver, $priceList, $product);
         if (count($priceList->getPriceRules()) > 0) {
             $rules = $this->getSortedRules($priceList);
             foreach ($rules as $rule) {

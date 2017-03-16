@@ -4,18 +4,23 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\ImportExport\Strategy;
 
 use Akeneo\Bundle\BatchBundle\Entity\JobExecution;
 use Akeneo\Bundle\BatchBundle\Entity\StepExecution;
-
-use Oro\Bundle\ImportExportBundle\Context\StepExecutionProxyContext;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\ImportExportBundle\Context\StepExecutionProxyContext;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceResetStrategy;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
 
 class ProductPriceResetStrategyTest extends WebTestCase
 {
+    /**
+     * @var QueryHintResolverInterface
+     */
+    protected $hintResolver;
+
     /**
      * @var ProductPriceResetStrategy
      */
@@ -61,6 +66,8 @@ class ProductPriceResetStrategyTest extends WebTestCase
         $this->strategy->setEntityName(
             $container->getParameter('oro_pricing.entity.product_price.class')
         );
+        $this->hintResolver = $this->getContainer()->get('oro_entity.query_hint_resolver');
+        $this->strategy->setHintResolver($this->hintResolver);
     }
 
     public function testProcessResetPriceListProductPrices()
@@ -73,7 +80,7 @@ class ProductPriceResetStrategyTest extends WebTestCase
         $actualPrices = $this->getContainer()
             ->get('doctrine')
             ->getRepository('OroPricingBundle:ProductPrice')
-            ->findBy(['priceList' => $priceList->getId()]);
+            ->findByPriceList($this->hintResolver, $priceList, ['priceList' => $priceList->getId()]);
         $this->assertCount(8, $actualPrices);
 
         $expectedPricesIds = [
@@ -99,7 +106,7 @@ class ProductPriceResetStrategyTest extends WebTestCase
             $this->getContainer()
                 ->get('doctrine')
                 ->getRepository('OroPricingBundle:ProductPrice')
-                ->findBy(['priceList' => $priceList->getId()])
+                ->findByPriceList($this->hintResolver, $priceList, ['priceList' => $priceList->getId()])
         );
 
         // do not clear twice
@@ -114,7 +121,7 @@ class ProductPriceResetStrategyTest extends WebTestCase
             $this->getContainer()
                 ->get('doctrine')
                 ->getRepository('OroPricingBundle:ProductPrice')
-                ->findBy(['priceList' => $priceList->getId()])
+                ->findByPriceList($this->hintResolver, $priceList, ['priceList' => $priceList->getId()])
         );
     }
 

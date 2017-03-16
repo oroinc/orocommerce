@@ -38,19 +38,6 @@ class PriceShardWalker extends SqlWalker
     }
 
     /**
-     * @param mixed $discriminationValue
-     * @return string
-     */
-    protected function getTableName($discriminationValue)
-    {
-        $tableName = 'oro_price_product_';
-        if ($discriminationValue instanceof PriceList) {
-            $discriminationValue = $discriminationValue->getId();
-        }
-        return $tableName . $discriminationValue;
-    }
-
-    /**
      * SELECT * FROM oro_product o0_
      * LEFT JOIN oro_price_list_to_product o2_ ON (o2_.price_list_id = ? AND o2_.product_id = o0_.id)  // level 2
      * LEFT JOIN oro_price_list o3_ ON (o2_.price_list_id = o3_.id)                                    // level 1

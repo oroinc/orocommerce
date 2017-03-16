@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 
@@ -17,6 +18,11 @@ use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
 class ProductControllerTest extends WebTestCase
 {
     /**
+     * @var
+     */
+    protected $hintResolver;
+
+    /**
      * @var array
      */
     protected $newPrice = [
@@ -30,7 +36,8 @@ class ProductControllerTest extends WebTestCase
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
-        $this->loadFixtures(['Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices']);
+        $this->loadFixtures([LoadProductPrices::class]);
+        $this->hintResolver = $this->getContainer()->get('oro_entity.query_hint_resolver');
     }
 
     public function testSidebar()
@@ -253,6 +260,7 @@ class ProductControllerTest extends WebTestCase
 
     public function testNewPriceWithNewUnit()
     {
+        $this->markTestSkipped('BB-8042');
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         /** @var PriceList $priceList */
@@ -287,17 +295,22 @@ class ProductControllerTest extends WebTestCase
         $this->assertContains('Product has been saved', $crawler->html());
 
         /** @var ProductPrice $price */
-        $price = $this->getContainer()->get('doctrine')
+        $prices = $this->getContainer()->get('doctrine')
             ->getManagerForClass('OroPricingBundle:ProductPrice')
             ->getRepository('OroPricingBundle:ProductPrice')
-            ->findOneBy([
-                'product' => $product,
-                'priceList' => $priceList,
-                'quantity' => $this->newPrice['quantity'],
-                'unit' => $this->newPrice['unit'],
-                'currency' => $this->newPrice['currency'],
-            ]);
-        $this->assertNotEmpty($price);
+            ->findByPriceList(
+                $this->hintResolver,
+                $priceList,
+                [
+                    'product' => $product,
+                    'priceList' => $priceList,
+                    'quantity' => $this->newPrice['quantity'],
+                    'unit' => $this->newPrice['unit'],
+                    'currency' => $this->newPrice['currency'],
+                ]
+            );
+        $this->assertNotEmpty($prices);
+        $price = $prices[0];
         $this->assertEquals($this->newPrice['price'], $price->getPrice()->getValue());
     }
 

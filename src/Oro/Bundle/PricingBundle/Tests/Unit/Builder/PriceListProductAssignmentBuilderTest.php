@@ -3,23 +3,28 @@
 namespace Oro\Bundle\PricingBundle\Tests\Unit\Builder;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
+use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use Oro\Bundle\PricingBundle\Compiler\ProductAssignmentRuleCompiler;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Oro\Bundle\PricingBundle\Builder\PriceListProductAssignmentBuilder;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\BasePriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
 use Oro\Bundle\PricingBundle\Event\AssignmentBuilderBuildEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class PriceListProductAssignmentBuilderTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var QueryHintResolverInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $hintResolver;
+
     /**
      * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -55,12 +60,14 @@ class PriceListProductAssignmentBuilderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $this->hintResolver = $this->createMock(QueryHintResolverInterface::class);
 
         $this->priceListProductAssignmentBuilder = new PriceListProductAssignmentBuilder(
             $this->registry,
             $this->insertFromSelectQueryExecutor,
             $this->ruleCompiler,
-            $this->eventDispatcher
+            $this->eventDispatcher,
+            $this->hintResolver
         );
     }
 

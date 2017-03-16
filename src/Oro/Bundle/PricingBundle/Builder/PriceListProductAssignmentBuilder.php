@@ -11,10 +11,16 @@ use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
 use Oro\Bundle\PricingBundle\Event\AssignmentBuilderBuildEvent;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class PriceListProductAssignmentBuilder
 {
+    /**
+     * @var QueryHintResolverInterface
+     */
+    protected $hintResolver;
+
     /**
      * @var ManagerRegistry
      */
@@ -40,17 +46,20 @@ class PriceListProductAssignmentBuilder
      * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
      * @param ProductAssignmentRuleCompiler $ruleCompiler
      * @param EventDispatcherInterface $eventDispatcher
+     * @param QueryHintResolverInterface $hintResolver
      */
     public function __construct(
         ManagerRegistry $registry,
         InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor,
         ProductAssignmentRuleCompiler $ruleCompiler,
-        EventDispatcherInterface $eventDispatcher
+        EventDispatcherInterface $eventDispatcher,
+        QueryHintResolverInterface $hintResolver
     ) {
         $this->registry = $registry;
         $this->insertFromSelectQueryExecutor = $insertFromSelectQueryExecutor;
         $this->ruleCompiler = $ruleCompiler;
         $this->eventDispatcher = $eventDispatcher;
+        $this->hintResolver = $hintResolver;
     }
 
     /**
@@ -69,7 +78,7 @@ class PriceListProductAssignmentBuilder
         }
         $this->registry->getManagerForClass(ProductPrice::class)
             ->getRepository(ProductPrice::class)
-            ->deleteInvalidPrices($priceList);
+            ->deleteInvalidPrices($this->hintResolver, $priceList);
 
         $event = new AssignmentBuilderBuildEvent($priceList, $product);
         $this->eventDispatcher->dispatch(AssignmentBuilderBuildEvent::NAME, $event);

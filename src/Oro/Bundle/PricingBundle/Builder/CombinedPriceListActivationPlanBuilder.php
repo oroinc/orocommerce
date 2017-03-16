@@ -119,7 +119,6 @@ class CombinedPriceListActivationPlanBuilder
 
     /**
      * @param CombinedPriceList $cpl
-     * @return CombinedPriceListActivationRule[]
      */
     protected function generateActivationRules(CombinedPriceList $cpl)
     {

@@ -2,22 +2,29 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
-use Oro\Component\Testing\Unit\EntityTrait;
 use Oro\Bundle\PricingBundle\Event\ProductPricesRemoveAfter;
 use Oro\Bundle\PricingBundle\Event\ProductPricesRemoveBefore;
 use Oro\Bundle\PricingBundle\EventListener\ProductUnitPrecisionListener;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
+use Oro\Component\Testing\Unit\EntityTrait;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class ProductUnitPrecisionListenerTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
-    
+
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject
+     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $eventDispatcher;
+
+    /**
+     * @var QueryHintResolverInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $hintResolver;
 
     /**
      * @var ProductUnitPrecisionListener
@@ -33,9 +40,11 @@ class ProductUnitPrecisionListenerTest extends \PHPUnit_Framework_TestCase
     {
         $this->productPriceClass = 'stdClass';
         $this->eventDispatcher = $this->createMock('Symfony\Component\EventDispatcher\EventDispatcherInterface');
+        $this->hintResolver = $this->createMock(QueryHintResolverInterface::class);
         $this->listener = new ProductUnitPrecisionListener();
         $this->listener->setEventDispatcher($this->eventDispatcher);
         $this->listener->setProductPriceClass($this->productPriceClass);
+        $this->listener->setHintResolver($this->hintResolver);
     }
 
     public function testPostRemoveInvalidEntity()
@@ -76,7 +85,7 @@ class ProductUnitPrecisionListenerTest extends \PHPUnit_Framework_TestCase
             ->getMock();
         $repository->expects($this->once())
             ->method('deleteByProductUnit')
-            ->with($product, $unit);
+            ->with($this->hintResolver, $product, $unit);
 
         $em = $this->getMockBuilder('Doctrine\ORM\EntityManager')
             ->disableOriginalConstructor()

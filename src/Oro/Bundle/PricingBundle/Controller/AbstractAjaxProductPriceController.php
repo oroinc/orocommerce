@@ -81,7 +81,13 @@ abstract class AbstractAjaxProductPriceController extends Controller
 
         /** @var ProductPriceRepository $repository */
         $repository = $this->getManagerForClass($productPriceClass)->getRepository($productPriceClass);
-        $units = $repository->getProductUnitsByPriceList($priceList, $product, $request->get('currency'));
+        $hintResolver = $this->get('oro_entity.query_hint_resolver');
+        $units = $repository->getProductUnitsByPriceList(
+            $hintResolver,
+            $priceList,
+            $product,
+            $request->get('currency')
+        );
 
         return new JsonResponse(['units' => $this->getProductUnitFormatter()->formatChoices($units)]);
     }

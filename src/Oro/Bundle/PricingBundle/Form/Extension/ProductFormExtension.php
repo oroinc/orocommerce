@@ -2,22 +2,26 @@
 
 namespace Oro\Bundle\PricingBundle\Form\Extension;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\Form\Type\ProductPriceCollectionType;
+use Oro\Bundle\PricingBundle\Validator\Constraints\UniqueProductPrices;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\ProductType;
+use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Oro\Bundle\PricingBundle\Form\Type\ProductPriceCollectionType;
-use Oro\Bundle\PricingBundle\Validator\Constraints\UniqueProductPrices;
-use Oro\Bundle\ProductBundle\Form\Type\ProductType;
-use Oro\Bundle\PricingBundle\Entity\ProductPrice;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
-
 class ProductFormExtension extends AbstractTypeExtension
 {
+    /**
+     * @var QueryHintResolverInterface
+     */
+    protected $hintResolver;
+
     /**
      * @var ManagerRegistry
      */
@@ -25,10 +29,12 @@ class ProductFormExtension extends AbstractTypeExtension
 
     /**
      * @param ManagerRegistry $registry
+     * @param QueryHintResolverInterface $hintResolver
      */
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, QueryHintResolverInterface $hintResolver)
     {
         $this->registry = $registry;
+        $this->hintResolver = $hintResolver;
     }
 
     /**
@@ -68,7 +74,7 @@ class ProductFormExtension extends AbstractTypeExtension
             return;
         }
 
-        $prices = $this->getProductPriceRepository()->getPricesByProduct($product);
+        $prices = $this->getProductPriceRepository()->getPricesByProduct($this->hintResolver, $product);
 
         $event->getForm()->get('prices')->setData($prices);
     }
@@ -95,8 +101,7 @@ class ProductFormExtension extends AbstractTypeExtension
             return;
         }
 
-        $entityManager = $this->registry->getManagerForClass('OroPricingBundle:ProductPrice');
-
+        $repository = $this->getProductPriceRepository();
         // persist existing prices
         $persistedPriceIds = [];
         foreach ($prices as $price) {
@@ -106,15 +111,15 @@ class ProductFormExtension extends AbstractTypeExtension
             }
 
             $price->setProduct($product);
-            $entityManager->persist($price);
+            $repository->persist($this->hintResolver, $price);
         }
 
         // remove deleted prices
         if ($product->getId()) {
-            $existingPrices = $this->getProductPriceRepository()->getPricesByProduct($product);
+            $existingPrices = $repository->getPricesByProduct($this->hintResolver, $product);
             foreach ($existingPrices as $price) {
                 if (!in_array($price->getId(), $persistedPriceIds, true)) {
-                    $entityManager->remove($price);
+                    $repository->remove($this->hintResolver, $price);
                 }
             }
         }

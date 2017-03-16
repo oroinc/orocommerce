@@ -4,7 +4,6 @@ namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer;
@@ -13,6 +12,7 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
 
 class CombinedProductPriceRepository extends BaseProductPriceRepository
 {
@@ -170,18 +170,10 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
     }
 
     /**
-     * Return product prices for specified price list and product IDs
-     *
-     * @param int $priceListId
-     * @param array $productIds
-     * @param bool $getTierPrices
-     * @param string|null $currency
-     * @param string|null $productUnitCode
-     * @param array $orderBy
-     *
-     * @return CombinedProductPrice[]
+     * {@inheritdoc}
      */
     public function findByPriceListIdAndProductIds(
+        QueryHintResolverInterface $hintResolver,
         $priceListId,
         array $productIds,
         $getTierPrices = true,

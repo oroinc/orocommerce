@@ -3,13 +3,12 @@
 namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
-
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Event\ProductPricesRemoveAfter;
 use Oro\Bundle\PricingBundle\Event\ProductPricesRemoveBefore;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Remove product prices by unit on ProductUnitPrecision delete.
@@ -25,6 +24,11 @@ class ProductUnitPrecisionListener
      * @var EventDispatcherInterface
      */
     protected $eventDispatcher;
+
+    /**
+     * @var QueryHintResolverInterface
+     */
+    protected $hintResolver;
 
     /**
      * @param LifecycleEventArgs $event
@@ -46,7 +50,7 @@ class ProductUnitPrecisionListener
             
             /** @var ProductPriceRepository $repository */
             $repository = $event->getEntityManager()->getRepository($this->productPriceClass);
-            $repository->deleteByProductUnit($product, $unit);
+            $repository->deleteByProductUnit($this->hintResolver, $product, $unit);
             $this->eventDispatcher
                 ->dispatch(ProductPricesRemoveAfter::NAME, new ProductPricesRemoveAfter($args));
         }
@@ -72,5 +76,13 @@ class ProductUnitPrecisionListener
         $this->eventDispatcher = $eventDispatcher;
 
         return $this;
+    }
+
+    /**
+     * @param QueryHintResolverInterface $hintResolver
+     */
+    public function setHintResolver(QueryHintResolverInterface $hintResolver)
+    {
+        $this->hintResolver = $hintResolver;
     }
 }

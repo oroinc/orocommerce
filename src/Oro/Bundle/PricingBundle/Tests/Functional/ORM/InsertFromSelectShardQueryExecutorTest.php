@@ -9,7 +9,7 @@ use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Component\DoctrineUtils\ORM\QueryHintResolver;
+use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
 
 class InsertFromSelectShardQueryExecutorTest extends WebTestCase
 {
@@ -19,7 +19,7 @@ class InsertFromSelectShardQueryExecutorTest extends WebTestCase
     protected $insertSelectExecutor;
 
     /**
-     * @var QueryHintResolver
+     * @var QueryHintResolverInterface
      */
     protected $hintResolver;
 

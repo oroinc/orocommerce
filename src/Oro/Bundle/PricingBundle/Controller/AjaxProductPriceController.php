@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Controller;
 
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
@@ -31,7 +32,11 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
     /**
      * Edit product form
      *
-     * @Route("/update/{id}", name="oro_product_price_update_widget", requirements={"id"="\d+"})
+     * @Route(
+     *     "/update/{priceList}/{id}",
+     *     name="oro_product_price_update_widget",
+     *     requirements={"id"="\d+", "priceListId"="\d+"}
+     * )
      * @Template("OroPricingBundle:ProductPrice:widget/update.html.twig")
      * @Acl(
      *      id="oro_pricing_product_price_update",
@@ -39,11 +44,19 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
      *      class="OroPricingBundle:ProductPrice",
      *      permission="EDIT"
      * )
-     * @param ProductPrice $productPrice
+     * @param Request $request
      * @return array|RedirectResponse
      */
-    public function updateAction(ProductPrice $productPrice)
+    public function updateAction(Request $request)
     {
+        $priceList = $this->getDoctrine()->getRepository(PriceList::class)->find($request->get('priceList'));
+        $prices = $this->getDoctrine()->getRepository(ProductPrice::class)
+            ->findByPriceList(
+                $this->get('oro_entity.query_hint_resolver'),
+                $priceList,
+                ['id' => $request->get('id')]
+            );
+        $productPrice = $prices[0];
         $form = $this->createForm(PriceListProductPriceType::NAME, $productPrice);
 
         return $this->get('oro_form.model.update_handler')

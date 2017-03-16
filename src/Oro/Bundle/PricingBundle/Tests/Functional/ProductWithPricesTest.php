@@ -52,6 +52,7 @@ class ProductWithPricesTest extends WebTestCase
      */
     public function testCreate()
     {
+        $this->markTestSkipped('BB-8042');
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_create'));
         $form = $crawler->selectButton('Continue')->form();
         $formValues = $form->getPhpValues();
@@ -110,7 +111,7 @@ class ProductWithPricesTest extends WebTestCase
             $formData['names']['values']['localizations'][$localization->getId()]['fallback'] = FallbackType::SYSTEM;
         }
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), [
-            'input_action'        => 'save_and_stay',
+            'input_action' => 'save_and_stay',
             'oro_product' => $formData
         ]);
         $result = $this->client->getResponse();

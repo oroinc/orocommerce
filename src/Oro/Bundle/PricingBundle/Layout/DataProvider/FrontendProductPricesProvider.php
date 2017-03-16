@@ -5,13 +5,19 @@ namespace Oro\Bundle\PricingBundle\Layout\DataProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
 
 class FrontendProductPricesProvider
 {
+    /**
+     * @var QueryHintResolverInterface
+     */
+    protected $hintResolver;
+
     /**
      * @var array
      */
@@ -37,14 +43,17 @@ class FrontendProductPricesProvider
      * @param PriceListRequestHandler $priceListRequestHandler
      * @param UserCurrencyManager $userCurrencyManager
      * @param ProductPriceFormatter $productPriceFormatter
+     * @param QueryHintResolverInterface $hintResolver
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         PriceListRequestHandler $priceListRequestHandler,
         UserCurrencyManager $userCurrencyManager,
-        ProductPriceFormatter $productPriceFormatter
+        ProductPriceFormatter $productPriceFormatter,
+        QueryHintResolverInterface $hintResolver
     ) {
         $this->doctrineHelper = $doctrineHelper;
+        $this->hintResolver = $hintResolver;
         $this->priceListRequestHandler = $priceListRequestHandler;
         $this->userCurrencyManager = $userCurrencyManager;
         $this->productPriceFormatter = $productPriceFormatter;
@@ -104,6 +113,7 @@ class FrontendProductPricesProvider
         /** @var ProductPriceRepository $priceRepository */
         $priceRepository = $this->doctrineHelper->getEntityRepository('OroPricingBundle:CombinedProductPrice');
         $prices = $priceRepository->findByPriceListIdAndProductIds(
+            $this->hintResolver,
             $priceList->getId(),
             $productsIds,
             true,

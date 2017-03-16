@@ -6,44 +6,38 @@ use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
+use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
-use Oro\Bundle\PricingBundle\Entity\PriceRule;
+use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
 
 class ProductPriceRepository extends BaseProductPriceRepository
 {
     const BUFFER_SIZE = 500;
 
     /**
+     * @param QueryHintResolverInterface $hintResolver
      * @param PriceList $priceList
      * @param Product|null $product
      */
-    public function deleteGeneratedPrices(PriceList $priceList, Product $product = null)
-    {
+    public function deleteGeneratedPrices(
+        QueryHintResolverInterface $hintResolver,
+        PriceList $priceList,
+        Product $product = null
+    ) {
         $qb = $this->getDeleteQbByPriceList($priceList, $product);
-        $qb->andWhere($qb->expr()->isNotNull('productPrice.priceRule'))
-            ->getQuery()
-            ->execute();
+        $query = $qb->andWhere($qb->expr()->isNotNull('productPrice.priceRule'))->getQuery();
+        $hintResolver->resolveHints($query, [PriceShardWalker::HINT_PRICE_SHARD]);
+        $query->execute();
     }
 
     /**
-     * @param PriceRule $priceRule
-     * @param Product|null $product
-     */
-    public function deleteGeneratedPricesByRule(PriceRule $priceRule, Product $product = null)
-    {
-        $qb = $this->getDeleteQbByPriceList($priceRule->getPriceList(), $product);
-        $qb->andWhere($qb->expr()->eq('productPrice.priceRule', ':priceRule'))
-            ->setParameter('priceRule', $priceRule)
-            ->getQuery()
-            ->execute();
-    }
-
-    /**
+     * @param QueryHintResolverInterface $hintResolver
      * @param PriceList $priceList
      */
-    public function deleteInvalidPrices(PriceList $priceList)
+    public function deleteInvalidPrices(QueryHintResolverInterface $hintResolver, PriceList $priceList)
     {
         $qb = $this->createQueryBuilder('invalidPrice');
         $qb->select('invalidPrice.id')
@@ -59,7 +53,9 @@ class ProductPriceRepository extends BaseProductPriceRepository
             ->where($qb->expr()->eq('invalidPrice.priceList', ':priceList'))
             ->andWhere($qb->expr()->isNull('productRelation.id'))
             ->setParameter('priceList', $priceList);
-        $iterator = new BufferedIdentityQueryResultIterator($qb);
+        $query = $qb->getQuery();
+        $hintResolver->resolveHints($query, [PriceShardWalker::HINT_PRICE_SHARD]);
+        $iterator = new BufferedIdentityQueryResultIterator($query);
         $iterator->setHydrationMode(Query::HYDRATE_SCALAR);
         $iterator->setBufferSize(self::BUFFER_SIZE);
 
@@ -90,5 +86,82 @@ class ProductPriceRepository extends BaseProductPriceRepository
         $qb->andWhere($qb->expr()->isNull('productPrice.priceRule'));
 
         return $qb;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getProductIdsByPriceLists(array $priceLists)
+    {
+        $this->_em->createQueryBuilder();
+        $qb = $this->_em->createQueryBuilder();
+
+        $result = $qb->select('IDENTITY(productToPriceList.product) as productId')
+            ->from(PriceListToProduct::class, 'productToPriceList')
+            ->where('productToPriceList.priceList IN (:priceLists)')
+            ->setParameter('priceLists', $priceLists)
+            ->getQuery()
+            ->getScalarResult();
+
+        return array_map('current', $result);
+    }
+
+    /**
+     * @param QueryHintResolverInterface $hintResolver
+     * @param BaseProductPrice $price
+     */
+    public function remove(QueryHintResolverInterface $hintResolver, BaseProductPrice $price)
+    {
+        //TODO: BB-8042 add test
+        $qb = $this->_em->createQueryBuilder();
+        $qb->delete($this->_entityName, 'price');
+        $qb->where('price = :price')
+            ->setParameter('price', $price);
+        $query = $qb->getQuery();
+        $hintResolver->resolveHints($query, [PriceShardWalker::HINT_PRICE_SHARD]);
+        $query->execute();
+    }
+
+    /**
+     * @param QueryHintResolverInterface $hintResolver
+     * @param BaseProductPrice $price
+     */
+    public function persist(QueryHintResolverInterface $hintResolver, BaseProductPrice $price)
+    {
+        //TODO: BB-8042
+        $this->_em->persist($price);
+        $this->_em->flush($price);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function find($id, $lockMode = null, $lockVersion = null)
+    {
+        throw new \LogicException('Method locked because of sharded tables');
+    }
+//    /**
+//     * {@inheritdoc}
+//     */
+//    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+//    {
+//
+//        throw new \LogicException('Method locked because of sharded tables');
+//    }
+
+//    /**
+//     * {@inheritdoc}
+//     */
+//    public function findAll()
+//    {
+//        throw new \LogicException('Method locked because of sharded tables');
+//    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function findOneBy(array $criteria, array $orderBy = null)
+    {
+        throw new \LogicException('Method locked because of sharded tables');
     }
 }

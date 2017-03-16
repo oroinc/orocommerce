@@ -3,14 +3,19 @@
 namespace Oro\Bundle\PricingBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
 
 class ProductPriceProvider
 {
+    /**
+     * @var QueryHintResolverInterface
+     */
+    protected $hintResolver;
+
     /**
      * @var ManagerRegistry
      */
@@ -23,10 +28,13 @@ class ProductPriceProvider
 
     /**
      * @param ManagerRegistry $registry
+     * @param QueryHintResolverInterface $hintResolver
      */
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, QueryHintResolverInterface $hintResolver)
     {
         $this->registry = $registry;
+        $this->hintResolver = $hintResolver;
+
     }
 
     /**
@@ -38,7 +46,13 @@ class ProductPriceProvider
     public function getPriceByPriceListIdAndProductIds($priceListId, array $productIds, $currency = null)
     {
         $result = [];
-        $prices = $this->getRepository()->findByPriceListIdAndProductIds($priceListId, $productIds, true, $currency);
+        $prices = $this->getRepository()->findByPriceListIdAndProductIds(
+            $this->hintResolver,
+            $priceListId,
+            $productIds,
+            true,
+            $currency
+        );
 
         if ($prices) {
             foreach ($prices as $price) {
@@ -70,6 +84,7 @@ class ProductPriceProvider
         }
 
         $prices = $this->getRepository()->getPricesBatch(
+            $this->hintResolver,
             $priceList->getId(),
             $productIds,
             $productUnitCodes,
