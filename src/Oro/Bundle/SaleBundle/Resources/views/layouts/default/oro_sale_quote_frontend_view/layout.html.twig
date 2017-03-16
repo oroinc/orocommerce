@@ -6,6 +6,14 @@
     </ul>
 {% endblock %}
 
+{% block _quote_view_customer_status_widget %}
+    {% set text %}
+        {{ 'oro.frontend.sale.quote.customer_status.label'|trans }}: {{ text }}
+    {% endset %}
+
+    {{ parent_block_widget(block) }}
+{% endblock %}
+
 {% block _quote_view_information_widget %}
     <div class="customer-oq-container">
         <div class="customer-oq__item__head">

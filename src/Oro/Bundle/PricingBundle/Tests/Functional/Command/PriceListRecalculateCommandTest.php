@@ -141,6 +141,16 @@ class PriceListRecalculateCommandTest extends WebTestCase
                 'customerGroup' => ['customer_group.group1'], // doesn't has own price list
                 'customer' => []
             ],
+            'verbosity_verbose' => [
+                'expected_message' => 'Processing combined price list id:',
+                'params' => ['--all', '-v'],
+                'expectedCount' => 40
+            ],
+            'verbosity_very_verbose' => [
+                'expected_message' => 'Processing price list:',
+                'params' => ['--all', '-vv'],
+                'expectedCount' => 40
+            ],
         ];
     }
 

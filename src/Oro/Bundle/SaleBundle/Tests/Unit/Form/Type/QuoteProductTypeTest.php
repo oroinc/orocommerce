@@ -129,7 +129,6 @@ class QuoteProductTypeTest extends AbstractTest
                 $this->assertArrayHasKey('data_class', $options);
                 $this->assertArrayHasKey('compact_units', $options);
                 $this->assertArrayHasKey('intention', $options);
-                $this->assertArrayHasKey('extra_fields_message', $options);
                 $this->assertArrayHasKey('page_component', $options);
                 $this->assertArrayHasKey('page_component_options', $options);
 
