@@ -38,6 +38,11 @@ class ShardManager implements \Serializable
     protected $shardList = [];
 
     /**
+     * @var bool
+     */
+    protected $enableSharding;
+
+    /**
      * @param array $shardList
      */
     public function __construct(array $shardList = [])
@@ -55,8 +60,13 @@ class ShardManager implements \Serializable
     {
         $baseTableName = $this->getEntityBaseTable($className);
 
+        if (!$this->enableSharding) {
+            return $baseTableName;
+        }
         if (!isset($attributes['priceList'])) {
-            throw new \Exception(sprintf("Required attribute '%s' for generation of shard name missing.", "priceList"));
+            throw new \Exception(
+                sprintf("Required attribute '%s' for generation of shard name missing.", "priceList")
+            );
         } elseif (is_a($attributes['priceList'], PriceList::class)) {
             /** @var PriceList $priceList */
             $priceList = $attributes['priceList'];
@@ -67,9 +77,7 @@ class ShardManager implements \Serializable
             throw new \Exception(sprintf("Wrong type of '%s' to generate shard name.", "priceList"));
         }
 
-        $shardName = sprintf("%s_%s", $baseTableName, $id);
-
-        return $shardName;
+        return sprintf("%s_%s", $baseTableName, $id);
     }
 
     /**
@@ -88,6 +96,9 @@ class ShardManager implements \Serializable
      */
     public function create($className, $shardName)
     {
+        if (!$this->enableSharding) {
+            return;
+        }
         $baseTableName = $this->getBaseTableName($className);
         $connection = $this->getConnection();
         $sm = $connection->getSchemaManager();
@@ -131,7 +142,9 @@ class ShardManager implements \Serializable
      */
     public function delete($shardName)
     {
-        $this->getConnection()->getSchemaManager()->dropTable($shardName);
+        if ($this->enableSharding) {
+            $this->getConnection()->getSchemaManager()->dropTable($shardName);
+        }
     }
 
     /**
@@ -277,6 +290,14 @@ class ShardManager implements \Serializable
     public function setRegistry(RegistryInterface $registry)
     {
         $this->registry = $registry;
+    }
+
+    /**
+     * @param $enableSharding
+     */
+    public function setEnableSharding($enableSharding)
+    {
+        $this->enableSharding = $enableSharding;
     }
 
     /**

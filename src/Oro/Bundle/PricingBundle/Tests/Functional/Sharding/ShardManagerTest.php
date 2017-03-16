@@ -22,6 +22,7 @@ class ShardManagerTest extends WebTestCase
         parent::setUp();
         $this->initClient();
         $this->manager = $this->getContainer()->get('oro_pricing.shard_manager');
+        $this->manager->setEnableSharding(true);
     }
 
     /**

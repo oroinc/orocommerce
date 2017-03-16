@@ -965,6 +965,7 @@ services:
             - [setRegistry, ['@doctrine']]
             - [addEntityForShard, ['%oro_pricing.entity.product_price.class%']]
             - [setConfigProvider, ['@oro_entity_config.provider.sharding']]
+            - [setEnableSharding, ['%enable_sharding%']]
 
     oro_pricing.entity_listener.price_list_sharding:
         class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListShardingListener'
