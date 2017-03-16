@@ -145,6 +145,8 @@ datagrids:
                         route: oro_api_patch_product_inline_edit_inventory_status
                         query_parameter_names:
                             - id
+                    validation_rules:
+                        NotBlank: true
             status:
                 inline_editing:
                     enable: true

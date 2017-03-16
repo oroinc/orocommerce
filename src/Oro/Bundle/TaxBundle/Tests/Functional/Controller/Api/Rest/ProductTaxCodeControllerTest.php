@@ -32,7 +32,7 @@ class ProductTaxCodeControllerTest extends WebTestCase
             'PATCH',
             $this->getUrl('oro_api_patch_product_tax_code', [
                 'id' => $product->getId(),
-                'taxCode' => $taxCode->getCode(),
+                'taxCode' => $taxCode->getId(),
             ])
         );
 

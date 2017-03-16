@@ -35,14 +35,14 @@ class ProductTaxCodeController extends FOSRestController
      */
     public function patchAction(Request $request, Product $product)
     {
-        $taxCode = $request->get('taxCode');
+        $taxCodeId = $request->get('taxCode');
         $doctrineHelper = $this->get('oro_entity.doctrine_helper');
 
         /** @var ProductTaxCodeRepository $taxCodeRepository */
         $taxCodeRepository = $doctrineHelper->getEntityRepositoryForClass(ProductTaxCode::class);
 
         $oldTaxCode = $taxCodeRepository->findOneByProduct($product);
-        $newTaxCode = $taxCode ? $taxCodeRepository->findOneBy(['code' => $taxCode]) : null;
+        $newTaxCode = $taxCodeId ? $taxCodeRepository->find($taxCodeId) : null;
         $manager = $doctrineHelper->getEntityManagerForClass(ProductTaxCode::class);
 
         $manager->transactional(function (EntityManager $manager) use ($oldTaxCode, $newTaxCode, $product) {
