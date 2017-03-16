@@ -8,9 +8,6 @@
         'data-page-component-module': 'oroui/js/app/components/view-component',
         '~data-page-component-options': {
             view: 'oroproduct/js/app/views/base-product-view',
-            viewport: {
-                maxScreenType: 'tablet',
-            },
             modelAttr: modelAttr
         },
         'data-layout': 'separate',
@@ -243,4 +240,19 @@
             {% endif %}
         </div>
     </div>
+{% endblock %}
+
+{% block _product_price_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-price--simple',
+        'data-page-component-module': 'oroui/js/app/components/viewport-component',
+        '~data-page-component-options': {
+            viewport: {
+                maxScreenType: 'tablet'
+            },
+            component: 'oroui/js/app/components/view-component',
+            changeUnitLabel: true,
+        },
+    }) %}
+    {{ block_widget(block, {attr: attr}) }}
 {% endblock %}

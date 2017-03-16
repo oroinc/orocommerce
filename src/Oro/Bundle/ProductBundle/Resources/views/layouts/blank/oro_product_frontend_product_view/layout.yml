@@ -11,20 +11,8 @@ layout:
             themes: 'layout.html.twig'
         - '@setOption':
             id: product_price_container
-            optionName: productPrices
-            optionValue: '=data["frontend_product_prices"].getByProduct(product)'
-        - '@setOption':
-            id: product_price_container
             optionName: product
             optionValue: '=data["product"]'
-        - '@setOption': 
-            id: product_price_container 
-            optionName: changeUnitLabel 
-            optionValue: true
-        - '@setOption': 
-            id: product_price_container 
-            optionName: productPriceMode 
-            optionValue: 'simple'
         - '@setOption':
             id: title
             optionName: params

@@ -15,26 +15,30 @@ define(function(require) {
             return FullscreenAttributeGroupTabContentComponent.__super__.initialize.call(this, options);
         },
 
-        onGroupChange: function(model) {
-            if (!viewportManager.isApplicable(this.viewport)) {
-                return FullscreenAttributeGroupTabContentComponent.__super__.onGroupChange.call(this, model);
-            }
+        onGroupChange: function(model, initialize) {
+            FullscreenAttributeGroupTabContentComponent.__super__.onGroupChange.call(this, model);
 
-            if (this.id !== model.id || model.isActiveChanged) {
+            if (initialize || this.id !== model.get('id') || !viewportManager.isApplicable(this.viewport)) {
                 return;
             }
 
-            if (this.fullscreenView) {
-                this.fullscreenView.dispose();
-                delete this.fullscreenView;
+            if (!model.get('active')) {
+                if (this.fullscreenView) {
+                    this.fullscreenView.dispose();
+                    delete this.fullscreenView;
+                }
+            } else if (!this.fullscreenView) {
+                this.fullscreenView = new FullscreenPopupView({
+                    disposeOnClose: true,
+                    content: this.el.html()
+                });
+                this.fullscreenView.on('close', function() {
+                    this.fullscreenView.dispose();
+                    delete this.fullscreenView;
+                }, this);
+
+                this.fullscreenView.show();
             }
-
-            this.fullscreenView = new FullscreenPopupView({
-                contentSelector: '[data-attribute-content="' + this.id + '"]'
-            });
-            this.fullscreenView.show();
-
-            FullscreenAttributeGroupTabContentComponent.__super__.onGroupChange.call(this, model);
         }
     });
 

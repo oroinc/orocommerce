@@ -17,9 +17,6 @@
         float: $product-view-primary-state;
 
         width: $product-view-primary-width;
-        margin-bottom: $product-view-primary-offset-bottom;
-
-        border-bottom: 1px solid get-color('additional', 'light');
 
         .page-title {
             margin: 0 0 5px;
@@ -40,6 +37,10 @@
 
         flex-wrap: wrap;
         justify-content: space-between;
+
+        padding: $product-view-content-inner-offset;
+
+        border-top: 1px solid get-color('additional', 'light');
     }
 
     &__specification {
@@ -93,7 +94,7 @@
 
         &__specification {
             width: $product-view-tablet-specification-width;
-            padding: $product-view-specification-tablet-inner-offset;
+            padding: 0;
         }
 
         &__description {
