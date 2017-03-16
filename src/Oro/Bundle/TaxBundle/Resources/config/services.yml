@@ -134,7 +134,7 @@ services:
             - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.before.customer-groups-select-grid, method: onBuildBefore }
 
     oro_tax.event_listener.product_grid:
-        class: 'Oro\Bundle\TaxBundle\EventListener\TaxCodeGridListener'
+        class: 'Oro\Bundle\TaxBundle\EventListener\ProductTaxCodeGridListener'
         arguments:
             - "@oro_entity.doctrine_helper"
             - '%oro_tax.entity.product_tax_code.class%'
