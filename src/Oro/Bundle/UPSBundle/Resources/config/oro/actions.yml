@@ -1,4 +1,5 @@
 operations:
+    # deprecated since 1.1.0, to be removed in 1.3.0. Use oro_integration_invalidate_cache_new instead
     oro_integration_invalidate_cache:
         enabled: false
         label: oro.ups.form.invalidate_cache.label

@@ -1,5 +1,9 @@
 /*jslint nomen:true*/
 /*global define*/
+/*
+ Deprecated since 1.1.0, to be removed in 1.3.0.
+ Use Oro/Bundle/CacheBundle/Resources/public/js/app/components/invalidate-cache-component.js instead
+ */
 define(function(require) {
     'use strict';
 

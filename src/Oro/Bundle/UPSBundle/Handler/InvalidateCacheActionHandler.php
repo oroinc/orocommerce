@@ -14,12 +14,12 @@ class InvalidateCacheActionHandler implements InvalidateCacheActionHandlerInterf
     /**
      * @var UPSShippingPriceCache
      */
-    protected $upsPriceCache;
+    private $upsPriceCache;
 
     /**
      * @var ShippingPriceCache
      */
-    protected $shippingPriceCache;
+    private $shippingPriceCache;
 
     /**
      * @param UPSShippingPriceCache $upsPriceCache

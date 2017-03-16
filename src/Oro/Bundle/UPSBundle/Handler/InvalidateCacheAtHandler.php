@@ -13,6 +13,10 @@ use Oro\Bundle\UPSBundle\Entity\UPSTransport;
 use Symfony\Component\Form\Exception\AlreadySubmittedException;
 use Symfony\Component\Form\FormInterface;
 
+/**
+ * @deprecated since 1.1.0, to be removed in 1.3.0.
+ * Functionality was moved to CacheBundle with usage of Oro\Bundle\UPSBundle\Handler\InvalidateCacheActionHandler
+ */
 class InvalidateCacheAtHandler
 {
     const COMMAND = InvalidateCacheScheduleCommand::NAME;

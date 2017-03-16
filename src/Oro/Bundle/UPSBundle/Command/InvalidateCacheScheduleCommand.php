@@ -9,6 +9,10 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * @deprecated since 1.1.0, to be removed in 1.3.0.
+ * Use Oro\Bundle\CacheBundle\Command\InvalidateCacheScheduleCommand instead
+ */
 class InvalidateCacheScheduleCommand extends ContainerAwareCommand
 {
     const NAME = 'oro:cron:shipping-price-cache-invalidate:schedule';
