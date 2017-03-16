@@ -10,6 +10,8 @@ use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ProductPrimaryUnitPrecisionType extends AbstractType
@@ -69,20 +71,7 @@ class ProductPrimaryUnitPrecisionType extends AbstractType
                     ProductUnitSelectionType::NAME,
                     [
                         'attr' => ['class' => 'unit'],
-                        'query_builder' => function (EntityRepository $er) use ($unitPrecision) {
-                            $excludedCode = '';
-                            if ($unitPrecision->getProduct()) {
-                                $additionalUnitPrecisions = $unitPrecision->getProduct()->getAdditionalUnitPrecisions();
-                                foreach ($additionalUnitPrecisions as $additionalUnitPrecision) {
-                                    $excludedCode = $additionalUnitPrecision->getUnit()->getCode();
-                                }
-                            }
-
-                            return $er
-                                ->createQueryBuilder('u')
-                                ->where('u.code != :codes')
-                                ->setParameter('codes', $excludedCode);
-                        },
+                        'product' => $unitPrecision ? $unitPrecision->getProduct() : null
                     ]
                 );
             } else {

@@ -25,7 +25,6 @@ class ProductUnitSelectionTypeStub extends StubEntityType
             [
                 'compact' => false,
                 'choice_list' => $this->choiceList,
-                'query_builder' => null,
                 'product' => null,
                 'product_holder' => null,
                 'product_field' => 'product',
