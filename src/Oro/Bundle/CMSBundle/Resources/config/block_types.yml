@@ -14,3 +14,16 @@ services:
             - [setOptionsConfig, [{loginPage: ~}]]
         tags:
              - { name: layout.block_type, alias: login_page }
+    oro_cms.layout.block_type.content_block:
+        parent: oro_layout.block_type.abstract_configurable
+        calls:
+            - [setName, ['content_block']]
+            -
+                - setOptionsConfig
+                -
+                    -
+                        alias: {required: true}
+                        contentBlock: {default: '=data["content_block"].getContentBlockView(alias)'}
+                        visible: {default: '=data["content_block"].getContentBlockView(alias)!==null'}
+        tags:
+            - { name: layout.block_type, alias: content_block }

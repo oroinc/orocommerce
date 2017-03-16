@@ -1,0 +1,6 @@
+{% block content_block_widget %}
+    <div{{ block('block_attributes') }}>
+        <h3>{{ contentBlock.titles|localized_value }}</h3>
+        {{ contentBlock.content|raw }}
+    </div>
+{% endblock %}
