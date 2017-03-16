@@ -7,6 +7,7 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
 use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
 use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -224,7 +225,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function buyerIsAgainOnShippingMethodCheckoutStepOn($shoppingListName)
     {
         $this->createOrderFromShoppingList($shoppingListName);
-        /** @var checkoutStep $checkoutStep */
+        /** @var CheckoutStep $checkoutStep */
         $checkoutStep = $this->createElement('CheckoutStep');
         $checkoutStep->assertTitle('Shipping Method');
     }

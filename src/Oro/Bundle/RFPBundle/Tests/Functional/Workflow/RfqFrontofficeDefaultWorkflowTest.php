@@ -187,12 +187,6 @@ class RfqFrontofficeDefaultWorkflowTestCase extends FrontendWebTestCase
             ['notes' => 'admin notes ']
         );
 
-        $this->transitSystem(
-            $this->request,
-            $this->getWorkflowName(),
-            'more_information_requested_transition'
-        );
-
         $crawler = $this->openEntityViewPage($this->request);
         $link = $this->getTransitionLink(
             $crawler,

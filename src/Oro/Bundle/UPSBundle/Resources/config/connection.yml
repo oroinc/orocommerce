@@ -1,0 +1,18 @@
+services:
+    oro_ups.connection.validator.request.factory.rate_request:
+        class: 'Oro\Bundle\UPSBundle\Connection\Validator\Request\Factory\RateUpsConnectionValidatorRequestFactory'
+        public: false
+        arguments:
+            - '@oro_security.encoder.mcrypt'
+
+    oro_ups.connection.validator.result.factory:
+        class: 'Oro\Bundle\UPSBundle\Connection\Validator\Result\Factory\UpsConnectionValidatorResultFactory'
+        public: false
+
+    oro_ups.connection.validator:
+        class: 'Oro\Bundle\UPSBundle\Connection\Validator\UpsConnectionValidator'
+        arguments:
+            - '@oro_ups.connection.validator.request.factory.rate_request'
+            - '@oro_ups.client.factory_basic'
+            - '@oro_ups.connection.validator.result.factory'
+            - '@logger'

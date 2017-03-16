@@ -14,6 +14,8 @@ oro:
             checkbox_label: Create 301 Redirect
         confirm_slug_change:
             checkbox_label: Create 301 Redirect from old to new URLs
+        slug_prototypes:
+            tooltip: This value is used to build human-readable URLs on the store frontend.
 
         slug:
             entity_label:           'Slug'

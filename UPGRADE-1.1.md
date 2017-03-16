@@ -59,6 +59,11 @@ FlatRateBundle
 -------------------
 - Change name of the bundle to FlatRateShippingBundle
 
+InventoryBundle
+---------------
+- REST API resource `/api/inventorylevels`
+    - the filter `productUnitPrecision.unit.code` was marked as deprecated. The `productUnitPrecision.unit.id` filter should be used instead
+
 WebsiteSearchBundle
 -------------------
 - Driver::writeItem() and Driver::flushWrites() should be used instead of Driver::saveItems()
@@ -327,6 +332,9 @@ SaleBundle
     - removed property `protected $configManager`
 - Class `Oro\Bundle\SaleBundle\EventListener\Quote\QuotePossibleShippingMethodsEventListener` removed. 
     - `Oro\Bundle\OrderBundle\EventListener\PossibleShippingMethodEventListener` must be used instead.
+- Removed property `locked` from entity class `Oro\Bundle\SaleBundle\Entity\Quote` with related methods
+- Class `Oro\Bundle\SaleBundle\Notification\NotificationHelper`
+    - removed parameter `request` from constructor
 
 ShoppingListBundle
 ------------------
@@ -414,3 +422,7 @@ CMSBundle
 ---------
 - Removed constructor of `Oro\Bundle\CMSBundle\Form\Type\CmsPageVariantType`.
     - corresponding logic moved to `Oro\Bundle\WebCatalogBundle\Form\Extension\PageVariantTypeExtension`
+
+UPSBundle
+---------
+- "Check UPS Connection" button was added on UPS integration page. Please, see [documentation](package/commerce/src/Oro/Bundle/UPSBundle/Resources/doc/credentials-validation.md) for more information.

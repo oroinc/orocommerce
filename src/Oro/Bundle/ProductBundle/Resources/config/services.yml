@@ -218,6 +218,11 @@ services:
     oro_product.provider.product_status_provider:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductStatusProvider'
 
+    oro_product.provider.product_inventory_status_provider:
+        class: 'Oro\Bundle\ProductBundle\Provider\ProductInventoryStatusProvider'
+        arguments:
+            - '@doctrine'
+
     oro_product.provider.product_type_provider:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductTypeProvider'
 
