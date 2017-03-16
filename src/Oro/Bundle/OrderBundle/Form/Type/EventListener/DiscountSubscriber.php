@@ -46,6 +46,10 @@ class DiscountSubscriber implements EventSubscriberInterface
 
         $order = $data->getOrder();
 
+        if (null === $order) {
+            return;
+        }
+
         $order->addDiscount($data);
 
         $this->totalHelper->fillDiscounts($order);

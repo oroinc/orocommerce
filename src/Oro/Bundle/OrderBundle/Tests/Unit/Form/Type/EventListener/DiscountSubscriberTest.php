@@ -106,4 +106,26 @@ class DiscountSubscriberTest extends \PHPUnit_Framework_TestCase
 
         $this->testedProcessor->onSubmitEventListener($eventMock);
     }
+
+    public function testOrderIsNull()
+    {
+        $eventMock = $this->createEventMock();
+        $orderDiscountMock = $this->createOrderDiscountMock();
+
+        $eventMock
+            ->expects(static::once())
+            ->method('getData')
+            ->willReturn($orderDiscountMock);
+
+        $orderDiscountMock
+            ->expects(static::once())
+            ->method('getOrder')
+            ->willReturn(null);
+
+        $this->totalHelperMock
+            ->expects(static::never())
+            ->method('fillDiscounts');
+
+        $this->testedProcessor->onSubmitEventListener($eventMock);
+    }
 }

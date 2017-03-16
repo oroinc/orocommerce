@@ -3,10 +3,6 @@ Oro\Bundle\OrderBundle\Entity\Order:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: identifier
         - Oro\Bundle\OrderBundle\Validator\Constraints\Discounts: ~
     properties:
-        owner:
-            - NotBlank: ~
-        organization:
-            - NotBlank: ~
         poNumber:
             - Length:
                 max: 255

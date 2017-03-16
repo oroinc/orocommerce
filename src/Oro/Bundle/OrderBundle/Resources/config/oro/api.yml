@@ -1,17 +1,8 @@
 api:
     entities:
         Oro\Bundle\OrderBundle\Entity\Order:
-            # website field is disabled in community version
             # totals are calculated using processors
             actions:
-                get:
-                    fields:
-                        website:
-                            exclude: true
-                get_list:
-                    fields:
-                        website:
-                            exclude: true
                 create:
                     fields:
                         subtotalValue:
@@ -20,8 +11,6 @@ api:
                             exclude: true
                         totalDiscountsAmount:
                             exclude: true
-                        website:
-                            exclude: true
                 update:
                     fields:
                         subtotalValue:
@@ -29,8 +18,6 @@ api:
                         totalValue:
                             exclude: true
                         totalDiscountsAmount:
-                            exclude: true
-                        website:
                             exclude: true
 
         Oro\Bundle\OrderBundle\Entity\OrderLineItem:
