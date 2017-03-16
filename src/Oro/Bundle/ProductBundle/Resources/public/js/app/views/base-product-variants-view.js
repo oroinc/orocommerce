@@ -18,9 +18,7 @@ define(function(require) {
             variantFields: ['variantForm', ':input[data-name]']
         },
 
-        elementsEvents: {
-            variantFields: ['change', 'onVariantsChange']
-        },
+        elementsEvents: {},
 
         initialize: function(options) {
             this.options = $.extend(true, {}, this.options, _.pick(options, _.keys(this.options)));
@@ -37,33 +35,6 @@ define(function(require) {
             if (options.productModel) {
                 this.model = options.productModel;
             }
-        },
-
-        onVariantsChange: function() {
-            var $form = this.getElement('variantForm');
-            $form.validate();
-
-            if (!$form.valid()) {
-                return false;
-            }
-
-            this.showLoading();
-            $form.ajaxSubmit({
-                success: _.bind(this.onVariantsLoaded, this),
-                error: _.bind(this.hideLoading, this)
-            });
-
-            return false;
-        },
-
-        onVariantsLoaded: function(response) {
-            if (!response.data) {
-                return;
-            }
-
-            this.updateProductInfo(response.data.id);
-
-            this.hideLoading();
         },
 
         updateProductInfo: function(id) {
