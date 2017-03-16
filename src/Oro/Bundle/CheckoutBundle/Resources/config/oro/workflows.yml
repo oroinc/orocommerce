@@ -344,6 +344,7 @@ workflows:
                             form_type: hidden
                             options:
                                 data: $internal_state_token
+
             finish_checkout:
                 step_to: order_created
                 transition_definition: finish_checkout_definition

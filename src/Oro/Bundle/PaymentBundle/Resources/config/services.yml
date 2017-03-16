@@ -143,7 +143,7 @@ services:
 
     oro_payment.provider.address_extractor:
         class: 'Oro\Bundle\PaymentBundle\Provider\AddressExtractor'
-        public: true
+        public: false
         arguments:
             - '@property_accessor'
 
