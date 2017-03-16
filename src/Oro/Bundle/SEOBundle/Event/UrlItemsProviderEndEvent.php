@@ -10,7 +10,7 @@ class UrlItemsProviderEndEvent extends Event
     const NAME = 'oro_seo.event.url_items_provider_end';
 
     /**
-     * @var WebsiteInterface
+     * @var WebsiteInterface|null
      */
     protected $website;
 
@@ -20,8 +20,8 @@ class UrlItemsProviderEndEvent extends Event
     protected $version;
 
     /**
-     * @param $version
-     * @param WebsiteInterface $website
+     * @param int $version
+     * @param WebsiteInterface|null $website
      */
     public function __construct($version, WebsiteInterface $website = null)
     {
@@ -30,7 +30,7 @@ class UrlItemsProviderEndEvent extends Event
     }
 
     /**
-     * @return WebsiteInterface
+     * @return WebsiteInterface|null
      */
     public function getWebsite()
     {

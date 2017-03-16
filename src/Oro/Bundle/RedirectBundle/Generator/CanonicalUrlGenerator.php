@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\RedirectBundle\Generator;
 
-use Doctrine\Common\Cache\CacheProvider;
+use Doctrine\Common\Cache\Cache;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
@@ -38,26 +38,26 @@ class CanonicalUrlGenerator
     protected $websiteSystemUrlResolver;
 
     /**
-     * @var CacheProvider
+     * @var Cache
      */
-    private $cacheProvider;
+    private $cache;
 
     /**
      * @param ConfigManager $configManager
-     * @param CacheProvider $cacheProvider
+     * @param Cache $cache
      * @param RequestStack $requestStack
      * @param RoutingInformationProvider $routingInformationProvider
      * @param WebsiteUrlResolver $websiteSystemUrlResolver
      */
     public function __construct(
         ConfigManager $configManager,
-        CacheProvider $cacheProvider,
+        Cache $cache,
         RequestStack $requestStack,
         RoutingInformationProvider $routingInformationProvider,
         WebsiteUrlResolver $websiteSystemUrlResolver
     ) {
         $this->configManager = $configManager;
-        $this->cacheProvider = $cacheProvider;
+        $this->cache = $cache;
         $this->requestStack = $requestStack;
         $this->routingInformationProvider = $routingInformationProvider;
         $this->websiteSystemUrlResolver = $websiteSystemUrlResolver;
@@ -124,9 +124,7 @@ class CanonicalUrlGenerator
             $domainUrl = $this->websiteSystemUrlResolver->getWebsiteUrl($website);
         }
 
-        $url = $this->createUrl($domainUrl, $slugUrl);
-
-        return $url;
+        return $this->createUrl($domainUrl, $slugUrl);
     }
 
     /**
@@ -165,11 +163,11 @@ class CanonicalUrlGenerator
     {
         $configKey = $this->getConfigKey(Configuration::CANONICAL_URL_TYPE);
         $cacheKey = $this->getCacheKey($configKey, $website);
-        if (!$this->cacheProvider->contains($cacheKey)) {
-            $this->cacheProvider->save($cacheKey, $this->configManager->get($configKey, false, false, $website));
+        if (!$this->cache->contains($cacheKey)) {
+            $this->cache->save($cacheKey, $this->configManager->get($configKey, false, false, $website));
         }
 
-        return $this->cacheProvider->fetch($cacheKey);
+        return $this->cache->fetch($cacheKey);
     }
 
     /**
@@ -181,11 +179,11 @@ class CanonicalUrlGenerator
     {
         $configKey = $this->getConfigKey(Configuration::CANONICAL_URL_SECURITY_TYPE);
         $cacheKey = $this->getCacheKey($configKey, $website);
-        if (!$this->cacheProvider->contains($cacheKey)) {
-            $this->cacheProvider->save($cacheKey, $this->configManager->get($configKey, false, false, $website));
+        if (!$this->cache->contains($cacheKey)) {
+            $this->cache->save($cacheKey, $this->configManager->get($configKey, false, false, $website));
         }
 
-        return $this->cacheProvider->fetch($cacheKey);
+        return $this->cache->fetch($cacheKey);
     }
 
     /**
@@ -193,11 +191,11 @@ class CanonicalUrlGenerator
      */
     public function clearCache(WebsiteInterface $website = null)
     {
-        $this->cacheProvider->delete($this->getCacheKey(
+        $this->cache->delete($this->getCacheKey(
             $this->getConfigKey(Configuration::CANONICAL_URL_TYPE),
             $website
         ));
-        $this->cacheProvider->delete($this->getCacheKey(
+        $this->cache->delete($this->getCacheKey(
             $this->getConfigKey(Configuration::CANONICAL_URL_SECURITY_TYPE),
             $website
         ));

@@ -44,7 +44,6 @@ class SitemapChangefreqType extends AbstractType
         ]);
     }
 
-
     /**
      * {@inheritdoc}
      */

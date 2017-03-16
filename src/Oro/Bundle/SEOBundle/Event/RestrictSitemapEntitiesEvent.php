@@ -21,14 +21,14 @@ class RestrictSitemapEntitiesEvent extends Event
     protected $version;
 
     /**
-     * @var WebsiteInterface
+     * @var WebsiteInterface|null
      */
     protected $website;
 
     /**
      * @param QueryBuilder $qb
      * @param int $version
-     * @param WebsiteInterface $website
+     * @param WebsiteInterface|null $website
      */
     public function __construct(QueryBuilder $qb, $version, WebsiteInterface $website = null)
     {
@@ -46,7 +46,7 @@ class RestrictSitemapEntitiesEvent extends Event
     }
 
     /**
-     * @return WebsiteInterface
+     * @return WebsiteInterface|null
      */
     public function getWebsite()
     {
