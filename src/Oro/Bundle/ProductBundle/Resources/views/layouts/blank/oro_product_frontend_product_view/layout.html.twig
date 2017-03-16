@@ -226,3 +226,17 @@
         </div>
     </div>
 {% endblock %}
+
+{% block _product_require_js_config_widget %}
+    <script>
+        require({
+            config: {
+                'oroui/js/app/views/tab-collection-view': {tamplateClassName: 'product-attributes-tabs'},
+                'oroui/js/app/views/tab-item-view': {
+                    className: 'product-attributes-tabs__item',
+                    tamplateClassName: 'product-attributes-tabs__link'
+                }
+            }
+        });
+    </script>
+{% endblock %}
