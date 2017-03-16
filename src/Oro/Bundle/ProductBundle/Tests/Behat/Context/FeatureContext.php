@@ -143,7 +143,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function fillProductFieldsWithNextData(TableNode $table)
     {
         /** @var Form $form */
-        $form = $this->createElement('Product');
+        $form = $this->createElement('ProductForm');
 
         if (in_array('AdditionalUnit', $table->getColumn(0), true)) {
             $additionalUnitAdd = $form->find('css', 'a.btn.add-list-item');
