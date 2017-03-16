@@ -104,6 +104,7 @@ services:
 
     oro_seo.sitemap.provider.sitemap_files_provider:
         class: Oro\Bundle\SEOBundle\Sitemap\Provider\SitemapFilesProvider
+        public: false
         arguments:
             - '@oro_seo.sitemap.filesystem_adapter'
             - '@oro_redirect.generator.canonical_url'
@@ -111,6 +112,7 @@ services:
 
     oro_seo.sitemap.filesystem_adapter:
         class: Oro\Bundle\SEOBundle\Sitemap\Filesystem\SitemapFilesystemAdapter
+        public: false
         arguments:
             - '@filesystem'
             - '@oro_seo.sitemap.sitemap_file_writer'
@@ -118,6 +120,7 @@ services:
 
     oro_seo.sitemap.sitemap_url_dumper:
         class: Oro\Bundle\SEOBundle\Sitemap\Dumper\SitemapDumper
+        public: false
         arguments:
             - '@oro_seo.sitemap.provider.url_items_provider_registry'
             - '@oro_seo.sitemap.sitemap_storage_factory'
@@ -132,6 +135,7 @@ services:
 
     oro_seo.sitemap.sitemap_index_dumper:
         class: Oro\Bundle\SEOBundle\Sitemap\Dumper\SitemapDumper
+        public: false
         arguments:
             - '@oro_seo.sitemap.provider.url_items_provider_registry_index'
             - '@oro_seo.sitemap.sitemap_storage_factory'
@@ -160,6 +164,7 @@ services:
     oro_seo.sitemap.provider.product_url_items_provider:
         class: '%oro_seo.sitemap.provider.url_items_provider.class%'
         parent: oro_seo.sitemap.provider.url_items_provider
+        public: false
         arguments:
             - 'product'
             - '%oro_product.entity.product.class%'
@@ -169,6 +174,7 @@ services:
     oro_seo.sitemap.provider.category_url_items_provider:
         class: '%oro_seo.sitemap.provider.url_items_provider.class%'
         parent: oro_seo.sitemap.provider.url_items_provider
+        public: false
         arguments:
             - 'category'
             - '%oro_catalog.entity.category.class%'
@@ -179,6 +185,7 @@ services:
     oro_seo.sitemap.provider.cms_page_url_items_provider:
         class: '%oro_seo.sitemap.provider.url_items_provider.class%'
         parent: oro_seo.sitemap.provider.url_items_provider
+        public: false
         arguments:
             - 'cms_page'
             - '%oro_cms.entity.page.class%'
@@ -264,6 +271,7 @@ services:
 
     oro_seo.manager.robots_txt:
         class: Oro\Bundle\SEOBundle\Manager\RobotsTxtManager
+        public: false
         arguments:
             - '@logger'
             - '@filesystem'
@@ -297,6 +305,7 @@ services:
 
     oro_seo.limiter.web_catalog_product_limiter:
         class: 'Oro\Bundle\SEOBundle\Limiter\WebCatalogProductLimiter'
+        public: false
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_config.manager'

@@ -12,6 +12,7 @@ use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\SEOBundle\Layout\DataProvider\LocalizedLinksDataProvider;
 use Oro\Bundle\SEOBundle\Model\DTO\AlternateUrl;
+use Oro\Bundle\TranslationBundle\Entity\Language;
 use Oro\Component\Testing\Unit\EntityTrait;
 use Symfony\Component\Validator\Constraints\Locale;
 use Symfony\Component\Validator\ConstraintViolationListInterface;
@@ -106,8 +107,10 @@ class LocalizedLinksDataProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetAlternatesWithSlugAwareInterfaceData()
     {
-        $enLocalization = $this->getEntity(Localization::class, ['id' => 1, 'languageCode' => 'en']);
-        $frLocalization = $this->getEntity(Localization::class, ['id' => 2, 'languageCode' => 'fr_FR']);
+        $languageEn = $this->getEntity(Language::class, ['code' => 'en']);
+        $languageFr = $this->getEntity(Language::class, ['code' => 'fr_FR']);
+        $enLocalization = $this->getEntity(Localization::class, ['id' => 1, 'language' => $languageEn]);
+        $frLocalization = $this->getEntity(Localization::class, ['id' => 2, 'language' => $languageFr]);
 
         $this->configureUserLocalizationManagerWithLocalizations([$enLocalization, $frLocalization]);
 
@@ -152,8 +155,10 @@ class LocalizedLinksDataProviderTest extends \PHPUnit_Framework_TestCase
         $canonicalUrlType,
         $enableDirectUrl
     ) {
-        $enLocalization = $this->getEntity(Localization::class, ['id' => 1, 'languageCode' => 'en']);
-        $frLocalization = $this->getEntity(Localization::class, ['id' => 2, 'languageCode' => 'fr_FR']);
+        $languageEn = $this->getEntity(Language::class, ['code' => 'en']);
+        $languageFr = $this->getEntity(Language::class, ['code' => 'fr_FR']);
+        $enLocalization = $this->getEntity(Localization::class, ['id' => 1, 'language' => $languageEn]);
+        $frLocalization = $this->getEntity(Localization::class, ['id' => 2, 'language' => $languageFr]);
 
         $this->configureUserLocalizationManagerWithLocalizations([$enLocalization, $frLocalization]);
 
@@ -195,7 +200,8 @@ class LocalizedLinksDataProviderTest extends \PHPUnit_Framework_TestCase
         $canonicalUrlType,
         $enableDirectUrl
     ) {
-        $enLocalization = $this->getEntity(Localization::class, ['id' => 1, 'languageCode' => 'en']);
+        $languageEn = $this->getEntity(Language::class, ['code' => 'en']);
+        $enLocalization = $this->getEntity(Localization::class, ['id' => 1, 'language' => $languageEn]);
 
         $this->configureUserLocalizationManagerWithLocalizations([$enLocalization]);
 
@@ -235,8 +241,10 @@ class LocalizedLinksDataProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetAlternatesWithSluggableInterfaceDataAndDirectUrlSupported()
     {
-        $enLocalization = $this->getEntity(Localization::class, ['id' => 1, 'languageCode' => 'en']);
-        $frLocalization = $this->getEntity(Localization::class, ['id' => 2, 'languageCode' => 'fr_FR']);
+        $languageEn = $this->getEntity(Language::class, ['code' => 'en']);
+        $languageFr = $this->getEntity(Language::class, ['code' => 'fr_FR']);
+        $enLocalization = $this->getEntity(Localization::class, ['id' => 1, 'language' => $languageEn]);
+        $frLocalization = $this->getEntity(Localization::class, ['id' => 2, 'language' => $languageFr]);
 
         $this->configureUserLocalizationManagerWithLocalizations([$enLocalization, $frLocalization]);
 
@@ -276,10 +284,13 @@ class LocalizedLinksDataProviderTest extends \PHPUnit_Framework_TestCase
     {
         $enLanguageCode = 'en';
         $notValidLanguageCode = 'fr_FRA';
-        $enLocalization = $this->getEntity(Localization::class, ['id' => 1, 'languageCode' => $enLanguageCode]);
+
+        $languageEn = $this->getEntity(Language::class, ['code' => $enLanguageCode]);
+        $languageFr = $this->getEntity(Language::class, ['code' => $notValidLanguageCode]);
+        $enLocalization = $this->getEntity(Localization::class, ['id' => 1, 'language' => $languageEn]);
         $notValidLanguageLocalization = $this->getEntity(Localization::class, [
             'id' => 2,
-            'languageCode' => $notValidLanguageCode
+            'language' => $languageFr
         ]);
 
         $this->configureUserLocalizationManagerWithLocalizations([$enLocalization, $notValidLanguageLocalization]);
@@ -320,10 +331,12 @@ class LocalizedLinksDataProviderTest extends \PHPUnit_Framework_TestCase
 
         $enLanguageCode = 'en';
         $notValidLanguageCode = 'fr_FRA';
-        $enLocalization = $this->getEntity(Localization::class, ['id' => 1, 'languageCode' => $enLanguageCode]);
+        $languageEn = $this->getEntity(Language::class, ['code' => $enLanguageCode]);
+        $languageFr = $this->getEntity(Language::class, ['code' => $notValidLanguageCode]);
+        $enLocalization = $this->getEntity(Localization::class, ['id' => 1, 'language' => $languageEn]);
         $notValidLanguageLocalization = $this->getEntity(Localization::class, [
             'id' => 2,
-            'languageCode' => $notValidLanguageCode
+            'language' => $languageFr
         ]);
 
         $this->configureUserLocalizationManagerWithLocalizations([$enLocalization, $notValidLanguageLocalization]);
