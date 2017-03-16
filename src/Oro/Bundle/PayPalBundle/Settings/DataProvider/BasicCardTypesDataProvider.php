@@ -36,4 +36,15 @@ class BasicCardTypesDataProvider implements CardTypesDataProviderInterface
             self::AMERICAN_EXPRESS,
         ];
     }
+
+    /**
+     * @return string[]
+     */
+    public function getDefaultCardTypes()
+    {
+        return [
+            self::VISA,
+            self::MASTERCARD,
+        ];
+    }
 }

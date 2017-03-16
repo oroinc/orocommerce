@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PayPalBundle\Form\Type;
 
+use Oro\Bundle\ConfigBundle\Form\Type\FormFieldType;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
 use Oro\Bundle\PayPalBundle\Settings\DataProvider\CardTypesDataProviderInterface;
@@ -128,6 +129,7 @@ class PayPalSettingsType extends AbstractType
             ])
             ->add('allowedCreditCardTypes', ChoiceType::class, [
                 'choices' => $this->cardTypesDataProvider->getCardTypes(),
+                'empty_data' => $this->cardTypesDataProvider->getDefaultCardTypes(),
                 'choices_as_values' => true,
                 'choice_label' => function ($cardType) {
                     return $this->translator->trans(
@@ -164,6 +166,7 @@ class PayPalSettingsType extends AbstractType
             ])
             ->add('requireCVVEntry', CheckboxType::class, [
                 'label' => 'oro.paypal.settings.require_cvv.label',
+                'empty_data' => true,
                 'required' => false,
             ])
             ->add('zeroAmountAuthorization', CheckboxType::class, [
@@ -188,6 +191,7 @@ class PayPalSettingsType extends AbstractType
             ])
             ->add('enableSSLVerification', CheckboxType::class, [
                 'label' => 'oro.paypal.settings.enable_ssl_verification.label',
+                'empty_data' => true,
                 'required' => false,
             ]);
         $this->transformWithEncodedValue($builder, 'vendor');
