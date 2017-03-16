@@ -6,6 +6,9 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+/**
+ * @dbIsolationPerTest
+ */
 class QuickAddFeatureToggleTest extends WebTestCase
 {
     /** @var ConfigManager $configManager */
@@ -19,12 +22,6 @@ class QuickAddFeatureToggleTest extends WebTestCase
         );
 
         $this->configManager = $this->getContainer()->get('oro_config.manager');
-    }
-
-    protected function tearDown()
-    {
-        $this->configManager->reset('oro_product.enable_quick_order_form');
-        $this->configManager->flush();
     }
 
     /**

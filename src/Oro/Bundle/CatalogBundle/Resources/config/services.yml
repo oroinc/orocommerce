@@ -25,13 +25,6 @@ services:
         arguments:
             - '%oro_catalog.entity.category.class%'
 
-    oro_catalog.category.manager.api:
-        class: 'Oro\Bundle\SoapBundle\Entity\Manager\ApiEntityManager'
-        parent: oro_soap.manager.entity_manager.abstract
-        arguments:
-            - '%oro_catalog.entity.category.class%'
-            - "@doctrine.orm.entity_manager"
-
     oro_catalog.event_listener.form_view:
         class: 'Oro\Bundle\CatalogBundle\EventListener\FormViewListener'
         arguments:
@@ -194,9 +187,10 @@ services:
         arguments:
             - '@oro_catalog.manager.product_index_scheduler'
             - '@property_accessor'
+            - '@oro_entity.doctrine.field_updates_checker'
+            - '@?oro_web_catalog.provider.web_catalog_usage_provider'
         tags:
             - { name: doctrine.event_listener, event: onFlush }
-            - { name: kernel.event_listener, event: oro.form.update_handler.after_entity_flush, method: onFormAfterFlush }
 
     oro_catalog.visibility.default_product_options:
         class: 'Oro\Bundle\CatalogBundle\Visibility\BasicCategoryDefaultProductUnitOptionsVisibility'
@@ -213,6 +207,7 @@ services:
     oro_catalog.config.event_listener.direct_url_prefix_change:
         class: Oro\Bundle\RedirectBundle\EventListener\ConfigRegenerateDirectUrlListener
         arguments:
+            - '@oro_config.manager'
             - '@oro_message_queue.client.message_producer'
             - '@oro_redirect.form.storage.redirect_storage'
             - '@oro_redirect.direct_url_message_factory'

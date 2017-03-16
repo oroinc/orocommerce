@@ -78,6 +78,9 @@ class Quote extends ExtendQuote implements
     const CUSTOMER_STATUS_CODE = 'quote_customer_status';
     const INTERNAL_STATUS_CODE = 'quote_internal_status';
 
+    const INTERNAL_STATUS_DRAFT = 'draft';
+    const INTERNAL_STATUS_DELETED = 'deleted';
+
     /**
      * @var int
      *
@@ -190,20 +193,6 @@ class Quote extends ExtendQuote implements
     /**
      * @var bool
      *
-     * @ORM\Column(type="boolean")
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
-     */
-    protected $locked = false;
-
-    /**
-     * @var bool
-     *
      * @ORM\Column(type="boolean", options={"default"=false})
      * @ConfigField(
      *      defaultValues={
@@ -281,14 +270,14 @@ class Quote extends ExtendQuote implements
      *
      * @var bool
      */
-    private $shippingMethodLocked = false;
+    protected $shippingMethodLocked = false;
 
     /**
      * @ORM\Column(name="allow_unlisted_shipping_method", type="boolean", options={"default"=false})
      *
      * @var bool
      */
-    private $allowUnlistedShippingMethod = false;
+    protected $allowUnlistedShippingMethod = false;
 
     /**
      * @var float
@@ -477,26 +466,6 @@ class Quote extends ExtendQuote implements
     public function getRequest()
     {
         return $this->request;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isLocked()
-    {
-        return $this->locked;
-    }
-
-    /**
-     * @param bool $locked
-     *
-     * @return Quote
-     */
-    public function setLocked($locked)
-    {
-        $this->locked = (bool)$locked;
-
-        return $this;
     }
 
     /**

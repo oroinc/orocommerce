@@ -2,6 +2,11 @@
 
 namespace Oro\Bundle\PricingBundle\Command;
 
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerGroupRepository;
@@ -14,10 +19,6 @@ use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class PriceListRecalculateCommand extends ContainerAwareCommand
 {
@@ -28,6 +29,7 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
     const WEBSITE = 'website';
     const PRICE_LIST = 'price-list';
     const DISABLE_TRIGGERS = 'disable-triggers';
+    const VERBOSE = 'verbose';
 
     /**
      * {@inheritdoc}
@@ -79,6 +81,9 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->getContainer()->get('oro_pricing.resolver.combined_product_price_resolver')
+            ->setOutput($output);
+
         $disableTriggers = (bool)$input->getOption(self::DISABLE_TRIGGERS);
         if (true === $disableTriggers) {
             $this->disableAllTriggers($output);

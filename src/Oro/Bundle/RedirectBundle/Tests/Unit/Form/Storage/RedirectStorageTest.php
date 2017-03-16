@@ -34,5 +34,6 @@ class RedirectStorageTest extends \PHPUnit_Framework_TestCase
         $this->redirectStorage->addPrefix($keyTwo, $prefixTwo);
         $this->assertEquals($prefixOne, $this->redirectStorage->getPrefixByKey($keyOne));
         $this->assertEquals($prefixTwo, $this->redirectStorage->getPrefixByKey($keyTwo));
+        $this->assertEquals(null, $this->redirectStorage->getPrefixByKey('not_existing_key'));
     }
 }

@@ -1,0 +1,6 @@
+layout:
+    actions:
+        - '@appendOption':
+            id: page_main
+            optionName: attr.class
+            optionValue: ' offset-none'

@@ -21,7 +21,8 @@
         "bower-asset/jquery-creditcardvalidator": "1.0",
         "bower-asset/jquery-validate": "1.11.1",
         "bower-asset/elevatezoom3": "3.0.8.1",
-        "besimple/soap-client": "^0.2.6"
+        "besimple/soap-client": "^0.2.6",
+        "bower-asset/prism": "1.6.0"
     },
     "extra": {
         "branch-alias": {

@@ -10,7 +10,7 @@ class FlatRateChannelType implements ChannelInterface, IconAwareIntegrationInter
     const TYPE = 'flat_rate';
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getLabel()
     {
@@ -18,12 +18,10 @@ class FlatRateChannelType implements ChannelInterface, IconAwareIntegrationInter
     }
 
     /**
-     * TODO: add icon
-     *
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getIcon()
     {
-        return 'bundles/oroflatrate/img/flat-logo.gif';
+        return 'bundles/oroflatrateshipping/img/flat-rate-logo.png';
     }
 }
