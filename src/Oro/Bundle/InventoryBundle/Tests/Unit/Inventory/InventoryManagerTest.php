@@ -7,7 +7,7 @@ use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Entity\Repository\InventoryLevelRepository;
 use Oro\Bundle\InventoryBundle\Inventory\InventoryManager;
 use Oro\Bundle\InventoryBundle\Tests\Unit\Inventory\Stub\InventoryStatusStub;
-use Oro\Bundle\InventoryBundle\Tests\Unit\Inventory\Stub\ProductStub;
+use Oro\Bundle\ProductBundle\Tests\Unit\Stub\ProductStub;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
@@ -38,7 +38,7 @@ class InventoryManagerTest extends \PHPUnit_Framework_TestCase
     public function testCreateInventoryLevel()
     {
         $product = new ProductStub();
-        $product->setInventoryStatus(new InventoryStatusStub(1, Product::INVENTORY_STATUS_OUT_OF_STOCK));
+        $product->inventoryStatus = new InventoryStatusStub(1, Product::INVENTORY_STATUS_OUT_OF_STOCK);
         $productUnitPrecision = $this->createMock(ProductUnitPrecision::class);
         $productUnitPrecision->expects($this->exactly(2))
             ->method('getProduct')
@@ -50,7 +50,7 @@ class InventoryManagerTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(InventoryLevel::class, $result);
         $this->assertEquals(
             Product::INVENTORY_STATUS_OUT_OF_STOCK,
-            $result->getProduct()->getInventoryStatus()->getName()
+            $result->getProduct()->inventoryStatus->getName()
         );
     }
 

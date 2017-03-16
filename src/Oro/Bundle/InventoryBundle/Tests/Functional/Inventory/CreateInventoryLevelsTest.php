@@ -17,6 +17,9 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class CreateInventoryLevelsTest extends WebTestCase
 {
+    /**
+     * {@inheritdoc}
+     */
     public function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
@@ -107,106 +110,22 @@ class CreateInventoryLevelsTest extends WebTestCase
     }
 
     /**
-     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
-     *
      * @depends testCreateInventoryLevels
      */
     public function testAddAdditionalUnit()
     {
         $product = $this->getProductDataBySku(ProductTestHelper::TEST_SKU);
         $id = $product->getId();
-        $localization = $this->getLocalization();
-        $localizedName = $this->getLocalizedName($product, $localization);
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $id]));
         $this->assertEquals(
             1,
             $crawler->filterXPath("//li/a[contains(text(),'" . ProductTestHelper::CATEGORY_MENU_NAME . "')]")->count()
         );
-        $businessUnitId = $this->getContainer()
-            ->get('oro_security.security_facade')
-            ->getLoggedUser()
-            ->getOwner()
-            ->getId();
-        /** @var Form $form */
         $form = $crawler->selectButton('Save and Close')->form();
 
         $data = $form->getPhpValues()['oro_product'];
-        $submittedData = [
-            'input_action' => 'save_and_stay',
-            'oro_product' => array_merge($data, [
-                '_token' => $form['oro_product[_token]']->getValue(),
-                'sku' => ProductTestHelper::UPDATED_SKU,
-                'owner' => $businessUnitId,
-                'inventory_status' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
-                'status' => Product::STATUS_ENABLED,
-                'type' => Product::TYPE_SIMPLE,
-                'primaryUnitPrecision' => [
-                    'unit' => ProductTestHelper::FIRST_UNIT_CODE,
-                    'precision' => ProductTestHelper::FIRST_UNIT_PRECISION,
-                ],
-                'additionalUnitPrecisions' => [
-                    [
-                        'unit' => ProductTestHelper::SECOND_UNIT_CODE,
-                        'precision' => ProductTestHelper::SECOND_UNIT_PRECISION,
-                        'conversionRate' => 2, 'sell' => false
-                    ],
-                    [
-                        'unit' => ProductTestHelper::THIRD_UNIT_CODE,
-                        'precision' => ProductTestHelper::THIRD_UNIT_PRECISION,
-                        'conversionRate' => 3, 'sell' => true
-                    ]
-                ],
-                'names' => [
-                    'values' => [
-                        'default' => ProductTestHelper::DEFAULT_NAME_ALTERED,
-                        'localizations' => [
-                            $localization->getId() => [
-                                'fallback' => FallbackType::SYSTEM
-                            ]
-                        ],
-                    ],
-                    'ids' => [
-                        $localization->getId() => $localizedName->getId()
-                    ],
-                ],
-                'descriptions' => [
-                    'values' => [
-                        'default' => ProductTestHelper::DEFAULT_DESCRIPTION,
-                        'localizations' => [
-                            $localization->getId() => [
-                                'fallback' => FallbackType::SYSTEM
-                            ]
-                        ],
-                    ],
-                    'ids' => [
-                        $localization->getId() => $localizedName->getId()
-                    ],
-                ],
-                'shortDescriptions' => [
-                    'values' => [
-                        'default' => ProductTestHelper::DEFAULT_SHORT_DESCRIPTION,
-                        'localizations' => [
-                            $localization->getId() => [
-                                'fallback' => FallbackType::SYSTEM
-                            ]
-                        ],
-                    ],
-                    'ids' => [
-                        $localization->getId() => $localizedName->getId()
-                    ],
-                ],
-                'images' => [
-                    0 => [
-                        'main' => 1,
-                        'listing' => 1
-                    ],
-                    1 => [
-                        'additional' => 1
-                    ]
-                ]
-            ]),
-        ];
+        $submittedData = $this->getSubmittedData($data, $product, $form);
 
         $this->client->followRedirects(true);
         $this->client->request($form->getMethod(), $form->getUri(), $submittedData);
@@ -288,5 +207,98 @@ class CreateInventoryLevelsTest extends WebTestCase
         $this->assertNotEmpty($product);
 
         return $product;
+    }
+
+    /**
+     * @param array $data
+     * @param Product $product
+     * @param Form $form
+     * @return array
+     */
+    private function getSubmittedData(array $data, Product $product, Form $form)
+    {
+        $localization = $this->getLocalization();
+        $localizedName = $this->getLocalizedName($product, $localization);
+        $businessUnitId = $this->getContainer()
+            ->get('oro_security.security_facade')
+            ->getLoggedUser()
+            ->getOwner()
+            ->getId();
+
+        return [
+            'input_action' => 'save_and_stay',
+            'oro_product' => array_merge($data, [
+                '_token' => $form['oro_product[_token]']->getValue(),
+                'sku' => ProductTestHelper::UPDATED_SKU,
+                'owner' => $businessUnitId,
+                'inventory_status' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
+                'status' => Product::STATUS_ENABLED,
+                'type' => Product::TYPE_SIMPLE,
+                'primaryUnitPrecision' => [
+                    'unit' => ProductTestHelper::FIRST_UNIT_CODE,
+                    'precision' => ProductTestHelper::FIRST_UNIT_PRECISION,
+                ],
+                'additionalUnitPrecisions' => [
+                    [
+                        'unit' => ProductTestHelper::SECOND_UNIT_CODE,
+                        'precision' => ProductTestHelper::SECOND_UNIT_PRECISION,
+                        'conversionRate' => 2, 'sell' => false
+                    ],
+                    [
+                        'unit' => ProductTestHelper::THIRD_UNIT_CODE,
+                        'precision' => ProductTestHelper::THIRD_UNIT_PRECISION,
+                        'conversionRate' => 3, 'sell' => true
+                    ]
+                ],
+                'names' => [
+                    'values' => [
+                        'default' => ProductTestHelper::DEFAULT_NAME_ALTERED,
+                        'localizations' => [
+                            $localization->getId() => [
+                                'fallback' => FallbackType::SYSTEM
+                            ]
+                        ],
+                    ],
+                    'ids' => [
+                        $localization->getId() => $localizedName->getId()
+                    ],
+                ],
+                'descriptions' => [
+                    'values' => [
+                        'default' => ProductTestHelper::DEFAULT_DESCRIPTION,
+                        'localizations' => [
+                            $localization->getId() => [
+                                'fallback' => FallbackType::SYSTEM
+                            ]
+                        ],
+                    ],
+                    'ids' => [
+                        $localization->getId() => $localizedName->getId()
+                    ],
+                ],
+                'shortDescriptions' => [
+                    'values' => [
+                        'default' => ProductTestHelper::DEFAULT_SHORT_DESCRIPTION,
+                        'localizations' => [
+                            $localization->getId() => [
+                                'fallback' => FallbackType::SYSTEM
+                            ]
+                        ],
+                    ],
+                    'ids' => [
+                        $localization->getId() => $localizedName->getId()
+                    ],
+                ],
+                'images' => [
+                    0 => [
+                        'main' => 1,
+                        'listing' => 1
+                    ],
+                    1 => [
+                        'additional' => 1
+                    ]
+                ]
+            ]),
+        ];
     }
 }

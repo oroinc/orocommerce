@@ -15,6 +15,9 @@ class ProductFlushEventListener
      */
     protected $inventoryManager;
 
+    /**
+     * @param InventoryManager $inventoryManager
+     */
     public function __construct(InventoryManager $inventoryManager)
     {
         $this->inventoryManager = $inventoryManager;

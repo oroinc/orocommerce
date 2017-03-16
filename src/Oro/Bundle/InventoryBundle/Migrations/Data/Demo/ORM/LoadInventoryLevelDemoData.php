@@ -8,7 +8,6 @@ use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\MigrationBundle\Fixture\AbstractEntityReferenceFixture;
-use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData;
 
 class LoadInventoryLevelDemoData extends AbstractEntityReferenceFixture implements DependentFixtureInterface

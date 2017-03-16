@@ -25,9 +25,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->loadFixtures([
-            UpdateInventoryLevelsQuantities::class,
-        ]);
+        $this->loadFixtures([UpdateInventoryLevelsQuantities::class]);
     }
 
     /**

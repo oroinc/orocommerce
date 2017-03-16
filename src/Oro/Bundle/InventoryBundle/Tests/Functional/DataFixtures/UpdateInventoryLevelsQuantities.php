@@ -17,14 +17,22 @@ class UpdateInventoryLevelsQuantities extends AbstractEntityReferenceFixture imp
     /**
      * {@inheritdoc}
      */
+    public function getDependencies()
+    {
+        return [
+            LoadProductUnitPrecisions::class,
+        ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function load(ObjectManager $manager)
     {
         /** @var InventoryLevelRepository $inventoryRepository */
-        $inventoryRepository = $manager->getRepository('OroInventoryBundle:InventoryLevel');
-        
-        $productInventoryData = $this->getInventoryLevelUpdateData();
+        $inventoryRepository = $manager->getRepository(InventoryLevel::class);
 
-        /** @var InventoryLevel $inventoryLevel */
+        $productInventoryData = $this->getInventoryLevelUpdateData();
         foreach ($productInventoryData as $productKey => $data) {
             foreach ($data as $item) {
                 if (isset($item['isPrimary'])) {
@@ -49,8 +57,7 @@ class UpdateInventoryLevelsQuantities extends AbstractEntityReferenceFixture imp
     /**
      * Group data in array with product sku as key and inventory data as value
      *
-     * @param $data Array containing inventory data fixtures for update
-     *
+     * @param array $data Array containing inventory data fixtures for update
      * @return array
      */
     protected function getProductInventory($data)
@@ -84,15 +91,5 @@ class UpdateInventoryLevelsQuantities extends AbstractEntityReferenceFixture imp
         $data = Yaml::parse(file_get_contents($filePath));
 
         return $this->getProductInventory($data);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getDependencies()
-    {
-        return [
-            LoadProductUnitPrecisions::class,
-        ];
     }
 }
