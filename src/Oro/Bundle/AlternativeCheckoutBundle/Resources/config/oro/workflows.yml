@@ -287,7 +287,6 @@ workflows:
                     is_checkout_show_errors: true
                 form_options:
                     form_init:
-                        - '@assign_constant_value': [$payment_method, 'Oro\Bundle\PaymentTermBundle\Method\PaymentTerm::TYPE']
                         - '@generate_checkout_state_snapshot':
                             entity: $checkout
                             attribute: $.result.initCheckoutState
@@ -1255,7 +1254,7 @@ workflows:
                 preconditions:
                     '@and':
                         - '@payment_method_applicable':
-                            payment_method: 'payment_term'
+                            payment_method: $payment_method
                             context: $.result.paymentContext
                         - '@order_line_item_has_count':
                             message: oro.checkout.workflow.condition.order_line_item_has_count.message
