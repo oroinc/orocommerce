@@ -5,7 +5,6 @@ services:
             - "@oro_ups.provider.transport"
             - '@oro_shipping.shipping_origin.provider'
             - '@oro_entity.doctrine_helper'
-            - '@oro_security.encoder.mcrypt'
         tags:
             - { name: form.type, alias: oro_ups_transport_settings_type }
 

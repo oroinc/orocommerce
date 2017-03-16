@@ -1,3 +1,7 @@
+parameters:
+    oro_ups.api.url.production: https://onlinetools.ups.com/rest
+    oro_ups.api.url.test: https://wwwcie.ups.com/rest
+
 services:
     # Providers
     oro_ups.provider.channel:
@@ -8,6 +12,7 @@ services:
     oro_ups.provider.transport:
         class: 'Oro\Bundle\UPSBundle\Provider\UPSTransport'
         arguments:
+            - '@oro_ups.client.url_provider_basic'
             - '@logger'
         calls:
             - [setRestClientFactory, ['@oro_integration.transport.rest.client_factory']]
@@ -124,3 +129,15 @@ services:
             - '@oro_shipping.method_disable_handler.decorator'
         tags:
             - { name: kernel.event_listener, event: oro_integration.channel_disable, method: onIntegrationDisable }
+
+    oro_ups.client.url_provider_basic:
+        class: 'Oro\Bundle\UPSBundle\Client\Url\Provider\Basic\BasicUpsClientUrlProvider'
+        arguments:
+            - '%oro_ups.api.url.production%'
+            - '%oro_ups.api.url.test%'
+
+    oro_ups.client.factory_basic:
+        class: 'Oro\Bundle\UPSBundle\Client\Factory\Basic\BasicUpsClientFactory'
+        arguments:
+            - '@oro_integration.transport.rest.client_factory'
+            - '@oro_ups.client.url_provider_basic'
