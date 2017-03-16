@@ -6,8 +6,7 @@ parameters:
 services:
     oro_web_catalog.provider.web_catalog_usage_provider:
         class: Oro\Bundle\WebCatalogBundle\Provider\WebCatalogUsageProvider
-        arguments:
-            - '@oro_config.global'
+        arguments: ['@oro_config.manager', '@doctrine']
 
     oro_web_catalog.acl.voter.web_catalog:
         class: Oro\Bundle\WebCatalogBundle\Acl\Voter\WebCatalogVoter
@@ -157,6 +156,7 @@ services:
             - '@oro_web_catalog.content_variant_type.registry'
             - '@oro_redirect.generator.redirect'
             - '@oro_locale.helper.localization'
+            - '@oro_redirect.generator.slug_url_differ'
 
     oro_web_catalog.generator.slug_generator.link:
         tags:

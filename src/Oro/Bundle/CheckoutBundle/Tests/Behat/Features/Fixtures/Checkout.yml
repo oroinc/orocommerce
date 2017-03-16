@@ -1,17 +1,41 @@
 Oro\Bundle\RuleBundle\Entity\Rule:
-    rule:
+    paymentRule:
+        name: 'Default'
+        enabled: true
+        sortOrder: 1
+    shippingRule:
         name: 'Default'
         enabled: true
         sortOrder: 1
 
 Oro\Bundle\PaymentBundle\Entity\PaymentMethodConfig:
     paymentMethodConfig:
-        type: '<("payment_term_" . @paymentTermIntegration->id)>'
+        type: '<("payment_term_".@paymentTermIntegration->id)>'
 
 Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule:
     paymentMethodsConfigsRule:
-        rule: '@rule'
+        rule: '@paymentRule'
         methodConfigs: ['@paymentMethodConfig']
+        currency: 'USD'
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
+    shippingMethodTypeConfig:
+        type: 'primary'
+        enabled: true
+        options:
+            price: 1.5
+            type: 'per_order'
+            handling_fee: 1.5
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
+    shippingMethodConfig:
+        method: '<("flat_rate_".@flatRateIntegration->id)>'
+        typeConfigs: ['@shippingMethodTypeConfig']
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
+    shippingMethodsConfigsRule:
+        rule: '@shippingRule'
+        methodConfigs: ['@shippingMethodConfig']
         currency: 'USD'
 
 Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm:
@@ -111,7 +135,7 @@ Oro\Bundle\PricingBundle\Entity\PriceListToCustomer:
         customer: '@customer'
         pricelist: '@pricelistShipping'
         website: '@website1'
-        priority: 200
+        sortOrder: 200
 
 Oro\Bundle\PricingBundle\Entity\ProductPrice:
     productPrice:

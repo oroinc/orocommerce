@@ -3,6 +3,8 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
@@ -114,6 +116,8 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
             [
                 'data' => $defaultVariant->{self::FIELD_COLOR},
                 'label' => self::FIELD_COLOR,
+                'placeholder' => 'oro.product.type.please_select_option',
+                'empty_data' => null
             ]
         );
 
@@ -128,6 +132,8 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
             [
                 'data' => $defaultVariant->{self::FIELD_NEW},
                 'label' => self::FIELD_NEW,
+                'placeholder' => 'oro.product.type.please_select_option',
+                'empty_data' => null
             ]
         );
 
@@ -254,5 +260,39 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
             ->willReturn($form);
 
         return $handler;
+    }
+
+    public function testFinishView()
+    {
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->createMock(FormInterface::class);
+
+        $formView = new FormView();
+
+        $product = new Product();
+        $product->setVariantFields([ 'field_first', 'field_second']);
+        $productVariant = new Product();
+
+        $this->productVariantAvailabilityProvider->expects($this->once())
+            ->method('getSimpleProductsByVariantFields')
+            ->with($product)
+            ->willReturn([$productVariant]);
+
+        $this->productVariantAvailabilityProvider->expects($this->exactly(2))
+            ->method('getVariantFieldScalarValue')
+            ->withConsecutive(
+                [$productVariant, 'field_first'],
+                [$productVariant, 'field_second']
+            )
+            ->willReturnOnConsecutiveCalls('value1', 'value2');
+
+        $expectedResult = [
+            null => [
+                'field_first' => 'value1',
+                'field_second' => 'value2',
+            ]
+        ];
+
+        $this->type->finishView($formView, $form, ['parentProduct' => $product]);
     }
 }
