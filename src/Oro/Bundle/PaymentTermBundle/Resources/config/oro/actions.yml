@@ -25,6 +25,14 @@ operations:
         for_all_entities: false
         preactions:
             - '@call_service_method':
+                service: oro_entity_config.helper.entity_config
+                method: getConfigValue
+                method_parameters: [$.data, 'label', false]
+                attribute: $.entityLabel
+            - '@trans':
+                id: $.entityLabel
+                attribute: $.entityLabel
+            - '@call_service_method':
                  service: oro_payment_term.payment_term.delete_message_generator
                  method: getDeleteMessageTextForDataGrid
                  method_parameters: [$id]
@@ -38,6 +46,7 @@ operations:
         actions:
             - '@redirect': {route: 'oro_payment_term_index'}
         frontend_options:
+            title: oro.action.delete_entity
             confirmation:
                 message: oro.paymentterm.delete.message.placeholder
                 message_parameters:

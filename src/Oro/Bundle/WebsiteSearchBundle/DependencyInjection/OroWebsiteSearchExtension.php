@@ -7,6 +7,9 @@ use Symfony\Component\Config\FileLocator;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Loader;
 
+use Oro\Component\Config\Loader\CumulativeConfigLoader;
+use Oro\Component\Config\Loader\YamlCumulativeFileLoader;
+
 class OroWebsiteSearchExtension extends Extension
 {
     const ALIAS = 'oro_website_search';
@@ -23,6 +26,17 @@ class OroWebsiteSearchExtension extends Extension
 
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
         $loader->load('services.yml');
+
+        $ymlLoader = new YamlCumulativeFileLoader(
+            'Resources/config/oro/website_search_engine/' . $config['engine'] . '.yml'
+        );
+
+        $engineLoader = new CumulativeConfigLoader('oro_website_search', $ymlLoader);
+        $engineResources = $engineLoader->load($container);
+
+        foreach ($engineResources as $engineResource) {
+            $loader->load($engineResource->path);
+        }
     }
 
     /**

@@ -3,9 +3,6 @@ oro_behat_extension:
     ProductNameField:
       selector: "input[name='oro_product[names][values][default]']"
 
-    SlugPrototypesField:
-      selector: "input[name='oro_product[slugPrototypesWithRedirect][slugPrototypes][values][default]']"
-
     QuickAddForm:
       selector: "form[name='oro_product_quick_add']"
 
