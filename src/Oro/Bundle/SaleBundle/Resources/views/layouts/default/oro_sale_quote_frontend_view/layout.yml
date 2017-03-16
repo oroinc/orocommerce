@@ -16,7 +16,7 @@ layout:
 
         - '@setOption':
             id: page_title
-            optionName: text
+            optionName: defaultValue
             optionValue:
                 label: 'oro.frontend.sale.quote.title.label'
                 parameters:
@@ -30,6 +30,11 @@ layout:
                     blockType: block
                     options:
                         visible: '=false'
+                quote_view_customer_status:
+                    blockType: text
+                    options:
+                        visible: '=data["entity"].getCustomerStatus()!=null'
+                        text: '=data["entity"].getCustomerStatus().getName()'
                 quote_view_information:
                     blockType: quote_view_information
                     options:
@@ -60,6 +65,7 @@ layout:
             tree:
                 page_content:
                     quote_view_page:
+                        quote_view_customer_status: ~
                         quote_view_controls_list: ~
                         quote_view_information:
                             quote_shipping_address: ~

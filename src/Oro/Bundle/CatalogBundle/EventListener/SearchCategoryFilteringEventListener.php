@@ -7,6 +7,7 @@ use Oro\Bundle\CatalogBundle\Entity\Repository\CategoryRepository;
 use Oro\Bundle\CatalogBundle\Handler\RequestProductHandler;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\DataGridBundle\Event\PreBuild;
+use Oro\Bundle\RedirectBundle\Routing\SluggableUrlGenerator;
 use Oro\Bundle\SearchBundle\Datagrid\Datasource\SearchDatasource;
 use Oro\Bundle\SearchBundle\Query\Criteria\Criteria;
 use Oro\Bundle\SearchBundle\Query\SearchQueryInterface;
@@ -15,6 +16,7 @@ class SearchCategoryFilteringEventListener
 {
     const CATEGORY_ID_CONFIG_PATH = '[options][urlParams][categoryId]';
     const INCLUDE_CAT_CONFIG_PATH = '[options][urlParams][includeSubcategories]';
+    const VIEW_LINK_PARAMS_CONFIG_PATH = '[properties][view_link][direct_params]';
 
     /** @var RequestProductHandler $requestProductHandler */
     private $requestProductHandler;
@@ -73,6 +75,14 @@ class SearchCategoryFilteringEventListener
         if (!$categoryId) {
             return;
         }
+
+        $config->offsetAddToArrayByPath(
+            self::VIEW_LINK_PARAMS_CONFIG_PATH,
+            [
+                SluggableUrlGenerator::CONTEXT_TYPE => 'category',
+                SluggableUrlGenerator::CONTEXT_DATA => $categoryId
+            ]
+        );
 
         $this->applyCategoryToQuery($datasource->getSearchQuery(), $categoryId, $includeSubcategories);
     }

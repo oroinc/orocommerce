@@ -4,8 +4,8 @@ namespace Oro\Bundle\WebCatalogBundle\Cache\ResolvedData;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
-use Oro\Component\WebCatalog\Entity\ContentVariantInterface;
 
 class ResolvedContentNode implements ContentNodeInterface
 {
@@ -35,22 +35,34 @@ class ResolvedContentNode implements ContentNodeInterface
     protected $childNodes;
 
     /**
+     * @var bool
+     */
+    protected $rewriteVariantTitle = true;
+
+    /**
      * @param int $id
      * @param string $identifier
      * @param Collection $titles
      * @param ResolvedContentVariant $resolvedContentVariant
+     * @param bool $rewriteVariantTitle
      */
-    public function __construct($id, $identifier, Collection $titles, ResolvedContentVariant $resolvedContentVariant)
-    {
+    public function __construct(
+        $id,
+        $identifier,
+        Collection $titles,
+        ResolvedContentVariant $resolvedContentVariant,
+        $rewriteVariantTitle = true
+    ) {
         $this->id = $id;
         $this->identifier = $identifier;
         $this->titles = $titles;
         $this->resolvedContentVariant = $resolvedContentVariant;
         $this->childNodes = new ArrayCollection();
+        $this->rewriteVariantTitle = $rewriteVariantTitle;
     }
 
     /**
-     * @return int
+     * {@inheritdoc}
      */
     public function getId()
     {
@@ -66,7 +78,7 @@ class ResolvedContentNode implements ContentNodeInterface
     }
 
     /**
-     * @return Collection
+     * {@inheritdoc}
      */
     public function getTitles()
     {
@@ -82,7 +94,7 @@ class ResolvedContentNode implements ContentNodeInterface
     }
 
     /**
-     * @return Collection|ContentVariantInterface[]
+     * {@inheritdoc}
      */
     public function getContentVariants()
     {
@@ -103,5 +115,13 @@ class ResolvedContentNode implements ContentNodeInterface
     public function getChildNodes()
     {
         return $this->childNodes;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isRewriteVariantTitle()
+    {
+        return $this->rewriteVariantTitle;
     }
 }

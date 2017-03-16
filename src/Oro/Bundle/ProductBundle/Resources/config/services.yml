@@ -28,7 +28,6 @@ services:
             - "@translator"
 
     oro_product.formatter.unit_label:
-        public: false
         abstract: true
         class: 'Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter'
         arguments:
@@ -46,7 +45,7 @@ services:
         class: 'Oro\Bundle\ProductBundle\Twig\ProductUnitValueExtension'
         public: false
         arguments:
-            - "@oro_product.formatter.product_unit_value"
+            - "@service_container"
         tags:
             - { name: twig.extension }
 
@@ -54,7 +53,7 @@ services:
         class: 'Oro\Bundle\ProductBundle\Twig\ProductUnitFieldsSettingsExtension'
         public: false
         arguments:
-            - "@oro_product.visibility.product_unit_fields_settings"
+            - "@service_container"
         tags:
             - { name: twig.extension }
 
@@ -62,7 +61,7 @@ services:
         class: 'Oro\Bundle\ProductBundle\Twig\UnitVisibilityExtension'
         public: false
         arguments:
-            - "@oro_product.visibility.unit"
+            - "@service_container"
         tags:
             - { name: twig.extension }
 
@@ -70,7 +69,7 @@ services:
         class: 'Oro\Bundle\ProductBundle\Twig\ProductUnitLabelExtension'
         public: false
         arguments:
-            - "@oro_product.formatter.product_unit_label"
+            - "@service_container"
         tags:
             - { name: twig.extension }
 
@@ -78,7 +77,7 @@ services:
         class: Oro\Bundle\ProductBundle\Twig\ProductExtension
         public: false
         arguments:
-            - "@oro_product.autocomplete_fields_provider"
+            - "@service_container"
         tags:
             - { name: twig.extension }
 
@@ -112,7 +111,6 @@ services:
     oro_product.service.product_update_handler:
         class: 'Oro\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler'
         parent: oro_form.model.update_handler
-        scope: request
         calls:
             - [setActionGroupRegistry, ['@oro_action.action_group_registry']]
             - [setTranslator, ['@translator']]
@@ -219,6 +217,11 @@ services:
 
     oro_product.provider.product_status_provider:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductStatusProvider'
+
+    oro_product.provider.product_inventory_status_provider:
+        class: 'Oro\Bundle\ProductBundle\Provider\ProductInventoryStatusProvider'
+        arguments:
+            - '@doctrine'
 
     oro_product.provider.product_type_provider:
         class: 'Oro\Bundle\ProductBundle\Provider\ProductTypeProvider'
@@ -352,9 +355,10 @@ services:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductContentVariantReindexEventListener'
         arguments:
             - "@event_dispatcher"
+            - '@oro_entity.doctrine.field_updates_checker'
+            - "@?oro_web_catalog.provider.web_catalog_usage_provider"
         tags:
             - { name: doctrine.event_listener, event: onFlush }
-            - { name: kernel.event_listener, event: oro.form.update_handler.after_entity_flush, method: onFormAfterFlush }
 
     oro_product.model.product_visibility_query_builder_modifier:
         class: 'Oro\Bundle\ProductBundle\Model\ProductVisibilityQueryBuilderModifier'
@@ -613,8 +617,10 @@ services:
 
     oro_product.provider.routing_information_provider:
         class: Oro\Bundle\ProductBundle\Provider\ProductRoutingInformationProvider
+        arguments:
+            - '@oro_config.global'
         tags:
-            - { name: oro_redirect.routing_information_provider }
+            - { name: oro_redirect.routing_information_provider, alias: '%oro_product.entity.product.class%' }
 
     oro_product.layout.data_provider.quick_add_collection:
         class: 'Oro\Bundle\ProductBundle\Provider\QuickAddCollectionProvider'
@@ -671,7 +677,6 @@ services:
 
     oro_product.visibility.product_unit_fields_settings:
         class: 'Oro\Bundle\ProductBundle\Visibility\BasicProductUnitFieldsSettings'
-        public: false
         arguments:
             - "@oro_entity.doctrine_helper"
 
@@ -687,7 +692,6 @@ services:
 
     oro_product.visibility.unit:
         class: 'Oro\Bundle\ProductBundle\Visibility\BasicUnitVisibility'
-        public: false
 
     oro_product.visibility.single_unit_mode_unit:
         class: 'Oro\Bundle\ProductBundle\Visibility\SingleUnitModeUnitVisibilityDecorator'
@@ -729,6 +733,24 @@ services:
         tags:
             - { name: oro_entity_config.layout.attribute_block_type_mapper }
 
+    oro_product.virtual_fields.decorator_factory:
+        class: 'Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory'
+        public: false
+        arguments:
+            - '@oro_entity.entity_field_provider'
+            - '@oro_product.virtual_fields.select_query_converter'
+            - '@doctrine'
+            - '@oro_entity.helper.field_helper'
+
+    oro_product.virtual_fields.select_query_converter:
+            class: 'Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsSelectQueryConverter'
+            arguments:
+                - '@oro_query_designer.query_designer.manager'
+                - '@oro_entity.virtual_field_provider.chain'
+                - '@doctrine'
+            calls:
+                - [setVirtualRelationProvider, ['@oro_entity.virtual_relation_provider.chain']]
+
     oro_product.event_listener.before_remove_field_listener:
         class: 'Oro\Bundle\ProductBundle\EventListener\ValidateBeforeRemoveFieldListener'
         arguments:
@@ -742,3 +764,21 @@ services:
         arguments:
             - '@oro_layout.theme_manager'
             - '@oro_entity.fallback.resolver.entity_fallback_resolver'
+
+    oro_product.config.event_listener.direct_url_prefix_change:
+        class: Oro\Bundle\RedirectBundle\EventListener\ConfigRegenerateDirectUrlListener
+        arguments:
+            - '@oro_config.manager'
+            - '@oro_message_queue.client.message_producer'
+            - '@oro_redirect.form.storage.redirect_storage'
+            - '@oro_redirect.direct_url_message_factory'
+            - 'oro_product.product_direct_url_prefix'
+            - '%oro_product.entity.product.class%'
+        tags:
+            - { name: kernel.event_listener, event: oro_config.update_after, method: onUpdateAfter }
+
+    oro_product.twig.product_image_extension:
+        class: Oro\Bundle\ProductBundle\Twig\ProductImageExtension
+        public: false
+        tags:
+            - { name: twig.extension }

@@ -5,7 +5,7 @@ namespace Oro\Bundle\RuleBundle\Entity;
 interface RuleOwnerInterface
 {
     /**
-     * @return Rule
+     * @return RuleInterface
      */
     public function getRule();
 }

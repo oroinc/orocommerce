@@ -15,7 +15,7 @@ layout:
             optionValue: 'customer'
         - '@setOption':
             id: page_title
-            optionName: text
+            optionName: defaultValue
             optionValue:
                 label: 'oro.frontend.rfp.request.title.label'
                 parameters:
@@ -24,7 +24,9 @@ layout:
             items:
                 rfp_request_view_page:
                     blockType: container
-                rfp_request_view_top_actions:
+                rfp_request_view_toolbar:
+                    blockType: container
+                rfp_request_view_toolbar_actions:
                     blockType: line_buttons
                     options:
                         visible: '=data["entity"]!=null'
@@ -65,8 +67,9 @@ layout:
             tree:
                 page_content:
                     rfp_request_view_page:
-                        rfp_request_view_customer_status: ~
-                        rfp_request_view_top_actions: ~
+                        rfp_request_view_toolbar:
+                            rfp_request_view_customer_status: ~
+                            rfp_request_view_toolbar_actions: ~
                         rfp_request_view_controls_list: ~
                         rfp_request_view_information: ~
                         rfp_request_view_additional_notes: ~

@@ -2,6 +2,8 @@
 
 namespace Oro\Component\WebCatalog\Entity;
 
+use Doctrine\Common\Collections\Collection;
+
 interface ContentNodeInterface
 {
     /**
@@ -10,7 +12,17 @@ interface ContentNodeInterface
     public function getId();
 
     /**
-     * @return ContentNodeInterface[]
+     * @return ContentVariantInterface[]
      */
     public function getContentVariants();
+
+    /**
+     * @return Collection
+     */
+    public function getTitles();
+
+    /**
+     * @return boolean
+     */
+    public function isRewriteVariantTitle();
 }

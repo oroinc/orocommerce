@@ -8,6 +8,7 @@ use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Form\Type\ContentNodeType;
 use Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -33,6 +34,8 @@ class ContentNodeController extends Controller
             $rootNode = new ContentNode();
             $rootNode->setWebCatalog($webCatalog);
         }
+
+        $rootNode->setUpdatedAt(new \DateTime());
 
         return $this->updateTreeNode($rootNode);
     }
@@ -82,10 +85,71 @@ class ContentNodeController extends Controller
         $nodeId = (int)$request->get('id');
         $parentId = (int)$request->get('parent');
         $position = (int)$request->get('position');
+        $createRedirect = (bool)$request->get('createRedirect', false);
+        
+        $handler = $this->getTreeHandler();
+        $handler->setCreateRedirect($createRedirect);
 
-        return new JsonResponse(
-            $this->getTreeHandler()->moveNode($nodeId, $parentId, $position)
-        );
+        return new JsonResponse($handler->moveNode($nodeId, $parentId, $position));
+    }
+
+    /**
+     * @Route(
+     *     "/get-possible-urls/{id}/{newParentId}",
+     *     name="oro_content_node_get_possible_urls",
+     *     requirements={"id"="\d+", "newParentId"="\d+"}
+     * )
+     *
+     * @ParamConverter("newParentContentNode", options={"id" = "newParentId"})
+     *
+     * @AclAncestor("oro_web_catalog_update")
+     *
+     * @param ContentNode $contentNode
+     * @param ContentNode $newParentContentNode
+     * @return JsonResponse
+     */
+    public function getPossibleUrlsAction(ContentNode $contentNode, ContentNode $newParentContentNode)
+    {
+        $slugGenerator = $this->get('oro_web_catalog.generator.slug_generator');
+
+        $urlsBeforeMove = $slugGenerator->prepareSlugUrls($contentNode);
+        $contentNode->setParentNode($newParentContentNode);
+        $urlsAfterMove = $slugGenerator->prepareSlugUrls($contentNode);
+
+        $slugUrlDiffer = $this->get('oro_redirect.generator.slug_url_differ');
+
+        $urlChanges = $slugUrlDiffer->getSlugUrlsChanges($urlsBeforeMove, $urlsAfterMove);
+
+        return new JsonResponse($urlChanges);
+    }
+
+    /**
+     * @Route(
+     *     "/get-changed-urls/{id}",
+     *     name="oro_content_node_get_changed_urls",
+     *     requirements={"id"="\d+"}
+     * )
+     *
+     * @AclAncestor("oro_web_catalog_update")
+     *
+     * @param ContentNode $node
+     * @return JsonResponse
+     */
+    public function getChangedUrlsAction(ContentNode $node, Request $request)
+    {
+        $slugGenerator = $this->get('oro_web_catalog.generator.slug_generator');
+        $oldUrls = $slugGenerator->prepareSlugUrls($node);
+
+        $form = $this->createForm(ContentNodeType::class, $node);
+        $form->submit($request);
+
+        $newUrls = $slugGenerator->prepareSlugUrls($form->getData());
+
+        $slugUrlDiffer = $this->get('oro_redirect.generator.slug_url_differ');
+
+        $urlChanges = $slugUrlDiffer->getSlugUrlsChanges($oldUrls, $newUrls);
+
+        return new JsonResponse($urlChanges);
     }
 
     /**

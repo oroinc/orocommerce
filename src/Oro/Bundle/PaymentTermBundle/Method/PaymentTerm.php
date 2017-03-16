@@ -6,46 +6,57 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
+use Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermAssociationProvider;
 use Oro\Bundle\PaymentTermBundle\Provider\PaymentTermProvider;
-use Psr\Log\LoggerInterface;
+use Psr\Log\LoggerAwareTrait;
 use Symfony\Component\PropertyAccess\Exception\NoSuchPropertyException;
 
 class PaymentTerm implements PaymentMethodInterface
 {
-    const TYPE = 'payment_term';
-
-    /** @var PaymentTermProvider */
-    protected $paymentTermProvider;
-
-    /** @var PaymentTermAssociationProvider */
-    protected $paymentTermAssociationProvider;
-
-    /** @var DoctrineHelper */
-    protected $doctrineHelper;
-
-    /** @var LoggerInterface */
-    private $logger;
+    use LoggerAwareTrait;
 
     /**
-     * @param PaymentTermProvider $paymentTermProvider
+     * @var PaymentTermProvider
+     */
+    protected $paymentTermProvider;
+
+    /**
+     * @var PaymentTermAssociationProvider
+     */
+    protected $paymentTermAssociationProvider;
+
+    /**
+     * @var DoctrineHelper
+     */
+    protected $doctrineHelper;
+
+    /**
+     * @var PaymentTermConfigInterface
+     */
+    protected $config;
+
+    /**
+     * @param PaymentTermProvider            $paymentTermProvider
      * @param PaymentTermAssociationProvider $paymentTermAssociationProvider
-     * @param DoctrineHelper $doctrineHelper
-     * @param LoggerInterface $logger
+     * @param DoctrineHelper                 $doctrineHelper
+     * @param PaymentTermConfigInterface     $config
      */
     public function __construct(
         PaymentTermProvider $paymentTermProvider,
         PaymentTermAssociationProvider $paymentTermAssociationProvider,
         DoctrineHelper $doctrineHelper,
-        LoggerInterface $logger
+        PaymentTermConfigInterface $config
     ) {
         $this->paymentTermProvider = $paymentTermProvider;
         $this->paymentTermAssociationProvider = $paymentTermAssociationProvider;
         $this->doctrineHelper = $doctrineHelper;
-        $this->logger = $logger;
+        $this->config = $config;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritDoc}
+     */
     public function execute($action, PaymentTransaction $paymentTransaction)
     {
         $entity = $this->doctrineHelper->getEntityReference(
@@ -88,24 +99,29 @@ class PaymentTerm implements PaymentMethodInterface
         return [];
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritDoc}
+     */
     public function getIdentifier()
     {
-        return self::TYPE;
+        return $this->config->getPaymentMethodIdentifier();
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function isApplicable(PaymentContextInterface $context)
     {
         if ($context->getCustomer()) {
             return (bool)$this->paymentTermProvider->getPaymentTerm($context->getCustomer());
         }
+
         return false;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * {@inheritDoc}
+     */
     public function supports($actionName)
     {
         return $actionName === self::PURCHASE;

@@ -6,8 +6,10 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Generator\DTO\SlugUrl;
+use Oro\Bundle\RedirectBundle\Generator\RedirectGenerator;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
@@ -23,17 +25,35 @@ class SlugGenerator
     protected $contentVariantTypeRegistry;
 
     /**
-     * @param ContentVariantTypeRegistry $contentVariantTypeRegistry
+     * @var LocalizationHelper
      */
-    public function __construct(ContentVariantTypeRegistry $contentVariantTypeRegistry)
-    {
+    private $localizationHelper;
+
+    /**
+     * @var RedirectGenerator
+     */
+    protected $redirectGenerator;
+
+    /**
+     * @param ContentVariantTypeRegistry $contentVariantTypeRegistry
+     * @param RedirectGenerator $redirectGenerator
+     * @param LocalizationHelper $localizationHelper
+     */
+    public function __construct(
+        ContentVariantTypeRegistry $contentVariantTypeRegistry,
+        RedirectGenerator $redirectGenerator,
+        LocalizationHelper $localizationHelper
+    ) {
         $this->contentVariantTypeRegistry = $contentVariantTypeRegistry;
+        $this->redirectGenerator = $redirectGenerator;
+        $this->localizationHelper = $localizationHelper;
     }
 
     /**
      * @param ContentNode $contentNode
+     * @param bool $generateRedirects
      */
-    public function generate(ContentNode $contentNode)
+    public function generate(ContentNode $contentNode, $generateRedirects = false)
     {
         if ($contentNode->getParentNode()) {
             $slugUrls = $this->prepareSlugUrls($contentNode);
@@ -43,11 +63,11 @@ class SlugGenerator
         }
 
         $this->updateLocalizedUrls($contentNode, $slugUrls);
-        $this->bindSlugs($contentNode, $slugUrls);
+        $this->bindSlugs($contentNode, $slugUrls, $generateRedirects);
 
         if (!$contentNode->getChildNodes()->isEmpty()) {
             foreach ($contentNode->getChildNodes() as $childNode) {
-                $this->generate($childNode);
+                $this->generate($childNode, $generateRedirects);
             }
         }
     }
@@ -55,8 +75,9 @@ class SlugGenerator
     /**
      * @param ContentNode $contentNode
      * @param SlugUrl[]|Collection $slugUrls
+     * @param bool $generateRedirects
      */
-    protected function bindSlugs(ContentNode $contentNode, Collection $slugUrls)
+    protected function bindSlugs(ContentNode $contentNode, Collection $slugUrls, $generateRedirects = false)
     {
         foreach ($contentNode->getContentVariants() as $contentVariant) {
             $contentVariantType = $this->contentVariantTypeRegistry->getContentVariantType($contentVariant->getType());
@@ -67,14 +88,23 @@ class SlugGenerator
             foreach ($contentVariant->getSlugs() as $slug) {
                 $localeId = (int)$this->getLocaleId($slug->getLocalization());
                 if ($slugUrls->containsKey($localeId)) {
+                    $previousSlugUrl = $slug->getUrl();
+
                     /** @var SlugUrl $slugUrl */
                     $slugUrl = $slugUrls->get($localeId);
                     $slug->resetScopes();
                     $this->fillSlug($slug, $slugUrl, $routeData, $scopes);
+
+                    $this->redirectGenerator->updateRedirects($previousSlugUrl, $slug);
+
+                    if ($generateRedirects) {
+                        $this->redirectGenerator->generate($previousSlugUrl, $slug);
+                    }
                 } else {
                     $toRemove[] = $slug;
                 }
             }
+
             foreach ($toRemove as $slugToRemove) {
                 $contentVariant->removeSlug($slugToRemove);
             }
@@ -111,27 +141,53 @@ class SlugGenerator
 
     /**
      * @param ContentNode $contentNode
-     * @return SlugUrl[]|Collection
+     * @return ArrayCollection
      */
-    protected function prepareSlugUrls(ContentNode $contentNode)
+    public function getSlugUrls(ContentNode $contentNode)
+    {
+        $parentUrls = $this->getParentNodeSlugUrls($contentNode);
+
+        $slugUrls = new ArrayCollection();
+        $slugPrototypes = $contentNode->getSlugPrototypes();
+        if (!$slugPrototypes->count()) {
+            return $slugUrls;
+        }
+
+        $localizations = array_merge([null], $this->localizationHelper->getLocalizations());
+        foreach ($localizations as $localization) {
+            $parentUrl = $this->localizationHelper->getLocalizedValue($parentUrls, $localization);
+
+            $url = $this->getUrl(
+                $parentUrl->getText(),
+                $this->localizationHelper->getLocalizedValue($slugPrototypes, $localization)->getString()
+            );
+
+            $slugUrls->set($this->getLocaleId($localization), new SlugUrl($url, $localization));
+        }
+
+        return $slugUrls;
+    }
+
+    /**
+     * @param ContentNode $contentNode
+     *
+     * @return Collection|SlugUrl[]
+     */
+    public function prepareSlugUrls(ContentNode $contentNode)
     {
         $filledSlugPrototypes = $this->getFilledSlugPrototypes($contentNode);
         $parentNodeSlugUrls = $this->getParentNodeSlugUrls($contentNode);
 
         $slugUrls = new ArrayCollection();
-        foreach ($filledSlugPrototypes as $localeId => $changedSlugPrototypeValue) {
+        foreach ($filledSlugPrototypes as $changedSlugPrototypeValue) {
             $slugPrototype = $changedSlugPrototypeValue->getUrl();
             $locale = $changedSlugPrototypeValue->getLocalization();
 
-            $url = null;
-            if (array_key_exists($localeId, $parentNodeSlugUrls)) {
-                $url = $this->getUrl($parentNodeSlugUrls[$localeId], $slugPrototype);
-            } elseif ($locale && $fallbackSlug = $this->findFallbackSlug($locale, $parentNodeSlugUrls)) {
-                $url = $this->getUrl($fallbackSlug, $slugPrototype);
-            }
+            $parentSlugUrl = $this->localizationHelper->getLocalizedValue($parentNodeSlugUrls, $locale);
 
-            if (null !== $url) {
-                $slugUrls->set((int)$this->getLocaleId($locale), new SlugUrl($url, $locale));
+            if ($parentSlugUrl) {
+                $url = $this->getUrl($parentSlugUrl->getText(), $slugPrototype);
+                $slugUrls->set((int)$this->getLocaleId($locale), new SlugUrl($url, $locale, $slugPrototype));
             }
         }
 
@@ -152,21 +208,16 @@ class SlugGenerator
 
     /**
      * @param ContentNode $contentNode
-     * @return array|SlugUrl[]
+     * @return Collection|SlugUrl[]
      */
     protected function getParentNodeSlugUrls(ContentNode $contentNode)
     {
         $parentNode = $contentNode->getParentNode();
-
-        $parentNodeSlugUrls = [];
-        if ($parentNode) {
-            foreach ($parentNode->getLocalizedUrls() as $parentNodeSlug) {
-                $localeId = $this->getLocaleId($parentNodeSlug->getLocalization());
-                $parentNodeSlugUrls[$localeId] = $parentNodeSlug->getText();
-            }
+        if (!$parentNode) {
+            return new ArrayCollection();
         }
 
-        return $parentNodeSlugUrls;
+        return $parentNode->getLocalizedUrls();
     }
 
     /**
@@ -191,24 +242,6 @@ class SlugGenerator
     }
 
     /**
-     * @param Localization $localization
-     * @param array|SlugUrl[] $parentNodeSlugUrls
-     * @return string|null
-     */
-    protected function findFallbackSlug(Localization $localization, array $parentNodeSlugUrls)
-    {
-        $localeHierarchy = $localization->getHierarchy();
-
-        foreach ($localeHierarchy as $localeId) {
-            if (array_key_exists($localeId, $parentNodeSlugUrls)) {
-                return $parentNodeSlugUrls[$localeId];
-            }
-        }
-
-        return null;
-    }
-
-    /**
      * @param Localization|null $localization
      * @return int|null
      */
@@ -218,7 +251,7 @@ class SlugGenerator
             return $localization->getId();
         }
 
-        return null;
+        return 0;
     }
 
     /**
@@ -231,6 +264,7 @@ class SlugGenerator
     {
         $slug->setLocalization($slugUrl->getLocalization());
         $slug->setUrl($slugUrl->getUrl());
+        $slug->setSlugPrototype($slugUrl->getSlug());
         $slug->setRouteName($routeData->getRoute());
         $slug->setRouteParameters($routeData->getRouteParameters());
         foreach ($scopes as $scope) {

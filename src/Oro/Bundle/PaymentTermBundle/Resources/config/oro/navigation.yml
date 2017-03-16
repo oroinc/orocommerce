@@ -2,10 +2,10 @@ navigation:
     menu_config:
         items:
             payment_terms:
-                label: 'oro.paymentterm.menu.payment_terms.label'
-                route: 'oro_payment_term_index'
+                label:           'oro.paymentterm.menu.payment_terms.label'
+                route:           'oro_payment_term_index'
+                position:        700
                 extras:
-                    position: 700
                     routes:      ['oro_payment_term*']
                     description: 'oro.paymentterm.menu.payment_terms.description'
 
@@ -18,5 +18,5 @@ navigation:
 
     titles:
         oro_payment_term_index: 'oro.paymentterm.entity_plural_label'
-        oro_payment_term_view: '%%entityLabel%%'
-        oro_payment_term_update: '%%entityLabel%%'
+        oro_payment_term_view: '%entityLabel%'
+        oro_payment_term_update: '%entityLabel%'

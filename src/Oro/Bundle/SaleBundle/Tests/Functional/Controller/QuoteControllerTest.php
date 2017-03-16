@@ -2,15 +2,18 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Functional\Controller;
 
+use Doctrine\Common\Collections\Collection;
+
 use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteType;
 use Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures\LoadUserData;
+use Oro\Bundle\UserBundle\Entity\AbstractUser;
+use Oro\Bundle\UserBundle\Entity\User;
 
 class QuoteControllerTest extends WebTestCase
 {
@@ -171,11 +174,12 @@ class QuoteControllerTest extends WebTestCase
         $form['oro_sale_quote[shipUntil]'] = self::$shipUntilUpdated;
         $form[sprintf('oro_sale_quote[%s]', $paymentTermProperty)] = $paymentTerm->getId();
 
-        $form['oro_sale_quote[assignedUsers]'] = $this->getReference(LoadUserData::USER1)->getId();
-        $form['oro_sale_quote[assignedCustomerUsers]'] = implode(',', [
-            $this->getReference(LoadUserData::ACCOUNT1_USER1)->getId(),
-            $this->getReference(LoadUserData::ACCOUNT1_USER2)->getId()
-        ]);
+        $user = $this->getReference(LoadUserData::USER1);
+        $accountUser1 = $this->getReference(LoadUserData::ACCOUNT1_USER1);
+        $accountUser2 = $this->getReference(LoadUserData::ACCOUNT1_USER2);
+
+        $form['oro_sale_quote[assignedUsers]'] = $user->getId();
+        $form['oro_sale_quote[assignedCustomerUsers]'] = implode(',', [$accountUser1->getId(), $accountUser2->getId()]);
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
@@ -183,10 +187,6 @@ class QuoteControllerTest extends WebTestCase
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains('Quote has been saved', $crawler->html());
-
-        $this->assertContains($this->getReference(LoadUserData::USER1)->getFullName(), $result->getContent());
-        $this->assertContains($this->getReference(LoadUserData::ACCOUNT1_USER1)->getFullName(), $result->getContent());
-        $this->assertContains($this->getReference(LoadUserData::ACCOUNT1_USER2)->getFullName(), $result->getContent());
 
         /** @var Quote $quote */
         $quote = $this->getContainer()->get('doctrine')
@@ -199,11 +199,31 @@ class QuoteControllerTest extends WebTestCase
         $this->assertEquals(strtotime(self::$validUntilUpdated), $quote->getValidUntil()->getTimestamp());
         $this->assertEquals(self::$poNumberUpdated, $quote->getPoNumber());
         $this->assertEquals(strtotime(self::$shipUntilUpdated), $quote->getShipUntil()->getTimestamp());
+        $this->assertUsersExists([$user], $quote->getAssignedUsers());
+        $this->assertUsersExists([$accountUser1, $accountUser2], $quote->getAssignedCustomerUsers());
 
         $accessor = $this->getContainer()->get('oro_payment_term.provider.payment_term_association');
         $this->assertEquals($paymentTerm->getId(), $accessor->getPaymentTerm($quote)->getId());
 
         return $id;
+    }
+
+    /**
+     * @param array $expectedUsers
+     * @param Collection $actualUsers
+     */
+    protected function assertUsersExists(array $expectedUsers, Collection $actualUsers)
+    {
+        $callable = function (AbstractUser $user) {
+            return $user->getId();
+        };
+
+        $expectedUserIds = array_map($callable, $expectedUsers);
+        $actualUserIds = array_map($callable, $actualUsers->toArray());
+
+        foreach ($expectedUserIds as $expectedUserId) {
+            $this->assertContains($expectedUserId, $actualUserIds);
+        }
     }
 
     /**
@@ -246,33 +266,14 @@ class QuoteControllerTest extends WebTestCase
         $this->client->request('GET', $this->getUrl('oro_sale_quote_view', ['id' => $id]));
 
         $result = $this->client->getResponse();
+
+        $this->assertContains($this->getReference(LoadUserData::USER1)->getFullName(), $result->getContent());
+        $this->assertContains($this->getReference(LoadUserData::ACCOUNT1_USER1)->getFullName(), $result->getContent());
+        $this->assertContains($this->getReference(LoadUserData::ACCOUNT1_USER2)->getFullName(), $result->getContent());
+
         static::assertHtmlResponseStatusCodeEquals($result, 200);
 
         return $id;
-    }
-
-    /**
-     * @depends testView
-     * @param int $id
-     */
-    public function testLockedFieldAndBadge($id)
-    {
-        $crawler = $this->client->request('GET', $this->getUrl('oro_sale_quote_view', ['id' => $id]));
-
-        $this->assertContains('Not Locked', $crawler->html(), 'By default Quote shouldn\'t be locked');
-
-        $crawler = $this->client->request('GET', $this->getUrl('oro_sale_quote_update', ['id' => $id]));
-
-        /* @var $form Form */
-        $form = $crawler->selectButton('Save and Close')->form();
-        $form['oro_sale_quote[locked]'] = true;
-
-        $this->client->followRedirects(true);
-        $crawler = $this->client->submit($form);
-
-        $result = $this->client->getResponse();
-        static::assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertContains('Locked', $crawler->html());
     }
 
     /**

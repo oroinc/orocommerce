@@ -18,7 +18,7 @@ layout:
         - '@add':
             id: checkouts_title
             parentId: checkouts_container
-            blockType: text
+            blockType: page_subtitle
             siblingId: ~
             prepend: true
             options:
@@ -27,7 +27,7 @@ layout:
 
         - '@setOption':
             id: page_title
-            optionName: text
+            optionName: defaultValue
             optionValue: 'oro.checkout.order_history.label'
 
         - '@setOption':

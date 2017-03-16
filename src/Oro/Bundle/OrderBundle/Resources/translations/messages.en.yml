@@ -197,6 +197,7 @@ oro:
             general: General
             additional: Additional
             subtotals: Order Totals
+            payment_history: Payment History
             order_line_items: 'Line Items'
             order_totals: Totals
             shipping_information: Shipping Information
@@ -247,6 +248,9 @@ oro:
         method_type:
             grid:
                 label: '%translatedMethodType%'
+
+        permission:
+            view_payment_history.label: View Payment History
 
     frontend:
         order:

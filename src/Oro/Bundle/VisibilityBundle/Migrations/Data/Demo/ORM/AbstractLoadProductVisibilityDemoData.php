@@ -64,7 +64,6 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
         }
 
         fclose($handler);
-        $manager->flush();
     }
 
     /**
@@ -135,6 +134,7 @@ abstract class AbstractLoadProductVisibilityDemoData extends AbstractFixture imp
             ->setProduct($product);
 
         $manager->persist($visibility);
+        $manager->flush();
     }
 
     /**

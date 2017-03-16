@@ -135,10 +135,18 @@ class LoadWebCatalogDemoData extends AbstractFixture implements ContainerAwareIn
             $slug->setString($contentNode['defaultSlugPrototype']);
             $node->setDefaultSlugPrototype($slug);
 
+            if ($parent) {
+                $node->setParentNode($parent);
+            }
+
             $isParentScopeUsed = !empty($contentNode['parentScopeUsed']);
             $node->setParentScopeUsed($isParentScopeUsed);
 
-            if (!$isParentScopeUsed) {
+            if ($isParentScopeUsed) {
+                foreach ($node->getParentNode()->getScopes() as $scope) {
+                    $node->addScope($scope);
+                }
+            } else {
                 foreach ($contentNode['scopes'] as $scope) {
                     $scope = $this->getScope($scope, $webCatalog);
                     $node->addScope($scope);
@@ -146,14 +154,10 @@ class LoadWebCatalogDemoData extends AbstractFixture implements ContainerAwareIn
             }
             $this->addContentVariants($webCatalog, $contentNode['contentVariants'], $node);
 
-            if ($parent) {
-                $node->setParentNode($parent);
-            }
-
             $manager->persist($node);
             $manager->flush($node);
-            $this->generateSlugs($node);
             $this->resolveScopes($node);
+            $this->generateSlugs($node);
 
             if ($contentNode['children']) {
                 $this->loadContentNodes($manager, $webCatalog, $contentNode['children'], $node);
@@ -215,7 +219,8 @@ class LoadWebCatalogDemoData extends AbstractFixture implements ContainerAwareIn
      */
     protected function getWebCatalogData()
     {
-        $fileName = __DIR__ . '/data/web_catalog_data.yml';
+        $locator = $this->container->get('file_locator');
+        $fileName = $locator->locate('@OroWebCatalogBundle/Migrations/Data/Demo/ORM/data/web_catalog_data.yml');
 
         return Yaml::parse(file_get_contents($fileName));
     }

@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Command;
 
+use Oro\Bundle\EntityBundle\Manager\Db\EntityTriggerManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PricingBundle\Command\PriceListRecalculateCommand;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceListFallbackSettings;
@@ -62,6 +63,18 @@ class PriceListRecalculateCommandTest extends WebTestCase
             $params[] = '--customer='.$this->getReference($customerName)->getId();
         }
 
+        if (false !== array_search('--disable-triggers', $params, true)) {
+            $databaseTriggerManager = $this->createMock(EntityTriggerManager::class);
+            $databaseTriggerManager->expects($this->once())
+                ->method('disable');
+            $databaseTriggerManager->expects($this->once())
+                ->method('enable');
+            $this->getContainer()->set(
+                'oro_pricing.database_triggers.manager.combined_prices',
+                $databaseTriggerManager
+            );
+        }
+
         $result = $this->runCommand(PriceListRecalculateCommand::NAME, $params);
         $this->assertContains($expectedMessage, $result);
         $this->assertCombinedPriceCount($expectedCount);
@@ -78,10 +91,15 @@ class PriceListRecalculateCommandTest extends WebTestCase
                 'params' => ['--all'],
                 'expectedCount' => 40 // 2 + 38 = config + website1
             ],
+            'all with triggers off' => [
+                'expected_message' => 'Start processing',
+                'params' => ['--all', '--disable-triggers'],
+                'expectedCount' => 40 // 2 + 38 = config + website1
+            ],
             'empty run' => [
                 'expected_message' => 'ATTENTION',
                 'params' => [],
-                'expectedCount' => 0
+                'expectedCount' => 0,
             ],
             'website 1' => [
                 'expected_message' => 'Start processing',
@@ -122,6 +140,16 @@ class PriceListRecalculateCommandTest extends WebTestCase
                 'website' => [],
                 'customerGroup' => ['customer_group.group1'], // doesn't has own price list
                 'customer' => []
+            ],
+            'verbosity_verbose' => [
+                'expected_message' => 'Processing combined price list id:',
+                'params' => ['--all', '-v'],
+                'expectedCount' => 40
+            ],
+            'verbosity_very_verbose' => [
+                'expected_message' => 'Processing price list:',
+                'params' => ['--all', '-vv'],
+                'expectedCount' => 40
             ],
         ];
     }

@@ -5,7 +5,6 @@ oro:
         entity_description: Represents product information
         id.label: Id
         sku.label: SKU
-        grouping.label: "Grouping"
         qty_sold.label: "Qty Sold"
         skip_empty_periods.label: "Exclude Empty Periods"
         item_number.label: "Item #"
@@ -33,13 +32,12 @@ oro:
         images.label: Images
         anything.label: Any Text
         featured_products.label: Featured Products
-        time_period.label: Time Period
         page_template.label: Page Template
         slugs:
             label:              'Slugs'
             singular_label:     'Slug'
         slug_prototypes:
-            label:              'Slug Prototypes'
+            label:              'URL Slug'
             singular_label:     'Slug Prototype'
 
         content_variant:
@@ -48,16 +46,13 @@ oro:
         type:
             simple: Simple
             configurable: Configurable
+            please_select_option: Please select option
         attribute_family.label: Product Family
         attribute_family.plural_label: Product Families
 
         status:
             enabled: Enabled
             disabled: Disabled
-
-        type:
-            simple: Simple Product
-            configurable: Configurable Product
 
         variant_fields:
             yes.label: Yes
@@ -211,6 +206,7 @@ oro:
                     bottom.label: 'Bottom'
                     bottomright.label: 'Bottom Right'
                 page_template.label: Page Template
+                product_direct_url_prefix.label: 'Product URL prefix'
             notice:
                 product_image_watermark: >
                    The updated product image watermark settings will be used for the newly uploaded images only.

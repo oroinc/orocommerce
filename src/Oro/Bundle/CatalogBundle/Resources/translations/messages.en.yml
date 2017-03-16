@@ -28,7 +28,7 @@ oro:
                 label:              'Slugs'
                 singular_label:     'Slug'
             slug_prototypes:
-                label:              'Slug Prototypes'
+                label:              'URL Slug'
                 singular_label:     'Slug Prototype'
 
         sections:
@@ -62,6 +62,8 @@ oro:
         system_configuration:
             groups:
                 catalog.title: 'Catalog'
+            fields:
+                category_direct_url_prefix.label: 'Category URL prefix'
 
         featured_categories:
             view:

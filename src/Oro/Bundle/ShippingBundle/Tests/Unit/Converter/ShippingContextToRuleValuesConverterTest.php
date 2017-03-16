@@ -7,42 +7,19 @@ use Oro\Bundle\AddressBundle\Entity\Region;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
-use Oro\Bundle\EntityBundle\Helper\FieldHelper;
-use Oro\Bundle\EntityBundle\Provider\EntityFieldProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory;
 use Oro\Bundle\ShippingBundle\Context\LineItem\Collection\Doctrine\DoctrineShippingLineItemCollection;
 use Oro\Bundle\ShippingBundle\Context\ShippingContext;
 use Oro\Bundle\ShippingBundle\Context\ShippingLineItem;
 use Oro\Bundle\ShippingBundle\Converter\ShippingContextToRuleValuesConverter;
 use Oro\Bundle\ShippingBundle\ExpressionLanguage\DecoratedProductLineItemFactory;
-use Oro\Bundle\ShippingBundle\QueryDesigner\SelectQueryConverter;
 use Oro\Bundle\ShippingBundle\Tests\Unit\Provider\Stub\ShippingAddressStub;
 use Oro\Component\Testing\Unit\EntityTrait;
-use Symfony\Bridge\Doctrine\ManagerRegistry;
 
 class ShippingContextToRuleValuesConverterTest extends \PHPUnit_Framework_TestCase
 {
     use EntityTrait;
-
-    /**
-     * @var EntityFieldProvider|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $fieldProvider;
-
-    /**
-     * @var SelectQueryConverter|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $converter;
-
-    /**
-     * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $doctrine;
-
-    /**
-     * @var FieldHelper|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $fieldHelper;
 
     /**
      * @var DecoratedProductLineItemFactory
@@ -59,23 +36,8 @@ class ShippingContextToRuleValuesConverterTest extends \PHPUnit_Framework_TestCa
      */
     protected function setUp()
     {
-        $this->converter = $this->getMockBuilder(SelectQueryConverter::class)
-            ->disableOriginalConstructor()->getMock();
-
-        $this->doctrine = $this->getMockBuilder(ManagerRegistry::class)
-            ->disableOriginalConstructor()->getMockForAbstractClass();
-
-        $this->fieldProvider = $this->getMockBuilder(EntityFieldProvider::class)
-            ->disableOriginalConstructor()->getMock();
-
-        $this->fieldHelper = $this->getMockBuilder(FieldHelper::class)
-            ->disableOriginalConstructor()->getMock();
-
         $this->factory = new DecoratedProductLineItemFactory(
-            $this->fieldProvider,
-            $this->converter,
-            $this->doctrine,
-            $this->fieldHelper
+            $this->createMock(VirtualFieldsProductDecoratorFactory::class)
         );
 
         $this->shippingContextToRuleValuesConverter = new ShippingContextToRuleValuesConverter(

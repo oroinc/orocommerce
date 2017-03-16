@@ -11,13 +11,15 @@ use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\RedirectBundle\Entity\LocalizedSlugPrototypeAwareInterface;
-use Oro\Bundle\RedirectBundle\Entity\LocalizedSlugPrototypeAwareTrait;
+use Oro\Bundle\RedirectBundle\Entity\LocalizedSlugPrototypeWithRedirectAwareInterface;
+use Oro\Bundle\RedirectBundle\Entity\LocalizedSlugPrototypeWithRedirectAwareTrait;
+use Oro\Bundle\RedirectBundle\Model\SlugPrototypesWithRedirect;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\ScopeBundle\Entity\ScopeCollectionAwareInterface;
 use Oro\Bundle\WebCatalogBundle\Model\ExtendContentNode;
 use Oro\Component\Tree\Entity\TreeTrait;
 use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
+use Oro\Component\WebCatalog\Entity\WebCatalogAwareInterface;
 
 /**
  * @ORM\Entity(repositoryClass="Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository")
@@ -59,12 +61,13 @@ use Oro\Component\WebCatalog\Entity\ContentNodeInterface;
 class ContentNode extends ExtendContentNode implements
     ContentNodeInterface,
     DatesAwareInterface,
-    LocalizedSlugPrototypeAwareInterface,
-    ScopeCollectionAwareInterface
+    LocalizedSlugPrototypeWithRedirectAwareInterface,
+    ScopeCollectionAwareInterface,
+    WebCatalogAwareInterface
 {
     use TreeTrait;
     use DatesAwareTrait;
-    use LocalizedSlugPrototypeAwareTrait;
+    use LocalizedSlugPrototypeWithRedirectAwareTrait;
 
     const FIELD_PARENT_NODE = 'parentNode';
 
@@ -94,7 +97,7 @@ class ContentNode extends ExtendContentNode implements
     /**
      * @var Collection|ContentNode[]
      *
-     * @ORM\OneToMany(targetEntity="ContentNode", mappedBy="parentNode", cascade={"persist", "remove"})
+     * @ORM\OneToMany(targetEntity="ContentNode", mappedBy="parentNode", cascade={"persist"})
      * @ORM\OrderBy({"left" = "ASC"})
      * @ConfigField(
      *      defaultValues={
@@ -231,6 +234,7 @@ class ContentNode extends ExtendContentNode implements
         $this->scopes = new ArrayCollection();
         $this->contentVariants = new ArrayCollection();
         $this->localizedUrls = new ArrayCollection();
+        $this->slugPrototypesWithRedirect = new SlugPrototypesWithRedirect($this->slugPrototypes);
     }
 
     /**

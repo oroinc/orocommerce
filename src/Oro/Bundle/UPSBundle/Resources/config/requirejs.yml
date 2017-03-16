@@ -2,3 +2,4 @@ config:
     paths:
         'oroups/js/app/components/ups-transport-settings-component': 'bundles/oroups/js/app/components/ups-transport-settings-component.js'
         'oroups/js/app/components/invalidate-cache-button-component': 'bundles/oroups/js/app/components/invalidate-cache-button-component.js'
+        'oroups/js/app/components/ups-connection-validator-component': 'bundles/oroups/js/app/components/ups-connection-validator-component.js'

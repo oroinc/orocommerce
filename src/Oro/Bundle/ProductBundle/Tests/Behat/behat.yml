@@ -1,0 +1,10 @@
+oro_behat_extension:
+  elements:
+    ProductNameField:
+      selector: "input[name='oro_product[names][values][default]']"
+
+    QuickAddForm:
+      selector: "form[name='oro_product_quick_add']"
+
+    CreateOrderButton:
+      selector: "a[title='Create Order']"

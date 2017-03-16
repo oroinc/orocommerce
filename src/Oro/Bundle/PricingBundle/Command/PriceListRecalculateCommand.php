@@ -2,6 +2,11 @@
 
 namespace Oro\Bundle\PricingBundle\Command;
 
+use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Output\OutputInterface;
+
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\CustomerBundle\Entity\Repository\CustomerGroupRepository;
@@ -14,10 +19,6 @@ use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Repository\WebsiteRepository;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
-use Symfony\Component\Console\Input\InputInterface;
-use Symfony\Component\Console\Input\InputOption;
-use Symfony\Component\Console\Output\OutputInterface;
 
 class PriceListRecalculateCommand extends ContainerAwareCommand
 {
@@ -27,6 +28,8 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
     const ACCOUNT_GROUP = 'customer-group';
     const WEBSITE = 'website';
     const PRICE_LIST = 'price-list';
+    const DISABLE_TRIGGERS = 'disable-triggers';
+    const VERBOSE = 'verbose';
 
     /**
      * {@inheritdoc}
@@ -64,6 +67,12 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
                 'price list ids for prices recalculate',
                 []
             )
+            ->addOption(
+                self::DISABLE_TRIGGERS,
+                null,
+                InputOption::VALUE_NONE,
+                'disables ALL triggers before the operation, allowing faster reindexation of bigger data'
+            )
             ->setDescription('Recalculate combined price list and combined product prices');
     }
 
@@ -72,6 +81,13 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $this->getContainer()->get('oro_pricing.resolver.combined_product_price_resolver')
+            ->setOutput($output);
+
+        $disableTriggers = (bool)$input->getOption(self::DISABLE_TRIGGERS);
+        if (true === $disableTriggers) {
+            $this->disableAllTriggers($output);
+        }
         $optionAll = (bool)$input->getOption(self::ALL);
         if ($optionAll) {
             $this->processAllPriceLists($output);
@@ -87,6 +103,9 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
                 '<comment>ATTENTION</comment>: To update all price lists run command with <info>--all</info> option:'
             );
             $output->writeln(sprintf('    <info>%s --all</info>', $this->getName()));
+        }
+        if (true === $disableTriggers) {
+            $this->enableAllTriggers($output);
         }
     }
 
@@ -141,6 +160,8 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
         $websiteCPLBuilder = $container->get('oro_pricing.builder.website_combined_price_list_builder');
         $customerGroupCPLBuilder = $container->get('oro_pricing.builder.customer_group_combined_price_list_builder');
         $customerCPLBuilder = $container->get('oro_pricing.builder.customer_combined_price_list_builder');
+        $databaseTriggerManager = $container->get('oro_pricing.database_triggers.manager.combined_prices');
+
         $now = new \DateTime();
         foreach ($websites as $website) {
             if (count($customerGroups) === 0 && count($customers) === 0) {
@@ -154,7 +175,8 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
                 }
             }
         }
-
+        $output->writeln('<info>Enabling triggers for the CPL table</info>');
+        $databaseTriggerManager->enable();
         $output->writeln('<info>The cache is updated successfully</info>');
     }
 
@@ -277,5 +299,29 @@ class PriceListRecalculateCommand extends ContainerAwareCommand
         }
 
         return $customers;
+    }
+
+    /**
+     * @param OutputInterface $output
+     */
+    protected function disableAllTriggers(OutputInterface $output)
+    {
+        $output->writeln('<info>Disabling ALL triggers for the CPL table</info>');
+
+        $container              = $this->getContainer();
+        $databaseTriggerManager = $container->get('oro_pricing.database_triggers.manager.combined_prices');
+        $databaseTriggerManager->disable();
+    }
+
+    /**
+     * @param OutputInterface $output
+     */
+    protected function enableAllTriggers(OutputInterface $output)
+    {
+        $output->writeln('<info>Enabling ALL triggers for the CPL table</info>');
+
+        $container              = $this->getContainer();
+        $databaseTriggerManager = $container->get('oro_pricing.database_triggers.manager.combined_prices');
+        $databaseTriggerManager->enable();
     }
 }

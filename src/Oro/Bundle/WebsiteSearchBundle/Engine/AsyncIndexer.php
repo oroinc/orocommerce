@@ -83,6 +83,8 @@ class AsyncIndexer implements IndexerInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @param array $context Not used here, only to comply with the interface
      */
     public function getClassesForReindex($class = null, array $context = [])
     {
@@ -105,6 +107,12 @@ class AsyncIndexer implements IndexerInterface
 
     /**
      * {@inheritdoc}
+     *
+     * @param array $context
+     * $context = [
+     *     'entityIds' int[] Array of entities ids to reindex
+     *     'websiteIds' int[] Array of websites ids to reindex
+     * ]
      */
     public function reindex($class = null, array $context = [])
     {
