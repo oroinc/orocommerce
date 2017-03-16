@@ -107,6 +107,12 @@ services:
             - "@oro_shipping.shipping_price.provider.cache"
             - "@oro_cron.deferred_scheduler"
 
+    oro_ups.handler.action.invalidate_cache:
+        class: 'Oro\Bundle\UPSBundle\Handler\InvalidateCacheActionHandler'
+        arguments:
+            - "@oro_ups.shipping_price_cache"
+            - "@oro_shipping.shipping_price.provider.cache"
+
     oro_ups.shipping_price_cache:
         class: 'Oro\Bundle\UPSBundle\Cache\ShippingPriceCache'
         public: false

@@ -1,5 +1,6 @@
 operations:
     oro_integration_invalidate_cache:
+        enabled: false
         label: oro.ups.form.invalidate_cache.label
         routes:
             - oro_integration_update
@@ -71,3 +72,20 @@ operations:
                 type: 'success'
         preconditions:
             '@equal': [$type, $.upstype]
+
+    oro_integration_invalidate_cache_new:
+        extends: oro_cache_invalidate
+        routes:
+            - oro_integration_update
+        acl_resource: [UPDATE, entity:Oro\Bundle\IntegrationBundle\Entity\Channel]
+        preactions:
+            - '@assign_value': [$.invalidateService, 'oro_ups.handler.action.invalidate_cache']
+            - '@assign_constant_value':
+                attribute: $.paramTransportId
+                value: Oro\Bundle\UPSBundle\Handler\InvalidateCacheActionHandler::PARAM_TRANSPORT_ID
+            - '@call_method':
+                object: $.dataStorage
+                method: set
+                method_parameters:
+                    - $.paramTransportId
+                    - $.data.transport.id
