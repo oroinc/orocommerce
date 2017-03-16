@@ -42,7 +42,7 @@ class WebCatalogEntityIndexerListenerTest extends FrontendWebTestCase
         // set WebCatalog for current Website
         $container->get('oro_config.global')->set(
             'oro_web_catalog.web_catalog',
-            $webCatalog,
+            $webCatalog->getId(),
             $container->get('oro_website.manager')->getCurrentWebsite()
         );
         
