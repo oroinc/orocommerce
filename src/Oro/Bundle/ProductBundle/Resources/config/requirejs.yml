@@ -33,8 +33,10 @@ config:
         'oroproduct/js/app/datagrid/sorting/backend-dropdown': 'bundles/oroproduct/js/app/datagrid/sorting/backend-dropdown.js'
         'oroproduct/js/app/components/product-variant-field-component': 'bundles/oroproduct/js/app/components/product-variant-field-component.js'
 
-
     shim:
         'tinymce/plugins/fullscreen/plugin.min':
             deps:
                 - 'tinymce/tinymce.min'
+        'oroproduct/js/app/components/product-unit-selection-limitations-component':
+            deps:
+                - 'oroproduct/js/app/components/product-primary-unit-limitations-component'

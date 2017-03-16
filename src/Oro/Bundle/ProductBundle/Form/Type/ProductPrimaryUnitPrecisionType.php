@@ -2,8 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Form\Type;
 
+use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\HiddenType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -28,15 +31,33 @@ class ProductPrimaryUnitPrecisionType extends AbstractType
 
     /**
      * @param FormBuilderInterface $builder
-     * @param array $options
+     * @param array                $options
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('precision', 'integer', ['type' => 'text', 'required' => false])
-            ->add('conversionRate', 'hidden', ['data' => 1])
-            ->add('sell', 'hidden', ['data' => true])
-        ;
+            ->add(
+                'precision',
+                IntegerType::class,
+                [
+                    'type' => 'text',
+                    'required' => false
+                ]
+            )
+            ->add(
+                'conversionRate',
+                HiddenType::class,
+                [
+                    'data' => 1
+                ]
+            )
+            ->add(
+                'sell',
+                HiddenType::class,
+                [
+                    'data' => true
+                ]
+            );
 
         $builder->addEventListener(FormEvents::PRE_SET_DATA, function (FormEvent $event) use ($options) {
             $unitPrecision = $event->getData();
@@ -48,7 +69,20 @@ class ProductPrimaryUnitPrecisionType extends AbstractType
                     ProductUnitSelectionType::NAME,
                     [
                         'attr' => ['class' => 'unit'],
-                        'product' => $unitPrecision ? $unitPrecision->getProduct() : null
+                        'query_builder' => function (EntityRepository $er) use ($unitPrecision) {
+                            $excludedCode = '';
+                            if ($unitPrecision->getProduct()) {
+                                $additionalUnitPrecisions = $unitPrecision->getProduct()->getAdditionalUnitPrecisions();
+                                foreach ($additionalUnitPrecisions as $additionalUnitPrecision) {
+                                    $excludedCode = $additionalUnitPrecision->getUnit()->getCode();
+                                }
+                            }
+
+                            return $er
+                                ->createQueryBuilder('u')
+                                ->where('u.code != :codes')
+                                ->setParameter('codes', $excludedCode);
+                        },
                     ]
                 );
             } else {
@@ -58,7 +92,7 @@ class ProductPrimaryUnitPrecisionType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function configureOptions(OptionsResolver $resolver)
     {
@@ -77,7 +111,7 @@ class ProductPrimaryUnitPrecisionType extends AbstractType
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getBlockPrefix()
     {
