@@ -59,7 +59,7 @@ class QuantityType extends AbstractProductAwareType
         $formattedQuantity = $this->roundingService->round($quantity, $scale);
 
         if ($quantity !== $formattedQuantity) {
-            $event->setData($formattedQuantity);
+            $event->setData((string)$formattedQuantity);//number type expected string value in submitted data
         }
     }
 
