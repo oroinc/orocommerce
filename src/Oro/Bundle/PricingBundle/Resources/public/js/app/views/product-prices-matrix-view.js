@@ -16,19 +16,20 @@ define(function(require) {
             fields: '[data-name="field__quantity"]:enabled',
             fieldsColumn: '[data-name="field__quantity"]:enabled',
             totalQty: '[data-role="total-quantity"]',
+            totalRowQty: '[data-footer-row-index]',
             totalPrice: '[data-role="total-price"]',
             submitButtons: '[data-shoppingList],[data-toggle="dropdown"]'
         },
 
         elementsEvents: {
-            'fields': ['input', 'setTotal'],
-            'fieldsColumn': ['input', 'setTotalColumn']
+            'fields': ['input', 'updateTotals']
         },
 
         total: {
             price: 0,
-            quantity: 0,
-            quantityColumn: 0
+            commonQuantity: 0,
+            rowQuantity: 0,
+            rowQuantityIndex: 1
         },
 
         prices: null,
@@ -72,60 +73,59 @@ define(function(require) {
 
          * @param event
          */
-        setTotal: function(event) {
-            this.total = _.reduce(this.getElement('fields'), function(total, field) {
-                if (_.isEmpty(field.value) || !_.isNumber(+field.value)) {
+        updateTotals: function(event) {
+            _.debounce(_.bind(function(event) {
+                var self = this;
+                var currentRowId = $(event.currentTarget).closest('[data-row-index]').data('row-index');
+
+                this.total = _.reduce(this.getElement('fields'), function(total, field) {
+                    var $this = $(field);
+                    var $parent = $this.closest('[data-row-index]');
+                    var productId = $parent.data('product-id');
+
+                    if ($parent.data('row-index') === currentRowId) {
+                        total.rowQuantity += self.getValue(field);
+                    }
+
+                    if (_.isEmpty(field.value) || !_.isNumber(+field.value)) {
+                        return total;
+                    }
+
+                    total.commonQuantity += self.getValue(field);
+                    total.price += PricesHelper.calcTotalPrice(this.prices[productId], this.unit, field.value);
+
                     return total;
-                }
+                }, {
+                    price: 0,
+                    commonQuantity: 0,
+                    rowQuantity: 0,
+                    rowQuantityIndex: currentRowId
+                }, this);
 
-                var productId = $(field).closest('[data-product-id]').data('product-id');
+                this.render();
+            }, this), 70)(event);
+        },
 
-                total.quantity += parseInt(field.value, 10) || 0;
-                total.price += PricesHelper.calcTotalPrice(this.prices[productId], this.unit, field.value);
-
-                return total;
-            }, {
-                price: 0,
-                quantity: 0
-            }, this);
-
-            this.render();
+        getValue: function(field) {
+            return parseInt(field.value, 10) || 0;
         },
 
         /**
          * Render actual view
          */
         render: function() {
-            if (this.total.quantity === 0) {
-                this.getElement('submitButtons').addClass('disabled').data('disabled', true);
-            } else {
-                this.getElement('submitButtons').removeClass('disabled').data('disabled', false);
-            }
+            this.getElement('submitButtons')
+                .toggleClass('disabled', this.total.commonQuantity === 0)
+                .data('disabled', this.total.commonQuantity === 0);
 
-            this.getElement('totalQty').text(this.total.quantity);
+            this.getElement('totalQty').text(this.total.commonQuantity);
             this.getElement('totalPrice').text(
                 NumberFormatter.formatCurrency(this.total.price)
             );
-        },
-        setTotalColumn: function (event) {
-            for (var i=2; i<8; i++) {
-                var totalColumn  = 0,
-                    columnsTotal = $('.matrix-order-widget__grid-footer-total');
 
-                $('.matrix-order-widget__grid>tbody>tr>td:nth-child(' + i + ')').each(function(){
-                    totalColumn += parseInt($(this).find('input').val()) || 0;
-                });
-
-                $('.matrix-order-widget__grid>tfoot>tr>td:nth-child(' + i + ')').children(columnsTotal).html(totalColumn);
-
-                $(columnsTotal).each(function(){
-                    if ($(this).text() == 0) {
-                        $(this).removeClass('selected');
-                    } else {
-                        $(this).addClass('selected');
-                    }
-                });
-            }
+            this.getElement('totalRowQty')
+                .filter('[data-footer-row-index=' + this.total.rowQuantityIndex + ']')
+                .text(this.total.rowQuantity);
         }
     }));
     return ProductPricesMatrixView;
