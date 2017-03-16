@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\SEOBundle\EventListener;
 
-use Oro\Bundle\SEOBundle\Event\UrlItemsProviderStartEvent;
+use Oro\Bundle\SEOBundle\Event\UrlItemsProviderEvent;
 use Oro\Bundle\SEOBundle\Limiter\WebCatalogProductLimiter;
 
 class ProductUrlItemsProviderStartListener
@@ -21,9 +21,9 @@ class ProductUrlItemsProviderStartListener
     }
 
     /**
-     * @param UrlItemsProviderStartEvent $event
+     * @param UrlItemsProviderEvent $event
      */
-    public function onStart(UrlItemsProviderStartEvent $event)
+    public function onStart(UrlItemsProviderEvent $event)
     {
         $this->webCatalogProductLimiter->prepareLimitation($event->getVersion(), $event->getWebsite());
     }

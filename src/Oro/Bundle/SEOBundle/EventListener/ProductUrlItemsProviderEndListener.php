@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\SEOBundle\EventListener;
 
-use Oro\Bundle\SEOBundle\Event\UrlItemsProviderEndEvent;
+use Oro\Bundle\SEOBundle\Event\UrlItemsProviderEvent;
 use Oro\Bundle\SEOBundle\Limiter\WebCatalogProductLimiter;
 
 class ProductUrlItemsProviderEndListener
@@ -21,9 +21,9 @@ class ProductUrlItemsProviderEndListener
     }
 
     /**
-     * @param UrlItemsProviderEndEvent $event
+     * @param UrlItemsProviderEvent $event
      */
-    public function onEnd(UrlItemsProviderEndEvent $event)
+    public function onEnd(UrlItemsProviderEvent $event)
     {
         $this->webCatalogProductLimiter->erase($event->getVersion());
     }

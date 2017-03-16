@@ -83,6 +83,39 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit_Framework_Te
         );
     }
 
+    public function testProcessWhenInvalidJobIdGiven()
+    {
+        $messageBody = [
+            SitemapMessageFactory::WEBSITE_ID => self::WEBSITE_ID,
+            SitemapMessageFactory::TYPE => self::TYPE
+        ];
+
+        $exception = new InvalidArgumentException();
+        $this->messageFactory->expects($this->once())
+            ->method('getJobIdFromMessage')
+            ->willThrowException($exception);
+
+        $this->logger->expects($this->once())
+            ->method('error')
+            ->with(
+                'Queue Message does not contain correct jobId',
+                [
+                    'exception' => $exception,
+                    'message' => JSON::encode($messageBody),
+                ]
+            );
+
+        $this->createProcessorWithTestJobRunner();
+
+        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message */
+        $message = $this->createMock(MessageInterface::class);
+        $message->expects($this->any())
+            ->method('getBody')
+            ->willReturn(JSON::encode($messageBody));
+
+        $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process($message, $this->session));
+    }
+
     public function testProcessWhenThrowsInvalidArgumentException()
     {
         $messageBody = [
@@ -100,7 +133,7 @@ class GenerateSitemapByWebsiteAndTypeProcessorTest extends \PHPUnit_Framework_Te
 
         $exception = new InvalidArgumentException();
         $this->messageFactory->expects($this->once())
-            ->method('getJobIdFromMessage')
+            ->method('getWebsiteFromMessage')
             ->with($messageBody)
             ->willThrowException($exception);
 

@@ -1,6 +1,5 @@
 parameters:
     oro_seo.sitemap_directory: 'sitemaps'
-    oro_seo.sitemap.provider.url_items_provider.class: Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProvider
 
 services:
     #EventListeners
@@ -154,41 +153,46 @@ services:
             - { name: form.type, alias: oro_sitemap_priority }
 
     oro_seo.sitemap.provider.url_items_provider:
+        class: Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProvider
         abstract: true
         arguments:
             - '@oro_redirect.generator.canonical_url'
             - '@oro_config.manager'
             - '@event_dispatcher'
-            - '@oro_entity.doctrine_helper'
+            - '@doctrine'
 
     oro_seo.sitemap.provider.product_url_items_provider:
-        class: '%oro_seo.sitemap.provider.url_items_provider.class%'
         parent: oro_seo.sitemap.provider.url_items_provider
         public: false
-        arguments:
-            - 'product'
-            - '%oro_product.entity.product.class%'
+        calls:
+            - ['setType', ['product']]
+            - ['setEntityClass', ['%oro_product.entity.product.class%']]
+            - ['setChangeFrequencySettingsKey', ['oro_seo.sitemap_changefreq_product']]
+            - ['setPrioritySettingsKey', ['oro_seo.sitemap_priority_product']]
         tags:
             - { name: oro_seo.sitemap.url_items_provider, alias: 'product' }
 
     oro_seo.sitemap.provider.category_url_items_provider:
-        class: '%oro_seo.sitemap.provider.url_items_provider.class%'
+        class: Oro\Bundle\SEOBundle\Sitemap\Provider\CategoryUrlItemsProvider
         parent: oro_seo.sitemap.provider.url_items_provider
         public: false
-        arguments:
-            - 'category'
-            - '%oro_catalog.entity.category.class%'
+        calls:
+            - ['setType', ['category']]
+            - ['setEntityClass', ['%oro_catalog.entity.category.class%']]
+            - ['setChangeFrequencySettingsKey', ['oro_seo.sitemap_changefreq_category']]
+            - ['setPrioritySettingsKey', ['oro_seo.sitemap_priority_category']]
         tags:
             - { name: oro_seo.sitemap.url_items_provider, alias: 'category' }
             - { name: oro_featuretogle.feature, feature: frontend_master_catalog }
 
     oro_seo.sitemap.provider.cms_page_url_items_provider:
-        class: '%oro_seo.sitemap.provider.url_items_provider.class%'
         parent: oro_seo.sitemap.provider.url_items_provider
         public: false
-        arguments:
-            - 'cms_page'
-            - '%oro_cms.entity.page.class%'
+        calls:
+            - ['setType', ['cms_page']]
+            - ['setEntityClass', ['%oro_cms.entity.page.class%']]
+            - ['setChangeFrequencySettingsKey', ['oro_seo.sitemap_changefreq_cms_page']]
+            - ['setPrioritySettingsKey', ['oro_seo.sitemap_priority_cms_page']]
         tags:
             - { name: oro_seo.sitemap.url_items_provider, alias: 'page' }
 

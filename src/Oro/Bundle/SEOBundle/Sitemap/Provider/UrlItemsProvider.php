@@ -2,18 +2,18 @@
 
 namespace Oro\Bundle\SEOBundle\Sitemap\Provider;
 
-use Doctrine\ORM\EntityManager;
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
-use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
+use Oro\Bundle\EntityBundle\EntityProperty\UpdatedAtAwareInterface;
+use Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
-use Oro\Bundle\SEOBundle\DependencyInjection\Configuration as SeoConfiguration;
 use Oro\Bundle\SEOBundle\Event\RestrictSitemapEntitiesEvent;
-use Oro\Bundle\SEOBundle\Event\UrlItemsProviderEndEvent;
-use Oro\Bundle\SEOBundle\Event\UrlItemsProviderStartEvent;
+use Oro\Bundle\SEOBundle\Event\UrlItemsProviderEvent;
 use Oro\Bundle\SEOBundle\Model\DTO\UrlItem;
 use Oro\Component\SEO\Provider\UrlItemsProviderInterface;
 use Oro\Component\Website\WebsiteInterface;
@@ -21,7 +21,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class UrlItemsProvider implements UrlItemsProviderInterface
 {
-    use FeatureCheckerHolderTrait;
+    const ENTITY_ALIAS = 'entityAlias';
+    const BUFFER_SIZE = 1000;
 
     /**
      * @var CanonicalUrlGenerator
@@ -39,9 +40,9 @@ class UrlItemsProvider implements UrlItemsProviderInterface
     private $eventDispatcher;
 
     /**
-     * @var EntityManager
+     * @var ManagerRegistry
      */
-    private $entityManager;
+    private $registry;
 
     /**
      * Provider type, like 'product' for example.
@@ -58,152 +59,177 @@ class UrlItemsProvider implements UrlItemsProviderInterface
     private $entityClass;
 
     /**
+     * @var string|null
+     */
+    private $changeFrequencySettingsKey;
+
+    /**
+     * @var string|null
+     */
+    private $prioritySettingsKey;
+
+    /**
+     * @var bool
+     */
+    private $isDirectUrlEnabled = false;
+
+    /**
+     * @var string|null
+     */
+    private $entityChangeFrequency;
+
+    /**
+     * @var string|null
+     */
+    private $entitySitemapPriority;
+
+    /**
      * @param CanonicalUrlGenerator $canonicalUrlGenerator
      * @param ConfigManager $configManager
      * @param EventDispatcherInterface $eventDispatcher
-     * @param DoctrineHelper $doctrineHelper
-     * @param $type
-     * @param $entityClass
+     * @param ManagerRegistry $registry
      */
     public function __construct(
         CanonicalUrlGenerator $canonicalUrlGenerator,
         ConfigManager $configManager,
         EventDispatcherInterface $eventDispatcher,
-        DoctrineHelper $doctrineHelper,
-        $type,
-        $entityClass
+        ManagerRegistry $registry
     ) {
         $this->canonicalUrlGenerator = $canonicalUrlGenerator;
         $this->configManager = $configManager;
         $this->eventDispatcher = $eventDispatcher;
-        $this->entityManager = $doctrineHelper->getEntityManagerForClass($entityClass);
+        $this->registry = $registry;
+    }
+
+    /**
+     * @param string $type
+     */
+    public function setType($type)
+    {
         $this->type = $type;
+    }
+
+    /**
+     * @param string $entityClass
+     */
+    public function setEntityClass($entityClass)
+    {
         $this->entityClass = $entityClass;
     }
 
     /**
-     * @param WebsiteInterface $website
-     * @param int $version
-     *
-     * @return \Generator|UrlItem[]
+     * @param string $changeFrequencySettingsKey
+     */
+    public function setChangeFrequencySettingsKey($changeFrequencySettingsKey)
+    {
+        $this->changeFrequencySettingsKey = $changeFrequencySettingsKey;
+    }
+
+    /**
+     * @param string $prioritySettingsKey
+     */
+    public function setPrioritySettingsKey($prioritySettingsKey)
+    {
+        $this->prioritySettingsKey = $prioritySettingsKey;
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function getUrlItems(WebsiteInterface $website, $version)
     {
-        if (!$this->isFeaturesEnabled()) {
-            return;
-        }
+        $this->loadConfigs($website);
 
-        $this->eventDispatcher->dispatch(
-            sprintf('%s.%s', UrlItemsProviderStartEvent::NAME, $this->type),
-            new UrlItemsProviderStartEvent($version, $website)
-        );
+        $this->dispatchIterationEvent(UrlItemsProviderEvent::ON_START, $website, $version);
 
-        $queryBuilder = $this->entityManager->createQueryBuilder()
-            ->select(str_replace('entityAlias', $this->type, 'DISTINCT entityAlias.id, entityAlias.updatedAt'))
-            ->from($this->entityClass, $this->type);
-
-        $canonicalUrlType = $this->canonicalUrlGenerator->getCanonicalUrlType($website);
-        if ($canonicalUrlType === Configuration::DIRECT_URL) {
-            $queryBuilder->addSelect('slugs.url');
-            $queryBuilder->leftJoin(sprintf('%s.slugs', $this->type), 'slugs');
-        }
-
-        $this->eventDispatcher->dispatch(
-            sprintf('%s.%s', RestrictSitemapEntitiesEvent::NAME, $this->type),
-            new RestrictSitemapEntitiesEvent($queryBuilder, $version, $website)
-        );
-
-        $entityChangeFrequency = $this->getEntityChangeFrequency($website);
-        $entitySitemapPriority = $this->getEntitySitemapPriority($website);
-        $iterableResult = new BufferedQueryResultIterator($queryBuilder);
-        foreach ($iterableResult as $row) {
-            $entityUrlItem = $this->getEntityUrlItem(
-                $website,
-                $row,
-                $canonicalUrlType,
-                $entityChangeFrequency,
-                $entitySitemapPriority
-            );
+        foreach ($this->getResultIterator($website, $version) as $row) {
+            $entityUrlItem = $this->getEntityUrlItem($website, $row);
 
             if ($entityUrlItem) {
                 yield $entityUrlItem;
             }
         }
 
-        $this->eventDispatcher->dispatch(
-            sprintf('%s.%s', UrlItemsProviderEndEvent::NAME, $this->type),
-            new UrlItemsProviderEndEvent($version, $website)
-        );
+        $this->dispatchIterationEvent(UrlItemsProviderEvent::ON_END, $website, $version);
     }
 
     /**
      * @param WebsiteInterface $website
+     * @param string $version
+     *
+     * @return QueryBuilder
+     */
+    protected function getQueryBuilder(WebsiteInterface $website, $version)
+    {
+        $queryBuilder = $this->getEntityManager()->createQueryBuilder();
+        $queryBuilder->from($this->entityClass, self::ENTITY_ALIAS)
+            ->select($this->getFieldName('id'))
+            ->distinct(true)
+            ->orderBy($this->getFieldName('id'), 'DESC');
+
+        if (is_a($this->entityClass, UpdatedAtAwareInterface::class, true)) {
+            $queryBuilder->addSelect($this->getFieldName('updatedAt'));
+        }
+
+        if ($this->isDirectUrlEnabled && is_a($this->entityClass, SlugAwareInterface::class, true)) {
+            $queryBuilder->leftJoin($this->getFieldName('slugs'), 'slugs');
+            $queryBuilder->addSelect('slugs.url');
+        }
+
+        $this->dispatchQueryBuilderRestrictionEvent($queryBuilder, $website, $version);
+
+        return $queryBuilder;
+    }
+
+    /**
+     * @param string $fieldName
      *
      * @return string
      */
-    private function getEntityChangeFrequency(WebsiteInterface $website)
+    protected function getFieldName($fieldName)
     {
-        return $this->configManager->get(
-            sprintf('oro_seo.sitemap_changefreq_%s', $this->type),
-            SeoConfiguration::CHANGEFREQ_DAILY,
-            false,
-            $website
-        );
+        return self::ENTITY_ALIAS . '.' . $fieldName;
     }
 
     /**
      * @param WebsiteInterface $website
+     * @param string $version
      *
-     * @return string
+     * @return \Iterator
      */
-    private function getEntitySitemapPriority(WebsiteInterface $website)
+    protected function getResultIterator(WebsiteInterface $website, $version)
     {
-        return $this->configManager->get(
-            sprintf('oro_seo.sitemap_priority_%s', $this->type),
-            SeoConfiguration::DEFAULT_PRIORITY,
-            false,
-            $website
+        $resultIterator = new BufferedQueryResultIterator(
+            $this->getQueryBuilder($website, $version)
         );
+        $resultIterator->setBufferSize(self::BUFFER_SIZE);
+        $resultIterator->setReverse(true);
+
+        return $resultIterator;
     }
 
     /**
      * @param WebsiteInterface $website
      * @param array $row
-     * @param string $canonicalUrlType
-     * @param string $entityChangeFrequency
-     * @param string $entitySitemapPriority
      *
      * @return null|UrlItem
      */
-    private function getEntityUrlItem(
-        WebsiteInterface $website,
-        array $row,
-        $canonicalUrlType,
-        $entityChangeFrequency,
-        $entitySitemapPriority
-    ) {
-        $entityReference = $this->entityManager->getPartialReference($this->entityClass, $row['id']);
-        $updatedAt = $row['updatedAt'];
-        $url = isset($row['url']) ? $row['url']: '';
+    private function getEntityUrlItem(WebsiteInterface $website, array $row)
+    {
+        $em = $this->getEntityManager();
+        $entityReference = $em->getPartialReference($this->entityClass, $row['id']);
+        $em->detach($entityReference);
 
-        $this->entityManager->detach($entityReference);
+        $updatedAt = isset($row['updatedAt']) ? $row['updatedAt'] : null;
+        $url = isset($row['url']) ? $row['url'] : null;
 
-        if ($canonicalUrlType === Configuration::DIRECT_URL) {
-            $entityUrlItem = $this->getDirectUrlItem(
-                $website,
-                $updatedAt,
-                $url,
-                $entityChangeFrequency,
-                $entitySitemapPriority
-            );
-        } else {
-            $entityUrlItem = $this->getSystemUrlItem(
-                $website,
-                $updatedAt,
-                $entityReference,
-                $entityChangeFrequency,
-                $entitySitemapPriority
-            );
+        $entityUrlItem = null;
+        if ($this->isDirectUrlEnabled) {
+            $entityUrlItem = $this->getDirectUrlItem($website, $url, $updatedAt);
+        }
+
+        if (!$entityUrlItem) {
+            $entityUrlItem = $this->getSystemUrlItem($website, $entityReference, $updatedAt);
         }
 
         return $entityUrlItem;
@@ -211,20 +237,12 @@ class UrlItemsProvider implements UrlItemsProviderInterface
 
     /**
      * @param WebsiteInterface $website
-     * @param \Datetime $updatedAt
-     * @param string $url
-     * @param string $entityChangeFrequency
-     * @param string $entitySitemapPriority
-     *
+     * @param string|null $url
+     * @param \DateTime|null $updatedAt
      * @return null|UrlItem
      */
-    private function getDirectUrlItem(
-        WebsiteInterface $website,
-        \DateTime $updatedAt,
-        $url,
-        $entityChangeFrequency,
-        $entitySitemapPriority
-    ) {
+    private function getDirectUrlItem(WebsiteInterface $website, $url, \DateTime $updatedAt = null)
+    {
         if ($url) {
             $absoluteUrl = $this->canonicalUrlGenerator->getAbsoluteUrl($url, $website);
 
@@ -232,8 +250,8 @@ class UrlItemsProvider implements UrlItemsProviderInterface
                 $urlItem = new UrlItem(
                     $absoluteUrl,
                     $updatedAt,
-                    $entityChangeFrequency,
-                    $entitySitemapPriority
+                    $this->entityChangeFrequency,
+                    $this->entitySitemapPriority
                 );
 
                 return $urlItem;
@@ -245,31 +263,117 @@ class UrlItemsProvider implements UrlItemsProviderInterface
 
     /**
      * @param WebsiteInterface $website
-     * @param \DateTime $updatedAt
      * @param SluggableInterface $entityReference
-     * @param string $entityChangeFrequency
-     * @param string $entitySitemapPriority
-     *
+     * @param \DateTime|null $updatedAt
      * @return null|UrlItem
      */
     private function getSystemUrlItem(
         WebsiteInterface $website,
-        \DateTime $updatedAt,
         SluggableInterface $entityReference,
-        $entityChangeFrequency,
-        $entitySitemapPriority
+        \DateTime $updatedAt = null
     ) {
         $systemUrl = $this->canonicalUrlGenerator->getSystemUrl($entityReference, $website);
 
         if ($systemUrl) {
-            return new UrlItem(
-                $systemUrl,
-                $updatedAt,
-                $entityChangeFrequency,
-                $entitySitemapPriority
-            );
+            return $this->createUrlItem($systemUrl, $updatedAt);
         }
 
         return null;
+    }
+
+    /**
+     * @return EntityManagerInterface|ObjectManager
+     */
+    protected function getEntityManager()
+    {
+        return $this->registry->getManagerForClass($this->entityClass);
+    }
+
+    /**
+     * @param string $eventName
+     * @param WebsiteInterface $website
+     * @param string $version
+     */
+    private function dispatchIterationEvent($eventName, WebsiteInterface $website, $version)
+    {
+        $this->eventDispatcher->dispatch(
+            sprintf('%s.%s', $eventName, $this->type),
+            new UrlItemsProviderEvent($version, $website)
+        );
+        $this->eventDispatcher->dispatch($eventName, new UrlItemsProviderEvent($version, $website));
+    }
+
+    /**
+     * @param QueryBuilder $queryBuilder
+     * @param WebsiteInterface $website
+     * @param string $version
+     */
+    private function dispatchQueryBuilderRestrictionEvent(
+        QueryBuilder $queryBuilder,
+        WebsiteInterface $website,
+        $version
+    ) {
+        $this->eventDispatcher->dispatch(
+            sprintf('%s.%s', RestrictSitemapEntitiesEvent::NAME, $this->type),
+            new RestrictSitemapEntitiesEvent($queryBuilder, $version, $website)
+        );
+        $this->eventDispatcher->dispatch(
+            RestrictSitemapEntitiesEvent::NAME,
+            new RestrictSitemapEntitiesEvent($queryBuilder, $version, $website)
+        );
+    }
+
+    /**
+     * @param WebsiteInterface $website
+     */
+    private function loadConfigs(WebsiteInterface $website)
+    {
+        $this->isDirectUrlEnabled = $this->canonicalUrlGenerator->isDirectUrlEnabled($website);
+        $this->entityChangeFrequency = $this->getEntityChangeFrequency($website);
+        $this->entitySitemapPriority = $this->getEntitySitemapPriority($website);
+    }
+
+    /**
+     * @param WebsiteInterface $website
+     *
+     * @return string|null
+     */
+    protected function getEntityChangeFrequency(WebsiteInterface $website)
+    {
+        if ($this->changeFrequencySettingsKey) {
+            return $this->configManager->get($this->changeFrequencySettingsKey, false, false, $website);
+        }
+
+        return null;
+    }
+
+    /**
+     * @param WebsiteInterface $website
+     *
+     * @return string|null
+     */
+    protected function getEntitySitemapPriority(WebsiteInterface $website)
+    {
+        if ($this->prioritySettingsKey) {
+            return $this->configManager->get($this->prioritySettingsKey, false, false, $website);
+        }
+
+        return null;
+    }
+
+    /**
+     * @param string $url
+     * @param \DateTime|null $updatedAt
+     *
+     * @return UrlItem
+     */
+    private function createUrlItem($url, \DateTime $updatedAt = null)
+    {
+        return new UrlItem(
+            $url,
+            $updatedAt,
+            $this->entityChangeFrequency,
+            $this->entitySitemapPriority
+        );
     }
 }

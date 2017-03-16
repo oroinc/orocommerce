@@ -7,9 +7,6 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\RedirectBundle\Tests\Functional\DataFixtures\LoadSlugsData;
-use Oro\Bundle\SEOBundle\Event\RestrictSitemapEntitiesEvent;
-use Oro\Bundle\SEOBundle\Event\UrlItemsProviderEndEvent;
-use Oro\Bundle\SEOBundle\Event\UrlItemsProviderStartEvent;
 use Oro\Bundle\SEOBundle\Model\DTO\UrlItem;
 use Oro\Bundle\SEOBundle\Sitemap\Provider\UrlItemsProvider;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -27,29 +24,14 @@ class UrlItemsProviderTest extends WebTestCase
     private $canonicalUrlGenerator;
 
     /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ConfigManager
      */
-    private $eventDispatcher;
+    private $configManager;
 
     /**
-     * @var WebsiteInterface
+     * @var UrlItemsProvider
      */
-    private $website;
-
-    /**
-     * @var integer
-     */
-    private $version;
-
-    /**
-     * @var string
-     */
-    private $providerType = 'cms_page';
-
-    /**
-     * @var string
-     */
-    private $providerEntityClass = Page::class;
+    private $provider;
 
     protected function setUp()
     {
@@ -58,32 +40,32 @@ class UrlItemsProviderTest extends WebTestCase
         $this->loadFixtures([LoadPageData::class, LoadSlugsData::class]);
 
         $this->canonicalUrlGenerator = $this->getContainer()->get('oro_redirect.generator.canonical_url');
-        $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
-        $this->website = $this->createMock(WebsiteInterface::class);
-        $this->version = '1';
+        /** @var EventDispatcherInterface $eventDispatcher */
+        $eventDispatcher = $this->createMock(EventDispatcherInterface::class);
+        $this->configManager = $this->getContainer()->get('oro_config.manager');
+
+        $this->provider = new UrlItemsProvider(
+            $this->canonicalUrlGenerator,
+            $this->configManager,
+            $eventDispatcher,
+            $this->getContainer()->get('doctrine')
+        );
+        $this->provider->setType('cms_page');
+        $this->provider->setEntityClass(Page::class);
+        $this->provider->setChangeFrequencySettingsKey('oro_seo.sitemap_changefreq_cms_page');
+        $this->provider->setPrioritySettingsKey('oro_seo.sitemap_priority_cms_page');
     }
 
     public function testItYieldsSystemUrls()
     {
-        $doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
-        $configManager = $this->getContainer()->get('oro_config.manager');
-        $configManager->set('oro_redirect.canonical_url_type', Configuration::SYSTEM_URL);
-        $configManager->flush();
-        $configManager = $this->getContainer()->get('oro_config.manager');
-        $provider = new UrlItemsProvider(
-            $this->canonicalUrlGenerator,
-            $configManager,
-            $this->eventDispatcher,
-            $doctrineHelper,
-            $this->providerType,
-            $this->providerEntityClass
-        );
+        /** @var WebsiteInterface $website */
+        $website = $this->createMock(WebsiteInterface::class);
+        $version = 1;
 
-        $urlItems = [];
-        foreach ($provider->getUrlItems($this->website, $this->version) as $urlItem) {
-            $urlItems[] = $urlItem;
-        }
+        $this->configManager->set('oro_redirect.canonical_url_type', Configuration::SYSTEM_URL);
+        $this->configManager->flush();
 
+        $urlItems = iterator_to_array($this->provider->getUrlItems($website, $version));
         $this->assertCount(5, $urlItems);
 
         $expectedEntity = $this->getReference(LoadPageData::PAGE_1);
@@ -91,8 +73,8 @@ class UrlItemsProviderTest extends WebTestCase
         $expectedUrlItem = new UrlItem(
             $expectedUrl,
             $expectedEntity->getUpdatedAt(),
-            $configManager->get(sprintf('oro_seo.sitemap_changefreq_%s', $this->providerType)),
-            $configManager->get(sprintf('oro_seo.sitemap_priority_%s', $this->providerType))
+            $this->configManager->get('oro_seo.sitemap_changefreq_cms_page'),
+            $this->configManager->get('oro_seo.sitemap_priority_cms_page')
         );
 
         $this->assertContains($expectedUrlItem, $urlItems, '', false, false);
@@ -100,97 +82,24 @@ class UrlItemsProviderTest extends WebTestCase
 
     public function testItYieldsDirectUrls()
     {
-        $doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
-        $configManager = $this->getContainer()->get('oro_config.manager');
-        $configManager->set('oro_redirect.canonical_url_type', Configuration::DIRECT_URL);
-        $configManager->flush();
-        $provider = new UrlItemsProvider(
-            $this->canonicalUrlGenerator,
-            $configManager,
-            $this->eventDispatcher,
-            $doctrineHelper,
-            $this->providerType,
-            $this->providerEntityClass
-        );
+        /** @var WebsiteInterface $website */
+        $website = $this->createMock(WebsiteInterface::class);
+        $version = 1;
 
-        $urlItems = [];
-        foreach ($provider->getUrlItems($this->website, $this->version) as $urlItem) {
-            $urlItems[] = $urlItem;
-        }
+        $this->configManager->set('oro_redirect.canonical_url_type', Configuration::DIRECT_URL);
+        $this->configManager->flush();
+
+        $urlItems = iterator_to_array($this->provider->getUrlItems($website, $version));
 
         $expectedEntity = $this->getReference(LoadPageData::PAGE_1);
         $expectedUrl = $this->canonicalUrlGenerator->getDirectUrl($expectedEntity);
         $expectedUrlItem = new UrlItem(
             $expectedUrl,
             $expectedEntity->getUpdatedAt(),
-            $configManager->get(sprintf('oro_seo.sitemap_changefreq_%s', $this->providerType)),
-            $configManager->get(sprintf('oro_seo.sitemap_priority_%s', $this->providerType))
+            $this->configManager->get('oro_seo.sitemap_changefreq_cms_page'),
+            $this->configManager->get('oro_seo.sitemap_priority_cms_page')
         );
 
         $this->assertContains($expectedUrlItem, $urlItems, '', false, false);
-    }
-
-    public function testItDispatchEvents()
-    {
-        $doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
-        /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject $configManager */
-        $configManager = $this->createMock(ConfigManager::class);
-        $provider = new UrlItemsProvider(
-            $this->canonicalUrlGenerator,
-            $configManager,
-            $this->eventDispatcher,
-            $doctrineHelper,
-            $this->providerType,
-            $this->providerEntityClass
-        );
-
-        $this->eventDispatcher->expects($this->exactly(3))
-            ->method('dispatch')
-            ->withConsecutive(
-                [
-                    UrlItemsProviderStartEvent::NAME.'.cms_page',
-                    new \PHPUnit_Framework_Constraint_IsInstanceOf(UrlItemsProviderStartEvent::class)
-                ],
-                [
-                    RestrictSitemapEntitiesEvent::NAME.'.cms_page',
-                    new \PHPUnit_Framework_Constraint_IsInstanceOf(RestrictSitemapEntitiesEvent::class)
-                ],
-                [
-                    UrlItemsProviderEndEvent::NAME.'.cms_page',
-                    new \PHPUnit_Framework_Constraint_IsInstanceOf(UrlItemsProviderEndEvent::class)
-                ]
-            );
-
-        $urlItems = [];
-        foreach ($provider->getUrlItems($this->website, $this->version) as $urlItem) {
-            $urlItems[] = $urlItem;
-        }
-
-        $this->assertCount(5, $urlItems);
-    }
-
-    public function testItCacheConfig()
-    {
-        $doctrineHelper = $this->getContainer()->get('oro_entity.doctrine_helper');
-        /** @var ConfigManager|\PHPUnit_Framework_MockObject_MockObject $configManager */
-        $configManager = $this->createMock(ConfigManager::class);
-        $provider = new UrlItemsProvider(
-            $this->canonicalUrlGenerator,
-            $configManager,
-            $this->eventDispatcher,
-            $doctrineHelper,
-            $this->providerType,
-            $this->providerEntityClass
-        );
-
-        $configManager->expects($this->exactly(2))
-            ->method('get');
-
-        $urlItems = [];
-        foreach ($provider->getUrlItems($this->website, $this->version) as $urlItem) {
-            $urlItems[] = $urlItem;
-        }
-
-        $this->assertCount(5, $urlItems);
     }
 }

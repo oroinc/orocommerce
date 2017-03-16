@@ -12,6 +12,7 @@ use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
 use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProvider;
+use Oro\Bundle\WebsiteBundle\Entity\Website;
 use Oro\Bundle\WebsiteBundle\Resolver\WebsiteUrlResolver;
 use Oro\Component\Routing\RouteData;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -72,6 +73,56 @@ class CanonicalUrlGeneratorTest extends \PHPUnit_Framework_TestCase
             $this->routingInformationProvider,
             $this->websiteUrlResolver
         );
+    }
+
+    public function testIsDirectUrlEnabled()
+    {
+        /** @var Website $website */
+        $website = $this->getEntity(Website::class, ['id' => 1]);
+
+        $key = 'oro_redirect.canonical_url_type';
+        $cacheKey = 'oro_redirect.canonical_url_type.1';
+        $this->configManager->expects($this->once())
+            ->method('get')
+            ->with($key, false, false, $website)
+            ->willReturn(Configuration::DIRECT_URL);
+        $this->cache->expects($this->once())
+            ->method('contains')
+            ->with($cacheKey)
+            ->willReturn(false);
+        $this->cache->expects($this->once())
+            ->method('save')
+            ->with($cacheKey, Configuration::DIRECT_URL);
+        $this->cache->expects($this->once())
+            ->method('fetch')
+            ->with($cacheKey)
+            ->willReturn(Configuration::DIRECT_URL);
+
+        $this->assertTrue($this->canonicalUrlGenerator->isDirectUrlEnabled($website));
+    }
+
+    public function testIsDirectUrlDisabled()
+    {
+        /** @var Website $website */
+        $website = $this->getEntity(Website::class, ['id' => 1]);
+
+        $key = 'oro_redirect.canonical_url_type';
+        $cacheKey = 'oro_redirect.canonical_url_type.1';
+        $this->configManager->expects($this->never())
+            ->method('get')
+            ->with($key, false, false, $website);
+        $this->cache->expects($this->once())
+            ->method('contains')
+            ->with($cacheKey)
+            ->willReturn(true);
+        $this->cache->expects($this->never())
+            ->method('save');
+        $this->cache->expects($this->once())
+            ->method('fetch')
+            ->with($cacheKey)
+            ->willReturn(Configuration::SYSTEM_URL);
+
+        $this->assertFalse($this->canonicalUrlGenerator->isDirectUrlEnabled($website));
     }
 
     public function testGetDirectUrlForInsecureCanonical()

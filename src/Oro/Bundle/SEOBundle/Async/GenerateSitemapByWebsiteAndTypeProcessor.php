@@ -63,31 +63,43 @@ class GenerateSitemapByWebsiteAndTypeProcessor implements MessageProcessorInterf
         try {
             $jobId = $this->messageFactory->getJobIdFromMessage($data);
             $result = $this->jobRunner->runDelayed($jobId, function () use ($data, $message) {
-                $this->sitemapDumper->dump(
-                    $this->messageFactory->getWebsiteFromMessage($data),
-                    $this->messageFactory->getVersionFromMessage($data),
-                    $this->messageFactory->getTypeFromMessage($data)
-                );
+                try {
+                    $this->sitemapDumper->dump(
+                        $this->messageFactory->getWebsiteFromMessage($data),
+                        $this->messageFactory->getVersionFromMessage($data),
+                        $this->messageFactory->getTypeFromMessage($data)
+                    );
+                } catch (InvalidArgumentException $e) {
+                    $this->logger->error(
+                        'Queue Message is invalid',
+                        [
+                            'exception' => $e,
+                            'message' => $message->getBody()
+                        ]
+                    );
+
+                    return false;
+                } catch (\Exception $exception) {
+                    $this->logger->error(
+                        'Unexpected exception occurred during queue message processing',
+                        [
+                            'message' => $message->getBody(),
+                            'exception' => $exception,
+                            'topic' => Topics::GENERATE_SITEMAP_BY_WEBSITE_AND_TYPE
+                        ]
+                    );
+
+                    return false;
+                }
 
                 return true;
             });
         } catch (InvalidArgumentException $e) {
             $this->logger->error(
-                'Queue Message is invalid',
+                'Queue Message does not contain correct jobId',
                 [
                     'exception' => $e,
                     'message' => $message->getBody()
-                ]
-            );
-
-            return self::REJECT;
-        } catch (\Exception $exception) {
-            $this->logger->error(
-                'Unexpected exception occurred during queue message processing',
-                [
-                    'message' => $message->getBody(),
-                    'exception' => $exception,
-                    'topic' => Topics::GENERATE_SITEMAP_BY_WEBSITE_AND_TYPE
                 ]
             );
 

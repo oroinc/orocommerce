@@ -77,7 +77,7 @@ class CanonicalUrlGenerator
     ) {
         $url = '';
 
-        if ($this->getCanonicalUrlType($website) === Configuration::DIRECT_URL) {
+        if ($this->isDirectUrlEnabled($website)) {
             $url = $this->getDirectUrl($entity, $localization, $website);
         }
 
@@ -152,6 +152,15 @@ class CanonicalUrlGenerator
         }
 
         return $url;
+    }
+
+    /**
+     * @param WebsiteInterface|null $website
+     * @return bool
+     */
+    public function isDirectUrlEnabled(WebsiteInterface $website = null)
+    {
+        return $this->getCanonicalUrlType($website) === Configuration::DIRECT_URL;
     }
 
     /**

@@ -3,7 +3,7 @@
 namespace Oro\Bundle\SEOBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\SEOBundle\Limiter\WebCatalogProductLimiter;
-use Oro\Bundle\SEOBundle\Event\UrlItemsProviderStartEvent;
+use Oro\Bundle\SEOBundle\Event\UrlItemsProviderEvent;
 use Oro\Bundle\SEOBundle\EventListener\ProductUrlItemsProviderStartListener;
 use Oro\Component\Website\WebsiteInterface;
 
@@ -32,11 +32,11 @@ class ProductUrlItemsProviderStartListenerTest extends \PHPUnit_Framework_TestCa
     public function testOnStart()
     {
         $website = $this->createMock(WebsiteInterface::class);
-        $event = new UrlItemsProviderStartEvent($website);
+        $event = new UrlItemsProviderEvent(1, $website);
 
         $this->webCatalogProductLimiter->expects($this->once())
             ->method('prepareLimitation')
-            ->with($website);
+            ->with(1, $website);
 
         $this->ProductUrlItemsProviderStartListener->onStart($event);
     }

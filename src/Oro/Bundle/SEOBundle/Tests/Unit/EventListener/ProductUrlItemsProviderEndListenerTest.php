@@ -3,7 +3,7 @@
 namespace Oro\Bundle\SEOBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\SEOBundle\Limiter\WebCatalogProductLimiter;
-use Oro\Bundle\SEOBundle\Event\UrlItemsProviderEndEvent;
+use Oro\Bundle\SEOBundle\Event\UrlItemsProviderEvent;
 use Oro\Bundle\SEOBundle\EventListener\ProductUrlItemsProviderEndListener;
 
 class ProductUrlItemsProviderEndListenerTest extends \PHPUnit_Framework_TestCase
@@ -31,7 +31,7 @@ class ProductUrlItemsProviderEndListenerTest extends \PHPUnit_Framework_TestCase
     public function testOnEnd()
     {
         $version = 42;
-        $event = new UrlItemsProviderEndEvent($version);
+        $event = new UrlItemsProviderEvent($version);
 
         $this->webCatalogProductLimiter->expects($this->once())
             ->method('erase')

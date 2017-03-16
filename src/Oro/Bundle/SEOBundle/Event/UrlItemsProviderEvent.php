@@ -5,9 +5,10 @@ namespace Oro\Bundle\SEOBundle\Event;
 use Oro\Component\Website\WebsiteInterface;
 use Symfony\Component\EventDispatcher\Event;
 
-class UrlItemsProviderEndEvent extends Event
+class UrlItemsProviderEvent extends Event
 {
-    const NAME = 'oro_seo.event.url_items_provider_end';
+    const ON_END = 'oro_seo.event.url_items_provider_end';
+    const ON_START = 'oro_seo.event.url_items_provider_start';
 
     /**
      * @var WebsiteInterface|null
