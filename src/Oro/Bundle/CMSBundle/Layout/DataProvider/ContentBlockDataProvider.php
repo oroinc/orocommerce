@@ -28,10 +28,10 @@ class ContentBlockDataProvider
 
     /**
      * @param ContentBlockResolver $contentBlockResolver
-     * @param ManagerRegistry               $registry
-     * @param ScopeManager                  $scopeManager
-     * @param string                        $entityClass
-     * @param string                        $scopeType
+     * @param ManagerRegistry      $registry
+     * @param ScopeManager         $scopeManager
+     * @param string               $entityClass
+     * @param string               $scopeType
      */
     public function __construct(
         ContentBlockResolver $contentBlockResolver,
