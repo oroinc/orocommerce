@@ -10,6 +10,7 @@ use Doctrine\DBAL\Schema\Index;
 use Doctrine\DBAL\Schema\Table;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
+use Oro\Bundle\EntityBundle\ORM\DatabaseDriverInterface;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Symfony\Bridge\Doctrine\RegistryInterface;
@@ -108,8 +109,7 @@ class ShardManager implements \Serializable
             $replace[] = $this->generateIdentifierName($shardName, $foreignKey);
         }
 
-        $createFlags = AbstractPlatform::CREATE_INDEXES|AbstractPlatform::CREATE_FOREIGNKEYS;
-        $createQueries = $connection->getDatabasePlatform()->getCreateTableSQL($table, $createFlags);
+        $createQueries = $this->getCreateTableQueries($table);
         foreach ($createQueries as $key => $query) {
             $query = str_replace($search, $replace, $query);
             $connection->executeQuery($query);
@@ -155,8 +155,12 @@ class ShardManager implements \Serializable
     protected function getConnection()
     {
         /** @var EntityManager $em */
-        $em = $this->registry->getManager('price');
+        $em = $this->registry->getManager();
         $connection = $em->getConnection();
+        if ($connection->getDriver()->getName() === DatabaseDriverInterface::DRIVER_MYSQL) {
+            $em = $this->registry->getManager('price');
+            $connection = $em->getConnection();
+        }
 
         return $connection;
     }
@@ -281,5 +285,34 @@ class ShardManager implements \Serializable
     public function setConfigProvider($configProvider)
     {
         $this->configProvider = $configProvider;
+    }
+
+    /**
+     * @param $table
+     * @return array
+     */
+    protected function getCreateTableQueries($table)
+    {
+        $connection = $this->getConnection();
+        $connection->getDriver();
+        $createFlags = AbstractPlatform::CREATE_INDEXES | AbstractPlatform::CREATE_FOREIGNKEYS;
+        $createQueries = $connection->getDatabasePlatform()->getCreateTableSQL($table, $createFlags);
+
+        //create single create table query
+        if ($connection->getDriver()->getName() === DatabaseDriverInterface::DRIVER_MYSQL) {
+            $createQuery = $createQueries[0];
+            $constraints = [];
+            //ALTER TABLE oro_price_product ADD CONSTRAINT FK_F47F707A1F68CB0D FOREIGN KEY (price_rule_id) REFERENCES oro_price_rule (id) ON DELETE CASCADE
+            foreach ($createQueries as $query) {
+                if (strpos($query, 'ALTER TABLE') === 0) {
+                    $constraints[] = substr($query, strpos($query, 'CONSTRAINT'));
+                }
+            }
+            $additionalSql = implode(', ', $constraints);
+            $createQuery = str_replace('PRIMARY KEY(id)', 'PRIMARY KEY(id), ' . $additionalSql, $createQuery);
+            $createQueries = [$createQuery];
+        }
+
+        return $createQueries;
     }
 }
