@@ -17,7 +17,7 @@ use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Migrations\Schema\v1_0\RenameInventoryConfigSectionQuery;
 use Oro\Bundle\InventoryBundle\Migrations\Schema\v1_0\UpdateEntityConfigExtendClassQuery;
 use Oro\Bundle\InventoryBundle\Migrations\Schema\v1_0\UpdateFallbackEntitySystemOptionConfig;
-use Oro\Bundle\InventoryBundle\Migrations\Schema\v1_1\AddQuantityToOrderFields;
+use Oro\Bundle\InventoryBundle\Model\Inventory;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\MigrationBundle\Migration\Extension\RenameExtension;
@@ -428,11 +428,11 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
             $schema,
             $this->extendExtension,
             'oro_product',
-            AddQuantityToOrderFields::FIELD_MINIMUM_QUANTITY_TO_ORDER,
+            Inventory::FIELD_MINIMUM_QUANTITY_TO_ORDER,
             'oro.inventory.fields.product.minimum_quantity_to_order.label',
             [
                 CategoryFallbackProvider::FALLBACK_ID => [
-                    'fieldName' => AddQuantityToOrderFields::FIELD_MINIMUM_QUANTITY_TO_ORDER,
+                    'fieldName' => Inventory::FIELD_MINIMUM_QUANTITY_TO_ORDER,
                 ],
                 SystemConfigFallbackProvider::FALLBACK_ID => [
                     'configName' => 'oro_inventory.minimum_quantity_to_order',
@@ -444,11 +444,11 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
             $schema,
             $this->extendExtension,
             'oro_product',
-            AddQuantityToOrderFields::FIELD_MAXIMUM_QUANTITY_TO_ORDER,
+            Inventory::FIELD_MAXIMUM_QUANTITY_TO_ORDER,
             'oro.inventory.fields.product.maximum_quantity_to_order.label',
             [
                 CategoryFallbackProvider::FALLBACK_ID => [
-                    'fieldName' => AddQuantityToOrderFields::FIELD_MAXIMUM_QUANTITY_TO_ORDER,
+                    'fieldName' => Inventory::FIELD_MAXIMUM_QUANTITY_TO_ORDER,
                 ],
                 SystemConfigFallbackProvider::FALLBACK_ID => [
                     'configName' => 'oro_inventory.maximum_quantity_to_order',
@@ -466,7 +466,7 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
             $schema,
             $this->extendExtension,
             'oro_catalog_category',
-            AddQuantityToOrderFields::FIELD_MINIMUM_QUANTITY_TO_ORDER,
+            Inventory::FIELD_MINIMUM_QUANTITY_TO_ORDER,
             'oro.inventory.fields.category.minimum_quantity_to_order.label',
             [
                 SystemConfigFallbackProvider::FALLBACK_ID => [
@@ -478,7 +478,7 @@ class OroInventoryBundleInstaller implements Installation, ExtendExtensionAwareI
             $schema,
             $this->extendExtension,
             'oro_catalog_category',
-            AddQuantityToOrderFields::FIELD_MAXIMUM_QUANTITY_TO_ORDER,
+            Inventory::FIELD_MAXIMUM_QUANTITY_TO_ORDER,
             'oro.inventory.fields.category.maximum_quantity_to_order.label',
             [
                 SystemConfigFallbackProvider::FALLBACK_ID => [
