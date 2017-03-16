@@ -1,0 +1,5 @@
+oro_behat_extension:
+    elements:
+        SlugPrototypesField:
+            selector: "input[name$='[slugPrototypes][values][default]']"
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element

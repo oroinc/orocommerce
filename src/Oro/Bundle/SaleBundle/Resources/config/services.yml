@@ -61,10 +61,8 @@ services:
 
     oro_sale.helper.notification:
         class: 'Oro\Bundle\SaleBundle\Notification\NotificationHelper'
-        scope: request
         arguments:
             - "@doctrine"
-            - "@request"
             - "@oro_email.email.model.builder"
             - "@oro_email.mailer.processor"
         calls:
