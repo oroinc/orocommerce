@@ -2,8 +2,8 @@
 
 namespace Oro\Bundle\UPSBundle\Handler;
 
-use Oro\Bundle\CacheBundle\Action\DataStorage\InvalidateCacheDataStorageInterface;
 use Oro\Bundle\CacheBundle\Action\Handler\InvalidateCacheActionHandlerInterface;
+use Oro\Bundle\CacheBundle\DataStorage\DataStorageInterface;
 use Oro\Bundle\ShippingBundle\Provider\Cache\ShippingPriceCache;
 use Oro\Bundle\UPSBundle\Cache\ShippingPriceCache as UPSShippingPriceCache;
 
@@ -34,9 +34,9 @@ class InvalidateCacheActionHandler implements InvalidateCacheActionHandlerInterf
     }
 
     /**
-     * @param InvalidateCacheDataStorageInterface $dataStorage
+     * @param DataStorageInterface $dataStorage
      */
-    public function handle(InvalidateCacheDataStorageInterface $dataStorage)
+    public function handle(DataStorageInterface $dataStorage)
     {
         $this->upsPriceCache->deleteAll($dataStorage->get(self::PARAM_TRANSPORT_ID));
         $this->shippingPriceCache->deleteAllPrices();
