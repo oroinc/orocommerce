@@ -19,3 +19,13 @@
         }
     }
 }
+
+@include breakpoint('tablet-small') {
+    .product-view {
+        &__attribute-box {
+            &-wrapper {
+                @include mosaic-grid($mosaic-grid-columns: 1);
+            }
+        }
+    }
+}

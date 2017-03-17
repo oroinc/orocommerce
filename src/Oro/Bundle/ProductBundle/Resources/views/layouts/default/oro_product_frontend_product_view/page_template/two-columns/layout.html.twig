@@ -10,7 +10,7 @@
 
 {% block attribute_group_rest_widget %}
     {{ block_widget(block) }}
-{%- endblock %}
+{% endblock %}
 
 {% block attribute_group_rest_attribute_group_widget %}
     <section {{ block('block_attributes') }} class="product-view__attribute-box">
@@ -20,4 +20,38 @@
 
 {% block attribute_label_widget %}
     <h2 class="product-view__attribute-box-title">{{ label }}</h2>
+{% endblock %}
+
+{% block _attribute_group_specifications_widget %}
+    <section {{ block('block_attributes') }} class="product-view__attribute-box">
+        <h2 class="product-view__attribute-box-title">Specifications</h2>
+        <p>
+            Fusce sed luctus massa, ac ultrices arcu.
+            Pellentesque malesuada ligula ac metus venenatis, a lacinia eros finibus.
+            Proin lobortis pharetra quam. Nam sagittis, nunc et scelerisque gravida,
+            magna enim lobortis lacus, eget suscipit sapien urna nec orci.
+            Quisque erat sapien, luctus ut ultricies non, vestibulum vitae nisl.
+            Aenean tristique tempor tempor. Fusce in velit in elit faucibus vulputate.
+            Quisque porta, tortor imperdiet vulputate tincidunt, ligula dui tristique urna,
+            dapibus lobortis ante purus a justo. <br>
+        </p>
+        <ul>
+            <li>• Proin faucibus luctus dolor nec vestibulum.</li>
+            <li>• Curabitur eu venenatis ligula.</li>
+        </ul>
+    </section>
+{% endblock %}
+
+{% block _attribute_group_video_widget %}
+    <section {{ block('block_attributes') }} class="product-view__attribute-box">
+        <div class="responsive-video">
+            <iframe class="responsive-video__container"
+                    width="630"
+                    height="360"
+                    src="https://www.youtube.com/embed/jFWFk8cpxl4"
+                    frameborder="0"
+                    allowfullscreen>
+            </iframe>
+        </div>
+    </section>
 {% endblock %}
