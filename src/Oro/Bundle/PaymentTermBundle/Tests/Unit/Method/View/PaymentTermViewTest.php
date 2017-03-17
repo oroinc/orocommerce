@@ -13,16 +13,24 @@ use Symfony\Component\Translation\TranslatorInterface;
 
 class PaymentTermViewTest extends \PHPUnit_Framework_TestCase
 {
-    /** @var PaymentTermProvider|\PHPUnit_Framework_MockObject_MockObject */
+    /**
+     * @var PaymentTermProvider|\PHPUnit_Framework_MockObject_MockObject
+     */
     protected $paymentTermProvider;
 
-    /** @var TranslatorInterface */
+    /**
+     * @var TranslatorInterface
+     */
     protected $translator;
 
-    /** @var PaymentTermView */
+    /**
+     * @var PaymentTermView
+     */
     protected $methodView;
 
-    /** @var PaymentTermConfigInterface|\PHPUnit_Framework_MockObject_MockObject */
+    /**
+     * @var PaymentTermConfigInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
     protected $paymentConfig;
 
     protected function setUp()
@@ -104,11 +112,6 @@ class PaymentTermViewTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('_payment_methods_payment_term_widget', $this->methodView->getBlock());
     }
 
-    public function testGetPaymentMethodType()
-    {
-        $this->assertEquals('payment_term', $this->methodView->getPaymentMethodType());
-    }
-
     public function testGetLabel()
     {
         $this->paymentConfig->expects($this->once())
@@ -125,5 +128,14 @@ class PaymentTermViewTest extends \PHPUnit_Framework_TestCase
             ->willReturn('short label');
 
         $this->assertEquals('short label', $this->methodView->getShortLabel());
+    }
+
+    public function testGetPaymentMethodIdentifier()
+    {
+        $this->paymentConfig->expects($this->once())
+            ->method('getPaymentMethodIdentifier')
+            ->willReturn('identifier');
+
+        $this->assertEquals('identifier', $this->methodView->getPaymentMethodIdentifier());
     }
 }

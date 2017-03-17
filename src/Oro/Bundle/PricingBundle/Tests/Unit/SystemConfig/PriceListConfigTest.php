@@ -16,7 +16,7 @@ class PriceListConfigTest extends \PHPUnit_Framework_TestCase
             new PriceListConfig(),
             [
                 ['priceList', new PriceList()],
-                ['priority', 100]
+                ['sortOrder', 100]
             ]
         );
     }
@@ -25,13 +25,13 @@ class PriceListConfigTest extends \PHPUnit_Framework_TestCase
     {
         $config = new PriceListConfig();
         $this->assertNull($config->getPriceList());
-        $this->assertNull($config->getPriority());
+        $this->assertNull($config->getSortOrder());
 
         $priceList = new PriceList();
         $priority = 100;
 
         $config = new PriceListConfig($priceList, $priority);
         $this->assertEquals($priceList, $config->getPriceList());
-        $this->assertEquals($priority, $config->getPriority());
+        $this->assertEquals($priority, $config->getSortOrder());
     }
 }

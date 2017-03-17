@@ -1,5 +1,6 @@
 styles:
     inputs:
         - 'bundles/oropricing/default/scss/variables/product-price-filter-config.scss'
+        - 'bundles/oropricing/default/scss/variables/product-price-config.scss'
         - 'bundles/oropricing/default/scss/variables/product-prices-config.scss'
         - 'bundles/oropricing/default/scss/styles.scss'

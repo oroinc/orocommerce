@@ -1,0 +1,15 @@
+shipping_rule.1.method_config.1:
+    methods_configs_rule: shipping_rule.1
+    method: ups
+
+shipping_rule.2.method_config.1:
+    methods_configs_rule: shipping_rule.2
+    method: flat_rate
+
+shipping_rule.3.method_config.1:
+    methods_configs_rule: shipping_rule.3
+    method: dpd
+
+shipping_rule.3.method_config_without_type_configs:
+    methods_configs_rule: shipping_rule.3
+    method: ups

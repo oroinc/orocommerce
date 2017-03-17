@@ -59,7 +59,12 @@ class QuantityType extends AbstractProductAwareType
         $formattedQuantity = $this->roundingService->round($quantity, $scale);
 
         if ($quantity !== $formattedQuantity) {
-            $event->setData($formattedQuantity);
+            if ($formattedQuantity === null) {
+                $event->setData(null);
+            } else {
+                //number type expected string value in submitted data
+                $event->setData((string)$formattedQuantity);
+            }
         }
     }
 
@@ -112,7 +117,12 @@ class QuantityType extends AbstractProductAwareType
 
         $data = $event->getData();
         if (!$data) {
-            $event->setData($defaultData);
+            if ($defaultData === null) {
+                $event->setData(null);
+            } else {
+                //number type expected string value in submitted data
+                $event->setData((string)$defaultData);
+            }
         }
     }
 
@@ -135,7 +145,7 @@ class QuantityType extends AbstractProductAwareType
     /** {@inheritDoc} */
     public function getParent()
     {
-        return 'text';
+        return 'number';
     }
 
     /** {@inheritDoc} */

@@ -26,17 +26,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @Then I should see slug prototypes field filled with :slugName value
-     * @param string $slugName
-     */
-    public function shouldSeeSlugPrototypesFieldFilledWithValue($slugName)
-    {
-        $slugPrototypesField = $this->createElement('SlugPrototypesField');
-
-        self::assertEquals($slugName, $slugPrototypesField->getValue());
-    }
-
-    /**
      * @When I am on quick order form page
      */
     public function amOnQuickOrderFormPage()

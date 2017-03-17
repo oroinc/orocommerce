@@ -26,7 +26,6 @@ class LoadQuoteDataForPerformance extends AbstractFixture
         'po_number',
         'created_at',
         'updated_at',
-        'locked',
         'expired',
         'valid_until'
     ];
@@ -38,6 +37,8 @@ class LoadQuoteDataForPerformance extends AbstractFixture
     {
         $user = $this->getUser($manager);
         $insertQuoteBaseSql = $this->getUpdateQuotesBaseSql();
+
+        $params = [];
 
         // generate sprintf string for insert values
         foreach (self::$quoteUpdateFields as $field) {
@@ -61,7 +62,6 @@ class LoadQuoteDataForPerformance extends AbstractFixture
                     $poNumber,
                     (new \DateTime('now', $UTC))->format('Y-m-d'),
                     (new \DateTime('now', $UTC))->format('Y-m-d'),
-                    0,
                     $this->getExpiredValue(),
                     $this->getValidUntilValue($UTC)
                 );
@@ -100,6 +100,8 @@ class LoadQuoteDataForPerformance extends AbstractFixture
     }
 
     /**
+     * @param string $timezone
+     *
      * @return string
      */
     protected function getValidUntilValue($timezone)

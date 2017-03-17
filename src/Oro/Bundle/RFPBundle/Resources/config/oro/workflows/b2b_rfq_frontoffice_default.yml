@@ -51,6 +51,7 @@ workflows:
                     -
                         entity_class: 'Oro\Bundle\RFPBundle\Entity\Request'
                         event: update
+                        queued: false
                         field: internal_status
                         require: "entity.getInternalStatus().getId() === 'more_info_requested'"
                 frontend_options:
@@ -140,7 +141,7 @@ workflows:
                         route_parameters:
                             id: $.result.requestCopy.id
                     - '@flash_message':
-                        message: 'oro.frontend.rfp.request.resubmited.message'
+                        message: 'oro.frontend.rfp.request.resubmitted.message'
                         type: 'success'
                         message_parameters:
                             viewLink: $.result.viewLink

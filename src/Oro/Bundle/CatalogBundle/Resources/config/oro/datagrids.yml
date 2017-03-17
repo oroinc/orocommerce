@@ -112,7 +112,7 @@ datagrids:
                     type:      datetime
                     data_name: product.updatedAt
         options:
-            entityHint:        product
+            entityHint:        products
             entity_pagination: true
             rowSelection:
                 dataField: id

@@ -4,14 +4,13 @@ layout:
             themes: 'attributes.html.twig'
         - '@addTree':
             items:
-                product_view_attributes_container:
-                    blockType: container
                 product_view_attributes_rest:
                     blockType: attribute_group_rest
                     options:
                         entity: '=data["product"]'
                         attribute_family: '=context["attribute_family"]'
+                        attr:
+                            'class': 'product-view__attributes-container'
             tree:
                 product_view_additional_container:
-                    product_view_attributes_container:
-                        product_view_attributes_rest: ~
+                    product_view_attributes_rest: ~
