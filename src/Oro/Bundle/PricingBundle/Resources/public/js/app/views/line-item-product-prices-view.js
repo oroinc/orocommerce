@@ -55,6 +55,7 @@ define(function(require) {
 
         /**
          * @param {Object} tierPrices
+         * @param {Boolean} silent
          */
         setTierPrices: function(tierPrices, silent) {
             this.tierPrices = tierPrices;
