@@ -5,7 +5,7 @@ namespace Oro\Bundle\InventoryBundle\Validator;
 use Symfony\Component\Translation\TranslatorInterface;
 
 use Oro\Bundle\EntityBundle\Fallback\EntityFallbackResolver;
-use Oro\Bundle\InventoryBundle\Migrations\Schema\v1_1\AddQuantityToOrderFields;
+use Oro\Bundle\InventoryBundle\Model\Inventory;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 
@@ -102,7 +102,7 @@ class QuantityToOrderValidatorService
     {
         return $this->fallbackResolver->getFallbackValue(
             $product,
-            AddQuantityToOrderFields::FIELD_MINIMUM_QUANTITY_TO_ORDER
+            Inventory::FIELD_MINIMUM_QUANTITY_TO_ORDER
         );
     }
 
@@ -114,7 +114,7 @@ class QuantityToOrderValidatorService
     {
         return $this->fallbackResolver->getFallbackValue(
             $product,
-            AddQuantityToOrderFields::FIELD_MAXIMUM_QUANTITY_TO_ORDER
+            Inventory::FIELD_MAXIMUM_QUANTITY_TO_ORDER
         );
     }
 

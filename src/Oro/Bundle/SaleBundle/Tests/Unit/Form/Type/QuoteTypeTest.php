@@ -88,7 +88,6 @@ class QuoteTypeTest extends AbstractTest
                 [
                     'data_class'    => 'Oro\Bundle\SaleBundle\Entity\Quote',
                     'intention'     => 'sale_quote',
-                    'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
                 ]
             );
 

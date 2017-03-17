@@ -174,7 +174,6 @@ class CategoryTypeTest extends FormIntegrationTestCase
                 [
                     'data_class' => self::DATA_CLASS,
                     'intention' => 'category',
-                    'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
                 ]
             );
 
