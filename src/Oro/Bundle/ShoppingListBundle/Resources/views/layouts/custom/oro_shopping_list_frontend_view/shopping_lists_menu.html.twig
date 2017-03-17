@@ -2,12 +2,6 @@
 
 {% block _shopping_list_view_tabs_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'data-page-component-module': 'oroui/js/app/components/view-component',
-        'data-page-component-options': {
-            view: 'oroui/js/app/views/layout-subtree-view',
-            blockId: id,
-            reloadEvents: ['shopping-list:refresh', 'frontend:item:delete']
-        },
         '~class': "shopping-list-tabs"
     }) %}
 
