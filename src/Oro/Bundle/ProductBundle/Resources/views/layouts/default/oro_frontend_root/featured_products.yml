@@ -10,7 +10,7 @@ layout:
         - '@setOption':
             id: featured_products
             optionName: items
-            optionValue: '=data["featured_products"].getAll()'
+            optionValue: '=data["segment"].getCollection()'
         - '@setOption':
             id: featured_products
             optionName: label
