@@ -3,7 +3,7 @@ datagrids:
         acl_resource: oro_shipping_methods_configs_rule_view
         extended_entity_name: %oro_shipping.entity.shipping_methods_configs_rule.class%
         options:
-            entityHint:        shipping rule
+            entityHint:        shipping rules
             entity_pagination: true
         source:
             type:         orm

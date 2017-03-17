@@ -1,4 +1,11 @@
-{% block __oro_product_list_item__product_price_container_widget %}
+{% block __oro_product_price__product_price_container_widget %}
+    {% if productPrices is not null %}
+        {% do block|merge_context({
+            productPrices: productPrices,
+            product: product
+        }) %}
+    {% endif %}
+
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'oroui/js/app/components/view-component',
         '~data-page-component-options': {
@@ -8,10 +15,11 @@
                 prices: productPrices
             }
         },
-        '~class': ' product-item__price-wrap product-item__price-wrap_{{ class_prefix }}'
+        '~class': ' product-price'
     }) %}
+
     <div {{ block('block_attributes') }}>
-        <div class="product-item__price-hint"
+        <div class="product-price__hint"
              data-name="prices-hint"
              data-placement="bottom"
              data-close="false"
@@ -23,37 +31,42 @@
     </div>
 {% endblock %}
 
-{% block __oro_product_list_item__product_price_widget %}
+{% block __oro_product_price__product_price_widget %}
     {% set buttonsId = id|replace({'_price': ''}) ~ '_line_item_form_buttons' %}
     {% if blocks[buttonsId] is defined and blocks[buttonsId].children is not empty %}
     {% if productPrices %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-item__price product-item__price_{{ class_prefix }}'
-    }) %}
-    <div {{ block('block_attributes') }}>
-        {{ block_widget(block) }}
-    </div>
+        {% set attr = layout_attr_defaults(attr, {
+            '~class': ' product-price__main'
+        }) %}
+        <div {{ block('block_attributes') }}>
+            {{ block_widget(block) }}
+        </div>
     {% endif %}
     {% endif %}
 {% endblock %}
 
-{% block __oro_product_list_item__product_price_value_widget %}
+{% block __oro_product_price__product_price_value_widget %}
     <div {{ block('block_attributes') }}
             data-name="price">
         {% if not is_configurable_product_type(product.type) %}
-            {{ 'oro.pricing.frontend.pricelist.index.your_price'|trans }}
+            <span class="product-price__label">{{ 'oro.pricing.frontend.pricelist.index.your_price'|trans }}</span>
             {% set firstPrice = productPrices|first %}
-            <div class="product-item__price_block">
-                <span class="fs16 blue" data-name="price-value">{{ firstPrice ? firstPrice.formatted_price }}</span>
-                / <span data-name="unit">{{ firstPrice ? firstPrice.formatted_unit }}</span>
-            </div>
+            <span class="product-price__main-box">
+                <span class="product-price__value" data-name="price-value">{{ firstPrice ? firstPrice.formatted_price }}</span>
+                <span> / </span>
+                <span data-name="unit">{{ firstPrice ? firstPrice.formatted_unit }}</span>
+            </span>
         {% endif %}
     </div>
 {% endblock %}
 
-{% block __oro_product_list_item__product_price_not_found_widget %}
+{% block __oro_product_price__product_price_not_found_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' hidden'
+    }) %}
     {% if not is_configurable_product_type(product.type) %}
-        <div data-name="price-not-found">
+        <div {{ block('block_attributes') }}
+                data-name="price-not-found">
             {% if productPrices %}
                 {{ 'oro.pricing.frontend.product_prices.price_not_found'|trans }}
             {% else %}
@@ -63,7 +76,7 @@
     {% endif %}
 {% endblock %}
 
-{% block __oro_product_list_item__product_price_hint_widget %}
+{% block __oro_product_price__product_price_hint_widget %}
     <div data-name="prices-hint-content" class="hidden">
         <table class="table">
             <thead>
@@ -98,14 +111,14 @@
     </div>
 {% endblock %}
 
-{% block __oro_product_list_item__product_listed_price_widget %}
+{% block __oro_product_price__product_price_listed_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-item__listed-price product-item__listed-price_{{ class_prefix }}'
+        '~class': ' product-price__listed'
     }) %}
     <div {{ block('block_attributes') }}>
         {% if productPrices %}
             {{ 'oro.pricing.frontend.pricelist.index.listed_price'|trans }}
-            <div class="product-item__price_block">
+            <span>
                 {% set pricesPerUnits = [] %}
                 {% for price in productPrices %}
                     {% set unit = price.unit %}
@@ -116,19 +129,20 @@
                     {% endif %}
                 {% endfor %}
                 {% for price in pricesPerUnits %}
-                    <div title="{{ 'oro.pricing.productprice.applicable_from'|trans({'%amount%': price.quantity})|raw }}">
-                        <span>{{ price.formatted_price }}</span> /
-                        {{ price.formatted_unit}}
-                    </div>
+                    <span title="{{ 'oro.pricing.productprice.applicable_from'|trans({'%amount%': price.quantity})|raw }}">
+                        <span class="product-price__listed-value">{{ price.formatted_price }}</span>
+                        <span> / </span>
+                        <span>{{ price.formatted_unit}}</span>
+                    </span>
                 {% endfor %}
-            </div>
+            </span>
         {% endif %}
     </div>
 {% endblock %}
 
-{% block __oro_product_list_item__product_msrp_widget %}
+{% block __oro_product_price__product_price_msrp_widget %}
     {% set attr = layout_attr_defaults({
-        '~class': ' product-item__mspr product-item__mspr_{{ class_prefix }}'
+        '~class': ' product-price__mspr product-price__mspr_{{ class_prefix }}'
     }) %}
     <div {{ block('block_attributes') }}>
         {{ 'oro.pricing.frontend.pricelist.index.msrp'|trans }} <span>$24.99</span>
