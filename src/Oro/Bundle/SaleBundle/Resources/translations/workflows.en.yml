@@ -1,0 +1,62 @@
+oro.workflow:
+    b2b_quote_backoffice_default:
+        label: 'Quote Backoffice'
+        step:
+            draft:
+                label: 'Draft'
+            sent_to_customer:
+                label: 'Sent to Customer'
+            closed:
+                label: 'Closed'
+            deleted:
+                label: 'Deleted'
+        attribute:
+            copy_notes.label: 'Copy All Notes'
+            expire_quote:
+                label: 'Expire Existing Quote'
+                no.label: 'Do Not Expire'
+                yes.label: 'Immediately'
+                after_accept.label: 'Upon Acceptance'
+            original_quote:
+                label: 'Original Quote'
+            email:
+                label: 'Email'
+            append_signature:
+                label: 'Append Email Signature'
+        transition:
+            edit_transition:
+                label: 'Edit'
+                warning_message: ''
+            clone_transition:
+                label: 'Clone'
+                warning_message: ''
+            delete_transition:
+                label: 'Delete'
+                warning_message: ''
+            undelete_transition:
+                label: 'Undelete'
+                warning_message: ''
+            send_to_customer_transition:
+                label: 'Send to Customer'
+                warning_message: ''
+            cancel_transition:
+                label: 'Cancel'
+                warning_message: ''
+            expire_transition:
+                label: 'Expire'
+                warning_message: ''
+            create_new_quote_transition:
+                label: 'Create new Quote'
+                warning_message: ''
+            accept_transition:
+                label: 'Accept'
+                warning_message: ''
+            decline_transition:
+                label: 'Decline'
+                warning_message: ''
+            decline_by_customer_transition:
+                label: 'Declined by Customer'
+                warning_message: ''
+            reopen_transition:
+                label: 'Reopen'
+                warning_message: ''

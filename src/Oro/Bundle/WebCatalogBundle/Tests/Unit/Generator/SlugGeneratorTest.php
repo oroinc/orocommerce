@@ -9,6 +9,7 @@ use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Generator\RedirectGenerator;
 use Oro\Bundle\RedirectBundle\Generator\DTO\SlugUrl;
+use Oro\Bundle\RedirectBundle\Generator\SlugUrlDiffer;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
@@ -42,6 +43,11 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
      */
     protected $slugGenerator;
 
+    /**
+     * @var SlugUrlDiffer|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $slugUrlDiffer;
+
     protected function setUp()
     {
         $this->contentVariantTypeRegistry = $this->createMock(ContentVariantTypeRegistry::class);
@@ -53,10 +59,15 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
+        $this->slugUrlDiffer = $this->getMockBuilder(SlugUrlDiffer::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
         $this->slugGenerator = new SlugGenerator(
             $this->contentVariantTypeRegistry,
             $this->redirectGenerator,
-            $this->localizationHelper
+            $this->localizationHelper,
+            $this->slugUrlDiffer
         );
     }
 
@@ -191,6 +202,20 @@ class SlugGeneratorTest extends \PHPUnit_Framework_TestCase
             ->willReturn($localizedUrl);
 
         $this->doTestGenerate($localization, $parentContentNode);
+    }
+
+    public function testGetSlugsUrlForMovedNode()
+    {
+        $targetContentNode = new ContentNode();
+        $sourceContentNode = new ContentNode();
+
+        $this->slugUrlDiffer->expects($this->once())
+            ->method('getSlugUrlsChanges')
+            ->with(new ArrayCollection(), new ArrayCollection())
+            ->willReturn(['some_slugged/url']);
+
+        $result = $this->slugGenerator->getSlugsUrlForMovedNode($targetContentNode, $sourceContentNode);
+        $this->assertEquals(['some_slugged/url'], $result);
     }
 
     public function testGenerateWithExistingSlugs()

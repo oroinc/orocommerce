@@ -54,7 +54,6 @@ class RequestTypeTest extends AbstractTest
                 [
                     'data_class' => 'Oro\Bundle\RFPBundle\Entity\Request',
                     'intention'  => 'rfp_request',
-                    'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
                 ]
             );
 

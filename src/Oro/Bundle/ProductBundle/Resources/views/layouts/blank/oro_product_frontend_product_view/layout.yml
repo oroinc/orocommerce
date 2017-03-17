@@ -95,3 +95,7 @@ layout:
             id: product_view_attribute_group_general_attribute_localized_fallback_names
             parentId: product_view_primary_container
             prepend: true
+        - '@add':
+            id: product_require_js_config
+            parentId: require_js
+            blockType: block
