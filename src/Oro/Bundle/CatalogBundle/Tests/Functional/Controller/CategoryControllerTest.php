@@ -260,43 +260,7 @@ class CategoryControllerTest extends WebTestCase
         );
     }
 
-    /**
-     * @depends testEditCategory
-     *
-     * @param int $id
-     */
-    public function testDelete($id)
-    {
-        $this->client->request(
-            'DELETE',
-            $this->getUrl('oro_api_delete_category', ['id' => $id]),
-            [],
-            [],
-            $this->generateWsseAuthHeader()
-        );
 
-        $result = $this->client->getResponse();
-        $this->assertEmptyResponseStatusCodeEquals($result, 204);
-
-        $this->client->request('GET', $this->getUrl('oro_catalog_category_update', ['id' => $id]));
-
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 404);
-    }
-
-    public function testDeleteRoot()
-    {
-        $this->client->request(
-            'DELETE',
-            $this->getUrl('oro_api_delete_category', ['id' => $this->masterCatalog->getId()]),
-            [],
-            [],
-            $this->generateWsseAuthHeader()
-        );
-
-        $result = $this->client->getResponse();
-        self::assertResponseStatusCodeEquals($result, 500);
-    }
 
     public function testGetChangedUrlsWhenNoSlugChanged()
     {

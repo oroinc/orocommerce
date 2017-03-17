@@ -2,10 +2,9 @@
 
 namespace Oro\Bundle\PricingBundle\ImportExport\Reader;
 
-use Doctrine\ORM\QueryBuilder;
-
 use Oro\Bundle\ImportExportBundle\Context\ContextInterface;
 use Oro\Bundle\ImportExportBundle\Reader\EntityReader;
+use Oro\Bundle\OrganizationBundle\Entity\Organization;
 
 class PriceListProductPricesReader extends EntityReader
 {
@@ -17,19 +16,21 @@ class PriceListProductPricesReader extends EntityReader
     /**
      * {@inheritdoc}
      */
-    public function setSourceQueryBuilder(QueryBuilder $queryBuilder)
+    protected function createSourceEntityQueryBuilder($entityName, Organization $organization = null)
     {
+        $qb = parent::createSourceEntityQueryBuilder($entityName, $organization);
+
         if ($this->priceListId) {
-            $aliases = $queryBuilder->getRootAliases();
+            $aliases = $qb->getRootAliases();
             $rootAlias = reset($aliases);
-            $queryBuilder
+            $qb
                 ->andWhere(
-                    $queryBuilder->expr()->eq(sprintf('IDENTITY(%s.priceList)', $rootAlias), ':priceList')
+                    $qb->expr()->eq(sprintf('IDENTITY(%s.priceList)', $rootAlias), ':priceList')
                 )
                 ->setParameter('priceList', $this->priceListId);
         }
 
-        parent::setSourceQueryBuilder($queryBuilder);
+        return $qb;
     }
 
     /**

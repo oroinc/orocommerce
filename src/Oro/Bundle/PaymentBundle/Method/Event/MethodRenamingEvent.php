@@ -29,7 +29,7 @@ class MethodRenamingEvent extends Event
     }
 
     /**
-     * @return int|string
+     * @return string
      */
     public function getOldMethodIdentifier()
     {
@@ -37,7 +37,7 @@ class MethodRenamingEvent extends Event
     }
 
     /**
-     * @return int|string
+     * @return string
      */
     public function getNewMethodIdentifier()
     {

@@ -139,3 +139,75 @@ datagrids:
                 icon:         close
                 entity_name:  %oro_payment.entity.payment_methods_configs_rule.class%
                 data_identifier: payment_rule.id
+
+    payment-transactions-grid:
+        options:
+            entityHint: payment_transaction
+        source:
+            type: orm
+            query:
+                select:
+                    - payment_transaction.id
+                    - payment_transaction.paymentMethod
+                    - payment_transaction.action
+                    - payment_transaction.amount
+                    - payment_transaction.currency
+                    - payment_transaction.active
+                    - payment_transaction.successful
+                    - payment_transaction.createdAt
+                    - payment_transaction.updatedAt
+                from:
+                    - { table: %oro_payment.entity.payment_transaction.class%, alias: payment_transaction }
+        columns:
+            id:
+                label: oro.payment.paymenttransaction.id.label
+            paymentMethod:
+                label: oro.payment.paymenttransaction.paymentMethod.label
+                type: twig
+                frontend_type: html
+                template: 'OroPaymentBundle:PaymentTransaction/Datagrid:paymentMethod.html.twig'
+            action:
+                label: oro.payment.paymenttransaction.action.label
+                type: twig
+                frontend_type: html
+                template: 'OroPaymentBundle:PaymentTransaction/Datagrid:action.html.twig'
+            amount:
+                label: oro.payment.paymenttransaction.amount.label
+                frontend_type: multi-currency
+                type: callback
+                callable: ['@oro_currency.converter.currency_to_string', 'convert']
+                multicurrency_config:
+                    base_currency_label: oro.order.subtotal.base.label
+                    currency_field: currency
+            active:
+                label: oro.payment.paymenttransaction.active.label
+                frontend_type: boolean
+                renderable: false
+            successful:
+                label: oro.payment.paymenttransaction.successful.label
+                frontend_type: boolean
+                renderable: false
+            createdAt:
+                label: oro.ui.created_at
+                frontend_type: datetime
+                renderable: false
+            updatedAt:
+                label: oro.ui.updated_at
+                frontend_type: datetime
+                renderable: false
+        properties:
+            id: ~
+        sorters:
+            columns:
+                id:
+                    data_name: payment_transaction.id
+                paymentMethod:
+                    data_name: payment_transaction.paymentMethod
+                action:
+                   data_name: payment_transaction.action
+                createdAt:
+                    data_name: payment_transaction.createdAt
+                updatedAt:
+                    data_name: payment_transaction.updatedAt
+            default:
+                updatedAt: DESC

@@ -108,57 +108,52 @@
 {% block _product_media_widget %}
     {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% import 'OroProductBundle::image_macros.html.twig' as Image %}
+
+    {% set productImages = collect_product_images_by_types(product, ['main', 'additional']) %}
+
+    {% if productImages|length == 0 %}
+        {% set productImages = collect_product_images_by_types(product, ['listing']) %}
+    {% endif %}
+
+    {% set zoomOptions = {
+        viewport: {
+            minScreenType: 'desktop'
+        },
+        component: 'oroui/js/app/components/jquery-widget-component',
+        widgetModule: 'oroproduct/js/widget/zoom-widget'
+    } %}
+
+    {% set imageListOptions = {
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        fade: true,
+        arrows: false,
+        asNavFor: '.product-gallery__nav',
+        lazyLoad: 'ondemand',
+        infinite: false
+    } %}
+
+    {% set navListOptions = {
+        slidesToShow: 4,
+        slidesToScroll: 1,
+        asNavFor: '.product-view-media__gallery',
+        focusOnSelect: true,
+        infinite: false,
+        arrows: true
+    } %}
+
+    {% set slideNavAttr = productImages|length > 1 ? {
+        'data-page-component-module': 'orofrontend/js/app/components/list-slider-component',
+        'data-page-component-options': navListOptions|json_encode
+    } : {} %}
+
+    {% set slideImageAttr = productImages|length > 1 ? {
+        'data-page-component-module': 'orofrontend/js/app/components/list-slider-component',
+        'data-page-component-options': imageListOptions|json_encode
+    } : {} %}
+
     <!-- START Product Gallery -->
     <div class="product-gallery">
-
-        {% set zoomOptions = {
-            viewport: {
-                minScreenType: 'desktop'
-            },
-            component: 'oroui/js/app/components/jquery-widget-component',
-            widgetModule: 'oroproduct/js/widget/zoom-widget'
-        } %}
-
-        {% set imageListOptions = {
-            slidesToShow: 1,
-            slidesToScroll: 1,
-            fade: true,
-            arrows: false,
-            asNavFor: '.product-gallery__nav',
-            lazyLoad: 'ondemand',
-            infinite: false
-        } %}
-
-        {% set navListOptions = {
-            slidesToShow: 4,
-            slidesToScroll: 1,
-            asNavFor: '.product-view-media__gallery',
-            focusOnSelect: true,
-            infinite: false,
-            arrows: true
-        } %}
-
-        {% set productImages = [] %}
-
-        {% for productImage in product.imagesByType('main')|merge(product.imagesByType('additional')) %}
-            {% if productImage not in productImages %}
-                {% set productImages = productImages|merge([productImage]) %}
-            {% endif %}
-        {% endfor %}
-
-        {% if productImages|length == 0 %}
-            {% set productImages = product.getImagesByType('listing') %}
-        {% endif %}
-
-        {% set slideNavAttr = productImages|length > 1 ? {
-            'data-page-component-module': 'orofrontend/js/app/components/list-slider-component',
-            'data-page-component-options': navListOptions|json_encode
-        } : {} %}
-
-        {% set slideImageAttr = productImages|length > 1 ? {
-            'data-page-component-module': 'orofrontend/js/app/components/list-slider-component',
-            'data-page-component-options': imageListOptions|json_encode
-        } : {} %}
 
         <div class="product-view-media__gallery" {{ UI.attributes(slideImageAttr) }}>
 
@@ -208,7 +203,6 @@
         </div>
 
         {% endif %}
-
     </div>
     <!-- END Product Gallery -->
 {% endblock %}
@@ -216,16 +210,10 @@
 {% block _product_media_popup_widget %}
     {% import 'OroProductBundle::image_macros.html.twig' as Image %}
 
-    {% set productImages = [] %}
-
-    {% for productImage in product.imagesByType('main')|merge(product.imagesByType('additional')) %}
-        {% if productImage not in productImages %}
-            {% set productImages = productImages|merge([productImage]) %}
-        {% endif %}
-    {% endfor %}
+    {% set productImages = collect_product_images_by_types(product, ['main', 'additional']) %}
 
     {% if productImages|length == 0 %}
-        {% set productImages = product.getImagesByType('listing') %}
+        {% set productImages = collect_product_images_by_types(product, ['listing']) %}
     {% endif %}
 
     <div class="popup-gallery-widget"
@@ -243,8 +231,10 @@
                 {% for productImage in productImages %}
                     <div class="popup-gallery-widget__image">
                         <img data-lazy="{{ Image.url(productImage.image, 'product_gallery_popup') }}"
+                             alt="{{ product.names|localized_value }}"
                              width="100%"
-                             height="100%"/>
+                             height="100%"
+                        />
                     </div>
                 {% endfor %}
             </div>
@@ -255,12 +245,28 @@
                         <div class="popup-gallery-widget__thumbnails-img">
                             <img
                                  src="{{ Image.url(productImage.image, 'product_small') }}"
-                                 width="80px"
-                                 height="80px"/>
+                                 alt="{{ product.names|localized_value }}"
+                                 width="80"
+                                 height="80"
+                            />
                         </div>
                     {% endfor %}
                 </div>
             {% endif %}
         </div>
     </div>
+{% endblock %}
+
+{% block _product_require_js_config_widget %}
+    <script>
+        require({
+            config: {
+                'oroui/js/app/views/tab-collection-view': {tamplateClassName: 'product-attributes-tabs'},
+                'oroui/js/app/views/tab-item-view': {
+                    className: 'product-attributes-tabs__item',
+                    tamplateClassName: 'product-attributes-tabs__link'
+                }
+            }
+        });
+    </script>
 {% endblock %}
