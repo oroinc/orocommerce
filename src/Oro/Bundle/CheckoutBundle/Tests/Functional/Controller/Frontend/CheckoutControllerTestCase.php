@@ -71,6 +71,7 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
             $this->generateBasicAuthHeader(TestCustomerUserData::AUTH_USER, TestCustomerUserData::AUTH_PW)
         );
         $paymentFixtures = (array)$this->getPaymentFixtures();
+        $inventoryFixtures = (array)$this->getInventoryFixtures();
         $this->loadFixtures(array_merge([
             LoadCustomerUserData::class,
             LoadCustomerAddresses::class,
@@ -78,8 +79,7 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
             LoadShoppingListLineItems::class,
             LoadCombinedProductPrices::class,
             LoadShippingMethodsConfigsRulesWithConfigs::class,
-            UpdateInventoryLevelsQuantities::class,
-        ], $paymentFixtures));
+        ], $paymentFixtures, $inventoryFixtures));
         $this->registry = $this->getContainer()->get('doctrine');
     }
 
@@ -92,6 +92,14 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
             LoadPaymentTermData::class,
             LoadPaymentMethodsConfigsRuleData::class
         ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function getInventoryFixtures()
+    {
+        return [UpdateInventoryLevelsQuantities::class];
     }
 
     /**
