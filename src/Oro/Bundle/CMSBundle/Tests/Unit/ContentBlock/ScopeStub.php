@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CMSBundle\Tests\Unit\ContentBlockView;
+namespace Oro\Bundle\CMSBundle\Tests\Unit\ContentBlock;
 
 use Oro\Bundle\ScopeBundle\Entity\Scope;
 

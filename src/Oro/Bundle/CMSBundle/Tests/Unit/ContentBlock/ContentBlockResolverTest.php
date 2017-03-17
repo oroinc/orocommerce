@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\CMSBundle\Tests\Unit\ContentBlockView;
+namespace Oro\Bundle\CMSBundle\Tests\Unit\ContentBlock;
 
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 

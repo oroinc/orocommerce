@@ -25,7 +25,9 @@ class ContentBlockResolver
     }
 
     /**
-     * {@inheritDoc}
+     * @param ContentBlock $contentBlock
+     * @param array $context
+     * @return null|ContentBlockView
      */
     public function getContentBlockView(ContentBlock $contentBlock, array $context)
     {
@@ -131,7 +133,6 @@ class ContentBlockResolver
             if ($maxScopePriority > 0) { // add only suitable variants to array
                 $variantsByPriority[$maxScopePriority] = $variant;
             }
-
         }
         if (empty($variantsByPriority)) {
             return null;
