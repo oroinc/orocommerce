@@ -16,6 +16,8 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class LoadChannelData extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
+    const PAYMENT_TERM_INTEGRATION_CHANNEL = 'payment_term:channel_1';
+
     /**
      * @var array Channels configuration
      */
@@ -25,7 +27,7 @@ class LoadChannelData extends AbstractFixture implements DependentFixtureInterfa
             'type' => 'payment_term',
             'transport' => 'payment_term:transport_1',
             'enabled' => true,
-            'reference' => 'payment_term:channel_1',
+            'reference' => self::PAYMENT_TERM_INTEGRATION_CHANNEL,
         ],
         [
             'name' => 'Payment Term 2',
@@ -49,7 +51,7 @@ class LoadChannelData extends AbstractFixture implements DependentFixtureInterfa
     protected $container;
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function setContainer(ContainerInterface $container = null)
     {
@@ -57,7 +59,7 @@ class LoadChannelData extends AbstractFixture implements DependentFixtureInterfa
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function load(ObjectManager $manager)
     {
@@ -85,12 +87,12 @@ class LoadChannelData extends AbstractFixture implements DependentFixtureInterfa
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getDependencies()
     {
         return [
-            __NAMESPACE__ . '\LoadPaymentTermSettingsData'
+            LoadPaymentTermSettingsData::class
         ];
     }
 

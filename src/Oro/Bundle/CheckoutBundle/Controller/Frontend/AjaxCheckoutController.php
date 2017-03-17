@@ -3,7 +3,6 @@
 namespace Oro\Bundle\CheckoutBundle\Controller\Frontend;
 
 use Oro\Bundle\CheckoutBundle\Entity\Checkout;
-use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -35,31 +34,29 @@ class AjaxCheckoutController extends Controller
             return new JsonResponse('', Response::HTTP_NOT_FOUND);
         }
 
-        $checkout->setShippingCost($this->getShippingCost($checkout, $request));
+        $this->setCorrectCheckoutShippingMethodData($checkout, $request);
+
         return new JsonResponse($this->get('oro_checkout.provider.checkout_totals')->getTotalsArray($checkout));
     }
 
     /**
      * @param Checkout $checkout
-     * @param Request $request
-     * @return Price
+     * @param Request  $request
+     *
+     * @return Checkout
      */
-    protected function getShippingCost(Checkout $checkout, Request $request)
+    protected function setCorrectCheckoutShippingMethodData(Checkout $checkout, Request $request)
     {
         $workflowTransitionData = $request->request->get('oro_workflow_transition');
         if (!is_array($workflowTransitionData)
             || !array_key_exists('shipping_method', $workflowTransitionData)
             || !array_key_exists('shipping_method_type', $workflowTransitionData)
         ) {
-            return $checkout->getShippingCost();
+            return $checkout;
         }
 
-        $shippingContextFactory = $this->get('oro_checkout.factory.shipping_context_factory');
-
-        return $this->get('oro_shipping.shipping_price.provider')->getPrice(
-            $shippingContextFactory->create($checkout),
-            $workflowTransitionData['shipping_method'],
-            $workflowTransitionData['shipping_method_type']
-        );
+        return $checkout
+            ->setShippingMethod($workflowTransitionData['shipping_method'])
+            ->setShippingMethodType($workflowTransitionData['shipping_method_type']);
     }
 }

@@ -6,6 +6,7 @@ use Oro\Bundle\IntegrationBundle\Entity\Transport;
 use Oro\Bundle\IntegrationBundle\Exception\InvalidConfigurationException;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Exception\RestException;
 use Oro\Bundle\IntegrationBundle\Provider\Rest\Transport\AbstractRestTransport;
+use Oro\Bundle\UPSBundle\Client\Url\Provider\UpsClientUrlProviderInterface;
 use Oro\Bundle\UPSBundle\Form\Type\UPSTransportSettingsType;
 use Oro\Bundle\UPSBundle\Model\PriceRequest;
 use Oro\Bundle\UPSBundle\Model\PriceResponse;
@@ -17,26 +18,34 @@ class UPSTransport extends AbstractRestTransport
     const API_RATES_PREFIX = 'Rate';
 
     /**
-     * @var LoggerInterface
+     * @var UpsClientUrlProviderInterface
      */
-    protected $logger;
+    private $upsClientUrlProvider;
 
     /**
-     * @param LoggerInterface $logger
+     * @var LoggerInterface
      */
-    public function __construct(LoggerInterface $logger)
+    private $logger;
+
+    /**
+     * @param UpsClientUrlProviderInterface $upsClientUrlProvider
+     * @param LoggerInterface               $logger
+     */
+    public function __construct(UpsClientUrlProviderInterface $upsClientUrlProvider, LoggerInterface $logger)
     {
+        $this->upsClientUrlProvider = $upsClientUrlProvider;
         $this->logger = $logger;
     }
 
     /**
      * @param ParameterBag $parameterBag
+     *
      * @throws \InvalidArgumentException
      * @return string
      */
     protected function getClientBaseUrl(ParameterBag $parameterBag)
     {
-        return rtrim($parameterBag->get('base_url'), '/') . '/';
+        return $this->upsClientUrlProvider->getUpsUrl($parameterBag->get('test_mode'));
     }
 
     /**

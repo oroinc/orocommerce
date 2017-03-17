@@ -34,6 +34,8 @@ class QuoteNotificationTest extends WebTestCase
             $this->getUrl(
                 'oro_action_widget_form',
                 [
+                    '_wid' => 'test-uuid',
+                    '_widgetContainer' => 'dialog',
                     'operationName' => 'oro_sale_notify_customer_by_email',
                     'entityClass' => 'Oro\Bundle\SaleBundle\Entity\Quote',
                     'entityId' => $quote->getId()
@@ -44,7 +46,7 @@ class QuoteNotificationTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 200);
 
         /* @var $form Form */
-        $form = $crawler->selectButton('Notify and Lock')->form();
+        $form = $crawler->selectButton('Send')->form();
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
