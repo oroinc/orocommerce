@@ -29,12 +29,14 @@ define(function(require) {
             price: 0,
             commonQuantity: 0,
             rowQuantity: 0,
-            rowQuantityIndex: 1
+            rowQuantityIndex: 0
         },
 
         prices: null,
 
         unit: null,
+
+        minValue: 1,
 
         /**
          * @inheritDoc
@@ -51,6 +53,9 @@ define(function(require) {
         dispose: function() {
             delete this.prices;
             delete this.total;
+            delete this.unit;
+            delete this.minValue;
+
             this.disposeElements();
             ProductPricesMatrixView.__super__.dispose.apply(this, arguments);
         },
@@ -73,41 +78,48 @@ define(function(require) {
 
          * @param event
          */
-        updateTotals: function(event) {
-            _.debounce(_.bind(function(event) {
-                var self = this;
-                var currentRowId = $(event.currentTarget).closest('[data-row-index]').data('row-index');
+        updateTotals: _.debounce(function(event) {
+            var self = this;
+            var currentRowId = $(event.currentTarget).closest('[data-row-index]').data('row-index');
 
-                this.total = _.reduce(this.getElement('fields'), function(total, field) {
-                    var $this = $(field);
-                    var $parent = $this.closest('[data-row-index]');
-                    var productId = $parent.data('product-id');
+            this.total = _.reduce(this.getElement('fields'), function(total, field) {
+                var $this = $(field);
+                var $parent = $this.closest('[data-row-index]');
+                var productId = $parent.data('product-id');
+                var validValue = self.getValidValue(field.value);
 
-                    if ($parent.data('row-index') === currentRowId) {
-                        total.rowQuantity += self.getValue(field);
-                    }
+                if ($parent.data('row-index') === currentRowId) {
+                    total.rowQuantity += validValue;
+                }
 
-                    if (_.isEmpty(field.value) || !_.isNumber(+field.value)) {
-                        return total;
-                    }
-
-                    total.commonQuantity += self.getValue(field);
-                    total.price += PricesHelper.calcTotalPrice(this.prices[productId], this.unit, field.value);
-
+                if (_.isEmpty(field.value)) {
                     return total;
-                }, {
-                    price: 0,
-                    commonQuantity: 0,
-                    rowQuantity: 0,
-                    rowQuantityIndex: currentRowId
-                }, this);
+                }
 
-                this.render();
-            }, this), 70)(event);
-        },
+                $this.val(validValue);
 
-        getValue: function(field) {
-            return parseInt(field.value, 10) || 0;
+                total.commonQuantity += validValue;
+                total.price += PricesHelper.calcTotalPrice(self.prices[productId], self.unit, field.value);
+
+                return total;
+            }, {
+                price: 0,
+                commonQuantity: 0,
+                rowQuantity: 0,
+                rowQuantityIndex: currentRowId
+            }, this);
+
+            this.render();
+        }, 150),
+
+        getValidValue: function(value) {
+            var val = parseInt(value, 10) || 0;
+
+            if (_.isEmpty(value)) {
+                return 0;
+            } else {
+                return val < this.minValue ? this.minValue : val;
+            }
         },
 
         /**
@@ -125,7 +137,8 @@ define(function(require) {
 
             this.getElement('totalRowQty')
                 .filter('[data-footer-row-index=' + this.total.rowQuantityIndex + ']')
-                .text(this.total.rowQuantity);
+                .toggleClass('valid', this.total.rowQuantity > 0)
+                .html(this.total.rowQuantity);
         }
     }));
     return ProductPricesMatrixView;

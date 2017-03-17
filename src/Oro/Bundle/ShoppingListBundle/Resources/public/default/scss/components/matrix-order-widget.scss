@@ -222,11 +222,12 @@
       text-transform: uppercase;
     }
 
-    &-total{
-      color: lighten(get-color('additional', 'dark'), .57);
+    &-total {
       padding: 10px 0;
 
-      &.selected{
+      color: get-color('additional', 'middle');
+
+      &.valid {
         color: get-color('additional', 'dark');
       }
     }
