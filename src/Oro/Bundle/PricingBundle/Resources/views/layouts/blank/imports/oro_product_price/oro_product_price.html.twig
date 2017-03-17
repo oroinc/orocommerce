@@ -1,5 +1,5 @@
 {% block __oro_product_price__product_price_container_widget %}
-    {% if productPrices %}
+    {% if productPrices is not null %}
         {% do block|merge_context({
             productPrices: productPrices,
             product: product

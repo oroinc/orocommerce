@@ -152,15 +152,15 @@ define(function(require) {
             }
 
             var price = this.model.get('price');
-            var unit_label = null;
+            var unitLabel = null;
             if (!clear && price) {
-                unit_label = _.__('oro.pricing.price.formatted.unit', {
+                unitLabel = _.__('oro.pricing.price.formatted.unit', {
                     formattedUnit: _(price.formatted_unit).capitalize(),
                     formattedPrice: price.formatted_price
                 });
             }
 
-            this.model.set('unit_label', unit_label);
+            this.model.set('unit_label', unitLabel);
         },
 
         setFoundPrice: function(changeQuantity) {
