@@ -563,3 +563,11 @@ services:
         class: 'Oro\Bundle\VisibilityBundle\Model\CategoryMessageFactory'
         arguments:
             - '@doctrine'
+
+    oro_visibility.model.category_visibility_query_builder_modifier:
+        class: 'Oro\Bundle\VisibilityBundle\Model\CategoryVisibilityQueryBuilderModifier'
+        public: false
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_config.manager'
+            - '@oro_scope.scope_manager'

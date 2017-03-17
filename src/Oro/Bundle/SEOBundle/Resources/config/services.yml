@@ -298,6 +298,12 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_seo.sitemap.event.on_sitemap_dump_finish.index, method: onSitemapDumpStorage }
 
+    oro_seo.event_listener.restrict_sitemap_category_by_visibility:
+        class: 'Oro\Bundle\SEOBundle\EventListener\RestrictSitemapCategoryByVisibilityListener'
+        arguments:
+            - '@oro_visibility.model.category_visibility_query_builder_modifier'
+        tags:
+            - { name: kernel.event_listener, event: oro_seo.event.restrict_sitemap_entity.category, method: restrictQueryBuilder }
     oro_seo.event_listener.restrict_sitemap_cms_page_by_web_catalog:
         class: 'Oro\Bundle\SEOBundle\EventListener\RestrictSitemapCmsPageByWebCatalogListener'
         arguments:
