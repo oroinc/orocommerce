@@ -19,7 +19,8 @@ define(function(require) {
         },
 
         elementsEvents: {
-            '$el': ['options:set:productModel', 'optionsSetProductModel']
+            '$el': ['options:set:productModel', 'optionsSetProductModel'],
+            'quantity': ['keyup', 'onQuantityChange']
         },
 
         modelElements: {
@@ -36,7 +37,8 @@ define(function(require) {
 
         modelEvents: {
             'id': ['change', 'onProductChanged'],
-            'line_item_form_enable': ['change', 'onLineItemFormEnableChanged']
+            'line_item_form_enable': ['change', 'onLineItemFormEnableChanged'],
+            'unit_label': ['change', 'changeUnitLabel']
         },
 
         originalProductId: null,
@@ -90,6 +92,29 @@ define(function(require) {
                 }),
                 layoutSubtreeCallback: _.bind(this.afterProductChanged, this)
             });
+        },
+
+        onQuantityChange: function(e) {
+            this.setModelValueFromElement(e, 'quantity', 'quantity');
+        },
+
+        changeUnitLabel: function() {
+            var $unit = this.getElement('unit');
+            var unitLabel = this.model.get('unit_label');
+
+            $unit.find('option').each(function() {
+                var $option = $(this);
+                if (!$option.data('originalText')) {
+                    $option.data('originalText', this.text);
+                }
+
+                if (unitLabel && this.selected) {
+                    this.text = unitLabel;
+                } else {
+                    this.text = $option.data('originalText');
+                }
+            });
+            $unit.inputWidget('refresh');
         },
 
         afterProductChanged: function() {
