@@ -39,10 +39,12 @@ services:
             - "@oro_cms.content_block.resolver"
             - "@doctrine"
             - "@oro_scope.scope_manager"
+            - "@logger"
             - "%oro_cms.entity.content_block.class%"
             - "cms_content_block"
         tags:
             - { name: layout.data_provider, alias: content_block }
+            - { name: monolog.logger, channel: oro_cms }
 
     oro_cms.content_variant_type.cms_page:
         class: Oro\Bundle\CMSBundle\ContentVariantType\CmsPageContentVariantType

@@ -6,6 +6,8 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 
+use Psr\Log\LoggerInterface;
+
 use Oro\Bundle\CMSBundle\ContentBlock\ContentBlockResolver;
 use Oro\Bundle\CMSBundle\ContentBlock\Model\ContentBlockView;
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
@@ -30,15 +32,20 @@ class ContentBlockDataProviderTest extends \PHPUnit_Framework_TestCase
     /** @var ScopeManager|\PHPUnit_Framework_MockObject_MockObject */
     protected $scopeManager;
 
+    /** @var LoggerInterface|\PHPUnit_Framework_MockObject_MockObject */
+    protected $logger;
+
     protected function setUp()
     {
         $this->resolver = $this->createMock(ContentBlockResolver::class);
         $this->registry = $this->createMock(ManagerRegistry::class);
         $this->scopeManager = $this->createMock(ScopeManager::class);
+        $this->logger = $this->createMock(LoggerInterface::class);
         $this->provider = new ContentBlockDataProvider(
             $this->resolver,
             $this->registry,
             $this->scopeManager,
+            $this->logger,
             self::ENTITY_CLASS,
             self::SCOPE_TYPE
         );
@@ -101,6 +108,9 @@ class ContentBlockDataProviderTest extends \PHPUnit_Framework_TestCase
             ->method('getManagerForClass')
             ->with(self::ENTITY_CLASS)
             ->willReturn($manager);
+        $this->logger->expects($this->once())
+            ->method('notice')
+            ->with('Content block with alias "{alias}" doesn\'t exists', ['alias' => 'test_alias']);
 
         $this->assertNull($this->provider->getContentBlockView('test_alias'));
     }

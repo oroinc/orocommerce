@@ -8,6 +8,7 @@ use Oro\Bundle\CMSBundle\ContentBlock\ContentBlockResolver;
 use Oro\Bundle\CMSBundle\ContentBlock\Model\ContentBlockView;
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
+use Psr\Log\LoggerInterface;
 
 class ContentBlockDataProvider
 {
@@ -23,6 +24,9 @@ class ContentBlockDataProvider
     /** @var ScopeManager */
     protected $scopeManager;
 
+    /** @var LoggerInterface */
+    protected $logger;
+
     /** @var string */
     protected $scopeType;
 
@@ -30,6 +34,7 @@ class ContentBlockDataProvider
      * @param ContentBlockResolver $contentBlockResolver
      * @param ManagerRegistry      $registry
      * @param ScopeManager         $scopeManager
+     * @param LoggerInterface      $logger
      * @param string               $entityClass
      * @param string               $scopeType
      */
@@ -37,12 +42,14 @@ class ContentBlockDataProvider
         ContentBlockResolver $contentBlockResolver,
         ManagerRegistry $registry,
         ScopeManager $scopeManager,
+        LoggerInterface $logger,
         $entityClass,
         $scopeType
     ) {
         $this->contentBlockResolver = $contentBlockResolver;
         $this->registry = $registry;
         $this->scopeManager = $scopeManager;
+        $this->logger = $logger;
         $this->entityClass = $entityClass;
         $this->scopeType = $scopeType;
     }
@@ -60,6 +67,8 @@ class ContentBlockDataProvider
         /** @var ContentBlock $contentBlock */
         $contentBlock = $repo->findOneBy(['alias' => $alias]);
         if (null === $contentBlock) {
+            $this->logger->notice('Content block with alias "{alias}" doesn\'t exists', ['alias' => $alias]);
+
             return null;
         }
 
