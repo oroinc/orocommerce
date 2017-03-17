@@ -412,3 +412,8 @@ CMSBundle
 UPSBundle
 ---------
 - "Check UPS Connection" button was added on UPS integration page. Please, see [documentation](package/commerce/src/Oro/Bundle/UPSBundle/Resources/doc/credentials-validation.md) for more information.
+- Class `Oro/Bundle/UPSBundle/Command/InvalidateCacheScheduleCommand` was removed, `Oro/Bundle/CacheBundle/Command/InvalidateCacheScheduleCommand` should be used instead
+- Class `Oro/Bundle/UPSBundle/Handler/InvalidateCacheAtHandler` was removed, `Oro/Bundle/UPSBundle/Handler/InvalidateCacheActionHandler` should be used instead
+- `oro_integration_invalidate_cache` action was updated - base functionality was moved to CacheBundle
+- Resource `Oro/Bundle/UPSBundle/Resources/views/Action/invalidateCache.html.twig` was moved to CacheBundle
+- Resource `Oro/Bundle/UPSBundle/Resources/public/js/app/components/invalidate-cache-button-component.js` was moved to CacheBundle
