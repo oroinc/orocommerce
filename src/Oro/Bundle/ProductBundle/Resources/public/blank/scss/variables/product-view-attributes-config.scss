@@ -1,8 +1,10 @@
-// @theme: default
+// @theme: blank
 
 // Attributes containers
 $product-view-attributes-containers-border-color: get-color('additional', 'light');
 $product-view-attributes-container-border-radius: 5px;
+// Attributes containers for mobile landscape
+$product-view-attributes-container-border-radius-mobile-l: 0;
 
 // Attributes tabs
 $product-view-attributes-tabs: '.product-attributes-tabs';
@@ -14,7 +16,18 @@ $product-view-attributes-tab-link-color: get-color('additional', 'dark');
 $product-view-attributes-tab-link-active-bg: get-color('additional', 'ultra');
 $product-view-attributes-tabs-border-color: $product-view-attributes-containers-border-color;
 $product-view-attributes-tabs-border-radius: $product-view-attributes-container-border-radius;
+// Attributes tabs for mobile landscape
+$product-view-attributes-tabs-flex-direction-mobile-l: column;
+$product-view-attributes-tabs-offset-mobile-l: 0 -10px;
+$product-view-attributes-tabs-border-radius-mobile-l: 0;
+$product-view-attributes-tabs-link-text-align-mobile-l: left;
+$product-view-attributes-tabs-link-after-position-mobile-l: absolute;
+$product-view-attributes-tabs-link-after-right-mobile-l: 15px;
+$product-view-attributes-tabs-link-after-margin-top-mobile-l: -2px;
+$product-view-attributes-tabs-link-after-font-size-mobile-l: $base-font-size--large;
 
 // Attributes tab content
 $product-view-attributes-tab-content-offset-inner: 40px;
 $product-view-attributes-tab-content-attribute-offset-bottom: 1rem;
+// Attributes tab content for mobile landscape
+$product-view-attributes-tab-content-display-mobile-l: none !important;

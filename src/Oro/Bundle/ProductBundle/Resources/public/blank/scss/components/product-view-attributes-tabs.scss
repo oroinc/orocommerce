@@ -1,4 +1,4 @@
-// @theme: default
+// @theme: blank
 
 @include nav-tabs(
     $nav-tabs: $product-view-attributes-tabs,
@@ -55,11 +55,14 @@
         border-radius: $product-view-attributes-tabs-border-radius-mobile-l;
 
         &__item {
-            border-left: 0;
             border-top: 1px solid $product-view-attributes-tabs-border-color;
 
             &:last-child {
                 border-bottom: 1px solid $product-view-attributes-tabs-border-color;
+            }
+
+            &:not(:first-child) {
+                border-left: 0;
             }
         }
 
