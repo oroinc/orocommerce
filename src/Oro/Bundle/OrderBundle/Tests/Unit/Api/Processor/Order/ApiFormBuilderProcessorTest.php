@@ -2,13 +2,13 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Api\Processor\Order;
 
-use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Bundle\ApiBundle\Processor\FormContext;
-use Oro\Bundle\OrderBundle\Api\Processor\Order\DiscountOrderApiProcessor;
+use Oro\Bundle\OrderBundle\Api\Processor\Order\ApiFormBuilderProcessor;
+use Oro\Component\ChainProcessor\ContextInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 
-class DiscountOrderApiProcessorTest extends \PHPUnit_Framework_TestCase
+class ApiFormBuilderProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var EventSubscriberInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -16,7 +16,7 @@ class DiscountOrderApiProcessorTest extends \PHPUnit_Framework_TestCase
     private $eventSubscriber;
 
     /**
-     * @var DiscountOrderApiProcessor
+     * @var ApiFormBuilderProcessor
      */
     protected $testedProcessor;
 
@@ -24,7 +24,7 @@ class DiscountOrderApiProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $this->eventSubscriber = $this->createMock(EventSubscriberInterface::class);
 
-        $this->testedProcessor = new DiscountOrderApiProcessor($this->eventSubscriber);
+        $this->testedProcessor = new ApiFormBuilderProcessor($this->eventSubscriber);
     }
 
     /**
@@ -50,6 +50,16 @@ class DiscountOrderApiProcessorTest extends \PHPUnit_Framework_TestCase
 
         $contextMock
             ->expects(static::once())
+            ->method('hasFormBuilder')
+            ->willReturn(true);
+
+        $contextMock
+            ->expects(static::once())
+            ->method('hasForm')
+            ->willReturn(false);
+
+        $contextMock
+            ->expects(static::once())
             ->method('getFormBuilder')
             ->willReturn($formBuilderMock);
 
@@ -68,6 +78,38 @@ class DiscountOrderApiProcessorTest extends \PHPUnit_Framework_TestCase
         $contextMock
             ->expects(static::never())
             ->method(static::anything());
+
+        $this->testedProcessor->process($contextMock);
+    }
+
+    public function testHasNoFormBuilder()
+    {
+        $contextMock = $this->createContextMock();
+
+        $contextMock
+            ->expects(static::once())
+            ->method('hasFormBuilder')
+            ->willReturn(false);
+
+        $contextMock
+            ->expects(static::never())
+            ->method('getFormBuilder');
+
+        $this->testedProcessor->process($contextMock);
+    }
+
+    public function testHasNoForm()
+    {
+        $contextMock = $this->createContextMock();
+
+        $contextMock
+            ->expects(static::once())
+            ->method('hasForm')
+            ->willReturn(true);
+
+        $contextMock
+            ->expects(static::never())
+            ->method('getFormBuilder');
 
         $this->testedProcessor->process($contextMock);
     }

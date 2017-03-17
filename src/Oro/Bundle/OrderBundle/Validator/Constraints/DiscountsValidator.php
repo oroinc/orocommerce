@@ -17,6 +17,10 @@ class DiscountsValidator extends ConstraintValidator
      */
     public function validate($value, Constraint $constraint)
     {
+        if (null === $value) {
+            return;
+        }
+
         if (!$value instanceof Order) {
             throw new \InvalidArgumentException(
                 sprintf(

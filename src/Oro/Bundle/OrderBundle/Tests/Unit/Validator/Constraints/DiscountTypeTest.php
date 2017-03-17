@@ -38,7 +38,7 @@ class DiscountTypeTest extends \PHPUnit_Framework_TestCase
         $context = $this->createMock('Symfony\Component\Validator\Context\ExecutionContextInterface');
         $validator = $this->getValidator();
         $validator->initialize($context);
-        $validator->validate(null, $this->constraint);
+        $validator->validate(new \stdClass(), $this->constraint);
     }
 
     /**
