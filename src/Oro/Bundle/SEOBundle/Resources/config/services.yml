@@ -273,8 +273,14 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_seo.event.restrict_sitemap_entity.product, method: restrictQueryBuilder }
 
-    oro_seo.manager.robots_txt:
-        class: Oro\Bundle\SEOBundle\Manager\RobotsTxtManager
+    oro_seo.sitemap.manager.robots_txt_sitemap_manager:
+        class: Oro\Bundle\SEOBundle\Sitemap\Manager\RobotsTxtSitemapManager
+        public: false
+        arguments:
+            - '@oro_seo.manager.robots_txt_file_manager'
+
+    oro_seo.manager.robots_txt_file_manager:
+        class: Oro\Bundle\SEOBundle\Manager\RobotsTxtFileManager
         public: false
         arguments:
             - '@logger'
@@ -284,7 +290,7 @@ services:
     oro_seo.sitemap.event_listener.dump_robots_txt:
         class: Oro\Bundle\SEOBundle\Sitemap\EventListener\DumpRobotsTxtListener
         arguments:
-            - '@oro_seo.manager.robots_txt'
+            - '@oro_seo.sitemap.manager.robots_txt_sitemap_manager'
             - '@oro_redirect.generator.canonical_url'
             - '@oro_seo.sitemap.filesystem_adapter'
             - '%oro_seo.sitemap_directory%'

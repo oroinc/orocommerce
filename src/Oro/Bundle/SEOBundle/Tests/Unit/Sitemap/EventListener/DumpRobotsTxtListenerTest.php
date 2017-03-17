@@ -3,7 +3,7 @@
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\EventListener;
 
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
-use Oro\Bundle\SEOBundle\Manager\RobotsTxtManager;
+use Oro\Bundle\SEOBundle\Sitemap\Manager\RobotsTxtSitemapManager;
 use Oro\Bundle\SEOBundle\Sitemap\Dumper\SitemapDumper;
 use Oro\Bundle\SEOBundle\Sitemap\Event\OnSitemapDumpFinishEvent;
 use Oro\Bundle\SEOBundle\Sitemap\EventListener\DumpRobotsTxtListener;
@@ -22,9 +22,9 @@ class DumpRobotsTxtListenerTest extends \PHPUnit_Framework_TestCase
     const SITEMAP_DIR = 'sitemap';
 
     /**
-     * @var RobotsTxtManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var RobotsTxtSitemapManager|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $robotsTxtManager;
+    private $robotsTxtSitemapManager;
 
     /**
      * @var CanonicalUrlGenerator|\PHPUnit_Framework_MockObject_MockObject
@@ -43,7 +43,7 @@ class DumpRobotsTxtListenerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->robotsTxtManager = $this->getMockBuilder(RobotsTxtManager::class)
+        $this->robotsTxtSitemapManager = $this->getMockBuilder(RobotsTxtSitemapManager::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->canonicalUrlGenerator = $this->getMockBuilder(CanonicalUrlGenerator::class)
@@ -53,7 +53,7 @@ class DumpRobotsTxtListenerTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->listener = new DumpRobotsTxtListener(
-            $this->robotsTxtManager,
+            $this->robotsTxtSitemapManager,
             $this->canonicalUrlGenerator,
             $this->sitemapFilesystemAdapter,
             self::SITEMAP_DIR
@@ -69,14 +69,13 @@ class DumpRobotsTxtListenerTest extends \PHPUnit_Framework_TestCase
             ->method('getSitemapFiles');
         $this->canonicalUrlGenerator->expects($this->never())
             ->method('getAbsoluteUrl');
-        $this->robotsTxtManager->expects($this->never())
-            ->method('changeByKeyword');
+        $this->robotsTxtSitemapManager->expects($this->never())
+            ->method('addSitemap');
+        $this->robotsTxtSitemapManager->expects($this->never())
+            ->method('flush');
         $this->listener->onSitemapDumpStorage($event);
     }
 
-    /**
-     * @dataProvider onSitemapDumpStorageWhenThrowsExceptionProvider
-     */
     public function testOnSitemapDumpStorageWhenThrowsException()
     {
         $website = $this->createWebsite(1, true);
@@ -91,26 +90,14 @@ class DumpRobotsTxtListenerTest extends \PHPUnit_Framework_TestCase
             ->willReturn(new \ArrayIterator());
         $this->canonicalUrlGenerator->expects($this->never())
             ->method('getAbsoluteUrl');
-        $this->robotsTxtManager->expects($this->never())
-            ->method('changeByKeyword');
+        $this->robotsTxtSitemapManager->expects($this->never())
+            ->method('addSitemap');
+        $this->robotsTxtSitemapManager->expects($this->never())
+            ->method('flush');
 
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('Cannot find sitemap index file.');
         $this->listener->onSitemapDumpStorage($event);
-    }
-
-    public function onSitemapDumpStorageWhenThrowsExceptionProvider()
-    {
-        return [
-            'when no index files' => [
-                'sitemapFiles' => new \ArrayIterator(),
-                'exceptionMessage' => 'Cannot find sitemap index file.',
-            ],
-            'when more than one index files' => [
-                'sitemapFiles' => new \ArrayIterator([new \SplFileInfo('some_name'), new \SplFileInfo('some_name_2')]),
-                'exceptionMessage' => 'There are more than one index files.',
-            ],
-        ];
     }
 
     public function testOnSitemapDumpStorage()
@@ -128,7 +115,7 @@ class DumpRobotsTxtListenerTest extends \PHPUnit_Framework_TestCase
             )
             ->willReturn(new \ArrayIterator([new \SplFileInfo($filename)]));
 
-        $url = 'http://example.com/robots.txt';
+        $url = 'http://example.com/sitemap.xml';
         $this->canonicalUrlGenerator->expects($this->once())
             ->method('getAbsoluteUrl')
             ->with(
@@ -143,9 +130,11 @@ class DumpRobotsTxtListenerTest extends \PHPUnit_Framework_TestCase
             )
             ->willReturn($url);
 
-        $this->robotsTxtManager->expects($this->once())
-            ->method('changeByKeyword')
-            ->with(RobotsTxtManager::KEYWORD_SITEMAP, $url);
+        $this->robotsTxtSitemapManager->expects($this->once())
+            ->method('addSitemap')
+            ->with($url);
+        $this->robotsTxtSitemapManager->expects($this->once())
+            ->method('flush');
         $this->listener->onSitemapDumpStorage($event);
     }
 

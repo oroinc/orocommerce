@@ -3,7 +3,7 @@
 namespace Oro\Bundle\SEOBundle\Sitemap\EventListener;
 
 use Oro\Bundle\RedirectBundle\Generator\CanonicalUrlGenerator;
-use Oro\Bundle\SEOBundle\Manager\RobotsTxtManager;
+use Oro\Bundle\SEOBundle\Sitemap\Manager\RobotsTxtSitemapManager;
 use Oro\Bundle\SEOBundle\Sitemap\Dumper\SitemapDumper;
 use Oro\Bundle\SEOBundle\Sitemap\Event\OnSitemapDumpFinishEvent;
 use Oro\Bundle\SEOBundle\Sitemap\Exception\LogicException;
@@ -13,9 +13,9 @@ use Oro\Bundle\SEOBundle\Sitemap\Storage\SitemapStorageFactory;
 class DumpRobotsTxtListener
 {
     /**
-     * @var RobotsTxtManager
+     * @var RobotsTxtSitemapManager
      */
-    private $robotsTxtManager;
+    private $robotsTxtSitemapManager;
 
     /**
      * @var CanonicalUrlGenerator
@@ -33,18 +33,18 @@ class DumpRobotsTxtListener
     private $sitemapDir;
 
     /**
-     * @param RobotsTxtManager $robotsTxtManager
+     * @param RobotsTxtSitemapManager $robotsTxtSitemapManager
      * @param CanonicalUrlGenerator $canonicalUrlGenerator
      * @param SitemapFilesystemAdapter $sitemapFilesystemAdapter
      * @param string $sitemapDir
      */
     public function __construct(
-        RobotsTxtManager $robotsTxtManager,
+        RobotsTxtSitemapManager $robotsTxtSitemapManager,
         CanonicalUrlGenerator $canonicalUrlGenerator,
         SitemapFilesystemAdapter $sitemapFilesystemAdapter,
         $sitemapDir
     ) {
-        $this->robotsTxtManager = $robotsTxtManager;
+        $this->robotsTxtSitemapManager = $robotsTxtSitemapManager;
         $this->canonicalUrlGenerator = $canonicalUrlGenerator;
         $this->sitemapFilesystemAdapter = $sitemapFilesystemAdapter;
         $this->sitemapDir = $sitemapDir;
@@ -66,27 +66,23 @@ class DumpRobotsTxtListener
                 throw new LogicException('Cannot find sitemap index file.');
             }
 
-            if ($indexFiles->count() > 1) {
-                throw new LogicException('There are more than one index files.');
-            }
-
             /** @var \SplFileInfo $indexFile */
             foreach ($indexFiles as $indexFile) {
-                break;
+                $absoluteUrl = $this->canonicalUrlGenerator->getAbsoluteUrl(
+                    sprintf(
+                        '%s/%s/%s/%s',
+                        $this->sitemapDir,
+                        $event->getWebsite()->getId(),
+                        SitemapFilesystemAdapter::ACTUAL_VERSION,
+                        $indexFile->getFilename()
+                    ),
+                    $event->getWebsite()
+                );
+
+                $this->robotsTxtSitemapManager->addSitemap($absoluteUrl);
             }
 
-            $absoluteUrl = $this->canonicalUrlGenerator->getAbsoluteUrl(
-                sprintf(
-                    '%s/%s/%s/%s',
-                    $this->sitemapDir,
-                    $event->getWebsite()->getId(),
-                    SitemapFilesystemAdapter::ACTUAL_VERSION,
-                    $indexFile->getFilename()
-                ),
-                $event->getWebsite()
-            );
-
-            $this->robotsTxtManager->changeByKeyword(RobotsTxtManager::KEYWORD_SITEMAP, $absoluteUrl);
+            $this->robotsTxtSitemapManager->flush();
         }
     }
 }
