@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShippingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query\Expr;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\LocaleBundle\Model\AddressInterface;
 use Oro\Bundle\SecurityBundle\ORM\Walker\AclHelper;
@@ -149,11 +150,34 @@ class ShippingMethodsConfigsRuleRepository extends EntityRepository
      */
     public function getRulesByMethod($method)
     {
-        $query = $this->createQueryBuilder('methodsConfigsRule')
+        $qb = $this->getRulesByMethodQueryBuilder($method);
+
+        return $this->aclHelper->apply($qb)->getResult();
+    }
+
+    /**
+     * @param string $method
+     *
+     * @return ShippingMethodsConfigsRule[]
+     */
+    public function getEnabledRulesByMethod($method)
+    {
+        $qb = $this->getRulesByMethodQueryBuilder($method)
+            ->innerJoin('methodsConfigsRule.rule', 'rule', Expr\Join::WITH, 'rule.enabled = true');
+
+        return $this->aclHelper->apply($qb)->getResult();
+    }
+
+    /**
+     * @param string $method
+     *
+     * @return QueryBuilder
+     */
+    private function getRulesByMethodQueryBuilder($method)
+    {
+        return $this->createQueryBuilder('methodsConfigsRule')
             ->innerJoin('methodsConfigsRule.methodConfigs', 'methodConfigs')
             ->where('methodConfigs.method = :method')
             ->setParameter('method', $method);
-
-        return $this->aclHelper->apply($query)->getResult();
     }
 }

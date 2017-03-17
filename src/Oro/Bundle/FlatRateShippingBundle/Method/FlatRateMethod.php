@@ -18,7 +18,7 @@ class FlatRateMethod implements ShippingMethodInterface
     protected $label;
 
     /**
-     * @var int
+     * @var string
      */
     protected $identifier;
 
@@ -28,9 +28,9 @@ class FlatRateMethod implements ShippingMethodInterface
     private $enabled;
 
     /**
-     * @param int|string $identifier
-     * @param string     $label
-     * @param bool       $enabled
+     * @param string $identifier
+     * @param string $label
+     * @param bool   $enabled
      */
     public function __construct($identifier, $label, $enabled)
     {

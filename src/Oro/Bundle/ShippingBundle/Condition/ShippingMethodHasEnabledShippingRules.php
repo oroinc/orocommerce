@@ -8,9 +8,9 @@ use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleReposi
 /**
  * Check if shipping method has shipping rules
  * Usage:
- * @shipping_method_has_shipping_rules: method_identifier
+ * @shipping_method_has_enabled_shipping_rules: method_identifier
  */
-class ShippingMethodHasShippingRules extends AbstractShippingMethodHasShippingRules
+class ShippingMethodHasEnabledShippingRules extends AbstractShippingMethodHasShippingRules
 {
     /**
      * @var ShippingMethodsConfigsRuleRepository
@@ -30,6 +30,6 @@ class ShippingMethodHasShippingRules extends AbstractShippingMethodHasShippingRu
      */
     protected function getRulesByMethod($shippingMethodIdentifier)
     {
-        return $this->repository->getRulesByMethod($shippingMethodIdentifier);
+        return $this->repository->getEnabledRulesByMethod($shippingMethodIdentifier);
     }
 }

@@ -2,9 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Method\Handler;
 
-use Oro\Bundle\RuleBundle\Entity\Rule;
 use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository;
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 
@@ -49,7 +47,6 @@ class RulesShippingMethodDisableHandlerDecorator implements ShippingMethodDisabl
         $shippingMethodsConfigsRule = $this->repository->getConfigsWithEnabledRuleAndMethod($methodId);
         foreach ($shippingMethodsConfigsRule as $configRule) {
             if (!$this->configHasEnabledMethod($configRule, $methodId)) {
-                /** @var Rule $rule */
                 $rule = $configRule->getRule();
                 $rule->setEnabled(false);
             }
@@ -64,7 +61,6 @@ class RulesShippingMethodDisableHandlerDecorator implements ShippingMethodDisabl
      */
     private function configHasEnabledMethod(ShippingMethodsConfigsRule $configRule, $disabledMethodId)
     {
-        /** @var ShippingMethodConfig[] $methodConfigs */
         $methodConfigs = $configRule->getMethodConfigs();
         foreach ($methodConfigs as $methodConfig) {
             $methodId = $methodConfig->getMethod();

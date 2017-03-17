@@ -46,7 +46,7 @@ operations:
                 method_parameters:  [{'methodConfigs': $.methodIdentifier}]
         preconditions:
             '@and':
-                - '@shipping_method_has_shipping_rules':
+                - '@shipping_method_has_enabled_shipping_rules':
                     parameters:
                         method_identifier: $.methodIdentifier
                 - '@equal': [$type, $.flatRateType]
@@ -54,9 +54,9 @@ operations:
                 - '@equal': [$.data.enabled, true]
         frontend_options:
             confirmation:
-                title: oro.flat_rate.rule.deactivate.title
-                okText: oro.flat_rate.rule.deactivate.button.okText
-                message: oro.flat_rate.rule.deactivate.message
+                title: oro.shipping.integration.deactivate.title
+                okText: oro.shipping.integration.deactivate.button.okText
+                message: oro.shipping.integration.deactivate.message
                 message_parameters:
                     linkGrid: $.linkGrid
                 component: oroui/js/standart-confirmation
@@ -71,7 +71,7 @@ operations:
         preconditions:
             '@and':
                 - '@not':
-                    - '@shipping_method_has_shipping_rules':
+                    - '@shipping_method_has_enabled_shipping_rules':
                         parameters:
                             method_identifier: $.methodIdentifier
                 - '@equal': [$type, $.flatRateType]
@@ -115,9 +115,9 @@ operations:
                 - '@equal': [$.actionAllowed, true]
         frontend_options:
             confirmation:
-                title: oro.flat_rate.rule.delete.title
-                okText: oro.flat_rate.rule.delete.button.okText
-                message: oro.flat_rate.rule.delete.message
+                title: oro.shipping.integration.delete.title
+                okText: oro.shipping.integration.delete.button.okText
+                message: oro.shipping.integration.delete.message
                 message_parameters:
                     linkGrid: $.linkGrid
                 component: oroui/js/standart-confirmation

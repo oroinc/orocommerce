@@ -2,7 +2,6 @@
 
 namespace Oro\Bundle\ShippingBundle\Controller\Api\Rest;
 
-use Doctrine\Common\Persistence\ObjectManager;
 use FOS\RestBundle\Controller\Annotations\Get;
 use FOS\RestBundle\Controller\Annotations\NamePrefix;
 use FOS\RestBundle\Controller\Annotations\RouteResource;
@@ -36,6 +35,7 @@ class ShippingMethodsConfigsRuleController extends RestController implements Cla
      * @AclAncestor("oro_shipping_methods_configs_rule_update")
      *
      * @param int $id
+     *
      * @return Response
      */
     public function enableAction($id)
@@ -45,13 +45,16 @@ class ShippingMethodsConfigsRuleController extends RestController implements Cla
 
         if ($shippingRule) {
             $shippingRule->getRule()->setEnabled(true);
-            /** @var ObjectManager $objectManager */
+            $validateResponse = $this->validateShippingMethodsConfigsRule($shippingRule);
+            if ($validateResponse) {
+                return $validateResponse;
+            }
             $objectManager = $this->getManager()->getObjectManager();
             $objectManager->persist($shippingRule);
             $objectManager->flush();
             $view = $this->view(
                 [
-                    'message'    => $this->get('translator')->trans('oro.shipping.notification.channel.enabled'),
+                    'message' => $this->get('translator')->trans('oro.shipping.notification.channel.enabled'),
                     'successful' => true,
                 ],
                 Codes::HTTP_OK
@@ -60,7 +63,6 @@ class ShippingMethodsConfigsRuleController extends RestController implements Cla
             /** @var View $view */
             $view = $this->view(null, Codes::HTTP_NOT_FOUND);
         }
-
 
         return $this->handleView(
             $view
@@ -82,6 +84,7 @@ class ShippingMethodsConfigsRuleController extends RestController implements Cla
      * @AclAncestor("oro_shipping_methods_configs_rule_update")
      *
      * @param int $id
+     *
      * @return Response
      */
     public function disableAction($id)
@@ -91,13 +94,16 @@ class ShippingMethodsConfigsRuleController extends RestController implements Cla
 
         if ($shippingRule) {
             $shippingRule->getRule()->setEnabled(false);
-            /** @var ObjectManager $objectManager */
+            $validateResponse = $this->validateShippingMethodsConfigsRule($shippingRule);
+            if ($validateResponse) {
+                return $validateResponse;
+            }
             $objectManager = $this->getManager()->getObjectManager();
             $objectManager->persist($shippingRule);
             $objectManager->flush();
             $view = $this->view(
                 [
-                    'message'    => $this->get('translator')->trans('oro.shipping.notification.channel.disabled'),
+                    'message' => $this->get('translator')->trans('oro.shipping.notification.channel.disabled'),
                     'successful' => true,
                 ],
                 Codes::HTTP_OK
@@ -106,7 +112,6 @@ class ShippingMethodsConfigsRuleController extends RestController implements Cla
             /** @var View $view */
             $view = $this->view(null, Codes::HTTP_NOT_FOUND);
         }
-
 
         return $this->handleView(
             $view
@@ -135,5 +140,30 @@ class ShippingMethodsConfigsRuleController extends RestController implements Cla
     public function getFormHandler()
     {
         throw new \LogicException('This method should not be called');
+    }
+
+    /**
+     * @param ShippingMethodsConfigsRule $configsRule
+     *
+     * @return Response|null
+     */
+    private function validateShippingMethodsConfigsRule(ShippingMethodsConfigsRule $configsRule)
+    {
+        $errors = $this->get('validator')->validate($configsRule);
+        if ($errors->count()) {
+            $view = $this->view(
+                [
+                    'message' => $errors->get(0)->getMessage(),
+                    'successful' => false,
+                ],
+                Codes::HTTP_BAD_REQUEST
+            );
+
+            return $this->handleView(
+                $view
+            );
+        }
+
+        return null;
     }
 }

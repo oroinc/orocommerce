@@ -7,16 +7,18 @@ services:
             - { name: kernel.event_listener, event: oro_shipping_method.config_data, method: onGetConfigData }
 
     oro_flat_rate_shipping.entity_listener.integration:
-        class: 'Oro\Bundle\FlatRateShippingBundle\EventListener\IntegrationRemovalListener'
+        class: 'Oro\Bundle\ShippingBundle\Method\EventListener\IntegrationRemovalListener'
         arguments:
+            - '%oro_flat_rate_shipping.integration.channel.type%'
             - '@oro_flat_rate_shipping.method.identifier_generator.method'
             - '@oro_shipping.method.event.dispatcher.method_removal'
         tags:
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\IntegrationBundle\Entity\Channel', event: preRemove }
+            - { name: kernel.event_listener, event: oro_integration.channel_delete, method: onRemove }
 
     oro_flat_rate_shipping.disable_integration_listener:
-         class: 'Oro\Bundle\FlatRateShippingBundle\EventListener\ShippingMethodDisableIntegrationListener'
+         class: 'Oro\Bundle\ShippingBundle\Method\EventListener\ShippingMethodDisableIntegrationListener'
          arguments:
+             - '%oro_flat_rate_shipping.integration.channel.type%'
              - '@oro_flat_rate_shipping.method.identifier_generator.method'
              - '@oro_shipping.method_disable_handler.decorator'
          tags:

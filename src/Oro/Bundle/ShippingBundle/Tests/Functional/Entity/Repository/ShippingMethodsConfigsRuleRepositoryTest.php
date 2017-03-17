@@ -148,6 +148,24 @@ class ShippingMethodsConfigsRuleRepositoryTest extends WebTestCase
         static::assertCount(0, $rulesByNotExistingMethod);
     }
 
+    public function testGetEnabledRulesByMethod()
+    {
+        $actualRules = $this->repository->getEnabledRulesByMethod($this->getFlatRateIdentifier());
+
+        $expectedRuleReferences = [
+            'shipping_rule.1',
+            'shipping_rule.2',
+            'shipping_rule.4',
+            'shipping_rule.5',
+            'shipping_rule.6',
+            'shipping_rule.7',
+            'shipping_rule.9',
+        ];
+        foreach ($expectedRuleReferences as $expectedRuleReference) {
+            static::assertContains($this->getReference($expectedRuleReference), $actualRules);
+        }
+    }
+
     /**
      * @param array $rules
      *

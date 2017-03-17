@@ -75,7 +75,6 @@ class OroShippingExtensionTest extends ExtensionTestCase
             'oro_shipping.checker.shipping_rule_enabled',
             'oro_shipping.method_disable_handler.decorator',
             'oro_shipping.method_disable_handler.basic',
-            'oro_shipping.provider.shipping_method_choices',
             'oro_shipping.repository.shipping_method_config',
             'oro_shipping.method.event_listener.method_renaming',
             'oro_shipping.method.event.dispatcher.method_renaming',

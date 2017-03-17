@@ -1,15 +1,20 @@
 <?php
 
-namespace Oro\Bundle\FlatRateShippingBundle\Tests\Unit\EventListener;
+namespace Oro\Bundle\ShippingBundle\Tests\Unit\EventListener;
 
 use Oro\Bundle\IntegrationBundle\Event\Action\ChannelDisableEvent;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\FlatRateShippingBundle\EventListener\ShippingMethodDisableIntegrationListener;
+use Oro\Bundle\ShippingBundle\Method\EventListener\ShippingMethodDisableIntegrationListener;
 use Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGeneratorInterface;
 use Oro\Bundle\ShippingBundle\Method\Handler\ShippingMethodDisableHandlerInterface;
 
 class ShippingMethodDisableIntegrationListenerTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var string
+     */
+    private $channelType;
+
     /**
      * @var IntegrationMethodIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -32,6 +37,8 @@ class ShippingMethodDisableIntegrationListenerTest extends \PHPUnit_Framework_Te
 
     protected function setUp()
     {
+        $this->channelType = 'integration_shipping_method';
+
         $this->methodIdentifierGenerator = $this->createMock(
             IntegrationMethodIdentifierGeneratorInterface::class
         );
@@ -42,6 +49,7 @@ class ShippingMethodDisableIntegrationListenerTest extends \PHPUnit_Framework_Te
             ChannelDisableEvent::class
         );
         $this->listener = new ShippingMethodDisableIntegrationListener(
+            $this->channelType,
             $this->methodIdentifierGenerator,
             $this->handler
         );
@@ -51,7 +59,6 @@ class ShippingMethodDisableIntegrationListenerTest extends \PHPUnit_Framework_Te
     {
         $methodIdentifier = 'method_1';
         $channel = $this->createMock(Channel::class);
-        $type = 'flat_rate';
 
         $this->event
             ->expects(static::once())
@@ -61,7 +68,7 @@ class ShippingMethodDisableIntegrationListenerTest extends \PHPUnit_Framework_Te
         $channel
             ->expects(static::once())
             ->method('getType')
-            ->willReturn($type);
+            ->willReturn($this->channelType);
 
         $this->methodIdentifierGenerator
             ->expects(static::once())
@@ -73,6 +80,31 @@ class ShippingMethodDisableIntegrationListenerTest extends \PHPUnit_Framework_Te
             ->expects(static::once())
             ->method('handleMethodDisable')
             ->with($methodIdentifier);
+
+        $this->listener->onIntegrationDisable($this->event);
+    }
+
+    public function testOnIntegrationDisableWithAnotherType()
+    {
+        $channel = $this->createMock(Channel::class);
+
+        $this->event
+            ->expects(static::once())
+            ->method('getChannel')
+            ->willReturn($channel);
+
+        $channel
+            ->expects(static::once())
+            ->method('getType')
+            ->willReturn('another_type');
+
+        $this->methodIdentifierGenerator
+            ->expects(static::never())
+            ->method('generateIdentifier');
+
+        $this->handler
+            ->expects(static::never())
+            ->method('handleMethodDisable');
 
         $this->listener->onIntegrationDisable($this->event);
     }

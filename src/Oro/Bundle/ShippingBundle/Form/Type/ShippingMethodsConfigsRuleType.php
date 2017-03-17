@@ -6,8 +6,6 @@ use Oro\Bundle\CurrencyBundle\Form\Type\CurrencySelectionType;
 use Oro\Bundle\FormBundle\Form\Type\CollectionType;
 use Oro\Bundle\RuleBundle\Form\Type\RuleType;
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
 use Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProviderInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -22,11 +20,6 @@ class ShippingMethodsConfigsRuleType extends AbstractType
     const BLOCK_PREFIX = 'oro_shipping_methods_configs_rule';
 
     /**
-     * @var ShippingMethodRegistry
-     */
-    protected $methodRegistry;
-
-    /**
      * @var TranslatorInterface
      */
     protected $translator;
@@ -37,18 +30,15 @@ class ShippingMethodsConfigsRuleType extends AbstractType
     protected $provider;
 
     /**
-     * @param ShippingMethodRegistry                 $methodRegistry
-     * @param TranslatorInterface                    $translator
      * @param ShippingMethodChoicesProviderInterface $provider
+     * @param TranslatorInterface                    $translator
      */
     public function __construct(
-        ShippingMethodRegistry $methodRegistry,
-        TranslatorInterface $translator,
-        ShippingMethodChoicesProviderInterface $provider
+        ShippingMethodChoicesProviderInterface $provider,
+        TranslatorInterface $translator
     ) {
-        $this->methodRegistry = $methodRegistry;
-        $this->translator = $translator;
         $this->provider = $provider;
+        $this->translator = $translator;
     }
 
     /**

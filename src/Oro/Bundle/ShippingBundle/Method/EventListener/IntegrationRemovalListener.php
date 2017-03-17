@@ -2,16 +2,17 @@
 
 namespace Oro\Bundle\ShippingBundle\Method\EventListener;
 
-use Doctrine\ORM\Event\LifecycleEventArgs;
-use Oro\Bundle\IntegrationBundle\Entity\Channel;
+use Oro\Bundle\IntegrationBundle\Event\Action\ChannelDeleteEvent;
 use Oro\Bundle\ShippingBundle\Method\Event\MethodRemovalEventDispatcherInterface;
 use Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGeneratorInterface;
 
-/**
- * @deprecated since 1.1.0. Use Oro\Bundle\ShippingBundle\Method\EventListener\IntegrationRemovalListener instead
- */
-abstract class AbstractIntegrationRemovalListener
+class IntegrationRemovalListener
 {
+    /**
+     * @var string
+     */
+    private $channelType;
+
     /**
      * @var IntegrationMethodIdentifierGeneratorInterface
      */
@@ -23,31 +24,28 @@ abstract class AbstractIntegrationRemovalListener
     private $dispatcher;
 
     /**
+     * @param string                                        $channelType
      * @param IntegrationMethodIdentifierGeneratorInterface $identifierGenerator
-     * @param MethodRemovalEventDispatcherInterface $dispatcher
+     * @param MethodRemovalEventDispatcherInterface         $dispatcher
      */
     public function __construct(
+        $channelType,
         IntegrationMethodIdentifierGeneratorInterface $identifierGenerator,
         MethodRemovalEventDispatcherInterface $dispatcher
     ) {
+        $this->channelType = $channelType;
         $this->identifierGenerator = $identifierGenerator;
         $this->dispatcher = $dispatcher;
     }
 
     /**
-     * @param Channel $channel
-     * @param LifecycleEventArgs $args
+     * @param ChannelDeleteEvent $event
      */
-    public function preRemove(Channel $channel, LifecycleEventArgs $args)
+    public function onRemove(ChannelDeleteEvent $event)
     {
-        if ($this->getType() === $channel->getType()) {
+        $channel = $event->getChannel();
+        if ($this->channelType === $channel->getType()) {
             $this->dispatcher->dispatch($this->identifierGenerator->generateIdentifier($channel));
         }
     }
-
-    /**
-     * Doctrine entity listener should be declared only once.
-     * @return string
-     */
-    abstract protected function getType();
 }

@@ -170,7 +170,7 @@ abstract class AbstractConfigSubscriberTest extends FormIntegrationTestCase
             new PreloadedExtension(
                 [
                     ShippingMethodsConfigsRuleType::class
-                    => new ShippingMethodsConfigsRuleType($this->methodRegistry, $translator, $choicesProvider),
+                    => new ShippingMethodsConfigsRuleType($choicesProvider, $translator),
                     ShippingMethodConfigCollectionType::class
                     => new ShippingMethodConfigCollectionType($this->methodConfigCollectionSubscriber),
                     ShippingMethodConfigType::class

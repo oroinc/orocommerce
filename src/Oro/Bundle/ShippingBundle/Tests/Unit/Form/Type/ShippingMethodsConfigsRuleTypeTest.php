@@ -83,6 +83,7 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
         $this->methodConfigCollectionSubscriber
             ->setFactory($this->factory)->setMethodRegistry($this->methodRegistry);
 
+        /** @var TranslatorInterface|\PHPUnit_Framework_MockObject_MockObject $translator */
         $translator = $this->createMock(TranslatorInterface::class);
         $translator->expects(static::any())
             ->method('trans')
@@ -93,9 +94,8 @@ class ShippingMethodsConfigsRuleTypeTest extends FormIntegrationTestCase
         $this->choicesProvider = $this->createMock(ShippingMethodChoicesProviderInterface::class);
 
         $this->formType = new ShippingMethodsConfigsRuleType(
-            $this->methodRegistry,
-            $translator,
-            $this->choicesProvider
+            $this->choicesProvider,
+            $translator
         );
     }
 

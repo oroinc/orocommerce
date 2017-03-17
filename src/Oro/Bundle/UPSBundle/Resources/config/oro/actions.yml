@@ -119,7 +119,7 @@ operations:
                 method_parameters:  [{'methodConfigs': $.methodIdentifier}]
         preconditions:
             '@and':
-                - '@shipping_method_has_shipping_rules':
+                - '@shipping_method_has_enabled_shipping_rules':
                     parameters:
                         method_identifier: $.methodIdentifier
                 - '@equal': [$type, $.upsType]
@@ -127,9 +127,9 @@ operations:
                 - '@equal': [$.data.enabled, true]
         frontend_options:
             confirmation:
-                title: oro.ups.rule.deactivate.title
-                okText: oro.ups.rule.deactivate.button.okText
-                message: oro.ups.rule.deactivate.message
+                title: oro.shipping.integration.deactivate.title
+                okText: oro.shipping.integration.deactivate.button.okText
+                message: oro.shipping.integration.deactivate.message
                 message_parameters:
                     linkGrid: $.linkGrid
                 component: oroui/js/standart-confirmation
@@ -144,7 +144,7 @@ operations:
         preconditions:
             '@and':
                 - '@not':
-                    - '@shipping_method_has_shipping_rules':
+                    - '@shipping_method_has_enabled_shipping_rules':
                         parameters:
                             method_identifier: $.methodIdentifier
                 - '@equal': [$type, $.upsType]
@@ -188,9 +188,9 @@ operations:
                 - '@equal': [$.actionAllowed, true]
         frontend_options:
             confirmation:
-                title: oro.ups.rule.delete.title
-                okText: oro.ups.rule.delete.button.okText
-                message: oro.ups.rule.delete.message
+                title: oro.shipping.integration.delete.title
+                okText: oro.shipping.integration.delete.button.okText
+                message: oro.shipping.integration.delete.message
                 message_parameters:
                     linkGrid: $.linkGrid
                 component: oroui/js/standart-confirmation

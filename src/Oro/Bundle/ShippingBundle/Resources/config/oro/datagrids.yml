@@ -101,7 +101,7 @@ datagrids:
                     options:
                         field_options:
                             multiple: true
-                            choices: '@oro_shipping.provider.basic_shipping_methos_choices->getMethods()'
+                            choices: '@oro_shipping.provider.basic_shipping_methods_choices->getMethods()'
         actions:
             view:
                 type:          navigate

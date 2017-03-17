@@ -1,3 +1,4 @@
+@fixture-../../../../../FlatRateShippingBundle/Tests/Behat/Features/Fixtures/FlatRateIntegration.yml
 @fixture-ShippingMethodsConfigsRule.yml
 Feature: Shipping Method Configurations disappear when removing integration
   #If integration will be disabled, then during saving we need to inform (show pop-up) admin about existing shipping rules which will be disabled/modified after this integration will be disabled. We also have to provide link to the grid with list of such rules in this pop-up.
