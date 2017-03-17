@@ -106,6 +106,7 @@
 {% endblock %}
 
 {% block _product_media_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% import 'OroProductBundle::image_macros.html.twig' as Image %}
     <!-- START Product Gallery -->
     <div class="product-gallery">
@@ -137,157 +138,95 @@
             arrows: true
         } %}
 
-        {% if product.imagesByType('main')|length == 0 and product.imagesByType('additional')|length == 0 and product.getImagesByType('listing')|length > 0 %}
-            <div class="product-view-media__gallery">
-                <div class="product-gallery__image-item">
-                    {% set productImage = product.imagesByType('listing')|length > 0 ? product.getImagesByType('listing').first.image : null %}
-                    <img class="product-gallery__image"
-                         src="{{ Image.url(productImage, 'product_large') }}"
-                         alt="{{ product.names|localized_value }}"
-                         width="378"
-                         height="378"
-                         data-trigger-gallery-open
-                        {% if productImage %}
-                            data-zoom-image="{{ Image.url(productImage, 'product_original') }}"
-                            data-page-component-module="oroui/js/app/components/viewport-component"
-                            data-page-component-options="{{ zoomOptions|json_encode }}"
-                        {% endif %}
-                    />
-                </div>
-            </div>
-        {% elseif product.imagesByType('main')|length == 0 and product.imagesByType('additional')|length == 0 %}
-            <div class="product-view-media__gallery">
-                <div class="product-gallery__image-item">
-                    {% set productImage = product.imagesByType('main')|length > 0 ? product.imagesByType('main').first.image : null %}
-                    <img class="product-gallery__image"
-                         src="{{ Image.url(productImage, 'product_large') }}"
-                         alt="{{ product.names|localized_value }}"
-                         width="378"
-                         height="378"
-                         data-trigger-gallery-open
-                    />
-                </div>
-            </div>
-        {% elseif product.imagesByType('main')|length == 1 and product.imagesByType('additional')|length == 0 %}
-            <div class="product-view-media__gallery">
-                <div class="product-gallery__image-item">
-                    {% set productImage = product.imagesByType('main')|length > 0 ? product.imagesByType('main').first.image : null %}
-                    <img class="product-gallery__image"
-                         src="{{ Image.url(productImage, 'product_extra_large') }}"
-                         alt="{{ product.names|localized_value }}"
-                         width="378"
-                         height="378"
-                         data-trigger-gallery-open
-                        {% if productImage %}
-                            data-zoom-image="{{ Image.url(productImage, 'product_original') }}"
-                            data-page-component-module="oroui/js/app/components/viewport-component"
-                            data-page-component-options="{{ zoomOptions|json_encode }}"
-                        {% endif %}
-                    />
-                </div>
-            </div>
+        {% set productImages = [] %}
 
-        {# @TODO START: main should be additional bt default BB-7917  #}
-        {% elseif product.imagesByType('main')|length > 0 and product.imagesByType('main').first.hasType('additional') == false and product.imagesByType('additional')|length > 0 %}
-            <div class="product-view-media__gallery"
-                 data-page-component-module="orofrontend/js/app/components/list-slider-component"
-                 data-page-component-options="{{ imageListOptions|json_encode }}">
-                {% set productImageMain = product.imagesByType('main').first %}
-                <div class="product-gallery__image-item" data-trigger-gallery-open>
+        {% for productImage in product.imagesByType('main')|merge(product.imagesByType('additional')) %}
+            {% if productImage not in productImages %}
+                {% set productImages = productImages|merge([productImage]) %}
+            {% endif %}
+        {% endfor %}
+
+        {% if productImages|length == 0 %}
+            {% set productImages = product.getImagesByType('listing') %}
+        {% endif %}
+
+        {% set slideNavAttr = productImages|length > 1 ? {
+            'data-page-component-module': 'orofrontend/js/app/components/list-slider-component',
+            'data-page-component-options': navListOptions|json_encode
+        } : {} %}
+
+        {% set slideImageAttr = productImages|length > 1 ? {
+            'data-page-component-module': 'orofrontend/js/app/components/list-slider-component',
+            'data-page-component-options': imageListOptions|json_encode
+        } : {} %}
+
+        <div class="product-view-media__gallery" {{ UI.attributes(slideImageAttr) }}>
+
+            {% if productImages|length == 0 %}
+
+                <div class="product-gallery__image-item">
                     <img class="product-gallery__image"
-                         data-url-zoom="{{ Image.url(productImageMain.image, 'product_original') }}"
-                        {% if productImageMain.image %}
-                            src="{{ Image.url(productImageMain.image, 'product_extra_large') }}"
-                            data-zoom-image="{{ Image.url(productImageMain.image, 'product_original') }}"
-                            data-page-component-module="oroui/js/app/components/viewport-component"
-                            data-page-component-options="{{ zoomOptions|json_encode }}"
-                        {% endif %}
-                        data-lazy="{{ Image.url(productImageMain.image, 'product_extra_large') }}"
-                    />
+                         src="{{ Image.url(null, 'product_large') }}"
+                         alt="{{ product.names|localized_value }}"
+                         width="378"
+                         height="378"
+                     />
                 </div>
-                {% for productImage in product.imagesByType('additional') %}
-                    <div class="product-gallery__image-item">
+
+            {% else %}
+
+                {% for productImage in productImages %}
+                    <div class="product-gallery__image-item" data-trigger-gallery-open>
                         <img class="product-gallery__image"
-                             data-url-zoom="{{ Image.url(productImage.image, 'product_original') }}"
-                             data-lazy="{{ Image.url(productImage.image, 'product_extra_large') }}"
+                             data-url-zoom="{{ productImage ? Image.url(productImage.image, 'product_original') : null }}"
+                             alt="{{ product.names|localized_value }}"
+                             data-zoom-image="{{ Image.url(productImage.image, 'product_original') }}"
+                             data-page-component-module="oroui/js/app/components/viewport-component"
+                             data-page-component-options="{{ zoomOptions|json_encode }}"
+                            {% if loop.first %}
+                                src="{{ productImage ? Image.url(productImage.image, 'product_large') : null }}"
+                            {% else %}
+                                data-lazy="{{ productImage ? Image.url(productImage.image, 'product_large') : null }}"
+                            {% endif %}
                         />
                     </div>
                 {% endfor %}
-            </div>
-            <div class="product-gallery__nav"
-                 data-page-component-module="orofrontend/js/app/components/list-slider-component"
-                 data-page-component-options="{{ navListOptions|json_encode }}">
 
-                {% set productImageMain = product.imagesByType('main').first %}
+            {% endif %}
+        </div>
+
+        {% if productImages|length > 1 %}
+
+        <div class="product-gallery__nav" {{ UI.attributes(slideNavAttr) }}>
+
+            {% for productImage in productImages %}
                 <div class="product-gallery__nav-item">
                     <img class="product-gallery__image"
-                         src="{{ Image.url(productImageMain.image, 'product_small') }}"/>
+                         src="{{ Image.url(productImage.image, 'product_small') }}"/>
                 </div>
+            {% endfor %}
+        </div>
 
-                {% for productImage in product.imagesByType('additional') %}
-                    <div class="product-gallery__nav-item" >
-                        <img class="product-gallery__image"
-                             src="{{ Image.url(productImage.image, 'product_small') }}"/>
-                    </div>
-                {% endfor %}
-            </div>
-        {# @TODO END main should be additional bt default BB-7917  #}
-        {% elseif product.imagesByType('additional')|length == 1 %}
-            <div class="product-view-media__gallery">
-                <div class="product-gallery__image-item">
-                    {% set productImage = product.imagesByType('additional').first %}
-                    <div class="product-gallery__image-item" data-trigger-gallery-open>
-                        <img class="product-gallery__image"
-                             data-url-zoom="{{ Image.url(productImage.image, 'product_original') }}"
-                            {% if productImage.image %}
-                                src="{{ Image.url(productImage.image, 'product_extra_large') }}"
-                                data-zoom-image="{{ Image.url(productImage.image, 'product_original') }}"
-                                data-page-component-module="oroui/js/app/components/viewport-component"
-                                data-page-component-options="{{ zoomOptions|json_encode }}"
-                            {% endif %}
-                        />
-                    </div>
-                </div>
-            </div>
-        {% else %}
-            <div class="product-view-media__gallery"
-                 data-page-component-module="orofrontend/js/app/components/list-slider-component"
-                 data-page-component-options="{{ imageListOptions|json_encode }}">
-                {% for productImage in product.imagesByType('additional') %}
-                    <div class="product-gallery__image-item" data-trigger-gallery-open>
-                        <img class="product-gallery__image"
-                             data-url-zoom="{{ Image.url(productImage.image, 'product_original') }}"
-                            {% if loop.first %}
-                                {% if productImage.image %}
-                                    src="{{ Image.url(productImage.image, 'product_extra_large') }}"
-                                    data-zoom-image="{{ Image.url(productImage.image, 'product_original') }}"
-                                    data-page-component-module="oroui/js/app/components/viewport-component"
-                                    data-page-component-options="{{ zoomOptions|json_encode }}"
-                                {% endif %}
-                            {% else %}
-                                data-lazy="{{ Image.url(productImage.image, 'product_extra_large') }}"
-                            {% endif %}
-                        />
-                    </div>
-                {% endfor %}
-            </div>
-            <div class="product-gallery__nav"
-                 data-page-component-module="orofrontend/js/app/components/list-slider-component"
-                 data-page-component-options="{{ navListOptions|json_encode }}">
-                {% for productImage in product.imagesByType('additional') %}
-                    <div class="product-gallery__nav-item">
-                        <img class="product-gallery__image"
-                             src="{{ Image.url(productImage.image, 'product_small') }}"/>
-                    </div>
-                {% endfor %}
-            </div>
         {% endif %}
+
     </div>
     <!-- END Product Gallery -->
 {% endblock %}
 
 {% block _product_media_popup_widget %}
     {% import 'OroProductBundle::image_macros.html.twig' as Image %}
+
+    {% set productImages = [] %}
+
+    {% for productImage in product.imagesByType('main')|merge(product.imagesByType('additional')) %}
+        {% if productImage not in productImages %}
+            {% set productImages = productImages|merge([productImage]) %}
+        {% endif %}
+    {% endfor %}
+
+    {% if productImages|length == 0 %}
+        {% set productImages = product.getImagesByType('listing') %}
+    {% endif %}
 
     <div class="popup-gallery-widget"
          data-gallery-content
@@ -301,7 +240,7 @@
             </div>
             <div class="popup-gallery-widget__images"
                  data-gallery-images>
-                {% for productImage in product.imagesByType('additional') %}
+                {% for productImage in productImages %}
                     <div class="popup-gallery-widget__image">
                         <img data-lazy="{{ Image.url(productImage.image, 'product_gallery_popup') }}"
                              width="100%"
@@ -309,10 +248,10 @@
                     </div>
                 {% endfor %}
             </div>
-            {% if product.imagesByType('additional')|length > 1 %}
+            {% if productImages|length > 1 %}
                 <div class="popup-gallery-widget__thumbnails"
                      data-gallery-thumbnails>
-                    {% for productImage in product.imagesByType('additional') %}
+                    {% for productImage in productImages %}
                         <div class="popup-gallery-widget__thumbnails-img">
                             <img
                                  src="{{ Image.url(productImage.image, 'product_small') }}"
