@@ -55,6 +55,9 @@
 
 {% macro oro_cms_content_variant_collection_item(form, name, disabled) %}
     {% spaceless %}
+        {% set scopes %}
+            {{ form_widget(form.scopes) }}
+        {% endset %}
         <div data-content="{{ name }}"
              data-validation-optional-group
              data-role="content-variant-item"
@@ -80,7 +83,7 @@
 
             <div class="scope-elements">
                 <h5>{{ form.scopes.vars.label|trans }}</h5>
-                {{ form_widget(form.scopes) }}
+                {{ scopes }}
             </div>
 
             <div class="hide">
