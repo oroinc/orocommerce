@@ -4,11 +4,12 @@ namespace Oro\Bundle\CMSBundle\Layout\DataProvider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 
+use Psr\Log\LoggerInterface;
+
 use Oro\Bundle\CMSBundle\ContentBlock\ContentBlockResolver;
 use Oro\Bundle\CMSBundle\ContentBlock\Model\ContentBlockView;
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
-use Psr\Log\LoggerInterface;
 
 class ContentBlockDataProvider
 {
