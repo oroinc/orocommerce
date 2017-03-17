@@ -29,9 +29,6 @@ define(function(require) {
         },
 
         initModel: function(options) {
-            if (!options.productModel) {
-                this.$el.trigger('options:set:productModel', options);
-            }
             if (options.productModel) {
                 this.model = options.productModel;
             }
