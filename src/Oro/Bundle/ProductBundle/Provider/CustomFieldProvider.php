@@ -64,4 +64,19 @@ class CustomFieldProvider
 
         return $customFields;
     }
+
+    /**
+     * @param string $entityName
+     * @return array
+     */
+    public function getVariantFields($entityName)
+    {
+        $customFields = $this->getEntityCustomFields($entityName);
+        // Show only boolean and enum as allowed
+        $customVariantFields = array_filter($customFields, function ($field) {
+            return (in_array($field['type'], ['boolean', 'enum'], true) && !$field['is_serialized']);
+        });
+
+        return $customVariantFields;
+    }
 }

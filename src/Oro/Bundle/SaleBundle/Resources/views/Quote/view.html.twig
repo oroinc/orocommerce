@@ -17,12 +17,6 @@
 {% block breadcrumbs %}
     {{ parent() }}
     <div class="pull-left">
-        {% if entity.locked %}
-            <div class="badge badge-disabled status-disabled"><i class="fa-lock"></i>{{ 'oro.sale.quote.locked.label'|trans }}</div>
-        {% else %}
-            <div class="badge badge-enabled status-enabled"><i class="fa-unlock"></i>{{ 'oro.sale.quote.not_locked.label'|trans }}</div>
-        {% endif %}
-
         {% if entity.expired %}
             <div class="badge badge-disabled status-disabled"><i class="fa-lock"></i>{{ 'oro.sale.quote.expired.label'|trans }}</div>
         {% else %}

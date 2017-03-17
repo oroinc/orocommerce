@@ -57,9 +57,6 @@ define(function(require) {
                 }) || {};
             this.modelAttr = $.extend(true, {}, this.modelAttr, modelAttr);
 
-            if (!options.productModel) {
-                this.$el.trigger('options:set:productModel', options);
-            }
             if (options.productModel) {
                 this.model = options.productModel;
             }

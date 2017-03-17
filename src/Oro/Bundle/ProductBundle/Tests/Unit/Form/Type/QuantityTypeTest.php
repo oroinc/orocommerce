@@ -59,8 +59,8 @@ class QuantityTypeTest extends FormIntegrationTestCase
     public function defaultDataProvider()
     {
         return [
-            'submit empty should leave default' => [['default_data' => 42], 42, null, 42],
-            'submitted value should override default' => [['default_data' => 42], 42, 1, 1],
+            'submit empty should leave default' => [['default_data' => '42'], 42, null, 42],
+            'submitted value should override default' => [['default_data' => '42'], 42, 1, 1],
             'submit value without default' => [['default_data' => null], null, 1, 1],
             'submit empty without default' => [['default_data' => null], null, null, null],
         ];
