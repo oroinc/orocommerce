@@ -1,25 +1,25 @@
-Feature: Slug Prototypes for Landing Page
+Feature: URL Slug for Landing Page
   In order to be sure that every landing page is accessible for it's own url
   As administrator
-  I need to be able to create Landing Page with Slug Prototypes
+  I need to be able to create Landing Page with URL Slug
 
-  Scenario: Create New Landing Page with empty Slug Prototypes
+  Scenario: Create New Landing Page with empty URL Slug
     Given I login as administrator
     When I open Landing Page Create page
     And I fill in Landing Page Titles field with "Test Page"
-    Then I should see Slug Prototypes field filled with "test-page"
+    Then I should see URL Slug field filled with "test-page"
 
-    When I fill in Slug Prototypes field with ""
+    When I fill in URL Slug field with ""
     And I save and close form
     Then I should be on Landing Page View page
     And I should see Landing Page with:
       | Title              | Test Page   |
       | Slugs              | N/A         |
 
-  Scenario: Create New Landing Page with non empty Slug Prototypes
+  Scenario: Create New Landing Page with non empty URL Slug
     When I open Landing Page Create page
     And I fill in Landing Page Titles field with "Other Page"
-    Then I should see Slug Prototypes field filled with "other-page"
+    Then I should see URL Slug field filled with "other-page"
     When I save and close form
     And reload the page
     And I should see Landing Page with:

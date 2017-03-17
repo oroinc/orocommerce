@@ -14,12 +14,12 @@ oro:
             quote_products.label: 'Quote Products'
             request.label: 'Request'
             customer.label: 'Customer'
+            internal_status.label: 'Internal Status'
+            customer_status.label: 'Customer Status'
             website.label: 'Website'
             customer_user.label: 'Customer User'
-            locked.label: 'Locked'
             shipping_method_locked.label: 'Shipping Method Locked'
             allow_unlisted_shipping_method.label: 'Allow Unlisted Shipping Method'
-            not_locked.label: 'Not Locked'
             expired.label: 'Expired'
             not_expired.label: 'Not Expired'
             po_number.label: 'PO Number'
@@ -58,7 +58,6 @@ oro:
                 label: 'Notify Customer'
                 by_email:
                     link.text: 'Notify by Email'
-                    notify_and_lock_warning: 'Once you click on "Notify and Lock" this email will be sent to the customer and the quote will be locked for further edits.'
 
             lineitem:
                 product_sku: SKU
@@ -82,6 +81,13 @@ oro:
 
             message:
                 quote.expire.success: 'Quote #%id% was successfully marked as expired'
+                quote.create.success: 'Quote #%id% successfully created'
+                quote.edit.success: 'Quote #%id% successfully updated'
+                quote.delete.success: 'Quote #%id% successfully deleted'
+                quote.undelete.success: 'Quote #%id% successfully undeleted'
+                quote.sent.success: 'Quote #%id% successfully sent to customer'
+                quote.cancel.success: 'Quote #%id% successfully cancelled'
+                quote.decline.success: 'Quote #%id% successfully declined'
 
             form:
                 address:
@@ -219,7 +225,6 @@ oro:
         btn:
             add_seller_notes: 'Add Seller Notes'
             remove_seller_notes: 'Remove Seller Notes'
-            notify_and_lock: 'Notify and Lock'
             send: 'Send'
             cancel: 'Cancel'
 
@@ -242,6 +247,7 @@ oro:
                 entity_plural_label: Quotes
                 qid.label: 'Quote #'
                 customer_user.label: 'Owner'
+                customer_status.label: 'Status'
                 valid_until.label: 'Valid Until'
                 po_number.label: 'PO Number'
                 ship_until.label: 'Do Not Ship Later Than'

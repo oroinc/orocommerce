@@ -89,10 +89,6 @@ class QuoteType extends AbstractType
                 'label'     => 'oro.sale.quote.valid_until.label',
                 'required'  => false
             ])
-            ->add('locked', CheckboxType::class, [
-                'label' => 'oro.sale.quote.locked.label',
-                'required'  => false
-            ])
             ->add('shippingMethodLocked', CheckboxType::class, [
                 'label' => 'oro.sale.quote.shipping_method_locked.label',
                 'required'  => false
@@ -184,7 +180,6 @@ class QuoteType extends AbstractType
         $resolver->setDefaults([
             'data_class'    => $this->dataClass,
             'intention'     => 'sale_quote',
-            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"'
         ]);
     }
 

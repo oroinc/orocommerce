@@ -13,7 +13,7 @@ class SlugPrototypesContext extends OroFeatureContext implements OroPageObjectAw
     use PageObjectDictionary, KernelDictionary;
 
     /**
-     * @Then /^(?:|I )should see Slug Prototypes field filled with "(?P<value>(?:[^"]|\\")*)"$/
+     * @Then /^(?:|I )should see URL Slug field filled with "(?P<value>(?:[^"]|\\")*)"$/
      * @param string $value
      */
     public function shouldSeeSlugPrototypesFieldFilledWithValue($value)
@@ -24,7 +24,7 @@ class SlugPrototypesContext extends OroFeatureContext implements OroPageObjectAw
     }
 
     /**
-     * @When /^(?:|I )fill in Slug Prototypes field with "(?P<value>(?:[^"]|\\")*)"$/
+     * @When /^(?:|I )fill in URL Slug field with "(?P<value>(?:[^"]|\\")*)"$/
      * @param string $value
      */
     public function fillSlugPrototypesFieldFilledWithValue($value)

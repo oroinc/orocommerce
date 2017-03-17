@@ -3,7 +3,7 @@ datagrids:
         acl_resource: oro_shopping_list_view
         extended_entity_name: %oro_shopping_list.entity.shopping_list.class%
         options:
-            entityHint:        shopping list
+            entityHint:        shopping lists
             entity_pagination: true
         source:
             type:         orm
@@ -108,7 +108,7 @@ datagrids:
         acl_resource:      oro_shopping_list_view
         extended_entity_name: %oro_shopping_list.entity.line_item.class%
         options:
-            entityHint:        line item
+            entityHint:        shopping list line items
         source:
             type:              orm
             query:

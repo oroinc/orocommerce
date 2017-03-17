@@ -68,6 +68,8 @@
     [class^="fa-"] {
       margin-right: 5px;
 
+      vertical-align: middle;
+
       &:before {
         font-size: 18px;
         color: get-color('ui', 'normal');
