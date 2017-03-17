@@ -3,7 +3,7 @@ datagrids:
         acl_resource: oro_payment_term_view
         extended_entity_name: %oro_payment_term.entity.payment_term.class%
         options:
-            entityHint:        payment_term
+            entityHint:        payment terms
             entity_pagination: true
         source:
             type:         orm
@@ -69,7 +69,7 @@ datagrids:
     payment-terms-select-grid:
         acl_resource: oro_payment_term_view
         options:
-            entityHint:        payment_term
+            entityHint:        payment terms
         source:
             type:         orm
             query:

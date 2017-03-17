@@ -3,7 +3,7 @@ datagrids:
         acl_resource: oro_payment_methods_configs_rule_view
         extended_entity_name: %oro_payment.entity.payment_methods_configs_rule.class%
         options:
-            entityHint:        payment methods configs rule
+            entityHint:        payment methods configs rules
             entity_pagination: true
         source:
             type:         orm

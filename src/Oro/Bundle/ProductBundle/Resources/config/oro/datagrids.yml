@@ -2,7 +2,7 @@ datagrids:
     products-select-grid-base:
         extended_entity_name: %oro_product.entity.product.class%
         options:
-            entityHint:        product
+            entityHint:        products
         source:
             type:         orm
             query:
@@ -295,7 +295,7 @@ datagrids:
 
     frontend-product-search-grid:
         options:
-            entityHint:        product
+            entityHint:        products
             displayOptions:
                 selector: '.catalog__filter-controls__item_display-options'
             requireJSModules:
