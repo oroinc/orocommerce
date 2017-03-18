@@ -113,7 +113,8 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
                 ->addName($name)
                 ->addDescription($description)
                 ->addShortDescription($shortDescription)
-                ->setType($row['type']);
+                ->setType($row['type'])
+                ->setFeatured($row['featured']);
 
             $slugPrototype = new LocalizedFallbackValue();
             $slugPrototype->setString($slugGenerator->slugify($row['name']));
