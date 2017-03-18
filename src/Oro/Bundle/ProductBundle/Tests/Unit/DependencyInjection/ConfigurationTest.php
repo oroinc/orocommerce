@@ -80,6 +80,10 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                 'product_direct_url_prefix' => [
                     'value' => '',
                     'scope' => 'app'
+                ],
+                'featured_products_segment_name' => [
+                    'value' => null,
+                    'scope' => 'app'
                 ]
             ]
         ];
