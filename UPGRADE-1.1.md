@@ -382,6 +382,7 @@ ShippingBundle
     - removed `Oro\Bundle\ShippingBundle\QueryDesigner\ShippingProductQueryDesigner`
     - removed `Oro\Bundle\ShippingBundle\ExpressionLanguage\ProductDecorator`
     - class `Oro\Bundle\PaymentBundle\ExpressionLanguage\DecoratedProductLineItemFactory` only dependency is now `Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory`
+- `Oro\Bundle\ShippingBundle\Method\EventListener\AbstractIntegrationRemovalListener` was deprecated, `Oro\Bundle\ShippingBundle\Method\EventListener\IntegrationRemovalListener` was created instead.
 
 WebCatalogBundle
 ----------------
