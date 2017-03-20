@@ -9,8 +9,6 @@ use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 
 class MoneyOrder implements PaymentMethodInterface
 {
-    const TYPE = 'money_order';
-
     /**
      * @var MoneyOrderConfigInterface
      */
