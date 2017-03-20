@@ -7,14 +7,17 @@ use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Event\BuildAfter;
 use Oro\Bundle\DataGridBundle\Event\BuildBefore;
+use Oro\Bundle\DataGridBundle\EventListener\RowSelectionListener;
+use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
-use Oro\Bundle\DataGridBundle\Datagrid\ParameterBag;
 
 class ProductVariantCustomFieldsDatagridListener
 {
     const FORM_SELECTED_VARIANTS = 'selectedVariantFields';
+    const FORM_APPEND_VARIANTS = 'appendVariants';
+    const GRID_DYNAMIC_LOAD_OPTION = 'gridDynamicLoad';
 
     /**
      * @var DoctrineHelper
@@ -50,8 +53,8 @@ class ProductVariantCustomFieldsDatagridListener
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->customFieldProvider = $customFieldProvider;
-        $this->productClass = $productClass;
-        $this->productVariantLinkClass = $productVariantLinkClass;
+        $this->productClass = (string)$productClass;
+        $this->productVariantLinkClass = (string)$productVariantLinkClass;
     }
 
     /**
@@ -71,27 +74,37 @@ class ProductVariantCustomFieldsDatagridListener
         /** @var Product $parentProduct */
         $parentProduct = $this->getProductRepository()->find($parentProductId);
         if (!$parentProduct) {
-            return;
+            throw new \InvalidArgumentException(sprintf('Can not find parent product with id "%d"', $parentProductId));
         }
+
+        $additionalParams = $parameters->get(ParameterBag::ADDITIONAL_PARAMETERS, []);
+
+        $appendVariants = $this->getMergedVariants($parameters);
 
         $config = $event->getConfig();
         $query = $config->getOrmQuery();
 
-        $variantFields = $this->getVariantFields(
+        $variantFields = $this->getConfigurableAttributes(
             $parentProduct->getVariantFields(),
-            $parameters->get(ParameterBag::ADDITIONAL_PARAMETERS, [])
+            $additionalParams
         );
 
-        if ($variantFields) {
-            $rootEntityAlias = $this->getRootAlias($config);
+        $rootEntityAlias = $this->getRootAlias($config);
 
+        // Always show selected product variants
+        if ($appendVariants) {
+            $query->addOrWhere(
+                sprintf('%s.id IN (%s)', $rootEntityAlias, implode(',', $appendVariants))
+            );
+        }
+
+        if ($variantFields) {
             $variantAndWherePart = [];
             foreach ($variantFields as $variantFieldName) {
                 $variantAndWherePart[] = sprintf('%s.%s IS NOT NULL', $rootEntityAlias, $variantFieldName);
             }
             $query->addAndWhere($variantAndWherePart);
         } else {
-            // Don't show any product variants if there are no variant fields specified in the configurable product
             $query->addAndWhere('1 = 0');
         }
 
@@ -113,7 +126,7 @@ class ProductVariantCustomFieldsDatagridListener
         $allCustomFields = $this->customFieldProvider->getEntityCustomFields($this->productClass);
         $parameters = $event->getDatagrid()->getParameters();
 
-        $variantFields = $this->getVariantFields(
+        $variantFields = $this->getConfigurableAttributes(
             $parentProduct->getVariantFields(),
             $parameters->get(ParameterBag::ADDITIONAL_PARAMETERS, [])
         );
@@ -133,7 +146,7 @@ class ProductVariantCustomFieldsDatagridListener
      * @param array $dynamicGridParams
      * @return array
      */
-    private function getVariantFields(array $productVariantFields, array $dynamicGridParams)
+    private function getConfigurableAttributes(array $productVariantFields, array $dynamicGridParams)
     {
         if (array_key_exists(self::FORM_SELECTED_VARIANTS, $dynamicGridParams)) {
             $productVariantFields = !empty($dynamicGridParams[self::FORM_SELECTED_VARIANTS])
@@ -197,5 +210,51 @@ class ProductVariantCustomFieldsDatagridListener
         }
 
         return $result;
+    }
+
+    /**
+     * @param ParameterBag $parameters
+     * @return array
+     */
+    private function getMergedVariants(ParameterBag $parameters)
+    {
+        $additionalParams = $parameters->get(ParameterBag::ADDITIONAL_PARAMETERS, []);
+
+        $gridDynamicLoad = (bool)$this->extractAdditionalParams(
+            $additionalParams,
+            self::GRID_DYNAMIC_LOAD_OPTION,
+            false
+        );
+        if ($gridDynamicLoad) {
+            return $this->extractAdditionalParams($additionalParams, RowSelectionListener::GRID_PARAM_DATA_IN, []);
+        } else {
+            return $this->extractParameters($parameters, self::FORM_APPEND_VARIANTS);
+        }
+    }
+
+    /**
+     * @param ParameterBag $parameterBag
+     * @param string $name
+     * @return array
+     */
+    private function extractParameters(ParameterBag $parameterBag, $name)
+    {
+        $param = $parameterBag->get($name);
+        if ($param === null) {
+            return [];
+        }
+
+        return array_filter(array_map('trim', explode(',', $param)));
+    }
+
+    /**
+     * @param array $additionalParams
+     * @param string $name
+     * @param mixed|null $default
+     * @return mixed|null
+     */
+    private function extractAdditionalParams(array $additionalParams, $name, $default = null)
+    {
+        return array_key_exists($name, $additionalParams) ? $additionalParams[$name] : $default;
     }
 }
