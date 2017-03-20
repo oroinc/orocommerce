@@ -14,23 +14,15 @@ use Oro\Bundle\OrderBundle\Entity\Order;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\Traits\EnabledPaymentMethodIdentifierTrait;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
-use Oro\Bundle\WarehouseBundle\Tests\Functional\DataFixtures\LoadAvailableWarehouseConfig;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyMethods)
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @group CommunityEdition
  */
 class CheckoutControllerTest extends CheckoutControllerTestCase
 {
     use EnabledPaymentMethodIdentifierTrait;
-
-    /**
-     * @return array
-     */
-    protected function getPaymentFixtures()
-    {
-        return array_merge(parent::getPaymentFixtures(), [LoadAvailableWarehouseConfig::class]);
-    }
 
     public function testStartCheckout()
     {

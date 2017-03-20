@@ -14,6 +14,9 @@ use Oro\Bundle\MoneyOrderBundle\Tests\Functional\DataFixtures\LoadPaymentMethods
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
+/**
+ * @group CommunityEdition
+ */
 class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
 {
     /**
