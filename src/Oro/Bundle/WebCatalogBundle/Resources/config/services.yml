@@ -156,6 +156,7 @@ services:
             - '@oro_web_catalog.content_variant_type.registry'
             - '@oro_redirect.generator.redirect'
             - '@oro_locale.helper.localization'
+            - '@oro_redirect.generator.slug_url_differ'
 
     oro_web_catalog.generator.slug_generator.link:
         tags:
