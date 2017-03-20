@@ -1,5 +1,6 @@
 parameters:
     oro_cms.entity.page.class: Oro\Bundle\CMSBundle\Entity\Page
+    oro_cms.entity.content_block.class: Oro\Bundle\CMSBundle\Entity\ContentBlock
     oro_cms.entity.loginpage.class: Oro\Bundle\CMSBundle\Entity\LoginPage
 
 services:
@@ -20,6 +21,30 @@ services:
             - [setLoginPageClass, ['%oro_cms.entity.loginpage.class%']]
         tags:
             - { name: layout.data_provider, alias: oro_cms_login_page }
+
+    oro_cms.content_block.cache:
+        public: false
+        parent: doctrine_cache.abstract.array
+        calls:
+            - [ setNamespace, [ 'oro_cms_content_block' ] ]
+
+    oro_cms.content_block.resolver:
+        class: 'Oro\Bundle\CMSBundle\ContentBlock\ContentBlockResolver'
+        arguments:
+            - "@property_accessor"
+
+    oro_cms.provider.content_block_provider:
+        class: 'Oro\Bundle\CMSBundle\Layout\DataProvider\ContentBlockDataProvider'
+        arguments:
+            - "@oro_cms.content_block.resolver"
+            - "@doctrine"
+            - "@oro_scope.scope_manager"
+            - "@logger"
+            - "%oro_cms.entity.content_block.class%"
+            - "cms_content_block"
+        tags:
+            - { name: layout.data_provider, alias: content_block }
+            - { name: monolog.logger, channel: oro_cms }
 
     oro_cms.content_variant_type.cms_page:
         class: Oro\Bundle\CMSBundle\ContentVariantType\CmsPageContentVariantType
