@@ -2,16 +2,10 @@
 
 namespace Oro\Bundle\PayPalBundle\Form\Type;
 
-use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
-use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
-use Oro\Bundle\PayPalBundle\Settings\DataProvider\CardTypesDataProviderInterface;
-use Oro\Bundle\PayPalBundle\Settings\DataProvider\PaymentActionsDataProviderInterface;
-use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Exception\AccessException;
@@ -21,6 +15,13 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
 use Symfony\Component\Validator\Exception\InvalidOptionsException;
 use Symfony\Component\Validator\Exception\MissingOptionsException;
+
+use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
+use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
+use Oro\Bundle\PayPalBundle\Settings\DataProvider\CardTypesDataProviderInterface;
+use Oro\Bundle\PayPalBundle\Settings\DataProvider\PaymentActionsDataProviderInterface;
+use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -150,9 +151,12 @@ class PayPalSettingsType extends AbstractType
                 'label' => 'oro.paypal.settings.user.label',
                 'required' => true,
             ])
-            ->add('password', PasswordType::class, [
+            ->add('password', OroEncodedPlaceholderPasswordType::class, [
                 'label' => 'oro.paypal.settings.password.label',
                 'required' => true,
+                // Prevents browser from filling password automatically.
+                // Move this to OroEncodedPlaceholderPasswordType?
+                'attr' => ['autocomplete' => 'new-password'],
             ])
             ->add('testMode', CheckboxType::class, [
                 'label' => 'oro.paypal.settings.test_mode.label',
@@ -193,7 +197,6 @@ class PayPalSettingsType extends AbstractType
         $this->transformWithEncodedValue($builder, 'vendor');
         $this->transformWithEncodedValue($builder, 'partner');
         $this->transformWithEncodedValue($builder, 'user');
-        $this->transformWithEncodedValue($builder, 'password', false);
         $this->transformWithEncodedValue($builder, 'proxyHost');
         $this->transformWithEncodedValue($builder, 'proxyPort');
     }
