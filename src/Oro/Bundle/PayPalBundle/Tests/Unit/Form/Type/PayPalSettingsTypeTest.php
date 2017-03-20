@@ -46,6 +46,10 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
             ->method('getCardTypes')
             ->willReturn(self::CARD_TYPES);
 
+        $cardTypesDataProvider->expects($this->any())
+            ->method('getDefaultCardTypes')
+            ->willReturn(self::CARD_TYPES);
+
         $paymentActionsDataProvider = $this->createMock(PaymentActionsDataProviderInterface::class);
         $paymentActionsDataProvider->expects($this->any())
             ->method('getPaymentActions')
@@ -103,7 +107,7 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
             'password' => 'pass',
             'testMode' => true,
             'debugMode' => false,
-            'requireCVVEntry' => true,
+            'requireCVVEntry' => false,
             'zeroAmountAuthorization' => false,
             'authorizationForRequiredAmount' => false,
             'useProxy' => false,
@@ -132,6 +136,33 @@ class PayPalSettingsTypeTest extends FormIntegrationTestCase
 
         static::assertTrue($form->isValid());
         static::assertEquals($payPalSettings, $form->getData());
+    }
+
+    /**
+     * @dataProvider defaultValuesAreSetDataProvider
+     *
+     * @param string $property
+     * @param mixed $value
+     */
+    public function testDefaultValuesAreSet($property, $value)
+    {
+        $payPalSettings = new PayPalSettings();
+        $form = $this->factory->create($this->formType, $payPalSettings);
+
+        static::assertEquals($value, $form->get($property)->getData());
+        static::assertEquals($payPalSettings, $form->getData());
+    }
+
+    /**
+     * @return array
+     */
+    public function defaultValuesAreSetDataProvider()
+    {
+        return [
+            ['allowedCreditCardTypes', self::CARD_TYPES],
+            ['requireCVVEntry', true],
+            ['enableSSLVerification', true],
+        ];
     }
 
     public function testConfigureOptions()

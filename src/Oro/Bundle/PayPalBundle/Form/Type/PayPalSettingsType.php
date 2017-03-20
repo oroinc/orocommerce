@@ -15,6 +15,9 @@ use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\Exception\AccessException;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -129,7 +132,6 @@ class PayPalSettingsType extends AbstractType
             ])
             ->add('allowedCreditCardTypes', ChoiceType::class, [
                 'choices' => $this->cardTypesDataProvider->getCardTypes(),
-                'empty_data' => $this->cardTypesDataProvider->getDefaultCardTypes(),
                 'choices_as_values' => true,
                 'choice_label' => function ($cardType) {
                     return $this->translator->trans(
@@ -166,7 +168,6 @@ class PayPalSettingsType extends AbstractType
             ])
             ->add('requireCVVEntry', CheckboxType::class, [
                 'label' => 'oro.paypal.settings.require_cvv.label',
-                'empty_data' => true,
                 'required' => false,
             ])
             ->add('zeroAmountAuthorization', CheckboxType::class, [
@@ -191,7 +192,6 @@ class PayPalSettingsType extends AbstractType
             ])
             ->add('enableSSLVerification', CheckboxType::class, [
                 'label' => 'oro.paypal.settings.enable_ssl_verification.label',
-                'empty_data' => true,
                 'required' => false,
             ]);
         $this->transformWithEncodedValue($builder, 'vendor');
@@ -200,6 +200,20 @@ class PayPalSettingsType extends AbstractType
         $this->transformWithEncodedValue($builder, 'password', false);
         $this->transformWithEncodedValue($builder, 'proxyHost');
         $this->transformWithEncodedValue($builder, 'proxyPort');
+
+        $builder->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetData']);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function preSetData(FormEvent $event)
+    {
+        /** @var PayPalSettings|null $data */
+        $data = $event->getData();
+        if ($data && !$data->getAllowedCreditCardTypes()) {
+            $data->setAllowedCreditCardTypes($this->cardTypesDataProvider->getDefaultCardTypes());
+        }
     }
 
     /**
