@@ -1,12 +1,12 @@
 <?php
 
-namespace Oro\Bundle\ProductBundle\Layout\DataProvider;
+namespace Oro\Bundle\OrderBundle\Layout\DataProvider;
 
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
 
-class FeaturedProductsProvider
+class TopSellingItemsProvider
 {
     const DEFAULT_QUANTITY = 10;
 

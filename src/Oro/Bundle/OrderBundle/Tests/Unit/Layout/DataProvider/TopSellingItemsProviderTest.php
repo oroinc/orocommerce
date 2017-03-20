@@ -7,9 +7,9 @@ use Doctrine\ORM\QueryBuilder;
 
 use Oro\Bundle\ProductBundle\Entity\Manager\ProductManager;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
-use Oro\Bundle\ProductBundle\Layout\DataProvider\FeaturedProductsProvider;
+use Oro\Bundle\OrderBundle\Layout\DataProvider\TopSellingItemsProvider;
 
-class FeaturedProductsProviderTest extends \PHPUnit_Framework_TestCase
+class TopSellingItemsProviderTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetAllWithDefaultQuantity()
     {
@@ -17,7 +17,7 @@ class FeaturedProductsProviderTest extends \PHPUnit_Framework_TestCase
         $productRepository = $this->createProductRepository();
         $productRepository->expects($this->once())
             ->method('getFeaturedProductsQueryBuilder')
-            ->with(FeaturedProductsProvider::DEFAULT_QUANTITY)
+            ->with(TopSellingItemsProvider::DEFAULT_QUANTITY)
             ->will($this->returnValue($queryBuilder));
         $productManager = $this->createProductManager();
         $productManager->expects($this->once())
@@ -42,11 +42,11 @@ class FeaturedProductsProviderTest extends \PHPUnit_Framework_TestCase
      * @param ProductRepository|\PHPUnit_Framework_MockObject_MockObject $productRepository
      * @param ProductManager|\PHPUnit_Framework_MockObject_MockObject    $productManager
      *
-     * @return FeaturedProductsProvider
+     * @return TopSellingItemsProvider
      */
     protected function createFeaturedProductsProvider($productRepository, $productManager)
     {
-        return new FeaturedProductsProvider($productRepository, $productManager);
+        return new TopSellingItemsProvider($productRepository, $productManager);
     }
 
     /**
