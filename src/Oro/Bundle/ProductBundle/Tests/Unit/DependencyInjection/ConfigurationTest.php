@@ -81,7 +81,7 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
                     'value' => '',
                     'scope' => 'app'
                 ],
-                'featured_products_segment_name' => [
+                'featured_products_segment_id' => [
                     'value' => null,
                     'scope' => 'app'
                 ]

@@ -136,13 +136,13 @@ system_configuration:
                     bottom: oro.product.system_configuration.fields.product_image_watermark_position.bottom.label
                     bottomright: oro.product.system_configuration.fields.product_image_watermark_position.bottomright.label
 
-        oro_product.featured_products_segment_name:
+        oro_product.featured_products_segment_id:
             data_type: string
-            type: 'Oro\Bundle\SegmentBundle\Form\Type\SegmentNameChoiceType'
+            type: 'Oro\Bundle\SegmentBundle\Form\Type\SegmentChoiceType'
             priority: 10
             options:
-                label: oro.product.system_configuration.fields.featured_products_segment_name.label
-                tooltip: oro.product.system_configuration.fields.featured_products_segment_name.tooltip
+                label: oro.product.system_configuration.fields.featured_products_segment.label
+                tooltip: oro.product.system_configuration.fields.featured_products_segment.tooltip
                 entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
 
         oro_product.enable_quick_order_form:
@@ -204,7 +204,7 @@ system_configuration:
                                 children:
                                     featured_products_segment:
                                         children:
-                                            - oro_product.featured_products_segment_name
+                                            - oro_product.featured_products_segment_id
                     product_inventory:
                         priority: 650
                         children:

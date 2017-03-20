@@ -216,7 +216,7 @@ oro:
                     bottomleft.label: 'Bottom Left'
                     bottom.label: 'Bottom'
                     bottomright.label: 'Bottom Right'
-                featured_products_segment_name:
+                featured_products_segment:
                     label: Segment
                     tooltip: |
                         Selected segment will be used as "Featured Products" block data source.
