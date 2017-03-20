@@ -19,6 +19,16 @@
     </div>
 {% endblock %}
 
+{% block _product_view_primary_wrapper_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-view__primary-wrapper'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block _product_view_primary_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-view__primary'
@@ -227,14 +237,29 @@
     </div>
 {% endblock %}
 
+{% block _product_price_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-price--simple',
+        'data-page-component-module': 'oroui/js/app/components/viewport-component',
+        '~data-page-component-options': {
+            viewport: {
+                maxScreenType: 'tablet'
+            },
+            component: 'oroui/js/app/components/view-component',
+            changeUnitLabel: true,
+        },
+    }) %}
+    {{ block_widget(block, {attr: attr}) }}
+{% endblock %}
+
 {% block _product_require_js_config_widget %}
     <script>
         require({
             config: {
-                'oroui/js/app/views/tab-collection-view': {tamplateClassName: 'product-attributes-tabs'},
+                'oroui/js/app/views/tab-collection-view': {templateClassName: 'product-attributes-tabs'},
                 'oroui/js/app/views/tab-item-view': {
                     className: 'product-attributes-tabs__item',
-                    tamplateClassName: 'product-attributes-tabs__link'
+                    templateClassName: 'product-attributes-tabs__link'
                 }
             }
         });

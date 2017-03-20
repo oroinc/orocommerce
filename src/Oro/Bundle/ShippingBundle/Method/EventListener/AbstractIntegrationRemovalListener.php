@@ -7,6 +7,9 @@ use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\ShippingBundle\Method\Event\MethodRemovalEventDispatcherInterface;
 use Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGeneratorInterface;
 
+/**
+ * @deprecated since 1.1.0. Use Oro\Bundle\ShippingBundle\Method\EventListener\IntegrationRemovalListener instead
+ */
 abstract class AbstractIntegrationRemovalListener
 {
     /**
