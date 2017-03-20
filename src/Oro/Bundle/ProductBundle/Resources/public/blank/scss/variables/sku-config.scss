@@ -1,4 +1,5 @@
 // @theme: blank;
 
-$sku-offset: 0 0 $offset-y 0 !default;
+$sku-offset: 0 0 $offset-y-m 0 !default;
 $sku-offset-color: get-color('secondary', 'dark') !default;
+$sku-font-size: 12px !default;

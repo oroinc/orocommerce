@@ -19,6 +19,16 @@
     </div>
 {% endblock %}
 
+{% block _product_view_primary_wrapper_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-view__primary-wrapper'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
 {% block _product_view_primary_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-view__primary'
@@ -106,77 +116,103 @@
 {% endblock %}
 
 {% block _product_media_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
     {% import 'OroProductBundle::image_macros.html.twig' as Image %}
 
     {% set productImages = collect_product_images_by_types(product, ['main', 'additional']) %}
 
+    {% if productImages|length == 0 %}
+        {% set productImages = collect_product_images_by_types(product, ['listing']) %}
+    {% endif %}
+
+    {% set zoomOptions = {
+        viewport: {
+            minScreenType: 'desktop'
+        },
+        component: 'oroui/js/app/components/jquery-widget-component',
+        widgetModule: 'oroproduct/js/widget/zoom-widget'
+    } %}
+
+    {% set imageListOptions = {
+        slidesToShow: 1,
+        slidesToScroll: 1,
+        fade: true,
+        arrows: false,
+        asNavFor: '.product-gallery__nav',
+        lazyLoad: 'ondemand',
+        infinite: false
+    } %}
+
+    {% set navListOptions = {
+        slidesToShow: 4,
+        slidesToScroll: 1,
+        asNavFor: '.product-view-media__gallery',
+        focusOnSelect: true,
+        infinite: false,
+        arrows: true
+    } %}
+
+    {% set slideNavAttr = productImages|length > 1 ? {
+        'data-page-component-module': 'orofrontend/js/app/components/list-slider-component',
+        'data-page-component-options': navListOptions|json_encode
+    } : {} %}
+
+    {% set slideImageAttr = productImages|length > 1 ? {
+        'data-page-component-module': 'orofrontend/js/app/components/list-slider-component',
+        'data-page-component-options': imageListOptions|json_encode
+    } : {} %}
+
     <!-- START Product Gallery -->
     <div class="product-gallery">
-        {% set zoomOptions = {
-            viewport: {
-                minScreenType: 'desktop'
-            },
-            component: 'oroui/js/app/components/jquery-widget-component',
-            widgetModule: 'oroproduct/js/widget/zoom-widget'
-        } %}
 
-        {% set imageListOptions = {
-            slidesToShow: 1,
-            slidesToScroll: 1,
-            fade: true,
-            arrows: false,
-            asNavFor: '.product-gallery__nav',
-            lazyLoad: 'ondemand',
-            infinite: false
-        } %}
+        <div class="product-view-media__gallery" {{ UI.attributes(slideImageAttr) }}>
 
-        {% set navListOptions = {
-            slidesToShow: 4,
-            slidesToScroll: 1,
-            asNavFor: '.product-view-media__gallery',
-            focusOnSelect: true,
-            infinite: false,
-            arrows: true
-        } %}
+            {% if productImages|length == 0 %}
 
-        <div class="product-view-media__gallery"
-             data-page-component-module="orofrontend/js/app/components/list-slider-component"
-             data-page-component-options="{{ imageListOptions|json_encode }}">
-            {% for productImage in productImages %}
-                <div class="product-gallery__image-item" data-trigger-gallery-open>
-                    <img class="product-gallery__image"
-                        data-url-zoom="{{ Image.url(productImage.image, 'product_original') }}"
-                        alt="{{ product.names|localized_value }}"
-                        {% if loop.first %}
-                            src="{{ Image.url(productImage.image, 'product_extra_large') }}"
-                            data-zoom-image="{{ Image.url(productImage.image, 'product_original') }}"
-                            data-page-component-module="oroui/js/app/components/viewport-component"
-                            data-page-component-options="{{ zoomOptions|json_encode }}"
-                        {% else %}
-                            data-lazy="{{ Image.url(productImage.image, 'product_extra_large') }}"
-                        {% endif %}
-                    />
-                </div>
-            {% else %}
                 <div class="product-gallery__image-item">
-                    {# render no image #}
-                    <img src="{{ Image.url(null, 'product_extra_large') }}" class="product-gallery__image" />
+                    <img class="product-gallery__image"
+                         src="{{ Image.url(null, 'product_large') }}"
+                         alt="{{ product.names|localized_value }}"
+                         width="378"
+                         height="378"
+                     />
                 </div>
-            {% endfor %}
+
+            {% else %}
+
+                {% for productImage in productImages %}
+                    <div class="product-gallery__image-item" data-trigger-gallery-open>
+                        <img class="product-gallery__image"
+                             data-url-zoom="{{ productImage ? Image.url(productImage.image, 'product_original') : null }}"
+                             alt="{{ product.names|localized_value }}"
+                             data-zoom-image="{{ Image.url(productImage.image, 'product_original') }}"
+                             data-page-component-module="oroui/js/app/components/viewport-component"
+                             data-page-component-options="{{ zoomOptions|json_encode }}"
+                            {% if loop.first %}
+                                src="{{ productImage ? Image.url(productImage.image, 'product_large') : null }}"
+                            {% else %}
+                                data-lazy="{{ productImage ? Image.url(productImage.image, 'product_large') : null }}"
+                            {% endif %}
+                        />
+                    </div>
+                {% endfor %}
+
+            {% endif %}
         </div>
 
-        <div class="product-gallery__nav"
-             data-page-component-module="orofrontend/js/app/components/list-slider-component"
-             data-page-component-options="{{ navListOptions|json_encode }}">
+        {% if productImages|length > 1 %}
+
+        <div class="product-gallery__nav" {{ UI.attributes(slideNavAttr) }}>
+
             {% for productImage in productImages %}
                 <div class="product-gallery__nav-item">
                     <img class="product-gallery__image"
-                         src="{{ Image.url(productImage.image, 'product_small') }}"
-                         alt="{{ product.names|localized_value }}"
-                    />
+                         src="{{ Image.url(productImage.image, 'product_small') }}"/>
                 </div>
             {% endfor %}
         </div>
+
+        {% endif %}
     </div>
     <!-- END Product Gallery -->
 {% endblock %}
@@ -185,6 +221,10 @@
     {% import 'OroProductBundle::image_macros.html.twig' as Image %}
 
     {% set productImages = collect_product_images_by_types(product, ['main', 'additional']) %}
+
+    {% if productImages|length == 0 %}
+        {% set productImages = collect_product_images_by_types(product, ['listing']) %}
+    {% endif %}
 
     <div class="popup-gallery-widget"
          data-gallery-content
@@ -225,4 +265,33 @@
             {% endif %}
         </div>
     </div>
+{% endblock %}
+
+{% block _product_price_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-price--simple',
+        'data-page-component-module': 'oroui/js/app/components/viewport-component',
+        '~data-page-component-options': {
+            viewport: {
+                maxScreenType: 'tablet'
+            },
+            component: 'oroui/js/app/components/view-component',
+            changeUnitLabel: true,
+        },
+    }) %}
+    {{ block_widget(block, {attr: attr}) }}
+{% endblock %}
+
+{% block _product_require_js_config_widget %}
+    <script>
+        require({
+            config: {
+                'oroui/js/app/views/tab-collection-view': {templateClassName: 'product-attributes-tabs'},
+                'oroui/js/app/views/tab-item-view': {
+                    className: 'product-attributes-tabs__item',
+                    templateClassName: 'product-attributes-tabs__link'
+                }
+            }
+        });
+    </script>
 {% endblock %}

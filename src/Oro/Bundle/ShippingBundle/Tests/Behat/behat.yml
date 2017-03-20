@@ -21,6 +21,7 @@ oro_behat_extension:
           Name: 'oro_shipping_methods_configs_rule[rule][name]'
           Sort Order: 'oro_shipping_methods_configs_rule[rule][sortOrder]'
           Currency: 'oro_shipping_methods_configs_rule[currency]'
+          Method: 'oro_shipping_methods_configs_rule[method]'
           Country: 'oro_shipping_methods_configs_rule[destinations][0][country]'
           Country1: 'oro_shipping_methods_configs_rule[destinations][1][country]'
           Country2: 'oro_shipping_methods_configs_rule[destinations][2][country]'
@@ -46,3 +47,16 @@ oro_behat_extension:
     CreateOrderFlashMessage:
       class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
       selector: '#flash-messages div.notification-flash__text'
+
+    Integration Form:
+      selector: 'form[name="oro_integration_channel_form"]'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          Type: 'oro_integration_channel_form[type]'
+          Name: 'oro_integration_channel_form[name]'
+          Label: 'oro_integration_channel_form[transport][labels][values][default]'
+
+    Deactivate Integration Confirm Button:
+      selector: '.modal-footer .btn-primary'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element

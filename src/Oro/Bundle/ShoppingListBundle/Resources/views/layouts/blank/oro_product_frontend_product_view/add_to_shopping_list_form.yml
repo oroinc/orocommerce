@@ -19,5 +19,5 @@ layout:
             id: line_item_form_shopping_lists
             parentId: line_item_form
             blockType: container
-            siblingId: line_item_buttons_container
+            siblingId: product_line_item_form_buttons
             prepend: true
