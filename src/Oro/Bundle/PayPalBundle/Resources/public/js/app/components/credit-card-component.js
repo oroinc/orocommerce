@@ -142,7 +142,7 @@ define(function(require) {
          * @param {Object} data
          */
         postUrl: function(formAction, data) {
-            var $form = $('<form action="' + formAction + '" method="POST">');
+            var $form = $('<form action="' + formAction + '" method="POST" data-nohash="true">');
             _.each(data, function(field) {
                 var $field = $('<input>')
                     .prop('type', 'hidden')
@@ -151,6 +151,8 @@ define(function(require) {
 
                 $form.append($field);
             });
+
+            $('body').append($form);
 
             $form.submit();
         },
