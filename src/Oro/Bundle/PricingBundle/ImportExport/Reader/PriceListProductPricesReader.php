@@ -16,9 +16,9 @@ class PriceListProductPricesReader extends EntityReader
     /**
      * {@inheritdoc}
      */
-    protected function createSourceEntityQueryBuilder($entityName, Organization $organization = null)
+    protected function createSourceEntityQueryBuilder($entityName, Organization $organization = null, array $ids = [])
     {
-        $qb = parent::createSourceEntityQueryBuilder($entityName, $organization);
+        $qb = parent::createSourceEntityQueryBuilder($entityName, $organization, $ids);
 
         if ($this->priceListId) {
             $aliases = $qb->getRootAliases();
