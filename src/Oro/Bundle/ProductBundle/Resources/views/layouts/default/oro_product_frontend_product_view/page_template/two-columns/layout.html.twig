@@ -15,7 +15,9 @@
 {% endblock %}
 
 {% block attribute_label_widget %}
-    <h2 class="product-view__attribute-box-title">{{ label }}</h2>
+    {% if label|first != '_' %}
+        <h2 class="product-view__attribute-box-title">{{ label }}</h2>
+    {% endif %}
 {% endblock %}
 
 {% block _attribute_group_specifications_widget %}

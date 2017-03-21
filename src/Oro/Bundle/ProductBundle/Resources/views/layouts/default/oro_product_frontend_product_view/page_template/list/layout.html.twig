@@ -8,10 +8,6 @@
     </section>
 {% endblock %}
 
-{% block attribute_label_widget %}
-    <h2 class="product-view__attribute-box-title">{{ label }}</h2>
-{% endblock %}
-
 {% block _product_view_description_container_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' product-view__description'
@@ -39,9 +35,15 @@
 
 {% block _line_item_form_shopping_lists_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        '~class': " shopping-lists__wrapper form__col "
+    '~class': " shopping-lists__wrapper form__col "
     }) %}
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
+{% endblock %}
+
+{% block attribute_label_widget %}
+    {% if label|first != '_' %}
+        <h2 class="product-view__attribute-box-title">{{ label }}</h2>
+    {% endif %}
 {% endblock %}
