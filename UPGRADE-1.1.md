@@ -413,3 +413,10 @@ CMSBundle
 UPSBundle
 ---------
 - "Check UPS Connection" button was added on UPS integration page. Please, see [documentation](package/commerce/src/Oro/Bundle/UPSBundle/Resources/doc/credentials-validation.md) for more information.
+
+FrontendLocalizationBundle
+--------------------------
+- Class `Oro\Bundle\FrontendLocalizationBundle\Provider\TranslationPackagesProviderExtension` removed
+- Updated service definition for `oro_frontend_localization.extension.transtation_packages_provider` 
+    - changed class to `Oro\Bundle\FrontendBundle\Provider\TranslationPackagesProviderExtension`
+    - changed publicity to `false`
