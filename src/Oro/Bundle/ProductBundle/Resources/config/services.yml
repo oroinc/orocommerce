@@ -534,6 +534,15 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_product.event.restrict_product_variant_event, method: onRestrictProductVariantEvent }
 
+    oro_product.layout.data_provider.featured_products:
+        class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\FeaturedProductsProvider'
+        arguments:
+            - '@oro_segment.segment_manager'
+            - '@oro_product.product.manager'
+            - '@oro_config.user'
+        tags:
+            - { name: layout.data_provider, alias: featured_products }
+
     oro_product.event_listener.product_image_listener:
         class: 'Oro\Bundle\ProductBundle\EventListener\ProductImageListener'
         public: false

@@ -30,9 +30,7 @@ class LoadFeaturedProductsSegmentData extends AbstractFixture implements
     }
 
     /**
-     * Load data fixtures with the passed EntityManager
-     *
-     * @param ObjectManager $manager
+     * {@inheritdoc}
      */
     public function load(ObjectManager $manager)
     {
