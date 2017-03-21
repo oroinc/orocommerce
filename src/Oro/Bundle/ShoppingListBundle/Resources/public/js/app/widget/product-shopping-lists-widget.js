@@ -19,8 +19,10 @@ define(function(require) {
             dialogOptions: {
                 modal: true,
                 resizable: false,
-                width: 580,
-                autoResize: true
+                width: '100%',
+                maxWidth: 580,
+                autoResize: true,
+                draggable: false
             },
             update_api_accessor: {
                 http_method: 'PUT',
