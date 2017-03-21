@@ -21,8 +21,7 @@ define(function(require) {
                 resizable: false,
                 width: '100%',
                 maxWidth: 580,
-                autoResize: true,
-                draggable: false
+                autoResize: true
             },
             update_api_accessor: {
                 http_method: 'PUT',
