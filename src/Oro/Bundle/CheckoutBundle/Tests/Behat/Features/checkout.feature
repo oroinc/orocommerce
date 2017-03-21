@@ -1,5 +1,5 @@
-@fixture-../../../../../FlatRateShippingBundle/Tests/Behat/Features/Fixtures/FlatRateIntegration.yml
-@fixture-../../../../../PaymentTermBundle/Tests/Behat/Features/Fixtures/PaymentTermIntegration.yml
+@fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
+@fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-Checkout.yml
 Feature: Checkout workflow
   Scenario: Create order from Shopping List 1
