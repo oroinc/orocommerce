@@ -1,12 +1,35 @@
+{% block attribute_group_rest_attribute_group_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-module': 'oroproduct/js/app/components/fullscreen-attribute-group-tab-content-component',
+        '~data-page-component-options': {
+            id: group,
+            viewport: {
+                maxScreenType: 'mobile-landscape',
+            }
+        }
+    }) %}
+    <div {{ block('block_attributes') }} style="display: none;" class="tab-content">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _product_view_attributes_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-view__attributes'
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{- block_widget(block) -}}
+    </div>
+{% endblock %}
+
 {% block attribute_product_images_widget %}
     {% set product = entity %}
-
     {{ block('_product_media_widget') }}
 {% endblock %}
 
 {% block _product_view_attribute_group_general_attribute_text_sku_widget %}
     {% set attr = layout_attr_defaults(attr, {
-    '~class': ' product-item__number product-item__number_{{ class_prefix }}'
+        '~class': ' product-item__number product-item__number_{{ class_prefix }}'
     }) %}
     <div {{ block('block_attributes') }}>
         Item #: <span class="red">{{ block_widget(block) }}</span>

@@ -33,7 +33,12 @@ class UPSShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
     /**
      * @var UPSShippingMethod
      */
-    private $method;
+    private $enabledMethod;
+
+    /**
+     * @var UPSShippingMethod
+     */
+    private $disabledMethod;
 
     public function setUp()
     {
@@ -46,27 +51,33 @@ class UPSShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
             ->with('OroIntegrationBundle:Channel')
             ->willReturn($repository);
 
-        $channel = $this->getEntity(Channel::class, [
-            'id' => 10,
-            'enabled' => true,
-        ]);
+        $enabledChannel = $this->getEntity(Channel::class, ['id' => 10, 'name' => 'ch_enabled', 'enabled' => true]);
+        $disabledChannel = $this->getEntity(Channel::class, ['id' => 20, 'name' => 'ch_enabled', 'enabled' => false]);
 
         $repository->expects(static::once())
             ->method('findByType')
             ->with(ChannelType::TYPE)
-            ->willReturn([$channel]);
+            ->willReturn([$enabledChannel, $disabledChannel]);
 
-        $this->method = $this->createMock(UPSShippingMethod::class);
-        $this->method
+        $this->enabledMethod = $this->createMock(UPSShippingMethod::class);
+        $this->enabledMethod
             ->method('getIdentifier')
             ->willReturn('ups_10');
 
-        $this->methodFactory = $this->createMock(IntegrationShippingMethodFactoryInterface::class);
+        $this->disabledMethod = $this->createMock(UPSShippingMethod::class);
+        $this->disabledMethod
+            ->method('getIdentifier')
+            ->willReturn('ups_20');
 
-        $this->methodFactory->expects($this->once())
+        $this->methodFactory = $this->createMock(IntegrationShippingMethodFactoryInterface::class);
+        $this->methodFactory->expects(static::at(0))
             ->method('create')
-            ->with($channel)
-            ->willReturn($this->method);
+            ->with($enabledChannel)
+            ->willReturn($this->enabledMethod);
+        $this->methodFactory->expects(static::at(1))
+            ->method('create')
+            ->with($disabledChannel)
+            ->willReturn($this->disabledMethod);
 
         $this->provider = new UPSShippingMethodProvider($this->doctrineHelper, $this->methodFactory);
     }
@@ -74,20 +85,20 @@ class UPSShippingMethodProviderTest extends \PHPUnit_Framework_TestCase
     public function testGetShippingMethods()
     {
         $methods = $this->provider->getShippingMethods();
-        static::assertCount(1, $methods);
+        static::assertCount(2, $methods);
         $actualMethod = reset($methods);
-        static::assertSame($this->method, $actualMethod);
+        static::assertSame($this->enabledMethod, $actualMethod);
     }
 
     public function testGetShippingMethod()
     {
-        $method = $this->provider->getShippingMethod($this->method->getIdentifier());
+        $method = $this->provider->getShippingMethod($this->enabledMethod->getIdentifier());
         static::assertInstanceOf(UPSShippingMethod::class, $method);
     }
 
     public function testHasShippingMethod()
     {
-        static::assertTrue($this->provider->hasShippingMethod($this->method->getIdentifier()));
+        static::assertTrue($this->provider->hasShippingMethod($this->enabledMethod->getIdentifier()));
     }
 
     public function testHasShippingMethodFalse()
