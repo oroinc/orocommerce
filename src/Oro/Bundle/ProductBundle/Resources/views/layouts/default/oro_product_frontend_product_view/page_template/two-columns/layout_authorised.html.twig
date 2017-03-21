@@ -1,0 +1,34 @@
+{% block _product_view_specification_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-view__specification--colored',
+        'data-role': 'layout-subtree-loading-container'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _product_view_description_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-view__description--short'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _product_price_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-page-component-module': 'oroui/js/app/components/viewport-component',
+        '~data-page-component-options': {
+            viewport: {
+                screenType: 'any'
+            },
+            component: 'oroui/js/app/components/view-component',
+            changeUnitLabel: false
+        },
+    }) %}
+    {{ block_widget(block, {attr: attr}) }}
+{% endblock %}

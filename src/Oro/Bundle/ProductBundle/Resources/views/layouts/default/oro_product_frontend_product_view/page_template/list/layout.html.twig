@@ -1,0 +1,47 @@
+{% block attribute_group_rest_widget %}
+    {{ block_widget(block) }}
+{% endblock %}
+
+{% block attribute_group_rest_attribute_group_widget %}
+    <section {{ block('block_attributes') }} class="product-view__attribute-box">
+        {{ block_widget(block) }}
+    </section>
+{% endblock %}
+
+{% block attribute_label_widget %}
+    <h2 class="product-view__attribute-box-title">{{ label }}</h2>
+{% endblock %}
+
+{% block _product_view_description_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-view__description'
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _product_price_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-price--simple',
+        'data-page-component-module': 'oroui/js/app/components/viewport-component',
+        '~data-page-component-options': {
+            viewport: {
+                screenType: 'any'
+            },
+            component: 'oroui/js/app/components/view-component',
+            changeUnitLabel: true
+        },
+    }) %}
+    {{ block_widget(block, {attr: attr}) }}
+{% endblock %}
+
+{% block _line_item_form_shopping_lists_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': " shopping-lists__wrapper form__col "
+    }) %}
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}

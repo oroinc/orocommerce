@@ -1,15 +1,11 @@
-{% block _product_view_attributes_container_widget %}
+{% block attribute_group_rest_widget %}
     {% set attr = layout_attr_defaults(attr, {
-    '~class': ' product-view__attribute-box-wrapper'
+    '~class': '- product-view__attribute-box-wrapper'
     }) %}
 
     <div {{ block('block_attributes') }}>
         {{ block_widget(block) }}
     </div>
-{% endblock %}
-
-{% block attribute_group_rest_widget %}
-    {{ block_widget(block) }}
 {% endblock %}
 
 {% block attribute_group_rest_attribute_group_widget %}

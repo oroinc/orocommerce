@@ -1,40 +1,76 @@
 // @theme: default
+.product-view {
+    &__specification {
+        &--colored {
+            position: $product-view-specification-colored-position;
+            display: $product-view-specification-colored-display;
+
+            width: $product-view-specification-colored-width;
+            padding: $product-view-specification-colored-inner-offset;
+
+            background: $product-view-specification-colored-background;
+            border-radius: $product-view-specification-colored-border-radius;
+        }
+    }
+
+    &__description {
+        &--short {
+            width: $product-view-description-short-width;
+        }
+    }
+}
+
 @include breakpoint('desktop') {
-    .product-view {
+    .product-view.default-theme {
         .product-price {
-            display: none;
+            display: $product-view-default-theme-product-price-display-desktop;
         }
     }
 }
 
 @include breakpoint('tablet') {
     .product-view {
-        &__primary-wrapper {
-            display: flex;
-            flex-direction: column-reverse;
+        &.default-theme {
+            .product-prices {
+                display: $product-view-default-theme-product-prices-display-tablet;
+            }
+        }
 
-            margin-top: -15px;
+        &__primary-wrapper {
+            display: $product-view-primary-wrapper-display-tablet;
+            flex-direction: $product-view-primary-wrapper-flex-direction-tablet;
+
+            margin-top: $product-view-primary-wrapper-margin-top-tablet;
         }
 
         &__primary {
-            margin-top: 0;
+            margin-top: $product-view-primary-margin-top-tablet;
 
-            text-align: center;
+            text-align: $product-view-primary-text-align-tablet;
 
             .page-title {
-                font-size: $base-font-size--l - 1;
-                line-height: 1.2;
+                font-size: $product-view-primary-page-title-font-size-tablet;
+                line-height: $product-view-primary-page-title-line-height-tablet;
+            }
+        }
+
+        &__specification {
+            &--colored {
+                width: $product-view-specification-colored-width-tablet;
+                margin-bottom: $product-view-specification-colored-margin-bottom-tablet;
+            }
+        }
+
+        &__description {
+            &--short {
+                width: $product-view-description-short-width-tablet;
             }
         }
 
         .line-item-form {
-            padding-top: 15px;
+            padding-top: $product-view-line-item-form-padding-top-tablet;
 
-            border-top: 1px solid get-color('additional', 'light');
-        }
-
-        .product-prices {
-            display: none;
+            border-top: $product-view-line-item-form-border-top-tablet;
         }
     }
 }

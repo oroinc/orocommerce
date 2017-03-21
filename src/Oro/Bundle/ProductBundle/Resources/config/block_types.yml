@@ -25,6 +25,7 @@ services:
                     -
                         parentProduct: ~
                         product: {required: true}
+                        productTheme: {default: 'default'}
             - [setName, ['product_view_container']]
         tags:
              - { name: layout.block_type, alias: product_view_container }

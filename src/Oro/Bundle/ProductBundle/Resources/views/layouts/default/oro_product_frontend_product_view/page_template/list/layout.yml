@@ -1,3 +1,14 @@
 layout:
-    actions: []
+    actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
+        - '@setOption':
+            id: product_view_container
+            optionName: productTheme
+            optionValue: 'list'
+        - '@move':
+            id: product_view_line_item_container
+            parentId: product_view_content_container
+        - '@remove':
+            id: product_view_price_container
     conditions: 'context["is_mobile"]==false'

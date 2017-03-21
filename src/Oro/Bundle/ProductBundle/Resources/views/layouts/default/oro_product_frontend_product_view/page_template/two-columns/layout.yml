@@ -2,6 +2,10 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'layout.html.twig'
+        - '@setOption':
+            id: product_view_container
+            optionName: productTheme
+            optionValue: 'two-columns'
         - '@add':
             id: attribute_group_specifications
             parentId: product_view_attributes_rest

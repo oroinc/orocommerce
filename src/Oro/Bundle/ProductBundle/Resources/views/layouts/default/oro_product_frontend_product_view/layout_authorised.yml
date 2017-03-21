@@ -11,7 +11,4 @@ layout:
         - '@move':
             id: product_view_description
             parentId: product_view_description_container
-        - '@remove':
-            id: product_price_listed
-
     conditions: 'context["is_logged_in"]'

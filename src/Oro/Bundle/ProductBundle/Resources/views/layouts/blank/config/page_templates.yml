@@ -1,16 +1,16 @@
 templates:
     -
-        label: Short page template
+        label: Short page
         description: Short page template of product page (no additional attributes groups are displayed at all)
         route_name: oro_product_frontend_product_view
         key: short
     -
-        label: Two columns page template
+        label: Two columns page
         description: Two columns template of product page (additional attribute groups are displayed in two columns)
         route_name: oro_product_frontend_product_view
         key: two-columns
     -
-        label: List page template
+        label: List page
         description: List template of product page (additional attribute groups are displayed in column one below another)
         route_name: oro_product_frontend_product_view
         key: list

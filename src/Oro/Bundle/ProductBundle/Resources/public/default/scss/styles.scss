@@ -1,5 +1,6 @@
 // @theme: default;
 
+//Components
 @import './components/product-list-item';
 @import './components/buttons-inline-group';
 @import './components/filter-controls';
@@ -9,5 +10,12 @@
 @import './components/featured-product/featured-product.scss';
 @import './components/product-view-layout';
 @import './components/line-item-form';
+@import './components/product-view-attributes';
 @import './components/product-view-quantity';
 @import './components/product-view-desc';
+
+//Page templates of product page
+@import './page-templates/default-theme';
+@import './page-templates/short-theme';
+@import './page-templates/two-columns-theme';
+@import './page-templates/list-theme';
