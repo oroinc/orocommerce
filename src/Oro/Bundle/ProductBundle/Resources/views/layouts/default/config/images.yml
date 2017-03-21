@@ -4,6 +4,7 @@ types:
         dimensions:
             - product_original
             - product_gallery_popup
+            - product_gallery_main
             - product_large
             - product_extra_large
             - product_medium
@@ -31,6 +32,11 @@ dimensions:
     product_gallery_popup:
         width: 610
         height: 610
+        options:
+            applyProductImageWatermark: true
+    product_gallery_main:
+        width: 600
+        height: auto
         options:
             applyProductImageWatermark: true
     product_extra_large:
