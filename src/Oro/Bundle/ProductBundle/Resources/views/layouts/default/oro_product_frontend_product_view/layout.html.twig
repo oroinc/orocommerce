@@ -1,0 +1,32 @@
+{% block _product_view_description_container_widget %}
+    {% set dom_relocation_options =  {
+        responsive: [
+            {
+                viewport: {
+                    maxScreenType: 'tablet',
+                },
+                moveTo: '[data-product-view-description]'
+            }
+        ]
+    }|json_encode %}
+
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' product-view__description'
+    }) %}
+
+    <div {{ block('block_attributes') }}
+            data-dom-relocation
+            data-dom-relocation-options="{{ dom_relocation_options }}">
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}
+
+{% block _product_view_description_relocation_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        'data-product-view-description': null,
+    }) %}
+
+    <div {{ block('block_attributes') }}>
+        {{ block_widget(block) }}
+    </div>
+{% endblock %}

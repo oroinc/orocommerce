@@ -5,7 +5,6 @@ oro:
         entity_description: Represents product information
         id.label: Id
         sku.label: SKU
-        grouping.label: "Grouping"
         qty_sold.label: "Qty Sold"
         skip_empty_periods.label: "Exclude Empty Periods"
         item_number.label: "Item #"
@@ -43,7 +42,7 @@ oro:
             label:              'Slugs'
             singular_label:     'Slug'
         slug_prototypes:
-            label:              'Slug Prototypes'
+            label:              'URL Slug'
             singular_label:     'Slug Prototype'
 
         content_variant:
@@ -52,16 +51,13 @@ oro:
         type:
             simple: Simple
             configurable: Configurable
+            please_select_option: Please select option
         attribute_family.label: Product Family
         attribute_family.plural_label: Product Families
 
         status:
             enabled: Enabled
             disabled: Disabled
-
-        type:
-            simple: Simple Product
-            configurable: Configurable Product
 
         variant_fields:
             yes.label: Yes
