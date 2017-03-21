@@ -701,7 +701,7 @@ class ProductControllerTest extends WebTestCase
         );
         $crawler = $this->client->request('GET', $this->getUrl('oro_frontend_root'));
 
-        $this->assertEquals(12, $crawler->filter('.featured-product')->count());
+        $this->assertEquals(9, $crawler->filter('.featured-product')->count());
     }
 
     /**
