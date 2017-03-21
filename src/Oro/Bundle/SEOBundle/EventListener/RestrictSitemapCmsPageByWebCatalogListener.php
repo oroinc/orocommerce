@@ -6,11 +6,10 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
-use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\SEOBundle\Event\RestrictSitemapEntitiesEvent;
+use Oro\Bundle\SEOBundle\Sitemap\Provider\WebCatalogScopeCriteriaProvider;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
@@ -26,20 +25,20 @@ class RestrictSitemapCmsPageByWebCatalogListener
     private $configManager;
 
     /**
-     * @var ScopeManager
+     * @var WebCatalogScopeCriteriaProvider
      */
-    private $scopeManager;
+    private $scopeCriteriaProvider;
 
     /**
      * @param ConfigManager $configManager
-     * @param ScopeManager $scopeManager
+     * @param WebCatalogScopeCriteriaProvider $scopeCriteriaProvider
      */
     public function __construct(
         ConfigManager $configManager,
-        ScopeManager $scopeManager
+        WebCatalogScopeCriteriaProvider $scopeCriteriaProvider
     ) {
         $this->configManager = $configManager;
-        $this->scopeManager = $scopeManager;
+        $this->scopeCriteriaProvider = $scopeCriteriaProvider;
     }
 
     /**
@@ -58,19 +57,10 @@ class RestrictSitemapCmsPageByWebCatalogListener
     private function restrict(RestrictSitemapEntitiesEvent $event)
     {
         $em = $event->getQueryBuilder()->getEntityManager();
+        $website = $event->getWebsite();
 
-        $webCatalogId = $this->configManager->get('oro_web_catalog.web_catalog', false, false, $event->getWebsite());
-        $anonymousGroupId = $this->configManager
-            ->get('oro_customer.anonymous_customer_group', false, false, $event->getWebsite());
-
-        $scopeCriteria = $this->scopeManager->getCriteria(
-            'web_content',
-            [
-                'website' => $event->getWebsite(),
-                'webCatalog' => $webCatalogId ? $em->getReference(WebCatalog::class, $webCatalogId) : null,
-                'customerGroup' => $anonymousGroupId ? $em->getReference(CustomerGroup::class, $anonymousGroupId) : null
-            ]
-        );
+        $webCatalogId = $this->configManager->get('oro_web_catalog.web_catalog', false, false, $website);
+        $scopeCriteria = $this->scopeCriteriaProvider->getWebCatalogScopeForAnonymousCustomerGroup($website);
 
         $qb = $event->getQueryBuilder();
         $rootAliases = $qb->getRootAliases();

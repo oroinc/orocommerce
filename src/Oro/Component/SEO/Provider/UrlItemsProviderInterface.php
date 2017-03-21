@@ -10,7 +10,7 @@ interface UrlItemsProviderInterface
     /**
      * @param WebsiteInterface $website
      * @param int $version
-     * @return array|UrlItemInterface[]
+     * @return array|UrlItemInterface[]|\Generator
      */
     public function getUrlItems(WebsiteInterface $website, $version);
 }

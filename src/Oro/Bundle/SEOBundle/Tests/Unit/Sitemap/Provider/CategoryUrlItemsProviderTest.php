@@ -1,4 +1,5 @@
 <?php
+
 namespace Oro\Bundle\SEOBundle\Tests\Unit\Sitemap\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;

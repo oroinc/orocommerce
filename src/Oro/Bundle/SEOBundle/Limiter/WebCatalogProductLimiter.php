@@ -6,12 +6,11 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query\Expr\Join;
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\CustomerBundle\Entity\CustomerGroup;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ScopeBundle\Manager\ScopeManager;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\SEOBundle\Entity\WebCatalogProductLimitation;
+use Oro\Bundle\SEOBundle\Sitemap\Provider\WebCatalogScopeCriteriaProvider;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
@@ -27,28 +26,28 @@ class WebCatalogProductLimiter
     protected $doctrineHelper;
 
     /**
-     * @var ScopeManager
-     */
-    protected $scopeManager;
-
-    /**
      * @var ConfigManager
      */
     protected $configManager;
 
     /**
+     * @var WebCatalogScopeCriteriaProvider
+     */
+    protected $scopeCriteriaProvider;
+
+    /**
      * @param DoctrineHelper $doctrineHelper
      * @param ConfigManager $configManager
-     * @param ScopeManager $scopeManager
+     * @param WebCatalogScopeCriteriaProvider $scopeCriteriaProvider
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         ConfigManager $configManager,
-        ScopeManager $scopeManager
+        WebCatalogScopeCriteriaProvider $scopeCriteriaProvider
     ) {
         $this->doctrineHelper = $doctrineHelper;
         $this->configManager = $configManager;
-        $this->scopeManager = $scopeManager;
+        $this->scopeCriteriaProvider = $scopeCriteriaProvider;
     }
 
     /**
@@ -246,30 +245,6 @@ class WebCatalogProductLimiter
      */
     private function getScopeCriteria(WebsiteInterface $website = null)
     {
-        $webCatalogId = $this->configManager->get('oro_web_catalog.web_catalog', false, false, $website);
-        $anonymousGroupId = $this->configManager->get('oro_customer.anonymous_customer_group', false, false, $website);
-
-        $webCatalog = null;
-        if ($webCatalogId) {
-            $webCatalog = $this->doctrineHelper
-                ->getEntityManager(WebCatalog::class)
-                ->getReference(WebCatalog::class, $webCatalogId);
-        }
-
-        $anonymousGroup = null;
-        if ($anonymousGroupId) {
-            $anonymousGroup = $this->doctrineHelper
-                ->getEntityManager(WebCatalog::class)
-                ->getReference(CustomerGroup::class, $anonymousGroupId);
-        }
-
-        return $this->scopeManager->getCriteria(
-            'web_content',
-            [
-                'website' => $website,
-                'webCatalog' => $webCatalog,
-                'customerGroup' => $anonymousGroup
-            ]
-        );
+        return $this->scopeCriteriaProvider->getWebCatalogScopeForAnonymousCustomerGroup($website);
     }
 }

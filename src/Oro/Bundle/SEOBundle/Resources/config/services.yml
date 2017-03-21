@@ -161,6 +161,27 @@ services:
             - '@event_dispatcher'
             - '@doctrine'
 
+    oro_seo.sitemap.provider.web_catalog_scope_criteria_provider:
+        class: Oro\Bundle\SEOBundle\Sitemap\Provider\WebCatalogScopeCriteriaProvider
+        public: false
+        arguments:
+            - '@oro_config.manager'
+            - '@oro_scope.scope_manager'
+            - '@doctrine'
+
+    oro_seo.sitemap.provider.content_variant_items_provider:
+        class: Oro\Bundle\SEOBundle\Sitemap\Provider\ContentVariantUrlItemsProvider
+        public: false
+        arguments:
+            - '@doctrine'
+            - '@oro_web_catalog.web_catalog_provider'
+            - '@oro_web_catalog.content_node_tree_resolver'
+            - '@oro_redirect.generator.canonical_url'
+            - '@oro_seo.sitemap.provider.web_catalog_scope_criteria_provider'
+        tags:
+            - { name: oro_seo.sitemap.url_items_provider, alias: 'web_catalog' }
+            - { name: oro_featuretogle.feature, feature: frontend_master_catalog }
+
     oro_seo.sitemap.provider.product_url_items_provider:
         parent: oro_seo.sitemap.provider.url_items_provider
         public: false
@@ -314,7 +335,7 @@ services:
         class: 'Oro\Bundle\SEOBundle\EventListener\RestrictSitemapCmsPageByWebCatalogListener'
         arguments:
             - '@oro_config.manager'
-            - '@oro_scope.scope_manager'
+            - '@oro_seo.sitemap.provider.web_catalog_scope_criteria_provider'
         tags:
             - { name: kernel.event_listener, event: oro_seo.event.restrict_sitemap_entity.cms_page , method: restrictQueryBuilder }
             - { name: oro_featuretogle.feature, feature: frontend_master_catalog }
@@ -325,7 +346,7 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_config.manager'
-            - '@oro_scope.scope_manager'
+            - '@oro_seo.sitemap.provider.web_catalog_scope_criteria_provider'
 
     oro_seo.event_listener.url_items_provider_start:
         class: 'Oro\Bundle\SEOBundle\EventListener\ProductUrlItemsProviderStartListener'
