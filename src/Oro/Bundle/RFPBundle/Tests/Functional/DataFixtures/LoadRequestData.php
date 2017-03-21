@@ -6,6 +6,7 @@ use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
@@ -37,7 +38,8 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
     const REQUEST11 = 'rfp.request.11';
     const REQUEST12 = 'rfp.request.12';
     const REQUEST13 = 'rfp.request.13';
-    const NUM_REQUESTS = 13;
+    const REQUEST14 = 'rfp.request.14';
+    const NUM_REQUESTS = 14;
     const NUM_LINE_ITEMS = 5;
     const NUM_PRODUCTS = 5;
 
@@ -193,6 +195,19 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
             'note' => self::REQUEST13,
             'customer' => LoadUserData::ACCOUNT2
         ],
+        self::REQUEST14 => [
+            'first_name' => self::FIRST_NAME,
+            'last_name' => self::LAST_NAME,
+            'email' => self::EMAIL,
+            'phone' => '2-(999)507-4625',
+            'company' => 'Google',
+            'role' => 'CEO',
+            'note' => self::REQUEST14,
+            'customer' => LoadUserData::ACCOUNT1,
+            'customerUser' => LoadUserData::ACCOUNT1_USER1,
+            'po_number' => 'deleted',
+            'internal_status' => 'deleted'
+        ]
     ];
 
     /**
@@ -265,6 +280,35 @@ class LoadRequestData extends AbstractFixture implements DependentFixtureInterfa
 
             $manager->persist($request);
             $this->addReference($key, $request);
+        }
+
+        $manager->flush();
+
+        $this->updatedInternalStatus($manager);
+    }
+
+    /**
+     * @param ObjectManager $manager
+     */
+    protected function updatedInternalStatus(ObjectManager $manager)
+    {
+        $internalEntityClass = ExtendHelper::buildEnumValueClassName('rfp_internal_status');
+        foreach (self::$requests as $key => $rawRequest) {
+            if (!isset($rawRequest['internal_status'])) {
+                continue;
+            }
+
+            /** @var Request $request */
+            $request = $this->getReference($key);
+
+            $enumValue = $manager->getRepository($internalEntityClass)->find($rawRequest['internal_status']);
+            if (!$enumValue) {
+                throw new \RuntimeException(
+                    sprintf('Can\'t find InternalStatus with code "%s"', $rawRequest['internal_status'])
+                );
+            }
+
+            $request->setInternalStatus($enumValue);
         }
 
         $manager->flush();
