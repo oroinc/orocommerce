@@ -19,7 +19,6 @@ define(function(require) {
         },
 
         elementsEvents: {
-            '$el': ['options:set:productModel', 'optionsSetProductModel'],
             'quantity': ['keyup', 'onQuantityChange']
         },
 
@@ -55,12 +54,6 @@ define(function(require) {
             this.initializeSubviews({
                 productModel: this.model
             });
-        },
-
-        optionsSetProductModel: function(e, options) {
-            options.productModel = this.model;
-            e.preventDefault();
-            e.stopPropagation();
         },
 
         initModel: function(options) {

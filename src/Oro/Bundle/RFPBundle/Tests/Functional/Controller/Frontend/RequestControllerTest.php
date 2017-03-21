@@ -87,11 +87,7 @@ class RequestControllerTest extends WebTestCase
 
         static::assertContains('frontend-requests-grid', $crawler->html());
 
-        $response = $this->client->requestFrontendGrid(
-            [
-                'gridName' => 'frontend-requests-grid',
-            ]
-        );
+        $response = $this->client->requestFrontendGrid(['gridName' => 'frontend-requests-grid']);
 
         $result = static::getJsonResponseContent($response, 200);
 
@@ -193,6 +189,24 @@ class RequestControllerTest extends WebTestCase
             $buttonEdit = $crawler->filter('.oro-customer-user-role__controls-list')->html();
             static::assertNotContains('edit', $buttonEdit);
         }
+    }
+
+    /**
+     * @dataProvider actionsForDeletedRequestProvider
+     *
+     * @param array $input
+     * @param string $path
+     */
+    public function testActionsForDeletedRequest(array $input, $path)
+    {
+        $this->initClient([], static::generateBasicAuthHeader($input['login'], $input['password']));
+
+        /* @var $request Request */
+        $request = $this->getReference(LoadRequestData::REQUEST14);
+
+        $this->client->request('GET', $this->getUrl($path, ['id' => $request->getId()]));
+
+        $this->assertHtmlResponseStatusCodeEquals($this->client->getResponse(), 404);
     }
 
     /**
@@ -544,6 +558,27 @@ class RequestControllerTest extends WebTestCase
                 'password' => LoadUserData::PARENT_ACCOUNT_USER2,
                 'status' => 403
             ],
+        ];
+    }
+
+    /**
+     * @return \Generator
+     */
+    public function actionsForDeletedRequestProvider()
+    {
+        yield 'view action' => [
+            'input' => [
+                'login' => LoadUserData::ACCOUNT1_USER1,
+                'password' => LoadUserData::ACCOUNT1_USER1
+            ],
+            'path' => 'oro_rfp_frontend_request_view'
+        ];
+        yield 'update action' => [
+            'input' => [
+                'login' => LoadUserData::ACCOUNT1_USER1,
+                'password' => LoadUserData::ACCOUNT1_USER1
+            ],
+            'path' => 'oro_rfp_frontend_request_update'
         ];
     }
 

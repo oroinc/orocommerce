@@ -13,6 +13,7 @@ use Oro\Bundle\RedirectBundle\Generator\RedirectGenerator;
 use Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator;
 use Oro\Bundle\RedirectBundle\Generator\UniqueSlugResolver;
 use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProviderInterface;
+use Oro\Bundle\RedirectBundle\Routing\Router;
 use Oro\Bundle\RedirectBundle\Tests\Unit\Entity\SluggableEntityStub;
 use Oro\Component\Routing\RouteData;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -273,6 +274,32 @@ class SlugEntityGeneratorTest extends \PHPUnit_Framework_TestCase
 
         $this->generator->generate($entity, true);
         $this->assertEquals($expected, $entity);
+    }
+
+    public function testGenerateWhenSlugPrototypesUpdated()
+    {
+        /** @var LocalizedFallbackValue $slugPrototype */
+        $slugPrototype = $this->getEntity(LocalizedFallbackValue::class, ['string' => 'something']);
+        $entity = (new SluggableEntityStub())->addSlugPrototype($slugPrototype);
+
+        $this->slugResolver
+            ->expects($this->once())
+            ->method('resolve')
+            ->willReturn('/some-prefix/something-1');
+
+        $routeData = new RouteData('someRoute');
+        $this->routingInformationProvider
+            ->expects($this->once())
+            ->method('getRouteData')
+            ->with($entity)
+            ->willReturn($routeData);
+
+        $expectedSlugPrototypes = new ArrayCollection([
+            $this->getEntity(LocalizedFallbackValue::class, ['string' => 'something-1'])
+        ]);
+
+        $this->generator->generate($entity);
+        $this->assertEquals($expectedSlugPrototypes, $entity->getSlugPrototypes());
     }
 
     public function testPrepareSlugUrls()
