@@ -41,7 +41,6 @@ class ProductFlushEventListener
                     $inventoryLevelMetadata = $em->getClassMetadata(get_class($inventoryLevel));
                     $uow->computeChangeSet($inventoryLevelMetadata, $inventoryLevel);
                 }
-
             }
         }
 
