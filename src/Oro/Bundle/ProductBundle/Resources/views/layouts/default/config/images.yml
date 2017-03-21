@@ -8,6 +8,7 @@ types:
             - product_extra_large
             - product_medium
             - product_small
+            - product_gallery_main
             - category_medium
         max_number: 1
     listing:
@@ -30,4 +31,5 @@ dimensions:
     product_large: { width: 268, height: 268 }
     product_medium: { width: 203, height: 203 }
     product_small: { width: 82, height: 82 }
+    product_gallery_main: { width: 600, height: auto }
     category_medium: { width: 315, height: 260 }
