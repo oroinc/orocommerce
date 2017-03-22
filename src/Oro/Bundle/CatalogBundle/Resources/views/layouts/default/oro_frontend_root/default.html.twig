@@ -9,59 +9,7 @@
 {% endblock %}
 
 {% block _hero_promo_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~data-page-component-options': {
-            autoplay: true,
-            autoplaySpeed: 4000,
-            arrows: false,
-            dots: true
-        }
-    }) %}
-
-    {{ block_widget(block, {
-        attr: attr
-    }) }}
-{% endblock %}
-
-{% block _hero_promo_item_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class':  ' hero-promo-item ' ~ item.class|default('')
-    }) %}
-
-    <div {{ block('block_attributes') }}>
-        {% if item.link|default('') %}
-        <a href="{{ app.request.getUriForPath(item.link) }}">
-        {% endif %}
-        <div class="hero-promo-item__picture">
-            <picture>
-                <source srcset="{{ asset(item.image_small) }}" media="(max-width: 414px)">
-                <source srcset="{{ asset(item.image_medium) }}" media="(max-width: 992px)">
-                <img src="{{ asset(item.image) }}" class="hero-promo-item__img" alt="{{ item.label|default('') ? item.label : '' }}">
-            </picture>
-        </div>
-        <div class="hero-promo-item__info">
-            {% if item.prelabel|default('') or item.label|default('') or item.link|default('') %}
-                <div class="hero-promo-item__cover">
-                    <div class="hero-promo-item__desc">
-                        {% if item.prelabel|default('') %}
-                            <span class="hero-promo-item__pretitle">{{ item.prelabel }}</span>
-                        {% endif %}
-                        {% if item.label|default('') %}
-                            <h2 class="hero-promo-item__title">{{ item.label }}</h2>
-                        {% endif %}
-                        {% if item.link|default('') and item.link_label|default('') %}
-                            <a href="{{ app.request.getUriForPath(item.link) }}" class="btn btn--info hero-promo-item__view-btn">
-                                {{ item.link_label }}
-                            </a>
-                        {% endif %}
-                    </div>
-                </div>
-            {% endif %}
-        </div>
-        {% if item.link|default('') %}
-        </a>
-        {% endif %}
-    </div>
+    {{ contentBlock.content|raw }}
 {% endblock %}
 
 {% block _featured_categories_widget %}
