@@ -285,6 +285,7 @@ workflows:
                 frontend_options:
                     is_checkout_continue: true
                     is_checkout_show_errors: true
+                    page_component_module: 'orocheckout/js/app/components/payment-transition-button-component'
                 form_options:
                     form_init:
                         - '@generate_checkout_state_snapshot':
@@ -1253,22 +1254,27 @@ workflows:
                         attribute: $.result.paymentContext
                 preconditions:
                     '@and':
-                        - '@payment_method_applicable':
-                            payment_method: $payment_method
-                            context: $.result.paymentContext
                         - '@order_line_item_has_count':
                             message: oro.checkout.workflow.condition.order_line_item_has_count.message
                             parameters:
                                 entity: $checkout
+                        - '@has_applicable_payment_methods':
+                            message: oro.checkout.workflow.condition.payment_method_is_not_applicable.message
+                            context: $.result.paymentContext
                 conditions:
-                    '@or':
-                        - '@empty': $.result.savedCheckoutState
-                        - '@check_checkout_states':
-                            message: oro.checkout.workflow.condition.content_of_order_was_changed.message
-                            parameters:
-                                entity: $checkout
-                                state1: $.result.initCheckoutState
-                                state2: $.result.savedCheckoutState
+                    '@and':
+                        - '@or':
+                            - '@empty': $.result.savedCheckoutState
+                            - '@check_checkout_states':
+                                message: oro.checkout.workflow.condition.content_of_order_was_changed.message
+                                parameters:
+                                    entity: $checkout
+                                    state1: $.result.initCheckoutState
+                                    state2: $.result.savedCheckoutState
+                        - '@payment_method_applicable':
+                            message: oro.checkout.workflow.condition.payment_method_is_not_applicable.message
+                            payment_method: $checkout.paymentMethod
+                            context: $.result.paymentContext
                 actions:
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
