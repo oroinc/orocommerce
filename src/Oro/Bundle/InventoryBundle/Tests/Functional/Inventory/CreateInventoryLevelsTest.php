@@ -6,13 +6,13 @@ use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Tests\Functional\Controller\ProductControllerTest;
+use Oro\Bundle\ProductBundle\Tests\Functional\Controller\ProductHelperTestCase;
 use Oro\Bundle\ProductBundle\Tests\Functional\Helper\ProductTestHelper;
 
 /**
  * @group CommunityEdition
  */
-class CreateInventoryLevelsTest extends ProductControllerTest
+class CreateInventoryLevelsTest extends ProductHelperTestCase
 {
     /**
      * {@inheritdoc}
@@ -111,21 +111,5 @@ class CreateInventoryLevelsTest extends ProductControllerTest
         }
 
         return $localizedName;
-    }
-
-    /**
-     * @param string $sku
-     * @return Product
-     */
-    private function getProductDataBySku($sku)
-    {
-        /** @var Product $product */
-        $product = $this->getContainer()->get('doctrine')
-            ->getManagerForClass('OroProductBundle:Product')
-            ->getRepository('OroProductBundle:Product')
-            ->findOneBy(['sku' => $sku]);
-        $this->assertNotEmpty($product);
-
-        return $product;
     }
 }
