@@ -114,8 +114,16 @@ This is the most important event because it collects the data that should be per
 ### Asynchronous search indexer
 
 The website search supports two types of indexation: immediate (synchronous) and scheduled (asynchronous). Regular indexer works synchronously, so you have to wait until indexation is finished. Asynchronous indexer sends a message
-to the Message Queue to process it later on a worker instances. Default asynchronous indexer is implemented in the 
+to the Message Queue to process it later by workers. 
+
+Default asynchronous indexer is implemented in the 
 `Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer` class and is accessible via the `oro_website_search.async.indexer` service. To trigger asynchronous indexation, set **$scheduled** parameter to `true`.
+Asynchronous indexer is using `Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\ReindexMessageGranularizer` to split message per entity and websiteId. What the request message granularizer does: 
+
+* on 1 indexation request message to handle entity `Product` within all websites `[1, 2, 3, 4, 5]` it splits the message into 5 different smaller messages, that allows handling each `Product` entity with each websiteId separately
+* on messages that contain large amounts of entityIds, it splits entityIds table into smaller chunks, for example 1000 entityIds will be split into 10 messages with 100 entityIds each  
+
+For each message `Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\SearchMessageProcessor` builds jobs with unique names to avoid parallel reindexation of same sets of entities, and runs them **unique** performing actual reindexation. In case, no parameters have been passed (empty class and context), the job will **NOT** be run as unique.
 
 Asynchronous indexer can send messages with the following topics:
 

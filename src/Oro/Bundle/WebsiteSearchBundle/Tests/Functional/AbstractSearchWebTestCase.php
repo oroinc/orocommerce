@@ -266,7 +266,18 @@ abstract class AbstractSearchWebTestCase extends WebTestCase
 
         $this->dispatcher->addListener(CollectDependentClassesEvent::NAME, $collectDependentClassesListener, -255);
 
-        $this->setClassSupportedExpectation(TestProduct::class, true);
+        $this->mappingProviderMock
+            ->expects($this->any())
+            ->method('isClassSupported')
+            ->withConsecutive(
+                [TestProduct::class],
+                [TestProduct::class],
+                [TestProduct::class],
+                [TestEmployee::class],
+                [TestEmployee::class]
+            )
+            ->willReturn(true);
+
         $this->setEntityAliasExpectation();
 
         $this->setGetEntityConfigExpectation();
