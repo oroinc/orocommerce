@@ -42,7 +42,7 @@
 
         .shopping-lists {
             &__wrapper {
-                order: 3;
+                order: $list-theme-product-view-shopping-lists-wrapper-order-desktop;
             }
 
             &__content {
