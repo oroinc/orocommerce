@@ -9,6 +9,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFeaturedProductData;
 use Oro\Bundle\ProductBundle\Tests\Functional\Helper\ProductTestHelper;
 
+use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 
 /**
@@ -307,35 +308,7 @@ class ProductControllerTest extends ProductHelperTestCase
         $result = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
-        $html = $crawler->html();
-        $this->assertContains('Product has been saved and duplicated', $html);
-        $this->assertContains(
-            ProductTestHelper::SECOND_DUPLICATED_SKU . ' - ' .
-            ProductTestHelper::DEFAULT_NAME_ALTERED . ' - Products - Products',
-            $html
-        );
-        $this->assertContains(ProductTestHelper::UPDATED_INVENTORY_STATUS, $html);
-        $this->assertContains(ProductTestHelper::STATUS, $html);
-
-        $this->assertContains(
-            $this->createPrimaryUnitPrecisionString(
-                ProductTestHelper::FIRST_UNIT_FULL_NAME,
-                ProductTestHelper::FIRST_UNIT_PRECISION
-            ),
-            $html
-        );
-        $this->assertContainsAdditionalUnitPrecision(
-            ProductTestHelper::SECOND_UNIT_FULL_NAME,
-            ProductTestHelper::SECOND_UNIT_PRECISION,
-            $html
-        );
-        $this->assertContainsAdditionalUnitPrecision(
-            ProductTestHelper::THIRD_UNIT_FULL_NAME,
-            ProductTestHelper::THIRD_UNIT_PRECISION,
-            $html
-        );
-
-        $this->assertEmpty($this->parseProductImages($crawler));
+        $this->checkDuplicateProduct($crawler);
 
         $product = $this->getProductDataBySku(ProductTestHelper::UPDATED_SKU);
 
@@ -588,5 +561,42 @@ class ProductControllerTest extends ProductHelperTestCase
         $crawler = $this->client->request('GET', $this->getUrl('oro_frontend_root'));
 
         $this->assertEquals(12, $crawler->filter('.featured-product')->count());
+    }
+
+    /**
+     * @param Crawler $crawler
+     */
+    protected function checkDuplicateProduct(Crawler $crawler)
+    {
+        $html = $crawler->html();
+
+        $this->assertContains('Product has been saved and duplicated', $html);
+        $this->assertContains(
+            ProductTestHelper::SECOND_DUPLICATED_SKU . ' - ' .
+            ProductTestHelper::DEFAULT_NAME_ALTERED . ' - Products - Products',
+            $html
+        );
+        $this->assertContains(ProductTestHelper::UPDATED_INVENTORY_STATUS, $html);
+        $this->assertContains(ProductTestHelper::STATUS, $html);
+
+        $this->assertContains(
+            $this->createPrimaryUnitPrecisionString(
+                ProductTestHelper::FIRST_UNIT_FULL_NAME,
+                ProductTestHelper::FIRST_UNIT_PRECISION
+            ),
+            $html
+        );
+        $this->assertContainsAdditionalUnitPrecision(
+            ProductTestHelper::SECOND_UNIT_FULL_NAME,
+            ProductTestHelper::SECOND_UNIT_PRECISION,
+            $html
+        );
+        $this->assertContainsAdditionalUnitPrecision(
+            ProductTestHelper::THIRD_UNIT_FULL_NAME,
+            ProductTestHelper::THIRD_UNIT_PRECISION,
+            $html
+        );
+
+        $this->assertEmpty($this->parseProductImages($crawler));
     }
 }
