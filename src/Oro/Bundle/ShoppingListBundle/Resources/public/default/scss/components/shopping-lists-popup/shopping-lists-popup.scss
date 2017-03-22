@@ -67,7 +67,7 @@
     }
 }
 
-@include breakpoint('mobile') {
+@include breakpoint('mobile-landscape') {
     .shopping-lists-popup {
         &__footer & {
             &__list {
