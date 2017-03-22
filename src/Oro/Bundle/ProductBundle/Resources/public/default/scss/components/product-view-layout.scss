@@ -72,5 +72,11 @@
 
             border-top: $product-view-line-item-form-border-top-tablet;
         }
+
+        .shopping-lists {
+            &__content {
+                min-height: $product-view-shopping-lists-content-min-height-tablet;
+            }
+        }
     }
 }

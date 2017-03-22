@@ -29,10 +29,13 @@
 
             form {
                 display: $list-theme-product-view-line-item-form-display-desktop;
+
+                > div {
+                    flex: $list-theme-product-view-line-item-form-div-flex-desktop;
+                }
             }
 
             .form__col {
-                flex: $list-theme-product-view-line-item-form-col-flex-desktop;
                 margin-left: $list-theme-product-view-line-item-form-margin-left-desktop;
             }
         }
@@ -43,21 +46,15 @@
             }
 
             &__content {
-                padding: $list-theme-product-view-shopping-lists-content-inner-offset-desktop;
+                min-height: $list-theme-product-view-shopping-lists-content-min-height-desktop;
             }
 
             &__icon {
                 top: $list-theme-product-view-shopping-lists-icon-top-desktop;
             }
-
-            &__text {
-                margin-bottom: $list-theme-product-view-shopping-lists-text-margin-bottom-desktop;
-            }
         }
 
         .product-view-quantity {
-            flex: $list-theme-product-view-quantity-flex-desktop;
-
             &__unit {
                 a.select2-choice,
                 .select--full {
