@@ -47,88 +47,7 @@ class ProductControllerTest extends WebTestCase
 
     public function testCreate()
     {
-        $crawler = $this->client->request('GET', $this->getUrl('oro_product_create'));
-        $this->assertEquals(
-            1,
-            $crawler->filterXPath("//li/a[contains(text(),'".ProductTestHelper::CATEGORY_MENU_NAME."')]")->count()
-        );
-
-        $this->assertEquals(
-            1,
-            $crawler->filterXPath("//select/option[contains(text(),'Simple')]")->count()
-        );
-
-        $this->assertEquals(
-            1,
-            $crawler->filterXPath("//select/option[contains(text(),'Configurable')]")->count()
-        );
-
-        $form = $crawler->selectButton('Continue')->form();
-        $formValues = $form->getPhpValues();
-        $formValues['input_action'] = 'oro_product_create';
-        $formValues['oro_product_step_one']['category'] = ProductTestHelper::CATEGORY_ID;
-        $formValues['oro_product_step_one']['type'] = Product::TYPE_SIMPLE;
-        $formValues['oro_product_step_one']['attributeFamily'] = ProductTestHelper::ATTRIBUTE_FAMILY_ID;
-
-        $this->client->followRedirects(true);
-        $crawler = $this->client->request(
-            'POST',
-            $this->getUrl('oro_product_create'),
-            $formValues
-        );
-
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-        $this->assertEquals(
-            0,
-            $crawler->filterXPath("//li/a[contains(text(),'".ProductTestHelper::CATEGORY_MENU_NAME."')]")->count()
-        );
-        $this->assertContains("Category: ".ProductTestHelper::CATEGORY_NAME, $crawler->html());
-
-        $form = $crawler->selectButton('Save and Close')->form();
-        $this->assertDefaultProductUnit($form);
-
-        $formValues = $form->getPhpValues();
-        $formValues['oro_product']['sku'] = ProductTestHelper::TEST_SKU;
-        $formValues['oro_product']['owner'] = $this->getBusinessUnitId();
-        $formValues['oro_product']['inventory_status'] = Product::INVENTORY_STATUS_IN_STOCK;
-        $formValues['oro_product']['status'] = Product::STATUS_DISABLED;
-        $formValues['oro_product']['names']['values']['default'] = ProductTestHelper::DEFAULT_NAME;
-        $formValues['oro_product']['descriptions']['values']['default'] = ProductTestHelper::DEFAULT_DESCRIPTION;
-        $formValues['oro_product']['shortDescriptions']['values']['default'] =
-            ProductTestHelper::DEFAULT_SHORT_DESCRIPTION;
-        $formValues['oro_product']['type'] = Product::TYPE_SIMPLE;
-        $formValues['oro_product']['additionalUnitPrecisions'][] = [
-            'unit' => ProductTestHelper::FIRST_UNIT_CODE,
-            'precision' => ProductTestHelper::FIRST_UNIT_PRECISION,
-            'conversionRate' => 10,
-            'sell' => true,
-        ];
-
-        $formValues['oro_product']['images'][] = [
-            'main' => 1,
-            'listing' => 1,
-            'additional' => 1
-        ];
-
-        $filesData['oro_product']['images'][] = [
-            'image' => [
-                'file' => $this->createUploadedFile(ProductTestHelper::FIRST_IMAGE_FILENAME)
-            ]
-        ];
-
-        $this->client->followRedirects(true);
-        $crawler = $this->client->request($form->getMethod(), $form->getUri(), $formValues, $filesData);
-
-        $result = $this->client->getResponse();
-        $this->assertHtmlResponseStatusCodeEquals($result, 200);
-
-        $html = $crawler->html();
-        $this->assertContains('Product has been saved', $html);
-        $this->assertContains(ProductTestHelper::TEST_SKU, $html);
-        $this->assertContains(ProductTestHelper::INVENTORY_STATUS, $html);
-        $this->assertContains(ProductTestHelper::STATUS, $html);
-        $this->assertContains(ProductTestHelper::FIRST_UNIT_CODE, $html);
+        $crawler = $this->createProduct();
 
         $expectedProductImageMatrix = [
             self::$expectedProductImageMatrixHeaders,
@@ -153,8 +72,6 @@ class ProductControllerTest extends WebTestCase
     {
         $product = $this->getProductDataBySku(ProductTestHelper::TEST_SKU);
         $id = $product->getId();
-        $localization = $this->getLocalization();
-        $localizedName = $this->getLocalizedName($product, $localization);
 
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_update', ['id' => $id]));
         $this->assertEquals(
@@ -165,80 +82,7 @@ class ProductControllerTest extends WebTestCase
         $form = $crawler->selectButton('Save and Close')->form();
 
         $data = $form->getPhpValues()['oro_product'];
-        $submittedData = [
-            'input_action' => 'save_and_stay',
-            'oro_product' => array_merge($data, [
-                '_token' => $form['oro_product[_token]']->getValue(),
-                'sku' => ProductTestHelper::UPDATED_SKU,
-                'owner' => $this->getBusinessUnitId(),
-                'inventory_status' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
-                'status' => Product::STATUS_ENABLED,
-                'type' => Product::TYPE_SIMPLE,
-                'primaryUnitPrecision' => [
-                    'unit' => ProductTestHelper::FIRST_UNIT_CODE,
-                    'precision' => ProductTestHelper::FIRST_UNIT_PRECISION,
-                ],
-                'additionalUnitPrecisions' => [
-                    [
-                        'unit' => ProductTestHelper::SECOND_UNIT_CODE,
-                        'precision' => ProductTestHelper::SECOND_UNIT_PRECISION,
-                        'conversionRate' => 2, 'sell' => false
-                    ],
-                    [
-                        'unit' => ProductTestHelper::THIRD_UNIT_CODE,
-                        'precision' => ProductTestHelper::THIRD_UNIT_PRECISION,
-                        'conversionRate' => 3, 'sell' => true
-                    ]
-                ],
-                'names' => [
-                    'values' => [
-                        'default' => ProductTestHelper::DEFAULT_NAME_ALTERED,
-                        'localizations' => [
-                            $localization->getId() => [
-                                'fallback' => FallbackType::SYSTEM
-                            ]
-                        ],
-                    ],
-                    'ids' => [
-                        $localization->getId() => $localizedName->getId()
-                    ],
-                ],
-                'descriptions' => [
-                    'values' => [
-                        'default' => ProductTestHelper::DEFAULT_DESCRIPTION,
-                        'localizations' => [
-                            $localization->getId() => ['fallback' => FallbackType::SYSTEM
-                            ]
-                        ],
-                    ],
-                    'ids' => [
-                        $localization->getId() => $localizedName->getId()
-                    ],
-                ],
-                'shortDescriptions' => [
-                    'values' => [
-                        'default' => ProductTestHelper::DEFAULT_SHORT_DESCRIPTION,
-                        'localizations' => [
-                            $localization->getId() => [
-                                'fallback' => FallbackType::SYSTEM
-                            ]
-                        ],
-                    ],
-                    'ids' => [
-                        $localization->getId() => $localizedName->getId()
-                    ],
-                ],
-                'images' => [
-                    0 => [
-                        'main' => 1,
-                        'listing' => 1
-                    ],
-                    1 => [
-                        'additional' => 1
-                    ]
-                ]
-            ]),
-        ];
+        $submittedData = $this->getSubmittedData($data, $product, $form);
 
         $filesData = [
             'oro_product' => [
@@ -947,6 +791,184 @@ class ProductControllerTest extends WebTestCase
         sort($result);
 
         return $result;
+    }
+
+    /**
+     * @return Crawler
+     */
+    protected function createProduct()
+    {
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_create'));
+        $this->assertEquals(
+            1,
+            $crawler->filterXPath("//li/a[contains(text(),'".ProductTestHelper::CATEGORY_MENU_NAME."')]")->count()
+        );
+
+        $this->assertEquals(
+            1,
+            $crawler->filterXPath("//select/option[contains(text(),'Simple')]")->count()
+        );
+
+        $this->assertEquals(
+            1,
+            $crawler->filterXPath("//select/option[contains(text(),'Configurable')]")->count()
+        );
+
+        $form = $crawler->selectButton('Continue')->form();
+        $formValues = $form->getPhpValues();
+        $formValues['input_action'] = 'oro_product_create';
+        $formValues['oro_product_step_one']['category'] = ProductTestHelper::CATEGORY_ID;
+        $formValues['oro_product_step_one']['type'] = Product::TYPE_SIMPLE;
+        $formValues['oro_product_step_one']['attributeFamily'] = ProductTestHelper::ATTRIBUTE_FAMILY_ID;
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->request(
+            'POST',
+            $this->getUrl('oro_product_create'),
+            $formValues
+        );
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+        $this->assertEquals(
+            0,
+            $crawler->filterXPath("//li/a[contains(text(),'".ProductTestHelper::CATEGORY_MENU_NAME."')]")->count()
+        );
+        $this->assertContains("Category: ".ProductTestHelper::CATEGORY_NAME, $crawler->html());
+
+        $form = $crawler->selectButton('Save and Close')->form();
+        $this->assertDefaultProductUnit($form);
+
+        $formValues = $form->getPhpValues();
+        $formValues['oro_product']['sku'] = ProductTestHelper::TEST_SKU;
+        $formValues['oro_product']['owner'] = $this->getBusinessUnitId();
+        $formValues['oro_product']['inventory_status'] = Product::INVENTORY_STATUS_IN_STOCK;
+        $formValues['oro_product']['status'] = Product::STATUS_DISABLED;
+        $formValues['oro_product']['names']['values']['default'] = ProductTestHelper::DEFAULT_NAME;
+        $formValues['oro_product']['descriptions']['values']['default'] = ProductTestHelper::DEFAULT_DESCRIPTION;
+        $formValues['oro_product']['shortDescriptions']['values']['default'] =
+            ProductTestHelper::DEFAULT_SHORT_DESCRIPTION;
+        $formValues['oro_product']['type'] = Product::TYPE_SIMPLE;
+        $formValues['oro_product']['additionalUnitPrecisions'][] = [
+            'unit' => ProductTestHelper::FIRST_UNIT_CODE,
+            'precision' => ProductTestHelper::FIRST_UNIT_PRECISION,
+            'conversionRate' => 10,
+            'sell' => true,
+        ];
+
+        $formValues['oro_product']['images'][] = [
+            'main' => 1,
+            'listing' => 1,
+            'additional' => 1
+        ];
+
+        $filesData['oro_product']['images'][] = [
+            'image' => [
+                'file' => $this->createUploadedFile(ProductTestHelper::FIRST_IMAGE_FILENAME)
+            ]
+        ];
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->request($form->getMethod(), $form->getUri(), $formValues, $filesData);
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $html = $crawler->html();
+        $this->assertContains('Product has been saved', $html);
+        $this->assertContains(ProductTestHelper::TEST_SKU, $html);
+        $this->assertContains(ProductTestHelper::INVENTORY_STATUS, $html);
+        $this->assertContains(ProductTestHelper::STATUS, $html);
+        $this->assertContains(ProductTestHelper::FIRST_UNIT_CODE, $html);
+
+        return $crawler;
+    }
+
+    /**
+     * @param array $data
+     * @param Product $product
+     * @param Form $form
+     * @return array
+     */
+    protected function getSubmittedData(array $data, Product $product, Form $form)
+    {
+        $localization = $this->getLocalization();
+        $localizedName = $this->getLocalizedName($product, $localization);
+
+        return [
+            'input_action' => 'save_and_stay',
+            'oro_product' => array_merge($data, [
+                '_token' => $form['oro_product[_token]']->getValue(),
+                'sku' => ProductTestHelper::UPDATED_SKU,
+                'owner' => $this->getBusinessUnitId(),
+                'inventory_status' => Product::INVENTORY_STATUS_OUT_OF_STOCK,
+                'status' => Product::STATUS_ENABLED,
+                'type' => Product::TYPE_SIMPLE,
+                'primaryUnitPrecision' => [
+                    'unit' => ProductTestHelper::FIRST_UNIT_CODE,
+                    'precision' => ProductTestHelper::FIRST_UNIT_PRECISION,
+                ],
+                'additionalUnitPrecisions' => [
+                    [
+                        'unit' => ProductTestHelper::SECOND_UNIT_CODE,
+                        'precision' => ProductTestHelper::SECOND_UNIT_PRECISION,
+                        'conversionRate' => 2, 'sell' => false
+                    ],
+                    [
+                        'unit' => ProductTestHelper::THIRD_UNIT_CODE,
+                        'precision' => ProductTestHelper::THIRD_UNIT_PRECISION,
+                        'conversionRate' => 3, 'sell' => true
+                    ]
+                ],
+                'names' => [
+                    'values' => [
+                        'default' => ProductTestHelper::DEFAULT_NAME_ALTERED,
+                        'localizations' => [
+                            $localization->getId() => [
+                                'fallback' => FallbackType::SYSTEM
+                            ]
+                        ],
+                    ],
+                    'ids' => [
+                        $localization->getId() => $localizedName->getId()
+                    ],
+                ],
+                'descriptions' => [
+                    'values' => [
+                        'default' => ProductTestHelper::DEFAULT_DESCRIPTION,
+                        'localizations' => [
+                            $localization->getId() => ['fallback' => FallbackType::SYSTEM
+                            ]
+                        ],
+                    ],
+                    'ids' => [
+                        $localization->getId() => $localizedName->getId()
+                    ],
+                ],
+                'shortDescriptions' => [
+                    'values' => [
+                        'default' => ProductTestHelper::DEFAULT_SHORT_DESCRIPTION,
+                        'localizations' => [
+                            $localization->getId() => [
+                                'fallback' => FallbackType::SYSTEM
+                            ]
+                        ],
+                    ],
+                    'ids' => [
+                        $localization->getId() => $localizedName->getId()
+                    ],
+                ],
+                'images' => [
+                    0 => [
+                        'main' => 1,
+                        'listing' => 1
+                    ],
+                    1 => [
+                        'additional' => 1
+                    ]
+                ]
+            ]),
+        ];
     }
 
     /**

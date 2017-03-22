@@ -157,6 +157,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
 
     public function testCreateEntity()
     {
+        $this->markTestSkipped('skipped due to issue BB-7759');
         $entityType = $this->getEntityType(InventoryLevel::class);
 
         $data = [
@@ -191,6 +192,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
 
     public function testCreateEntityWithDefaultUnit()
     {
+        $this->markTestSkipped('skipped due to issue BB-7759');
         $entityType = $this->getEntityType(InventoryLevel::class);
 
         $data = [
