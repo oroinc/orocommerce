@@ -5,14 +5,14 @@ namespace Oro\Bundle\PricingBundle\ImportExport\Strategy;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
-use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 
 class ProductPriceResetStrategy extends ProductPriceImportStrategy
 {
     /**
-     * @var QueryHintResolverInterface
+     * @var ShardManager
      */
-    protected $hintResolver;
+    protected $shardManager;
 
     /**
      * @var array
@@ -31,12 +31,12 @@ class ProductPriceResetStrategy extends ProductPriceImportStrategy
             $identifier = $this->databaseHelper->getIdentifier($priceList);
             if ($identifier && empty($this->processedPriceLists[$identifier])) {
                 $recordsToDelete = $this->getProductPriceRepository()
-                    ->countByPriceList($this->hintResolver, $priceList);
+                    ->countByPriceList($this->shardManager, $priceList);
                 if ($recordsToDelete) {
                     $this->context->incrementDeleteCount($recordsToDelete);
                 }
 
-                $this->getProductPriceRepository()->deleteByPriceList($this->hintResolver, $priceList);
+                $this->getProductPriceRepository()->deleteByPriceList($this->shardManager, $priceList);
 
                 $this->processedPriceLists[$identifier] = true;
             }
@@ -79,10 +79,10 @@ class ProductPriceResetStrategy extends ProductPriceImportStrategy
     }
 
     /**
-     * @param QueryHintResolverInterface $hintResolver
+     * @param ShardManager $shardManager
      */
-    public function setHintResolver(QueryHintResolverInterface $hintResolver)
+    public function setShardManager(ShardManager $shardManager)
     {
-        $this->hintResolver = $hintResolver;
+        $this->shardManager = $shardManager;
     }
 }

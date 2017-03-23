@@ -14,17 +14,17 @@ use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var QueryHintResolverInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShardManager|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $hintResolver;
+    protected $shardManager;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
@@ -67,7 +67,7 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->hintResolver = $this->createMock(QueryHintResolverInterface::class);
+        $this->shardManager = $this->createMock(ShardManager::class);
 
         $this->listener = $this->createListener();
     }
@@ -81,7 +81,7 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
             $this->translator,
             $this->priceListRequestHandler,
             $this->doctrineHelper,
-            $this->hintResolver
+            $this->shardManager
         );
     }
 
@@ -296,7 +296,7 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
             $this->setUpRepository()
                 ->expects($this->any())
                 ->method('findByPriceListIdAndProductIds')
-                ->with($this->hintResolver, $priceListId, $productIds)
+                ->with($this->shardManager, $priceListId, $productIds)
                 ->willReturn($prices);
         }
 

@@ -6,7 +6,7 @@ services:
             - '@oro_pricing.model.price_list_request_handler'
             - '@oro_pricing.user_currency_manager'
             - '@oro_pricing.formatter.product_price_formatter'
-            - '@oro_entity.query_hint_resolver'
+            - '@oro_pricing.shard_manager'
         tags:
             - { name: layout.data_provider, alias: frontend_product_prices }
 

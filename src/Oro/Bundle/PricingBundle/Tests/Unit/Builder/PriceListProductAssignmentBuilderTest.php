@@ -14,16 +14,16 @@ use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\BasePriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
 use Oro\Bundle\PricingBundle\Event\AssignmentBuilderBuildEvent;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class PriceListProductAssignmentBuilderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var QueryHintResolverInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShardManager|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $hintResolver;
+    protected $shardManager;
 
     /**
      * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
@@ -60,14 +60,14 @@ class PriceListProductAssignmentBuilderTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $this->eventDispatcher = $this->createMock(EventDispatcherInterface::class);
-        $this->hintResolver = $this->createMock(QueryHintResolverInterface::class);
+        $this->shardManager = $this->createMock(ShardManager::class);
 
         $this->priceListProductAssignmentBuilder = new PriceListProductAssignmentBuilder(
             $this->registry,
             $this->insertFromSelectQueryExecutor,
             $this->ruleCompiler,
             $this->eventDispatcher,
-            $this->hintResolver
+            $this->shardManager
         );
     }
 

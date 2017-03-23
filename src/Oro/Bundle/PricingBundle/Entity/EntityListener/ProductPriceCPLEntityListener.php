@@ -2,16 +2,15 @@
 
 namespace Oro\Bundle\PricingBundle\Entity\EntityListener;
 
-use Doctrine\ORM\Event\PreUpdateEventArgs;
-
 use Oro\Bundle\CommerceEntityBundle\Storage\ExtraActionEntityStorageInterface;
 use Oro\Bundle\PricingBundle\Async\Topics;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Event\ProductPriceRemove;
+use Oro\Bundle\PricingBundle\Event\ProductPriceSaveAfterEvent;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\ProductBundle\Entity\Product;
-
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
 class ProductPriceCPLEntityListener
@@ -47,33 +46,21 @@ class ProductPriceCPLEntityListener
     }
 
     /**
-     * @param ProductPrice $productPrice
+     * @param ProductPriceSaveAfterEvent $event
      */
-    public function prePersist(ProductPrice $productPrice)
+    public function onSave(ProductPriceSaveAfterEvent $event)
     {
+        $productPrice = $event->getPrice();
         $this->handleChanges($productPrice);
         $this->addPriceListToProductRelation($productPrice);
     }
 
     /**
-     * @param ProductPrice $productPrice
+     * @param ProductPriceRemove $event
      */
-    public function preRemove(ProductPrice $productPrice)
+    public function onRemove(ProductPriceRemove $event)
     {
-        $this->handleChanges($productPrice);
-    }
-
-    /**
-     * @param ProductPrice $productPrice
-     * @param PreUpdateEventArgs $event
-     */
-    public function preUpdate(ProductPrice $productPrice, PreUpdateEventArgs $event)
-    {
-        if ($event->hasChangedField('product') || $event->hasChangedField('priceList')) {
-            $this->addPriceListToProductRelation($productPrice);
-        }
-
-        $this->handleChanges($productPrice);
+        $this->handleChanges($event->getPrice());
     }
 
     /**
@@ -100,39 +87,14 @@ class ProductPriceCPLEntityListener
         $priceList = $productPrice->getPriceList();
         $product = $productPrice->getProduct();
 
-        if ($this->isPriceListToProductScheduled($priceList, $product)) {
-            return;
-        }
-
         if (null === $this->findRelation($product, $priceList)) {
             $relation = new PriceListToProduct();
             $relation->setPriceList($priceList)
                 ->setProduct($product);
-            $this->extraActionsStorage->scheduleForExtraInsert($relation);
+            $em = $this->registry->getManagerForClass(ProductPrice::class);
+            $em->persist($relation);
+            $em->flush($relation);
         }
-    }
-
-    /**
-     * @param PriceList $priceList
-     * @param Product $product
-     * @return bool
-     */
-    protected function isPriceListToProductScheduled(PriceList $priceList, Product $product)
-    {
-        /** @var PriceListToProduct[] $scheduledForInsert */
-        $scheduledForInsert = $this->extraActionsStorage->getScheduledForInsert(
-            PriceListToProduct::class
-        );
-
-        foreach ($scheduledForInsert as $scheduled) {
-            if ($scheduled->getProduct()->getId() === $product->getId()
-                && $scheduled->getPriceList()->getId() === $priceList->getId()
-            ) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     /**

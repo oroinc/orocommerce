@@ -18,7 +18,7 @@ services:
         public: false
         parent: oro_pricing.importexport.strategy.product_price.add_or_replace
         calls:
-            - [setHintResolver, ['@oro_entity.query_hint_resolver']]
+            - [setShardManager, ['@oro_pricing.shard_manager']]
 
     # Template Fixture
     oro_pricing.importexport.template_fixture.product_price:

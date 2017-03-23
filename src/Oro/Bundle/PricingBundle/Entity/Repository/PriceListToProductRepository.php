@@ -3,13 +3,15 @@
 namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-
 use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
 use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
+use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 class PriceListToProductRepository extends EntityRepository
@@ -46,12 +48,19 @@ class PriceListToProductRepository extends EntityRepository
     }
 
     /**
+     * @param ShardManager $shardManager
      * @param PriceList $priceList
      * @return \Iterator
      */
-    public function getProductsWithoutPrices(PriceList $priceList)
+    public function getProductsWithoutPrices(ShardManager $shardManager, PriceList $priceList)
     {
-        return new BufferedIdentityQueryResultIterator($this->getProductsWithoutPricesQueryBuilder($priceList));
+        $query = $this->getProductsWithoutPricesQueryBuilder($priceList)
+            ->getQuery();
+
+        $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
+        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
+
+        return new BufferedIdentityQueryResultIterator($query);
     }
 
     /**

@@ -12,16 +12,16 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
 use Symfony\Component\Translation\TranslatorInterface;
 
 class ProductPriceDatagridListener
 {
     /**
-     * @var QueryHintResolverInterface
+     * @var ShardManager
      */
-    protected $hintResolver;
+    protected $shardManager;
 
     /**
      * @var TranslatorInterface
@@ -47,18 +47,18 @@ class ProductPriceDatagridListener
      * @param TranslatorInterface $translator
      * @param PriceListRequestHandler $priceListRequestHandler
      * @param DoctrineHelper $doctrineHelper
-     * @param QueryHintResolverInterface $hintResolver
+     * @param ShardManager $shardManager
      */
     public function __construct(
         TranslatorInterface $translator,
         PriceListRequestHandler $priceListRequestHandler,
         DoctrineHelper $doctrineHelper,
-        QueryHintResolverInterface $hintResolver
+        ShardManager $shardManager
     ) {
         $this->translator = $translator;
         $this->priceListRequestHandler = $priceListRequestHandler;
         $this->doctrineHelper = $doctrineHelper;
-        $this->hintResolver = $hintResolver;
+        $this->shardManager = $shardManager;
     }
 
     /**
@@ -269,7 +269,7 @@ class ProductPriceDatagridListener
 
         $priceList = $this->getPriceList();
         return $priceRepository->findByPriceListIdAndProductIds(
-            $this->hintResolver,
+            $this->shardManager,
             $priceList->getId(),
             $productIds,
             $showTierPrices

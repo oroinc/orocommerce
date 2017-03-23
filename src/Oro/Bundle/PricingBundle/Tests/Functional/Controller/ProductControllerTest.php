@@ -2,25 +2,24 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
-use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
-use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\DomCrawler\Form;
-
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\FilterBundle\Form\Type\Filter\NumberFilterType;
-use Oro\Bundle\PricingBundle\Entity\ProductPrice;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\DomCrawler\Form;
 
 class ProductControllerTest extends WebTestCase
 {
     /**
      * @var
      */
-    protected $hintResolver;
+    protected $shardManager;
 
     /**
      * @var array
@@ -37,7 +36,7 @@ class ProductControllerTest extends WebTestCase
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
         $this->loadFixtures([LoadProductPrices::class]);
-        $this->hintResolver = $this->getContainer()->get('oro_entity.query_hint_resolver');
+        $this->shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
     }
 
     public function testSidebar()
@@ -299,7 +298,7 @@ class ProductControllerTest extends WebTestCase
             ->getManagerForClass('OroPricingBundle:ProductPrice')
             ->getRepository('OroPricingBundle:ProductPrice')
             ->findByPriceList(
-                $this->hintResolver,
+                $this->shardManager,
                 $priceList,
                 [
                     'product' => $product,

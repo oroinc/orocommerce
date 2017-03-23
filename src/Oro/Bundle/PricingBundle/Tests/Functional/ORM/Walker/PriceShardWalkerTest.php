@@ -47,7 +47,7 @@ DQL;
             'priceList' => 2,
             'priceListManual' => 2
         ]);
-
+        $this->getContainer()->get('oro_pricing.shard_manager')->setEnableSharding(true);
         $this->getContainer()->get('oro_entity.query_hint_resolver')->resolveHints($query, ['HINT_PRICE_SHARD']);
         $sql = $query->getSQL();
         $this->assertContains(' oro_price_product_1 ', $sql);

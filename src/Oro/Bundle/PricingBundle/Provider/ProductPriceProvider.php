@@ -7,14 +7,14 @@ use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
-use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 
 class ProductPriceProvider
 {
     /**
-     * @var QueryHintResolverInterface
+     * @var ShardManager
      */
-    protected $hintResolver;
+    protected $shardManager;
 
     /**
      * @var ManagerRegistry
@@ -28,12 +28,12 @@ class ProductPriceProvider
 
     /**
      * @param ManagerRegistry $registry
-     * @param QueryHintResolverInterface $hintResolver
+     * @param ShardManager $shardManager
      */
-    public function __construct(ManagerRegistry $registry, QueryHintResolverInterface $hintResolver)
+    public function __construct(ManagerRegistry $registry, ShardManager $shardManager)
     {
         $this->registry = $registry;
-        $this->hintResolver = $hintResolver;
+        $this->shardManager = $shardManager;
 
     }
 
@@ -47,7 +47,7 @@ class ProductPriceProvider
     {
         $result = [];
         $prices = $this->getRepository()->findByPriceListIdAndProductIds(
-            $this->hintResolver,
+            $this->shardManager,
             $priceListId,
             $productIds,
             true,
@@ -84,7 +84,7 @@ class ProductPriceProvider
         }
 
         $prices = $this->getRepository()->getPricesBatch(
-            $this->hintResolver,
+            $this->shardManager,
             $priceList->getId(),
             $productIds,
             $productUnitCodes,

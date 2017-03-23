@@ -40,12 +40,12 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
 
     public function testOnCreate()
     {
-        /** @var EntityManagerInterface $em */
-        $em = $this->getContainer()->get('doctrine')->getManager();
+        /** @var EntityManagerInterface $priceManager */
+        $priceManager = $this->getContainer()->get('oro_pricing.manager.price_manager');
 
         // create two prices with same product and priceList
         // to ensure that duplicate triggers won't be flushed
-        $em->persist(
+        $priceManager->persist(
             $this->getProductPrice(
                 LoadProductData::PRODUCT_5,
                 LoadPriceLists::PRICE_LIST_1,
@@ -53,7 +53,7 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
                 10
             )
         );
-        $em->persist(
+        $priceManager->persist(
             $this->getProductPrice(
                 LoadProductData::PRODUCT_5,
                 LoadPriceLists::PRICE_LIST_1,
@@ -61,9 +61,10 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
                 100
             )
         );
-        $em->flush();
+        $priceManager->flush();
 
         // assert that needed productPriceRelationCreated
+        $em = $this->getContainer()->get('doctrine')->getManagerForClass(ProductPrice::class);
         $plToProductRelations = $em->getRepository('OroPricingBundle:PriceListToProduct')->findBy([
             'product' => $this->getReference(LoadProductData::PRODUCT_5),
             'priceList' => $this->getReference(LoadPriceLists::PRICE_LIST_1),
@@ -73,12 +74,13 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
 
     public function testOnUpdateChangeTriggerCreated()
     {
-        /** @var EntityManagerInterface $em */
-        $em = $this->getContainer()->get('doctrine')->getManager();
+        /** @var EntityManagerInterface $priceManager */
+        $priceManager = $this->getContainer()->get('oro_pricing.manager.price_manager');
         /** @var ProductPrice $productPrice */
         $productPrice = $this->getReference(LoadProductPrices::PRODUCT_PRICE_4);
         $productPrice->setPrice(Price::create(1000, 'EUR'));
-        $em->flush();
+        $priceManager->persist($productPrice);
+        $priceManager->flush();
         $handler = $this->getContainer()->get('oro_pricing.price_list_trigger_handler');
         $this->assertAttributeCount(1, 'scheduledTriggers', $handler);
     }
@@ -101,6 +103,11 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
         $productPrice2->setPriceList($newPriceList);
 
         $productPrice3->setQuantity(10000);
+        $priceManager = $this->getContainer()->get('oro_pricing.manager.price_manager');
+        $priceManager->persist($productPrice1);
+        $priceManager->persist($productPrice2);
+        $priceManager->persist($productPrice3);
+        $priceManager->flush();
 
         $em = $this->getContainer()->get('doctrine')->getManager();
         $em->flush();
@@ -124,10 +131,10 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
 
     public function testOnDelete()
     {
-        $em = $this->getContainer()->get('doctrine')->getManager();
-        $em->remove($this->getReference(LoadProductPrices::PRODUCT_PRICE_1));
-        $em->remove($this->getReference(LoadProductPrices::PRODUCT_PRICE_2));
-        $em->flush();
+        $priceManager = $this->getContainer()->get('oro_pricing.manager.price_manager');
+        $priceManager->remove($this->getReference(LoadProductPrices::PRODUCT_PRICE_1));
+        $priceManager->remove($this->getReference(LoadProductPrices::PRODUCT_PRICE_2));
+        $priceManager->flush();
 
         $handler = $this->getContainer()->get('oro_pricing.price_list_trigger_handler');
         $this->assertAttributeCount(1, 'scheduledTriggers', $handler);

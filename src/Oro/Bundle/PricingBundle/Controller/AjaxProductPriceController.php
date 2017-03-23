@@ -3,18 +3,16 @@
 namespace Oro\Bundle\PricingBundle\Controller;
 
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
-
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-
-use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListProductPriceType;
+use Oro\Bundle\SecurityBundle\Annotation\Acl;
+use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 class AjaxProductPriceController extends AbstractAjaxProductPriceController
 {
@@ -35,7 +33,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
      * @Route(
      *     "/update/{priceList}/{id}",
      *     name="oro_product_price_update_widget",
-     *     requirements={"id"="\d+", "priceListId"="\d+"}
+     *     requirements={"priceListId"="\d+"}
      * )
      * @Template("OroPricingBundle:ProductPrice:widget/update.html.twig")
      * @Acl(
@@ -52,7 +50,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
         $priceList = $this->getDoctrine()->getRepository(PriceList::class)->find($request->get('priceList'));
         $prices = $this->getDoctrine()->getRepository(ProductPrice::class)
             ->findByPriceList(
-                $this->get('oro_entity.query_hint_resolver'),
+                $this->get('oro_pricing.shard_manager'),
                 $priceList,
                 ['id' => $request->get('id')]
             );

@@ -9,10 +9,10 @@ use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
 use Oro\Bundle\PricingBundle\Layout\DataProvider\FrontendProductPricesProvider;
 use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
@@ -20,9 +20,9 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
     use EntityTrait;
 
     /**
-     * @var QueryHintResolverInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShardManager|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $hintResolver;
+    protected $shardManager;
 
     /**
      * @var FrontendProductPricesProvider
@@ -66,14 +66,14 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
             ->getMockBuilder('Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter')
             ->disableOriginalConstructor()
             ->getMock();
-        $this->hintResolver = $this->createMock(QueryHintResolverInterface::class);
+        $this->shardManager = $this->createMock(ShardManager::class);
 
         $this->provider = new FrontendProductPricesProvider(
             $this->doctrineHelper,
             $this->priceListRequestHandler,
             $this->userCurrencyManager,
             $this->productPriceFormatter,
-            $this->hintResolver
+            $this->shardManager
         );
     }
 
@@ -114,7 +114,7 @@ class FrontendProductPricesProviderTest extends \PHPUnit_Framework_TestCase
 
         $repo->expects($this->once())
             ->method('findByPriceListIdAndProductIds')
-            ->with($this->hintResolver, $priceListId, [$productId], true, 'EUR', null, $priceSorting)
+            ->with($this->shardManager, $priceListId, [$productId], true, 'EUR', null, $priceSorting)
             ->willReturn($prices);
 
         $this->doctrineHelper->expects($this->once())

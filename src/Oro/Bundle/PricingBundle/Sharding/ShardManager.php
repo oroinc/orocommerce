@@ -96,11 +96,9 @@ class ShardManager implements \Serializable
      */
     public function create($className, $shardName)
     {
-        if (!$this->enableSharding) {
-            return;
-        }
         $baseTableName = $this->getBaseTableName($className);
         $connection = $this->getConnection();
+
         $sm = $connection->getSchemaManager();
 
         /** @var Table $table */
@@ -167,17 +165,16 @@ class ShardManager implements \Serializable
      */
     protected function getConnection()
     {
-        /** @var EntityManager $em */
-        $em = $this->registry->getManager();
-        $connection = $em->getConnection();
-        if ($connection->getDriver()->getName() === DatabaseDriverInterface::DRIVER_MYSQL) {
-            $em = $this->registry->getManager('price');
-            $connection = $em->getConnection();
-        }
-
-        return $connection;
+        return $this->getEntityManager()->getConnection();
     }
 
+    /**
+     * @return EntityManager
+     */
+    public function getEntityManager()
+    {
+        return $this->registry->getManager();
+    }
     /**
      * @param string $shardName
      * @param Constraint $asset
@@ -323,7 +320,6 @@ class ShardManager implements \Serializable
         if ($connection->getDriver()->getName() === DatabaseDriverInterface::DRIVER_MYSQL) {
             $createQuery = $createQueries[0];
             $constraints = [];
-            //ALTER TABLE oro_price_product ADD CONSTRAINT FK_F47F707A1F68CB0D FOREIGN KEY (price_rule_id) REFERENCES oro_price_rule (id) ON DELETE CASCADE
             foreach ($createQueries as $query) {
                 if (strpos($query, 'ALTER TABLE') === 0) {
                     $constraints[] = substr($query, strpos($query, 'CONSTRAINT'));

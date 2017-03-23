@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PricingBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -300,5 +299,13 @@ class BaseProductPrice implements ProductUnitHolderInterface, ProductHolderInter
     public function getProductUnitCode()
     {
         return $this->getUnit()->getCode();
+    }
+
+    /**
+     * @param string $id
+     */
+    public function setId($id)
+    {
+        $this->id = $id;
     }
 }

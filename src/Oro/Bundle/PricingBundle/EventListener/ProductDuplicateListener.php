@@ -4,8 +4,8 @@ namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
-use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
 
 class ProductDuplicateListener
 {
@@ -20,9 +20,9 @@ class ProductDuplicateListener
     protected $productPriceClass;
 
     /**
-     * @var QueryHintResolverInterface
+     * @var ShardManager
      */
-    protected $hintResolver;
+    protected $shardManager;
 
     /**
      * @param DoctrineHelper $doctrineHelper
@@ -50,13 +50,13 @@ class ProductDuplicateListener
         $product = $event->getProduct();
         $sourceProduct = $event->getSourceProduct();
 
-        $productPrices = $this->getProductPriceRepository()->getPricesByProduct($this->hintResolver, $sourceProduct);
+        $productPrices = $this->getProductPriceRepository()->getPricesByProduct($this->shardManager, $sourceProduct);
         $objectManager = $this->doctrineHelper->getEntityManager($this->productPriceClass);
 
         foreach ($productPrices as $productPrice) {
             $productPriceCopy = clone $productPrice;
             $productPriceCopy->setProduct($product);
-            $this->getProductPriceRepository()->persist($this->hintResolver, $productPriceCopy);
+            $this->getProductPriceRepository()->save($this->shardManager, $productPriceCopy);
         }
 
         $objectManager->flush();
@@ -71,10 +71,10 @@ class ProductDuplicateListener
     }
 
     /**
-     * @param QueryHintResolverInterface $hintResolver
+     * @param ShardManager $shardManager
      */
-    public function setHintResolver(QueryHintResolverInterface $hintResolver)
+    public function setShardManager(ShardManager $shardManager)
     {
-        $this->hintResolver = $hintResolver;
+        $this->shardManager = $shardManager;
     }
 }

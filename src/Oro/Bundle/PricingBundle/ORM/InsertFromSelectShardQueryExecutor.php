@@ -4,14 +4,12 @@ namespace Oro\Bundle\PricingBundle\ORM;
 
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Select;
-use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Doctrine\ORM\QueryBuilder;
+use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\EntityBundle\ORM\NativeQueryExecutorHelper;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
-use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
-use Oro\Component\DoctrineUtils\ORM\QueryUtils;
 
 class InsertFromSelectShardQueryExecutor extends InsertFromSelectQueryExecutor
 {
@@ -25,7 +23,7 @@ class InsertFromSelectShardQueryExecutor extends InsertFromSelectQueryExecutor
      * @param NativeQueryExecutorHelper $helper
      * @param $shardManager
      */
-    public function __construct(NativeQueryExecutorHelper $helper, $shardManager)
+    public function __construct(NativeQueryExecutorHelper $helper, ShardManager $shardManager)
     {
         $this->shardManager = $shardManager;
         parent::__construct($helper);
@@ -49,7 +47,7 @@ class InsertFromSelectShardQueryExecutor extends InsertFromSelectQueryExecutor
 
         $sql = sprintf('insert into %s (%s) %s', $insertToTableName, implode(', ', $columns), $selectQuery->getSQL());
 
-        return $this->helper->getManager($className)->getConnection()->executeUpdate($sql, $params, $types);
+        return $this->shardManager->getEntityManager()->getConnection()->executeUpdate($sql, $params, $types);
     }
 
     /**

@@ -7,16 +7,16 @@ use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\EventListener\ProductDuplicateListener;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
-use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
 
 class ProductDuplicateListenerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var QueryHintResolverInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShardManager|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $hintResolver;
+    protected $shardManager;
 
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|DoctrineHelper
@@ -58,7 +58,7 @@ class ProductDuplicateListenerTest extends \PHPUnit_Framework_TestCase
         $this->product = new Product();
         $this->sourceProduct = new Product();
 
-        $this->hintResolver = $this->createMock(QueryHintResolverInterface::class);
+        $this->shardManager = $this->createMock(ShardManager::class);
 
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
@@ -86,21 +86,21 @@ class ProductDuplicateListenerTest extends \PHPUnit_Framework_TestCase
         $this->listener = new ProductDuplicateListener();
         $this->listener->setProductPriceClass($this->productPriceClass);
         $this->listener->setDoctrineHelper($this->doctrineHelper);
-        $this->listener->setHintResolver($this->hintResolver);
+        $this->listener->setshardManager($this->shardManager);
     }
 
     public function testOnDuplicateAfter()
     {
         $this->productPriceRepository->expects($this->once())
             ->method('getPricesByProduct')
-            ->with($this->hintResolver, $this->sourceProduct)
+            ->with($this->shardManager, $this->sourceProduct)
             ->will($this->returnValue(
                 [new ProductPrice(), new ProductPrice(), new ProductPrice()]
             ));
 
         $this->productPriceRepository
             ->expects($this->exactly(3))
-            ->method('persist');
+            ->method('save');
 
         $event = new ProductDuplicateAfterEvent($this->product, $this->sourceProduct);
 
@@ -111,14 +111,14 @@ class ProductDuplicateListenerTest extends \PHPUnit_Framework_TestCase
     {
         $this->productPriceRepository->expects($this->once())
             ->method('getPricesByProduct')
-            ->with($this->hintResolver, $this->sourceProduct)
+            ->with($this->shardManager, $this->sourceProduct)
             ->will($this->returnValue(
                 []
             ));
 
         $this->productPriceRepository
             ->expects($this->never())
-            ->method('persist');
+            ->method('save');
 
         $event = new ProductDuplicateAfterEvent($this->product, $this->sourceProduct);
 

@@ -4,10 +4,10 @@ namespace Oro\Bundle\PricingBundle\Migrations\Data\Demo\ORM;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\ORM\EntityManager;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Manager\PriceManager;
 
 class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
 {
@@ -42,7 +42,7 @@ class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
             ],
         ];
 
-
+        $priceManager = $this->container->get('oro_pricing.manager.price_manager');
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
 
@@ -65,9 +65,9 @@ class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
                         ->setQuantity(1)
                         ->setPrice($price);
 
-                    $manager->persist($productPrice);
+                    $priceManager->persist($productPrice);
 
-                    $this->createPriceTiers($manager, $productPrice, $price);
+                    $this->createPriceTiers($priceManager, $productPrice, $price);
                 }
             }
         }
@@ -78,12 +78,15 @@ class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
     }
 
     /**
-     * @param ObjectManager $manager
+     * @param PriceManager $priceManager
      * @param ProductPrice $productPrice
      * @param Price $unitPrice
      */
-    protected function createPriceTiers(ObjectManager $manager, ProductPrice $productPrice, Price $unitPrice)
-    {
+    protected function createPriceTiers(
+        PriceManager $priceManager,
+        ProductPrice $productPrice,
+        Price $unitPrice
+    ) {
         $tiers = [
             10  => 0.05,
             20  => 0.10,
@@ -96,7 +99,7 @@ class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
             $price
                 ->setQuantity($qty)
                 ->setPrice($unitPrice->setValue(round($unitPrice->getValue() * (1 - $discount), 2)));
-            $manager->persist($price);
+            $priceManager->persist($price);
         }
     }
 

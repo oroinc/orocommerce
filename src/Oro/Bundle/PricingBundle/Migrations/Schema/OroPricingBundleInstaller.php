@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PricingBundle\Migrations\Schema;
 
 use Doctrine\DBAL\Schema\Schema;
-
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
@@ -182,7 +181,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
     protected function createOroPriceProductTable(Schema $schema)
     {
         $table = $schema->createTable('oro_price_product');
-        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('id', 'string', ['length' => 36, 'comment' => '(DC2Type:guid)']);
         $table->addColumn('price_rule_id', 'integer', ['notnull' => false]);
         $table->addColumn('unit_code', 'string', ['length' => 255]);
         $table->addColumn('product_id', 'integer', []);

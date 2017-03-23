@@ -6,8 +6,8 @@ use Doctrine\ORM\Event\LifecycleEventArgs;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Event\ProductPricesRemoveAfter;
 use Oro\Bundle\PricingBundle\Event\ProductPricesRemoveBefore;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -26,9 +26,9 @@ class ProductUnitPrecisionListener
     protected $eventDispatcher;
 
     /**
-     * @var QueryHintResolverInterface
+     * @var ShardManager
      */
-    protected $hintResolver;
+    protected $shardManager;
 
     /**
      * @param LifecycleEventArgs $event
@@ -44,13 +44,14 @@ class ProductUnitPrecisionListener
             if (!$product->getId()) {
                 return;
             }
-            $args = ['unit' => $product, 'product' => $unit];
+            //TODO: check reindex for prices
+            $args = ['unit' => $unit, 'product' => $product];
             $this->eventDispatcher
                 ->dispatch(ProductPricesRemoveBefore::NAME, new ProductPricesRemoveBefore($args));
             
             /** @var ProductPriceRepository $repository */
             $repository = $event->getEntityManager()->getRepository($this->productPriceClass);
-            $repository->deleteByProductUnit($this->hintResolver, $product, $unit);
+            $repository->deleteByProductUnit($this->shardManager, $product, $unit);
             $this->eventDispatcher
                 ->dispatch(ProductPricesRemoveAfter::NAME, new ProductPricesRemoveAfter($args));
         }
@@ -79,10 +80,10 @@ class ProductUnitPrecisionListener
     }
 
     /**
-     * @param QueryHintResolverInterface $hintResolver
+     * @param ShardManager $shardManager
      */
-    public function setHintResolver(QueryHintResolverInterface $hintResolver)
+    public function setShardManager(ShardManager $shardManager)
     {
-        $this->hintResolver = $hintResolver;
+        $this->shardManager = $shardManager;
     }
 }

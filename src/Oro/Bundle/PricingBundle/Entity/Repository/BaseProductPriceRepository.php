@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\EntityRepository;
+use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
@@ -13,19 +14,19 @@ use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
 
 abstract class BaseProductPriceRepository extends EntityRepository
 {
     /**
-     * @param QueryHintResolverInterface $hintResolver
+     * @param ShardManager $shardManager
      * @param Product $product
      * @param ProductUnit $unit
      */
     public function deleteByProductUnit(
-        QueryHintResolverInterface $hintResolver,
+        ShardManager $shardManager,
         Product $product,
         ProductUnit $unit
     ) {
@@ -49,24 +50,26 @@ abstract class BaseProductPriceRepository extends EntityRepository
                 ->setParameter('product', $product);
 
             $query = $qb->getQuery();
-            $hintResolver->resolveHints($query, [PriceShardWalker::HINT_PRICE_SHARD]);
+            $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
+            $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
             $query->execute();
         }
     }
 
     /**
-     * @param QueryHintResolverInterface $hintResolver
+     * @param ShardManager $shardManager
      * @param BasePriceList $priceList
      * @param Product $product
      */
     public function deleteByPriceList(
-        QueryHintResolverInterface $hintResolver,
+        ShardManager $shardManager,
         BasePriceList $priceList,
         Product $product = null
     ) {
         $query = $this->getDeleteQbByPriceList($priceList, $product)
             ->getQuery();
-        $hintResolver->resolveHints($query, [PriceShardWalker::HINT_PRICE_SHARD]);
+        $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
+        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
         $query->execute();
     }
 
@@ -92,11 +95,11 @@ abstract class BaseProductPriceRepository extends EntityRepository
     }
 
     /**
-     * @param QueryHintResolverInterface $hintResolver
+     * @param ShardManager $shardManager
      * @param PriceList $priceList
      * @return int
      */
-    public function countByPriceList(QueryHintResolverInterface $hintResolver, PriceList $priceList)
+    public function countByPriceList(ShardManager $shardManager, PriceList $priceList)
     {
         $qb = $this->createQueryBuilder('productPrice');
 
@@ -106,18 +109,43 @@ abstract class BaseProductPriceRepository extends EntityRepository
             ->setParameter('priceList', $priceList)
             ->getQuery();
 
-        $hintResolver->resolveHints($query, [PriceShardWalker::HINT_PRICE_SHARD]);
+        $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
+        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
 
         return (int)$query
             ->getSingleScalarResult();
     }
 
     /**
-     * @param QueryHintResolverInterface $hintResolver
+     * @deprecated Fetch currencies from config instead
+     * @return array
+     */
+    public function getAvailableCurrencies()
+    {
+        $qb = $this->createQueryBuilder('productPrice');
+
+        $currencies = $qb
+            ->distinct()
+            ->select('productPrice.currency')
+            ->orderBy($qb->expr()->asc('productPrice.currency'))
+            ->getQuery()
+            ->getArrayResult();
+
+        $result = [];
+        foreach ($currencies as $currency) {
+            $currencyName = reset($currency);
+            $result[$currencyName] = $currencyName;
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param ShardManager $shardManager
      * @param Product $product
      * @return ProductPrice[]
      */
-    public function getPricesByProduct(QueryHintResolverInterface $hintResolver, Product $product)
+    public function getPricesByProduct(ShardManager $shardManager, Product $product)
     {
         $priceLists = $this->getPriceListIdsByProduct($product);
 
@@ -134,7 +162,10 @@ abstract class BaseProductPriceRepository extends EntityRepository
         foreach ($priceLists as $priceListId) {
             $qb->setParameter('priceList', $priceListId);
             $query = $qb->getQuery();
-            $hintResolver->resolveHints($query, [PriceShardWalker::HINT_PRICE_SHARD]);
+            $query->useQueryCache(false);
+            $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
+            $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
+
             $pricesByPriceList = $query->getResult();
             $prices = array_merge($prices, $pricesByPriceList);
         }
@@ -145,7 +176,7 @@ abstract class BaseProductPriceRepository extends EntityRepository
     /**
      * Return product prices for specified price list and product IDs
      *
-     * @param QueryHintResolverInterface $hintResolver
+     * @param ShardManager $shardManager
      * @param int $priceListId
      * @param array $productIds
      * @param bool $getTierPrices
@@ -155,7 +186,7 @@ abstract class BaseProductPriceRepository extends EntityRepository
      * @return ProductPrice[]
      */
     public function findByPriceListIdAndProductIds(
-        QueryHintResolverInterface $hintResolver,
+        ShardManager $shardManager,
         $priceListId,
         array $productIds,
         $getTierPrices = true,
@@ -177,7 +208,9 @@ abstract class BaseProductPriceRepository extends EntityRepository
         );
 
         $query = $qb->getQuery();
-        $hintResolver->resolveHints($query, [PriceShardWalker::HINT_PRICE_SHARD]);
+        $query->useQueryCache(false);
+        $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
+        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
 
         return $query->getResult();
     }
@@ -237,7 +270,7 @@ abstract class BaseProductPriceRepository extends EntityRepository
     }
 
     /**
-     * @param QueryHintResolverInterface $hintResolver
+     * @param ShardManager $shardManager
      * @param int $priceListId
      * @param array $productIds
      * @param array $productUnitCodes
@@ -245,7 +278,7 @@ abstract class BaseProductPriceRepository extends EntityRepository
      * @return array
      */
     public function getPricesBatch(
-        QueryHintResolverInterface $hintResolver,
+        ShardManager $shardManager,
         $priceListId,
         array $productIds,
         array $productUnitCodes,
@@ -285,27 +318,31 @@ abstract class BaseProductPriceRepository extends EntityRepository
         }
 
         $query = $qb->getQuery();
-        $hintResolver->resolveHints($query, [PriceShardWalker::HINT_PRICE_SHARD]);
+        $query->useQueryCache(false);
+        $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
+        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
 
         return $query->getArrayResult();
     }
 
     /**
-     * @param QueryHintResolverInterface $hintResolver
+     * @param ShardManager $shardManager
      * @param BasePriceList $priceList
      * @param Product $product
      * @param string|null $currency
      * @return ProductUnit[]
      */
     public function getProductUnitsByPriceList(
-        QueryHintResolverInterface $hintResolver,
+        ShardManager $shardManager,
         BasePriceList $priceList,
         Product $product,
         $currency = null
     ) {
         $qb = $this->getProductUnitsByPriceListQueryBuilder($priceList, $product, $currency);
         $query = $qb->getQuery();
-        $hintResolver->resolveHints($query, [PriceShardWalker::HINT_PRICE_SHARD]);
+        $query->useQueryCache(false);
+        $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
+        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
 
         return $query->getResult();
     }
@@ -342,14 +379,14 @@ abstract class BaseProductPriceRepository extends EntityRepository
     }
 
     /**
-     * @param QueryHintResolverInterface $hintResolver
+     * @param ShardManager $shardManager
      * @param BasePriceList $priceList
      * @param Collection $products
      * @param string $currency
      * @return array
      */
     public function getProductsUnitsByPriceList(
-        QueryHintResolverInterface $hintResolver,
+        ShardManager $shardManager,
         BasePriceList $priceList,
         Collection $products,
         $currency
@@ -368,7 +405,9 @@ abstract class BaseProductPriceRepository extends EntityRepository
                 'currency' => $currency,
             ]);
         $query = $qb->getQuery();
-        $hintResolver->resolveHints($query, [PriceShardWalker::HINT_PRICE_SHARD]);
+        $query->useQueryCache(false);
+        $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
+        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
         $productsUnits = $query->getResult();
 
         $result = [];
@@ -449,7 +488,7 @@ abstract class BaseProductPriceRepository extends EntityRepository
     }
 
     /**
-     * @param QueryHintResolverInterface $hintResolver
+     * @param ShardManager $shardManager
      * @param BasePriceList $priceList
      * @param array $criteria
      * @param array $orderBy
@@ -458,7 +497,7 @@ abstract class BaseProductPriceRepository extends EntityRepository
      * @return array|BaseProductPrice[]
      */
     public function findByPriceList(
-        QueryHintResolverInterface $hintResolver,
+        ShardManager $shardManager,
         BasePriceList $priceList,
         array $criteria,
         array $orderBy = [],
@@ -488,7 +527,9 @@ abstract class BaseProductPriceRepository extends EntityRepository
             $qb->setFirstResult($offset);
         }
         $query = $qb->getQuery();
-        $hintResolver->resolveHints($query, [PriceShardWalker::HINT_PRICE_SHARD]);
+        $query->useQueryCache(false);
+        $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
+        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
 
         return $query->getResult();
     }
@@ -510,5 +551,25 @@ abstract class BaseProductPriceRepository extends EntityRepository
             ->getScalarResult();
 
         return array_map('current', $result);
+    }
+
+    /**
+     * @param ShardManager $shardManager
+     * @param BaseProductPrice $price
+     */
+    public function save(ShardManager $shardManager, BaseProductPrice $price)
+    {
+        $this->_em->persist($price);
+        $this->_em->flush($price);
+    }
+
+    /**
+     * @param ShardManager $shardManager
+     * @param BaseProductPrice $price
+     */
+    public function remove(ShardManager $shardManager, BaseProductPrice $price)
+    {
+        $this->_em->remove($price);
+        $this->_em->flush($price);
     }
 }

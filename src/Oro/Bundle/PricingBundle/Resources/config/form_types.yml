@@ -85,7 +85,8 @@ services:
         class: 'Oro\Bundle\PricingBundle\Form\Extension\ProductFormExtension'
         arguments:
             - "@doctrine"
-            - '@oro_entity.query_hint_resolver'
+            - '@oro_pricing.shard_manager'
+            - '@oro_pricing.manager.price_manager'
         tags:
             - { name: form.type_extension, alias: oro_product }
 

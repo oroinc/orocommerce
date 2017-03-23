@@ -4,14 +4,19 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\UnitOfWork;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Form\Extension\ProductFormExtension;
 use Oro\Bundle\PricingBundle\Form\Type\ProductPriceCollectionType;
+use Oro\Bundle\PricingBundle\Manager\PriceManager;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\PricingBundle\Validator\Constraints\UniqueProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
-use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
@@ -23,14 +28,24 @@ use Symfony\Component\Form\FormInterface;
 class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var QueryHintResolverInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var UnitOfWork
      */
-    protected $hintResolver;
+    protected $uow;
+
+    /**
+     * @var PriceManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $priceManager;
+
+    /**
+     * @var ShardManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $shardManager;
 
     /**
      * @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $priceManager;
+    protected $em;
 
     /**
      * @var ProductPriceRepository|\PHPUnit_Framework_MockObject_MockObject
@@ -49,8 +64,13 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
                 ->disableOriginalConstructor()
                 ->getMock();
 
-        $this->priceManager = $this->createMock('Doctrine\Common\Persistence\ObjectManager');
-        $this->priceManager->expects($this->any())
+        $this->em = $this->createMock(EntityManager::class);
+        $this->uow = $this->getMockBuilder(UnitOfWork::class)->disableOriginalConstructor()->getMock();
+        $this->uow;
+
+        $this->em->method('getUnitOfWork')->willReturn($this->uow);
+        $this->em->method('getClassMetadata')->willReturn($this->createMock(ClassMetadata::class));
+        $this->em->expects($this->any())
             ->method('getRepository')
             ->with('OroPricingBundle:ProductPrice')
             ->willReturn($this->priceRepository);
@@ -60,9 +80,11 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
         $registry->expects($this->any())
             ->method('getManagerForClass')
             ->with('OroPricingBundle:ProductPrice')
-            ->willReturn($this->priceManager);
-        $this->hintResolver = $this->createMock(QueryHintResolverInterface::class);
-        $this->extension = new ProductFormExtension($registry, $this->hintResolver);
+            ->willReturn($this->em);
+        $this->shardManager = $this->createMock(ShardManager::class);
+        $this->priceManager = $this->createMock(PriceManager::class);
+
+        $this->extension = new ProductFormExtension($registry, $this->shardManager, $this->priceManager);
     }
 
     public function testGetExtendedType()
@@ -116,7 +138,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
 
             $this->priceRepository->expects($this->once())
                 ->method('getPricesByProduct')
-                ->with($this->hintResolver, $product)
+                ->with($this->shardManager, $product)
                 ->willReturn($prices);
 
             /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $pricesForm */
@@ -173,7 +195,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('getData')
             ->willReturn([$priceOne, $priceTwo]);
 
-        $this->priceManager->expects($this->never())
+        $this->em->expects($this->never())
             ->method('persist');
 
         $this->extension->onPostSubmit($event);
@@ -183,9 +205,11 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $product = $this->createProduct();
         $event = $this->createEvent($product);
-
+        $priceList = new PriceList();
         $priceOne = $this->createProductPrice(1);
         $priceTwo = $this->createProductPrice(2);
+        $priceOne->setPriceList($priceList);
+        $priceTwo->setPriceList($priceList);
 
         $this->assertPriceAdd($event, [$priceOne, $priceTwo]);
         $this->priceRepository->expects($this->never())
@@ -202,18 +226,22 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
         $product = $this->createProduct(1);
         $event = $this->createEvent($product);
 
+        $priceList = new PriceList();
         $priceOne = $this->createProductPrice(1);
         $priceTwo = $this->createProductPrice(2);
         $removedPrice = $this->createProductPrice(3);
+        $priceOne->setPriceList($priceList);
+        $priceTwo->setPriceList($priceList);
+        $removedPrice->setPriceList($priceList);
 
         $this->assertPriceAdd($event, [$priceOne, $priceTwo]);
         $this->priceRepository->expects($this->once())
             ->method('getPricesByProduct')
             ->will($this->returnValue([$removedPrice]));
 
-        $this->priceRepository->expects($this->once())
+        $this->priceManager->expects($this->once())
             ->method('remove')
-            ->with($this->hintResolver, $removedPrice);
+            ->with($removedPrice);
 
         $this->extension->onPostSubmit($event);
 
@@ -292,7 +320,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->method('getData')
             ->will($this->returnValue($prices));
 
-        $this->priceRepository->expects($this->exactly(count($prices)))
+        $this->priceManager->expects($this->exactly(count($prices)))
             ->method('persist');
     }
 }

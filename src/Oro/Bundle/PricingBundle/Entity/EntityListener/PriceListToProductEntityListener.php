@@ -11,8 +11,8 @@ use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Event\AssignmentBuilderBuildEvent;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\Model\PriceRuleLexemeTriggerHandler;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
 
 class PriceListToProductEntityListener
 {
@@ -20,9 +20,9 @@ class PriceListToProductEntityListener
     const FIELD_PRODUCT = 'product';
 
     /**
-     * @var QueryHintResolverInterface
+     * @var ShardManager
      */
-    protected $hintResolver;
+    protected $shardManager;
 
     /**
      * @var PriceListTriggerHandler
@@ -37,16 +37,16 @@ class PriceListToProductEntityListener
     /**
      * @param PriceListTriggerHandler $priceListTriggerHandler
      * @param PriceRuleLexemeTriggerHandler $priceRuleLexemeTriggerHandler
-     * @param QueryHintResolverInterface $hintResolver
+     * @param ShardManager $shardManager
      */
     public function __construct(
         PriceListTriggerHandler $priceListTriggerHandler,
         PriceRuleLexemeTriggerHandler $priceRuleLexemeTriggerHandler,
-        QueryHintResolverInterface $hintResolver
+        ShardManager $shardManager
     ) {
         $this->priceListTriggerHandler = $priceListTriggerHandler;
         $this->priceRuleLexemeTriggerHandler = $priceRuleLexemeTriggerHandler;
-        $this->hintResolver = $hintResolver;
+        $this->shardManager = $shardManager;
     }
 
     /**
@@ -78,7 +78,7 @@ class PriceListToProductEntityListener
         $event->getEntityManager()
             ->getRepository(ProductPrice::class)
             ->deleteByPriceList(
-                $this->hintResolver,
+                $this->shardManager,
                 $priceListToProduct->getPriceList(),
                 $priceListToProduct->getProduct()
             );

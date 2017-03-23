@@ -6,10 +6,10 @@ use Doctrine\ORM\EntityManager;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
 
 class InsertFromSelectShardQueryExecutorTest extends WebTestCase
 {
@@ -19,9 +19,9 @@ class InsertFromSelectShardQueryExecutorTest extends WebTestCase
     protected $insertSelectExecutor;
 
     /**
-     * @var QueryHintResolverInterface
+     * @var ShardManager
      */
-    protected $hintResolver;
+    protected $shardManager;
 
     /**
      * @var EntityManager
@@ -34,7 +34,7 @@ class InsertFromSelectShardQueryExecutorTest extends WebTestCase
         $this->loadFixtures([LoadProductPrices::class]);
         $this->em = $this->getContainer()->get('doctrine')->getManagerForClass(ProductPrice::class);
         $this->insertSelectExecutor = $this->getContainer()->get('oro_pricing.orm.insert_from_select_query_executor');
-        $this->hintResolver = $this->getContainer()->get('oro_entity.query_hint_resolver');
+        $this->shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
     }
 
     public function testInsert()
@@ -44,10 +44,11 @@ class InsertFromSelectShardQueryExecutorTest extends WebTestCase
 
         /** @var ProductPriceRepository $repository */
         $repository = $this->em->getRepository(ProductPrice::class);
-        $repository->deleteByPriceList($this->hintResolver, $priceListInto);
+        $repository->deleteByPriceList($this->shardManager, $priceListInto);
 
         $qb = $this->em->createQueryBuilder();
         $qb->select([
+            'UUID()',
             'IDENTITY(prices.product)',
             'prices.productSku',
             'prices.quantity',
@@ -60,11 +61,11 @@ class InsertFromSelectShardQueryExecutorTest extends WebTestCase
             ->where('prices.priceList = :priceList')
             ->setParameter('priceList', $priceListFrom);
 
-        $fields = ['product', 'productSku', 'quantity', 'unit', 'value', 'priceList', 'currency'];
+        $fields = ['id','product', 'productSku', 'quantity', 'unit', 'value', 'priceList', 'currency'];
         $this->insertSelectExecutor->execute(ProductPrice::class, $fields, $qb);
 
-        $originalCount = $repository->countByPriceList($this->hintResolver, $priceListFrom);
-        $countSaved = $repository->countByPriceList($this->hintResolver, $priceListInto);
+        $originalCount = $repository->countByPriceList($this->shardManager, $priceListFrom);
+        $countSaved = $repository->countByPriceList($this->shardManager, $priceListInto);
         $this->assertEquals($originalCount, $countSaved);
     }
 }

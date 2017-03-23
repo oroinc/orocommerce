@@ -11,8 +11,8 @@ use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
 
 class CombinedProductPriceRepository extends BaseProductPriceRepository
 {
@@ -173,7 +173,7 @@ class CombinedProductPriceRepository extends BaseProductPriceRepository
      * {@inheritdoc}
      */
     public function findByPriceListIdAndProductIds(
-        QueryHintResolverInterface $hintResolver,
+        ShardManager $shardManager,
         $priceListId,
         array $productIds,
         $getTierPrices = true,

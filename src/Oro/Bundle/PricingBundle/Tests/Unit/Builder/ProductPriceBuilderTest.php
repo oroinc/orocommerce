@@ -15,15 +15,15 @@ use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
 
 class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var QueryHintResolverInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShardManager|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $hintResolver;
+    protected $shardManager;
 
     /**
      * @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject
@@ -62,13 +62,13 @@ class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
         $this->priceListTriggerHandler = $this->getMockBuilder(PriceListTriggerHandler::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->hintResolver = $this->createMock(QueryHintResolverInterface::class);
+        $this->shardManager = $this->createMock(ShardManager::class);
         $this->productPriceBuilder = new ProductPriceBuilder(
             $this->registry,
             $this->insertFromSelectQueryExecutor,
             $this->ruleCompiler,
             $this->priceListTriggerHandler,
-            $this->hintResolver
+            $this->shardManager
         );
     }
 
@@ -83,7 +83,7 @@ class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
         $repo = $this->getRepositoryMock();
         $repo->expects($this->once())
             ->method('deleteGeneratedPrices')
-            ->with($this->hintResolver, $priceList, $product);
+            ->with($this->shardManager, $priceList, $product);
 
         $this->insertFromSelectQueryExecutor->expects($this->never())
             ->method($this->anything());
@@ -103,7 +103,7 @@ class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
         $repo = $this->getRepositoryMock();
         $repo->expects($this->once())
             ->method('deleteGeneratedPrices')
-            ->with($this->hintResolver, $priceList, null);
+            ->with($this->shardManager, $priceList, null);
 
         $this->insertFromSelectQueryExecutor->expects($this->never())
             ->method($this->anything());
@@ -135,7 +135,7 @@ class ProductPriceBuilderTest extends \PHPUnit_Framework_TestCase
         $repo = $this->getRepositoryMock();
         $repo->expects($this->once())
             ->method('deleteGeneratedPrices')
-            ->with($this->hintResolver, $priceList, $product);
+            ->with($this->shardManager, $priceList, $product);
 
         $qb = $this->assertInsertCall($fields, [$rule1, $rule2], $product);
 

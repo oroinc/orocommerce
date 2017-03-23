@@ -11,15 +11,15 @@ use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Model\PriceListTriggerHandler;
 use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Component\DoctrineUtils\ORM\QueryHintResolverInterface;
 
 class ProductPriceBuilder
 {
     /**
-     * @var QueryHintResolverInterface
+     * @var ShardManager
      */
-    protected $hintResolver;
+    protected $shardManager;
 
     /**
      * @var ManagerRegistry
@@ -51,20 +51,20 @@ class ProductPriceBuilder
      * @param InsertFromSelectShardQueryExecutor $insertFromSelectQueryExecutor
      * @param PriceListRuleCompiler $ruleCompiler
      * @param PriceListTriggerHandler $priceListTriggerHandler
-     * @param QueryHintResolverInterface $hintResolver
+     * @param ShardManager $shardManager
      */
     public function __construct(
         ManagerRegistry $registry,
         InsertFromSelectShardQueryExecutor $insertFromSelectQueryExecutor,
         PriceListRuleCompiler $ruleCompiler,
         PriceListTriggerHandler $priceListTriggerHandler,
-        QueryHintResolverInterface $hintResolver
+        ShardManager $shardManager
     ) {
         $this->registry = $registry;
         $this->insertFromSelectQueryExecutor = $insertFromSelectQueryExecutor;
         $this->ruleCompiler = $ruleCompiler;
         $this->priceListTriggerHandler = $priceListTriggerHandler;
-        $this->hintResolver = $hintResolver;
+        $this->shardManager = $shardManager;
     }
 
     /**
@@ -73,7 +73,7 @@ class ProductPriceBuilder
      */
     public function buildByPriceList(PriceList $priceList, Product $product = null)
     {
-        $this->getProductPriceRepository()->deleteGeneratedPrices($this->hintResolver, $priceList, $product);
+        $this->getProductPriceRepository()->deleteGeneratedPrices($this->shardManager, $priceList, $product);
         if (count($priceList->getPriceRules()) > 0) {
             $rules = $this->getSortedRules($priceList);
             foreach ($rules as $rule) {
