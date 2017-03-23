@@ -589,6 +589,8 @@ services:
             - '@oro_layout.loader.image_filter'
             - '@oro_layout.provider.image_type'
             - '@oro_attachment.image_resizer'
+            - '@oro_attachment.media_cache_manager'
+            - '@oro_attachment.manager'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 

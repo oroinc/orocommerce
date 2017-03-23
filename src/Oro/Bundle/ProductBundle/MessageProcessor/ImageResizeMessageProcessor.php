@@ -4,6 +4,8 @@ namespace Oro\Bundle\ProductBundle\MessageProcessor;
 
 use Doctrine\ORM\EntityRepository;
 
+use Oro\Bundle\AttachmentBundle\Manager\AttachmentManager;
+use Oro\Bundle\AttachmentBundle\Manager\MediaCacheManager;
 use Oro\Bundle\AttachmentBundle\Resizer\ImageResizer;
 use Oro\Bundle\LayoutBundle\Loader\ImageFilterLoader;
 use Oro\Bundle\LayoutBundle\Model\ThemeImageTypeDimension;
@@ -40,22 +42,38 @@ class ImageResizeMessageProcessor implements MessageProcessorInterface, TopicSub
     protected $imageResizer;
 
     /**
+     * @var MediaCacheManager
+     */
+    private $mediaCacheManager;
+
+    /**
+     * @var AttachmentManager
+     */
+    private $attachmentManager;
+
+    /**
      * @param EntityRepository $imageRepository
      * @param ImageFilterLoader $filterLoader
      * @param ImageTypeProvider $imageTypeProvider
      * @param ImageResizer $imageResizer
+     * @param MediaCacheManager $mediaCacheManager
+     * @param AttachmentManager $attachmentManager
      */
     public function __construct(
         EntityRepository $imageRepository,
         ImageFilterLoader $filterLoader,
         ImageTypeProvider $imageTypeProvider,
-        ImageResizer $imageResizer
+        ImageResizer $imageResizer,
+        MediaCacheManager $mediaCacheManager,
+        AttachmentManager $attachmentManager
     ) {
 
         $this->imageRepository = $imageRepository;
         $this->filterLoader = $filterLoader;
         $this->imageTypeProvider = $imageTypeProvider;
         $this->imageResizer = $imageResizer;
+        $this->mediaCacheManager = $mediaCacheManager;
+        $this->attachmentManager = $attachmentManager;
     }
 
     /**
@@ -84,7 +102,14 @@ class ImageResizeMessageProcessor implements MessageProcessorInterface, TopicSub
         $this->filterLoader->load();
 
         foreach ($this->getDimensionsForProductImage($productImage) as $dimension) {
-            $this->imageResizer->resizeImage($productImage->getImage(), $dimension->getName(), $data['force']);
+            $imagePath = $this->attachmentManager->getFilteredImageUrl($productImage->getImage(), $dimension->getName());
+            if (!$data['force'] && $this->mediaCacheManager->exists($imagePath)) {
+                continue;
+            }
+
+            if ($filteredImage = $this->imageResizer->resizeImage($productImage->getImage(), $dimension->getName())) {
+                $this->mediaCacheManager->store($filteredImage->getContent(), $imagePath);
+            }
         }
 
         return self::ACK;
