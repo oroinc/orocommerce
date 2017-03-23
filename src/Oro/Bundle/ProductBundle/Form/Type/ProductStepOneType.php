@@ -19,7 +19,6 @@ class ProductStepOneType extends AbstractType
     {
         $resolver->setDefaults([
             'intention'            => 'product',
-            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
             'data_class'           => Product::class,
             'validation_groups'    => ['product_create_step_one'],
             'enable_attribute_family' => true,

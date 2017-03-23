@@ -7,7 +7,9 @@ use Oro\Bundle\UPSBundle\DependencyInjection\OroUPSExtension;
 
 class OroUPSExtensionTest extends ExtensionTestCase
 {
-    /** @var OroUPSExtension */
+    /**
+     * @var OroUPSExtension
+     */
     protected $extension;
 
     protected function setUp()
@@ -33,6 +35,12 @@ class OroUPSExtensionTest extends ExtensionTestCase
             'oro_ups.entity_listener.channel',
             'oro_ups.entity_listener.transport',
             'oro_ups.shipping_units_mapper',
+            'oro_ups.disable_integration_listener',
+            'oro_ups.client.url_provider_basic',
+            'oro_ups.client.factory_basic',
+            'oro_ups.connection.validator.request.factory.rate_request',
+            'oro_ups.connection.validator.result.factory',
+            'oro_ups.connection.validator',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }

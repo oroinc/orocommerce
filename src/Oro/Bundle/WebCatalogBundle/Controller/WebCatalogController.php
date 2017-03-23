@@ -104,6 +104,8 @@ class WebCatalogController extends Controller
     public function moveAction(Request $request, WebCatalog $webCatalog)
     {
         $handler = $this->get('oro_web_catalog.content_node_tree_handler');
+        $slugGenerator = $this->get('oro_web_catalog.generator.slug_generator');
+        $contentNodeRepository = $this->getDoctrine()->getRepository("OroWebCatalogBundle:ContentNode");
 
         $root = $handler->getTreeRootByWebCatalog($webCatalog);
         $treeItems = $handler->getTreeItemList($root, true);
@@ -126,12 +128,22 @@ class WebCatalogController extends Controller
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $currentInsertPosition = count($collection->target->getChildren());
+            $createRedirect = (bool)$collection->createRedirect;
+            $handler->setCreateRedirect($createRedirect);
+            $targetContentNode = $contentNodeRepository->find($collection->target->getKey());
+
             foreach ($collection->source as $source) {
+                if ($createRedirect) {
+                    $sourceContentNode = $contentNodeRepository->find($source->getKey());
+                    $urlChanges = $slugGenerator->getSlugsUrlForMovedNode($targetContentNode, $sourceContentNode);
+                }
+
                 $handler->moveNode($source->getKey(), $collection->target->getKey(), $currentInsertPosition);
                 $responseData['changed'][] = [
                     'id' => $source->getKey(),
                     'parent' => $collection->target->getKey(),
-                    'position' => $currentInsertPosition
+                    'position' => $currentInsertPosition,
+                    'urlChanges' => isset($urlChanges) ? $urlChanges : ''
                 ];
                 $currentInsertPosition++;
             }

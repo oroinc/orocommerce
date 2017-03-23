@@ -107,7 +107,6 @@ class InvoiceType extends AbstractType
             [
                 'data_class' => $this->dataClass,
                 'intention' => 'invoice',
-                'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
             ]
         );
     }

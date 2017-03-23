@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShippingBundle\Tests\Functional\Controller\Api\Rest;
 
 use Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule;
+use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRulesWithConfigs;
 use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
@@ -15,12 +16,10 @@ class ShippingMethodsConfigsRuleControllerTest extends WebTestCase
     {
         $this->initClient([]);
         $this->client->useHashNavigation(true);
-        $this->loadFixtures(
-            [
-                'Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRules',
-                'Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadUserData'
-            ]
-        );
+        $this->loadFixtures([
+            LoadShippingMethodsConfigsRulesWithConfigs::class,
+            LoadUserData::class,
+        ]);
     }
 
     public function testDisableAction()

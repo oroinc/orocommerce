@@ -40,7 +40,7 @@ class UPSShippingMethodProvider implements ShippingMethodProviderInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getShippingMethods()
     {
@@ -49,10 +49,8 @@ class UPSShippingMethodProvider implements ShippingMethodProviderInterface
             $this->methods = [];
             /** @var Channel $channel */
             foreach ($channels as $channel) {
-                if ($channel->isEnabled()) {
-                    $method = $this->methodFactory->create($channel);
-                    $this->methods[$method->getIdentifier()] = $method;
-                }
+                $method = $this->methodFactory->create($channel);
+                $this->methods[$method->getIdentifier()] = $method;
             }
         }
 
@@ -60,7 +58,7 @@ class UPSShippingMethodProvider implements ShippingMethodProviderInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getShippingMethod($name)
     {
@@ -72,7 +70,7 @@ class UPSShippingMethodProvider implements ShippingMethodProviderInterface
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function hasShippingMethod($name)
     {
