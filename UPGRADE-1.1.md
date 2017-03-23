@@ -1,6 +1,16 @@
 UPGRADE FROM 1.0.0 to 1.1
 =======================================
 
+####General
+- Changed minimum required php version to 7.0
+- Updated dependency to [fxpio/composer-asset-plugin](https://github.com/fxpio/composer-asset-plugin) composer plugin to version 1.3.
+- Composer updated to version 1.4.
+
+```
+    composer self-update
+    composer global require "fxp/composer-asset-plugin"
+```
+
 Tree Component
 --------------
 - `Oro\Component\Tree\Handler\AbstractTreeHandler`:
@@ -427,3 +437,10 @@ CMSBundle
 UPSBundle
 ---------
 - "Check UPS Connection" button was added on UPS integration page. Please, see [documentation](package/commerce/src/Oro/Bundle/UPSBundle/Resources/doc/credentials-validation.md) for more information.
+
+FrontendLocalizationBundle
+--------------------------
+- Class `Oro\Bundle\FrontendLocalizationBundle\Provider\TranslationPackagesProviderExtension` removed
+- Updated service definition for `oro_frontend_localization.extension.transtation_packages_provider` 
+    - changed class to `Oro\Bundle\FrontendBundle\Provider\TranslationPackagesProviderExtension`
+    - changed publicity to `false`

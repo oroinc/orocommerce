@@ -167,6 +167,7 @@ services:
         class: Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\SearchMessageProcessor
         arguments:
             - '@oro_website_search.indexer'
+            - '@oro_message_queue.job.runner'
         tags:
             - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.website.search.indexer.save' }
             - { name: 'oro_message_queue.client.message_processor', topicName: 'oro.website.search.indexer.delete' }

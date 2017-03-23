@@ -1,4 +1,5 @@
 styles:
     inputs:
         - 'bundles/oroshoppinglist/default/scss/variables/shopping-list-owner-config.scss'
+        - 'bundles/oroshoppinglist/default/scss/variables/shopping-lists-popup-config.scss'
         - 'bundles/oroshoppinglist/default/scss/styles.scss'
