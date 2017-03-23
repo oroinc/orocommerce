@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\InventoryBundle\ImportExport\Reader;
 
-use Doctrine\ORM\QueryBuilder;
-
 use Oro\Bundle\ImportExportBundle\Reader\EntityReader;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
@@ -17,28 +15,30 @@ class InventoryLevelReader extends EntityReader
     /**
      * {@inheritdoc}
      */
-    public function setSourceEntityName($entityName, Organization $organization = null)
+    public function setSourceEntityName($entityName, Organization $organization = null, array $ids = [])
     {
         $this->currentEntityName = $entityName;
-        parent::setSourceEntityName($entityName, $organization);
+        parent::setSourceEntityName($entityName, $organization, $ids);
     }
 
     /**
      * {@inheritdoc}
      */
-    public function setSourceQueryBuilder(QueryBuilder $queryBuilder)
+    protected function createSourceEntityQueryBuilder($entityName, Organization $organization = null, array $ids = [])
     {
+        $qb = parent::createSourceEntityQueryBuilder($entityName, $organization);
+
         switch ($this->currentEntityName) {
             case Product::class:
-                $queryBuilder->orderBy('o.sku', 'ASC');
+                $qb->orderBy('o.sku', 'ASC');
                 break;
             case InventoryLevel::class:
-                $queryBuilder->orderBy('_product.sku', 'ASC');
+                $qb->orderBy('_product.sku', 'ASC');
                 break;
             default:
                 throw new \LogicException(sprintf("Invalid entity name provided: %s", $this->currentEntityName));
         }
 
-        parent::setSourceQueryBuilder($queryBuilder);
+        return $qb;
     }
 }

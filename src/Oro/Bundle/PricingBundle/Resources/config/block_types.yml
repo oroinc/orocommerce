@@ -1,14 +1,8 @@
 services:
     oro_pricing.layout.type.product_prices:
-        parent: oro_layout.block_type.abstract_configurable_container
-        calls:
-            -
-                - setOptionsConfig
-                -
-                    -
-                        productPrices: {required: true}
-                        productUnitSelectionVisible: ~
-            - [setName, ['product_prices']]
+        class: 'Oro\Bundle\PricingBundle\Layout\Block\Type\ProductPricesType'
+        arguments:
+            - '@oro_entity_config.attribute_group_rendrer_registry'
         tags:
              - { name: layout.block_type, alias: product_prices }
 

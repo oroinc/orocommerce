@@ -1,11 +1,18 @@
 {% block oro_product_primary_unit_precision_widget %}
     {% set precisions = {} %}
+    {% set initialAdditionalUnits = {} %}
 
     {% for choice in form.unit.vars.choices %}
         {% set precisions = precisions|merge({ (choice.data.code) : choice.data.defaultPrecision}) %}
     {% endfor %}
+    {% if form.vars.data.product is not null %}
+        {% for addPrecision in form.vars.data.product.additionalUnitPrecisions %}
+            {% set initialAdditionalUnits = initialAdditionalUnits|merge({ (addPrecision.unit.code) : addPrecision.unit.code}) %}
+        {% endfor %}
+    {% endif %}
+
     <div data-page-component-module="oroproduct/js/app/components/product-primary-unit-limitations-component"
-         data-page-component-options="{{ { 'precisions': precisions }|json_encode }}">
+         data-page-component-options="{{ { 'precisions': precisions, 'initialAdditionalUnits': initialAdditionalUnits }|json_encode  }}">
 
         <div class="float-holder">
             <table>

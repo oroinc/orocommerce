@@ -1,0 +1,23 @@
+// @theme: blank;
+
+.product-view-quantity {
+    display: $product-view-quantity-display;
+
+    margin-bottom: $product-view-quantity-margin-bottom;
+
+    &__unit {
+        width: $product-view-quantity-unit-width;
+        margin-right: $product-view-quantity-unit-margin-right;
+    }
+
+    &__value {
+        width: $product-view-quantity-value-width;
+    }
+
+    &__value .input {
+        margin: $product-view-quantity-value-input-offset;
+        padding: $product-view-quantity-value-input-inner-offset;
+
+        text-align: $product-view-quantity-value-input-text-align;
+    }
+}

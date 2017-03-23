@@ -10,3 +10,11 @@
         {{ block_widget(block) }}
     </div>
 {% endblock %}
+
+{% block __oro_product_variant_form__variant_field_form_fields_widget %}
+    {%- if form.parent is empty -%}
+        {{ form_errors(form) }}
+    {%- endif -%}
+    {{- block('form_rows') -}}
+    {{- form_rest(form) -}}
+{% endblock %}

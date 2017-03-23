@@ -2,11 +2,8 @@
 
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Method;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\UPSBundle\Cache\ShippingPriceCache;
 use Oro\Bundle\UPSBundle\Cache\ShippingPriceCacheKey;
@@ -16,7 +13,6 @@ use Oro\Bundle\UPSBundle\Factory\PriceRequestFactory;
 use Oro\Bundle\UPSBundle\Form\Type\UPSShippingMethodOptionsType;
 use Oro\Bundle\UPSBundle\Method\UPSShippingMethod;
 use Oro\Bundle\UPSBundle\Method\UPSShippingMethodType;
-use Oro\Bundle\UPSBundle\Model\Package;
 use Oro\Bundle\UPSBundle\Model\PriceRequest;
 use Oro\Bundle\UPSBundle\Model\PriceResponse;
 use Oro\Bundle\UPSBundle\Provider\UPSTransport as UPSTransportProvider;
@@ -78,7 +74,7 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
             ShippingService::class,
             ['id' => 1, 'code' => 'ups_identifier', 'description' => 'ups_label', 'country' => new Country('US')]
         );
-        
+
         /** @var PriceRequestFactory | \PHPUnit_Framework_MockObject_MockObject $priceRequestFactory */
         $this->priceRequestFactory = $this->createMock(PriceRequestFactory::class);
 
@@ -100,13 +96,19 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
                 $this->transport,
                 $this->transportProvider,
                 $this->priceRequestFactory,
-                $this->cache
+                $this->cache,
+                true
             );
     }
 
     public function testIsGrouped()
     {
         static::assertTrue($this->upsShippingMethod->isGrouped());
+    }
+
+    public function testIsEnabled()
+    {
+        static::assertTrue($this->upsShippingMethod->isEnabled());
     }
 
     public function testGetIdentifier()
@@ -158,12 +160,13 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
      */
     public function testCalculatePrices($methodSurcharge, $typeSurcharge, $expectedPrice)
     {
-        /** @var ShippingContextInterface|\PHPUnit_Framework_MockObject_MockObject $context **/
+        /** @var ShippingContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
         $context = $this->createMock(ShippingContextInterface::class);
 
         $methodOptions = ['surcharge' => $methodSurcharge];
         $optionsByTypes = ['01' => ['surcharge' => $typeSurcharge]];
 
+        /** @var PriceRequest|\PHPUnit_Framework_MockObject_MockObject $priceRequest */
         $priceRequest = $this->createMock(PriceRequest::class);
 
         $this->priceRequestFactory->expects(self::once())->method('create')->willReturn($priceRequest);
@@ -225,7 +228,7 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param string $number
+     * @param string      $number
      * @param string|null $resultURL
      *
      * @dataProvider trackingDataProvider
@@ -251,14 +254,14 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
             ],
             'rightTrackingNumber' => [
                 'number' => '1Z111E111111111111',
-                'resultURL' => UPSShippingMethod::TRACKING_URL.'1Z111E111111111111',
+                'resultURL' => UPSShippingMethod::TRACKING_URL . '1Z111E111111111111',
             ],
         ];
     }
 
     public function testCalculatePricesWithoutCache()
     {
-        /** @var ShippingContextInterface|\PHPUnit_Framework_MockObject_MockObject $context **/
+        /** @var ShippingContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
         $context = $this->createMock(ShippingContextInterface::class);
 
         $methodOptions = ['surcharge' => 10];
@@ -333,7 +336,7 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
 
     public function testCalculatePricesOneWithoutCache()
     {
-        /** @var ShippingContextInterface|\PHPUnit_Framework_MockObject_MockObject $context **/
+        /** @var ShippingContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
         $context = $this->createMock(ShippingContextInterface::class);
 
         $methodOptions = ['surcharge' => 10];
@@ -392,7 +395,8 @@ class UPSShippingMethodTest extends \PHPUnit_Framework_TestCase
             $this->transport,
             $this->transportProvider,
             $this->priceRequestFactory,
-            $this->cache
+            $this->cache,
+            true
         );
 
         $optionsByTypes = [

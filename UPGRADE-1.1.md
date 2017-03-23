@@ -1,10 +1,28 @@
 UPGRADE FROM 1.0.0 to 1.1
 =======================================
 
+####General
+- Changed minimum required php version to 7.0
+- Updated dependency to [fxpio/composer-asset-plugin](https://github.com/fxpio/composer-asset-plugin) composer plugin to version 1.3.
+- Composer updated to version 1.4.
+
+```
+    composer self-update
+    composer global require "fxp/composer-asset-plugin"
+```
+
 Tree Component
 --------------
 - `Oro\Component\Tree\Handler\AbstractTreeHandler`:
     - added method `getTreeItemList`
+    
+WebCatalog Component
+-------------
+- New Interface `Oro\Component\WebCatalog\Entity\WebCatalogAwareInterface`
+    - for entities which are aware of WebCatalogs
+- New Interface `Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface`
+    - provide information about assigned WebCatalogs to given entities (passed as an argument)
+    - provide information about usage of WebCatalog by id
 
 CatalogBundle
 -------------
@@ -70,6 +88,11 @@ CommerceMenuBundle
 FlatRateBundle
 -------------------
 - Change name of the bundle to FlatRateShippingBundle
+
+InventoryBundle
+---------------
+- REST API resource `/api/inventorylevels`
+    - the filter `productUnitPrecision.unit.code` was marked as deprecated. The `productUnitPrecision.unit.id` filter should be used instead
 
 WebsiteSearchBundle
 -------------------
@@ -339,6 +362,9 @@ SaleBundle
     - removed property `protected $configManager`
 - Class `Oro\Bundle\SaleBundle\EventListener\Quote\QuotePossibleShippingMethodsEventListener` removed. 
     - `Oro\Bundle\OrderBundle\EventListener\PossibleShippingMethodEventListener` must be used instead.
+- Removed property `locked` from entity class `Oro\Bundle\SaleBundle\Entity\Quote` with related methods
+- Class `Oro\Bundle\SaleBundle\Notification\NotificationHelper`
+    - removed parameter `request` from constructor
 
 ShoppingListBundle
 ------------------
@@ -386,6 +412,7 @@ ShippingBundle
     - removed `Oro\Bundle\ShippingBundle\QueryDesigner\ShippingProductQueryDesigner`
     - removed `Oro\Bundle\ShippingBundle\ExpressionLanguage\ProductDecorator`
     - class `Oro\Bundle\PaymentBundle\ExpressionLanguage\DecoratedProductLineItemFactory` only dependency is now `Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory`
+- `Oro\Bundle\ShippingBundle\Method\EventListener\AbstractIntegrationRemovalListener` was deprecated, `Oro\Bundle\ShippingBundle\Method\EventListener\IntegrationRemovalListener` was created instead.
 
 WebCatalogBundle
 ----------------
@@ -412,3 +439,14 @@ CMSBundle
 ---------
 - Removed constructor of `Oro\Bundle\CMSBundle\Form\Type\CmsPageVariantType`.
     - corresponding logic moved to `Oro\Bundle\WebCatalogBundle\Form\Extension\PageVariantTypeExtension`
+
+UPSBundle
+---------
+- "Check UPS Connection" button was added on UPS integration page. Please, see [documentation](package/commerce/src/Oro/Bundle/UPSBundle/Resources/doc/credentials-validation.md) for more information.
+
+FrontendLocalizationBundle
+--------------------------
+- Class `Oro\Bundle\FrontendLocalizationBundle\Provider\TranslationPackagesProviderExtension` removed
+- Updated service definition for `oro_frontend_localization.extension.transtation_packages_provider` 
+    - changed class to `Oro\Bundle\FrontendBundle\Provider\TranslationPackagesProviderExtension`
+    - changed publicity to `false`

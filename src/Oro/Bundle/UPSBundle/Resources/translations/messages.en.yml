@@ -5,7 +5,7 @@ oro:
         transport:
             label: UPS API
             labels.label: Label
-            base_url.label: Base URL
+            test_mode.label: Test Mode
             api_user.label: API User
             api_password.label: API Password
             api_key.label: API Key
@@ -47,3 +47,12 @@ oro:
             invalidate_cache.type:
                 immediate: Now
                 scheduled: Schedule Invalidation
+
+        connection_validation:
+            button.text: Check UPS Connection
+            result:
+                authentication.message: Authentication error has occurred: %error_message%
+                measurement_system.message: Measurement error has occurred: %error_message%
+                unexpected_error.message: Unexpected error has occurred: %error_message%. Please, contact system administrator
+                success.message: UPS Connection is valid
+                server_error.message: Connection error has occurred: %error_message%. Please, try again later

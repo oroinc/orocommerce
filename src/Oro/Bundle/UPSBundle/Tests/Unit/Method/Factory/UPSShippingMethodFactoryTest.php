@@ -89,6 +89,9 @@ class UPSShippingMethodFactoryTest extends \PHPUnit_Framework_TestCase
         $channel->expects($this->any())
             ->method('getTransport')
             ->willReturn($settings);
+        $channel->expects($this->any())
+            ->method('isEnabled')
+            ->willReturn(true);
 
         $type1 = $this->createMock(UPSShippingMethodType::class);
         $type2 = $this->createMock(UPSShippingMethodType::class);
@@ -132,7 +135,8 @@ class UPSShippingMethodFactoryTest extends \PHPUnit_Framework_TestCase
             $settings,
             $this->transport,
             $this->priceRequestFactory,
-            $this->shippingPriceCache
+            $this->shippingPriceCache,
+            true
         ), $this->factory->create($channel));
     }
 }
