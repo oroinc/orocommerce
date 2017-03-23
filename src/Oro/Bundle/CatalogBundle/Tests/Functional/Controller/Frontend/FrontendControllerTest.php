@@ -29,7 +29,7 @@ class FrontendControllerTest extends WebTestCase
         $this->assertNotEmpty($content);
         $this->assertContains('list-slider-component', $content);
         $this->assertContains('Featured Products', $content);
-        //Todo: for temporary check on travis
-        //$this->assertContains('Top Selling Items', $content);
+        //Todo: uncomment for temporary check on travis
+        $this->assertContains('Top Selling Items', $content);
     }
 }
