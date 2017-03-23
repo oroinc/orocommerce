@@ -40,12 +40,23 @@ class DelayedJobRunnerDecoratingProcessor implements MessageProcessorInterface
             return self::REJECT;
         }
 
-        return $this->jobRunner->runDelayed($data['jobId'], function () use ($data, $message, $session) {
+        $result = $this->jobRunner->runDelayed($data['jobId'], function () use ($data, $message, $session) {
             $processorMessage = clone $message;
             unset($data['jobId']);
             $processorMessage->setBody(JSON::encode($data));
 
-            return $this->processor->process($processorMessage, $session);
+            $result = $this->processor->process($processorMessage, $session);
+
+            if ($result === true || $result === self::ACK) {
+                return true;
+            }
+            if ($result === self::REQUEUE) {
+                throw new \Exception('REQUEUE requested');
+            }
+
+            return false;
         });
+
+        return $result ? self::ACK : self::REJECT;
     }
 }

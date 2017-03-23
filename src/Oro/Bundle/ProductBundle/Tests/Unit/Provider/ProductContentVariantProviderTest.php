@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Provider;
 
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\ProductContentVariantProvider;
-use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
+use Oro\Bundle\ProductBundle\Tests\Unit\Entity\Stub\ContentNodeStub;
 
 class ProductContentVariantProviderTest extends \PHPUnit_Framework_TestCase
 {
@@ -24,14 +24,12 @@ class ProductContentVariantProviderTest extends \PHPUnit_Framework_TestCase
 
     public function testGetValues()
     {
-        $contentNode = $this->createMock(ContentNode::class);
-        $this->assertEquals([], $this->provider->getValues($contentNode));
+        $this->assertEquals([], $this->provider->getValues(new ContentNodeStub(1)));
     }
 
     public function testGetLocalizedValues()
     {
-        $contentNode = $this->createMock(ContentNode::class);
-        $this->assertEquals([], $this->provider->getLocalizedValues($contentNode));
+        $this->assertEquals([], $this->provider->getLocalizedValues(new ContentNodeStub(1)));
     }
 
     public function testGetRecordId()

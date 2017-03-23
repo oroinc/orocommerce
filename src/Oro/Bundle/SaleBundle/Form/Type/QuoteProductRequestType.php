@@ -74,7 +74,6 @@ class QuoteProductRequestType extends AbstractType
                 'data_class' => $this->dataClass,
                 'compact_units' => false,
                 'intention' => 'sale_quote_product_request',
-                'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
             ]
         );
     }

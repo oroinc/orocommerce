@@ -17,5 +17,5 @@ navigation:
 
     titles:
         oro_invoice_index: ~
-        oro_invoice_view:   'Invoice #%%identifier%%'
-        oro_invoice_update:   'Invoice #%%identifier%%'
+        oro_invoice_view:   'Invoice #%identifier%'
+        oro_invoice_update:   'Invoice #%identifier%'

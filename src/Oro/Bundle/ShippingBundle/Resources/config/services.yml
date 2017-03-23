@@ -8,6 +8,8 @@ parameters:
     oro_shipping.entity.weight_unit.class: Oro\Bundle\ShippingBundle\Entity\WeightUnit
     oro_shipping.entity.product_shipping_options.class: Oro\Bundle\ShippingBundle\Entity\ProductShippingOptions
     oro_shipping.entity.shipping_methods_configs_rule.class: Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule
+    oro_shipping.rule_grid_route_name: 'oro_shipping_methods_configs_rule_index'
+    oro_shipping.rule_grid_name: 'shipping-methods-configs-rule-grid'
 
 services:
     oro_shipping.shipping_rule.manager.api:
@@ -175,6 +177,13 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_shipping_enabled_type_config_validation_group_validator }
 
+    oro_shipping.validator.shipping_rule_enabled:
+        class: 'Oro\Bundle\ShippingBundle\Validator\Constraints\ShippingRuleEnableValidator'
+        arguments:
+            - '@oro_shipping.checker.shipping_rule_enabled'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_shipping_rule_enabled_validator }
+
     oro_shipping.form.data_transformer.measure:
         class: 'Oro\Bundle\ShippingBundle\Form\DataTransformer\MeasureTransformer'
         public: false
@@ -214,6 +223,15 @@ services:
             - '@oro_shipping.shipping_method.registry'
             - '@oro_shipping.shipping_price.provider.cache'
             - '@oro_shipping.method.view_factory'
+
+    oro_shipping.shipping_price.provider_enabled_methods_decorator:
+        class: 'Oro\Bundle\ShippingBundle\Provider\EnabledMethodsShippingPriceProviderDecorator'
+        public: false
+        decorates: oro_shipping.shipping_price.provider
+        decoration_priority: 255
+        arguments:
+             - '@oro_shipping.shipping_price.provider_enabled_methods_decorator.inner'
+             - '@oro_shipping.shipping_method.registry'
 
     oro_shipping.methods_configs_rules.provider:
         class: 'Oro\Bundle\ShippingBundle\Provider\ShippingMethodsConfigsRulesProvider'
@@ -277,6 +295,22 @@ services:
         tags:
             - { name: oro_workflow.condition, alias: 'has_applicable_shipping_methods' }
             - { name: oro_action.condition, alias: 'has_applicable_shipping_methods' }
+
+    oro_shipping.condition.shipping_method_has_shipping_rules:
+        class: 'Oro\Bundle\ShippingBundle\Condition\ShippingMethodHasShippingRules'
+        arguments:
+            - '@oro_shipping.repository.shipping_methods_configs_rule'
+        tags:
+            - { name: oro_workflow.condition, alias: 'shipping_method_has_shipping_rules' }
+            - { name: oro_action.condition, alias: 'shipping_method_has_shipping_rules' }
+
+    oro_shipping.condition.shipping_method_has_enabled_shipping_rules:
+        class: 'Oro\Bundle\ShippingBundle\Condition\ShippingMethodHasEnabledShippingRules'
+        arguments:
+            - '@oro_shipping.repository.shipping_methods_configs_rule'
+        tags:
+            - { name: oro_workflow.condition, alias: 'shipping_method_has_enabled_shipping_rules' }
+            - { name: oro_action.condition, alias: 'shipping_method_has_enabled_shipping_rules' }
 
     oro_shipping.shipping_context.cache_key_generator:
         class: 'Oro\Bundle\ShippingBundle\Context\ShippingContextCacheKeyGenerator'
@@ -364,3 +398,67 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_shipping.method_removal, method: onMethodRemove }
             - { name: kernel.event_listener, event: oro_shipping.method_type_removal, method: onMethodTypeRemove }
+
+    oro_shipping.helper.filtered_datagrid_route:
+        class: 'Oro\Bundle\ShippingBundle\Tools\FilteredDatagridRouteHelper'
+        arguments:
+                - '%oro_shipping.rule_grid_route_name%'
+                - '%oro_shipping.rule_grid_name%'
+                - '@oro_datagrid.helper.route'
+
+    oro_shipping.provider.basic_shipping_methods_choices:
+        class: Oro\Bundle\ShippingBundle\Provider\BasicShippingMethodChoicesProvider
+        arguments:
+        - '@oro_shipping.shipping_method.registry'
+        - '@translator'
+
+    oro_shipping.shipping_methods_choices_provider.enabled_methods_decorator:
+         class: 'Oro\Bundle\ShippingBundle\Provider\EnabledShippingMethodChoicesProviderDecorator'
+         public: false
+         decorates: oro_shipping.provider.basic_shipping_methods_choices
+         decoration_priority: 255
+         arguments:
+             - '@oro_shipping.shipping_method.registry'
+             - '@oro_shipping.shipping_methods_choices_provider.enabled_methods_decorator.inner'
+
+    oro_shipping.checker.shipping_method_enabled:
+        class: 'Oro\Bundle\ShippingBundle\Checker\ShippingMethodEnabledByIdentifierChecker'
+        arguments:
+            - '@oro_shipping.shipping_method.registry'
+
+    oro_shipping.checker.shipping_rule_enabled:
+        class: 'Oro\Bundle\ShippingBundle\Checker\ShippingRuleEnabledChecker'
+        arguments:
+            - '@oro_shipping.checker.shipping_method_enabled'
+
+    oro_shipping.method_disable_handler.basic:
+        class: 'Oro\Bundle\ShippingBundle\Method\Handler\BasicShippingMethodDisableHandler'
+        public: false
+
+    oro_shipping.method_disable_handler.decorator:
+        class: 'Oro\Bundle\ShippingBundle\Method\Handler\RulesShippingMethodDisableHandlerDecorator'
+        decorates: oro_shipping.method_disable_handler.basic
+        decoration_priority: 255
+        public: false
+        arguments:
+            - '@oro_shipping.method_disable_handler.decorator.inner'
+            - '@oro_shipping.repository.shipping_methods_configs_rule'
+            - '@oro_shipping.shipping_method.registry'
+
+    oro_shipping.repository.shipping_method_config:
+        class: 'Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodConfigRepository'
+        parent: oro_entity.abstract_repository
+        arguments:
+            - 'Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig'
+
+    oro_shipping.method.event_listener.method_renaming:
+        class: 'Oro\Bundle\ShippingBundle\Method\EventListener\MethodRenamingListener'
+        arguments:
+            - '@oro_shipping.repository.shipping_method_config'
+        tags:
+            - { name: kernel.event_listener, event: oro_shipping.method_renaming, method: onMethodRename}
+
+    oro_shipping.method.event.dispatcher.method_renaming:
+        class: 'Oro\Bundle\ShippingBundle\Method\Event\BasicMethodRenamingEventDispatcher'
+        arguments:
+            - '@event_dispatcher'

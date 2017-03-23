@@ -33,6 +33,12 @@ Oro\Bundle\OrderBundle\Entity\Order:
                 min: 1
                 minMessage: 'oro.order.orderlineitem.count'
             - Valid: ~
+        discounts:
+            - Valid: ~
+        billingAddress:
+            - Valid: ~
+        shippingAddress:
+            - Valid: ~
 
 Oro\Bundle\OrderBundle\Entity\OrderLineItem:
     constraints:

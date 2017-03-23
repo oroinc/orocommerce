@@ -3,11 +3,12 @@
 namespace Oro\Bundle\ProductBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
-use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
-use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantTypeHandlerRegistry;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -35,8 +36,8 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
     /** @var ProductVariantTypeHandlerRegistry|\PHPUnit_Framework_MockObject_MockObject */
     protected $productVariantTypeHandlerRegistry;
 
-    /** @var AttributeManager|\PHPUnit_Framework_MockObject_MockObject */
-    protected $attributeManager;
+    /** @var CustomFieldProvider|\PHPUnit_Framework_MockObject_MockObject */
+    protected $customFieldProvider;
 
     /**
      * {@inheritdoc}
@@ -51,12 +52,12 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
 
         $this->productVariantTypeHandlerRegistry = $this->createMock(ProductVariantTypeHandlerRegistry::class);
 
-        $this->attributeManager = $this->createMock(AttributeManager::class);
+        $this->customFieldProvider = $this->createMock(CustomFieldProvider::class);
 
         $this->type = new FrontendVariantFiledType(
             $this->productVariantAvailabilityProvider,
             $this->productVariantTypeHandlerRegistry,
-            $this->attributeManager,
+            $this->customFieldProvider,
             $this->getPropertyAccessor(),
             self::PRODUCT_CLASS
         );
@@ -85,8 +86,6 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
      */
     public function testBuildFormConfigurableProduct()
     {
-        $attributeColor = $this->getEntity(FieldConfigModel::class, ['fieldName' => self::FIELD_COLOR]);
-        $attributeNew = $this->getEntity(FieldConfigModel::class, ['fieldName' => self::FIELD_NEW]);
         $attributeFamily = $this->getEntity(AttributeFamily::class);
 
         $parentProduct = $this->getEntity(Product::class, [
@@ -114,6 +113,8 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
             [
                 'data' => $defaultVariant->{self::FIELD_COLOR},
                 'label' => self::FIELD_COLOR,
+                'placeholder' => 'oro.product.type.please_select_option',
+                'empty_data' => null
             ]
         );
 
@@ -128,6 +129,8 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
             [
                 'data' => $defaultVariant->{self::FIELD_NEW},
                 'label' => self::FIELD_NEW,
+                'placeholder' => 'oro.product.type.please_select_option',
+                'empty_data' => null
             ]
         );
 
@@ -155,18 +158,23 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
                 ]
             ]);
 
-        $this->attributeManager->expects($this->at(0))
-            ->method('getAttributesByFamily')
-            ->with($attributeFamily)
-            ->willReturn([$attributeColor, $attributeNew]);
-        $this->attributeManager->expects($this->at(1))
-            ->method('getAttributeLabel')
-            ->with($attributeColor)
-            ->willReturn(self::FIELD_COLOR);
-        $this->attributeManager->expects($this->at(2))
-            ->method('getAttributeLabel')
-            ->with($attributeNew)
-            ->willReturn(self::FIELD_NEW);
+        $customFields = [
+            self::FIELD_COLOR => [
+                'type' => 'enum',
+                'is_serialized' => false,
+                'label' => self::FIELD_COLOR
+            ],
+            self::FIELD_NEW => [
+                'type' => 'boolean',
+                'is_serialized' => false,
+                'label' => self::FIELD_NEW
+            ]
+        ];
+        $this->customFieldProvider->expects($this->once())
+            ->method('getVariantFields')
+            ->with(Product::class)
+            ->willReturn($customFields);
+
 
         $form = $this->factory->create($this->type, $defaultVariant, $options);
 
@@ -254,5 +262,32 @@ class FrontendVariantFiledTypeTest extends FormIntegrationTestCase
             ->willReturn($form);
 
         return $handler;
+    }
+
+    public function testFinishView()
+    {
+        /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $form */
+        $form = $this->createMock(FormInterface::class);
+
+        $formView = new FormView();
+
+        $product = new Product();
+        $product->setVariantFields([ 'field_first', 'field_second']);
+        $productVariant = new Product();
+
+        $this->productVariantAvailabilityProvider->expects($this->once())
+            ->method('getSimpleProductsByVariantFields')
+            ->with($product)
+            ->willReturn([$productVariant]);
+
+        $this->productVariantAvailabilityProvider->expects($this->exactly(2))
+            ->method('getVariantFieldScalarValue')
+            ->withConsecutive(
+                [$productVariant, 'field_first'],
+                [$productVariant, 'field_second']
+            )
+            ->willReturnOnConsecutiveCalls('value1', 'value2');
+
+        $this->type->finishView($formView, $form, ['parentProduct' => $product]);
     }
 }

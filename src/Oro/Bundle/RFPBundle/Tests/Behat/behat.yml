@@ -1,13 +1,30 @@
 oro_behat_extension:
-  elements:
-    RequestForQuote:
-      class: Oro\Bundle\RFPBundle\Tests\Behat\Element\RequestForQuote
-      selector: '.page-content'
+    elements:
+        RequestForQuote:
+            class: Oro\Bundle\RFPBundle\Tests\Behat\Element\RequestForQuote
+            selector: '.page-content'
 
-    RequestForQuoteTitle:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
-      selector: 'span.page-title__text'
+        RequestForQuoteTitle:
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+            selector: 'span.page-title__text'
 
-    RequestForQuoteFlashMessage:
-      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
-      selector: '#flash-messages div.notification-flash__text'
+        RequestForQuoteFlashMessage:
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+            selector: '#flash-messages div.notification-flash__text'
+
+        RequestMoreInformationPopupForm:
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+            selector: div.ui-dialog form
+
+        RequestNotesBlock:
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+            selector: .page-content div.notes
+
+    pages:
+        RequestViewBackendPage:
+            class: Oro\Bundle\RFPBundle\Tests\Behat\Page\RequestViewPage
+            route: oro_rfp_request_view
+
+        RequestViewFrontendPage:
+            class: Oro\Bundle\RFPBundle\Tests\Behat\Page\RequestViewPage
+            route: oro_rfp_frontend_request_view
