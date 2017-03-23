@@ -1,1 +1,40 @@
 // @theme: default
+@include breakpoint('desktop') {
+    .product-view {
+        .product-price {
+            display: none;
+        }
+    }
+}
+
+@include breakpoint('tablet') {
+    .product-view {
+        &__primary-wrapper {
+            display: flex;
+            flex-direction: column-reverse;
+
+            margin-top: -15px;
+        }
+
+        &__primary {
+            margin-top: 0;
+
+            text-align: center;
+
+            .page-title {
+                font-size: $base-font-size--l - 1;
+                line-height: 1.2;
+            }
+        }
+
+        .line-item-form {
+            padding-top: 15px;
+
+            border-top: 1px solid get-color('additional', 'light');
+        }
+
+        .product-prices {
+            display: none;
+        }
+    }
+}
