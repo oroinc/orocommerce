@@ -58,12 +58,6 @@ services:
         tags:
             - { name: doctrine.event_listener, event: postRemove }
 
-    oro_pricing.provider.currency:
-        class: 'Oro\Bundle\PricingBundle\Provider\CurrencyProvider'
-        arguments:
-            - '@doctrine'
-            - '%oro_pricing.entity.product_price.class%'
-
     oro_pricing.user_currency_manager:
         class: 'Oro\Bundle\PricingBundle\Manager\UserCurrencyManager'
         arguments:

@@ -113,30 +113,6 @@ abstract class BaseProductPriceRepository extends EntityRepository
     }
 
     /**
-     * @deprecated Fetch currencies from config instead
-     * @return array
-     */
-    public function getAvailableCurrencies()
-    {
-        $qb = $this->createQueryBuilder('productPrice');
-
-        $currencies = $qb
-            ->distinct()
-            ->select('productPrice.currency')
-            ->orderBy($qb->expr()->asc('productPrice.currency'))
-            ->getQuery()
-            ->getArrayResult();
-
-        $result = [];
-        foreach ($currencies as $currency) {
-            $currencyName = reset($currency);
-            $result[$currencyName] = $currencyName;
-        }
-
-        return $result;
-    }
-
-    /**
      * @param QueryHintResolverInterface $hintResolver
      * @param Product $product
      * @return ProductPrice[]

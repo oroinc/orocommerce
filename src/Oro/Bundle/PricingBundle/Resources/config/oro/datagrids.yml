@@ -464,7 +464,7 @@ datagrids:
                     data_name: productPrice.currency
                     options:
                         field_options:
-                            choices: "@oro_pricing.provider.currency->getAvailableCurrencies"
+                            choices: "@oro_currency.config.currency->getCurrencies"
                 filter:
                     type:       single_choice
                     data_name:  ruleId
@@ -590,7 +590,7 @@ datagrids:
                     data_name: productPrice.currency
                     options:
                         field_options:
-                            choices: "@oro_pricing.provider.currency->getAvailableCurrencies"
+                            choices: "@oro_currency.config.currency->getCurrencies"
         properties:
             priceListId: ~
             view_price_list_link:

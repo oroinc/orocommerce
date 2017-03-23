@@ -486,11 +486,6 @@ class ProductPriceRepositoryTest extends WebTestCase
 
     public function testGetAvailableCurrencies()
     {
-        $this->assertEquals(
-            ['EUR' => 'EUR', 'USD' => 'USD'],
-            $this->repository->getAvailableCurrencies()
-        );
-
         $em = $this->getContainer()->get('doctrine')->getManager();
 
         $price = new Price();
@@ -516,11 +511,6 @@ class ProductPriceRepositoryTest extends WebTestCase
 
         $em->persist($productPrice);
         $em->flush();
-
-        $this->assertEquals(
-            ['EUR' => 'EUR', 'UAH' => 'UAH', 'USD' => 'USD'],
-            $this->repository->getAvailableCurrencies()
-        );
     }
 
     public function testCountByPriceList()
