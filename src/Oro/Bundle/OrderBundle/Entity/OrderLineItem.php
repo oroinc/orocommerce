@@ -5,7 +5,7 @@ namespace Oro\Bundle\OrderBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CurrencyBundle\Entity\PriceSetterAwareInterface;
+use Oro\Bundle\CurrencyBundle\Entity\SettablePriceAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\OrderBundle\Model\ExtendOrderLineItem;
 use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
@@ -33,7 +33,7 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnit;
  */
 class OrderLineItem extends ExtendOrderLineItem implements
     ProductLineItemInterface,
-    PriceSetterAwareInterface,
+    SettablePriceAwareInterface,
     PriceTypeAwareInterface
 {
     /**

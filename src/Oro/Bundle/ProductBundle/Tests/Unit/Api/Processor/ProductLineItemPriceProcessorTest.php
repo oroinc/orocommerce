@@ -5,7 +5,7 @@ namespace Oro\Bundle\ProductBundle\Tests\Unit\Api\Processor;
 use Oro\Bundle\ApiBundle\Processor\ContextInterface;
 use Oro\Bundle\ApiBundle\Processor\FormContext;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CurrencyBundle\Entity\PriceSetterAwareInterface;
+use Oro\Bundle\CurrencyBundle\Entity\SettablePriceAwareInterface;
 use Oro\Bundle\ProductBundle\Api\Processor\ProductLineItemPriceProcessor;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
@@ -106,7 +106,7 @@ class ProductLineItemPriceProcessorTest extends \PHPUnit_Framework_TestCase
      */
     private function createProductLineItemMock(Price $price = null)
     {
-        $mock = $this->createMock([ProductLineItemInterface::class, PriceSetterAwareInterface::class]);
+        $mock = $this->createMock([ProductLineItemInterface::class, SettablePriceAwareInterface::class]);
 
         if (null === $price) {
             $mock

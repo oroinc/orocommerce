@@ -7,7 +7,7 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
 use Oro\Bundle\ApiBundle\Processor\FormContext;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
-class ApiFormBuilderProcessor implements ProcessorInterface
+class ApiFormBuilderSubscriberProcessor implements ProcessorInterface
 {
     /**
      * @var EventSubscriberInterface

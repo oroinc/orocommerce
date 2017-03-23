@@ -3,12 +3,12 @@
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Api\Processor\Order;
 
 use Oro\Bundle\ApiBundle\Processor\FormContext;
-use Oro\Bundle\OrderBundle\Api\Processor\Order\ApiFormBuilderProcessor;
+use Oro\Bundle\OrderBundle\Api\Processor\Order\ApiFormBuilderSubscriberProcessor;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\Form\FormBuilderInterface;
 
-class ApiFormBuilderProcessorTest extends \PHPUnit_Framework_TestCase
+class ApiFormBuilderSubscriberProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var EventSubscriberInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -16,7 +16,7 @@ class ApiFormBuilderProcessorTest extends \PHPUnit_Framework_TestCase
     private $eventSubscriber;
 
     /**
-     * @var ApiFormBuilderProcessor
+     * @var ApiFormBuilderSubscriberProcessor
      */
     protected $testedProcessor;
 
@@ -24,7 +24,7 @@ class ApiFormBuilderProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $this->eventSubscriber = $this->createMock(EventSubscriberInterface::class);
 
-        $this->testedProcessor = new ApiFormBuilderProcessor($this->eventSubscriber);
+        $this->testedProcessor = new ApiFormBuilderSubscriberProcessor($this->eventSubscriber);
     }
 
     /**

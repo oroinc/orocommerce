@@ -4,7 +4,7 @@ namespace Oro\Bundle\ProductBundle\Api\Processor;
 
 use Oro\Bundle\ApiBundle\Processor\FormContext;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CurrencyBundle\Entity\PriceSetterAwareInterface;
+use Oro\Bundle\CurrencyBundle\Entity\SettablePriceAwareInterface;
 use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
@@ -25,7 +25,7 @@ class ProductLineItemPriceProcessor implements ProcessorInterface
 
         if (!$requestData
             || false === ($productItem instanceof ProductLineItemInterface)
-            || false === ($productItem instanceof PriceSetterAwareInterface)
+            || false === ($productItem instanceof SettablePriceAwareInterface)
         ) {
             return;
         }
@@ -34,12 +34,12 @@ class ProductLineItemPriceProcessor implements ProcessorInterface
     }
 
     /**
-     * @param PriceSetterAwareInterface $priceSetterAwareItem
-     * @param array                     $requestData
+     * @param SettablePriceAwareInterface $priceSetterAwareItem
+     * @param array                       $requestData
      *
      * @return array
      */
-    protected function processRequestData(PriceSetterAwareInterface $priceSetterAwareItem, array $requestData)
+    protected function processRequestData(SettablePriceAwareInterface $priceSetterAwareItem, array $requestData)
     {
         $currency = null;
         $value = null;
