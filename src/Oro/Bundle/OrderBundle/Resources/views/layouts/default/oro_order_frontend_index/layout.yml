@@ -14,7 +14,7 @@ layout:
             optionName: grid_render_parameters.themeOptions
             optionValue:
                 cellLauncherOptions:
-                    launcherMode: 'text-only'
+                    launcherMode: 'icon-text'
 
         - '@appendOption':
             id: orders_datagrid
