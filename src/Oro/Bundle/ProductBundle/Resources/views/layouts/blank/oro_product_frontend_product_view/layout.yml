@@ -1,18 +1,11 @@
 layout:
     imports:
         -
-            id: oro_product_price
-            root: product_view_specification_container
-        -
             id: oro_product_variant_form
             root: product_view_variant_field_container
     actions:
         - '@setBlockTheme':
             themes: 'layout.html.twig'
-        - '@setOption':
-            id: product_price_container
-            optionName: product
-            optionValue: '=data["product"]'
         - '@setOption':
             id: title
             optionName: params
@@ -25,6 +18,7 @@ layout:
                     options:
                         product: '=data["oro_product_variant"].getProductVariantOrProduct(data)'
                         parentProduct: '=data["product"].isConfigurable()?data["product"]'
+                        productTheme: '=context["page_template"]'
                 product_view_primary_wrapper:
                     blockType: container
                 product_view_primary_container:
@@ -73,8 +67,7 @@ layout:
                                 product_media_popup: ~
                         product_view_main_container:
                             product_view_content_container:
-                                product_view_specification_container:
-                                    product_view_variant_field_container: ~
+                                product_view_specification_container: ~
                                 product_view_description_container:
                                     product_view_line_item_container: ~
                                 product_view_attribute_group_general: ~

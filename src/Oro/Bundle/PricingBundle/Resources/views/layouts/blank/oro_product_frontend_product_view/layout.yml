@@ -1,28 +1,15 @@
 layout:
     actions:
-        - '@setBlockTheme':
-            themes: 'layout.html.twig'
         - '@add':
-            id: product_view_price_container
+            id: product_price_subtree_update
             parentId: product_view_specification_container
-            siblingId: product_view_variant_field_container
-            prepend: true
-            blockType: container
-        - '@add':
-            id: product_prices_subtree_update
-            parentId: product_view_price_container
             blockType: layout_subtree_update
             options:
                 reloadEvents: ['layout-subtree:update:product']
-
-        - '@add':
-            id: product_prices
-            parentId: product_prices_subtree_update
-            blockType: attribute_group
-            options:
-                entity: '=data["oro_product_variant"].getProductVariantOrProduct(data)'
-                attribute_family: '=context["attribute_family"]'
-                group: 'prices'
-                visible: '=data["oro_product_variant"].getProductVariantOrProduct(data).getUnitPrecisions()!=null'
-                vars:
-                    productUnitSelectionVisible: '=data["oro_product_unit_fields_settings"].isProductUnitSelectionVisible(data["oro_product_variant"].getProductVariantOrProduct(data))'
+        - '@move':
+            id: product_price_container
+            parentId: product_price_subtree_update
+        - '@setOption':
+            id: product_price_container
+            optionName: product
+            optionValue: '=data["product"]'

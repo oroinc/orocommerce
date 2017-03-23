@@ -5,8 +5,6 @@ styles:
         - 'bundles/oroproduct/default/scss/variables/buttons-inline-group-config.scss'
         - 'bundles/oroproduct/default/scss/variables/product-view-layout-config.scss'
         - 'bundles/oroproduct/default/scss/variables/product-view-desc-title-config.scss'
-        - 'bundles/oroproduct/default/scss/page-templates/variables/default-theme-config.scss'
         - 'bundles/oroproduct/default/scss/page-templates/variables/list-theme-config.scss'
-        - 'bundles/oroproduct/default/scss/page-templates/variables/short-theme-config.scss'
         - 'bundles/oroproduct/default/scss/page-templates/variables/two-columns-theme-config.scss'
         - 'bundles/oroproduct/default/scss/styles.scss'

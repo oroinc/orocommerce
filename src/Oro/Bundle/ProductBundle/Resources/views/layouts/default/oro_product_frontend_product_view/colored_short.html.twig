@@ -18,17 +18,3 @@
         {{ block_widget(block) }}
     </div>
 {% endblock %}
-
-{% block _product_price_container_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        'data-page-component-module': 'oroui/js/app/components/viewport-component',
-        '~data-page-component-options': {
-            viewport: {
-                screenType: 'any'
-            },
-            component: 'oroui/js/app/components/view-component',
-            changeUnitLabel: false
-        },
-    }) %}
-    {{ block_widget(block, {attr: attr}) }}
-{% endblock %}

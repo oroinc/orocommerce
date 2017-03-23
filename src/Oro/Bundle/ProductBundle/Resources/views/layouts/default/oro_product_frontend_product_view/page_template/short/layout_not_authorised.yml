@@ -1,5 +1,0 @@
-layout:
-    actions:
-         - '@remove':
-             id: product_price_container
-    conditions: 'context["is_mobile"]==false && context["is_logged_in"]==false'

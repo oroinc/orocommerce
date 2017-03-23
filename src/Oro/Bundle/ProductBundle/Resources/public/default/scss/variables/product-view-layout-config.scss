@@ -8,9 +8,6 @@ $product-view-specification-colored-inner-offset: 20px 25px !default;
 $product-view-specification-colored-background: get-color('additional', 'base') !default;
 $product-view-specification-colored-border-radius: 2px !default;
 
-$product-view-specification-colored-width-tablet: 100% !default;
-$product-view-specification-colored-margin-bottom-tablet: 20px !default;
-
 $product-view-description-width: calc(100% - #{$product-view-specification-width});
 $product-view-description-short-width: calc(100% - 320px) !default;
 

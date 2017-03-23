@@ -1,6 +1,6 @@
 {% block attribute_group_rest_widget %}
     {% set attr = layout_attr_defaults(attr, {
-    '~class': '- product-view__attribute-box-wrapper'
+        '~class': ' product-view__attribute-box-wrapper'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -9,9 +9,12 @@
 {% endblock %}
 
 {% block attribute_group_rest_attribute_group_widget %}
+    {% set content = block_widget(block) %}
+    {% if content|trim|length > 0 %}
     <section {{ block('block_attributes') }} class="product-view__attribute-box">
-        {{ block_widget(block) }}
+        {{ content|raw }}
     </section>
+    {% endif %}
 {% endblock %}
 
 {% block attribute_label_widget %}

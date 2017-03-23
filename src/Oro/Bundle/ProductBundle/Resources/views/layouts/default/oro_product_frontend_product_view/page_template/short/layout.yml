@@ -1,9 +1,4 @@
 layout:
     actions:
-        - '@setOption':
-            id: product_view_container
-            optionName: productTheme
-            optionValue: 'short'
         - '@remove':
             id: product_view_additional_container
-    conditions: 'context["is_mobile"]==false'

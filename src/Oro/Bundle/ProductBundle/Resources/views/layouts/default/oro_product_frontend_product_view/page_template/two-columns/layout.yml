@@ -2,10 +2,6 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'layout.html.twig'
-        - '@setOption':
-            id: product_view_container
-            optionName: productTheme
-            optionValue: 'two-columns'
         - '@add':
             id: attribute_group_specifications
             parentId: product_view_attributes_rest
@@ -14,4 +10,4 @@ layout:
             id: attribute_group_video
             parentId: product_view_attributes_rest
             blockType: block
-    conditions: 'context["is_mobile"]==false'
+    conditions: '!context["is_mobile"]'
