@@ -58,6 +58,15 @@ oro.cms:
             general.label: General
             use_for.label: Restrictions
 
+    textcontentvariant:
+        entity_label: Content Variant
+        entity_plural_label: Content Variants
+        content.label: Content
+        default.label: Default
+        id.label: Id
+        content_block.label: Content Block
+        scopes.label: Scopes
+
     controller:
         page.saved.message: 'Page has been saved'
         contentblock.saved.message: 'Content block has been saved'

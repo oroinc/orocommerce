@@ -29,6 +29,6 @@ class OroCMSBundle extends Bundle
                ContentBlock::class => [
                    'title' => 'titles'
                ]
-           ]));
+            ]));
     }
 }
