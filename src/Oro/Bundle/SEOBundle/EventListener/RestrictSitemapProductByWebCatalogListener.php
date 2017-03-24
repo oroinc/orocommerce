@@ -51,9 +51,10 @@ class RestrictSitemapProductByWebCatalogListener
             Join::WITH,
             $qb->expr()->andX(
                 $qb->expr()->eq(reset($rootAliases), 'productLimitation.productId'),
-                $qb->expr()->eq($event->getVersion(), 'productLimitation.version')
+                $qb->expr()->eq('productLimitation.version', ':version')
             )
-        );
+        )
+        ->setParameter('version', (int) $event->getVersion());
     }
 
     /**
