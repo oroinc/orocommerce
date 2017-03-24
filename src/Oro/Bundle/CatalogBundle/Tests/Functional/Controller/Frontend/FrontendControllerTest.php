@@ -2,7 +2,10 @@
 
 namespace Oro\Bundle\CatalogBundle\Bundle\Tests\Functional\Controller\Frontend;
 
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData;
+use Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductImageData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class FrontendControllerTest extends WebTestCase
@@ -14,8 +17,9 @@ class FrontendControllerTest extends WebTestCase
             $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
         );
         $this->loadFixtures([
-            'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryData',
-            'Oro\Bundle\CatalogBundle\Tests\Functional\DataFixtures\LoadCategoryProductData',
+            LoadCategoryData::class,
+            LoadCategoryProductData::class,
+            LoadProductImageData::class
         ]);
     }
 
