@@ -67,7 +67,6 @@ class ImageResizeMessageProcessor implements MessageProcessorInterface, TopicSub
         MediaCacheManager $mediaCacheManager,
         AttachmentManager $attachmentManager
     ) {
-
         $this->imageRepository = $imageRepository;
         $this->filterLoader = $filterLoader;
         $this->imageTypeProvider = $imageTypeProvider;
@@ -102,12 +101,15 @@ class ImageResizeMessageProcessor implements MessageProcessorInterface, TopicSub
         $this->filterLoader->load();
 
         foreach ($this->getDimensionsForProductImage($productImage) as $dimension) {
-            $imagePath = $this->attachmentManager->getFilteredImageUrl($productImage->getImage(), $dimension->getName());
+            $image = $productImage->getImage();
+            $filterName = $dimension->getName();
+            $imagePath = $this->attachmentManager->getFilteredImageUrl($image, $filterName);
+
             if (!$data['force'] && $this->mediaCacheManager->exists($imagePath)) {
                 continue;
             }
 
-            if ($filteredImage = $this->imageResizer->resizeImage($productImage->getImage(), $dimension->getName())) {
+            if ($filteredImage = $this->imageResizer->resizeImage($image, $filterName)) {
                 $this->mediaCacheManager->store($filteredImage->getContent(), $imagePath);
             }
         }
