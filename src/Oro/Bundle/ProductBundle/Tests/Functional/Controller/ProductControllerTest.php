@@ -569,9 +569,9 @@ class ProductControllerTest extends ProductHelperTestCase
         $form = $crawler->selectButton('Continue')->form();
         $formValues = $form->getPhpValues();
         $formValues['input_action'] = 'oro_product_create';
-        $formValues['oro_product_step_one']['category'] = self::CATEGORY_ID;
+        $formValues['oro_product_step_one']['category'] = ProductTestHelper::CATEGORY_ID;
         $formValues['oro_product_step_one']['type'] = Product::TYPE_SIMPLE;
-        $formValues['oro_product_step_one']['attributeFamily'] = self::ATTRIBUTE_FAMILY_ID;
+        $formValues['oro_product_step_one']['attributeFamily'] = ProductTestHelper::ATTRIBUTE_FAMILY_ID;
 
         $this->client->followRedirects(true);
         $crawler = $this->client->request('POST', $this->getUrl('oro_product_create'), $formValues);
@@ -580,7 +580,7 @@ class ProductControllerTest extends ProductHelperTestCase
 
         $bigStringValue = str_repeat('a', 256);
         $formValues = $form->getPhpValues();
-        $formValues['oro_product']['sku'] = self::TEST_SKU;
+        $formValues['oro_product']['sku'] = ProductTestHelper::TEST_SKU;
         $formValues['oro_product']['owner'] = $this->getBusinessUnitId();
         $formValues['oro_product']['names']['values']['default'] = $bigStringValue;
         $formValues['oro_product']['slugPrototypesWithRedirect']['slugPrototypes'] = [
