@@ -48,7 +48,7 @@
         </div>
         <div class="shopping-lists__ui-row">
             <ul class="actions-row">
-                <li class="actions-row__item actions-row__item--edit">
+                <li class="actions-row__item">
                     <button type="button"
                             title="{{ 'Edit'|trans }}"
                             class="actions-row__button"
@@ -163,13 +163,12 @@
                                     <% } %>
                                     <div class="shopping-lists-units__actions">
                                         <ul class="actions-row">
-                                            <li class="actions-row__item actions-row__item--edit">
+                                            <li class="actions-row__item actions-row__item--separate-light">
                                                 <button class="actions-row__button" type="button" title="{{ 'Edit'|trans }}" data-role="edit">
                                                     <i class="actions-row__icon fa-pencil"></i>
                                                 </button>
                                             </li>
-                                            <li class="actions-row__item actions-row__item--separate">|</li>
-                                            <li class="actions-row__item actions-row__item--remove">
+                                            <li class="actions-row__item actions-row__item--separate-light">
                                                 <button class="actions-row__button" type="button" title="{{ 'Delete'|trans }}"
                                                         {{ utils.underscoreRaw(UI.renderPageComponentAttributes({
                                                             module: 'orofrontend/js/app/components/delete-item-component',
