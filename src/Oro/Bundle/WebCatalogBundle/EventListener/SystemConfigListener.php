@@ -45,16 +45,18 @@ class SystemConfigListener
      */
     public function onSettingsSaveBefore(ConfigSettingsUpdateEvent $event)
     {
-        $settingsKey = implode(ConfigManager::SECTION_MODEL_SEPARATOR, [OroWebCatalogExtension::ALIAS, self::SETTING]);
         $settings = $event->getSettings();
-        if (is_array($settings)
-            && array_key_exists($settingsKey, $settings)
-            && $settings[$settingsKey]['value'] instanceof WebCatalog
-        ) {
-            /** @var WebCatalog $webCatalog */
-            $webCatalog = $settings[$settingsKey]['value'];
-            $settings[$settingsKey]['value'] = $webCatalog->getId();
-            $event->setSettings($settings);
+
+        if (!array_key_exists('value', $settings)) {
+            return;
         }
+
+        if (!$settings['value'] instanceof WebCatalog) {
+            return;
+        }
+
+        $webCatalog = $settings['value'];
+        $settings['value'] = $webCatalog->getId();
+        $event->setSettings($settings);
     }
 }
