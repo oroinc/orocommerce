@@ -80,6 +80,11 @@ Oro\Bundle\SaleBundle\Entity\QuoteAddress:
             - Length:
                 max: 255
 
+Oro\Bundle\SaleBundle\Entity\QuoteDemand:
+    properties:
+        demandProducts:
+            - Symfony\Component\Validator\Constraints\Valid: ~
+
 Oro\Bundle\SaleBundle\Entity\QuoteProductDemand:
     constraints:
         - Oro\Bundle\SaleBundle\Validator\Constraints\AllowedQuoteDemandQuantity: ~
