@@ -28,14 +28,6 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
             LoadProductPrices::class,
         ]);
 
-        /** @var EntityManagerInterface $em */
-        $em = $this->getContainer()->get('doctrine')->getManager();
-
-        $em->getRepository(PriceListToProduct::class)
-            ->createQueryBuilder('pltp')
-            ->delete()
-            ->getQuery()
-            ->execute();
         $this->getContainer()->get('oro_pricing.price_list_trigger_handler')->sendScheduledTriggers();
     }
 
@@ -75,6 +67,7 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
 
     public function testOnUpdateChangeTriggerCreated()
     {
+        $handler = $this->getContainer()->get('oro_pricing.price_list_trigger_handler');
         /** @var PriceManager $priceManager */
         $priceManager = $this->getContainer()->get('oro_pricing.manager.price_manager');
         /** @var ProductPrice $productPrice */
@@ -82,12 +75,22 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
         $productPrice->setPrice(Price::create(1000, 'EUR'));
         $priceManager->persist($productPrice);
         $priceManager->flush();
-        $handler = $this->getContainer()->get('oro_pricing.price_list_trigger_handler');
         $this->assertAttributeCount(1, 'scheduledTriggers', $handler);
     }
 
     public function testOnUpdatePriceToProductRelation()
     {
+        /** @var EntityManagerInterface $em */
+        $em = $this->getContainer()->get('doctrine')->getManager();
+        $em->flush();
+        /** @var PriceListToProductRepository $repository */
+        $repository = $em->getRepository(PriceListToProduct::class);
+        $repository
+            ->createQueryBuilder('pltp')
+            ->delete()
+            ->getQuery()
+            ->execute();
+
         /** @var ProductPrice $productPrice1 */
         $productPrice1 = $this->getReference(LoadProductPrices::PRODUCT_PRICE_1);
         /** @var ProductPrice $productPrice2 */
@@ -110,11 +113,6 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
         $priceManager->persist($productPrice3);
         $priceManager->flush();
 
-        $em = $this->getContainer()->get('doctrine')->getManager();
-        $em->flush();
-        /** @var PriceListToProductRepository $repository */
-        $repository = $em->getRepository(PriceListToProduct::class);
-
         // new relation should be created when new product specified
         $this->assertCount(1, $repository->findBy([
             'product' => $this->getReference(LoadProductData::PRODUCT_2),
@@ -127,7 +125,7 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
             'priceList' => $this->getReference(LoadPriceLists::PRICE_LIST_5),
         ]));
 
-        $this->assertCount(2, $repository->findBy([]));
+        $this->assertCount(3, $repository->findBy([]));
     }
 
     public function testOnDelete()

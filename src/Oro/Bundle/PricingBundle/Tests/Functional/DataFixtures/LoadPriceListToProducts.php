@@ -55,7 +55,6 @@ class LoadPriceListToProducts extends AbstractFixture implements DependentFixtur
      */
     public function load(ObjectManager $manager)
     {
-
         foreach ($this->data as $data) {
             /** @var Product $product */
             $product = $this->getReference($data['product']);
@@ -72,6 +71,7 @@ class LoadPriceListToProducts extends AbstractFixture implements DependentFixtur
                 ->setProduct($product);
 
             $manager->persist($relation);
+            $manager->flush($relation);
         }
 
         $manager->flush();

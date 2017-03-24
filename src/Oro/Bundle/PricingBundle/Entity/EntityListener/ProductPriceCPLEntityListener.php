@@ -91,7 +91,7 @@ class ProductPriceCPLEntityListener
             $relation = new PriceListToProduct();
             $relation->setPriceList($priceList)
                 ->setProduct($product);
-            $em = $this->registry->getManagerForClass(ProductPrice::class);
+            $em = $this->registry->getManagerForClass(PriceListToProduct::class);
             $em->persist($relation);
             $em->flush($relation);
         }

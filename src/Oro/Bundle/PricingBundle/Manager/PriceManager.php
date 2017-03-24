@@ -69,12 +69,13 @@ class PriceManager
         $em = $this->shardManager->getEntityManager();
         $unitOfWork = $em->getUnitOfWork();
         $classMetadata = $em->getClassMetadata(ProductPrice::class);
+        $unitOfWork->computeChangeSet($classMetadata, $price);
         $changeSet = $unitOfWork->getEntityChangeSet($price);
         $repository = $em->getRepository($class);
 
-        $unitOfWork->computeChangeSet($classMetadata, $price);
         if ($price->getId() === null || !empty($changeSet)) {
-            if (array_key_exists('priceList', $changeSet)) {
+            //remove price from old shard
+            if (array_key_exists('priceList', $changeSet) && $changeSet['priceList'][0]) {
                 $newPriceList = $price->getPriceList();
                 $price->setPriceList($changeSet['priceList'][0]);
                 $repository->remove($this->shardManager, $price);
