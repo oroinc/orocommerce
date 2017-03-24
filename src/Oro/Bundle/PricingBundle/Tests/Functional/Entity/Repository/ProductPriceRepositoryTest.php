@@ -636,7 +636,7 @@ class ProductPriceRepositoryTest extends WebTestCase
             ->setQuantity(1)
             ->setPrice($price)
             ->setProduct($product);
-        $this->repository->persist($this->shardManager, $productPrice);
+        $this->repository->save($this->shardManager, $productPrice);
 
         $objectRepository
             ->createQueryBuilder('productRelation')
@@ -653,6 +653,39 @@ class ProductPriceRepositoryTest extends WebTestCase
 
         $prices = $this->repository->findByPriceList($this->shardManager, $priceList, ['priceList' => $priceList]);
         $this->assertEmpty($prices);
+    }
+
+    public function testSave()
+    {
+        $price = new ProductPrice();
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
+        $price->setPriceList($priceList);
+        $price->setProduct($this->getReference(LoadProductData::PRODUCT_1));
+        $price->setQuantity(111);
+        $unit = new ProductUnit();
+        $unit->setCode('item');
+        $price->setUnit($unit);
+        $priceValue = new Price();
+        $priceValue->setCurrency('USD');
+        $priceValue->setValue(1);
+        $price->setPrice($priceValue);
+        $this->repository->save($this->shardManager, $price);
+        $this->assertNotNull($price->getId());
+        $priceFromDb = $this->repository->findByPriceList($this->shardManager, $priceList, ['id' => $price->getId()]);
+        $this->assertCount(1, $priceFromDb);
+    }
+
+    public function testRemove()
+    {
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        $prices = $this->repository->findByPriceList($this->shardManager, $priceList, ['product' => $product]);
+        $this->assertNotEmpty($prices);
+        foreach ($prices as $price) {
+            $this->repository->remove($this->shardManager, $price);
+            $result = $this->repository->findByPriceList($this->shardManager, $priceList, ['id' => $price->getId()]);
+            $this->assertEmpty($result);
+        }
     }
 
     /**

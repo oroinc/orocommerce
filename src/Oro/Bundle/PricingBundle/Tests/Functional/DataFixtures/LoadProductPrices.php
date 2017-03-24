@@ -226,8 +226,7 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
     public function getDependencies()
     {
         return [
-            LoadProductUnitPrecisions::class,
-            LoadPriceLists::class
+            LoadPriceListToProducts::class
         ];
     }
 }

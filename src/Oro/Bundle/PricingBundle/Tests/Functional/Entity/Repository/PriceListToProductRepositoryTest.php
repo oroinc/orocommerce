@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
@@ -14,6 +15,11 @@ use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 
 class PriceListToProductRepositoryTest extends WebTestCase
 {
+    /**
+     * @var ShardManager
+     */
+    protected $shardManager;
+
     /**
      * @var PriceListToProductRepository
      */
@@ -35,6 +41,7 @@ class PriceListToProductRepositoryTest extends WebTestCase
         $this->repository = $this->getContainer()
             ->get('doctrine')
             ->getRepository('OroPricingBundle:PriceListToProduct');
+        $this->shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
     }
     
     public function testGetProductsWithoutPrices()
@@ -48,7 +55,7 @@ class PriceListToProductRepositoryTest extends WebTestCase
             function (Product $product) {
                 return $product->getId();
             },
-            iterator_to_array($this->repository->getProductsWithoutPrices($priceList))
+            iterator_to_array($this->repository->getProductsWithoutPrices($this->shardManager, $priceList))
         );
 
         // Check that 2 products does not have prices

@@ -34,8 +34,8 @@ class ProductPriceEntityListenerTest extends WebTestCase
 
     public function testPostPersist()
     {
-        /** @var EntityManagerInterface $em */
-        $em = $this->getContainer()->get('doctrine')->getManagerForClass(ProductPrice::class);
+        /** @var EntityManagerInterface $priceManager */
+        $priceManager = $this->getContainer()->get('oro_pricing.manager.price_manager');
 
         /** @var PriceList $priceList */
         $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_2);
@@ -50,8 +50,8 @@ class ProductPriceEntityListenerTest extends WebTestCase
             ->setUnit($this->getReference('product_unit.box'))
             ->setPrice(Price::create(42, 'USD'));
 
-        $em->persist($price);
-        $em->flush();
+        $priceManager->persist($price);
+        $priceManager->flush();
 
         $this->sendScheduledMessages();
 

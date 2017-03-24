@@ -34,7 +34,7 @@ class PriceListShardingListenerTest extends WebTestCase
     {
         $priceList = new PriceList();
         $priceList->setName('Test PL');
-
+        $this->shardManager->setEnableSharding(true);
         $this->em->persist($priceList);
         $this->em->flush($priceList);
         $shardName = $this->shardManager->getShardName(ProductPrice::class, ['priceList' => $priceList]);

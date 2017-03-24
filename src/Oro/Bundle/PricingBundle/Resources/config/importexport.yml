@@ -69,6 +69,7 @@ services:
         arguments:
             - '@oro_importexport.context_registry'
             - '@doctrine'
+            - '@oro_pricing.shard_manager'
 
     # Export template
     orocrm_contact.importexport.processor.export_template.product_price:

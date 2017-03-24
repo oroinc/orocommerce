@@ -155,7 +155,6 @@ class ProductPriceRepository extends BaseProductPriceRepository
      */
     public function remove(ShardManager $shardManager, BaseProductPrice $price)
     {
-        //TODO: BB-8042 add test
         $tableName = $shardManager->getShardName($this->_entityName, ['priceList' => $price->getPriceList()]);
         $connection = $this->_em->getConnection();
         $qb = $connection->createQueryBuilder();

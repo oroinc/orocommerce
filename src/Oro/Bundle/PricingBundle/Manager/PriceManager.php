@@ -56,7 +56,7 @@ class PriceManager
      */
     public function remove(ProductPrice $price)
     {
-        $this->pricesToSave[] = $price;
+        $this->pricesToRemove[] = $price;
     }
 
     /**
@@ -66,10 +66,25 @@ class PriceManager
     {
         $class = ClassUtils::getRealClass(get_class($price));
         /** @var ProductPriceRepository $repository */
-        $repository = $this->shardManager->getEntityManager()->getRepository($class);
-        $repository->save($this->shardManager, $price);
-        $event = new ProductPriceSaveAfterEvent($price);
-        $this->eventDispatcher->dispatch(ProductPriceSaveAfterEvent::NAME, $event);
+        $em = $this->shardManager->getEntityManager();
+        $unitOfWork = $em->getUnitOfWork();
+        $classMetadata = $em->getClassMetadata(ProductPrice::class);
+        $changeSet = $unitOfWork->getEntityChangeSet($price);
+        $repository = $em->getRepository($class);
+
+        $unitOfWork->computeChangeSet($classMetadata, $price);
+        if ($price->getId() === null || !empty($changeSet)) {
+            if (array_key_exists('priceList', $changeSet)) {
+                $newPriceList = $price->getPriceList();
+                $price->setPriceList($changeSet['priceList'][0]);
+                $repository->remove($this->shardManager, $price);
+                $price->setId(null);
+                $price->setPriceList($newPriceList);
+            }
+            $repository->save($this->shardManager, $price);
+            $event = new ProductPriceSaveAfterEvent($price);
+            $this->eventDispatcher->dispatch(ProductPriceSaveAfterEvent::NAME, $event);
+        }
     }
 
     /**
