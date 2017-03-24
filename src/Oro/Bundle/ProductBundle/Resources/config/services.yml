@@ -545,6 +545,7 @@ services:
             - '@oro_segment.segment_manager'
             - '@oro_product.product.manager'
             - '@oro_config.user'
+            - '@logger'
         tags:
             - { name: layout.data_provider, alias: featured_products }
 
