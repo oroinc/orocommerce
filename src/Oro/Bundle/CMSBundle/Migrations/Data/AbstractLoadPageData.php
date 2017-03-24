@@ -2,16 +2,14 @@
 
 namespace Oro\Bundle\CMSBundle\Migrations\Data;
 
-use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
-use Oro\Bundle\RedirectBundle\Async\Topics;
-use Oro\Component\MessageQueue\Util\JSON;
+use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\Persistence\ObjectManager;
+
 use Symfony\Component\Yaml\Yaml;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
-use Doctrine\Common\DataFixtures\AbstractFixture;
-use Doctrine\Common\Persistence\ObjectManager;
-
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\Organization;
 use Oro\Bundle\CMSBundle\Entity\Page;
 
@@ -42,18 +40,18 @@ abstract class AbstractLoadPageData extends AbstractFixture implements Container
     {
         $organization = $this->getOrganization($manager);
 
+        $slugRedirectGenerator = $this->container->get('oro_redirect.generator.slug_entity');
+        $urlStorageCache = $this->container->get('oro_redirect.url_storage_cache');
+
         foreach ((array)$this->getFilePaths() as $filePath) {
             $pages = $this->loadFromFile($filePath, $organization);
             foreach ($pages as $page) {
                 $manager->persist($page);
+                $slugRedirectGenerator->generate($page, true);
             }
         }
+        $urlStorageCache->flush();
         $manager->flush();
-
-        $this->container->get('oro_message_queue.client.message_producer')->send(
-            Topics::REGENERATE_DIRECT_URL_FOR_ENTITY_TYPE,
-            JSON::encode(Page::class)
-        );
     }
 
     /**

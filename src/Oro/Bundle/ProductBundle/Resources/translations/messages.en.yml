@@ -32,6 +32,11 @@ oro:
         images.label: Images
         anything.label: Any Text
         featured_products.label: Featured Products
+        featured:
+            label: Is Featured
+            yes: Yes
+            no: No
+        time_period.label: Time Period
         page_template.label: Page Template
         slugs:
             label:              'Slugs'
@@ -180,6 +185,8 @@ oro:
                 default_product_unit.title: 'Primary Unit'
                 product_images.title: 'Product Images'
                 product_image_watermark.title: 'Product Image Watermark'
+                featured_products.title: 'Featured Products'
+                featured_products_segment.title: 'Featured Products Segment'
                 quick_order.title: Quick Order Form
                 quick_order_form.title: Quick Order Form
             fields:
@@ -205,6 +212,12 @@ oro:
                     bottomleft.label: 'Bottom Left'
                     bottom.label: 'Bottom'
                     bottomright.label: 'Bottom Right'
+                featured_products_segment:
+                    label: Segment
+                    tooltip: |
+                        Selected segment will be used as "Featured Products" block data source.
+                        To modify existing or create new segment go to "Reports & Segments > Manage Segments" section.
+                        Only segments with type "Product" are listed here.
                 page_template.label: Page Template
                 product_direct_url_prefix.label: 'Product URL prefix'
             notice:
