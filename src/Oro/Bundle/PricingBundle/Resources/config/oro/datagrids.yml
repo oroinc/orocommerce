@@ -493,6 +493,12 @@ datagrids:
                 params:
                     priceList: priceListId
                     id: id
+            delete_link:
+                type:   url
+                route:  oro_product_price_delete
+                params:
+                    priceListId: priceListId
+                    productPriceId: id
         actions:
             view_product:
                 type:          navigate
@@ -512,6 +518,12 @@ datagrids:
                     options:
                         dialogOptions:
                             width: 650
+            delete:
+                type:         ajax
+                acl_resource: oro_pricing_product_price_delete
+                label:        oro.grid.action.delete
+                icon:         trash
+                link:         delete_link
 
     product-prices-grid:
         acl_resource:      oro_pricing_product_price_view

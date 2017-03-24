@@ -2,7 +2,12 @@
 
 namespace Oro\Bundle\PricingBundle\Controller;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
+use Oro\Bundle\ActionBundle\Exception\ForbiddenOperationException;
+use Oro\Bundle\ActionBundle\Exception\OperationNotFoundException;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListProductPriceType;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
@@ -13,6 +18,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 
 class AjaxProductPriceController extends AbstractAjaxProductPriceController
 {
@@ -77,5 +83,74 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
         );
 
         return new JsonResponse($matchedPrices);
+    }
+
+    /**
+     * @Route(
+     *     "/delete-product-price/{priceListId}/{productPriceId}",
+     *      name="oro_product_price_delete"
+     *     )
+     * @ParamConverter("priceList", class="OroPricingBundle:PriceList", options={"id" = "priceListId"})
+     * @Acl(
+     *      id="oro_pricing_product_price_delete",
+     *      type="entity",
+     *      class="OroPricingBundle:ProductPrice",
+     *      permission="DELETE"
+     * )
+     *
+     * {@inheritdoc}
+     */
+    public function deleteAction(PriceList $priceList, $productPriceId)
+    {
+        /** @var ProductPriceRepository $priceRepository */
+        $priceRepository = $this->get('doctrine')
+            ->getRepository(ProductPrice::class);
+        /** @var ProductPrice $productPrice */
+        $productPrice = $priceRepository
+            ->findByPriceList(
+                $this->get('oro_pricing.shard_manager'),
+                $priceList,
+                ['id' => $productPriceId]
+            );
+        $code = JsonResponse::HTTP_OK;
+        $errors = new ArrayCollection();
+        $message = '';
+
+        if (empty($productPrice)) {
+            $code = JsonResponse::HTTP_NOT_FOUND;
+        } else {
+            try {
+                $priceManager = $this->get('oro_pricing.manager.price_manager');
+                $priceManager->delete($productPrice[0]);
+            } catch (\Exception $e) {
+                $code = JsonResponse::HTTP_INTERNAL_SERVER_ERROR;
+                $message = $e->getMessage();
+            }
+        }
+
+        $response = [
+            'success' => $code === JsonResponse::HTTP_OK,
+            'message' => $message,
+            'messages' => $this->prepareMessages($errors),
+            'refreshGrid' => $this->get('oro_action.helper.context')->getActionData()->getRefreshGrid(),
+            'flashMessages' => $this->get('session')->getFlashBag()->all()
+        ];
+        return new JsonResponse($response, $code);
+    }
+
+    /**
+     * @param Collection $messages
+     * @return array
+     */
+    protected function prepareMessages(Collection $messages)
+    {
+        $translator = $this->get('translator');
+        $result = [];
+
+        foreach ($messages as $message) {
+            $result[] = $translator->trans($message['message'], $message['parameters']);
+        }
+
+        return $result;
     }
 }

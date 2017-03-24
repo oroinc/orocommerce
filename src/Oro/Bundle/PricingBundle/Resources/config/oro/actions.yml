@@ -63,7 +63,6 @@ operations:
             - price-list-websites-grid
             - pricing-price-list-select-grid
             - product-prices-grid
-
     oro_pricing_price_list_set_active:
         label: oro.pricing.pricelist.status.enable
         routes: [oro_pricing_price_list_view]
@@ -164,17 +163,6 @@ operations:
                 route: 'oro_pricing_price_list_view'
                 route_parameters:
                     id: $.newPriceList.id
-
-    oro_pricing_delete_product_price:
-        extends: DELETE
-        replace:
-            - for_all_datagrids
-            - for_all_entities
-            - preconditions
-        preconditions:
-            '@not_blank': $.data
-        datagrids:
-            - price-list-product-prices-grid
 
     oro_pricing_recalculate_price_list:
         label: oro.pricing.pricelist.recalculate.label
