@@ -225,6 +225,32 @@ class PageControllerTest extends WebTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 404);
     }
 
+    public function testValidationForLocalizedFallbackValues()
+    {
+        $crawler = $this->client->request('GET', $this->getUrl('oro_cms_page_create'));
+        $form = $crawler->selectButton('Save and Close')->form();
+
+        $bigStringValue = str_repeat('a', 256);
+        $formValues = $form->getPhpValues();
+        $formValues['oro_cms_page']['titles']['values']['default'] = $bigStringValue;
+        $formValues['oro_cms_page']['slugPrototypesWithRedirect']['slugPrototypes'] = [
+            'values' => ['default' => $bigStringValue]
+        ];
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->request($form->getMethod(), $form->getUri(), $formValues);
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $this->assertEquals(
+            2,
+            $crawler->filterXPath(
+                "//li[contains(text(),'This value is too long. It should have 255 characters or less.')]"
+            )->count()
+        );
+    }
+
     /**
      * @param string $title
      * @param string $slug

@@ -701,7 +701,46 @@ class ProductControllerTest extends WebTestCase
         );
         $crawler = $this->client->request('GET', $this->getUrl('oro_frontend_root'));
 
-        $this->assertEquals(12, $crawler->filter('.featured-product')->count());
+        $this->assertEquals(9, $crawler->filter('.featured-product')->count());
+    }
+
+    public function testValidationForLocalizedFallbackValues()
+    {
+        $crawler = $this->client->request('GET', $this->getUrl('oro_product_create'));
+        $form = $crawler->selectButton('Continue')->form();
+        $formValues = $form->getPhpValues();
+        $formValues['input_action'] = 'oro_product_create';
+        $formValues['oro_product_step_one']['category'] = self::CATEGORY_ID;
+        $formValues['oro_product_step_one']['type'] = Product::TYPE_SIMPLE;
+        $formValues['oro_product_step_one']['attributeFamily'] = self::ATTRIBUTE_FAMILY_ID;
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->request('POST', $this->getUrl('oro_product_create'), $formValues);
+
+        $form = $crawler->selectButton('Save and Close')->form();
+
+        $bigStringValue = str_repeat('a', 256);
+        $formValues = $form->getPhpValues();
+        $formValues['oro_product']['sku'] = self::TEST_SKU;
+        $formValues['oro_product']['owner'] = $this->getBusinessUnitId();
+        $formValues['oro_product']['names']['values']['default'] = $bigStringValue;
+        $formValues['oro_product']['slugPrototypesWithRedirect']['slugPrototypes'] = [
+            'values' => ['default' => $bigStringValue]
+        ];
+        $formValues['oro_product']['type'] = Product::TYPE_SIMPLE;
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->request($form->getMethod(), $form->getUri(), $formValues);
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $this->assertEquals(
+            2,
+            $crawler->filterXPath(
+                "//li[contains(text(),'This value is too long. It should have 255 characters or less.')]"
+            )->count()
+        );
     }
 
     /**
