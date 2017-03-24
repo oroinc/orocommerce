@@ -5,8 +5,11 @@ namespace Oro\Bundle\SaleBundle\Tests\Functional\DataFixtures;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\DataFixtures\FixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
+use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
 use Oro\Bundle\PaymentTermBundle\Entity\PaymentTerm;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
@@ -17,17 +20,19 @@ use Oro\Bundle\WebsiteBundle\Entity\Website;
 
 class LoadQuoteData extends AbstractFixture implements FixtureInterface, DependentFixtureInterface
 {
-    const QUOTE1    = 'sale.quote.1';
-    const QUOTE2    = 'sale.quote.2';
-    const QUOTE3    = 'sale.quote.3';
-    const QUOTE4    = 'sale.quote.4';
-    const QUOTE5    = 'sale.quote.5';
-    const QUOTE6    = 'sale.quote.6';
-    const QUOTE7    = 'sale.quote.7';
-    const QUOTE8    = 'sale.quote.8';
-    const QUOTE9    = 'sale.quote.9';
-    const QUOTE10    = 'sale.quote.10';
-    const QUOTE11    = 'sale.quote.11';
+    const QUOTE1 = 'sale.quote.1';
+    const QUOTE2 = 'sale.quote.2';
+    const QUOTE3 = 'sale.quote.3';
+    const QUOTE4 = 'sale.quote.4';
+    const QUOTE5 = 'sale.quote.5';
+    const QUOTE6 = 'sale.quote.6';
+    const QUOTE7 = 'sale.quote.7';
+    const QUOTE8 = 'sale.quote.8';
+    const QUOTE9 = 'sale.quote.9';
+    const QUOTE10 = 'sale.quote.10';
+    const QUOTE11 = 'sale.quote.11';
+    const QUOTE12 = 'sale.quote.12';
+    const QUOTE_DRAFT = 'sale.quote.draft';
 
     const PRODUCT1  = 'product-1';
     const PRODUCT2  = 'product-2';
@@ -48,6 +53,8 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
     public static $items = [
         self::QUOTE1 => [
             'qid'       => self::QUOTE1,
+            'internal_status' => 'open',
+            'customer_status' => 'open',
             'products'  => [
                 self::PRODUCT1 => [
                     [
@@ -81,11 +88,15 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
         ],
         self::QUOTE2 => [
             'qid'           => self::QUOTE2,
+            'internal_status' => 'open',
+            'customer_status' => 'open',
             'customer'       => LoadUserData::ACCOUNT1,
             'products'      => [],
         ],
         self::QUOTE3 => [
             'qid'           => self::QUOTE3,
+            'internal_status' => 'sent_to_customer',
+            'customer_status' => 'open',
             'customer'       => LoadUserData::ACCOUNT1,
             'customerUser'   => LoadUserData::ACCOUNT1_USER1,
             'products'      => [
@@ -104,6 +115,8 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
         ],
         self::QUOTE4 => [
             'qid'           => self::QUOTE4,
+            'internal_status' => 'sent_to_customer',
+            'customer_status' => 'open',
             'customer'       => LoadUserData::ACCOUNT1,
             'customerUser'   => LoadUserData::ACCOUNT1_USER2,
             'products'      => [],
@@ -111,6 +124,8 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
         ],
         self::QUOTE5 => [
             'qid'           => self::QUOTE5,
+            'internal_status' => 'open',
+            'customer_status' => 'open',
             'customer'       => LoadUserData::ACCOUNT1,
             'customerUser'   => LoadUserData::ACCOUNT1_USER3,
             'validUntil'    => 'now',
@@ -118,17 +133,23 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
         ],
         self::QUOTE6 => [
             'qid'           => self::QUOTE6,
+            'internal_status' => 'open',
+            'customer_status' => 'open',
             'customer'       => LoadUserData::ACCOUNT2,
             'products'      => [],
         ],
         self::QUOTE7 => [
             'qid'           => self::QUOTE7,
+            'internal_status' => 'open',
+            'customer_status' => 'open',
             'customer'       => LoadUserData::ACCOUNT2,
             'customerUser'   => LoadUserData::ACCOUNT2_USER1,
             'products'      => [],
         ],
         self::QUOTE8 => [
             'qid'           => self::QUOTE8,
+            'internal_status' => 'open',
+            'customer_status' => 'open',
             'customer'       => LoadUserData::ACCOUNT1,
             'customerUser'   => LoadUserData::ACCOUNT1_USER3,
             'expired'       => true,
@@ -136,6 +157,8 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
         ],
         self::QUOTE9 => [
             'qid'           => self::QUOTE9,
+            'internal_status' => 'sent_to_customer',
+            'customer_status' => 'open',
             'customer'       => LoadUserData::ACCOUNT1,
             'customerUser'   => LoadUserData::ACCOUNT1_USER3,
             'validUntil'    => null,
@@ -144,16 +167,39 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
         ],
         self::QUOTE10 => [
             'qid'           => self::QUOTE10,
+            'internal_status' => 'open',
+            'customer_status' => 'open',
             'customer'       => LoadUserData::PARENT_ACCOUNT,
             'customerUser'   => LoadUserData::PARENT_ACCOUNT_USER1,
             'products'      => [],
         ],
         self::QUOTE11 => [
             'qid'           => self::QUOTE11,
+            'internal_status' => 'open',
+            'customer_status' => 'open',
             'customer'       => LoadUserData::PARENT_ACCOUNT,
             'customerUser'   => LoadUserData::PARENT_ACCOUNT_USER2,
             'products'      => [],
         ],
+        self::QUOTE_DRAFT => [
+            'qid' => self::QUOTE_DRAFT,
+            'internal_status' => 'draft',
+            'customer_status' => 'open',
+            'customer' => LoadUserData::PARENT_ACCOUNT,
+            'customerUser' => LoadUserData::PARENT_ACCOUNT_USER2,
+            'products' => [],
+        ],
+        self::QUOTE12 => [
+            'qid' => self::QUOTE12,
+            'internal_status' => 'sent_to_customer',
+            'customer_status' => 'open',
+            'customer' => LoadUserData::ACCOUNT1,
+            'customerUser' => LoadUserData::ACCOUNT1_USER3,
+            'validUntil' => null,
+            'products' => [],
+            'paymentTerm' => LoadPaymentTermData::TERM_LABEL_NET_10,
+            'expired' => true
+        ]
     ];
 
     /**
@@ -236,7 +282,18 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
 
             $this->setReference($item['qid'], $quote);
         }
+        $manager->flush();
 
+        // set statuses after autostart workflow
+        foreach (self::$items as $item) {
+            $quote = $this->getReference($item['qid']);
+            $quote->setCustomerStatus(
+                $this->getEnumEntity($manager, Quote::CUSTOMER_STATUS_CODE, $item['customer_status'])
+            )->setInternalStatus(
+                $this->getEnumEntity($manager, Quote::INTERNAL_STATUS_CODE, $item['internal_status'])
+            );
+            $manager->persist($quote);
+        }
         $manager->flush();
     }
 
@@ -282,6 +339,19 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
         $manager->persist($product);
 
         $quote->addQuoteProduct($product);
+    }
+
+    /**
+     * @param EntityManager $manager
+     * @param string $enumField
+     * @param string $enumCode
+     * @return AbstractEnumValue
+     */
+    protected function getEnumEntity(EntityManager $manager, $enumField, $enumCode)
+    {
+        $className = ExtendHelper::buildEnumValueClassName($enumField);
+
+        return $manager->getReference($className, $enumCode);
     }
 
     /**

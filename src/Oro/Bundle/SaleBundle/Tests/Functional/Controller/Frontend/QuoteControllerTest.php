@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SaleBundle\Tests\Functional\Controller\Frontend;
 
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\Translation\TranslatorInterface;
 
@@ -61,7 +62,9 @@ class QuoteControllerTest extends WebTestCase
             $this->assertEquals($expectedColumns, $testedColumns);
         }
 
-        for ($i = 0; $i < count($expectedData['data']); $i++) {
+        for ($i = 0; $i < $iMax = count($expectedData['data']); $i++) {
+            // not expected Draft Quote
+            $this->assertArrayNotHasKey(LoadQuoteData::QUOTE_DRAFT, $data[$i]);
             foreach ($expectedData['data'][$i] as $key => $value) {
                 $this->assertArrayHasKey($key, $data[$i]);
                 $this->assertEquals($value, $data[$i][$key]);
@@ -76,6 +79,18 @@ class QuoteControllerTest extends WebTestCase
      */
     public function indexProvider()
     {
+        $defaultColumns = [
+            'customerStatusName',
+            'id',
+            'qid',
+            'createdAt',
+            'validUntil',
+            'poNumber',
+            'shipUntil',
+            'view_link',
+            'action_configuration',
+        ];
+
         return [
             'customer1 user1 (only customer user quotes)' => [
                 'input' => [
@@ -88,16 +103,7 @@ class QuoteControllerTest extends WebTestCase
                             'qid' => LoadQuoteData::QUOTE3,
                         ],
                     ],
-                    'columns' => [
-                        'id',
-                        'qid',
-                        'createdAt',
-                        'validUntil',
-                        'poNumber',
-                        'shipUntil',
-                        'view_link',
-                        'action_configuration',
-                    ],
+                    'columns' => $defaultColumns,
                 ],
             ],
             'customer1 user2 (all customer qouotes)' => [
@@ -108,6 +114,9 @@ class QuoteControllerTest extends WebTestCase
                 'expected' => [
                     'data' => [
                         [
+                            'qid' => LoadQuoteData::QUOTE12,
+                        ],
+                        [
                             'qid' => LoadQuoteData::QUOTE2,
                         ],
                         [
@@ -126,16 +135,7 @@ class QuoteControllerTest extends WebTestCase
                             'qid' => LoadQuoteData::QUOTE9,
                         ],
                     ],
-                    'columns' => [
-                        'id',
-                        'qid',
-                        'createdAt',
-                        'validUntil',
-                        'poNumber',
-                        'shipUntil',
-                        'view_link',
-                        'action_configuration',
-                    ],
+                    'columns' => $defaultColumns,
                 ],
             ],
             'customer1 user3 (all customer quotes and assignedTo)' => [
@@ -146,6 +146,9 @@ class QuoteControllerTest extends WebTestCase
                 'expected' => [
                     'data' => [
                         [
+                            'qid' => LoadQuoteData::QUOTE12,
+                        ],
+                        [
                             'qid' => LoadQuoteData::QUOTE2,
                         ],
                         [
@@ -164,17 +167,7 @@ class QuoteControllerTest extends WebTestCase
                             'qid' => LoadQuoteData::QUOTE9,
                         ],
                     ],
-                    'columns' => [
-                        'id',
-                        'qid',
-                        'createdAt',
-                        'validUntil',
-                        'customerUserName',
-                        'poNumber',
-                        'shipUntil',
-                        'view_link',
-                        'action_configuration',
-                    ],
+                    'columns' => array_merge(['customerUserName'], $defaultColumns),
                 ],
             ],
             'customer2 user1 (only customer user quotes)' => [
@@ -188,16 +181,7 @@ class QuoteControllerTest extends WebTestCase
                             'qid' => LoadQuoteData::QUOTE7,
                         ],
                     ],
-                    'columns' => [
-                        'id',
-                        'qid',
-                        'createdAt',
-                        'validUntil',
-                        'poNumber',
-                        'shipUntil',
-                        'view_link',
-                        'action_configuration',
-                    ],
+                    'columns' => $defaultColumns,
                 ],
             ],
             'parent customer user1 (all quotes)' => [
@@ -212,6 +196,9 @@ class QuoteControllerTest extends WebTestCase
                         ],
                         [
                             'qid' => LoadQuoteData::QUOTE11,
+                        ],
+                        [
+                            'qid' => LoadQuoteData::QUOTE12,
                         ],
                         [
                             'qid' => LoadQuoteData::QUOTE2,
@@ -238,17 +225,7 @@ class QuoteControllerTest extends WebTestCase
                             'qid' => LoadQuoteData::QUOTE9,
                         ]
                     ],
-                    'columns' => [
-                        'id',
-                        'qid',
-                        'createdAt',
-                        'validUntil',
-                        'poNumber',
-                        'shipUntil',
-                        'view_link',
-                        'action_configuration',
-                        'customerUserName'
-                    ],
+                    'columns' => array_merge(['customerUserName'], $defaultColumns),
                 ],
             ]
         ];
@@ -506,6 +483,38 @@ class QuoteControllerTest extends WebTestCase
                     ],
                 ],
             ],
+            'customer1 user3 (CustomerUser:DEEP) not acceptable' => [
+                'input' => [
+                    'qid' => LoadQuoteData::QUOTE12,
+                    'login' => LoadUserData::ACCOUNT1_USER3,
+                    'password' => LoadUserData::ACCOUNT1_USER3,
+                ],
+                'expected' => [
+                    'createOrderButton' => false,
+                    'columns' => [
+                        [
+                            'label' => 'oro.frontend.sale.quote.qid.label',
+                            'property' => 'qid',
+                        ],
+                        [
+                            'label' => 'oro.frontend.sale.quote.valid_until.label',
+                            'property' => 'valid_until',
+                        ],
+                        [
+                            'label' => 'oro.sale.quote.po_number.label',
+                            'property' => 'po_number',
+                        ],
+                        [
+                            'label' => 'oro.sale.quote.ship_until.label',
+                            'property' => 'ship_until',
+                        ],
+                        [
+                            'label' => 'oro.paymentterm.entity_label',
+                            'property' => 'payment_term_7c4f1e8e.label',
+                        ],
+                    ],
+                ],
+            ],
         ];
     }
 
@@ -580,6 +589,25 @@ class QuoteControllerTest extends WebTestCase
 
         $response = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($response, 200);
+    }
+
+    public function testViewDraft()
+    {
+        $this->loginUser(LoadUserData::PARENT_ACCOUNT_USER1);
+
+        /* @var $quote Quote */
+        $quote = $this->getReference(LoadQuoteData::QUOTE_DRAFT);
+
+        $this->client->request(
+            'GET',
+            $this->getUrl(
+                'oro_sale_quote_frontend_view',
+                ['id' => $quote->getId()]
+            )
+        );
+
+        $response = $this->client->getResponse();
+        static::assertHtmlResponseStatusCodeEquals($response, Response::HTTP_NOT_FOUND);
     }
 
     public function testGridAccessDeniedForAnonymousUsers()

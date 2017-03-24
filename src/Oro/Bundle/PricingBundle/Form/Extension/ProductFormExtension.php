@@ -47,7 +47,7 @@ class ProductFormExtension extends AbstractTypeExtension
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -69,11 +69,12 @@ class ProductFormExtension extends AbstractTypeExtension
         );
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'onPostSetData']);
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit'], 10);
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit'], 10);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function onPostSetData(FormEvent $event)
     {
@@ -89,7 +90,43 @@ class ProductFormExtension extends AbstractTypeExtension
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
+     */
+    public function onPreSubmit(FormEvent $event)
+    {
+        $form = $event->getForm();
+
+        /** @var Product|null $product */
+        $product = $form->getData();
+        if (!$product) {
+            return;
+        }
+
+        $submittedData = $event->getData();
+
+        if (array_key_exists('prices', $submittedData)) {
+            $submittedPrices = $submittedData['prices'];
+
+            if ($product->getId()) {
+                $replacedPrices = [];
+                $existingPrices = $this->getProductPriceRepository()->getPricesByProduct($product);
+                foreach ($submittedPrices as $key => $submittedPrice) {
+                    foreach ($existingPrices as $k => $existingPrice) {
+                        if ($key !== $k && $this->assertUniqueAttributes($submittedPrice, $existingPrice)) {
+                            $replacedPrices[$k] = $submittedPrice;
+                            break;
+                        }
+                    }
+                }
+                $correctPrices = array_replace($submittedPrices, $replacedPrices);
+                $submittedData['prices'] = $correctPrices;
+                $event->setData($submittedData);
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function onPostSubmit(FormEvent $event)
     {
@@ -169,5 +206,29 @@ class ProductFormExtension extends AbstractTypeExtension
     protected function getManager()
     {
         return $this->registry->getManagerForClass('OroPricingBundle:ProductPrice');
+    }
+
+    /**
+     * @param array        $submitted
+     * @param ProductPrice $existing
+     *
+     * @return boolean
+     */
+    protected function assertUniqueAttributes(array $submitted, ProductPrice $existing)
+    {
+        if ($submitted['priceList'] !== (string)$existing->getPriceList()->getId()) {
+            return false;
+        }
+        if ($submitted['price']['currency'] !== $existing->getPrice()->getCurrency()) {
+            return false;
+        }
+        if ($submitted['quantity'] !== (string)$existing->getQuantity()) {
+            return false;
+        }
+        if ($submitted['unit'] !== $existing->getUnit()->getCode()) {
+            return false;
+        }
+
+        return true;
     }
 }

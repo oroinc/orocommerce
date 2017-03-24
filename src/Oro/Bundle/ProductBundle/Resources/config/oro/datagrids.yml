@@ -2,7 +2,7 @@ datagrids:
     products-select-grid-base:
         extended_entity_name: %oro_product.entity.product.class%
         options:
-            entityHint:        product
+            entityHint:        products
         source:
             type:         orm
             query:
@@ -25,11 +25,10 @@ datagrids:
                 label:         oro.product.sku.label
             productName:
                 label:         oro.product.names.label
-            inventoryStatus:
+            inventoryStatusId:
                 label:         oro.product.inventory_status.label
-                type:          twig
-                frontend_type: html
-                template:      OroProductBundle:Product:Datagrid/inventoryStatus.html.twig
+                frontend_type: select
+                choices:       "@oro_product.provider.product_inventory_status_provider->getAvailableProductInventoryStatuses"
             status:
                 label:         oro.product.status.label
                 frontend_type: select
@@ -56,7 +55,7 @@ datagrids:
                     data_name: product.sku
                 productName:
                     data_name: productName
-                inventoryStatus:
+                inventoryStatusId:
                     data_name: inventoryStatusName
                 status:
                     data_name: product.status
@@ -76,7 +75,7 @@ datagrids:
                 productName:
                     type:      string
                     data_name: productName
-                inventoryStatus:
+                inventoryStatusId:
                     type:      enum
                     data_name: inventoryStatusId
                     enum_code: prod_inventory_status
@@ -126,6 +125,31 @@ datagrids:
                 icon:          eye
                 acl_resource:  oro_product_view
                 rowAction:     true
+        inline_editing:
+            enable: true
+            behaviour: enable_selected
+        columns:
+            productName:
+                inline_editing:
+                    enable: true
+                    save_api_accessor:
+                        route: oro_api_patch_product_inline_edit_name
+                        query_parameter_names:
+                            - id
+                    validation_rules:
+                        NotBlank: true
+            inventoryStatusId:
+                inline_editing:
+                    enable: true
+                    save_api_accessor:
+                        route: oro_api_patch_product_inline_edit_inventory_status
+                        query_parameter_names:
+                            - id
+                    validation_rules:
+                        NotBlank: true
+            status:
+                inline_editing:
+                    enable: true
 
     product-product-variants-base:
         acl_resource: oro_product_view
@@ -292,7 +316,7 @@ datagrids:
 
     frontend-product-search-grid:
         options:
-            entityHint:        product
+            entityHint:        products
             displayOptions:
                 selector: '.catalog__filter-controls__item_display-options'
             requireJSModules:

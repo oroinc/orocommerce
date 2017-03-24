@@ -4,7 +4,7 @@ namespace Oro\Bundle\ShippingBundle\Condition;
 
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
-use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
+use Oro\Bundle\ShippingBundle\Provider\Price\ShippingPriceProviderInterface;
 use Oro\Component\ConfigExpression\Condition\AbstractCondition;
 use Oro\Component\ConfigExpression\ContextAccessorAwareInterface;
 use Oro\Component\ConfigExpression\ContextAccessorAwareTrait;
@@ -33,11 +33,11 @@ class HasApplicableShippingMethods extends AbstractCondition implements ContextA
 
     /**
      * @param ShippingMethodRegistry $shippingMethodRegistry
-     * @param ShippingPriceProvider $shippingPriceProvider
+     * @param ShippingPriceProviderInterface $shippingPriceProvider
      */
     public function __construct(
         ShippingMethodRegistry $shippingMethodRegistry,
-        ShippingPriceProvider $shippingPriceProvider
+        ShippingPriceProviderInterface $shippingPriceProvider
     ) {
         $this->shippingMethodRegistry = $shippingMethodRegistry;
         $this->shippingPriceProvider = $shippingPriceProvider;

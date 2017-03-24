@@ -1,4 +1,5 @@
-@fixture-PaymentTermIntegration.yml
+@fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
+@fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-Checkout.yml
 Feature: Checkout workflow
   Scenario: Create order from Shopping List 1

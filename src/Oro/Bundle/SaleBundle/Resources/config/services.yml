@@ -6,6 +6,11 @@ parameters:
     oro_sale.entity.quote_product_request.class: Oro\Bundle\SaleBundle\Entity\QuoteProductRequest
 
 services:
+    oro_sale.condition.quote_acceptable:
+        class: Oro\Bundle\SaleBundle\Model\Condition\QuoteAcceptable
+        tags:
+            - { name: oro_action.condition, alias: quote_acceptable }
+
     oro_sale.provider.quote_product_price:
         class: 'Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider'
         arguments:
@@ -61,10 +66,8 @@ services:
 
     oro_sale.helper.notification:
         class: 'Oro\Bundle\SaleBundle\Notification\NotificationHelper'
-        scope: request
         arguments:
             - "@doctrine"
-            - "@request"
             - "@oro_email.email.model.builder"
             - "@oro_email.mailer.processor"
         calls:
@@ -88,6 +91,16 @@ services:
         calls:
             - [addEntity, ['a', '%oro_customer.entity.customer_address.class%']]
             - [addEntity, ['au', '%oro_customer.entity.customer_user_address.class%']]
+
+    oro_sale.privider.form_template_data.quote:
+        class: 'Oro\Bundle\SaleBundle\Form\QuoteFormTemplateDataProvider'
+        lazy: true
+        arguments:
+            - '@event_dispatcher'
+            - '@oro_sale.provider.quote_product_price'
+            - '@oro_sale.provider.quote_address_security'
+        tags:
+            - { name: oro_form.form_template_data_provider, alias: quote_update }
 
     oro_sale.provider.quote_address:
         class: 'Oro\Bundle\SaleBundle\Provider\QuoteAddressProvider'
@@ -126,6 +139,16 @@ services:
         arguments:
             - "@oro_pricing.subtotal_processor.total_processor_provider"
             - "@oro_pricing.subtotal_processor.provider.subtotal_line_item"
+
+    oro_sale.event_listener.quote_update:
+        class: 'Oro\Bundle\SaleBundle\EventListener\QuoteUpdateHandlerEventListener'
+        arguments:
+            - '@oro_website.manager'
+            - '@oro_sale.service.quote_request_handler'
+            - '@request_stack'
+        tags:
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_form_data_set.oro_sale_quote, method: ensureWebsite }
+            - { name: kernel.event_listener, event: oro.form.update_handler.before_form_data_set.oro_sale_quote, method: ensureCustomer }
 
     oro_sale.event_listener.customer_view:
         class: 'Oro\Bundle\SaleBundle\EventListener\CustomerViewListener'

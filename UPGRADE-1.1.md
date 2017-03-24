@@ -1,10 +1,28 @@
 UPGRADE FROM 1.0.0 to 1.1
 =======================================
 
+####General
+- Changed minimum required php version to 7.0
+- Updated dependency to [fxpio/composer-asset-plugin](https://github.com/fxpio/composer-asset-plugin) composer plugin to version 1.3.
+- Composer updated to version 1.4.
+
+```
+    composer self-update
+    composer global require "fxp/composer-asset-plugin"
+```
+
 Tree Component
 --------------
 - `Oro\Component\Tree\Handler\AbstractTreeHandler`:
     - added method `getTreeItemList`
+    
+WebCatalog Component
+-------------
+- New Interface `Oro\Component\WebCatalog\Entity\WebCatalogAwareInterface`
+    - for entities which are aware of WebCatalogs
+- New Interface `Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface`
+    - provide information about assigned WebCatalogs to given entities (passed as an argument)
+    - provide information about usage of WebCatalog by id
 
 CatalogBundle
 -------------
@@ -50,6 +68,11 @@ CommerceMenuBundle
 FlatRateBundle
 -------------------
 - Change name of the bundle to FlatRateShippingBundle
+
+InventoryBundle
+---------------
+- REST API resource `/api/inventorylevels`
+    - the filter `productUnitPrecision.unit.code` was marked as deprecated. The `productUnitPrecision.unit.id` filter should be used instead
 
 WebsiteSearchBundle
 -------------------
@@ -104,6 +127,27 @@ MoneyOrderBundle
         - `Oro\Bundle\MoneyOrderBundle\Method\Factory\MoneyOrderPaymentMethodFactory`
         - `Oro\Bundle\MoneyOrderBundle\Method\View\Factory\MoneyOrderPaymentMethodViewFactory`
 
+NavigationBundle
+----------------
+
+* Chaged placeholders format for `navigation.yml` files. Please use `%` instead of `%%`
+* Removed class `Oro\Bundle\FrontendBundle\Menu\BreadcrumbManager`. From now menu name used to build breadcrumbs is set directly in `Oro\Bundle\NavigationBundle\Layout\DataProvider\NavigationTitleProvider::getTitle`:
+* `Oro\Bundle\NavigationBundle\Provider\TitleServiceInterface`:
+    - Changed signature of loadByRoute to `($route, $menuName = null)` to provide ability to set menu that will be used to build title
+* Removed title db cache:
+    - Removed command `oro:navigation:init` it is not needed, titles are generated and cached on fly
+    - Removed repository `Oro\Bundle\NavigationBundle\Entity\Repository`
+    - Removed entity `Oro\Bundle\NavigationBundle\Entity\Title`
+* Added `Oro\Bundle\NavigationBundle\Title\TitleReader\TitleReaderRegistry`:
+    - Added service tag `oro_navigation.title_reader` to register custom title template reader
+* Added `Oro\Bundle\NavigationBundle\Provider\ConfigurationProvider`. It contains logic that was previously in NavigationExtension 
+* Removed `Oro\Bundle\NavigationBundle\Event\RequestTitleListener`
+* Removed `Oro\Bundle\NavigationBundle\Provider\TitleProvider`
+* Changed `Oro\Bundle\NavigationBundle\Title\TitleReader\AnnotationsReader` constructor signature to `__construct(RequestStack $requestStack, Reader $reader)`
+* Changed `Oro\Bundle\NavigationBundle\Title\TranslationExtractor` constructor signature to `__construct(TitleReaderRegistry $titleReaderRegistry, RouterInterface $router)`
+* Changed `Oro\Bundle\NavigationBundle\ContentProvider\NavigationElementsContentProvider` constructor signature to `__construct(ConfigurationProvider $configurationProvider)`
+* Changed `Oro\Bundle\NavigationBundle\Config\MenuConfiguration` constructor signature to `__construct(ConfigurationProvider $configurationProvider)`
+
 OrderBundle
 -----------
 - Class `Oro\Bundle\OrderBundle\Twig\OrderExtension`
@@ -117,6 +161,8 @@ OrderBundle
     - renamed and moved to `Oro\Bundle\OrderBundle\EventListener\PossibleShippingMethodEventListener`
     - constructor accepts `Oro\Bundle\ShippingBundle\Context\ShippingContextFactoryInterface` instead of `Oro\Bundle\OrderBundle\Factory\OrderShippingContextFactory`
     - method `onOrderEvent` renamed to `onEvent` and it accepts `Oro\Bundle\ShippingBundle\EventListener\EntityDataAwareEventInterface`
+- Payment history section was added to order view page with payment transactions for current order
+- `VIEW_PAYMENT_HISTORY` permission was added for viewing payment history section
 
 PaymentBundle
 -------------
@@ -251,7 +297,19 @@ PricingBundle
     - changed the return type of `getIteratorByPriceList` method from `BufferedQueryResultIterator` to `BufferedQueryResultIteratorInterface`
 - Class `Oro\Bundle\PricingBundle\Entity\Repository\PriceListToWebsiteRepository`
     - changed the return type of `getWebsiteIteratorByDefaultFallback` method from `BufferedQueryResultIterator` to `BufferedQueryResultIteratorInterface`
-
+- Class `Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType`
+    - field `priority` was removed. Field `_position` from `Oro\Bundle\FormBundle\Form\Extension\SortableExtension` will be used instead.
+- Class `Oro\Bundle\PricingBundle\Entity\BasePriceListRelation`
+    - property `$priority` was renamed to `$sortOrder`
+    - methods `getPriority` and `setPriority` were renamed to `getSortOrder` and `setSortOrder` accordingly
+- Class `Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig`
+    - property `$priority` was renamed to `$sortOrder`
+    - methods `getPriority` and `setPriority` were renamed to `getSortOrder` and `setSortOrder` accordingly
+- Interface `Oro\Bundle\PricingBundle\Entity\PriceListAwareInterface`
+    - method `getPriority` was renamed to `getSortOrder`
+- Class `Oro\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter`
+    - constant `PRIORITY_KEY` was renamed to `SORT_ORDER_KEY`
+    
 ProductBundle
 -------------
 - Class `Oro\Bundle\ProductBundle\Twig\ProductExtension`
@@ -284,6 +342,9 @@ SaleBundle
     - removed property `protected $configManager`
 - Class `Oro\Bundle\SaleBundle\EventListener\Quote\QuotePossibleShippingMethodsEventListener` removed. 
     - `Oro\Bundle\OrderBundle\EventListener\PossibleShippingMethodEventListener` must be used instead.
+- Removed property `locked` from entity class `Oro\Bundle\SaleBundle\Entity\Quote` with related methods
+- Class `Oro\Bundle\SaleBundle\Notification\NotificationHelper`
+    - removed parameter `request` from constructor
 
 ShoppingListBundle
 ------------------
@@ -331,6 +392,7 @@ ShippingBundle
     - removed `Oro\Bundle\ShippingBundle\QueryDesigner\ShippingProductQueryDesigner`
     - removed `Oro\Bundle\ShippingBundle\ExpressionLanguage\ProductDecorator`
     - class `Oro\Bundle\PaymentBundle\ExpressionLanguage\DecoratedProductLineItemFactory` only dependency is now `Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory`
+- `Oro\Bundle\ShippingBundle\Method\EventListener\AbstractIntegrationRemovalListener` was deprecated, `Oro\Bundle\ShippingBundle\Method\EventListener\IntegrationRemovalListener` was created instead.
 
 WebCatalogBundle
 ----------------
@@ -357,3 +419,14 @@ CMSBundle
 ---------
 - Removed constructor of `Oro\Bundle\CMSBundle\Form\Type\CmsPageVariantType`.
     - corresponding logic moved to `Oro\Bundle\WebCatalogBundle\Form\Extension\PageVariantTypeExtension`
+
+UPSBundle
+---------
+- "Check UPS Connection" button was added on UPS integration page. Please, see [documentation](package/commerce/src/Oro/Bundle/UPSBundle/Resources/doc/credentials-validation.md) for more information.
+
+FrontendLocalizationBundle
+--------------------------
+- Class `Oro\Bundle\FrontendLocalizationBundle\Provider\TranslationPackagesProviderExtension` removed
+- Updated service definition for `oro_frontend_localization.extension.transtation_packages_provider` 
+    - changed class to `Oro\Bundle\FrontendBundle\Provider\TranslationPackagesProviderExtension`
+    - changed publicity to `false`

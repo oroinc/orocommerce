@@ -2,7 +2,7 @@ datagrids:
     base-orders-grid:
         extended_entity_name: %oro_order.entity.order.class%
         options:
-            entityHint:        order
+            entityHint:        orders
             entity_pagination: true
         source:
             type:         orm
@@ -379,7 +379,7 @@ datagrids:
         acl_resource: oro_order_view
         extended_entity_name: %oro_order.entity.order.class%
         options:
-            entityHint:        order
+            entityHint:        orders
             entity_pagination: true
         source:
             type:         orm
@@ -542,7 +542,7 @@ datagrids:
     base-order-line-items-grid:
         extended_entity_name: %oro_order.entity.order_line_item.class%
         options:
-            entityHint: order_line_item
+            entityHint: order line items
         source:
             type: orm
             query:
@@ -625,7 +625,7 @@ datagrids:
     order-shipping-trackings-grid:
         extended_entity_name: %oro_order.entity.order_shipping_tracking.class%
         options:
-            entityHint: order_shipping_tracking
+            entityHint: order shipping trackings
             entity_pagination: false
             toolbarOptions:
                 hide: true
@@ -659,7 +659,7 @@ datagrids:
     best-selling-products:
         entity_name: %oro_report.calendar_date.entity.class%
         options:
-            entityHint: calendarDate
+            entityHint: calendar dates
             export: true
         source:
             type: orm
@@ -701,7 +701,7 @@ datagrids:
                 frontend_type: date
                 renderable: false
             dateGrouping:
-                label:         oro.product.time_period.label
+                label:         oro.report.datagrid.column.time_period.label
             sku:
                 label:         oro.product.sku.label
             productName:
@@ -717,17 +717,19 @@ datagrids:
                     data_name: product.sku
                 cDate:
                     data_name: calendarDate.date
+                dateGrouping:
+                    data_name: calendarDate.date
                 qtySold:
                     data_name: qtySold
                 productName:
                     data_name: productName
             default:
-                cDate: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
+                dateGrouping: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
                 sku: %oro_datagrid.extension.orm_sorter.class%::DIRECTION_DESC
         filters:
             columns:
                 createdAt:
-                    label:     oro.product.time_period.label
+                    label:     oro.report.datagrid.column.time_period.label
                     type:      datetime
                     data_name: calendarDate.date
                 sku:
@@ -739,18 +741,30 @@ datagrids:
                 skip_empty_periods:
                     type:      skip_empty_periods
                     data_name: calendarDate.date
-                    label:     oro.product.skip_empty_periods.label
+                    label:     oro.report.filter.skip_empty_periods.label
                     not_nullable_field: product.id
                 grouping:
                     type:      date_grouping
                     data_name: calendarDate.date
-                    label:     oro.product.grouping.label
+                    label:     oro.report.filter.grouping.label
                     column_name: dateGrouping
                     calendar_entity: %oro_report.calendar_date.entity.class%
                     target_entity: %oro_order.entity.order.class%
                     not_nullable_field: product.id
+                    joined_column: createdAt
             default:
                 grouping:
                     value: day
                 skip_empty_periods:
                     value: 1
+
+    order-payment-transactions-grid:
+        extends:  payment-transactions-grid
+        source:
+            query:
+                where:
+                    and:
+                        - payment_transaction.entityClass = '%oro_order.entity.order.class%'
+                        - payment_transaction.entityIdentifier = :order_id
+            bind_parameters:
+                - order_id

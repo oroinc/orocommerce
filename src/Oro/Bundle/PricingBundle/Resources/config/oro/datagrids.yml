@@ -2,7 +2,7 @@ datagrids:
     pricing-price-list-select-grid:
         acl_resource:      oro_pricing_price_list_view
         options:
-            entityHint:        priceList
+            entityHint:        price lists
         source:
             type:              orm
             query:
@@ -377,7 +377,7 @@ datagrids:
     price-list-product-prices-grid:
         acl_resource:      oro_pricing_product_price_view
         options:
-            entityHint:        productPrice
+            entityHint:        product prices
         source:
             type:              orm
             query:
@@ -516,7 +516,7 @@ datagrids:
     product-prices-grid:
         acl_resource:      oro_pricing_product_price_view
         options:
-            entityHint:        price
+            entityHint:        prices
         source:
             type:              orm
             query:
@@ -610,7 +610,7 @@ datagrids:
     pricing-price-attribute-price-list-grid:
         acl_resource:      oro_pricing_price_attribute_price_list_view
         options:
-            entityHint:        priceAttributepriceList
+            entityHint:        price attributes
         source:
             type:              orm
             query:

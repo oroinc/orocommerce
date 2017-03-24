@@ -93,7 +93,6 @@ class InvoiceType extends AbstractType
                 InvoiceLineItemsCollectionType::NAME,
                 [
                     'add_label' => 'oro.invoice.invoicelineitem.add_label',
-                    'cascade_validation' => true,
                     'options' => ['currency' => $invoice->getCurrency()],
                 ]
             );
@@ -108,7 +107,6 @@ class InvoiceType extends AbstractType
             [
                 'data_class' => $this->dataClass,
                 'intention' => 'invoice',
-                'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
             ]
         );
     }

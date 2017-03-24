@@ -16,6 +16,15 @@ workflows:
 
         applications: ['commerce']
 
+        variable_definitions:
+            variables:
+                order_approval_threshold:
+                    type: 'float'
+                    value: 5000
+                    options:
+                        form_options:
+                            tooltip: true
+
         attributes:
             billing_address:
                 property_path: checkout.billingAddress
@@ -537,6 +546,7 @@ workflows:
                                 token: $state_token
                 preconditions:
                     '@and':
+                        - '@quote_acceptable': [$checkout.sourceEntity, true]
                         - '@extendable':
                             events: [extendable_condition.checkout]
                         - '@order_line_item_has_count':
@@ -640,10 +650,12 @@ workflows:
                                  state: $.result.currentCheckoutState
                                  token: $state_token
                 preconditions:
-                    '@order_line_item_has_count':
-                        message: oro.checkout.workflow.condition.order_line_item_has_count.message
-                        parameters:
-                            entity: $checkout
+                    '@and':
+                        - '@quote_acceptable': [$checkout.sourceEntity, true]
+                        - '@order_line_item_has_count':
+                            message: oro.checkout.workflow.condition.order_line_item_has_count.message
+                            parameters:
+                                entity: $checkout
                 conditions:
                     '@and':
                         - '@or':
@@ -725,6 +737,7 @@ workflows:
                         attribute: $.result.shippingContext
                 preconditions:
                     '@and':
+                        - '@quote_acceptable': [$checkout.sourceEntity, true]
                         - '@order_line_item_has_count':
                             message: oro.checkout.workflow.condition.order_line_item_has_count.message
                             parameters:
@@ -780,12 +793,14 @@ workflows:
                                 state: $.result.currentCheckoutState
                                 token: $state_token
                 preconditions:
-                    '@or':
-                        message: "Pending approval"
-                        parameters:
-                            - '@less_order_total_limit': [$checkout, 5000]
-                            - '@equal': [$allowed, true]
-                            - '@acl_granted': 'oro_alternativecheckout_checkout_approve'
+                    '@and':
+                        - '@quote_acceptable': [$checkout.sourceEntity, true]
+                        - '@or':
+                            message: "Pending approval"
+                            parameters:
+                                - '@less_order_total_limit': [$checkout, $.data.order_approval_threshold]
+                                - '@equal': [$allowed, true]
+                                - '@acl_granted': 'oro_alternativecheckout_checkout_approve'
                 conditions:
                     '@and':
                         - '@extendable':
@@ -1078,8 +1093,9 @@ workflows:
                         - '@not':
                             - '@acl_granted': 'oro_alternativecheckout_checkout_approve'
                         - '@not':
-                            - '@less_order_total_limit': [$checkout, 5000]
+                            - '@less_order_total_limit': [$checkout, $.data.order_approval_threshold]
                         - '@equal': [$allowed, false]
+                        - '@quote_acceptable': [$checkout.sourceEntity, true]
                 conditions:
                     '@or':
                         - '@empty': $.result.savedCheckoutState
@@ -1129,14 +1145,16 @@ workflows:
                                 state: $.result.currentCheckoutState
                                 token: $state_token
                 conditions:
-                    '@or':
-                        - '@empty': $.result.savedCheckoutState
-                        - '@check_checkout_states':
-                            message: oro.checkout.workflow.condition.content_of_order_was_changed.message
-                            parameters:
-                                entity: $checkout
-                                state1: $.result.initCheckoutState
-                                state2: $.result.savedCheckoutState
+                    '@and':
+                        - '@quote_acceptable': [$checkout.sourceEntity, true]
+                        - '@or':
+                            - '@empty': $.result.savedCheckoutState
+                            - '@check_checkout_states':
+                                message: oro.checkout.workflow.condition.content_of_order_was_changed.message
+                                parameters:
+                                    entity: $checkout
+                                    state1: $.result.initCheckoutState
+                                    state2: $.result.savedCheckoutState
                 actions:
                     - '@assign_value':
                         conditions:
@@ -1184,6 +1202,7 @@ workflows:
                     '@and':
                         - '@acl_granted': 'oro_alternativecheckout_checkout_approve'
                         - '@equal': [$allowed, false]
+                        - '@quote_acceptable': [$checkout.sourceEntity, true]
                 conditions:
                     '@or':
                         - '@empty': $.result.savedCheckoutState
@@ -1245,6 +1264,7 @@ workflows:
                         attribute: $.result.paymentContext
                 preconditions:
                     '@and':
+                        - '@quote_acceptable': [$checkout.sourceEntity, true]
                         - '@payment_method_applicable':
                             payment_method: 'payment_term'
                             context: $.result.paymentContext

@@ -89,7 +89,6 @@ class OrderType extends AbstractType
                 OrderLineItemsCollectionType::NAME,
                 [
                     'add_label' => 'oro.order.orderlineitem.add_label',
-                    'cascade_validation' => true,
                     'options' => ['currency' => $order->getCurrency()]
                 ]
             )
@@ -98,7 +97,6 @@ class OrderType extends AbstractType
                 OrderDiscountItemsCollectionType::NAME,
                 [
                     'add_label' => 'oro.order.discountitem.add_label',
-                    'cascade_validation' => true,
                     'options' => [
                         'currency' => $order->getCurrency(),
                         'total' => pow(10, 18) - 1,

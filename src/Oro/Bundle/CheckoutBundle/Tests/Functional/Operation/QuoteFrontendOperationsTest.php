@@ -3,6 +3,7 @@
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Operation;
 
 use Symfony\Component\DomCrawler\Form;
+use Symfony\Component\HttpFoundation\Response;
 
 use Oro\Bundle\FrontendBundle\Tests\Functional\FrontendActionTestCase;
 use Oro\Bundle\SaleBundle\Entity\Quote;
@@ -40,6 +41,23 @@ class QuoteFrontendOperationsTest extends FrontendActionTestCase
         $this->assertNotEquals($firstData->attr('action'), $startData->attr('action'));
     }
 
+    public function testSubmitOrdersFromSingleQuoteNotAllowed()
+    {
+        /** @var Quote $quote */
+        $quote = $this->getReference(LoadQuoteData::QUOTE1);
+
+        $this->loginUser(LoadUserData::ACCOUNT1_USER2);
+        $this->executeOperation($quote, 'oro_checkout_frontend_quote_submit_to_order', Response::HTTP_FORBIDDEN);
+
+        $data = json_decode($this->client->getResponse()->getContent(), true);
+
+        $this->assertArrayHasKey('success', $data);
+        $this->assertFalse($data['success']);
+
+        $this->assertArrayHasKey('messages', $data);
+        $this->assertEquals(['Quote #sale.quote.1 is no longer available'], $data['messages']);
+    }
+
     /**
      * @param Quote $quote
      * @return Form
@@ -68,7 +86,7 @@ class QuoteFrontendOperationsTest extends FrontendActionTestCase
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
 
         $title = $crawler->filter('.page-main__content .page-title__text');
-        $this->assertEquals('<h3>Open Order</h3>', $title->html());
+        $this->assertEquals('Open Order', $title->html());
 
         $form = $crawler->filter('form[name=oro_workflow_transition]');
         $this->assertEquals(1, $form->count());
@@ -79,14 +97,17 @@ class QuoteFrontendOperationsTest extends FrontendActionTestCase
     /**
      * @param Quote $quote
      * @param string $operationName
+     * @param int $statusCode
      */
-    protected function executeOperation(Quote $quote, $operationName)
+    protected function executeOperation(Quote $quote, $operationName, $statusCode = Response::HTTP_OK)
     {
         $this->assertExecuteOperation(
             $operationName,
             $quote->getId(),
             Quote::class,
-            ['route' => 'oro_sale_quote_frontend_view']
+            ['route' => 'oro_sale_quote_frontend_view'],
+            ['HTTP_X_REQUESTED_WITH' => 'XMLHttpRequest'],
+            $statusCode
         );
     }
 }

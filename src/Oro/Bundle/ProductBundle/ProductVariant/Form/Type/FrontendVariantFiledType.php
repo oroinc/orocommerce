@@ -6,11 +6,13 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 
-use Oro\Bundle\EntityConfigBundle\Manager\AttributeManager;
+use Oro\Bundle\ProductBundle\Provider\CustomFieldProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider;
 use Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantTypeHandlerRegistry;
@@ -26,8 +28,8 @@ class FrontendVariantFiledType extends AbstractType
     /** @var ProductVariantTypeHandlerRegistry */
     protected $productVariantTypeHandlerRegistry;
 
-    /** @var AttributeManager */
-    protected $attributeManager;
+    /** @var CustomFieldProvider */
+    protected $customFieldProvider;
 
     /** @var PropertyAccessor */
     protected $propertyAccessor;
@@ -38,20 +40,20 @@ class FrontendVariantFiledType extends AbstractType
     /**
      * @param ProductVariantAvailabilityProvider $productVariantAvailabilityProvider
      * @param ProductVariantTypeHandlerRegistry $productVariantTypeHandlerRegistry
-     * @param AttributeManager $attributeManager
+     * @param CustomFieldProvider $customFieldProvider
      * @param PropertyAccessor $propertyAccessor
      * @param string $productClass
      */
     public function __construct(
         ProductVariantAvailabilityProvider $productVariantAvailabilityProvider,
         ProductVariantTypeHandlerRegistry $productVariantTypeHandlerRegistry,
-        AttributeManager $attributeManager,
+        CustomFieldProvider $customFieldProvider,
         PropertyAccessor $propertyAccessor,
         $productClass
     ) {
         $this->productVariantAvailabilityProvider = $productVariantAvailabilityProvider;
         $this->productVariantTypeHandlerRegistry = $productVariantTypeHandlerRegistry;
-        $this->attributeManager = $attributeManager;
+        $this->customFieldProvider = $customFieldProvider;
         $this->propertyAccessor = $propertyAccessor;
         $this->productClass = (string)$productClass;
     }
@@ -100,7 +102,7 @@ class FrontendVariantFiledType extends AbstractType
         }
 
         $variantAvailability = $this->productVariantAvailabilityProvider->getVariantFieldsAvailability($parentProduct);
-        $labels = $this->getVariantFieldLabels($parentProduct);
+        $labels = $this->customFieldProvider->getVariantFields($this->productClass);
 
         foreach ($parentProduct->getVariantFields() as $fieldName) {
             $fieldType = $this->productVariantAvailabilityProvider->getCustomFieldType($fieldName);
@@ -115,30 +117,14 @@ class FrontendVariantFiledType extends AbstractType
                 $variantAvailability[$fieldName],
                 [
                     'data' => $subFormData,
-                    'label' => $labels[$fieldName],
+                    'label' => $labels[$fieldName]['label'],
+                    'placeholder' => 'oro.product.type.please_select_option',
+                    'empty_data' => null
                 ]
             );
 
             $form->add($subForm);
         }
-    }
-
-    /**
-     * @param Product $product
-     * @return array
-     */
-    private function getVariantFieldLabels(Product $product)
-    {
-        $labels = [];
-
-        $attributes = $this->attributeManager->getAttributesByFamily($product->getAttributeFamily());
-        foreach ($attributes as $attribute) {
-            if (in_array($attribute->getFieldName(), $product->getVariantFields())) {
-                $labels[$attribute->getFieldName()] = $this->attributeManager->getAttributeLabel($attribute);
-            }
-        }
-
-        return $labels;
     }
 
     /**
@@ -151,7 +137,10 @@ class FrontendVariantFiledType extends AbstractType
         ]);
 
         $resolver->setDefaults([
-            'data_class' => $this->productClass
+            'data_class' => $this->productClass,
+            'attr' => [
+                'data-page-component-module' => 'oroproduct/js/app/components/product-variant-field-component'
+            ],
         ]);
 
         $resolver->setNormalizer('parentProduct', function (Options $options, Product $parentProduct) {
@@ -179,5 +168,45 @@ class FrontendVariantFiledType extends AbstractType
     public function getBlockPrefix()
     {
         return self::NAME;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function finishView(FormView $view, FormInterface $form, array $options)
+    {
+        if (!isset($view->vars['attr']['data-page-component-options']['simpleProductVariants'])) {
+            $view->vars['attr']['data-page-component-options'] = json_encode(
+                [
+                    'simpleProductVariants' => $this->getSimpleProductVariants($options['parentProduct']),
+                    'view' => 'oroproduct/js/app/views/base-product-variants-view'
+                ]
+            );
+        }
+    }
+
+    /**
+     * @param Product $product
+     * @return array
+     */
+    private function getSimpleProductVariants(Product $product)
+    {
+        $simpleProducts = $this->productVariantAvailabilityProvider->getSimpleProductsByVariantFields($product);
+
+        $variantFields = $product->getVariantFields();
+
+        $simpleProductVariants = [];
+
+        foreach ($variantFields as $key => $fieldName) {
+            foreach ($simpleProducts as $simpleProduct) {
+                $value = $this->productVariantAvailabilityProvider->getVariantFieldScalarValue(
+                    $simpleProduct,
+                    $fieldName
+                );
+                $simpleProductVariants[$simpleProduct->getId()][$fieldName] = $value;
+            }
+        }
+
+        return $simpleProductVariants;
     }
 }

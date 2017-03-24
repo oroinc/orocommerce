@@ -1,0 +1,26 @@
+oro_behat_extension:
+    pages:
+        Landing Page Create:
+            class: Oro\Bundle\CMSBundle\Tests\Behat\Page\LandingPageCreate
+            route: 'oro_cms_page_create'
+
+        Landing Page Edit:
+            class: Oro\Bundle\CMSBundle\Tests\Behat\Page\LandingPageEdit
+            route: 'oro_cms_page_update'
+
+        Landing Page View:
+            class: Oro\Bundle\CMSBundle\Tests\Behat\Page\LandingPageView
+            route: 'oro_cms_page_view'
+
+        Landing Page Index:
+            class: Oro\Bundle\CMSBundle\Tests\Behat\Page\LandingPageIndex
+            route: 'oro_cms_page_index'
+
+    elements:
+        LandingPageTitlesField:
+            selector: "input[name='oro_cms_page[titles][values][default]']"
+
+        Modal Cancel Button:
+            class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
+            selector: 'div.modal-footer a.cancel'
+

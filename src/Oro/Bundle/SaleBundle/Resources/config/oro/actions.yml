@@ -80,14 +80,90 @@ operations:
                 method: get
                 method_parameters: ['oro_email.append_signature']
 
+        preactions:
+            - '@assign_constant_value':
+                attribute: $.sentToCustomerInternalStatus
+                value: Oro\Bundle\SaleBundle\Entity\Quote::INTERNAL_STATUS_SENT_TO_CUSTOMER
+
+        preconditions:
+            '@not_equal': [$.sentToCustomerInternalStatus, $internalStatus.id]
+
         actions:
             - '@run_action_group':
                 action_group: oro_sale_notify_customer_by_email
                 parameters_mapping:
-                    data: $.data
                     email: $.email
+            - '@request_enum_entity':
+                enum_code: 'quote_internal_status'
+                attribute: $internalStatus
+                identifier: 'sent_to_customer'
+            - '@flush_entity': $.data
+            - '@flash_message':
+                message: oro.sale.quote.message.quote.sent.success
+                type: 'info'
+                message_parameters:
+                    id: $qid
 
 action_groups:
+    oro_sale_quote_duplicate:
+        parameters:
+            quote:
+                type: 'Oro\Bundle\SaleBundle\Entity\Quote'
+            copy_notes:
+                type: bool
+                default: true
+            flush:
+                type: bool
+                default: true
+        actions:
+            - '@create_datetime':
+                attribute: $.currentDatetime
+            - '@duplicate':
+                target: $.quote
+                attribute: $.quoteCopy
+                settings:
+                    - [[setNull], [propertyName, [id]]]
+                    - [[setNull], [propertyName, [qid]]]
+                    - [[setNull], [propertyName, [demands]]]
+                    - [[setNull], [propertyName, [internal_status]]]
+                    - [[setNull], [propertyName, [customer_status]]]
+                    - [[keep], [propertyName, [customerUser]]]
+                    - [[keep], [propertyName, [customer]]]
+                    - [[keep], [propertyName, [organization]]]
+                    - [[keep], [propertyName, [owner]]]
+                    - [[keep], [propertyName, [website]]]
+                    - [[keep], [propertyName, [request]]]
+                    - [[keep], [propertyName, [assignedUsers]]]
+                    - [[keep], [propertyName, [assignedCustomerUsers]]]
+                    - [[keep], [property, ['%oro_sale.entity.quote_address.class%', country]]]
+                    - [[keep], [property, ['%oro_sale.entity.quote_address.class%', region]]]
+                    - [[keep], [property, ['%oro_sale.entity.quote_address.class%', customerAddress]]]
+                    - [[keep], [property, ['%oro_sale.entity.quote_address.class%', customerUserAddress]]]
+                    - [[keep], [propertyType, ['%oro_product.entity.product.class%']]]
+                    - [[keep], [propertyType, ['%oro_product.entity.product_unit.class%']]]
+                    - [[keep], [propertyType, ['%oro_payment_term.entity.payment_term.class%']]]
+                    - [[keep], [propertyType, ['%oro_rfp.entity.request_product_item.class%']]]
+                    - [[collection], [propertyType, ['Doctrine\Common\Collections\Collection']]]
+            - '@assign_value': [$.quoteCopy.expired, false]
+            - '@assign_value': [$.quoteCopy.createdAt, $.currentDatetime]
+            - '@assign_value': [$.quoteCopy.updatedAt, $.currentDatetime]
+
+            - '@foreach':
+                conditions:
+                    '@equal': [false, $.copy_notes]
+                parameters:
+                    array: $.quoteCopy.quoteProducts
+                    value: $.quoteProduct
+                    actions:
+                        - '@assign_value': [$.quoteProduct.comment, '']
+                        - '@assign_value': [$.quoteProduct.commentCustomer, '']
+
+            - '@flush_entity':
+                conditions:
+                    '@equal': [true, $.flush]
+                parameters:
+                    entity: $.quoteCopy
+
     oro_sale_expire_quote:
         parameters:
             data:
@@ -100,8 +176,6 @@ action_groups:
 
     oro_sale_notify_customer_by_email:
         parameters:
-            data:
-                type: Oro\Bundle\SaleBundle\Entity\Quote
             email:
                 type: Oro\Bundle\EmailBundle\Form\Model\Email
         acl_resource: oro_email_email_create
@@ -109,7 +183,7 @@ action_groups:
             - '@call_service_method':
                 service: oro_sale.helper.notification
                 method: send
-                method_parameters: [$.email, $.data]
+                method_parameters: [$.email]
 
     oro_sale_send_no_quote_alert:
         parameters:

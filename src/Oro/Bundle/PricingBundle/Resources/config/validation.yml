@@ -151,7 +151,7 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
 
 Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig:
     properties:
-        priority:
+        sortOrder:
             - NotBlank: ~
             - Type:
                 type: integer
