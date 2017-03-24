@@ -3,6 +3,7 @@
 namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\Controller;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Oro\Bundle\CMSBundle\Tests\Functional\DataFixtures\LoadPageData;
 use Oro\Bundle\MessageQueueBundle\Test\Functional\MessageQueueAssertTrait;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebCatalogBundle\Async\Topics;
@@ -17,7 +18,10 @@ class ContentNodeControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
-        $this->loadFixtures([LoadContentVariantsData::class]);
+        $this->loadFixtures([
+            LoadContentVariantsData::class,
+            LoadPageData::class,
+        ]);
     }
 
     public function testGetPossibleUrlsAction()
@@ -69,7 +73,7 @@ class ContentNodeControllerTest extends WebTestCase
                 'oro_content_node_move',
                 [
                     'id' => $contentNode->getId(),
-                    'newParentId' => $newParentContentNode->getId(),
+                    'parent' => $newParentContentNode->getId(),
                     'position' => 0,
                     'createRedirect' => 1
                 ]
@@ -85,5 +89,38 @@ class ContentNodeControllerTest extends WebTestCase
         ];
 
         $this->assertContains($expectedMessage, self::getSentMessages());
+    }
+
+    public function testValidationForLocalizedFallbackValues()
+    {
+        $rootNodeId = $this->getReference(LoadContentNodesData::CATALOG_1_ROOT)->getId();
+        $crawler = $this->client->request('GET', $this->getUrl('oro_content_node_create', ['id' => $rootNodeId]));
+        $form = $crawler->selectButton('Save')->form();
+
+        $bigStringValue = str_repeat('a', 256);
+        $formValues = $form->getPhpValues();
+        $formValues['oro_web_catalog_content_node']['parentNode'] = $rootNodeId;
+        $formValues['oro_web_catalog_content_node']['titles']['values']['default'] = $bigStringValue;
+        $formValues['oro_web_catalog_content_node']['slugPrototypesWithRedirect']['slugPrototypes'] = [
+            'values' => ['default' => $bigStringValue]
+        ];
+        $formValues['oro_web_catalog_content_node']['contentVariants'][] = [
+            'default' => 1,
+            'cmsPage' => $this->getReference(LoadPageData::PAGE_1)->getId(),
+            'type' => 'cms_page',
+        ];
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->request($form->getMethod(), $form->getUri(), $formValues);
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $this->assertEquals(
+            2,
+            $crawler->filterXPath(
+                "//li[contains(text(),'This value is too long. It should have 255 characters or less.')]"
+            )->count()
+        );
     }
 }

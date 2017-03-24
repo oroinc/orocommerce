@@ -26,7 +26,7 @@ class AjaxUPSController extends Controller
      * @param Country $country
      * @return JsonResponse
      */
-    public function getShippingServicesByCountry(Country $country)
+    public function getShippingServicesByCountryAction(Country $country)
     {
         /** @var ShippingServiceRepository $repository */
         $repository = $this->container
@@ -51,7 +51,7 @@ class AjaxUPSController extends Controller
      *
      * @return JsonResponse
      */
-    public function validateConnection(Request $request, Channel $channel = null)
+    public function validateConnectionAction(Request $request, Channel $channel = null)
     {
         if (!$channel) {
             $channel = new Channel();

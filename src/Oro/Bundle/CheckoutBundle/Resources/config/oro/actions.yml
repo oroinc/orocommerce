@@ -75,9 +75,11 @@ operations:
             icon: fa-pencil-square-o
             class:  quota-accept-btn
         preconditions:
-            '@workflow_available_by_record_group':
-                group_name: b2b_checkout_flow
-                entity_class: Oro\Bundle\CheckoutBundle\Entity\Checkout
+            '@and':
+                - '@quote_acceptable': $.data
+                - '@workflow_available_by_record_group':
+                    group_name: b2b_checkout_flow
+                    entity_class: Oro\Bundle\CheckoutBundle\Entity\Checkout
         actions:
             - '@get_active_user': $.currentUser
             - '@find_entity':

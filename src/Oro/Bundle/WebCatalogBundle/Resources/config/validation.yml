@@ -15,6 +15,10 @@ Oro\Bundle\WebCatalogBundle\Entity\ContentNode:
             - Valid: ~
         scopes:
             - Oro\Bundle\CustomerBundle\Validator\Constraints\ScopeWithCustomerGroupAndCustomer: ~
+        titles:
+            - Valid: ~
+        slugPrototypes:
+            - Valid: ~
 
 Oro\Bundle\WebCatalogBundle\Entity\ContentVariant:
     properties:
