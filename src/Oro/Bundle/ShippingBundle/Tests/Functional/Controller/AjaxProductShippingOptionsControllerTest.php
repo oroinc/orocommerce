@@ -16,7 +16,7 @@ class AjaxProductShippingOptionsControllerTest extends WebTestCase
         $this->loadFixtures(['Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadProductShippingOptions']);
     }
 
-    public function testGetAvailableProductUnitFreightClasses()
+    public function testGetAvailableProductUnitFreightClassesAction()
     {
         $requiredFreightClass = 'parcel';
         $data = [
