@@ -2,12 +2,6 @@
 
 {% block _shopping_list_view_tabs_widget %}
     {% set attr = layout_attr_defaults(attr, {
-        'data-page-component-module': 'oroui/js/app/components/view-component',
-        'data-page-component-options': {
-            view: 'oroui/js/app/views/layout-subtree-view',
-            blockId: id,
-            reloadEvents: ['shopping-list:refresh', 'frontend:item:delete']
-        },
         '~class': "shopping-list-tabs"
     }) %}
 
@@ -17,7 +11,18 @@
 {% endblock %}
 
 {% block _shopping_list_view_container_widget %}
-    {% set attr = layout_attr_defaults(attr, {'~class': "shopping-list-wrapper"}) %}
+    {% set attr = layout_attr_defaults(attr, {
+        'id': 'shopping_list_view_container_content',
+        '~class': "shopping-list-wrapper",
+        'data-page-component-module': 'oroui/js/app/components/view-component',
+        'data-page-component-options': {
+            'view': 'oroui/js/app/views/layout-subtree-view',
+            'blockId' : block.vars.id,
+            'reloadEvents': ['shopping-list:refresh', 'product:quantity-unit:update', 'workflow:transitions_failure']
+        }|json_encode,
+        'data-layout': 'separate'
+        })
+    %}
 
     <div{{ block('block_attributes') }}>
         {{ block_widget(block) }}
@@ -53,10 +58,6 @@
     {% set currentClass = 'shopping-list-links__item--current' %}
     {% if shoppingLists|length > 6 %}
     {% set attr = layout_attr_defaults(attr, {
-        'data-page-component-module': 'oroshoppinglist/js/app/views/shoppinglist-widget-view',
-        'data-page-component-options': {
-            'currentClass': currentClass
-        },
         '~class': ' shopping-list-dropdown'
     }) %}
 

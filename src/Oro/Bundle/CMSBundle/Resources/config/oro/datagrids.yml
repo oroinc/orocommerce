@@ -2,7 +2,7 @@ datagrids:
     cms-page-select-grid:
         acl_resource: oro_cms_page_view
         options:
-            entityHint: 'landing page'
+            entityHint: 'landing pages'
         source:
             type:         orm
             query:
@@ -41,7 +41,7 @@ datagrids:
         acl_resource: oro_cms_loginpage_view
         options:
             entity_pagination: true
-            entityHint:        login page
+            entityHint:        login pages
         source:
             type:         orm
             query:
@@ -71,7 +71,7 @@ datagrids:
         acl_resource: oro_cms_page_view
         options:
             entity_pagination: true
-            entityHint:        landing page
+            entityHint:        landing pages
         source:
             type:         orm
             query:

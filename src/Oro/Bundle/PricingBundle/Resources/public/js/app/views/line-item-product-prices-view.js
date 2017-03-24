@@ -32,6 +32,8 @@ define(function(require) {
             mediator.trigger('pricing:get:products-tier-prices', _.bind(function(tierPrices) {
                 this.setTierPrices(tierPrices, true);
             }, this));
+
+            this.updateTierPrices();
         },
 
         updateTierPrices: function() {
@@ -53,6 +55,7 @@ define(function(require) {
 
         /**
          * @param {Object} tierPrices
+         * @param {Boolean} silent
          */
         setTierPrices: function(tierPrices, silent) {
             this.tierPrices = tierPrices;

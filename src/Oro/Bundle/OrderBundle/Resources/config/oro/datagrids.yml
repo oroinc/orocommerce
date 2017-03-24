@@ -2,7 +2,7 @@ datagrids:
     base-orders-grid:
         extended_entity_name: %oro_order.entity.order.class%
         options:
-            entityHint:        order
+            entityHint:        orders
             entity_pagination: true
         source:
             type:         orm
@@ -379,7 +379,7 @@ datagrids:
         acl_resource: oro_order_view
         extended_entity_name: %oro_order.entity.order.class%
         options:
-            entityHint:        order
+            entityHint:        orders
             entity_pagination: true
         source:
             type:         orm
@@ -542,7 +542,7 @@ datagrids:
     base-order-line-items-grid:
         extended_entity_name: %oro_order.entity.order_line_item.class%
         options:
-            entityHint: order_line_item
+            entityHint: order line items
         source:
             type: orm
             query:
@@ -625,7 +625,7 @@ datagrids:
     order-shipping-trackings-grid:
         extended_entity_name: %oro_order.entity.order_shipping_tracking.class%
         options:
-            entityHint: order_shipping_tracking
+            entityHint: order shipping trackings
             entity_pagination: false
             toolbarOptions:
                 hide: true
@@ -659,7 +659,7 @@ datagrids:
     best-selling-products:
         entity_name: %oro_report.calendar_date.entity.class%
         options:
-            entityHint: calendarDate
+            entityHint: calendar dates
             export: true
         source:
             type: orm

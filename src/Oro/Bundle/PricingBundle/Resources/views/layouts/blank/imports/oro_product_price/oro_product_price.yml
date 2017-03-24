@@ -1,0 +1,34 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'oro_product_price.html.twig'
+        - '@addTree':
+            items:
+                __product_price_container:
+                    blockType: product_prices
+                    options:
+                        productPrices: '=product ? data["frontend_product_prices"].getByProduct(product) : []'
+                        attributeFamily: '=context.offsetExists("attribute_family") ? context["attribute_family"] : null'
+                __product_price:
+                    blockType: container
+                __product_price_value:
+                    blockType: block
+                __product_price_not_found:
+                    blockType: block
+                __product_price_listed:
+                    blockType: block
+                __product_price_msrp:
+                    blockType: block
+                    options:
+                        visible: false
+                __product_price_hint:
+                    blockType: block
+            tree:
+                __root:
+                    __product_price_container:
+                        __product_price:
+                            __product_price_value: ~
+                            __product_price_not_found: ~
+                        __product_price_hint: ~
+                        __product_price_listed: ~
+                        __product_price_msrp: ~
