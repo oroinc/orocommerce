@@ -14,7 +14,7 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
-use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityFallbackCategoryData;
+use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityFallbackCategoryForAnonymousData;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityScopedData;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
@@ -218,14 +218,10 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         }
     }
 
-    /**
-     * @todo after fix of BB-8133, should be implemented for both editions
-     * @group CommunityEdition
-     */
-    public function testNotVisibleFallbackCategoryFiltered()
+    public function testNotVisibleForAnonymousFallbackCategoryFiltered()
     {
         $this->initClient();
-        $this->loadFixtures([LoadProductVisibilityFallbackCategoryData::class]);
+        $this->loadFixtures([LoadProductVisibilityFallbackCategoryForAnonymousData::class]);
         $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
         $this->prepareModifierForAnonymousRestrictionTests();
         $queryBuilder = $this->getProductRepository()->createQueryBuilder('product')->select('product.sku');
@@ -237,14 +233,12 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         $actualProductSkus = array_map(function ($item) {
             return $item['sku'];
         }, $actual);
-        $this->assertCount(5, $actualProductSkus);
+        $this->assertCount(3, $actualProductSkus);
 
         $expected = [
             LoadProductData::PRODUCT_1,
             LoadProductData::PRODUCT_2,
-            LoadProductData::PRODUCT_3,
             LoadProductData::PRODUCT_5,
-            LoadProductData::PRODUCT_6,
         ];
         foreach ($expected as $productReference) {
             $product = $this->getReference($productReference);
