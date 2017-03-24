@@ -317,6 +317,12 @@ PricingBundle
     - method `getPriority` was renamed to `getSortOrder`
 - Class `Oro\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter`
     - constant `PRIORITY_KEY` was renamed to `SORT_ORDER_KEY`
+- Class `Oro\Bundle\PricingBundle\Controller\AjaxPriceListController`
+    - method `getPriceListCurrencyList` was renamed to `getPriceListCurrencyListAction`
+- Class `Oro\Bundle\PricingBundle\Controller\AjaxProductPriceController`
+   - method `getProductPricesByCustomer` was renamed to `getProductPricesByCustomerAction`
+- Class `Oro\Bundle\PricingBundle\Controller\Frontend\AjaxProductPriceController`
+   - method `getProductPricesByCustomer` was renamed to `getProductPricesByCustomerAction`
     
 ProductBundle
 -------------
@@ -353,6 +359,11 @@ SaleBundle
 - Removed property `locked` from entity class `Oro\Bundle\SaleBundle\Entity\Quote` with related methods
 - Class `Oro\Bundle\SaleBundle\Notification\NotificationHelper`
     - removed parameter `request` from constructor
+
+ShoppingBundle
+------------------
+- Class `Oro\Bundle\ShippingBundle\ControllerAjaxProductShippingOptionsController`
+    - method `getAvailableProductUnitFreightClasses` was renamed to `getAvailableProductUnitFreightClassesAction`
 
 ShoppingListBundle
 ------------------
@@ -431,6 +442,9 @@ CMSBundle
 UPSBundle
 ---------
 - "Check UPS Connection" button was added on UPS integration page. Please, see [documentation](package/commerce/src/Oro/Bundle/UPSBundle/Resources/doc/credentials-validation.md) for more information.
+- Class `Oro\Bundle\UPSBundle\Controller`
+    - method `getShippingServicesByCountry` was renamed to `getShippingServicesByCountryAction`
+    - method `validateConnection` was renamed to `validateConnectionAction`
 
 FrontendLocalizationBundle
 --------------------------

@@ -43,6 +43,8 @@ Oro\Bundle\ProductBundle\Entity\Product:
             - Oro\Bundle\ProductBundle\Validator\Constraints\ProductImageCollection: ~
         attributeFamily:
             - NotBlank: ~
+        slugPrototypes:
+            - Valid: ~
 
 Oro\Bundle\ProductBundle\Entity\ProductUnit:
     properties:
