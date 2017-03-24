@@ -256,7 +256,6 @@ workflows:
                     - '@run_action_group':
                         action_group: oro_sale_notify_customer_by_email
                         parameters_mapping:
-                            data: $quote
                             email: $email
                     - '@flash_message':
                         message: oro.sale.quote.message.quote.sent.success
