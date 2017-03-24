@@ -303,3 +303,4 @@ oro:
             message:
                 quote.create_order.success: 'Your sales order was submitted successfully'
                 quote.create_order.error: 'Can not create new Order'
+                quote.not_available: 'Quote #%qid% is no longer available'

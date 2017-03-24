@@ -114,6 +114,8 @@ class SlugEntityGenerator
                 );
             }
         }
+
+        $this->updateSlugPrototypes($entity, $slugUrls);
     }
 
     /**
@@ -212,11 +214,35 @@ class SlugEntityGenerator
     {
         $slugUrls = $this->prepareSlugUrls($entity);
 
-        foreach ($slugUrls as $slugUrl) {
-            $slugUrl->setUrl($this->slugResolver->resolve($slugUrl, $entity));
+        foreach ($slugUrls as $localizationId => $slugUrl) {
+            $url = $this->slugResolver->resolve($slugUrl, $entity);
+
+            $slugPrototype = substr($url, strrpos($url, Slug::DELIMITER) + 1);
+
+            $slugUrl->setUrl($url);
+            $slugUrl->setSlug($slugPrototype);
         }
 
         return $slugUrls;
+    }
+
+    /**
+     * @param SluggableInterface $entity
+     * @param SlugUrl[] $slugUrls
+     */
+    private function updateSlugPrototypes(SluggableInterface $entity, $slugUrls)
+    {
+        $slugPrototypesByLocalizationId = [];
+        foreach ($entity->getSlugPrototypes() as $slugPrototype) {
+            $slugPrototypesByLocalizationId[$this->getLocalizationId($slugPrototype->getLocalization())] =
+                $slugPrototype;
+        }
+
+        foreach ($slugUrls as $localizationId => $slugUrl) {
+            if (isset($slugPrototypesByLocalizationId[$localizationId])) {
+                $slugPrototypesByLocalizationId[$localizationId]->setString($slugUrl->getSlug());
+            }
+        }
     }
 
     /**

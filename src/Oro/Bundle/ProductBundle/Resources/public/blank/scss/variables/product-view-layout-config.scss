@@ -9,18 +9,16 @@ $product-view-aside-tablet-inner-offset: 0 !default;
 
 $product-view-primary-state: right !default;
 $product-view-primary-width: calc(100% - #{$product-view-aside-width}) !default;
-$product-view-primary-offset-bottom: $offset-y !default;
 
 $product-view-main-state: right !default;
 $product-view-main-width: calc(100% - #{$product-view-aside-width}) !default;
 $product-view-main-offset-bottom: $offset-y !default;
 
-$product-view-content-offset-bottom: $offset-y !default;
+$product-view-content-inner-offset: 15px 0 0 0 !default;
 
 $product-view-specification-width: 50% !default;
-$product-view-specification-inner-offset: 0 10px 0 0 !default;
 
-$product-view-specification-tablet-inner-offset: 0 !default;
+$product-view-specification-inner-offset: 0 10px 0 0 !default;
 
 $product-view-description-width: 50% !default;
 $product-view-description-inner-offset: 0 0 0 10px !default;
@@ -40,6 +38,5 @@ $product-view-primary-tablet-width: 100% !default;
 $product-view-main-tablet-width: 100% !default;
 
 $product-view-tablet-specification-width: 100% !default;
-$product-view-tablet-specification-offset: 0 0 $offset-y 0 !default;
 
 $product-view-description-tablet-width: 100% !default;

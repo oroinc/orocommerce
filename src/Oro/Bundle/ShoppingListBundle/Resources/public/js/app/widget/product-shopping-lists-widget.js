@@ -19,7 +19,8 @@ define(function(require) {
             dialogOptions: {
                 modal: true,
                 resizable: false,
-                width: 580,
+                width: '100%',
+                maxWidth: 580,
                 autoResize: true
             },
             update_api_accessor: {
