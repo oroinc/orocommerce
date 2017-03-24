@@ -9,6 +9,7 @@ oro:
         discounts:
             sum.error.label: 'The sum of all discounts cannot exceed the order grand total amount. Please review some discounts above and make necessary ajustments.'
             item.error.label: 'The discount amount cannot exceed the order grand total amount.'
+            type.error.label: 'The discount type is invalid. Valid types are: %valid_types%'
         orderlineitem:
             count: 'Please add at least one Line Item'
             product:

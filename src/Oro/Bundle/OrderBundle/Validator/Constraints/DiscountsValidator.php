@@ -11,12 +11,16 @@ class DiscountsValidator extends ConstraintValidator
 {
     /**
      * @param Order|object $value
-     * @param Discounts $constraint
+     * @param Discounts    $constraint
      *
      * {@inheritdoc}
      */
     public function validate($value, Constraint $constraint)
     {
+        if (null === $value) {
+            return;
+        }
+
         if (!$value instanceof Order) {
             throw new \InvalidArgumentException(
                 sprintf(
@@ -26,8 +30,11 @@ class DiscountsValidator extends ConstraintValidator
                 )
             );
         }
-        
-        if ($value->getTotalDiscounts() && $value->getSubtotal() < $value->getTotalDiscounts()->getValue()) {
+
+        if ($value->getTotalDiscounts()
+            && $value->getSubtotal()
+            && $value->getSubtotal() < $value->getTotalDiscounts()->getValue()
+        ) {
             $this->context->buildViolation($constraint->errorMessage)
                 ->atPath('totalDiscountsAmount')
                 ->addViolation();

@@ -5,15 +5,13 @@ namespace Oro\Bundle\OrderBundle\Entity;
 use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\CurrencyBundle\Entity\PriceAwareInterface;
+use Oro\Bundle\CurrencyBundle\Entity\SettablePriceAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\OrderBundle\Model\ExtendOrderLineItem;
 use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
-use Oro\Bundle\ProductBundle\Model\QuantityAwareInterface;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
-use Oro\Bundle\ProductBundle\Model\ProductHolderInterface;
-use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
 
 /**
  * @ORM\Table(name="oro_order_line_item")
@@ -34,11 +32,9 @@ use Oro\Bundle\ProductBundle\Model\ProductUnitHolderInterface;
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  */
 class OrderLineItem extends ExtendOrderLineItem implements
-    ProductUnitHolderInterface,
-    ProductHolderInterface,
-    PriceAwareInterface,
-    PriceTypeAwareInterface,
-    QuantityAwareInterface
+    ProductLineItemInterface,
+    SettablePriceAwareInterface,
+    PriceTypeAwareInterface
 {
     /**
      * @var int

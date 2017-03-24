@@ -3,10 +3,6 @@ Oro\Bundle\OrderBundle\Entity\Order:
         - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: identifier
         - Oro\Bundle\OrderBundle\Validator\Constraints\Discounts: ~
     properties:
-        owner:
-            - NotBlank: ~
-        organization:
-            - NotBlank: ~
         poNumber:
             - Length:
                 max: 255
@@ -31,8 +27,6 @@ Oro\Bundle\OrderBundle\Entity\Order:
                 minMessage: 'oro.order.subtotal.min.error.label'
                 maxMessage: 'oro.order.subtotal.max.error.label'
         customer:
-            - NotBlank: ~
-        website:
             - NotBlank: ~
         lineItems:
             - Count:
@@ -73,6 +67,9 @@ Oro\Bundle\OrderBundle\Entity\OrderLineItem:
         price:
             - NotBlank: ~
             - Valid: ~
+        freeFormProduct:
+            - Length:
+                max: 255
 
 Oro\Bundle\OrderBundle\Entity\OrderAddress:
     properties:
@@ -102,6 +99,8 @@ Oro\Bundle\OrderBundle\Entity\OrderAddress:
                 max: 255
 
 Oro\Bundle\OrderBundle\Entity\OrderDiscount:
+    constraints:
+        - Oro\Bundle\OrderBundle\Validator\Constraints\DiscountType: ~
     properties:
         percent:
             - NotBlank: ~
@@ -116,6 +115,11 @@ Oro\Bundle\OrderBundle\Entity\OrderDiscount:
             - Range:
                 min: 0
                 max: 999999999999999999
+        type:
+            - Type:
+                type: string
+        order:
+            - Oro\Bundle\OrderBundle\Validator\Constraints\Discounts: ~
 
 Oro\Bundle\OrderBundle\Entity\OrderShippingTracking:
     properties:
