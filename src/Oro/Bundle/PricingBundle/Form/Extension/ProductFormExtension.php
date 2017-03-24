@@ -109,7 +109,7 @@ class ProductFormExtension extends AbstractTypeExtension
 
             if ($product->getId()) {
                 $replacedPrices = [];
-                $existingPrices = $this->getProductPriceRepository()->getPricesByProduct($product);
+                $existingPrices = $this->getProductPriceRepository()->getPricesByProduct($this->shardManager, $product);
                 foreach ($submittedPrices as $key => $submittedPrice) {
                     foreach ($existingPrices as $k => $existingPrice) {
                         if ($key !== $k && $this->assertUniqueAttributes($submittedPrice, $existingPrice)) {
