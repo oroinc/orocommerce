@@ -91,6 +91,8 @@ class ReindexMessageGranularizerTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
+     *
      * @return array
      */
     public function smallDataProvider()
@@ -106,7 +108,21 @@ class ReindexMessageGranularizerTest extends \PHPUnit_Framework_TestCase
                     [
                         'class'   => ['Product'],
                         'context' => [
-                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [1, 2, 3],
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [1],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [],
+                        ]
+                    ],
+                    [
+                        'class'   => ['Product'],
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [2],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [],
+                        ]
+                    ],
+                    [
+                        'class'   => ['Product'],
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [3],
                             AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [],
                         ]
                     ]
@@ -122,7 +138,21 @@ class ReindexMessageGranularizerTest extends \PHPUnit_Framework_TestCase
                     [
                         'class'   => ['Product'],
                         'context' => [
-                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [1, 2, 3],
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [1],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [4, 5],
+                        ]
+                    ],
+                    [
+                        'class'   => ['Product'],
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [2],
+                            AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [4, 5],
+                        ]
+                    ],
+                    [
+                        'class'   => ['Product'],
+                        'context' => [
+                            AbstractIndexer::CONTEXT_WEBSITE_IDS      => [3],
                             AbstractIndexer::CONTEXT_ENTITIES_IDS_KEY => [4, 5],
                         ]
                     ]

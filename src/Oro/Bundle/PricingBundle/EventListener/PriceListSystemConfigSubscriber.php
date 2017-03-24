@@ -20,7 +20,7 @@ class PriceListSystemConfigSubscriber
     /**
      * @var boolean
      */
-    protected $isApplicable;
+    protected $wasChanged = false;
 
     /**
      * @var PriceListRelationTriggerHandler
@@ -40,7 +40,6 @@ class PriceListSystemConfigSubscriber
 
     /**
      * @param ConfigSettingsUpdateEvent $event
-     * @return array
      */
     public function formPreSet(ConfigSettingsUpdateEvent $event)
     {
@@ -57,24 +56,15 @@ class PriceListSystemConfigSubscriber
      */
     public function beforeSave(ConfigSettingsUpdateEvent $event)
     {
-        $settingsKey = $this->getSettingsKey(ConfigManager::SECTION_MODEL_SEPARATOR);
         $settings = $event->getSettings();
-        if ($this->isSettingsApplicable($settings, $settingsKey)) {
-            $settings[$settingsKey]['value'] = $this->converter->convertBeforeSave($settings[$settingsKey]['value']);
-            $event->setSettings($settings);
+        if (!array_key_exists('value', $settings)) {
+            return;
         }
-    }
 
-    /**
-     * @param array $settings
-     * @param string $settingsKey
-     * @return bool
-     */
-    protected function isSettingsApplicable(array $settings, $settingsKey)
-    {
-        $this->isApplicable = is_array($settings) && array_key_exists($settingsKey, $settings);
+        $settings['value'] = $this->converter->convertBeforeSave($settings['value']);
+        $event->setSettings($settings);
 
-        return $this->isApplicable;
+        $this->wasChanged = true;
     }
 
     /**
@@ -82,7 +72,8 @@ class PriceListSystemConfigSubscriber
      */
     public function updateAfter(ConfigUpdateEvent $event)
     {
-        if ($this->isApplicable && $event->getChangeSet()) {
+        if ($this->wasChanged && $event->getChangeSet()) {
+            $this->wasChanged = false;
             $this->triggerHandler->handleConfigChange();
         }
     }
