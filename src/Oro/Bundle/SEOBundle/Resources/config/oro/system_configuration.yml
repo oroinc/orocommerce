@@ -12,12 +12,6 @@ system_configuration:
         sitemap_page:
             title: oro.seo.system_configuration.groups.sitemap_page.title
     fields:
-        oro_seo.sitemap_changefreq_default:
-            data_type: string
-            type: Oro\Bundle\SEOBundle\Form\Type\SitemapChangefreqType
-            priority: 100
-            options:
-                label: oro.seo.system_configuration.fields.changefreq_default.label
         oro_seo.sitemap_changefreq_product:
             data_type: string
             type: Oro\Bundle\SEOBundle\Form\Type\SitemapChangefreqType
@@ -76,7 +70,6 @@ system_configuration:
                                     sitemap_default:
                                         children:
                                             - oro_seo.sitemap_cron_definition
-                                            - oro_seo.sitemap_changefreq_default
                                     sitemap_product:
                                         children:
                                             - oro_seo.sitemap_changefreq_product

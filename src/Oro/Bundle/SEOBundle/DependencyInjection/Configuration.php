@@ -32,7 +32,6 @@ class Configuration implements ConfigurationInterface
         SettingsBuilder::append(
             $rootNode,
             [
-                'sitemap_changefreq_default' => ['value' => self::CHANGEFREQ_DAILY],
                 'sitemap_changefreq_product' => ['value' => self::CHANGEFREQ_DAILY],
                 'sitemap_priority_product' => ['value' => self::DEFAULT_PRIORITY],
                 'sitemap_changefreq_category' => ['value' => self::CHANGEFREQ_DAILY],

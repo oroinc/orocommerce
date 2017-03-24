@@ -372,3 +372,8 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_seo.event.restrict_sitemap_entity.product , method: restrictQueryBuilder }
             - { name: oro_featuretogle.feature, feature: frontend_master_catalog }
+
+    oro_seo.event_listener.restrict_sitemap_product_by_status:
+        class: Oro\Bundle\SEOBundle\EventListener\RestrictSitemapProductByStatusListener
+        tags:
+            - { name: kernel.event_listener, event: oro_seo.event.restrict_sitemap_entity.product, method: restrictQueryBuilder }
