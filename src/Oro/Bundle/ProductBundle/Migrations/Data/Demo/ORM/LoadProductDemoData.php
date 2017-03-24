@@ -250,6 +250,8 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
         $allImageTypes
     ) {
         $imageResizer = $this->container->get('oro_attachment.image_resizer');
+        $attachmentManager = $this->container->get('oro_attachment.manager');
+        $mediaCacheManager = $this->container->get('oro_attachment.media_cache_manager');
 
         $productImage = $this->getProductImageForProductSku($manager, $locator, $sku, $allImageTypes);
 
@@ -257,7 +259,14 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
             $product->addImage($productImage);
 
             foreach ($this->getDimensionsForProductImage($productImage) as $dimension) {
-                $imageResizer->resizeImage($productImage->getImage(), $dimension->getName(), true);
+                $image = $productImage->getImage();
+                $filterName = $dimension->getName();
+                $imagePath = $attachmentManager->getFilteredImageUrl($image, $filterName);
+
+
+                if ($filteredImage = $imageResizer->resizeImage($image, $filterName)) {
+                    $mediaCacheManager->store($filteredImage->getContent(), $imagePath);
+                }
             }
         }
     }
