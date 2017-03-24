@@ -113,22 +113,11 @@ class ProductFormExtension extends AbstractTypeExtension
         $repository = $this->getProductPriceRepository();
         // persist existing prices
         $persistedPriceIds = [];
-        $em = $this->getManager();
-        $unitOfWork = $em->getUnitOfWork();
-        $classMetadata = $em->getClassMetadata(ProductPrice::class);
 
         foreach ($prices as $price) {
             $priceId = $price->getId();
             if ($priceId) {
-                $unitOfWork->computeChangeSet($classMetadata, $price);
-                $changeSet = $unitOfWork->getEntityChangeSet($price);
-                //should be moved to another shard
-                if (isset($changeSet['priceList'])) {
-                    $this->priceManager->remove($price);
-                    $price->setId(null);
-                } else {
-                    $persistedPriceIds[] = $priceId;
-                }
+                $persistedPriceIds[] = $priceId;
             }
 
             $price->setProduct($product);

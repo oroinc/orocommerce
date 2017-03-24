@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional;
 
-use Symfony\Component\DomCrawler\Form;
-
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Form;
 
 class ProductWithPricesTest extends WebTestCase
 {
@@ -48,11 +47,10 @@ class ProductWithPricesTest extends WebTestCase
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function testCreate()
     {
-        $this->markTestSkipped('BB-8042');
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_create'));
         $form = $crawler->selectButton('Continue')->form();
         $formValues = $form->getPhpValues();

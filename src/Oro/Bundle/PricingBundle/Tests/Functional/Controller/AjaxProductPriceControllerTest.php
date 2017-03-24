@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Controller;
 
-use Symfony\Component\DomCrawler\Form;
-
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
+use Symfony\Component\DomCrawler\Form;
 
 class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerTest
 {
@@ -82,7 +81,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
 
     public function testUpdateDuplicateEntry()
     {
-        $this->markTestSkipped('fix in BB-8042');
+        $this->markTestSkipped('fix in BB-8385');
         $this->loadFixtures([
             'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices'
         ]);

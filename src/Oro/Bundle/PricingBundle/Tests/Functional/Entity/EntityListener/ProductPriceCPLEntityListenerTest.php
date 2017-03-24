@@ -8,6 +8,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\PriceListToProductRepository;
+use Oro\Bundle\PricingBundle\Manager\PriceManager;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Product;
@@ -74,7 +75,7 @@ class ProductPriceCPLEntityListenerTest extends WebTestCase
 
     public function testOnUpdateChangeTriggerCreated()
     {
-        /** @var EntityManagerInterface $priceManager */
+        /** @var PriceManager $priceManager */
         $priceManager = $this->getContainer()->get('oro_pricing.manager.price_manager');
         /** @var ProductPrice $productPrice */
         $productPrice = $this->getReference(LoadProductPrices::PRODUCT_PRICE_4);

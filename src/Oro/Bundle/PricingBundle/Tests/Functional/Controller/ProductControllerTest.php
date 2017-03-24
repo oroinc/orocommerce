@@ -259,7 +259,6 @@ class ProductControllerTest extends WebTestCase
 
     public function testNewPriceWithNewUnit()
     {
-        $this->markTestSkipped('BB-8042');
         /** @var Product $product */
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         /** @var PriceList $priceList */
