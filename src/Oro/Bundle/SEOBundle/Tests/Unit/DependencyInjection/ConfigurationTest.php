@@ -25,10 +25,6 @@ class ConfigurationTest extends \PHPUnit_Framework_TestCase
         $expected = [
             'settings' => [
                 'resolved' => true,
-                'sitemap_changefreq_default' => [
-                    'value' => Configuration::CHANGEFREQ_DAILY,
-                    'scope' => 'app',
-                ],
                 'sitemap_changefreq_product' => [
                     'value' => Configuration::CHANGEFREQ_DAILY,
                     'scope' => 'app',

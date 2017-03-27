@@ -54,7 +54,13 @@ class SitemapFilesProvider implements UrlItemsProviderInterface
         }
 
         foreach ($files as $file) {
-            $url = sprintf('%s/%d/%d/%s', $this->webPath, $website->getId(), $version, $file->getFilename());
+            $url = sprintf(
+                '%s/%d/%s/%s',
+                $this->webPath,
+                $website->getId(),
+                SitemapFilesystemAdapter::ACTUAL_VERSION,
+                $file->getFilename()
+            );
 
             $mTime = \DateTime::createFromFormat('U', $file->getMTime(), new \DateTimeZone('UTC'));
             yield new UrlItem($this->canonicalUrlGenerator->getAbsoluteUrl($url, $website), $mTime);

@@ -75,7 +75,7 @@ class SitemapFilesProviderTest extends \PHPUnit_Framework_TestCase
         $website->expects($this->any())
             ->method('getId')
             ->willReturn(1);
-        $version = 'actual';
+        $version = '42';
 
         $fileName = 'test.xml';
 
@@ -104,10 +104,10 @@ class SitemapFilesProviderTest extends \PHPUnit_Framework_TestCase
             ->with($website, $version)
             ->willReturn($finder);
 
-        $absoluteUrl = 'http://test.com/sitemaps/1/0/test.xml';
+        $absoluteUrl = 'http://test.com/sitemaps/1/actual/test.xml';
         $this->canonicalUrlGenerator->expects($this->once())
             ->method('getAbsoluteUrl')
-            ->with('/sitemaps/1/0/test.xml', $website)
+            ->with('/sitemaps/1/actual/test.xml', $website)
             ->willReturn($absoluteUrl);
 
         $actual = iterator_to_array($this->provider->getUrlItems($website, $version));

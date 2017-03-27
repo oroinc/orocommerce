@@ -2,33 +2,34 @@
 
 namespace Oro\Bundle\SEOBundle\Limiter;
 
+use Doctrine\DBAL\Types\Type;
 use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Query\Expr\Join;
+use Doctrine\ORM\QueryBuilder;
 use Oro\Bundle\CatalogBundle\Entity\Category;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
+use Oro\Bundle\EntityBundle\ORM\NativeQueryExecutorHelper;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ScopeBundle\Model\ScopeCriteria;
 use Oro\Bundle\SEOBundle\Entity\WebCatalogProductLimitation;
 use Oro\Bundle\SEOBundle\Sitemap\Provider\WebCatalogScopeCriteriaProvider;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentNode;
 use Oro\Bundle\WebCatalogBundle\Entity\ContentVariant;
-use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
+use Oro\Bundle\WebCatalogBundle\Provider\WebCatalogProvider;
 use Oro\Component\Website\WebsiteInterface;
 
 class WebCatalogProductLimiter
 {
-    const BATCH_SIZE = 10000;
-
     /**
      * @var DoctrineHelper
      */
     protected $doctrineHelper;
 
     /**
-     * @var ConfigManager
+     * @var WebCatalogProvider
      */
-    protected $configManager;
+    protected $webCatalogProvider;
 
     /**
      * @var WebCatalogScopeCriteriaProvider
@@ -36,18 +37,34 @@ class WebCatalogProductLimiter
     protected $scopeCriteriaProvider;
 
     /**
+     * @var InsertFromSelectQueryExecutor
+     */
+    protected $insertQueryExecutor;
+
+    /**
+     * @var NativeQueryExecutorHelper
+     */
+    protected $nativeQueryExecutorHelper;
+
+    /**
      * @param DoctrineHelper $doctrineHelper
-     * @param ConfigManager $configManager
+     * @param WebCatalogProvider $webCatalogProvider
      * @param WebCatalogScopeCriteriaProvider $scopeCriteriaProvider
+     * @param InsertFromSelectQueryExecutor $insertQueryExecutor
+     * @param NativeQueryExecutorHelper $nativeQueryExecutorHelper
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
-        ConfigManager $configManager,
-        WebCatalogScopeCriteriaProvider $scopeCriteriaProvider
+        WebCatalogProvider $webCatalogProvider,
+        WebCatalogScopeCriteriaProvider $scopeCriteriaProvider,
+        InsertFromSelectQueryExecutor $insertQueryExecutor,
+        NativeQueryExecutorHelper $nativeQueryExecutorHelper
     ) {
         $this->doctrineHelper = $doctrineHelper;
-        $this->configManager = $configManager;
         $this->scopeCriteriaProvider = $scopeCriteriaProvider;
+        $this->insertQueryExecutor = $insertQueryExecutor;
+        $this->nativeQueryExecutorHelper = $nativeQueryExecutorHelper;
+        $this->webCatalogProvider = $webCatalogProvider;
     }
 
     /**
@@ -56,36 +73,37 @@ class WebCatalogProductLimiter
      */
     public function prepareLimitation($version, WebsiteInterface $website = null)
     {
-        $em = $this->doctrineHelper->getEntityManager(WebCatalogProductLimitation::class);
+        $this->insertQueryExecutor->execute(
+            WebCatalogProductLimitation::class,
+            ['productId', 'version'],
+            $this->getWebCatalogDirectProductIds($version, $website)
+        );
 
-        $this->fillProductIds($em, $this->getWebCatalogDirectProductIds($website), $version);
-        $this->fillProductIds($em, $this->getWebCatalogCategoriesProductIds($website), $version);
-    }
+        $webCatalogCategoriesQueryBuilder = $this->getWebCatalogCategoriesQueryBuilder($website);
+        $categoriesProductIdsSQL = 'SELECT product_id, ? FROM oro_category_to_product WHERE category_id IN ('
+        . $webCatalogCategoriesQueryBuilder->getQuery()->getSQL()
+        . ');';
 
-    /**
-     * @param EntityManager $em
-     * @param array $productIds
-     * @param int $version
-     */
-    private function fillProductIds(EntityManager $em, array $productIds, $version)
-    {
-        $inserted = 0;
-        foreach ($productIds as $productId) {
-            $productLimitation = new WebCatalogProductLimitation();
-            $productLimitation->setProductId($productId);
-            $productLimitation->setVersion($version);
+        // Get all subquery position parameters
+        list($params, $types) = $this->nativeQueryExecutorHelper->processParameterMappings(
+            $webCatalogCategoriesQueryBuilder->getQuery()
+        );
 
-            $em->persist($productLimitation);
+        // Set version value into first position parameter
+        array_unshift($params, $version);
+        array_unshift($types, Type::INTEGER);
 
-            $inserted++;
-            if (($inserted % self::BATCH_SIZE) === 0) {
-                $em->flush();
-                $em->clear();
-            }
-        }
+        $sql = sprintf(
+            'insert into %s (%s) %s',
+            $this->nativeQueryExecutorHelper->getTableName(WebCatalogProductLimitation::class),
+            'product_id, version',
+            $categoriesProductIdsSQL
+        );
 
-        $em->flush();
-        $em->clear();
+        $this->nativeQueryExecutorHelper
+            ->getManager(WebCatalogProductLimitation::class)
+            ->getConnection()
+            ->executeUpdate($sql, $params, $types);
     }
 
     /**
@@ -113,16 +131,17 @@ class WebCatalogProductLimiter
     }
 
     /**
+     * @param int $version
      * @param WebsiteInterface $website
-     * @return array
+     * @return QueryBuilder
      */
-    private function getWebCatalogDirectProductIds(WebsiteInterface $website = null)
+    private function getWebCatalogDirectProductIds($version, WebsiteInterface $website = null)
     {
         /** @var EntityManager $em */
         $em = $this->doctrineHelper->getEntityManager(Product::class);
         $qb = $em->createQueryBuilder();
 
-        $qb->select('IDENTITY(productContentVariant.product_page_product)')
+        $qb->select('IDENTITY(productContentVariant.product_page_product), '. (int)$version)
             ->from(ContentVariant::class, 'productContentVariant')
             ->innerJoin(
                 ContentNode::class,
@@ -130,113 +149,65 @@ class WebCatalogProductLimiter
                 Join::WITH,
                 'productContentVariant.node = productContentNode'
             )
-            ->innerJoin(
-                WebCatalog::class,
-                'productWebCatalog',
-                Join::WITH,
-                'productContentNode.webCatalog = productWebCatalog'
-            )
             ->leftJoin('productContentVariant.scopes', 'productScopes')
             ->where($qb->expr()->eq('productContentVariant.type', ':productPageType'))
-            ->andWhere($qb->expr()->eq('productWebCatalog', ':productWebCatalogId'))
+            ->andWhere($qb->expr()->eq('productContentNode.webCatalog', ':webCatalog'))
             ->setParameter('productPageType', 'product_page')
-            ->setParameter(
-                'productWebCatalogId',
-                $this->configManager->get('oro_web_catalog.web_catalog', false, false, $website)
-            );
+            ->setParameter('webCatalog', $this->webCatalogProvider->getWebCatalog($website));
 
         $this->getScopeCriteria($website)->applyWhereWithPriority($qb, 'productScopes');
 
-        return array_map('current', $qb->getQuery()->getScalarResult());
+        return $qb;
     }
 
     /**
      * @param WebsiteInterface $website
-     * @return array
+     * @return QueryBuilder
      */
-    private function getWebCatalogCategoriesProductIds(WebsiteInterface $website = null)
-    {
-        $result = [];
-        $webCatalogCategories = $this->getWebCatalogCategories($website);
-        if ($webCatalogCategories) {
-            $categoryIds = implode(', ', $webCatalogCategories);
-            $sql = "SELECT product_id FROM oro_category_to_product WHERE category_id IN ($categoryIds)";
-
-            /** @var EntityManager $em */
-            $em = $this->doctrineHelper->getEntityManager(Product::class);
-            $stmt = $em->getConnection()->prepare($sql);
-            $stmt->execute();
-
-            $result = array_map('current', $stmt->fetchAll());
-        }
-
-        return $result;
-    }
-
-    /**
-     * @param WebsiteInterface $website
-     * @return array
-     */
-    private function getWebCatalogCategories(WebsiteInterface $website = null)
-    {
-        $categoryIds = [];
-        $directCategories = $this->getWebCatalogDirectCategories($website);
-        foreach ($directCategories as $category) {
-            $categoryIds[] = $category->getId();
-            $categoryIds = array_merge($categoryIds, $this->getCategorySubCategories($category));
-        }
-
-        return array_unique($categoryIds);
-    }
-
-    /**
-     * @param WebsiteInterface $website
-     * @return array
-     */
-    private function getWebCatalogDirectCategories(WebsiteInterface $website = null)
+    private function getWebCatalogCategoriesQueryBuilder(WebsiteInterface $website = null)
     {
         /** @var EntityManager $em */
         $em = $this->doctrineHelper->getEntityManager(Category::class);
         $qb = $em->createQueryBuilder();
 
-        $qb->select('IDENTITY(categoryContentVariant.category_page_category) as categoryId')
+        $qb->select('category.id as categoryId')
             ->from(ContentVariant::class, 'categoryContentVariant')
             ->innerJoin(
+                Category::class,
+                'parentCategory',
+                Join::WITH,
+                $qb->expr()->eq('categoryContentVariant.category_page_category', 'parentCategory.id')
+            )
+            ->innerJoin(
+                Category::class,
+                'category',
+                Join::WITH,
+                $qb->expr()->orX(
+                    $qb->expr()->eq('category.id', 'parentCategory.id'),
+                    $qb->expr()->andX(
+                        $qb->expr()->lt('category.right', 'parentCategory.right'),
+                        $qb->expr()->gt('category.left', 'parentCategory.left')
+                    )
+                )
+            )
+            ->leftJoin(
                 ContentNode::class,
                 'categoryContentNode',
                 Join::WITH,
-                'categoryContentVariant.node = categoryContentNode'
-            )
-            ->innerJoin(
-                WebCatalog::class,
-                'categoryWebCatalog',
-                Join::WITH,
-                'categoryContentNode.webCatalog = categoryWebCatalog'
+                $qb->expr()->eq('categoryContentVariant.node', 'categoryContentNode')
             )
             ->leftJoin('categoryContentVariant.scopes', 'categoryScopes')
             ->where($qb->expr()->eq('categoryContentVariant.type', ':categoryPageType'))
-            ->andWhere($qb->expr()->eq('categoryWebCatalog', ':categoryWebCatalogId'))
+            ->andWhere($qb->expr()->eq('categoryContentNode.webCatalog', ':webCatalog'))
             ->setParameter('categoryPageType', 'category_page')
             ->setParameter(
-                'categoryWebCatalogId',
-                $this->configManager->get('oro_web_catalog.web_catalog', false, false, $website)
+                'webCatalog',
+                $this->webCatalogProvider->getWebCatalog($website)
             );
 
         $this->getScopeCriteria($website)->applyWhereWithPriority($qb, 'categoryScopes');
 
-        return array_map(function ($item) use ($em) {
-            return $em->getReference(Category::class, $item['categoryId']);
-        }, $qb->getQuery()->getScalarResult());
-    }
-
-    /**
-     * @param $category
-     * @return array
-     */
-    private function getCategorySubCategories($category)
-    {
-        return $this->doctrineHelper->getEntityManager(Category::class)->getRepository(Category::class)
-            ->getChildrenIds($category);
+        return $qb;
     }
 
     /**

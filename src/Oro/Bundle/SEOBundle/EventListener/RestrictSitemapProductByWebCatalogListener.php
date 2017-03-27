@@ -7,6 +7,7 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\FeatureToggleBundle\Checker\FeatureCheckerHolderTrait;
 use Oro\Bundle\SEOBundle\Entity\WebCatalogProductLimitation;
 use Oro\Bundle\SEOBundle\Event\RestrictSitemapEntitiesEvent;
+use Oro\Component\Website\WebsiteInterface;
 
 class RestrictSitemapProductByWebCatalogListener
 {
@@ -30,7 +31,9 @@ class RestrictSitemapProductByWebCatalogListener
      */
     public function restrictQueryBuilder(RestrictSitemapEntitiesEvent $event)
     {
-        if ($this->isEnabled()) {
+        $website = $event->getWebsite();
+
+        if ($this->isEnabled($website)) {
             $this->restrict($event);
         }
     }
@@ -48,16 +51,18 @@ class RestrictSitemapProductByWebCatalogListener
             Join::WITH,
             $qb->expr()->andX(
                 $qb->expr()->eq(reset($rootAliases), 'productLimitation.productId'),
-                $qb->expr()->eq($event->getVersion(), 'productLimitation.version')
+                $qb->expr()->eq('productLimitation.version', ':version')
             )
-        );
+        )
+        ->setParameter('version', (int) $event->getVersion());
     }
 
     /**
+     * @param WebsiteInterface $website
      * @return bool
      */
-    private function isEnabled()
+    private function isEnabled(WebsiteInterface $website = null)
     {
-        return !$this->isFeaturesEnabled();
+        return !$this->isFeaturesEnabled($website);
     }
 }

@@ -345,8 +345,10 @@ services:
         public: false
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '@oro_config.manager'
+            - '@oro_web_catalog.web_catalog_provider'
             - '@oro_seo.sitemap.provider.web_catalog_scope_criteria_provider'
+            - '@oro_entity.orm.insert_from_select_query_executor'
+            - '@oro_entity.orm.native_query_executor_helper'
 
     oro_seo.event_listener.url_items_provider_start:
         class: 'Oro\Bundle\SEOBundle\EventListener\ProductUrlItemsProviderStartListener'
@@ -370,3 +372,8 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_seo.event.restrict_sitemap_entity.product , method: restrictQueryBuilder }
             - { name: oro_featuretogle.feature, feature: frontend_master_catalog }
+
+    oro_seo.event_listener.restrict_sitemap_product_by_status:
+        class: Oro\Bundle\SEOBundle\EventListener\RestrictSitemapProductByStatusListener
+        tags:
+            - { name: kernel.event_listener, event: oro_seo.event.restrict_sitemap_entity.product, method: restrictQueryBuilder }
