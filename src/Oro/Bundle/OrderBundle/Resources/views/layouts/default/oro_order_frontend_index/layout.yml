@@ -11,13 +11,6 @@ layout:
 
         - '@appendOption':
             id: orders_datagrid
-            optionName: grid_render_parameters.themeOptions
-            optionValue:
-                cellLauncherOptions:
-                    launcherMode: 'text-only'
-
-        - '@appendOption':
-            id: orders_datagrid
             optionName: grid_render_parameters.toolbarOptions.itemsCounter
             optionValue:
                 transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.orders'

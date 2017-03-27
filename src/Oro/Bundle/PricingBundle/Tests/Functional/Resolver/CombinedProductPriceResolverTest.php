@@ -66,7 +66,7 @@ class CombinedProductPriceResolverTest extends WebTestCase
         $this->assertEquals($expectedPrices, $actualPrices);
 
         $messages = $collector->getTopicSentMessages(AsyncIndexer::TOPIC_REINDEX);
-        $this->assertCount(1, $messages);
+        $this->assertCount(4, $messages);
 
         $this->assertEquals([Product::class], $messages[0]['message']['class']);
         $products = [];

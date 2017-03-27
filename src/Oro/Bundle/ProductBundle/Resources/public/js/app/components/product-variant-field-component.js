@@ -59,8 +59,9 @@ define(function(require) {
 
         /**
          * Set state
-         * @param name
-         * @param value
+         *
+         * @param {string} name
+         * @param {object} value
          * @returns {*}
          */
         setState: function(name, value) {
@@ -130,10 +131,10 @@ define(function(require) {
                     var normalizeName = this._extractName($select.data('name'));
 
                     this.filteredOptions = this.filteredOptions.concat(
-                        $select.find('option').get().filter(function(option) {
+                        $select.find('option').get().filter(_.bind(function(option) {
                             option.value = option.value !== '' ? normalizeName + '_' + option.value : '';
                             return !option.disabled && option.value !== '';
-                        })
+                        }, this))
                     );
 
                     this._appendToHierarchy(normalizeName);
@@ -147,22 +148,25 @@ define(function(require) {
         },
 
         /**
-         * Fix case where attributes similar value
-         * make attribute unique value
+         * Fix case where attributes similar value make attribute unique value
+         *
          * @private
          */
         _prepareProductVariants: function() {
             this.options.simpleProductVariants = _.mapObject(this.options.simpleProductVariants, function(variant) {
                 return _.reduce(variant, function(memo, attr, key) {
-                    memo[key.toLowerCase()] = (key + '_' + attr).toLowerCase();
+                    memo[this._extractName(key)] = (
+                        this._extractName(key) + '_' + this._normalizeBool(attr)
+                    ).toLowerCase();
                     return memo;
-                }, {});
-            });
+                }, {}, this);
+            }, this);
         },
 
         /**
          * Append new item to hierarchy stack
-         * @param newOne
+         *
+         * @param {object} newOne
          * @returns {null}
          * @private
          */
@@ -182,8 +186,9 @@ define(function(require) {
 
         /**
          * onChange handler for select variant fields
-         * @param simpleProductVariants
-         * @param event
+         *
+         * @param {object} simpleProductVariants
+         * @param {object} event
          * @private
          */
         _onVariantFieldChange: function(simpleProductVariants, event) {
@@ -195,6 +200,7 @@ define(function(require) {
 
         /**
          * Resolve field hierarchy depends selected options
+         *
          * @param {Object} simpleProductVariants
          * @private
          */
@@ -268,6 +274,17 @@ define(function(require) {
             name = name.toLowerCase().split('__').slice(-1)[0];
             name = name.replace(/[-_]/g, '');
             return name;
+        },
+
+        /**
+         * Convert from "true" or "false" to "1" and "0"
+         *
+         * @param {boolean} value
+         * @returns {number}
+         * @private
+         */
+        _normalizeBool: function(value) {
+            return _.isBoolean(value) ? +value : value;
         }
     });
 

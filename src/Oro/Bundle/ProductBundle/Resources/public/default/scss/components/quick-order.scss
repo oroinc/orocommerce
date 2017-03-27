@@ -59,15 +59,6 @@
       display: none;
     }
   }
-
-  [class^="cf"] {
-    font-size: 0;
-
-    &:before {
-      color: get-color('ui', 'normal');
-      font-size: $base-font-size;
-    }
-  }
 }
 
 .quick-order__container {

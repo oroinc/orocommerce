@@ -81,9 +81,6 @@ define(function(require) {
 
         initModel: function(options) {
             this.modelAttr = $.extend(true, {}, this.modelAttr, options.modelAttr || {});
-            if (!options.productModel) {
-                this.$el.trigger('options:set:productModel', options);
-            }
             if (options.productModel) {
                 this.model = options.productModel;
             }

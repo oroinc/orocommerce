@@ -7,6 +7,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 
@@ -36,10 +37,7 @@ class RequestController extends Controller
      */
     public function viewAction(RFPRequest $request)
     {
-        $status = $request->getInternalStatus();
-        if ($status && $status->getId() === RFPRequest::INTERNAL_STATUS_DELETED) {
-            throw $this->createNotFoundException();
-        }
+        $this->assertValidInternalStatus($request);
 
         return [
             'data' => [
@@ -113,6 +111,8 @@ class RequestController extends Controller
      */
     public function updateAction(RFPRequest $rfpRequest)
     {
+        $this->assertValidInternalStatus($rfpRequest);
+
         $response = $this->update($rfpRequest);
 
         if ($response instanceof Response) {
@@ -240,5 +240,17 @@ class RequestController extends Controller
         }
         $this->get('oro_rfp.request.manager')
             ->addProductLineItemsToRequest($rfpRequest, $filteredProducts);
+    }
+
+    /**
+     * @param RFPRequest $request
+     * @throws NotFoundHttpException
+     */
+    private function assertValidInternalStatus(RFPRequest $request)
+    {
+        $status = $request->getInternalStatus();
+        if ($status && $status->getId() === RFPRequest::INTERNAL_STATUS_DELETED) {
+            throw $this->createNotFoundException();
+        }
     }
 }
