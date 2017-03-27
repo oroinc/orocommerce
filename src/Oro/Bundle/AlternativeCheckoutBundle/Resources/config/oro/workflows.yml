@@ -23,6 +23,8 @@ workflows:
                     value: 5000
                     options:
                         form_options:
+                            constraints:
+                                NotBlank: ~
                             tooltip: true
 
         attributes:
