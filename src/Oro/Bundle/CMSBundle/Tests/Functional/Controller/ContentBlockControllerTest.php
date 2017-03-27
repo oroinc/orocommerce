@@ -22,6 +22,7 @@ class ContentBlockControllerTest extends WebTestCase
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
+        $this->client->useHashNavigation(true);
         $this->registry = $this->getContainer()->get('doctrine');
     }
 

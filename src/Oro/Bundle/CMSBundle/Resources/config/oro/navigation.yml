@@ -65,4 +65,4 @@ navigation:
         oro_cms_content_block_index:  ~
         oro_cms_content_block_view: '%title%'
         oro_cms_content_block_update: '%title% - oro.ui.edit'
-        oro_cms_content_block_create: '%title% - oro.ui.create'
+        oro_cms_content_block_create: 'oro.ui.create'
