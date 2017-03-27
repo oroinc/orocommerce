@@ -367,7 +367,7 @@ services:
     oro_order.order_api.line_item_product_processor:
         class: 'Oro\Bundle\OrderBundle\Api\Processor\Order\OrderLineItemProductProcessor'
         arguments:
-            - '@oro_api.doctrine_helper'
+            - '@oro_product.repository.product'
         tags:
             - { name: oro.api.processor, action: create, group: load_data, priority: -255, class: '%oro_order.entity.order_line_item.class%' }
             - { name: oro.api.processor, action: update, group: load_data, priority: -255, class: '%oro_order.entity.order_line_item.class%' }

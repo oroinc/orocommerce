@@ -11,7 +11,7 @@ use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImageType;
 
-class ProductRepository extends EntityRepository
+class ProductRepository extends EntityRepository implements ProductRepositoryInterface
 {
     /**
      * @param string $sku

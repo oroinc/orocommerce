@@ -2,20 +2,19 @@
 
 namespace Oro\Bundle\OrderBundle\Tests\Unit\Api\Processor\Order;
 
-use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\ApiBundle\Processor\FormContext;
-use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\OrderBundle\Api\Processor\Order\OrderLineItemProductProcessor;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepositoryInterface;
 use Oro\Component\ChainProcessor\ContextInterface;
 
 class OrderLineItemProductProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var DoctrineHelper|\PHPUnit_Framework_MockObject_MockObject
+     * @var ProductRepositoryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $doctrineHelper;
+    protected $productRepositoryMock;
 
     /**
      * @var OrderLineItemProductProcessor
@@ -24,9 +23,9 @@ class OrderLineItemProductProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->doctrineHelper = $this->createMock(DoctrineHelper::class);
+        $this->productRepositoryMock = $this->createMock(ProductRepositoryInterface::class);
 
-        $this->testedProcessor = new OrderLineItemProductProcessor($this->doctrineHelper);
+        $this->testedProcessor = new OrderLineItemProductProcessor($this->productRepositoryMock);
     }
 
     /**
@@ -46,15 +45,7 @@ class OrderLineItemProductProcessorTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @return EntityRepository|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected function createEntityRepositoryMock()
-    {
-        return $this->createMock(EntityRepository::class);
-    }
-
-    /**
-     * @return EntityRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @return Product|\PHPUnit_Framework_MockObject_MockObject
      */
     protected function createProductMock()
     {
@@ -68,7 +59,6 @@ class OrderLineItemProductProcessorTest extends \PHPUnit_Framework_TestCase
         $productId = 1;
         $contextMock = $this->createContextMock();
         $orderLineItemMock = $this->createOrderLineItemMock();
-        $entityRepositoryMock = $this->createEntityRepositoryMock();
         $productMock = $this->createProductMock();
 
         $contextMock
@@ -81,16 +71,10 @@ class OrderLineItemProductProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('getRequestData')
             ->willReturn($requestData);
 
-        $this->doctrineHelper
+        $this->productRepositoryMock
             ->expects(static::once())
-            ->method('getEntityRepository')
-            ->with(Product::class)
-            ->willReturn($entityRepositoryMock);
-
-        $entityRepositoryMock
-            ->expects(static::once())
-            ->method('findOneBy')
-            ->with(['sku' => $productSku])
+            ->method('findOneBySku')
+            ->with($productSku)
             ->willReturn($productMock);
 
         $productMock
@@ -116,9 +100,13 @@ class OrderLineItemProductProcessorTest extends \PHPUnit_Framework_TestCase
     {
         $contextMock = $this->createMock(ContextInterface::class);
 
-        $this->doctrineHelper
+        $contextMock
             ->expects(static::never())
-            ->method('getEntityRepository');
+            ->method('getResult');
+
+        $this->productRepositoryMock
+            ->expects(static::never())
+            ->method('findOneBySku');
 
         $this->testedProcessor->process($contextMock);
     }
@@ -196,7 +184,6 @@ class OrderLineItemProductProcessorTest extends \PHPUnit_Framework_TestCase
     public function testNoProduct()
     {
         $contextMock = $this->createContextMock();
-        $entityRepositoryMock = $this->createEntityRepositoryMock();
 
         $contextMock
             ->expects(static::any())
@@ -211,12 +198,6 @@ class OrderLineItemProductProcessorTest extends \PHPUnit_Framework_TestCase
             ->expects(static::once())
             ->method('getRequestData')
             ->willReturn(['productSku' => 'productSku']);
-
-        $this->doctrineHelper
-            ->expects(static::once())
-            ->method('getEntityRepository')
-            ->with(Product::class)
-            ->willReturn($entityRepositoryMock);
 
         $this->testedProcessor->process($contextMock);
     }
