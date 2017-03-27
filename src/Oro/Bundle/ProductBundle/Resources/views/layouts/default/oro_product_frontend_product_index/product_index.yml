@@ -5,6 +5,12 @@ layout:
     actions:
         - '@setBlockTheme':
             themes: 'product_index.html.twig'
+
+        - '@setOption':
+            id: product_datagrid
+            optionName: grid_render_parameters.enableViews
+            optionValue: false
+
         - '@addTree':
             items:
                 product_index_page:
