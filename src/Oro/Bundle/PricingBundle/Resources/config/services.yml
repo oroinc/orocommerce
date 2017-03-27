@@ -487,7 +487,7 @@ services:
             - '@oro_pricing.price_list_relation_trigger_handler'
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
-            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save.oro_pricing.default_price_lists, method: beforeSave }
             - { name: kernel.event_listener, event: oro_config.update_after, method: updateAfter }
 
     oro_pricing.event_listener.price_list:

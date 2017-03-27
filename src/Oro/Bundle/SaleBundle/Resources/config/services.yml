@@ -6,6 +6,11 @@ parameters:
     oro_sale.entity.quote_product_request.class: Oro\Bundle\SaleBundle\Entity\QuoteProductRequest
 
 services:
+    oro_sale.condition.quote_acceptable:
+        class: Oro\Bundle\SaleBundle\Model\Condition\QuoteAcceptable
+        tags:
+            - { name: oro_action.condition, alias: quote_acceptable }
+
     oro_sale.provider.quote_product_price:
         class: 'Oro\Bundle\SaleBundle\Provider\QuoteProductPriceProvider'
         arguments:

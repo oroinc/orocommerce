@@ -63,11 +63,14 @@ class OrmIndexer extends AbstractIndexer
         $entityAliasTemp,
         array $context
     ) {
-        //Save entities directly with real alias if entity ids passed to context
+        $entityIds = array_keys($entitiesData);
+
+        // Save entities directly with real alias if entity ids passed to context
         if ($this->getContextEntityIds($context)) {
             $entityAliasTemp = $this->getEntityAlias($entityClass, $context);
         }
 
+        // Build items for search index
         $items = [];
         foreach ($entitiesData as $entityId => $indexData) {
             $item = $this->getDriver()->createItem();
@@ -81,6 +84,10 @@ class OrmIndexer extends AbstractIndexer
             $items[] = $item;
         }
 
+        // Remove old data to prevent possible conflicts with unique indexes
+        $this->deleteEntities($entityClass, $entityIds, $context);
+
+        // Insert data to the database
         $this->getDriver()->flushWrites();
 
         return count($items);

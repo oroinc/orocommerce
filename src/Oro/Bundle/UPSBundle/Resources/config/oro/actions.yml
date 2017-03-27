@@ -41,16 +41,12 @@ operations:
                 type: string
             invalidateCacheAt:
                 label: oro.ups.form.invalidate_cache_at.label
-                type: entity
-                property_path: data.transport.invalidateCacheAt
+                type: object
                 options:
-                    class: Oro\Bundle\IntegrationBundle\Entity\Channel
+                    class: DateTime
             invalidateNow:
                 label: 'invalidate_cache.action.invalidate_now'
-                type: entity
-                property_path: data.transport.invalidateCacheAt
-                options:
-                    class: Oro\Bundle\IntegrationBundle\Entity\Channel
+                type: boolean
         form_options:
             attribute_fields:
                 invalidateType:
@@ -66,8 +62,6 @@ operations:
                     form_type: hidden
             attribute_default_values:
                 invalidateCacheAt: $.data.transport.invalidateCacheAt
-        form_init:
-            - '@assign_value': [$.invalidateCacheAt, $.data.transport.invalidateCacheAt]
         preactions:
             - '@assign_constant_value':
                 attribute: $.upsType
