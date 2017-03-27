@@ -3,10 +3,12 @@
 namespace Oro\Bundle\InventoryBundle\Tests\Functional\Api;
 
 use Symfony\Component\HttpFoundation\Response;
+
 use Oro\Bundle\ApiBundle\Tests\Functional\RestJsonApiTestCase;
+use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
+use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\UpdateInventoryLevelsQuantities;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 
 /**
  * @group CommunityEdition
@@ -23,7 +25,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->loadFixtures(['@OroInventoryBundle/Tests/Functional/DataFixtures/inventory_level.yml']);
+        $this->loadFixtures([UpdateInventoryLevelsQuantities::class]);
     }
 
     /**
@@ -183,36 +185,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
             $data
         );
 
-        $this->assertResponseStatusCodeEquals($response, Response::HTTP_CREATED);
-        $this->assertCreatedInventoryLevel('product-3', 'liter', 100);
-    }
-
-    public function testCreateEntityWithDefaultUnit()
-    {
-        $entityType = $this->getEntityType(InventoryLevel::class);
-
-        $data = [
-            'data' => [
-                'type' => $entityType,
-                'attributes' => ['quantity' => 50],
-                'relationships' => [
-                    'product' => [
-                        'data' => [
-                            'type' => $this->getEntityType(Product::class),
-                            'id' => 'product-2',
-                        ],
-                    ],
-                ]
-            ]
-        ];
-        $response = $this->request(
-            'POST',
-            $this->getUrl('oro_rest_api_post', ['entity' => $entityType]),
-            $data
-        );
-
-        $this->assertResponseStatusCodeEquals($response, Response::HTTP_CREATED);
-        $this->assertCreatedInventoryLevel('product-2', null, 50);
+        $this->assertResponseStatusCodeEquals($response, Response::HTTP_METHOD_NOT_ALLOWED);
     }
 
     public function testDeleteEntity()
@@ -231,36 +204,7 @@ class InventoryLevelApiTest extends RestJsonApiTestCase
             $this->getUrl('oro_rest_api_delete', ['entity' => $entityType, 'id' => $inventoryLevel->getId()])
         );
 
-        $this->assertResponseStatusCodeEquals($response, Response::HTTP_NO_CONTENT);
-        $this->assertDeletedInventorLevel($inventoryLevel->getId());
-    }
-
-    public function testDeleteEntityUsingFilters()
-    {
-        /** @var InventoryLevel $inventoryLevel */
-        $inventoryLevel = $this->getReference(
-            sprintf(
-                'inventory_level.%s',
-                'product_unit_precision.product-1.liter'
-            )
-        );
-
-        $params = [
-            'filter' => [
-                'product.sku' => $inventoryLevel->getProduct()->getSku(),
-                'productUnitPrecision.unit.code' => $inventoryLevel->getProductUnitPrecision()->getProductUnitCode(),
-            ]
-        ];
-
-        $entityType = $this->getEntityType(InventoryLevel::class);
-        $response = $this->request(
-            'DELETE',
-            $this->getUrl('oro_rest_api_cdelete', ['entity' => $entityType]),
-            $params
-        );
-
-        $this->assertResponseStatusCodeEquals($response, Response::HTTP_NO_CONTENT);
-        $this->assertDeletedInventorLevel($inventoryLevel->getId());
+        $this->assertResponseStatusCodeEquals($response, Response::HTTP_METHOD_NOT_ALLOWED);
     }
 
     /**

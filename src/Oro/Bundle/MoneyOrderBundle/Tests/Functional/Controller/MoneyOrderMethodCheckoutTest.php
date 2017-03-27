@@ -3,6 +3,10 @@
 namespace Oro\Bundle\MoneyOrderBundle\Tests\Functional\Controller;
 
 use Doctrine\ORM\EntityRepository;
+
+use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Component\DomCrawler\Form;
+
 use Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend\CheckoutControllerTestCase;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
@@ -12,9 +16,10 @@ use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
-use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\DomCrawler\Form;
 
+/**
+ * @group CommunityEdition
+ */
 class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
 {
     /**

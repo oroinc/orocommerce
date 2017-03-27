@@ -3,17 +3,22 @@
 namespace Oro\Bundle\InventoryBundle\Tests\Functional\Controller;
 
 use Symfony\Component\Routing\RouterInterface;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
-use Oro\Bundle\ProductBundle\Entity\Product;
 
-class WarehouseInventoryLevelControllerNoProductUnitsTest extends WebTestCase
+use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\UpdateInventoryLevelsQuantities;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+
+/**
+ * @group CommunityEdition
+ */
+class InventoryLevelControllerNoProductUnitsTest extends WebTestCase
 {
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
 
-        $this->loadFixtures(['@OroInventoryBundle/Tests/Functional/DataFixtures/inventory_level.yml']);
+        $this->loadFixtures([UpdateInventoryLevelsQuantities::class]);
     }
 
     public function testNoUnitsOfQuantityReasonMessage()
