@@ -1,8 +1,9 @@
 @fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-OroPaymentTermBundle:PaymentTermIntegration.yml
 @fixture-Checkout.yml
+@fixture-InventoryLevel.yml
+@community-edition-only
 Feature: Checkout workflow
-  @conditional-fixtures
   Scenario: Create order from Shopping List 1
     Given There is EUR currency in the system configuration
       And AmandaRCole@example.org customer user has Buyer role

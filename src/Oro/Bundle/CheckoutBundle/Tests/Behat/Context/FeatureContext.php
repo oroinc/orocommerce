@@ -7,12 +7,9 @@ use Behat\Symfony2Extension\Context\KernelDictionary;
 
 use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep;
 use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutSuccessStep;
-use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\TestFrameworkBundle\Behat\Context\OroFeatureContext;
 use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
-use Oro\Bundle\WarehouseBundle\Entity\Warehouse;
-use Oro\Bundle\WarehouseBundle\SystemConfig\WarehouseConfig;
 
 class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
 {
@@ -30,37 +27,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         'Payment Terms' => 'paymentMethod',
         'Delete the shopping list' => 'oro_workflow_transition[remove_source]'
     ];
-
-    /**
-     * @BeforeScenario @conditional-fixtures
-     * @todo: Move this to other bundle: BB-8365
-     */
-    public function loadFixtures()
-    {
-        /* @var $configManager ConfigManager */
-        $configManager = $this->getContainer()->get('oro_config.global');
-
-        /* @var $warehouses Warehouse[] */
-        $warehouses = $this->getContainer()->get('oro_entity.doctrine_helper')->getEntityRepository(
-            Warehouse::class
-        )->findAll();
-
-        $enabledWarehouses = [];
-
-        $k = 0;
-        foreach ($warehouses as $warehouse) {
-            $warehouseConfig = new WarehouseConfig($warehouse, $k + 1);
-            $enabledWarehouses[] = $warehouseConfig;
-            $k;
-        }
-
-        $configManager->set(
-            'oro_warehouse.enabled_warehouses',
-            $enabledWarehouses
-        );
-
-        $configManager->flush();
-    }
 
     /**
      * @When /^I select "(?P<value>.+)" on the "(?P<step>[\w\s]+)" checkout step and press (?P<button>[\w\s]+)$/

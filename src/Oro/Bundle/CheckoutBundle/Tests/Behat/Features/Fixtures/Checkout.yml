@@ -183,16 +183,3 @@ Oro\Bundle\CustomerBundle\Entity\CustomerUserAddressToAddressType:
         address: '@address'
         type: '@shippingType'
         default: true
-
-# @todo: move this to other bundle: BB-8365
-Oro\Bundle\WarehouseBundle\Entity\Warehouse:
-    testWarehouse:
-        name: 'Test Warehouse'
-        organization: '@organization'
-
-Oro\Bundle\InventoryBundle\Entity\InventoryLevel:
-    inventoryLevel:
-        product: '@product'
-        productUnitPrecision: '@precision'
-        quantity: 100
-        warehouse: '@testWarehouse'
