@@ -21,7 +21,7 @@ navigation:
                 route:           'oro_cms_content_block_index'
                 position:        101
                 extras:
-                    routes:      ['/^oro_cms_contentblock/']
+                    routes:      ['/^oro_cms_content_block/']
                     description: 'oro.cms.menu.contentblock_list.description'
 
             login_page_list:
@@ -63,6 +63,6 @@ navigation:
         oro_cms_frontend_page_view: '%title%'
 
         oro_cms_content_block_index:  ~
-        oro_cms_content_block_view: '%%title%%'
-        oro_cms_content_block_update: 'oro.ui.edit'
-        oro_cms_content_block_create: 'oro.ui.create'
+        oro_cms_content_block_view: '%title%'
+        oro_cms_content_block_update: '%title% - oro.ui.edit'
+        oro_cms_content_block_create: '%title% - oro.ui.create'

@@ -3,20 +3,39 @@
 namespace Oro\Bundle\CMSBundle\Migrations\Data\ORM;
 
 use Doctrine\Common\DataFixtures\AbstractFixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Common\Persistence\ObjectManager;
 
 use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\CMSBundle\Entity\TextContentVariant;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
+use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
+use Oro\Bundle\UserBundle\Migrations\Data\ORM\LoadAdminUserData;
 
-class LoadHomePageSlider extends AbstractFixture
+class LoadHomePageSlider extends AbstractFixture implements DependentFixtureInterface
 {
+    use UserUtilityTrait;
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getDependencies()
+    {
+        return [
+            LoadAdminUserData::class
+        ];
+    }
+
     /**
      * @param ObjectManager $manager
      */
     public function load(ObjectManager $manager)
     {
+        $user = $this->getFirstUser($manager);
+
         $slider = new ContentBlock();
+        $slider->setOrganization($user->getOrganization());
+        $slider->setOwner($user->getOwner());
         $slider->setAlias('home-page-slider');
 
         $title = new LocalizedFallbackValue();

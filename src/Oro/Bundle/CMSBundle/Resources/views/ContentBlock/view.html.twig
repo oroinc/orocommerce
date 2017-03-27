@@ -1,7 +1,7 @@
 {% extends 'OroUIBundle:actions:view.html.twig' %}
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 
-{% oro_title_set({params : {"%title%": 'oro.cms.contentblock.entity_label'|trans } }) %}
+{% oro_title_set({params : {'%title%': entity.titles|localized_value} }) %}
 
 {% block pageHeader %}
     {% set breadcrumbs = {
