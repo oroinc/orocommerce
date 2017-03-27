@@ -47,4 +47,4 @@ layout:
         - '@setOption':
             id: __datagrid_toolbar
             optionName: attr.class
-            optionValue: 'grid__toolbar grid__toolbar--simplistic'
+            optionValue: 'grid-toolbar simplistic'
