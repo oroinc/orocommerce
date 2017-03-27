@@ -5,6 +5,7 @@ parameters:
     oro_product.entity.product_variant_link.class: Oro\Bundle\ProductBundle\Entity\ProductVariantLink
     oro_product.entity.product_image.class: Oro\Bundle\ProductBundle\Entity\ProductImage
     oro_product.entity.product_image_type.class: Oro\Bundle\ProductBundle\Entity\ProductImageType
+
     oro_product.event_listener.scoped_product_db_query_restriction.common_class: Oro\Bundle\ProductBundle\EventListener\ScopedProductDBQueryRestrictionEventListener
     oro_product.event_listener.scoped_product_search_query_restriction.common_class: Oro\Bundle\ProductBundle\EventListener\ScopedProductSearchQueryRestrictionEventListener
 
@@ -590,6 +591,8 @@ services:
             - '@oro_layout.loader.image_filter'
             - '@oro_layout.provider.image_type'
             - '@oro_attachment.image_resizer'
+            - '@oro_attachment.media_cache_manager'
+            - '@oro_attachment.manager'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 
