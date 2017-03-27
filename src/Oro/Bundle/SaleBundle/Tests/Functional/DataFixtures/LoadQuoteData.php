@@ -32,6 +32,7 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
     const QUOTE10 = 'sale.quote.10';
     const QUOTE11 = 'sale.quote.11';
     const QUOTE12 = 'sale.quote.12';
+    const QUOTE13 = 'sale.quote.13';
     const QUOTE_DRAFT = 'sale.quote.draft';
 
     const PRODUCT1  = 'product-1';
@@ -181,14 +182,6 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
             'customerUser'   => LoadUserData::PARENT_ACCOUNT_USER2,
             'products'      => [],
         ],
-        self::QUOTE_DRAFT => [
-            'qid' => self::QUOTE_DRAFT,
-            'internal_status' => 'draft',
-            'customer_status' => 'open',
-            'customer' => LoadUserData::PARENT_ACCOUNT,
-            'customerUser' => LoadUserData::PARENT_ACCOUNT_USER2,
-            'products' => [],
-        ],
         self::QUOTE12 => [
             'qid' => self::QUOTE12,
             'internal_status' => 'sent_to_customer',
@@ -199,6 +192,44 @@ class LoadQuoteData extends AbstractFixture implements FixtureInterface, Depende
             'products' => [],
             'paymentTerm' => LoadPaymentTermData::TERM_LABEL_NET_10,
             'expired' => true
+        ],
+        self::QUOTE13 => [
+            'qid'           => self::QUOTE13,
+            'internal_status' => 'sent_to_customer',
+            'customer_status' => 'open',
+            'customer'       => LoadUserData::ACCOUNT1,
+            'customerUser'   => LoadUserData::ACCOUNT1_USER2,
+            'products'      => [
+                self::PRODUCT1 => [
+                    [
+                        'priceType' => QuoteProductOffer::PRICE_TYPE_UNIT,
+                        'quantity'  => 1,
+                        'unit'      => self::UNIT1,
+                        'price'     => self::PRICE1,
+                        'currency'  => self::CURRENCY1,
+                        'allow_increments' => false
+                    ],
+                ],
+                self::PRODUCT2 => [
+                    [
+                        'priceType' => QuoteProductOffer::PRICE_TYPE_UNIT,
+                        'quantity'  => 100,
+                        'unit'      => self::UNIT3,
+                        'price'     => 3,
+                        'currency'  => self::CURRENCY1,
+                        'allow_increments' => true
+                    ]
+                ],
+            ],
+            'estimatedShippingCostAmount' => 10
+        ],
+        self::QUOTE_DRAFT => [
+            'qid' => self::QUOTE_DRAFT,
+            'internal_status' => 'draft',
+            'customer_status' => 'open',
+            'customer' => LoadUserData::PARENT_ACCOUNT,
+            'customerUser' => LoadUserData::PARENT_ACCOUNT_USER2,
+            'products' => [],
         ]
     ];
 
