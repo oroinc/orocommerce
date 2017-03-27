@@ -1,6 +1,6 @@
 {% extends 'OroUIBundle:actions:update.html.twig' %}
 
-{% oro_title_set({params : {'%title%': entity.titles|localized_value} }) %}
+{% oro_title_set({params : {'%title%': entity.defaultTitle.string} }) %}
 
 {% set formAction = formAction|default(entity.id ?
     path('oro_cms_content_block_update', { 'id': entity.id })
