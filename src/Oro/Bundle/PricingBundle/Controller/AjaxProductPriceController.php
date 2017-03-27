@@ -23,7 +23,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
      *
      * {@inheritdoc}
      */
-    public function getProductPricesByCustomer(Request $request)
+    public function getProductPricesByCustomerAction(Request $request)
     {
         return parent::getProductPricesByCustomer($request);
     }

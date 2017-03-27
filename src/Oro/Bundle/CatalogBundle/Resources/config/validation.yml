@@ -7,3 +7,14 @@ Oro\Bundle\CatalogBundle\Model\CategoryUnitPrecision:
                 min: 0
                 max: 10
             - Oro\Bundle\ValidationBundle\Validator\Constraints\Integer: ~
+
+Oro\Bundle\CatalogBundle\Entity\Category:
+    properties:
+        titles:
+            - Valid: ~
+        shortDescriptions:
+            - Valid: ~
+        longDescriptions:
+            - Valid: ~
+        slugPrototypes:
+            - Valid: ~

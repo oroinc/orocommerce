@@ -81,7 +81,7 @@ services:
             - '@doctrine'
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
-            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: onSettingsSaveBefore }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save.oro_web_catalog.web_catalog, method: onSettingsSaveBefore }
 
     oro_web_catalog.event_listener.webcatalog_config:
         class: Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogConfigChangeListener

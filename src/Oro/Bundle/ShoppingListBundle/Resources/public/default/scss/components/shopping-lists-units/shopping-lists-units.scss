@@ -1,6 +1,6 @@
 // @theme: default
 
-$shopping-lists-actions-width: 55px;
+$shopping-lists-actions-width: 57px;
 
 .shopping-lists-units {
     position: relative;
@@ -24,7 +24,7 @@ $shopping-lists-actions-width: 55px;
 
     &__actions {
         position: absolute;
-        top: 0;
+        top: 3px;
         right: 0;
 
         width: $shopping-lists-actions-width;
