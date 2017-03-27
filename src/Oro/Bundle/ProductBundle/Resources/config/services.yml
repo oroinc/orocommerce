@@ -542,8 +542,10 @@ services:
     oro_product.layout.data_provider.featured_products:
         class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\FeaturedProductsProvider'
         arguments:
-            - "@oro_product.repository.product"
-            - "@oro_product.product.manager"
+            - '@oro_segment.segment_manager'
+            - '@oro_product.product.manager'
+            - '@oro_config.user'
+            - '@logger'
         tags:
             - { name: layout.data_provider, alias: featured_products }
 

@@ -16,6 +16,16 @@ class LoadProductVisibilityDemoData extends AbstractLoadProductVisibilityDemoDat
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function load(ObjectManager $manager)
+    {
+        parent::load($manager);
+
+        $this->container->get('oro_visibility.visibility.cache.product.cache_builder')->buildCache();
+    }
+
+    /**
      * @param ObjectManager $manager
      * @param array $row
      * @return Website

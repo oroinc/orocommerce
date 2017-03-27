@@ -61,7 +61,8 @@
                         'sku': UI.renderProperty('oro.product.sku.label'|trans, entity.sku),
                         'names': UI.renderProperty('oro.product.names.label'|trans, entity.defaultName),
                         'info': productInfo,
-                        'generatedSugs': Redirect.renderGeneratedSlugs(entity.slugs)
+                        'generatedSugs': Redirect.renderGeneratedSlugs(entity.slugs),
+                        'featured': UI.renderProperty('oro.product.featured.label'|trans, entity.featured ? 'oro.product.featured.yes'|trans : 'oro.product.featured.no'|trans),
                     }
                 },
                 {'data' : {

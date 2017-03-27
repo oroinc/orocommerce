@@ -31,7 +31,7 @@ class AjaxProductShippingOptionsController extends Controller
      * @return JsonResponse
      * @throws \Symfony\Component\HttpKernel\Exception\NotFoundHttpException
      */
-    public function getAvailableProductUnitFreightClasses(Request $request)
+    public function getAvailableProductUnitFreightClassesAction(Request $request)
     {
         $unitCode = $request->request->get('activeUnitCode');
 

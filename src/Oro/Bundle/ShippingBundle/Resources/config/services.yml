@@ -31,7 +31,7 @@ services:
             - '@oro_shipping.factory.shipping_origin_model_factory'
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: formPreSet }
-            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: beforeSave }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save.oro_shipping.shipping_origin, method: beforeSave }
 
     oro_shipping.event_listener.form_view:
         class: Oro\Bundle\ShippingBundle\EventListener\FormViewListener
