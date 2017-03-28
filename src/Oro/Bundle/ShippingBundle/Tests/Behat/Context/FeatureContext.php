@@ -93,15 +93,9 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     public function flashMessageAppearsThatThereIsNoShippingMethodsAvailable()
     {
-        $flashMessages = $this->createElement('CreateOrderFlashMessage');
-
-        self::assertTrue(
-            $flashMessages->isValid(),
-            'Flash message is not found, or found more then one'
-        );
-        self::assertEquals(
+        $this->oroMainContext->iShouldSeeFlashMessage(
             'No shipping methods are available, please contact us to complete the order submission.',
-            $flashMessages->getText()
+            'CreateOrderFlashMessage'
         );
     }
 
