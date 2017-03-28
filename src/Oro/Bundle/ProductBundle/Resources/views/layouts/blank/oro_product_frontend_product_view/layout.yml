@@ -99,3 +99,7 @@ layout:
             id: product_require_js_config
             parentId: require_js
             blockType: block
+        - '@add':
+            id: breadcrumbs
+            parentId: page_main_header
+            blockType: breadcrumbs
