@@ -1,0 +1,3 @@
+# Some text
+User-agent: *
+Sitemap: http://example.com/sitemap.xml
