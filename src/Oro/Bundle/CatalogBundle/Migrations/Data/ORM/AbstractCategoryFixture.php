@@ -5,6 +5,7 @@ namespace Oro\Bundle\CatalogBundle\Migrations\Data\ORM;
 use Doctrine\Common\DataFixtures\AbstractFixture;
 use Doctrine\Common\Persistence\ObjectManager;
 
+use Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -53,6 +54,11 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
         $this->addCategories($root, $this->categories, $this->categoryImages, $manager);
 
         $manager->flush();
+
+        $this->generateSlugs($this->categories, $this->container->get('oro_redirect.generator.slug_entity'));
+
+        $this->container->get('oro_redirect.url_storage_cache')->flush();
+        $manager->flush();
     }
 
     /**
@@ -68,8 +74,6 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
         }
 
         $slugGenerator = $this->container->get('oro_entity_config.slug.generator');
-        $slugRedirectGenerator = $this->container->get('oro_redirect.generator.slug_entity');
-        $urlStorageCache = $this->container->get('oro_redirect.url_storage_cache');
 
         foreach ($categories as $title => $nestedCategories) {
             $categoryTitle = new LocalizedFallbackValue();
@@ -98,11 +102,23 @@ abstract class AbstractCategoryFixture extends AbstractFixture implements Contai
             $root->addChildCategory($category);
 
             $this->addCategories($category, $nestedCategories, $images, $manager);
-
-            $slugRedirectGenerator->generate($category, true);
         }
+    }
 
-        $urlStorageCache->flush();
+    /**
+     * @param array $categories
+     * @param SlugEntityGenerator $slugEntityGenerator
+     */
+    private function generateSlugs(array $categories, SlugEntityGenerator $slugEntityGenerator)
+    {
+        foreach ($categories as $title => $nestedCategories) {
+            /** @var Category $category */
+            $category = $this->getReference($title);
+
+            $slugEntityGenerator->generate($category, true);
+
+            $this->generateSlugs($nestedCategories, $slugEntityGenerator);
+        }
     }
 
     /**
