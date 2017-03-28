@@ -549,6 +549,8 @@ datagrids:
                         - IDENTITY(productPrice.product) = :product_id
             bind_parameters:
                 - product_id
+            hints:
+                - HINT_PRICE_SHARD
 
         columns:
             priceListName:
@@ -579,13 +581,14 @@ datagrids:
         filters:
             columns:
                 priceListName:
-                    type:      entity
+                    type:      price_list
                     data_name: priceList.id
                     options:
                         field_type: entity
                         field_options:
                             class:    %oro_pricing.entity.price_list.class%
                             property: name
+                            required: true
                 quantity:
                     type:      number
                     data_name: productPrice.quantity
@@ -603,6 +606,8 @@ datagrids:
                     options:
                         field_options:
                             choices: "@oro_currency.config.currency->getCurrencies"
+            default:
+                priceListName: { value: "@oro_pricing.provider.price_list_provider->getDefaultPriceListId" }
         properties:
             priceListId: ~
             view_price_list_link:

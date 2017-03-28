@@ -1003,3 +1003,16 @@ services:
             - '@event_dispatcher'
         tags:
             - { name: doctrine.event_listener, event: postFlush }
+
+    oro_pricing.filter.price_list_filter:
+        class: Oro\Bundle\PricingBundle\Filter\PriceListFilter
+        arguments:
+            - '@form.factory'
+            - '@oro_filter.filter_utility'
+        tags:
+            - { name: oro_filter.extension.orm_filter.filter, type: price_list, datasource: orm }
+
+    oro_pricing.provider.price_list_provider:
+        class: Oro\Bundle\PricingBundle\Provider\PriceListProvider
+        arguments:
+            - '@doctrine'

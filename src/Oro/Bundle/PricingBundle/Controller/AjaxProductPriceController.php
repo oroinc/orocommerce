@@ -4,21 +4,19 @@ namespace Oro\Bundle\PricingBundle\Controller;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
-use Oro\Bundle\ActionBundle\Exception\ForbiddenOperationException;
-use Oro\Bundle\ActionBundle\Exception\OperationNotFoundException;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Form\Type\PriceListProductPriceType;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 
 class AjaxProductPriceController extends AbstractAjaxProductPriceController
 {
@@ -121,7 +119,8 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
         } else {
             try {
                 $priceManager = $this->get('oro_pricing.manager.price_manager');
-                $priceManager->delete($productPrice[0]);
+                $priceManager->remove($productPrice[0]);
+                $priceManager->flush();
             } catch (\Exception $e) {
                 $code = JsonResponse::HTTP_INTERNAL_SERVER_ERROR;
                 $message = $e->getMessage();
@@ -135,6 +134,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
             'refreshGrid' => $this->get('oro_action.helper.context')->getActionData()->getRefreshGrid(),
             'flashMessages' => $this->get('session')->getFlashBag()->all()
         ];
+
         return new JsonResponse($response, $code);
     }
 

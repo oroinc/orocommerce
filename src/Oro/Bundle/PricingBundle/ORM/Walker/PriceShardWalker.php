@@ -2,9 +2,8 @@
 
 namespace Oro\Bundle\PricingBundle\ORM\Walker;
 
-use Doctrine\ORM\Query\SqlWalker;
 use Doctrine\ORM\Query\AST;
-use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Doctrine\ORM\Query\SqlWalker;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 
 class PriceShardWalker extends SqlWalker
@@ -65,7 +64,7 @@ class PriceShardWalker extends SqlWalker
                 $discriminationField = $alias . '.' . $discriminationColumn;
                 $discriminationValue = $this->detectDiscriminationValue($sql, $discriminationField, []);
                 if ($discriminationValue === null) {
-                    throw new \RuntimeException('Cant\'t detect shard name by query parameters');
+                    continue;
                 }
                 $tableMap[$alias] = $shardManager->getShardName(
                     $entityClass,
