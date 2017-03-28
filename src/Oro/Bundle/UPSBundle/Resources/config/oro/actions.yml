@@ -25,6 +25,9 @@ operations:
         preactions:
             - '@assign_value': [$.invalidateService, 'oro_ups.handler.action.invalidate_cache']
             - '@assign_constant_value':
+                attribute: $.upsType
+                value: Oro\Bundle\UPSBundle\Provider\ChannelType::TYPE
+            - '@assign_constant_value':
                 attribute: $.paramTransportId
                 value: Oro\Bundle\UPSBundle\Handler\InvalidateCacheActionHandler::PARAM_TRANSPORT_ID
             - '@call_method':
@@ -33,6 +36,8 @@ operations:
                 method_parameters:
                     - $.paramTransportId
                     - $.data.transport.id
+        preconditions:
+            '@equal': [$.data.type, $.upsType]
 
     oro_ups_integration_deactivate:
         extends: oro_integration_deactivate
