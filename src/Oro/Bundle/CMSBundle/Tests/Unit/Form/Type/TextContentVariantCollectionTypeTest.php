@@ -26,16 +26,6 @@ class TextContentVariantCollectionTypeTest extends \PHPUnit_Framework_TestCase
         $this->type = new TextContentVariantCollectionType();
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals('oro_cms_text_content_variant_collection', $this->type->getName());
-    }
-
-    public function testGetBlockPrefix()
-    {
-        $this->assertEquals('oro_cms_text_content_variant_collection', $this->type->getBlockPrefix());
-    }
-
     public function testConfigureOptions()
     {
         /** @var OptionsResolver|\PHPUnit_Framework_MockObject_MockObject $resolver */

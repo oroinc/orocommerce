@@ -15,8 +15,6 @@ use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 
 class ContentBlockType extends AbstractType
 {
-    const NAME = 'oro_cms_content_block';
-
     /**
      * {@inheritdoc}
      */
@@ -59,7 +57,7 @@ class ContentBlockType extends AbstractType
                 ]
             )->add(
                 'contentVariants',
-                TextContentVariantCollectionType::NAME,
+                TextContentVariantCollectionType::class,
                 [
                     'label' => 'oro.cms.page.text_content_variants.label',
                 ]
@@ -76,21 +74,5 @@ class ContentBlockType extends AbstractType
                 'data_class' => ContentBlock::class
             ]
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return $this->getBlockPrefix();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
-    {
-        return self::NAME;
     }
 }

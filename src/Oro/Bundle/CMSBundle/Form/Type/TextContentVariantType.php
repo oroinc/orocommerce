@@ -13,8 +13,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class TextContentVariantType extends AbstractType
 {
-    const NAME = 'oro_cms_text_content_variant';
-
     /**
      * {@inheritdoc}
      */
@@ -63,21 +61,5 @@ class TextContentVariantType extends AbstractType
                 'data_class' => TextContentVariant::class,
             ]
         );
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return $this->getBlockPrefix();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
-    {
-        return self::NAME;
     }
 }

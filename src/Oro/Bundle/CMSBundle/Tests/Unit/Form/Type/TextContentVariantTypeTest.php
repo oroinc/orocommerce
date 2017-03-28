@@ -76,16 +76,6 @@ class TextContentVariantTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('default'));
     }
 
-    public function testGetName()
-    {
-        $this->assertEquals(TextContentVariantType::NAME, $this->type->getName());
-    }
-
-    public function testGetBlockPrefix()
-    {
-        $this->assertEquals(TextContentVariantType::NAME, $this->type->getBlockPrefix());
-    }
-
     /**
      * @dataProvider submitDataProvider
      *

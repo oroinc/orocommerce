@@ -8,16 +8,22 @@ Oro\Bundle\CMSBundle\Entity\Page:
             - Valid: ~
 
 Oro\Bundle\CMSBundle\Entity\ContentBlock:
+    constraints:
+        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity: alias
     properties:
         alias:
             - NotBlank: ~
             - Regex:
                 pattern: '/^[a-zA-Z0-9_\-]*$/'
-                message: "This value should contain only alphabetic symbols, underscore, hyphen and numbers."
+                message: oro.cms.contentblock.alias.regex.message
         titles:
             - NotBlank: ~
+            - Valid: ~
         scopes:
             - Oro\Bundle\CustomerBundle\Validator\Constraints\ScopeWithCustomerGroupAndCustomer: ~
+        contentVariants:
+            - Valid: ~
+            - NotBlank: ~
 
 Oro\Bundle\CMSBundle\Entity\TextContentVariant:
     properties:

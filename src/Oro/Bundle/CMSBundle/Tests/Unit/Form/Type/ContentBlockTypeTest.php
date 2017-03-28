@@ -17,7 +17,10 @@ use Oro\Bundle\LocaleBundle\Tests\Unit\Form\Type\Stub\LocalizedFallbackValueColl
 
 use Oro\Component\Testing\Unit\FormIntegrationTestCase;
 
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntityValidator;
 use Symfony\Component\Form\PreloadedExtension;
+use Symfony\Component\Validator\Constraint;
+use Symfony\Component\Validator\ConstraintValidatorFactoryInterface;
 
 class ContentBlockTypeTest extends FormIntegrationTestCase
 {
@@ -67,8 +70,8 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
                     CollectionType::NAME => new CollectionType(),
                     ScopeCollectionType::NAME => new ScopeCollectionTypeStub(),
                     LocalizedFallbackValueCollectionType::NAME => new LocalizedFallbackValueCollectionTypeStub(),
-                    TextContentVariantCollectionType::NAME => new TextContentVariantCollectionType(),
-                    TextContentVariantType::NAME => new TextContentVariantType(),
+                    new TextContentVariantCollectionType(),
+                    new TextContentVariantType(),
                     OroRichTextType::NAME => new OroRichTextType($configManager, $htmlTagProvider),
                 ],
                 []
@@ -86,16 +89,6 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
         $this->assertTrue($form->has('scopes'));
         $this->assertTrue($form->has('enabled'));
         $this->assertTrue($form->has('contentVariants'));
-    }
-
-    public function testGetName()
-    {
-        $this->assertEquals(ContentBlockType::NAME, $this->type->getName());
-    }
-
-    public function testGetBlockPrefix()
-    {
-        $this->assertEquals(ContentBlockType::NAME, $this->type->getBlockPrefix());
     }
 
     /**
@@ -222,5 +215,37 @@ class ContentBlockTypeTest extends FormIntegrationTestCase
                     ),
             ]
         ];
+    }
+
+    /**
+     * @return \PHPUnit_Framework_MockObject_MockObject|ConstraintValidatorFactoryInterface
+     */
+    protected function getConstraintValidatorFactory()
+    {
+        /* @var $factory \PHPUnit_Framework_MockObject_MockObject|ConstraintValidatorFactoryInterface */
+        $factory = $this->createMock('Symfony\Component\Validator\ConstraintValidatorFactoryInterface');
+        $factory->expects($this->any())
+            ->method('getInstance')
+            ->willReturnCallback(
+                function (Constraint $constraint) {
+                    $className = $constraint->validatedBy();
+
+                    if ($className === 'doctrine.orm.validator.unique') {
+                        $this->validators[$className] = $this->getMockBuilder(UniqueEntityValidator::class)
+                            ->disableOriginalConstructor()
+                            ->getMock();
+                    }
+
+                    if (!isset($this->validators[$className]) ||
+                        $className === 'Symfony\Component\Validator\Constraints\CollectionValidator'
+                    ) {
+                        $this->validators[$className] = new $className();
+                    }
+
+                    return $this->validators[$className];
+                }
+            );
+
+        return $factory;
     }
 }

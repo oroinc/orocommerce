@@ -12,6 +12,7 @@ use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 use Oro\Bundle\CMSBundle\Form\Type\ContentBlockType;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
 use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
+use Symfony\Component\HttpFoundation\Request;
 
 class ContentBlockController extends Controller
 {
@@ -49,8 +50,8 @@ class ContentBlockController extends Controller
     }
 
     /**
+     * @param Request $request
      * @return array|RedirectResponse
-     *
      * @Route("/create", name="oro_cms_content_block_create")
      * @Template("OroCMSBundle:ContentBlock:update.html.twig")
      * @Acl(
@@ -60,16 +61,15 @@ class ContentBlockController extends Controller
      *      permission="CREATE"
      * )
      */
-    public function createAction()
+    public function createAction(Request $request)
     {
-        return $this->update(new ContentBlock());
+        return $this->update(new ContentBlock(), $request);
     }
 
     /**
      * @param ContentBlock $contentBlock
-     *
+     * @param Request      $request
      * @return array
-     *
      * @Route("/update/{id}", name="oro_cms_content_block_update", requirements={"id"="\d+"})
      * @Template
      * @Acl(
@@ -79,22 +79,23 @@ class ContentBlockController extends Controller
      *      permission="EDIT"
      * )
      */
-    public function updateAction(ContentBlock $contentBlock)
+    public function updateAction(ContentBlock $contentBlock, Request $request)
     {
-        return $this->update($contentBlock);
+        return $this->update($contentBlock, $request);
     }
 
     /**
      * @param ContentBlock $contentBlock
-     *
+     * @param Request      $request
      * @return array|RedirectResponse
      */
-    protected function update(ContentBlock $contentBlock)
+    protected function update(ContentBlock $contentBlock, Request $request)
     {
-        return $this->get('oro_form.model.update_handler')->update(
+        return $this->get('oro_form.update_handler')->update(
             $contentBlock,
-            $this->createForm(ContentBlockType::NAME, $contentBlock),
-            $this->get('translator')->trans('oro.cms.controller.contentblock.saved.message')
+            $this->createForm(ContentBlockType::class, $contentBlock),
+            $this->get('translator')->trans('oro.cms.controller.contentblock.saved.message'),
+            $request
         );
     }
 }

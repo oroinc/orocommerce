@@ -129,7 +129,6 @@ datagrids:
                     - block.updatedAt
                 from:
                     - { table: OroCMSBundle:ContentBlock, alias: block }
-                groupBy: block.alias, block.enabled, block.createdAt, block.updatedAt
         columns:
             alias:
                 label: oro.cms.contentblock.alias.label

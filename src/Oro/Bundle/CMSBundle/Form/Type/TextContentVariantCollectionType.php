@@ -14,8 +14,6 @@ use Oro\Component\WebCatalog\Model\ContentVariantFormPrototype;
 
 class TextContentVariantCollectionType extends AbstractType
 {
-    const NAME = 'oro_cms_text_content_variant_collection';
-
     /**
      * {@inheritdoc}
      */
@@ -31,7 +29,7 @@ class TextContentVariantCollectionType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'type' => TextContentVariantType::NAME,
+                'type' => TextContentVariantType::class,
                 'prototype_name' => '__variant_idx__',
             ]
         );
@@ -54,22 +52,6 @@ class TextContentVariantCollectionType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $this->initializeContentVariantForm($builder, $options);
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
-    {
-        return $this->getBlockPrefix();
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getBlockPrefix()
-    {
-        return self::NAME;
     }
 
     /**
