@@ -7,6 +7,8 @@ use Oro\Bundle\ProductBundle\Event\ProductImageResizeEvent;
 
 class ProductImageResizeEventTest extends \PHPUnit_Framework_TestCase
 {
+    const PRODUCT_IMAGE_ID = 1;
+
     /**
      * @var ProductImageResizeEvent
      */
@@ -19,16 +21,21 @@ class ProductImageResizeEventTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->productImage = new ProductImage();
-        $this->event = new ProductImageResizeEvent($this->productImage);
+        $this->productImage = $this->prophesize(ProductImage::class);
+        $this->productImage->getId()->willReturn(self::PRODUCT_IMAGE_ID);
+        $this->event = new ProductImageResizeEvent($this->productImage->reveal());
     }
 
-    public function testMutators()
+    public function testGetData()
     {
-        $this->assertEquals($this->productImage, $this->event->getProductImage());
-        $this->assertFalse($this->event->getForceOption());
+        $expectedData = [
+            'productImageId' => self::PRODUCT_IMAGE_ID,
+            'force' => false
+        ];
 
-        $this->event = new ProductImageResizeEvent($this->productImage, true);
-        $this->assertTrue($this->event->getForceOption());
+        $this->assertEquals($expectedData, $this->event->getData());
+
+        $this->event = new ProductImageResizeEvent($this->productImage->reveal(), true);
+        $this->assertTrue($this->event->getData()['force']);
     }
 }
