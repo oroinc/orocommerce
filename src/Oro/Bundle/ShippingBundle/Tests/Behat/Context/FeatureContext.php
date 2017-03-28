@@ -110,15 +110,9 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     public function noShippingMethodsAvailable()
     {
-        $notificationAllert = $this->createElement('Notification Alert');
-
-        self::assertTrue(
-            $notificationAllert->isValid(),
-            'Notification Alert is not found, or found more then one'
-        );
-        self::assertEquals(
+        $this->oroMainContext->iShouldSeeFlashMessage(
             'No shipping methods are available, please contact us to complete the order submission.',
-            $notificationAllert->getText()
+            'Notification Alert'
         );
     }
 

@@ -11,6 +11,7 @@ use Oro\Bundle\ShoppingListBundle\Manager\MatrixGridOrderManager;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollection;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionColumn;
 use Oro\Bundle\ShoppingListBundle\Model\MatrixCollectionRow;
+use Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager\Stub\ProductWithInSaleAndDiscount;
 use Oro\Bundle\ShoppingListBundle\Tests\Unit\Manager\Stub\ProductWithSizeAndColor;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -122,6 +123,102 @@ class MatrixGridOrderManagerTest extends \PHPUnit_Framework_TestCase
         $expectedCollection = new MatrixCollection();
         $expectedCollection->unit = $productUnit;
         $expectedCollection->rows = [$rowSmall, $rowMedium];
+
+        $this->assertEquals($expectedCollection, $this->manager->getMatrixCollection($product));
+    }
+
+    public function testGetMatrixCollectionWithBoolean()
+    {
+        /** @var Product $product */
+        $product = $this->getEntity(Product::class);
+        $productUnit = new ProductUnit();
+        $productUnitPrecision = (new ProductUnitPrecision())->setUnit($productUnit);
+        $product->setPrimaryUnitPrecision($productUnitPrecision);
+
+        $this->variantAvailability->expects($this->at(0))
+            ->method('getVariantFieldsAvailability')
+            ->with($product)
+            ->willReturn([
+                'discount' => [
+                    true => true,
+                    false => true,
+                ],
+                'inSale' => [
+                    true => true,
+                    false => true,
+                ],
+            ]);
+
+        $this->variantAvailability->expects($this->at(1))
+            ->method('getVariantFieldValues')
+            ->with('discount')
+            ->willReturn([true => 'Yes', false => 'No']);
+
+        $this->variantAvailability->expects($this->at(2))
+            ->method('getVariantFieldValues')
+            ->with('inSale')
+            ->willReturn([true => 'Yes', false => 'No']);
+
+        $simpleProductNoDiscountNotInSale = (new ProductWithInSaleAndDiscount())->setDiscount(false)->setInSale(false);
+        $simpleProductNoDiscountInSale = (new ProductWithInSaleAndDiscount())->setDiscount(false)->setInSale(true);
+        $simpleProductDiscountNotInSale = (new ProductWithInSaleAndDiscount())->setDiscount(true)->setInSale(false);
+
+        $simpleProductNoDiscountNotInSale->addUnitPrecision($productUnitPrecision);
+        $simpleProductNoDiscountInSale->addUnitPrecision($productUnitPrecision);
+
+        $this->variantAvailability->expects($this->at(3))
+            ->method('getSimpleProductsByVariantFields')
+            ->with($product)
+            ->willReturn([
+                $simpleProductNoDiscountNotInSale,
+                $simpleProductNoDiscountInSale,
+                $simpleProductDiscountNotInSale
+            ]);
+
+        $this->variantAvailability->expects($this->at(4))
+            ->method('getVariantFieldScalarValue')
+            ->with($simpleProductNoDiscountNotInSale, 'discount')
+            ->willReturn(true);
+
+        $this->variantAvailability->expects($this->at(5))
+            ->method('getVariantFieldScalarValue')
+            ->with($simpleProductNoDiscountNotInSale, 'inSale')
+            ->willReturn(true);
+
+        $this->variantAvailability->expects($this->at(6))
+            ->method('getVariantFieldScalarValue')
+            ->with($simpleProductNoDiscountInSale, 'discount')
+            ->willReturn(false);
+
+        $this->variantAvailability->expects($this->at(7))
+            ->method('getVariantFieldScalarValue')
+            ->with($simpleProductNoDiscountInSale, 'inSale')
+            ->willReturn(false);
+
+        $columnDiscountInSale = new MatrixCollectionColumn();
+        $columnDiscountNotInSale = new MatrixCollectionColumn();
+        $columnNotDiscountInSale = new MatrixCollectionColumn();
+        $columnNotDiscountNotInSale = new MatrixCollectionColumn();
+
+        $columnDiscountInSale->label = 'Yes';
+        $columnDiscountNotInSale->label = 'No';
+        $columnNotDiscountInSale->label = 'Yes';
+        $columnNotDiscountNotInSale->label = 'No';
+
+        $columnDiscountInSale->product = $simpleProductNoDiscountNotInSale;
+        $columnNotDiscountNotInSale->product = $simpleProductNoDiscountInSale;
+
+        $rowYes = new MatrixCollectionRow();
+        $rowYes->label = 'Yes';
+        $rowYes->columns = [$columnDiscountInSale, $columnDiscountNotInSale];
+
+        $rowNo = new MatrixCollectionRow();
+        $rowNo->label = 'No';
+        $rowNo->columns = [$columnNotDiscountInSale, $columnNotDiscountNotInSale];
+
+        $expectedCollection = new MatrixCollection();
+        $expectedCollection->unit = $productUnit;
+        $expectedCollection->rows = [$rowYes, $rowNo];
 
         $this->assertEquals($expectedCollection, $this->manager->getMatrixCollection($product));
     }
