@@ -8,7 +8,7 @@ use Doctrine\ORM\EntityManager;
 
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\MigrationBundle\Fixture\AbstractEntityReferenceFixture;
-use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData;
 
 class LoadInventoryLevelDemoData extends AbstractEntityReferenceFixture implements DependentFixtureInterface
 {
@@ -18,7 +18,7 @@ class LoadInventoryLevelDemoData extends AbstractEntityReferenceFixture implemen
     public function getDependencies()
     {
         return [
-            'Oro\Bundle\ProductBundle\Migrations\Data\Demo\ORM\LoadProductUnitPrecisionDemoData',
+            LoadProductUnitPrecisionDemoData::class,
         ];
     }
 
@@ -28,14 +28,11 @@ class LoadInventoryLevelDemoData extends AbstractEntityReferenceFixture implemen
     public function load(ObjectManager $manager)
     {
         /** @var EntityManager $manager */
-        $precisions = $this->getObjectReferences($manager, ProductUnitPrecision::class);
+        $inventoryLevels = $this->getObjectReferences($manager, InventoryLevel::class);
 
-        foreach ($precisions as $precision) {
-            $level = new InventoryLevel();
-            $level
-                ->setProductUnitPrecision($precision)
-                ->setQuantity(mt_rand(1, 100));
-            $manager->persist($level);
+        foreach ($inventoryLevels as $inventoryLevel) {
+            $inventoryLevel->setQuantity(mt_rand(1, 100));
+            $manager->persist($inventoryLevel);
         }
 
         $manager->flush();

@@ -4,10 +4,14 @@ namespace Oro\Bundle\InventoryBundle\Tests\Functional\Entity\Repository;
 
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\InventoryBundle\Entity\Repository\InventoryLevelRepository;
+use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\UpdateInventoryLevelsQuantities;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
+/**
+ * @group CommunityEdition
+ */
 class InventoryLevelRepositoryTest extends WebTestCase
 {
     /**
@@ -19,7 +23,7 @@ class InventoryLevelRepositoryTest extends WebTestCase
     {
         $this->initClient();
         $this->loadFixtures([
-            '@OroInventoryBundle/Tests/Functional/DataFixtures/inventory_level.yml',
+            UpdateInventoryLevelsQuantities::class,
         ]);
 
         $this->inventoryLevelRepo = $this->client->getContainer()->get('oro_entity.doctrine_helper')

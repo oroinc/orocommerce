@@ -164,9 +164,14 @@ class CheckoutController extends Controller
      */
     protected function addTransitionErrors(TransitionData $continueTransition)
     {
+        $translator = $this->get('translator');
+
         $errors = $continueTransition->getErrors();
         foreach ($errors as $error) {
-            $this->get('session')->getFlashBag()->add('error', $error['message']);
+            $this->get('session')->getFlashBag()->add(
+                'error',
+                $translator->trans($error['message'], $error['parameters'])
+            );
         }
     }
 

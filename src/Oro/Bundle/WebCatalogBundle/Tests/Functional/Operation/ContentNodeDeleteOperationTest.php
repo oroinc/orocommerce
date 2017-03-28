@@ -43,7 +43,8 @@ class ContentNodeDeleteOperationTest extends ActionTestCase
                 ],
                 'flashMessages' => [
                     'success' => ['Content Node deleted']
-                ]
+                ],
+                'pageReload' => true
             ],
             json_decode($this->client->getResponse()->getContent(), true)
         );

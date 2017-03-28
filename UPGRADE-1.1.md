@@ -1,234 +1,124 @@
-UPGRADE FROM 1.0.0 to 1.1
-=======================================
+UPGRADE FROM 1.0 to 1.1
+=======================
 
-Tree Component
---------------
-- `Oro\Component\Tree\Handler\AbstractTreeHandler`:
-    - added method `getTreeItemList`
-    
-WebCatalog Component
+General
+-------
+* Changed minimum required `php` version to **7.0**.
+* Updated dependency to [fxpio/composer-asset-plugin](https://github.com/fxpio/composer-asset-plugin) composer plugin to version **1.3**.
+* Composer updated to version **1.4**.
+```
+    composer self-update
+    composer global require "fxp/composer-asset-plugin"
+```
+* For upgrade from **1.0** use the command:
+```bash
+php app/console oro:platform:update --env=prod --force
+```
+
+AlternativeCheckoutBundle
 -------------
-- New Interface `Oro\Component\WebCatalog\Entity\WebCatalogAwareInterface`
-    - for entities which are aware of WebCatalogs
-- New Interface `Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface`
-    - provide information about assigned WebCatalogs to given entities (passed as an argument)
-    - provide information about usage of WebCatalog by id
+* The method [`PaymentTermViewProvider::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/AlternativeCheckoutBundle/Layout/DataProvider/PaymentTermViewProvider.php "Oro\Bundle\AlternativeCheckoutBundle\Layout\DataProvider\PaymentTermViewProvider") has been updated. Pass [`PaymentMethodViewProviderInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Method/View/PaymentMethodViewProviderInterface.php "Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface") as a first argument of the method instead of [`PaymentMethodViewRegistry`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/Method/View/PaymentMethodViewRegistry.php "Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry"). Pass [`PaymentMethodProviderInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Method/Provider/PaymentMethodProviderInterface.php "Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface") as a second argument of the method instead of [`PaymentMethodRegistry`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/Method/PaymentMethodRegistry.php "Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry").
+
+CMSBundle
+-------------
+* The following methods in class [`CmsPageVariantType`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/CMSBundle/Form/Type/CmsPageVariantType.php "Oro\Bundle\CMSBundle\Form\Type\CmsPageVariantType") were removed:
+   - `__construct`
+   - `configureOptions`
 
 CatalogBundle
 -------------
-- Class `Oro\Bundle\CatalogBundle\Twig\CategoryExtension`
-    - the construction signature of was changed. Now the constructor has `ContainerInterface $container` parameter
-    - removed method `setContainer`
-- Removed constructor of `Oro\Bundle\CatalogBundle\Form\Type\CategoryPageVariantType`. 
-    - corresponding logic moved to `Oro\Bundle\WebCatalogBundle\Form\Extension\PageVariantTypeExtension`
-
-
-CustomerBundle
---------------
-- Added the constructor to `Oro\Bundle\CustomerBundle\Owner\FrontendOwnerTreeProvider`. The constructor signature is
-  ```
-  __construct(
-        ManagerRegistry $doctrine,
-        DatabaseChecker $databaseChecker,
-        CacheProvider $cache,
-        MetadataProviderInterface $ownershipMetadataProvider,
-        TokenStorageInterface $tokenStorage
-    )
-  ```
-- Class `Oro\Bundle\CustomerBundle\Twig\CustomerExtension`
-    - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
-    - removed property `protected $securityProvider`
-- Added Configurable Permission `commerce` for View and Edit pages of Customer Role in backend area (see [configurable-permissions.md](../platform/src/Oro/Bundle/SecurityBundle/Resources/doc/configurable-permissions.md) for details.
-- Added Configurable Permission `commerce_frontend` for View and Edit pages of Customer Role in frontend area (see [configurable-permissions.md](../platform/src/Oro/Bundle/SecurityBundle/Resources/doc/configurable-permissions.md) for details.
+* The following classes were removed:
+    - [`CategoryController`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/CatalogBundle/Controller/Api/Rest/CategoryController.php "Oro\Bundle\CatalogBundle\Controller\Api\Rest\CategoryController")
+    - [`ProductController`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/CatalogBundle/Controller/Frontend/ProductController.php "Oro\Bundle\CatalogBundle\Controller\Frontend\ProductController")
+* The following methods in class [`CategoryContentVariantIndexListener`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/CatalogBundle/EventListener/CategoryContentVariantIndexListener.php "Oro\Bundle\CatalogBundle\EventListener\CategoryContentVariantIndexListener") were removed:
+   - `addCategory`
+   - `collectCategories`
+   - `onFormAfterFlush`
+* The following methods in class [`CategoryPageVariantType`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/CatalogBundle/Form/Type/CategoryPageVariantType.php "Oro\Bundle\CatalogBundle\Form\Type\CategoryPageVariantType") were removed:
+   - `__construct` corresponding logic moved to [`PageVariantTypeExtension`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/WebCatalogBundle/Form/Extension/PageVariantTypeExtension.php "Oro\Bundle\WebCatalogBundle\Form\Extension\PageVariantTypeExtension")
+   - `configureOptions`
+* The method [`CategoryExtension::setContainer`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/CatalogBundle/Twig/CategoryExtension.php "Oro\Bundle\CatalogBundle\Twig\CategoryExtension") was removed.
+* The method [`CategoryController::createAction`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/CatalogBundle/Controller/CategoryController.php "Oro\Bundle\CatalogBundle\Controller\CategoryController") has been updated. Pass `Symfony\Component\HttpFoundation\Request` as a second argument of the method. Pass `Symfony\Component\HttpFoundation\Request` as a second argument of the method instead of `mixed`.
+* The method [`CategoryController::update`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/CatalogBundle/Controller/CategoryController.php "Oro\Bundle\CatalogBundle\Controller\CategoryController") has been updated. Pass `Symfony\Component\HttpFoundation\Request` as a second argument of the method. Pass `Symfony\Component\HttpFoundation\Request` as a second argument of the method instead of `mixed`.
+* The method [`CategoryController::updateAction`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/CatalogBundle/Controller/CategoryController.php "Oro\Bundle\CatalogBundle\Controller\CategoryController") has been updated. Pass `Symfony\Component\HttpFoundation\Request` as a second argument of the method. Pass `Symfony\Component\HttpFoundation\Request` as a second argument of the method instead of `mixed`.
+* The method [`CategoryContentVariantIndexListener::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/CatalogBundle/EventListener/CategoryContentVariantIndexListener.php "Oro\Bundle\CatalogBundle\EventListener\CategoryContentVariantIndexListener") has been updated. Pass [`FieldUpdatesChecker`](https://github.com/orocrm/platform/tree/2.1.0/src/Oro/Component/DoctrineUtils/ORM/FieldUpdatesChecker.php "Oro\Component\DoctrineUtils\ORM\FieldUpdatesChecker") as a third argument of the method. Pass [`FieldUpdatesChecker`](https://github.com/orocrm/platform/tree/2.1.0/src/Oro/Component/DoctrineUtils/ORM/FieldUpdatesChecker.php "Oro\Component\DoctrineUtils\ORM\FieldUpdatesChecker") as a third argument of the method instead of `mixed`. Pass [`WebCatalogUsageProviderInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Component/WebCatalog/Provider/WebCatalogUsageProviderInterface.php "Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface") as a fourth argument of the method. Pass [`WebCatalogUsageProviderInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Component/WebCatalog/Provider/WebCatalogUsageProviderInterface.php "Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface") as a fourth argument of the method instead of `mixed`.
+* The method [`FeaturedCategoriesProvider::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/CatalogBundle/Layout/DataProvider/FeaturedCategoriesProvider.php "Oro\Bundle\CatalogBundle\Layout\DataProvider\FeaturedCategoriesProvider") has been updated. Pass `Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface` as a second argument of the method. Pass `Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface` as a second argument of the method instead of `mixed`.
+* The method [`CategoryFallbackProvider::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/CatalogBundle/Fallback/Provider/CategoryFallbackProvider.php "Oro\Bundle\CatalogBundle\Fallback\Provider\CategoryFallbackProvider") has been changed. Pass `Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider` as a second argument of the method.
 
 CheckoutBundle
---------------
-- Class `Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository`:
-    - added third argument `string $workflowName` for method `public function findCheckoutByCustomerUserAndSourceCriteria()`
-- Class `Oro\Bundle\CheckoutBundle\Twig\LineItemsExtension`
-    - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
-    - removed property `protected $totalsProvider`
-    - removed property `protected $lineItemSubtotalProvider`
+-------------
+* The method [`AjaxCheckoutController::getShippingCost`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/CheckoutBundle/Controller/Frontend/AjaxCheckoutController.php "Oro\Bundle\CheckoutBundle\Controller\Frontend\AjaxCheckoutController") was removed.
+* The following methods in class [`CheckoutGridListener`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/CheckoutBundle/Datagrid/CheckoutGridListener.php "Oro\Bundle\CheckoutBundle\Datagrid\CheckoutGridListener") were removed:
+   - `buildItemsCountColumn`
+   - `buildStartedFromColumn`
+   - `buildTotalColumn`
+* The method [`CheckoutController::handleTransition`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/CheckoutBundle/Controller/Frontend/CheckoutController.php "Oro\Bundle\CheckoutBundle\Controller\Frontend\CheckoutController") has been updated. Pass [`WorkflowItem`](https://github.com/orocrm/platform/tree/2.1.0/src/Oro/Bundle/WorkflowBundle/Entity/WorkflowItem.php "Oro\Bundle\WorkflowBundle\Entity\WorkflowItem") as a first argument of the method instead of [`CheckoutInterface`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/CheckoutBundle/Entity/CheckoutInterface.php "Oro\Bundle\CheckoutBundle\Entity\CheckoutInterface").
+* The method [`CheckoutRepository::findCheckoutByCustomerUserAndSourceCriteria`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/CheckoutBundle/Entity/Repository/CheckoutRepository.php "Oro\Bundle\CheckoutBundle\Entity\Repository\CheckoutRepository") has been updated. Pass `mixed` as a third argument of the method.
+* The method [`CheckoutTotalsProvider::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/CheckoutBundle/Provider/CheckoutTotalsProvider.php "Oro\Bundle\CheckoutBundle\Provider\CheckoutTotalsProvider") has been updated. Pass [`CheckoutShippingMethodsProviderInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/CheckoutBundle/Shipping/Method/CheckoutShippingMethodsProviderInterface.php "Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInterface") as a fourth argument of the method. Pass [`CheckoutShippingMethodsProviderInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/CheckoutBundle/Shipping/Method/CheckoutShippingMethodsProviderInterface.php "Oro\Bundle\CheckoutBundle\Shipping\Method\CheckoutShippingMethodsProviderInterface") as a fourth argument of the method instead of `mixed`.
+* The method [`PriceCheckoutShippingMethodsProviderChainElement::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/CheckoutBundle/Shipping/Method/Chain/Member/Price/PriceCheckoutShippingMethodsProviderChainElement.php "Oro\Bundle\CheckoutBundle\Shipping\Method\Chain\Member\Price\PriceCheckoutShippingMethodsProviderChainElement") has been updated. Pass [`ShippingPriceProviderInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ShippingBundle/Provider/Price/ShippingPriceProviderInterface.php "Oro\Bundle\ShippingBundle\Provider\Price\ShippingPriceProviderInterface") as a first argument of the method instead of [`ShippingPriceProvider`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ShippingBundle/Provider/ShippingPriceProvider.php "Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider").
+* The method [`LineItemsExtension::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/CheckoutBundle/Twig/LineItemsExtension.php "Oro\Bundle\CheckoutBundle\Twig\LineItemsExtension") has been updated. Pass `Symfony\Component\DependencyInjection\ContainerInterface` as a first argument of the method instead of [`TotalProcessorProvider`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PricingBundle/SubtotalProcessor/TotalProcessorProvider.php "Oro\Bundle\PricingBundle\SubtotalProcessor\TotalProcessorProvider").
 
 CommerceMenuBundle
-------------------
-- Class `Oro\Bundle\CommerceMenuBundle\Twig\MenuExtension`
-    - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
+-------------
+* `CommerceMenuBundle` is moved to `customer-portal` package.
+
+CustomerBundle
+-------------
+* `CustomerBundle` is moved to `customer-portal` package.
 
 FlatRateBundle
--------------------
-- Change name of the bundle to FlatRateShippingBundle
+-------------
+* `FlatRateBundle` is renamed to `FlatRateShippingBundle`.
 
-InventoryBundle
----------------
-- REST API resource `/api/inventorylevels`
-    - the filter `productUnitPrecision.unit.code` was marked as deprecated. The `productUnitPrecision.unit.id` filter should be used instead
-
-WebsiteSearchBundle
--------------------
-- Driver::writeItem() and Driver::flushWrites() should be used instead of Driver::saveItems()
+FrontendBundle
+-------------
+* `FrontendBundle` is moved to `customer-portal` package.
 
 FrontendTestFrameworkBundle
----------------------------
-- 'Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase' method `tearDown` renamed to `afterFrontendTest`
+-------------
+* The method [`FrontendWebTestCase::tearDown`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/FrontendTestFrameworkBundle/Test/FrontendWebTestCase.php "Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase") renamed to [`FrontendWebTestCase::afterFrontendTest`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/FrontendTestFrameworkBundle/Test/FrontendWebTestCase.php "Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase").
 
-RFPBundle
----------
-* The following classes were removed:
-    - `Oro\Bundle\RFPBundle\Datagrid\ActionPermissionProvider`
-    - `Oro\Bundle\RFPBundle\Entity\Repository\RequestStatusRepository`
-* Removed controllers `RequestStatusController`
-* The following fields and methods were removed from `Request` entity:
-    - methods `setStatus`/`getStatus`
-* Added enum fields `customer_status` and `internal_status` to `Oro\Bundle\RFPBundle\Entity\Request` entity
-* Following methods were added to `Oro\Bundle\RFPBundle\Entity\Request` entity:
-    - `getRequestAdditionalNotes`
-    - `addRequestAdditionalNote`
-    - `removeRequestAdditionalNote`
-* Added new entities:
-    - `Oro\Bundle\RFPBundle\Entity\RequestAdditionalNote`
-* Removed entities:
-    - `Oro\Bundle\RFPBundle\Entity\RequestStatus`
-* Removed following classes:
-    - `Oro\Bundle\RFPBundle\Form\Type\RequestStatusTranslationType`
-    - `Oro\Bundle\RFPBundle\Form\Type\DefaulRequestStatusType`
-    - `Oro\Bundle\RFPBundle\Form\Type\RequestStatusSelectType`
-    - `Oro\Bundle\RFPBundle\Form\Type\RequestStatusWithDeletedSelectType`
-* The methods `setRequestStatusClass` and `postSubmit` was removed from class `Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType`
+InventoryBundle
+-------------
+* REST API resource `/api/inventorylevels`
+  * the filter `productUnitPrecision.unit.code` was marked as deprecated. The `productUnitPrecision.unit.id` filter should be used instead
+* The class [`InventoryLevelController`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/InventoryBundle/Controller/Api/Rest/InventoryLevelController.php "Oro\Bundle\InventoryBundle\Controller\Api\Rest\InventoryLevelController") was removed.
+* The method [`QuantityToOrderConditionListener::isNotCorrectConditionContextForStart`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/InventoryBundle/EventListener/QuantityToOrderConditionListener.php "Oro\Bundle\InventoryBundle\EventListener\QuantityToOrderConditionListener") was removed.
+* The method [`InventoryLevelReader::setSourceQueryBuilder`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/InventoryBundle/ImportExport/Reader/InventoryLevelReader.php "Oro\Bundle\InventoryBundle\ImportExport\Reader\InventoryLevelReader") was removed.
+* The method [`InventoryLevelReader::setSourceEntityName`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/InventoryBundle/ImportExport/Reader/InventoryLevelReader.php "Oro\Bundle\InventoryBundle\ImportExport\Reader\InventoryLevelReader") has been updated. Pass `mixed` as a third argument of the method.
 
 MoneyOrderBundle
-----------------
-* MoneyOrder implementation was changed using IntegrationBundle (refer to PaymentBundle and IntegrationBundle for details). Notable changes:
-    - Class `Oro\Bundle\MoneyOrderBundle\DependencyInjection\Configuration` was removed and instead `Oro\Bundle\MoneyOrderBundle\Entity\MoneyOrderSettings` was created - entity that implements `Oro\Bundle\IntegrationBundle\Entity\Transport` to store payment integration properties
-    - Class `Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig` was realized as ParameterBag and is being used for holding payment integration properties that are stored in MoneyOrderSettings
-    - Class `Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder` method getIdentifier now uses MoneyOrderConfig to retrieve identifier of a concrete method
-    - Class `Oro\Bundle\MoneyOrderBundle\Method\View\MoneyOrderView` now has two additional methods due to implementing `Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface`
-        - getAdminLabel() is used to display labels in admin panel
-        - getPaymentMethodIdentifier() used to properly display different methods in frontend
-    - According to changes in PaymentBundle were added:
-        - `Oro\Bundle\MoneyOrderBundle\Method\Provider\MoneyOrderMethodProvider` for providing *Money Order Payment Methods*
-        - `Oro\Bundle\MoneyOrderBundle\Method\View\Provider\MoneyOrderMethodViewProvider` for providing *Money Order Payment Method Views*
-    - Added multiple classes to implement payment through integration and most of them have interfaces, so they are extendable through composition:
-        - `Oro\Bundle\MoneyOrderBundle\Form\Type\MoneyOrderSettingsType`
-        - `Oro\Bundle\MoneyOrderBundle\Integration\MoneyOrderChannelType`
-        - `Oro\Bundle\MoneyOrderBundle\Integration\MoneyOrderTransport`
-        - `Oro\Bundle\MoneyOrderBundle\Method\Config\Factory\MoneyOrderConfigFactory`
-        - `Oro\Bundle\MoneyOrderBundle\Method\Config\Provider\MoneyOrderConfigProvider`
-        - `Oro\Bundle\MoneyOrderBundle\Method\Factory\MoneyOrderPaymentMethodFactory`
-        - `Oro\Bundle\MoneyOrderBundle\Method\View\Factory\MoneyOrderPaymentMethodViewFactory`
-
-NavigationBundle
-----------------
-
-* Chaged placeholders format for `navigation.yml` files. Please use `%` instead of `%%`
-* Removed class `Oro\Bundle\FrontendBundle\Menu\BreadcrumbManager`. From now menu name used to build breadcrumbs is set directly in `Oro\Bundle\NavigationBundle\Layout\DataProvider\NavigationTitleProvider::getTitle`:
-* `Oro\Bundle\NavigationBundle\Provider\TitleServiceInterface`:
-    - Changed signature of loadByRoute to `($route, $menuName = null)` to provide ability to set menu that will be used to build title
-* Removed title db cache:
-    - Removed command `oro:navigation:init` it is not needed, titles are generated and cached on fly
-    - Removed repository `Oro\Bundle\NavigationBundle\Entity\Repository`
-    - Removed entity `Oro\Bundle\NavigationBundle\Entity\Title`
-* Added `Oro\Bundle\NavigationBundle\Title\TitleReader\TitleReaderRegistry`:
-    - Added service tag `oro_navigation.title_reader` to register custom title template reader
-* Added `Oro\Bundle\NavigationBundle\Provider\ConfigurationProvider`. It contains logic that was previously in NavigationExtension 
-* Removed `Oro\Bundle\NavigationBundle\Event\RequestTitleListener`
-* Removed `Oro\Bundle\NavigationBundle\Provider\TitleProvider`
-* Changed `Oro\Bundle\NavigationBundle\Title\TitleReader\AnnotationsReader` constructor signature to `__construct(RequestStack $requestStack, Reader $reader)`
-* Changed `Oro\Bundle\NavigationBundle\Title\TranslationExtractor` constructor signature to `__construct(TitleReaderRegistry $titleReaderRegistry, RouterInterface $router)`
-* Changed `Oro\Bundle\NavigationBundle\ContentProvider\NavigationElementsContentProvider` constructor signature to `__construct(ConfigurationProvider $configurationProvider)`
-* Changed `Oro\Bundle\NavigationBundle\Config\MenuConfiguration` constructor signature to `__construct(ConfigurationProvider $configurationProvider)`
+-------------
+* `MoneyOrder` implementation was changed using `IntegrationBundle` (refer to `PaymentBundle` and `IntegrationBundle` for details).
+* The class [`Configuration`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/MoneyOrderBundle/DependencyInjection/Configuration.php "Oro\Bundle\MoneyOrderBundle\DependencyInjection\Configuration") was removed. Use [`MoneyOrderSettings`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/MoneyOrderBundle/Entity/MoneyOrderSettings.php "Oro\Bundle\MoneyOrderBundle\Entity\MoneyOrderSettings") entity that implements [`Transport`](https://github.com/orocrm/platform/tree/2.1.0/src/Oro/Bundle/IntegrationBundle/Entity/Transport.php "Oro\Bundle\IntegrationBundle\Entity\Transport") to store payment integration properties.
+* The class [`MoneyOrderConfig`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/MoneyOrderBundle/Method/Config/MoneyOrderConfig.php "Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig") was realized as `ParameterBag` and is being used for holding payment integration properties that are stored in [`MoneyOrderSettings`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/MoneyOrderBundle/Entity/MoneyOrderSettings.php "Oro\Bundle\MoneyOrderBundle\Entity\MoneyOrderSettings")
+* The method [`MoneyOrderConfig::getPaymentExtensionAlias`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/MoneyOrderBundle/Method/Config/MoneyOrderConfig.php "Oro\Bundle\MoneyOrderBundle\Method\Config\MoneyOrderConfig") was removed.
+* The method [`MoneyOrder::getType`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/MoneyOrderBundle/Method/MoneyOrder.php "Oro\Bundle\MoneyOrderBundle\Method\MoneyOrder") was removed.
+* The method [`MoneyOrderView::getPaymentMethodType`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/MoneyOrderBundle/Method/View/MoneyOrderView.php "Oro\Bundle\MoneyOrderBundle\Method\View\MoneyOrderView") was removed.
+* The class [`MoneyOrderView`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/MoneyOrderBundle/Method/View/MoneyOrderView.php "Oro\Bundle\MoneyOrderBundle\Method\View\MoneyOrderView") now has two additional methods due to implementing [`Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface`](# "https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Method/View/PaymentMethodViewInterface.php")
+  * `getAdminLabel` is used to display labels in admin panel
+  * `getPaymentMethodIdentifier` used to properly display different methods in frontend
+* According to changes in `PaymentBundle` were added:
+  * `Oro\Bundle\MoneyOrderBundle\Method\Provider\MoneyOrderMethodProvider` for providing Money Order Payment Methods.
+  * `Oro\Bundle\MoneyOrderBundle\Method\View\Provider\MoneyOrderMethodViewProvider` for providing Money Order Payment Method Views.
+* Added multiple classes to implement payment through integration and most of them have interfaces, so they are extendable through composition:
+  * `Oro\Bundle\MoneyOrderBundle\Form\Type\MoneyOrderSettingsType`
+  * `Oro\Bundle\MoneyOrderBundle\Integration\MoneyOrderChannelType`
+  * `Oro\Bundle\MoneyOrderBundle\Integration\MoneyOrderTransport`
+  * `Oro\Bundle\MoneyOrderBundle\Method\Config\Factory\MoneyOrderConfigFactory`
+  * `Oro\Bundle\MoneyOrderBundle\Method\Config\Provider\MoneyOrderConfigProvider`
+  * `Oro\Bundle\MoneyOrderBundle\Method\Factory\MoneyOrderPaymentMethodFactory`
+  * `Oro\Bundle\MoneyOrderBundle\Method\View\Factory\MoneyOrderPaymentMethodViewFactory`
 
 OrderBundle
------------
-- Class `Oro\Bundle\OrderBundle\Twig\OrderExtension`
-    - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
-    - removed property `protected $sourceDocumentFormatter`
-    - removed property `protected $shippingTrackingFormatter`
-- Class `Oro\Bundle\OrderBundle\Twig\OrderShippingExtension`
-    - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
-    - removed method `setShippingLabelFormatter`
-- Class `Oro\Bundle\OrderBundle\EventListener\Order\OrderPossibleShippingMethodsEventListener` 
-    - renamed and moved to `Oro\Bundle\OrderBundle\EventListener\PossibleShippingMethodEventListener`
-    - constructor accepts `Oro\Bundle\ShippingBundle\Context\ShippingContextFactoryInterface` instead of `Oro\Bundle\OrderBundle\Factory\OrderShippingContextFactory`
-    - method `onOrderEvent` renamed to `onEvent` and it accepts `Oro\Bundle\ShippingBundle\EventListener\EntityDataAwareEventInterface`
-- Payment history section was added to order view page with payment transactions for current order
-- `VIEW_PAYMENT_HISTORY` permission was added for viewing payment history section
-
-PaymentBundle
 -------------
-- Class `Oro\Bundle\PaymentBundle\Twig\PaymentMethodExtension`
-    - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
-    - removed property `protected $paymentTransactionProvider`
-    - removed property `protected $paymentMethodLabelFormatter`
-    - removed property `protected $dispatcher`
-- Class `Oro\Bundle\PaymentBundle\Twig\PaymentStatusExtension`
-    - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
-    - removed property `protected $paymentStatusLabelFormatter`
-- Abstracted and moved classes that relate to actions that disable/enable `Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule` to `RuleBundle` (refer to `RuleBundle` upgrade documentation)
-    - removed `Oro\Bundle\PaymentBundle\Datagrid\Extension\MassAction\Actions\StatusDisableMassAction` and switched definition to `Oro\Bundle\RuleBundle\Datagrid\Extension\MassAction\Actions\StatusEnableMassAction`
-    - removed `Oro\Bundle\PaymentBundle\Datagrid\Extension\MassAction\Actions\StatusEnableMassAction` and switched definition to `Oro\Bundle\RuleBundle\Datagrid\Extension\MassAction\Actions\StatusEnableMassAction`
-    - removed `Oro\Bundle\PaymentBundle\Datagrid\Extension\MassAction\StatusMassActionHandler` and switched definition to `Oro\Bundle\RuleBundle\Datagrid\Extension\MassAction\StatusMassActionHandler`
-    - removed `Oro\Bundle\PaymentBundle\Datagrid\PaymentRuleActionsVisibilityProvider` and switched definition to `Oro\Bundle\RuleBundle\Datagrid\RuleActionsVisibilityProvider`
-- Abstracted and moved classes that relate to decorating `Oro\Bundle\ProductBundle\Entity\Product` with virtual fields to `ProductBundle` (refer to `ProductBundle` upgrade documentation)
-    - removed `Oro\Bundle\PaymentBundle\QueryDesigner\SelectQueryConverter`
-    - removed `Oro\Bundle\PaymentBundle\QueryDesigner\PaymentProductQueryDesigner`
-    - removed `Oro\Bundle\PaymentBundle\ExpressionLanguage\ProductDecorator`
-    - class `Oro\Bundle\PaymentBundle\ExpressionLanguage\DecoratedProductLineItemFactory` only dependency is now `Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory`
-- Entity `Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule`
-    - added ownership type *organization*
-
-* In order to have possibility to create more than one payment method of same type PaymentBundle was significantly changed **with breaking backwards compatibility**.
-    - To realize this was added `Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface` which should be implemented in any class(payment method provider) which is responsible for providing of any payment method.
-    - Also was added `Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface` which should be implemented in any class(payment method view provider) which is responsible for providing of any payment method view.
-    - Class `Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry` was changed to `Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistry` which implements `Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface` and this registry is responsible for collecting data from all payment method providers
-    - Class `Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry` was changed to `Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider` which implements `Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface` this composite provider is single point to provide data from all payment method view providers
-    - Any payment method provider should be registered in service definitions with tag *oro_payment.payment_method_provider*
-    - Any payment method view provider should be registered in service definitions with tag *oro_payment.payment_method_view_provider*
-    - Each payment method provider should provide payment method(one or many) which should implement `Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface`.
-    - Each payment method view provider should provide payment method view(one or many) which should implement `Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface`.
-    - In order to keep all common logic of all payment method providers was created `Oro\Bundle\PaymentBundle\Method\Provider\AbstractPaymentMethodProvider` which should be extended by any payment method provider
-    - In order to keep all common logic of all payment method view providers was created `Oro\Bundle\PaymentBundle\Method\View\AbstractPaymentMethodViewProvider` which should be extended by any payment method view provider
-    - Class`Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface` was modified:
-        - removed methods:
-            - getType()
-        - added methods:
-            - getIdentifier()
-    - Class`Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface` was modified:
-        - removed methods:
-            - getPaymentMethodType()
-        - added methods:
-            - getAdminLabel()
-            - getPaymentMethodIdentifier()
-    - Class`Oro\Bundle\PaymentBundle\Method\Config\PaymentConfigInterface` was modified:
-        - added methods:
-            - getAdminLabel()
-            - getPaymentMethodIdentifier()
-
-PaymentTermBundle
------------------
-- Class `Oro\Bundle\PaymentTermBundle\Twig\DeleteMessageTextExtension`
-    - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
-    - removed property `protected $deleteMessageGenerator`
-    
-* PaymentTerm implementation was changed using IntegrationBundle (refer to PaymentBundle and IntegrationBundle for details). Notable changes:
-    - Class `Oro\Bundle\PaymentTermBundle\DependencyInjection\Configuration` was removed and instead `Oro\Bundle\PaymentTermBundle\Entity\PaymentTermSettings` was created - entity that implements `Oro\Bundle\IntegrationBundle\Entity\Transport` to store payment integration properties
-    - Class `Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfig` was removed and instead simple parameter bag object `Oro\Bundle\PaymentTermBundle\Method\Config\ParameterBagPaymentTermConfig` is being used for holding payment integration properties that are stored in PaymentTermSettings
-    - Class `Oro\Bundle\PaymentTermBundle\Method\PaymentTerm` method getIdentifier now uses PaymentTermConfig to retrieve identifier of a concrete method
-    - Class `Oro\Bundle\PaymentTermBundle\Method\View\PaymentTermView` now has two additional methods due to implementing `Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface`
-        getAdminLabel() is used to display labels in admin panel
-        getPaymentMethodIdentifier() used to properly display different methods in frontend
-    - Added multiple classes to implement payment through integration and most of them have interfaces, so they are extendable through composition:
-        - `Oro\Bundle\PaymentTermBundle\Entity\Repository\PaymentTermSettingsRepository`
-        - `Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermSettingsType`
-        - `Oro\Bundle\PaymentTermBundle\Integration\PaymentTermChannelType`
-        - `Oro\Bundle\PaymentTermBundle\Integration\PaymentTermTransport`
-        - `Oro\Bundle\PaymentTermBundle\Method\Config\ParameterBag\ParameterBagPaymentTermConfig`
-        - `Oro\Bundle\PaymentTermBundle\Method\Config\Provider\Basic\BasicPaymentTermConfigProvider`
-        - `Oro\Bundle\PaymentTermBundle\Method\Config\Provider\Cached\Memory\CachedMemoryPaymentTermConfigProvider`
-        - `Oro\Bundle\PaymentTermBundle\Method\Factory\PaymentTermPaymentMethodFactory`
-        - `Oro\Bundle\PaymentTermBundle\Method\Provider\PaymentTermMethodProvider`
-        - `Oro\Bundle\PaymentTermBundle\Method\View\Factory\PaymentTermPaymentMethodViewFactory`
-        - `Oro\Bundle\PaymentTermBundle\Method\View\Provider\PaymentTermMethodViewProvider`
+* Payment history section was added to order view page with payment transactions for current order.
+* `VIEW_PAYMENT_HISTORY` permission was added for viewing payment history section.
+* The class [`OrderPossibleShippingMethodsEventListener`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/OrderBundle/EventListener/Order/OrderPossibleShippingMethodsEventListener.php "Oro\Bundle\OrderBundle\EventListener\Order\OrderPossibleShippingMethodsEventListener") was removed.
+* The method [`OrderController::successAction`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/OrderBundle/Controller/Frontend/OrderController.php "Oro\Bundle\OrderBundle\Controller\Frontend\OrderController") was removed.
+* The method [`OrderShippingExtension::setShippingLabelFormatter`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/OrderBundle/Twig/OrderShippingExtension.php "Oro\Bundle\OrderBundle\Twig\OrderShippingExtension") was removed.
+* The method [`OrderShippingContextFactory::create`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/OrderBundle/Factory/OrderShippingContextFactory.php "Oro\Bundle\OrderBundle\Factory\OrderShippingContextFactory") has been updated. Pass `mixed` as a first argument of the method instead of [`Order`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/OrderBundle/Entity/Order.php "Oro\Bundle\OrderBundle\Entity\Order").
+* The method [`OrderExtension::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/OrderBundle/Twig/OrderExtension.php "Oro\Bundle\OrderBundle\Twig\OrderExtension") has been updated. Pass `Symfony\Component\DependencyInjection\ContainerInterface` as a first argument of the method instead of [`SourceDocumentFormatter`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/OrderBundle/Formatter/SourceDocumentFormatter.php "Oro\Bundle\OrderBundle\Formatter\SourceDocumentFormatter").
 
 PayPalBundle
 -------------
@@ -265,158 +155,353 @@ PayPalBundle
         - `Oro\Bundle\PayPalBundle\Method\View\Factory\BasicPayPalExpressCheckoutPaymentMethodViewFactory`
         - `Oro\Bundle\PayPalBundle\Settings\DataProvider\BasicCardTypesDataProvider`
         - `Oro\Bundle\PayPalBundle\Settings\DataProvider\BasicPaymentActionsDataProvider`
+* The method [`PayflowExpressCheckoutListener::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PayPalBundle/EventListener/Callback/PayflowExpressCheckoutListener.php "Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowExpressCheckoutListener") has been updated. Pass [`PaymentMethodProviderInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Method/Provider/PaymentMethodProviderInterface.php "Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface") as a first argument of the method instead of [`PaymentMethodRegistry`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/Method/PaymentMethodRegistry.php "Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry").
+* The method [`PayflowExpressCheckoutRedirectListener::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PayPalBundle/EventListener/Callback/PayflowExpressCheckoutRedirectListener.php "Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowExpressCheckoutRedirectListener") has been updated. Pass [`PaymentMethodProviderInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Method/Provider/PaymentMethodProviderInterface.php "Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface") as a second argument of the method. Pass [`PaymentMethodProviderInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Method/Provider/PaymentMethodProviderInterface.php "Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface") as a second argument of the method instead of `mixed`.
+* The method [`PayflowIPCheckListener::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PayPalBundle/EventListener/Callback/PayflowIPCheckListener.php "Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowIPCheckListener") has been updated. Pass [`PaymentMethodProviderInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Method/Provider/PaymentMethodProviderInterface.php "Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface") as a second argument of the method. Pass [`PaymentMethodProviderInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Method/Provider/PaymentMethodProviderInterface.php "Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface") as a second argument of the method instead of `mixed`.
+* The method [`PayflowListener::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PayPalBundle/EventListener/Callback/PayflowListener.php "Oro\Bundle\PayPalBundle\EventListener\Callback\PayflowListener") has been updated. Pass [`PaymentMethodProviderInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Method/Provider/PaymentMethodProviderInterface.php "Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface") as a second argument of the method instead of [`PaymentMethodRegistry`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/Method/PaymentMethodRegistry.php "Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry").
+* The method [`ZeroAmountAuthorizationRedirectListener::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PayPalBundle/EventListener/ZeroAmountAuthorizationRedirectListener.php "Oro\Bundle\PayPalBundle\EventListener\ZeroAmountAuthorizationRedirectListener") has been updated. Pass [`PayPalCreditCardConfigProviderInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PayPalBundle/Method/Config/Provider/PayPalCreditCardConfigProviderInterface.php "Oro\Bundle\PayPalBundle\Method\Config\Provider\PayPalCreditCardConfigProviderInterface") as a first argument of the method instead of [`PayflowGatewayConfigInterface`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PayPalBundle/Method/Config/PayflowGatewayConfigInterface.php "Oro\Bundle\PayPalBundle\Method\Config\PayflowGatewayConfigInterface").
+
+PaymentBundle
+-------------
+* The following classes were removed:
+    - [`StatusDisableMassAction`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/Datagrid/Extension/MassAction/Actions/StatusDisableMassAction.php "Oro\Bundle\PaymentBundle\Datagrid\Extension\MassAction\Actions\StatusDisableMassAction")
+    - [`StatusEnableMassAction`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/Datagrid/Extension/MassAction/Actions/StatusEnableMassAction.php "Oro\Bundle\PaymentBundle\Datagrid\Extension\MassAction\Actions\StatusEnableMassAction")
+    - [`StatusMassActionHandler`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/Datagrid/Extension/MassAction/StatusMassActionHandler.php "Oro\Bundle\PaymentBundle\Datagrid\Extension\MassAction\StatusMassActionHandler")
+    - [`PaymentRuleActionsVisibilityProvider`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/Datagrid/PaymentRuleActionsVisibilityProvider.php "Oro\Bundle\PaymentBundle\Datagrid\PaymentRuleActionsVisibilityProvider")
+    - [`PaymentMethodPass`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/DependencyInjection/Compiler/PaymentMethodPass.php "Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\PaymentMethodPass")
+    - [`PaymentMethodViewPass`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/DependencyInjection/Compiler/PaymentMethodViewPass.php "Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\PaymentMethodViewPass")
+    - [`ProductDecorator`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/ExpressionLanguage/ProductDecorator.php "Oro\Bundle\PaymentBundle\ExpressionLanguage\ProductDecorator")
+    - [`PaymentMethodRegistry`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/Method/PaymentMethodRegistry.php "Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry")
+    - [`PaymentMethodViewRegistry`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/Method/View/PaymentMethodViewRegistry.php "Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry")
+    - [`PaymentContextProvider`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/Provider/PaymentContextProvider.php "Oro\Bundle\PaymentBundle\Provider\PaymentContextProvider")
+    - [`PaymentProductQueryDesigner`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/QueryDesigner/PaymentProductQueryDesigner.php "Oro\Bundle\PaymentBundle\QueryDesigner\PaymentProductQueryDesigner")
+    - [`SelectQueryConverter`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/QueryDesigner/SelectQueryConverter.php "Oro\Bundle\PaymentBundle\QueryDesigner\SelectQueryConverter")
+* The following methods in class [`PaymentDiscountSurchargeListener`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/EventListener/PaymentDiscountSurchargeListener.php "Oro\Bundle\PaymentBundle\EventListener\PaymentDiscountSurchargeListener") were removed:
+   - `__construct`
+   - `onCollectSurcharge`
+* The following methods in class [`PaymentShippingSurchargeListener`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/EventListener/PaymentShippingSurchargeListener.php "Oro\Bundle\PaymentBundle\EventListener\PaymentShippingSurchargeListener") were removed:
+   - `__construct`
+   - `onCollectSurcharge`
+* The method [`AbstractPaymentConfig::getPaymentExtensionAlias`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/Method/Config/AbstractPaymentConfig.php "Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentConfig") was removed.
+* The method [`AbstractPaymentMethodAction::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Action/AbstractPaymentMethodAction.php "Oro\Bundle\PaymentBundle\Action\AbstractPaymentMethodAction") has been updated. Pass [`PaymentMethodProvidersRegistryInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Method/Provider/Registry/PaymentMethodProvidersRegistryInterface.php "Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface") as a second argument of the method instead of [`PaymentMethodRegistry`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/Method/PaymentMethodRegistry.php "Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry").
+* The method [`PaymentMethodSupports::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Condition/PaymentMethodSupports.php "Oro\Bundle\PaymentBundle\Condition\PaymentMethodSupports") has been updated. Pass [`PaymentMethodProvidersRegistryInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Method/Provider/Registry/PaymentMethodProvidersRegistryInterface.php "Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface") as a first argument of the method instead of [`PaymentMethodRegistry`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/Method/PaymentMethodRegistry.php "Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry").
+* The method [`RequirePaymentRedirect::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Condition/RequirePaymentRedirect.php "Oro\Bundle\PaymentBundle\Condition\RequirePaymentRedirect") has been updated. Pass [`PaymentMethodProvidersRegistryInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Method/Provider/Registry/PaymentMethodProvidersRegistryInterface.php "Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface") as a first argument of the method instead of [`PaymentMethodRegistry`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/Method/PaymentMethodRegistry.php "Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry").
+* The method [`PaymentMethodsConfigsRule::setRule`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Entity/PaymentMethodsConfigsRule.php "Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule") has been updated. Pass [`RuleInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RuleBundle/Entity/RuleInterface.php "Oro\Bundle\RuleBundle\Entity\RuleInterface") as a first argument of the method instead of [`Rule`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/RuleBundle/Entity/Rule.php "Oro\Bundle\RuleBundle\Entity\Rule").
+* The method [`DecoratedProductLineItemFactory::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/ExpressionLanguage/DecoratedProductLineItemFactory.php "Oro\Bundle\PaymentBundle\ExpressionLanguage\DecoratedProductLineItemFactory") has been updated. Pass [`VirtualFieldsProductDecoratorFactory`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ProductBundle/VirtualFields/VirtualFieldsProductDecoratorFactory.php "Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory") as a first argument of the method instead of [`EntityFieldProvider`](https://github.com/orocrm/platform/tree/2.0.0/src/Oro/Bundle/EntityBundle/Provider/EntityFieldProvider.php "Oro\Bundle\EntityBundle\Provider\EntityFieldProvider").
+* The method [`RuleMethodConfigCollectionSubscriber::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Form/EventSubscriber/RuleMethodConfigCollectionSubscriber.php "Oro\Bundle\PaymentBundle\Form\EventSubscriber\RuleMethodConfigCollectionSubscriber") has been updated. Pass [`PaymentMethodProvidersRegistryInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Method/Provider/Registry/PaymentMethodProvidersRegistryInterface.php "Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface") as a first argument of the method instead of [`PaymentMethodRegistry`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/Method/PaymentMethodRegistry.php "Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry").
+* The method [`PaymentMethodConfigType::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Form/Type/PaymentMethodConfigType.php "Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodConfigType") has been updated. Pass [`PaymentMethodProvidersRegistryInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Method/Provider/Registry/PaymentMethodProvidersRegistryInterface.php "Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface") as a first argument of the method instead of [`PaymentMethodRegistry`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/Method/PaymentMethodRegistry.php "Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry"). Pass [`PaymentMethodViewProviderInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Method/View/PaymentMethodViewProviderInterface.php "Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface") as a second argument of the method instead of `Symfony\Component\Translation\TranslatorInterface`.
+* The method [`PaymentMethodsConfigsRuleType::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Form/Type/PaymentMethodsConfigsRuleType.php "Oro\Bundle\PaymentBundle\Form\Type\PaymentMethodsConfigsRuleType") has been updated. Pass [`PaymentMethodProvidersRegistryInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Method/Provider/Registry/PaymentMethodProvidersRegistryInterface.php "Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface") as a first argument of the method instead of [`PaymentMethodRegistry`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/Method/PaymentMethodRegistry.php "Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry"). Pass [`PaymentMethodViewProviderInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Method/View/PaymentMethodViewProviderInterface.php "Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface") as a second argument of the method instead of `Symfony\Component\Translation\TranslatorInterface`.
+* The method [`PaymentMethodLabelFormatter::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Formatter/PaymentMethodLabelFormatter.php "Oro\Bundle\PaymentBundle\Formatter\PaymentMethodLabelFormatter") has been updated. Pass [`PaymentMethodViewProviderInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Method/View/PaymentMethodViewProviderInterface.php "Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface") as a first argument of the method instead of [`PaymentMethodViewRegistry`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/Method/View/PaymentMethodViewRegistry.php "Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry").
+* The method [`PaymentMethodViewsProvider::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Layout/DataProvider/PaymentMethodViewsProvider.php "Oro\Bundle\PaymentBundle\Layout\DataProvider\PaymentMethodViewsProvider") has been updated. Pass [`PaymentMethodViewProviderInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Method/View/PaymentMethodViewProviderInterface.php "Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface") as a first argument of the method instead of [`PaymentMethodViewRegistry`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/Method/View/PaymentMethodViewRegistry.php "Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry").
+* The method [`AbstractPaymentConfig::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Method/Config/AbstractPaymentConfig.php "Oro\Bundle\PaymentBundle\Method\Config\AbstractPaymentConfig") has been updated. Pass [`Channel`](https://github.com/orocrm/platform/tree/2.1.0/src/Oro/Bundle/IntegrationBundle/Entity/Channel.php "Oro\Bundle\IntegrationBundle\Entity\Channel") as a first argument of the method instead of [`ConfigManager`](https://github.com/orocrm/platform/tree/2.0.0/src/Oro/Bundle/ConfigBundle/Config/ConfigManager.php "Oro\Bundle\ConfigBundle\Config\ConfigManager").
+* The method [`PaymentMethodProvider::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Method/Provider/PaymentMethodProvider.php "Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProvider") has been updated. Pass [`PaymentMethodProvidersRegistryInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Method/Provider/Registry/PaymentMethodProvidersRegistryInterface.php "Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface") as a first argument of the method instead of [`PaymentMethodRegistry`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/Method/PaymentMethodRegistry.php "Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry").
+* The method [`PaymentMethodExtension::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Twig/PaymentMethodExtension.php "Oro\Bundle\PaymentBundle\Twig\PaymentMethodExtension") has been updated. Pass `Symfony\Component\DependencyInjection\ContainerInterface` as a first argument of the method instead of [`PaymentTransactionProvider`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/Provider/PaymentTransactionProvider.php "Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider").
+* The method [`PaymentStatusExtension::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentBundle/Twig/PaymentStatusExtension.php "Oro\Bundle\PaymentBundle\Twig\PaymentStatusExtension") has been updated. Pass `Symfony\Component\DependencyInjection\ContainerInterface` as a first argument of the method instead of [`PaymentStatusLabelFormatter`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentBundle/Formatter/PaymentStatusLabelFormatter.php "Oro\Bundle\PaymentBundle\Formatter\PaymentStatusLabelFormatter").
+* In order to have possibility to create more than one payment method of same type PaymentBundle was significantly changed **with breaking backwards compatibility**.
+    * To realize this was added `Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface` which should be implemented in any class(payment method provider) which is responsible for providing of any payment method.
+    * Also was added `Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface` which should be implemented in any class(payment method view provider) which is responsible for providing of any payment method view.
+    * Class `Oro\Bundle\PaymentBundle\Method\PaymentMethodRegistry` was changed to `Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistry` which implements `Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface` and this registry is responsible for collecting data from all payment method providers
+    * Class `Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewRegistry` was changed to `Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider` which implements `Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewProviderInterface` this composite provider is single point to provide data from all payment method view providers
+    * Any payment method provider should be registered in service definitions with tag *oro_payment.payment_method_provider*
+    * Any payment method view provider should be registered in service definitions with tag *oro_payment.payment_method_view_provider*
+    * Each payment method provider should provide payment method(one or many) which should implement `Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface`.
+    * Each payment method view provider should provide payment method view(one or many) which should implement `Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface`.
+    * In order to keep all common logic of all payment method providers was created `Oro\Bundle\PaymentBundle\Method\Provider\AbstractPaymentMethodProvider` which should be extended by any payment method provider
+    * In order to keep all common logic of all payment method view providers was created `Oro\Bundle\PaymentBundle\Method\View\AbstractPaymentMethodViewProvider` which should be extended by any payment method view provider
+    * Class`Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface` was modified:
+        * removed methods:
+            * `getType`
+        * added methods:
+            * `getIdentifier`
+    * Class`Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface` was modified:
+        * removed methods:
+            * `getPaymentMethodType`
+        * added methods:
+            * `getAdminLabel`
+            * `getPaymentMethodIdentifier`
+    * Class`Oro\Bundle\PaymentBundle\Method\Config\PaymentConfigInterface` was modified:
+        * added methods:
+            * `getAdminLabel`
+            * `getPaymentMethodIdentifier`
+
+PaymentTermBundle
+-------------
+* The following classes were removed:
+    - [`PaymentTermController`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentTermBundle/Controller/Api/Rest/PaymentTermController.php "Oro\Bundle\PaymentTermBundle\Controller\Api\Rest\PaymentTermController")
+    - [`Configuration`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentTermBundle/DependencyInjection/Configuration.php "Oro\Bundle\PaymentTermBundle\DependencyInjection\Configuration")
+    - [`PaymentTermConfig`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentTermBundle/Method/Config/PaymentTermConfig.php "Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfig")
+* The method [`PaymentTerm::getType`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentTermBundle/Method/PaymentTerm.php "Oro\Bundle\PaymentTermBundle\Method\PaymentTerm") was removed.
+* The method [`PaymentTermView::getPaymentMethodType`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentTermBundle/Method/View/PaymentTermView.php "Oro\Bundle\PaymentTermBundle\Method\View\PaymentTermView") was removed.
+* The method [`PaymentTerm::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentTermBundle/Method/PaymentTerm.php "Oro\Bundle\PaymentTermBundle\Method\PaymentTerm") has been updated. Pass [`PaymentTermConfigInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentTermBundle/Method/Config/PaymentTermConfigInterface.php "Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface") as a fourth argument of the method. Pass [`PaymentTermConfigInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentTermBundle/Method/Config/PaymentTermConfigInterface.php "Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfigInterface") as a fourth argument of the method instead of `mixed`.
+* The method [`DeleteMessageTextExtension::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PaymentTermBundle/Twig/DeleteMessageTextExtension.php "Oro\Bundle\PaymentTermBundle\Twig\DeleteMessageTextExtension") has been updated. Pass `Symfony\Component\DependencyInjection\ContainerInterface` as a first argument of the method instead of [`DeleteMessageTextGenerator`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PaymentTermBundle/Twig/DeleteMessageTextGenerator.php "Oro\Bundle\PaymentTermBundle\Twig\DeleteMessageTextGenerator").
+* PaymentTerm implementation was changed using IntegrationBundle (refer to PaymentBundle and IntegrationBundle for details). Notable changes:
+    * Class `Oro\Bundle\PaymentTermBundle\DependencyInjection\Configuration` was removed and instead `Oro\Bundle\PaymentTermBundle\Entity\PaymentTermSettings` was created - entity that implements `Oro\Bundle\IntegrationBundle\Entity\Transport` to store payment integration properties
+    * Class `Oro\Bundle\PaymentTermBundle\Method\Config\PaymentTermConfig` was removed and instead simple parameter bag object `Oro\Bundle\PaymentTermBundle\Method\Config\ParameterBagPaymentTermConfig` is being used for holding payment integration properties that are stored in PaymentTermSettings
+    * Class `Oro\Bundle\PaymentTermBundle\Method\PaymentTerm` method getIdentifier now uses PaymentTermConfig to retrieve identifier of a concrete method
+    * Class `Oro\Bundle\PaymentTermBundle\Method\View\PaymentTermView` now has two additional methods due to implementing `Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface`
+        getAdminLabel() is used to display labels in admin panel
+        getPaymentMethodIdentifier() used to properly display different methods in frontend
+    * Added multiple classes to implement payment through integration and most of them have interfaces, so they are extendable through composition:
+        * `Oro\Bundle\PaymentTermBundle\Entity\Repository\PaymentTermSettingsRepository`
+        * `Oro\Bundle\PaymentTermBundle\Form\Type\PaymentTermSettingsType`
+        * `Oro\Bundle\PaymentTermBundle\Integration\PaymentTermChannelType`
+        * `Oro\Bundle\PaymentTermBundle\Integration\PaymentTermTransport`
+        * `Oro\Bundle\PaymentTermBundle\Method\Config\ParameterBag\ParameterBagPaymentTermConfig`
+        * `Oro\Bundle\PaymentTermBundle\Method\Config\Provider\Basic\BasicPaymentTermConfigProvider`
+        * `Oro\Bundle\PaymentTermBundle\Method\Config\Provider\Cached\Memory\CachedMemoryPaymentTermConfigProvider`
+        * `Oro\Bundle\PaymentTermBundle\Method\Factory\PaymentTermPaymentMethodFactory`
+        * `Oro\Bundle\PaymentTermBundle\Method\Provider\PaymentTermMethodProvider`
+        * `Oro\Bundle\PaymentTermBundle\Method\View\Factory\PaymentTermPaymentMethodViewFactory`
+        * `Oro\Bundle\PaymentTermBundle\Method\View\Provider\PaymentTermMethodViewProvider`
 
 PricingBundle
 -------------
-- Class `Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListRepository`
-    - changed the return type of `getCombinedPriceListsByPriceList` method from `BufferedQueryResultIterator` to `BufferedQueryResultIteratorInterface`
-    - changed the return type of `getCombinedPriceListsByPriceLists` method from `BufferedQueryResultIterator` to `BufferedQueryResultIteratorInterface`
-    - changed the return type of `getCPLsForPriceCollectByTimeOffset` method from `BufferedQueryResultIterator` to `BufferedQueryResultIteratorInterface`
-- Class `Oro\Bundle\PricingBundle\Entity\Repository\PriceListCustomerFallbackRepository`
-    - changed the return type of `getCustomerIdentityByGroup` method from `BufferedQueryResultIterator` to `BufferedQueryResultIteratorInterface`
-- Class `Oro\Bundle\PricingBundle\Entity\Repository\PriceListCustomerGroupFallbackRepository`
-    - changed the return type of `getCustomerIdentityByWebsite` method from `BufferedQueryResultIterator` to `BufferedQueryResultIteratorInterface`
-- Class `Oro\Bundle\PricingBundle\Entity\Repository\PriceListRepository`
-    - changed the return type of `getPriceListsWithRules` method from `BufferedQueryResultIterator` to `BufferedQueryResultIteratorInterface`
-- Class `Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerGroupRepository`
-    - changed the return type of `getCustomerGroupIteratorByDefaultFallback` method from `BufferedQueryResultIterator` to `BufferedQueryResultIteratorInterface`
-    - changed the return type of `getIteratorByPriceList` method from `BufferedQueryResultIterator` to `BufferedQueryResultIteratorInterface`
-- Class `Oro\Bundle\PricingBundle\Entity\Repository\PriceListToCustomerRepository`
-    - changed the return type of `getCustomerIteratorByDefaultFallback` method from `BufferedQueryResultIterator` to `BufferedQueryResultIteratorInterface`
-    - changed the return type of `getCustomerWebsitePairsByCustomerGroupIterator` method from `BufferedQueryResultIterator` to `BufferedQueryResultIteratorInterface`
-    - changed the return type of `getIteratorByPriceList` method from `BufferedQueryResultIterator` to `BufferedQueryResultIteratorInterface`
-- Class `Oro\Bundle\PricingBundle\Entity\Repository\PriceListToWebsiteRepository`
-    - changed the return type of `getWebsiteIteratorByDefaultFallback` method from `BufferedQueryResultIterator` to `BufferedQueryResultIteratorInterface`
-- Class `Oro\Bundle\PricingBundle\Form\Type\PriceListSelectWithPriorityType`
-    - field `priority` was removed. Field `_position` from `Oro\Bundle\FormBundle\Form\Extension\SortableExtension` will be used instead.
-- Class `Oro\Bundle\PricingBundle\Entity\BasePriceListRelation`
-    - property `$priority` was renamed to `$sortOrder`
-    - methods `getPriority` and `setPriority` were renamed to `getSortOrder` and `setSortOrder` accordingly
-- Class `Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig`
-    - property `$priority` was renamed to `$sortOrder`
-    - methods `getPriority` and `setPriority` were renamed to `getSortOrder` and `setSortOrder` accordingly
-- Interface `Oro\Bundle\PricingBundle\Entity\PriceListAwareInterface`
-    - method `getPriority` was renamed to `getSortOrder`
-- Class `Oro\Bundle\PricingBundle\SystemConfig\PriceListConfigConverter`
-    - constant `PRIORITY_KEY` was renamed to `SORT_ORDER_KEY`
-    
+* The following classes were removed:
+    - [`ProductController`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PricingBundle/Controller/Frontend/ProductController.php "Oro\Bundle\PricingBundle\Controller\Frontend\ProductController")
+    - [`MinimalProductPrice`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PricingBundle/Entity/MinimalProductPrice.php "Oro\Bundle\PricingBundle\Entity\MinimalProductPrice")
+    - [`MinimalProductPriceRepository`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PricingBundle/Entity/Repository/MinimalProductPriceRepository.php "Oro\Bundle\PricingBundle\Entity\Repository\MinimalProductPriceRepository")
+* The following methods in class [`BasePriceListRelation`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PricingBundle/Entity/BasePriceListRelation.php "Oro\Bundle\PricingBundle\Entity\BasePriceListRelation") were removed:
+   - `getPriority`
+   - `setPriority`
+* The method [`PriceListProductPricesReader::setSourceQueryBuilder`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PricingBundle/ImportExport/Reader/PriceListProductPricesReader.php "Oro\Bundle\PricingBundle\ImportExport\Reader\PriceListProductPricesReader") was removed.
+* The following methods in class [`PriceListConfig`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/PricingBundle/SystemConfig/PriceListConfig.php "Oro\Bundle\PricingBundle\SystemConfig\PriceListConfig") were removed:
+   - `getPriority`
+   - `setPriority`
+* The method [`CombinedProductPriceResolver::combinePrices`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/PricingBundle/Resolver/CombinedProductPriceResolver.php "Oro\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver") has been updated. Pass `mixed` as a third argument of the method.
+
 ProductBundle
 -------------
-- Class `Oro\Bundle\ProductBundle\Twig\ProductExtension`
-    - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
-- Class `Oro\Bundle\ProductBundle\Twig\ProductUnitFieldsSettingsExtension`
-    - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
-    - removed property `protected $productUnitFieldsSettings`
-- Class `Oro\Bundle\ProductBundle\Twig\ProductUnitLabelExtension`
-    - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
-    - removed property `protected $formatter`
-- Class `Oro\Bundle\ProductBundle\Twig\ProductUnitValueExtension`
-    - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
-    - removed property `protected $formatter`
-- Class `Oro\Bundle\ProductBundle\Twig\UnitVisibilityExtension`
-    - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
-    - removed property `protected $unitVisibility`
-- Added classes that can decorate `Oro\Bundle\ProductBundle\Entity\Product` to have virtual fields
-    - `Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory` is the class that should be used to create a decorated `Product`
-    - `Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecorator` is the class that decorates `Product`
-    - `Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsSelectQueryConverter` this converter is used inside of `VirtualFieldsProductDecorator`
-    - `Oro\Bundle\ProductBundle\VirtualFields\QueryDesigner\VirtualFieldsProductQueryDesigner` this query designer is used inside of `VirtualFieldsProductDecorator`
-- Removed constructor of `Oro\Bundle\ProductBundle\Form\Type\ProductPageVariantType`.
-    - corresponding logic moved to `Oro\Bundle\WebCatalogBundle\Form\Extension\PageVariantTypeExtension`
+* The method [`ProductController::infoAction`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ProductBundle/Controller/Frontend/ProductController.php "Oro\Bundle\ProductBundle\Controller\Frontend\ProductController") was removed.
+* The method [`ProductContentVariantReindexEventListener::onFormAfterFlush`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ProductBundle/EventListener/ProductContentVariantReindexEventListener.php "Oro\Bundle\ProductBundle\EventListener\ProductContentVariantReindexEventListener") was removed.
+* The following methods in class [`ProductPageVariantType`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ProductBundle/Form/Type/ProductPageVariantType.php "Oro\Bundle\ProductBundle\Form\Type\ProductPageVariantType") were removed:
+   - `__construct`
+   - `configureOptions`
+* The following methods in class [`ProductStrategy`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ProductBundle/ImportExport/Strategy/ProductStrategy.php "Oro\Bundle\ProductBundle\ImportExport\Strategy\ProductStrategy") were removed:
+   - `combineIdentityValues`
+   - `getInversedFieldName`
+   - `updateRelations`
+* The method [`ProductContentVariantReindexEventListener::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ProductBundle/EventListener/ProductContentVariantReindexEventListener.php "Oro\Bundle\ProductBundle\EventListener\ProductContentVariantReindexEventListener") has been updated. Pass [`FieldUpdatesChecker`](https://github.com/orocrm/platform/tree/2.1.0/src/Oro/Component/DoctrineUtils/ORM/FieldUpdatesChecker.php "Oro\Component\DoctrineUtils\ORM\FieldUpdatesChecker") as a second argument of the method. Pass [`FieldUpdatesChecker`](https://github.com/orocrm/platform/tree/2.1.0/src/Oro/Component/DoctrineUtils/ORM/FieldUpdatesChecker.php "Oro\Component\DoctrineUtils\ORM\FieldUpdatesChecker") as a second argument of the method instead of `mixed`. Pass [`WebCatalogUsageProviderInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Component/WebCatalog/Provider/WebCatalogUsageProviderInterface.php "Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface") as a third argument of the method. Pass [`WebCatalogUsageProviderInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Component/WebCatalog/Provider/WebCatalogUsageProviderInterface.php "Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface") as a third argument of the method instead of `mixed`.
+* The method [`ProductType::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ProductBundle/Form/Type/ProductType.php "Oro\Bundle\ProductBundle\Form\Type\ProductType") has been updated. Pass `Symfony\Component\Routing\Generator\UrlGeneratorInterface` as a second argument of the method. Pass `Symfony\Component\Routing\Generator\UrlGeneratorInterface` as a second argument of the method instead of `mixed`.
+* The method [`FeaturedProductsProvider::getAll`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ProductBundle/Layout/DataProvider/FeaturedProductsProvider.php "Oro\Bundle\ProductBundle\Layout\DataProvider\FeaturedProductsProvider") has been updated. Pass `mixed` as a first argument of the method.
+* The method [`FrontendVariantFiledType::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ProductBundle/ProductVariant/Form/Type/FrontendVariantFiledType.php "Oro\Bundle\ProductBundle\ProductVariant\Form\Type\FrontendVariantFiledType") has been updated. Pass [`CustomFieldProvider`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ProductBundle/Provider/CustomFieldProvider.php "Oro\Bundle\ProductBundle\Provider\CustomFieldProvider") as a third argument of the method instead of `Symfony\Component\PropertyAccess\PropertyAccessor`. Pass `Symfony\Component\PropertyAccess\PropertyAccessor` as a fourth argument of the method instead of `mixed`. Pass `mixed` as a fifth argument of the method.
+* The method [`ProductExtension::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ProductBundle/Twig/ProductExtension.php "Oro\Bundle\ProductBundle\Twig\ProductExtension") has been updated. Pass `Symfony\Component\DependencyInjection\ContainerInterface` as a first argument of the method instead of [`AutocompleteFieldsProvider`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ProductBundle/Expression/Autocomplete/AutocompleteFieldsProvider.php "Oro\Bundle\ProductBundle\Expression\Autocomplete\AutocompleteFieldsProvider").
+* The method [`ProductUnitFieldsSettingsExtension::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ProductBundle/Twig/ProductUnitFieldsSettingsExtension.php "Oro\Bundle\ProductBundle\Twig\ProductUnitFieldsSettingsExtension") has been updated. Pass `Symfony\Component\DependencyInjection\ContainerInterface` as a first argument of the method instead of [`ProductUnitFieldsSettingsInterface`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ProductBundle/Visibility/ProductUnitFieldsSettingsInterface.php "Oro\Bundle\ProductBundle\Visibility\ProductUnitFieldsSettingsInterface").
+* The method [`ProductUnitLabelExtension::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ProductBundle/Twig/ProductUnitLabelExtension.php "Oro\Bundle\ProductBundle\Twig\ProductUnitLabelExtension") has been updated. Pass `Symfony\Component\DependencyInjection\ContainerInterface` as a first argument of the method instead of [`ProductUnitLabelFormatter`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ProductBundle/Formatter/ProductUnitLabelFormatter.php "Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter").
+* The method [`ProductUnitValueExtension::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ProductBundle/Twig/ProductUnitValueExtension.php "Oro\Bundle\ProductBundle\Twig\ProductUnitValueExtension") has been updated. Pass `Symfony\Component\DependencyInjection\ContainerInterface` as a first argument of the method instead of [`UnitValueFormatterInterface`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ProductBundle/Formatter/UnitValueFormatterInterface.php "Oro\Bundle\ProductBundle\Formatter\UnitValueFormatterInterface").
+* The method [`UnitVisibilityExtension::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ProductBundle/Twig/UnitVisibilityExtension.php "Oro\Bundle\ProductBundle\Twig\UnitVisibilityExtension") has been updated. Pass `Symfony\Component\DependencyInjection\ContainerInterface` as a first argument of the method instead of [`UnitVisibilityInterface`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ProductBundle/Visibility/UnitVisibilityInterface.php "Oro\Bundle\ProductBundle\Visibility\UnitVisibilityInterface").
 
-SaleBundle
-----------
-- Class `Oro\Bundle\SaleBundle\Twig\QuoteExtension`
-    - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
-    - removed property `protected $quoteProductFormatter`
-    - removed property `protected $configManager`
-- Class `Oro\Bundle\SaleBundle\EventListener\Quote\QuotePossibleShippingMethodsEventListener` removed. 
-    - `Oro\Bundle\OrderBundle\EventListener\PossibleShippingMethodEventListener` must be used instead.
-- Removed property `locked` from entity class `Oro\Bundle\SaleBundle\Entity\Quote` with related methods
-- Class `Oro\Bundle\SaleBundle\Notification\NotificationHelper`
-    - removed parameter `request` from constructor
-
-ShoppingListBundle
-------------------
-- Class `Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListTotalRepository`
-    - changed signature of `invalidateTotals` method from `invalidateTotals(BufferedQueryResultIterator $iterator)` to `invalidateTotals(\Iterator $iterator)`
-- Class `Oro\Bundle\ShippingBundle\Twig\DimensionsUnitValueExtension`
-    - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
-    - removed property `protected $formatter`
-- Class `Oro\Bundle\ShippingBundle\Twig\ShippingMethodExtension`
-    - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
-    - removed property `protected $shippingMethodLabelFormatter`
-    - removed property `protected $dispatcher`
-- Class `Oro\Bundle\ShippingBundle\Twig\ShippingOptionLabelExtension`
-    - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
-    - removed property `protected $lengthUnitLabelFormatter`
-    - removed property `protected $weightUnitLabelFormatter`
-    - removed property `protected $freightClassLabelFormatter`
-- Class `Oro\Bundle\ShippingBundle\Twig\WeightUnitValueExtension`
-    - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
-    - removed property `protected $formatter`
-
-VisibilityBundle
-----------------
-- Class `Oro\Bundle\VisibilityBundle\Driver\AbstractCustomerPartialUpdateDriver`
-    - changed the return type of `getCustomerVisibilityIterator` method from `BufferedQueryResultIterator` to `BufferedQueryResultIteratorInterface`
+RFPBundle
+-------------
+* The following classes were removed:
+    - [`Duplicate`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/RFPBundle/Action/Duplicate.php "Oro\Bundle\RFPBundle\Action\Duplicate")
+    - [`RequestStatusController`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/RFPBundle/Controller/Api/Rest/RequestStatusController.php "Oro\Bundle\RFPBundle\Controller\Api\Rest\RequestStatusController")
+    - [`RequestStatusController`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/RFPBundle/Controller/RequestStatusController.php "Oro\Bundle\RFPBundle\Controller\RequestStatusController")
+    - [`ActionPermissionProvider`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/RFPBundle/Datagrid/ActionPermissionProvider.php "Oro\Bundle\RFPBundle\Datagrid\ActionPermissionProvider")
+    - [`DuplicatorFilterPass`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/RFPBundle/DependencyInjection/CompilerPass/DuplicatorFilterPass.php "Oro\Bundle\RFPBundle\DependencyInjection\CompilerPass\DuplicatorFilterPass")
+    - [`DuplicatorMatcherPass`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/RFPBundle/DependencyInjection/CompilerPass/DuplicatorMatcherPass.php "Oro\Bundle\RFPBundle\DependencyInjection\CompilerPass\DuplicatorMatcherPass")
+    - [`RequestStatusRepository`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/RFPBundle/Entity/Repository/RequestStatusRepository.php "Oro\Bundle\RFPBundle\Entity\Repository\RequestStatusRepository")
+    - [`RequestStatus`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/RFPBundle/Entity/RequestStatus.php "Oro\Bundle\RFPBundle\Entity\RequestStatus")
+    - [`RequestStatusTranslation`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/RFPBundle/Entity/RequestStatusTranslation.php "Oro\Bundle\RFPBundle\Entity\RequestStatusTranslation")
+    - [`DuplicatorFactory`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/RFPBundle/Factory/DuplicatorFactory.php "Oro\Bundle\RFPBundle\Factory\DuplicatorFactory")
+    - [`RequestStatusHandler`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/RFPBundle/Form/Handler/RequestStatusHandler.php "Oro\Bundle\RFPBundle\Form\Handler\RequestStatusHandler")
+    - [`DefaulRequestStatusType`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/RFPBundle/Form/Type/DefaulRequestStatusType.php "Oro\Bundle\RFPBundle\Form\Type\DefaulRequestStatusType")
+    - [`RequestStatusSelectType`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/RFPBundle/Form/Type/RequestStatusSelectType.php "Oro\Bundle\RFPBundle\Form\Type\RequestStatusSelectType")
+    - [`RequestStatusTranslationType`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/RFPBundle/Form/Type/RequestStatusTranslationType.php "Oro\Bundle\RFPBundle\Form\Type\RequestStatusTranslationType")
+    - [`RequestStatusType`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/RFPBundle/Form/Type/RequestStatusType.php "Oro\Bundle\RFPBundle\Form\Type\RequestStatusType")
+    - [`RequestStatusWithDeletedSelectType`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/RFPBundle/Form/Type/RequestStatusWithDeletedSelectType.php "Oro\Bundle\RFPBundle\Form\Type\RequestStatusWithDeletedSelectType")
+* The method [`RequestController::getDefaultRequestStatus`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/RFPBundle/Controller/Frontend/RequestController.php "Oro\Bundle\RFPBundle\Controller\Frontend\RequestController") was removed.
+* The following methods in class [`Request`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/RFPBundle/Entity/Request.php "Oro\Bundle\RFPBundle\Entity\Request") were removed:
+   - `getStatus`
+   - `setStatus`
+* The following methods in class [`CustomerViewListener`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/RFPBundle/EventListener/CustomerViewListener.php "Oro\Bundle\RFPBundle\EventListener\CustomerViewListener") were removed:
+   - `__construct`
+   - `addRequestForQuotesBlock`
+   - `getEntityFromRequestId`
+* The following methods in class [`RequestType`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/RFPBundle/Form/Type/Frontend/RequestType.php "Oro\Bundle\RFPBundle\Form\Type\Frontend\RequestType") were removed:
+   - `getDefaultRequestStatus`
+   - `postSubmit`
+   - `setRequestStatusClass`
 
 RuleBundle
 ----------
-- Added `Oro\Bundle\RuleBundle\Entity\RuleInterface` this interface should now be used for injection instead of `Rule` in bundles that implement `RuleBundle` functionality
-- Added classes for handling enable/disable `Rule` actions - use them to define corresponding services
-    - `Oro\Bundle\RuleBundle\Datagrid\Extension\MassAction\StatusMassActionHandler`
-    - `Oro\Bundle\RuleBundle\Datagrid\Extension\MassAction\Actions\StatusEnableMassAction`
-    - `Oro\Bundle\RuleBundle\Datagrid\RuleActionsVisibilityProvider`
-- Added `RuleActionsVisibilityProvider` that should be used to define action visibility configuration in datagrids with `Rule` entity fields
+* Added `Oro\Bundle\RuleBundle\Entity\RuleInterface` this interface should now be used for injection instead of `Rule` in bundles that implement `RuleBundle` functionality
+* Added classes for handling enable/disable `Rule` actions - use them to define corresponding services
+    * `Oro\Bundle\RuleBundle\Datagrid\Extension\MassAction\StatusMassActionHandler`
+    * `Oro\Bundle\RuleBundle\Datagrid\Extension\MassAction\Actions\StatusEnableMassAction`
+    * `Oro\Bundle\RuleBundle\Datagrid\RuleActionsVisibilityProvider`
+* Added `RuleActionsVisibilityProvider` that should be used to define action visibility configuration in datagrids with `Rule` entity fields
+
+RedirectBundle
+-------------
+* The following classes were removed:
+    - [`RoutingCompilerPass`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/RedirectBundle/DependencyInjection/Compiler/RoutingCompilerPass.php "Oro\Bundle\RedirectBundle\DependencyInjection\Compiler\RoutingCompilerPass")
+    - [`SlugGenerator`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/RedirectBundle/Generator/SlugGenerator.php "Oro\Bundle\RedirectBundle\Generator\SlugGenerator")
+* The following methods in class [`Redirect`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/RedirectBundle/Entity/Redirect.php "Oro\Bundle\RedirectBundle\Entity\Redirect") were removed:
+   - `getWebsite`
+   - `setWebsite`
+* The method [`RedirectRepository::findByFrom`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/RedirectBundle/Entity/Repository/RedirectRepository.php "Oro\Bundle\RedirectBundle\Entity\Repository\RedirectRepository") was removed.
+* The method [`Slug::getSlugUrl`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/RedirectBundle/Entity/Slug.php "Oro\Bundle\RedirectBundle\Entity\Slug") was removed.
+* The following methods in class [`SlugEntityGenerator`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/RedirectBundle/Generator/SlugEntityGenerator.php "Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator") were removed:
+   - `getLocalizationId`
+   - `getSlugUrls`
+* The method [`DirectUrlMessageFactory::getEntityFromMessage`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/RedirectBundle/Model/DirectUrlMessageFactory.php "Oro\Bundle\RedirectBundle\Model\DirectUrlMessageFactory") was removed.
+* The method [`SlugUrlMatcher::getSlug`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/RedirectBundle/Routing/SlugUrlMatcher.php "Oro\Bundle\RedirectBundle\Routing\SlugUrlMatcher") was removed.
+* The method [`DirectUrlProcessor::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/Async/DirectUrlProcessor.php "Oro\Bundle\RedirectBundle\Async\DirectUrlProcessor") has been updated. Pass [`UrlStorageCache`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/Cache/UrlStorageCache.php "Oro\Bundle\RedirectBundle\Cache\UrlStorageCache") as a 6 argument of the method. Pass [`UrlStorageCache`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/Cache/UrlStorageCache.php "Oro\Bundle\RedirectBundle\Cache\UrlStorageCache") as a 6 argument of the method instead of `mixed`.
+* The method [`SlugUrl::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/Generator/DTO/SlugUrl.php "Oro\Bundle\RedirectBundle\Generator\DTO\SlugUrl") has been updated. Pass `mixed` as a third argument of the method.
+* The method [`SlugEntityGenerator::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/Generator/SlugEntityGenerator.php "Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator") has been updated. Pass [`UniqueSlugResolver`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/Generator/UniqueSlugResolver.php "Oro\Bundle\RedirectBundle\Generator\UniqueSlugResolver") as a second argument of the method. Pass [`UniqueSlugResolver`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/Generator/UniqueSlugResolver.php "Oro\Bundle\RedirectBundle\Generator\UniqueSlugResolver") as a second argument of the method instead of `mixed`. Pass [`RedirectGenerator`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/Generator/RedirectGenerator.php "Oro\Bundle\RedirectBundle\Generator\RedirectGenerator") as a third argument of the method. Pass [`RedirectGenerator`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/Generator/RedirectGenerator.php "Oro\Bundle\RedirectBundle\Generator\RedirectGenerator") as a third argument of the method instead of `mixed`. Pass [`UrlStorageCache`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/Cache/UrlStorageCache.php "Oro\Bundle\RedirectBundle\Cache\UrlStorageCache") as a fourth argument of the method. Pass [`UrlStorageCache`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/Cache/UrlStorageCache.php "Oro\Bundle\RedirectBundle\Cache\UrlStorageCache") as a fourth argument of the method instead of `mixed`.
+* The method [`SlugEntityGenerator::generate`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/Generator/SlugEntityGenerator.php "Oro\Bundle\RedirectBundle\Generator\SlugEntityGenerator") has been updated. Pass `mixed` as a second argument of the method.
+* The method [`DirectUrlMessageFactory::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/Model/DirectUrlMessageFactory.php "Oro\Bundle\RedirectBundle\Model\DirectUrlMessageFactory") has been updated. Pass [`ConfigManager`](https://github.com/orocrm/platform/tree/2.1.0/src/Oro/Bundle/ConfigBundle/Config/ConfigManager.php "Oro\Bundle\ConfigBundle\Config\ConfigManager") as a second argument of the method. Pass [`ConfigManager`](https://github.com/orocrm/platform/tree/2.1.0/src/Oro/Bundle/ConfigBundle/Config/ConfigManager.php "Oro\Bundle\ConfigBundle\Config\ConfigManager") as a second argument of the method instead of `mixed`.
+* The method [`RoutingInformationProvider::registerProvider`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/Provider/RoutingInformationProvider.php "Oro\Bundle\RedirectBundle\Provider\RoutingInformationProvider") has been updated. Pass `mixed` as a second argument of the method.
+* The method [`SlugUrlMatcher::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/Routing/SlugUrlMatcher.php "Oro\Bundle\RedirectBundle\Routing\SlugUrlMatcher") has been updated. Pass `Symfony\Component\Routing\RouterInterface` as a first argument of the method instead of `mixed`. Pass [`SlugRepository`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/Entity/Repository/SlugRepository.php "Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository") as a second argument of the method instead of `Symfony\Component\Routing\RouterInterface`. Pass [`ScopeManager`](https://github.com/orocrm/platform/tree/2.1.0/src/Oro/Bundle/ScopeBundle/Manager/ScopeManager.php "Oro\Bundle\ScopeBundle\Manager\ScopeManager") as a third argument of the method instead of `Doctrine\Common\Persistence\ManagerRegistry`. Pass [`MatchedUrlDecisionMaker`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/Routing/MatchedUrlDecisionMaker.php "Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker") as a fourth argument of the method instead of [`ScopeManager`](https://github.com/orocrm/platform/tree/2.0.0/src/Oro/Bundle/ScopeBundle/Manager/ScopeManager.php "Oro\Bundle\ScopeBundle\Manager\ScopeManager").
+
+SEOBundle
+-------------
+* The method [`ProductSearchIndexListener::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/SEOBundle/EventListener/ProductSearchIndexListener.php "Oro\Bundle\SEOBundle\EventListener\ProductSearchIndexListener") has been updated. Pass [`DoctrineHelper`](https://github.com/orocrm/platform/tree/2.1.0/src/Oro/Bundle/EntityBundle/ORM/DoctrineHelper.php "Oro\Bundle\EntityBundle\ORM\DoctrineHelper") as a first argument of the method instead of [`AbstractWebsiteLocalizationProvider`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/WebsiteBundle/Provider/AbstractWebsiteLocalizationProvider.php "Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider"). Pass [`AbstractWebsiteLocalizationProvider`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebsiteBundle/Provider/AbstractWebsiteLocalizationProvider.php "Oro\Bundle\WebsiteBundle\Provider\AbstractWebsiteLocalizationProvider") as a second argument of the method instead of [`WebsiteContextManager`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/WebsiteSearchBundle/Manager/WebsiteContextManager.php "Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager"). Pass [`WebsiteContextManager`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebsiteSearchBundle/Manager/WebsiteContextManager.php "Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager") as a third argument of the method. Pass [`WebsiteContextManager`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebsiteSearchBundle/Manager/WebsiteContextManager.php "Oro\Bundle\WebsiteSearchBundle\Manager\WebsiteContextManager") as a third argument of the method instead of `mixed`.
+
+SaleBundle
+-------------
+* The class [`QuotePossibleShippingMethodsEventListener`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/SaleBundle/EventListener/Quote/QuotePossibleShippingMethodsEventListener.php "Oro\Bundle\SaleBundle\EventListener\Quote\QuotePossibleShippingMethodsEventListener") was removed.
+* The method [`QuoteController::infoAction`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/SaleBundle/Controller/Frontend/QuoteController.php "Oro\Bundle\SaleBundle\Controller\Frontend\QuoteController") was removed.
+* The following methods in class [`QuoteController`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/SaleBundle/Controller/QuoteController.php "Oro\Bundle\SaleBundle\Controller\QuoteController") were removed:
+   - `getQuoteAddressSecurityProvider`
+   - `getQuoteHandler`
+   - `getQuoteProductPriceProvider`
+* The following methods in class [`Quote`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/SaleBundle/Entity/Quote.php "Oro\Bundle\SaleBundle\Entity\Quote") were removed:
+   - `isLocked`
+   - `setLocked`
+* The following methods in class [`CustomerViewListener`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/SaleBundle/EventListener/CustomerViewListener.php "Oro\Bundle\SaleBundle\EventListener\CustomerViewListener") were removed:
+   - `__construct`
+   - `addRequestForQuotesBlock`
+   - `getEntityFromRequestId`
+   - `onCustomerUserView`
+   - `onCustomerView`
+* The method [`NotificationHelper::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/SaleBundle/Notification/NotificationHelper.php "Oro\Bundle\SaleBundle\Notification\NotificationHelper") has been updated. Pass [`EmailModelBuilder`](https://github.com/orocrm/platform/tree/2.1.0/src/Oro/Bundle/EmailBundle/Builder/EmailModelBuilder.php "Oro\Bundle\EmailBundle\Builder\EmailModelBuilder") as a second argument of the method instead of `Symfony\Component\HttpFoundation\Request`. Pass [`Processor`](https://github.com/orocrm/platform/tree/2.1.0/src/Oro/Bundle/EmailBundle/Mailer/Processor.php "Oro\Bundle\EmailBundle\Mailer\Processor") as a third argument of the method instead of [`EmailModelBuilder`](https://github.com/orocrm/platform/tree/2.0.0/src/Oro/Bundle/EmailBundle/Builder/EmailModelBuilder.php "Oro\Bundle\EmailBundle\Builder\EmailModelBuilder").
+* The method [`ShippingCostQuoteDemandSubtotalsCalculatorDecorator::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/SaleBundle/Quote/Demand/Subtotals/Calculator/Decorator/ShippingCost/ShippingCostQuoteDemandSubtotalsCalculatorDecorator.php "Oro\Bundle\SaleBundle\Quote\Demand\Subtotals\Calculator\Decorator\ShippingCost\ShippingCostQuoteDemandSubtotalsCalculatorDecorator") has been updated. Pass [`ShippingContextFactoryInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ShippingBundle/Context/ShippingContextFactoryInterface.php "Oro\Bundle\ShippingBundle\Context\ShippingContextFactoryInterface") as a first argument of the method instead of [`QuoteShippingContextFactoryInterface`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/SaleBundle/Quote/Shipping/Context/Factory/QuoteShippingContextFactoryInterface.php "Oro\Bundle\SaleBundle\Quote\Shipping\Context\Factory\QuoteShippingContextFactoryInterface").
+* The method [`BasicQuoteShippingContextFactory::create`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/SaleBundle/Quote/Shipping/Context/Factory/Basic/BasicQuoteShippingContextFactory.php "Oro\Bundle\SaleBundle\Quote\Shipping\Context\Factory\Basic\BasicQuoteShippingContextFactory") has been updated. Pass `mixed` as a first argument of the method instead of [`Quote`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/SaleBundle/Entity/Quote.php "Oro\Bundle\SaleBundle\Entity\Quote").
+* The method [`QuoteExtension::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/SaleBundle/Twig/QuoteExtension.php "Oro\Bundle\SaleBundle\Twig\QuoteExtension") has been updated. Pass `Symfony\Component\DependencyInjection\ContainerInterface` as a first argument of the method instead of [`QuoteProductFormatter`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/SaleBundle/Formatter/QuoteProductFormatter.php "Oro\Bundle\SaleBundle\Formatter\QuoteProductFormatter").
 
 ShippingBundle
---------------
-- Abstracted and moved classes that relate to actions that disable/enable `Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule` to `RuleBundle` (refer to `RuleBundle` upgrade documentation)
-    - removed `Oro\Bundle\ShippingBundle\Datagrid\Extension\MassAction\Actions\StatusDisableMassAction` and switched definition to `Oro\Bundle\RuleBundle\Datagrid\Extension\MassAction\Actions\StatusEnableMassAction`
-    - removed `Oro\Bundle\ShippingBundle\Datagrid\Extension\MassAction\Actions\StatusEnableMassAction` and switched definition to `Oro\Bundle\RuleBundle\Datagrid\Extension\MassAction\Actions\StatusEnableMassAction`
-    - removed `Oro\Bundle\ShippingBundle\Datagrid\Extension\MassAction\StatusMassActionHandler` and switched definition to `Oro\Bundle\RuleBundle\Datagrid\Extension\MassAction\StatusMassActionHandler`
-    - removed `Oro\Bundle\ShippingBundle\Datagrid\ShippingRuleActionsVisibilityProvider` and switched definition to `Oro\Bundle\RuleBundle\Datagrid\RuleActionsVisibilityProvider`
-- Abstracted and moved classes that relate to decorating `Oro\Bundle\ProductBundle\Entity\Product` with virtual fields to `ProductBundle` (refer to `ProductBundle` upgrade documentation)
-    - removed `Oro\Bundle\ShippingBundle\QueryDesigner\SelectQueryConverter`
-    - removed `Oro\Bundle\ShippingBundle\QueryDesigner\ShippingProductQueryDesigner`
-    - removed `Oro\Bundle\ShippingBundle\ExpressionLanguage\ProductDecorator`
-    - class `Oro\Bundle\PaymentBundle\ExpressionLanguage\DecoratedProductLineItemFactory` only dependency is now `Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory`
-- `Oro\Bundle\ShippingBundle\Method\EventListener\AbstractIntegrationRemovalListener` was deprecated, `Oro\Bundle\ShippingBundle\Method\EventListener\IntegrationRemovalListener` was created instead.
+-------------
+* The following classes were removed:
+    - [`StatusDisableMassAction`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ShippingBundle/Datagrid/Extension/MassAction/Actions/StatusDisableMassAction.php "Oro\Bundle\ShippingBundle\Datagrid\Extension\MassAction\Actions\StatusDisableMassAction")
+    - [`StatusEnableMassAction`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ShippingBundle/Datagrid/Extension/MassAction/Actions/StatusEnableMassAction.php "Oro\Bundle\ShippingBundle\Datagrid\Extension\MassAction\Actions\StatusEnableMassAction")
+    - [`StatusMassActionHandler`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ShippingBundle/Datagrid/Extension/MassAction/StatusMassActionHandler.php "Oro\Bundle\ShippingBundle\Datagrid\Extension\MassAction\StatusMassActionHandler")
+    - [`ShippingRuleActionsVisibilityProvider`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ShippingBundle/Datagrid/ShippingRuleActionsVisibilityProvider.php "Oro\Bundle\ShippingBundle\Datagrid\ShippingRuleActionsVisibilityProvider")
+    - [`ProductDecorator`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ShippingBundle/ExpressionLanguage/ProductDecorator.php "Oro\Bundle\ShippingBundle\ExpressionLanguage\ProductDecorator")
+    - [`DestinationCollectionTypeSubscriber`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ShippingBundle/Form/EventSubscriber/DestinationCollectionTypeSubscriber.php "Oro\Bundle\ShippingBundle\Form\EventSubscriber\DestinationCollectionTypeSubscriber")
+    - [`SelectQueryConverter`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ShippingBundle/QueryDesigner/SelectQueryConverter.php "Oro\Bundle\ShippingBundle\QueryDesigner\SelectQueryConverter")
+    - [`ShippingProductQueryDesigner`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ShippingBundle/QueryDesigner/ShippingProductQueryDesigner.php "Oro\Bundle\ShippingBundle\QueryDesigner\ShippingProductQueryDesigner")
+* The method [`ShippingMethodTypeConfigRepository::deleteByMethodAndType`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ShippingBundle/Entity/Repository/ShippingMethodTypeConfigRepository.php "Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodTypeConfigRepository") was removed.
+* The method [`ShippingMethodsConfigsRuleType::getMethods`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ShippingBundle/Form/Type/ShippingMethodsConfigsRuleType.php "Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleType") was removed.
+* The method [`HasApplicableShippingMethods::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ShippingBundle/Condition/HasApplicableShippingMethods.php "Oro\Bundle\ShippingBundle\Condition\HasApplicableShippingMethods") has been updated. Pass [`ShippingPriceProviderInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ShippingBundle/Provider/Price/ShippingPriceProviderInterface.php "Oro\Bundle\ShippingBundle\Provider\Price\ShippingPriceProviderInterface") as a second argument of the method instead of [`ShippingPriceProvider`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ShippingBundle/Provider/ShippingPriceProvider.php "Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider").
+* The method [`ShippingRuleChangeListener::isShippingRule`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ShippingBundle/EventListener/Cache/ShippingRuleChangeListener.php "Oro\Bundle\ShippingBundle\EventListener\Cache\ShippingRuleChangeListener") has been updated. Pass [`RuleInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RuleBundle/Entity/RuleInterface.php "Oro\Bundle\RuleBundle\Entity\RuleInterface") as a first argument of the method instead of [`Rule`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/RuleBundle/Entity/Rule.php "Oro\Bundle\RuleBundle\Entity\Rule").
+* The method [`DecoratedProductLineItemFactory::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ShippingBundle/ExpressionLanguage/DecoratedProductLineItemFactory.php "Oro\Bundle\ShippingBundle\ExpressionLanguage\DecoratedProductLineItemFactory") has been updated. Pass [`VirtualFieldsProductDecoratorFactory`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ProductBundle/VirtualFields/VirtualFieldsProductDecoratorFactory.php "Oro\Bundle\ProductBundle\VirtualFields\VirtualFieldsProductDecoratorFactory") as a first argument of the method instead of [`EntityFieldProvider`](https://github.com/orocrm/platform/tree/2.0.0/src/Oro/Bundle/EntityBundle/Provider/EntityFieldProvider.php "Oro\Bundle\EntityBundle\Provider\EntityFieldProvider").
+* The method [`ShippingMethodsConfigsRuleType::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ShippingBundle/Form/Type/ShippingMethodsConfigsRuleType.php "Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleType") has been updated. Pass [`ShippingMethodChoicesProviderInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ShippingBundle/Provider/ShippingMethodChoicesProviderInterface.php "Oro\Bundle\ShippingBundle\Provider\ShippingMethodChoicesProviderInterface") as a first argument of the method instead of [`ShippingMethodRegistry`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ShippingBundle/Method/ShippingMethodRegistry.php "Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry").
+* The method [`ShippingMethodsProvider::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ShippingBundle/Layout/DataProvider/ShippingMethodsProvider.php "Oro\Bundle\ShippingBundle\Layout\DataProvider\ShippingMethodsProvider") has been updated. Pass [`ShippingPriceProviderInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ShippingBundle/Provider/Price/ShippingPriceProviderInterface.php "Oro\Bundle\ShippingBundle\Provider\Price\ShippingPriceProviderInterface") as a first argument of the method instead of [`ShippingPriceProvider`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ShippingBundle/Provider/ShippingPriceProvider.php "Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider").
+* The method [`DimensionsUnitValueExtension::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ShippingBundle/Twig/DimensionsUnitValueExtension.php "Oro\Bundle\ShippingBundle\Twig\DimensionsUnitValueExtension") has been updated. Pass `Symfony\Component\DependencyInjection\ContainerInterface` as a first argument of the method instead of [`UnitValueFormatter`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ProductBundle/Formatter/UnitValueFormatter.php "Oro\Bundle\ProductBundle\Formatter\UnitValueFormatter").
+* The method [`ShippingMethodExtension::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ShippingBundle/Twig/ShippingMethodExtension.php "Oro\Bundle\ShippingBundle\Twig\ShippingMethodExtension") has been updated. Pass [`ShippingMethodEnabledByIdentifierCheckerInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ShippingBundle/Checker/ShippingMethodEnabledByIdentifierCheckerInterface.php "Oro\Bundle\ShippingBundle\Checker\ShippingMethodEnabledByIdentifierCheckerInterface") as a third argument of the method. Pass [`ShippingMethodEnabledByIdentifierCheckerInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ShippingBundle/Checker/ShippingMethodEnabledByIdentifierCheckerInterface.php "Oro\Bundle\ShippingBundle\Checker\ShippingMethodEnabledByIdentifierCheckerInterface") as a third argument of the method instead of `mixed`.
+* The method [`ShippingOptionLabelExtension::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ShippingBundle/Twig/ShippingOptionLabelExtension.php "Oro\Bundle\ShippingBundle\Twig\ShippingOptionLabelExtension") has been updated. Pass `Symfony\Component\DependencyInjection\ContainerInterface` as a first argument of the method instead of [`UnitLabelFormatter`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ProductBundle/Formatter/UnitLabelFormatter.php "Oro\Bundle\ProductBundle\Formatter\UnitLabelFormatter").
+* The method [`WeightUnitValueExtension::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ShippingBundle/Twig/WeightUnitValueExtension.php "Oro\Bundle\ShippingBundle\Twig\WeightUnitValueExtension") has been updated. Pass `Symfony\Component\DependencyInjection\ContainerInterface` as a first argument of the method instead of [`UnitValueFormatter`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ProductBundle/Formatter/UnitValueFormatter.php "Oro\Bundle\ProductBundle\Formatter\UnitValueFormatter").
+
+ShoppingListBundle
+-------------
+* The class [`HasPriceInShoppingLineItems`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ShoppingListBundle/Condition/HasPriceInShoppingLineItems.php "Oro\Bundle\ShoppingListBundle\Condition\HasPriceInShoppingLineItems") was removed.
+* The method [`AjaxLineItemController::getSuccessMessage`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ShoppingListBundle/Controller/Frontend/AjaxLineItemController.php "Oro\Bundle\ShoppingListBundle\Controller\Frontend\AjaxLineItemController") was removed.
+* The method [`ShoppingListController::deleteAction`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/ShoppingListBundle/Controller/Frontend/Api/Rest/ShoppingListController.php "Oro\Bundle\ShoppingListBundle\Controller\Frontend\Api\Rest\ShoppingListController") was removed.
+* The method [`ShoppingListTotalRepository::invalidateTotals`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ShoppingListBundle/Entity/Repository/ShoppingListTotalRepository.php "Oro\Bundle\ShoppingListBundle\Entity\Repository\ShoppingListTotalRepository") has been updated. Pass `\Iterator` as a first argument of the method instead of [`BufferedQueryResultIterator`](https://github.com/orocrm/platform/tree/2.0.0/src/Oro/Bundle/BatchBundle/ORM/Query/BufferedQueryResultIterator.php "Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator").
+* The method [`LineItemValidateEvent::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ShoppingListBundle/Event/LineItemValidateEvent.php "Oro\Bundle\ShoppingListBundle\Event\LineItemValidateEvent") has been updated. Pass `mixed` as a second argument of the method.
+* The method [`LineItemErrorsProvider::getLineItemErrors`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ShoppingListBundle/Validator/LineItemErrorsProvider.php "Oro\Bundle\ShoppingListBundle\Validator\LineItemErrorsProvider") has been updated. Pass `mixed` as a second argument of the method.
+
+TaxBundle
+-------------
+* The following methods in class [`AbstractTaxCode`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/TaxBundle/Entity/AbstractTaxCode.php "Oro\Bundle\TaxBundle\Entity\AbstractTaxCode") were removed:
+   - `prePersist`
+   - `preUpdate`
+* The following methods in class [`Tax`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/TaxBundle/Entity/Tax.php "Oro\Bundle\TaxBundle\Entity\Tax") were removed:
+   - `prePersist`
+   - `preUpdate`
+* The following methods in class [`TaxJurisdiction`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/TaxBundle/Entity/TaxJurisdiction.php "Oro\Bundle\TaxBundle\Entity\TaxJurisdiction") were removed:
+   - `prePersist`
+   - `preUpdate`
+* The following methods in class [`TaxRule`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/TaxBundle/Entity/TaxRule.php "Oro\Bundle\TaxBundle\Entity\TaxRule") were removed:
+   - `prePersist`
+   - `preUpdate`
+* The following methods in class [`ZipCode`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/TaxBundle/Entity/ZipCode.php "Oro\Bundle\TaxBundle\Entity\ZipCode") were removed:
+   - `prePersist`
+   - `preUpdate`
+* The method [`OrderHandler::getRepository`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/TaxBundle/OrderTax/ContextHandler/OrderHandler.php "Oro\Bundle\TaxBundle\OrderTax\ContextHandler\OrderHandler") was removed.
+* The method [`OrderLineItemHandler::getRepository`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/TaxBundle/OrderTax/ContextHandler/OrderLineItemHandler.php "Oro\Bundle\TaxBundle\OrderTax\ContextHandler\OrderLineItemHandler") was removed.
+* The method [`AbstractTaxCode::setCreatedAt`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/TaxBundle/Entity/AbstractTaxCode.php "Oro\Bundle\TaxBundle\Entity\AbstractTaxCode") has been updated. Pass `\DateTime` as a first argument of the method instead of `mixed`.
+* The method [`AbstractTaxCode::setUpdatedAt`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/TaxBundle/Entity/AbstractTaxCode.php "Oro\Bundle\TaxBundle\Entity\AbstractTaxCode") has been updated. Pass `\DateTime` as a first argument of the method instead of `mixed`.
+* The method [`Tax::setCreatedAt`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/TaxBundle/Entity/Tax.php "Oro\Bundle\TaxBundle\Entity\Tax") has been updated. Pass `\DateTime` as a first argument of the method instead of `mixed`.
+* The method [`Tax::setUpdatedAt`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/TaxBundle/Entity/Tax.php "Oro\Bundle\TaxBundle\Entity\Tax") has been updated. Pass `\DateTime` as a first argument of the method instead of `mixed`.
+* The method [`TaxJurisdiction::setCreatedAt`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/TaxBundle/Entity/TaxJurisdiction.php "Oro\Bundle\TaxBundle\Entity\TaxJurisdiction") has been updated. Pass `\DateTime` as a first argument of the method instead of `mixed`.
+* The method [`TaxJurisdiction::setUpdatedAt`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/TaxBundle/Entity/TaxJurisdiction.php "Oro\Bundle\TaxBundle\Entity\TaxJurisdiction") has been updated. Pass `\DateTime` as a first argument of the method instead of `mixed`.
+* The method [`TaxRule::setCreatedAt`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/TaxBundle/Entity/TaxRule.php "Oro\Bundle\TaxBundle\Entity\TaxRule") has been updated. Pass `\DateTime` as a first argument of the method instead of `mixed`.
+* The method [`TaxRule::setUpdatedAt`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/TaxBundle/Entity/TaxRule.php "Oro\Bundle\TaxBundle\Entity\TaxRule") has been updated. Pass `\DateTime` as a first argument of the method instead of `mixed`.
+* The method [`ZipCode::setCreatedAt`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/TaxBundle/Entity/ZipCode.php "Oro\Bundle\TaxBundle\Entity\ZipCode") has been updated. Pass `\DateTime` as a first argument of the method instead of `mixed`.
+* The method [`ZipCode::setUpdatedAt`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/TaxBundle/Entity/ZipCode.php "Oro\Bundle\TaxBundle\Entity\ZipCode") has been updated. Pass `\DateTime` as a first argument of the method instead of `mixed`.
+* The method [`OrderHandler::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/TaxBundle/OrderTax/ContextHandler/OrderHandler.php "Oro\Bundle\TaxBundle\OrderTax\ContextHandler\OrderHandler") has been updated. Pass [`TaxCodeProvider`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/TaxBundle/Provider/TaxCodeProvider.php "Oro\Bundle\TaxBundle\Provider\TaxCodeProvider") as a first argument of the method instead of [`DoctrineHelper`](https://github.com/orocrm/platform/tree/2.0.0/src/Oro/Bundle/EntityBundle/ORM/DoctrineHelper.php "Oro\Bundle\EntityBundle\ORM\DoctrineHelper").
+* The method [`OrderLineItemHandler::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/TaxBundle/OrderTax/ContextHandler/OrderLineItemHandler.php "Oro\Bundle\TaxBundle\OrderTax\ContextHandler\OrderLineItemHandler") has been updated. Pass [`TaxCodeProvider`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/TaxBundle/Provider/TaxCodeProvider.php "Oro\Bundle\TaxBundle\Provider\TaxCodeProvider") as a second argument of the method instead of [`DoctrineHelper`](https://github.com/orocrm/platform/tree/2.0.0/src/Oro/Bundle/EntityBundle/ORM/DoctrineHelper.php "Oro\Bundle\EntityBundle\ORM\DoctrineHelper").
+
+UPSBundle
+-------------
+* "Check UPS Connection" button was added on UPS integration page. Please, see [documentation](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Resources/doc/credentials-validation.md) for more information.
+* The class [`UPSChannelEntityListener`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/UPSBundle/EventListener/UPSChannelEntityListener.php "Oro\Bundle\UPSBundle\EventListener\UPSChannelEntityListener") was removed.
+* The following methods in class [`UPSTransport`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/UPSBundle/Entity/UPSTransport.php "Oro\Bundle\UPSBundle\Entity\UPSTransport") were removed:
+   - `getBaseUrl`
+   - `setBaseUrl`
+* The method [`UPSShippingMethod::fetchPrices`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/UPSBundle/Method/UPSShippingMethod.php "Oro\Bundle\UPSBundle\Method\UPSShippingMethod") was removed.
+* The method [`UPSShippingMethod::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Method/UPSShippingMethod.php "Oro\Bundle\UPSBundle\Method\UPSShippingMethod") has been updated. Pass `mixed` as a first argument of the method instead of [`UPSTransport`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/UPSBundle/Provider/UPSTransport.php "Oro\Bundle\UPSBundle\Provider\UPSTransport"). Pass `mixed` as a second argument of the method instead of [`Channel`](https://github.com/orocrm/platform/tree/2.0.0/src/Oro/Bundle/IntegrationBundle/Entity/Channel.php "Oro\Bundle\IntegrationBundle\Entity\Channel"). Pass `mixed` as a third argument of the method instead of [`PriceRequestFactory`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/UPSBundle/Factory/PriceRequestFactory.php "Oro\Bundle\UPSBundle\Factory\PriceRequestFactory"). Pass [`UPSTransport`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Entity/UPSTransport.php "Oro\Bundle\UPSBundle\Entity\UPSTransport") as a fourth argument of the method instead of [`LocalizationHelper`](https://github.com/orocrm/platform/tree/2.0.0/src/Oro/Bundle/LocaleBundle/Helper/LocalizationHelper.php "Oro\Bundle\LocaleBundle\Helper\LocalizationHelper"). Pass [`UPSTransport`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Provider/UPSTransport.php "Oro\Bundle\UPSBundle\Provider\UPSTransport") as a fifth argument of the method instead of [`ShippingPriceCache`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/UPSBundle/Cache/ShippingPriceCache.php "Oro\Bundle\UPSBundle\Cache\ShippingPriceCache"). Pass [`PriceRequestFactory`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Factory/PriceRequestFactory.php "Oro\Bundle\UPSBundle\Factory\PriceRequestFactory") as a 6 argument of the method. Pass [`PriceRequestFactory`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Factory/PriceRequestFactory.php "Oro\Bundle\UPSBundle\Factory\PriceRequestFactory") as a 6 argument of the method instead of `mixed`. Pass [`ShippingPriceCache`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Cache/ShippingPriceCache.php "Oro\Bundle\UPSBundle\Cache\ShippingPriceCache") as a 7 argument of the method. Pass [`ShippingPriceCache`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Cache/ShippingPriceCache.php "Oro\Bundle\UPSBundle\Cache\ShippingPriceCache") as a 7 argument of the method instead of `mixed`. Pass `mixed` as a 8 argument of the method.
+* The method [`UPSShippingMethodProvider::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Method/UPSShippingMethodProvider.php "Oro\Bundle\UPSBundle\Method\UPSShippingMethodProvider") has been updated. Pass [`DoctrineHelper`](https://github.com/orocrm/platform/tree/2.1.0/src/Oro/Bundle/EntityBundle/ORM/DoctrineHelper.php "Oro\Bundle\EntityBundle\ORM\DoctrineHelper") as a first argument of the method instead of [`UPSTransport`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/UPSBundle/Provider/UPSTransport.php "Oro\Bundle\UPSBundle\Provider\UPSTransport"). Pass [`IntegrationShippingMethodFactoryInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/ShippingBundle/Method/Factory/IntegrationShippingMethodFactoryInterface.php "Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface") as a second argument of the method instead of `Symfony\Bridge\Doctrine\ManagerRegistry`.
+* The method [`UPSShippingMethodType::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Method/UPSShippingMethodType.php "Oro\Bundle\UPSBundle\Method\UPSShippingMethodType") has been updated. Pass `mixed` as a second argument of the method instead of [`UPSTransport`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/UPSBundle/Entity/UPSTransport.php "Oro\Bundle\UPSBundle\Entity\UPSTransport"). Pass `mixed` as a third argument of the method instead of [`UPSTransport`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/UPSBundle/Provider/UPSTransport.php "Oro\Bundle\UPSBundle\Provider\UPSTransport"). Pass [`UPSTransport`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Entity/UPSTransport.php "Oro\Bundle\UPSBundle\Entity\UPSTransport") as a fifth argument of the method instead of [`PriceRequestFactory`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/UPSBundle/Factory/PriceRequestFactory.php "Oro\Bundle\UPSBundle\Factory\PriceRequestFactory"). Pass [`UPSTransport`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Provider/UPSTransport.php "Oro\Bundle\UPSBundle\Provider\UPSTransport") as a 6 argument of the method instead of [`ShippingPriceCache`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/UPSBundle/Cache/ShippingPriceCache.php "Oro\Bundle\UPSBundle\Cache\ShippingPriceCache"). Pass [`PriceRequestFactory`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Factory/PriceRequestFactory.php "Oro\Bundle\UPSBundle\Factory\PriceRequestFactory") as a 7 argument of the method. Pass [`PriceRequestFactory`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Factory/PriceRequestFactory.php "Oro\Bundle\UPSBundle\Factory\PriceRequestFactory") as a 7 argument of the method instead of `mixed`. Pass [`ShippingPriceCache`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Cache/ShippingPriceCache.php "Oro\Bundle\UPSBundle\Cache\ShippingPriceCache") as a 8 argument of the method. Pass [`ShippingPriceCache`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Cache/ShippingPriceCache.php "Oro\Bundle\UPSBundle\Cache\ShippingPriceCache") as a 8 argument of the method instead of `mixed`.
+* The method [`UPSTransport::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Provider/UPSTransport.php "Oro\Bundle\UPSBundle\Provider\UPSTransport") has been updated. Pass [`UpsClientUrlProviderInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/UPSBundle/Client/Url/Provider/UpsClientUrlProviderInterface.php "Oro\Bundle\UPSBundle\Client\Url\Provider\UpsClientUrlProviderInterface") as a first argument of the method instead of `Psr\Log\LoggerInterface`. Pass `Psr\Log\LoggerInterface` as a second argument of the method. Pass `Psr\Log\LoggerInterface` as a second argument of the method instead of `mixed`.
+
+VisibilityBundle
+-------------
+* The following methods in class [`VisibilityGridListener`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/VisibilityBundle/EventListener/VisibilityGridListener.php "Oro\Bundle\VisibilityBundle\EventListener\VisibilityGridListener") were removed:
+   - `addSubscribedGridConfig`
+   - `isDefaultValue`
+   - `isFilteredByDefaultValue`
+   - `onOrmResultBeforeQuery`
+   - `onResultBefore`
 
 WebCatalogBundle
-----------------
-- Class `Oro\Bundle\WebCatalogBundle\Twig\WebCatalogExtension`
-    - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
-    - removed property `protected $treeHandler`
-    - removed property `protected $contentVariantTypeRegistry`
+-------------
+* The method [`ContentNodeListener::getSlugGeneratorLink`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/WebCatalogBundle/EventListener/ContentNodeListener.php "Oro\Bundle\WebCatalogBundle\EventListener\ContentNodeListener") was removed.
+* The method [`SlugGenerator::findFallbackSlug`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/WebCatalogBundle/Generator/SlugGenerator.php "Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator") was removed.
+* The method [`ContentNodeSlugsProcessor::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebCatalogBundle/Async/ContentNodeSlugsProcessor.php "Oro\Bundle\WebCatalogBundle\Async\ContentNodeSlugsProcessor") has been updated. Pass [`ResolveNodeSlugsMessageFactory`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebCatalogBundle/Model/ResolveNodeSlugsMessageFactory.php "Oro\Bundle\WebCatalogBundle\Model\ResolveNodeSlugsMessageFactory") as a fifth argument of the method instead of `Psr\Log\LoggerInterface`. Pass `Psr\Log\LoggerInterface` as a 6 argument of the method. Pass `Psr\Log\LoggerInterface` as a 6 argument of the method instead of `mixed`.
+* The method [`ResolvedContentNode::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebCatalogBundle/Cache/ResolvedData/ResolvedContentNode.php "Oro\Bundle\WebCatalogBundle\Cache\ResolvedData\ResolvedContentNode") has been updated. Pass `mixed` as a fifth argument of the method.
+* The method [`ContentNodeListener::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebCatalogBundle/EventListener/ContentNodeListener.php "Oro\Bundle\WebCatalogBundle\EventListener\ContentNodeListener") has been updated. Pass [`MessageProducerInterface`](https://github.com/orocrm/platform/tree/2.1.0/src/Oro/Component/MessageQueue/Client/MessageProducerInterface.php "Oro\Component\MessageQueue\Client\MessageProducerInterface") as a third argument of the method instead of [`ServiceLink`](https://github.com/orocrm/platform/tree/2.0.0/src/Oro/Component/DependencyInjection/ServiceLink.php "Oro\Component\DependencyInjection\ServiceLink"). Pass [`ResolveNodeSlugsMessageFactory`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebCatalogBundle/Model/ResolveNodeSlugsMessageFactory.php "Oro\Bundle\WebCatalogBundle\Model\ResolveNodeSlugsMessageFactory") as a fourth argument of the method instead of [`MessageProducerInterface`](https://github.com/orocrm/platform/tree/2.0.0/src/Oro/Component/MessageQueue/Client/MessageProducerInterface.php "Oro\Component\MessageQueue\Client\MessageProducerInterface").
+* The method [`ContentNodeListener::postRemove`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebCatalogBundle/EventListener/ContentNodeListener.php "Oro\Bundle\WebCatalogBundle\EventListener\ContentNodeListener") has been updated. Pass `Doctrine\ORM\Event\LifecycleEventArgs` as a second argument of the method. Pass `Doctrine\ORM\Event\LifecycleEventArgs` as a second argument of the method instead of `mixed`.
+* The method [`ScopeRequestListener::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebCatalogBundle/EventListener/ScopeRequestListener.php "Oro\Bundle\WebCatalogBundle\EventListener\ScopeRequestListener") has been updated. Pass [`SlugRepository`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/Entity/Repository/SlugRepository.php "Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository") as a second argument of the method. Pass [`SlugRepository`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/Entity/Repository/SlugRepository.php "Oro\Bundle\RedirectBundle\Entity\Repository\SlugRepository") as a second argument of the method instead of `mixed`. Pass [`MatchedUrlDecisionMaker`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/Routing/MatchedUrlDecisionMaker.php "Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker") as a third argument of the method. Pass [`MatchedUrlDecisionMaker`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/Routing/MatchedUrlDecisionMaker.php "Oro\Bundle\RedirectBundle\Routing\MatchedUrlDecisionMaker") as a third argument of the method instead of `mixed`.
+* The method [`SlugGenerator::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebCatalogBundle/Generator/SlugGenerator.php "Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator") has been updated. Pass [`RedirectGenerator`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/Generator/RedirectGenerator.php "Oro\Bundle\RedirectBundle\Generator\RedirectGenerator") as a second argument of the method. Pass [`RedirectGenerator`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/Generator/RedirectGenerator.php "Oro\Bundle\RedirectBundle\Generator\RedirectGenerator") as a second argument of the method instead of `mixed`. Pass [`LocalizationHelper`](https://github.com/orocrm/platform/tree/2.1.0/src/Oro/Bundle/LocaleBundle/Helper/LocalizationHelper.php "Oro\Bundle\LocaleBundle\Helper\LocalizationHelper") as a third argument of the method. Pass [`LocalizationHelper`](https://github.com/orocrm/platform/tree/2.1.0/src/Oro/Bundle/LocaleBundle/Helper/LocalizationHelper.php "Oro\Bundle\LocaleBundle\Helper\LocalizationHelper") as a third argument of the method instead of `mixed`. Pass [`SlugUrlDiffer`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/Generator/SlugUrlDiffer.php "Oro\Bundle\RedirectBundle\Generator\SlugUrlDiffer") as a fourth argument of the method. Pass [`SlugUrlDiffer`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/RedirectBundle/Generator/SlugUrlDiffer.php "Oro\Bundle\RedirectBundle\Generator\SlugUrlDiffer") as a fourth argument of the method instead of `mixed`.
+* The method [`SlugGenerator::bindSlugs`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebCatalogBundle/Generator/SlugGenerator.php "Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator") has been updated. Pass `mixed` as a third argument of the method.
+* The method [`SlugGenerator::generate`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebCatalogBundle/Generator/SlugGenerator.php "Oro\Bundle\WebCatalogBundle\Generator\SlugGenerator") has been updated. Pass `mixed` as a second argument of the method.
+* The method [`ContentNodeTreeHandler::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebCatalogBundle/JsTree/ContentNodeTreeHandler.php "Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler") has been updated. Pass [`MessageProducerInterface`](https://github.com/orocrm/platform/tree/2.1.0/src/Oro/Component/MessageQueue/Client/MessageProducerInterface.php "Oro\Component\MessageQueue\Client\MessageProducerInterface") as a fourth argument of the method. Pass [`MessageProducerInterface`](https://github.com/orocrm/platform/tree/2.1.0/src/Oro/Component/MessageQueue/Client/MessageProducerInterface.php "Oro\Component\MessageQueue\Client\MessageProducerInterface") as a fourth argument of the method instead of `mixed`. Pass [`ResolveNodeSlugsMessageFactory`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebCatalogBundle/Model/ResolveNodeSlugsMessageFactory.php "Oro\Bundle\WebCatalogBundle\Model\ResolveNodeSlugsMessageFactory") as a fifth argument of the method. Pass [`ResolveNodeSlugsMessageFactory`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebCatalogBundle/Model/ResolveNodeSlugsMessageFactory.php "Oro\Bundle\WebCatalogBundle\Model\ResolveNodeSlugsMessageFactory") as a fifth argument of the method instead of `mixed`.
+* The method [`WebCatalogUsageProvider::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebCatalogBundle/Provider/WebCatalogUsageProvider.php "Oro\Bundle\WebCatalogBundle\Provider\WebCatalogUsageProvider") has been updated. Pass `Doctrine\Common\Persistence\ManagerRegistry` as a second argument of the method. Pass `Doctrine\Common\Persistence\ManagerRegistry` as a second argument of the method instead of `mixed`.
+* The method [`WebCatalogUsageProvider::isInUse`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebCatalogBundle/Provider/WebCatalogUsageProvider.php "Oro\Bundle\WebCatalogBundle\Provider\WebCatalogUsageProvider") has been updated. Pass [`WebCatalogInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Component/WebCatalog/Entity/WebCatalogInterface.php "Oro\Component\WebCatalog\Entity\WebCatalogInterface") as a first argument of the method instead of [`WebCatalog`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/WebCatalogBundle/Entity/WebCatalog.php "Oro\Bundle\WebCatalogBundle\Entity\WebCatalog").
+* The method [`WebCatalogExtension::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebCatalogBundle/Twig/WebCatalogExtension.php "Oro\Bundle\WebCatalogBundle\Twig\WebCatalogExtension") has been updated. Pass `Symfony\Component\DependencyInjection\ContainerInterface` as a first argument of the method instead of [`ContentNodeTreeHandler`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/WebCatalogBundle/JsTree/ContentNodeTreeHandler.php "Oro\Bundle\WebCatalogBundle\JsTree\ContentNodeTreeHandler").
 
 WebsiteBundle
 -------------
-- Class `Oro\Bundle\WebsiteBundle\Twig\OroWebsiteExtension`
-    - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
-    - removed property `protected $websiteManager`
-- Class `Oro\Bundle\WebsiteBundle\Twig\WebsitePathExtension`
-    - the construction signature of was changed. Now the constructor has only `ContainerInterface $container` parameter
-    - removed property `protected $websiteUrlResolver`
+* `WebsiteBundle` is moved to `customer-portal` package.
 
-RedirectBundle
---------------
-- `Oro\Bundle\RedirectBundle\Entity\Redirect`
-    - removed property `website` in favour of `scopes` collection using
+WebsiteSearchBundle
+-------------
+* `Driver::writeItem` and `Driver::flushWrites` should be used instead of `Driver::saveItems`
+* The class [`CustomerIdPlaceholder`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/WebsiteSearchBundle/Placeholder/CustomerIdPlaceholder.php "Oro\Bundle\WebsiteSearchBundle\Placeholder\CustomerIdPlaceholder") was removed.
+* The method [`AbstractIndexer::getWebsiteIdsToIndex`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/WebsiteSearchBundle/Engine/AbstractIndexer.php "Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer") was removed.
+* The method [`IndexationRequestListener::getEntitiesWithUpdatedIndexedFields`](https://github.com/orocommerce/orocommerce/tree/1.0.0/src/Oro/Bundle/WebsiteSearchBundle/EventListener/IndexationRequestListener.php "Oro\Bundle\WebsiteSearchBundle\EventListener\IndexationRequestListener") was removed.
+* The method [`AbstractIndexer::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebsiteSearchBundle/Engine/AbstractIndexer.php "Oro\Bundle\WebsiteSearchBundle\Engine\AbstractIndexer") has been updated. Pass [`IndexerInputValidator`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebsiteSearchBundle/Engine/IndexerInputValidator.php "Oro\Bundle\WebsiteSearchBundle\Engine\IndexerInputValidator") as a 6 argument of the method. Pass [`IndexerInputValidator`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebsiteSearchBundle/Engine/IndexerInputValidator.php "Oro\Bundle\WebsiteSearchBundle\Engine\IndexerInputValidator") as a 6 argument of the method instead of `mixed`.
+* The method [`AsyncIndexer::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebsiteSearchBundle/Engine/AsyncIndexer.php "Oro\Bundle\WebsiteSearchBundle\Engine\AsyncIndexer") has been updated. Pass [`IndexerInputValidator`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebsiteSearchBundle/Engine/IndexerInputValidator.php "Oro\Bundle\WebsiteSearchBundle\Engine\IndexerInputValidator") as a third argument of the method. Pass [`IndexerInputValidator`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebsiteSearchBundle/Engine/IndexerInputValidator.php "Oro\Bundle\WebsiteSearchBundle\Engine\IndexerInputValidator") as a third argument of the method instead of `mixed`. Pass [`ReindexMessageGranularizer`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebsiteSearchBundle/Engine/AsyncMessaging/ReindexMessageGranularizer.php "Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\ReindexMessageGranularizer") as a fourth argument of the method. Pass [`ReindexMessageGranularizer`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebsiteSearchBundle/Engine/AsyncMessaging/ReindexMessageGranularizer.php "Oro\Bundle\WebsiteSearchBundle\Engine\AsyncMessaging\ReindexMessageGranularizer") as a fourth argument of the method instead of `mixed`.
+* The method [`WebsiteQueryFactory::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebsiteSearchBundle/Query/Factory/WebsiteQueryFactory.php "Oro\Bundle\WebsiteSearchBundle\Query\Factory\WebsiteQueryFactory") has been updated. Pass [`EngineInterface`](https://github.com/orocrm/platform/tree/2.1.0/src/Oro/Bundle/SearchBundle/Engine/EngineInterface.php "Oro\Bundle\SearchBundle\Engine\EngineInterface") as a first argument of the method instead of [`EngineV2Interface`](https://github.com/orocrm/platform/tree/2.0.0/src/Oro/Bundle/SearchBundle/Engine/EngineV2Interface.php "Oro\Bundle\SearchBundle\Engine\EngineV2Interface").
+* The method [`WebsiteSearchQuery::__construct`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Bundle/WebsiteSearchBundle/Query/WebsiteSearchQuery.php "Oro\Bundle\WebsiteSearchBundle\Query\WebsiteSearchQuery") has been updated. Pass [`EngineInterface`](https://github.com/orocrm/platform/tree/2.1.0/src/Oro/Bundle/SearchBundle/Engine/EngineInterface.php "Oro\Bundle\SearchBundle\Engine\EngineInterface") as a first argument of the method instead of [`EngineV2Interface`](https://github.com/orocrm/platform/tree/2.0.0/src/Oro/Bundle/SearchBundle/Engine/EngineV2Interface.php "Oro\Bundle\SearchBundle\Engine\EngineV2Interface").
 
-CMSBundle
----------
-- Removed constructor of `Oro\Bundle\CMSBundle\Form\Type\CmsPageVariantType`.
-    - corresponding logic moved to `Oro\Bundle\WebCatalogBundle\Form\Extension\PageVariantTypeExtension`
-
-UPSBundle
----------
-- "Check UPS Connection" button was added on UPS integration page. Please, see [documentation](package/commerce/src/Oro/Bundle/UPSBundle/Resources/doc/credentials-validation.md) for more information.
-
-FrontendLocalizationBundle
---------------------------
-- Class `Oro\Bundle\FrontendLocalizationBundle\Provider\TranslationPackagesProviderExtension` removed
-- Updated service definition for `oro_frontend_localization.extension.transtation_packages_provider` 
-    - changed class to `Oro\Bundle\FrontendBundle\Provider\TranslationPackagesProviderExtension`
-    - changed publicity to `false`
+WebCatalog Component
+-------------
+- New interface [`WebCatalogAwareInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Component/WebCatalog/Entity/WebCatalogAwareInterface.php "Oro\Component\WebCatalog\Entity\WebCatalogAwareInterface")
+    - for entities which are aware of `WebCatalogs`
+- New interface [`WebCatalogUsageProviderInterface`](https://github.com/orocommerce/orocommerce/tree/1.1.0/src/Oro/Component/WebCatalog/Provider/WebCatalogUsageProviderInterface.php "Oro\Component\WebCatalog\Provider\WebCatalogUsageProviderInterface")
+    - provide information about assigned `WebCatalogs` to given entities (passed as an argument)
+    - provide information about usage of `WebCatalog` by id
