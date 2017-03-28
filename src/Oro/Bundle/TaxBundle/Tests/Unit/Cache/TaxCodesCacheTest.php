@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\TaxBundle\Tests\Unit\Calculator;
+namespace Oro\Bundle\TaxBundle\Tests\Unit\Cache;
 
 use Doctrine\Common\Cache\CacheProvider;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
