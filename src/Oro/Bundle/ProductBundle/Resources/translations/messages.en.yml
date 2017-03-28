@@ -323,8 +323,8 @@ oro:
             short: kg
             short_plural: kgs
         value:
-            full: '{0} none|{1} %count% kilogram|]1,Inf] %count% kilograms'
-            short: '{0} none|{1} %count% kg|]1,Inf] %count% kg'
+            full: '{0} %count% kilogram|{1} %count% kilogram|]1,Inf] %count% kilograms'
+            short: '{0}%count% kg|{1} %count% kg|]1,Inf] %count% kg'
 
     product_unit.piece:
         label:
