@@ -373,7 +373,7 @@ services:
             - { name: oro.api.processor, action: update, group: load_data, priority: -255, class: '%oro_order.entity.order_line_item.class%' }
 
     oro_order.order_api.form_builder_totals_processor:
-        class: 'Oro\Bundle\OrderBundle\Api\Processor\Order\ApiFormBuilderSubscriberProcessor'
+        class: 'Oro\Bundle\ApiBundle\Processor\ApiFormBuilderSubscriberProcessor'
         arguments:
             - '@oro_order.form.type.event_listener.subtotals_subscriber'
         tags:
@@ -381,7 +381,7 @@ services:
             - { name: oro.api.processor, action: update, group: transform_data, priority: 90, class: '%oro_order.entity.order.class%' }
 
     oro_order.order_api.form_builder_default_website:
-        class: 'Oro\Bundle\OrderBundle\Api\Processor\Order\ApiFormBuilderSubscriberProcessor'
+        class: 'Oro\Bundle\ApiBundle\Processor\ApiFormBuilderSubscriberProcessor'
         arguments:
             - '@oro_order.form_event_subscriber.default_website'
         tags:
@@ -389,7 +389,7 @@ services:
             - { name: oro.api.processor, action: update, group: transform_data, priority: 90, class: '%oro_order.entity.order.class%' }
 
     oro_order.order_api.totals_processor:
-        class: 'Oro\Bundle\OrderBundle\Api\Processor\Order\ApiFormBuilderSubscriberProcessor'
+        class: 'Oro\Bundle\ApiBundle\Processor\ApiFormBuilderSubscriberProcessor'
         arguments:
             - '@oro_order.form_event_subscriber.discount'
         tags:

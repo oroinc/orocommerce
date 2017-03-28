@@ -20,3 +20,12 @@ UPSBundle
 - Class `Oro\Bundle\UPSBundle\Controller`
     - method `getShippingServicesByCountry` was renamed to `getShippingServicesByCountryAction`
     - method `validateConnection` was renamed to `validateConnectionAction`
+
+OrderBundle
+-----------
+- Added API for:
+    - `Oro\Bundle\OrderBundle\Entity\Order`
+    - `Oro\Bundle\OrderBundle\Entity\OrderDiscount`
+    - `Oro\Bundle\OrderBundle\Entity\OrderLineItem`
+    - `Oro\Bundle\OrderBundle\Entity\OrderAddress`
+    - `Oro\Bundle\OrderBundle\Entity\OrderShippingTracking`
