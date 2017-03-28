@@ -284,7 +284,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $this->assertSession()->elementTextContains(
             'css',
             'div.modal-header',
-            'Disabling linked shipping rules and methods'
+            'Deactivate integration'
         );
     }
 
