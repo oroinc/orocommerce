@@ -12,7 +12,7 @@ use Oro\Bundle\VisibilityBundle\Entity\Visibility\VisibilityInterface;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\CustomerProductVisibilityResolved;
 use Oro\Bundle\VisibilityBundle\Entity\VisibilityResolved\BaseVisibilityResolved;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
-use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Component\Website\WebsiteInterface;
 
 trait ProductVisibilityTrait
 {
@@ -44,13 +44,13 @@ trait ProductVisibilityTrait
     /**
      * @param QueryBuilder $queryBuilder
      * @param CustomerGroup $customerGroup
-     * @param Website $website
+     * @param WebsiteInterface $website
      * @return string
      */
     private function getCustomerGroupProductVisibilityResolvedTermByWebsite(
         QueryBuilder $queryBuilder,
         CustomerGroup $customerGroup,
-        Website $website
+        WebsiteInterface $website
     ) {
         $queryBuilder->leftJoin(
             'OroVisibilityBundle:VisibilityResolved\CustomerGroupProductVisibilityResolved',
@@ -81,13 +81,13 @@ trait ProductVisibilityTrait
     /**
      * @param QueryBuilder $queryBuilder
      * @param Customer $customer
-     * @param Website $website
+     * @param WebsiteInterface $website
      * @return string
      */
     private function getCustomerProductVisibilityResolvedTermByWebsite(
         QueryBuilder $queryBuilder,
         Customer $customer,
-        Website $website
+        WebsiteInterface $website
     ) {
         $queryBuilder->leftJoin(
             'OroVisibilityBundle:VisibilityResolved\CustomerProductVisibilityResolved',
@@ -136,10 +136,10 @@ TERM;
 
     /**
      * @param QueryBuilder $queryBuilder
-     * @param Website $website
+     * @param WebsiteInterface $website
      * @return string
      */
-    private function getProductVisibilityResolvedTermByWebsite(QueryBuilder $queryBuilder, Website $website)
+    private function getProductVisibilityResolvedTermByWebsite(QueryBuilder $queryBuilder, WebsiteInterface $website)
     {
         $queryBuilder->leftJoin(
             'OroVisibilityBundle:VisibilityResolved\ProductVisibilityResolved',

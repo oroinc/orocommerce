@@ -12,6 +12,9 @@
             customer_group.group3:
                 - category_1_2_3
                 - category_1_2_3_4
+            Non-Authenticated Visitors:
+                - category_1_2_3
+                - category_1_2_3_4
         hiddenCategoriesByCustomers:
             customer.level_1:
                 - category_1_5_6
