@@ -37,7 +37,7 @@ operations:
                     - $.paramTransportId
                     - $.data.transport.id
         preconditions:
-            '@equal': [$.data.type, $.upsType]
+            '@equal': [$type, $.upsType]
 
     oro_ups_integration_deactivate:
         extends: oro_integration_deactivate

@@ -19,6 +19,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class SystemPageVariantType extends AbstractType
 {
     const NAME = 'oro_web_catalog_system_page_variant';
+    const MENU_NAME = 'frontend_menu';
 
     /**
      * {@inheritdoc}
@@ -34,7 +35,8 @@ class SystemPageVariantType extends AbstractType
                     'required' => true,
                     'options_filter' => [
                         'frontend' => true
-                    ]
+                    ],
+                    'menu_name' => self::MENU_NAME
                 ]
             )
             ->add(

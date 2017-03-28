@@ -531,7 +531,8 @@ class ProductControllerTest extends ProductHelperTestCase
                 'success'     => true,
                 'message'     => '',
                 'messages'    => [],
-                'redirectUrl' => $this->getUrl('oro_product_index')
+                'redirectUrl' => $this->getUrl('oro_product_index'),
+                'pageReload' => true
             ],
             json_decode($this->client->getResponse()->getContent(), true)
         );
