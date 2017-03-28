@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Event;
 
-use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Symfony\Component\EventDispatcher\Event;
 
 class ProductPriceSaveAfterEvent extends Event
@@ -10,23 +10,23 @@ class ProductPriceSaveAfterEvent extends Event
     const NAME = 'oro_pricing.product_price.save_after';
 
     /**
-     * @var ProductPrice
+     * @var PreUpdateEventArgs
      */
-    protected $price;
+    protected $eventArgs;
 
     /**
-     * @param ProductPrice $price
+     * @param PreUpdateEventArgs $eventArgs
      */
-    public function __construct(ProductPrice $price)
+    public function __construct(PreUpdateEventArgs $eventArgs)
     {
-        $this->price = $price;
+        $this->eventArgs = $eventArgs;
     }
 
     /**
-     * @return ProductPrice
+     * @return PreUpdateEventArgs
      */
-    public function getPrice()
+    public function getEventArgs()
     {
-        return $this->price;
+        return $this->eventArgs;
     }
 }

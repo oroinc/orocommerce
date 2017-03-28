@@ -41,7 +41,6 @@ class PriceListRuleCompilerTest extends WebTestCase
 
     public function setUp()
     {
-        $this->markTestSkipped('fix in BB-8462');
         $this->initClient([], $this->generateBasicAuthHeader());
         $this->client->useHashNavigation(true);
         $this->loadFixtures(
@@ -245,7 +244,7 @@ class PriceListRuleCompilerTest extends WebTestCase
 
         $qb = $this->getQueryBuilder($priceRule);
         $actual = $this->getActualResult($qb);
-        $this->assertEquals($expected, $actual);
+        $this->assertEqualsPrices($expected, $actual);
     }
 
     public function testApplyRuleConditionsWithExpressionsAndDefinedValues()
@@ -303,7 +302,8 @@ class PriceListRuleCompilerTest extends WebTestCase
 
         $qb = $this->getQueryBuilder($priceRule);
         $actual = $this->getActualResult($qb);
-        $this->assertEquals($expected, $actual);
+        $this->assertEqualsPrices($expected, $actual);
+//        $this->assertEquals($expected, $actual);
     }
 
     public function testRestrictByManualPrices()
@@ -349,7 +349,7 @@ class PriceListRuleCompilerTest extends WebTestCase
 
         $qb = $this->getQueryBuilder($priceRule);
         $actual = $this->getActualResult($qb);
-        $this->assertEquals($expected, $actual);
+        $this->assertEqualsPrices($expected, $actual);
     }
 
     public function testRestrictByProduct()
@@ -385,7 +385,7 @@ class PriceListRuleCompilerTest extends WebTestCase
 
         $qb = $this->getQueryBuilder($priceRule, $product1);
         $actual = $this->getActualResult($qb);
-        $this->assertEquals($expected, $actual);
+        $this->assertEqualsPrices($expected, $actual);
     }
 
     public function testRestrictByAssignedProducts()
@@ -426,7 +426,7 @@ class PriceListRuleCompilerTest extends WebTestCase
             ],
         ];
         $actual = $this->getActualResult($qb);
-        $this->assertEquals($expected, $actual);
+        $this->assertEqualsPrices($expected, $actual);
     }
 
     public function testRestrictByProductUnit()
@@ -460,12 +460,12 @@ class PriceListRuleCompilerTest extends WebTestCase
         ];
         $qb = $this->getQueryBuilder($priceRule);
         $actual = $this->getActualResult($qb);
-        $this->assertEquals($expected, $actual);
+        $this->assertEqualsPrices($expected, $actual);
 
         // Check that cache does not affect results
         $qb = $this->getQueryBuilder($priceRule);
         $actual = $this->getActualResult($qb);
-        $this->assertEquals($expected, $actual);
+        $this->assertEqualsPrices($expected, $actual);
     }
 
     public function testNotIn()
@@ -512,7 +512,7 @@ class PriceListRuleCompilerTest extends WebTestCase
         ];
         $qb = $this->getQueryBuilder($priceRule);
         $actual = $this->getActualResult($qb);
-        $this->assertEquals($expected, $actual);
+        $this->assertEqualsPrices($expected, $actual);
     }
 
     public function testIn()
@@ -559,7 +559,7 @@ class PriceListRuleCompilerTest extends WebTestCase
         ];
         $qb = $this->getQueryBuilder($priceRule);
         $actual = $this->getActualResult($qb);
-        $this->assertEquals($expected, $actual);
+        $this->assertEqualsPrices($expected, $actual);
     }
 
     public function testProductAssignmentRuleReferencing()
@@ -606,7 +606,7 @@ class PriceListRuleCompilerTest extends WebTestCase
         ];
         $qb = $this->getQueryBuilder($priceRule);
         $actual = $this->getActualResult($qb);
-        $this->assertEquals($expected, $actual);
+        $this->assertEqualsPrices($expected, $actual);
     }
 
     public function testRuleUnsupportedCurrency()
@@ -727,5 +727,18 @@ class PriceListRuleCompilerTest extends WebTestCase
         }
 
         $em->flush();
+    }
+
+    /**
+     * @param array $expected
+     * @param array $actual
+     */
+    protected function assertEqualsPrices(array $expected, array $actual)
+    {
+        foreach ($actual as $key => $price) {
+            $this->assertArrayHasKey('id', $price);
+            unset($price['id']);
+            self::assertEquals($expected[$key], $price);
+        }
     }
 }

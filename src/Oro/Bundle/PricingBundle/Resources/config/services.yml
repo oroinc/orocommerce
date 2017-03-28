@@ -605,11 +605,9 @@ services:
     oro_pricing.entity_listener.product_price:
         class: 'Oro\Bundle\PricingBundle\Entity\EntityListener\ProductPriceEntityListener'
         parent: oro_pricing.entity_listener.abstract_rule_listener
-        public: false
         tags:
-            - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.product_price.class%', event: postPersist }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.product_price.class%', event: preUpdate }
-            - { name: doctrine.orm.entity_listener, entity: '%oro_pricing.entity.product_price.class%', event: preRemove }
+            - { name: kernel.event_listener, event: oro_pricing.product_price.remove, method: onRemove }
+            - { name: kernel.event_listener, event: oro_pricing.product_price.save_after, method: onSave }
 
     oro_pricing.entity_listener.price_list_to_product:
         class: Oro\Bundle\PricingBundle\Entity\EntityListener\PriceListToProductEntityListener

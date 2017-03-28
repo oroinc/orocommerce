@@ -50,7 +50,8 @@ class ProductPriceCPLEntityListener
      */
     public function onSave(ProductPriceSaveAfterEvent $event)
     {
-        $productPrice = $event->getPrice();
+        /** @var ProductPrice $productPrice */
+        $productPrice = $event->getEventArgs()->getEntity();
         $this->handleChanges($productPrice);
         $this->addPriceListToProductRelation($productPrice);
     }

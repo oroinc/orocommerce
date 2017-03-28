@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Manager;
 
 use Doctrine\Common\Util\ClassUtils;
 use Doctrine\ORM\Event\PostFlushEventArgs;
+use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Event\ProductPriceRemove;
@@ -83,7 +84,8 @@ class PriceManager
                 $price->setPriceList($newPriceList);
             }
             $repository->save($this->shardManager, $price);
-            $event = new ProductPriceSaveAfterEvent($price);
+            $args = new PreUpdateEventArgs($price, $em, $changeSet);
+            $event = new ProductPriceSaveAfterEvent($args);
             $this->eventDispatcher->dispatch(ProductPriceSaveAfterEvent::NAME, $event);
         }
     }
@@ -97,6 +99,7 @@ class PriceManager
         /** @var ProductPriceRepository $repository */
         $repository = $this->shardManager->getEntityManager()->getRepository($class);
         $repository->remove($this->shardManager, $price);
+
         $event = new ProductPriceRemove($price);
         $this->eventDispatcher->dispatch(ProductPriceRemove::NAME, $event);
     }
