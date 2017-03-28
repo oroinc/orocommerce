@@ -24,6 +24,15 @@ services:
         tags:
             - { name: oro_form.autocomplete.search_handler, alias: oro_product_tax_code }
 
+    oro_tax.form.autocomplete.product_tax_code.entity_search_handler:
+        class: Oro\Bundle\TaxBundle\Autocomplete\SearchHandler
+        parent: oro_form.autocomplete.search_handler
+        arguments:
+            - %oro_tax.entity.product_tax_code.class%
+            - ["code"]
+        tags:
+            - { name: oro_form.autocomplete.search_handler, alias: oro_product_tax_code_entity_search }
+
     oro_tax.form.autocomplete.customer_tax_code.search_handler:
         public: false
         parent: oro_form.autocomplete.search_handler
