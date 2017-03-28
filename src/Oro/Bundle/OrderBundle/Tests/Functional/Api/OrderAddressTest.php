@@ -15,33 +15,37 @@ use Symfony\Component\HttpFoundation\Response;
 class OrderAddressTest extends RestJsonApiTestCase
 {
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     protected function setUp()
     {
         parent::setUp();
 
-        $this->loadFixtures([
-            LoadOrderAddressData::class,
-            LoadCountryData::class,
-            LoadRegionData::class,
-        ]);
+        $this->loadFixtures(
+            [
+                LoadOrderAddressData::class,
+                LoadCountryData::class,
+                LoadRegionData::class,
+            ]
+        );
     }
 
     public function testGetList()
     {
         $response = $this->cget(['entity' => $this->getEntityType(OrderAddress::class)]);
 
-        $this->assertResponseContains(__DIR__.'/responses/address/get_addresses.yml', $response);
+        $this->assertResponseContains(__DIR__ . '/responses/address/get_addresses.yml', $response);
     }
 
     public function testGet()
     {
-        $response = $this->get([
-            'entity' => $this->getEntityType(OrderAddress::class),
-            'id' => '<toString(@order_address.office->id)>',
-        ]);
-        $this->assertResponseContains(__DIR__.'/responses/address/get_address.yml', $response);
+        $response = $this->get(
+            [
+                'entity' => $this->getEntityType(OrderAddress::class),
+                'id' => '<toString(@order_address.office->id)>',
+            ]
+        );
+        $this->assertResponseContains(__DIR__ . '/responses/address/get_address.yml', $response);
     }
 
     public function testGetCountryRelationship()
@@ -104,7 +108,7 @@ class OrderAddressTest extends RestJsonApiTestCase
     {
         $this->post(
             ['entity' => $this->getEntityType(OrderAddress::class)],
-            __DIR__.'/responses/address/create_address.yml'
+            __DIR__ . '/responses/address/create_address.yml'
         );
 
         /** @var OrderAddress $orderAddress */
