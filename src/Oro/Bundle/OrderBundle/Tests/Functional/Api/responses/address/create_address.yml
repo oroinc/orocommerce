@@ -1,0 +1,27 @@
+data:
+    type: orderaddresses
+    attributes:
+        fromExternalSource: false
+        phone: '777-777-777'
+        label:
+        street: '1215 Caldwell Road'
+        street2:
+        city: 'Rochester'
+        postalCode: '14608'
+        organization:
+        namePrefix:
+        firstName:
+        middleName:
+        lastName:
+        nameSuffix:
+        created: '2017-03-28T06:30:16Z'
+        updated: '2017-03-28T06:30:16Z'
+    relationships:
+        country:
+            data:
+                type: countries
+                id: 'US'
+        region:
+            data:
+                type: regions
+                id: 'US-NY'
