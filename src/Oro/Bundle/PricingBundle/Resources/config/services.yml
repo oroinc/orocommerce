@@ -350,6 +350,14 @@ services:
         tags:
             - { name: validator.constraint_validator, alias: oro_pricing_product_price_currency_validator }
 
+    oro_pricing.validator.unique_entity:
+        class: 'Oro\Bundle\PricingBundle\Validator\Constraints\UniqueEntityValidator'
+        arguments:
+           - '@doctrine'
+           - '@oro_pricing.shard_manager'
+        tags:
+            - { name: validator.constraint_validator, alias: oro_pricing_unique_entity_validator }
+
     oro_pricing.validator.price_list_product_prices_currency:
         class: 'Oro\Bundle\PricingBundle\Validator\Constraints\PriceListProductPricesCurrencyValidator'
         arguments:

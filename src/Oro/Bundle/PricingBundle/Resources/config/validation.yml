@@ -126,10 +126,8 @@ Oro\Bundle\PricingBundle\Entity\ProductPrice:
     constraints:
         - Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceAllowedUnits: ~
         - Oro\Bundle\PricingBundle\Validator\Constraints\ProductPriceCurrency: ~
-# TODO: BB-8042
-#        - Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity:
-#            fields:  [ product, priceList, quantity, unit, currency ]
-#            message: oro.pricing.validators.product_price.unique_entity.message
+        - Oro\Bundle\PricingBundle\Validator\Constraints\UniqueEntity:
+            fields:  [ product, priceList, quantity, unit, currency ]
     properties:
         product:
             - NotBlank: ~

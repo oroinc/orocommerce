@@ -81,7 +81,6 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
 
     public function testUpdateDuplicateEntry()
     {
-        $this->markTestSkipped('fix in BB-8385');
         $this->loadFixtures([
             'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices'
         ]);
