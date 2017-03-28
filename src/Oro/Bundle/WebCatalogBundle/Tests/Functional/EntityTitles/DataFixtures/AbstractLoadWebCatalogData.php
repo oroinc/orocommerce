@@ -52,6 +52,7 @@ abstract class AbstractLoadWebCatalogData extends AbstractFixture implements Dep
         $variant = new ContentVariant();
         $variant->setType($this->getContentVariantType());
         $variant->setNode($node);
+        $variant->addScope($scope);
 
         $entitySetterMethod = $this->getEntitySetterMethod();
         if (method_exists($variant, $entitySetterMethod)) {

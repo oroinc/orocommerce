@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\SEOBundle;
 
+use Oro\Bundle\SEOBundle\DependencyInjection\Compiler\UrlItemsProviderCompilerPass;
+
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 
@@ -35,6 +37,7 @@ class OroSEOBundle extends Bundle
             ->addCompilerPass(new ContentNodeFieldsChangesCompilerPass(
                 array_values($fields),
                 'oro_catalog.event_listener.category_content_variant_index'
-            ));
+            ))
+            ->addCompilerPass(new UrlItemsProviderCompilerPass());
     }
 }

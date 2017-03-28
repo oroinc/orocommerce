@@ -73,12 +73,10 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
         $allImageTypes = $this->getImageTypes();
         $defaultAttributeFamily = $this->getDefaultAttributeFamily($manager);
 
-        $slugRedirectGenerator = $this->container->get('oro_redirect.generator.slug_entity');
-        $urlStorageCache = $this->container->get('oro_redirect.url_storage_cache');
-
         $this->container->get('oro_layout.loader.image_filter')->load();
 
         $slugGenerator = $this->container->get('oro_entity_config.slug.generator');
+        $loadedProducts = [];
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
 
@@ -141,13 +139,29 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
             $this->addImageToProduct($product, $manager, $locator, $row['sku'], $allImageTypes);
 
             $manager->persist($product);
-
-            $slugRedirectGenerator->generate($product, true);
+            $loadedProducts[] = $product;
         }
+
+        $manager->flush();
 
         fclose($handler);
 
-        $urlStorageCache->flush();
+        $this->createSlugs($loadedProducts, $manager);
+    }
+
+    /**
+     * @param array|Product[] $products
+     * @param ObjectManager $manager
+     */
+    private function createSlugs(array $products, ObjectManager $manager)
+    {
+        $slugRedirectGenerator = $this->container->get('oro_redirect.generator.slug_entity');
+
+        foreach ($products as $product) {
+            $slugRedirectGenerator->generate($product, true);
+        }
+
+        $this->container->get('oro_redirect.url_storage_cache')->flush();
         $manager->flush();
     }
 
@@ -251,6 +265,8 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
         $allImageTypes
     ) {
         $imageResizer = $this->container->get('oro_attachment.image_resizer');
+        $attachmentManager = $this->container->get('oro_attachment.manager');
+        $mediaCacheManager = $this->container->get('oro_attachment.media_cache_manager');
 
         $productImage = $this->getProductImageForProductSku($manager, $locator, $sku, $allImageTypes);
 
@@ -258,7 +274,14 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
             $product->addImage($productImage);
 
             foreach ($this->getDimensionsForProductImage($productImage) as $dimension) {
-                $imageResizer->resizeImage($productImage->getImage(), $dimension->getName(), true);
+                $image = $productImage->getImage();
+                $filterName = $dimension->getName();
+                $imagePath = $attachmentManager->getFilteredImageUrl($image, $filterName);
+
+
+                if ($filteredImage = $imageResizer->resizeImage($image, $filterName)) {
+                    $mediaCacheManager->store($filteredImage->getContent(), $imagePath);
+                }
             }
         }
     }
