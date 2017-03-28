@@ -83,7 +83,7 @@ class CustomerGroupProductRepositoryTest extends VisibilityResolvedRepositoryTes
      */
     public function insertStaticDataProvider()
     {
-        return ['expected_rows' => [8]];
+        return ['expected_rows' => [9]];
     }
 
     /**

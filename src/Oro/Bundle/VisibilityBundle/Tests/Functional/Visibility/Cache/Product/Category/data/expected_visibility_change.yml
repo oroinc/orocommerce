@@ -16,6 +16,9 @@
             customer_group.group3:
                 - category_1_2_3
                 - category_1_2_3_4
+            Non-Authenticated Visitors:
+                - category_1_2_3
+                - category_1_2_3_4
         hiddenCategoriesByCustomers:
             customer.level_1:
                 - category_1_5_6
@@ -90,6 +93,9 @@
                 - category_1_2_3
                 - category_1_2_3_4
             customer_group.group3:
+                - category_1_2_3
+                - category_1_2_3_4
+            Non-Authenticated Visitors:
                 - category_1_2_3
                 - category_1_2_3_4
         hiddenCategoriesByCustomers:
@@ -173,6 +179,9 @@
             customer_group.group2:
                 - category_1_2
             customer_group.group3:
+                - category_1_2_3
+                - category_1_2_3_4
+            Non-Authenticated Visitors:
                 - category_1_2_3
                 - category_1_2_3_4
         hiddenCategoriesByCustomers:
@@ -298,6 +307,9 @@
                 - category_1_5
                 - category_1_5_6
                 - category_1_5_6_7
+            Non-Authenticated Visitors:
+                - category_1_2_3
+                - category_1_2_3_4
         hiddenCategoriesByCustomers:
             customer.level_1:
                 - category_1_5_6
@@ -385,6 +397,9 @@
             customer_group.group3:
                 - category_1_2_3
                 - category_1_2_3_4
+            Non-Authenticated Visitors:
+                - category_1_2_3
+                - category_1_2_3_4
         hiddenCategoriesByCustomers:
             customer.level_1:
                 - category_1_5_6
@@ -460,6 +475,9 @@
                 - category_1_2_3
                 - category_1_2_3_4
             customer_group.group3:
+                - category_1_2_3
+                - category_1_2_3_4
+            Non-Authenticated Visitors:
                 - category_1_2_3
                 - category_1_2_3_4
         hiddenCategoriesByCustomers:
@@ -539,6 +557,9 @@
             customer_group.group3:
                 - category_1_2_3
                 - category_1_2_3_4
+            Non-Authenticated Visitors:
+                - category_1_2_3
+                - category_1_2_3_4
         hiddenCategoriesByCustomers:
             customer.level_1:
                 - category_1_5_6
@@ -616,6 +637,9 @@
             customer_group.group3:
                 - category_1_2_3
                 - category_1_2_3_4
+            Non-Authenticated Visitors:
+                - category_1_2_3
+                - category_1_2_3_4
         hiddenCategoriesByCustomers:
             customer.level_1:
                 - category_1_5_6
@@ -691,6 +715,9 @@
                 - category_1_2_3
                 - category_1_2_3_4
             customer_group.group3:
+                - category_1_2_3
+                - category_1_2_3_4
+            Non-Authenticated Visitors:
                 - category_1_2_3
                 - category_1_2_3_4
         hiddenCategoriesByCustomers:
@@ -781,6 +808,9 @@
             customer_group.group3:
                 - category_1_2_3
                 - category_1_2_3_4
+            Non-Authenticated Visitors:
+                - category_1_2_3
+                - category_1_2_3_4
         hiddenCategoriesByCustomers:
             customer.level_1:
                 - category_1_5_6
@@ -852,6 +882,9 @@
                 - category_1_2_3
                 - category_1_2_3_4
             customer_group.group3:
+                - category_1_2_3
+                - category_1_2_3_4
+            Non-Authenticated Visitors:
                 - category_1_2_3
                 - category_1_2_3_4
         hiddenCategoriesByCustomers:
@@ -936,6 +969,9 @@
                 - category_1_2_3
                 - category_1_2_3_4
             customer_group.group3:
+                - category_1_2_3
+                - category_1_2_3_4
+            Non-Authenticated Visitors:
                 - category_1_2_3
                 - category_1_2_3_4
         hiddenCategoriesByCustomers:

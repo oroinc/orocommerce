@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\SEOBundle\Tests\Unit;
 
+use Oro\Bundle\SEOBundle\DependencyInjection\Compiler\UrlItemsProviderCompilerPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\KernelInterface;
 
@@ -41,6 +42,7 @@ class OroSEOBundleTest extends \PHPUnit_Framework_TestCase
                     array_values($fields),
                     'oro_catalog.event_listener.category_content_variant_index'
                 ),
+                new UrlItemsProviderCompilerPass(),
             ],
             $container->getCompiler()->getPassConfig()->getBeforeOptimizationPasses()
         );
