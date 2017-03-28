@@ -4,24 +4,24 @@ namespace Oro\Bundle\OrderBundle\Api\Processor\Order;
 
 use Oro\Bundle\ApiBundle\Processor\FormContext;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\OrderBundle\Provider\SkuCachedProductProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepositoryInterface;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
 
 class OrderLineItemProductProcessor implements ProcessorInterface
 {
     /**
-     * @var ProductRepositoryInterface
+     * @var SkuCachedProductProvider
      */
-    private $productRepository;
+    private $skuCachedProductProvider;
 
     /**
-     * @param ProductRepositoryInterface $productRepository
+     * @param SkuCachedProductProvider $skuCachedProductProvider
      */
-    public function __construct(ProductRepositoryInterface $productRepository)
+    public function __construct(SkuCachedProductProvider $skuCachedProductProvider)
     {
-        $this->productRepository = $productRepository;
+        $this->skuCachedProductProvider = $skuCachedProductProvider;
     }
 
     /**
@@ -52,7 +52,7 @@ class OrderLineItemProductProcessor implements ProcessorInterface
             return;
         }
 
-        $product = $this->productRepository->findOneBySku($requestData['productSku']);
+        $product = $this->skuCachedProductProvider->getBySku($requestData['productSku']);
 
         if (null === $product) {
             return;

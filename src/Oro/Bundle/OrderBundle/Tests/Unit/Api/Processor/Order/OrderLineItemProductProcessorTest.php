@@ -5,16 +5,16 @@ namespace Oro\Bundle\OrderBundle\Tests\Unit\Api\Processor\Order;
 use Oro\Bundle\ApiBundle\Processor\FormContext;
 use Oro\Bundle\OrderBundle\Api\Processor\Order\OrderLineItemProductProcessor;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\OrderBundle\Provider\SkuCachedProductProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepositoryInterface;
 use Oro\Component\ChainProcessor\ContextInterface;
 
 class OrderLineItemProductProcessorTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ProductRepositoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var SkuCachedProductProvider|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $productRepositoryMock;
+    protected $skuCachedProductProviderMock;
 
     /**
      * @var OrderLineItemProductProcessor
@@ -23,9 +23,9 @@ class OrderLineItemProductProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->productRepositoryMock = $this->createMock(ProductRepositoryInterface::class);
+        $this->skuCachedProductProviderMock = $this->createMock(SkuCachedProductProvider::class);
 
-        $this->testedProcessor = new OrderLineItemProductProcessor($this->productRepositoryMock);
+        $this->testedProcessor = new OrderLineItemProductProcessor($this->skuCachedProductProviderMock);
     }
 
     /**
@@ -71,9 +71,9 @@ class OrderLineItemProductProcessorTest extends \PHPUnit_Framework_TestCase
             ->method('getRequestData')
             ->willReturn($requestData);
 
-        $this->productRepositoryMock
+        $this->skuCachedProductProviderMock
             ->expects(static::once())
-            ->method('findOneBySku')
+            ->method('getBySku')
             ->with($productSku)
             ->willReturn($productMock);
 
@@ -104,9 +104,9 @@ class OrderLineItemProductProcessorTest extends \PHPUnit_Framework_TestCase
             ->expects(static::never())
             ->method('getResult');
 
-        $this->productRepositoryMock
+        $this->skuCachedProductProviderMock
             ->expects(static::never())
-            ->method('findOneBySku');
+            ->method('getBySku');
 
         $this->testedProcessor->process($contextMock);
     }

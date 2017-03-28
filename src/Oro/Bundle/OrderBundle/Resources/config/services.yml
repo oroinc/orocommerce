@@ -367,7 +367,7 @@ services:
     oro_order.order_api.line_item_product_processor:
         class: 'Oro\Bundle\OrderBundle\Api\Processor\Order\OrderLineItemProductProcessor'
         arguments:
-            - '@oro_product.repository.product'
+            - '@oro_order.product_provider.sku_cached'
         tags:
             - { name: oro.api.processor, action: create, group: load_data, priority: -255, class: '%oro_order.entity.order_line_item.class%' }
             - { name: oro.api.processor, action: update, group: load_data, priority: -255, class: '%oro_order.entity.order_line_item.class%' }
@@ -395,3 +395,16 @@ services:
         tags:
             - { name: oro.api.processor, action: update, group: transform_data, priority: 90, class: '%oro_order.entity.order_discount_item.class%' }
             - { name: oro.api.processor, action: create, group: transform_data, priority: 90, class: '%oro_order.entity.order_discount_item.class%' }
+
+    oro_order.product_provider.sku_cached:
+        class: 'Oro\Bundle\OrderBundle\Provider\SkuCachedProductProvider'
+        arguments:
+            - '@oro_product.repository.product'
+
+    oro_order.order_api.product_cacher_processor:
+        class: 'Oro\Bundle\OrderBundle\Api\Processor\Order\OrderProductCacherProcessor'
+        arguments:
+            - '@oro_order.product_provider.sku_cached'
+        tags:
+            - { name: oro.api.processor, action: create, group: load_data, priority: -40, class: '%oro_order.entity.order.class%' }
+            - { name: oro.api.processor, action: update, group: load_data, priority: -40, class: '%oro_order.entity.order.class%' }
