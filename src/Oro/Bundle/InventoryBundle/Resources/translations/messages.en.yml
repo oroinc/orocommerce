@@ -89,8 +89,8 @@ oro:
                 not_allowed: 'There is not enough quantity for this product'
             label: Decrement Inventory
             choice:
-                'true': Yes
-                'false': No
+                'true': On Order Submission
+                'false': Defined by Workflow
         backorders:
             label: Backorders
             choice:
