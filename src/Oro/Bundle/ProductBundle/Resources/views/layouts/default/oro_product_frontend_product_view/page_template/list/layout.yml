@@ -9,4 +9,9 @@ layout:
             prepend: false
         - '@remove':
             id: attribute_group_rest
+        - '@move':
+            id: line_item_form_shopping_lists
+            parentId: line_item_form
+            siblingId: line_item_form_end
+            prepend: true
     conditions: '!context["is_mobile"]'

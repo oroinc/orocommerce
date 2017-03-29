@@ -37,6 +37,10 @@
                     flex: $list-theme-product-view-line-item-form-div-flex-desktop;
                 }
             }
+
+            .form__col {
+                margin-left: $list-theme-product-view-line-item-form-margin-left-desktop;
+            }
         }
 
         .shopping-lists {
@@ -54,8 +58,6 @@
         }
 
         .product-view-quantity {
-            margin-right: $list-theme-product-view-quantity-margin-right-desktop;
-
             &__unit {
                 a.select2-choice,
                 .select--full {
