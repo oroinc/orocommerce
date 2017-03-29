@@ -25,6 +25,16 @@ services:
         tags:
             - { name: layout.data_provider, alias: category }
 
+    oro_catalog.layout.data_provider.category_breadcrumb:
+        class: 'Oro\Bundle\CatalogBundle\Layout\DataProvider\CategoryBreadcrumbProvider'
+        public: true
+        arguments:
+            - "@oro_catalog.layout.data_provider.category"
+            - '@oro_locale.helper.localization'
+            - '@router'
+        tags:
+            - { name: layout.data_provider, alias: category_breadcrumbs }
+
     oro_catalog.layout.data_provider.featured_categories:
         class: 'Oro\Bundle\CatalogBundle\Layout\DataProvider\FeaturedCategoriesProvider'
         public: true
