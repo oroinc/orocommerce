@@ -1,0 +1,84 @@
+system_configuration:
+    groups:
+        sitemap:
+            title: oro.seo.system_configuration.groups.sitemap.title
+            icon: 'fa-map'
+        sitemap_default:
+            title: oro.seo.system_configuration.groups.sitemap_default.title
+        sitemap_product:
+            title: oro.seo.system_configuration.groups.sitemap_product.title
+        sitemap_category:
+            title: oro.seo.system_configuration.groups.sitemap_category.title
+        sitemap_page:
+            title: oro.seo.system_configuration.groups.sitemap_page.title
+    fields:
+        oro_seo.sitemap_changefreq_product:
+            data_type: string
+            type: Oro\Bundle\SEOBundle\Form\Type\SitemapChangefreqType
+            priority: 100
+            options:
+                label: oro.seo.system_configuration.fields.changefreq_product.label
+        oro_seo.sitemap_priority_product:
+            data_type: float
+            type: Oro\Bundle\SEOBundle\Form\Type\SitemapPriorityType
+            priority: 200
+            options:
+                label: oro.seo.system_configuration.fields.priority_product.label
+        oro_seo.sitemap_changefreq_category:
+            data_type: string
+            type: Oro\Bundle\SEOBundle\Form\Type\SitemapChangefreqType
+            priority: 100
+            options:
+                label: oro.seo.system_configuration.fields.changefreq_category.label
+        oro_seo.sitemap_priority_category:
+            data_type: float
+            type: Oro\Bundle\SEOBundle\Form\Type\SitemapPriorityType
+            priority: 200
+            options:
+                label: oro.seo.system_configuration.fields.priority_category.label
+        oro_seo.sitemap_changefreq_cms_page:
+            data_type: string
+            type: Oro\Bundle\SEOBundle\Form\Type\SitemapChangefreqType
+            priority: 100
+            options:
+                label: oro.seo.system_configuration.fields.changefreq_page.label
+        oro_seo.sitemap_priority_cms_page:
+            data_type: float
+            type: Oro\Bundle\SEOBundle\Form\Type\SitemapPriorityType
+            priority: 200
+            options:
+                label: oro.seo.system_configuration.fields.priority_page.label
+        oro_seo.sitemap_cron_definition:
+            data_type: string
+            type: choice
+            priority: 500
+            options:
+                label: oro.seo.system_configuration.fields.sitemap_cron_definition.label
+                choices:
+                    0 0 * * 0: oro.seo.system_configuration.fields.sitemap_cron_definition.choice.weekly.label
+                    0 0 * * *: oro.seo.system_configuration.fields.sitemap_cron_definition.choice.daily.label
+                    0 * * * *: oro.seo.system_configuration.fields.sitemap_cron_definition.choice.hourly.label
+
+    tree:
+        system_configuration:
+            platform:
+                children:
+                    websites:
+                        children:
+                            sitemap:
+                                children:
+                                    sitemap_default:
+                                        children:
+                                            - oro_seo.sitemap_cron_definition
+                                    sitemap_product:
+                                        children:
+                                            - oro_seo.sitemap_changefreq_product
+                                            - oro_seo.sitemap_priority_product
+                                    sitemap_category:
+                                        children:
+                                            - oro_seo.sitemap_changefreq_category
+                                            - oro_seo.sitemap_priority_category
+                                    sitemap_page:
+                                        children:
+                                            - oro_seo.sitemap_changefreq_cms_page
+                                            - oro_seo.sitemap_priority_cms_page

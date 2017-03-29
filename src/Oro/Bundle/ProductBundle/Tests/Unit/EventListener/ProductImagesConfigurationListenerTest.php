@@ -44,14 +44,8 @@ class ProductImagesConfigurationListenerTest extends \PHPUnit_Framework_TestCase
 
     public function testBeforeSaveAddsMessageForProductImagesSection()
     {
-        $flashBag = $this->prophesize(FlashBag::class);
-        $flashBag->add(
-            ProductImagesConfigurationListener::MESSAGE_TYPE,
-            self::MESSAGE
-        )->shouldBeCalledTimes(1);
-
         $this->translator->trans(Argument::type('string'))->willReturn(self::MESSAGE);
-        $this->session->getFlashBag()->willReturn($flashBag->reveal());
+        $this->session->getFlashBag()->willReturn($this->prepareFlashBag()->reveal());
 
         $this->listener->beforeSave($this->prepareEvent([
             'oro_product.product_image_watermark_size' => 20,
@@ -78,5 +72,20 @@ class ProductImagesConfigurationListenerTest extends \PHPUnit_Framework_TestCase
         $configManager = $this->prophesize(ConfigManager::class);
 
         return new ConfigSettingsUpdateEvent($configManager->reveal(), $settings);
+    }
+
+    /**
+     * @return \Prophecy\Prophecy\ObjectProphecy
+     */
+    protected function prepareFlashBag()
+    {
+        $flashBag = $this->prophesize(FlashBag::class);
+        $flashBag
+            ->add(
+                ProductImagesConfigurationListener::MESSAGE_TYPE,
+                self::MESSAGE.' <code>'.ProductImagesConfigurationListener::COMMAND.'</code>'
+            )->shouldBeCalledTimes(1);
+
+        return $flashBag;
     }
 }

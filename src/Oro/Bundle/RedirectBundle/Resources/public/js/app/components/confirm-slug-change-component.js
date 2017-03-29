@@ -67,6 +67,7 @@ define(function(require) {
                 throw new TypeError('Missing required option(s): ' + requiredMissed.join(','));
             }
 
+            this.initializeElements();
             mediator.on('page:afterChange', this.initializeElements, this);
         },
 
@@ -77,7 +78,7 @@ define(function(require) {
                 this.$slugFields = this.$form.find(this.options.slugFields).filter(this.options.textFieldSelector);
                 this.$createRedirectCheckbox = this.$form.find(this.options.createRedirectCheckbox);
                 this._saveSlugFieldsInitialState();
-                this.$form.on('submit', _.bind(this.onSubmit, this));
+                this.$form.off('submit').on('submit', _.bind(this.onSubmit, this));
             }
         },
 
@@ -155,17 +156,19 @@ define(function(require) {
          * @inheritDoc
          */
         dispose: function() {
-            if (this.disabled) {
+            if (this.disposed) {
                 return;
             }
 
-            if (this.disposed) {
+            if (this.disabled) {
                 return;
             }
 
             this._removeConfirmModal();
 
-            this.$form.off('submit', _.bind(this.onSubmit, this));
+            if (this.$form) {
+                this.$form.off('submit');
+            }
             mediator.off(null, null, this);
 
             ConfirmSlugChangeComponent.__super__.dispose.call(this);
@@ -236,6 +239,9 @@ define(function(require) {
             if (this.confirmModal) {
                 this.confirmModal.off();
                 this.confirmModal.dispose();
+                delete this.$createRedirectCheckbox;
+                delete this.$slugFields;
+                delete this.$form;
                 delete this.confirmModal;
             }
         }

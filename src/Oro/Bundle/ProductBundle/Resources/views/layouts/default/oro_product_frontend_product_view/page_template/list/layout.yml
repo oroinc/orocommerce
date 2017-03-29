@@ -1,0 +1,17 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
+        - '@move':
+            id: product_view_line_item_container
+            parentId: product_view_content_container
+            siblingId: product_view_description_container
+            prepend: false
+        - '@remove':
+            id: attribute_group_rest
+        - '@move':
+            id: line_item_form_shopping_lists
+            parentId: line_item_form
+            siblingId: line_item_form_end
+            prepend: true
+    conditions: '!context["is_mobile"]'

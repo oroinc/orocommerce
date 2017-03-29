@@ -44,7 +44,8 @@ class OrderFrontendOperationTest extends FrontendActionTestCase
                 'message' => '',
                 'messages' => [],
                 'refreshGrid' => null,
-                'flashMessages' => []
+                'flashMessages' => [],
+                'pageReload' => true
             ],
             json_decode($this->client->getResponse()->getContent(), true)
         );
