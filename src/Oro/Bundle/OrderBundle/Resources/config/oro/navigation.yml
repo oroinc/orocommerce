@@ -38,6 +38,11 @@ navigation:
                 extras:
                     description: 'oro.order.menu.best_selling_list.description'
 
+            static_reports_tab:
+                label: 'oro.order.menu.static_reports_tab.label'
+                uri: '#'
+                position: 5
+
         tree:
             application_menu:
                 children:
@@ -46,7 +51,9 @@ navigation:
                             order_list: ~
                     reports_tab:
                         children:
-                            best_selling_list: ~
+                            static_reports_tab:
+                                children:
+                                    best_selling_list: ~
             frontend_menu:
                 children:
                     frontend_order_list: ~
