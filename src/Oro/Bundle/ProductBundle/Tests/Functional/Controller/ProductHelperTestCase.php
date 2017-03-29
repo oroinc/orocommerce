@@ -146,9 +146,7 @@ class ProductHelperTestCase extends WebTestCase
                     'values' => [
                         'default' => ProductTestHelper::DEFAULT_NAME_ALTERED,
                         'localizations' => [
-                            $localization->getId() => [
-                                'fallback' => FallbackType::SYSTEM
-                            ]
+                            $localization->getId() => ['fallback' => FallbackType::SYSTEM]
                         ],
                     ],
                     'ids' => [
@@ -159,8 +157,7 @@ class ProductHelperTestCase extends WebTestCase
                     'values' => [
                         'default' => ProductTestHelper::DEFAULT_DESCRIPTION,
                         'localizations' => [
-                            $localization->getId() => ['fallback' => FallbackType::SYSTEM
-                            ]
+                            $localization->getId() => ['fallback' => FallbackType::SYSTEM]
                         ],
                     ],
                     'ids' => [
@@ -171,9 +168,7 @@ class ProductHelperTestCase extends WebTestCase
                     'values' => [
                         'default' => ProductTestHelper::DEFAULT_SHORT_DESCRIPTION,
                         'localizations' => [
-                            $localization->getId() => [
-                                'fallback' => FallbackType::SYSTEM
-                            ]
+                            $localization->getId() => ['fallback' => FallbackType::SYSTEM]
                         ],
                     ],
                     'ids' => [
