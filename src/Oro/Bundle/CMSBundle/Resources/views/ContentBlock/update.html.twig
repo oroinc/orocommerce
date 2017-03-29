@@ -16,7 +16,7 @@
             'entity':      entity,
             'indexPath':   path('oro_cms_content_block_index'),
             'indexLabel': 'oro.cms.contentblock.entity_plural_label'|trans,
-            'entityTitle': entity.titles|localized_value|default('N/A'|trans)
+            'entityTitle': entity.defaultTitle.string|default('N/A'|trans)
         } %}
         {{ parent() }}
     {% else %}
