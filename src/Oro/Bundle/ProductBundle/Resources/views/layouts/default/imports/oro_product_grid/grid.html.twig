@@ -37,15 +37,6 @@
     {{ parent_block_widget(block) }}
 {% endblock %}
 
-{% block __oro_product_grid__datagrid_items_counter_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' catalog__filter-controls__item',
-        'data-grid-items-counter': ''
-    }) %}
-
-    {{ parent_block_widget(block) }}
-{% endblock %}
-
 {% block __oro_product_grid__datagrid_toolbar_page_size_widget %}
     {% set attr = layout_attr_defaults(attr, {
         '~class': ' catalog__filter-controls__item page-size form-horizontal',
