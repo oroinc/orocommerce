@@ -9,11 +9,8 @@ use Symfony\Component\DomCrawler\Form;
 
 use Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend\CheckoutControllerTestCase;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\MoneyOrderBundle\Tests\Functional\DataFixtures\LoadMoneyOrderSettingsData;
 use Oro\Bundle\MoneyOrderBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
-use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\ShoppingListBundle\Entity\LineItem;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
 
@@ -27,7 +24,9 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
      */
     protected function getPaymentFixtures()
     {
-        return LoadPaymentMethodsConfigsRuleData::class;
+        return [
+            LoadPaymentMethodsConfigsRuleData::class
+        ];
     }
 
     /**
@@ -116,7 +115,6 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
     {
         $shoppingList = $this->getSourceEntity();
         $this->startCheckout($shoppingList);
-        $this->setProductInventoryLevels($shoppingList->getLineItems()[0]);
         $this->client->request('GET', self::$checkoutUrl);
         $result = $this->client->getResponse();
         static::assertHtmlResponseStatusCodeEquals($result, 200);
@@ -155,27 +153,6 @@ class MoneyOrderMethodCheckoutTest extends CheckoutControllerTestCase
         $crawler = $this->client->request('GET', self::$checkoutUrl);
         $form = $this->getFakeForm($crawler);
         $this->client->submit($form);
-    }
-
-    /**
-     * @param LineItem $lineItem
-     * @return InventoryLevel
-     */
-    protected function setProductInventoryLevels(LineItem $lineItem)
-    {
-        $inventoryLevelEm = $this->registry->getManagerForClass(InventoryLevel::class);
-        $productUnitPrecisionEm = $this->registry->getManagerForClass(ProductUnitPrecision::class);
-        $productUnitPrecision = $productUnitPrecisionEm
-            ->getRepository(ProductUnitPrecision::class)
-            ->findOneBy(['product' => $lineItem->getProduct()]);
-        $inventoryLevel = new InventoryLevel();
-        $inventoryLevel->setProductUnitPrecision($productUnitPrecision);
-        $inventoryLevel->setQuantity(10);
-        $inventoryLevelEm->persist($inventoryLevel);
-        $productUnitPrecisionEm->persist($productUnitPrecision);
-        $inventoryLevelEm->flush();
-
-        return $inventoryLevel;
     }
 
     /**

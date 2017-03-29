@@ -26,7 +26,7 @@ class ManageInventoryFallbackTest extends WebTestCase
         $product = $this->getReference(LoadProductData::PRODUCT_1);
         $crawler = $this->client->request('GET', $this->getUrl('oro_product_view', ['id' => $product->getId()]));
         $manageInventoryValue = $crawler->filterXPath(self::VIEW_MANAGED_INVENTORY_XPATH)->html();
-        $this->assertEquals('No', $manageInventoryValue);
+        $this->assertEquals('Yes', $manageInventoryValue);
     }
 
     /**
@@ -140,8 +140,8 @@ class ManageInventoryFallbackTest extends WebTestCase
     public function productCategorySystemFallbackProvider()
     {
         return [
-            [false, 'No', true, true],
-            [true, 'Yes'],
+            [0, 'No', true, true],
+            [1, 'Yes'],
         ];
     }
 
