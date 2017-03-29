@@ -22,6 +22,7 @@ operations:
         routes:
             - oro_integration_update
         acl_resource: [UPDATE, entity:Oro\Bundle\IntegrationBundle\Entity\Channel]
+        page_reload: false
         button_options:
             icon: fa-clock-o
         frontend_options:
