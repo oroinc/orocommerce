@@ -37,7 +37,7 @@ class PriceListShardingListenerTest extends WebTestCase
         $this->shardManager->setEnableSharding(true);
         $this->em->persist($priceList);
         $this->em->flush($priceList);
-        $shardName = $this->shardManager->getShardName(ProductPrice::class, ['priceList' => $priceList]);
+        $shardName = $this->shardManager->getEnabledShardName(ProductPrice::class, ['priceList' => $priceList]);
 
         $this->assertTrue($this->shardManager->exists($shardName));
 

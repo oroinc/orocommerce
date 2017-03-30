@@ -61,7 +61,7 @@ class PriceShardWalker extends SqlWalker
                 if ($discriminationValue === null) {
                     continue;
                 }
-                $tableMap[$alias] = $shardManager->getShardName(
+                $tableMap[$alias] = $shardManager->getEnabledShardName(
                     $entityClass,
                     ['priceList' => $discriminationValue]
                 );

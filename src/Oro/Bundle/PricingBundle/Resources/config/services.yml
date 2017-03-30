@@ -961,7 +961,7 @@ services:
         class: 'Oro\Bundle\PricingBundle\Sharding\ShardManager'
         calls:
             - [setRegistry, ['@doctrine']]
-            - [addEntityForShard, ['%oro_pricing.entity.product_price.class%']]
+            - [addEntityForShard, ['prices', '%oro_pricing.entity.product_price.class%']]
             - [setConfigProvider, ['@oro_entity_config.provider.sharding']]
             - [setEnableSharding, ['%enable_price_sharding%']]
 

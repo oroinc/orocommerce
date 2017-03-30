@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\PricingBundle\Sharding;
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Schema\Constraint;
@@ -12,9 +13,12 @@ use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Oro\Bundle\EntityBundle\ORM\DatabaseDriverInterface;
 use Oro\Bundle\EntityConfigBundle\Provider\ConfigProvider;
-use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
+/**
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ */
 class ShardManager implements \Serializable
 {
     /**
@@ -51,7 +55,24 @@ class ShardManager implements \Serializable
     }
 
     /**
-     * @param $className
+     * @param string $className
+     * @param array $attributes
+     * @return string
+     * @throws \Exception
+     */
+    public function getEnabledShardName($className, array $attributes)
+    {
+        $baseTableName = $this->getEntityBaseTable($className);
+
+        if (!$this->enableSharding) {
+            return $baseTableName;
+        }
+
+        return $this->getShardName($className, $attributes);
+    }
+
+    /**
+     * @param string $className
      * @param array $attributes
      * @return string
      * @throws \Exception
@@ -59,29 +80,134 @@ class ShardManager implements \Serializable
     public function getShardName($className, array $attributes)
     {
         $baseTableName = $this->getEntityBaseTable($className);
+        $discValue = $this->getDiscriminationValue($className, $attributes);
 
-        if (!$this->enableSharding) {
-            return $baseTableName;
-        }
-        if (!isset($attributes['priceList'])) {
-            throw new \Exception(
-                sprintf("Required attribute '%s' for generation of shard name missing.", "priceList")
-            );
-        } elseif (is_a($attributes['priceList'], PriceList::class)) {
-            /** @var PriceList $priceList */
-            $priceList = $attributes['priceList'];
-            $id = $priceList->getId();
-        } elseif (is_int($attributes['priceList']) || is_string($attributes['priceList'])) {
-            $id = $attributes['priceList'];
-        } else {
-            throw new \Exception(sprintf("Wrong type of '%s' to generate shard name.", "priceList"));
-        }
-
-        return sprintf("%s_%s", $baseTableName, $id);
+        return sprintf("%s_%s", $baseTableName, $discValue);
     }
 
     /**
-     * @param $className
+     * @param string $className
+     */
+    public function moveDataFromBaseTableToShard($className)
+    {
+        $baseTableName = $this->getBaseTableName($className);
+        $connection = $this->getConnection();
+
+        foreach ($this->getShardsAttributes($className) as $attributes) {
+            $shardName = $this->getShardName($className, $attributes);
+            $discriminationValue = $this->getDiscriminationValue($className, $attributes);
+
+            if (!$this->exists($shardName)) {
+                $this->create($className, $shardName);
+            }
+
+            $column = $connection->getDatabasePlatform()->quoteIdentifier($this->getDiscriminationColumn($className));
+            $columnsStr = $this->getColumnsPlaceholder($className);
+            $sql = "INSERT INTO $shardName ($columnsStr) SELECT $columnsStr FROM $baseTableName WHERE $column = :value";
+            $connection->executeUpdate($sql, ["value" => $discriminationValue]);
+        }
+        $connection->exec("DELETE FROM $baseTableName");
+    }
+
+    /**
+     * @param string $class
+     */
+    public function moveDataFromShardsToBaseTable($class)
+    {
+        $connection = $this->getConnection();
+        $baseTableName = $this->getBaseTableName($class);
+
+        foreach ($this->getShardsAttributes($class) as $attributes) {
+            $shardName = $this->getShardName($class, $attributes);
+            if (!$this->exists($shardName)) {
+                continue;
+            }
+            $columnsStr = $this->getColumnsPlaceholder($class);
+            $sql = "INSERT INTO $baseTableName ($columnsStr) SELECT $columnsStr FROM $shardName";
+            $connection->executeUpdate($sql);
+            $this->delete($shardName);
+        }
+    }
+
+    /**
+     * @param string $class
+     * @return array
+     */
+    protected function getShardsAttributes($class)
+    {
+        $discFieldName = $this->getDiscriminationField($class);
+        /** @var EntityManager $em */
+        $em = $this->registry->getManagerForClass($class);
+        $metadata = $em->getClassMetadata($class);
+        /** @var ClassMetadata $targetMetadata */
+        $targetMetadata = $em->getClassMetadata($metadata->getAssociationTargetClass($discFieldName));
+        $targetColumnName = $metadata->getSingleAssociationReferencedJoinColumnName($discFieldName);
+        $targetFieldName = $targetMetadata->getFieldForColumn($targetColumnName);
+        $qb = $em->getRepository($metadata->getAssociationTargetClass($discFieldName))->createQueryBuilder('target');
+
+        $attributes = $qb->select("target.$targetFieldName as $discFieldName")->getQuery()->getArrayResult();
+
+        return $attributes;
+    }
+
+    /**
+     * @param string $class
+     * @return string
+     */
+    protected function getColumnsPlaceholder($class)
+    {
+        $connection = $this->getConnection();
+        $sm = $connection->getSchemaManager();
+
+        $baseTableName = $this->getBaseTableName($class);
+        /** @var Table $table */
+        $table = $sm->listTableDetails($baseTableName);
+        $columns = [];
+        foreach ($table->getColumns() as $column) {
+            $columns[] = $column->getQuotedName($connection->getDatabasePlatform());
+        }
+        return implode(', ', $columns);
+    }
+
+    /**
+     * @param string $class
+     * @param array $attributes
+     * @return mixed
+     * @throws \Exception
+     */
+    protected function getDiscriminationValue($class, array $attributes)
+    {
+        $em = $this->registry->getManagerForClass($class);
+        /** @var ClassMetadata $metadata */
+        $metadata = $em->getClassMetadata($class);
+        $discFieldName = $this->getDiscriminationField($class);
+        if (!array_key_exists($discFieldName, $attributes)) {
+            throw new \Exception(
+                sprintf("Required attribute '%s' for generation of shard name missing.", $discFieldName)
+            );
+        }
+        $discValue = $attributes[$discFieldName];
+        if (!is_object($discValue)) {
+            return $discValue;
+        }
+        $accessor = new PropertyAccessor();
+        /** @var ClassMetadata $targetMetadata */
+        $targetClassName = $metadata->getAssociationTargetClass($discFieldName);
+        if (!is_a($discValue, $targetClassName)) {
+            throw new \Exception(
+                sprintf("Wrong type of '%s' to generate shard name.", $discFieldName)
+            );
+        }
+
+        $targetMetadata = $em->getClassMetadata($targetClassName);
+        $targetColumnName = $metadata->getSingleAssociationReferencedJoinColumnName($discFieldName);
+        $targetFieldName = $targetMetadata->getFieldForColumn($targetColumnName);
+
+        return $accessor->getValue($discValue, $targetFieldName);
+    }
+
+    /**
+     * @param string $className
      * @return bool
      */
     public function isEntitySharded($className)
@@ -169,7 +295,7 @@ class ShardManager implements \Serializable
     }
 
     /**
-     * @return EntityManager
+     * @return EntityManager|ObjectManager
      */
     public function getEntityManager()
     {
@@ -198,17 +324,18 @@ class ShardManager implements \Serializable
     }
 
     /**
-     * @param $className
+     * @param string $alias
+     * @param string $className
      */
-    public function addEntityForShard($className)
+    public function addEntityForShard($alias, $className)
     {
-        $this->shardList[] = $className;
+        $this->shardList[$alias] = $className;
         $this->shardMap = [];
     }
 
     /**
-     * @param $className
-     * @return mixed
+     * @param string $className
+     * @return string mixed
      * @throws \Exception
      */
     public function getEntityBaseTable($className)
@@ -235,7 +362,7 @@ class ShardManager implements \Serializable
     }
 
     /**
-     * @param $className
+     * @param string $className
      * @return string
      */
     public function getDiscriminationField($className)
@@ -245,23 +372,24 @@ class ShardManager implements \Serializable
     }
 
     /**
-     * @param $className
+     * @param string $className
      * @return string
+     * @throws \Exception
      */
     public function getDiscriminationColumn($className)
     {
         $fieldName = $this->getDiscriminationField($className);
-        $columnName = $fieldName;
         $em = $this->registry->getManagerForClass($className);
         /** @var ClassMetadata $metadata */
         $metadata = $em->getClassMetadata($className);
-        if (isset($metadata->columnNames[$fieldName])) {
-            $columnName = $metadata->columnNames[$fieldName];
-        } elseif (isset($metadata->associationMappings[$fieldName])) {
-            $columnName = $metadata->associationMappings[$fieldName]['joinColumns'][0]['name'];
+
+        if (!$metadata->hasAssociation($fieldName)) {
+            throw new \Exception(
+                sprintf("Class '%s' has invalid '%s' discrimination field config", $className, $fieldName)
+            );
         }
 
-        return $columnName;
+        return $metadata->getSingleAssociationJoinColumnName($fieldName);
     }
 
     /**
@@ -290,7 +418,7 @@ class ShardManager implements \Serializable
     }
 
     /**
-     * @param $enableSharding
+     * @param boolean $enableSharding
      */
     public function setEnableSharding($enableSharding)
     {
@@ -306,10 +434,10 @@ class ShardManager implements \Serializable
     }
 
     /**
-     * @param $table
+     * @param Table $table
      * @return array
      */
-    protected function getCreateTableQueries($table)
+    protected function getCreateTableQueries(Table $table)
     {
         $connection = $this->getConnection();
         $connection->getDriver();
@@ -331,5 +459,13 @@ class ShardManager implements \Serializable
         }
 
         return $createQueries;
+    }
+
+    /**
+     * @return array
+     */
+    public function getShardList()
+    {
+        return $this->shardList;
     }
 }
