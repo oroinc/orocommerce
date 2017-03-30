@@ -1,0 +1,10 @@
+services:
+    oro_apruve.integation.payments_pro.channel:
+        class: 'Oro\Bundle\ApruveBundle\Integration\ApruveChannelType'
+        tags:
+            - { name: oro_integration.channel, type: apruve }
+
+    oro_apruve.integration.payflow_gateway.transport:
+        class: 'Oro\Bundle\ApruveBundle\Integration\ApruveTransport'
+        tags:
+            - { name: oro_integration.transport, type: apruve, channel_type: apruve }

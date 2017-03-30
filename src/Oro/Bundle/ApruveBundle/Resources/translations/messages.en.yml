@@ -1,2 +1,4 @@
 oro:
     apruve:
+        channel_type.label: Apruve
+        settings.label: Apruve Settings
