@@ -1,0 +1,48 @@
+{% block oro_authorize_net_settings_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    <fieldset class="form-horizontal">
+        <h5 class="user-fieldset">
+            <span>{{ 'oro.authorize_net.settings.form.groups.display_options.title'|trans }}</span>
+        </h5>
+        <div class="control-group control-group-choice">
+            <div class="control-label wrap">
+                {{ UI.tooltip('oro.authorize_net.settings.label.tooltip', {}, 'right') }}
+                {{ form_label(form.creditCardLabels) }}
+            </div>
+            <div class="controls">
+                {{ form_widget(form.creditCardLabels) }}
+            </div>
+        </div>
+        <div class="control-group control-group-choice">
+            <div class="control-label wrap">
+                {{ UI.tooltip('oro.authorize_net.settings.short_label.tooltip', {}, 'right') }}
+                {{ form_label(form.creditCardShortLabels) }}
+            </div>
+            <div class="controls">
+                {{ form_widget(form.creditCardShortLabels) }}
+            </div>
+        </div>
+        {{ form_row(form.allowedCreditCardTypes) }}
+    </fieldset>
+    <fieldset class="form-horizontal">
+        <h5 class="user-fieldset">
+            <span>{{ 'oro.authorize_net.settings.form.groups.integration.title'|trans }}</span>
+        </h5>
+        {{ form_row(form.apiLogin) }}
+        {{ form_row(form.transactionKey) }}
+        {{ form_row(form.clientKey) }}
+        {{ form_row(form.testMode) }}
+    </fieldset>
+    <fieldset class="form-horizontal">
+        <h5 class="user-fieldset">
+            <span>{{ 'oro.authorize_net.settings.form.groups.advanced_settings.title'|trans }}</span>
+        </h5>
+        {{ form_row(form.creditCardPaymentAction) }}
+    </fieldset>
+    <fieldset class="form-horizontal">
+        <h5 class="user-fieldset">
+            <span>{{ 'oro.authorize_net.settings.form.groups.other.title'|trans }}</span>
+        </h5>
+        {{ form_rest(form) }}
+    </fieldset>
+{% endblock %}

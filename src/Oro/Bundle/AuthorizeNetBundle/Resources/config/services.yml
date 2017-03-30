@@ -1,0 +1,10 @@
+services:
+    oro_authorize_net.integation.authorize_net.channel:
+        class: 'Oro\Bundle\AuthorizeNetBundle\Integration\AuthorizeNetChannelType'
+        tags:
+            - { name: oro_integration.channel, type: authorize_net }
+
+    oro_authorize_net.integration.authorize_net.transport:
+        class: 'Oro\Bundle\AuthorizeNetBundle\Integration\AuthorizeNetTransport'
+        tags:
+            - { name: oro_integration.transport, type: authorize_net, channel_type: authorize_net }

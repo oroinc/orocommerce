@@ -1,0 +1,34 @@
+oro:
+    authorize_net:
+        settings:
+            label: 'Authorize.NET'
+            api_login.label: 'API Login ID'
+            transaction_key.label: 'Transaction Key'
+            client_key.label: 'Client Key'
+            label.tooltip: 'This label is used on the checkout screens'
+            short_label.tooltip: 'This label is used in order history'
+            credit_card_payment_action.label: 'Payment Action'
+            credit_card_labels.label: 'Label'
+            credit_card_short_labels.label: 'Short Label'
+            test_mode.label: 'Test Mode'
+            payment_action:
+                label: 'Payment Action'
+                authorize: 'Authorize'
+                charge: 'Authorize and Charge'
+            allowed_cc_types:
+                label: 'Allowed Credit Card Types'
+                visa: 'Visa'
+                mastercard: 'Mastercard'
+                discover: 'Discover'
+                american_express: 'American Express'
+            form:
+                groups:
+                    display_options.title: 'Display Options'
+                    integration.title: 'Integration'
+                    connection.title: 'Connection Options'
+                    advanced_settings.title: 'Advanced Settings'
+                    other.title: 'Other'
+        channel_type:
+            authorize_net.label: 'Authorize.NET'
+
+
