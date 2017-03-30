@@ -5,7 +5,7 @@ namespace Oro\Bundle\PricingBundle\Entity\Repository;
 use Doctrine\ORM\Id\UuidGenerator;
 use Doctrine\ORM\Query;
 use Doctrine\ORM\Query\Expr\Join;
-use Oro\Bundle\BatchBundle\ORM\Query\BufferedIdentityQueryResultIterator;
+use Oro\Bundle\BatchBundle\ORM\Query\BufferedQueryResultIterator;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -71,7 +71,7 @@ class ProductPriceRepository extends BaseProductPriceRepository
         $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
         $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
 
-        $iterator = new BufferedIdentityQueryResultIterator($query);
+        $iterator = new BufferedQueryResultIterator($query);
         $iterator->setHydrationMode(Query::HYDRATE_SCALAR);
         $iterator->setBufferSize(self::BUFFER_SIZE);
 

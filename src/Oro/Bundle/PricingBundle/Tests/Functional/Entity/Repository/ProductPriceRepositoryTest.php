@@ -182,10 +182,11 @@ class ProductPriceRepositoryTest extends WebTestCase
         foreach ($priceReferences as $priceReference) {
             $expectedPrices[] = $this->getReference($priceReference);
         }
-
+        $exppectedResult = $this->getPriceIds($expectedPrices);
+        $result = $this->getPriceIds($this->repository->getPricesByProduct($this->shardManager, $product));
         $this->assertEquals(
-            $this->getPriceIds($expectedPrices),
-            $this->getPriceIds($this->repository->getPricesByProduct($this->shardManager, $product))
+            sort($exppectedResult),
+            sort($result)
         );
     }
 
