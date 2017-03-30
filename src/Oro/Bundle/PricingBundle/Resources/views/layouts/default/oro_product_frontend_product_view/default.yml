@@ -1,0 +1,7 @@
+layout:
+    imports:
+        -
+            id: oro_product_price_table
+            root: product_view_specification_container
+    actions: []
+    conditions: '!context["is_mobile"] && !context["page_template"]'
