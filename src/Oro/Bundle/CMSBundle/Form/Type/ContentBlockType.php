@@ -25,7 +25,7 @@ class ContentBlockType extends AbstractType
                 'alias',
                 TextType::class,
                 [
-                    'label' => 'oro.cms.page.alias.label',
+                    'label' => 'oro.cms.contentblock.alias.label',
                     'required' => true
                 ]
             )
@@ -33,7 +33,7 @@ class ContentBlockType extends AbstractType
                 'titles',
                 LocalizedFallbackValueCollectionType::NAME,
                 [
-                    'label' => 'oro.cms.page.titles.label',
+                    'label' => 'oro.cms.contentblock.titles.label',
                     'required' => true,
                     'options' => ['constraints' => [new NotBlank()]]
                 ]
@@ -42,7 +42,7 @@ class ContentBlockType extends AbstractType
                 'enabled',
                 CheckboxType::class,
                 [
-                    'label' => 'oro.cms.page.enabled.label',
+                    'label' => 'oro.cms.contentblock.enabled.label',
                     'required' => false
                 ]
             )
@@ -59,7 +59,7 @@ class ContentBlockType extends AbstractType
                 'contentVariants',
                 TextContentVariantCollectionType::class,
                 [
-                    'label' => 'oro.cms.page.text_content_variants.label',
+                    'label' => 'oro.cms.contentblock.content_variants.label',
                 ]
             );
     }

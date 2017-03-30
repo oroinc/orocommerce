@@ -19,7 +19,7 @@ class ContentBlockController extends Controller
     /**
      * @Route("/", name="oro_cms_content_block_index")
      * @Template
-     * @AclAncestor("oro_cms_content_block_view")
+     * @AclAncestor("oro_cms_contentblock_view")
      *
      * @return array
      */

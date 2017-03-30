@@ -73,3 +73,11 @@ services:
             - '%oro_cms.entity.page.class%'
         tags:
             - { name: kernel.event_listener, event: oro_config.update_after, method: onUpdateAfter }
+
+    oro_locale.localization_scope_criteria_provider:
+        class: 'Oro\Bundle\LocaleBundle\Provider\LocalizationScopeCriteriaProvider'
+        public: false
+        arguments:
+            - "@oro_locale.provider.current_localization"
+        tags:
+            - {name: oro_scope.provider, scopeType: cms_content_block, priority: 1}

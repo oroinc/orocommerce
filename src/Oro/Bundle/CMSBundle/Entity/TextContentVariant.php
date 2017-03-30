@@ -86,7 +86,7 @@ class TextContentVariant implements
     }
 
     /**
-     * {@inheritdoc}
+     * @return ContentBlock
      */
     public function getContentBlock()
     {

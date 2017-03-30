@@ -23,7 +23,6 @@ Oro\Bundle\CMSBundle\Entity\ContentBlock:
             - Oro\Bundle\CustomerBundle\Validator\Constraints\ScopeWithCustomerGroupAndCustomer: ~
         contentVariants:
             - Valid: ~
-            - NotBlank: ~
 
 Oro\Bundle\CMSBundle\Entity\TextContentVariant:
     properties:

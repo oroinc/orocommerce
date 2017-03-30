@@ -38,7 +38,10 @@ class ContentBlockResolver
         $contentVariants = $contentBlock->getContentVariants();
         $mostSuitableContentVariant = $this->getMostSuitableContentVariant($contentVariants, $context);
         if (!$mostSuitableContentVariant) {
-            $mostSuitableContentVariant = $this->getDefaultContentVariant($contentVariants);
+            $mostSuitableContentVariant = $contentBlock->getDefaultVariant();
+            if (null === $mostSuitableContentVariant) {
+                throw new \RuntimeException('Default content variant should be defined.');
+            }
         }
 
         return new ContentBlockView(
@@ -94,22 +97,6 @@ class ContentBlockResolver
         }
 
         return true;
-    }
-
-    /**
-     * @param Collection|TextContentVariant[] $contentVariants
-     * @return TextContentVariant
-     * @throws \RuntimeException
-     */
-    private function getDefaultContentVariant(Collection $contentVariants)
-    {
-        foreach ($contentVariants as $contentVariant) {
-            if ($contentVariant->isDefault()) {
-                return $contentVariant;
-            }
-        }
-
-        throw new \RuntimeException('Default content variant should be defined.');
     }
 
     /**

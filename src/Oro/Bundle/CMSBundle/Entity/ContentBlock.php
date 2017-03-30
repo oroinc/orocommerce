@@ -14,6 +14,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\BusinessUnitAwareTrait;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
+use Oro\Bundle\ScopeBundle\Entity\ScopeCollectionAwareInterface;
 
 /**
  * @ORM\Entity
@@ -42,7 +43,8 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
  */
 class ContentBlock extends ExtendContentBlock implements
     DatesAwareInterface,
-    OrganizationAwareInterface
+    OrganizationAwareInterface,
+    ScopeCollectionAwareInterface
 {
     use BusinessUnitAwareTrait;
     use DatesAwareTrait;
@@ -121,7 +123,6 @@ class ContentBlock extends ExtendContentBlock implements
      *     targetEntity="Oro\Bundle\CMSBundle\Entity\TextContentVariant",
      *     mappedBy="contentBlock",
      *     cascade={"ALL"},
-     *     fetch="EAGER",
      *     orphanRemoval=true
      * )
      */
@@ -218,7 +219,7 @@ class ContentBlock extends ExtendContentBlock implements
     }
 
     /**
-     * @return ArrayCollection|Scope[]
+     * {@inheritDoc}
      */
     public function getScopes()
     {
