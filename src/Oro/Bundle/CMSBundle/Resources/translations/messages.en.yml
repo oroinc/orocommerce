@@ -96,6 +96,5 @@ oro.cms:
         fields:
             landing_page_direct_url_prefix.label: 'Landing Page URL prefix'
 
-    scope:
-        content_block.label: Content Block
+oro.scope.content_block.label: Content Block
 
