@@ -155,7 +155,7 @@ class ProductPriceRepository extends BaseProductPriceRepository
      */
     public function remove(ShardManager $shardManager, BaseProductPrice $price)
     {
-        $tableName = $shardManager->getShardName($this->_entityName, ['priceList' => $price->getPriceList()]);
+        $tableName = $shardManager->getEnabledShardName($this->_entityName, ['priceList' => $price->getPriceList()]);
         $connection = $this->_em->getConnection();
         $qb = $connection->createQueryBuilder();
         $qb->delete($tableName)
@@ -172,7 +172,7 @@ class ProductPriceRepository extends BaseProductPriceRepository
     {
         $connection = $this->_em->getConnection();
         $qb = $connection->createQueryBuilder();
-        $tableName = $shardManager->getShardName($this->_entityName, ['priceList' => $price->getPriceList()]);
+        $tableName = $shardManager->getEnabledShardName($this->_entityName, ['priceList' => $price->getPriceList()]);
         $columns = [
             'price_rule_id' => ':price_rule_id',
             'unit_code' => ':unit_code',

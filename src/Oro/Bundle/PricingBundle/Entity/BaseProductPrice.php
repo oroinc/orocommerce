@@ -303,9 +303,12 @@ class BaseProductPrice implements ProductUnitHolderInterface, ProductHolderInter
 
     /**
      * @param string $id
+     * @return $this
      */
     public function setId($id)
     {
         $this->id = $id;
+
+        return $this;
     }
 }

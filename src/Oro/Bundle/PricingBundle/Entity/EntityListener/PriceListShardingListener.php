@@ -64,13 +64,13 @@ class PriceListShardingListener
     public function postFlush(PostFlushEventArgs $args)
     {
         foreach ($this->priceListsCreate as $priceList) {
-            $shardName = $this->shardManager->getShardName(ProductPrice::class, ['priceList' => $priceList]);
+            $shardName = $this->shardManager->getEnabledShardName(ProductPrice::class, ['priceList' => $priceList]);
             if (!$this->shardManager->exists($shardName)) {
                 $this->shardManager->create(ProductPrice::class, $shardName);
             }
         }
         foreach ($this->priceListsDelete as $priceList) {
-            $shardName = $this->shardManager->getShardName(ProductPrice::class, ['priceList' => $priceList]);
+            $shardName = $this->shardManager->getEnabledShardName(ProductPrice::class, ['priceList' => $priceList]);
             $this->shardManager->delete($shardName);
         }
 

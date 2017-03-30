@@ -83,6 +83,6 @@ class InsertFromSelectShardQueryExecutor extends InsertFromSelectQueryExecutor
             $priceListId = $priceListStatement;
         }
 
-        return $this->shardManager->getShardName($className, ['priceList' => (int)$priceListId]);
+        return $this->shardManager->getEnabledShardName($className, ['priceList' => (int)$priceListId]);
     }
 }

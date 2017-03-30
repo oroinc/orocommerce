@@ -181,7 +181,7 @@ class OroPricingBundleInstaller implements Installation, ActivityExtensionAwareI
     protected function createOroPriceProductTable(Schema $schema)
     {
         $table = $schema->createTable('oro_price_product');
-        $table->addColumn('id', 'string', ['length' => 36, 'comment' => '(DC2Type:guid)']);
+        $table->addColumn('id', 'guid', ['notnull' => false]);
         $table->addColumn('price_rule_id', 'integer', ['notnull' => false]);
         $table->addColumn('unit_code', 'string', ['length' => 255]);
         $table->addColumn('product_id', 'integer', []);
