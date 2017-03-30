@@ -8,3 +8,9 @@ services:
         class: 'Oro\Bundle\AuthorizeNetBundle\Integration\AuthorizeNetTransport'
         tags:
             - { name: oro_integration.transport, type: authorize_net, channel_type: authorize_net }
+
+    oro_authorize_net.method_view_factory:
+        class: 'Oro\Bundle\AuthorizeNetBundle\Method\View\Factory\AuthorizeNetPaymentMethodViewFactory'
+        arguments:
+            - '@form.factory'
+            - '@oro_payment.provider.payment_transaction'
