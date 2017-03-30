@@ -399,3 +399,30 @@ services:
     oro_shipping.method.factory.method_type_change_event:
         class: 'Oro\Bundle\ShippingBundle\Method\Factory\MethodTypeChangeEventFactory'
         public: false
+
+    oro_shipping.method_validator.result_factory_common_parameter_bag:
+        class: 'Oro\Bundle\ShippingBundle\Method\Validator\Result\Factory\Common\ParameterBag\ParameterBagCommonShippingMethodValidatorResultFactory'
+
+    oro_shipping.method_validator.result_error_factory_common_parameter_bag:
+        class: 'Oro\Bundle\ShippingBundle\Method\Validator\Result\Error\Factory\Common\ParameterBag\ParameterBagCommonShippingMethodValidatorResultErrorFactory'
+
+    oro_shipping.method_validator_result_error_collection_builder_common:
+        class: 'Oro\Bundle\ShippingBundle\Method\Validator\Result\Error\Collection\Builder\Common\Doctrine\DoctrineCommonShippingMethodValidatorResultErrorCollectionBuilder'
+
+    oro_shipping.method_validator.main:
+        parent: oro_shipping.method_validator.basic
+
+    oro_shipping.method_validator.basic:
+        class: 'Oro\Bundle\ShippingBundle\Method\Validator\Basic\BasicShippingMethodValidator'
+        arguments:
+            - '@oro_shipping.method_validator.result_factory_common_parameter_bag'
+
+    oro_shipping.method_validator.basic_enabled_shipping_methods_by_rules:
+        class: 'Oro\Bundle\ShippingBundle\Method\Validator\EnabledShippingMethodsByRules\EnabledShippingMethodsByRulesShippingMethodValidator'
+        public: false
+        decorates: oro_shipping.method_validator.main
+        arguments:
+            - '@oro_shipping.method_validator.basic_enabled_shipping_methods_by_rules.inner'
+            - '@oro_shipping.method_validator.result_error_factory_common_parameter_bag'
+            - '@oro_shipping.repository.shipping_method_type_config'
+            - '@translator'

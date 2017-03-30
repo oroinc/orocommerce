@@ -58,10 +58,8 @@ services:
     oro_ups.validator.remove_used_shipping_service:
         class: 'Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceValidator'
         arguments:
-            - "@oro_ups.config.integration_method_identifier_generator"
-            - "@event_dispatcher"
-            - "@oro_ups.repository.shipping_service"
-            - "@oro_shipping.method.factory.method_type_change_event"
+            - "@oro_ups.method.factory.method"
+            - "@oro_shipping.method_validator.main"
         tags:
             - { name: validator.constraint_validator, alias: oro_ups_remove_used_shipping_service_validator }
 

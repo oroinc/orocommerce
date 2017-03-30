@@ -88,7 +88,7 @@ oro:
         method_type:
             shipping_methods_widget:
                 label: '%translatedMethodType%: <strong>%price%</strong>'
-            change.error: 'The following types "%types%" are used in Shipping Rules. Please disable them before removal.'
+            used.error: 'The following types "%types%" are used in Shipping Rules. Please disable them before removal.'
 
         methods:
             label: "Shipping Method"

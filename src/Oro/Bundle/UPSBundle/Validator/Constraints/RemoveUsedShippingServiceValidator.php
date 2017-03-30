@@ -3,12 +3,18 @@
 namespace Oro\Bundle\UPSBundle\Validator\Constraints;
 
 use Oro\Bundle\AddressBundle\Entity\Country;
+use Oro\Bundle\ChannelBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 use Oro\Bundle\ShippingBundle\Method\Event\MethodTypeChangeEvent;
+use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
 use Oro\Bundle\ShippingBundle\Method\Factory\MethodTypeChangeEventFactoryInterface;
+use Oro\Bundle\ShippingBundle\Method\Validator\Result\ShippingMethodValidatorResultInterface;
+use Oro\Bundle\ShippingBundle\Method\Validator\ShippingMethodValidatorInterface;
 use Oro\Bundle\UPSBundle\Entity\Repository\ShippingServiceRepository;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
+use Oro\Component\PropertyAccess\PropertyAccessor;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -18,41 +24,25 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
     const ALIAS = 'oro_ups_remove_used_shipping_service_validator';
 
     /**
-     * @var IntegrationIdentifierGeneratorInterface
+     * @var IntegrationShippingMethodFactoryInterface
      */
-    private $identifierGenerator;
+    private $integrationShippingMethodFactory;
 
     /**
-     * @var EventDispatcherInterface
+     * @var ShippingMethodValidatorInterface
      */
-    private $dispatcher;
+    private $shippingMethodValidator;
 
     /**
-     * @var ShippingServiceRepository
-     */
-    private $serviceRepository;
-
-    /**
-     * @var MethodTypeChangeEventFactoryInterface
-     */
-    private $typeChangeEventFactory;
-
-    /**
-     * @param IntegrationIdentifierGeneratorInterface $identifierGenerator
-     * @param EventDispatcherInterface                $dispatcher
-     * @param ShippingServiceRepository               $serviceRepository
-     * @param MethodTypeChangeEventFactoryInterface   $typeChangeEventFactory
+     * @param IntegrationShippingMethodFactoryInterface $integrationShippingMethodFactory
+     * @param ShippingMethodValidatorInterface          $shippingMethodValidator
      */
     public function __construct(
-        IntegrationIdentifierGeneratorInterface $identifierGenerator,
-        EventDispatcherInterface $dispatcher,
-        ShippingServiceRepository $serviceRepository,
-        MethodTypeChangeEventFactoryInterface $typeChangeEventFactory
+        IntegrationShippingMethodFactoryInterface $integrationShippingMethodFactory,
+        ShippingMethodValidatorInterface $shippingMethodValidator
     ) {
-        $this->identifierGenerator = $identifierGenerator;
-        $this->dispatcher = $dispatcher;
-        $this->serviceRepository = $serviceRepository;
-        $this->typeChangeEventFactory = $typeChangeEventFactory;
+        $this->integrationShippingMethodFactory = $integrationShippingMethodFactory;
+        $this->shippingMethodValidator = $shippingMethodValidator;
     }
 
     /**
@@ -65,100 +55,30 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
             return;
         }
 
-        $event = $this->buildMethodTypeChangeEvent($value);
-        $this->dispatcher->dispatch(MethodTypeChangeEvent::NAME, $event);
-
-        if ($event->hasErrors()) {
-            $this->handleErrors($event, $value);
-        }
-    }
-
-    /**
-     * @param MethodTypeChangeEvent $event
-     * @param UPSTransport          $transport
-     */
-    private function handleErrors(MethodTypeChangeEvent $event, UPSTransport $transport)
-    {
-        $serviceDescriptions = $this->getAllServiceDescriptions($transport->getCountry());
-
-        $errorDescriptions = [];
-        foreach ($event->getErrorTypes() as $type) {
-            if (!array_key_exists($type, $serviceDescriptions)) {
-                continue;
-            }
-
-            $errorDescriptions[] = $serviceDescriptions[$type];
+        if (!$value->getChannel()) {
+            return;
         }
 
-        $this->addViolation(
-            $event->getErrorMessagePlaceholder(),
-            implode(', ', $errorDescriptions)
-        );
+        $upsShippingMethod = $this->integrationShippingMethodFactory->create($value->getChannel());
+        $shippingMethodValidatorResult = $this->shippingMethodValidator->validate($upsShippingMethod);
+
+        $this->handleValidationResult($shippingMethodValidatorResult);
     }
 
-    /**
-     * @param string $messagePlaceholder
-     * @param string $errorTypes
-     */
-    private function addViolation($messagePlaceholder, $errorTypes)
+    private function handleValidationResult(ShippingMethodValidatorResultInterface $shippingMethodValidatorResult)
     {
+        if ($shippingMethodValidatorResult->getErrors()->isEmpty()) {
+            return;
+        }
+
         /** @var ExecutionContextInterface $context */
         $context = $this->context;
 
-        $context->buildViolation($messagePlaceholder)
-            ->setParameter('%types%', $errorTypes)
-            ->setTranslationDomain(null)
-            ->atPath('applicableShippingServices')
-            ->addViolation();
-    }
-
-    /**
-     * @param UPSTransport $transport
-     *
-     * @return MethodTypeChangeEvent
-     */
-    private function buildMethodTypeChangeEvent(UPSTransport $transport)
-    {
-        $selectedServiceCodes = $this->getSelectedServiceCodes($transport);
-
-        $methodIdentifier = $this->identifierGenerator->generateIdentifier(
-            $transport->getChannel()
-        );
-
-        return $this->typeChangeEventFactory->create($selectedServiceCodes, $methodIdentifier);
-    }
-
-    /**
-     * @param Country $country
-     *
-     * @return array<code => description>
-     */
-    private function getAllServiceDescriptions(Country $country)
-    {
-        $shippingServices = $this->serviceRepository->getShippingServicesByCountry($country);
-
-        $names = [];
-        foreach ($shippingServices as $service) {
-            $names[$service->getCode()] = $service->getDescription();
+        foreach ($shippingMethodValidatorResult->getErrors() as $error) {
+            $context->buildViolation($error->getMessage())
+                ->setTranslationDomain(null)
+                ->atPath('applicableShippingServices')
+                ->addViolation();
         }
-
-        return $names;
-    }
-
-    /**
-     * @param UPSTransport $transport
-     *
-     * @return string[]
-     */
-    private function getSelectedServiceCodes(UPSTransport $transport)
-    {
-        $selectedServices = $transport->getApplicableShippingServices();
-
-        $codes = [];
-        foreach ($selectedServices as $service) {
-            $codes[] = $service->getCode();
-        }
-
-        return $codes;
     }
 }
