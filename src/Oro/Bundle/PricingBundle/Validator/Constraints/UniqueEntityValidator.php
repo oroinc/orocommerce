@@ -3,15 +3,14 @@
 namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Util\ClassUtils;
-
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
+use Symfony\Component\Validator\Context\ExecutionContext;
 use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
-
-use Oro\Bundle\PricingBundle\Sharding\ShardManager;
-use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 
 class UniqueEntityValidator extends ConstraintValidator
 {
@@ -37,6 +36,10 @@ class UniqueEntityValidator extends ConstraintValidator
     }
 
     /**
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     *
+     * @param UniqueEntity $constraint
      * {@inheritdoc}
      */
     public function validate($entity, Constraint $constraint)
@@ -50,10 +53,14 @@ class UniqueEntityValidator extends ConstraintValidator
                 )
             );
         }
+        if ($entity->getProduct() && null === $entity->getProduct()->getId()) {
+            // for new product prices can't exist in db
+            return;
+        }
         $em = $this->registry->getManager();
 
-        /* @var $class ClassMetadata */
-        $class =  $em->getClassMetadata(ProductPrice::class);
+        /* @var ClassMetadata $class */
+        $class = $em->getClassMetadata(ProductPrice::class);
         $fields = $constraint->fields;
         $criteria = [];
         foreach ($fields as $fieldName) {
@@ -87,6 +94,8 @@ class UniqueEntityValidator extends ConstraintValidator
             return;
         }
 
-        $this->context->buildViolation($constraint->message)->addViolation();
+        /** @var ExecutionContext $context */
+        $context = $this->context;
+        $context->buildViolation($constraint->message)->addViolation();
     }
 }

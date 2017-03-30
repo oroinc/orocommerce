@@ -506,7 +506,7 @@ abstract class BaseProductPriceRepository extends EntityRepository
     ) {
         $qb = $this->createQueryBuilder('prices');
         $qb->andWhere('prices.priceList = :priceList')
-        ->setParameter('priceList', $priceList);
+            ->setParameter('priceList', $priceList);
         foreach ($criteria as $field => $criterion) {
             if ($criterion === null) {
                 $qb->andWhere($qb->expr()->isNull('prices.'.$field));
