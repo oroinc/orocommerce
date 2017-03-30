@@ -34,7 +34,6 @@ class ProductPriceProvider
     {
         $this->registry = $registry;
         $this->shardManager = $shardManager;
-
     }
 
     /**

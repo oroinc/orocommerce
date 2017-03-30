@@ -14,6 +14,7 @@ use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
@@ -259,7 +260,8 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                                     ],
                                 ],
                             ],
-                        ]
+                        ],
+                        'hints' => [PriceShardWalker::HINT_PRICE_SHARD],
                     ]
                 ],
             ],

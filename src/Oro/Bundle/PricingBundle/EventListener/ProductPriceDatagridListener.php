@@ -12,6 +12,7 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Symfony\Component\Translation\TranslatorInterface;
@@ -84,6 +85,7 @@ class ProductPriceDatagridListener
                 $this->addProductPriceCurrencyColumn($config, $currencyIsoCode, $unit);
             }
         }
+        $config->getOrmQuery()->addHint(PriceShardWalker::HINT_PRICE_SHARD);
     }
 
     /**

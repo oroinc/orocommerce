@@ -65,6 +65,7 @@ class PriceManager
      */
     protected function doSave(ProductPrice $price)
     {
+        $price->updatePrice();
         $class = ClassUtils::getRealClass(get_class($price));
         /** @var ProductPriceRepository $repository */
         $em = $this->shardManager->getEntityManager();

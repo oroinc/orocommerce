@@ -81,7 +81,8 @@ class DefaultPriceListFilterTypeTest extends AbstractTypeTestCase
         if ($defaultOptions) {
             $resolver->expects($this->exactly(2))
                 ->method('setDefaults')
-                ->willReturnMap([
+                ->willReturnMap(
+                    [
                         [$defaultOptions, $this->returnSelf()],
                         [['default_value' => 'Default Price List'], $this->returnSelf()]
                     ]

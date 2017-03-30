@@ -96,9 +96,10 @@ class LoadProductPriceDemoData extends AbstractLoadProductPriceDemoData
 
         foreach ($tiers as $qty => $discount) {
             $price = clone $productPrice;
+            $currentPrice = clone $unitPrice;
             $price
                 ->setQuantity($qty)
-                ->setPrice($unitPrice->setValue(round($unitPrice->getValue() * (1 - $discount), 2)));
+                ->setPrice($currentPrice->setValue(round($unitPrice->getValue() * (1 - $discount), 2)));
             $priceManager->persist($price);
         }
     }

@@ -37,11 +37,6 @@ class PriceShardWalker extends SqlWalker
     }
 
     /**
-     * SELECT * FROM oro_product o0_
-     * LEFT JOIN oro_price_list_to_product o2_ ON (o2_.price_list_id = ? AND o2_.product_id = o0_.id)  // level 2
-     * LEFT JOIN oro_price_list o3_ ON (o2_.price_list_id = o3_.id)                                    // level 1
-     * LEFT JOIN oro_price_product o1_ ON (o1_.product_id = o0_.id AND o1_.price_list_id = o3_.id)     // level 0
-     *
      * @param string $sql
      * @return string
      * @throws \Exception
@@ -92,6 +87,15 @@ class PriceShardWalker extends SqlWalker
             //get parameter value
             return $this->findParameterValue($sql, $foundParameterPosition, $parameterSet);
         } else {
+            //check direct id
+            preg_match_all('~[ (]' . $discriminationField . ' = ([\d]+)[ )]~', $sql, $matches);
+            if (empty($matches[1])) {
+                $expr = '~[ (]([\d]+) = ' . $discriminationField . '[ )]~';
+                preg_match_all($expr, $sql, $matches);
+            }
+            if (!empty($matches[1])) {
+                return $matches[1][0];
+            }
             preg_match_all('~[ (]' . $discriminationField . ' = ([.\w_-]+)[ )]~', $sql, $matches);
             if (empty($matches[1])) {
                 $expr = '~[ (]([.\w_-]+) = ' . $discriminationField . '[ )]~';
