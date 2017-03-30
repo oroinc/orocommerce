@@ -6,6 +6,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\Mapping\ClassMetadata;
 use Doctrine\Common\Util\ClassUtils;
 
+use Doctrine\ORM\EntityManager;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
@@ -50,12 +51,38 @@ class UniqueEntityValidator extends ConstraintValidator
                 )
             );
         }
+        /** @var EntityManager $em */
         $em = $this->registry->getManager();
+        $criteria = [];
+        $fields = $constraint->fields;
+        $this->getCriteria($em, $entity, $criteria, $fields);
+        $priceList = $entity->getPriceList();
+        $result = $em
+            ->getRepository(ProductPrice::class)
+            ->findByPriceList(
+                $this->shardManager,
+                $priceList,
+                $criteria
+            );
 
+        $countResult = count($result);
+        if (0 === $countResult || (1 === $countResult && $entity === current($result))) {
+            return;
+        }
+        $this->context->buildViolation($constraint->message)->addViolation();
+    }
+
+    /**
+     * @param EntityManager $em
+     * @param ProductPrice $entity
+     * @param array $criteria
+     * @param $fields
+     */
+    private function getCriteria(EntityManager $em, ProductPrice $entity, array &$criteria, $fields)
+    {
         /* @var $class ClassMetadata */
         $class =  $em->getClassMetadata(ProductPrice::class);
-        $fields = $constraint->fields;
-        $criteria = [];
+
         foreach ($fields as $fieldName) {
             if (!$class->hasField($fieldName) && !$class->hasAssociation($fieldName)) {
                 throw new ConstraintDefinitionException(
@@ -73,20 +100,5 @@ class UniqueEntityValidator extends ConstraintValidator
                 $em->initializeObject($criteria[$fieldName]);
             }
         }
-
-        $priceList = $entity->getPriceList();
-        $result = $em
-            ->getRepository(ProductPrice::class)
-            ->findByPriceList(
-                $this->shardManager,
-                $priceList,
-                $criteria
-            );
-
-        if (0 === count($result) || (1 === count($result) && $entity === current($result))) {
-            return;
-        }
-
-        $this->context->buildViolation($constraint->message)->addViolation();
     }
 }
