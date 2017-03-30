@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\Validator\Constraints;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Util\ClassUtils;
+use Doctrine\ORM\EntityManager;
 use Doctrine\ORM\Mapping\ClassMetadata;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
@@ -72,7 +73,9 @@ class UniqueEntityValidator extends ConstraintValidator
         if (0 === $countResult || (1 === $countResult && $entity === current($result))) {
             return;
         }
-        $this->context->buildViolation($constraint->message)->addViolation();
+        /** @var ExecutionContext $context */
+        $context = $this->context;
+        $context->buildViolation($constraint->message)->addViolation();
     }
 
     /**
@@ -83,8 +86,8 @@ class UniqueEntityValidator extends ConstraintValidator
      */
     private function getCriteria(EntityManager $em, ProductPrice $entity, array &$criteria, $fields)
     {
-        /* @var $class ClassMetadata */
-        $class =  $em->getClassMetadata(ProductPrice::class);
+        /* @var ClassMetadata $class */
+        $class = $em->getClassMetadata(ProductPrice::class);
 
         foreach ($fields as $fieldName) {
             if (!$class->hasField($fieldName) && !$class->hasAssociation($fieldName)) {
