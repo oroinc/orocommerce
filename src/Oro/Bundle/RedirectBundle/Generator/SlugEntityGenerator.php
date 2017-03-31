@@ -4,14 +4,15 @@ namespace Oro\Bundle\RedirectBundle\Generator;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+
 use Oro\Bundle\LocaleBundle\Entity\Localization;
-use Oro\Bundle\LocaleBundle\Helper\LocalizationHelper;
 use Oro\Bundle\RedirectBundle\Cache\UrlStorageCache;
 use Oro\Bundle\RedirectBundle\Entity\LocalizedSlugPrototypeAwareInterface;
 use Oro\Bundle\RedirectBundle\Entity\Slug;
 use Oro\Bundle\RedirectBundle\Entity\SluggableInterface;
 use Oro\Bundle\RedirectBundle\Generator\DTO\SlugUrl;
 use Oro\Bundle\RedirectBundle\Provider\RoutingInformationProviderInterface;
+
 use Oro\Component\Routing\RouteData;
 
 class SlugEntityGenerator
@@ -36,7 +37,6 @@ class SlugEntityGenerator
      * @param UniqueSlugResolver $slugResolver
      * @param RedirectGenerator $redirectGenerator
      * @param UrlStorageCache $urlStorageCache
-     * @param LocalizationHelper $localizationHelper
      */
     public function __construct(
         RoutingInformationProviderInterface $routingInformationProvider,
