@@ -97,6 +97,7 @@ class ProductPriceProvider
             $code = $productPriceCriteria->getProductUnit()->getCode();
             $quantity = $productPriceCriteria->getQuantity();
             $currency = $productPriceCriteria->getCurrency();
+            $precision = $productPriceCriteria->getProductUnit()->getDefaultPrecision();
 
             $productPrices = array_filter(
                 $prices,
@@ -105,38 +106,52 @@ class ProductPriceProvider
                 }
             );
 
-            $price = $this->matchPriceByQuantity($productPrices, $quantity);
-
-            $result[$productPriceCriteria->getIdentifier()] = $price !== null ? Price::create($price, $currency) : null;
+            list($price, $matchedQuantity) = $this->matchPriceByQuantity($productPrices, $quantity);
+            if ($price !== null) {
+                $result[$productPriceCriteria->getIdentifier()] = Price::create(
+                    $this->recalculatePricePerUnit($price, $matchedQuantity, $precision),
+                    $currency
+                );
+            } else {
+                $result[$productPriceCriteria->getIdentifier()] = null;
+            }
         }
 
         return $result;
     }
 
     /**
+     * @param float $price
+     * @param float $quantityPerAmount
+     * @param int $precision
+     * @return float
+     */
+    protected function recalculatePricePerUnit($price, $quantityPerAmount, $precision)
+    {
+        return $precision > 0 ?
+            $price / $quantityPerAmount :
+            $price;
+    }
+
+    /**
      * @param array $prices
      * @param float $expectedQuantity
-     * @return float
+     * @return array
      */
     protected function matchPriceByQuantity(array $prices, $expectedQuantity)
     {
         $price = null;
-
+        $matchedQuantity = null;
         foreach ($prices as $productPrice) {
             $quantity = (float)$productPrice['quantity'];
 
-            if ($expectedQuantity < $quantity) {
-                break;
-            }
-
             if ($expectedQuantity >= $quantity) {
                 $price = (float)$productPrice['value'];
-            } else {
-                break;
+                $matchedQuantity = $quantity;
             }
         }
 
-        return $price;
+        return [$price, $matchedQuantity];
     }
 
     /**

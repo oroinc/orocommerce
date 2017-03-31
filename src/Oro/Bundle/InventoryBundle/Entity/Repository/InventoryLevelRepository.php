@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\InventoryBundle\Entity\InventoryLevel;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
 
 class InventoryLevelRepository extends EntityRepository
 {
@@ -20,6 +21,24 @@ class InventoryLevelRepository extends EntityRepository
         return $this->getQBForProductAndProductUnit($product, $productUnit)
             ->getQuery()
             ->getOneOrNullResult();
+    }
+
+    /**
+     * @param Product $product
+     * @param ProductUnitPrecision $productUnitPrecision
+     */
+    public function deleteInventoryLevelByProductAndProductUnitPrecision(
+        Product $product,
+        ProductUnitPrecision $productUnitPrecision
+    ) {
+        $qb = $this->createQueryBuilder('il')
+            ->delete(InventoryLevel::class, 'il')
+            ->where('il.product = :product')
+            ->andWhere('il.productUnitPrecision = :productUnitPrecision')
+            ->setParameter('product', $product)
+            ->setParameter('productUnitPrecision', $productUnitPrecision);
+
+        $qb->getQuery()->execute();
     }
 
     /**

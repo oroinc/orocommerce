@@ -21,7 +21,6 @@ use Oro\Bundle\WebCatalogBundle\Entity\Repository\ContentNodeRepository;
 use Oro\Bundle\WebCatalogBundle\Entity\WebCatalog;
 use Oro\Bundle\WebCatalogBundle\Layout\DataProvider\MenuDataProvider;
 use Oro\Bundle\WebCatalogBundle\Provider\WebCatalogProvider;
-
 use Oro\Component\Testing\Unit\EntityTrait;
 
 class MenuDataProviderTest extends \PHPUnit_Framework_TestCase

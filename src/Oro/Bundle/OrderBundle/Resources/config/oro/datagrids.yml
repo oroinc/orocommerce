@@ -666,7 +666,6 @@ datagrids:
             query:
                 select:
                     - calendarDate.date as cDate
-                    - orderAlias.createdAt as createdAt
                     - lineitem.productUnitCode as unitCode
                     - SUM (lineitem.quantity) as qtySold
                     - product.sku as sku
@@ -690,7 +689,7 @@ datagrids:
                             conditionType: WITH
                             condition: lineitem.product = product.id
 
-                groupBy: cDate, sku, product.id, unitCode, createdAt
+                groupBy: cDate, sku, product.id, unitCode
         properties:
             productName:
                 type: localized_value
