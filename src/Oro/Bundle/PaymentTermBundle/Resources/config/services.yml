@@ -118,3 +118,10 @@ services:
             - 'Oro\Bundle\PaymentTermBundle\Entity\PaymentTermSettings'
         calls:
             - [setAclHelper, ['@oro_security.acl_helper']]
+
+    oro_payment_term.event_listener.import_export_customer_subscriber:
+        class: Oro\Bundle\PaymentTermBundle\EventListener\CustomerImportExportSubscriber
+        arguments:
+            - '@oro_payment_term.provider.payment_term_association'
+        tags:
+            - { name: kernel.event_subscriber }
