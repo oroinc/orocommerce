@@ -2,9 +2,9 @@
 
 namespace Oro\Bundle\ApruveBundle\Integration;
 
-use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
+use Oro\Bundle\ApruveBundle\Form\Type\ApruveSettingsType;
 use Oro\Bundle\ApruveBundle\Entity\ApruveSettings;
 use Oro\Bundle\IntegrationBundle\Entity\Transport;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
@@ -27,8 +27,7 @@ class ApruveTransport implements TransportInterface
      */
     public function getSettingsFormType()
     {
-        // todo@webevt: change to proper Apruve Settings form type, as soon as it is ready.
-        return FormType::class;
+        return ApruveSettingsType::class;
     }
 
      /**

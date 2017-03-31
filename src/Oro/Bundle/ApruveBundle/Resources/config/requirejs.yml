@@ -1,0 +1,3 @@
+config:
+    paths:
+        'oroapruve/js/app/components/webhook-token-component': 'bundles/oroapruve/js/app/components/webhook-token-component.js'

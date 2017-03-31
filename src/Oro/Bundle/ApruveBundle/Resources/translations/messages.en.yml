@@ -2,3 +2,25 @@ oro:
     apruve:
         channel_type.label: Apruve
         settings.label: Apruve Settings
+        settings:
+            form:
+                groups:
+                    display_options.title: Display Options
+                    integration.title: Integration
+                    other.title: Other
+            labels:
+                label: Label
+                tooltip: 'This label is used on the checkout screens'
+            short_labels:
+                label: Short Label
+                tooltip: 'This label is used in order history'
+            merchant_id.label: Merchant ID
+            api_key.label: API Key
+            test_mode.label: Test Mode
+            webhook_url:
+                label: Webhook URL
+                tooltip: >
+                    Copy this URL and paste into the "Webhook URL" field in Apruve profile settings of your
+                    merchant account
+                regenerate.button: Regenerate
+                not_available_yet.text: Webhook URL will become available after the form is submitted

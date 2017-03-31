@@ -1,0 +1,10 @@
+Oro\Bundle\ApruveBundle\Entity\ApruveSettings:
+    properties:
+        labels:
+            - NotBlank: ~
+        shortLabels:
+            - NotBlank: ~
+        merchantId:
+            - NotBlank: ~
+        apiKey:
+            - NotBlank: ~

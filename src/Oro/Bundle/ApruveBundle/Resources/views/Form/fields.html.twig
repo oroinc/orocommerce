@@ -1,0 +1,71 @@
+{% block oro_apruve_settings_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    <fieldset class="form-horizontal">
+        <h5 class="user-fieldset">
+            <span>{{ 'oro.apruve.settings.form.groups.display_options.title'|trans }}</span>
+        </h5>
+        <div class="control-group control-group-choice">
+            <div class="control-label wrap">
+                {{ UI.tooltip('oro.apruve.settings.label.tooltip', {}, 'right') }}
+                {{ form_label(form.labels) }}
+            </div>
+            <div class="controls">
+                {{ form_widget(form.labels) }}
+            </div>
+        </div>
+        <div class="control-group control-group-choice">
+            <div class="control-label wrap">
+                {{ UI.tooltip('oro.apruve.settings.short_label.tooltip', {}, 'right') }}
+                {{ form_label(form.shortLabels) }}
+            </div>
+            <div class="controls">
+                {{ form_widget(form.shortLabels) }}
+            </div>
+        </div>
+    </fieldset>
+    <fieldset class="form-horizontal">
+        <h5 class="user-fieldset">
+            <span>{{ 'oro.apruve.settings.form.groups.integration.title'|trans }}</span>
+        </h5>
+        {{ form_row(form.testMode) }}
+        {{ form_row(form.apiKey) }}
+        {{ form_row(form.merchantId) }}
+        {{ form_row(form.webhookToken) }}
+    </fieldset>
+    <fieldset class="form-horizontal">
+        <h5 class="user-fieldset">
+            <span>{{ 'oro.apruve.settings.form.groups.other.title'|trans }}</span>
+        </h5>
+        {{ form_rest(form) }}
+    </fieldset>
+{% endblock %}
+
+
+{% block oro_apruve_webhook_token_widget %}
+    {% import 'OroUIBundle::macros.html.twig' as UI %}
+    {{ form_widget(form) }}
+
+    <div class="control-group control-group-text">
+        <div class="control-label wrap">
+            {{ UI.tooltip('oro.apruve.settings.webhook_url.tooltip', {}, 'left') }}
+            {{ form_label(form) }}
+        </div>
+        <div class="controls wrap html-content">
+            {% if form.parent.vars.value.id %}
+                <div class="clearfix"><span class="webhook-token-url"></span></div>
+                <button type="button"
+                        class="btn btn-mini"
+                        data-page-component-module="oroapruve/js/app/components/webhook-token-component"
+                        data-page-component-options="{{ {
+                            'webhookTokenSelector': '#'~form.vars.id,
+                            'webhookUrlSelector': '[name="oro_integration_channel_form"] .webhook-token-url'
+                        }|json_encode }}"
+                >
+                    {{ 'oro.apruve.settings.webhook_url.regenerate.button'|trans }}
+                </button>
+            {% else %}
+                <span>{{ 'oro.apruve.settings.webhook_url.not_available_yet.text'|trans }}</span>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

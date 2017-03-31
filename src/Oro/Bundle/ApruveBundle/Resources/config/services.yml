@@ -1,2 +1,4 @@
 services:
 
+    oro_apruve.token_generator:
+        class: Oro\Bundle\ApruveBundle\TokenGenerator\TokenGenerator
