@@ -84,7 +84,7 @@ class ShardManagerTest extends WebTestCase
 
     public function testSerialization()
     {
-        $this->manager->addEntityForShard(ProductPrice::class);
+        $this->manager->addEntityForShard('price', ProductPrice::class);
         $result = serialize($this->manager);
         /** @var ShardManager $newManager */
         $newManager = unserialize($result);
