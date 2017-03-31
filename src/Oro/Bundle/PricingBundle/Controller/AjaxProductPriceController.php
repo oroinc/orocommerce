@@ -128,7 +128,7 @@ class AjaxProductPriceController extends AbstractAjaxProductPriceController
         }
 
         $response = [
-            'success' => $code === JsonResponse::HTTP_OK,
+            'successful' => $code === JsonResponse::HTTP_OK,
             'message' => $message,
             'messages' => $this->prepareMessages($errors),
             'refreshGrid' => $this->get('oro_action.helper.context')->getActionData()->getRefreshGrid(),

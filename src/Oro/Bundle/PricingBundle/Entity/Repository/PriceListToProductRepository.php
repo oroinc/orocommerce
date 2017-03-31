@@ -56,7 +56,7 @@ class PriceListToProductRepository extends EntityRepository
     {
         $query = $this->getProductsWithoutPricesQueryBuilder($priceList)
             ->getQuery();
-
+        $query->setCacheable(false);
         $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
         $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
 

@@ -126,4 +126,12 @@ class PriceManager
     {
         $this->flush();
     }
+
+    /**
+     * @return \Doctrine\Common\Persistence\ObjectManager|\Doctrine\ORM\EntityManager
+     */
+    public function getEntityManager()
+    {
+        return $this->shardManager->getEntityManager();
+    }
 }

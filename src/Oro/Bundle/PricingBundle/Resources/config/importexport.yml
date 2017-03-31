@@ -62,6 +62,8 @@ services:
         public: false
         parent: oro_importexport.reader.entity
         class: 'Oro\Bundle\PricingBundle\ImportExport\Reader\PriceListProductPricesReader'
+        calls:
+            - [setShardManager, ['@oro_pricing.shard_manager']]
 
     oro_pricing.importexport.reader.price_list_additional_product_prices:
         public: false
@@ -85,3 +87,5 @@ services:
         class: 'Oro\Bundle\PricingBundle\ImportExport\Writer\ProductPriceWriter'
         public: false
         parent: oro_integration.writer.persistent_batch_writer
+        calls:
+            - [setPriceManager, ['@oro_pricing.manager.price_manager']]

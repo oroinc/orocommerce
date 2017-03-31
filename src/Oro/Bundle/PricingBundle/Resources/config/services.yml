@@ -113,7 +113,7 @@ services:
         class: 'Oro\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver'
         arguments:
             - '@doctrine'
-            - '@oro_entity.orm.insert_from_select_query_executor'
+            - '@oro_pricing.orm.insert_from_select_query_executor'
             - '@oro_pricing.model.combined_price_list_trigger_handler'
 
     oro_pricing.resolver.combined_product_schedule_resolver:

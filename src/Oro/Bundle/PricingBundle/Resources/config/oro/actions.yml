@@ -194,7 +194,7 @@ action_groups:
                 type: Oro\Bundle\PricingBundle\Entity\ProductPrice
         acl_resource: ['CREATE', 'entity:Oro\Bundle\PricingBundle\Entity\ProductPrice']
         actions:
-            - '@create_entity':
+            - '@create_object':
                 class: Oro\Bundle\PricingBundle\Entity\ProductPrice
                 attribute: $.newPrice
                 data:
@@ -203,4 +203,10 @@ action_groups:
                     quantity: $.price.quantity
                     unit: $.price.unit
                     price: $.price.price
-                flush: true
+            - '@call_service_method':
+                service: 'oro_pricing.manager.price_manager'
+                method: 'persist'
+                method_parameters: [$.newPrice]
+            - '@call_service_method':
+                service: 'oro_pricing.manager.price_manager'
+                method: 'flush'

@@ -5,6 +5,7 @@ namespace Oro\Bundle\PricingBundle\Resolver;
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManager;
 
+use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
 use Symfony\Component\Console\Helper\ProgressBar;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -63,7 +64,7 @@ class CombinedProductPriceResolver
      */
     public function __construct(
         ManagerRegistry $registry,
-        InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor,
+        InsertFromSelectShardQueryExecutor $insertFromSelectQueryExecutor,
         CombinedPriceListTriggerHandler $triggerHandler
     ) {
         $this->registry = $registry;

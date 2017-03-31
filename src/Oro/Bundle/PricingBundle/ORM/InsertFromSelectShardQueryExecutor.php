@@ -34,9 +34,6 @@ class InsertFromSelectShardQueryExecutor extends InsertFromSelectQueryExecutor
      */
     public function execute($className, array $fields, QueryBuilder $selectQueryBuilder)
     {
-        if ($this->shardManager->isEntitySharded($className)) {
-            return parent::execute($className, $fields, $selectQueryBuilder);
-        }
         $insertToTableName = $this->getTableName($className, $fields, $selectQueryBuilder);
         $columns = $this->getColumns($className, $fields);
         $selectQuery = $selectQueryBuilder->getQuery();
@@ -58,6 +55,9 @@ class InsertFromSelectShardQueryExecutor extends InsertFromSelectQueryExecutor
      */
     protected function getTableName($className, array $fields, QueryBuilder $selectQueryBuilder)
     {
+        if (!$this->shardManager->isEntitySharded($className)) {
+            return $this->helper->getTableName($className);
+        }
         $index = array_search($this->shardManager->getDiscriminationField($className), $fields, true);
 
         $selectPart = $selectQueryBuilder->getDQLPart('select');

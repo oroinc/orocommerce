@@ -31,6 +31,7 @@ class OroPricingBundle implements Migration, ConnectionAwareInterface
             $queries->addQuery('UPDATE oro_price_product SET id=uuid_generate_v4();');
             $queries->addQuery('ALTER TABLE oro_price_product ADD PRIMARY KEY (id);');
         } else {
+            $table->dropPrimaryKey();
             $table->changeColumn(
                 'id',
                 [
@@ -41,6 +42,7 @@ class OroPricingBundle implements Migration, ConnectionAwareInterface
             );
             $queries->addQuery("UPDATE oro_price_product SET id=uuid()");
             $queries->addQuery("ALTER TABLE oro_price_product CHANGE id id CHAR(36) NOT NULL COMMENT '(DC2Type:guid)'");
+            $table->setPrimaryKey(['id']);
         }
     }
 
