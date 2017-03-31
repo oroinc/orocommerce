@@ -30,7 +30,7 @@ define(function(require) {
             } else if (!this.fullscreenView) {
                 this.fullscreenView = new FullscreenPopupView({
                     disposeOnClose: true,
-                    content: this.el.html()
+                    contentElement: this.el
                 });
                 this.fullscreenView.on('close', function() {
                     this.fullscreenView.dispose();
