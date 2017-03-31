@@ -39,6 +39,7 @@ class ProductPriceWriterTest extends WebTestCase
             $container->get('oro_importexport.context_registry'),
             $container->get('oro_integration.logger.strategy')
         );
+        $writer->setPriceManager($this->getContainer()->get('oro_pricing.manager.price_manager'));
         $writer->setStepExecution($stepExecution);
 
         $writer->write([]);
