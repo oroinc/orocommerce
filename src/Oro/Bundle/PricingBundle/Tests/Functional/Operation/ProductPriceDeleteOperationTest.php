@@ -37,7 +37,8 @@ class ProductPriceDeleteOperationTest extends ActionTestCase
                 ],
                 'flashMessages' => [
                     'success' => ['Product Price deleted']
-                ]
+                ],
+                'pageReload' => true
             ],
             json_decode($this->client->getResponse()->getContent(), true)
         );

@@ -155,7 +155,9 @@ define(function(require) {
         _prepareProductVariants: function() {
             this.options.simpleProductVariants = _.mapObject(this.options.simpleProductVariants, function(variant) {
                 return _.reduce(variant, function(memo, attr, key) {
-                    memo[key.toLowerCase()] = (key + '_' + this._normalizeBool(attr)).toLowerCase();
+                    memo[this._extractName(key)] = (
+                        this._extractName(key) + '_' + this._normalizeBool(attr)
+                    ).toLowerCase();
                     return memo;
                 }, {}, this);
             }, this);

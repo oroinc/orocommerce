@@ -1,27 +1,26 @@
 // @theme: default
+$shopping-list-dropdown-radio-width: 20px;
 
 .shopping-list-dropdown {
     min-width: 280px;
 
     &__item {
-        display: table;
+        display: flex;
 
-        font-size: $base-font-size -1px;
+        font-size: $base-font-size - 1px;
 
         padding: 10px 9px;
 
-        border-bottom: 1px solid #ebebeb
+        border-bottom: 1px solid get-color('additional', 'light');
     }
 
-    &__radio,
-    &__link {
-        display: table-cell;
-
-        vertical-align: top;
+    &__radio {
+        width: $shopping-list-dropdown-radio-width;
     }
 
     &__link {
-        width: 100%;
+        display: block;
+        width: calc(100% - #{$shopping-list-dropdown-radio-width});
         padding-left: 5px;
     }
 
@@ -29,7 +28,7 @@
     &__link:hover {
         text-decoration: none;
 
-        color: #000;
+        color: get-color('additional', 'darker');
     }
 
     &__title {
@@ -65,21 +64,27 @@
         text-align: right;
     }
 
-    &__desc,
     &__info {
         display: block;
     }
 
-    &__desc {
-        overflow: hidden;
-
+    &__products {
+        display: block;
         margin-top: 4px;
 
-        color: #b7b7b7;
+        color: get-color('additional', 'dark');
+
+        &__item {
+            display: block;
+
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
     }
 
     &__info {
-        color: #4597ca;
+        color: get-color('ui', 'normal');
     }
 
     &__link:hover &__info {
@@ -90,7 +95,9 @@
         display: inline-block;
         width: 100%;
 
-        line-height: 0.8;
+        font-size: $base-font-size--large + 2px;
+
+        line-height: 0.4;
         vertical-align: top;
     }
 }

@@ -7,11 +7,12 @@ use Oro\Bundle\UserBundle\Entity\User;
 use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
 use Oro\Bundle\CustomerBundle\Entity\Customer;
 use Oro\Bundle\RFPBundle\Entity\Request;
-use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteAddress;
 use Oro\Bundle\SaleBundle\Entity\QuoteProduct;
 use Oro\Bundle\SaleBundle\Entity\QuoteProductOffer;
+use Oro\Bundle\SaleBundle\Tests\Unit\Stub\QuoteStub as Quote;
 use Oro\Bundle\WebsiteBundle\Entity\Website;
+use Oro\Component\Testing\Unit\Entity\Stub\StubEnumValue;
 
 /**
  * @SuppressWarnings(PHPMD.TooManyPublicMethods)
@@ -144,28 +145,76 @@ class QuoteTest extends AbstractTest
      * @param bool $expired
      * @param \DateTime|null $validUntil
      * @param bool $expected
+     * @param string $internalStatus
      */
-    public function testIsAcceptable($expired, $validUntil, $expected)
-    {
+    public function testIsAcceptable(
+        $expired,
+        $validUntil,
+        $expected,
+        $internalStatus = Quote::INTERNAL_STATUS_SENT_TO_CUSTOMER
+    ) {
+        $status = $internalStatus ? new StubEnumValue($internalStatus, 'test') : null;
+
         $quote = new Quote();
-        $quote
-            ->setExpired($expired)
-            ->setValidUntil($validUntil);
+        $quote->setExpired($expired)
+            ->setValidUntil($validUntil)
+            ->setInternalStatus($status);
         $this->assertEquals($expected, $quote->isAcceptable());
     }
 
     /**
-     * @return array
+     * @return \Generator
      */
     public function isAcceptableDataProvider()
     {
-        return [
-            [false, null, true],
-            [false, new \DateTime('+1 day'), true],
-            [false, new \DateTime('-1 day'), false],
-            [true, null, false],
-            [true, new \DateTime('+1 day'), false],
-            [true, new \DateTime('-1 day'), false],
+        yield [
+            'expired' => false,
+            'validUntil' => null,
+            'expected' => true
+        ];
+
+        yield [
+            'expired' => false,
+            'validUntil' => new \DateTime('+1 day'),
+            'expected' => true
+        ];
+
+        yield [
+            'expired' => false,
+            'validUntil' => new \DateTime('-1 day'),
+            'expected' => false
+        ];
+
+        yield [
+            'expired' => true,
+            'validUntil' => null,
+            'expected' => false
+        ];
+
+        yield [
+            'expired' => true,
+            'validUntil' => new \DateTime('+1 day'),
+            'expected' => false
+        ];
+
+        yield [
+            'expired' => true,
+            'validUntil' => new \DateTime('-1 day'),
+            'expected' => false
+        ];
+
+        yield [
+            'expired' => false,
+            'validUntil' => new \DateTime('+1 day'),
+            'expected' => false,
+            'internalStatus' => Quote::INTERNAL_STATUS_DELETED
+        ];
+
+        yield [
+            'expired' => false,
+            'validUntil' => new \DateTime('+1 day'),
+            'expected' => false,
+            'internalStatus' => null
         ];
     }
 

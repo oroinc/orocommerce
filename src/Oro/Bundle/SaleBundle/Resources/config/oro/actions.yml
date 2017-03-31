@@ -80,11 +80,29 @@ operations:
                 method: get
                 method_parameters: ['oro_email.append_signature']
 
+        preactions:
+            - '@assign_constant_value':
+                attribute: $.sentToCustomerInternalStatus
+                value: Oro\Bundle\SaleBundle\Entity\Quote::INTERNAL_STATUS_SENT_TO_CUSTOMER
+
+        preconditions:
+            '@not_equal': [$.sentToCustomerInternalStatus, $internalStatus.id]
+
         actions:
             - '@run_action_group':
                 action_group: oro_sale_notify_customer_by_email
                 parameters_mapping:
                     email: $.email
+            - '@request_enum_entity':
+                enum_code: 'quote_internal_status'
+                attribute: $internalStatus
+                identifier: 'sent_to_customer'
+            - '@flush_entity': $.data
+            - '@flash_message':
+                message: oro.sale.quote.message.quote.sent.success
+                type: 'info'
+                message_parameters:
+                    id: $qid
 
 action_groups:
     oro_sale_quote_duplicate:
@@ -124,6 +142,7 @@ action_groups:
                     - [[keep], [propertyType, ['%oro_product.entity.product.class%']]]
                     - [[keep], [propertyType, ['%oro_product.entity.product_unit.class%']]]
                     - [[keep], [propertyType, ['%oro_payment_term.entity.payment_term.class%']]]
+                    - [[keep], [propertyType, ['%oro_rfp.entity.request_product_item.class%']]]
                     - [[collection], [propertyType, ['Doctrine\Common\Collections\Collection']]]
             - '@assign_value': [$.quoteCopy.expired, false]
             - '@assign_value': [$.quoteCopy.createdAt, $.currentDatetime]
