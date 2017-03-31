@@ -2,8 +2,10 @@
 
 namespace Oro\Bundle\ApruveBundle\Tests\Unit\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\HttpFoundation\ParameterBag;
 
+use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\ApruveBundle\Entity\ApruveSettings;
 use Oro\Component\Testing\Unit\EntityTestCaseTrait;
 use Oro\Component\Testing\Unit\EntityTrait;
@@ -13,19 +15,54 @@ class ApruveSettingsTest extends \PHPUnit_Framework_TestCase
     use EntityTestCaseTrait;
     use EntityTrait;
 
+    /**
+     * @dataProvider constructorPropertiesDataProvider
+     *
+     * @param string $property
+     * @param string $class
+     */
+    public function testConstructor($property, $class)
+    {
+        $settings = new ApruveSettings();
+
+        $reflection = new \ReflectionProperty(ApruveSettings::class, $property);
+        $reflection->setAccessible(true);
+        $value = $reflection->getValue($settings);
+
+        static::assertInstanceOf($class, $value);
+    }
+
+    /**
+     * @return array
+     */
+    public function constructorPropertiesDataProvider()
+    {
+        return [
+            ['labels', ArrayCollection::class],
+            ['shortLabels', ArrayCollection::class],
+        ];
+    }
+
     public function testAccessors()
     {
         static::assertPropertyAccessors(new ApruveSettings(), [
             ['merchantId', '7b97ea0172e18cbd4d3bf21e2b525b2d'],
             ['apiKey', '213a9079914f3b5163c6190f31444528'],
             ['testMode', false],
-            ['learnMoreUrl', 'https://test.apruve.com/apply/oro-test-store'],
             ['webhookToken', '8c02aef5-68df-4458-bad3-e2da636cee90'],
+        ]);
+
+        static::assertPropertyCollections(new ApruveSettings(), [
+            ['labels', new LocalizedFallbackValue()],
+            ['shortLabels', new LocalizedFallbackValue()],
         ]);
     }
 
     public function testGetSettingsBag()
     {
+        $label = (new LocalizedFallbackValue())->setString('Apruve');
+        $shortLabel = (new LocalizedFallbackValue())->setString('Apruve (short)');
+
         /** @var ApruveSettings $entity */
         $entity = $this->getEntity(
             ApruveSettings::class,
@@ -33,21 +70,20 @@ class ApruveSettingsTest extends \PHPUnit_Framework_TestCase
                 'merchantId' => '7b97ea0172e18cbd4d3bf21e2b525b2d',
                 'apiKey' => '213a9079914f3b5163c6190f31444528',
                 'testMode' => false,
-                'learnMoreUrl' => 'https://test.apruve.com/apply/oro-test-store',
                 'webhookToken' => '8c02aef5-68df-4458-bad3-e2da636cee90',
+                'labels' => [$label],
+                'shortLabels' => [$shortLabel],
             ]
         );
 
-        /** @var ParameterBag $result */
-        $result = $entity->getSettingsBag();
+        /** @var ParameterBag $settings */
+        $settings = $entity->getSettingsBag();
 
-        static::assertEquals('7b97ea0172e18cbd4d3bf21e2b525b2d', $result->get(ApruveSettings::MERCHANT_ID_KEY));
-        static::assertEquals('213a9079914f3b5163c6190f31444528', $result->get(ApruveSettings::API_KEY_KEY));
-        static::assertEquals(false, $result->get(ApruveSettings::TEST_MODE_KEY));
-        static::assertEquals(
-            'https://test.apruve.com/apply/oro-test-store',
-            $result->get(ApruveSettings::LEARN_MORE_URL_KEY)
-        );
-        static::assertEquals('8c02aef5-68df-4458-bad3-e2da636cee90', $result->get(ApruveSettings::WEBHOOK_TOKEN_KEY));
+        static::assertEquals('7b97ea0172e18cbd4d3bf21e2b525b2d', $settings->get(ApruveSettings::MERCHANT_ID_KEY));
+        static::assertEquals('213a9079914f3b5163c6190f31444528', $settings->get(ApruveSettings::API_KEY_KEY));
+        static::assertEquals(false, $settings->get(ApruveSettings::TEST_MODE_KEY));
+        static::assertEquals('8c02aef5-68df-4458-bad3-e2da636cee90', $settings->get(ApruveSettings::WEBHOOK_TOKEN_KEY));
+        static::assertEquals([$label], $settings->get('labels'));
+        static::assertEquals([$shortLabel], $settings->get('short_labels'));
     }
 }

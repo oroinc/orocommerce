@@ -3,10 +3,8 @@
 namespace Oro\Bundle\ApruveBundle\Tests\Unit\Integration;
 
 use Oro\Bundle\ApruveBundle\Entity\ApruveSettings;
+use Oro\Bundle\ApruveBundle\Form\Type\ApruveSettingsType;
 use Oro\Bundle\ApruveBundle\Integration\ApruveTransport;
-
-use Symfony\Component\Form\Extension\Core\Type\FormType;
-use Symfony\Component\Form\Form;
 
 class ApruveTransportTest extends \PHPUnit_Framework_TestCase
 {
@@ -30,8 +28,7 @@ class ApruveTransportTest extends \PHPUnit_Framework_TestCase
 
     public function testGetSettingsFormType()
     {
-        // todo@webevt: change to proper Apruve Settings form type, as soon as it is ready.
-        static::assertSame(FormType::class, $this->transport->getSettingsFormType());
+        static::assertSame(ApruveSettingsType::class, $this->transport->getSettingsFormType());
     }
 
     public function testGetSettingsEntityFQCN()
