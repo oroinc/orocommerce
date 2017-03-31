@@ -150,17 +150,17 @@ abstract class AbstractAjaxProductPriceControllerTest extends WebTestCase
                 'unit' => 'liter',
                 'currency' => 'USD',
                 'expected' => [
-                    'value' => 12.2,
+                    'value' => 1.22,
                     'currency' => 'USD'
                 ]
             ],
             [
                 'product' => 'product-1',
-                'qty' => 100,
+                'qty' => 120,
                 'unit' => 'liter',
                 'currency' => 'USD',
                 'expected' => [
-                    'value' => 12.2,
+                    'value' => 1.22,
                     'currency' => 'USD'
                 ]
             ]

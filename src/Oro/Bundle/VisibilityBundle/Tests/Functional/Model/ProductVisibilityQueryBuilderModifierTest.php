@@ -8,13 +8,19 @@ use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\Repository\ProductRepository;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\VisibilityBundle\Entity\Visibility\ProductVisibility;
 use Oro\Bundle\VisibilityBundle\Model\ProductVisibilityQueryBuilderModifier;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadCategoryVisibilityData;
 use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityData;
+use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityFallbackCategoryForAnonymousData;
+use Oro\Bundle\VisibilityBundle\Tests\Functional\DataFixtures\LoadProductVisibilityScopedData;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
 
+/**
+ * @dbIsolationPerTest
+ */
 class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
 {
     const PRODUCT_VISIBILITY_CONFIGURATION_PATH = 'oro_visibility.product_visibility';
@@ -31,33 +37,6 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
     protected $configManager;
 
     /**
-     * {@inheritdoc}
-     */
-    protected function setUp()
-    {
-        $this->initClient(
-            [],
-            $this->generateBasicAuthHeader(CustomerLoadCustomerUserData::EMAIL, CustomerLoadCustomerUserData::PASSWORD)
-        );
-
-        $this->loadFixtures([
-            LoadCustomerUserData::class,
-            LoadCategoryVisibilityData::class,
-            LoadProductVisibilityData::class
-        ]);
-
-        $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
-            ->disableOriginalConstructor()->getMock();
-
-        $this->modifier = new ProductVisibilityQueryBuilderModifier(
-            $this->configManager,
-            $this->getContainer()->get('oro_scope.scope_manager')
-        );
-
-        $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
-    }
-
-    /**
      * @dataProvider modifyDataProvider
      *
      * @param string $configValue
@@ -66,6 +45,8 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
      */
     public function testModify($configValue, $user, $expectedData)
     {
+        $this->setUpForModifyMethodTests();
+
         if ($user) {
             /** @var CustomerUser $user */
             $user = $this->getReference($user);
@@ -181,6 +162,8 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
 
     public function testVisibilityProductSystemConfigurationPathNotSet()
     {
+        $this->setUpForModifyMethodTests();
+
         $queryBuilder = $this->getProductRepository()->createQueryBuilder('p')
             ->select('p.sku')->orderBy('p.sku');
 
@@ -192,6 +175,8 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
 
     public function testVisibilityProductCategoryConfigurationPathNotSet()
     {
+        $this->setUpForModifyMethodTests();
+
         $queryBuilder = $this->getProductRepository()->createQueryBuilder('p')
             ->select('p.sku')->orderBy('p.sku');
 
@@ -202,6 +187,65 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         $this->modifier->modify($queryBuilder);
     }
 
+    public function testNotVisibleForAnonymousCanBeFiltered()
+    {
+        $this->initClient();
+        $this->loadFixtures([LoadProductVisibilityScopedData::class]);
+        $this->getContainer()->get('oro_visibility.visibility.cache.product.cache_builder')->buildCache();
+        $this->prepareModifierForAnonymousRestrictionTests();
+        $queryBuilder = $this->getProductRepository()->createQueryBuilder('product')->select('product.sku');
+
+        $website =  $this->getContainer()->get('oro_website.manager')->getDefaultWebsite();
+        $this->modifier->restrictForAnonymous($queryBuilder, $website);
+
+        $actual = $queryBuilder->getQuery()->getArrayResult();
+        $actualProductSkus = array_map(function ($item) {
+            return $item['sku'];
+        }, $actual);
+        $this->assertCount(6, $actualProductSkus);
+
+        $expected = [
+            LoadProductData::PRODUCT_1,
+            LoadProductData::PRODUCT_3,
+            LoadProductData::PRODUCT_5,
+            LoadProductData::PRODUCT_6,
+            LoadProductData::PRODUCT_7,
+            LoadProductData::PRODUCT_8,
+        ];
+        foreach ($expected as $productReference) {
+            $product = $this->getReference($productReference);
+            $this->assertContains($product->getSku(), $actualProductSkus);
+        }
+    }
+
+    public function testNotVisibleForAnonymousFallbackCategoryFiltered()
+    {
+        $this->initClient();
+        $this->loadFixtures([LoadProductVisibilityFallbackCategoryForAnonymousData::class]);
+        $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
+        $this->prepareModifierForAnonymousRestrictionTests();
+        $queryBuilder = $this->getProductRepository()->createQueryBuilder('product')->select('product.sku');
+
+        $website =  $this->getContainer()->get('oro_website.manager')->getDefaultWebsite();
+        $this->modifier->restrictForAnonymous($queryBuilder, $website);
+
+        $actual = $queryBuilder->getQuery()->getArrayResult();
+        $actualProductSkus = array_map(function ($item) {
+            return $item['sku'];
+        }, $actual);
+        $this->assertCount(3, $actualProductSkus);
+
+        $expected = [
+            LoadProductData::PRODUCT_1,
+            LoadProductData::PRODUCT_2,
+            LoadProductData::PRODUCT_5,
+        ];
+        foreach ($expected as $productReference) {
+            $product = $this->getReference($productReference);
+            $this->assertContains($product->getSku(), $actualProductSkus);
+        }
+    }
+
     /**
      * @return ProductRepository
      */
@@ -210,5 +254,45 @@ class ProductVisibilityQueryBuilderModifierTest extends WebTestCase
         return $this->getContainer()->get('doctrine')
             ->getManagerForClass(Product::class)
             ->getRepository(Product::class);
+    }
+
+    private function setUpForModifyMethodTests()
+    {
+        $this->initClient(
+            [],
+            $this->generateBasicAuthHeader(CustomerLoadCustomerUserData::EMAIL, CustomerLoadCustomerUserData::PASSWORD)
+        );
+
+        $this->loadFixtures([
+            LoadCustomerUserData::class,
+            LoadCategoryVisibilityData::class,
+            LoadProductVisibilityData::class
+        ]);
+
+        $this->getContainer()->get('oro_visibility.visibility.cache.cache_builder')->buildCache();
+
+        $this->configManager = $this->getMockBuilder('Oro\Bundle\ConfigBundle\Config\ConfigManager')
+            ->disableOriginalConstructor()->getMock();
+
+        $this->modifier = new ProductVisibilityQueryBuilderModifier(
+            $this->configManager,
+            $this->getContainer()->get('oro_scope.scope_manager'),
+            $this->getContainer()->get('oro_entity.doctrine_helper')
+        );
+    }
+
+    private function prepareModifierForAnonymousRestrictionTests()
+    {
+        $this->modifier = new ProductVisibilityQueryBuilderModifier(
+            $this->getContainer()->get('oro_config.manager'),
+            $this->getContainer()->get('oro_scope.scope_manager'),
+            $this->getContainer()->get('oro_entity.doctrine_helper')
+        );
+
+        $this->modifier->setProductVisibilitySystemConfigurationPath(static::PRODUCT_VISIBILITY_CONFIGURATION_PATH);
+        $this->modifier->setCategoryVisibilitySystemConfigurationPath(static::CATEGORY_VISIBILITY_CONFIGURATION_PATH);
+        $this->modifier->setVisibilityScopeProvider(
+            $this->getContainer()->get('oro_visibility.provider.visibility_scope_provider')
+        );
     }
 }

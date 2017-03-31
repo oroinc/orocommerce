@@ -68,7 +68,9 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
                     }
                 )
             );
-        $this->productPriceProvider = $this->getMockBuilder('Oro\Bundle\PricingBundle\Provider\ProductPriceProvider')
+
+        $this->productPriceProvider = $this
+            ->getMockBuilder('Oro\Bundle\PricingBundle\Provider\ProductPriceProvider')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -76,7 +78,8 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->priceListTreeHandler = $this->getMockBuilder('Oro\Bundle\PricingBundle\Model\PriceListTreeHandler')
+        $this->priceListTreeHandler = $this
+            ->getMockBuilder('Oro\Bundle\PricingBundle\Model\PriceListTreeHandler')
             ->disableOriginalConstructor()
             ->getMock();
 
@@ -95,11 +98,26 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
         unset($this->translator, $this->provider);
     }
 
-    public function testGetSubtotal()
-    {
-        $value = 142.0;
+    /**
+     * @dataProvider getPriceDataProvider
+     * @param float  $value
+     * @param string $identifier
+     * @param float  $defaultQuantity
+     * @param float  $quantity
+     * @param float  $expectedValue
+     * @param int    $precision
+     * @param string $code
+     */
+    public function testGetSubtotal(
+        $value,
+        $identifier,
+        $defaultQuantity,
+        $quantity,
+        $expectedValue,
+        $precision,
+        $code
+    ) {
         $currency = 'USD';
-        $identifier = '1-code-2-USD';
 
         $this->translator->expects($this->once())
             ->method('trans')
@@ -107,15 +125,15 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
             ->willReturn('test');
 
         $product = $this->prepareProduct();
-        $productUnit = $this->prepareProductUnit();
+        $productUnit = $this->prepareProductUnit($code, $precision);
         $this->prepareEntityManager($product, $productUnit);
-        $this->preparePrice($value, $identifier);
+        $this->preparePrice($value, $identifier, $defaultQuantity);
 
         $entity = new EntityNotPricedStub();
         $lineItem = new LineItemNotPricedStub();
         $lineItem->setProduct($product);
         $lineItem->setProductUnit($productUnit);
-        $lineItem->setQuantity(2);
+        $lineItem->setQuantity($quantity);
 
         $entity->addLineItem($lineItem);
 
@@ -135,7 +153,7 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
         $this->assertEquals('test', $subtotal->getLabel());
         $this->assertEquals($entity->getCurrency(), $subtotal->getCurrency());
         $this->assertInternalType('float', $subtotal->getAmount());
-        $this->assertEquals($value * 2, $subtotal->getAmount());
+        $this->assertEquals($expectedValue, (float)$subtotal->getAmount());
         $this->assertTrue($subtotal->isVisible());
     }
 
@@ -178,7 +196,7 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
     /**
      * @return ProductUnit|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected function prepareProductUnit()
+    protected function prepareProductUnit($code, $precision)
     {
         /** @var ProductUnit|\PHPUnit_Framework_MockObject_MockObject $productUnit */
         $productUnit = $this->getMockBuilder('Oro\Bundle\ProductBundle\Entity\ProductUnit')
@@ -186,7 +204,10 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
             ->getMock();
         $productUnit->expects($this->any())
             ->method('getCode')
-            ->willReturn('code');
+            ->willReturn($code);
+        $productUnit->expects($this->any())
+            ->method('getDefaultPrecision')
+            ->willReturn($precision);
 
         return $productUnit;
     }
@@ -208,7 +229,7 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
     }
 
     /**
-     * @param Product$product
+     * @param Product $product
      * @param ProductUnit $productUnit
      */
     protected function prepareEntityManager(Product $product, ProductUnit $productUnit)
@@ -229,10 +250,11 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
     }
 
     /**
-     * @param float $value
-     * @param string $identifier
+     * @param $value
+     * @param $identifier
+     * @param $defaultQuantity
      */
-    protected function preparePrice($value, $identifier)
+    protected function preparePrice($value, $identifier, $defaultQuantity)
     {
         /** @var Price|\PHPUnit_Framework_MockObject_MockObject $price */
         $price = $this->getMockBuilder('Oro\Bundle\CurrencyBundle\Entity\Price')
@@ -240,9 +262,37 @@ class LineItemNotPricedSubtotalProviderTest extends AbstractSubtotalProviderTest
             ->getMock();
         $price->expects($this->any())
             ->method('getValue')
-            ->willReturn($value);
+            ->willReturn($value / $defaultQuantity);
+
         $this->productPriceProvider->expects($this->any())
             ->method('getMatchedPrices')
             ->willReturn([$identifier => $price]);
+    }
+
+    /**
+     * @return array
+     */
+    public function getPriceDataProvider()
+    {
+        return [
+            'kilogram' => [
+                'value' => 25.0,
+                'identifier' => '1-kg-3-USD',
+                'defaultQuantity' => 0.5,
+                'quantity' => 3,
+                'expectedValue' => 150,
+                'precision' => 3,
+                'code' => 'kg'
+            ],
+            'item' => [
+                'value' => 142.0,
+                'identifier' => '1-item-2-USD',
+                'defaultQuantity' => 1,
+                'quantity' => 2,
+                'expectedValue' => 284,
+                'precision' => 0,
+                'code' => 'item'
+            ],
+        ];
     }
 }

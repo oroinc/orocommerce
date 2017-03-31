@@ -11,7 +11,7 @@
             modelAttr: modelAttr
         },
         'data-layout': 'separate',
-        '~class': ' product-view'
+        '~class': ' product-view ' ~ productTheme|default('default') ~ '-theme'
     }) %}
 
     <div {{ block('block_attributes') }}>
@@ -267,21 +267,6 @@
     </div>
 {% endblock %}
 
-{% block _product_price_container_widget %}
-    {% set attr = layout_attr_defaults(attr, {
-        '~class': ' product-price--simple',
-        'data-page-component-module': 'oroui/js/app/components/viewport-component',
-        '~data-page-component-options': {
-            viewport: {
-                maxScreenType: 'tablet'
-            },
-            component: 'oroui/js/app/components/view-component',
-            changeUnitLabel: true,
-        },
-    }) %}
-    {{ block_widget(block, {attr: attr}) }}
-{% endblock %}
-
 {% block _product_require_js_config_widget %}
     <script>
         require({
@@ -294,4 +279,13 @@
             }
         });
     </script>
+{% endblock %}
+
+{% block _product_view_line_item_container_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' line-item-form',
+    }) %}
+    <div {{ block('block_attributes') }}>
+    {{ block_widget(block, {attr: attr}) }}
+    </div>
 {% endblock %}

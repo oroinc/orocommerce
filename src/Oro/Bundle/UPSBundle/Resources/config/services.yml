@@ -107,13 +107,11 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_shipping_method.config_data, method: onGetConfigData }
 
-    oro_ups.handler.invalidate_cache_at:
-        class: 'Oro\Bundle\UPSBundle\Handler\InvalidateCacheAtHandler'
+    oro_ups.handler.action.invalidate_cache:
+        class: 'Oro\Bundle\UPSBundle\Handler\InvalidateCacheActionHandler'
         arguments:
-            - "@doctrine"
             - "@oro_ups.shipping_price_cache"
             - "@oro_shipping.shipping_price.provider.cache"
-            - "@oro_cron.deferred_scheduler"
 
     oro_ups.shipping_price_cache:
         class: 'Oro\Bundle\UPSBundle\Cache\ShippingPriceCache'

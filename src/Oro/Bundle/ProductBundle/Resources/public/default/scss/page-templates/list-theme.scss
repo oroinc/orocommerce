@@ -1,0 +1,73 @@
+// @theme: default;
+// @productTheme: list-theme;
+
+@include breakpoint('desktop') {
+    .list-theme.product-view {
+        .product-view {
+            &__content {
+                display: $list-theme-product-view-content-display-desktop;
+            }
+
+            &__description {
+                padding: $list-theme-product-view-description-inner-offset-desktop;
+                width: $list-theme-product-view-description-width-desktop;
+            }
+
+            &__attribute-box {
+                margin-right: $list-theme-product-view-attribute-box-margin-right-desktop;
+
+                .tab-content__wrapper {
+                    margin-bottom: $list-theme-product-view-tab-content-margin-bottom-desktop;
+                }
+            }
+
+            &__attributes-container {
+                border: none;
+            }
+        }
+
+        .line-item-form {
+            border-top: $list-theme-product-view-line-item-form-border-desktop;
+            padding-top: $list-theme-product-view-line-item-form-padding-top-desktop;
+
+            form {
+                display: $list-theme-product-view-line-item-form-display-desktop;
+
+                > div {
+                    flex: $list-theme-product-view-line-item-form-div-flex-desktop;
+                }
+            }
+
+            .form__col {
+                margin-left: $list-theme-product-view-line-item-form-margin-left-desktop;
+            }
+        }
+
+        .shopping-lists {
+            &__wrapper {
+                order: $list-theme-product-view-shopping-lists-wrapper-order-desktop;
+            }
+
+            &__content {
+                min-height: $list-theme-product-view-shopping-lists-content-min-height-desktop;
+            }
+
+            &__icon {
+                top: $list-theme-product-view-shopping-lists-icon-top-desktop;
+            }
+        }
+
+        .product-view-quantity {
+            &__unit {
+                a.select2-choice,
+                .select--full {
+                    padding: $list-theme-product-view-quantity-unit-select2-inner-offset-desktop;
+                }
+            }
+
+            &__value .input {
+                padding: $list-theme-product-view-quantity-value-input-inner-offset-desktop;
+            }
+        }
+    }
+}

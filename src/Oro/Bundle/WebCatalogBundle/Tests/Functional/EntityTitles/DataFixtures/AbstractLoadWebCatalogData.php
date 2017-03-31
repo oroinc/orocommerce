@@ -18,6 +18,7 @@ use Oro\Bundle\WebCatalogBundle\Tests\Functional\DataFixtures\LoadWebCatalogData
 abstract class AbstractLoadWebCatalogData extends AbstractFixture implements DependentFixtureInterface
 {
     const CONTENT_NODE_SLUG = '/content-node-slug';
+    const CONTENT_NODE = 'content-node';
     const CONTENT_NODE_TITLE = 'Content node title';
 
     /**
@@ -52,6 +53,7 @@ abstract class AbstractLoadWebCatalogData extends AbstractFixture implements Dep
         $variant = new ContentVariant();
         $variant->setType($this->getContentVariantType());
         $variant->setNode($node);
+        $variant->addScope($scope);
 
         $entitySetterMethod = $this->getEntitySetterMethod();
         if (method_exists($variant, $entitySetterMethod)) {
@@ -63,6 +65,7 @@ abstract class AbstractLoadWebCatalogData extends AbstractFixture implements Dep
         $manager->persist($slug);
         $manager->persist($variant);
         $manager->persist($node);
+        $this->setReference(self::CONTENT_NODE, $node);
 
         $manager->flush();
     }
