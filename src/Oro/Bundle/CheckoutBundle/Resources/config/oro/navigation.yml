@@ -1,4 +1,36 @@
 navigation:
+    menu_config:
+        items:
+            oro_order_frontend_index:
+                label: 'oro.order.order_history.label'
+                route: 'oro_order_frontend_index'
+                position: 60
+                acl_resource_id: 'oro_order_frontend_view'
+
+            oro_order_frontend_view:
+                label: 'oro.ui.view'
+                extras:
+                    routes: ['oro_order_frontend_view']
+
+            oro_checkout_frontend_open_orders:
+                label: 'oro.checkout.open_order.plural_label'
+                route: 'oro_checkout_frontend_open_orders'
+                position: 65
+                extras:
+                    condition: 'config_get("oro_checkout.frontend_open_orders_separate_page")'
+        tree:
+            oro_customer_breadcrumbs_menu:
+                children:
+                    oro_customer_menu_customer_user_index:
+                        children:
+                            oro_order_frontend_index:
+                                children:
+                                    oro_order_frontend_view: ~
+                            oro_checkout_frontend_open_orders: ~
+            oro_customer_menu:
+                children:
+                    oro_order_frontend_index: ~
+                    oro_checkout_frontend_open_orders: ~
     titles:
         oro_checkout_frontend_checkout: '%step_label% - oro.checkout.open_order.label'
         oro_checkout_frontend_open_orders: 'oro.checkout.open_order.plural_label'

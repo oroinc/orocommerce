@@ -22,6 +22,22 @@ navigation:
                 extras:
                     routes: ['/^oro_sale_quote_frontend/']
 
+            oro_sale_quote_frontend_index:
+                label: 'oro.frontend.sale.quote.entity_plural_label'
+                route: oro_sale_quote_frontend_index
+                position: 70
+                acl_resource_id: 'oro_sale_quote_frontend_index'
+
+            oro_sale_quote_frontend_view:
+                label: 'oro.ui.view'
+                extras:
+                    routes: ['oro_sale_quote_frontend_view']
+
+            oro_sale_quote_frontend_choice:
+                label: 'oro.frontend.sale.quote.sections.general'
+                extras:
+                    routes: ['oro_sale_quote_frontend_choice']
+
         tree:
             application_menu:
                 children:
@@ -32,6 +48,18 @@ navigation:
                 children:
                     sale_quote_frontend_list: ~
 
+            oro_customer_breadcrumbs_menu:
+                children:
+                    oro_customer_menu_customer_user_index:
+                        children:
+                            oro_sale_quote_frontend_index:
+                                children:
+                                    oro_sale_quote_frontend_view: ~
+                                    oro_sale_quote_frontend_choice: ~
+
+            oro_customer_menu:
+                children:
+                    oro_sale_quote_frontend_index: ~
     titles:
         oro_sale_quote_index: ~
         oro_sale_quote_view:   'oro.sale.navigation.view'

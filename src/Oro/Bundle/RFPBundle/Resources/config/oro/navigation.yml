@@ -37,6 +37,21 @@ navigation:
                 extras:
                     routes: ['oro_rfp_frontend_request_view', 'oro_rfp_frontend_request_update']
 
+            oro_rfp_frontend_request_index:
+                label: 'oro.frontend.rfp.request.entity_plural_label'
+                route: 'oro_rfp_frontend_request_index'
+                position: 50
+
+            oro_rfp_frontend_request_create:
+                label: 'oro.frontend.rfp.request.create_title.label'
+                extras:
+                    routes: ['oro_rfp_frontend_request_create']
+
+            oro_rfp_frontend_request_view:
+                label: 'oro.ui.view'
+                extras:
+                    routes: ['oro_rfp_frontend_request_view']
+
         tree:
             frontend_menu:
                 children:
@@ -51,6 +66,19 @@ navigation:
             shortcuts:
                 children:
                     shortcut_request_list: ~
+
+            oro_customer_breadcrumbs_menu:
+                children:
+                    oro_customer_menu_customer_user_index:
+                        children:
+                            oro_rfp_frontend_request_index:
+                                children:
+                                    oro_rfp_frontend_request_create: ~
+                                    oro_rfp_frontend_request_view: ~
+
+            oro_customer_menu:
+                children:
+                    oro_rfp_frontend_request_index: ~
 
     titles:
         oro_rfp_request_index:           ~
