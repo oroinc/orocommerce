@@ -87,5 +87,5 @@ services:
         class: 'Oro\Bundle\PricingBundle\ImportExport\Writer\ProductPriceWriter'
         public: false
         parent: oro_integration.writer.persistent_batch_writer
-        calls:
-            - [setPriceManager, ['@oro_pricing.manager.price_manager']]
+        arguments:
+            - '@oro_pricing.manager.price_manager'

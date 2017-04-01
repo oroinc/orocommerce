@@ -37,13 +37,14 @@ class ProductPriceWriterTest extends WebTestCase
             $container->get('doctrine'),
             $container->get('event_dispatcher'),
             $container->get('oro_importexport.context_registry'),
-            $container->get('oro_integration.logger.strategy')
+            $container->get('oro_integration.logger.strategy'),
+            $container->get('oro_pricing.manager.price_manager')
         );
-        $writer->setPriceManager($this->getContainer()->get('oro_pricing.manager.price_manager'));
         $writer->setStepExecution($stepExecution);
 
         $writer->write([]);
 
-        $this->assertEmpty($context->getValue(ProductPriceImportStrategy::PROCESSED_ENTITIES_HASH));
+        $value = $context->getValue(ProductPriceImportStrategy::PROCESSED_ENTITIES_HASH);
+        $this->assertEmpty($value);
     }
 }
