@@ -22,12 +22,6 @@ services:
         tags:
             - { name: layout.data_provider, alias: oro_cms_login_page }
 
-    oro_cms.content_block.cache:
-        public: false
-        parent: doctrine_cache.abstract.array
-        calls:
-            - [ setNamespace, [ 'oro_cms_content_block' ] ]
-
     oro_cms.content_block.resolver:
         class: 'Oro\Bundle\CMSBundle\ContentBlock\ContentBlockResolver'
         arguments:
