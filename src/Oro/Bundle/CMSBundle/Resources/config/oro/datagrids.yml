@@ -117,7 +117,7 @@ datagrids:
                     data_name: title
 
     cms-content-block-grid:
-        extended_entity_name: Oro\Bundle\CMSBundle\Entity\ContentBlock
+        extended_entity_name: '%oro_cms.entity.content_block.class%'
         source:
             type: orm
             query:
