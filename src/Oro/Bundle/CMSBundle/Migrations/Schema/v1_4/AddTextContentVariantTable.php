@@ -7,16 +7,11 @@ use Doctrine\DBAL\Schema\Schema;
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
-use Oro\Bundle\ScopeBundle\Migration\Extension\ScopeExtensionAwareInterface;
-use Oro\Bundle\ScopeBundle\Migration\Extension\ScopeExtensionAwareTrait;
 
 class AddTextContentVariantTable implements
     Migration,
-    ScopeExtensionAwareInterface,
     OrderedMigrationInterface
 {
-    use ScopeExtensionAwareTrait;
-
     /**
      * {@inheritdoc}
      */

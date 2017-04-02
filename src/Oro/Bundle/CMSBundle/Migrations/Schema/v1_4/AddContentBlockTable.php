@@ -9,17 +9,12 @@ use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterf
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\MigrationBundle\Migration\OrderedMigrationInterface;
-use Oro\Bundle\ScopeBundle\Migration\Extension\ScopeExtensionAwareInterface;
-use Oro\Bundle\ScopeBundle\Migration\Extension\ScopeExtensionAwareTrait;
 
 class AddContentBlockTable implements
     Migration,
     ExtendExtensionAwareInterface,
-    ScopeExtensionAwareInterface,
     OrderedMigrationInterface
 {
-    use ScopeExtensionAwareTrait;
-
     /** @var ExtendExtension */
     private $extendExtension;
 
@@ -45,9 +40,6 @@ class AddContentBlockTable implements
         $this->addOroCmsContentBlockTitleForeignKeys($schema);
         $this->addOroCmsContentBlockScopeForeignKeys($schema);
         $this->addOrganizationForeignKeys($schema);
-
-        /** Associations */
-        $this->addOroCmsContentBlockScopeAssociations($schema);
     }
 
     /**
@@ -138,14 +130,6 @@ class AddContentBlockTable implements
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
-    }
-
-    /**
-     * @param Schema $schema
-     */
-    protected function addOroCmsContentBlockScopeAssociations(Schema $schema)
-    {
-        $this->scopeExtension->addScopeAssociation($schema, 'contentBlock', 'oro_cms_content_block', 'alias');
     }
 
     /**

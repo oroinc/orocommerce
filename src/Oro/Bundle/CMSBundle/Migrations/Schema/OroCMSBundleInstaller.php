@@ -15,18 +15,14 @@ use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtension;
 use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtensionAwareInterface;
-use Oro\Bundle\ScopeBundle\Migration\Extension\ScopeExtensionAwareInterface;
-use Oro\Bundle\ScopeBundle\Migration\Extension\ScopeExtensionAwareTrait;
 
 class OroCMSBundleInstaller implements
     Installation,
     AttachmentExtensionAwareInterface,
     ExtendExtensionAwareInterface,
-    ScopeExtensionAwareInterface,
     SlugExtensionAwareInterface
 {
     use AttachmentExtensionAwareTrait;
-    use ScopeExtensionAwareTrait;
 
     const CMS_LOGIN_PAGE_TABLE = 'oro_cms_login_page';
     const MAX_LOGO_IMAGE_SIZE_IN_MB = 10;
@@ -94,7 +90,6 @@ class OroCMSBundleInstaller implements
 
         /** Associations */
         $this->addOroCmsLoginPageImageAssociations($schema);
-        $this->addOroCmsContentBlockScopeAssociations($schema);
 
         $this->addContentVariantTypes($schema);
     }
@@ -359,14 +354,6 @@ class OroCMSBundleInstaller implements
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
-    }
-
-    /**
-     * @param Schema $schema
-     */
-    protected function addOroCmsContentBlockScopeAssociations(Schema $schema)
-    {
-        $this->scopeExtension->addScopeAssociation($schema, 'contentBlock', 'oro_cms_content_block', 'alias');
     }
 
     /**
