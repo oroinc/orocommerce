@@ -1,4 +1,5 @@
 config:
     paths:
+        'orocatalog/js/app/views/product-sidebar-view': 'bundles/orocatalog/js/app/views/product-sidebar-view.js'
         'orocatalog/js/app/views/tree-manage-view': 'bundles/orocatalog/js/app/views/tree-manage-view.js'
         'orocatalog/js/app/views/category-unit-limitations-view': 'orocatalog/js/app/views/category-unit-limitations-view.js'
