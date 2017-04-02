@@ -8,15 +8,13 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
-use Oro\Bundle\ScopeBundle\Entity\ScopeCollectionAwareInterface;
 
 /**
  * @ORM\Entity
  * @ORM\Table(name="oro_cms_text_content_variant")
  * @Config
  */
-class TextContentVariant implements
-    ScopeCollectionAwareInterface
+class TextContentVariant
 {
     /**
      * @var int

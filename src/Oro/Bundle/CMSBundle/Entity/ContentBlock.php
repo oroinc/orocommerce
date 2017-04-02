@@ -14,7 +14,6 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\OrganizationBundle\Entity\OrganizationAwareInterface;
 use Oro\Bundle\OrganizationBundle\Entity\Ownership\BusinessUnitAwareTrait;
 use Oro\Bundle\ScopeBundle\Entity\Scope;
-use Oro\Bundle\ScopeBundle\Entity\ScopeCollectionAwareInterface;
 
 /**
  * @ORM\Entity
@@ -43,8 +42,7 @@ use Oro\Bundle\ScopeBundle\Entity\ScopeCollectionAwareInterface;
  */
 class ContentBlock extends ExtendContentBlock implements
     DatesAwareInterface,
-    OrganizationAwareInterface,
-    ScopeCollectionAwareInterface
+    OrganizationAwareInterface
 {
     use BusinessUnitAwareTrait;
     use DatesAwareTrait;
