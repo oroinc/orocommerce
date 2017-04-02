@@ -39,7 +39,6 @@ class AddTextContentVariantTable implements
         $table->addColumn('content', 'text', ['notnull' => false]);
         $table->addColumn('is_default', 'boolean', ['default' => false]);
         $table->setPrimaryKey(['id']);
-        $table->addIndex(['content_block_id'], 'IDX_17D032FABB5A68E3', []);
     }
 
     /**
@@ -53,8 +52,6 @@ class AddTextContentVariantTable implements
         $table->addColumn('variant_id', 'integer', []);
         $table->addColumn('scope_id', 'integer', []);
         $table->setPrimaryKey(['variant_id', 'scope_id']);
-        $table->addIndex(['variant_id'], 'IDX_DA4264BA3B69A9AF', []);
-        $table->addIndex(['scope_id'], 'IDX_DA4264BA682B5931', []);
     }
 
     /**

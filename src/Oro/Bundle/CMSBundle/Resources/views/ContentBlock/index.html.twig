@@ -5,7 +5,7 @@
 {% set pageTitle = 'oro.cms.contentblock.entity_plural_label'|trans %}
 
 {% block navButtons %}
-    {% if resource_granted('oro_cms_contentblock_create') %}
+    {% if resource_granted('oro_cms_content_block_create') %}
         <div class="btn-group">
             {{ UI.addButton({
                 'path': path('oro_cms_content_block_create'),

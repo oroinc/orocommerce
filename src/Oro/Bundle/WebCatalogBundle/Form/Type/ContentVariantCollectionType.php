@@ -2,17 +2,15 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Form\Type;
 
+use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
+use Oro\Bundle\WebCatalogBundle\Form\EventListener\ContentVariantCollectionResizeSubscriber;
+use Oro\Bundle\WebCatalogBundle\Model\ContentVariantFormPrototype;
 use Symfony\Bridge\Doctrine\Form\EventListener\MergeDoctrineCollectionListener;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
-use Oro\Bundle\WebCatalogBundle\Form\EventListener\ContentVariantCollectionResizeSubscriber;
-
-use Oro\Component\WebCatalog\Model\ContentVariantFormPrototype;
 
 class ContentVariantCollectionType extends AbstractType
 {

@@ -2,19 +2,17 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Unit\Form\Type;
 
+use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
+use Oro\Bundle\WebCatalogBundle\Form\EventListener\ContentVariantCollectionResizeSubscriber;
+use Oro\Bundle\WebCatalogBundle\Form\Type\ContentVariantCollectionType;
+use Oro\Bundle\WebCatalogBundle\Model\ContentVariantFormPrototype;
+use Oro\Component\WebCatalog\ContentVariantTypeInterface;
 use Symfony\Bridge\Doctrine\Form\EventListener\MergeDoctrineCollectionListener;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-
-use Oro\Bundle\WebCatalogBundle\ContentVariantType\ContentVariantTypeRegistry;
-use Oro\Bundle\WebCatalogBundle\Form\EventListener\ContentVariantCollectionResizeSubscriber;
-use Oro\Bundle\WebCatalogBundle\Form\Type\ContentVariantCollectionType;
-
-use Oro\Component\WebCatalog\Model\ContentVariantFormPrototype;
-use Oro\Component\WebCatalog\ContentVariantTypeInterface;
 
 class ContentVariantCollectionTypeTest extends \PHPUnit_Framework_TestCase
 {

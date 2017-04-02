@@ -198,5 +198,5 @@ datagrids:
                 label:         oro.grid.action.view
                 link:          view_link
                 icon:          eye
-                acl_resource:  oro_cms_contentblock_view
+                acl_resource:  oro_cms_content_block_view
                 rowAction:     true

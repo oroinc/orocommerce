@@ -30,9 +30,6 @@ use Oro\Bundle\ScopeBundle\Entity\Scope;
  *              "organization_field_name"="organization",
  *              "organization_column_name"="organization_id"
  *          },
- *          "dataaudit"={
- *              "auditable"=true
- *          },
  *          "security"={
  *              "type"="ACL",
  *              "group_name"=""
@@ -60,13 +57,6 @@ class ContentBlock extends ExtendContentBlock implements
      * @var string
      *
      * @ORM\Column(type="string", length=100, nullable=false, unique=true)
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
      */
     protected $alias;
 
@@ -130,13 +120,6 @@ class ContentBlock extends ExtendContentBlock implements
      * @var bool
      *
      * @ORM\Column(type="boolean", options={"default"=true})
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
      */
     protected $enabled = true;
 
@@ -331,13 +314,5 @@ class ContentBlock extends ExtendContentBlock implements
         $this->enabled = (bool)$enabled;
 
         return $this;
-    }
-
-    /**
-     * @return string
-     */
-    public function __toString()
-    {
-        return (string) $this->getDefaultTitle();
     }
 }

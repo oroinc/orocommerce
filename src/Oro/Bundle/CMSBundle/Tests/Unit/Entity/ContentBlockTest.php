@@ -73,14 +73,4 @@ class ContentBlockTest extends \PHPUnit_Framework_TestCase
 
         $this->assertFalse($entity->isEnabled());
     }
-
-    public function testToString()
-    {
-        $value = 'test';
-
-        $page = new ContentBlock();
-        $page->addTitle((new LocalizedFallbackValue())->setString($value));
-
-        $this->assertEquals($value, (string)$page);
-    }
 }

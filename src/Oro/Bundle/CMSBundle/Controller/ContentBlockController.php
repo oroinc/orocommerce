@@ -19,7 +19,7 @@ class ContentBlockController extends Controller
     /**
      * @Route("/", name="oro_cms_content_block_index")
      * @Template
-     * @AclAncestor("oro_cms_contentblock_view")
+     * @AclAncestor("oro_cms_content_block_view")
      *
      * @return array
      */
@@ -38,7 +38,7 @@ class ContentBlockController extends Controller
      * @Route("/{id}", name="oro_cms_content_block_view", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="oro_cms_contentblock_view",
+     *      id="oro_cms_content_block_view",
      *      type="entity",
      *      class="OroCMSBundle:ContentBlock",
      *      permission="VIEW"
@@ -55,7 +55,7 @@ class ContentBlockController extends Controller
      * @Route("/create", name="oro_cms_content_block_create")
      * @Template("OroCMSBundle:ContentBlock:update.html.twig")
      * @Acl(
-     *      id="oro_cms_contentblock_create",
+     *      id="oro_cms_content_block_create",
      *      type="entity",
      *      class="OroCMSBundle:ContentBlock",
      *      permission="CREATE"
@@ -73,7 +73,7 @@ class ContentBlockController extends Controller
      * @Route("/update/{id}", name="oro_cms_content_block_update", requirements={"id"="\d+"})
      * @Template
      * @Acl(
-     *      id="oro_cms_contentblock_update",
+     *      id="oro_cms_content_block_update",
      *      type="entity",
      *      class="OroCMSBundle:ContentBlock",
      *      permission="EDIT"
