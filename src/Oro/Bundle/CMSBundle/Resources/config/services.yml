@@ -74,7 +74,7 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_config.update_after, method: onUpdateAfter }
 
-    oro_locale.localization_scope_criteria_provider:
+    oro_cms.localization_scope_criteria_provider:
         class: 'Oro\Bundle\LocaleBundle\Provider\LocalizationScopeCriteriaProvider'
         public: false
         arguments:
