@@ -117,18 +117,17 @@ datagrids:
                     data_name: title
 
     cms-content-block-grid:
-        extended_entity_name: '%oro_cms.entity.content_block.class%'
         source:
             type: orm
             query:
                 select:
-                    - block.id
-                    - block.alias
-                    - block.enabled
-                    - block.createdAt
-                    - block.updatedAt
+                    - contentBlock.id
+                    - contentBlock.alias
+                    - contentBlock.enabled
+                    - contentBlock.createdAt
+                    - contentBlock.updatedAt
                 from:
-                    - { table: OroCMSBundle:ContentBlock, alias: block }
+                    - { table: '%oro_cms.entity.content_block.class%', alias: contentBlock }
         columns:
             alias:
                 label: oro.cms.contentblock.alias.label
@@ -149,28 +148,28 @@ datagrids:
         sorters:
             columns:
                 alias:
-                    data_name: block.alias
+                    data_name: contentBlock.alias
                 title:
                     data_name: title
                 enabled:
-                    data_name: block.enabled
+                    data_name: contentBlock.enabled
                 createdAt:
-                    data_name: block.createdAt
+                    data_name: contentBlock.createdAt
                 updatedAt:
-                    data_name: block.updatedAt
+                    data_name: contentBlock.updatedAt
             default:
                 updatedAt: DESC
         filters:
             columns:
                 alias:
                     type: string
-                    data_name: block.alias
+                    data_name: contentBlock.alias
                 title:
                     type: string
                     data_name: title
                 enabled:
                     type: boolean
-                    data_name: block.enabled
+                    data_name: contentBlock.enabled
                     options:
                         field_options:
                             choices:
@@ -178,15 +177,15 @@ datagrids:
                                 2: Disabled
                 createdAt:
                     type: datetime
-                    data_name: block.createdAt
+                    data_name: contentBlock.createdAt
                 updatedAt:
                     type: datetime
-                    data_name: block.updatedAt
+                    data_name: contentBlock.updatedAt
         properties:
             id: ~
             title:
                 type: localized_value
-                data_name: block.titles
+                data_name: contentBlock.titles
             view_link:
                 type: url
                 route: oro_cms_content_block_view
