@@ -173,9 +173,9 @@ datagrids:
                 template: 'OroPaymentBundle:PaymentTransaction/Datagrid:action.html.twig'
             amount:
                 label: oro.payment.paymenttransaction.amount.label
-                type:          twig
+                type: twig
                 frontend_type: html
-                template:      OroPaymentBundle:PaymentTransaction:Datagrid/price.html.twig
+                template: OroPaymentBundle:PaymentTransaction:Datagrid/price.html.twig
             active:
                 label: oro.payment.paymenttransaction.active.label
                 frontend_type: boolean
