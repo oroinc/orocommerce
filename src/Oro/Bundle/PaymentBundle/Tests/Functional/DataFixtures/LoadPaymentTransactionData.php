@@ -15,8 +15,11 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
     use EntityTrait;
 
     const AUTHORIZE_TRANSACTION = 'authorize_transaction';
+    const CHARGE_TRANSACTION = 'charge_transaction';
+    const CHARGE_TRANSACTION_FAILED = 'charge_transaction_failed';
     const VALIDATE_TRANSACTION = 'validate_transaction';
     const AUTHORIZE_ACTIVE_TRANSACTION = 'authorize_active_transaction';
+    const CHARGED_AUTHORIZE_TRANSACTION = 'charged_authorize_transaction';
 
     const PAYMENT_METHOD = 'payment_method';
 
@@ -27,6 +30,11 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
     {
         return ['Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData'];
     }
+
+    /**
+     * @var array
+     */
+    private $referenceProperties = ['sourcePaymentTransactionReference'];
 
     /**
      * @var array
@@ -75,6 +83,53 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
                 'SECURETOKENID' => 'SECURETOKENID',
             ],
         ],
+        self::CHARGED_AUTHORIZE_TRANSACTION => [
+            'amount' => '1000.00',
+            'currency' => 'USD',
+            'action' => PaymentMethodInterface::AUTHORIZE,
+            'entityIdentifier' => 1,
+            'active' => true,
+            'successful' => true,
+            'paymentMethod' => self::PAYMENT_METHOD,
+            'entityClass' => PaymentTransaction::class,
+            'frontendOwner' => LoadCustomerUserData::EMAIL,
+            'response' => [
+                'SECURETOKEN' => 'SECURETOKEN',
+                'SECURETOKENID' => 'SECURETOKENID',
+            ],
+        ],
+        self::CHARGE_TRANSACTION => [
+            'amount' => '1000.00',
+            'currency' => 'USD',
+            'action' => PaymentMethodInterface::CHARGE,
+            'entityIdentifier' => 1,
+            'active' => true,
+            'successful' => true,
+            'paymentMethod' => self::PAYMENT_METHOD,
+            'entityClass' => PaymentTransaction::class,
+            'frontendOwner' => LoadCustomerUserData::EMAIL,
+            'response' => [
+                'SECURETOKEN' => 'SECURETOKEN',
+                'SECURETOKENID' => 'SECURETOKENID',
+            ],
+            'sourcePaymentTransactionReference' => self::CHARGED_AUTHORIZE_TRANSACTION
+        ],
+        self::CHARGE_TRANSACTION_FAILED => [
+            'amount' => '1000.00',
+            'currency' => 'USD',
+            'action' => PaymentMethodInterface::CHARGE,
+            'entityIdentifier' => 1,
+            'active' => true,
+            'successful' => false,
+            'paymentMethod' => self::PAYMENT_METHOD,
+            'entityClass' => PaymentTransaction::class,
+            'frontendOwner' => LoadCustomerUserData::EMAIL,
+            'response' => [
+                'SECURETOKEN' => 'SECURETOKEN',
+                'SECURETOKENID' => 'SECURETOKENID',
+            ],
+            'sourcePaymentTransactionReference' => self::CHARGED_AUTHORIZE_TRANSACTION
+        ],
     ];
 
     /**
@@ -88,8 +143,14 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
             $data['frontendOwner'] = $this->getReference($data['frontendOwner']);
 
             foreach ($data as $property => $value) {
+                if ($this->isReferenceProperty($property)) {
+                    continue;
+                }
+
                 $this->setValue($paymentTransaction, $property, $value);
             }
+
+            $this->handleReferenceProperties($paymentTransaction, $data);
 
             $this->setReference($reference, $paymentTransaction);
 
@@ -97,5 +158,30 @@ class LoadPaymentTransactionData extends AbstractFixture implements DependentFix
         }
 
         $manager->flush();
+    }
+
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     * @param array              $data
+     *
+     * @return void
+     */
+    private function handleReferenceProperties(PaymentTransaction $paymentTransaction, array $data)
+    {
+        if (array_key_exists('sourcePaymentTransactionReference', $data)) {
+            $sourcePaymentTransaction = $this->getReference($data['sourcePaymentTransactionReference']);
+
+            $this->setValue($paymentTransaction, 'sourcePaymentTransaction', $sourcePaymentTransaction);
+        }
+    }
+
+    /**
+     * @param string $property
+     *
+     * @return bool
+     */
+    private function isReferenceProperty($property)
+    {
+        return in_array($property, $this->referenceProperties, true);
     }
 }
