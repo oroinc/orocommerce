@@ -1,0 +1,25 @@
+parameters:
+    oro_apruve.method.identifier_prefix.apruve: 'apruve'
+
+services:
+    oro_apruve.method.generator.identifier:
+        parent: oro_integration.generator.prefixed_identifier_generator
+        public: true
+        arguments:
+            - '%oro_apruve.method.identifier_prefix.apruve%'
+
+    oro_apruve.payment_method.config.factory:
+        class: 'Oro\Bundle\ApruveBundle\Method\Config\Factory\ApruveConfigFactory'
+        public: false
+        arguments:
+            - '@oro_locale.helper.localization'
+            - '@oro_apruve.method.generator.identifier'
+
+    oro_apruve.payment_method.config.provider:
+        class: 'Oro\Bundle\ApruveBundle\Method\Config\Provider\ApruveConfigProvider'
+        public: false
+        arguments:
+            - '@doctrine'
+            - '@logger'
+            - '@oro_apruve.payment_method.config.factory'
+
