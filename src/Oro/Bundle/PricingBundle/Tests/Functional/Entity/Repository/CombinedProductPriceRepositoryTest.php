@@ -6,6 +6,7 @@ use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedPriceListToPriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
+use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
@@ -17,7 +18,7 @@ use Oro\Bundle\WebsiteBundle\Tests\Functional\DataFixtures\LoadWebsiteData;
 class CombinedProductPriceRepositoryTest extends WebTestCase
 {
     /**
-     * @var InsertFromSelectQueryExecutor
+     * @var InsertFromSelectShardQueryExecutor
      */
     protected $insertFromSelectQueryExecutor;
 
@@ -32,7 +33,7 @@ class CombinedProductPriceRepositoryTest extends WebTestCase
             ]
         );
         $this->insertFromSelectQueryExecutor = $this->getContainer()
-            ->get('oro_entity.orm.insert_from_select_query_executor');
+            ->get('oro_pricing.orm.insert_from_select_query_executor');
     }
 
     /**

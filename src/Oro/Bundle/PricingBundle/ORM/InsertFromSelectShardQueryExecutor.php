@@ -38,7 +38,7 @@ class InsertFromSelectShardQueryExecutor extends InsertFromSelectQueryExecutor
         $columns = $this->getColumns($className, $fields);
         $selectQuery = $selectQueryBuilder->getQuery();
         list($params, $types) = $this->helper->processParameterMappings($selectQuery);
-
+        $selectQuery->useQueryCache(false);
         $selectQuery->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $this->shardManager);
         $selectQuery->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
 

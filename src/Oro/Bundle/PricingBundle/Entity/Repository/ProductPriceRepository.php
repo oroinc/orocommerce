@@ -15,6 +15,7 @@ use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
 use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Doctrine\DBAL\Connection;
 
 class ProductPriceRepository extends BaseProductPriceRepository
 {
@@ -37,12 +38,16 @@ class ProductPriceRepository extends BaseProductPriceRepository
     ) {
         $qb = $this->getDeleteQbByPriceList($priceList, $product);
         $query = $qb->andWhere($qb->expr()->isNotNull('productPrice.priceRule'))->getQuery();
-
-        $query->useQueryCache(false);
-        $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
-        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
-
-        $query->execute();
+        $shardName = $shardManager->getEnabledShardName($this->getClassName(), ['priceList' => $priceList]);
+        $realTableName = ' ' . $shardName . ' ';
+        $baseTable = ' ' . $shardManager->getEntityBaseTable($this->getClassName()) . ' ';
+        $sql = $query->getSQL();
+        $sql = str_replace($baseTable, $realTableName, $sql);
+        $parameters = [$priceList->getId()];
+        if ($product) {
+            $parameters[] = $product->getId();
+        }
+        $this->_em->getConnection()->executeQuery($sql, $parameters);
     }
 
     /**
@@ -67,7 +72,7 @@ class ProductPriceRepository extends BaseProductPriceRepository
             ->setParameter('priceList', $priceList);
         $query = $qb->getQuery();
 
-        $query->useQueryCache(false);
+        $query->setHint('priceList', $priceList->getId());
         $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
         $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
 
@@ -80,16 +85,29 @@ class ProductPriceRepository extends BaseProductPriceRepository
 
         $qbDelete = $this->getDeleteQbByPriceList($priceList);
         $qbDelete->andWhere('productPrice.id IN (:ids)');
+        $sql = $qbDelete->getQuery()->getSQL();
+        $baseTableName = ' ' . $shardManager->getEntityBaseTable($this->getClassName()) . ' ';
+        $tableName = ' ' . $shardManager->getEnabledShardName($this->getClassName(), ['priceList' => $priceList]) . ' ';
+        $sql = str_replace($baseTableName, $tableName, $sql);
         foreach ($iterator as $priceId) {
             $i++;
-            $ids[] = $priceId;
+            $ids[] = $priceId['id'];
             if ($i % self::BUFFER_SIZE === 0) {
-                $qbDelete->setParameter('ids', $ids)->getQuery()->execute();
+                $this->_em->getConnection()->executeQuery(
+                    $sql,
+                    [$priceList->getId(), $ids],
+                    [\PDO::PARAM_INT, Connection::PARAM_STR_ARRAY]
+                );
                 $ids = [];
             }
         }
+
         if (!empty($ids)) {
-            $qbDelete->setParameter('ids', $ids)->getQuery()->execute();
+            $this->_em->getConnection()->executeQuery(
+                $sql,
+                [$priceList->getId(), $ids],
+                [\PDO::PARAM_INT, Connection::PARAM_STR_ARRAY]
+            );
         }
     }
 
@@ -217,22 +235,23 @@ class ProductPriceRepository extends BaseProductPriceRepository
     {
         throw new \LogicException('Method locked because of sharded tables');
     }
-//    /**
-//     * {@inheritdoc}
-//     */
-//    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
-//    {
-//
-//        throw new \LogicException('Method locked because of sharded tables');
-//    }
 
-//    /**
-//     * {@inheritdoc}
-//     */
-//    public function findAll()
-//    {
-//        throw new \LogicException('Method locked because of sharded tables');
-//    }
+    /**
+     * {@inheritdoc}
+     */
+    public function findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+    {
+
+        throw new \LogicException('Method locked because of sharded tables');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function findAll()
+    {
+        throw new \LogicException('Method locked because of sharded tables');
+    }
 
     /**
      * {@inheritdoc}

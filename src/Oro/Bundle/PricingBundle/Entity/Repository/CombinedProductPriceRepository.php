@@ -4,27 +4,27 @@ namespace Oro\Bundle\PricingBundle\Entity\Repository;
 
 use Doctrine\ORM\Query\Expr\Join;
 use Doctrine\ORM\QueryBuilder;
-use Oro\Bundle\EntityBundle\ORM\InsertFromSelectQueryExecutor;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomer;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToCustomerGroup;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToWebsite;
 use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
+use Oro\Bundle\PricingBundle\ORM\InsertFromSelectShardQueryExecutor;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 class CombinedProductPriceRepository extends BaseProductPriceRepository
 {
     /**
-     * @param InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor
+     * @param InsertFromSelectShardQueryExecutor $insertFromSelectQueryExecutor
      * @param CombinedPriceList $combinedPriceList
      * @param PriceList $priceList
      * @param boolean $mergeAllowed
      * @param Product|null $product
      */
     public function insertPricesByPriceList(
-        InsertFromSelectQueryExecutor $insertFromSelectQueryExecutor,
+        InsertFromSelectShardQueryExecutor $insertFromSelectQueryExecutor,
         CombinedPriceList $combinedPriceList,
         PriceList $priceList,
         $mergeAllowed,

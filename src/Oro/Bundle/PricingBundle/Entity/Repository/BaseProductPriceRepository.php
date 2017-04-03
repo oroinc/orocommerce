@@ -45,14 +45,12 @@ abstract class BaseProductPriceRepository extends EntityRepository
                 )
             );
         foreach ($priceLists as $priceListId) {
-            $qb->setParameter('priceList', $priceListId)
-                ->setParameter('unit', $unit)
-                ->setParameter('product', $product);
-
-            $query = $qb->getQuery();
-            $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
-            $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
-            $query->execute();
+            $sql = $qb->getQuery()->getSQL();
+            $baseTableName = ' ' . $shardManager->getEntityBaseTable($this->getClassName()) . ' ';
+            $shardName = $shardManager->getEnabledShardName($this->getClassName(), ['priceList' => $priceListId]);
+            $tableName = ' ' . $shardName . ' ';
+            $sql = str_replace($baseTableName, $tableName, $sql);
+            $this->_em->getConnection()->executeQuery($sql, [$priceListId, $unit, $product->getId()]);
         }
     }
 
@@ -68,9 +66,15 @@ abstract class BaseProductPriceRepository extends EntityRepository
     ) {
         $query = $this->getDeleteQbByPriceList($priceList, $product)
             ->getQuery();
-        $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
-        $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
-        $query->execute();
+        $sql = $query->getSQL();
+        $baseTableName = ' ' . $shardManager->getEntityBaseTable($this->getClassName()) . ' ';
+        $tableName = ' ' . $shardManager->getEnabledShardName($this->getClassName(), ['priceList' => $priceList]) . ' ';
+        $sql = str_replace($baseTableName, $tableName, $sql);
+        $parameters = [$priceList->getId()];
+        if ($product) {
+            $parameters[] = $product->getId();
+        }
+        $this->_em->getConnection()->executeQuery($sql, $parameters);
     }
 
     /**
@@ -108,7 +112,7 @@ abstract class BaseProductPriceRepository extends EntityRepository
             ->where($qb->expr()->eq('productPrice.priceList', ':priceList'))
             ->setParameter('priceList', $priceList)
             ->getQuery();
-
+        $query->setHint('priceList', $priceList->getId());
         $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
         $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
 
@@ -527,7 +531,7 @@ abstract class BaseProductPriceRepository extends EntityRepository
             $qb->setFirstResult($offset);
         }
         $query = $qb->getQuery();
-        $query->useQueryCache(false);
+        $query->setHint('priceList', $priceList->getId());
         $query->setHint(PriceShardWalker::ORO_PRICING_SHARD_MANAGER, $shardManager);
         $query->setHint(Query::HINT_CUSTOM_OUTPUT_WALKER, PriceShardWalker::class);
 

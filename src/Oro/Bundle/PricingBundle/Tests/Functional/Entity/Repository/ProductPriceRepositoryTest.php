@@ -13,6 +13,7 @@ use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
+use Oro\Bundle\PricingBundle\Tests\Functional\ProductPriceReference;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -24,6 +25,8 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class ProductPriceRepositoryTest extends WebTestCase
 {
+    use ProductPriceReference;
+
     /**
      * @var ProductPriceRepository
      */
@@ -241,7 +244,7 @@ class ProductPriceRepositoryTest extends WebTestCase
         $currency = null,
         array $orderBy = ['unit' => 'ASC', 'quantity' => 'ASC']
     ) {
-        $priceListId = -1;
+        $priceListId = 1;
         if ($priceList) {
             /** @var PriceList $priceListEntity */
             $priceListEntity = $this->getReference($priceList);
@@ -258,7 +261,7 @@ class ProductPriceRepositoryTest extends WebTestCase
         $expectedPriceIds = [];
         foreach ($expectedPrices as $price) {
             /** @var ProductPrice $priceEntity */
-            $priceEntity = $this->getReference($price);
+            $priceEntity = $this->getPriceByReference($price);
             $expectedPriceIds[] = $priceEntity->getId();
         }
 
@@ -517,10 +520,10 @@ class ProductPriceRepositoryTest extends WebTestCase
     public function testCountByPriceList()
     {
         /** @var PriceList $priceList */
-        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_6);
 
         $this->assertEquals(
-            7,
+            2,
             $this->repository->countByPriceList($this->shardManager, $priceList)
         );
     }

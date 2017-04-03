@@ -12,8 +12,10 @@ use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
-class LoadProductPrices extends AbstractFixture implements DependentFixtureInterface
+class LoadProductPrices extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
     const PRODUCT_PRICE_1 = 'product_price.1';
     const PRODUCT_PRICE_2 = 'product_price.2';
@@ -33,6 +35,11 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
     const PRODUCT_PRICE_16 = 'product_price.16';
 
     /**
+     * @var ContainerInterface
+     */
+    private $container;
+
+    /**
      * @var array
      */
     protected $loadedRelations = [];
@@ -40,150 +47,134 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
     /**
      * @var array
      */
-    protected $data = [
-        [
+    public static $data = [
+        self::PRODUCT_PRICE_1 => [
             'product' => 'product-1',
             'priceList' => 'price_list_1',
-            'qty' => 10,
+            'quantity' => 10,
             'unit' => 'product_unit.liter',
-            'price' => 12.2,
-            'currency' => 'USD',
-            'reference' => self::PRODUCT_PRICE_1
+            'value' => 12.2,
+            'currency' => 'USD'
         ],
-        [
+        self::PRODUCT_PRICE_2 => [
             'product' => 'product-1',
             'priceList' => 'price_list_1',
-            'qty' => 11,
+            'quantity' => 11,
             'unit' => 'product_unit.bottle',
-            'price' => 12.2,
-            'currency' => 'EUR',
-            'reference' => self::PRODUCT_PRICE_2
+            'value' => 12.2,
+            'currency' => 'EUR'
         ],
-        [
+        self::PRODUCT_PRICE_3 => [
             'product' => 'product-2',
             'priceList' => 'price_list_1',
-            'qty' => 12,
+            'quantity' => 12,
             'unit' => 'product_unit.liter',
-            'price' => 12.2,
+            'value' => 12.2,
             'currency' => 'USD',
-            'reference' => self::PRODUCT_PRICE_3
         ],
-        [
+        self::PRODUCT_PRICE_4 => [
             'product' => 'product-2',
             'priceList' => 'price_list_2',
-            'qty' => 13,
+            'quantity' => 13,
             'unit' => 'product_unit.liter',
-            'price' => 12.2,
+            'value' => 12.2,
             'currency' => 'USD',
-            'reference' => self::PRODUCT_PRICE_4
         ],
-        [
+        self::PRODUCT_PRICE_5 => [
             'product' => 'product-2',
             'priceList' => 'price_list_2',
-            'qty' => 14,
+            'quantity' => 14,
             'unit' => 'product_unit.bottle',
-            'price' => 12.2,
+            'value' => 12.2,
             'currency' => 'USD',
-            'reference' => self::PRODUCT_PRICE_5
         ],
-        [
+        self::PRODUCT_PRICE_6 => [
             'product' => 'product-1',
             'priceList' => 'price_list_2',
-            'qty' => 15,
+            'quantity' => 15,
             'unit' => 'product_unit.liter',
-            'price' => 12.2,
+            'value' => 12.2,
             'currency' => 'USD',
-            'reference' => self::PRODUCT_PRICE_6
         ],
-        [
+        self::PRODUCT_PRICE_7 => [
             'product' => 'product-1',
             'priceList' => 'price_list_1',
-            'qty' => 1,
+            'quantity' => 1,
             'unit' => 'product_unit.liter',
-            'price' => 10,
+            'value' => 10,
             'currency' => 'USD',
-            'reference' => self::PRODUCT_PRICE_7
         ],
-        [
+        self::PRODUCT_PRICE_8 => [
             'product' => 'product-2',
             'priceList' => 'price_list_1',
-            'qty' => 1,
+            'quantity' => 1,
             'unit' => 'product_unit.liter',
-            'price' => 20,
+            'value' => 20,
             'currency' => 'USD',
-            'reference' => self::PRODUCT_PRICE_8
         ],
-        [
+        self::PRODUCT_PRICE_9 => [
             'product' => 'product-3',
             'priceList' => 'price_list_1',
-            'qty' => 1,
+            'quantity' => 1,
             'unit' => 'product_unit.liter',
-            'price' => 5,
+            'value' => 5,
             'currency' => 'USD',
-            'reference' => self::PRODUCT_PRICE_9
         ],
-        [
+        self::PRODUCT_PRICE_10 => [
             'product' => 'product-1',
             'priceList' => 'price_list_1',
-            'qty' => 1,
+            'quantity' => 1,
             'unit' => 'product_unit.bottle',
-            'price' => 12.2,
+            'value' => 12.2,
             'currency' => 'EUR',
-            'reference' => self::PRODUCT_PRICE_10
         ],
-        [
+        self::PRODUCT_PRICE_11 => [
             'product' => 'product-2',
             'priceList' => 'price_list_1',
-            'qty' => 14,
+            'quantity' => 14,
             'unit' => 'product_unit.liter',
-            'price' => 16.5,
+            'value' => 16.5,
             'currency' => 'EUR',
-            'reference' => self::PRODUCT_PRICE_11
         ],
-        [
+        self::PRODUCT_PRICE_12 => [
             'product' => 'product-2',
             'priceList' => 'price_list_2',
-            'qty' => 24,
+            'quantity' => 24,
             'unit' => 'product_unit.bottle',
-            'price' => 16.5,
+            'value' => 16.5,
             'currency' => 'EUR',
-            'reference' => self::PRODUCT_PRICE_12
         ],
-        [
+        self::PRODUCT_PRICE_13 => [
             'product' => 'product-2',
             'priceList' => 'default_price_list',
-            'qty' => 1,
+            'quantity' => 1,
             'unit' => 'product_unit.bottle',
-            'price' => 17.5,
+            'value' => 17.5,
             'currency' => 'EUR',
-            'reference' => self::PRODUCT_PRICE_13
         ],
-        [
+        self::PRODUCT_PRICE_14 => [
             'product' => 'product-3',
             'priceList' => 'default_price_list',
-            'qty' => 1,
+            'quantity' => 1,
             'unit' => 'product_unit.bottle',
-            'price' => 20.5,
+            'value' => 20.5,
             'currency' => 'EUR',
-            'reference' => self::PRODUCT_PRICE_14
         ],
-        [
+        self::PRODUCT_PRICE_15 => [
             'product' => 'product-2',
             'priceList' => 'price_list_6',
-            'qty' => 97,
+            'quantity' => 97,
             'unit' => 'product_unit.liter',
-            'price' => 15,
+            'value' => 15,
             'currency' => 'USD',
-            'reference' => self::PRODUCT_PRICE_15
         ],
-        [
+        self::PRODUCT_PRICE_16 => [
             'product' => 'product-2',
             'priceList' => 'price_list_6',
-            'qty' => 97,
+            'quantity' => 97,
             'unit' => 'product_unit.bottle',
-            'price' => 15,
+            'value' => 15,
             'currency' => 'EUR',
-            'reference' => self::PRODUCT_PRICE_16
         ],
     ];
 
@@ -192,7 +183,8 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
      */
     public function load(ObjectManager $manager)
     {
-        foreach ($this->data as $data) {
+        $priceManager = $this->container->get('oro_pricing.manager.price_manager');
+        foreach (static::$data as $reference => $data) {
             /** @var Product $product */
             $product = $this->getReference($data['product']);
             if ($data['priceList'] === 'default_price_list') {
@@ -203,18 +195,20 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
             }
             /** @var ProductUnit $unit */
             $unit = $this->getReference($data['unit']);
-            $price = Price::create($data['price'], $data['currency']);
+            $price = Price::create($data['value'], $data['currency']);
 
             $productPrice = new ProductPrice();
             $productPrice
                 ->setPriceList($priceList)
                 ->setUnit($unit)
-                ->setQuantity($data['qty'])
+                ->setQuantity($data['quantity'])
                 ->setPrice($price)
                 ->setProduct($product);
 
-            $manager->persist($productPrice);
-            $this->setReference($data['reference'], $productPrice);
+            $priceManager->persist($productPrice);
+            $priceManager->flush();
+            $this->setReference($reference, $productPrice);
+            $this->referenceRepository->setReferenceIdentity($reference, $productPrice->getId());
         }
 
         $manager->flush();
@@ -226,7 +220,16 @@ class LoadProductPrices extends AbstractFixture implements DependentFixtureInter
     public function getDependencies()
     {
         return [
-            LoadPriceListToProducts::class
+            LoadProductUnitPrecisions::class,
+            LoadPriceLists::class,
         ];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function setContainer(ContainerInterface $container = null)
+    {
+        $this->container = $container;
     }
 }

@@ -82,9 +82,6 @@ class LoadPriceListToProducts extends AbstractFixture implements DependentFixtur
      */
     public function getDependencies()
     {
-        return [
-            LoadProductUnitPrecisions::class,
-            LoadPriceLists::class,
-        ];
+        return [];
     }
 }

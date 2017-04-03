@@ -362,6 +362,7 @@ services:
         class: 'Oro\Bundle\PricingBundle\Validator\Constraints\PriceListProductPricesCurrencyValidator'
         arguments:
             - '@doctrine'
+            - '@oro_pricing.shard_manager'
         tags:
             - { name: validator.constraint_validator, alias: oro_pricing_price_list_product_prices_currency_validator }
 

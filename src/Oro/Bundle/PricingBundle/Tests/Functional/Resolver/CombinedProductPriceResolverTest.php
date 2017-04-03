@@ -10,6 +10,7 @@ use Oro\Bundle\PricingBundle\Entity\CombinedProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Resolver\CombinedProductPriceResolver;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPricesForCombination;
@@ -149,7 +150,7 @@ class CombinedProductPriceResolverTest extends WebTestCase
         $this->resolver->combinePrices($combinedPriceList);
         $this->assertTrue($combinedPriceList->isPricesCalculated());
         $this->assertNotEmpty($this->getCombinedPrices($combinedPriceList));
-
+        $priceManager = $this->getContainer()->get('oro_pricing.manager.price_manager');
         /** @var Product $product */
         $product = $this->getReference('product-2');
         /** @var PriceList $priceList */
@@ -163,16 +164,16 @@ class CombinedProductPriceResolverTest extends WebTestCase
             ->setPrice($price)
             ->setQuantity(1)
             ->setUnit($unit);
-        $this->getEntityManager()->persist($productPrice);
-        $this->getEntityManager()->flush($productPrice);
+        $priceManager->persist($productPrice);
+        $priceManager->flush();
 
         $combinedPriceList->setPricesCalculated(false);
         $this->resolver->combinePrices($combinedPriceList, $product);
         $this->assertFalse($combinedPriceList->isPricesCalculated());
         $actualPrices = $this->getCombinedPrices($combinedPriceList);
 
-        $this->getEntityManager()->remove($productPrice);
-        $this->getEntityManager()->flush($productPrice);
+        $priceManager->remove($productPrice);
+        $priceManager->flush();
 
         $this->assertEquals($expectedPrices, $actualPrices);
     }
@@ -245,10 +246,11 @@ class CombinedProductPriceResolverTest extends WebTestCase
         $this->assertNotEmpty($this->getCombinedPrices($combinedPriceList));
 
         /** @var ProductPrice $price */
-        $price = $this->getReference('product_price.7');
-        $price->setQuantity(20);
-        $this->getEntityManager()->persist($price);
-        $this->getEntityManager()->flush($price);
+        $price = $this->getPriceByReference('product_price.7');
+        $price->getPrice()->setValue(22);
+        $priceManager = $this->getContainer()->get('oro_pricing.manager.price_manager');
+        $priceManager->persist($price);
+        $priceManager->flush();
 
         $this->resolver->combinePrices($combinedPriceList, $price->getProduct());
 
@@ -274,7 +276,7 @@ class CombinedProductPriceResolverTest extends WebTestCase
                     ],
                     'product-2' => [
                         '1 USD/1 bottle',
-                        '10 USD/20 bottle'
+                        '22 USD/10 bottle'
                     ]
                 ]
             ],
@@ -288,7 +290,7 @@ class CombinedProductPriceResolverTest extends WebTestCase
                         '10 USD/9 liter',
                     ],
                     'product-2' => [
-                        '10 USD/20 bottle'
+                        '22 USD/10 bottle'
                     ]
                 ]
             ],
@@ -302,7 +304,7 @@ class CombinedProductPriceResolverTest extends WebTestCase
                     ],
                     'product-2' => [
                         '1 USD/1 bottle',
-                        '10 USD/20 bottle'
+                        '22 USD/10 bottle'
                     ]
                 ]
             ]
@@ -325,9 +327,10 @@ class CombinedProductPriceResolverTest extends WebTestCase
         /** @var Product $product */
         $product = $this->getReference('product-2');
         /** @var ProductPrice $price */
-        $price = $this->getReference('product_price.7');
-        $this->getEntityManager()->remove($price);
-        $this->getEntityManager()->flush($price);
+        $price = $this->getPriceByReference('product_price.7');
+        $priceManager = $this->getContainer()->get('oro_pricing.manager.price_manager');
+        $priceManager->remove($price);
+        $priceManager->flush();
 
         $this->resolver->combinePrices($combinedPriceList, $product);
 
@@ -335,8 +338,9 @@ class CombinedProductPriceResolverTest extends WebTestCase
         $this->assertEquals($expectedPrices, $actualPrices);
 
         //recreate price for next test
-        $this->getEntityManager()->persist($price);
-        $this->getEntityManager()->flush($price);
+        $price->setId(null);
+        $priceManager->persist($price);
+        $priceManager->flush();
     }
 
     /**
@@ -436,5 +440,31 @@ class CombinedProductPriceResolverTest extends WebTestCase
         }
 
         return $actualPrices;
+    }
+
+    protected function getPriceByReference($reference)
+    {
+        $criteria = LoadProductPricesForCombination::$data[$reference];
+        /** @var ProductPriceRepository $repository */
+        $registry = $this->getContainer()->get('doctrine');
+        $repository = $registry->getRepository(ProductPrice::class);
+        /** @var Product $product */
+        $criteria['product'] = $this->getReference($criteria['product']);
+        if ($criteria['priceList'] === 'default_price_list') {
+            $criteria['priceList'] = $registry->getManager()->getRepository('OroPricingBundle:PriceList')->getDefault();
+        } else {
+            /** @var PriceList $priceList */
+            $criteria['priceList'] = $this->getReference($criteria['priceList']);
+        }
+        /** @var ProductUnit $unit */
+        $criteria['unit'] = $this->getReference($criteria['unit']);
+        unset($criteria['value']);
+        $prices = $repository->findByPriceList(
+            $this->getContainer()->get('oro_pricing.shard_manager'),
+            $criteria['priceList'],
+            $criteria
+        );
+
+        return $prices[0];
     }
 }

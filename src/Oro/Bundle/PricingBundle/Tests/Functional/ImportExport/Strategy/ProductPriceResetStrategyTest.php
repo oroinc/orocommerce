@@ -10,12 +10,16 @@ use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceResetStrategy;
 use Oro\Bundle\PricingBundle\Sharding\ShardManager;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
+use Oro\Bundle\PricingBundle\Tests\Functional\ProductPriceReference;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ProductPriceResetStrategyTest extends WebTestCase
 {
+    use ProductPriceReference;
+
     /**
      * @var ShardManager
      */
@@ -43,7 +47,7 @@ class ProductPriceResetStrategyTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices'
+                LoadProductPrices::class
             ]
         );
 
@@ -111,8 +115,9 @@ class ProductPriceResetStrategyTest extends WebTestCase
 
         // do not clear twice
         $newProductPrice = $this->createProductPrice();
-        $this->getContainer()->get('doctrine')->getManager()->persist($newProductPrice);
-        $this->getContainer()->get('doctrine')->getManager()->flush();
+        $priceManager = $this->getContainer()->get('oro_pricing.manager.price_manager');
+        $priceManager->persist($newProductPrice);
+        $priceManager->flush();
 
         $this->strategy->process($productPrice);
 
@@ -125,14 +130,6 @@ class ProductPriceResetStrategyTest extends WebTestCase
         );
     }
 
-    /**
-     * @param string $reference
-     * @return ProductPrice
-     */
-    protected function getPriceByReference($reference)
-    {
-        return $this->getReference($reference);
-    }
 
     /**
      * @return ProductPrice

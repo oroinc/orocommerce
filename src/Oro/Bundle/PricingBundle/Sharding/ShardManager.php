@@ -212,7 +212,7 @@ class ShardManager implements \Serializable
      */
     public function isEntitySharded($className)
     {
-        return in_array($className, $this->getShardMap());
+        return in_array($className, $this->getShardList());
     }
 
     /**

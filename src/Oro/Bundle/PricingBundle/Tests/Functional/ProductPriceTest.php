@@ -10,6 +10,8 @@ use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 
 class ProductPriceTest extends WebTestCase
 {
+    use ProductPriceReference;
+
     protected function setUp()
     {
         $this->initClient([], $this->generateBasicAuthHeader());
@@ -25,7 +27,7 @@ class ProductPriceTest extends WebTestCase
     public function testCreateDuplicateEntry()
     {
         /** @var ProductPrice $productPrice */
-        $productPrice = $this->getReference('product_price.3');
+        $productPrice = $this->getPriceByReference('product_price.3');
 
         $form = $this->getWidgetForm($productPrice->getPriceList());
         $form['oro_action_operation[price][product]'] = $productPrice->getProduct()->getId();
