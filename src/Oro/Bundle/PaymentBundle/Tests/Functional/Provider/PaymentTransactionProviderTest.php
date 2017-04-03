@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\PaymentBundle\Tests\Functional\Provider;
 
+use Oro\Bundle\CustomerBundle\Entity\CustomerUser;
+use Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData;
 use Psr\Log\LoggerInterface;
 
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
@@ -20,11 +22,7 @@ class PaymentTransactionProviderTest extends WebTestCase
     {
         $this->initClient();
         $this->client->useHashNavigation(true);
-        $this->loadFixtures(
-            [
-                'Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures\LoadPaymentTransactionData'
-            ]
-        );
+        $this->loadFixtures([LoadPaymentTransactionData::class]);
 
         $paymentTransactionProvider = $this->getContainer()->get('oro_payment.provider.payment_transaction');
 
@@ -220,5 +218,65 @@ class PaymentTransactionProviderTest extends WebTestCase
             new Item()
         );
         $paymentTransactionProvider->savePaymentTransaction($paymentTransaction);
+    }
+
+    public function testCreatePaymentTransactionByParentTransaction()
+    {
+        $this->initClient();
+
+        $paymentTransactionProvider = $this->getContainer()->get('oro_payment.provider.payment_transaction');
+
+        $action = 'someAction';
+        $paymentMethod = 'somePaymentMethod';
+        $entityClass = 'someEntityClass';
+        $entityIdentifier = 1;
+        $amount = 'someAmount';
+        $currency = 'someCurrency';
+
+        $parentPaymentTransaction = new PaymentTransaction();
+        $parentPaymentTransaction
+            ->setPaymentMethod($paymentMethod)
+            ->setEntityClass($entityClass)
+            ->setEntityIdentifier($entityIdentifier)
+            ->setAmount($amount)
+            ->setCurrency($currency)
+            ->setAccessToken(null)
+            ->setAccessIdentifier(null);
+
+        $expectedPaymentTransaction = clone $parentPaymentTransaction;
+        $expectedPaymentTransaction
+            ->setAction($action)
+            ->setFrontendOwner($this->getLoggedCustomerUser())
+            ->setSourcePaymentTransaction($parentPaymentTransaction);
+
+        $actualPaymentTransaction = $paymentTransactionProvider->createPaymentTransactionByParentTransaction(
+            $action,
+            $parentPaymentTransaction
+        );
+
+        $actualPaymentTransaction
+            ->setAccessToken(null)
+            ->setAccessIdentifier(null);
+
+        $this->assertEquals($expectedPaymentTransaction, $actualPaymentTransaction);
+    }
+
+    /**
+     * @return CustomerUser|null
+     */
+    protected function getLoggedCustomerUser()
+    {
+        $token = $this->getContainer()->get('security.token_storage')->getToken();
+        if (!$token) {
+            return null;
+        }
+
+        $user = $token->getUser();
+
+        if ($user instanceof CustomerUser) {
+            return $user;
+        }
+
+        return null;
     }
 }

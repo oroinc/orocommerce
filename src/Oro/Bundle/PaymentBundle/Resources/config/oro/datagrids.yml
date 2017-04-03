@@ -173,11 +173,9 @@ datagrids:
                 template: 'OroPaymentBundle:PaymentTransaction/Datagrid:action.html.twig'
             amount:
                 label: oro.payment.paymenttransaction.amount.label
-                frontend_type: multi-currency
-                type: callback
-                callable: ['@oro_currency.converter.currency_to_string', 'convert']
-                multicurrency_config:
-                    currency_field: currency
+                type: twig
+                frontend_type: html
+                template: OroPaymentBundle:PaymentTransaction:Datagrid/price.html.twig
             active:
                 label: oro.payment.paymenttransaction.active.label
                 frontend_type: boolean
