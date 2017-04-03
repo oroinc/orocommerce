@@ -70,15 +70,8 @@ class ProductType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
-        $product = $builder->getData();
-
-        if (!$product->getPageTemplate()) {
-            $entityFallback = new EntityFieldFallbackValue();
-            $entityFallback->setFallback(SystemConfigFallbackProvider::FALLBACK_ID);
-            $product->setPageTemplate($entityFallback);
-        }
-
         $builder
+            ->add('attributeFamily', HiddenType::class)
             ->add('sku', 'text', ['required' => true, 'label' => 'oro.product.sku.label'])
             ->add('status', ProductStatusType::NAME, ['label' => 'oro.product.status.label'])
             ->add(
@@ -158,15 +151,6 @@ class ProductType extends AbstractType
                 ]
             )
             ->add(
-                'variantFields',
-                ProductCustomVariantFieldsCollectionType::NAME,
-                [
-                    'label' => 'oro.product.variant_fields.label',
-                    'tooltip' => 'oro.product.form.tooltip.variant_fields',
-                    'required' => false,
-                ]
-            )
-            ->add(
                 'images',
                 ProductImageCollectionType::NAME,
                 ['required' => false]
@@ -182,6 +166,7 @@ class ProductType extends AbstractType
                 ]
             )
             ->add('type', HiddenType::class)
+
             ->add(
                 'slugPrototypesWithRedirect',
                 LocalizedSlugWithRedirectType::NAME,
@@ -198,7 +183,8 @@ class ProductType extends AbstractType
             ])
             ->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener'])
             ->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetDataListener'])
-            ->addEventListener(FormEvents::SUBMIT, [$this, 'submitListener']);
+            ->addEventListener(FormEvents::SUBMIT, [$this, 'submitListener'])
+            ->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
 
         $builder->get('pageTemplate')
             ->addModelTransformer(new PageTemplateEntityFieldFallbackValueTransformer(self::PAGE_TEMPLATE_ROUTE_NAME));
@@ -212,6 +198,22 @@ class ProductType extends AbstractType
         /** @var Product $product */
         $product = $event->getData();
         $form = $event->getForm();
+
+        if (!$product->getPageTemplate()) {
+            $entityFallback = new EntityFieldFallbackValue();
+            $entityFallback->setFallback(SystemConfigFallbackProvider::FALLBACK_ID);
+            $product->setPageTemplate($entityFallback);
+        }
+        $form->add(
+            'variantFields',
+            ProductCustomVariantFieldsCollectionType::NAME,
+            [
+                'label' => 'oro.product.variant_fields.label',
+                'tooltip' => 'oro.product.form.tooltip.variant_fields',
+                'required' => false,
+                'attributeFamily' => $product->getAttributeFamily()
+            ]
+        );
 
         if ($product->getId() == null) {
             $form->remove('primaryUnitPrecision');
@@ -296,6 +298,18 @@ class ProductType extends AbstractType
             }
         }
         PropertyAccess::createPropertyAccessor()->setValue($product, 'additionalUnitPrecisions', $additionalPrecisions);
+    }
+
+    /**
+     * @param FormEvent $event
+     */
+    public function onPreSubmit(FormEvent $event)
+    {
+        /** @var Product $product */
+        $product = $event->getData();
+        $form = $event->getForm();
+
+        return;
     }
 
     /**

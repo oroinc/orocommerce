@@ -3,7 +3,7 @@
 
 {% oro_title_set({params : {"%sku%": entity.sku|default('N/A'|trans) , "%name%": (entity.id ? entity.defaultName.string : '')|default('N/A'|trans) } }) %}
 
-{% set formAction = path('oro_product_create_step_two')  %}
+{% set formAction = path('oro_product_create_step_two', { attributeFamilyId: entity.attributeFamily.id})  %}
 
 {% block navButtons %}
     {{ parent() }}
@@ -61,7 +61,8 @@
     {% set generalData = generalData|merge([
         form_row(form.status),
         form_row(form.slugPrototypesWithRedirect),
-        form_row(form.featured)
+        form_row(form.featured),
+        form_row(form.attributeFamily)
     ]) %}
 
     {% if oro_is_product_primary_unit_visible() %}

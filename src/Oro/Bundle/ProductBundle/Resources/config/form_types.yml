@@ -100,8 +100,7 @@ services:
     oro_product.form.type.custom_variant_fields_collection:
         class: 'Oro\Bundle\ProductBundle\Form\Type\ProductCustomVariantFieldsCollectionType'
         arguments:
-            - '@oro_product.provider.custom_field_provider'
-            - '%oro_product.entity.product.class%'
+            - '@oro_product.provider.variant_field_provider'
         tags:
             - { name: form.type, alias: oro_product_custom_variant_fields_collection }
 

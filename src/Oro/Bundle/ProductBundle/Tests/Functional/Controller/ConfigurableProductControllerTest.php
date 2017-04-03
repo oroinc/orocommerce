@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\ProductBundle\Tests\Functional\Controller;
 
+use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityConfigBundle\Entity\FieldConfigModel;
 use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
@@ -61,11 +63,21 @@ class ConfigurableProductControllerTest extends WebTestCase
             $crawler->filterXPath("//select/option[contains(text(),'Configurable')]")->count()
         );
 
+        /** @var AttributeFamily $defaultAttributeFamily */
+        $defaultAttributeFamily = $this->getContainer()
+            ->get('oro_entity.doctrine_helper')
+            ->getEntityRepository(AttributeFamily::class)
+            ->findOneBy(['code' => LoadProductDefaultAttributeFamilyData::DEFAULT_FAMILY_CODE]);
+
+        $attributes = $this->getContainer()
+            ->get('oro_entity_config.manager.attribute_manager')->getAttributesByFamily($defaultAttributeFamily);
+
         $form = $crawler->selectButton('Continue')->form();
         $formValues = $form->getPhpValues();
         $formValues['input_action'] = 'oro_product_create';
         $formValues['oro_product_step_one']['category'] = self::CATEGORY_ID;
         $formValues['oro_product_step_one']['type'] = Product::TYPE_CONFIGURABLE;
+        $formValues['oro_product_step_one']['attributeFamily'] = $defaultAttributeFamily->getId();
 
         $this->client->followRedirects(true);
         $crawler = $this->client->request(
