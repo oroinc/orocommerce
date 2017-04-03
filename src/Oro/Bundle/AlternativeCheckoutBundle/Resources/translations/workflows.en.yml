@@ -77,48 +77,122 @@ oro:
             transition:
                 __start__:
                     label: 'Create Order'
+                    warning_message: ''
                 start_from_shoppinglist:
                     label: 'Create Order'
+                    warning_message: ''
                 start_from_quickorderform:
                     label: 'Create Order'
+                    warning_message: ''
                 continue_to_shipping_address:
                     label: Continue
+                    warning_message: ''
                     attribute:
                         save_billing_address:
                             label: 'Save address'
                         ship_to_billing_address:
                             label: 'Ship to this address'
+#                        billing_address:
+#                            label: ''
+                        state_token:
+                            label: ''
                 continue_to_shipping_method:
                     label: Continue
+                    warning_message: ''
                     attribute:
                         save_shipping_address:
                             label: 'Save address'
                         ship_to_billing_address:
                             label: 'Use billing address'
+#                        shipping_address:
+#                            label: ''
+                        state_token:
+                            label: ''
                 continue_to_payment:
                     label: Continue
+                    warning_message: ''
+                    attribute:
+                        shipping_method:
+                            label: ''
+                        shipping_method_type:
+                            label: ''
+                        state_token:
+                            label: ''
                 continue_to_order_review:
                     label: Continue
+                    warning_message: ''
+                    attribute:
+                        payment_method:
+                            label: ''
+                        state_token:
+                            label: ''
                 continue_to_request_approval:
                     label: 'Request Approval'
+                    warning_message: ''
+                    attribute:
+                        customer_notes:
+                            label: ''
+                        po_number:
+                            label: ''
+                        remove_source:
+                            label: ''
+                        ship_until:
+                            label: ''
+                        state_token:
+                            label: ''
                 continue_to_approve_request:
                     label: 'Request Approval'
                     warning_message: 'You exceeded the allowable amount of $5,000.00. <br/> To proceed please request manager approval. <br/>'
+                    attribute:
+                        request_approval_notes:
+                            label: ''
+                        state_token:
+                            label: ''
                 back_to_billing_address:
                     label: 'Edit Billing Information'
+                    warning_message: ''
                 back_to_shipping_address:
                     label: 'Edit Shipping Information'
+                    warning_message: ''
                 back_to_shipping_method:
                     label: 'Edit Shipping Method'
+                    warning_message: ''
                 back_to_payment:
                     label: 'Edit Payment'
+                    warning_message: ''
                 back_to_order_review:
                     label: 'Back To Order Review'
+                    warning_message: ''
                 back_to_request_approval:
                     label: 'Back To Request Approval'
+                    warning_message: ''
                 place_order:
                     label: 'Submit Order'
+                    warning_message: ''
+                    attribute:
+                        customer_notes:
+                            label: ''
+                        po_number:
+                            label: ''
+                        remove_source:
+                            label: ''
+                        ship_until:
+                            label: ''
                 place_order_with_inactive_possibility:
                     label: 'Submit Order'
+                    warning_message: ''
+                    attribute:
+                        customer_notes:
+                            label: ''
+                        po_number:
+                            label: ''
+                        ship_until:
+                            label: ''
+                        state_token:
+                            label: ''
                 approve_order:
                     label: 'Approve Order'
+                    warning_message: ''
+                    attribute:
+                        state_token:
+                            label: ''

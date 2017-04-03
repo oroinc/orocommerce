@@ -6,6 +6,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
+use Oro\Bundle\EmailBundle\Model\EmailHolderInterface;
 use Oro\Bundle\EntityBundle\EntityProperty\DatesAwareTrait;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\ConfigField;
@@ -61,6 +62,7 @@ use Oro\Bundle\RFPBundle\Model\ExtendRequest;
  */
 class Request extends ExtendRequest implements
     CustomerOwnerAwareInterface,
+    EmailHolderInterface,
     SoftDeleteableInterface,
     OrganizationAwareInterface
 {

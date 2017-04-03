@@ -2,19 +2,23 @@
 
 namespace Oro\Bundle\WebCatalogBundle\Tests\Functional\EntityTitles;
 
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\WebCatalogBundle\Tests\Functional\EntityTitles\DataFixtures\AbstractLoadWebCatalogData;
-use Oro\Bundle\WebCatalogBundle\Tests\Functional\EntityTitles\DataFixtures\LoadWebCatalogPageData;
+use Oro\Bundle\WebCatalogBundle\Tests\Functional\EntityTitles\DataFixtures\LoadWebCatalogCategoryData;
 
-class CMSPageTitle extends WebTestCase
+class CategoryPageTitleTest extends WebTestCase
 {
     protected function setUp()
     {
-        $this->initClient();
+        $this->initClient(
+            [],
+            $this->generateBasicAuthHeader(LoadCustomerUserData::AUTH_USER, LoadCustomerUserData::AUTH_PW)
+        );
         $this->client->useHashNavigation(true);
         $this->loadFixtures(
             [
-                LoadWebCatalogPageData::class
+                LoadWebCatalogCategoryData::class,
             ]
         );
     }
@@ -30,9 +34,10 @@ class CMSPageTitle extends WebTestCase
             AbstractLoadWebCatalogData::CONTENT_NODE_TITLE,
             $crawler->filter('title')->html()
         );
+
         $this->assertContains(
             AbstractLoadWebCatalogData::CONTENT_NODE_TITLE,
-            $crawler->filter('h1.page-title')->html()
+            $crawler->filter('h1.category-title')->html()
         );
     }
 }
