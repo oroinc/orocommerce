@@ -1017,3 +1017,9 @@ services:
         class: Oro\Bundle\PricingBundle\Provider\PriceListProvider
         arguments:
             - '@doctrine'
+
+    oro_pricing.handler.product_price_handler:
+        class: Oro\Bundle\PricingBundle\Handler\ProductPriceHandler
+        parent: oro_form.form.handler.default
+        arguments:
+            - '@oro_pricing.manager.price_manager'

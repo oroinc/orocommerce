@@ -85,14 +85,13 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
 
     public function testUpdateDuplicateEntry()
     {
-        $this->markTestSkipped('BB-8630');
         $this->loadFixtures([
             'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices'
         ]);
         /** @var ProductPrice $productPrice */
 
-        $productPrice = $this->getReferenceRepository()->getReferences()[LoadProductPrices::PRODUCT_PRICE_3];
-        $productPriceEUR = $this->getReferenceRepository()->getReferences()[LoadProductPrices::PRODUCT_PRICE_11];
+        $productPrice = $this->getPriceByReference(LoadProductPrices::PRODUCT_PRICE_1);
+        $productPriceEUR = $this->getPriceByReference(LoadProductPrices::PRODUCT_PRICE_2);
 
         $crawler = $this->client->request(
             'GET',
@@ -134,7 +133,7 @@ class AjaxProductPriceControllerTest extends AbstractAjaxProductPriceControllerT
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $html = $crawler->html();
 
-        $this->assertRegExp('/"savedId":\s*null/i', $html);
+        $this->assertRegExp('/"savedId":[\s\d-]*/i', $html);
         $error = $this->getContainer()->get('translator')
             ->trans($message, [], 'validators');
         $this->assertContains($error, $html);
