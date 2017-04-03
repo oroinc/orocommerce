@@ -444,6 +444,7 @@ workflows:
                                 token: $state_token
                 preconditions:
                     '@and':
+                        - '@quote_acceptable': [$checkout.sourceEntity, true]
                         - '@extendable':
                             events: [extendable_condition.checkout]
                         - '@equal': [$checkout_finished, false]
@@ -554,6 +555,7 @@ workflows:
                                  token: $state_token
                 preconditions:
                     '@and':
+                        - '@quote_acceptable': [$checkout.sourceEntity, true]
                         - '@equal': [$checkout_finished, false]
                         - '@order_line_item_has_count':
                             message: oro.checkout.workflow.condition.order_line_item_has_count.message
@@ -641,6 +643,7 @@ workflows:
                         attribute: $.result.shippingContext
                 preconditions:
                     '@and':
+                        - '@quote_acceptable': [$checkout.sourceEntity, true]
                         - '@order_line_item_has_count':
                             message: oro.checkout.workflow.condition.order_line_item_has_count.message
                             parameters:
@@ -710,6 +713,7 @@ workflows:
                 preconditions:
                     '@and':
                         - '@equal': [$checkout_finished, false]
+                        - '@quote_acceptable': [$checkout.sourceEntity, true]
                         - '@order_line_item_has_count':
                             message: oro.checkout.workflow.condition.order_line_item_has_count.message
                             parameters:
@@ -861,6 +865,7 @@ workflows:
                 preconditions:
                     '@and':
                         - '@not_empty': $.result.paymentContext
+                        - '@quote_acceptable': [$checkout.sourceEntity, true]
                         - '@checkout_has_applicable_shipping_methods':
                             message: oro.checkout.workflow.condition.shipping_method_is_not_available.message
                             checkout: $checkout

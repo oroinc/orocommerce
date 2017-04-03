@@ -14,14 +14,6 @@ define(function(require) {
             template: ''
         },
 
-        elements: {
-            editLineItem: '[data-role="edit-line-item"]'
-        },
-
-        elementsEvents: {
-            editLineItem: ['click', 'editLineItem']
-        },
-
         modelAttr: {
             shopping_lists: []
         },
@@ -57,9 +49,6 @@ define(function(require) {
                 }) || {};
             this.modelAttr = $.extend(true, {}, this.modelAttr, modelAttr);
 
-            if (!options.productModel) {
-                this.$el.trigger('options:set:productModel', options);
-            }
             if (options.productModel) {
                 this.model = options.productModel;
             }
@@ -127,13 +116,6 @@ define(function(require) {
                 this.shoppingListCollection.get(current.id).toJSON()
             );
         },
-
-        editLineItem: function(event) {
-            var lineItemId = $(event.currentTarget).data('lineItemId');
-            if (lineItemId) {
-                this.model.trigger('editLineItem', lineItemId);
-            }
-        }
     }));
 
     return ProductShoppingListsView;

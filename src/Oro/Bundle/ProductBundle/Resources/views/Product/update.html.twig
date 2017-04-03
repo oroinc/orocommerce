@@ -58,7 +58,8 @@
 
     {% set generalData = generalData|merge([
         form_row(form.slugPrototypesWithRedirect),
-        form_row(form.status)
+        form_row(form.status),
+        form_row(form.featured)
     ]) %}
 
     {% if oro_is_product_primary_unit_visible(entity) %}
@@ -146,7 +147,17 @@
     }) %}
 
     {% set productHasVariants = (entity.isConfigurable and form.variantFields.vars.data|length != 0) %}
+
     {% if productHasVariants %}
+
+        {% set dataGridParameters = {
+            'parentProduct': entity.id
+        } %}
+
+        {% if form.variantLinks.appendVariants.vars.value|length != 0 %}
+            {% set dataGridParameters = dataGridParameters|merge({appendVariants: form.variantLinks.appendVariants.vars.value}) %}
+        {% endif %}
+
         {% set variantLinksForm = form.variantLinks %}
         {% set dataBlocks = dataBlocks|merge([{
             'title' : 'oro.product.sections.productVariants'|trans,
@@ -156,7 +167,7 @@
                 'data' : [
                     form_widget(variantLinksForm.appendVariants, {'id': 'productAppendVariants'}),
                     form_widget(variantLinksForm.removeVariants, {'id': 'productRemoveVariants'}),
-                    dataGrid.renderGrid('product-product-variants-edit', {'parentProduct': entity.id}, { cssClass: 'inner-grid' })
+                    dataGrid.renderGrid('product-product-variants-edit', dataGridParameters, { cssClass: 'inner-grid' })
                 ]
             }]
         }] ) %}

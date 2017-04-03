@@ -160,7 +160,7 @@
     {# TODO: Pass default currency from provider. BB-2218 #}
     {% set defaultCurrency = 'USD' %}
 
-        {% set attr = attr|merge({ class: attr.class|default('') ~ " cart-table cart-table_b-bordered cart-table__verticalp-enlarged mt1-md"}) %}
+        {% set attr = attr|merge({ class: attr.class|default('') ~ " cart-table cart-table_b-bordered cart-table__verticalp-enlarged"}) %}
         <div{{ block('block_attributes') }} {{ UI.renderPageComponentAttributes({
             module: 'orofrontend/js/app/components/empty-items-component',
             options: {eventName: 'frontend:item:delete'}

@@ -1,0 +1,4 @@
+layout:
+    actions:
+        - '@remove':
+            id: product_view_additional_container

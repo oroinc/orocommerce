@@ -1,0 +1,5 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'logged.html.twig'
+    conditions: '!context["is_mobile"] && context["is_logged_in"]'

@@ -2,7 +2,7 @@ datagrids:
     base-orders-grid:
         extended_entity_name: %oro_order.entity.order.class%
         options:
-            entityHint:        order
+            entityHint:        orders
             entity_pagination: true
         source:
             type:         orm
@@ -68,7 +68,6 @@ datagrids:
                 type:          callback
                 callable:      ['@oro_currency.converter.currency_to_string', 'convert']
                 multicurrency_config:
-                    base_currency_label: oro.order.total.base.label
                     currency_field: currency
             paymentMethods:
                 label: oro.order.payment_method.label
@@ -97,7 +96,6 @@ datagrids:
                 type:          callback
                 callable:      ['@oro_currency.converter.currency_to_string', 'convert']
                 multicurrency_config:
-                    base_currency_label: oro.order.subtotal.base.label
                     currency_field: currency
                 renderable: false
             shippingMethod:
@@ -225,7 +223,6 @@ datagrids:
                 type:          callback
                 callable:      ['@oro_currency.converter.currency_to_string', 'convert']
                 multicurrency_config:
-                    base_currency_label: oro.order.subtotal.base.label
                     currency_field: currency
                 renderable: false
             total:
@@ -234,7 +231,6 @@ datagrids:
                 type:          callback
                 callable:      ['@oro_currency.converter.currency_to_string', 'convert']
                 multicurrency_config:
-                    base_currency_label: oro.order.total.base.label
                     currency_field: currency
             customerName:
                 label:         oro.order.customer.label
@@ -379,7 +375,7 @@ datagrids:
         acl_resource: oro_order_view
         extended_entity_name: %oro_order.entity.order.class%
         options:
-            entityHint:        order
+            entityHint:        orders
             entity_pagination: true
         source:
             type:         orm
@@ -409,7 +405,6 @@ datagrids:
                 type:          callback
                 callable:      ['@oro_currency.converter.currency_to_string', 'convert']
                 multicurrency_config:
-                    base_currency_label: oro.order.subtotal.base.label
                     currency_field: currency
                 renderable: false
             total:
@@ -418,7 +413,6 @@ datagrids:
                 type:          callback
                 callable:      ['@oro_currency.converter.currency_to_string', 'convert']
                 multicurrency_config:
-                    base_currency_label: oro.order.total.base.label
                     currency_field: currency
             lineItemsCount:
                 label:         oro.order.line_items_count.label
@@ -542,7 +536,7 @@ datagrids:
     base-order-line-items-grid:
         extended_entity_name: %oro_order.entity.order_line_item.class%
         options:
-            entityHint: order_line_item
+            entityHint: order line items
         source:
             type: orm
             query:
@@ -625,7 +619,7 @@ datagrids:
     order-shipping-trackings-grid:
         extended_entity_name: %oro_order.entity.order_shipping_tracking.class%
         options:
-            entityHint: order_shipping_tracking
+            entityHint: order shipping trackings
             entity_pagination: false
             toolbarOptions:
                 hide: true
@@ -659,14 +653,13 @@ datagrids:
     best-selling-products:
         entity_name: %oro_report.calendar_date.entity.class%
         options:
-            entityHint: calendarDate
+            entityHint: calendar dates
             export: true
         source:
             type: orm
             query:
                 select:
                     - calendarDate.date as cDate
-                    - orderAlias.createdAt as createdAt
                     - lineitem.productUnitCode as unitCode
                     - SUM (lineitem.quantity) as qtySold
                     - product.sku as sku
@@ -690,7 +683,7 @@ datagrids:
                             conditionType: WITH
                             condition: lineitem.product = product.id
 
-                groupBy: cDate, sku, product.id, unitCode, createdAt
+                groupBy: cDate, sku, product.id, unitCode
         properties:
             productName:
                 type: localized_value

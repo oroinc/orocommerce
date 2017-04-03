@@ -5,6 +5,7 @@ parameters:
     oro_product.entity.product_variant_link.class: Oro\Bundle\ProductBundle\Entity\ProductVariantLink
     oro_product.entity.product_image.class: Oro\Bundle\ProductBundle\Entity\ProductImage
     oro_product.entity.product_image_type.class: Oro\Bundle\ProductBundle\Entity\ProductImageType
+
     oro_product.event_listener.scoped_product_db_query_restriction.common_class: Oro\Bundle\ProductBundle\EventListener\ScopedProductDBQueryRestrictionEventListener
     oro_product.event_listener.scoped_product_search_query_restriction.common_class: Oro\Bundle\ProductBundle\EventListener\ScopedProductSearchQueryRestrictionEventListener
 
@@ -542,8 +543,10 @@ services:
     oro_product.layout.data_provider.featured_products:
         class: 'Oro\Bundle\ProductBundle\Layout\DataProvider\FeaturedProductsProvider'
         arguments:
-            - "@oro_product.repository.product"
-            - "@oro_product.product.manager"
+            - '@oro_segment.segment_manager'
+            - '@oro_product.product.manager'
+            - '@oro_config.user'
+            - '@logger'
         tags:
             - { name: layout.data_provider, alias: featured_products }
 
@@ -588,6 +591,8 @@ services:
             - '@oro_layout.loader.image_filter'
             - '@oro_layout.provider.image_type'
             - '@oro_attachment.image_resizer'
+            - '@oro_attachment.media_cache_manager'
+            - '@oro_attachment.manager'
         tags:
             - { name: 'oro_message_queue.client.message_processor' }
 
@@ -650,19 +655,38 @@ services:
             - { name: kernel.event_listener, event: oro_ui.scroll_data.before.product-view, method: onViewList, priority: -255 }
 
     oro_product.provider.product_variant_availability_provider:
+        public: false
         class: 'Oro\Bundle\ProductBundle\Provider\ProductVariantAvailabilityProvider'
         arguments:
             - '@oro_entity.doctrine_helper'
-            - '@oro_entity_extend.enum_value_provider'
             - '@oro_product.provider.custom_field_provider'
             - '@property_accessor'
             - '@event_dispatcher'
+            - '@oro_product.product_variant_field.registry.product_variant_field_value_handler_registry'
 
     oro_product.product_variant.registry.product_variant_type_handler_factory:
         class: 'Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantTypeHandlerRegistry'
         calls:
             - [addHandler,  ['@oro_product.product_variant.type_handler.enum_type_handler']]
             - [addHandler,  ['@oro_product.product_variant.type_handler.boolean_type_handler']]
+
+    oro_product.product_variant_field.registry.product_variant_field_value_handler_registry:
+        public: false
+        class: 'Oro\Bundle\ProductBundle\ProductVariant\Registry\ProductVariantFieldValueHandlerRegistry'
+        calls:
+            - [addHandler, ['@oro_product.product_variant_field.field_value_handler.enum_type_handler']]
+            - [addHandler, ['@oro_product.product_variant_field.field_value_handler.boolean_type_handler']]
+
+    oro_product.product_variant_field.field_value_handler.enum_type_handler:
+        public: false
+        class: 'Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\EnumVariantFieldValueHandler'
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_entity_extend.enum_value_provider'
+
+    oro_product.product_variant_field.field_value_handler.boolean_type_handler:
+        public: false
+        class: 'Oro\Bundle\ProductBundle\ProductVariant\VariantFieldValueHandler\BooleanVariantFieldValueHandler'
 
     oro_product.product_variant.type_handler.enum_type_handler:
         class: 'Oro\Bundle\ProductBundle\ProductVariant\TypeHandler\EnumTypeHandler'
@@ -776,3 +800,9 @@ services:
             - '%oro_product.entity.product.class%'
         tags:
             - { name: kernel.event_listener, event: oro_config.update_after, method: onUpdateAfter }
+
+    oro_product.twig.product_image_extension:
+        class: Oro\Bundle\ProductBundle\Twig\ProductImageExtension
+        public: false
+        tags:
+            - { name: twig.extension }

@@ -2,24 +2,26 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
-use Oro\Bundle\ActionBundle\Model\ActionData;
-use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses;
-use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
-use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as TestCustomerUserData;
-use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
-use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
-use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
-use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
-use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRulesWithConfigs;
-use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
-use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Symfony\Bridge\Doctrine\ManagerRegistry;
 use Symfony\Component\DomCrawler\Crawler;
 use Symfony\Component\DomCrawler\Form;
 use Symfony\Component\PropertyAccess\PropertyAccess;
 use Symfony\Component\PropertyAccess\PropertyPath;
 use Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken;
+
+use Oro\Bundle\ActionBundle\Model\ActionData;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses;
+use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData as TestCustomerUserData;
+use Oro\Bundle\FrontendTestFrameworkBundle\Test\FrontendWebTestCase;
+use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\UpdateInventoryLevelsQuantities;
+use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
+use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadCombinedProductPrices;
+use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductUnitPrecisions;
+use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsConfigsRulesWithConfigs;
+use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
+use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 
 abstract class CheckoutControllerTestCase extends FrontendWebTestCase
 {
@@ -69,6 +71,7 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
             $this->generateBasicAuthHeader(TestCustomerUserData::AUTH_USER, TestCustomerUserData::AUTH_PW)
         );
         $paymentFixtures = (array)$this->getPaymentFixtures();
+        $inventoryFixtures = (array)$this->getInventoryFixtures();
         $this->loadFixtures(array_merge([
             LoadCustomerUserData::class,
             LoadCustomerAddresses::class,
@@ -76,8 +79,7 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
             LoadShoppingListLineItems::class,
             LoadCombinedProductPrices::class,
             LoadShippingMethodsConfigsRulesWithConfigs::class,
-            '@OroInventoryBundle/Tests/Functional/DataFixtures/inventory_level.yml',
-        ], $paymentFixtures));
+        ], $paymentFixtures, $inventoryFixtures));
         $this->registry = $this->getContainer()->get('doctrine');
     }
 
@@ -90,6 +92,14 @@ abstract class CheckoutControllerTestCase extends FrontendWebTestCase
             LoadPaymentTermData::class,
             LoadPaymentMethodsConfigsRuleData::class
         ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function getInventoryFixtures()
+    {
+        return [UpdateInventoryLevelsQuantities::class];
     }
 
     /**

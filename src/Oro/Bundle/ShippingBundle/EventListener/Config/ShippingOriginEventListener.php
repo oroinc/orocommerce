@@ -43,16 +43,16 @@ class ShippingOriginEventListener
     public function beforeSave(ConfigSettingsUpdateEvent $event)
     {
         $settings = $event->getSettings();
-        $key = OroShippingExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . self::KEY;
 
-        if (empty($settings[$key]['value'])) {
+        if (!array_key_exists('value', $settings)) {
             return;
         }
-        $shippingOrigin = $settings[$key]['value'];
+
+        $shippingOrigin = $settings['value'];
         if (!$shippingOrigin instanceof ShippingOrigin) {
             return;
         }
-        $settings[$key]['value'] = [
+        $settings['value'] = [
             'country' => $shippingOrigin->getCountry() ? $shippingOrigin->getCountry()->getIso2Code() : null,
             'region' => $shippingOrigin->getRegion() ? $shippingOrigin->getRegion()->getCombinedCode() : null,
             'region_text' => $shippingOrigin->getRegionText(),

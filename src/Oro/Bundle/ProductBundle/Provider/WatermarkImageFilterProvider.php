@@ -5,11 +5,14 @@ namespace Oro\Bundle\ProductBundle\Provider;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\LayoutBundle\Model\ThemeImageTypeDimension;
 use Oro\Bundle\LayoutBundle\Provider\CustomImageFilterProviderInterface;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 
 class WatermarkImageFilterProvider implements CustomImageFilterProviderInterface
 {
+    const APPLY_PRODUCT_IMAGE_WATERMARK_OPTION_NAME = 'applyProductImageWatermark';
+
     /**
      * @var ConfigManager
      */
@@ -67,5 +70,15 @@ class WatermarkImageFilterProvider implements CustomImageFilterProviderInterface
         }
 
         return $config;
+    }
+
+    /**
+     * @param ThemeImageTypeDimension $dimension
+     * @return bool
+     */
+    public function isApplicable(ThemeImageTypeDimension $dimension)
+    {
+        return $dimension->hasOption(self::APPLY_PRODUCT_IMAGE_WATERMARK_OPTION_NAME) &&
+            $dimension->getOption(self::APPLY_PRODUCT_IMAGE_WATERMARK_OPTION_NAME);
     }
 }

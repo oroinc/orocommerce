@@ -1,73 +1,168 @@
 operations:
+    oro_integration_deactivate:
+        preactions:
+            - '@assign_constant_value':
+                attribute: $.upsType
+                value: Oro\Bundle\UPSBundle\Provider\ChannelType::TYPE
+        preconditions:
+            '@and':
+                - '@not_equal': [$type, $.upsType]
+
+    oro_integration_delete:
+        preactions:
+            - '@assign_constant_value':
+                attribute: $.upsType
+                value: Oro\Bundle\UPSBundle\Provider\ChannelType::TYPE
+        preconditions:
+            '@and':
+                - '@not_equal': [$type, $.upsType]
+
     oro_integration_invalidate_cache:
-        label: oro.ups.form.invalidate_cache.label
+        extends: oro_cache_invalidate
         routes:
             - oro_integration_update
         acl_resource: [UPDATE, entity:Oro\Bundle\IntegrationBundle\Entity\Channel]
-        button_options:
-            icon: fa-clock-o
-        frontend_options:
-            template: OroUPSBundle:Action:invalidateCache.html.twig
-            title: oro.ups.form.invalidate_cache.title
-            options:
-                width: 505
-                modal: false
-                stateEnabled: false
-                incrementalPosition: false
-                allowMaximize: false
-                allowMinimize: false
-                maximizedHeightDecreaseBy: minimize-bar
-        attributes:
-            invalidateType:
-                label: oro.ups.form.invalidate_cache.label
-                type: string
-            invalidateCacheAt:
-                label: oro.ups.form.invalidate_cache_at.label
-                type: entity
-                property_path: data.transport.invalidateCacheAt
-                options:
-                    class: Oro\Bundle\IntegrationBundle\Entity\Channel
-            invalidateNow:
-                label: 'invalidate_cache.action.invalidate_now'
-                type: entity
-                property_path: data.transport.invalidateCacheAt
-                options:
-                    class: Oro\Bundle\IntegrationBundle\Entity\Channel
-        form_options:
-            attribute_fields:
-                invalidateType:
-                    form_type: choice
-                    options:
-                        placeholder: false
-                        choices:
-                            scheduled: oro.ups.form.invalidate_cache.type.scheduled
-                            immediate: oro.ups.form.invalidate_cache.type.immediate
-                invalidateCacheAt:
-                    form_type: Oro\Bundle\FormBundle\Form\Type\OroDateTimeType
-                invalidateNow:
-                    form_type: hidden
-            attribute_default_values:
-                invalidateCacheAt: $.data.transport.invalidateCacheAt
-        form_init:
-            - '@assign_value': [$.invalidateCacheAt, $.data.transport.invalidateCacheAt]
+        preactions:
+            - '@assign_value': [$.invalidateService, 'oro_ups.handler.action.invalidate_cache']
+            - '@assign_constant_value':
+                attribute: $.upsType
+                value: Oro\Bundle\UPSBundle\Provider\ChannelType::TYPE
+            - '@assign_constant_value':
+                attribute: $.paramTransportId
+                value: Oro\Bundle\UPSBundle\Handler\InvalidateCacheActionHandler::PARAM_TRANSPORT_ID
+            - '@call_method':
+                object: $.dataStorage
+                method: set
+                method_parameters:
+                    - $.paramTransportId
+                    - $.data.transport.id
+        preconditions:
+            '@equal': [$type, $.upsType]
+
+    oro_ups_integration_deactivate:
+        extends: oro_integration_deactivate
+        for_all_entities: false
+        for_all_datagrids: false
+        replace:
+            - preactions
+            - preconditions
+            - frontend_options
         preactions:
             - '@assign_constant_value':
-                attribute: $.upstype
+                attribute: $.upsType
                 value: Oro\Bundle\UPSBundle\Provider\ChannelType::TYPE
-        actions:
             - '@call_service_method':
-                service: oro_ups.handler.invalidate_cache_at
-                method: process
-                method_parameters: [$.data, $.form]
-            - '@flash_message':
-                conditions:
-                    '@not_empty': $.invalidateNow
-                message: oro.ups.form.invalidate_cache.flash.invalidate_success
-                type: 'success'
-            - '@flash_message':
-                conditions:
-                    '@empty': $.invalidateNow
-                message: oro.ups.form.invalidate_cache.flash.save_success
-                type: 'success'
+                attribute: $.actionAllowed
+                service: oro_integration.utils.edit_mode
+                method: isSwitchEnableAllowed
+                method_parameters: [$.data.editMode]
+            - '@call_service_method':
+                attribute: $.methodIdentifier
+                service: oro_ups.method.identifier_generator.method
+                method: generateIdentifier
+                method_parameters: [$.data]
+            - '@call_service_method':
+                attribute: $.linkGrid
+                service: oro_shipping.helper.filtered_datagrid_route
+                method: generate
+                method_parameters:  [{'methodConfigs': $.methodIdentifier}]
         preconditions:
-            '@equal': [$type, $.upstype]
+            '@and':
+                - '@shipping_method_has_enabled_shipping_rules':
+                    parameters:
+                        method_identifier: $.methodIdentifier
+                - '@equal': [$type, $.upsType]
+                - '@equal': [$.actionAllowed, true]
+                - '@equal': [$.data.enabled, true]
+        frontend_options:
+            confirmation:
+                title: oro.shipping.integration.deactivate.title
+                okText: oro.shipping.integration.deactivate.button.okText
+                message: oro.shipping.integration.deactivate.message
+                message_parameters:
+                    linkGrid: $.linkGrid
+                component: oroui/js/standart-confirmation
+
+    oro_ups_integration_deactivate_without_rules:
+        extends: oro_ups_integration_deactivate
+        for_all_entities: false
+        for_all_datagrids: false
+        replace:
+            - preconditions
+            - frontend_options
+        preconditions:
+            '@and':
+                - '@not':
+                    - '@shipping_method_has_enabled_shipping_rules':
+                        parameters:
+                            method_identifier: $.methodIdentifier
+                - '@equal': [$type, $.upsType]
+                - '@equal': [$.actionAllowed, true]
+                - '@equal': [$.data.enabled, true]
+        frontend_options: ~
+
+    oro_ups_integration_delete:
+        extends: oro_integration_delete
+        for_all_entities: false
+        for_all_datagrids: false
+        replace:
+            - preactions
+            - preconditions
+            - frontend_options
+        preactions:
+            - '@assign_constant_value':
+                attribute: $.upsType
+                value: Oro\Bundle\UPSBundle\Provider\ChannelType::TYPE
+            - '@call_service_method':
+                service: oro_integration.utils.edit_mode
+                method: isEditAllowed
+                method_parameters: [$.data.editMode]
+                attribute: $.actionAllowed
+            - '@call_service_method':
+                attribute: $.methodIdentifier
+                service: oro_ups.method.identifier_generator.method
+                method: generateIdentifier
+                method_parameters: [$.data]
+            - '@call_service_method':
+                attribute: $.linkGrid
+                service: oro_shipping.helper.filtered_datagrid_route
+                method: generate
+                method_parameters:  [{'methodConfigs': $.methodIdentifier}]
+        preconditions:
+            '@and':
+                - '@shipping_method_has_shipping_rules':
+                    parameters:
+                        method_identifier: $.methodIdentifier
+                - '@equal': [$type, $.upsType]
+                - '@equal': [$.actionAllowed, true]
+        frontend_options:
+            confirmation:
+                title: oro.shipping.integration.delete.title
+                okText: oro.shipping.integration.delete.button.okText
+                message: oro.shipping.integration.delete.message
+                message_parameters:
+                    linkGrid: $.linkGrid
+                component: oroui/js/standart-confirmation
+
+    oro_ups_integration_delete_without_rules:
+        extends: oro_ups_integration_delete
+        for_all_entities: false
+        for_all_datagrids: false
+        replace:
+            - preconditions
+            - frontend_options
+        preconditions:
+            '@and':
+                - '@not':
+                    - '@shipping_method_has_shipping_rules':
+                        parameters:
+                            method_identifier: $.methodIdentifier
+                - '@equal': [$type, $.upsType]
+                - '@equal': [$.actionAllowed, true]
+        frontend_options:
+            title: oro.action.delete_entity
+            confirmation:
+                title: oro.action.delete_entity
+                message: oro.action.delete_confirm
+                message_parameters:
+                    entityLabel: $name

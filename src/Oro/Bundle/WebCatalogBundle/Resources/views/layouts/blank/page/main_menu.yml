@@ -58,4 +58,6 @@ layout:
                                     web_catalog_menu_third_level_item_mega:
                                         web_catalog_menu_four_level_item_mega: ~
                                 web_catalog_menu_second_level_sale_mega: ~
-    conditions: 'context["web_catalog_id"]'
+        - '@remove':
+            id: 'categories_main_menu_list'
+    conditions: 'context["web_catalog_id"] !== null'

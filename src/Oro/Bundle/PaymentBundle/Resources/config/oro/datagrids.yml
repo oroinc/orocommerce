@@ -3,7 +3,7 @@ datagrids:
         acl_resource: oro_payment_methods_configs_rule_view
         extended_entity_name: %oro_payment.entity.payment_methods_configs_rule.class%
         options:
-            entityHint:        payment methods configs rule
+            entityHint:        payment methods configs rules
             entity_pagination: true
         source:
             type:         orm
@@ -177,7 +177,6 @@ datagrids:
                 type: callback
                 callable: ['@oro_currency.converter.currency_to_string', 'convert']
                 multicurrency_config:
-                    base_currency_label: oro.order.subtotal.base.label
                     currency_field: currency
             active:
                 label: oro.payment.paymenttransaction.active.label
