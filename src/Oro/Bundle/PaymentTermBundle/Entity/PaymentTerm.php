@@ -57,7 +57,10 @@ class PaymentTerm extends ExtendPaymentTerm
      *      defaultValues={
      *          "dataaudit"={
      *              "auditable"=true
-     *          }
+     *          },
+     *          "importexport"={
+     *              "identity"=true
+     *         }
      *      }
      * )
      */

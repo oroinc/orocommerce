@@ -4,6 +4,7 @@ namespace Oro\Bundle\TaxBundle\EventSubscriber;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
+use Oro\Bundle\ImportExportBundle\Event\LoadTemplateFixturesEvent;
 use Oro\Bundle\ImportExportBundle\Event\AfterEntityPageLoadedEvent;
 use Oro\Bundle\ImportExportBundle\Event\Events;
 use Oro\Bundle\ImportExportBundle\Event\NormalizeEntityEvent;
@@ -50,6 +51,7 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
             Events::AFTER_ENTITY_PAGE_LOADED => 'updateEntityResults',
             Events::AFTER_NORMALIZE_ENTITY => 'normalizeEntity',
             Events::AFTER_LOAD_ENTITY_RULES_AND_BACKEND_HEADERS => 'loadEntityRulesAndBackendHeaders',
+            Events::AFTER_LOAD_TEMPLATE_FIXTURES => 'addTaxCodeToCustomers',
         ];
     }
 
@@ -103,6 +105,21 @@ class CustomerTaxCodeImportExportSubscriber implements EventSubscriberInterface
             'value' => sprintf('tax_code%scode', $event->getConvertDelimiter()),
             'order' => 200,
         ]);
+    }
+
+    /**
+     * @param LoadTemplateFixturesEvent $event
+     */
+    public function addTaxCodeToCustomers(LoadTemplateFixturesEvent $event)
+    {
+        foreach ($event->getEntities() as $customerData) {
+            foreach ($customerData as $customer) {
+                /** @var Customer $customer */
+                $customer = $customer['entity'];
+
+                $this->customerTaxCodes[$customer->getId()] = (new CustomerTaxCode())->setCode('Tax_code_1');
+            }
+        }
     }
 
 
