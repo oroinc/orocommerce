@@ -1,53 +1,68 @@
 operations:
-    oro_order_capture:
+    oro_order_payment_transaction_capture:
         label: oro.payment.capture
         button_options:
             icon: fa-credit-card
         applications: [default]
-        routes:
-            - oro_order_view
-        acl_resource: oro_payment_transaction
+        datagrids:
+            - order-payment-transactions-grid
         order: 20
         preactions:
             - '@call_service_method':
-                service: oro_payment.provider.payment_transaction
-                method: getActiveAuthorizePaymentTransaction
-                method_parameters: [$.data, $.data.total, $.data.currency]
-                attribute: $.authorizePaymentTransaction
+                service: oro_payment.payment_method.composite_provider
+                method: hasPaymentMethod
+                method_parameters: [$.data.paymentMethod]
+                attribute: $.paymentMethodExist
             - '@call_service_method':
-                service: oro_order.factory.payment_context
-                method: create
-                method_parameters: [$.data]
-                attribute: $.paymentContext
+                service: oro_currency.formatter.number
+                method: formatCurrency
+                method_parameters: [$.data.amount, $.data.currency]
+                attribute: $.amountWithCurrency
+            - '@find_entity':
+                class: '%oro_order.entity.order.class%'
+                where:
+                    id: $.data.entityIdentifier
+                attribute: $.order
         preconditions:
             '@and':
-                - '@not_empty': [$.authorizePaymentTransaction]
-                - '@payment_method_applicable':
-                    parameters:
-                        payment_method: $.authorizePaymentTransaction.paymentMethod
-                        context: $.paymentContext
+                - '@acl_granted': ['CHARGE_AUTHORIZED_PAYMENTS', $.order]
+                - '@equal': [$.data.entity_class, '%oro_order.entity.order.class%']
+                - '@equal': [$.data.action, 'authorize']
+                - '@equal': [$.paymentMethodExist, true]
+                - '@not':
+                    - '@payment_transaction_was_charged':
+                        transaction: $.data
         actions:
-            - '@payment_capture':
-                attribute: $.result
-                object: $.data
-                amount: $.data.total
-                currency: $.data.currency
-                paymentMethod: $.authorizePaymentTransaction.paymentMethod
+            - '@payment_transaction_capture':
+                paymentTransaction: $.data
                 transactionOptions: []
+                attribute: $.result
             - '@flash_message':
                 conditions:
-                    '@and':
-                        - '@not_empty': ['$.result[message]']
-                        - '@equal': ['$.result[successful]', true]
-                message: '$.result[message]'
+                    '@equal': ['$.result[successful]', true]
+                message: oro.order.payment_transaction.capture.result.success
+                message_parameters:
+                    'amount': $.amountWithCurrency
                 type: 'success'
             - '@flash_message':
                 conditions:
-                    '@and':
-                        - '@not_empty': ['$.result[message]']
-                        - '@equal': ['$.result[successful]', false]
+                    '@equal': ['$.result[successful]', false]
                 message: '$.result[message]'
                 type: 'error'
+            - '@refresh_grid':
+                conditions:
+                    '@equal': ['$.result[successful]', true]
+                parameters:
+                    - order-payment-transactions-grid
+        frontend_options:
+            confirmation:
+                title: oro.order.payment_transaction.capture.title
+                message: oro.order.payment_transaction.capture.message
+                message_parameters:
+                    amount: $.amountWithCurrency
+                okText: oro.order.payment_transaction.capture.button.okText
+                component: oroui/js/standart-confirmation
+
     DELETE:
         exclude_datagrids:
             - order-line-items-grid
