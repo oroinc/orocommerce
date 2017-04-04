@@ -60,35 +60,9 @@ class ProductPriceHandlerTest extends \PHPUnit_Framework_TestCase
     public function testHandleUpdateWorksWithValidForm()
     {
         $entity = new ProductPrice();
-        $this->form->expects($this->once())
-            ->method('setData')
-            ->with($entity);
-        $this->request->expects($this->once())
-            ->method('getMethod')
-            ->will($this->returnValue('POST'));
-        $this->form->expects($this->once())
-            ->method('submit')
-            ->with($this->request);
-        $this->form->expects($this->once())
-            ->method('isValid')
-            ->will($this->returnValue(true));
-
-        $em = $this->getMockBuilder(EntityManager::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->doctrineHelper->expects($this->any())
-            ->method('getEntityManager')
-            ->with($entity)
-            ->will($this->returnValue($em));
-        $em->expects($this->once())
-            ->method('beginTransaction');
-        $this->priceManager->expects($this->once())
-            ->method('persist')
-            ->with($entity);
-        $this->priceManager->expects($this->once())
-            ->method('flush');
-        $em->expects($this->once())
-            ->method('commit');
+        $em = $this->formHandlerMock($entity);
+        $this->priceManager->expects($this->once())->method('flush');
+        $em->expects($this->once())->method('commit');
 
         $this->assertProcessEventsTriggered($this->form, $entity);
         $this->assertProcessAfterEventsTriggered($this->form, $entity);
@@ -105,6 +79,22 @@ class ProductPriceHandlerTest extends \PHPUnit_Framework_TestCase
     public function testHandleUpdateWorksWhenFormFlushFailed()
     {
         $entity = new ProductPrice();
+        $em = $this->formHandlerMock($entity);
+        $this->priceManager->expects($this->once())
+            ->method('flush')
+            ->willThrowException(new \Exception('Test flush exception'));
+        $em->expects($this->once())
+            ->method('rollback');
+
+        $this->handler->process($entity, $this->form, $this->request);
+    }
+
+    /**
+     * @param $entity
+     * @return \PHPUnit_Framework_MockObject_MockObject
+     */
+    protected function formHandlerMock($entity)
+    {
         $this->form->expects($this->once())
             ->method('setData')
             ->with($entity);
@@ -129,13 +119,7 @@ class ProductPriceHandlerTest extends \PHPUnit_Framework_TestCase
         $this->priceManager->expects($this->once())
             ->method('persist')
             ->with($entity);
-        $this->priceManager->expects($this->once())
-            ->method('flush')
-            ->willThrowException(new \Exception('Test flush exception'));
-        $em->expects($this->once())
-            ->method('rollback');
-
-        $this->handler->process($entity, $this->form, $this->request);
+        return $em;
     }
 
     /**
