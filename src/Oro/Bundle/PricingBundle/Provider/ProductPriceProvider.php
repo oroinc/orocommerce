@@ -3,14 +3,19 @@
 namespace Oro\Bundle\PricingBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 
 class ProductPriceProvider
 {
+    /**
+     * @var ShardManager
+     */
+    protected $shardManager;
+
     /**
      * @var ManagerRegistry
      */
@@ -23,10 +28,12 @@ class ProductPriceProvider
 
     /**
      * @param ManagerRegistry $registry
+     * @param ShardManager $shardManager
      */
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, ShardManager $shardManager)
     {
         $this->registry = $registry;
+        $this->shardManager = $shardManager;
     }
 
     /**
@@ -38,7 +45,13 @@ class ProductPriceProvider
     public function getPriceByPriceListIdAndProductIds($priceListId, array $productIds, $currency = null)
     {
         $result = [];
-        $prices = $this->getRepository()->findByPriceListIdAndProductIds($priceListId, $productIds, true, $currency);
+        $prices = $this->getRepository()->findByPriceListIdAndProductIds(
+            $this->shardManager,
+            $priceListId,
+            $productIds,
+            true,
+            $currency
+        );
 
         if ($prices) {
             foreach ($prices as $price) {
@@ -70,6 +83,7 @@ class ProductPriceProvider
         }
 
         $prices = $this->getRepository()->getPricesBatch(
+            $this->shardManager,
             $priceList->getId(),
             $productIds,
             $productUnitCodes,

@@ -17,3 +17,9 @@ entity_config:
                         require_schema_update: false
                         value_type: boolean
                         default_value: false
+    sharding:
+        field:
+            items:
+                discrimination_field:
+                    options:
+                        default_value: false

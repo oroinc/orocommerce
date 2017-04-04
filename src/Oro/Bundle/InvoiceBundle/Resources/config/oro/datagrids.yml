@@ -98,7 +98,7 @@ datagrids:
                     data_name: invoice.currency
                     options:
                         field_options:
-                            choices: "@oro_pricing.provider.currency->getAvailableCurrencies"
+                            choices: "@oro_currency.config.currency->getCurrencies"
                 createdAt:
                     type:      datetime
                     data_name: invoice.createdAt

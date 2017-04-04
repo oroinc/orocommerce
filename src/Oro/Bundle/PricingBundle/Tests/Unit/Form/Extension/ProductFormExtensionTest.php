@@ -4,10 +4,16 @@ namespace Oro\Bundle\PricingBundle\Tests\Unit\Form\Extension;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping\ClassMetadata;
+use Doctrine\ORM\UnitOfWork;
+use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Form\Extension\ProductFormExtension;
 use Oro\Bundle\PricingBundle\Form\Type\ProductPriceCollectionType;
+use Oro\Bundle\PricingBundle\Manager\PriceManager;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\PricingBundle\Validator\Constraints\UniqueProductPrices;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Form\Type\ProductType;
@@ -22,9 +28,24 @@ use Symfony\Component\Form\FormInterface;
 class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject
+     * @var UnitOfWork
+     */
+    protected $uow;
+
+    /**
+     * @var PriceManager|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $priceManager;
+
+    /**
+     * @var ShardManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $shardManager;
+
+    /**
+     * @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $em;
 
     /**
      * @var ProductPriceRepository|\PHPUnit_Framework_MockObject_MockObject
@@ -43,35 +64,39 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->priceManager = $this->createMock(ObjectManager::class);
-        $this->priceManager
-            ->expects(static::any())
+        $this->em = $this->createMock(EntityManager::class);
+        $this->uow = $this->getMockBuilder(UnitOfWork::class)->disableOriginalConstructor()->getMock();
+        $this->uow;
+
+        $this->em->method('getUnitOfWork')->willReturn($this->uow);
+        $this->em->method('getClassMetadata')->willReturn($this->createMock(ClassMetadata::class));
+        $this->em->expects($this->any())
             ->method('getRepository')
             ->with('OroPricingBundle:ProductPrice')
             ->willReturn($this->priceRepository);
 
         /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject $registry */
-        $registry = $this->createMock(ManagerRegistry::class);
-        $registry
-            ->expects(static::any())
+        $registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
+        $registry->expects($this->any())
             ->method('getManagerForClass')
             ->with('OroPricingBundle:ProductPrice')
-            ->willReturn($this->priceManager);
+            ->willReturn($this->em);
+        $this->shardManager = $this->createMock(ShardManager::class);
+        $this->priceManager = $this->createMock(PriceManager::class);
 
-        $this->extension = new ProductFormExtension($registry);
+        $this->extension = new ProductFormExtension($registry, $this->shardManager, $this->priceManager);
     }
 
     public function testGetExtendedType()
     {
-        static::assertEquals(ProductType::NAME, $this->extension->getExtendedType());
+        $this->assertEquals(ProductType::NAME, $this->extension->getExtendedType());
     }
 
     public function testBuildForm()
     {
         /** @var FormBuilderInterface|\PHPUnit_Framework_MockObject_MockObject $builder */
-        $builder = $this->createMock(FormBuilderInterface::class);
-        $builder
-            ->expects(static::once())
+        $builder = $this->createMock('Symfony\Component\Form\FormBuilderInterface');
+        $builder->expects($this->once())
             ->method('add')
             ->with(
                 'prices',
@@ -80,14 +105,10 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
                     'label' => 'oro.pricing.productprice.entity_plural_label',
                     'required' => false,
                     'mapped' => false,
-                    'constraints' =>
-                        [
-                            new UniqueProductPrices()
-                        ],
-                    'options' =>
-                        [
-                            'product' => null,
-                        ],
+                    'constraints' => [new UniqueProductPrices()],
+                    'options' => [
+                        'product' => null,
+                    ],
                 ]
             );
 
@@ -126,7 +147,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
             $this->priceRepository
                 ->expects(static::once())
                 ->method('getPricesByProduct')
-                ->with($product)
+                ->with($this->shardManager, $product)
                 ->willReturn($prices);
 
             /** @var FormInterface|\PHPUnit_Framework_MockObject_MockObject $pricesForm */
@@ -195,8 +216,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
                 ]
             );
 
-        $this->priceManager
-            ->expects(static::never())
+        $this->em->expects($this->never())
             ->method('persist');
 
         $this->extension->onPostSubmit($event);
@@ -206,18 +226,20 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
     {
         $product = $this->createProduct();
         $event = $this->createEvent($product);
-
+        $priceList = new PriceList();
         $priceOne = $this->createProductPrice(1);
         $priceTwo = $this->createProductPrice(2);
+        $priceOne->setPriceList($priceList);
+        $priceTwo->setPriceList($priceList);
 
         $this->assertPriceAdd($event, [$priceOne, $priceTwo]);
-        $this->priceRepository->expects(static::never())
+        $this->priceRepository->expects($this->never())
             ->method('getPricesByProduct');
 
         $this->extension->onPostSubmit($event);
 
-        static::assertEquals($product, $priceOne->getProduct());
-        static::assertEquals($product, $priceTwo->getProduct());
+        $this->assertEquals($product, $priceOne->getProduct());
+        $this->assertEquals($product, $priceTwo->getProduct());
     }
 
     public function testOnPostSubmitExistingProduct()
@@ -225,25 +247,27 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
         $product = $this->createProduct(1);
         $event = $this->createEvent($product);
 
+        $priceList = new PriceList();
         $priceOne = $this->createProductPrice(1);
         $priceTwo = $this->createProductPrice(2);
         $removedPrice = $this->createProductPrice(3);
+        $priceOne->setPriceList($priceList);
+        $priceTwo->setPriceList($priceList);
+        $removedPrice->setPriceList($priceList);
 
         $this->assertPriceAdd($event, [$priceOne, $priceTwo]);
-        $this->priceRepository
-            ->expects(static::once())
+        $this->priceRepository->expects($this->once())
             ->method('getPricesByProduct')
-            ->will(static::returnValue([$removedPrice]));
+            ->will($this->returnValue([$removedPrice]));
 
-        $this->priceManager
-            ->expects(static::once())
+        $this->priceManager->expects($this->once())
             ->method('remove')
             ->with($removedPrice);
 
         $this->extension->onPostSubmit($event);
 
-        static::assertEquals($product, $priceOne->getProduct());
-        static::assertEquals($product, $priceTwo->getProduct());
+        $this->assertEquals($product, $priceOne->getProduct());
+        $this->assertEquals($product, $priceTwo->getProduct());
     }
 
     /**
@@ -286,7 +310,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @param string   $class
+     * @param string $class
      * @param int|null $id
      *
      * @return object
@@ -305,7 +329,7 @@ class ProductFormExtensionTest extends \PHPUnit_Framework_TestCase
 
     /**
      * @param FormEvent $event
-     * @param array     $prices
+     * @param array $prices
      */
     protected function assertPriceAdd(FormEvent $event, array $prices)
     {
