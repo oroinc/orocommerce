@@ -8,18 +8,30 @@ services:
         arguments:
             - '%oro_apruve.method.identifier_prefix.apruve%'
 
-    oro_apruve.payment_method.config.factory:
+    oro_apruve.method.config.factory:
         class: 'Oro\Bundle\ApruveBundle\Method\Config\Factory\ApruveConfigFactory'
         public: false
         arguments:
             - '@oro_locale.helper.localization'
             - '@oro_apruve.method.generator.identifier'
 
-    oro_apruve.payment_method.config.provider:
+    oro_apruve.method.config.provider:
         class: 'Oro\Bundle\ApruveBundle\Method\Config\Provider\ApruveConfigProvider'
         public: false
         arguments:
             - '@doctrine'
             - '@logger'
-            - '@oro_apruve.payment_method.config.factory'
+            - '@oro_apruve.method.config.factory'
 
+    oro_apruve.method.apruve.factory:
+        class: 'Oro\Bundle\ApruveBundle\Method\Factory\ApruvePaymentMethodFactory'
+        public: false
+
+    oro_apruve.method.apruve.provider:
+        class: 'Oro\Bundle\ApruveBundle\Method\Provider\ApruvePaymentMethodProvider'
+        public: false
+        arguments:
+            - '@oro_apruve.method.config.provider'
+            - '@oro_apruve.method.apruve.factory'
+        tags:
+            - { name: oro_payment.method_provider }
