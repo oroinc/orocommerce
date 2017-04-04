@@ -23,12 +23,9 @@ class OroCMSBundle extends Bundle
                     'slugPrototype' => 'slugPrototypes',
                     'title' => 'titles'
                 ],
-            ]));
-        $container
-            ->addCompilerPass(new DefaultFallbackExtensionPass([
-               ContentBlock::class => [
-                   'title' => 'titles'
-               ]
+                ContentBlock::class => [
+                    'title' => 'titles'
+                ]
             ]));
     }
 }
