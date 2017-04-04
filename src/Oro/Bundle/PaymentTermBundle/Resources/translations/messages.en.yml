@@ -1,7 +1,7 @@
 oro:
     paymentterm:
         channel_type:
-            label: Payment Term
+            label: Payment Terms
         settings:
             label: Payment Term Settings
             labels.label: Label
