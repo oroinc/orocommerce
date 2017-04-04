@@ -50,7 +50,6 @@ class ContentBlockController extends Controller
     }
 
     /**
-     * @param Request $request
      * @return array|RedirectResponse
      * @Route("/create", name="oro_cms_content_block_create")
      * @Template("OroCMSBundle:ContentBlock:update.html.twig")
@@ -61,14 +60,13 @@ class ContentBlockController extends Controller
      *      permission="CREATE"
      * )
      */
-    public function createAction(Request $request)
+    public function createAction()
     {
-        return $this->update(new ContentBlock(), $request);
+        return $this->update(new ContentBlock());
     }
 
     /**
      * @param ContentBlock $contentBlock
-     * @param Request      $request
      * @return array
      * @Route("/update/{id}", name="oro_cms_content_block_update", requirements={"id"="\d+"})
      * @Template
@@ -79,17 +77,16 @@ class ContentBlockController extends Controller
      *      permission="EDIT"
      * )
      */
-    public function updateAction(ContentBlock $contentBlock, Request $request)
+    public function updateAction(ContentBlock $contentBlock)
     {
-        return $this->update($contentBlock, $request);
+        return $this->update($contentBlock);
     }
 
     /**
      * @param ContentBlock $contentBlock
-     * @param Request      $request
      * @return array|RedirectResponse
      */
-    protected function update(ContentBlock $contentBlock, Request $request)
+    protected function update(ContentBlock $contentBlock)
     {
         return $this->get('oro_form.model.update_handler')->update(
             $contentBlock,

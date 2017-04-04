@@ -15,6 +15,8 @@ use Oro\Bundle\CMSBundle\Entity\ContentBlock;
 
 class ContentBlockType extends AbstractType
 {
+    const BLOCK_PREFIX = 'oro_cms_content_block';
+
     /**
      * {@inheritdoc}
      */
@@ -31,7 +33,7 @@ class ContentBlockType extends AbstractType
             )
             ->add(
                 'titles',
-                LocalizedFallbackValueCollectionType::NAME,
+                LocalizedFallbackValueCollectionType::class,
                 [
                     'label' => 'oro.cms.contentblock.titles.label',
                     'required' => true,
@@ -74,5 +76,13 @@ class ContentBlockType extends AbstractType
                 'data_class' => ContentBlock::class
             ]
         );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getBlockPrefix()
+    {
+        return self::BLOCK_PREFIX;
     }
 }

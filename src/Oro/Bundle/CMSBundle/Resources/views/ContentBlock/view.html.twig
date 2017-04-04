@@ -1,14 +1,14 @@
 {% extends 'OroUIBundle:actions:view.html.twig' %}
 {% import 'OroUIBundle::macros.html.twig' as UI %}
 
-{% oro_title_set({params : {'%title%': entity.defaultTitle.string} }) %}
+{% oro_title_set({params : {'%title%': entity.alias} }) %}
 
 {% block pageHeader %}
     {% set breadcrumbs = {
         'entity': entity,
         'indexPath': path('oro_cms_content_block_index'),
         'indexLabel': 'oro.cms.contentblock.entity_plural_label'|trans,
-        'entityTitle': entity.defaultTitle.string|default('N/A'|trans)
+        'entityTitle': entity.alias|default('N/A'|trans)
     } %}
 
     {{ parent() }}

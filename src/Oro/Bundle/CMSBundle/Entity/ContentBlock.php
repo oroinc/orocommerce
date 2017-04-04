@@ -68,22 +68,6 @@ class ContentBlock extends ExtendContentBlock implements
      *      cascade={"ALL"},
      *      orphanRemoval=true
      * )
-     * @ORM\JoinTable(
-     *      name="oro_cms_content_block_title",
-     *      joinColumns={
-     *          @ORM\JoinColumn(name="content_block_id", referencedColumnName="id", onDelete="CASCADE")
-     *      },
-     *      inverseJoinColumns={
-     *          @ORM\JoinColumn(name="localized_value_id", referencedColumnName="id", onDelete="CASCADE", unique=true)
-     *      }
-     * )
-     * @ConfigField(
-     *      defaultValues={
-     *          "dataaudit"={
-     *              "auditable"=true
-     *          }
-     *      }
-     * )
      */
     protected $titles;
 

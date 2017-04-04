@@ -185,7 +185,7 @@ datagrids:
             id: ~
             title:
                 type: localized_value
-                data_name: contentBlock.titles
+                data_name: titles
             view_link:
                 type: url
                 route: oro_cms_content_block_view

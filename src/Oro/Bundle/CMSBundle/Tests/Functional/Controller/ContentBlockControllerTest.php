@@ -38,10 +38,10 @@ class ContentBlockControllerTest extends WebTestCase
     public function testCreate()
     {
         $crawler = $this->client->request('GET', $this->getUrl('oro_cms_content_block_create'));
-        $form    = $crawler->selectButton('Save and Close')->form();
+        $form    = $crawler->selectButton('Save')->form();
 
-        $form['content_block[alias]']                   = self::CONTENT_BLOCK_ALIAS;
-        $form['content_block[titles][values][default]'] = 'Default title';
+        $form['oro_cms_content_block[alias]']                   = self::CONTENT_BLOCK_ALIAS;
+        $form['oro_cms_content_block[titles][values][default]'] = 'Default title';
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
 
@@ -82,12 +82,12 @@ class ContentBlockControllerTest extends WebTestCase
             $this->getUrl('oro_cms_content_block_update', ['id' => $contentBlock->getId()])
         );
 
-        $form = $crawler->selectButton('Save and Close')->form();
-        $this->assertEquals(self::CONTENT_BLOCK_ALIAS, $form['content_block[alias]']->getValue());
-        $this->assertEquals('Default title', $form['content_block[titles][values][default]']->getValue());
+        $form = $crawler->selectButton('Save')->form();
+        $this->assertEquals(self::CONTENT_BLOCK_ALIAS, $form['oro_cms_content_block[alias]']->getValue());
+        $this->assertEquals('Default title', $form['oro_cms_content_block[titles][values][default]']->getValue());
 
-        $form['content_block[alias]']                   = 'first-content-block-updated';
-        $form['content_block[titles][values][default]'] = 'Default title updated';
+        $form['oro_cms_content_block[alias]']                   = 'first-content-block-updated';
+        $form['oro_cms_content_block[titles][values][default]'] = 'Default title updated';
 
         $this->client->followRedirects(true);
         $crawler = $this->client->submit($form);
