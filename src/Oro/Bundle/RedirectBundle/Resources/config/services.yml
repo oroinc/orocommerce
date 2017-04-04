@@ -79,6 +79,7 @@ services:
         tags:
             - { name: doctrine.event_listener, event: onFlush }
             - { name: doctrine.event_listener, event: postPersist }
+            - { name: doctrine.event_listener, event: postFlush }
 
     oro_redirect.event_listener.slug_change:
         class: Oro\Bundle\RedirectBundle\EventListener\SlugListener
