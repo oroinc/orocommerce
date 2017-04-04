@@ -3,8 +3,8 @@
 namespace Oro\Bundle\OrderBundle\Api\Processor\Order;
 
 use Oro\Bundle\ApiBundle\Processor\FormContext;
-use Oro\Bundle\ApiBundle\Util\DoctrineHelper;
 use Oro\Bundle\OrderBundle\Entity\OrderLineItem;
+use Oro\Bundle\OrderBundle\Provider\SkuCachedProductProvider;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Component\ChainProcessor\ContextInterface;
 use Oro\Component\ChainProcessor\ProcessorInterface;
@@ -12,16 +12,16 @@ use Oro\Component\ChainProcessor\ProcessorInterface;
 class OrderLineItemProductProcessor implements ProcessorInterface
 {
     /**
-     * @var DoctrineHelper
+     * @var SkuCachedProductProvider
      */
-    private $doctrineHelper;
+    private $skuCachedProductProvider;
 
     /**
-     * @param DoctrineHelper $doctrineHelper
+     * @param SkuCachedProductProvider $skuCachedProductProvider
      */
-    public function __construct(DoctrineHelper $doctrineHelper)
+    public function __construct(SkuCachedProductProvider $skuCachedProductProvider)
     {
-        $this->doctrineHelper = $doctrineHelper;
+        $this->skuCachedProductProvider = $skuCachedProductProvider;
     }
 
     /**
@@ -52,8 +52,7 @@ class OrderLineItemProductProcessor implements ProcessorInterface
             return;
         }
 
-        $product = $this->doctrineHelper->getEntityRepository(Product::class)
-            ->findOneBy(['sku' => $requestData['productSku']]);
+        $product = $this->skuCachedProductProvider->getBySku($requestData['productSku']);
 
         if (null === $product) {
             return;
