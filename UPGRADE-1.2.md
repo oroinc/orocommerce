@@ -1,6 +1,17 @@
 UPGRADE FROM 1.1 to 1.2
 =======================
 
+OrderBundle
+-------------
+- `CHARGE_AUTHORIZED_PAYMENTS` permission was added for possibility to charge payment transaction
+- Capture button for payment authorize transactions was added in Payment History section, Capture button for order was removed
+- `oro_order_capture` operation was removed, `oro_order_payment_transaction_capture` should be used instead
+
+PaymentBundle
+-------------
+- For supporting same approaches for working with payment methods, `Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistryInterface` and its implementation were deprecated. Related deprecation is `Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\PaymentMethodProvidersPass`. `Oro\Bundle\PaymentBundle\Method\Provider\CompositePaymentMethodProvider` which implements `Oro\Bundle\PaymentBundle\Method\Provider\PaymentMethodProviderInterface` was added instead. And `Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\CompositePaymentMethodProviderCompilerPass` was added for collecting providers in new composite. 
+- Class `Oro\Bundle\PaymentBundle\Action\CaptureAction` was removed, `Oro\Bundle\PaymentBundle\Action\PaymentTransactionCaptureAction` should be used instead
+
 PricingBundle
 -------------
 - Class `Oro\Bundle\PricingBundle\Controller\AjaxPriceListController`
