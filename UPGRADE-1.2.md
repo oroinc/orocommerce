@@ -60,3 +60,7 @@ RuleBundle
 - Following methods were added to `\Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface`:
     - `getBaseSlug`
     - `getSlugByLocalization`
+
+PayPalBundle
+------------
+- Form type `Oro\Bundle\PayPalBundle\Form\Type\PayPalPasswordType` is deprecated, to be removed in v1.3
