@@ -1,0 +1,4 @@
+oro:
+    checkout:
+        open_order:
+            plural_label: Open Orders

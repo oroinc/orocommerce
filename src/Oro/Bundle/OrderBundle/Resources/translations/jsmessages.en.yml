@@ -12,3 +12,6 @@ oro:
             remove: Remove Notes
 
         continue_editing: Continue Editing
+
+        past_orders:
+            label: Past orders
