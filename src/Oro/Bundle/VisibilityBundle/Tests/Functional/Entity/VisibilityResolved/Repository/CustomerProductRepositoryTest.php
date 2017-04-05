@@ -100,7 +100,7 @@ class CustomerProductRepositoryTest extends VisibilityResolvedRepositoryTestCase
      */
     public function insertStaticDataProvider()
     {
-        return ['expected_rows' => [4]];
+        return ['expected_rows' => [5]];
     }
     /**
      * @return CustomerProductVisibilityResolved[]

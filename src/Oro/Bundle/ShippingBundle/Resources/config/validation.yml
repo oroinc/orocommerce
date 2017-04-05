@@ -31,6 +31,8 @@ Oro\Bundle\ShippingBundle\Model\Weight:
             - Oro\Bundle\ValidationBundle\Validator\Constraints\GreaterThanZero: ~
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
+    constraints:
+        - Oro\Bundle\ShippingBundle\Validator\Constraints\ShippingRuleEnable: ~
     properties:
         destinations:
             - Valid: ~

@@ -1,0 +1,13 @@
+// @theme: default
+
+$product-price-value-color: get-color('ui', 'normal') !default;
+$product-price-main-box-font-size: $base-font-size--large;
+$product-price-hint-display: inline-block !default;
+
+$product-price-simple-label-font-size: 0 !default;
+$product-price-simple-value-font-size: $base-font-size--l + 1 !default;
+$product-price-simple-listed-value-color: get-color('ui', 'normal') !default;
+
+$product-price-simple-display-tablet: block !default;
+$product-price-simple-margin-top-tablet: -5px !default;
+$product-price-simple-text-align-tablet: center !default;

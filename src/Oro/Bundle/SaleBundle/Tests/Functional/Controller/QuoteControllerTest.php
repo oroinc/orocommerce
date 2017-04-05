@@ -302,7 +302,8 @@ class QuoteControllerTest extends WebTestCase
                 'success' => true,
                 'message' => '',
                 'messages' => [],
-                'redirectUrl' => $this->getUrl('oro_sale_quote_index')
+                'redirectUrl' => $this->getUrl('oro_sale_quote_index'),
+                'pageReload' => true
             ],
             json_decode($this->client->getResponse()->getContent(), true)
         );

@@ -1,0 +1,4 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'OroSEOBundle:layouts:default/layout.html.twig'

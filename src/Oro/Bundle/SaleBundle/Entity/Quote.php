@@ -80,6 +80,7 @@ class Quote extends ExtendQuote implements
 
     const INTERNAL_STATUS_DRAFT = 'draft';
     const INTERNAL_STATUS_DELETED = 'deleted';
+    const INTERNAL_STATUS_SENT_TO_CUSTOMER = 'sent_to_customer';
 
     /**
      * @var int
@@ -809,7 +810,11 @@ class Quote extends ExtendQuote implements
      */
     public function isAcceptable()
     {
+        $status = $this->getInternalStatus();
+
         return !$this->isExpired()
+            && $status
+            && $status->getId() === self::INTERNAL_STATUS_SENT_TO_CUSTOMER
             && (!$this->getValidUntil() || $this->getValidUntil() >= new \DateTime('now', new \DateTimeZone('UTC')));
     }
 

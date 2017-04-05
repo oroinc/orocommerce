@@ -1,3 +1,6 @@
 api:
     entities:
-        Oro\Bundle\InventoryBundle\Entity\InventoryLevel: ~
+        Oro\Bundle\InventoryBundle\Entity\InventoryLevel:
+            actions:
+                create: false
+                delete: false

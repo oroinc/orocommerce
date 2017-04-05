@@ -19,7 +19,7 @@ class FlatRateMethodTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->flatRate = new FlatRateMethod(self::IDENTIFIER, self::LABEL);
+        $this->flatRate = new FlatRateMethod(self::IDENTIFIER, self::LABEL, true);
     }
 
     public function testGetIdentifier()
@@ -30,6 +30,11 @@ class FlatRateMethodTest extends \PHPUnit_Framework_TestCase
     public function testIsGrouped()
     {
         static::assertFalse($this->flatRate->isGrouped());
+    }
+
+    public function testIsEnabled()
+    {
+        static::assertTrue($this->flatRate->isEnabled());
     }
 
     public function testGetLabel()

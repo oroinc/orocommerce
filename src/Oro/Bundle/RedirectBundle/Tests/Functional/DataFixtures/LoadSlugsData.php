@@ -28,6 +28,7 @@ class LoadSlugsData extends AbstractFixture implements DependentFixtureInterface
         $anonymousSlug = $this
             ->createSlug($manager, self::SLUG_URL_ANONYMOUS, 'oro_cms_frontend_page_view', ['id' => $page->getId()]);
         $anonymousSlug->setSlugPrototype('anonymous');
+        $page->addSlug($anonymousSlug);
 
         $this->createSlug($manager, self::SLUG_URL_USER, 'oro_customer_frontend_customer_user_index', []);
         $this->createSlug($manager, self::SLUG_TEST_DUPLICATE_URL, 'oro_customer_frontend_customer_user_index', []);

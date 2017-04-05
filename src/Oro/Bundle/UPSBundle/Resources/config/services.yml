@@ -1,4 +1,6 @@
 parameters:
+    oro_ups.integration.channel.type: 'ups'
+    oro_ups.integration.transport.type: 'ups'
     oro_ups.api.url.production: https://onlinetools.ups.com/rest
     oro_ups.api.url.test: https://wwwcie.ups.com/rest
 
@@ -7,7 +9,7 @@ services:
     oro_ups.provider.channel:
         class: 'Oro\Bundle\UPSBundle\Provider\ChannelType'
         tags:
-            - { name: oro_integration.channel, type: ups }
+            - { name: oro_integration.channel, type: '%oro_ups.integration.channel.type%'}
 
     oro_ups.provider.transport:
         class: 'Oro\Bundle\UPSBundle\Provider\UPSTransport'
@@ -17,7 +19,7 @@ services:
         calls:
             - [setRestClientFactory, ['@oro_integration.transport.rest.client_factory']]
         tags:
-            - { name: oro_integration.transport, type: ups, channel_type: ups }
+            - { name: oro_integration.transport, type: '%oro_ups.integration.transport.type%', channel_type: '%oro_ups.integration.channel.type%' }
 
     oro_ups.shipping_method_provider.ups:
         class: 'Oro\Bundle\UPSBundle\Method\UPSShippingMethodProvider'
@@ -66,12 +68,13 @@ services:
             - { name: validator.constraint_validator, alias: oro_ups_remove_used_shipping_service_validator }
 
     oro_ups.entity_listener.channel:
-        class: 'Oro\Bundle\UPSBundle\EventListener\IntegrationRemovalListener'
+        class: 'Oro\Bundle\ShippingBundle\Method\EventListener\IntegrationRemovalListener'
         arguments:
+            - '%oro_ups.integration.channel.type%'
             - '@oro_ups.method.identifier_generator.method'
             - '@oro_shipping.method.event.dispatcher.method_removal'
         tags:
-            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\IntegrationBundle\Entity\Channel', event: preRemove }
+            - { name: kernel.event_listener, event: oro_integration.channel_delete, method: onRemove }
 
     oro_ups.entity_listener.transport:
         class: 'Oro\Bundle\UPSBundle\EventListener\UPSTransportEntityListener'
@@ -104,13 +107,11 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_shipping_method.config_data, method: onGetConfigData }
 
-    oro_ups.handler.invalidate_cache_at:
-        class: 'Oro\Bundle\UPSBundle\Handler\InvalidateCacheAtHandler'
+    oro_ups.handler.action.invalidate_cache:
+        class: 'Oro\Bundle\UPSBundle\Handler\InvalidateCacheActionHandler'
         arguments:
-            - "@doctrine"
             - "@oro_ups.shipping_price_cache"
             - "@oro_shipping.shipping_price.provider.cache"
-            - "@oro_cron.deferred_scheduler"
 
     oro_ups.shipping_price_cache:
         class: 'Oro\Bundle\UPSBundle\Cache\ShippingPriceCache'
@@ -121,6 +122,15 @@ services:
     oro_ups.cache.shipping_price:
         public: false
         parent: oro.cache.abstract
+
+    oro_ups.disable_integration_listener:
+        class: 'Oro\Bundle\ShippingBundle\Method\EventListener\ShippingMethodDisableIntegrationListener'
+        arguments:
+            - '%oro_ups.integration.channel.type%'
+            - '@oro_ups.method.identifier_generator.method'
+            - '@oro_shipping.method_disable_handler.decorator'
+        tags:
+            - { name: kernel.event_listener, event: oro_integration.channel_disable, method: onIntegrationDisable }
 
     oro_ups.client.url_provider_basic:
         class: 'Oro\Bundle\UPSBundle\Client\Url\Provider\Basic\BasicUpsClientUrlProvider'

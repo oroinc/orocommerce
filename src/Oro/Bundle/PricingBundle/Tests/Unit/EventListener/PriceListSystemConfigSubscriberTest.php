@@ -79,18 +79,14 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
     {
         $values = $this->createConfigs(2);
         $settings = [
-            'oro_pricing.default_price_lists' => [
-                'value' => $values,
-            ],
+            'value' => $values,
         ];
         $converted = [
             ['priceList' => 1, 'sort_order' => 100],
             ['priceList' => 2, 'sort_order' => 200],
         ];
         $expected = [
-            'oro_pricing.default_price_lists' => [
-                'value' => $converted,
-            ],
+            'value' => $converted,
         ];
 
         $configManager = $this->getConfigManager();
@@ -113,7 +109,7 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
      * @param boolean $dispatch
      * @param string $key
      */
-    public function testUpdateAfter($changeSet, $dispatch, $key)
+    public function testUpdateAfter($changeSet, $dispatch)
     {
         $converted = [
             ['priceList' => 1, 'sort_order' => 100],
@@ -123,9 +119,7 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
         $configManager = $this->getConfigManager();
 
         $settings = [
-            $key => [
-                'value' => $values,
-            ],
+            'value' => $values,
         ];
         $event = new ConfigSettingsUpdateEvent($configManager, $settings);
 
@@ -156,17 +150,10 @@ class PriceListSystemConfigSubscriberTest extends \PHPUnit_Framework_TestCase
             'changedAndApplicable' => [
                 'changeSet' => ['some', 'changes'],
                 'dispatch' => true,
-                'key' => 'oro_pricing.default_price_lists',
             ],
             'notChangedAndApplicable' => [
                 'changeSet' => [],
                 'dispatch' => false,
-                'key' => 'oro_pricing.default_price_lists',
-            ],
-            'changedAndNotApplicable' => [
-                'changeSet' => ['some', 'changes'],
-                'dispatch' => false,
-                'key' => 'anotherKey',
             ],
         ];
     }

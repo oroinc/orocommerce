@@ -80,7 +80,6 @@ class RequestProductType extends AbstractType
             'data_class' => $this->dataClass,
             'compact_units' => false,
             'intention'  => 'rfp_request_product',
-            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
             'page_component' => 'oroui/js/app/components/view-component',
             'page_component_options' => ['view' => 'ororfp/js/app/views/line-item-view'],
         ]);

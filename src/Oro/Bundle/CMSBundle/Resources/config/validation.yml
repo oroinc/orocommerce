@@ -2,3 +2,7 @@ Oro\Bundle\CMSBundle\Entity\Page:
     properties:
         organization:
             - NotBlank: ~
+        titles:
+            - Valid: ~
+        slugPrototypes:
+            - Valid: ~

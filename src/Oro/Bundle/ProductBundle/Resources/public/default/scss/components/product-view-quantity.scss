@@ -1,0 +1,13 @@
+// @theme: default;
+
+@include breakpoint('tablet') {
+    .product-view-quantity {
+        &__unit {
+            width: 75%;
+        }
+
+        &__value {
+            width: 25%;
+        }
+    }
+}

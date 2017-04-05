@@ -18,6 +18,7 @@ class Configuration implements ConfigurationInterface
     const PRODUCT_IMAGE_WATERMARK_FILE = 'product_image_watermark_file';
     const PRODUCT_IMAGE_WATERMARK_SIZE = 'product_image_watermark_size';
     const PRODUCT_IMAGE_WATERMARK_POSITION = 'product_image_watermark_position';
+    const FEATURED_PRODUCTS_SEGMENT_ID = 'featured_products_segment_id';
     const ENABLE_QUICK_ORDER_FORM = 'enable_quick_order_form';
     const DIRECT_URL_PREFIX = 'product_direct_url_prefix';
 
@@ -47,6 +48,7 @@ class Configuration implements ConfigurationInterface
                 self::PRODUCT_IMAGE_WATERMARK_FILE => ['value' => null],
                 self::PRODUCT_IMAGE_WATERMARK_SIZE => ['value' => 100],
                 self::PRODUCT_IMAGE_WATERMARK_POSITION => ['value' => 'center'],
+                self::FEATURED_PRODUCTS_SEGMENT_ID => ['value' => null],
                 self::ENABLE_QUICK_ORDER_FORM => ['type' => 'boolean', 'value' => true],
                 self::DIRECT_URL_PREFIX => ['value' => ''],
             ]

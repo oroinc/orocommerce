@@ -37,7 +37,7 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
      */
     public function getMigrationVersion()
     {
-        return 'v1_3';
+        return 'v1_4';
     }
 
     /**
@@ -49,6 +49,7 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
         $this->addMetaInformation($schema, self::CATEGORY_TABLE_NAME);
         $this->addMetaInformation($schema, self::LANDING_PAGE_TABLE_NAME);
         $this->addMetaInformation($schema, self::WEB_CATALOG_NODE_TABLE_NAME);
+        $this->createOroWebCatalogProductLimitTable($schema);
     }
 
     /**
@@ -109,5 +110,19 @@ class OroSEOBundleInstaller implements Installation, ExtendExtensionAwareInterfa
                 ],
             ]
         );
+    }
+
+    /**
+     * Create oro_web_catalog_product_limit table
+     *
+     * @param Schema $schema
+     */
+    private function createOroWebCatalogProductLimitTable(Schema $schema)
+    {
+        $table = $schema->createTable('oro_web_catalog_product_limit');
+        $table->addColumn('id', 'integer', ['autoincrement' => true]);
+        $table->addColumn('product_id', 'integer', []);
+        $table->addColumn('version', 'integer', []);
+        $table->setPrimaryKey(['id']);
     }
 }

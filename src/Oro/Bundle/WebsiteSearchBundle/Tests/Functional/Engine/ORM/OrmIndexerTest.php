@@ -327,7 +327,7 @@ class OrmIndexerTest extends AbstractSearchWebTestCase
     {
         $this->loadFixtures([LoadProductsToIndex::class]);
         $this->mappingProviderMock
-            ->expects($this->exactly(4))
+            ->expects($this->exactly(7))
             ->method('isClassSupported')
             ->with(TestProduct::class)
             ->willReturn(true);

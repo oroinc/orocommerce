@@ -91,8 +91,18 @@ class QuoteController extends Controller
      */
     public function choiceAction(Request $request, QuoteDemand $quoteDemand)
     {
-        if (!$quoteDemand->getQuote()->isAcceptable()) {
-            return new RedirectResponse($request->headers->get('referer'));
+        $quote = $quoteDemand->getQuote();
+
+        if (!$quote->isAcceptable()) {
+            $this->get('session')->getFlashBag()->add(
+                'info',
+                $this->get('translator')->trans(
+                    'oro.frontend.sale.message.quote.not_available',
+                    ['%qid%' => $quote->getQid()]
+                )
+            );
+
+            return $this->redirectToRoute('oro_sale_quote_frontend_index');
         }
 
         $form = $this->createForm(QuoteDemandType::NAME, $quoteDemand);
@@ -123,7 +133,7 @@ class QuoteController extends Controller
             'data' => [
                 'data' => $quoteDemand,
                 'form' => $form->createView(),
-                'quote' => $quoteDemand->getQuote(),
+                'quote' => $quote,
                 'totals' => (object)$this->getSubtotalsCalculator()->calculateSubtotals($quoteDemand)
             ]
         ];

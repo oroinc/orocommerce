@@ -31,44 +31,17 @@
 {% endblock %}
 
 {% block __product_shopping_lists__shopping_lists_template_preview_widget %}
-    <i class="shopping-lists__icon"></i>
-    <% if (currentShoppingList) { %>
-    <% _.each(currentShoppingList.line_items, function(lineItem) { %>
-    <div class="shopping-lists__text">
-        <div class="shopping-lists__description-row">
-            <span class="shopping-lists__label"><%= _.__(
-                    'oro.shoppinglist.actions.line_items_in_shopping_list', {
-                    lineItems: _.__(
-                        'oro.product.product_unit.' + lineItem.unit + '.value.short',
-                        {count: lineItem.quantity},
-                        lineItem.quantity
-                    ),
-                    shoppingList: _.escape(currentShoppingList.label)
-            }) %></span>
-        </div>
-        <div class="shopping-lists__ui-row">
-            <ul class="actions-row">
-                <li class="actions-row__item actions-row__item--edit">
-                    <button type="button"
-                            title="{{ 'Edit'|trans }}"
-                            class="actions-row__button"
-                            data-role="edit-line-item"
-                            data-line-item-id="<%= lineItem.id %>"
-                    >
-                        <i class="actions-row__icon fa-pencil"></i>
-                    </button>
-                </li>
-            </ul>
+    <i class="shopping-lists__cart"></i>
+    <div class="shopping-lists__content-wrapper">
+        <div class="shopping-lists__text">
+            <% if (shoppingListsCount == 1) { %>
+                <%= _.__('oro.shoppinglist.actions.in_shopping_list') %>
+            <% } else { %>
+                <%= _.__('oro.shoppinglist.actions.in_shopping_lists') %>
+            <% } %>
         </div>
     </div>
-    <% }) %>
-    <% } else { %>
-    <div class="shopping-lists__text">
-        <%= _.__('oro.shoppinglist.actions.in_shopping_lists', {
-        count: shoppingListsCount
-        }) %>
-    </div>
-    <% } %>
+    <i class="shopping-lists__edit"></i>
 {% endblock %}
 
 {% block __product_shopping_lists__shopping_lists_popup_widget %}
@@ -95,9 +68,9 @@
                 configDefaultUnit: defaultUnitCode
             }
         },
-        '~class': ' shopping-lists__link'
+        '~class': ' shopping-lists__area-trigger'
     }) %}
-    <a {{ block('block_attributes') }}>({{ 'oro.shoppinglist.actions.add_to_multiple'|trans }})</a>
+    <a {{ block('block_attributes') }}></a>
 {% endblock %}
 
 {% block __product_shopping_lists__shopping_lists_popup_template_widget %}

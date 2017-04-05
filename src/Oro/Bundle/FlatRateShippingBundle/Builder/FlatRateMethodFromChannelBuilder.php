@@ -10,10 +10,14 @@ use Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGener
 
 class FlatRateMethodFromChannelBuilder
 {
-    /** @var IntegrationMethodIdentifierGeneratorInterface */
+    /**
+     * @var IntegrationMethodIdentifierGeneratorInterface
+     */
     private $identifierGenerator;
 
-    /** @var LocalizationHelper */
+    /**
+     * @var LocalizationHelper
+     */
     private $localizationHelper;
 
     /**
@@ -38,7 +42,7 @@ class FlatRateMethodFromChannelBuilder
         $id = $this->identifierGenerator->generateIdentifier($channel);
         $label = $this->getChannelLabel($channel);
 
-        return new FlatRateMethod($id, $label);
+        return new FlatRateMethod($id, $label, $channel->isEnabled());
     }
 
     /**

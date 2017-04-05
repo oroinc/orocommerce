@@ -1,0 +1,15 @@
+// @theme: blank
+
+.product-price {
+    display: $product-price-display;
+    overflow: $product-price-overflow;
+
+    &__main {
+        margin-top: $product-price-main-margin-top;
+    }
+
+    &__hint {
+        margin-bottom: $product-price-hint-margin-bottom;
+        padding-bottom: $product-price-hint-padding-bottom;
+    }
+}

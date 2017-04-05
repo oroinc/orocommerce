@@ -297,9 +297,11 @@ class ProductTypeTest extends FormIntegrationTestCase
                         'slugPrototypes' => [['string' => 'slug']],
                         'createRedirect' => true,
                     ],
+                    'featured' => 1
                 ],
                 'expectedData'  => $this->createExpectedProductEntity()
                     ->addSlugPrototype((new LocalizedFallbackValue())->setString('slug'))
+                    ->setFeatured(true)
             ],
             'product with additionalUnitPrecisions' => [
                 'defaultData'   => $this->createDefaultProductEntity(),

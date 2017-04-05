@@ -2,8 +2,11 @@
 
 namespace Oro\Bundle\CheckoutBundle\Tests\Functional\Controller\Frontend;
 
+use Symfony\Component\DomCrawler\Crawler;
+
 use Oro\Bundle\CustomerBundle\Tests\Functional\DataFixtures\LoadCustomerAddresses;
 use Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadCustomerUserData;
+use Oro\Bundle\InventoryBundle\Tests\Functional\DataFixtures\UpdateInventoryLevelsQuantities;
 use Oro\Bundle\PaymentBundle\Entity\PaymentMethodsConfigsRule;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentMethodsConfigsRuleData;
 use Oro\Bundle\PaymentTermBundle\Tests\Functional\DataFixtures\LoadPaymentTermData;
@@ -16,10 +19,10 @@ use Oro\Bundle\ShippingBundle\Tests\Functional\DataFixtures\LoadShippingMethodsC
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingListLineItems;
 use Oro\Bundle\ShoppingListBundle\Tests\Functional\DataFixtures\LoadShoppingLists;
-use Symfony\Component\DomCrawler\Crawler;
 
 /**
  * @dbIsolationPerTest
+ * @group CommunityEdition
  */
 class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
 {
@@ -40,6 +43,7 @@ class CheckoutControllerErrorsTest extends CheckoutControllerTestCase
                 LoadPaymentTermData::class,
                 LoadPaymentMethodsConfigsRuleData::class,
                 LoadShippingMethodsConfigsRulesWithConfigs::class,
+                UpdateInventoryLevelsQuantities::class
             ]
         );
         $this->registry = static::getContainer()->get('doctrine');
