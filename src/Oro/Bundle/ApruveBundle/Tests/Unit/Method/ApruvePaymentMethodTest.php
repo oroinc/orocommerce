@@ -4,14 +4,21 @@ namespace Oro\Bundle\ApruveBundle\Tests\Unit\Method;
 
 use Oro\Bundle\ApruveBundle\Method\ApruvePaymentMethod;
 use Oro\Bundle\ApruveBundle\Method\Config\ApruveConfigInterface;
+use Oro\Bundle\ApruveBundle\Method\PaymentAction\Executor\PaymentActionExecutor;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
+use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 
 class ApruvePaymentMethodTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ApruvePaymentMethod
      */
-    protected $method;
+    private $method;
+
+    /**
+     * @var PaymentActionExecutor|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private $paymentActionExecutor;
 
     /**
      * @var ApruveConfigInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -24,13 +31,26 @@ class ApruvePaymentMethodTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->config = $this->createMock(ApruveConfigInterface::class);
+        $this->paymentActionExecutor = $this->createMock(PaymentActionExecutor::class);
 
-        $this->method = new ApruvePaymentMethod($this->config);
+        $this->method = new ApruvePaymentMethod($this->config, $this->paymentActionExecutor);
     }
 
     public function testExecute()
     {
-        // todo@webevt: make proper test once actions are processed properly.
+        /** @var PaymentTransaction|\PHPUnit_Framework_MockObject_MockObject $paymentTransaction */
+        $paymentTransaction = $this->createMock(PaymentTransaction::class);
+        $action = 'some_action';
+
+        $this->paymentActionExecutor
+            ->expects($this->once())
+            ->method('execute')
+            ->with($action, $this->config, $paymentTransaction)
+            ->willReturn([]);
+
+        $actual = $this->method->execute($action, $paymentTransaction);
+
+        static::assertSame([], $actual);
     }
 
     public function testGetIdentifier()
@@ -41,7 +61,7 @@ class ApruvePaymentMethodTest extends \PHPUnit_Framework_TestCase
             ->method('getPaymentMethodIdentifier')
             ->willReturn($identifier);
 
-        $this->assertEquals($identifier, $this->method->getIdentifier());
+        static::assertEquals($identifier, $this->method->getIdentifier());
     }
 
     /**
@@ -52,7 +72,20 @@ class ApruvePaymentMethodTest extends \PHPUnit_Framework_TestCase
      */
     public function testSupports($expected, $actionName)
     {
-        $this->assertEquals($expected, $this->method->supports($actionName));
+        $this->paymentActionExecutor
+            ->expects($this->once())
+            ->method('supports')
+            ->willReturnMap([
+                [ApruvePaymentMethod::AUTHORIZE, true],
+                [ApruvePaymentMethod::CAPTURE, true],
+                [ApruvePaymentMethod::COMPLETE, true],
+                [ApruvePaymentMethod::CANCEL, true],
+                [ApruvePaymentMethod::VALIDATE, false],
+                [ApruvePaymentMethod::PURCHASE, false],
+                [ApruvePaymentMethod::CHARGE, false],
+            ]);
+
+        static::assertEquals($expected, $this->method->supports($actionName));
     }
 
     /**
@@ -65,6 +98,9 @@ class ApruvePaymentMethodTest extends \PHPUnit_Framework_TestCase
             [true, ApruvePaymentMethod::CAPTURE],
             [true, ApruvePaymentMethod::COMPLETE],
             [true, ApruvePaymentMethod::CANCEL],
+            [false, ApruvePaymentMethod::VALIDATE],
+            [false, ApruvePaymentMethod::PURCHASE],
+            [false, ApruvePaymentMethod::CHARGE],
         ];
     }
 
@@ -72,6 +108,6 @@ class ApruvePaymentMethodTest extends \PHPUnit_Framework_TestCase
     {
         /** @var PaymentContextInterface|\PHPUnit_Framework_MockObject_MockObject $context */
         $context = $this->createMock(PaymentContextInterface::class);
-        $this->assertTrue($this->method->isApplicable($context));
+        static::assertTrue($this->method->isApplicable($context));
     }
 }
