@@ -7,6 +7,7 @@ use Doctrine\ORM\Query\Expr\Join;
 
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceList;
 use Oro\Bundle\PricingBundle\Entity\CombinedPriceListToPriceList;
+use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\ProductBundle\Entity\Product;
 
 class CombinedPriceListToPriceListRepository extends EntityRepository
@@ -21,12 +22,15 @@ class CombinedPriceListToPriceListRepository extends EntityRepository
         $qb = $this->createQueryBuilder('combinedPriceListToPriceList');
 
         if ($product) {
-            $qb->innerJoin('combinedPriceListToPriceList.priceList', 'priceList')
+            $qb
                 ->innerJoin(
-                    'priceList.prices',
-                    'prices',
+                    PriceListToProduct::class,
+                    'priceListToProduct',
                     Join::WITH,
-                    $qb->expr()->eq('prices.product', ':product')
+                    $qb->expr()->andX(
+                        $qb->expr()->eq('priceListToProduct.priceList', 'combinedPriceListToPriceList.priceList'),
+                        $qb->expr()->eq('priceListToProduct.product', ':product')
+                    )
                 )
                 ->setParameter('product', $product);
         }

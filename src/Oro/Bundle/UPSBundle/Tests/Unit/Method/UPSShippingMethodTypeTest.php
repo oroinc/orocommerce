@@ -72,7 +72,6 @@ class UPSShippingMethodTypeTest extends \PHPUnit_Framework_TestCase
         $this->transport = $this->getEntity(
             UPSTransport::class,
             [
-                'baseUrl' => 'some url',
                 'apiUser' => 'some user',
                 'apiPassword' => 'some password',
                 'apiKey' => 'some key',

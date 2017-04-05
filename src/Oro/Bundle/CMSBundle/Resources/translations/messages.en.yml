@@ -12,7 +12,7 @@ oro.cms:
             label:              'Slugs'
             singular_label:     'Slug'
         slug_prototypes:
-            label:              'Slug Prototypes'
+            label:              'URL Slug'
             singular_label:     'Slug Prototype'
         form.choose:            'Choose a Landing Page...'
         content_variant_type.label: 'Landing Page'

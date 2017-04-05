@@ -1,0 +1,8 @@
+{% block seo_localized_links_container_widget %}
+    {% for linkItem in linkItems %}
+        {% set rel = 'alternate' %}
+        {% set href = linkItem.url %}
+        {% set hreflang = linkItem.languageCode %}
+        {{ block('external_resource_widget') }}
+    {% endfor %}
+{% endblock %}

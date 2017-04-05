@@ -126,45 +126,49 @@
         'dataBlocks': dataBlocks
     }%}
     {% set componentOptions = {
-    container: 'web-catalog-page-container',
-    sidebar: 'tree-component',
-    fixSidebarHeight: true
+        container: 'web-catalog-page-container',
+        sidebar: 'tree-component',
+        fixSidebarHeight: true
     } %}
-    <div class="web-catalog-page-container tree-component-container"
+    <div class="web-catalog-page-container tree-component-container left-panel-container"
          data-page-component-module="orodatagrid/js/app/components/grid-sidebar-component"
          data-page-component-options="{{ componentOptions|json_encode }}">
-        <div class="web-catalog-sidebar page page-tree tree-component">
-            {% set nodeId = null %}
-            {% if entity.id %}
-                {% set nodeId = entity.id %}
-            {% elseif entity.parentNode is not empty %}
-                {% set nodeId = entity.parentNode.id %}
-            {% endif %}
-            {% set treeOptions = {
-                'key' : 'web-catalog',
-                'data' : oro_web_catalog_tree(web_catalog),
-                'updateAllowed' : resource_granted('oro_web_catalog_update'),
-                'onRootSelectRoute': 'oro_content_node_update',
-                'onSelectRoute' : 'oro_content_node_update',
-                'onMoveRoute' : 'oro_content_node_move',
-                'nodeId': nodeId,
-                'view': 'orowebcatalog/js/app/views/web-catalog-tree-view'
-            } %}
-            {{ UI.renderJsTree(
-                {
-                    'label': 'oro.webcatalog.contentnode.entity_plural_label'|trans,
-                    'treeOptions': treeOptions
-                },
-                {
-                    'move': {
+        <div class="placeholder">
+            <div class="scrollable-container overflow-y clearfix">
+                <div class="web-catalog-sidebar page page-tree tree-component left-panel scrollable-container">
+                    {% set nodeId = null %}
+                    {% if entity.id %}
+                        {% set nodeId = entity.id %}
+                    {% elseif entity.parentNode is not empty %}
+                        {% set nodeId = entity.parentNode.id %}
+                    {% endif %}
+                    {% set treeOptions = {
+                        'key' : 'web-catalog',
+                        'data' : oro_web_catalog_tree(web_catalog),
+                        'updateAllowed' : resource_granted('oro_web_catalog_update'),
+                        'onRootSelectRoute': 'oro_content_node_update',
+                        'onSelectRoute' : 'oro_content_node_update',
+                        'onMoveRoute' : 'oro_content_node_move',
+                        'nodeId': nodeId,
+                        'view': 'orowebcatalog/js/app/views/web-catalog-tree-view'
+                    } %}
+                    {{ UI.renderJsTree(
+                    {
+                        'label': 'oro.webcatalog.contentnode.entity_plural_label'|trans,
+                        'treeOptions': treeOptions
+                    },
+                    {
+                        'move': {
                         'routeName': 'oro_web_catalog_move',
                         'routeParams': {'id': web_catalog.id}
                     }
-                }
-            ) }}
+                    }
+                    ) }}
+                </div>
+                <div class="web-catalog-page-data">
+                    {{ parent() }}
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="web-catalog-page-data">
-        {{ parent() }}
     </div>
 {% endblock content_data %}

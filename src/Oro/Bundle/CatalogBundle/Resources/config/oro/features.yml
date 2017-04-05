@@ -1,0 +1,6 @@
+features:
+    frontend_master_catalog:
+        label: oro.catalog.feature.frontend_master_catalog.label
+        description: oro.catalog.feature.frontend_master_catalog.description
+        strategy: unanimous
+        allow_if_all_abstain: true

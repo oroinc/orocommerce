@@ -3,14 +3,19 @@
 namespace Oro\Bundle\PricingBundle\Provider;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Model\ProductPriceCriteria;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 
 class ProductPriceProvider
 {
+    /**
+     * @var ShardManager
+     */
+    protected $shardManager;
+
     /**
      * @var ManagerRegistry
      */
@@ -23,10 +28,12 @@ class ProductPriceProvider
 
     /**
      * @param ManagerRegistry $registry
+     * @param ShardManager $shardManager
      */
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, ShardManager $shardManager)
     {
         $this->registry = $registry;
+        $this->shardManager = $shardManager;
     }
 
     /**
@@ -38,7 +45,13 @@ class ProductPriceProvider
     public function getPriceByPriceListIdAndProductIds($priceListId, array $productIds, $currency = null)
     {
         $result = [];
-        $prices = $this->getRepository()->findByPriceListIdAndProductIds($priceListId, $productIds, true, $currency);
+        $prices = $this->getRepository()->findByPriceListIdAndProductIds(
+            $this->shardManager,
+            $priceListId,
+            $productIds,
+            true,
+            $currency
+        );
 
         if ($prices) {
             foreach ($prices as $price) {
@@ -70,6 +83,7 @@ class ProductPriceProvider
         }
 
         $prices = $this->getRepository()->getPricesBatch(
+            $this->shardManager,
             $priceList->getId(),
             $productIds,
             $productUnitCodes,
@@ -83,6 +97,7 @@ class ProductPriceProvider
             $code = $productPriceCriteria->getProductUnit()->getCode();
             $quantity = $productPriceCriteria->getQuantity();
             $currency = $productPriceCriteria->getCurrency();
+            $precision = $productPriceCriteria->getProductUnit()->getDefaultPrecision();
 
             $productPrices = array_filter(
                 $prices,
@@ -91,38 +106,52 @@ class ProductPriceProvider
                 }
             );
 
-            $price = $this->matchPriceByQuantity($productPrices, $quantity);
-
-            $result[$productPriceCriteria->getIdentifier()] = $price !== null ? Price::create($price, $currency) : null;
+            list($price, $matchedQuantity) = $this->matchPriceByQuantity($productPrices, $quantity);
+            if ($price !== null) {
+                $result[$productPriceCriteria->getIdentifier()] = Price::create(
+                    $this->recalculatePricePerUnit($price, $matchedQuantity, $precision),
+                    $currency
+                );
+            } else {
+                $result[$productPriceCriteria->getIdentifier()] = null;
+            }
         }
 
         return $result;
     }
 
     /**
+     * @param float $price
+     * @param float $quantityPerAmount
+     * @param int $precision
+     * @return float
+     */
+    protected function recalculatePricePerUnit($price, $quantityPerAmount, $precision)
+    {
+        return $precision > 0 ?
+            $price / $quantityPerAmount :
+            $price;
+    }
+
+    /**
      * @param array $prices
      * @param float $expectedQuantity
-     * @return float
+     * @return array
      */
     protected function matchPriceByQuantity(array $prices, $expectedQuantity)
     {
         $price = null;
-
+        $matchedQuantity = null;
         foreach ($prices as $productPrice) {
             $quantity = (float)$productPrice['quantity'];
 
-            if ($expectedQuantity < $quantity) {
-                break;
-            }
-
             if ($expectedQuantity >= $quantity) {
                 $price = (float)$productPrice['value'];
-            } else {
-                break;
+                $matchedQuantity = $quantity;
             }
         }
 
-        return $price;
+        return [$price, $matchedQuantity];
     }
 
     /**

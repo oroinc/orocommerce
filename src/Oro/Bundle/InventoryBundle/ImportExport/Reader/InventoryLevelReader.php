@@ -15,16 +15,16 @@ class InventoryLevelReader extends EntityReader
     /**
      * {@inheritdoc}
      */
-    public function setSourceEntityName($entityName, Organization $organization = null)
+    public function setSourceEntityName($entityName, Organization $organization = null, array $ids = [])
     {
         $this->currentEntityName = $entityName;
-        parent::setSourceEntityName($entityName, $organization);
+        parent::setSourceEntityName($entityName, $organization, $ids);
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function createSourceEntityQueryBuilder($entityName, Organization $organization = null)
+    protected function createSourceEntityQueryBuilder($entityName, Organization $organization = null, array $ids = [])
     {
         $qb = parent::createSourceEntityQueryBuilder($entityName, $organization);
 

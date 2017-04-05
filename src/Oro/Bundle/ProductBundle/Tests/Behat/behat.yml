@@ -2,9 +2,23 @@ oro_behat_extension:
   elements:
     ProductNameField:
       selector: "input[name='oro_product[names][values][default]']"
+    ProductPrimaryUnitField:
+      selector: "select[name='oro_product[primaryUnitPrecision][unit]']"
+    ProductAdditionalUnitField:
+      selector: "select[name='oro_product[additionalUnitPrecisions][0][unit]']"
 
-    SlugPrototypesField:
-      selector: "input[name='oro_product[slugPrototypesWithRedirect][slugPrototypes][values][default]']"
+    ProductForm:
+      selector: 'div#container'
+      class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Form
+      options:
+        mapping:
+          SKU: 'oro_product[sku]'
+          Name: 'oro_product[names][values][default]'
+          Status: 'oro_product[status]'
+          PrimaryUnit: 'oro_product[primaryUnitPrecision][unit]'
+          PrimaryPrecision: 'oro_product[primaryUnitPrecision][precision]'
+          AdditionalUnit: 'oro_product[additionalUnitPrecisions][0][unit]'
+          AdditionalPrecision: 'oro_product[additionalUnitPrecisions][0][precision]'
 
     QuickAddForm:
       selector: "form[name='oro_product_quick_add']"

@@ -174,6 +174,66 @@ class ProductSearchGridTest extends FrontendWebTestCase
         ];
     }
 
+    /**
+     * @dataProvider dataProviderForDoesNotContainFilter
+     *
+     * @param string $filter
+     * @param string $searchString
+     * @param array $expectedFieldValues
+     */
+    public function testDoesNotContainFilterWithForceLikeOption($filter, $searchString, $expectedFieldValues)
+    {
+        $products = $this->getDatagridData(
+            ProductController::GRID_NAME,
+            [
+                sprintf('[%s][value]', $filter) => $searchString,
+                sprintf('[%s][type]', $filter) => 2
+            ]
+        );
+
+        $actualFieldValues = [];
+        foreach ($products as $product) {
+            $actualFieldValues[] = $product[$filter];
+        }
+
+        $this->assertEquals(count($actualFieldValues), count($expectedFieldValues));
+        foreach ($expectedFieldValues as $expected) {
+            $this->assertContains($expected, $expectedFieldValues);
+        }
+    }
+
+    /**
+     * @return array
+     */
+    public function dataProviderForDoesNotContainFilter()
+    {
+        return [
+            'sku not like' => [
+                'sku',
+                substr(LoadProductData::PRODUCT_8, 5),
+                [
+                    LoadProductData::PRODUCT_1,
+                    LoadProductData::PRODUCT_2,
+                    LoadProductData::PRODUCT_3,
+                    LoadProductData::PRODUCT_6,
+                    LoadProductData::PRODUCT_7
+                ],
+            ],
+            'sku not like inside' => [
+                'sku', substr(LoadProductData::PRODUCT_8, 3, 4), [],
+            ],
+            'name not like inside' => [
+                'name', substr(LoadProductData::PRODUCT_1_DEFAULT_NAME, 6, 12), [
+                    LoadProductData::PRODUCT_2_DEFAULT_NAME,
+                    LoadProductData::PRODUCT_3_DEFAULT_NAME,
+                    LoadProductData::PRODUCT_6_DEFAULT_NAME,
+                    LoadProductData::PRODUCT_7_DEFAULT_NAME,
+                    LoadProductData::PRODUCT_8_DEFAULT_NAME,
+                ],
+            ],
+        ];
+    }
+
     public function testAllTextFilter()
     {
         $data = $this->getDatagridData(

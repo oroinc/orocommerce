@@ -21,6 +21,9 @@ product-2:
         customer_group.group2:
             visibility: hidden
             reference: product-2.visibility.customer_group.group2
+        customer_group.anonymous:
+            visibility: hidden
+            reference: product-2.visibility.customer_group.anonymous
     customers:
         customer.level_1:
             visibility: hidden
@@ -35,8 +38,11 @@ product-3:
             reference: product-3.visibility.customer_group.group1
         customer_group.anonymous:
             visibility: visible
-            reference: product-8.visibility.customer_group.anonymous
-    customers: {}
+            reference: product-3.visibility.customer_group.anonymous
+    customers:
+        customer.level_1:
+            visibility: hidden
+            reference: product-3.visibility.customer.level_1
 product-4:
     all:
         visibility: hidden
@@ -59,7 +65,7 @@ product-5:
             reference: product-5.visibility.customer_group.group2
         customer_group.anonymous:
             visibility: visible
-            reference: product-8.visibility.customer_group.anonymous
+            reference: product-5.visibility.customer_group.anonymous
     customers:
         customer.level_1:
             visibility: current_product

@@ -1,15 +1,19 @@
+parameters:
+    oro_flat_rate_shipping.integration.channel.type: 'flat_rate'
+    oro_flat_rate_shipping.integration.transport.type: 'flat_rate'
+
 services:
     oro_flat_rate_shipping.integration.channel:
         class: 'Oro\Bundle\FlatRateShippingBundle\Integration\FlatRateChannelType'
         public: false
         tags:
-            - { name: oro_integration.channel, type: flat_rate }
+            - { name: oro_integration.channel, type: '%oro_flat_rate_shipping.integration.channel.type%' }
 
     oro_flat_rate_shipping.integration.transport:
         class: 'Oro\Bundle\FlatRateShippingBundle\Integration\FlatRateTransport'
         public: false
         tags:
-            - { name: oro_integration.transport, type: flat_rate, channel_type: flat_rate }
+            - { name: oro_integration.transport, type: '%oro_flat_rate_shipping.integration.transport.type%', channel_type: '%oro_flat_rate_shipping.integration.channel.type%' }
 
     oro_flat_rate_shipping.method.provider:
         class: 'Oro\Bundle\FlatRateShippingBundle\Method\FlatRateMethodProvider'

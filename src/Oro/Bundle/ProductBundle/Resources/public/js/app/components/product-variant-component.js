@@ -55,6 +55,7 @@ define(function(require) {
          */
         _updateProductVariantsGrid: function(selectedFields) {
             mediator.trigger('datagrid:setParam:' + this.options.datagridName, 'selectedVariantFields', selectedFields);
+            mediator.trigger('datagrid:setParam:' + this.options.datagridName, 'gridDynamicLoad', 1);
             mediator.trigger('datagrid:doReset:' + this.options.datagridName);
         },
 

@@ -7,6 +7,7 @@ use Behat\Gherkin\Node\TableNode;
 use Behat\Symfony2Extension\Context\KernelAwareContext;
 use Behat\Symfony2Extension\Context\KernelDictionary;
 use Doctrine\Common\Persistence\ObjectManager;
+use Oro\Bundle\CheckoutBundle\Tests\Behat\Element\CheckoutStep;
 use Oro\Bundle\DataGridBundle\Tests\Behat\Element\Grid;
 use Oro\Bundle\NavigationBundle\Tests\Behat\Element\MainMenu;
 use Oro\Bundle\ShoppingListBundle\Entity\ShoppingList;
@@ -92,15 +93,9 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     public function flashMessageAppearsThatThereIsNoShippingMethodsAvailable()
     {
-        $flashMessages = $this->createElement('CreateOrderFlashMessage');
-
-        self::assertTrue(
-            $flashMessages->isValid(),
-            'Flash message is not found, or found more then one'
-        );
-        self::assertEquals(
+        $this->oroMainContext->iShouldSeeFlashMessage(
             'No shipping methods are available, please contact us to complete the order submission.',
-            $flashMessages->getText()
+            'CreateOrderFlashMessage'
         );
     }
 
@@ -109,15 +104,9 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
      */
     public function noShippingMethodsAvailable()
     {
-        $notificationAllert = $this->createElement('Notification Alert');
-
-        self::assertTrue(
-            $notificationAllert->isValid(),
-            'Notification Alert is not found, or found more then one'
-        );
-        self::assertEquals(
+        $this->oroMainContext->iShouldSeeFlashMessage(
             'No shipping methods are available, please contact us to complete the order submission.',
-            $notificationAllert->getText()
+            'Notification Alert'
         );
     }
 
@@ -224,7 +213,7 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     public function buyerIsAgainOnShippingMethodCheckoutStepOn($shoppingListName)
     {
         $this->createOrderFromShoppingList($shoppingListName);
-        /** @var checkoutStep $checkoutStep */
+        /** @var CheckoutStep $checkoutStep */
         $checkoutStep = $this->createElement('CheckoutStep');
         $checkoutStep->assertTitle('Shipping Method');
     }
@@ -275,5 +264,37 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         }
         $form->fill($table);
         $this->getSession()->getPage()->pressButton('Continue');
+    }
+
+    /**
+     * Verify that Existing Shipping Rules popup appears
+     *
+     * Example: I should see Existing Shipping Rules popup
+     *
+     * @Then /^(?:|I )should see Existing Shipping Rules popup$/
+     */
+    public function iShouldSeeExistingShippingRulesPopup()
+    {
+        $this->assertSession()->elementTextContains(
+            'css',
+            'div.modal-header',
+            'Deactivate integration'
+        );
+    }
+
+    /**
+     * Verify that page contains disabled Shipping Method Config
+     *
+     * Example: I should see Disabled Shipping Method Configuration$/
+     *
+     * @Then /^(?:|I )should see Disabled Shipping Method Configuration$/
+     */
+    public function assertDisabledShippingMethodConfig()
+    {
+        $this->assertSession()->elementTextContains(
+            'css',
+            'div[data-name="field__method-configs"]',
+            'Disabled'
+        );
     }
 }

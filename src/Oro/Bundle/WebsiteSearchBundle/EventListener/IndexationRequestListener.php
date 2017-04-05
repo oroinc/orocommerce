@@ -8,17 +8,14 @@ use Doctrine\Common\Util\ClassUtils;
 
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\FormBundle\Event\FormHandler\AfterFormProcessEvent;
 use Oro\Bundle\PlatformBundle\EventListener\OptionalListenerInterface;
-use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\WebsiteSearchBundle\Event\ReindexationRequestEvent;
-use Oro\Bundle\SearchBundle\EventListener\IndexationListenerTrait;
+use Oro\Bundle\WebsiteSearchBundle\Provider\WebsiteSearchMappingProvider;
 
 class IndexationRequestListener implements OptionalListenerInterface
 {
-    use IndexationListenerTrait;
-
     /**
      * @var bool
      */
@@ -66,16 +63,20 @@ class IndexationRequestListener implements OptionalListenerInterface
         $entityManager = $args->getEntityManager();
         $unitOfWork    = $entityManager->getUnitOfWork();
 
-        foreach (array_merge(
-            $unitOfWork->getScheduledEntityInsertions(),
-            $this->getEntitiesWithUpdatedIndexedFields($unitOfWork)
-        ) as $updatedEntity) {
+        foreach ($unitOfWork->getScheduledEntityUpdates() as $hash => $entity) {
+            $className = $this->doctrineHelper->getEntityClass($entity);
+            if (!$this->mappingProvider->hasFieldsMapping($className)) {
+                continue;
+            }
+            $this->scheduleForSendingWithEvent($entity);
+        }
+
+        foreach ($unitOfWork->getScheduledEntityInsertions() as $updatedEntity) {
             if (!$this->mappingProvider->hasFieldsMapping(
                 $this->doctrineHelper->getEntityClass($updatedEntity)
             )) {
                 continue;
             }
-
             $this->scheduleForSendingWithEvent($updatedEntity);
         }
 

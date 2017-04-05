@@ -13,10 +13,6 @@ use Oro\Bundle\TestFrameworkBundle\Behat\Element\OroPageObjectAware;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\OroMainContext;
 use Oro\Bundle\TestFrameworkBundle\Tests\Behat\Context\PageObjectDictionary;
 
-/**
- * @SuppressWarnings(PHPMD.TooManyMethods)
- * @SuppressWarnings(PHPMD.TooManyPublicMethods)
- */
 class FeatureContext extends OroFeatureContext implements OroPageObjectAware, KernelAwareContext
 {
     use PageObjectDictionary, KernelDictionary;
@@ -36,16 +32,11 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
     }
 
     /**
-     * @Given Admin creates a quote for RFQ with PO Number :poNumber
+     * @Given /^(?:|I )create a quote from RFQ with PO Number "(?P<poNumber>[^"]+)"$/
      * @param string $poNumber
      */
-    public function adminCreatesAQuoteForRFQWithPONumber($poNumber)
+    public function iCreateAQuoteFromRFQWithPONumber($poNumber)
     {
-        $this->getMink()->setDefaultSessionName('second_session');
-        $this->getSession()->resizeWindow(1920, 1880, 'current');
-
-        $this->oroMainContext->loginAsUserWithPassword();
-        $this->waitForAjax();
         /** @var MainMenu $mainMenu */
         $mainMenu = $this->createElement('MainMenu');
         $mainMenu->openAndClick('Sales/Requests For Quote');
@@ -68,9 +59,6 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $unitPrice->blur();
 
         $this->getPage()->pressButton('Save and Close');
-
-        $this->getSession('second_session')->stop();
-        $this->getMink()->setDefaultSessionName('first_session');
     }
 
     /**

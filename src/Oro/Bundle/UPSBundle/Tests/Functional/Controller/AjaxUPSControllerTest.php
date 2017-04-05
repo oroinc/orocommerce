@@ -20,7 +20,7 @@ class AjaxUPSControllerTest extends WebTestCase
      * @param string $countryCode
      * @param array $expectedServices
      */
-    public function testGetShippingServicesByCountry($countryCode, array $expectedServices)
+    public function testGetShippingServicesByCountryAction($countryCode, array $expectedServices)
     {
         $this
             ->client

@@ -34,11 +34,6 @@ class ProductStepOneTypeTest extends FormIntegrationTestCase
             'product',
             $form->getConfig()->getOptions()['intention']
         );
-
-        $this->assertEquals(
-            'This form should not contain extra fields: "{{ extra_fields }}"',
-            $form->getConfig()->getOptions()['extra_fields_message']
-        );
     }
 
     /**

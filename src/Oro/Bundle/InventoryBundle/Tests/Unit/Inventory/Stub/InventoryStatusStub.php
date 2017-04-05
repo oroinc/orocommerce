@@ -6,5 +6,4 @@ use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 
 class InventoryStatusStub extends AbstractEnumValue
 {
-
 }

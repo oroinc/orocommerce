@@ -3,7 +3,7 @@ datagrids:
         acl_resource: oro_rfp_request_view
         extended_entity_name: %oro_rfp.entity.request.class%
         options:
-            entityHint:        request
+            entityHint:        requests
             entity_pagination: true
         source:
             type:         orm
@@ -274,7 +274,7 @@ datagrids:
         acl_resource: oro_rfp_frontend_request_view
         extended_entity_name: %oro_rfp.entity.request.class%
         options:
-            entityHint:        request
+            entityHint:        requests
             entity_pagination: true
             customerUserOwner:
                 customerUserColumn: customerUserName
@@ -381,7 +381,7 @@ datagrids:
         acl_resource: oro_rfp_request_view
         extended_entity_name: %oro_rfp.entity.request.additional_note.class%
         options:
-            entityHint: additional_note
+            entityHint: additional notes
         source:
             type: orm
             query:

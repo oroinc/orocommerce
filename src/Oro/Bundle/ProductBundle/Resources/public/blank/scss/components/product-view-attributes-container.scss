@@ -1,0 +1,35 @@
+// @theme: blank
+
+.product-view {
+    &__attributes-container {
+        margin-bottom: $offset-y;
+
+        border: 1px solid $product-view-attributes-containers-border-color;
+
+        border-radius: $product-view-attributes-container-border-radius;
+
+        .tab-content {
+            padding: $product-view-attributes-tab-content-offset-inner;
+
+            label {
+                font-weight: bold;
+            }
+
+            p {
+                margin-bottom: $product-view-attributes-tab-content-attribute-offset-bottom;
+            }
+        }
+    }
+}
+
+@include breakpoint('mobile-landscape') {
+    .product-view {
+        &__attributes-container {
+            border: $product-view-attributes-container-border-radius-mobile-l;
+        }
+
+        .tab-content {
+            display: $product-view-attributes-tab-content-display-mobile-l;
+        }
+    }
+}

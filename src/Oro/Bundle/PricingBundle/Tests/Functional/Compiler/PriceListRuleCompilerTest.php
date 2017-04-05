@@ -79,25 +79,27 @@ class PriceListRuleCompilerTest extends WebTestCase
         $priceRule = $this->createPriceRule($priceList, $condition, $rule, 1, $unitLitre, 'USD');
 
         $expected = [
-            [
-                'product' => $product1->getId(),
-                'priceList' => $priceList->getId(),
-                'unit' => $unitLitre->getCode(),
-                'currency' => 'USD',
-                'quantity' => 1,
-                'productSku' => $product1->getSku(),
-                'priceRule' => $priceRule->getId(),
-                'value' => 110,
-            ],
+            'product' => $product1->getId(),
+            'priceList' => $priceList->getId(),
+            'unit' => $unitLitre->getCode(),
+            'currency' => 'USD',
+            'quantity' => 1,
+            'productSku' => $product1->getSku(),
+            'priceRule' => $priceRule->getId(),
+            'value' => 110,
         ];
         $qb = $this->getQueryBuilder($priceRule);
-        $actual = $this->getActualResult($qb);
+        $prices = $this->getActualResult($qb);
+        $actual = reset($prices);
+        unset($actual['id']);
         $this->assertEquals($expected, $actual);
 
         // Check that cache does not affect results
         $qb = $this->getQueryBuilder($priceRule);
         $actual = $this->getActualResult($qb);
-        $this->assertEquals($expected, $actual);
+        $price = reset($actual);
+        unset($price['id']);
+        $this->assertEquals($expected, $price);
     }
 
     public function testApplyRuleConditionsWithExpressions()
@@ -174,7 +176,12 @@ class PriceListRuleCompilerTest extends WebTestCase
         ];
 
         $qb = $this->getQueryBuilder($priceRule);
-        $actual = $this->getActualResult($qb);
+        $prices = $this->getActualResult($qb);
+        $actual = [];
+        foreach ($prices as $price) {
+            unset($price['id']);
+            $actual[] = $price;
+        }
         $this->assertEquals($expected, $actual);
     }
 
@@ -237,7 +244,7 @@ class PriceListRuleCompilerTest extends WebTestCase
 
         $qb = $this->getQueryBuilder($priceRule);
         $actual = $this->getActualResult($qb);
-        $this->assertEquals($expected, $actual);
+        $this->assertEqualsPrices($expected, $actual);
     }
 
     public function testApplyRuleConditionsWithExpressionsAndDefinedValues()
@@ -295,7 +302,8 @@ class PriceListRuleCompilerTest extends WebTestCase
 
         $qb = $this->getQueryBuilder($priceRule);
         $actual = $this->getActualResult($qb);
-        $this->assertEquals($expected, $actual);
+        $this->assertEqualsPrices($expected, $actual);
+//        $this->assertEquals($expected, $actual);
     }
 
     public function testRestrictByManualPrices()
@@ -341,7 +349,7 @@ class PriceListRuleCompilerTest extends WebTestCase
 
         $qb = $this->getQueryBuilder($priceRule);
         $actual = $this->getActualResult($qb);
-        $this->assertEquals($expected, $actual);
+        $this->assertEqualsPrices($expected, $actual);
     }
 
     public function testRestrictByProduct()
@@ -377,7 +385,7 @@ class PriceListRuleCompilerTest extends WebTestCase
 
         $qb = $this->getQueryBuilder($priceRule, $product1);
         $actual = $this->getActualResult($qb);
-        $this->assertEquals($expected, $actual);
+        $this->assertEqualsPrices($expected, $actual);
     }
 
     public function testRestrictByAssignedProducts()
@@ -418,7 +426,7 @@ class PriceListRuleCompilerTest extends WebTestCase
             ],
         ];
         $actual = $this->getActualResult($qb);
-        $this->assertEquals($expected, $actual);
+        $this->assertEqualsPrices($expected, $actual);
     }
 
     public function testRestrictByProductUnit()
@@ -452,12 +460,12 @@ class PriceListRuleCompilerTest extends WebTestCase
         ];
         $qb = $this->getQueryBuilder($priceRule);
         $actual = $this->getActualResult($qb);
-        $this->assertEquals($expected, $actual);
+        $this->assertEqualsPrices($expected, $actual);
 
         // Check that cache does not affect results
         $qb = $this->getQueryBuilder($priceRule);
         $actual = $this->getActualResult($qb);
-        $this->assertEquals($expected, $actual);
+        $this->assertEqualsPrices($expected, $actual);
     }
 
     public function testNotIn()
@@ -504,7 +512,7 @@ class PriceListRuleCompilerTest extends WebTestCase
         ];
         $qb = $this->getQueryBuilder($priceRule);
         $actual = $this->getActualResult($qb);
-        $this->assertEquals($expected, $actual);
+        $this->assertEqualsPrices($expected, $actual);
     }
 
     public function testIn()
@@ -551,7 +559,7 @@ class PriceListRuleCompilerTest extends WebTestCase
         ];
         $qb = $this->getQueryBuilder($priceRule);
         $actual = $this->getActualResult($qb);
-        $this->assertEquals($expected, $actual);
+        $this->assertEqualsPrices($expected, $actual);
     }
 
     public function testProductAssignmentRuleReferencing()
@@ -598,7 +606,7 @@ class PriceListRuleCompilerTest extends WebTestCase
         ];
         $qb = $this->getQueryBuilder($priceRule);
         $actual = $this->getActualResult($qb);
-        $this->assertEquals($expected, $actual);
+        $this->assertEqualsPrices($expected, $actual);
     }
 
     public function testRuleUnsupportedCurrency()
@@ -719,5 +727,18 @@ class PriceListRuleCompilerTest extends WebTestCase
         }
 
         $em->flush();
+    }
+
+    /**
+     * @param array $expected
+     * @param array $actual
+     */
+    protected function assertEqualsPrices(array $expected, array $actual)
+    {
+        foreach ($actual as $key => $price) {
+            $this->assertArrayHasKey('id', $price);
+            unset($price['id']);
+            self::assertEquals($expected[$key], $price);
+        }
     }
 }

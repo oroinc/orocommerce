@@ -64,7 +64,39 @@
         }
     }
 
+    &__icon {
+        margin-right: 0;
+    }
+
     &--hidden {
         display: none;
+    }
+}
+
+@include breakpoint('mobile') {
+    .shopping-lists-modify {
+        &__select {
+            width: 65px;
+        }
+
+        &__badges {
+            right: 5px;
+        }
+
+        &__input {
+            width: 40px;
+            padding: 7px 2px;
+            text-align: center;
+        }
+
+        &__select {
+            min-width: 59px;
+            width: 59px;
+        }
+
+        .select2-container a.select2-choice {
+            padding: 8px 6px;
+            margin-right: -2px;
+        }
     }
 }

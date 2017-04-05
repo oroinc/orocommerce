@@ -31,20 +31,6 @@ class ReindexMessageGranularizer
 
         $result = [];
 
-        if (count($entities) === 1 && count($entityIds) <= self::ID_CHUNK_SIZE) {
-            $entity      = current($entities);
-            $itemContext = [];
-            $itemContext = $this->setContextEntityIds($itemContext, $entityIds);
-            $itemContext = $this->setContextWebsiteIds($itemContext, $websites);
-
-            return [
-                [
-                    'class'   => [$entity],
-                    'context' => $itemContext
-                ]
-            ];
-        }
-
         if (empty($websites)) {
             foreach ($entities as $entity) {
                 $chunks = $this->getChunksOfIds($entityIds);

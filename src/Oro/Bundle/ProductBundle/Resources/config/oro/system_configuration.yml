@@ -26,6 +26,11 @@ system_configuration:
             icon: 'fa-picture-o'
         product_image_watermark:
             title: oro.product.system_configuration.groups.product_image_watermark.title
+        featured_products:
+            title: oro.product.system_configuration.groups.featured_products.title
+            icon: 'fa-certificate'
+        featured_products_segment:
+            title: oro.product.system_configuration.groups.featured_products_segment.title
         quick_order:
             title: oro.product.system_configuration.groups.quick_order.title
             icon: 'fa-shopping-cart'
@@ -95,7 +100,6 @@ system_configuration:
             priority: 30
             options:
                 label: oro.product.system_configuration.fields.product_image_watermark_file.label
-                resettable: false
                 required: false
                 fileConstraints:
                     - Image: ~
@@ -131,6 +135,15 @@ system_configuration:
                     bottom: oro.product.system_configuration.fields.product_image_watermark_position.bottom.label
                     bottomright: oro.product.system_configuration.fields.product_image_watermark_position.bottomright.label
 
+        oro_product.featured_products_segment_id:
+            data_type: string
+            type: 'Oro\Bundle\SegmentBundle\Form\Type\SegmentChoiceType'
+            priority: 10
+            options:
+                label: oro.product.system_configuration.fields.featured_products_segment.label
+                tooltip: oro.product.system_configuration.fields.featured_products_segment.tooltip
+                entityClass: 'Oro\Bundle\ProductBundle\Entity\Product'
+
         oro_product.enable_quick_order_form:
             data_type: boolean
             type: oro_config_checkbox
@@ -164,7 +177,7 @@ system_configuration:
                         priority: 700
                         children:
                             product_unit:
-                                priority: 200
+                                priority: 300
                                 children:
                                     product_unit_rounding:
                                         children:
@@ -178,13 +191,19 @@ system_configuration:
                                             - oro_product.default_unit
                                             - oro_product.default_unit_precision
                             product_images:
-                                priority: 100
+                                priority: 200
                                 children:
                                     product_image_watermark:
                                         children:
                                             - oro_product.product_image_watermark_file
                                             - oro_product.product_image_watermark_size
                                             - oro_product.product_image_watermark_position
+                            featured_products:
+                                priority: 100
+                                children:
+                                    featured_products_segment:
+                                        children:
+                                            - oro_product.featured_products_segment_id
                     product_inventory:
                         priority: 650
                         children:

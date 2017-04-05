@@ -45,6 +45,10 @@ class UniqueProductVariantLinksValidator extends ConstraintValidator
             return;
         }
 
+        if (!$value->getVariantFields()) {
+            return;
+        }
+
         $this->validateUniqueVariantLinks($value, $constraint);
     }
 
