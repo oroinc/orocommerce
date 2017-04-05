@@ -322,6 +322,34 @@ class CategoryControllerTest extends WebTestCase
         $this->assertEquals(LoadCategoryData::FIRST_LEVEL, $category->getParentCategory()->getTitle()->getString());
     }
 
+    public function testValidationForLocalizedFallbackValues()
+    {
+        $rootId = $this->masterCatalog->getId();
+        $crawler = $this->client->request('GET', $this->getUrl('oro_catalog_category_create', ['id' => $rootId]));
+        $form = $crawler->selectButton('Save')->form();
+
+        $bigStringValue = str_repeat('a', 256);
+        $formValues = $form->getPhpValues();
+        $formValues['oro_catalog_category']['inventoryThreshold']['scalarValue'] = 0;
+        $formValues['oro_catalog_category']['titles']['values']['default'] = $bigStringValue;
+        $formValues['oro_catalog_category']['slugPrototypesWithRedirect']['slugPrototypes'] = [
+            'values' => ['default' => $bigStringValue]
+        ];
+
+        $this->client->followRedirects(true);
+        $crawler = $this->client->request($form->getMethod(), $form->getUri(), $formValues);
+
+        $result = $this->client->getResponse();
+        $this->assertHtmlResponseStatusCodeEquals($result, 200);
+
+        $this->assertEquals(
+            2,
+            $crawler->filterXPath(
+                "//li[contains(text(),'This value is too long. It should have 255 characters or less.')]"
+            )->count()
+        );
+    }
+
     /**
      * @param int    $parentId
      * @param string $title

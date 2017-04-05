@@ -7,18 +7,6 @@
     </div>
 {% endblock %}
 
-{% block errors %}
-    {% if context is defined and not context.data.locked %}
-        <div class="alert alert-warning">
-            <div class="message">
-                {{ 'oro.sale.quote.notify_customer.by_email.notify_and_lock_warning'|trans }}
-            </div>
-        </div>
-    {% endif %}
-
-    {{ parent() }}
-{% endblock %}
-
 {% block form %}
     {% form_theme form with ['OroFormBundle:Form:fields.html.twig', 'OroEmailBundle:Form:fields.html.twig'] %}
 
@@ -79,12 +67,7 @@
 
                 <div class="widget-actions form-actions">
                     <button class="btn" type="reset">{{ 'oro.sale.btn.cancel'|trans }}</button>
-
-                    {% set button_text = 'oro.sale.btn.notify_and_lock'|trans %}
-                    {% if context.data.locked %}
-                        {% set button_text = 'oro.sale.btn.send'|trans %}
-                    {% endif %}
-                    <button class="btn " type="submit">{{ button_text }}</button>
+                    <button class="btn" type="submit">{{ 'oro.sale.btn.send'|trans }}</button>
                 </div>
             </fieldset>
         </form>

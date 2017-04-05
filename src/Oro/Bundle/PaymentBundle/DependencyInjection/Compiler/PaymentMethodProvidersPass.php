@@ -6,13 +6,18 @@ use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
+/**
+ * @deprecated since 1.1
+ *
+ * @see \Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\CompositePaymentMethodProviderCompilerPass
+ */
 class PaymentMethodProvidersPass implements CompilerPassInterface
 {
     const REGISTRY_SERVICE = 'oro_payment.payment_method_provider.registry';
     const TAG = 'oro_payment.payment_method_provider';
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function process(ContainerBuilder $container)
     {

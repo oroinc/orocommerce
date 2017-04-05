@@ -18,7 +18,7 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
     public function testAccessors()
     {
         static::assertPropertyAccessors(new UPSTransport(), [
-            ['baseUrl', 'some string'],
+            ['testMode', true],
             ['apiUser', 'some string'],
             ['apiPassword', 'some string'],
             ['apiKey', 'some string'],
@@ -38,7 +38,7 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
         $entity = $this->getEntity(
             'Oro\Bundle\UPSBundle\Entity\UPSTransport',
             [
-                'baseUrl' => 'some url',
+                'testMode' => true,
                 'apiUser' => 'some user',
                 'apiPassword' => 'some password',
                 'apiKey' => 'some key',
@@ -56,7 +56,7 @@ class UPSTransportTest extends \PHPUnit_Framework_TestCase
         /** @var ParameterBag $result */
         $result = $entity->getSettingsBag();
 
-        static::assertEquals('some url', $result->get('base_url'));
+        static::assertTrue($result->get('test_mode'));
         static::assertEquals('some user', $result->get('api_user'));
         static::assertEquals('some password', $result->get('api_password'));
         static::assertEquals('some key', $result->get('api_key'));

@@ -206,13 +206,8 @@ abstract class AbstractIndexer implements IndexerInterface
         $contextEntityIds = $this->getContextEntityIds($context);
 
         if ($contextEntityIds) {
-            //Remove certain entities from index before reindexation
-            $entities = [];
-            foreach ($contextEntityIds as $id) {
-                $entities[$id] = $entityManager->getReference($entityClass, $id);
-            }
-            $this->delete($entities, $context);
-
+            // Remove certain entities from index before reindexation
+            $this->deleteEntities($entityClass, $contextEntityIds, $context);
             $queryBuilder->where($queryBuilder->expr()->in("entity.$identifierName", $contextEntityIds));
         }
 
@@ -243,6 +238,23 @@ abstract class AbstractIndexer implements IndexerInterface
         }
 
         return $indexedItemsNum;
+    }
+
+    /**
+     * @param string $entityClass
+     * @param array $entityIds
+     * @param array $context
+     */
+    protected function deleteEntities($entityClass, array $entityIds, array $context)
+    {
+        $entityManager = $this->doctrineHelper->getEntityManager($entityClass);
+
+        $entities = [];
+        foreach ($entityIds as $id) {
+            $entities[$id] = $entityManager->getReference($entityClass, $id);
+        }
+
+        $this->delete($entities, $context);
     }
 
     /**

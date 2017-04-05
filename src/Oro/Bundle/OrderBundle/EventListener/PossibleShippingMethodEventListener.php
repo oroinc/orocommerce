@@ -4,7 +4,7 @@ namespace Oro\Bundle\OrderBundle\EventListener;
 
 use Oro\Bundle\ShippingBundle\Context\ShippingContextFactoryInterface;
 use Oro\Bundle\ShippingBundle\EventListener\EntityDataAwareEventInterface;
-use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
+use Oro\Bundle\ShippingBundle\Provider\Price\ShippingPriceProviderInterface;
 use Oro\Bundle\OrderBundle\Converter\ShippingPricesConverter;
 
 class PossibleShippingMethodEventListener
@@ -18,7 +18,7 @@ class PossibleShippingMethodEventListener
     protected $factory;
 
     /**
-     * @var ShippingPriceProvider|null
+     * @var ShippingPriceProviderInterface|null
      */
     protected $priceProvider;
 
@@ -30,12 +30,12 @@ class PossibleShippingMethodEventListener
     /**
      * @param ShippingContextFactoryInterface $factory
      * @param ShippingPricesConverter $priceConverter
-     * @param ShippingPriceProvider|null $priceProvider
+     * @param ShippingPriceProviderInterface|null $priceProvider
      */
     public function __construct(
         ShippingContextFactoryInterface $factory,
         ShippingPricesConverter $priceConverter,
-        ShippingPriceProvider $priceProvider = null
+        ShippingPriceProviderInterface $priceProvider = null
     ) {
         $this->factory = $factory;
         $this->priceConverter = $priceConverter;

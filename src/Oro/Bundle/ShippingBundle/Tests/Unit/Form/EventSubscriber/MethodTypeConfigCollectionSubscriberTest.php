@@ -2,19 +2,11 @@
 
 namespace Oro\Bundle\ShippingBundle\Tests\Unit\Form\EventSubscriber;
 
-use Symfony\Component\Form\FormEvents;
-
-class MethodTypeConfigCollectionSubscriberTest extends MethodConfigSubscriberTest
+class MethodTypeConfigCollectionSubscriberTest extends AbstractConfigSubscriberTest
 {
-
-    public function testGetSubscribedEvents()
+    public function setUp()
     {
-        $this->assertEquals(
-            [
-                FormEvents::PRE_SET_DATA => 'preSet',
-                FormEvents::PRE_SUBMIT => 'preSubmit'
-            ],
-            MethodTypeConfigCollectionSubscriberProxy::getSubscribedEvents()
-        );
+        parent::setUp();
+        $this->subscriber = $this->methodTypeConfigCollectionSubscriber;
     }
 }

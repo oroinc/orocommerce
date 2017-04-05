@@ -23,3 +23,9 @@
         </ol>
     {%- endspaceless -%}
 {% endmacro %}
+
+{% macro renderShippingMethodDisabledFlag(identifier) %}
+    {% if oro_shipping_method_enabled(identifier) == false %}
+        <span class="label">Disabled</span>
+    {% endif %}
+{% endmacro %}

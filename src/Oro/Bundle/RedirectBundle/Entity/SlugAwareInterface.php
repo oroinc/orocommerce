@@ -3,6 +3,7 @@
 namespace Oro\Bundle\RedirectBundle\Entity;
 
 use Doctrine\Common\Collections\Collection;
+use Oro\Bundle\LocaleBundle\Entity\Localization;
 
 interface SlugAwareInterface
 {
@@ -33,4 +34,15 @@ interface SlugAwareInterface
      * @return bool
      */
     public function hasSlug(Slug $slug);
+
+    /**
+     * @return Slug|null
+     */
+    public function getBaseSlug();
+
+    /**
+     * @param Localization $localization
+     * @return Slug|null
+     */
+    public function getSlugByLocalization(Localization $localization = null);
 }

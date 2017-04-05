@@ -53,7 +53,7 @@ services:
     oro_shipping.form.type.shipping_methods_configs_rule:
         class: Oro\Bundle\ShippingBundle\Form\Type\ShippingMethodsConfigsRuleType
         arguments:
-            - '@oro_shipping.shipping_method.registry'
+            - '@oro_shipping.provider.basic_shipping_methods_choices'
             - '@translator'
         tags:
             - { name: form.type }

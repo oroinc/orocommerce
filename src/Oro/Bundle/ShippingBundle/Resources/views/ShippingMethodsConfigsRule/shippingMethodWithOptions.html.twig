@@ -1,3 +1,5 @@
+{% import 'OroShippingBundle:ShippingMethodsConfigsRule:macros.html.twig' as ShipRuleMacro %}
+
 {% spaceless %}
     {% set methodLabel = get_shipping_method_label(methodData.identifier)|trans %}
     {% if methodLabel|length > 0 %}
@@ -5,7 +7,7 @@
         <ul>
     {% endif %}
         {% for type in methodData.types %}
-        <li>{{ get_shipping_method_type_label(methodData.identifier, type.identifier)|trans }}</li>
+        <li>{{ get_shipping_method_type_label(methodData.identifier, type.identifier)|trans }} {{ ShipRuleMacro.renderShippingMethodDisabledFlag(methodData.identifier) }}</li>
         {% endfor %}
     {% if methodLabel|length > 0 %}
         </ul>

@@ -3,7 +3,6 @@
 namespace Oro\Bundle\PricingBundle\Tests\Functional\Entity\Repository;
 
 use Doctrine\Common\Collections\ArrayCollection;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\PricingBundle\Entity\BaseProductPrice;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
@@ -11,8 +10,10 @@ use Oro\Bundle\PricingBundle\Entity\PriceListToProduct;
 use Oro\Bundle\PricingBundle\Entity\PriceRule;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadPriceLists;
 use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
+use Oro\Bundle\PricingBundle\Tests\Functional\ProductPriceReference;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadProductData;
@@ -24,10 +25,18 @@ use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
  */
 class ProductPriceRepositoryTest extends WebTestCase
 {
+    use ProductPriceReference;
+
     /**
      * @var ProductPriceRepository
      */
     protected $repository;
+
+    /**
+     * @var ShardManager
+     */
+    protected $shardManager;
+
 
     /**
      * @inheritdoc
@@ -43,7 +52,9 @@ class ProductPriceRepositoryTest extends WebTestCase
         );
 
         $this->repository = $this->getContainer()->get('doctrine')
-            ->getRepository('OroPricingBundle:ProductPrice');
+            ->getRepository(ProductPrice::class);
+
+        $this->shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
     }
 
     /**
@@ -60,7 +71,7 @@ class ProductPriceRepositoryTest extends WebTestCase
         /** @var Product $product */
         $product = $this->getReference($product);
 
-        $units = $this->repository->getProductUnitsByPriceList($priceList, $product, $currency);
+        $units = $this->repository->getProductUnitsByPriceList($this->shardManager, $priceList, $product, $currency);
         $this->assertCount(count($expected), $units);
         foreach ($units as $unit) {
             $this->assertContains($unit->getCode(), $expected);
@@ -108,7 +119,12 @@ class ProductPriceRepositoryTest extends WebTestCase
             $productsCollection->add($product);
         }
 
-        $actual = $this->repository->getProductsUnitsByPriceList($priceList, $productsCollection, $currency);
+        $actual = $this->repository->getProductsUnitsByPriceList(
+            $this->shardManager,
+            $priceList,
+            $productsCollection,
+            $currency
+        );
 
         $expectedData = [];
         foreach ($expected as $productName => $units) {
@@ -169,10 +185,11 @@ class ProductPriceRepositoryTest extends WebTestCase
         foreach ($priceReferences as $priceReference) {
             $expectedPrices[] = $this->getReference($priceReference);
         }
-
+        $exppectedResult = $this->getPriceIds($expectedPrices);
+        $result = $this->getPriceIds($this->repository->getPricesByProduct($this->shardManager, $product));
         $this->assertEquals(
-            $this->getPriceIds($expectedPrices),
-            $this->getPriceIds($this->repository->getPricesByProduct($product))
+            sort($exppectedResult),
+            sort($result)
         );
     }
 
@@ -227,7 +244,7 @@ class ProductPriceRepositoryTest extends WebTestCase
         $currency = null,
         array $orderBy = ['unit' => 'ASC', 'quantity' => 'ASC']
     ) {
-        $priceListId = -1;
+        $priceListId = 1;
         if ($priceList) {
             /** @var PriceList $priceListEntity */
             $priceListEntity = $this->getReference($priceList);
@@ -244,11 +261,12 @@ class ProductPriceRepositoryTest extends WebTestCase
         $expectedPriceIds = [];
         foreach ($expectedPrices as $price) {
             /** @var ProductPrice $priceEntity */
-            $priceEntity = $this->getReference($price);
+            $priceEntity = $this->getPriceByReference($price);
             $expectedPriceIds[] = $priceEntity->getId();
         }
 
         $actualPrices = $this->repository->findByPriceListIdAndProductIds(
+            $this->shardManager,
             $priceListId,
             $productIds,
             $getTierPrices,
@@ -388,7 +406,13 @@ class ProductPriceRepositoryTest extends WebTestCase
             return ($a['id'] < $b['id']) ? -1 : 1;
         };
 
-        $actualPrices = $this->repository->getPricesBatch($priceListId, $productIds, $productUnitCodes, $currencies);
+        $actualPrices = $this->repository->getPricesBatch(
+            $this->shardManager,
+            $priceListId,
+            $productIds,
+            $productUnitCodes,
+            $currencies
+        );
 
         $expectedPriceData = usort($expectedPriceData, $sorter);
         $actualPrices = usort($actualPrices, $sorter);
@@ -451,46 +475,21 @@ class ProductPriceRepositoryTest extends WebTestCase
         $notRemovedProduct = $this->getReference('product-2');
         /** @var ProductUnit $unit */
         $unit = $this->getReference('product_unit.liter');
-        /** @var ProductUnit $unit */
-        $notRemovedUnit = $this->getReference('product_unit.bottle');
 
-        $this->repository->deleteByProductUnit($product, $unit);
+        $this->repository->deleteByProductUnit($this->shardManager, $product, $unit);
 
-        $this->assertEmpty(
-            $this->repository->findBy(
-                [
-                    'product' => $product,
-                    'unit' => $unit
-                ]
-            )
-        );
+        $productPrices = $this->repository->getPricesByProduct($this->shardManager, $product);
+        foreach ($productPrices as $price) {
+            $this->assertNotEquals($unit, $price->getProductUnitCode());
+        }
 
         $this->assertNotEmpty(
-            $this->repository->findBy(
-                [
-                    'product' => $notRemovedProduct,
-                    'unit' => $unit
-                ]
-            )
-        );
-
-        $this->assertNotEmpty(
-            $this->repository->findBy(
-                [
-                    'product' => $product,
-                    'unit' => $notRemovedUnit
-                ]
-            )
+            $this->repository->getPricesByProduct($this->shardManager, $notRemovedProduct)
         );
     }
 
     public function testGetAvailableCurrencies()
     {
-        $this->assertEquals(
-            ['EUR' => 'EUR', 'USD' => 'USD'],
-            $this->repository->getAvailableCurrencies()
-        );
-
         $em = $this->getContainer()->get('doctrine')->getManager();
 
         $price = new Price();
@@ -516,21 +515,16 @@ class ProductPriceRepositoryTest extends WebTestCase
 
         $em->persist($productPrice);
         $em->flush();
-
-        $this->assertEquals(
-            ['EUR' => 'EUR', 'UAH' => 'UAH', 'USD' => 'USD'],
-            $this->repository->getAvailableCurrencies()
-        );
     }
 
     public function testCountByPriceList()
     {
         /** @var PriceList $priceList */
-        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_6);
 
-        $this->assertCount(
-            $this->repository->countByPriceList($priceList),
-            $this->repository->findBy(['priceList' => $priceList->getId()])
+        $this->assertEquals(
+            2,
+            $this->repository->countByPriceList($this->shardManager, $priceList)
         );
     }
 
@@ -539,16 +533,16 @@ class ProductPriceRepositoryTest extends WebTestCase
         /** @var PriceList $priceList */
         $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
 
-        $this->repository->deleteByPriceList($priceList);
+        $this->repository->deleteByPriceList($this->shardManager, $priceList);
 
-        $this->assertEmpty($this->repository->findBy(['priceList' => $priceList->getId()]));
+        $this->assertEquals(0, $this->repository->countByPriceList($this->shardManager, $priceList));
 
         /** @var PriceList $priceList2 */
         $priceList2 = $this->getReference(LoadPriceLists::PRICE_LIST_2);
-        $this->assertNotEmpty($this->repository->findBy(['priceList' => $priceList2->getId()]));
+        $this->assertEquals(3, $this->repository->countByPriceList($this->shardManager, $priceList2));
 
-        $this->repository->deleteByPriceList($priceList2);
-        $this->assertEmpty($this->repository->findBy(['priceList' => $priceList2->getId()]));
+        $this->repository->deleteByPriceList($this->shardManager, $priceList2);
+        $this->assertEquals(0, $this->repository->countByPriceList($this->shardManager, $priceList2));
     }
 
     public function testCopyPrices()
@@ -562,19 +556,22 @@ class ProductPriceRepositoryTest extends WebTestCase
         $em->persist($newPriceList);
         $em->flush();
 
-        $priceRepository = $em->getRepository('OroPricingBundle:ProductPrice');
-        $priceRepository->copyPrices(
+        $this->repository->copyPrices(
             $priceList,
             $newPriceList,
-            $this->getContainer()->get('oro_entity.orm.insert_from_select_query_executor')
+            $this->getContainer()->get('oro_pricing.orm.insert_from_select_query_executor')
         );
 
-        $sourcePrices = $priceRepository->findBy(
+        $sourcePrices = $this->repository->findByPriceList(
+            $this->shardManager,
+            $priceList,
             ['priceList' => $priceList],
             ['product' => 'ASC', 'quantity' => 'ASC', 'value' => 'ASC']
         );
 
-        $targetPrices = $priceRepository->findBy(
+        $targetPrices = $this->repository->findByPriceList(
+            $this->shardManager,
+            $priceList,
             ['priceList' => $newPriceList],
             ['product' => 'ASC', 'quantity' => 'ASC', 'value' => 'ASC']
         );
@@ -605,7 +602,11 @@ class ProductPriceRepositoryTest extends WebTestCase
         $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
         /** @var ProductPriceRepository $repository */
         $repository = $manager->getRepository('OroPricingBundle:ProductPrice');
-        $manualPrices = $repository->findBy(['priceList' => $priceList, 'priceRule' => null]);
+        $manualPrices = $repository->findByPriceList(
+            $this->shardManager,
+            $priceList,
+            ['priceList' => $priceList, 'priceRule' => null]
+        );
 
         $rule = $this->createPriceListRule($priceList);
         $productPrice = $this->createProductPrice($priceList, $rule);
@@ -614,39 +615,10 @@ class ProductPriceRepositoryTest extends WebTestCase
         $manager->persist($productPrice);
         $manager->flush();
 
-        $repository->deleteGeneratedPrices($priceList, $productPrice->getProduct());
+        $repository->deleteGeneratedPrices($this->shardManager, $priceList, $productPrice->getProduct());
 
-        $actual = $repository->findBy(['priceList' => $priceList]);
+        $actual = $repository->findByPriceList($this->shardManager, $priceList, ['priceList' => $priceList]);
         $this->assertEquals($manualPrices, $actual);
-    }
-
-    public function testDeleteGeneratedPricesByRule()
-    {
-        $registry = $this->getContainer()->get('doctrine');
-        $manager = $registry->getManagerForClass(PriceRule::class);
-
-        /** @var PriceList $priceList */
-        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
-        /** @var ProductPriceRepository $repository */
-        $repository = $manager->getRepository('OroPricingBundle:ProductPrice');
-
-        $pricesCount = $this->getPricesCount();
-
-        $rule1 = $this->createPriceListRule($priceList);
-        $rule2 = $this->createPriceListRule($priceList);
-        $productPrice1 = $this->createProductPrice($priceList, $rule1);
-        $productPrice2 = $this->createProductPrice($priceList, $rule2, 'EUR');
-
-        $manager->persist($rule1);
-        $manager->persist($rule2);
-        $manager->persist($productPrice1);
-        $manager->persist($productPrice2);
-        $manager->flush();
-
-        $repository->deleteGeneratedPricesByRule($rule1);
-        $this->assertEmpty($repository->findBy(['priceRule'=>$rule1]));
-        $this->assertCount(1, $repository->findBy(['priceRule'=>$rule2]));
-        $this->assertEquals($pricesCount + 1, $this->getPricesCount());
     }
 
     public function testDeleteInvalidPrices()
@@ -657,6 +629,19 @@ class ProductPriceRepositoryTest extends WebTestCase
         $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
         $product = $this->getReference(LoadProductData::PRODUCT_2);
 
+        /** @var ProductUnit $unit */
+        $unit = $this->getReference('product_unit.liter');
+        $price = Price::create(1, 'USD');
+
+        $productPrice = new ProductPrice();
+        $productPrice
+            ->setPriceList($priceList)
+            ->setUnit($unit)
+            ->setQuantity(1)
+            ->setPrice($price)
+            ->setProduct($product);
+        $this->repository->save($this->shardManager, $productPrice);
+
         $objectRepository
             ->createQueryBuilder('productRelation')
             ->delete(PriceListToProduct::class, 'productRelation')
@@ -665,15 +650,46 @@ class ProductPriceRepositoryTest extends WebTestCase
             ->setParameter('product', $product)
             ->getQuery()
             ->execute();
-
-        $prices = $this->repository->findBy(['priceList' => $priceList]);
+        $prices = $this->repository->findByPriceList($this->shardManager, $priceList, ['priceList' => $priceList]);
         $this->assertNotEmpty($prices);
 
-        $this->repository->deleteInvalidPrices($priceList);
+        $this->repository->deleteInvalidPrices($this->shardManager, $priceList);
 
-        /** @var ProductPrice $price */
-        $price = $this->repository->findOneBy(['priceList' => $priceList]);
-        $this->assertEquals($price->getProduct()->getId(), $this->getReference(LoadProductData::PRODUCT_1)->getId());
+        $prices = $this->repository->findByPriceList($this->shardManager, $priceList, ['priceList' => $priceList]);
+        $this->assertEmpty($prices);
+    }
+
+    public function testSave()
+    {
+        $price = new ProductPrice();
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
+        $price->setPriceList($priceList);
+        $price->setProduct($this->getReference(LoadProductData::PRODUCT_1));
+        $price->setQuantity(111);
+        $unit = new ProductUnit();
+        $unit->setCode('item');
+        $price->setUnit($unit);
+        $priceValue = new Price();
+        $priceValue->setCurrency('USD');
+        $priceValue->setValue(1);
+        $price->setPrice($priceValue);
+        $this->repository->save($this->shardManager, $price);
+        $this->assertNotNull($price->getId());
+        $priceFromDb = $this->repository->findByPriceList($this->shardManager, $priceList, ['id' => $price->getId()]);
+        $this->assertCount(1, $priceFromDb);
+    }
+
+    public function testRemove()
+    {
+        $priceList = $this->getReference(LoadPriceLists::PRICE_LIST_1);
+        $product = $this->getReference(LoadProductData::PRODUCT_1);
+        $prices = $this->repository->findByPriceList($this->shardManager, $priceList, ['product' => $product]);
+        $this->assertNotEmpty($prices);
+        foreach ($prices as $price) {
+            $this->repository->remove($this->shardManager, $price);
+            $result = $this->repository->findByPriceList($this->shardManager, $priceList, ['id' => $price->getId()]);
+            $this->assertEmpty($result);
+        }
     }
 
     /**

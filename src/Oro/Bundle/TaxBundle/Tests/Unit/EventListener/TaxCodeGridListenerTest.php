@@ -47,7 +47,11 @@ class TaxCodeGridListenerTest extends AbstractTaxCodeGridListenerTest
                         'from' => [['alias' => 'customer']],
                     ],
                 ],
-                'columns' => ['taxCode' => ['label' => 'oro.tax.taxcode.label']],
+                'columns' => [
+                    'taxCode' => [
+                        'label' => 'oro.tax.taxcode.label'
+                    ]
+                ],
                 'sorters' => ['columns' => ['taxCode' => ['data_name' => 'taxCode']]],
                 'filters' => ['columns' => ['taxCode' => ['data_name' => 'taxCode', 'type' => 'string']]],
                 'name' => 'customers-grid',

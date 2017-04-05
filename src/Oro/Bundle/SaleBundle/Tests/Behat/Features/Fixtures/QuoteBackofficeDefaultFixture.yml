@@ -1,0 +1,39 @@
+include:
+    - ../../../../../ShoppingListBundle/Tests/Behat/Features/Fixtures/ShoppingListFixture.yml
+    - ../../../../../../../../../customer-portal/src/Oro/Bundle/CustomerBundle/Tests/Behat/Features/Fixtures/BuyerCustomerFixture.yml
+
+Oro\Bundle\SaleBundle\Entity\Quote:
+    quote{1..30}:
+        organization: '@organization'
+        owner: '@admin'
+        customerUser: '@amanda'
+        poNumber: 'PO<current()>'
+        qid: '<current()>'
+        website: '@website1'
+
+Oro\Bundle\SaleBundle\Entity\QuoteProduct:
+    quoteproduct{1..30}:
+        product: '@product1'
+        quote: '@quote<current()>'
+        comment: 'Seller Notes<current()>'
+        commentCustomer: 'Customer Notes<current()>'
+
+Oro\Bundle\CurrencyBundle\Entity\Price (local):
+    price1:
+        value: 5
+        currency: USD
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductOffer:
+    quoteproductoffer{1..30}:
+        quote_product: '@quoteproduct<current()>'
+        product_unit: '@item'
+        price: '@price1'
+        quantity: 5
+        allow_increments: true
+
+Oro\Bundle\SaleBundle\Entity\QuoteProductRequest:
+    quoteproductrequest{1..30}:
+        quote_product: '@quoteproduct<current()>'
+        product_unit: '@item'
+        price: '@price1'
+        quantity: 5

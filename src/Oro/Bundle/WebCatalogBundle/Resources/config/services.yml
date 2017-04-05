@@ -81,7 +81,7 @@ services:
             - '@doctrine'
         tags:
             - { name: kernel.event_listener, event: oro_config.settings_form_preset, method: onFormPreSetData }
-            - { name: kernel.event_listener, event: oro_config.settings_before_save, method: onSettingsSaveBefore }
+            - { name: kernel.event_listener, event: oro_config.settings_before_save.oro_web_catalog.web_catalog, method: onSettingsSaveBefore }
 
     oro_web_catalog.event_listener.webcatalog_config:
         class: Oro\Bundle\WebCatalogBundle\EventListener\WebCatalogConfigChangeListener
@@ -156,6 +156,7 @@ services:
             - '@oro_web_catalog.content_variant_type.registry'
             - '@oro_redirect.generator.redirect'
             - '@oro_locale.helper.localization'
+            - '@oro_redirect.generator.slug_url_differ'
 
     oro_web_catalog.generator.slug_generator.link:
         tags:
@@ -252,6 +253,23 @@ services:
         tags:
             - { name: layout.data_provider, alias: web_catalog_menu }
 
+    oro_web_catalog.layout.data_provider.content_variant:
+        class: Oro\Bundle\WebCatalogBundle\Layout\DataProvider\ContentVariantDataProvider
+        arguments:
+            - '@request_stack'
+        tags:
+            - { name: layout.data_provider, alias: web_catalog_content_variant }
+
+    oro_web_catalog.layout.data_provider.breadcrumb_data:
+        class: Oro\Bundle\WebCatalogBundle\Layout\DataProvider\WebCatalogBreadcrumbProvider
+        public: true
+        arguments:
+            - '@doctrine'
+            - '@oro_locale.helper.localization'
+            - '@request_stack'
+        tags:
+            - { name: layout.data_provider, alias: web_catalog_breadcrumbs }
+
     oro_web_catalog.layout.context_configurator.web_catalog:
         class: Oro\Bundle\WebCatalogBundle\Layout\Extension\WebCatalogContextConfigurator
         arguments:
@@ -317,3 +335,10 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@oro_config.manager'
+
+    oro_web_catalog.feature.voter.feature_voter:
+        class: Oro\Bundle\WebCatalogBundle\Feature\Voter\FeatureVoter
+        arguments:
+            - '@oro_config.manager'
+        tags:
+            - { name: oro_featuretogle.voter }

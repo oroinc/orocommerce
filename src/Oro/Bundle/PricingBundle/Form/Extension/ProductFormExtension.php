@@ -2,22 +2,33 @@
 
 namespace Oro\Bundle\PricingBundle\Form\Extension;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManager;
+use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\Form\Type\ProductPriceCollectionType;
+use Oro\Bundle\PricingBundle\Manager\PriceManager;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
+use Oro\Bundle\PricingBundle\Validator\Constraints\UniqueProductPrices;
+use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
 use Symfony\Component\Form\FormEvents;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-
-use Oro\Bundle\PricingBundle\Form\Type\ProductPriceCollectionType;
-use Oro\Bundle\PricingBundle\Validator\Constraints\UniqueProductPrices;
-use Oro\Bundle\ProductBundle\Form\Type\ProductType;
-use Oro\Bundle\PricingBundle\Entity\ProductPrice;
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
-
 class ProductFormExtension extends AbstractTypeExtension
 {
+    /**
+     * @var PriceManager
+     */
+    protected $priceManager;
+
+    /**
+     * @var ShardManager
+     */
+    protected $shardManager;
+
     /**
      * @var ManagerRegistry
      */
@@ -25,14 +36,18 @@ class ProductFormExtension extends AbstractTypeExtension
 
     /**
      * @param ManagerRegistry $registry
+     * @param ShardManager $shardManager
+     * @param PriceManager $priceManager
      */
-    public function __construct(ManagerRegistry $registry)
+    public function __construct(ManagerRegistry $registry, ShardManager $shardManager, PriceManager $priceManager)
     {
         $this->registry = $registry;
+        $this->shardManager = $shardManager;
+        $this->priceManager = $priceManager;
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
@@ -54,11 +69,12 @@ class ProductFormExtension extends AbstractTypeExtension
         );
 
         $builder->addEventListener(FormEvents::POST_SET_DATA, [$this, 'onPostSetData']);
+        $builder->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit'], 10);
         $builder->addEventListener(FormEvents::POST_SUBMIT, [$this, 'onPostSubmit'], 10);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function onPostSetData(FormEvent $event)
     {
@@ -68,13 +84,49 @@ class ProductFormExtension extends AbstractTypeExtension
             return;
         }
 
-        $prices = $this->getProductPriceRepository()->getPricesByProduct($product);
+        $prices = $this->getProductPriceRepository()->getPricesByProduct($this->shardManager, $product);
 
         $event->getForm()->get('prices')->setData($prices);
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
+     */
+    public function onPreSubmit(FormEvent $event)
+    {
+        $form = $event->getForm();
+
+        /** @var Product|null $product */
+        $product = $form->getData();
+        if (!$product) {
+            return;
+        }
+
+        $submittedData = $event->getData();
+
+        if (array_key_exists('prices', $submittedData)) {
+            $submittedPrices = $submittedData['prices'];
+
+            if ($product->getId()) {
+                $replacedPrices = [];
+                $existingPrices = $this->getProductPriceRepository()->getPricesByProduct($this->shardManager, $product);
+                foreach ($submittedPrices as $key => $submittedPrice) {
+                    foreach ($existingPrices as $k => $existingPrice) {
+                        if ($key !== $k && $this->assertUniqueAttributes($submittedPrice, $existingPrice)) {
+                            $replacedPrices[$k] = $submittedPrice;
+                            break;
+                        }
+                    }
+                }
+                $correctPrices = array_replace($submittedPrices, $replacedPrices);
+                $submittedData['prices'] = $correctPrices;
+                $event->setData($submittedData);
+            }
+        }
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function onPostSubmit(FormEvent $event)
     {
@@ -95,10 +147,10 @@ class ProductFormExtension extends AbstractTypeExtension
             return;
         }
 
-        $entityManager = $this->registry->getManagerForClass('OroPricingBundle:ProductPrice');
-
+        $repository = $this->getProductPriceRepository();
         // persist existing prices
         $persistedPriceIds = [];
+
         foreach ($prices as $price) {
             $priceId = $price->getId();
             if ($priceId) {
@@ -106,15 +158,15 @@ class ProductFormExtension extends AbstractTypeExtension
             }
 
             $price->setProduct($product);
-            $entityManager->persist($price);
+            $this->priceManager->persist($price);
         }
 
         // remove deleted prices
         if ($product->getId()) {
-            $existingPrices = $this->getProductPriceRepository()->getPricesByProduct($product);
+            $existingPrices = $repository->getPricesByProduct($this->shardManager, $product);
             foreach ($existingPrices as $price) {
                 if (!in_array($price->getId(), $persistedPriceIds, true)) {
-                    $entityManager->remove($price);
+                    $this->priceManager->remove($price);
                 }
             }
         }
@@ -133,7 +185,39 @@ class ProductFormExtension extends AbstractTypeExtension
      */
     protected function getProductPriceRepository()
     {
-        return $this->registry->getManagerForClass('OroPricingBundle:ProductPrice')
+        return $this->getManager()
             ->getRepository('OroPricingBundle:ProductPrice');
+    }
+
+    /**
+     * @return EntityManager
+     */
+    protected function getManager()
+    {
+        return $this->registry->getManagerForClass('OroPricingBundle:ProductPrice');
+    }
+
+    /**
+     * @param array        $submitted
+     * @param ProductPrice $existing
+     *
+     * @return boolean
+     */
+    protected function assertUniqueAttributes(array $submitted, ProductPrice $existing)
+    {
+        if ($submitted['priceList'] !== (string)$existing->getPriceList()->getId()) {
+            return false;
+        }
+        if ($submitted['price']['currency'] !== $existing->getPrice()->getCurrency()) {
+            return false;
+        }
+        if ($submitted['quantity'] !== (string)$existing->getQuantity()) {
+            return false;
+        }
+        if ($submitted['unit'] !== $existing->getUnit()->getCode()) {
+            return false;
+        }
+
+        return true;
     }
 }

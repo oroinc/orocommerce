@@ -2,9 +2,11 @@
 
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Form\Type;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
 use Genemu\Bundle\FormBundle\Form\JQuery\Type\Select2Type;
 use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
 use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizationCollectionType;
@@ -55,7 +57,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
     /**
      * @var SymmetricCrypterInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $symmetricCrypter;
+    protected $crypter;
 
     protected function setUp()
     {
@@ -73,15 +75,12 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->symmetricCrypter = $this
-            ->getMockBuilder(SymmetricCrypterInterface::class)
-            ->getMock();
+        $this->crypter = $this->createMock(SymmetricCrypterInterface::class);
 
         $this->formType = new UPSTransportSettingsType(
             $this->transport,
             $this->shippingOriginProvider,
-            $this->doctrineHelper,
-            $this->symmetricCrypter
+            $this->doctrineHelper
         );
 
         parent::setUp();
@@ -151,10 +150,11 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
             ],
             'entity'
         );
-        $registry = $this->getMockBuilder('Doctrine\Common\Persistence\ManagerRegistry')
-            ->disableOriginalConstructor()
-            ->getMock();
+
+        /** @var ManagerRegistry|\PHPUnit_Framework_MockObject_MockObject $registry */
+        $registry = $this->createMock('Doctrine\Common\Persistence\ManagerRegistry');
         $localizedFallbackValue = new LocalizedFallbackValueCollectionType($registry);
+
         return [
             new PreloadedExtension(
                 [
@@ -164,6 +164,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
                     LocalizedPropertyType::class => new LocalizedPropertyType(),
                     LocalizationCollectionType::class => new LocalizationCollectionTypeStub(),
                     LocalizedFallbackValueCollectionType::class => $localizedFallbackValue,
+                    new OroEncodedPlaceholderPasswordType($this->crypter),
                 ],
                 []
             ),
@@ -185,7 +186,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
         UPSTransport $expectedData
     ) {
         if (count($submittedData) > 0) {
-            $this->symmetricCrypter
+            $this->crypter
                 ->expects($this->once())
                 ->method('encryptData')
                 ->with($submittedData['apiPassword'])
@@ -267,7 +268,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
                     'labels' => [
                         'values' => [ 'default' => 'first label'],
                     ],
-                    'baseUrl' => 'http://ups.com',
+                    'testMode' => true,
                     'apiUser' => 'user',
                     'apiPassword' => 'password',
                     'apiKey' => 'key',
@@ -280,7 +281,7 @@ class UPSTransportSettingsTypeTest extends FormIntegrationTestCase
                 ],
                 'isValid' => true,
                 'expectedData' => (new UPSTransport())
-                    ->setBaseUrl('http://ups.com')
+                    ->setTestMode(true)
                     ->setApiUser('user')
                     ->setApiPassword('password')
                     ->setApiKey('key')

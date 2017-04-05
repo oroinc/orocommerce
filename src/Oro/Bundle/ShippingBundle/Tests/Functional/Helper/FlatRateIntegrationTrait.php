@@ -21,7 +21,7 @@ trait FlatRateIntegrationTrait
     {
         $channel = $this->getChannelReference();
 
-        return 'flat_rate_' . $channel->getId();
+        return sprintf('flat_rate_%s', $channel->getId());
     }
 
     /**

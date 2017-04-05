@@ -166,6 +166,8 @@
 {% endblock %}
 
 {% block oro_shipping_method_config_widget %}
+    {% import 'OroShippingBundle:ShippingMethodsConfigsRule:macros.html.twig' as ShipRuleMacro %}
+
     {% if form.method.vars.value %}
         <div class="control-group control-group-choice">
             <div class="control-label wrap">
@@ -174,6 +176,7 @@
             <div class="controls">
                 <input type="text" disabled="disabled" value="{{ methods_labels[form.method.vars.value]|trans }}"/>
                 {{ form_widget(form.method) }}
+                {{ ShipRuleMacro.renderShippingMethodDisabledFlag(form.method.vars.value) }}
             </div>
         </div>
     {% endif %}

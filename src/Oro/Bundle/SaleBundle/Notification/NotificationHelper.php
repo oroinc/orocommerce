@@ -6,7 +6,6 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\HttpFoundation\Request;
 
 use Oro\Bundle\EmailBundle\Builder\EmailModelBuilder;
@@ -15,7 +14,7 @@ use Oro\Bundle\EmailBundle\Form\Model\Email;
 use Oro\Bundle\EmailBundle\Mailer\Processor;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 
-class NotificationHelper extends Controller
+class NotificationHelper
 {
     /** @var ManagerRegistry */
     protected $registry;
@@ -26,9 +25,6 @@ class NotificationHelper extends Controller
     /** @var Processor */
     protected $emailProcessor;
 
-    /** @var Request */
-    protected $request;
-
     /** @var string */
     protected $quoteClassName;
 
@@ -37,18 +33,15 @@ class NotificationHelper extends Controller
 
     /**
      * @param ManagerRegistry $registry
-     * @param Request $request
      * @param EmailModelBuilder $emailModelBuilder
      * @param Processor $emailProcessor
      */
     public function __construct(
         ManagerRegistry $registry,
-        Request $request,
         EmailModelBuilder $emailModelBuilder,
         Processor $emailProcessor
     ) {
         $this->registry = $registry;
-        $this->request = $request;
         $this->emailModelBuilder = $emailModelBuilder;
         $this->emailProcessor = $emailProcessor;
     }
@@ -86,19 +79,10 @@ class NotificationHelper extends Controller
 
     /**
      * @param Email $emailModel
-     * @param Quote $quote
      */
-    public function send(Email $emailModel, Quote $quote)
+    public function send(Email $emailModel)
     {
         $this->emailProcessor->process($emailModel);
-
-        if (!$quote->isLocked()) {
-            $quote->setLocked(true);
-
-            $manager = $this->getManager($this->quoteClassName);
-            $manager->persist($quote);
-            $manager->flush();
-        }
     }
 
     /**
@@ -107,6 +91,8 @@ class NotificationHelper extends Controller
      */
     protected function createEmailModel(Quote $quote)
     {
+        $this->applyEntityContext($quote);
+
         $emailModel = $this->emailModelBuilder->createEmailModel();
         $emailModel
             ->setEntityClass($this->quoteClassName)
@@ -116,6 +102,18 @@ class NotificationHelper extends Controller
             ->setTemplate($this->getEmailTemplate('quote_email_link'));
 
         return $emailModel;
+    }
+
+    /**
+     * @param Quote $quote
+     */
+    protected function applyEntityContext(Quote $quote)
+    {
+        // pass entityClass end entityId to request, because no way to set up entityClass and entityId as arguments
+        $request = new Request(['entityClass' => $this->quoteClassName, 'entityId' => $quote->getId()]);
+        $request->setMethod('GET');
+
+        $this->emailModelBuilder->setRequest($request);
     }
 
     /**

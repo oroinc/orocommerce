@@ -59,6 +59,22 @@ class UniqueProductVariantLinksValidatorTest extends \PHPUnit_Framework_TestCase
         $this->service->validate(new \stdClass(), new UniqueProductVariantLinks());
     }
 
+    public function testNotValidateWithNoVariantFields()
+    {
+        $product = $this->prepareProduct([], [
+            [
+                self::VARIANT_FIELD_KEY_COLOR => 'Blue',
+            ],
+            [
+                self::VARIANT_FIELD_KEY_COLOR => 'Blue',
+            ],
+        ]);
+
+        $this->context->expects($this->never())->method('addViolation');
+
+        $this->service->validate($product, new UniqueProductVariantLinks());
+    }
+
     public function testDoesNotAddViolationIfAllVariantFieldCombinationsAreUniqueTypeString()
     {
         $product = $this->prepareProduct(

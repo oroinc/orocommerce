@@ -1,3 +1,5 @@
+{% import 'OroShippingBundle:ShippingMethodsConfigsRule:macros.html.twig' as ShipRuleMacro %}
+
 {% spaceless %}
     {% set methodLabel = get_shipping_method_label(methodData.identifier)|trans %}
     {% if methodLabel|length > 0 %}
@@ -9,7 +11,7 @@
             {%- if type.options['handling_fee'] is defined and type.options['handling_fee'] is not empty -%}
                 , {{ 'oro.flat_rate.method.handling_fee.label'|trans}}: {{ type.options['handling_fee']|oro_format_currency({'currency': currency}) }}
             {%- endif -%}
-            )</li>
+            ) {{ ShipRuleMacro.renderShippingMethodDisabledFlag(methodData.identifier) }}</li>
         {% endfor %}
     {% if methodLabel|length > 0 %}
         </ul>
