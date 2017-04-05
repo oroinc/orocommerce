@@ -26,6 +26,8 @@ services:
     oro_apruve.method.apruve.factory:
         class: 'Oro\Bundle\ApruveBundle\Method\Factory\ApruvePaymentMethodFactory'
         public: false
+        arguments:
+            - '@oro_apruve.method.payment_action.strategy'
 
     oro_apruve.method.apruve.provider:
         class: 'Oro\Bundle\ApruveBundle\Method\Provider\ApruvePaymentMethodProvider'
@@ -34,4 +36,17 @@ services:
             - '@oro_apruve.method.config.provider'
             - '@oro_apruve.method.apruve.factory'
         tags:
-            - { name: oro_payment.method_provider }
+            - { name: oro_payment.payment_method_provider }
+
+    oro_apruve.method.view.factory:
+        class: 'Oro\Bundle\ApruveBundle\Method\View\Factory\ApruvePaymentMethodViewFactory'
+        public: false
+
+    oro_apruve.method.view.provider:
+        class: 'Oro\Bundle\ApruveBundle\Method\View\Provider\ApruvePaymentMethodViewProvider'
+        public: false
+        arguments:
+            - '@oro_apruve.method.config.provider'
+            - '@oro_apruve.method.view.factory'
+        tags:
+            - { name: oro_payment.payment_method_view_provider }

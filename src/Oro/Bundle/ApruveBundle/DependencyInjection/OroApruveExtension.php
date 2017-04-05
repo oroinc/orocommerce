@@ -19,5 +19,6 @@ class OroApruveExtension extends Extension
         $loader->load('integration.yml');
         $loader->load('form_types.yml');
         $loader->load('method.yml');
+        $loader->load('payment_action.yml');
     }
 }

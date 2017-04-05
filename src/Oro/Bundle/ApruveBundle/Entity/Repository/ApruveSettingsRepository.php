@@ -31,6 +31,6 @@ class ApruveSettingsRepository extends EntityRepository
             ->innerJoin('settings.channel', 'channel')
             ->andWhere('channel.enabled = true');
 
-        $this->aclHelper->apply($qb)->getResult();
+        return $this->aclHelper->apply($qb)->getResult();
     }
 }

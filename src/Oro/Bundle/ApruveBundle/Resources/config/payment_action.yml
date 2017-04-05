@@ -1,0 +1,38 @@
+services:
+    oro_apruve.method.payment_action.strategy:
+        class: 'Oro\Bundle\ApruveBundle\Method\PaymentAction\Executor\PaymentActionExecutor'
+        public: false
+        lazy: true
+        calls:
+            - ['addPaymentAction', ['@oro_apruve.method.payment_action.authorize']]
+            - ['addPaymentAction', ['@oro_apruve.method.payment_action.capture']]
+            - ['addPaymentAction', ['@oro_apruve.method.payment_action.complete']]
+            - ['addPaymentAction', ['@oro_apruve.method.payment_action.cancel']]
+
+    oro_apruve.method.payment_action.abstract:
+        class: 'Oro\Bundle\ApruveBundle\Method\PaymentAction\AbstractPaymentAction'
+        abstract: true
+
+    oro_apruve.method.payment_action.authorize:
+        parent: oro_apruve.method.payment_action.abstract
+        class: 'Oro\Bundle\ApruveBundle\Method\PaymentAction\AuthorizePaymentAction'
+        public: false
+        lazy: true
+
+    oro_apruve.method.payment_action.capture:
+        parent: oro_apruve.method.payment_action.abstract
+        class: 'Oro\Bundle\ApruveBundle\Method\PaymentAction\CapturePaymentAction'
+        public: false
+        lazy: true
+
+    oro_apruve.method.payment_action.complete:
+        parent: oro_apruve.method.payment_action.abstract
+        class: 'Oro\Bundle\ApruveBundle\Method\PaymentAction\CompletePaymentAction'
+        public: false
+        lazy: true
+
+    oro_apruve.method.payment_action.cancel:
+        parent: oro_apruve.method.payment_action.abstract
+        class: 'Oro\Bundle\ApruveBundle\Method\PaymentAction\CancelPaymentAction'
+        public: false
+        lazy: true
