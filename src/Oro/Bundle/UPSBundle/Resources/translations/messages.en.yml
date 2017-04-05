@@ -34,19 +34,6 @@ oro:
         form:
             shipping_method_config_options:
                 surcharge.label: Surcharge
-            invalidate_cache.title: Invalidate Shipping Calculations Cache
-            invalidate_cache_at.label: Invalidate cache at
-            invalidate_cache.label: Invalidate cache
-            invalidate_cache.action.cancel: Cancel
-            invalidate_cache.action.invalidate_now: Invalidate Now
-            invalidate_cache.action.remove: Remove Scheduled Invalidation
-            invalidate_cache.action.submit: Submit
-            invalidate_cache.flash.invalidate_success: Cache was successfully invalidated
-            invalidate_cache.flash.save_success: Cache settings have been saved
-            invalidate_cache.at.label: at
-            invalidate_cache.type:
-                immediate: Now
-                scheduled: Schedule Invalidation
 
         connection_validation:
             button.text: Check UPS Connection

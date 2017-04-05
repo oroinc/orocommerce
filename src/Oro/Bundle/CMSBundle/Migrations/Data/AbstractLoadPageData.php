@@ -43,13 +43,20 @@ abstract class AbstractLoadPageData extends AbstractFixture implements Container
         $slugRedirectGenerator = $this->container->get('oro_redirect.generator.slug_entity');
         $urlStorageCache = $this->container->get('oro_redirect.url_storage_cache');
 
+        $loadedPages = [];
         foreach ((array)$this->getFilePaths() as $filePath) {
             $pages = $this->loadFromFile($filePath, $organization);
             foreach ($pages as $page) {
                 $manager->persist($page);
-                $slugRedirectGenerator->generate($page, true);
+                $loadedPages[] = $page;
             }
         }
+        $manager->flush();
+
+        foreach ($loadedPages as $page) {
+            $slugRedirectGenerator->generate($page, true);
+        }
+
         $urlStorageCache->flush();
         $manager->flush();
     }

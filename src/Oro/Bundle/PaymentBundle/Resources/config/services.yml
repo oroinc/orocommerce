@@ -100,11 +100,11 @@ services:
         calls:
             - ['setLogger', ['@logger']]
 
-    oro_payment.action.capture:
-        class: 'Oro\Bundle\PaymentBundle\Action\CaptureAction'
+    oro_payment.action.capture_payment_transaction:
+        class: 'Oro\Bundle\PaymentBundle\Action\PaymentTransactionCaptureAction'
         parent: oro_payment.action.payment_method_action.abstract
         tags:
-            - { name: oro_action.action, alias: payment_capture }
+            - { name: oro_action.action, alias: payment_transaction_capture }
 
     oro_payment.action.purchase:
         class: 'Oro\Bundle\PaymentBundle\Action\PurchaseAction'
@@ -140,6 +140,13 @@ services:
             - '@oro_payment.method.provider.method_provider'
         tags:
             - { name: oro_action.condition, alias: 'has_applicable_payment_methods' }
+
+    oro_payment.condition.payment_transaction_was_charged:
+        class: 'Oro\Bundle\PaymentBundle\Condition\PaymentTransactionWasCharged'
+        arguments:
+            - '@oro_payment.repository.payment_transaction'
+        tags:
+            - { name: oro_action.condition, alias: 'payment_transaction_was_charged' }
 
     oro_payment.provider.address_extractor:
         class: 'Oro\Bundle\PaymentBundle\Provider\AddressExtractor'
@@ -192,6 +199,10 @@ services:
     oro_payment.payment_method_provider.registry:
         class: 'Oro\Bundle\PaymentBundle\Method\Provider\Registry\PaymentMethodProvidersRegistry'
         public: false
+        deprecated: 'The "%service_id%" service is deprecated since 1.1. Use "oro_payment.payment_method.composite_provider" instead'
+
+    oro_payment.payment_method.composite_provider:
+        class: 'Oro\Bundle\PaymentBundle\Method\Provider\CompositePaymentMethodProvider'
 
     oro_payment.payment_method_view.composite_provider:
         class: 'Oro\Bundle\PaymentBundle\Method\View\CompositePaymentMethodViewProvider'

@@ -69,6 +69,9 @@ category_1_2_3:
         customer_group.group3:
             visibility: hidden
             reference: category_1_2_3.visibility.customer_group.group3
+        customer_group.anonymous:
+            visibility: hidden
+            reference: category_1_2_3.visibility.customer_group.anonymous
     customers:
         customer.level_1.1:
             visibility: parent_category
@@ -90,6 +93,9 @@ category_1_2_3_4:
         customer_group.group3:
             visibility: parent_category
             reference: category_1_2_3_4.visibility.customer_group.group3
+        customer_group.anonymous:
+            visibility: parent_category
+            reference: category_1_2_3_4.visibility.customer_group.anonymous
     customers:
         customer.level_1.1:
             visibility: parent_category

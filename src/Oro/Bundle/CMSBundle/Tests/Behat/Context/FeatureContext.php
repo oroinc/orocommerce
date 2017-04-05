@@ -24,4 +24,20 @@ class FeatureContext extends OroFeatureContext implements OroPageObjectAware, Ke
         $productNameField->blur();
         $this->waitForAjax();
     }
+
+    /**
+     *
+     * @Then /^(?:|I )am on page with title "(?P<value>(?:[^"]|\\")*)"$/
+     * @param string $pageTitle
+     */
+    public function iAmOnPageWithTitle($pageTitle)
+    {
+        $currentPageTitle = $this->createElement('PageTitle');
+
+        static::assertEquals(
+            $pageTitle,
+            $currentPageTitle->getHtml(),
+            sprintf('Expected "%s" page title, actual title is "%s"', $pageTitle, $currentPageTitle->getHtml())
+        );
+    }
 }

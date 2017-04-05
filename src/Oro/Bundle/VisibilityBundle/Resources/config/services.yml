@@ -118,9 +118,11 @@ services:
         arguments:
             - "@oro_config.global"
             - "@oro_scope.scope_manager"
+            - "@oro_entity.doctrine_helper"
         calls:
             - [setProductVisibilitySystemConfigurationPath, ['oro_visibility.product_visibility']]
             - [setCategoryVisibilitySystemConfigurationPath, ['oro_visibility.category_visibility']]
+            - [setVisibilityScopeProvider, ['@oro_visibility.provider.visibility_scope_provider']]
 
     oro_visibility.visibility.cache.product.cache_builder.abstract:
         class: 'Oro\Bundle\VisibilityBundle\Visibility\Cache\Product\AbstractResolvedCacheBuilder'
@@ -561,3 +563,11 @@ services:
         class: 'Oro\Bundle\VisibilityBundle\Model\CategoryMessageFactory'
         arguments:
             - '@doctrine'
+
+    oro_visibility.model.category_visibility_query_builder_modifier:
+        class: 'Oro\Bundle\VisibilityBundle\Model\CategoryVisibilityQueryBuilderModifier'
+        public: false
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@oro_config.manager'
+            - '@oro_scope.scope_manager'

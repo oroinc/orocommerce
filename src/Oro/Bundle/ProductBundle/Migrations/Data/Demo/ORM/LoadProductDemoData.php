@@ -11,6 +11,7 @@ use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 use Oro\Bundle\LayoutBundle\Model\ThemeImageTypeDimension;
+use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityConfigBundle\Attribute\Entity\AttributeFamily;
 use Oro\Bundle\EntityExtendBundle\Entity\AbstractEnumValue;
 use Oro\Bundle\EntityExtendBundle\Tools\ExtendHelper;
@@ -19,6 +20,7 @@ use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductImage;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
+use Oro\Bundle\ProductBundle\Form\Type\ProductType;
 use Oro\Bundle\ProductBundle\Migrations\Data\ORM\LoadProductDefaultAttributeFamilyData;
 use Oro\Bundle\UserBundle\DataFixtures\UserUtilityTrait;
 
@@ -73,12 +75,10 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
         $allImageTypes = $this->getImageTypes();
         $defaultAttributeFamily = $this->getDefaultAttributeFamily($manager);
 
-        $slugRedirectGenerator = $this->container->get('oro_redirect.generator.slug_entity');
-        $urlStorageCache = $this->container->get('oro_redirect.url_storage_cache');
-
         $this->container->get('oro_layout.loader.image_filter')->load();
 
         $slugGenerator = $this->container->get('oro_entity_config.slug.generator');
+        $loadedProducts = [];
         while (($data = fgetcsv($handler, 1000, ',')) !== false) {
             $row = array_combine($headers, array_values($data));
 
@@ -122,6 +122,8 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
                 ->setType($row['type'])
                 ->setFeatured($row['featured']);
 
+            $this->setPageTemplate($product, $row);
+
             $slugPrototype = new LocalizedFallbackValue();
             $slugPrototype->setString($slugGenerator->slugify($row['name']));
             $product->addSlugPrototype($slugPrototype);
@@ -141,13 +143,29 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
             $this->addImageToProduct($product, $manager, $locator, $row['sku'], $allImageTypes);
 
             $manager->persist($product);
-
-            $slugRedirectGenerator->generate($product, true);
+            $loadedProducts[] = $product;
         }
+
+        $manager->flush();
 
         fclose($handler);
 
-        $urlStorageCache->flush();
+        $this->createSlugs($loadedProducts, $manager);
+    }
+
+    /**
+     * @param array|Product[] $products
+     * @param ObjectManager $manager
+     */
+    private function createSlugs(array $products, ObjectManager $manager)
+    {
+        $slugRedirectGenerator = $this->container->get('oro_redirect.generator.slug_entity');
+
+        foreach ($products as $product) {
+            $slugRedirectGenerator->generate($product, true);
+        }
+
+        $this->container->get('oro_redirect.url_storage_cache')->flush();
         $manager->flush();
     }
 
@@ -290,5 +308,22 @@ class LoadProductDemoData extends AbstractFixture implements ContainerAwareInter
         }
 
         return $dimensions;
+    }
+
+    /**
+     * @param Product $product
+     * @param array   $row
+     * @return LoadProductDemoData
+     */
+    private function setPageTemplate(Product $product, array $row)
+    {
+        if (!empty($row['page_template'])) {
+            $entityFallbackValue = new EntityFieldFallbackValue();
+            $entityFallbackValue->setArrayValue([ProductType::PAGE_TEMPLATE_ROUTE_NAME => $row['page_template']]);
+
+            $product->setPageTemplate($entityFallbackValue);
+        }
+
+        return $this;
     }
 }

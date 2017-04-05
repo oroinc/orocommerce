@@ -1,0 +1,17 @@
+layout:
+    actions:
+        - '@addTree':
+            items:
+                webcatalog_breadcrumbs:
+                    blockType: breadcrumbs
+                    options:
+                        breadcrumbs: '=data["web_catalog_breadcrumbs"].getItems()'
+                webcatalog_breadcrumbs_filters:
+                    blockType: block
+            tree:
+                page_main_header:
+                    webcatalog_breadcrumbs:
+                        webcatalog_breadcrumbs_filters: ~
+        - '@remove':
+            id: 'category_breadcrumbs'
+    conditions: 'context["web_catalog_id"] != null'

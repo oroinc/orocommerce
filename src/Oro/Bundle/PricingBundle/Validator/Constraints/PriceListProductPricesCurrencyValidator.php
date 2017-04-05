@@ -13,9 +13,15 @@ use Symfony\Component\Validator\Exception\UnexpectedTypeException;
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\BasePriceListRepository;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 
 class PriceListProductPricesCurrencyValidator extends ConstraintValidator
 {
+    /**
+     * @var ShardManager
+     */
+    protected $shardManager;
+
     /**
      * @var Registry
      */
@@ -23,10 +29,12 @@ class PriceListProductPricesCurrencyValidator extends ConstraintValidator
 
     /**
      * @param Registry $registry
+     * @param ShardManager $shardManager
      */
-    public function __construct(Registry $registry)
+    public function __construct(Registry $registry, ShardManager $shardManager)
     {
         $this->registry = $registry;
+        $this->shardManager = $shardManager;
     }
 
     /**
@@ -45,7 +53,7 @@ class PriceListProductPricesCurrencyValidator extends ConstraintValidator
         /** @var BasePriceListRepository $repository */
         $repository = $this->registry->getManagerForClass($class)
             ->getRepository($class);
-        $invalidCurrencies = $repository->getInvalidCurrenciesByPriceList($value);
+        $invalidCurrencies = $repository->getInvalidCurrenciesByPriceList($this->shardManager, $value);
 
         /** @var ExecutionContextInterface $context */
         $context = $this->context;

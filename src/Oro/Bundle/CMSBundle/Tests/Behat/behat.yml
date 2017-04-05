@@ -20,6 +20,9 @@ oro_behat_extension:
         LandingPageTitlesField:
             selector: "input[name='oro_cms_page[titles][values][default]']"
 
+        PageTitle:
+            selector: "title"
+
         Modal Cancel Button:
             class: Oro\Bundle\TestFrameworkBundle\Behat\Element\Element
             selector: 'div.modal-footer a.cancel'
