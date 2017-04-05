@@ -47,7 +47,8 @@ define(function(require) {
             this.options._sourceElement
                 .on('content:changed', _.bind(this.onChange, this))
                 .on('content:remove', _.bind(this.askConfirmation, this))
-                .on('click', '.removeLineItem', _.bind(this.onRemoveRow, this));
+                .on('click', '.removeLineItem', _.bind(this.onRemoveRow, this))
+                .on('change', this.options.unitSelect, _.bind(this.onSelectChange, this));
 
             this.options._sourceElement.trigger('content:changed');
         },
@@ -85,61 +86,41 @@ define(function(require) {
          */
         onChange: function() {
             var selects = this.options._sourceElement.find(this.options.unitSelect);
-            var self = this;
+            var primary = _.first(_.values(this.getPrimaryData()));
 
-            self.toggleTableVisibility();
+            this.toggleTableVisibility();
 
-            selects.each(function(index) {
-                var select = $(this);
-
-                selects.each(function(_index) {
-
-                    var primary = null;
-                    _.each(self.getPrimaryData(), function(text, val) {
-                        primary = val;
-                    });
-
-                    var primaryOption = $(this).find('option[value="' + primary + '"]');
-
-                    if (primaryOption) {
-                        primaryOption.remove();
-                    }
-
-                    if (index === _index) {
-                        return;
-                    }
-
-                    var option = $(this).find('option[value="' + select.val() + '"]');
-
-                    if (option) {
-                        option.remove();
-                    }
-                });
-
-                if (select.find('option').length <= 1) {
-                    self.getAddButton().hide();
+            _.each(selects.get(), function(select) {
+                select = $(select);
+                if (primary) {
+                    select.find('option[value="' + primary + '"]').remove();
                 }
 
                 var option = select.find('option:selected');
+                selects.not(select).find('option[value="' + option.val() + '"]').remove();
 
-                if (option.val() !== select.data('prevValue') && !select.hasClass(self.options.hiddenUnitClass)) {
-                    var value = self.options.precisions[option.val()];
+                if (select.find('option').length <= 1) {
+                    this.getAddButton().hide();
+                }
 
-                    if (value !== undefined) {
-                        select.parents(self.options.selectParent).find('input[class="precision"]').val(value);
+                if (option.val() !== select.data('prevValue') && !select.hasClass(this.options.hiddenUnitClass)) {
+                    var value = this.options.precisions[option.val()];
+
+                    if (!_.isUndefined(value)) {
+                        select.parents(this.options.selectParent).find('input[class="precision"]').val(value);
                     }
                 }
 
                 select
                     .data('prevValue', option.val())
-                    .data('prevText', option.text())
-                    .on('change', _.bind(self.onSelectChange, self));
+                    .data('prevText', option.text());
 
-                self.addData({value: option.val(), text: option.text()});
-            });
-            _.each(self.getPrimaryData(), function(text, val) {
-                self.addConversionRateLabels(val);
-            });
+                this.addData({value: option.val(), text: option.text()});
+            }, this);
+
+            _.each(this.getPrimaryData(), function(text, val) {
+                this.addConversionRateLabels(val);
+            }, this);
         },
 
         /**
