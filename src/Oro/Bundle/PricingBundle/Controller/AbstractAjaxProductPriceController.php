@@ -3,15 +3,13 @@
 namespace Oro\Bundle\PricingBundle\Controller;
 
 use Doctrine\ORM\EntityManager;
-
-use Symfony\Bundle\FrameworkBundle\Controller\Controller;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-
 use Oro\Bundle\PricingBundle\Entity\BasePriceList;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Formatter\ProductUnitLabelFormatter;
+use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 abstract class AbstractAjaxProductPriceController extends Controller
 {
@@ -81,7 +79,13 @@ abstract class AbstractAjaxProductPriceController extends Controller
 
         /** @var ProductPriceRepository $repository */
         $repository = $this->getManagerForClass($productPriceClass)->getRepository($productPriceClass);
-        $units = $repository->getProductUnitsByPriceList($priceList, $product, $request->get('currency'));
+        $shardManager = $this->get('oro_pricing.shard_manager');
+        $units = $repository->getProductUnitsByPriceList(
+            $shardManager,
+            $priceList,
+            $product,
+            $request->get('currency')
+        );
 
         return new JsonResponse(['units' => $this->getProductUnitFormatter()->formatChoices($units)]);
     }

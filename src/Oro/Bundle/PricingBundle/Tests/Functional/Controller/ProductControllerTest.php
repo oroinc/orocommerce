@@ -290,17 +290,20 @@ class ProductControllerTest extends WebTestCase
         static::assertContains('Product has been saved', $crawler->html());
 
         /** @var ProductPrice $price */
-        $price = static::getContainer()->get('doctrine')
+        $shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
+        $prices = static::getContainer()->get('doctrine')
             ->getManagerForClass('OroPricingBundle:ProductPrice')
             ->getRepository('OroPricingBundle:ProductPrice')
-            ->findOneBy([
+            ->findByPriceList($shardManager, $priceList, [
                 'product' => $product,
                 'priceList' => $priceList,
                 'quantity' => $this->newPrice['quantity'],
                 'unit' => $this->newPrice['unit'],
                 'currency' => $this->newPrice['currency'],
             ]);
-        static::assertNotEmpty($price);
+
+        static::assertNotEmpty($prices);
+        $price = $prices[0];
         static::assertEquals($this->newPrice['price'], $price->getPrice()->getValue());
     }
 

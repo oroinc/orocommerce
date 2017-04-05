@@ -1,18 +1,22 @@
 <?php
 
-namespace Oro\Bundle\PaymentBundle\Tests\Unit\DependencyInjection;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\DependencyInjection\Compiler;
 
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
-use Oro\Bundle\PaymentBundle\DependencyInjection\Compiler\PaymentMethodProvidersPass;
-
-class PaymentMethodProvidersPassTest extends \PHPUnit_Framework_TestCase
+abstract class AbstractPaymentMethodProvidersPassTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var PaymentMethodProvidersPass
+     * @var CompilerPassInterface
      */
     protected $compilerPass;
+
+    /**
+     * @var string
+     */
+    protected $serviceDefinition;
 
     /**
      * @var ContainerBuilder|\PHPUnit_Framework_MockObject_MockObject
@@ -24,8 +28,6 @@ class PaymentMethodProvidersPassTest extends \PHPUnit_Framework_TestCase
         $this->containerBuilder = $this
             ->getMockBuilder('Symfony\Component\DependencyInjection\ContainerBuilder')
             ->getMock();
-
-        $this->compilerPass = new PaymentMethodProvidersPass();
     }
 
     public function tearDown()
@@ -36,17 +38,17 @@ class PaymentMethodProvidersPassTest extends \PHPUnit_Framework_TestCase
     public function testProcessRegistryDoesNotExist()
     {
         $this->containerBuilder
-            ->expects($this->once())
+            ->expects(static::once())
             ->method('hasDefinition')
-            ->with(PaymentMethodProvidersPass::REGISTRY_SERVICE)
+            ->with($this->serviceDefinition)
             ->willReturn(false);
 
         $this->containerBuilder
-            ->expects($this->never())
+            ->expects(static::never())
             ->method('getDefinition');
 
         $this->containerBuilder
-            ->expects($this->never())
+            ->expects(static::never())
             ->method('findTaggedServiceIds');
 
         $this->compilerPass->process($this->containerBuilder);
@@ -55,18 +57,18 @@ class PaymentMethodProvidersPassTest extends \PHPUnit_Framework_TestCase
     public function testProcessNoTaggedServicesFound()
     {
         $this->containerBuilder
-            ->expects($this->once())
+            ->expects(static::once())
             ->method('hasDefinition')
-            ->with(PaymentMethodProvidersPass::REGISTRY_SERVICE)
+            ->with($this->serviceDefinition)
             ->willReturn(true);
 
         $this->containerBuilder
-            ->expects($this->once())
+            ->expects(static::once())
             ->method('findTaggedServiceIds')
             ->willReturn([]);
 
         $this->containerBuilder
-            ->expects($this->never())
+            ->expects(static::never())
             ->method('getDefinition');
 
         $this->compilerPass->process($this->containerBuilder);
@@ -75,39 +77,35 @@ class PaymentMethodProvidersPassTest extends \PHPUnit_Framework_TestCase
     public function testProcessWithTaggedServices()
     {
         $this->containerBuilder
-            ->expects($this->once())
+            ->expects(static::once())
             ->method('hasDefinition')
-            ->with(PaymentMethodProvidersPass::REGISTRY_SERVICE)
+            ->with($this->serviceDefinition)
             ->willReturn(true);
 
         $registryServiceDefinition = $this->createMock('Symfony\Component\DependencyInjection\Definition');
 
         $this->containerBuilder
-            ->expects($this->once())
+            ->expects(static::once())
             ->method('getDefinition')
-            ->with(PaymentMethodProvidersPass::REGISTRY_SERVICE)
+            ->with($this->serviceDefinition)
             ->willReturn($registryServiceDefinition);
 
         $taggedServices = [
-            'service.name.1' => [[]],
-            'service.name.2' => [[]],
-            'service.name.3' => [[]],
-            'service.name.4' => [[]],
+            'service.name.1' => [],
+            'service.name.2' => [],
         ];
 
         $this->containerBuilder
-            ->expects($this->once())
+            ->expects(static::once())
             ->method('findTaggedServiceIds')
             ->willReturn($taggedServices);
 
         $registryServiceDefinition
-            ->expects($this->exactly(4))
+            ->expects(static::exactly(2))
             ->method('addMethodCall')
             ->withConsecutive(
                 ['addProvider', [new Reference('service.name.1')]],
-                ['addProvider', [new Reference('service.name.2')]],
-                ['addProvider', [new Reference('service.name.3')]],
-                ['addProvider', [new Reference('service.name.4')]]
+                ['addProvider', [new Reference('service.name.2')]]
             );
 
         $this->compilerPass->process($this->containerBuilder);

@@ -25,3 +25,6 @@ oro_behat_extension:
 
     CreateOrderButton:
       selector: "a[title='Create Order']"
+
+    EntityConfigForm:
+      selector: "form[name='oro_entity_config_type']"

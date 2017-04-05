@@ -15,3 +15,8 @@ oro:
 
         past_orders:
             label: Past orders
+        payment_transaction:
+            capture:
+                title: Charge The Customer
+                message: The customer will be charged {{ amount }}. Are you sure you want to continue?
+                button.okText: Yes, Charge
