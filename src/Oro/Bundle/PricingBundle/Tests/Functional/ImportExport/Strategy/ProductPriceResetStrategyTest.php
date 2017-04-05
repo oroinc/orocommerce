@@ -4,18 +4,27 @@ namespace Oro\Bundle\PricingBundle\Tests\Functional\ImportExport\Strategy;
 
 use Akeneo\Bundle\BatchBundle\Entity\JobExecution;
 use Akeneo\Bundle\BatchBundle\Entity\StepExecution;
-
-use Oro\Bundle\ImportExportBundle\Context\StepExecutionProxyContext;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\CurrencyBundle\Entity\Price;
+use Oro\Bundle\ImportExportBundle\Context\StepExecutionProxyContext;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\ImportExport\Strategy\ProductPriceResetStrategy;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
+use Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices;
+use Oro\Bundle\PricingBundle\Tests\Functional\ProductPriceReference;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 class ProductPriceResetStrategyTest extends WebTestCase
 {
+    use ProductPriceReference;
+
+    /**
+     * @var ShardManager
+     */
+    protected $shardManager;
+
     /**
      * @var ProductPriceResetStrategy
      */
@@ -38,7 +47,7 @@ class ProductPriceResetStrategyTest extends WebTestCase
 
         $this->loadFixtures(
             [
-                'Oro\Bundle\PricingBundle\Tests\Functional\DataFixtures\LoadProductPrices'
+                LoadProductPrices::class
             ]
         );
 
@@ -61,6 +70,8 @@ class ProductPriceResetStrategyTest extends WebTestCase
         $this->strategy->setEntityName(
             $container->getParameter('oro_pricing.entity.product_price.class')
         );
+        $this->shardManager = $this->getContainer()->get('oro_pricing.shard_manager');
+        $this->strategy->setShardManager($this->shardManager);
     }
 
     public function testProcessResetPriceListProductPrices()
@@ -73,7 +84,7 @@ class ProductPriceResetStrategyTest extends WebTestCase
         $actualPrices = $this->getContainer()
             ->get('doctrine')
             ->getRepository('OroPricingBundle:ProductPrice')
-            ->findBy(['priceList' => $priceList->getId()]);
+            ->findByPriceList($this->shardManager, $priceList, ['priceList' => $priceList->getId()]);
         $this->assertCount(8, $actualPrices);
 
         $expectedPricesIds = [
@@ -99,13 +110,14 @@ class ProductPriceResetStrategyTest extends WebTestCase
             $this->getContainer()
                 ->get('doctrine')
                 ->getRepository('OroPricingBundle:ProductPrice')
-                ->findBy(['priceList' => $priceList->getId()])
+                ->findByPriceList($this->shardManager, $priceList, ['priceList' => $priceList->getId()])
         );
 
         // do not clear twice
         $newProductPrice = $this->createProductPrice();
-        $this->getContainer()->get('doctrine')->getManager()->persist($newProductPrice);
-        $this->getContainer()->get('doctrine')->getManager()->flush();
+        $priceManager = $this->getContainer()->get('oro_pricing.manager.price_manager');
+        $priceManager->persist($newProductPrice);
+        $priceManager->flush();
 
         $this->strategy->process($productPrice);
 
@@ -114,18 +126,10 @@ class ProductPriceResetStrategyTest extends WebTestCase
             $this->getContainer()
                 ->get('doctrine')
                 ->getRepository('OroPricingBundle:ProductPrice')
-                ->findBy(['priceList' => $priceList->getId()])
+                ->findByPriceList($this->shardManager, $priceList, ['priceList' => $priceList->getId()])
         );
     }
 
-    /**
-     * @param string $reference
-     * @return ProductPrice
-     */
-    protected function getPriceByReference($reference)
-    {
-        return $this->getReference($reference);
-    }
 
     /**
      * @return ProductPrice
