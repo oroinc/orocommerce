@@ -60,3 +60,7 @@ RuleBundle
 - Following methods were added to `\Oro\Bundle\RedirectBundle\Entity\SlugAwareInterface`:
     - `getBaseSlug`
     - `getSlugByLocalization`
+
+PayPalBundle
+------------
+- Interface `\Oro\Bundle\PayPalBundle\Settings\DataProvider\CardTypesDataProviderInterface` is deprecated, will be removed in v1.3. Use `\Oro\Bundle\PayPalBundle\Settings\DataProvider\CreditCardTypesDataProviderInterface` instead.

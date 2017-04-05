@@ -2,6 +2,12 @@
 
 namespace Oro\Bundle\PayPalBundle\Form\Type;
 
+use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
+use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
+use Oro\Bundle\PayPalBundle\Settings\DataProvider\CardTypesDataProviderInterface;
+use Oro\Bundle\PayPalBundle\Settings\DataProvider\CreditCardTypesDataProviderInterface;
+use Oro\Bundle\PayPalBundle\Settings\DataProvider\PaymentActionsDataProviderInterface;
+use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
@@ -18,12 +24,6 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
 use Symfony\Component\Validator\Exception\InvalidOptionsException;
 use Symfony\Component\Validator\Exception\MissingOptionsException;
-
-use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
-use Oro\Bundle\PayPalBundle\Entity\PayPalSettings;
-use Oro\Bundle\PayPalBundle\Settings\DataProvider\CardTypesDataProviderInterface;
-use Oro\Bundle\PayPalBundle\Settings\DataProvider\PaymentActionsDataProviderInterface;
-use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 
 /**
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
@@ -208,10 +208,13 @@ class PayPalSettingsType extends AbstractType
      */
     public function preSetData(FormEvent $event)
     {
-        /** @var PayPalSettings|null $data */
-        $data = $event->getData();
-        if ($data && !$data->getAllowedCreditCardTypes()) {
-            $data->setAllowedCreditCardTypes($this->cardTypesDataProvider->getDefaultCardTypes());
+        // TODO: remove this condition when CardTypesDataProviderInterface is removed in v1.3.
+        if ($this->cardTypesDataProvider instanceof CreditCardTypesDataProviderInterface) {
+            /** @var PayPalSettings|null $data */
+            $data = $event->getData();
+            if ($data && !$data->getAllowedCreditCardTypes()) {
+                $data->setAllowedCreditCardTypes($this->cardTypesDataProvider->getDefaultCardTypes());
+            }
         }
     }
 
