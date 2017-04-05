@@ -1,0 +1,5 @@
+doctrine:
+    orm:
+        dql:
+            string_functions:
+                uuid: Oro\Bundle\PricingBundle\ORM\Query\AST\Functions\String\UUID

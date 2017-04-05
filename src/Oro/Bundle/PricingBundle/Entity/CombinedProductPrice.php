@@ -35,6 +35,7 @@ use Doctrine\ORM\Mapping as ORM;
  *     }
  * )
  * @ORM\Entity(repositoryClass="Oro\Bundle\PricingBundle\Entity\Repository\CombinedProductPriceRepository")
+ * @method CombinedPriceList getPriceList()
  */
 class CombinedProductPrice extends BaseProductPrice
 {

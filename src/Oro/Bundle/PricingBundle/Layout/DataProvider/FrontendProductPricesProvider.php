@@ -5,13 +5,19 @@ namespace Oro\Bundle\PricingBundle\Layout\DataProvider;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
-use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
-use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
-use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\PricingBundle\Formatter\ProductPriceFormatter;
+use Oro\Bundle\PricingBundle\Manager\UserCurrencyManager;
+use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class FrontendProductPricesProvider
 {
+    /**
+     * @var ShardManager
+     */
+    protected $shardManager;
+
     /**
      * @var array
      */
@@ -37,14 +43,17 @@ class FrontendProductPricesProvider
      * @param PriceListRequestHandler $priceListRequestHandler
      * @param UserCurrencyManager $userCurrencyManager
      * @param ProductPriceFormatter $productPriceFormatter
+     * @param ShardManager $shardManager
      */
     public function __construct(
         DoctrineHelper $doctrineHelper,
         PriceListRequestHandler $priceListRequestHandler,
         UserCurrencyManager $userCurrencyManager,
-        ProductPriceFormatter $productPriceFormatter
+        ProductPriceFormatter $productPriceFormatter,
+        ShardManager $shardManager
     ) {
         $this->doctrineHelper = $doctrineHelper;
+        $this->shardManager = $shardManager;
         $this->priceListRequestHandler = $priceListRequestHandler;
         $this->userCurrencyManager = $userCurrencyManager;
         $this->productPriceFormatter = $productPriceFormatter;
@@ -104,6 +113,7 @@ class FrontendProductPricesProvider
         /** @var ProductPriceRepository $priceRepository */
         $priceRepository = $this->doctrineHelper->getEntityRepository('OroPricingBundle:CombinedProductPrice');
         $prices = $priceRepository->findByPriceListIdAndProductIds(
+            $this->shardManager,
             $priceList->getId(),
             $productsIds,
             true,
