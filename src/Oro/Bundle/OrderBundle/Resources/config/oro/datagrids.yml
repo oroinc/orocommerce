@@ -173,7 +173,7 @@ datagrids:
                     data_name: order1.currency
                     options:
                         field_options:
-                            choices: "@oro_pricing.provider.currency->getAvailableCurrencies"
+                            choices: "@oro_currency.config.currency->getCurrencies"
                 subtotal:
                     type:      currency
                     data_name: subtotal
@@ -324,7 +324,7 @@ datagrids:
                     data_name: order1.currency
                     options:
                         field_options:
-                            choices: "@oro_pricing.provider.currency->getAvailableCurrencies"
+                            choices: "@oro_currency.config.currency->getCurrencies"
                 subtotal:
                     type:      currency
                     data_name: subtotal
