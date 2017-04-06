@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\ShippingBundle\Method\Validator\Result\ParameterBag;
 
-use Oro\Bundle\ShippingBundle\Method\Validator\Result\Factory\Common\ParameterBag\ParameterBagCommonShippingMethodValidatorResultFactory;
+use Oro\Bundle\ShippingBundle\Method\Validator\Result\Factory\Common;
 use Oro\Bundle\ShippingBundle\Method\Validator\Result\ShippingMethodValidatorResultInterface;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 
@@ -15,7 +15,7 @@ class ParameterBagShippingMethodValidatorResult extends ParameterBag implements 
      */
     public function createCommonFactory()
     {
-        return new ParameterBagCommonShippingMethodValidatorResultFactory();
+        return new Common\ParameterBag\ParameterBagCommonShippingMethodValidatorResultFactory();
     }
 
     /**

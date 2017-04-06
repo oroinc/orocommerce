@@ -2,44 +2,29 @@
 
 namespace Oro\Bundle\UPSBundle\Tests\Unit\Validator\Constraints;
 
-use Oro\Bundle\AddressBundle\Entity\Country;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
-use Oro\Bundle\ShippingBundle\Method\Event\MethodTypeChangeEvent;
-use Oro\Bundle\ShippingBundle\Method\Factory\MethodTypeChangeEventFactoryInterface;
-use Oro\Bundle\UPSBundle\Entity\Repository\ShippingServiceRepository;
-use Oro\Bundle\UPSBundle\Entity\ShippingService;
+use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
+use Oro\Bundle\ShippingBundle\Method\Validator\Result\Error;
+use Oro\Bundle\ShippingBundle\Method\Validator\Result\ShippingMethodValidatorResultInterface;
+use Oro\Bundle\ShippingBundle\Method\Validator\ShippingMethodValidatorInterface;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
-use Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingService;
+use Oro\Bundle\UPSBundle\Method\UPSShippingMethod;
+use Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceConstraint;
 use Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceValidator;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
 use Symfony\Component\Validator\Violation\ConstraintViolationBuilderInterface;
 
-/**
- * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
- */
 class RemoveUsedShippingServiceValidatorTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var IntegrationIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var IntegrationShippingMethodFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $identifierGenerator;
+    private $integrationShippingMethodFactory;
 
     /**
-     * @var EventDispatcherInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ShippingMethodValidatorInterface|\PHPUnit_Framework_MockObject_MockObject
      */
-    private $dispatcher;
-
-    /**
-     * @var ShippingServiceRepository|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $serviceRepository;
-
-    /**
-     * @var MethodTypeChangeEventFactoryInterface|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $typeChangeEventFactory;
+    private $shippingMethodValidator;
 
     /**
      * @var ExecutionContextInterface|\PHPUnit_Framework_MockObject_MockObject
@@ -52,110 +37,138 @@ class RemoveUsedShippingServiceValidatorTest extends \PHPUnit_Framework_TestCase
     private $validator;
 
     /**
-     * @var RemoveUsedShippingService
+     * @var RemoveUsedShippingServiceConstraint
      */
     private $constraint;
 
-    /**
-     * @var Country
-     */
-    private $country;
-
     protected function setUp()
     {
-        $this->identifierGenerator = $this->createMock(IntegrationIdentifierGeneratorInterface::class);
-        $this->dispatcher = $this->createMock(EventDispatcherInterface::class);
-        $this->serviceRepository = $this->createMock(ShippingServiceRepository::class);
-        $this->typeChangeEventFactory = $this->createMock(MethodTypeChangeEventFactoryInterface::class);
+        $this->integrationShippingMethodFactory = $this->createMock(IntegrationShippingMethodFactoryInterface::class);
+        $this->shippingMethodValidator = $this->createMock(ShippingMethodValidatorInterface::class);
         $this->context = $this->createMock(ExecutionContextInterface::class);
 
         $this->validator = new RemoveUsedShippingServiceValidator(
-            $this->identifierGenerator,
-            $this->dispatcher,
-            $this->serviceRepository,
-            $this->typeChangeEventFactory
+            $this->integrationShippingMethodFactory,
+            $this->shippingMethodValidator
         );
         $this->validator->initialize($this->context);
 
-        $this->constraint = new RemoveUsedShippingService();
-        $this->country = new Country('US');
+        $this->constraint = new RemoveUsedShippingServiceConstraint();
+    }
+
+    public function testValidateNotUPSSettings()
+    {
+        $this->context->expects(static::never())
+            ->method('buildViolation');
+        $this->validator->validate(new \stdClass(), $this->constraint);
     }
 
     public function testValidateNoErrors()
     {
-        $selectedServiceCodes = ['11', '2'];
+        $channel = $this->createMock(Channel::class);
 
-        $transport = new UPSTransport();
-        $transport->setCountry($this->country)
-            ->setChannel(new Channel());
+        $transport = $this->createUPSSettingsMock();
+        $transport->expects(static::once())
+            ->method('getChannel')
+            ->willReturn($channel);
 
-        $event = new MethodTypeChangeEvent($selectedServiceCodes, 'id');
+        $upsShippingMethod = $this->createMock(UPSShippingMethod::class);
 
-        $this->typeChangeEventFactory->expects(static::once())
+        $this->integrationShippingMethodFactory->expects(static::once())
             ->method('create')
-            ->willReturn($event);
+            ->with($channel)
+            ->willReturn($upsShippingMethod);
+
+        $errorsCollection = $this->createMock(
+            Error\Collection\ShippingMethodValidatorResultErrorCollectionInterface::class
+        );
+        $errorsCollection->expects(static::once())
+            ->method('isEmpty')
+            ->willReturn(true);
+
+        $result = $this->createMock(ShippingMethodValidatorResultInterface::class);
+        $result->expects(static::any())
+            ->method('getErrors')
+            ->willReturn($errorsCollection);
+
+        $this->shippingMethodValidator->expects(static::once())
+            ->method('validate')
+            ->with($upsShippingMethod)
+            ->willReturn($result);
 
         $this->context->expects(static::never())
             ->method('buildViolation');
 
         $this->validator->validate($transport, $this->constraint);
-
-        static::assertFalse($event->hasErrors());
     }
 
     public function testValidateWithErrors()
     {
-        $selectedServiceCodes = ['11', '2'];
+        $channel = $this->createMock(Channel::class);
 
-        $transport = new UPSTransport();
-        $transport->setCountry($this->country)
-            ->setChannel(new Channel());
+        $transport = $this->createUPSSettingsMock();
+        $transport->expects(static::once())
+            ->method('getChannel')
+            ->willReturn($channel);
 
-        $event = new MethodTypeChangeEvent($selectedServiceCodes, 'id');
-        $event->addErrorType('3');
-        $event->addErrorType('4');
+        $upsShippingMethod = $this->createMock(UPSShippingMethod::class);
 
-        $this->typeChangeEventFactory->expects(static::once())
+        $this->integrationShippingMethodFactory->expects(static::once())
             ->method('create')
-            ->willReturn($event);
+            ->with($channel)
+            ->willReturn($upsShippingMethod);
 
-        $this->serviceRepository->expects(static::once())
-            ->method('getShippingServicesByCountry')
-            ->willReturn([
-                $this->getShippingService('3', 'name3')
-            ]);
+        $errorMessage = 'Error message about types';
+
+        $error = $this->createErrorMock();
+        $error->expects(static::once())
+            ->method('getMessage')
+            ->willReturn($errorMessage);
+
+        $errorsCollection = new Error\Collection\Doctrine\DoctrineShippingMethodValidatorResultErrorCollection();
+        $errorsCollection = $errorsCollection->createCommonBuilder()
+            ->addError($error)->getCollection();
+
+        $result = $this->createMock(ShippingMethodValidatorResultInterface::class);
+        $result->expects(static::any())
+            ->method('getErrors')
+            ->willReturn($errorsCollection);
+
+        $this->shippingMethodValidator->expects(static::once())
+            ->method('validate')
+            ->with($upsShippingMethod)
+            ->willReturn($result);
 
         $violationBuilder = $this->createMock(ConstraintViolationBuilderInterface::class);
-        $violationBuilder->expects(static::once())
-            ->method('setParameter')
-            ->willReturn($violationBuilder);
         $violationBuilder->expects(static::once())
             ->method('setTranslationDomain')
             ->willReturn($violationBuilder);
         $violationBuilder->expects(static::once())
             ->method('atPath')
+            ->with('applicableShippingServices')
             ->willReturn($violationBuilder);
 
         $this->context->expects(static::once())
             ->method('buildViolation')
+            ->with($errorMessage)
             ->willReturn($violationBuilder);
 
         $this->validator->validate($transport, $this->constraint);
     }
 
     /**
-     * @param string $code
-     * @param string $description
-     *
-     * @return ShippingService
+     * @return UPSTransport|\PHPUnit_Framework_MockObject_MockObject
      */
-    private function getShippingService($code, $description)
+    private function createUPSSettingsMock()
     {
-        $service = new ShippingService();
+        return $this->createMock(UPSTransport::class);
+    }
 
-        $service->setCode($code)
-            ->setDescription($description);
-
-        return $service;
+    /**
+     * @return Error\ShippingMethodValidatorResultErrorInterface|\PHPUnit_Framework_MockObject_MockObject
+     */
+    private function createErrorMock()
+    {
+        return $this->createMock(Error\ShippingMethodValidatorResultErrorInterface::class);
     }
 }

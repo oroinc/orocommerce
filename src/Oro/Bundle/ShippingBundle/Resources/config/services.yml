@@ -464,21 +464,10 @@ services:
         tags:
             - { name: kernel.event_listener, event: oro_shipping.method_renaming, method: onMethodRename}
 
-    oro_shipping.event_listener.method_type.change:
-        class: 'Oro\Bundle\ShippingBundle\Method\EventListener\MethodTypeChangeListener'
-        arguments:
-            - '@oro_shipping.repository.shipping_method_type_config'
-        tags:
-            - { name: kernel.event_listener, event: oro_shipping_method_type.change, method: addErrorTypes }
-
     oro_shipping.method.event.dispatcher.method_renaming:
         class: 'Oro\Bundle\ShippingBundle\Method\Event\BasicMethodRenamingEventDispatcher'
         arguments:
             - '@event_dispatcher'
-
-    oro_shipping.method.factory.method_type_change_event:
-        class: 'Oro\Bundle\ShippingBundle\Method\Factory\MethodTypeChangeEventFactory'
-        public: false
 
     oro_shipping.method_validator.result_factory_common_parameter_bag:
         class: 'Oro\Bundle\ShippingBundle\Method\Validator\Result\Factory\Common\ParameterBag\ParameterBagCommonShippingMethodValidatorResultFactory'
@@ -497,12 +486,14 @@ services:
         arguments:
             - '@oro_shipping.method_validator.result_factory_common_parameter_bag'
 
-    oro_shipping.method_validator.basic_enabled_shipping_methods_by_rules:
-        class: 'Oro\Bundle\ShippingBundle\Method\Validator\EnabledShippingMethodsByRules\EnabledShippingMethodsByRulesShippingMethodValidator'
+    oro_shipping.method_validator.decorator.basic_enabled_shipping_methods_by_rules:
+        class: 'Oro\Bundle\ShippingBundle\Method\Validator\EnabledShippingMethodsByRules\EnabledShippingMethodsByRulesShippingMethodValidatorDecorator'
         public: false
         decorates: oro_shipping.method_validator.main
         arguments:
-            - '@oro_shipping.method_validator.basic_enabled_shipping_methods_by_rules.inner'
+            - '@oro_shipping.method_validator.decorator.basic_enabled_shipping_methods_by_rules.inner'
             - '@oro_shipping.method_validator.result_error_factory_common_parameter_bag'
             - '@oro_shipping.repository.shipping_method_type_config'
+            - '@oro_shipping.shipping_method.registry'
             - '@translator'
+            - '@logger'

@@ -4,7 +4,7 @@ namespace Oro\Bundle\UPSBundle\Validator\Constraints;
 
 use Symfony\Component\Validator\Constraint;
 
-class RemoveUsedShippingService extends Constraint
+class RemoveUsedShippingServiceConstraint extends Constraint
 {
     /**
      * {@inheritDoc}

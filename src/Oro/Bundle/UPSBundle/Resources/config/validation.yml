@@ -1,6 +1,6 @@
 Oro\Bundle\UPSBundle\Entity\UPSTransport:
     constraints:
-        - Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingService: ~
+        - Oro\Bundle\UPSBundle\Validator\Constraints\RemoveUsedShippingServiceConstraint: ~
     properties:
         apiUser:
             - NotBlank: ~

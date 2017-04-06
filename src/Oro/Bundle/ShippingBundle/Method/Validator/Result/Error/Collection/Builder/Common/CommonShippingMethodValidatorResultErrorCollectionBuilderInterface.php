@@ -14,7 +14,7 @@ interface CommonShippingMethodValidatorResultErrorCollectionBuilderInterface
     /**
      * @param Error\Collection\ShippingMethodValidatorResultErrorCollectionInterface $collection
      *
-     * @return static
+     * @return $this
      */
     public function cloneAndBuild(
         Error\Collection\ShippingMethodValidatorResultErrorCollectionInterface $collection
@@ -23,7 +23,7 @@ interface CommonShippingMethodValidatorResultErrorCollectionBuilderInterface
     /**
      * @param Error\ShippingMethodValidatorResultErrorInterface $error
      *
-     * @return static
+     * @return $this
      */
     public function addError(Error\ShippingMethodValidatorResultErrorInterface $error);
 }

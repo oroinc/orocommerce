@@ -2,19 +2,10 @@
 
 namespace Oro\Bundle\UPSBundle\Validator\Constraints;
 
-use Oro\Bundle\AddressBundle\Entity\Country;
-use Oro\Bundle\ChannelBundle\Entity\Channel;
-use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
-use Oro\Bundle\ShippingBundle\Method\Event\MethodTypeChangeEvent;
 use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
-use Oro\Bundle\ShippingBundle\Method\Factory\MethodTypeChangeEventFactoryInterface;
 use Oro\Bundle\ShippingBundle\Method\Validator\Result\ShippingMethodValidatorResultInterface;
 use Oro\Bundle\ShippingBundle\Method\Validator\ShippingMethodValidatorInterface;
-use Oro\Bundle\UPSBundle\Entity\Repository\ShippingServiceRepository;
 use Oro\Bundle\UPSBundle\Entity\UPSTransport;
-use Oro\Component\PropertyAccess\PropertyAccessor;
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 use Symfony\Component\Validator\Context\ExecutionContextInterface;
@@ -22,6 +13,11 @@ use Symfony\Component\Validator\Context\ExecutionContextInterface;
 class RemoveUsedShippingServiceValidator extends ConstraintValidator
 {
     const ALIAS = 'oro_ups_remove_used_shipping_service_validator';
+
+    /**
+     * @internal
+     */
+    const VIOLATION_PATH = 'applicableShippingServices';
 
     /**
      * @var IntegrationShippingMethodFactoryInterface
@@ -46,16 +42,12 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
     }
 
     /**
-     * @param UPSTransport                         $value
-     * @param Constraint|RemoveUsedShippingService $constraint
+     * @param UPSTransport                                   $value
+     * @param Constraint|RemoveUsedShippingServiceConstraint $constraint
      */
     public function validate($value, Constraint $constraint)
     {
         if (!$value instanceof UPSTransport) {
-            return;
-        }
-
-        if (!$value->getChannel()) {
             return;
         }
 
@@ -65,6 +57,9 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
         $this->handleValidationResult($shippingMethodValidatorResult);
     }
 
+    /**
+     * @param ShippingMethodValidatorResultInterface $shippingMethodValidatorResult
+     */
     private function handleValidationResult(ShippingMethodValidatorResultInterface $shippingMethodValidatorResult)
     {
         if ($shippingMethodValidatorResult->getErrors()->isEmpty()) {
@@ -77,7 +72,7 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
         foreach ($shippingMethodValidatorResult->getErrors() as $error) {
             $context->buildViolation($error->getMessage())
                 ->setTranslationDomain(null)
-                ->atPath('applicableShippingServices')
+                ->atPath(static::VIOLATION_PATH)
                 ->addViolation();
         }
     }

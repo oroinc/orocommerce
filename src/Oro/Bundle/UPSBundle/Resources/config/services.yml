@@ -144,12 +144,6 @@ services:
             - '@oro_integration.transport.rest.client_factory'
             - '@oro_ups.client.url_provider_basic'
 
-    oro_ups.config.integration_method_identifier_generator:
-        class: 'Oro\Bundle\IntegrationBundle\Generator\Prefixed\PrefixedIntegrationIdentifierGenerator'
-        public: false
-        arguments:
-            - '%oro_ups.integration.channel.type%'
-
     oro_ups.repository.shipping_service:
         class: 'Oro\Bundle\UPSBundle\Entity\Repository\ShippingServiceRepository'
         parent: oro_entity.abstract_repository
