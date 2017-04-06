@@ -7,9 +7,12 @@ use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
 use Symfony\Component\Routing\RouterInterface;
+use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option;
 
 class AuthorizeNetPaymentMethod implements PaymentMethodInterface
 {
+    const ZERO_AMOUNT = 0;
+
     /** @var RouterInterface */
     protected $router;
 
@@ -31,7 +34,11 @@ class AuthorizeNetPaymentMethod implements PaymentMethodInterface
      */
     public function execute($action, PaymentTransaction $paymentTransaction)
     {
-        // TODO: Implement execute() method.
+        if (!$this->supports($action)) {
+            throw new \InvalidArgumentException(sprintf('Unsupported action "%s"', $action));
+        }
+
+        return $this->{$action}($paymentTransaction) ?: [];
     }
 
     /**
@@ -49,11 +56,29 @@ class AuthorizeNetPaymentMethod implements PaymentMethodInterface
     {
         return true;// TODO: Implement isApplicable() method.
     }
+
     /**
      * {@inheritdoc}
      */
     public function supports($actionName)
     {
-        return true;// TODO: Implement supports() method.
+        return in_array(
+            $actionName,
+            [self::AUTHORIZE, self::CAPTURE, self::CHARGE, self::PURCHASE, self::VALIDATE],
+            true
+        );
+    }
+
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     */
+    public function validate(PaymentTransaction $paymentTransaction)
+    {
+        $paymentTransaction
+            ->setAmount(self::ZERO_AMOUNT)
+            ->setCurrency(Option\Currency::US_DOLLAR)
+            ->setAction(PaymentMethodInterface::VALIDATE)
+            ->setActive(true)
+            ->setSuccessful(true);
     }
 }

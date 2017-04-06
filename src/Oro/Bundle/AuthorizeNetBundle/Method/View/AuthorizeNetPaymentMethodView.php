@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\AuthorizeNetBundle\Method\View;
 
+use Oro\Bundle\AuthorizeNetBundle\Form\Type\CreditCardType;
 use Oro\Bundle\AuthorizeNetBundle\Method\Config\AuthorizeNetConfigInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
@@ -46,7 +47,20 @@ class AuthorizeNetPaymentMethodView implements PaymentMethodViewInterface
      */
     public function getOptions(PaymentContextInterface $context)
     {
-        //TODO: implement method;
+        $formOptions = [
+            'requireCvvEntryEnabled' => false,// TODO: change to $this->config->isRequireCvvEntryEnabled(),
+        ];
+        $formView = $this->formFactory->create(CreditCardType::NAME, null, $formOptions)->createView();
+
+        return [
+            'formView' => $formView,
+            'creditCardComponentOptions' => [
+                'allowedCreditCards' => $this->getAllowedCreditCards(),
+                'clientKey' => $this->config->getClientKey(),
+                'apiLoginID' => $this->config->getApiLogin(),
+                'testMode' => $this->config->isTestMode(),
+            ],
+        ];
     }
 
     /**
@@ -54,7 +68,7 @@ class AuthorizeNetPaymentMethodView implements PaymentMethodViewInterface
      */
     public function getBlock()
     {
-        //TODO: implement method;
+        return '_payment_methods_au_net_credit_card_widget';
     }
 
     /**

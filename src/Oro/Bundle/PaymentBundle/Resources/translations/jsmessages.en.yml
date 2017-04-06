@@ -1,5 +1,5 @@
 oro:
-    paypal:
+    payment:
         validation:
             expiration_date: "Invalid Expiration date."
             month: "Please, choose correct month."

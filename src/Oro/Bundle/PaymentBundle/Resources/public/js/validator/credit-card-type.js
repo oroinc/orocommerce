@@ -2,16 +2,16 @@
 define([
     'underscore',
     'orotranslation/js/translator',
-    'oropaypal/js/adapter/credit-card-validator-adapter'
+    'oropayment/js/adapter/credit-card-validator-adapter'
 ], function(_, __, creditCardValidator) {
     'use strict';
 
     var defaultParam = {
-        message: 'oro.paypal.validation.credit_card_type'
+        message: 'oro.payment.validation.credit_card_type'
     };
 
     /**
-     * @export oropaypal/js/validator/credit-card-type
+     * @export oropayment/js/validator/credit-card-type
      */
     return [
         'credit-card-type',

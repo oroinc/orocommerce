@@ -8,3 +8,8 @@ services:
             - '@oro_paypal.settings.payment_action.provider'
         tags:
             - { name: form.type }
+
+    oro_authorize_net.form.type.credit_card:
+        class: Oro\Bundle\AuthorizeNetBundle\Form\Type\CreditCardType
+        tags:
+            - { name: form.type, alias: oro_authorize_net_credit_card }

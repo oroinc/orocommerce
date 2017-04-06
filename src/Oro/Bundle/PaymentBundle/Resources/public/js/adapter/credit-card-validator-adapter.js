@@ -4,7 +4,7 @@ define([
     'orotranslation/js/translator',
     'jquery',
     'jquery.validate',
-    'oropaypal/js/lib/jquery-credit-card-validator'
+    'oropayment/js/lib/jquery-credit-card-validator'
 ], function(_, __, $) {
     'use strict';
 

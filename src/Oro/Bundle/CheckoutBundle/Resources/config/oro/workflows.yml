@@ -59,6 +59,8 @@ workflows:
                 type: bool
             payment_save_for_later:
                 type: bool
+            additional_data:
+                type: array
             state_token:
                 type: string
             internal_state_token:
@@ -272,6 +274,8 @@ workflows:
                             form_type: hidden
                             options:
                                 data: $internal_state_token
+                        additional_data:
+                            form_type: hidden
 
             back_to_billing_address:
                 step_to: enter_billing_address
@@ -766,6 +770,7 @@ workflows:
                                     saveForLaterUse: $payment_save_for_later
                                     successUrl: $.result.successUrl
                                     failureUrl: $.result.failureUrl
+                                    additionalData: $additional_data
                     - '@generate_checkout_state_snapshot':
                         entity: $checkout
                         attribute: $.result.actualCheckoutState

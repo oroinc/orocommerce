@@ -18,7 +18,8 @@ define(function(require) {
                 checkoutSidebar: '[data-role="checkout-sidebar"]',
                 checkoutContent: '[data-role="checkout-content"]',
                 transitionTriggerContainer: '[data-role="transition-trigger-container"]',
-                transitionTrigger: '[data-role="transition-trigger"]'
+                transitionTrigger: '[data-role="transition-trigger"]',
+                additionalDataContainer: '[name$="[additional_data]"]'
             }
         },
 
@@ -33,6 +34,7 @@ define(function(require) {
             this.initializeTriggers();
             if (this.options.hasForm) {
                 this.$form = this.$el.closest('form');
+                this.$additionalDataContainer = this.$form.find(this.options.selectors.additionalDataContainer);
                 this.$form.on('submit', $.proxy(this.onSubmit, this));
             } else {
                 this.$el.on('click', $.proxy(this.transit, this));
@@ -56,7 +58,7 @@ define(function(require) {
         },
 
         onSubmit: function(e) {
-            this.transit(e, {method: 'POST', data: this.$form.serialize()});
+            this.transit(e, {method: 'POST', additionalDataContainer: this.$additionalDataContainer});
         },
 
         transit: function(e, data) {
@@ -75,6 +77,9 @@ define(function(require) {
             data = data || {method: 'GET'};
             data.url = url;
             data.errorHandlerMessage = false;
+            if (this.$form) {
+                data.data = this.$form.serialize();
+            }
             $.ajax(data)
                 .done(_.bind(this.onSuccess, this))
                 .fail(_.bind(this.onFail, this));

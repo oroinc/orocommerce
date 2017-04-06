@@ -18,5 +18,8 @@
         {%  if  form.state_token is defined %}
             {{ form_row(form.state_token) }}
         {% endif %}
+        {%  if  form.additional_data is defined %}
+            {{ form_row(form.additional_data) }}
+        {% endif %}
     </div>
 {% endblock %}

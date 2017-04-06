@@ -57,13 +57,20 @@ define(function(require) {
             }
 
             var paymentMethod = this.getPaymentMethodElement().val();
-            var eventData = {stopped: false, data: {paymentMethod: paymentMethod}};
+            var eventData = {
+                stopped: false,
+                resume: $.proxy(this.continueTransit, this, e, data),
+                data: {paymentMethod: paymentMethod},
+                additionalDataContainer: data.additionalDataContainer
+            };
 
             mediator.trigger('checkout:payment:before-transit', eventData);
-            if (eventData.stopped) {
-                return;
+            if (!eventData.stopped) {
+                this.continueTransit(e, data);
             }
+        },
 
+        continueTransit: function(e, data) {
             var filledForm = this.getPaymentForm();
             mediator.trigger('checkout:payment:before-hide-filled-form', filledForm);
             filledForm

@@ -31,4 +31,7 @@ oro:
         channel_type:
             authorize_net.label: 'Authorize.NET'
 
+        methods:
+            credit_card.label: 'Credit card'
+
 

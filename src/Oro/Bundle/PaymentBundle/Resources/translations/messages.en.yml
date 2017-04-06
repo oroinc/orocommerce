@@ -114,3 +114,8 @@ oro:
 
         controller:
             rule.saved.message: 'Payment rule has been saved'
+
+        credit_card:
+            card_number.label: Credit Card Number
+            expiration_date.label: Expiration Date
+            cvv2.label: CVV

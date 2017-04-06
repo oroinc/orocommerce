@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PayPalBundle\Form\Type;
+namespace Oro\Bundle\PaymentBundle\Form\Type;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -8,7 +8,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class CreditCardExpirationDateType extends AbstractType
 {
-    const NAME = 'oro_paypal_credit_card_expiration_date';
+    const NAME = 'oro_payment_credit_card_expiration_date';
     const YEAR_PERIOD = 10;
 
     /**

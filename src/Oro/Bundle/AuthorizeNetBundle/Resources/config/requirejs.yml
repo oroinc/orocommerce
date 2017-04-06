@@ -1,0 +1,3 @@
+config:
+    paths:
+        'oroauthorizenet/js/app/components/credit-card-component': 'bundles/oroauthorizenet/js/app/components/credit-card-component.js'
