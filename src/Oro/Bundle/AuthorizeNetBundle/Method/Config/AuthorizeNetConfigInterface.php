@@ -9,7 +9,7 @@ interface AuthorizeNetConfigInterface extends PaymentConfigInterface
     /**
      * @return string
      */
-    public function getApiLogin();
+    public function getApiLoginId();
 
     /**
      * @return string
@@ -30,4 +30,9 @@ interface AuthorizeNetConfigInterface extends PaymentConfigInterface
      * @return array
      */
     public function getAllowedCreditCards();
+
+    /**
+     * @return string
+     */
+    public function getPurchaseAction();
 }

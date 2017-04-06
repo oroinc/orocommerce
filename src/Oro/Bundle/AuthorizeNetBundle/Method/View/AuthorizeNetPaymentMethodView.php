@@ -48,7 +48,7 @@ class AuthorizeNetPaymentMethodView implements PaymentMethodViewInterface
     public function getOptions(PaymentContextInterface $context)
     {
         $formOptions = [
-            'requireCvvEntryEnabled' => false,// TODO: change to $this->config->isRequireCvvEntryEnabled(),
+            'requireCvvEntryEnabled' => false,
         ];
         $formView = $this->formFactory->create(CreditCardType::NAME, null, $formOptions)->createView();
 
@@ -57,7 +57,7 @@ class AuthorizeNetPaymentMethodView implements PaymentMethodViewInterface
             'creditCardComponentOptions' => [
                 'allowedCreditCards' => $this->getAllowedCreditCards(),
                 'clientKey' => $this->config->getClientKey(),
-                'apiLoginID' => $this->config->getApiLogin(),
+                'apiLoginID' => $this->config->getApiLoginId(),
                 'testMode' => $this->config->isTestMode(),
             ],
         ];

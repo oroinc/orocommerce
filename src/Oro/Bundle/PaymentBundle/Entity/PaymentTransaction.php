@@ -257,7 +257,9 @@ class PaymentTransaction implements DatesAwareInterface
         return $this;
     }
 
-    /** {@inheritdoc} */
+    /**
+     * @return array
+     */
     public function getRequest()
     {
         if (!$this->request) {

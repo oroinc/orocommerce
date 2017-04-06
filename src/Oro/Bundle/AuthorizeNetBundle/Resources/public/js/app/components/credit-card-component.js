@@ -185,6 +185,7 @@ define(function(require) {
                 var self = this;
                 eventData.stopped = true;
                 if (this.validate()) {
+                    mediator.execute('showLoading');
                     this.acceptJs.dispatchData({
                             authData: {
                                 clientKey: this.options.clientKey,
@@ -196,6 +197,7 @@ define(function(require) {
                                 year: this.$form.find(this.options.selectors.year).val()
                             }
                         }, function(response) {
+                            mediator.execute('hideLoading');
                             if (response.messages.resultCode === 'Error') {
                                 for (var i = 0; i < response.messages.message.length; i++) {
                                     var message = response.messages.message[i];
