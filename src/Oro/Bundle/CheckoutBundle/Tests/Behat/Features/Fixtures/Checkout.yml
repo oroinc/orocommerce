@@ -85,6 +85,7 @@ Oro\Bundle\ProductBundle\Entity\Product:
         addName: ['@locValue']
         inventoryStatus: '@enumInventoryStatuses'
         status: 'enabled'
+        organization: '@organization'
 
 Oro\Bundle\ShoppingListBundle\Entity\ShoppingList:
     shoppinglist:
