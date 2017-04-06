@@ -63,12 +63,20 @@ class RemoveUsedShippingServiceValidatorTest extends \PHPUnit_Framework_TestCase
         $this->validator->validate(new \stdClass(), $this->constraint);
     }
 
+    public function testValidateNoChannel()
+    {
+        $transport = $this->createUPSSettingsMock();
+        $this->context->expects(static::never())
+            ->method('buildViolation');
+        $this->validator->validate($transport, $this->constraint);
+    }
+
     public function testValidateNoErrors()
     {
         $channel = $this->createMock(Channel::class);
 
         $transport = $this->createUPSSettingsMock();
-        $transport->expects(static::once())
+        $transport->expects(static::any())
             ->method('getChannel')
             ->willReturn($channel);
 
@@ -107,7 +115,7 @@ class RemoveUsedShippingServiceValidatorTest extends \PHPUnit_Framework_TestCase
         $channel = $this->createMock(Channel::class);
 
         $transport = $this->createUPSSettingsMock();
-        $transport->expects(static::once())
+        $transport->expects(static::any())
             ->method('getChannel')
             ->willReturn($channel);
 

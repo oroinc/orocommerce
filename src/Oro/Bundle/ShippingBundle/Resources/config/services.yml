@@ -493,7 +493,17 @@ services:
         arguments:
             - '@oro_shipping.method_validator.decorator.basic_enabled_shipping_methods_by_rules.inner'
             - '@oro_shipping.method_validator.result_error_factory_common_parameter_bag'
-            - '@oro_shipping.repository.shipping_method_type_config'
-            - '@oro_shipping.shipping_method.registry'
+            - '@oro_shipping.method.provider.type.non_deletable.shipping_rules_method_type_identifier_provider'
+            - '@oro_shipping.method.provider.type.label.provider'
             - '@translator'
             - '@logger'
+
+    oro_shipping.method.provider.type.label.provider:
+        class: 'Oro\Bundle\ShippingBundle\Method\Provider\Label\Type\BasicMethodTypeLabelsProvider'
+        arguments:
+            - '@oro_shipping.shipping_method.registry'
+
+    oro_shipping.method.provider.type.non_deletable.shipping_rules_method_type_identifier_provider:
+        class: 'Oro\Bundle\ShippingBundle\Method\Provider\Type\NonDeletable\ShippingRulesNonDeletableMethodTypeIdentifiersProvider'
+        arguments:
+            - '@oro_shipping.repository.shipping_method_type_config'

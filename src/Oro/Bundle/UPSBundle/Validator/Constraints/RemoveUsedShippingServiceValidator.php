@@ -2,6 +2,7 @@
 
 namespace Oro\Bundle\UPSBundle\Validator\Constraints;
 
+use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
 use Oro\Bundle\ShippingBundle\Method\Validator\Result\ShippingMethodValidatorResultInterface;
 use Oro\Bundle\ShippingBundle\Method\Validator\ShippingMethodValidatorInterface;
@@ -48,6 +49,10 @@ class RemoveUsedShippingServiceValidator extends ConstraintValidator
     public function validate($value, Constraint $constraint)
     {
         if (!$value instanceof UPSTransport) {
+            return;
+        }
+
+        if (!$value->getChannel() instanceof Channel) {
             return;
         }
 

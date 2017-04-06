@@ -85,6 +85,13 @@ services:
         tags:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\UPSBundle\Entity\UPSTransport', event: postUpdate }
 
+    oro_ups.entity_listener.channel.cache_ups_methods:
+        class: 'Oro\Bundle\UPSBundle\EventListener\Entity\UPSMethodsLoadChannelListener'
+        arguments:
+            - '@oro_ups.shipping_method_provider.ups'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\IntegrationBundle\Entity\Channel', event: postLoad }
+
     oro_ups.factory.price_request_factory:
         class: 'Oro\Bundle\UPSBundle\Factory\PriceRequestFactory'
         public: false

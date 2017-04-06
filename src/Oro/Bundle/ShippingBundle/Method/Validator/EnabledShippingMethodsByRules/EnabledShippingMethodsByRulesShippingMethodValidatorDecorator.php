@@ -2,11 +2,10 @@
 
 namespace Oro\Bundle\ShippingBundle\Method\Validator\EnabledShippingMethodsByRules;
 
-use Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodTypeConfigRepository;
-use Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig;
+use Oro\Bundle\ShippingBundle\Method\Exception\InvalidArgumentException;
+use Oro\Bundle\ShippingBundle\Method\Provider\Label\Type\MethodTypeLabelsProviderInterface;
+use Oro\Bundle\ShippingBundle\Method\Provider\Type\NonDeletable\NonDeletableMethodTypeIdentifiersProviderInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
-use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use Oro\Bundle\ShippingBundle\Method\Validator\Result\Error\Factory\Common;
 use Oro\Bundle\ShippingBundle\Method\Validator\ShippingMethodValidatorInterface;
 use Psr\Log\LoggerInterface;
@@ -27,14 +26,14 @@ class EnabledShippingMethodsByRulesShippingMethodValidatorDecorator implements S
     private $errorFactory;
 
     /**
-     * @var ShippingMethodTypeConfigRepository
+     * @var NonDeletableMethodTypeIdentifiersProviderInterface
      */
-    private $methodTypeRepository;
+    private $nonDeletableTypeIdentifiersProvider;
 
     /**
-     * @var ShippingMethodRegistry
+     * @var MethodTypeLabelsProviderInterface
      */
-    private $methodRegistry;
+    private $methodTypeLabelsProvider;
 
     /**
      * @var TranslatorInterface
@@ -49,23 +48,23 @@ class EnabledShippingMethodsByRulesShippingMethodValidatorDecorator implements S
     /**
      * @param ShippingMethodValidatorInterface                                $parentShippingMethodValidator
      * @param Common\CommonShippingMethodValidatorResultErrorFactoryInterface $errorFactory
-     * @param ShippingMethodTypeConfigRepository                              $methodTypeRepository
-     * @param ShippingMethodRegistry                                          $methodRegistry
+     * @param NonDeletableMethodTypeIdentifiersProviderInterface              $nonDeletableTypeIdentifiersProvider
+     * @param MethodTypeLabelsProviderInterface                               $methodTypeLabelsProvider
      * @param TranslatorInterface                                             $translator
      * @param LoggerInterface                                                 $logger
      */
     public function __construct(
         ShippingMethodValidatorInterface $parentShippingMethodValidator,
         Common\CommonShippingMethodValidatorResultErrorFactoryInterface $errorFactory,
-        ShippingMethodTypeConfigRepository $methodTypeRepository,
-        ShippingMethodRegistry $methodRegistry,
+        NonDeletableMethodTypeIdentifiersProviderInterface $nonDeletableTypeIdentifiersProvider,
+        MethodTypeLabelsProviderInterface $methodTypeLabelsProvider,
         TranslatorInterface $translator,
         LoggerInterface $logger
     ) {
         $this->parentShippingMethodValidator = $parentShippingMethodValidator;
         $this->errorFactory = $errorFactory;
-        $this->methodTypeRepository = $methodTypeRepository;
-        $this->methodRegistry = $methodRegistry;
+        $this->nonDeletableTypeIdentifiersProvider = $nonDeletableTypeIdentifiersProvider;
+        $this->methodTypeLabelsProvider = $methodTypeLabelsProvider;
         $this->translator = $translator;
         $this->logger = $logger;
     }
@@ -78,7 +77,7 @@ class EnabledShippingMethodsByRulesShippingMethodValidatorDecorator implements S
         $result = $this->parentShippingMethodValidator->validate($shippingMethod);
 
         $nonDeletableShippingMethodTypeIdentifiers
-            = $this->calculateNonDeletableShippingMethodTypeIdentifiers($shippingMethod);
+            = $this->nonDeletableTypeIdentifiersProvider->getMethodTypeIdentifiers($shippingMethod);
 
         if ([] === $nonDeletableShippingMethodTypeIdentifiers) {
             return $result;
@@ -95,7 +94,7 @@ class EnabledShippingMethodsByRulesShippingMethodValidatorDecorator implements S
 
         $errorMessage = $this->translator->trans(
             self::USED_SHIPPING_METHODS_ERROR,
-            ['%types%' => implode(',', $nonDeletableShippingMethodTypeLabels)]
+            ['%types%' => implode(', ', $nonDeletableShippingMethodTypeLabels)]
         );
 
         $errorsBuilder = $result->getErrors()
@@ -109,41 +108,6 @@ class EnabledShippingMethodsByRulesShippingMethodValidatorDecorator implements S
     }
 
     /**
-     * @param ShippingMethodInterface $shippingMethod
-     *
-     * @return string[]
-     */
-    private function calculateNonDeletableShippingMethodTypeIdentifiers(ShippingMethodInterface $shippingMethod)
-    {
-        $enabledTypes = $this->methodTypeRepository->findEnabledByMethodIdentifier(
-            $shippingMethod->getIdentifier()
-        );
-
-        $shippingMethodTypeIdentifiers = array_map(
-            function (ShippingMethodTypeInterface $value) {
-                return $value->getIdentifier();
-            },
-            $shippingMethod->getTypes()
-        );
-
-        $enabledShippingMethodTypesIdentifiers = array_map(
-            function (ShippingMethodTypeConfig $value) {
-                return $value->getType();
-            },
-            $enabledTypes
-        );
-
-        $uniqueEnabledShippingMethodTypesIdentifiers = array_unique($enabledShippingMethodTypesIdentifiers);
-
-        $nonDeletableShippingMethodTypes = array_diff(
-            $uniqueEnabledShippingMethodTypesIdentifiers,
-            $shippingMethodTypeIdentifiers
-        );
-
-        return $nonDeletableShippingMethodTypes;
-    }
-
-    /**
      * @param string   $methodIdentifier
      * @param string[] $methodTypeIdentifiers
      *
@@ -151,29 +115,15 @@ class EnabledShippingMethodsByRulesShippingMethodValidatorDecorator implements S
      */
     private function getShippingMethodTypesLabels($methodIdentifier, array $methodTypeIdentifiers)
     {
-        $method = $this->methodRegistry->getShippingMethod($methodIdentifier);
-        if (!$method) {
-            $this->logger->error('Shipping method does not exist.', [
+        try {
+            return $this->methodTypeLabelsProvider->getLabels($methodIdentifier, $methodTypeIdentifiers);
+        } catch (InvalidArgumentException $exception) {
+            $this->logger->error($exception->getMessage(), [
                 'method_identifier' => $methodIdentifier,
+                'type_identifiers' => $methodTypeIdentifiers,
             ]);
 
             return [];
         }
-
-        $labels = [];
-        foreach ($methodTypeIdentifiers as $methodTypeIdentifier) {
-            $type = $method->getType($methodTypeIdentifier);
-            if (!$method) {
-                $this->logger->error('Shipping method type does not exist.', [
-                    'method_identifier' => $methodIdentifier,
-                    'method_type_identifier' => $methodTypeIdentifier,
-                ]);
-
-                return [];
-            }
-            $labels[] = $type->getLabel();
-        }
-
-        return $labels;
     }
 }
