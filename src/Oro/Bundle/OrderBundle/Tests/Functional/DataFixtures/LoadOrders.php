@@ -18,6 +18,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 class LoadOrders extends AbstractFixture implements DependentFixtureInterface, ContainerAwareInterface
 {
     const ORDER_1 = 'simple_order';
+    const ORDER_2 = 'simple_order2';
+    const ORDER_3 = 'simple_order3';
+    const ORDER_4 = 'simple_order4';
     const MY_ORDER = 'my_order';
     const ACCOUNT_USER = 'grzegorz.brzeczyszczykiewicz@example.com';
     const SUBTOTAL = '789';
@@ -31,6 +34,36 @@ class LoadOrders extends AbstractFixture implements DependentFixtureInterface, C
             'user' => LoadOrderUsers::ORDER_USER_1,
             'customerUser' => self::ACCOUNT_USER,
             'poNumber' => '1234567890',
+            'customerNotes' => 'Test customer user notes',
+            'currency' => 'USD',
+            'subtotal' => self::SUBTOTAL,
+            'total' => self::TOTAL,
+            'paymentTerm' => LoadPaymentTermData::PAYMENT_TERM_NET_10,
+        ],
+        self::ORDER_2 => [
+            'user' => LoadOrderUsers::ORDER_USER_1,
+            'customerUser' => self::ACCOUNT_USER,
+            'poNumber' => 'PO2',
+            'customerNotes' => 'Test customer user notes',
+            'currency' => 'USD',
+            'subtotal' => self::SUBTOTAL,
+            'total' => self::TOTAL,
+            'paymentTerm' => LoadPaymentTermData::PAYMENT_TERM_NET_10,
+        ],
+        self::ORDER_3 => [
+            'user' => LoadOrderUsers::ORDER_USER_1,
+            'customerUser' => self::ACCOUNT_USER,
+            'poNumber' => 'PO3',
+            'customerNotes' => 'Test customer user notes',
+            'currency' => 'USD',
+            'subtotal' => self::SUBTOTAL,
+            'total' => self::TOTAL,
+            'paymentTerm' => LoadPaymentTermData::PAYMENT_TERM_NET_10,
+        ],
+        self::ORDER_4 => [
+            'user' => LoadOrderUsers::ORDER_USER_1,
+            'customerUser' => self::ACCOUNT_USER,
+            'poNumber' => 'PO3',
             'customerNotes' => 'Test customer user notes',
             'currency' => 'USD',
             'subtotal' => self::SUBTOTAL,
