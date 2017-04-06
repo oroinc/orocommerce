@@ -3,13 +3,12 @@
 namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
-
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-
+use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\Event\ProductPricesRemoveAfter;
 use Oro\Bundle\PricingBundle\Event\ProductPricesRemoveBefore;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\ProductUnitPrecision;
-use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
  * Remove product prices by unit on ProductUnitPrecision delete.
@@ -27,6 +26,11 @@ class ProductUnitPrecisionListener
     protected $eventDispatcher;
 
     /**
+     * @var ShardManager
+     */
+    protected $shardManager;
+
+    /**
      * @param LifecycleEventArgs $event
      */
     public function postRemove(LifecycleEventArgs $event)
@@ -40,13 +44,14 @@ class ProductUnitPrecisionListener
             if (!$product->getId()) {
                 return;
             }
-            $args = ['unit' => $product, 'product' => $unit];
+            //TODO: check reindex for prices
+            $args = ['unit' => $unit, 'product' => $product];
             $this->eventDispatcher
                 ->dispatch(ProductPricesRemoveBefore::NAME, new ProductPricesRemoveBefore($args));
             
             /** @var ProductPriceRepository $repository */
             $repository = $event->getEntityManager()->getRepository($this->productPriceClass);
-            $repository->deleteByProductUnit($product, $unit);
+            $repository->deleteByProductUnit($this->shardManager, $product, $unit);
             $this->eventDispatcher
                 ->dispatch(ProductPricesRemoveAfter::NAME, new ProductPricesRemoveAfter($args));
         }
@@ -72,5 +77,13 @@ class ProductUnitPrecisionListener
         $this->eventDispatcher = $eventDispatcher;
 
         return $this;
+    }
+
+    /**
+     * @param ShardManager $shardManager
+     */
+    public function setShardManager(ShardManager $shardManager)
+    {
+        $this->shardManager = $shardManager;
     }
 }

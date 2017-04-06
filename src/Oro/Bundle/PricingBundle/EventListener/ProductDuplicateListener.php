@@ -4,6 +4,7 @@ namespace Oro\Bundle\PricingBundle\EventListener;
 
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Event\ProductDuplicateAfterEvent;
 
 class ProductDuplicateListener
@@ -17,6 +18,11 @@ class ProductDuplicateListener
      * @var string
      */
     protected $productPriceClass;
+
+    /**
+     * @var ShardManager
+     */
+    protected $shardManager;
 
     /**
      * @param DoctrineHelper $doctrineHelper
@@ -44,13 +50,13 @@ class ProductDuplicateListener
         $product = $event->getProduct();
         $sourceProduct = $event->getSourceProduct();
 
-        $productPrices = $this->getProductPriceRepository()->getPricesByProduct($sourceProduct);
+        $productPrices = $this->getProductPriceRepository()->getPricesByProduct($this->shardManager, $sourceProduct);
         $objectManager = $this->doctrineHelper->getEntityManager($this->productPriceClass);
 
         foreach ($productPrices as $productPrice) {
             $productPriceCopy = clone $productPrice;
             $productPriceCopy->setProduct($product);
-            $objectManager->persist($productPriceCopy);
+            $this->getProductPriceRepository()->save($this->shardManager, $productPriceCopy);
         }
 
         $objectManager->flush();
@@ -62,5 +68,13 @@ class ProductDuplicateListener
     protected function getProductPriceRepository()
     {
         return $this->doctrineHelper->getEntityRepository($this->productPriceClass);
+    }
+
+    /**
+     * @param ShardManager $shardManager
+     */
+    public function setShardManager(ShardManager $shardManager)
+    {
+        $this->shardManager = $shardManager;
     }
 }

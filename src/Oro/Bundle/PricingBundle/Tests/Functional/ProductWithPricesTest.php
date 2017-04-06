@@ -2,13 +2,12 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Functional;
 
-use Symfony\Component\DomCrawler\Form;
-
 use Oro\Bundle\LocaleBundle\Entity\Localization;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
-use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 use Oro\Bundle\PricingBundle\Entity\PriceList;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
+use Symfony\Component\DomCrawler\Form;
 
 class ProductWithPricesTest extends WebTestCase
 {
@@ -48,7 +47,7 @@ class ProductWithPricesTest extends WebTestCase
     }
 
     /**
-     * @return int
+     * @return string
      */
     public function testCreate()
     {
@@ -110,7 +109,7 @@ class ProductWithPricesTest extends WebTestCase
             $formData['names']['values']['localizations'][$localization->getId()]['fallback'] = FallbackType::SYSTEM;
         }
         $crawler = $this->client->request($form->getMethod(), $form->getUri(), [
-            'input_action'        => 'save_and_stay',
+            'input_action' => 'save_and_stay',
             'oro_product' => $formData
         ]);
         $result = $this->client->getResponse();
