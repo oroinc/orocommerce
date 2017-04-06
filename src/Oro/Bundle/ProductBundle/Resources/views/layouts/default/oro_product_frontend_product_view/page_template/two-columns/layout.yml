@@ -1,0 +1,13 @@
+layout:
+    actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
+        - '@add':
+            id: attribute_group_specifications
+            parentId: product_view_attributes_rest
+            blockType: block
+        - '@add':
+            id: attribute_group_video
+            parentId: product_view_attributes_rest
+            blockType: block
+    conditions: '!context["is_mobile"]'

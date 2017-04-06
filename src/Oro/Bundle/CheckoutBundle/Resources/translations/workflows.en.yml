@@ -74,44 +74,80 @@ oro:
             transition:
                 __start__:
                     label: 'Create Order'
+                    warning_message: ''
                 start_from_shoppinglist:
                     label: 'Create Order'
+                    warning_message: ''
                 start_from_quickorderform:
                     label: 'Create Order'
+                    warning_message: ''
                 continue_to_shipping_address:
                     label: Continue
+                    warning_message: ''
                     attribute:
                         save_billing_address:
                             label: 'Save address'
                         ship_to_billing_address:
                             label: 'Ship to this address'
+#                        billing_address:
+#                            label: ''
                         state_token:
-                            label: 'State token'
+                            label: ''
                 continue_to_shipping_method:
                     label: Continue
+                    warning_message: ''
                     attribute:
                         save_shipping_address:
                             label: 'Save address'
                         ship_to_billing_address:
                             label: 'Use billing address'
+#                        shipping_address:
+#                            label: ''
+                        state_token:
+                            label: ''
                 continue_to_payment:
                     label: Continue
+                    warning_message: ''
+                    attribute:
+                        shipping_method:
+                            label: ''
+                        shipping_method_type:
+                            label: ''
+                        state_token:
+                            label: ''
                 continue_to_order_review:
                     label: Continue
+                    warning_message: ''
+                    attribute:
+                        payment_method:
+                            label: ''
+                        payment_save_for_later:
+                            label: ''
+                        payment_validate:
+                            label: ''
+                        state_token:
+                            label: ''
                 back_to_billing_address:
                     label: 'Edit Billing Information'
+                    warning_message: ''
                 back_to_shipping_address:
                     label: 'Edit Shipping Information'
+                    warning_message: ''
                 back_to_shipping_address_on_fail_address:
                     label: 'Edit Shipping Information'
+                    warning_message: ''
                 back_to_shipping_method:
                     label: 'Edit Shipping Method'
+                    warning_message: ''
                 back_to_payment:
                     label: 'Edit Payment'
+                    warning_message: ''
                 verify_payment:
                     label: 'Verify Payment'
+                    warning_message: ''
                 place_order:
                     label: 'Submit Order'
+                    warning_message: ''
                     attribute:
                         remove_source:
                             label: 'Remove Source Entity'
@@ -125,5 +161,7 @@ oro:
                             label: 'State token'
                 finish_checkout:
                     label: 'Finish checkout'
+                    warning_message: ''
                 payment_error:
                     label: 'Payment error'
+                    warning_message: ''

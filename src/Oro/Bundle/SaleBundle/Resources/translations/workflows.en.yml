@@ -39,6 +39,9 @@ oro.workflow:
             send_to_customer_transition:
                 label: 'Send to Customer'
                 warning_message: ''
+                attribute:
+                    email:
+                        label: 'Email'
             cancel_transition:
                 label: 'Cancel'
                 warning_message: ''
@@ -48,6 +51,11 @@ oro.workflow:
             create_new_quote_transition:
                 label: 'Create new Quote'
                 warning_message: ''
+                attribute:
+                    copy_notes:
+                        label: 'Copy All Notes'
+                    expire_quote:
+                        label: 'Expire Existing Quote'
             accept_transition:
                 label: 'Accept'
                 warning_message: ''

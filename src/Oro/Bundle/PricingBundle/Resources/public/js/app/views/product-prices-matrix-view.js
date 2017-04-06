@@ -14,23 +14,29 @@ define(function(require) {
 
         elements: {
             fields: '[data-name="field__quantity"]:enabled',
+            fieldsColumn: '[data-name="field__quantity"]:enabled',
             totalQty: '[data-role="total-quantity"]',
+            totalRowQty: '[data-footer-row-index]',
             totalPrice: '[data-role="total-price"]',
             submitButtons: '[data-shoppingList],[data-toggle="dropdown"]'
         },
 
         elementsEvents: {
-            'fields': ['input', 'setTotal']
+            'fields': ['input', 'updateTotals']
         },
 
         total: {
             price: 0,
-            quantity: 0
+            commonQuantity: 0,
+            rowQuantity: 0,
+            rowQuantityIndex: 0
         },
 
         prices: null,
 
         unit: null,
+
+        minValue: 1,
 
         /**
          * @inheritDoc
@@ -47,6 +53,9 @@ define(function(require) {
         dispose: function() {
             delete this.prices;
             delete this.total;
+            delete this.unit;
+            delete this.minValue;
+
             this.disposeElements();
             ProductPricesMatrixView.__super__.dispose.apply(this, arguments);
         },
@@ -69,40 +78,67 @@ define(function(require) {
 
          * @param event
          */
-        setTotal: function(event) {
+        updateTotals: _.debounce(function(event) {
+            var self = this;
+            var currentRowId = $(event.currentTarget).closest('[data-row-index]').data('row-index');
+
             this.total = _.reduce(this.getElement('fields'), function(total, field) {
-                if (_.isEmpty(field.value) || !_.isNumber(+field.value)) {
+                var $this = $(field);
+                var $parent = $this.closest('[data-row-index]');
+                var productId = $parent.data('product-id');
+                var validValue = self.getValidValue(field.value);
+
+                if ($parent.data('row-index') === currentRowId) {
+                    total.rowQuantity += validValue;
+                }
+
+                if (_.isEmpty(field.value)) {
                     return total;
                 }
 
-                var productId = $(field).closest('[data-product-id]').data('product-id');
+                $this.val(validValue);
 
-                total.quantity += parseInt(field.value, 10) || 0;
-                total.price += PricesHelper.calcTotalPrice(this.prices[productId], this.unit, field.value);
+                total.commonQuantity += validValue;
+                total.price += PricesHelper.calcTotalPrice(self.prices[productId], self.unit, field.value);
 
                 return total;
             }, {
                 price: 0,
-                quantity: 0
+                commonQuantity: 0,
+                rowQuantity: 0,
+                rowQuantityIndex: currentRowId
             }, this);
 
             this.render();
+        }, 150),
+
+        getValidValue: function(value) {
+            var val = parseInt(value, 10) || 0;
+
+            if (_.isEmpty(value)) {
+                return 0;
+            } else {
+                return val < this.minValue ? this.minValue : val;
+            }
         },
 
         /**
          * Render actual view
          */
         render: function() {
-            if (this.total.quantity === 0) {
-                this.getElement('submitButtons').addClass('disabled').data('disabled', true);
-            } else {
-                this.getElement('submitButtons').removeClass('disabled').data('disabled', false);
-            }
+            this.getElement('submitButtons')
+                .toggleClass('disabled', this.total.commonQuantity === 0)
+                .data('disabled', this.total.commonQuantity === 0);
 
-            this.getElement('totalQty').text(this.total.quantity);
+            this.getElement('totalQty').text(this.total.commonQuantity);
             this.getElement('totalPrice').text(
                 NumberFormatter.formatCurrency(this.total.price)
             );
+
+            this.getElement('totalRowQty')
+                .filter('[data-footer-row-index=' + this.total.rowQuantityIndex + ']')
+                .toggleClass('valid', this.total.rowQuantity > 0)
+                .html(this.total.rowQuantity);
         }
     }));
     return ProductPricesMatrixView;

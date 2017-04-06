@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\PricingBundle\Tests\Unit\EventListener;
 
-use Symfony\Component\Translation\TranslatorInterface;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\DataGridBundle\Datagrid\Common\DatagridConfiguration;
 use Oro\Bundle\DataGridBundle\Datagrid\DatagridInterface;
@@ -16,11 +14,19 @@ use Oro\Bundle\PricingBundle\Entity\ProductPrice;
 use Oro\Bundle\PricingBundle\Entity\Repository\ProductPriceRepository;
 use Oro\Bundle\PricingBundle\EventListener\ProductPriceDatagridListener;
 use Oro\Bundle\PricingBundle\Model\PriceListRequestHandler;
+use Oro\Bundle\PricingBundle\ORM\Walker\PriceShardWalker;
+use Oro\Bundle\PricingBundle\Sharding\ShardManager;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Symfony\Component\Translation\TranslatorInterface;
 
 class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
 {
+    /**
+     * @var ShardManager|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $shardManager;
+
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|TranslatorInterface
      */
@@ -62,6 +68,8 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
         $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
             ->disableOriginalConstructor()
             ->getMock();
+        $this->shardManager = $this->createMock(ShardManager::class);
+
         $this->listener = $this->createListener();
     }
 
@@ -73,7 +81,8 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
         return new ProductPriceDatagridListener(
             $this->translator,
             $this->priceListRequestHandler,
-            $this->doctrineHelper
+            $this->doctrineHelper,
+            $this->shardManager
         );
     }
 
@@ -251,7 +260,8 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
                                     ],
                                 ],
                             ],
-                        ]
+                        ],
+                        'hints' => [PriceShardWalker::HINT_PRICE_SHARD],
                     ]
                 ],
             ],
@@ -288,7 +298,7 @@ class ProductPriceDatagridListenerTest extends \PHPUnit_Framework_TestCase
             $this->setUpRepository()
                 ->expects($this->any())
                 ->method('findByPriceListIdAndProductIds')
-                ->with($priceListId, $productIds)
+                ->with($this->shardManager, $priceListId, $productIds)
                 ->willReturn($prices);
         }
 

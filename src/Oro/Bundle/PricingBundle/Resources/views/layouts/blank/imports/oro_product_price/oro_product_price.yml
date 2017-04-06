@@ -17,18 +17,16 @@ layout:
                     blockType: block
                 __product_price_listed:
                     blockType: block
-                __product_price_msrp:
-                    blockType: block
-                    options:
-                        visible: false
                 __product_price_hint:
+                    blockType: container
+                __product_price_hint_content:
                     blockType: block
             tree:
                 __root:
                     __product_price_container:
-                        __product_price:
-                            __product_price_value: ~
-                            __product_price_not_found: ~
-                        __product_price_hint: ~
-                        __product_price_listed: ~
-                        __product_price_msrp: ~
+                        __product_price_hint:
+                            __product_price_hint_content: ~
+                            __product_price:
+                                __product_price_value: ~
+                                __product_price_not_found: ~
+                            __product_price_listed: ~

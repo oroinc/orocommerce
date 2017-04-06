@@ -2,76 +2,70 @@
 
 .shopping-lists {
     &__content {
-        position: relative;
+        position: $shopping-lists-content-position;
+        display: $shopping-lists-content-display;
+        justify-content: $shopping-lists-content-justify-content;
+        align-items: $shopping-lists-content-align-items;
 
-        height: auto;
+        padding: $shopping-lists-content-inner-offset;
 
-        padding: 7px 13px;
+        width: $shopping-lists-content-width;
+        height: $shopping-lists-content-height;
+        min-height: $shopping-lists-content-min-height;
 
-        font-size: $base-font-size--s;
-        text-align: left;
+        font-size: $shopping-lists-content-font-size;
 
-        color: #5b7a59;
-        border-radius: 3px;
-        background: #d9e8d1;
+        color: $shopping-lists-content-color;
+        background: $shopping-lists-content-background;
+        border-radius: $shopping-lists-content-border-radius;
     }
 
     &__text {
-        display: table;
-        table-layout: fixed;
-        width: 100%;
-        margin-bottom: 5px;
-        padding-left: 25px;
+        display: $shopping-lists-text-display;
 
-        &:last-child {
-            margin-bottom: 0;
+        padding: $shopping-lists-text-offset;
+
+        text-align: $shopping-lists-text-text-align;
+        justify-content: $shopping-lists-text-justify-content;
+        word-break: $shopping-lists-text-word-break;
+    }
+
+
+    &__cart {
+        &:before {
+            font-size: $shopping-lists-cart-font-size;
         }
+
+        opacity: $shopping-lists-icons-opacity;
+
+        @include fa-icon($shopping-lists-cart-icon);
     }
 
-    &__description-row,
-    &__ui-row {
-        display: table-cell;
-        vertical-align: top;
-    }
+    &__edit {
+        position: $shopping-lists-edit-position;
 
-    &__description-row {
-        width: 100%;
-        padding-right: 5px;
-    }
+        right: $shopping-lists-edit-right;
 
-    &__ui-row {
-        width: 30px;
+        font-size: $shopping-lists-edit-font-size;
 
-        text-align: right;
-    }
+        opacity: $shopping-lists-icons-opacity;
 
-    &__icon {
-        position: absolute;
-        top: 7px;
-        left: 13px;
-
-        display: block;
-        width: 15px;
-        height: 19px;
-
-        // background: url(__icon/shopping-lists__icon.png) 0 0 no-repeat;
-        background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAA8AAAATCAYAAABPwleqAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAVlJREFUeNrEk8ErxEEUx3c1J9UPJxe4cBFXlYukKClyxF9AwtHNmYtY/4FUCilAqi1smxI3railkqMLiPr5vO0t0/Nbm7baV5/mTdN33sz7zsTDMIwViuWNpSxDI0yPD00s2PWKWAlRPnE8sb44z9is8znuluKuo+RNMAVVcABpWGH9Ji920ActOpcGpSAJsyqU6BWxL8xVlm5TqYP8FD7hWcWTsA2tMAM7Os9veOU0uVCh08UBCKAfOiEDx55QIsg1jOO8MlyafnTBGjzCoRH+6vZZREPbtVlBMavS/3TqwxWpbONNm7kHm774Gp6g2ghuYVcFSe3Pj1XeR5D79ejuW2KN9dYPZ+YZFVfCoMCGhbRZK36Ae6j960mDHPfl+9hUqGc4gTp5XRw3Yf62FNqHblhlfcS3Sl5Vg9o3FlGxTYUSw2xW44ul6rvmRxFiceNO83Nx5kuAAQDNe2iMFRDafQAAAABJRU5ErkJggg==) 0 0 no-repeat;
-    }
-
-    &__count {
-        text-decoration: underline;
+        @include fa-icon($shopping-lists-edit-icon);
     }
 
     &__label {
-      margin-right: 5px;
+      margin-right: $shopping-lists-text-label-margin-right;
     }
 
-    &__link {
-        display: block;
-        margin-left: 25px;
+    &__area-trigger {
+        display: $shopping-lists-text-area-trigger-display;
+        position: $shopping-lists-text-area-trigger-position;
 
-        font-size: $base-font-size - 2px;
+        width: $shopping-lists-text-area-trigger-width;
+        height: $shopping-lists-text-area-trigger-height;
+        left: $shopping-lists-text-area-trigger-left;
+        top: $shopping-lists-text-area-trigger-top;
 
-        cursor: pointer;
+        cursor: $shopping-lists-text-area-trigger-cursor;
     }
 }
