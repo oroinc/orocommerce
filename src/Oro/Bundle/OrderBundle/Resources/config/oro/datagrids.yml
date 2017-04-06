@@ -715,9 +715,9 @@ datagrids:
                 sku:
                     data_name: product.sku
                 cDate:
-                    data_name: calendarDate.date
+                    data_name: cDate
                 dateGrouping:
-                    data_name: calendarDate.date
+                    data_name: cDate
                 qtySold:
                     data_name: qtySold
                 productName:
