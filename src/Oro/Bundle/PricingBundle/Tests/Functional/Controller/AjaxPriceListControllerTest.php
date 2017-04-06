@@ -43,7 +43,7 @@ class AjaxPriceListControllerTest extends WebTestCase
         $this->assertEquals([$priceList], $defaultPriceLists);
     }
 
-    public function testGetPriceListCurrencyList()
+    public function testGetPriceListCurrencyListAction()
     {
         /** @var PriceList $priceList */
         $priceList = $this->getReference('price_list_1');

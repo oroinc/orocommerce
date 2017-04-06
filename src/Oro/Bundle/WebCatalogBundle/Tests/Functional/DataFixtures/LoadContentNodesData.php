@@ -21,7 +21,7 @@ class LoadContentNodesData extends AbstractFixture implements DependentFixtureIn
     /**
      * @var array
      */
-    protected static $data = [
+    public static $data = [
         LoadWebCatalogData::CATALOG_1 => [
             self::CATALOG_1_ROOT => [
                 'parent' => null,

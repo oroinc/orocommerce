@@ -74,7 +74,7 @@
                         <th></th>
                     </tr>
                     </thead>
-                    <tbody class="pricing-price-list-items sortable-wrapper" data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %} data-content>
+                    <tbody class="sortable-wrapper" data-last-index="{{ form.children|length}}" data-prototype-name="{{ prototype_name }}"{% if prototype_html is defined %} data-prototype="{{ prototype_html|escape }}"{% endif %} data-content>
                     {% if form.children|length %}
                         {% for child in form.children %}
                             {{ _self.oro_pricing_price_list_collection_prototype(child) }}
@@ -99,7 +99,7 @@
         {% set name = widget.vars.full_name %}
     {% endif %}
     <tr data-content="{{ name }}" data-validation-optional-group {{ block('widget_container_attributes') }}
-        class="pricing-price-list pricing-price-list-item">
+        class="pricing-price-list">
         {{ form_widget(form) }}
     </tr>
 {% endmacro %}
@@ -116,7 +116,7 @@
         </td>
         <td>
             {{ form_widget(form._position) }}
-            <span class="add-on ui-sortable-handle price-list-sortable" data-name="sortable-handle">
+            <span class="sortable-handle add-on ui-sortable-handle" data-name="sortable-handle">
                 <i class="fa-arrows-v handle"></i></span>
         </td>
         <td>
@@ -213,7 +213,7 @@
                         {% endfor %}
                     </tr>
                     </thead>
-                    <tbody class="pricing-price-list-items" data-last-index="{{ form.children|length }}">
+                    <tbody data-last-index="{{ form.children|length }}">
                     {% if form.children|length %}
                         {% for unit, unitLabel in form.vars.units %}
                             <tr>

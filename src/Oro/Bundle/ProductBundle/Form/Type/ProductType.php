@@ -5,6 +5,7 @@ namespace Oro\Bundle\ProductBundle\Form\Type;
 use Oro\Bundle\EntityBundle\Entity\EntityFieldFallbackValue;
 use Oro\Bundle\EntityBundle\Fallback\Provider\SystemConfigFallbackProvider;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormEvent;
@@ -190,6 +191,11 @@ class ProductType extends AbstractType
                     'source_field' => 'names'
                 ]
             )
+            ->add('featured', ChoiceType::class, [
+                'label' => 'oro.product.featured.label',
+                'choices' => ['oro.product.featured.no', 'oro.product.featured.yes'],
+                'empty_value' => false,
+            ])
             ->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener'])
             ->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetDataListener'])
             ->addEventListener(FormEvents::SUBMIT, [$this, 'submitListener']);
@@ -300,7 +306,6 @@ class ProductType extends AbstractType
         $resolver->setDefaults([
             'data_class' => $this->dataClass,
             'intention' => 'product',
-            'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
             'enable_attributes' => true,
             'enable_attribute_family' => true,
         ]);

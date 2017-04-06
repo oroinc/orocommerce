@@ -4,22 +4,22 @@ namespace Oro\Bundle\ShippingBundle\Layout\DataProvider;
 
 use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodRegistry;
-use Oro\Bundle\ShippingBundle\Provider\ShippingPriceProvider;
+use Oro\Bundle\ShippingBundle\Provider\Price\ShippingPriceProviderInterface;
 
 class ShippingMethodsProvider
 {
-    /** @var ShippingPriceProvider */
+    /** @var ShippingPriceProviderInterface */
     protected $shippingPriceProvider;
 
     /** @var ShippingMethodRegistry */
     protected $registry;
 
     /**
-     * @param ShippingPriceProvider $shippingPriceProvider
+     * @param ShippingPriceProviderInterface $shippingPriceProvider
      * @param ShippingMethodRegistry $registry
      */
     public function __construct(
-        ShippingPriceProvider $shippingPriceProvider,
+        ShippingPriceProviderInterface $shippingPriceProvider,
         ShippingMethodRegistry $registry
     ) {
         $this->shippingPriceProvider = $shippingPriceProvider;

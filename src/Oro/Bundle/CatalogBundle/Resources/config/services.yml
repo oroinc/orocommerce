@@ -187,9 +187,10 @@ services:
         arguments:
             - '@oro_catalog.manager.product_index_scheduler'
             - '@property_accessor'
+            - '@oro_entity.doctrine.field_updates_checker'
+            - '@?oro_web_catalog.provider.web_catalog_usage_provider'
         tags:
             - { name: doctrine.event_listener, event: onFlush }
-            - { name: kernel.event_listener, event: oro.form.update_handler.after_entity_flush, method: onFormAfterFlush }
 
     oro_catalog.visibility.default_product_options:
         class: 'Oro\Bundle\CatalogBundle\Visibility\BasicCategoryDefaultProductUnitOptionsVisibility'

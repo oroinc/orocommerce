@@ -21,3 +21,9 @@ layout:
             options:
                 rel: 'canonical'
                 href: '=data["category"].getCurrentCategory()!=null ? data["canonical"].getUrl(data["category"].getCurrentCategory()) : null'
+        - '@add':
+            id: entity_localized_urls
+            parentId: head
+            blockType: seo_localized_links_container
+            options:
+                linkItems: '=data["web_catalog_content_variant"].getFromRequest()!=null ? data["seo_localized_links"].getAlternates(data["web_catalog_content_variant"].getFromRequest()) : (data["category"].getCurrentCategory()!=null ? data["seo_localized_links"].getAlternates(data["category"].getCurrentCategory()) : [])'

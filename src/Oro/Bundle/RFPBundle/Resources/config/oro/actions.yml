@@ -100,6 +100,9 @@ operations:
         routes:
             - oro_rfp_frontend_request_index
         acl_resource: [CREATE, entity:commerce@Oro\Bundle\RFPBundle\Entity\Request]
+        button_options:
+            class: btn--info
+            icon: fa-plus fa--small
         order: 10
         actions:
             - '@redirect':
@@ -173,18 +176,20 @@ action_groups:
                 target: $.request
                 attribute: $.requestCopy
                 settings:
-                  - [[setNull], [propertyName, [id]]]
-                  - [[collection], [propertyType, ['Doctrine\Common\Collections\Collection']]]
-                  - [[keep], [propertyName, [customerUser]]]
-                  - [[keep], [propertyName, [customer]]]
-                  - [[keep], [propertyName, [organization]]]
-                  - [[keep], [propertyName, [owner]]]
-                  - [[keep], [propertyName, [internal_status]]]
-                  - [[keep], [propertyName, [customer_status]]]
-                  - [[keep], [property, ["%oro_rfp.entity.request_product.class%", product]]]
-                  - [[keep], [property, ["%oro_rfp.entity.request_product_item.class%", productUnit]]]
-            - '@assign_value': [$.entityCopy.createdAt, $.currentDatetime]
-            - '@assign_value': [$.entityCopy.updatedAt, $.currentDatetime]
+                    - [[setNull], [propertyName, [id]]]
+                    - [[keep], [propertyName, [customerUser]]]
+                    - [[keep], [propertyName, [customer]]]
+                    - [[keep], [propertyName, [organization]]]
+                    - [[keep], [propertyName, [owner]]]
+                    - [[keep], [propertyName, [internal_status]]]
+                    - [[keep], [propertyName, [customer_status]]]
+                    - [[keep], [propertyName, [assignedUsers]]]
+                    - [[keep], [propertyName, [assignedCustomerUsers]]]
+                    - [[keep], [property, ["%oro_rfp.entity.request_product.class%", product]]]
+                    - [[keep], [property, ["%oro_rfp.entity.request_product_item.class%", productUnit]]]
+                    - [[collection], [propertyType, ['Doctrine\Common\Collections\Collection']]]
+            - '@assign_value': [$.requestCopy.createdAt, $.currentDatetime]
+            - '@assign_value': [$.requestCopy.updatedAt, $.currentDatetime]
             - '@flush_entity':
                 conditions:
                     '@equal': [true, $.flush]

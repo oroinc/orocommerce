@@ -240,6 +240,8 @@ class CustomerGroupCategoryResolvedCacheBuilderTest extends AbstractProductResol
 
     /**
      * @return array
+     *
+     * @SuppressWarnings(PHPMD.ExcessiveMethodLength)
      */
     public function buildCacheDataProvider()
     {
@@ -265,10 +267,22 @@ class CustomerGroupCategoryResolvedCacheBuilderTest extends AbstractProductResol
                         'customerGroup' => 'customer_group.group1',
                     ],
                     [
+                        'category' => 'category_1_2_3',
+                        'visibility' => CustomerGroupCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                        'source' => CustomerGroupCategoryVisibilityResolved::SOURCE_STATIC,
+                        'customerGroup' => 'customer_group.anonymous',
+                    ],
+                    [
                         'category' => 'category_1_2_3_4',
                         'visibility' => CustomerGroupCategoryVisibilityResolved::VISIBILITY_HIDDEN,
                         'source' => CustomerGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
                         'customerGroup' => 'customer_group.group1',
+                    ],
+                    [
+                        'category' => 'category_1_2_3_4',
+                        'visibility' => CustomerGroupCategoryVisibilityResolved::VISIBILITY_HIDDEN,
+                        'source' => CustomerGroupCategoryVisibilityResolved::SOURCE_PARENT_CATEGORY,
+                        'customerGroup' => 'customer_group.anonymous',
                     ],
                     [
                         'category' => 'category_1_5_6',

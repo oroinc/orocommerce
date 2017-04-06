@@ -98,6 +98,6 @@ class ProductUpdateHandler extends UpdateHandler
      */
     protected function isSaveAndDuplicateAction()
     {
-        return $this->request->get(Router::ACTION_PARAMETER) === self::ACTION_SAVE_AND_DUPLICATE;
+        return $this->getCurrentRequest()->get(Router::ACTION_PARAMETER) === self::ACTION_SAVE_AND_DUPLICATE;
     }
 }

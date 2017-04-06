@@ -1,0 +1,42 @@
+// @theme: default
+
+.product-price {
+    &__value {
+        color: $product-price-value-color;
+    }
+
+    &__main-box {
+        font-size: $product-price-main-box-font-size;
+    }
+
+    &__hint {
+        display: $product-price-hint-display;
+    }
+
+    //Modifier for simple view(only main price)
+    &--simple & {
+        &__label {
+            font-size: $product-price-simple-label-font-size;
+        }
+
+        &__value {
+            font-size: $product-price-simple-value-font-size;
+        }
+
+        &__listed-value {
+            color: $product-price-simple-listed-value-color;
+        }
+    }
+}
+
+@include breakpoint('tablet') {
+    .product-price {
+        &--simple {
+            display: $product-price-simple-display-tablet;
+
+            margin-top: $product-price-simple-margin-top-tablet;
+
+            text-align: $product-price-simple-text-align-tablet;
+        }
+    }
+}

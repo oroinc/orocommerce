@@ -60,7 +60,8 @@
 
     {% set generalData = generalData|merge([
         form_row(form.status),
-        form_row(form.slugPrototypesWithRedirect)
+        form_row(form.slugPrototypesWithRedirect),
+        form_row(form.featured)
     ]) %}
 
     {% if oro_is_product_primary_unit_visible() %}

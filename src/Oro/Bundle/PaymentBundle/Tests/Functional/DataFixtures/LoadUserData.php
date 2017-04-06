@@ -3,9 +3,8 @@
 namespace Oro\Bundle\PaymentBundle\Tests\Functional\DataFixtures;
 
 use Oro\Bundle\TestFrameworkBundle\Migrations\Data\ORM\AbstractLoadMultipleUserData;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
-class LoadUserData extends AbstractLoadMultipleUserData implements ContainerAwareInterface
+class LoadUserData extends AbstractLoadMultipleUserData
 {
     const USER_VIEWER = 'payment-user-viewer';
     const USER_EDITOR = 'payment-user-editor';
@@ -22,35 +21,70 @@ class LoadUserData extends AbstractLoadMultipleUserData implements ContainerAwar
         self::ROLE_VIEW => [
             [
                 'class' => 'oro_payment.entity.payment_methods_configs_rule.class',
-                'acls'  => ['VIEW_SYSTEM'],
+                'acls'  => [
+                    [
+                        AbstractLoadMultipleUserData::ACL_PERMISSION => 'VIEW',
+                        AbstractLoadMultipleUserData::ACL_LEVEL => 'SYSTEM',
+                    ],
+                ],
             ],
             [
                 'class' => 'oro_rule.entity.rule.class',
-                'acls'  => ['VIEW_SYSTEM'],
+                'acls'  => [
+                    [
+                        AbstractLoadMultipleUserData::ACL_PERMISSION => 'VIEW',
+                        AbstractLoadMultipleUserData::ACL_LEVEL => 'SYSTEM',
+                    ],
+                ],
             ],
             [
                 'class' => 'oro_integration.entity.class',
-                'acls'  => ['VIEW_SYSTEM'],
+                'acls'  => [
+                    [
+                        AbstractLoadMultipleUserData::ACL_PERMISSION => 'VIEW',
+                        AbstractLoadMultipleUserData::ACL_LEVEL => 'SYSTEM',
+                    ],
+                ],
             ],
         ],
         self::ROLE_EDIT => [
             [
                 'class' => 'oro_payment.entity.payment_methods_configs_rule.class',
-                'acls'  => ['EDIT_SYSTEM'],
+                'acls'  => [
+                    [
+                        AbstractLoadMultipleUserData::ACL_PERMISSION => 'EDIT',
+                        AbstractLoadMultipleUserData::ACL_LEVEL => 'SYSTEM',
+                    ],
+                ],
             ],
             [
                 'class' => 'oro_integration.entity.class',
-                'acls'  => ['EDIT_SYSTEM'],
+                'acls'  => [
+                    [
+                        AbstractLoadMultipleUserData::ACL_PERMISSION => 'EDIT',
+                        AbstractLoadMultipleUserData::ACL_LEVEL => 'SYSTEM',
+                    ],
+                ],
             ],
         ],
         self::ROLE_CREATE => [
             [
                 'class' => 'oro_payment.entity.payment_methods_configs_rule.class',
-                'acls'  => ['CREATE_SYSTEM'],
+                'acls'  => [
+                    [
+                        AbstractLoadMultipleUserData::ACL_PERMISSION => 'CREATE',
+                        AbstractLoadMultipleUserData::ACL_LEVEL => 'SYSTEM',
+                    ],
+                ],
             ],
             [
                 'class' => 'oro_integration.entity.class',
-                'acls'  => ['CREATE_SYSTEM'],
+                'acls'  => [
+                    [
+                        AbstractLoadMultipleUserData::ACL_PERMISSION => 'CREATE',
+                        AbstractLoadMultipleUserData::ACL_LEVEL => 'SYSTEM',
+                    ],
+                ],
             ],
         ],
     ];

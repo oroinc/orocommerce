@@ -1,0 +1,3 @@
+{% set action = record.getValue('action') %}
+
+{{ ('oro.payment.paymenttransaction.types.' ~ action ~ '.label')|trans }}

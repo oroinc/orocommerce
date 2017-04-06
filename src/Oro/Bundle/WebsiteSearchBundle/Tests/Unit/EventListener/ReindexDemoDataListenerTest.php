@@ -22,7 +22,7 @@ class ReindexDemoDataListenerTest extends \PHPUnit_Framework_TestCase
     public function setUp()
     {
         $this->dispatcher = $this->getMockBuilder(EventDispatcher::class)->getMock();
-        $this->listener   = new ReindexDemoDataListener($this->dispatcher);
+        $this->listener = new ReindexDemoDataListener($this->dispatcher);
     }
 
     /**

@@ -22,3 +22,12 @@ oro:
                     label: '{{ translatedMethod }}, {{ translatedMethodType }}: {{ price }}'
                 method_type_and_price:
                     label: '{{ translatedMethodType }}: {{ price }}'
+        integration:
+            deactivate:
+                message: Some shipping methods in <a href="{{ linkGrid }}" target="_blank">the following</a> shipping rules depend on the integration that is being disabled. The affected shipping methods will be disabled. Shipping rule will also be disabled if none of its shipping methods remain enabled.
+                title: Deactivate integration.
+                button.okText: Deactivate
+            delete:
+                message: Some shipping methods in <a href="{{ linkGrid }}" target="_blank">the following</a> shipping rules depend on the integration that is being deleted. The affected shipping methods will be disabled. Shipping rule will also be disabled if none of its shipping methods remain enabled.
+                title: Delete integration.
+                button.okText: Delete

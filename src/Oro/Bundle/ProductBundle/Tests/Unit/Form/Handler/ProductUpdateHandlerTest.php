@@ -17,10 +17,11 @@ use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\ActionBundle\Model\ActionGroup;
 use Oro\Bundle\ActionBundle\Model\ActionGroupRegistry;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
-use Oro\Bundle\UIBundle\Route\Router;
+use Oro\Bundle\FormBundle\Tests\Unit\Model\UpdateHandlerTest;
 use Oro\Bundle\ProductBundle\Form\Handler\ProductUpdateHandler;
+use Oro\Bundle\UIBundle\Route\Router;
 
-class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
+class ProductUpdateHandlerTest extends UpdateHandlerTest
 {
     const PRODUCT_ID = 1;
 
@@ -70,21 +71,8 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->request = $this->getMockBuilder('Symfony\Component\HttpFoundation\Request')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->session = $this->getMockBuilder('Symfony\Component\HttpFoundation\Session\Session')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->router = $this->getMockBuilder('Oro\Bundle\UIBundle\Route\Router')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->doctrineHelper = $this->getMockBuilder('Oro\Bundle\EntityBundle\ORM\DoctrineHelper')
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->eventDispatcher = $this->getMockBuilder('Symfony\Component\EventDispatcher\EventDispatcherInterface')
-            ->disableOriginalConstructor()
-            ->getMock();
+        parent::setUp();
+
         $this->translator = $this->getMockBuilder('Symfony\Component\Translation\TranslatorInterface')
             ->disableOriginalConstructor()
             ->getMock();
@@ -104,11 +92,11 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
             ->willReturn('generated_redirect_url');
 
         $this->handler = new ProductUpdateHandler(
-            $this->request,
+            $this->requestStack,
             $this->session,
             $this->router,
             $this->doctrineHelper,
-            $this->eventDispatcher
+            $this->formHandler
         );
         $this->handler->setTranslator($this->translator);
         $this->handler->setActionGroupRegistry($this->actionGroupRegistry);
@@ -146,7 +134,7 @@ class ProductUpdateHandlerTest extends \PHPUnit_Framework_TestCase
             ->with(Router::ACTION_PARAMETER)
             ->will($this->returnValue(ProductUpdateHandler::ACTION_SAVE_AND_DUPLICATE));
 
-        $this->doctrineHelper->expects($this->once())
+        $this->doctrineHelper->expects($this->any())
             ->method('getEntityManager')
             ->with($entity)
             ->will($this->returnValue($this->entityManager));

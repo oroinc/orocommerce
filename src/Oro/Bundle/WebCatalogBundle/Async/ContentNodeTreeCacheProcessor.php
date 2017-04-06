@@ -13,9 +13,16 @@ use Oro\Component\MessageQueue\Transport\MessageInterface;
 use Oro\Component\MessageQueue\Transport\SessionInterface;
 use Oro\Component\MessageQueue\Util\JSON;
 use Psr\Log\LoggerInterface;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
+use Symfony\Component\OptionsResolver\Options;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ContentNodeTreeCacheProcessor implements MessageProcessorInterface, TopicSubscriberInterface
 {
+    const JOB_ID = 'jobId';
+    const CONTENT_NODE = 'contentNode';
+    const SCOPE = 'scope';
+
     /**
      * @var ContentNodeTreeDumper
      */
@@ -35,6 +42,11 @@ class ContentNodeTreeCacheProcessor implements MessageProcessorInterface, TopicS
      * @var JobRunner
      */
     private $jobRunner;
+
+    /**
+     * @var OptionsResolver
+     */
+    private $resolver;
 
     /**
      * @param JobRunner $jobRunner
@@ -59,52 +71,27 @@ class ContentNodeTreeCacheProcessor implements MessageProcessorInterface, TopicS
      */
     public function process(MessageInterface $message, SessionInterface $session)
     {
-        $data = JSON::decode($message->getBody());
+        try {
+            $data = $this->getOptionsResolver()->resolve(JSON::decode($message->getBody()));
+            $result = $this->jobRunner->runDelayed($data[self::JOB_ID], function () use ($data, $message) {
+                $this->dumper->dump($data[self::CONTENT_NODE], $data[self::SCOPE]);
 
-        $result = $this->jobRunner->runDelayed($data['jobId'], function () use ($data, $message) {
-            try {
-                if (empty($data['scope'])) {
-                    $this->logger->error(
-                        'Message is invalid. Key "scope" was not found.',
-                        ['message' => $message->getBody()]
-                    );
+                return true;
+            });
 
-                    return false;
-                }
-                $scope = $this->registry
-                    ->getManagerForClass(Scope::class)
-                    ->find(Scope::class, $data['scope']);
+            return $result ? self::ACK : self::REJECT;
+        } catch (\Exception $e) {
+            $this->logger->error(
+                'Unexpected exception occurred during queue message processing',
+                [
+                    'message' => $message->getBody(),
+                    'topic' => Topics::CALCULATE_CONTENT_NODE_TREE_BY_SCOPE,
+                    'exception' => $e
+                ]
+            );
 
-                if (empty($data['contentNode'])) {
-                    $this->logger->error(
-                        'Message is invalid. Key "contentNode" was not found.',
-                        ['message' => $message->getBody()]
-                    );
-
-                    return false;
-                }
-                $contentNode = $this->registry
-                    ->getManagerForClass(ContentNode::class)
-                    ->find(ContentNode::class, $data['contentNode']);
-
-                $this->dumper->dump($contentNode, $scope);
-            } catch (\Exception $e) {
-                $this->logger->error(
-                    'Unexpected exception occurred during queue message processing',
-                    [
-                        'message' => $message->getBody(),
-                        'topic' => Topics::CALCULATE_CONTENT_NODE_TREE_BY_SCOPE,
-                        'exception' => $e
-                    ]
-                );
-
-                return false;
-            }
-
-            return true;
-        });
-
-        return $result ? self::ACK : self::REJECT;
+            return self::REJECT;
+        }
     }
 
     /**
@@ -113,5 +100,40 @@ class ContentNodeTreeCacheProcessor implements MessageProcessorInterface, TopicS
     public static function getSubscribedTopics()
     {
         return [Topics::CALCULATE_CONTENT_NODE_TREE_BY_SCOPE];
+    }
+
+    /**
+     * @return OptionsResolver
+     */
+    private function getOptionsResolver()
+    {
+        if (!$this->resolver) {
+            $this->resolver = new OptionsResolver();
+            $this->resolver->setRequired([self::SCOPE, self::JOB_ID, self::CONTENT_NODE]);
+
+            $this->resolver->setAllowedTypes(self::SCOPE, 'int');
+            $this->resolver->setAllowedTypes(self::JOB_ID, 'int');
+            $this->resolver->setAllowedTypes(self::CONTENT_NODE, 'int');
+
+            $entityOptionNormalizer = function ($className) {
+                return function (Options $options, $id) use ($className) {
+                    $entity = $this->registry
+                        ->getManagerForClass($className)
+                        ->find($className, $id);
+
+                    if (!$entity) {
+                        throw new InvalidOptionsException(
+                            sprintf('Could not find entity %s by given id "%s"', $className, $id)
+                        );
+                    }
+
+                    return $entity;
+                };
+            };
+            $this->resolver->setNormalizer(self::SCOPE, $entityOptionNormalizer(Scope::class));
+            $this->resolver->setNormalizer(self::CONTENT_NODE, $entityOptionNormalizer(ContentNode::class));
+        }
+
+        return $this->resolver;
     }
 }

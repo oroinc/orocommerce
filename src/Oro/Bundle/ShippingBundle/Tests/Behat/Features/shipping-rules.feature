@@ -1,3 +1,4 @@
+@fixture-OroFlatRateShippingBundle:FlatRateIntegration.yml
 @fixture-ShippingMethodsConfigsRule.yml
 Feature: Applying shipping rules
   In order to decrease shipping cost for buyers
@@ -49,8 +50,7 @@ Feature: Applying shipping rules
       | HandlingFee   | 1.5       |
     When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
     Then Shipping Type "Flat Rate: €4.00" is shown for Buyer selection
-#    And  the order total is recalculated to "€14.00"
-#    TODO: uncomment when BB-8036 will be resolved
+    And  the order total is recalculated to "€14.00"
 
   Scenario: "Shipping 2F" > LIST OF ZIP CODES FOR SHIPPING RULE #3 CONTAINS ZIP CODE FOR ORDER. PRIORITY - MAJOR
     Given Admin User created "Shipping Rule Third" with next data:
@@ -68,8 +68,7 @@ Feature: Applying shipping rules
       | Sort Order    | 2 |
     When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
     Then Shipping Type "Flat Rate: €4.50" is shown for Buyer selection
-#    And  the order total is recalculated to "€14.50"
-#    TODO: uncomment when BB-8036 will be resolved
+    And  the order total is recalculated to "€14.50"
 
   Scenario: "Shipping 2G" > LIST OF ZIP CODES FOR SHIPPING RULE #3 DOES NOT CONTAIN ZIP CODE FOR ORDER. PRIORITY - MAJOR
     Given Admin User edited "Shipping Rule Third" with next data:
@@ -94,8 +93,7 @@ Feature: Applying shipping rules
       | HandlingFee   | 1.5               |
     When Buyer is again on Shipping Method Checkout step on "Shopping List 1"
     Then Shipping Type "Flat Rate: €9.00" is shown for Buyer selection
-#    And  the order total is recalculated to "€19.00"
-#    TODO: uncomment when BB-8036 will be resolved
+    And  the order total is recalculated to "€19.00"
 
   Scenario: "Shipping 2I" > SHIPPING RULE #5 IS APPLICABLE FOR ALL COUNTRIES. PRIORITY - MAJOR
     Given Admin User created "Shipping Rule Fifth" with next data:
@@ -113,5 +111,4 @@ Feature: Applying shipping rules
       | Zip/Postal Code | 01000                |
       | Street          | Hreschatik           |
     Then Shipping Type "Flat Rate: €6.50" is shown for Buyer selection
-#    And  the order total is recalculated to "€16.50"
-#    TODO: uncomment when BB-8036 will be resolved
+    And  the order total is recalculated to "€16.50"

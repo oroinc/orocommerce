@@ -329,6 +329,7 @@ services:
             - '@oro_checkout.data_provider.manager.checkout_line_items'
             - '@oro_pricing.subtotal_processor.total_processor_provider'
             - '@oro_checkout.mapper.order_mapper'
+            - '@oro_checkout.shipping_method.provider_main'
 
     oro_checkout.action.default_shipping_method_setter:
         class: 'Oro\Bundle\CheckoutBundle\Action\DefaultShippingMethodSetter'

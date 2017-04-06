@@ -66,7 +66,7 @@ FrontendBundle and FrontendTestFrameworkBundle:
 - Removed `OroB2B\Bundle\FrontendBundle\DependencyInjection\CompilerPass\TestClientPass`. Parameter is passed in `FrontendTestFrameworkBundle/Resources/config/services.yml` 
 - Moved `OroB2B\Bundle\FrontendBundle\DependencyInjection\Test\Client` to `Oro\Bundle\FrontendTestFrameworkBundle\Test\Client`
 - Moved `Oro\Component\Testing\Fixtures\LoadAccountUserData` to `Oro\Bundle\FrontendTestFrameworkBundle\Migrations\Data\ORM\LoadAccountUserData`
-- No need to load fixtures after test environment setup using `doctrine:fixture:load`
+- No need to load fixtures after test environment setup using `doctrine:fixtures:load`
 
 
 InvoiceBundle:

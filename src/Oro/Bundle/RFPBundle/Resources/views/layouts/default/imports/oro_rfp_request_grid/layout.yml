@@ -5,7 +5,17 @@ layout:
             root: __root
 
     actions:
+        - '@setBlockTheme':
+            themes: 'layout.html.twig'
+
         - '@setOption':
             id: __datagrid
             optionName: grid_name
             optionValue: frontend-requests-grid
+
+        - '@add':
+            id: __button_container_create_new_quote
+            parentId: page_title_container
+            blockType: combined_buttons
+            options:
+                buttons: '=data["buttons"].getAll()'

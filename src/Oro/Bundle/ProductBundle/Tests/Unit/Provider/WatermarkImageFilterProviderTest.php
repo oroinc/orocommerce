@@ -7,6 +7,7 @@ use Doctrine\ORM\EntityRepository;
 use Oro\Bundle\AttachmentBundle\Entity\File;
 use Oro\Bundle\ConfigBundle\Config\ConfigManager;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\LayoutBundle\Model\ThemeImageTypeDimension;
 use Oro\Bundle\ProductBundle\DependencyInjection\Configuration;
 use Oro\Bundle\ProductBundle\Provider\WatermarkImageFilterProvider;
 
@@ -84,6 +85,23 @@ class WatermarkImageFilterProviderTest extends \PHPUnit_Framework_TestCase
         $this->doctrineHelper->getEntityRepositoryForClass(File::class)->shouldNotBeCalled();
 
         $this->assertEquals([], $this->provider->getFilterConfig());
+    }
+
+    public function testIsApplicable()
+    {
+        $dimension = $this->prophesize(ThemeImageTypeDimension::class);
+        $dimension
+            ->hasOption(WatermarkImageFilterProvider::APPLY_PRODUCT_IMAGE_WATERMARK_OPTION_NAME)
+            ->willReturn(true);
+        $dimension
+            ->getOption(WatermarkImageFilterProvider::APPLY_PRODUCT_IMAGE_WATERMARK_OPTION_NAME)
+            ->willReturn(true);
+        $this->assertTrue($this->provider->isApplicable($dimension->reveal()));
+
+        $dimension
+            ->hasOption(WatermarkImageFilterProvider::APPLY_PRODUCT_IMAGE_WATERMARK_OPTION_NAME)
+            ->willReturn(false);
+        $this->assertFalse($this->provider->isApplicable($dimension->reveal()));
     }
 
     /**

@@ -6,3 +6,4 @@ oro:
         shippingrule:
             type.config.count.message: 'You must select at least {{ limit }} shipping method type|You must select at least {{ limit }} shipping method types'
             method.config.count.message: 'You must select at least {{ limit }} shipping method|You must select at least {{ limit }} shipping methods'
+            enabled.message: 'No method configs are enabled for this shipping rule'

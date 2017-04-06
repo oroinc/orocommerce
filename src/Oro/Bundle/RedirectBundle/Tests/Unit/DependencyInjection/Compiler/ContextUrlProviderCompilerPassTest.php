@@ -3,14 +3,13 @@
 namespace Oro\Bundle\RedirectBundle\Tests\Unit\DependencyInjection\Compiler;
 
 use Oro\Bundle\RedirectBundle\DependencyInjection\Compiler\ContextUrlProviderCompilerPass;
-use Oro\Component\DependencyInjection\Tests\Unit\Compiler\AssertTaggedServicesCompilerPass;
+use Oro\Component\DependencyInjection\Tests\Unit\Compiler\TaggedServicesCompilerPassCase;
 
-class ContextUrlProviderCompilerPassTest extends \PHPUnit_Framework_TestCase
+class ContextUrlProviderCompilerPassTest extends TaggedServicesCompilerPassCase
 {
     public function testProcess()
     {
-        $assertTaggedServicesCompilerPass = new AssertTaggedServicesCompilerPass();
-        $assertTaggedServicesCompilerPass->assertTaggedServicesRegistered(
+        $this->assertTaggedServicesRegistered(
             new ContextUrlProviderCompilerPass(),
             ContextUrlProviderCompilerPass::PROVIDER_REGISTRY,
             ContextUrlProviderCompilerPass::TAG,

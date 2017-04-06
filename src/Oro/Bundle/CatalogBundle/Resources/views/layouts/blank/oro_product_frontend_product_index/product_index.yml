@@ -4,11 +4,11 @@ layout:
             themes: 'product_index.html.twig'
         - '@addTree':
             items:
-                breadcrumbs:
+                category_breadcrumbs:
                     blockType: breadcrumbs
                     options:
-                        breadcrumbs: '=data["category"].getBreadcrumbs()'
-                breadcrumbs_filters:
+                        breadcrumbs: '=data["category_breadcrumbs"].getItems()'
+                category_breadcrumbs_filters:
                     blockType: block
                 category_picture:
                     blockType: category
@@ -21,6 +21,6 @@ layout:
             tree:
                 page_main_header:
                     category_picture: ~
-                    breadcrumbs:
-                        breadcrumbs_filters: ~
+                    category_breadcrumbs:
+                        category_breadcrumbs_filters: ~
                     category_title: ~

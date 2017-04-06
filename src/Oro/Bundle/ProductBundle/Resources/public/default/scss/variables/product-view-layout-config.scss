@@ -1,5 +1,33 @@
 // @theme: default;
 
 $product-view-specification-width: 240px;
+$product-view-specification-colored-position: relative !default;
+$product-view-specification-colored-display: inline-table !default;
+$product-view-specification-colored-width: 300px !default;
+$product-view-specification-colored-inner-offset: 20px 25px !default;
+$product-view-specification-colored-background: get-color('additional', 'base') !default;
+$product-view-specification-colored-border-radius: 2px !default;
 
 $product-view-description-width: calc(100% - #{$product-view-specification-width});
+$product-view-description-short-width: calc(100% - 320px) !default;
+
+$product-view-description-short-width-tablet: 100% !default;
+
+$product-view-description-paragraphs-line-height: 1.4;
+
+$product-view-line-item-form-padding-top-tablet: 15px !default;
+$product-view-line-item-form-border-top-tablet: 1px solid get-color('additional', 'light') !default;
+
+$product-view-shopping-lists-content-min-height-tablet: 42px !default;
+
+$product-view-primary-margin-top-tablet: 0 !default;
+$product-view-primary-text-align-tablet: center !default;
+$product-view-primary-page-title-font-size-tablet: $base-font-size--l - 1 !default;
+$product-view-primary-page-title-line-height-tablet: 1.2 !default;
+
+$product-view-primary-wrapper-display-tablet: flex !default;
+$product-view-primary-wrapper-flex-direction-tablet: column-reverse !default;
+$product-view-primary-wrapper-margin-top-tablet: -15px !default;
+
+$product-view-default-theme-product-price-display-desktop: none !default;
+$product-view-default-theme-product-prices-display-tablet: none !default;

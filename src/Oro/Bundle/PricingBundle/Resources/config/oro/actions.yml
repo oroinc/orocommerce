@@ -63,7 +63,6 @@ operations:
             - price-list-websites-grid
             - pricing-price-list-select-grid
             - product-prices-grid
-
     oro_pricing_price_list_set_active:
         label: oro.pricing.pricelist.status.enable
         routes: [oro_pricing_price_list_view]
@@ -165,17 +164,6 @@ operations:
                 route_parameters:
                     id: $.newPriceList.id
 
-    oro_pricing_delete_product_price:
-        extends: DELETE
-        replace:
-            - for_all_datagrids
-            - for_all_entities
-            - preconditions
-        preconditions:
-            '@not_blank': $.data
-        datagrids:
-            - price-list-product-prices-grid
-
     oro_pricing_recalculate_price_list:
         label: oro.pricing.pricelist.recalculate.label
         routes: [oro_pricing_price_list_view]
@@ -206,7 +194,7 @@ action_groups:
                 type: Oro\Bundle\PricingBundle\Entity\ProductPrice
         acl_resource: ['CREATE', 'entity:Oro\Bundle\PricingBundle\Entity\ProductPrice']
         actions:
-            - '@create_entity':
+            - '@create_object':
                 class: Oro\Bundle\PricingBundle\Entity\ProductPrice
                 attribute: $.newPrice
                 data:
@@ -215,4 +203,10 @@ action_groups:
                     quantity: $.price.quantity
                     unit: $.price.unit
                     price: $.price.price
-                flush: true
+            - '@call_service_method':
+                service: 'oro_pricing.manager.price_manager'
+                method: 'persist'
+                method_parameters: [$.newPrice]
+            - '@call_service_method':
+                service: 'oro_pricing.manager.price_manager'
+                method: 'flush'

@@ -9,6 +9,6 @@ layout:
             themes: 'matrix_grid_order_form.html.twig'
         - '@move':
             id: product_matrix_grid_order_button
-            parentId: product_view_specification_container
-            siblingId: line_item_form
+            parentId: product_view_line_item_container
+            siblingId: ~
             prepend: false

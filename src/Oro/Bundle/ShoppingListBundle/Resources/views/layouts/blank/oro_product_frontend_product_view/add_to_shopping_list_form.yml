@@ -17,7 +17,7 @@ layout:
             optionValue: '=data["oro_shopping_list_product_units_quantity"].getByProduct(data["oro_product_variant"].getProductVariantOrProduct(data))'
         - '@add':
             id: line_item_form_shopping_lists
-            parentId: line_item_form
+            parentId: product_view_line_item_container
             blockType: container
-            siblingId: line_item_buttons_container
+            siblingId: ~
             prepend: true

@@ -8,10 +8,25 @@ Oro\Bundle\RuleBundle\Entity\Rule:
         expression: 'true'
         stopProcessing: false
 
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodTypeConfig:
+    shippingMethodTypeConfig:
+        type: 'primary'
+        enabled: true
+        options:
+            price: 1.5
+            type: 'per_order'
+            handling_fee: 1.5
+
+Oro\Bundle\ShippingBundle\Entity\ShippingMethodConfig:
+    shippingMethodConfig:
+        method: '<("flat_rate_".@flatRateIntegration->id)>'
+        typeConfigs: ['@shippingMethodTypeConfig']
+
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRule:
     shipping_methods_configs_rule1:
         rule: '@rule1'
         currency: 'EUR'
+        methodConfigs: ['@shippingMethodConfig']
         organization: '@organization'
 
 Oro\Bundle\ShippingBundle\Entity\ShippingMethodsConfigsRuleDestination:

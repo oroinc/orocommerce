@@ -55,7 +55,6 @@ class ProductTaxCodeEventListener
         if ($codes) {
             /** @var AbstractTaxCodeRepository $repository */
             $repository = $this->doctrineHelper->getEntityRepository($this->taxCodeClass);
-
             $result = $repository->findByCodes($this->filterCodes($codes));
         }
 
@@ -70,13 +69,12 @@ class ProductTaxCodeEventListener
     {
         $settings = $event->getSettings();
 
-        $key = OroTaxExtension::ALIAS . ConfigManager::SECTION_MODEL_SEPARATOR . $this->settingsKey;
-        if (!array_key_exists($key, $settings)) {
+        if (!array_key_exists('value', $settings)) {
             return;
         }
 
         $result = [];
-        $ids = (array)$settings[$key]['value'];
+        $ids = (array)$settings['value'];
 
         if ($ids) {
             $taxCodes = $this->doctrineHelper->getEntityRepository($this->taxCodeClass)
@@ -90,7 +88,7 @@ class ProductTaxCodeEventListener
             );
         }
 
-        $settings[$key]['value'] = $result;
+        $settings['value'] = $result;
         $event->setSettings($settings);
     }
 

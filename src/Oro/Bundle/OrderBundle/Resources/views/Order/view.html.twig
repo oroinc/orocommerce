@@ -84,6 +84,14 @@
         'subblocks': [{'data' : [orderTotals]}]
     }]) %}
 
+    {% if resource_granted('VIEW_PAYMENT_HISTORY', entity) %}
+        {% set dataBlocks = dataBlocks|merge([{
+            'title': 'oro.order.sections.payment_history'|trans,
+            'priority': -20,
+            'subblocks': [{'data' : [dataGrid.renderGrid('order-payment-transactions-grid', { order_id: entity.id })]}]
+        }]) %}
+    {% endif %}
+
     {% set id = 'order-view' %}
     {% set data = {'dataBlocks': dataBlocks} %}
 

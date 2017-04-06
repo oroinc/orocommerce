@@ -95,7 +95,6 @@ class LoadQuoteDemoData extends AbstractFixture implements
                 ->setValidUntil($validUntil)
                 ->setCustomerUser($customerUser)
                 ->setCustomer($customer)
-                ->setLocked(mt_rand(0, 1))
                 ->setShipUntil(new \DateTime('+10 day'))
                 ->setPoNumber($poNumber)
                 ->setWebsite($website);

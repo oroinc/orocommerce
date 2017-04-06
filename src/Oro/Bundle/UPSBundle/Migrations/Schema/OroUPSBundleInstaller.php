@@ -29,7 +29,7 @@ class OroUPSBundleInstaller implements Installation, ContainerAwareInterface
      */
     public function getMigrationVersion()
     {
-        return 'v1_2';
+        return 'v1_3';
     }
 
     /**
@@ -57,7 +57,7 @@ class OroUPSBundleInstaller implements Installation, ContainerAwareInterface
     public function updateOroIntegrationTransportTable(Schema $schema)
     {
         $table = $schema->getTable('oro_integration_transport');
-        $table->addColumn('ups_base_url', 'string', ['notnull' => false, 'length' => 255]);
+        $table->addColumn('ups_test_mode', 'boolean', ['notnull' => false, 'default' => false]);
         $table->addColumn('ups_api_user', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('ups_api_password', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('ups_api_key', 'string', ['notnull' => false, 'length' => 255]);

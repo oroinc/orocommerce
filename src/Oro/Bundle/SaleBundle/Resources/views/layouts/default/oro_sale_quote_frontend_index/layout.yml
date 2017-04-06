@@ -10,3 +10,9 @@ layout:
             id: page_title
             optionName: defaultValue
             optionValue: 'oro.frontend.sale.quote.entity_plural_label'
+
+        - '@appendOption':
+            id: quotes_datagrid
+            optionName: grid_render_parameters.toolbarOptions.itemsCounter
+            optionValue:
+                transTemplate: 'oro_frontend.datagrid.pagination.totalRecords.quotes'

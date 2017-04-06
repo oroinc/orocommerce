@@ -5,9 +5,9 @@ namespace Oro\Bundle\InventoryBundle\Validator\Constraints;
 use Symfony\Component\Validator\Constraint;
 use Symfony\Component\Validator\ConstraintValidator;
 
-use Oro\Bundle\ProductBundle\Entity\Product;
-use Oro\Bundle\InventoryBundle\Migrations\Schema\v1_1\AddQuantityToOrderFields;
+use Oro\Bundle\InventoryBundle\Model\Inventory;
 use Oro\Bundle\InventoryBundle\Validator\QuantityToOrderValidatorService;
+use Oro\Bundle\ProductBundle\Entity\Product;
 
 class ProductQuantityToOrderLimitValidator extends ConstraintValidator
 {
@@ -35,7 +35,7 @@ class ProductQuantityToOrderLimitValidator extends ConstraintValidator
 
         if ($this->validatorService->isMaxLimitLowerThenMinLimit($value)) {
             $this->context->buildViolation($constraint->message)
-                ->atPath(AddQuantityToOrderFields::FIELD_MINIMUM_QUANTITY_TO_ORDER)
+                ->atPath(Inventory::FIELD_MINIMUM_QUANTITY_TO_ORDER)
                 ->addViolation();
         }
     }

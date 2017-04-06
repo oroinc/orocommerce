@@ -21,3 +21,9 @@ layout:
             options:
                 rel: 'canonical'
                 href: '=data["canonical"].getUrl(data["page"])'
+        - '@add':
+            id: entity_localized_urls
+            parentId: head
+            blockType: seo_localized_links_container
+            options:
+                linkItems: '=data["seo_localized_links"].getAlternates(data["web_catalog_content_variant"].getFromRequest() ? data["web_catalog_content_variant"].getFromRequest() : data["page"])'

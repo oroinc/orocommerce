@@ -2,12 +2,11 @@
 
 namespace Oro\Bundle\SaleBundle\Controller\Frontend;
 
-use Oro\Bundle\SaleBundle\Quote\Demand\Subtotals\Calculator\QuoteDemandSubtotalsCalculatorInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\ParamConverter;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\Template;
 
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
+
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -16,10 +15,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Oro\Bundle\ActionBundle\Model\ActionData;
 use Oro\Bundle\LayoutBundle\Annotation\Layout;
 use Oro\Bundle\SecurityBundle\Annotation\Acl;
-use Oro\Bundle\SecurityBundle\Annotation\AclAncestor;
 use Oro\Bundle\SaleBundle\Entity\Quote;
 use Oro\Bundle\SaleBundle\Entity\QuoteDemand;
 use Oro\Bundle\SaleBundle\Form\Type\QuoteDemandType;
+use Oro\Bundle\SaleBundle\Quote\Demand\Subtotals\Calculator\QuoteDemandSubtotalsCalculatorInterface;
 
 class QuoteController extends Controller
 {
@@ -40,6 +39,12 @@ class QuoteController extends Controller
      */
     public function viewAction(Quote $quote)
     {
+        $status = $quote->getInternalStatus();
+        $statuses = [Quote::INTERNAL_STATUS_DRAFT, Quote::INTERNAL_STATUS_DELETED];
+        if ($status && in_array($status->getId(), $statuses, true)) {
+            throw $this->createNotFoundException();
+        }
+
         if (!$quote->isAcceptable()) {
             $this->addFlash('notice', $this->get('translator')->trans('oro.sale.controller.quote.expired.message'));
         }
@@ -86,8 +91,18 @@ class QuoteController extends Controller
      */
     public function choiceAction(Request $request, QuoteDemand $quoteDemand)
     {
-        if (!$quoteDemand->getQuote()->isAcceptable()) {
-            return new RedirectResponse($request->headers->get('referer'));
+        $quote = $quoteDemand->getQuote();
+
+        if (!$quote->isAcceptable()) {
+            $this->get('session')->getFlashBag()->add(
+                'info',
+                $this->get('translator')->trans(
+                    'oro.frontend.sale.message.quote.not_available',
+                    ['%qid%' => $quote->getQid()]
+                )
+            );
+
+            return $this->redirectToRoute('oro_sale_quote_frontend_index');
         }
 
         $form = $this->createForm(QuoteDemandType::NAME, $quoteDemand);
@@ -118,7 +133,7 @@ class QuoteController extends Controller
             'data' => [
                 'data' => $quoteDemand,
                 'form' => $form->createView(),
-                'quote' => $quoteDemand->getQuote(),
+                'quote' => $quote,
                 'totals' => (object)$this->getSubtotalsCalculator()->calculateSubtotals($quoteDemand)
             ]
         ];

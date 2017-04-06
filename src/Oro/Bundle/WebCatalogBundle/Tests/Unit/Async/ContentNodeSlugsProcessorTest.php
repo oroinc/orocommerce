@@ -142,25 +142,6 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit_Framework_TestCase
 
     public function testProcessWithException()
     {
-        $em = $this->createMock(EntityManagerInterface::class);
-
-        $em->expects($this->once())
-            ->method('beginTransaction');
-
-        $em->expects($this->once())
-            ->method('rollback');
-
-        $em->expects($this->never())
-            ->method('commit');
-
-        $this->logger->expects($this->once())
-            ->method('error');
-
-        $this->registry->expects($this->once())
-            ->method('getManagerForClass')
-            ->with(ContentNode::class)
-            ->willReturn($em);
-
         $contentNodeId = 42;
         $contentNode = $this->getEntity(ContentNode::class, ['id' => $contentNodeId, 'webCatalog' => new WebCatalog()]);
 
@@ -192,6 +173,37 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit_Framework_TestCase
             ->willThrowException(new \Exception());
         $this->messageProducer->expects($this->never())
             ->method('send');
+        $this->assertRollback();
+
+        $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process($message, $session));
+    }
+
+    public function testProcessContentNodeNotFound()
+    {
+        $body = [
+            ResolveNodeSlugsMessageFactory::ID => 42,
+            ResolveNodeSlugsMessageFactory::CREATE_REDIRECT => true
+        ];
+
+        /** @var MessageInterface|\PHPUnit_Framework_MockObject_MockObject $message **/
+        $message = $this->createMock(MessageInterface::class);
+        $message->expects($this->exactly(2))
+            ->method('getBody')
+            ->willReturn(JSON::encode($body));
+
+        /** @var SessionInterface|\PHPUnit_Framework_MockObject_MockObject $session **/
+        $session = $this->createMock(SessionInterface::class);
+
+        $this->messageFactory->expects($this->once())
+            ->method('getEntityFromMessage')
+            ->with($body)
+            ->willReturn(null);
+
+        $this->defaultVariantScopesResolver->expects($this->never())
+            ->method('resolve');
+        $this->messageProducer->expects($this->never())
+            ->method('send');
+        $this->assertRollback();
 
         $this->assertEquals(MessageProcessorInterface::REJECT, $this->processor->process($message, $session));
     }
@@ -199,5 +211,27 @@ class ContentNodeSlugsProcessorTest extends \PHPUnit_Framework_TestCase
     public function testGetSubscribedTopics()
     {
         $this->assertEquals([Topics::RESOLVE_NODE_SLUGS], ContentNodeSlugsProcessor::getSubscribedTopics());
+    }
+
+    protected function assertRollback()
+    {
+        $em = $this->createMock(EntityManagerInterface::class);
+
+        $em->expects($this->once())
+            ->method('beginTransaction');
+
+        $em->expects($this->once())
+            ->method('rollback');
+
+        $em->expects($this->never())
+            ->method('commit');
+
+        $this->logger->expects($this->once())
+            ->method('error');
+
+        $this->registry->expects($this->once())
+            ->method('getManagerForClass')
+            ->with(ContentNode::class)
+            ->willReturn($em);
     }
 }

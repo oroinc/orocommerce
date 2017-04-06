@@ -88,7 +88,6 @@ class RequestProductItemType extends AbstractType
                 'data_class' => $this->dataClass,
                 'compact_units' => false,
                 'intention' => 'rfp_request_product_item',
-                'extra_fields_message' => 'This form should not contain extra fields: "{{ extra_fields }}"',
             ]
         );
     }
