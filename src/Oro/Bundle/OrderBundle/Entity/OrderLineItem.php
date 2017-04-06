@@ -2,16 +2,16 @@
 
 namespace Oro\Bundle\OrderBundle\Entity;
 
+use Brick\Math\BigDecimal;
 use Doctrine\ORM\Mapping as ORM;
-
 use Oro\Bundle\CurrencyBundle\Entity\Price;
 use Oro\Bundle\CurrencyBundle\Entity\SettablePriceAwareInterface;
 use Oro\Bundle\EntityConfigBundle\Metadata\Annotation\Config;
 use Oro\Bundle\OrderBundle\Model\ExtendOrderLineItem;
 use Oro\Bundle\PricingBundle\Entity\PriceTypeAwareInterface;
-use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Entity\ProductUnit;
+use Oro\Bundle\ProductBundle\Model\ProductLineItemInterface;
 
 /**
  * @ORM\Table(name="oro_order_line_item")
@@ -447,7 +447,7 @@ class OrderLineItem extends ExtendOrderLineItem implements
      */
     public function getValue()
     {
-        return $this->value;
+        return BigDecimal::of($this->value)->toFloat();
     }
 
     /**
