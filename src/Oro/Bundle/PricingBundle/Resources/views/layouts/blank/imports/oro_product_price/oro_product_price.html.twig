@@ -1,11 +1,13 @@
 {% block __oro_product_price__product_price_container_widget %}
     {% if productPrices is not null %}
+        {% if product.prices is defined %}
+            {% set productPrices = product.prices %}
+        {% endif %}
         {% do block|merge_context({
             productPrices: productPrices,
             product: product
         }) %}
     {% endif %}
-
     {% set attr = layout_attr_defaults(attr, {
         'data-page-component-module': 'oroui/js/app/components/view-component',
         '~data-page-component-options': {
