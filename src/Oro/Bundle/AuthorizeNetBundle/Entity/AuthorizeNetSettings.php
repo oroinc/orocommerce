@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\ParameterBag;
  */
 class AuthorizeNetSettings extends Transport
 {
-    const API_LOGIN = 'api_login';
+    const API_LOGIN_ID = 'api_login_id';
     const TRANSACTION_KEY = 'transaction_key';
     const CLIENT_KEY = 'client_key';
     const CREDIT_CARD_LABELS_KEY = 'credit_card_labels';
@@ -113,7 +113,7 @@ class AuthorizeNetSettings extends Transport
      *
      * @ORM\Column(name="au_net_test_mode", type="boolean", options={"default"=false})
      */
-    protected $testMode = false;
+    protected $authNetTestMode = false;
 
     /**
      * Constructor
@@ -128,7 +128,7 @@ class AuthorizeNetSettings extends Transport
     {
         if (null === $this->settings) {
             $this->settings = new ParameterBag([
-                self::API_LOGIN => $this->getApiLoginId(),
+                self::API_LOGIN_ID => $this->getApiLoginId(),
                 self::TRANSACTION_KEY => $this->getTransactionKey(),
                 self::CLIENT_KEY => $this->getClientKey(),
                 self::CREDIT_CARD_LABELS_KEY => $this->getCreditCardLabels(),
@@ -179,7 +179,10 @@ class AuthorizeNetSettings extends Transport
      */
     public function getTestMode()
     {
-        return $this->testMode;
+        //Note that property name differs from getter name because of problems with doctrine hydration,
+        //when single-table-inherited siblings have properties with same names
+        //(see 'testMode' in Oro\Bundle\PayPalBundle\Entity\PayPalSettings)
+        return $this->authNetTestMode;
     }
 
     /**
@@ -187,7 +190,7 @@ class AuthorizeNetSettings extends Transport
      */
     public function setTestMode($testMode)
     {
-        $this->testMode = $testMode;
+        $this->authNetTestMode = $testMode;
     }
 
     /**
