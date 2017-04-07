@@ -2,6 +2,7 @@ services:
 
     oro_apruve.token_generator:
         class: Oro\Bundle\ApruveBundle\TokenGenerator\TokenGenerator
+        lazy: true
 
     oro_apruve.repository.apruve_settings:
         class: 'Oro\Bundle\ApruveBundle\Entity\Repository\ApruveSettingsRepository'
@@ -10,3 +11,7 @@ services:
             - 'Oro\Bundle\ApruveBundle\Entity\ApruveSettings'
         calls:
             - [setAclHelper, ['@oro_security.acl_helper']]
+
+    oro_apruve.apruve.provider.supported_currencies:
+        class: Oro\Bundle\ApruveBundle\Apruve\Provider\SupportedCurrenciesProvider
+        lazy: true
