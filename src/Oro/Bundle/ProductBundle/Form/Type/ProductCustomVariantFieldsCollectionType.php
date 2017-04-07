@@ -67,11 +67,9 @@ class ProductCustomVariantFieldsCollectionType extends AbstractType
 
         $eventData = $event->getData();
 
-        if (null === $eventData) {
+        if (!$eventData) {
             $eventData = [];
-        }
-
-        if (!is_array($eventData) && !($eventData instanceof \ArrayAccess)) {
+        } elseif (!is_array($eventData) && !($eventData instanceof \ArrayAccess)) {
             throw new UnexpectedTypeException($eventData, 'array or \ArrayAccess');
         }
 

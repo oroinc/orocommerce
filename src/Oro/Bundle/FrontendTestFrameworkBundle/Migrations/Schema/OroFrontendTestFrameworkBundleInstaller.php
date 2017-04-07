@@ -55,19 +55,21 @@ class OroFrontendTestFrameworkBundleInstaller implements Installation, ExtendExt
      */
     private function addVariantFieldToProduct(Schema $schema)
     {
-        $table = $schema->getTable('oro_product');
+        if ($schema->hasTable('oro_product')) {
+            $table = $schema->getTable('oro_product');
 
-        $this->extendExtension->addEnumField(
-            $schema,
-            $table,
-            self::VARIANT_FIELD_NAME,
-            self::VARIANT_FIELD_CODE,
-            false,
-            false,
-            [
-                'extend' => ['owner' => ExtendScope::OWNER_CUSTOM],
-                'attribute' => ['is_attribute' => true],
-            ]
-        );
+            $this->extendExtension->addEnumField(
+                $schema,
+                $table,
+                self::VARIANT_FIELD_NAME,
+                self::VARIANT_FIELD_CODE,
+                false,
+                false,
+                [
+                    'extend' => ['owner' => ExtendScope::OWNER_CUSTOM],
+                    'attribute' => ['is_attribute' => true],
+                ]
+            );
+        }
     }
 }

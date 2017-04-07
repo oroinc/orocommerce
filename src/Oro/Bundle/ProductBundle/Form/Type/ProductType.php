@@ -71,7 +71,6 @@ class ProductType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         $builder
-            ->add('attributeFamily', HiddenType::class)
             ->add('sku', 'text', ['required' => true, 'label' => 'oro.product.sku.label'])
             ->add('status', ProductStatusType::NAME, ['label' => 'oro.product.status.label'])
             ->add(
@@ -183,8 +182,7 @@ class ProductType extends AbstractType
             ])
             ->addEventListener(FormEvents::PRE_SET_DATA, [$this, 'preSetDataListener'])
             ->addEventListener(FormEvents::POST_SET_DATA, [$this, 'postSetDataListener'])
-            ->addEventListener(FormEvents::SUBMIT, [$this, 'submitListener'])
-            ->addEventListener(FormEvents::PRE_SUBMIT, [$this, 'onPreSubmit']);
+            ->addEventListener(FormEvents::SUBMIT, [$this, 'submitListener']);
 
         $builder->get('pageTemplate')
             ->addModelTransformer(new PageTemplateEntityFieldFallbackValueTransformer(self::PAGE_TEMPLATE_ROUTE_NAME));
@@ -298,18 +296,6 @@ class ProductType extends AbstractType
             }
         }
         PropertyAccess::createPropertyAccessor()->setValue($product, 'additionalUnitPrecisions', $additionalPrecisions);
-    }
-
-    /**
-     * @param FormEvent $event
-     */
-    public function onPreSubmit(FormEvent $event)
-    {
-        /** @var Product $product */
-        $product = $event->getData();
-        $form = $event->getForm();
-
-        return;
     }
 
     /**
