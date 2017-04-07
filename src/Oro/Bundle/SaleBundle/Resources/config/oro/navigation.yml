@@ -15,13 +15,6 @@ navigation:
                 extras:
                     routes: ['/^oro_sale/']
 
-            sale_quote_frontend_list:
-                label:      'oro.frontend.sale.quote.entity_plural_label'
-                route:      'oro_sale_quote_frontend_index'
-                position:   400
-                extras:
-                    routes: ['/^oro_sale_quote_frontend/']
-
             oro_sale_quote_frontend_index:
                 label: 'oro.frontend.sale.quote.entity_plural_label'
                 route: oro_sale_quote_frontend_index
@@ -44,11 +37,8 @@ navigation:
                     sales_tab:
                         children:
                             sale_quote_list: ~
-            frontend_menu:
-                children:
-                    sale_quote_frontend_list: ~
 
-            oro_customer_breadcrumbs_menu:
+            frontend_menu:
                 children:
                     oro_customer_menu_customer_user_index:
                         children:
@@ -66,6 +56,6 @@ navigation:
         oro_sale_quote_update: 'oro.sale.navigation.view - oro.ui.edit'
         oro_sale_quote_create: 'oro.ui.create_entity'
 
-        oro_sale_quote_frontend_index: ~
+        oro_sale_quote_frontend_index: 'oro.frontend.sale.quote.entity_plural_label'
         oro_sale_quote_frontend_view:  'oro.sale.navigation.view'
         oro_sale_quote_frontend_choice:  'oro.sale.navigation.view'
