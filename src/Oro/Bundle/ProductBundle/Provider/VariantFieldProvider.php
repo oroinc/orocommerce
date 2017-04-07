@@ -13,7 +13,7 @@ class VariantFieldProvider
     private $attributeManager;
 
     /** @var SerializedFieldProvider */
-    private $serializedFieldsProvider;
+    private $serializedFieldProvider;
 
     /** @var array */
     private $allowedAttributeTypes = ['boolean', 'enum'];
@@ -25,7 +25,7 @@ class VariantFieldProvider
     public function __construct(AttributeManager $attributeManager, SerializedFieldProvider $serializedFieldProvider)
     {
         $this->attributeManager = $attributeManager;
-        $this->serializedFieldsProvider = $serializedFieldProvider;
+        $this->serializedFieldProvider = $serializedFieldProvider;
     }
 
     /**
@@ -43,7 +43,7 @@ class VariantFieldProvider
             if (!in_array($attribute->getType(), $this->allowedAttributeTypes, true) ||
                 $this->attributeManager->isSystem($attribute) ||
                 !$this->attributeManager->isActive($attribute) ||
-                $this->serializedFieldsProvider->isSerialized($attribute)
+                $this->serializedFieldProvider->isSerialized($attribute)
             ) {
                 continue;
             }
