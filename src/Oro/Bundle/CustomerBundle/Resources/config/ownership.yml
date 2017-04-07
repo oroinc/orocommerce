@@ -16,6 +16,7 @@ services:
 
     oro_customer.owner.frontend_ownership_metadata_provider.cache:
         parent: oro.cache.abstract
+        public: true
         calls:
             - [ setNamespace, [ 'oro_acl_entity_ownership_frontend' ] ]
 
@@ -35,5 +36,6 @@ services:
 
     oro_customer.owner.frontend_ownership_tree_provider.cache:
         parent: oro.cache.abstract
+        public: true
         calls:
             - [ setNamespace, [ 'oro_acl_owner_tree_frontend' ] ]
