@@ -8,6 +8,7 @@ use Oro\Bundle\LocaleBundle\Entity\LocalizedFallbackValue;
 use Oro\Bundle\LocaleBundle\Model\FallbackType;
 use Oro\Bundle\ProductBundle\Entity\Product;
 use Oro\Bundle\ProductBundle\Tests\Functional\DataFixtures\LoadFeaturedProductData;
+use Oro\Bundle\RedirectBundle\DependencyInjection\Configuration;
 use Oro\Bundle\TestFrameworkBundle\Test\WebTestCase;
 
 use Symfony\Component\DomCrawler\Crawler;
@@ -644,6 +645,70 @@ class ProductControllerTest extends WebTestCase
 
         $response = $this->client->getResponse();
         $this->assertJsonStringEqualsJsonString(json_encode($expectedData), $response->getContent());
+    }
+
+    /**
+     * @return array
+     */
+    public function getChangedDefaultSlugDataProvider()
+    {
+        // @codingStandardsIgnoreStart
+        return [
+            'Product name set, redirect strategy empty' => [
+                'requestParams' => [
+                    'productName' => 'New product name',
+                ],
+                'redirectStrategy' => null,
+                'expected' => '{"showRedirectConfirmation":true,"slugsData":{"Default Value":{"before":"\/old-default-slug","after":"\/new-product-name"}}}',
+            ],
+            'Product name empty, redirect strategy empty' => [
+                'requestParams' => [],
+                'redirectStrategy' => null,
+                'expected' => '{"showRedirectConfirmation":true,"slugsData":[]}',
+            ],
+            'Product name set, redirect strategy ask' => [
+                'requestParams' => [
+                    'productName' => 'New product name',
+                ],
+                'redirectStrategy' => Configuration::STRATEGY_ASK,
+                'expected' => '{"showRedirectConfirmation":true,"slugsData":{"Default Value":{"before":"\/old-default-slug","after":"\/new-product-name"}}}',
+            ],
+            'Product name set, redirect strategy never' => [
+                'requestParams' => [
+                    'productName' => 'New product name',
+                ],
+                'redirectStrategy' => Configuration::STRATEGY_NEVER,
+                'expected' => '{"showRedirectConfirmation":false,"slugsData":{"Default Value":{"before":"\/old-default-slug","after":"\/new-product-name"}}}',
+            ],
+        ];
+        // @codingStandardsIgnoreEnd
+    }
+
+    /**
+     * @depends testGetChangedUrlsWhenSlugChanged
+     * @param array $requestParams
+     * @param string $redirectStrategy
+     * @param string $expected
+     * @dataProvider getChangedDefaultSlugDataProvider
+     */
+    public function testGetChangedDefaultSlug($requestParams, $redirectStrategy, $expected)
+    {
+        /** @var Product $product */
+        $product = $this->getProductDataBySku(self::UPDATED_SKU);
+
+        $configManager = $this->getContainer()->get('oro_config.global');
+        $configManager->set('oro_redirect.redirect_generation_strategy', $redirectStrategy);
+        $configManager->flush();
+        $configManager->reload();
+
+        $this->client->request(
+            'POST',
+            $this->getUrl('oro_product_get_changed_default_slug', ['id' => $product->getId()]),
+            $requestParams
+        );
+
+        $response = $this->client->getResponse();
+        $this->assertEquals($expected, $response->getContent());
     }
 
     /**

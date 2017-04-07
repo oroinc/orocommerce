@@ -179,7 +179,7 @@ class SlugEntityGenerator
     {
         $prefix = trim($this->routingInformationProvider->getUrlPrefix($entity), Slug::DELIMITER);
 
-        $url = Slug::DELIMITER  . $slugPrototype;
+        $url = Slug::DELIMITER . $slugPrototype;
         if ($prefix) {
             $url = Slug::DELIMITER . $prefix . $url;
         }
