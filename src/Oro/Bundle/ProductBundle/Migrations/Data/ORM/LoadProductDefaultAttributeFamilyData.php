@@ -23,10 +23,8 @@ class LoadProductDefaultAttributeFamilyData extends AbstractFixture implements
 {
     use UserUtilityTrait;
 
-    /**
-     * @var string
-     */
     const DEFAULT_FAMILY_CODE = 'default_family';
+    const GENERAL_GROUP_CODE = 'general';
 
     use ContainerAwareTrait;
 
@@ -36,7 +34,7 @@ class LoadProductDefaultAttributeFamilyData extends AbstractFixture implements
     private static $groups = [
         [
             'groupLabel' => 'General',
-            'groupCode' => 'general',
+            'groupCode' => self::GENERAL_GROUP_CODE,
             'attributes' => [
                 'sku',
                 'names',
