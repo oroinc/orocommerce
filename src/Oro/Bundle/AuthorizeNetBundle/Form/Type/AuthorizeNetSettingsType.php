@@ -110,7 +110,10 @@ class AuthorizeNetSettingsType extends AbstractType
                 'required' => true,
                 'multiple' => true,
             ])
-            ->add('apiLogin', TextType::class, [
+            ->add(
+                'apiLoginId',
+                TextType::class,
+                [
                 'label' => 'oro.authorize_net.settings.api_login.label',
                 'required' => true,
             ])
@@ -126,7 +129,7 @@ class AuthorizeNetSettingsType extends AbstractType
                 'label' => 'oro.authorize_net.settings.test_mode.label',
                 'required' => false,
             ]);
-        $this->transformWithEncodedValue($builder, 'apiLogin');
+        $this->transformWithEncodedValue($builder, 'apiLoginId');
         $this->transformWithEncodedValue($builder, 'transactionKey');
         $this->transformWithEncodedValue($builder, 'clientKey');
     }

@@ -62,7 +62,7 @@ class AuthorizeNetConfigFactory implements AuthorizeNetConfigFactoryInterface
         $params[AuthorizeNetConfig::TEST_MODE_KEY] = $settings->getTestMode();
         $params[AuthorizeNetConfig::PURCHASE_ACTION_KEY] = $settings->getCreditCardPaymentAction();
         $params[AuthorizeNetConfig::CLIENT_KEY] = $this->getDecryptedValue($settings->getClientKey());
-        $params[Option\ApiLoginId::API_LOGIN_ID] = $this->getDecryptedValue($settings->getApiLogin());
+        $params[Option\ApiLoginId::API_LOGIN_ID] = $this->getDecryptedValue($settings->getApiLoginId());
         $params[Option\TransactionKey::TRANSACTION_KEY] = $this->getDecryptedValue($settings->getTransactionKey());
 
         return new AuthorizeNetConfig($params);

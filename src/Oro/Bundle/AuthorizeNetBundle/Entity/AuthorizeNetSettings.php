@@ -38,7 +38,7 @@ class AuthorizeNetSettings extends Transport
      *
      * @ORM\Column(name="au_net_api_login", type="string", length=255, nullable=false)
      */
-    protected $apiLogin;
+    protected $apiLoginId;
 
     /**
      * @var string
@@ -128,6 +128,9 @@ class AuthorizeNetSettings extends Transport
     {
         if (null === $this->settings) {
             $this->settings = new ParameterBag([
+                self::API_LOGIN => $this->getApiLoginId(),
+                self::TRANSACTION_KEY => $this->getTransactionKey(),
+                self::CLIENT_KEY => $this->getClientKey(),
                 self::CREDIT_CARD_LABELS_KEY => $this->getCreditCardLabels(),
                 self::CREDIT_CARD_SHORT_LABELS_KEY => $this->getCreditCardShortLabels(),
                 self::CREDIT_CARD_PAYMENT_ACTION_KEY => $this->getCreditCardPaymentAction(),
@@ -172,38 +175,6 @@ class AuthorizeNetSettings extends Transport
     }
 
     /**
-     * @return Collection|LocalizedFallbackValue[]
-     */
-    public function getCreditCardLabels()
-    {
-        return $this->creditCardLabels;
-    }
-
-    /**
-     * @param Collection|LocalizedFallbackValue[] $creditCardLabels
-     */
-    public function setCreditCardLabels($creditCardLabels)
-    {
-        $this->creditCardLabels = $creditCardLabels;
-    }
-
-    /**
-     * @return Collection|LocalizedFallbackValue[]
-     */
-    public function getCreditCardShortLabels()
-    {
-        return $this->creditCardShortLabels;
-    }
-
-    /**
-     * @param Collection|LocalizedFallbackValue[] $creditCardShortLabels
-     */
-    public function setCreditCardShortLabels($creditCardShortLabels)
-    {
-        $this->creditCardShortLabels = $creditCardShortLabels;
-    }
-
-    /**
      * @return bool
      */
     public function getTestMode()
@@ -217,6 +188,90 @@ class AuthorizeNetSettings extends Transport
     public function setTestMode($testMode)
     {
         $this->testMode = $testMode;
+    }
+
+    /**
+     * Add creditCardLabel
+     *
+     * @param LocalizedFallbackValue $creditCardLabel
+     *
+     * @return AuthorizeNetSettings
+     */
+    public function addCreditCardLabel(LocalizedFallbackValue $creditCardLabel)
+    {
+        if (!$this->creditCardLabels->contains($creditCardLabel)) {
+            $this->creditCardLabels->add($creditCardLabel);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove creditCardLabel
+     *
+     * @param LocalizedFallbackValue $creditCardLabel
+     *
+     * @return AuthorizeNetSettings
+     */
+    public function removeCreditCardLabel(LocalizedFallbackValue $creditCardLabel)
+    {
+        if ($this->creditCardLabels->contains($creditCardLabel)) {
+            $this->creditCardLabels->removeElement($creditCardLabel);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get creditCardLabels
+     *
+     * @return Collection
+     */
+    public function getCreditCardLabels()
+    {
+        return $this->creditCardLabels;
+    }
+
+    /**
+     * Add creditCardShortLabel
+     *
+     * @param LocalizedFallbackValue $creditCardShortLabel
+     *
+     * @return AuthorizeNetSettings
+     */
+    public function addCreditCardShortLabel(LocalizedFallbackValue $creditCardShortLabel)
+    {
+        if (!$this->creditCardShortLabels->contains($creditCardShortLabel)) {
+            $this->creditCardShortLabels->add($creditCardShortLabel);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Remove creditCardShortLabel
+     *
+     * @param LocalizedFallbackValue $creditCardShortLabel
+     *
+     * @return AuthorizeNetSettings
+     */
+    public function removeCreditCardShortLabel(LocalizedFallbackValue $creditCardShortLabel)
+    {
+        if ($this->creditCardShortLabels->contains($creditCardShortLabel)) {
+            $this->creditCardShortLabels->removeElement($creditCardShortLabel);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Get creditCardShortLabels
+     *
+     * @return Collection
+     */
+    public function getCreditCardShortLabels()
+    {
+        return $this->creditCardShortLabels;
     }
 
     /**
@@ -253,16 +308,16 @@ class AuthorizeNetSettings extends Transport
     /**
      * @return string
      */
-    public function getApiLogin()
+    public function getApiLoginId()
     {
-        return $this->apiLogin;
+        return $this->apiLoginId;
     }
 
     /**
-     * @param string $apiLogin
+     * @param string $apiLoginId
      */
-    public function setApiLogin($apiLogin)
+    public function setApiLoginId($apiLoginId)
     {
-        $this->apiLogin = $apiLogin;
+        $this->apiLoginId = $apiLoginId;
     }
 }
