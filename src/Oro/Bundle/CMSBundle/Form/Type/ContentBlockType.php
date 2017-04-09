@@ -33,7 +33,7 @@ class ContentBlockType extends AbstractType
             )
             ->add(
                 'titles',
-                LocalizedFallbackValueCollectionType::class,
+                LocalizedFallbackValueCollectionType::NAME,
                 [
                     'label' => 'oro.cms.contentblock.titles.label',
                     'required' => true,
