@@ -65,7 +65,6 @@ class ContentBlockControllerTest extends WebTestCase
         $result       = $this->client->getResponse();
         $this->assertHtmlResponseStatusCodeEquals($result, 200);
         $this->assertContains($contentBlock->getAlias(), $crawler->html());
-        $this->assertContains($contentBlock->getDefaultTitle()->getString(), $crawler->html());
     }
 
     /**
