@@ -2,6 +2,8 @@
 
 namespace Oro\Bundle\AuthorizeNetBundle\Method;
 
+use Psr\Log\LoggerAwareTrait;
+
 use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Gateway;
 use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Option;
 use Oro\Bundle\AuthorizeNetBundle\Method\Config\AuthorizeNetConfigInterface;
@@ -12,6 +14,8 @@ use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\Currency;
 
 class AuthorizeNetPaymentMethod implements PaymentMethodInterface
 {
+    use LoggerAwareTrait;
+
     const ZERO_AMOUNT = 0;
     const AMOUNT_PRECISION = 2;
     const API_CREDENTIALS_DELIMITER = ';';
@@ -165,6 +169,10 @@ class AuthorizeNetPaymentMethod implements PaymentMethodInterface
             ->setActive($response->isSuccessful())
             ->setReference($response->getReference())
             ->setResponse($response->getData());
+
+        if (!$response->isSuccessful() && $this->logger) {
+                $this->logger->critical($response->getMessage());
+        }
 
         return [
             'message' => $response->getMessage(),

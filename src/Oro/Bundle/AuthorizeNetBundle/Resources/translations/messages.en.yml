@@ -34,4 +34,7 @@ oro:
         methods:
             credit_card.label: 'Credit card'
 
+        errors:
+            communication_err: 'Authorize.Net communication error.'
+
 

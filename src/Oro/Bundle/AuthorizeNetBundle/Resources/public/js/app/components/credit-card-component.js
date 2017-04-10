@@ -198,18 +198,17 @@ define(function(require) {
                             }
                         }, function(response) {
                             mediator.execute('hideLoading');
-                            if (response.messages.resultCode === 'Error') {
-                                for (var i = 0; i < response.messages.message.length; i++) {
-                                    var message = response.messages.message[i];
-                                    mediator.execute(
-                                        'showFlashMessage',
-                                        'error',
-                                        __(self.options.messages.communication_err) + ' ' +
-                                        '(' + message.code + ') "' + message.text + '"'
-                                    );
-                                }
-                            } else if (!response.opaqueData.dataDescriptor || !response.opaqueData.dataValue) {
-                                mediator.execute('showFlashMessage', 'error', __(self.options.messages.wrong_response));
+                            if (response.messages.resultCode === 'Error'||
+                                !response.opaqueData ||
+                                !response.opaqueData.dataDescriptor ||
+                                !response.opaqueData.dataValue
+                            ) {
+                                mediator.execute(
+                                    'showFlashMessage',
+                                    'error',
+                                    __(self.options.messages.communication_err)
+                                );
+                                console.error(response);
                             } else {
                                 var $container = eventData.additionalDataContainer;
                                 $container.val(

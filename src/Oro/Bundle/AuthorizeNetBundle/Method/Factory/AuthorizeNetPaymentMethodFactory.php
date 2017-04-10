@@ -2,13 +2,16 @@
 
 namespace Oro\Bundle\AuthorizeNetBundle\Method\Factory;
 
+use Psr\Log\LoggerAwareTrait;
+
 use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Gateway;
 use Oro\Bundle\AuthorizeNetBundle\Method\AuthorizeNetPaymentMethod;
 use Oro\Bundle\AuthorizeNetBundle\Method\Config\AuthorizeNetConfigInterface;
-use Symfony\Component\Routing\RouterInterface;
 
 class AuthorizeNetPaymentMethodFactory implements AuthorizeNetPaymentMethodFactoryInterface
 {
+    use LoggerAwareTrait;
+
     /**@var Gateway*/
     protected $gateway;
 
@@ -25,9 +28,10 @@ class AuthorizeNetPaymentMethodFactory implements AuthorizeNetPaymentMethodFacto
      */
     public function create(AuthorizeNetConfigInterface $config)
     {
-        return new AuthorizeNetPaymentMethod(
-            $this->gateway,
-            $config
-        );
+        $method = new AuthorizeNetPaymentMethod($this->gateway, $config);
+        if ($this->logger) {
+            $method->setLogger($this->logger);
+        }
+        return $method;
     }
 }

@@ -10,7 +10,7 @@ interface ResponseInterface
     public function isSuccessful();
 
     /**
-     * @return string
+     * @return string|null
      */
     public function getReference();
 

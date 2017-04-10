@@ -15,6 +15,10 @@ services:
         public: false
         arguments:
             - '@oro_authorize_net.gateway'
+        calls:
+            - [ setLogger, [ '@logger' ] ]
+        tags:
+            - { name: monolog.logger, channel: oro_authorize_net }
 
     oro_authorize_net.method.generator.identifier:
         parent: oro_integration.generator.prefixed_identifier_generator
