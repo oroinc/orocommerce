@@ -2,38 +2,31 @@
 
 namespace Oro\Bundle\InfinitePayBundle\Action\Provider;
 
-use Oro\Bundle\InfinitePayBundle\Configuration\InfinitePayConfigInterface;
+use Oro\Bundle\InfinitePayBundle\Method\Config\InfinitePayConfigInterface;
 use Oro\Bundle\InfinitePayBundle\Service\InfinitePay\ReserveOrder;
 use Oro\Bundle\OrderBundle\Entity\Order;
 
 class AutomationProvider implements AutomationProviderInterface
 {
     /**
-     * @var InfinitePayConfigInterface
-     */
-    protected $config;
-
-    /**
      * @var InvoiceDataProviderInterface
      */
     protected $invoiceDataProvider;
 
     public function __construct(
-        InfinitePayConfigInterface $infinitePayConfig,
         InvoiceDataProviderInterface $invoiceDataProvider
     ) {
-        $this->config = $infinitePayConfig;
         $this->invoiceDataProvider = $invoiceDataProvider;
     }
 
-    public function setAutomation(ReserveOrder $reserveOrder, Order $order)
+    public function setAutomation(ReserveOrder $reserveOrder, Order $order, InfinitePayConfigInterface $config)
     {
-        if (!$this->config->isAutoCaptureActive()) {
+        if (!$config->isAutoCaptureEnabled()) {
             return $reserveOrder;
         }
         $reserveOrder->getREQUEST()->getOrderData()->setAutoCapture('1');
 
-        if ($this->config->isAutoActivationActive()) {
+        if ($config->isAutoActivateEnabled()) {
             $reserveOrder = $this->enableAutoActivation($reserveOrder, $order);
         }
 

@@ -6,3 +6,20 @@ Oro\Bundle\CustomerBundle\Entity\CustomerAddress:
     properties:
         frontendOwner:
             - Oro\Bundle\InfinitePayBundle\Validator\Constraints\CustomerRequireVatId: ~
+
+Oro\Bundle\InfinitePayBundle\Entity\InfinitePaySettings:
+    properties:
+        infinitePayLabels:
+            - NotBlank: ~
+        infinitePayShortLabels:
+            - NotBlank: ~
+        clientRef:
+            - NotBlank: ~
+        username:
+            - NotBlank: ~
+        usernameToken:
+            - NotBlank: ~
+        password:
+            - NotBlank: ~
+        secret:
+            - NotBlank: ~

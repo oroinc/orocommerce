@@ -4,13 +4,11 @@ namespace Oro\Bundle\InfinitePayBundle\Service\InfinitePay;
 
 use BeSimple\SoapClient\SoapClient;
 use BeSimple\SoapClient\WsSecurityFilter;
-use Oro\Bundle\InfinitePayBundle\Configuration\InfinitePayConfigInterface;
+use Oro\Bundle\InfinitePayBundle\Method\Config\InfinitePayConfigInterface;
 use Oro\Bundle\InfinitePayBundle\Service\InfinitePay\Logger\InfinitePayAPILoggerInterface;
 
-/**
- * {@inheritdoc}
- */
-class InfinitePayAPI extends SoapClient
+
+class InfinitePayClient extends SoapClient implements InfinitePayClientInterface
 {
     /** @var InfinitePayConfigInterface */
     protected $config;
@@ -214,7 +212,7 @@ class InfinitePayAPI extends SoapClient
     {
         $options = array_merge([
             'features' => 1,
-            'trace' => $this->config->getDebugMode(),
+            'trace' => $this->config->isDebugModeEnabled(),
         ], $options);
 
         return $options;
@@ -250,6 +248,6 @@ class InfinitePayAPI extends SoapClient
      */
     private function hasErrorsInDebugMode($response)
     {
-        return $this->config->getDebugMode() && $this->responseHasErrors($response->getResponse());
+        return $this->config->isDebugModeEnabled() && $this->responseHasErrors($response->getResponse());
     }
 }

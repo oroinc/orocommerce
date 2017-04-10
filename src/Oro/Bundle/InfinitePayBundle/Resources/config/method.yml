@@ -1,0 +1,55 @@
+parameters:
+    oro_infinite_pay.method.infinite_pay: 'infinite_pay'
+
+services:
+    oro_infinite_pay.method.generator.identifier.infinite_pay:
+        parent: oro_integration.generator.prefixed_identifier_generator
+        public: true
+        arguments:
+            - '%oro_infinite_pay.method.infinite_pay%'
+
+    oro_infinite_pay.method.config.factory.infinite_pay:
+        class: 'Oro\Bundle\InfinitePayBundle\Method\Config\Factory\InfinitePayConfigFactory'
+        public: false
+        arguments:
+            - '@oro_security.encoder.mcrypt'
+            - '@oro_locale.helper.localization'
+            - '@oro_infinite_pay.method.generator.identifier.infinite_pay'
+
+    oro_infinite_pay.method.config.provider.infinite_pay:
+        class: 'Oro\Bundle\InfinitePayBundle\Method\Config\Provider\InfinitePayConfigProvider'
+        public: false
+        arguments:
+            - '@doctrine'
+            - '@logger'
+            - '@oro_infinite_pay.method.config.factory.infinite_pay'
+            - '%oro_infinite_pay.method.infinite_pay%'
+
+    oro_infinite_pay.method.view.factory.infinite_pay:
+        class: 'Oro\Bundle\InfinitePayBundle\Method\View\Factory\InfinitePayViewFactory'
+        public: false
+        arguments:
+            - '@form.factory'
+
+    oro_infinite_pay.method.factory.infinite_pay:
+        class: 'Oro\Bundle\InfinitePayBundle\Method\Factory\InfinitePayFactory'
+        public: false
+        arguments:
+            - '@oro_infinite_pay.registry.payment_actions'
+            - '@oro_infinite_pay.method_provider.order'
+
+    oro_infinite_pay.method.provider.infinite_pay:
+        class: 'Oro\Bundle\InfinitePayBundle\Method\Provider\InfinitePayProvider'
+        arguments:
+            - '@oro_infinite_pay.method.config.provider.infinite_pay'
+            - '@oro_infinite_pay.method.factory.infinite_pay'
+        tags:
+            - { name: oro_payment.payment_method_provider }
+
+    oro_infinite_pay.method.view.provider.infinite_pay:
+        class: 'Oro\Bundle\InfinitePayBundle\Method\View\Provider\InfinitePayViewProvider'
+        arguments:
+            - '@oro_infinite_pay.method.view.factory.infinite_pay'
+            - '@oro_infinite_pay.method.config.provider.infinite_pay'
+        tags:
+            - { name: oro_payment.payment_method_view_provider }

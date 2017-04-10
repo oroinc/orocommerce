@@ -3,8 +3,8 @@
 namespace Oro\Bundle\InfinitePayBundle\Action;
 
 use Oro\Bundle\InfinitePayBundle\Action\Mapper\ResponseMapperInterface;
-use Oro\Bundle\InfinitePayBundle\Configuration\InfinitePayConfigInterface;
 use Oro\Bundle\InfinitePayBundle\Gateway\GatewayInterface;
+use Oro\Bundle\InfinitePayBundle\Method\Config\Provider\InfinitePayConfigProviderInterface;
 
 abstract class ActionAbstract implements ActionInterface
 {
@@ -12,9 +12,9 @@ abstract class ActionAbstract implements ActionInterface
     protected $gateway;
 
     /**
-     * @var InfinitePayConfigInterface
+     * @var InfinitePayConfigProviderInterface
      */
-    protected $config;
+    protected $configProvider;
 
     /**
      * @var ResponseMapperInterface
@@ -28,10 +28,10 @@ abstract class ActionAbstract implements ActionInterface
 
     public function __construct(
         GatewayInterface $gateway,
-        InfinitePayConfigInterface $config
+        InfinitePayConfigProviderInterface $configProvider
     ) {
         $this->gateway = $gateway;
-        $this->config = $config;
+        $this->configProvider = $configProvider;
     }
 
     /**
@@ -56,5 +56,10 @@ abstract class ActionAbstract implements ActionInterface
         $this->responseMapper = $responseMapper;
 
         return $this;
+    }
+
+    protected function getPaymentMethodConfig($paymentMethodIdentifier)
+    {
+        return $this->configProvider->getPaymentConfig($paymentMethodIdentifier);
     }
 }

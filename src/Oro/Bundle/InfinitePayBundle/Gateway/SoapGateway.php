@@ -2,7 +2,9 @@
 
 namespace Oro\Bundle\InfinitePayBundle\Gateway;
 
+use Oro\Bundle\InfinitePayBundle\Method\Config\InfinitePayConfigInterface;
 use Oro\Bundle\InfinitePayBundle\Service\InfinitePay as SOAP;
+use Oro\Bundle\InfinitePayBundle\Service\InfinitePay\Factory\InfinitePayClientFactoryInterface;
 
 /**
  * @codeCoverageIgnore
@@ -10,55 +12,63 @@ use Oro\Bundle\InfinitePayBundle\Service\InfinitePay as SOAP;
 class SoapGateway implements GatewayInterface
 {
     /**
-     * @var SOAP\ApiWrapper
+     * @var InfinitePayClientFactoryInterface
      */
-    protected $clientWrapper;
+    protected $clientFactory;
 
     /**
-     * @param SOAP\ApiWrapper $apiWrapper
+     * @param InfinitePayClientFactoryInterface $clientFactory
      */
-    public function __construct(SOAP\ApiWrapper $apiWrapper)
+    public function __construct(InfinitePayClientFactoryInterface $clientFactory)
     {
-        $this->clientWrapper = $apiWrapper;
+        $this->clientFactory = $clientFactory;
     }
 
     /**
      * @param SOAP\ReserveOrder $reservation
      *
+     * @param InfinitePayConfigInterface $config
      * @return SOAP\ReserveOrderResponse
      */
-    public function reserve(SOAP\ReserveOrder $reservation)
+    public function reserve(SOAP\ReserveOrder $reservation, InfinitePayConfigInterface $config)
     {
-        return $this->clientWrapper->getClient()->reserveOrder($reservation);
+        $client = $this->clientFactory->create($config);
+        return $client->reserveOrder($reservation);
     }
 
     /**
      * @param SOAP\CaptureOrder $capture
      *
+     * @param InfinitePayConfigInterface $config
      * @return SOAP\CaptureOrderResponse
      */
-    public function capture(SOAP\CaptureOrder $capture)
+    public function capture(SOAP\CaptureOrder $capture, InfinitePayConfigInterface $config)
     {
-        return $this->clientWrapper->getClient()->callCaptureOrder($capture);
+        $client = $this->clientFactory->create($config);
+        return $client->callCaptureOrder($capture);
     }
 
     /**
      * @param SOAP\ActivateOrder $activateOrder
      *
+     * @param InfinitePayConfigInterface $config
      * @return SOAP\ActivateOrderResponse
      */
-    public function activate(SOAP\ActivateOrder $activateOrder)
+    public function activate(SOAP\ActivateOrder $activateOrder, InfinitePayConfigInterface $config)
     {
-        return $this->clientWrapper->getClient()->activateOrder($activateOrder);
+        $client = $this->clientFactory->create($config);
+        return $client->activateOrder($activateOrder);
     }
 
     /**
      * @param SOAP\ApplyTransaction $applyTransactionRequest
      *
+     * @param InfinitePayConfigInterface $config
      * @return SOAP\ApplyTransactionResponse
      */
-    public function applyTransaction(SOAP\ApplyTransaction $applyTransactionRequest)
+    public function applyTransaction(SOAP\ApplyTransaction $applyTransactionRequest, InfinitePayConfigInterface $config)
     {
-        return $this->clientWrapper->getClient()->applyTransactionOnActivatedOrder($applyTransactionRequest);
+        $client = $this->clientFactory->create($config);
+        return $client->applyTransactionOnActivatedOrder($applyTransactionRequest);
     }
 }

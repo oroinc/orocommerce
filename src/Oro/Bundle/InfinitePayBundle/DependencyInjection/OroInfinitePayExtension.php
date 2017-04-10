@@ -13,18 +13,14 @@ class OroInfinitePayExtension extends Extension
 
     public function load(array $configs, ContainerBuilder $container)
     {
-        $configuration = new Configuration();
-        $config = $this->processConfiguration($configuration, $configs);
-        $container->prependExtensionConfig($this->getAlias(), $config);
-
         $loader = new Loader\YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.yml');
         $loader->load('parameters.yml');
+        $loader->load('services.yml');
+        $loader->load('method.yml');
         $loader->load('actions.yml');
         $loader->load('action_mappers.yml');
         $loader->load('form_types.yml');
         $loader->load('request_providers.yml');
-        $loader->load('event_listeners.yml');
     }
 
     /**

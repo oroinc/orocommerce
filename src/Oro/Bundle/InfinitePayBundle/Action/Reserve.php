@@ -30,13 +30,16 @@ class Reserve extends ActionAbstract
 
         $reserveOrder = $this->requestMapper->createRequestFromOrder($order, $additionalOptions);
         $reserveOrder = $this->automationProvider->setAutomation($reserveOrder, $order);
-        $paymentResponse = $this->gateway->reserve($reserveOrder);
+        $paymentResponse = $this->gateway->reserve(
+            $reserveOrder,
+            $this->getPaymentMethodConfig($paymentTransaction->getPaymentMethod())
+        );
 
         $paymentTransaction = $this->responseMapper->mapResponseToPaymentTransaction(
             $paymentTransaction,
             $paymentResponse
         );
-        $paymentTransaction->setSuccessful($this->isSuccessfullAutoActivation($paymentTransaction));
+        $paymentTransaction->setSuccessful($this->isSuccessfulAutoActivation($paymentTransaction));
 
         return $this->createResponseFromPaymentTransaction($paymentTransaction);
     }
@@ -75,8 +78,9 @@ class Reserve extends ActionAbstract
      *
      * @return bool
      */
-    private function isSuccessfullAutoActivation(PaymentTransaction $paymentTransaction)
+    private function isSuccessfulAutoActivation(PaymentTransaction $paymentTransaction)
     {
-        return $this->config->isAutoActivationActive() && $paymentTransaction->isActive();
+        $config = $this->getPaymentMethodConfig($paymentTransaction->getPaymentMethod());
+        return $config !== null && $config->isAutoActivateEnabled() && $paymentTransaction->isActive();
     }
 }

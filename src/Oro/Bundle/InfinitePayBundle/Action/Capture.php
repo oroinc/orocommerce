@@ -16,7 +16,10 @@ class Capture extends ActionAbstract
     public function execute(PaymentTransaction $paymentTransaction, Order $order)
     {
         $captureRequest = $this->requestMapper->createRequestFromOrder($order, []);
-        $captureResponse = $this->gateway->capture($captureRequest);
+        $captureResponse = $this->gateway->capture(
+            $captureRequest,
+            $this->getPaymentMethodConfig($paymentTransaction->getPaymentMethod())
+        );
 
         $paymentTransaction = $this->responseMapper->mapResponseToPaymentTransaction(
             $paymentTransaction,

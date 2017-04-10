@@ -2,8 +2,6 @@
 
 namespace Oro\Bundle\InfinitePayBundle\Form\Type;
 
-use Oro\Bundle\InfinitePayBundle\Configuration\InfinitePayConfig;
-use Oro\Bundle\InfinitePayBundle\Configuration\InfinitePayConfigInterface;
 use Oro\Bundle\ValidationBundle\Validator\Constraints\Email;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -17,19 +15,32 @@ use Symfony\Component\Validator\Constraints\NotBlank;
  */
 class DebtorDataType extends AbstractType
 {
-    const NAME = 'oro_infinite_pay_debtor_data';
+    const BLOCK_PREFIX = 'oro_infinite_pay_debtor_data';
 
-    /** @var InfinitePayConfigInterface */
-    protected $config;
 
-    /**
-     * DebtorDataType constructor.
-     *
-     * @param InfinitePayConfigInterface $config
-     */
-    public function __construct(InfinitePayConfigInterface $config)
+    public static function getAvailableLegalTypes()
     {
-        $this->config = $config;
+        return [
+            'ag' => 'AG',
+            'eg' => 'eG',
+            'ek' => 'EK',
+            'ev' => 'e.V.',
+            'freelancer' => 'Freelancer',
+            'gbr' => 'GbR',
+            'gmbh' => 'GmbH',
+            'gmbh_ig' => 'GmbH iG',
+            'gmbh_co_kg' => 'GmbH & Co. KG',
+            'kg' => 'KG',
+            'kgaa' => 'KgaA',
+            'ltd' => 'Ltd',
+            'ltd_co_kg' => 'Ltd co KG',
+            'ohg' => 'OHG',
+            'offtl_einrichtung' => 'öffl. Einrichtung',
+            'sonst_pers_ges' => 'Sonst. KapitalGes',
+            'stiftung' => 'Stiftung',
+            'ug' => 'UG',
+            'einzel' => 'Einzelunternehmen, Kleingewerbe, Handelsvetreter',
+        ];
     }
 
     /**
@@ -49,7 +60,7 @@ class DebtorDataType extends AbstractType
                 'legal_form',
                 ChoiceType::class,
                 [
-                    'choices' => InfinitePayConfig::$availableLegalTypes,
+                    'choices' => self::getAvailableLegalTypes(),
                 ]
             );
     }
@@ -69,18 +80,10 @@ class DebtorDataType extends AbstractType
     }
 
     /**
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->getBlockPrefix();
-    }
-
-    /**
      * {@inheritdoc}
      */
     public function getBlockPrefix()
     {
-        return self::NAME;
+        return self::BLOCK_PREFIX;
     }
 }

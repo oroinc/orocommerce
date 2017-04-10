@@ -4,8 +4,7 @@ namespace Oro\Bundle\InfinitePayBundle\Method;
 
 use Oro\Bundle\InfinitePayBundle\Action\ActionInterface;
 use Oro\Bundle\InfinitePayBundle\Action\Registry\ActionRegistryInterface;
-use Oro\Bundle\InfinitePayBundle\Configuration\InfinitePayConfig;
-use Oro\Bundle\InfinitePayBundle\Configuration\InfinitePayConfigInterface;
+use Oro\Bundle\InfinitePayBundle\Method\Config\InfinitePayConfigInterface;
 use Oro\Bundle\InfinitePayBundle\Method\Provider\OrderProviderInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
@@ -14,9 +13,11 @@ use Oro\Bundle\ReminderBundle\Exception\MethodNotSupportedException;
 
 class InfinitePay implements PaymentMethodInterface
 {
-    const IDENTIFIER = 'infinite_pay';
+    const ACTIVATE = 'activate';
 
-    /** @var InfinitePayConfigInterface */
+    /**
+     * @var InfinitePayConfigInterface
+     */
     protected $config;
 
     /**
@@ -68,15 +69,7 @@ class InfinitePay implements PaymentMethodInterface
      */
     public function getIdentifier()
     {
-        return static::IDENTIFIER;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isEnabled()
-    {
-        return $this->config->getIsActive();
+        return $this->config->getPaymentMethodIdentifier();
     }
 
     /**
@@ -84,7 +77,7 @@ class InfinitePay implements PaymentMethodInterface
      */
     public function isApplicable(PaymentContextInterface $context)
     {
-        return $this->isEnabled();
+        return true;
     }
 
     /**
@@ -94,17 +87,18 @@ class InfinitePay implements PaymentMethodInterface
      */
     public function supports($actionName)
     {
-        return in_array($actionName, [
-            InfinitePayConfig::ACTION_PURCHASE_ORDER,
-            InfinitePayConfig::ACTION_CAPTURE_ORDER,
-            InfinitePayConfig::ACTION_ACTIVATE_ORDER,
-        ], true);
+        return in_array(
+            $actionName,
+            [self::PURCHASE, self::CAPTURE, self::ACTIVATE],
+            true
+        );
     }
 
     /**
      * @param string $actionType
      *
      * @return ActionInterface
+     * @throws \Exception
      */
     private function getActionExecutorFromActionType($actionType)
     {
