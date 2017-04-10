@@ -242,10 +242,14 @@ datagrids:
                 where:
                     and:
                         - product.type <> :productType
+                        - product.attributeFamily = :attributeFamily
             bind_parameters:
                 -
                     name: productType
                     default: configurable
+                -
+                    name: attributeFamily
+
         columns:
             isVariant:
                 label: oro.product.is_variant.label

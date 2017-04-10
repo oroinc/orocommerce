@@ -70,24 +70,29 @@ class ProductVariantCustomFieldsDatagridListener
         }
 
         $parentProductId = $parameters->get('parentProduct');
-
-        /** @var Product $parentProduct */
-        $parentProduct = $this->getProductRepository()->find($parentProductId);
-        if (!$parentProduct) {
-            throw new \InvalidArgumentException(sprintf('Can not find parent product with id "%d"', $parentProductId));
-        }
-
         $additionalParams = $parameters->get(ParameterBag::ADDITIONAL_PARAMETERS, []);
+        $variantFields = [];
+
+        if ($parentProductId) {
+            /** @var Product $parentProduct */
+            $parentProduct = $this->getProductRepository()->find($parentProductId);
+            if (!$parentProduct) {
+                throw new \InvalidArgumentException(
+                    sprintf('Can not find parent product with id "%d"', $parentProductId)
+                );
+            }
+            $variantFields = $this->getConfigurableAttributes(
+                $parentProduct->getVariantFields(),
+                $additionalParams
+            );
+        } elseif (isset($additionalParams['selectedVariantFields'])) {
+            $variantFields = $additionalParams['selectedVariantFields'];
+        }
 
         $appendVariants = $this->getMergedVariants($parameters);
 
         $config = $event->getConfig();
         $query = $config->getOrmQuery();
-
-        $variantFields = $this->getConfigurableAttributes(
-            $parentProduct->getVariantFields(),
-            $additionalParams
-        );
 
         $rootEntityAlias = $this->getRootAlias($config);
 

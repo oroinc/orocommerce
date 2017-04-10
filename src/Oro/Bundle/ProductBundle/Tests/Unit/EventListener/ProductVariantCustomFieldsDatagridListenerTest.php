@@ -140,6 +140,30 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
         $this->assertEquals($expectedConfigValue, $this->config->toArray());
     }
 
+    public function testOnBuildBeforeHideUnsuitableShowsAllAvailableVariantsOnCreate()
+    {
+        $product = new Product();
+        $product->setVariantFields([
+            self::FIELD_COLOR,
+            self::FIELD_SIZE,
+        ]);
+
+        $this->prepareRepositoryProduct($product);
+
+        $this->setParameterBag(null);
+        $event = $this->prepareBuildBeforeEvent($this->config);
+        $this->listener->onBuildBeforeHideUnsuitable($event);
+
+        $expectedConfigValue = $this->getInitConfig();
+        $this->setValueByPath($expectedConfigValue, '[source][query][where][and]', ['1 = 0' ]);
+
+        $this->setValueByPath($expectedConfigValue, '[source][query][where][or]', [
+            sprintf('%s.id IS NOT NULL', self::PRODUCT_VARIANT_LINK_ALIAS)
+        ]);
+
+        $this->assertEquals($expectedConfigValue, $this->config->toArray());
+    }
+
     /**
      * User saves configurable product with "color" variant field and select products with ids 1,2,3 as variants
      */
@@ -466,9 +490,12 @@ class ProductVariantCustomFieldsDatagridListenerTest extends \PHPUnit_Framework_
         return $initConfig;
     }
 
-    private function setParameterBag()
+    /**
+     * @param int $productId
+     */
+    private function setParameterBag($productId = self::PRODUCT_ID)
     {
-        $this->parameterBag->set('parentProduct', self::PRODUCT_ID);
+        $this->parameterBag->set('parentProduct', $productId);
     }
 
     /**

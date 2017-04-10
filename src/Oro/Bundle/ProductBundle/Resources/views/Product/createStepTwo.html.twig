@@ -52,9 +52,14 @@
         'names': form_row(form.names)
     } %}
 
-    {% if form.type.vars.value == constant('Oro\\Bundle\\ProductBundle\\Entity\\Product::TYPE_CONFIGURABLE') %}
+    {% if entity.isConfigurable %}
+        {% set productsVariantSelector %}
+            <div data-page-component-module="oroproduct/js/app/components/product-variant-component">
+                {{ form_row(form.variantFields) }}
+            </div>
+        {% endset %}
         {% set generalData = generalData|merge([
-            form_row(form.variantFields)
+        productsVariantSelector
         ]) %}
     {% endif %}
 
@@ -147,6 +152,34 @@
             }]
         }
     }) %}
+
+    {% set productHasVariants = (entity.isConfigurable and form.variantFields.vars.data|length != 0) %}
+
+    {% if productHasVariants %}
+
+        {% set dataGridParameters = {
+            'parentProduct': 0,
+            'attributeFamily': entity.attributeFamily.id
+        } %}
+
+        {% if form.variantLinks.appendVariants.vars.value|length != 0 %}
+            {% set dataGridParameters = dataGridParameters|merge({appendVariants: form.variantLinks.appendVariants.vars.value}) %}
+        {% endif %}
+
+        {% set variantLinksForm = form.variantLinks %}
+        {% set dataBlocks = dataBlocks|merge([{
+            'title' : 'oro.product.sections.productVariants'|trans,
+            'subblocks': [{
+            'title' : null,
+            'useSpan': false,
+            'data' : [
+                    form_widget(variantLinksForm.appendVariants, {'id': 'productAppendVariants'}),
+                    form_widget(variantLinksForm.removeVariants, {'id': 'productRemoveVariants'}),
+                    dataGrid.renderGrid('product-product-variants-edit', dataGridParameters, { cssClass: 'inner-grid' })
+                ]
+            }]
+        }] ) %}
+    {% endif %}
 
     {% set data = {
         'formErrors': form_errors(form),
