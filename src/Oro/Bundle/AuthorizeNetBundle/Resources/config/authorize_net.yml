@@ -9,6 +9,8 @@ services:
     oro_authorize_net.sdk.client:
         class: 'Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Client\AuthorizeNetSDKClient'
         public: false
+        arguments:
+            - '@jms_serializer.serializer'
 
     oro_authorize_net.request.registry:
         class: 'Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Request\RequestRegistry'

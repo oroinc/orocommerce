@@ -2,13 +2,29 @@
 
 namespace Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Client;
 
+use JMS\Serializer\Serializer;
 use net\authorize\api\contract\v1 as AnetAPI;
 use net\authorize\api\controller as AnetController;
+use net\authorize\api\contract\v1\CreateTransactionResponse;
+
 use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Option;
 use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Response\AuthorizeNetSDKResponse;
 
 class AuthorizeNetSDKClient implements ClientInterface
 {
+    /**
+     * @var Serializer
+     */
+    protected $serializer;
+
+    /**
+     * @param Serializer $serializer
+     */
+    public function __construct(Serializer $serializer)
+    {
+        $this->serializer = $serializer;
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -24,11 +40,14 @@ class AuthorizeNetSDKClient implements ClientInterface
 
         $controller = new AnetController\CreateTransactionController($request);
 
-        /**@var AnetAPI\CreateTransactionResponse $apiResponse*/
-        $apiResponse = $controller
-            ->executeWithApiResponse($options[Option\Environment::ENVIRONMENT]);
+        $apiResponse = $controller->executeWithApiResponse($options[Option\Environment::ENVIRONMENT]);
+        if (!$apiResponse instanceof CreateTransactionResponse) {
+            throw new \LogicException('Authoreze.Net SDK API returned wrong response type.
+                Expected: net\authorize\api\contract\v1\CreateTransactionResponse. Actual: ' .
+                get_class($apiResponse));
+        }
 
-        return new AuthorizeNetSDKResponse($apiResponse);
+        return new AuthorizeNetSDKResponse($this->serializer, $apiResponse);
     }
 
     /**

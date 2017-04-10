@@ -2,10 +2,10 @@
 
 namespace Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Response;
 
+use JMS\Serializer\Serializer;
 use net\authorize\api\contract\v1\CreateTransactionResponse;
 use net\authorize\api\contract\v1\TransactionResponseType\ErrorsAType\ErrorAType;
 use net\authorize\api\contract\v1\TransactionResponseType\MessagesAType\MessageAType;
-use Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Option;
 
 class AuthorizeNetSDKResponse implements ResponseInterface
 {
@@ -15,10 +15,18 @@ class AuthorizeNetSDKResponse implements ResponseInterface
     protected $apiResponse;
 
     /**
-     * @param CreateTransactionResponse $apiResponse
+     * @var array|null
      */
-    public function __construct(CreateTransactionResponse $apiResponse)
+    protected $apiResponseSerialized;
+
+    /**
+     * @var Serializer
+     */
+    protected $serializer;
+
+    public function __construct(Serializer $serializer, CreateTransactionResponse $apiResponse)
     {
+        $this->serializer = $serializer;
         $this->apiResponse = $apiResponse;
     }
 
@@ -95,14 +103,26 @@ class AuthorizeNetSDKResponse implements ResponseInterface
      */
     public function getData()
     {
-        $transactionResponse = $this->apiResponse->getTransactionResponse();
-        // TODO: consider increase volume of returned information about api response
-        $data = ['message' => $this->getMessage()];
-        if ($transactionResponse) {
-            $data[Option\OriginalTransaction::ORIGINAL_TRANSACTION] = $transactionResponse->getTransId();
-            $data['result'] = $transactionResponse->getResponseCode();
-            $data['authCode'] = $transactionResponse->getAuthCode();
+        if ($this->apiResponseSerialized === null) {
+            $this->apiResponseSerialized = $this->cleanup($this->serializer->toArray($this->apiResponse));
         }
-        return $data;
+        return $this->apiResponseSerialized;
+    }
+
+    /**
+     * @param array $response
+     * @return array
+     */
+    protected function cleanup(array $response)
+    {
+        foreach ($response as $key => $value) {
+            if (is_array($value)) {
+                $response[$key] = $this->cleanup($value);
+            }
+            if ($response[$key] === [] || $response[$key] === '') {
+                unset($response[$key]);
+            }
+        }
+        return $response;
     }
 }
