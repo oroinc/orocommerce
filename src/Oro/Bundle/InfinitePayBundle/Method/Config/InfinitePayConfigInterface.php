@@ -1,31 +1,15 @@
 <?php
 
-namespace Oro\Bundle\InfinitePayBundle\Configuration;
+namespace Oro\Bundle\InfinitePayBundle\Method\Config;
 
-interface InfinitePayConfigInterface
+use Oro\Bundle\PaymentBundle\Method\Config\PaymentConfigInterface;
+
+interface InfinitePayConfigInterface extends PaymentConfigInterface
 {
     /**
      * @return bool
      */
-    public function getIsActive();
-
-    /** @var string */
-    public function getLabel();
-
-    /**
-     * @return int
-     */
-    public function getOrder();
-
-    /**
-     * @return string
-     */
-    public function getShortLabel();
-
-    /**
-     * @return bool
-     */
-    public function getDebugMode();
+    public function isDebugModeEnabled();
 
     /**
      * @return string
@@ -50,12 +34,12 @@ interface InfinitePayConfigInterface
     /**
      * @return bool
      */
-    public function isAutoCaptureActive();
+    public function isAutoCaptureEnabled();
 
     /**
      * @return bool
      */
-    public function isAutoActivationActive();
+    public function isAutoActivateEnabled();
 
     /**
      * @return int

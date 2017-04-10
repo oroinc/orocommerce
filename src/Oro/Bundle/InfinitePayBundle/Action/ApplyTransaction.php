@@ -18,7 +18,10 @@ class ApplyTransaction extends ActionAbstract
         $refNo = $paymentTransaction->getSourcePaymentTransaction()->getReference();
         $applyTransactionRequest = $this->requestMapper->createRequestFromOrder($order, ['ref_no' => $refNo]);
 
-        $response = $this->gateway->applyTransaction($applyTransactionRequest);
+        $response = $this->gateway->applyTransaction(
+            $applyTransactionRequest,
+            $this->getPaymentMethodConfig($paymentTransaction->getPaymentMethod())
+        );
 
         $paymentTransaction = $this->responseMapper->mapResponseToPaymentTransaction($paymentTransaction, $response);
 

@@ -2,37 +2,30 @@
 
 namespace Oro\Bundle\InfinitePayBundle\Action\Provider;
 
-use Oro\Bundle\InfinitePayBundle\Configuration\InfinitePayConfigInterface;
+use Oro\Bundle\InfinitePayBundle\Method\Config\InfinitePayConfigInterface;
 use Oro\Bundle\InfinitePayBundle\Method\Provider\InvoiceNumberGeneratorInterface;
 use Oro\Bundle\InfinitePayBundle\Service\InfinitePay\InvoiceData;
 use Oro\Bundle\OrderBundle\Entity\Order;
 
 class InvoiceDataProvider implements InvoiceDataProviderInterface
 {
-    /** @var InfinitePayConfigInterface */
-    protected $config;
-
     /**
      * @var InvoiceNumberGeneratorInterface
      */
     protected $invoiceNumberGenerator;
 
-    public function __construct(InfinitePayConfigInterface $config, InvoiceNumberGeneratorInterface $numberGenerator)
+    public function __construct(InvoiceNumberGeneratorInterface $numberGenerator)
     {
-        $this->config = $config;
         $this->invoiceNumberGenerator = $numberGenerator;
     }
 
     /**
-     * @param Order $order
-     * @param int   $delayInDays
-     *
-     * @return InvoiceData
+     * @inheritdoc
      */
-    public function getInvoiceData(Order $order, $delayInDays = 0)
+    public function getInvoiceData(Order $order, InfinitePayConfigInterface $config, $delayInDays = 0)
     {
-        $duePeriod = $this->config->getInvoiceDuePeriod();
-        $deliveryDays = $this->config->getShippingDuration();
+        $duePeriod = $config->getInvoiceDuePeriod();
+        $deliveryDays = $config->getShippingDuration();
 
         $invoiceData = new InvoiceData();
         $invoiceData

@@ -2,32 +2,22 @@
 
 namespace Oro\Bundle\InfinitePayBundle\Action\Provider;
 
-use Oro\Bundle\InfinitePayBundle\Configuration\InfinitePayConfigInterface;
+use Oro\Bundle\InfinitePayBundle\Method\Config\InfinitePayConfigInterface;
 use Oro\Bundle\InfinitePayBundle\Service\InfinitePay\ClientData;
 use Zend\Crypt\Hmac;
 
 class ClientDataProvider implements ClientDataProviderInterface
 {
-    /** @var InfinitePayConfigInterface */
-    protected $config;
-
-    public function __construct(InfinitePayConfigInterface $config)
-    {
-        $this->config = $config;
-    }
-
     /**
-     * @param string $orderId
-     *
-     * @return ClientData
+     * @inheritdoc
      */
-    public function getClientData($orderId)
+    public function getClientData($orderId, InfinitePayConfigInterface $config)
     {
         $clientData = new ClientData();
-        $clientData->setClientRef($this->config->getClientRef());
-        $message = $this->config->getClientRef().$orderId;
+        $clientData->setClientRef($config->getClientRef());
+        $message = $config->getClientRef().$orderId;
         $clientData->setSecurityCd(
-            $this->generateSecurityCode($message, $this->config->getUsername())
+            $this->generateSecurityCode($message, $config->getUsername())
         );
 
         return $clientData;

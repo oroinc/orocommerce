@@ -2,19 +2,23 @@
 
 namespace Oro\Bundle\InfinitePayBundle\Method\View;
 
-use Oro\Bundle\InfinitePayBundle\Configuration\InfinitePayConfigInterface;
 use Oro\Bundle\InfinitePayBundle\Form\Type\DebtorDataType;
-use Oro\Bundle\InfinitePayBundle\Method\InfinitePay;
+use Oro\Bundle\InfinitePayBundle\Method\Config\InfinitePayConfigInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
 use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
 
 class InfinitePayView implements PaymentMethodViewInterface
 {
-    /** @var FormFactoryInterface */
+    /**
+     * @var FormFactoryInterface
+     */
     protected $formFactory;
 
-    /** @var InfinitePayConfigInterface */
+    /**
+     * @var InfinitePayConfigInterface
+     */
     protected $config;
 
     public function __construct(
@@ -28,10 +32,11 @@ class InfinitePayView implements PaymentMethodViewInterface
     /**
      * @param PaymentContextInterface $context
      * @return array
+     * @throws InvalidOptionsException
      */
     public function getOptions(PaymentContextInterface $context)
     {
-        $formView = $this->formFactory->create(DebtorDataType::NAME)->createView();
+        $formView = $this->formFactory->create(DebtorDataType::class)->createView();
 
         return ['formView' => $formView];
     }
@@ -45,11 +50,11 @@ class InfinitePayView implements PaymentMethodViewInterface
     }
 
     /**
-     * @return int
+     * {@inheritdoc}
      */
-    public function getOrder()
+    public function getAdminLabel()
     {
-        return $this->config->getOrder();
+        return $this->config->getAdminLabel();
     }
 
     /**
@@ -71,8 +76,8 @@ class InfinitePayView implements PaymentMethodViewInterface
     /**
      * @return string
      */
-    public function getPaymentMethodType()
+    public function getPaymentMethodIdentifier()
     {
-        return InfinitePay::TYPE;
+        return $this->config->getPaymentMethodIdentifier();
     }
 }

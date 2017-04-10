@@ -6,7 +6,7 @@ services:
         abstract: true
         arguments:
             - '@oro_infinite_pay.soap.gateway'
-            - '@oro_infinite_pay.config'
+            - '@oro_infinite_pay.method.config.provider.infinite_pay'
 
     oro_infinite_pay.actions.reserve:
         class: 'Oro\Bundle\InfinitePayBundle\Action\Reserve'
