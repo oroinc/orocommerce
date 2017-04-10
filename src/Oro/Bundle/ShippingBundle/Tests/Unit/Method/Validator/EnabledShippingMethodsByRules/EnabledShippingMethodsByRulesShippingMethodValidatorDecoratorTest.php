@@ -185,7 +185,7 @@ class EnabledShippingMethodsByRulesShippingMethodValidatorDecoratorTest extends 
             ->method('trans')
             ->with(
                 'oro.shipping.method_type.used.error',
-                ['%types%' => implode(',', $typeLabels)]
+                ['%types%' => implode(', ', $typeLabels)]
             )
             ->willReturn($translatedMessage);
 
