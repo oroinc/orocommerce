@@ -43,8 +43,10 @@
 
     &__edit {
         position: $shopping-lists-edit-position;
-
+        top: 50%;
         right: $shopping-lists-edit-right;
+        height: $shopping-lists-edit-height;
+        margin-top: -($shopping-lists-edit-height / 2);
 
         font-size: $shopping-lists-edit-font-size;
 
