@@ -10,7 +10,6 @@ use Oro\Bundle\AuthorizeNetBundle\Method\Config\AuthorizeNetConfigInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
 use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\PaymentMethodInterface;
-use Oro\Bundle\PayPalBundle\PayPal\Payflow\Option\Currency;
 
 class AuthorizeNetPaymentMethod implements PaymentMethodInterface
 {
@@ -95,7 +94,7 @@ class AuthorizeNetPaymentMethod implements PaymentMethodInterface
     {
         $paymentTransaction
             ->setAmount(self::ZERO_AMOUNT)
-            ->setCurrency(Currency::US_DOLLAR)
+            ->setCurrency(Option\Currency::US_DOLLAR)
             ->setAction(PaymentMethodInterface::VALIDATE)
             ->setActive(true)
             ->setSuccessful(true);
@@ -109,18 +108,8 @@ class AuthorizeNetPaymentMethod implements PaymentMethodInterface
      */
     protected function purchase(PaymentTransaction $paymentTransaction)
     {
-        list($dataDescriptor, $dataValue) = $this->extractOpaqueCreditCardCredentials($paymentTransaction);
-
-        $options = [
-            Option\DataDescriptor::DATA_DESCRIPTOR => $dataDescriptor,
-            Option\DataValue::DATA_VALUE => $dataValue,
-            //TODO: consider using RoundingServiceInterface
-            Option\Amount::AMOUNT => round($paymentTransaction->getAmount(), self::AMOUNT_PRECISION),
-            Option\Currency::CURRENCY => $paymentTransaction->getCurrency()
-        ];
-
         $paymentTransaction
-            ->setRequest($options)
+            ->setRequest($this->getPaymentOptions($paymentTransaction))
             ->setAction($this->config->getPurchaseAction());
 
         return $this->executePaymentAction($paymentTransaction->getAction(), $paymentTransaction);
@@ -132,18 +121,9 @@ class AuthorizeNetPaymentMethod implements PaymentMethodInterface
      */
     protected function capture(PaymentTransaction $paymentTransaction)
     {
-        list($dataDescriptor, $dataValue) = $this->extractOpaqueCreditCardCredentials(
-            $paymentTransaction->getSourcePaymentTransaction()
-        );
-
-        $options = [
-            Option\DataDescriptor::DATA_DESCRIPTOR => $dataDescriptor,
-            Option\DataValue::DATA_VALUE => $dataValue,
-            Option\Amount::AMOUNT => (float)$paymentTransaction->getAmount(),
-            Option\Currency::CURRENCY => $paymentTransaction->getSourcePaymentTransaction()->getCurrency(),
-            Option\OriginalTransaction::ORIGINAL_TRANSACTION =>
-                $paymentTransaction->getSourcePaymentTransaction()->getReference(),
-        ];
+        $sourceTransaction = $paymentTransaction->getSourcePaymentTransaction();
+        $options = $this->getPaymentOptions($paymentTransaction->getSourcePaymentTransaction());
+        $options[Option\OriginalTransaction::ORIGINAL_TRANSACTION] = $sourceTransaction->getReference();
 
         $paymentTransaction
             ->setRequest($options)
@@ -171,12 +151,29 @@ class AuthorizeNetPaymentMethod implements PaymentMethodInterface
             ->setResponse($response->getData());
 
         if (!$response->isSuccessful() && $this->logger) {
-                $this->logger->critical($response->getMessage());
+            $this->logger->critical($response->getMessage());
         }
 
         return [
             'message' => $response->getMessage(),
             'successful' => $response->isSuccessful(),
+        ];
+    }
+
+    /**
+     * @param PaymentTransaction $paymentTransaction
+     * @return array
+     */
+    protected function getPaymentOptions(PaymentTransaction $paymentTransaction)
+    {
+        list($dataDescriptor, $dataValue) = $this->extractOpaqueCreditCardCredentials($paymentTransaction);
+
+        return [
+            Option\DataDescriptor::DATA_DESCRIPTOR => $dataDescriptor,
+            Option\DataValue::DATA_VALUE => $dataValue,
+            //TODO: consider using RoundingServiceInterface
+            Option\Amount::AMOUNT => round($paymentTransaction->getAmount(), self::AMOUNT_PRECISION),
+            Option\Currency::CURRENCY => $paymentTransaction->getCurrency(),
         ];
     }
 
@@ -217,7 +214,7 @@ class AuthorizeNetPaymentMethod implements PaymentMethodInterface
     }
 
     /**
-     * @param $paymentTransaction
+     * @param PaymentTransaction $paymentTransaction
      * @return array
      */
     protected function extractOpaqueCreditCardCredentials(PaymentTransaction $paymentTransaction)

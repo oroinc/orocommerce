@@ -33,8 +33,6 @@ abstract class AbstractRequest implements RequestInterface
             ->addOption(new Option\TransactionKey())
             ->addOption(new Option\DataDescriptor())
             ->addOption(new Option\DataValue())
-            ->addOption(new Option\Amount())
-            ->addOption(new Option\Currency())
             ->addOption(new Option\Environment());
 
         return $this;
@@ -56,6 +54,10 @@ abstract class AbstractRequest implements RequestInterface
      */
     protected function configureRequestOptions()
     {
+        $this
+            ->addOption(new Option\Amount())
+            ->addOption(new Option\Currency());
+
         return $this;
     }
 

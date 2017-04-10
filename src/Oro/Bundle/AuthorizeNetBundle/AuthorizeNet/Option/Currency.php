@@ -2,7 +2,7 @@
 
 namespace Oro\Bundle\AuthorizeNetBundle\AuthorizeNet\Option;
 
-class Currency implements OptionInterface
+class Currency implements OptionsDependentInterface
 {
     const CURRENCY = 'Currency';
 
@@ -25,27 +25,35 @@ class Currency implements OptionInterface
         Currency::NEW_ZEALAND_DOLLAR,
     ];
 
-    /** @var bool */
-    protected $required;
-
-    /**
-     * @param bool $required
-     */
-    public function __construct($required = true)
-    {
-        $this->required = $required;
-    }
-
     /** {@inheritdoc} */
     public function configureOption(OptionsResolver $resolver)
     {
-        if ($this->required) {
-            $resolver
-                ->setRequired(Currency::CURRENCY);
-        }
-
         $resolver
             ->setDefined(Currency::CURRENCY)
             ->addAllowedValues(Currency::CURRENCY, Currency::$currencies);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isApplicableDependent(array $options)
+    {
+        if (!isset($options[Transaction::TRANSACTION_TYPE])) {
+            return false;
+        }
+
+        return in_array(
+            $options[Transaction::TRANSACTION_TYPE],
+            [Transaction::CHARGE, Transaction::AUTHORIZE],
+            true
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function configureDependentOption(OptionsResolver $resolver, array $options)
+    {
+        $this->configureOption($resolver);
     }
 }

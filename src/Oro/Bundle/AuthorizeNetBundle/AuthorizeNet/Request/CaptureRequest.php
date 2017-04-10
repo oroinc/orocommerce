@@ -15,6 +15,7 @@ class CaptureRequest extends AbstractRequest
     /** {@inheritdoc} */
     protected function configureRequestOptions()
     {
+        parent::configureRequestOptions();
         $this->addOption(new Option\OriginalTransaction());
         return $this;
     }

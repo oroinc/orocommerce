@@ -40,15 +40,14 @@ class AuthorizeNetSDKClient implements ClientInterface
         $transactionType = $options[Option\Transaction::TRANSACTION_TYPE];
 
         $transactionRequest = new AnetAPI\TransactionRequestType();
-        $transactionRequest
-            ->setTransactionType($transactionType)
-            ->setCurrencyCode($options[Option\Currency::CURRENCY])
-            ->setPayment($this->getPayment($options));
+        $transactionRequest->setTransactionType($transactionType)
+            ->setAmount($options[Option\Amount::AMOUNT])
+            ->setCurrencyCode($options[Option\Currency::CURRENCY]);
 
         if ($transactionType === Option\Transaction::CAPTURE) {
             $transactionRequest->setRefTransId($options[Option\OriginalTransaction::ORIGINAL_TRANSACTION]);
         } else {
-            $transactionRequest->setAmount($options[Option\Amount::AMOUNT]);
+            $transactionRequest->setPayment($this->getPayment($options));
         }
 
         return $transactionRequest;
