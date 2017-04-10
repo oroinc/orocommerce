@@ -198,7 +198,7 @@ define(function(require) {
                             }
                         }, function(response) {
                             mediator.execute('hideLoading');
-                            if (response.messages.resultCode === 'Error'||
+                            if (response.messages.resultCode === 'Error' ||
                                 !response.opaqueData ||
                                 !response.opaqueData.dataDescriptor ||
                                 !response.opaqueData.dataValue

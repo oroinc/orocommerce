@@ -114,9 +114,10 @@ class AuthorizeNetSettingsType extends AbstractType
                 'apiLoginId',
                 TextType::class,
                 [
-                'label' => 'oro.authorize_net.settings.api_login.label',
-                'required' => true,
-            ])
+                    'label' => 'oro.authorize_net.settings.api_login.label',
+                    'required' => true,
+                ]
+            )
             ->add('transactionKey', TextType::class, [
                 'label' => 'oro.authorize_net.settings.transaction_key.label',
                 'required' => true,
