@@ -28,7 +28,6 @@ services:
     oro_visibility.event_listener.visibility_grid_listener:
         class: 'Oro\Bundle\VisibilityBundle\EventListener\VisibilityGridListener'
         abstract: true
-        private: true
         arguments:
             - "@doctrine"
             - "@oro_visibility.provider.visibility_choices"
