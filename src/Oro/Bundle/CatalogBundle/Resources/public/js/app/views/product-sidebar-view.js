@@ -16,6 +16,13 @@ define(function(require) {
         /**
          * @property {Object}
          */
+        listen: {
+            'grid_load:complete mediator': 'onGridLoadComplete'
+        },
+
+        /**
+         * @property {Object}
+         */
         options: {
             defaultCategoryId: null,
             sidebarAlias: 'products-sidebar',
@@ -26,6 +33,11 @@ define(function(require) {
          * @property {jQuery.Element}
          */
         subcategoriesSelector: null,
+
+        /**
+         * @property {String}
+         */
+        gridName: null,
 
         /**
          * @param {Object} options
@@ -42,6 +54,10 @@ define(function(require) {
 
             this.subcategoriesSelector = $(this.options.includeSubcategoriesSelector);
             this.subcategoriesSelector.on('change', _.bind(this.onIncludeSubcategoriesChange, this));
+        },
+
+        onGridLoadComplete: function(collection) {
+            this.gridName = collection.options.gridName;
         },
 
         /**
@@ -71,6 +87,7 @@ define(function(require) {
             if (this.initialization) {
                 return;
             }
+
             if (selected.node.id === this.selectedCategoryId) {
                 this.$tree.jstree('deselect_node', selected.node);
                 this.selectedCategoryId = null;
@@ -87,8 +104,10 @@ define(function(require) {
         triggerSidebarChanged: function() {
             var params = {
                 categoryId: this.selectedCategoryId,
-                includeSubcategories: this.subcategoriesSelector.prop('checked')
+                includeSubcategories: this.subcategoriesSelector.prop('checked') ? 1 : 0
             };
+
+            params[this.gridName] = _.clone(params);
 
             mediator.trigger(
                 'grid-sidebar:change:' + this.options.sidebarAlias,

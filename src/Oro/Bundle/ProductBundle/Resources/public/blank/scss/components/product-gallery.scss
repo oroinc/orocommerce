@@ -11,6 +11,13 @@
 
     .product-view-media__gallery {
         border: 1px solid get-color('additional', 'light');
+        max-height: 380px;
+
+        &.slick-initialized {
+            .product-gallery__image-item {
+                display: flex; //Should for reset slick  display value
+            }
+        }
     }
 
     &__pics {
@@ -38,13 +45,15 @@
     }
 
     &__image {
-        display: block;
-        width: 100%;
-        height: auto;
+        max-width: 100%;
+        max-height: 378px;
 
-        &--item {
-            width: auto;
-            min-width: 100%;
+        &-item {
+            display: flex;
+            justify-content: center;
+            flex-direction: column;
+            align-items: center;
+            height: 378px;
         }
     }
 
@@ -139,7 +148,6 @@
         width: 100%;
         max-width: 380px;
         margin: auto;
-        margin-bottom: 0;
     }
 }
 
