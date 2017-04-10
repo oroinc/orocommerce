@@ -4,8 +4,8 @@ services:
         arguments:
             - '@translator.default'
             - '@oro_security.encoder.mcrypt'
-            - '@oro_paypal.settings.card_type.provider'
-            - '@oro_paypal.settings.payment_action.provider'
+            - '@oro_authorize_net.settings.card_type.provider'
+            - '@oro_authorize_net.settings.payment_action.provider'
         tags:
             - { name: form.type }
 
