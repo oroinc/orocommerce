@@ -792,5 +792,5 @@ services:
         class: 'Oro\Bundle\ProductBundle\Provider\VariantFieldProvider'
         public: false
         arguments:
-            - "@oro_entity_config.manager.attribute_manager"
-            - "@oro_entity_config.provider.serialized_field_provider"
+            - '@oro_entity_config.manager.attribute_manager'
+            - '@oro_entity_config.provider.serialized_field_provider'
