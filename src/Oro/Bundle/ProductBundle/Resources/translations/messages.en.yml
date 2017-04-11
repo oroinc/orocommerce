@@ -388,6 +388,7 @@ oro:
 
     webcatalog:
         contentvariant:
+            product_collection_segment.label: Product Collection Segment
             product_page_product.label: Product
 
     feature:

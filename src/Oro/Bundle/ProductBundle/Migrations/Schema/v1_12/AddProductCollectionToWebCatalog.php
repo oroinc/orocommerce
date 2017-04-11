@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\WebCatalogBundle\Migrations\Schema\v1_1;
+namespace Oro\Bundle\ProductBundle\Migrations\Schema\v1_12;
 
 use Doctrine\DBAL\Schema\Schema;
 
@@ -10,7 +10,7 @@ use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterf
 use Oro\Bundle\MigrationBundle\Migration\Migration;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 
-class OroWebCatalogBundle implements Migration, ExtendExtensionAwareInterface
+class AddProductCollectionToWebCatalog implements Migration, ExtendExtensionAwareInterface
 {
     /**
      * @var ExtendExtension
