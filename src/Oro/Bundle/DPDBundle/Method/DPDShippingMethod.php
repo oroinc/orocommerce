@@ -68,7 +68,7 @@ class DPDShippingMethod implements
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getIdentifier()
     {
@@ -76,7 +76,16 @@ class DPDShippingMethod implements
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
+     */
+    public function isEnabled()
+    {
+        //TODO: should be $channel->isEnabled()
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
      */
     public function isGrouped()
     {
@@ -84,7 +93,7 @@ class DPDShippingMethod implements
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getLabel()
     {
@@ -92,7 +101,7 @@ class DPDShippingMethod implements
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getTypes()
     {
@@ -100,7 +109,7 @@ class DPDShippingMethod implements
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getType($identifier)
     {
@@ -117,7 +126,7 @@ class DPDShippingMethod implements
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getOptionsConfigurationFormType()
     {
@@ -125,13 +134,18 @@ class DPDShippingMethod implements
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getSortOrder()
     {
         return 20;
     }
 
+    /**
+     * @param string $number
+     *
+     * @return null|string
+     */
     public function getTrackingLink($number)
     {
         if (!preg_match(self::TRACKING_REGEX, $number, $match)) {
@@ -142,7 +156,7 @@ class DPDShippingMethod implements
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function calculatePrices(ShippingContextInterface $context, array $methodOptions, array $optionsByTypes)
     {
@@ -161,7 +175,7 @@ class DPDShippingMethod implements
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getDPDHandlers()
     {
@@ -169,7 +183,7 @@ class DPDShippingMethod implements
     }
 
     /**
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
     public function getDPDHandler($identifier)
     {
