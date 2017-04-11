@@ -32,6 +32,7 @@ class OroDPDExtensionTest extends ExtensionTestCase
             'oro_dpd.entity_listener.transport',
             'oro_dpd.event_listener.shipping_method_config_data',
             'oro_dpd.validator.remove_used_shipping_service',
+            'oro_dpd.handler.action.invalidate_cache',
         ];
         $this->assertDefinitionsLoaded($expectedDefinitions);
     }
