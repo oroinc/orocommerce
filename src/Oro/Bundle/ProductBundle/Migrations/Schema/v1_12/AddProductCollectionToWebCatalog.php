@@ -44,21 +44,26 @@ class AddProductCollectionToWebCatalog implements Migration, ExtendExtensionAwar
             $this->extendExtension->addManyToOneRelation(
                 $schema,
                 $table,
-                'productCollectionSegment',
+                'product_collection_segment',
                 'oro_segment',
                 'id',
                 [
-                    'entity' => ['label' => 'oro.segment.entity_label'],
+                    'entity' => ['label' => 'oro.webcatalog.contentvariant.product_collection_segment.label'],
                     'extend' => [
                         'is_extend' => true,
                         'owner' => ExtendScope::OWNER_CUSTOM,
                         'cascade' => ['persist', 'remove'],
                         'on_delete' => 'CASCADE',
                     ],
-                    'datagrid' => ['is_visible' => false],
-                    'form' => ['is_enabled' => false],
+                    'datagrid' => [
+                        'is_visible' => false
+                    ],
+                    'form' => [
+                        'is_enabled' => false
+                    ],
                     'view' => ['is_displayable' => false],
                     'merge' => ['display' => false],
+                    'dataaudit' => ['auditable' => true]
                 ]
             );
         }

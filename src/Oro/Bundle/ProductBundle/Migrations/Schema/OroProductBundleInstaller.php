@@ -542,7 +542,7 @@ class OroProductBundleInstaller implements
             $this->extendExtension->addManyToOneRelation(
                 $schema,
                 $table,
-                'productCollectionSegment',
+                'product_collection_segment',
                 'oro_segment',
                 'id',
                 [
