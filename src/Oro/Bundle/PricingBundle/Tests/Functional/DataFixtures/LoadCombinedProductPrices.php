@@ -21,6 +21,10 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
      */
     private $container;
 
+    const PRICE_PRODUCT_7 = 'product_price.7';
+
+    const PRICE_PRODUCT_8 = 'product_price.8';
+
     /**
      * @var array
      */
@@ -86,7 +90,7 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
             'unit' => 'product_unit.liter',
             'price' => 10,
             'currency' => 'USD',
-            'reference' => 'product_price.7'
+            'reference' => self::PRICE_PRODUCT_7
         ],
         [
             'product' => 'product-2',
@@ -95,7 +99,7 @@ class LoadCombinedProductPrices extends AbstractFixture implements DependentFixt
             'unit' => 'product_unit.liter',
             'price' => 20,
             'currency' => 'USD',
-            'reference' => 'product_price.8'
+            'reference' => self::PRICE_PRODUCT_8
         ],
         [
             'product' => 'product-3',

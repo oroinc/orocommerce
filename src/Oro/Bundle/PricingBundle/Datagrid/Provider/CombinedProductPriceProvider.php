@@ -69,6 +69,13 @@ class CombinedProductPriceProvider implements CombinedProductPriceProviderInterf
             ->getPricesForProductsByPriceList($priceList, $productIds, $currency);
 
         $resultProductPrices = [];
+        usort($combinedPrices, function (CombinedProductPrice $a, CombinedProductPrice $b) {
+            if ($a->getProductUnitCode() !==  $b->getProductUnitCode()) {
+                return $a->getProductUnitCode() > $b->getProductUnitCode();
+            }
+
+            return  $a->getQuantity() > $b->getQuantity();
+        });
         foreach ($combinedPrices as $price) {
             $index = sprintf('%s_%s', $price->getProductUnitCode(), $price->getQuantity());
 
