@@ -22,7 +22,7 @@ define(function(require) {
 
         dispose: function() {
             mediator.off('checkout:place-order:response', this.placeOrderResponse, this);
-            CreditCardComponent.__super__.dispose.call(this);
+            OrderReviewComponent.__super__.dispose.call(this);
         },
 
         placeOrderResponse: function(eventData) {

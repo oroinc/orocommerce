@@ -7,6 +7,7 @@ define(function(require) {
     var $ = require('jquery');
     var mediator = require('oroui/js/mediator');
     var BaseComponent = require('oroui/js/app/components/base/component');
+    var console = window.console;
     require('jquery.validate');
 
     CreditCardComponent = BaseComponent.extend({
