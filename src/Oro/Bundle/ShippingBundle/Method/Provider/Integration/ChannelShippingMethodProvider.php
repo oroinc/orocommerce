@@ -3,6 +3,7 @@
 namespace Oro\Bundle\ShippingBundle\Method\Provider\Integration;
 
 use Doctrine\ORM\Event\LifecycleEventArgs;
+use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
 use Oro\Bundle\IntegrationBundle\Entity\Repository\ChannelRepository;
 use Oro\Bundle\ShippingBundle\Method\Factory\IntegrationShippingMethodFactoryInterface;
@@ -17,9 +18,9 @@ class ChannelShippingMethodProvider implements ShippingMethodProviderInterface
     private $channelType;
 
     /**
-     * @var ChannelRepository
+     * @var DoctrineHelper
      */
-    private $channelRepository;
+    private $doctrineHelper;
 
     /**
      * @var IntegrationShippingMethodFactoryInterface
@@ -38,16 +39,16 @@ class ChannelShippingMethodProvider implements ShippingMethodProviderInterface
 
     /**
      * @param string                                    $channelType
-     * @param ChannelRepository                         $channelRepository
+     * @param DoctrineHelper                            $doctrineHelper
      * @param IntegrationShippingMethodFactoryInterface $methodFactory
      */
     public function __construct(
         string $channelType,
-        ChannelRepository $channelRepository,
+        DoctrineHelper $doctrineHelper,
         IntegrationShippingMethodFactoryInterface $methodFactory
     ) {
         $this->channelType = $channelType;
-        $this->channelRepository = $channelRepository;
+        $this->doctrineHelper = $doctrineHelper;
         $this->methodFactory = $methodFactory;
     }
 
@@ -105,9 +106,17 @@ class ChannelShippingMethodProvider implements ShippingMethodProviderInterface
         $this->methods[$method->getIdentifier()] = $method;
     }
 
+    /**
+     * @return ChannelRepository|\Doctrine\ORM\EntityRepository
+     */
+    private function getRepository()
+    {
+        return $this->doctrineHelper->getEntityRepository('OroIntegrationBundle:Channel');
+    }
+
     private function loadChannels()
     {
         /* After fetching, all entities will be saved into $loadedChannels on postLoad call */
-        $this->channelRepository->findByTypeAndExclude($this->channelType, $this->loadedChannels);
+        $this->getRepository()->findByTypeAndExclude($this->channelType, $this->loadedChannels);
     }
 }

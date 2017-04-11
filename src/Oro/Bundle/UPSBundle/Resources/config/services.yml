@@ -22,10 +22,10 @@ services:
             - { name: oro_integration.transport, type: '%oro_ups.integration.transport.type%', channel_type: '%oro_ups.integration.channel.type%' }
 
     oro_ups.shipping_method_provider.ups:
-        class: 'Oro\Bundle\ShippingBundle\Method\Provider\Integration\ChannelShippingMethodProvider'
+        class: 'Oro\Bundle\UPSBundle\Method\UPSShippingMethodProvider'
         arguments:
             - '%oro_ups.integration.channel.type%'
-            - '@oro_integration.repository.channel'
+            - '@oro_entity.doctrine_helper'
             - '@oro_ups.method.factory.method'
         tags:
             - { name: oro_shipping_method_provider }

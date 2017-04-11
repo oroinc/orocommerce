@@ -16,10 +16,10 @@ services:
             - { name: oro_integration.transport, type: '%oro_flat_rate_shipping.integration.transport.type%', channel_type: '%oro_flat_rate_shipping.integration.channel.type%' }
 
     oro_flat_rate_shipping.method.provider:
-        class: 'Oro\Bundle\ShippingBundle\Method\Provider\Integration\ChannelShippingMethodProvider'
+        class: 'Oro\Bundle\FlatRateShippingBundle\Method\FlatRateMethodProvider'
         arguments:
-            - '%oro_ups.integration.channel.type%'
-            - '@oro_integration.repository.channel'
+            - '%oro_flat_rate_shipping.integration.channel.type%'
+            - '@oro_entity.doctrine_helper'
             - '@oro_flat_rate_shipping.factory.method'
         tags:
             - { name: oro_shipping_method_provider }
