@@ -812,3 +812,7 @@ services:
         arguments: []
         tags:
             - { name: kernel.event_listener, event: oro.entity_config.entity.attribute.before_save, method: onBeforeSave }
+
+    oro_product.provider.content_variant_segment_provider:
+        class: Oro\Bundle\ProductBundle\Provider\ContentVariantSegmentProvider
+        public: false
