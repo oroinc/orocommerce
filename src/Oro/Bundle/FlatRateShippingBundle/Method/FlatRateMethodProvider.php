@@ -10,6 +10,10 @@ use Oro\Bundle\IntegrationBundle\Entity\Repository\ChannelRepository;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodProviderInterface;
 
+/**
+ * @deprecated since 1.2, will be removed in 1.3.
+ * Use Oro\Bundle\ShippingBundle\Method\Provider\Integration\ChannelShippingMethodProvider instead.
+ */
 class FlatRateMethodProvider implements ShippingMethodProviderInterface
 {
     /**

@@ -64,4 +64,14 @@ RuleBundle
 ShippingBundle
 --------------
 - `Oro\Bundle\ShippingBundle\Entity\Repository\ShippingMethodsConfigsRuleRepository::getConfigsWithEnabledRuleAndMethod` method deprecated because it completely duplicate `getEnabledRulesByMethod`
-- If you have implemented a form that helps configure your custom shipping method (like the UPS integration form that is designed for the system UPS shipping method), you might need your custom shipping method validation. The `Oro\Bundle\ShippingBundle\Method\Validator\ShippingMethodValidatorInterface` and `oro_shipping.method_validator.basic` service were created to handle this. To add a custom logics, add a decorator for this service. Please refer to `oro_shipping.method_validator.decorator.basic_enabled_shipping_methods_by_rules` example. 
+- If you have implemented a form that helps configure your custom shipping method (like the UPS integration form that is designed for the system UPS shipping method), you might need your custom shipping method validation. The `Oro\Bundle\ShippingBundle\Method\Validator\ShippingMethodValidatorInterface` and `oro_shipping.method_validator.basic` service were created to handle this. To add a custom logics, add a decorator for this service. Please refer to `oro_shipping.method_validator.decorator.basic_enabled_shipping_methods_by_rules` example.
+- The `Oro\Bundle\ShippingBundle\Method\Provider\Integration\ChannelShippingMethodProvider` was created.
+
+FlatRateShippingBundle
+--------------
+- The `Oro\Bundle\FlatRateShippingBundle\Builder\FlatRateMethodFromChannelBuilder` was deprecated, the `Oro\Bundle\FlatRateShippingBundle\Factory\FlatRateMethodFromChannelFactory` was created instead.
+- The `Oro\Bundle\FlatRateShippingBundle\Method\FlatRateMethodProvider` was deprecated, the `Oro\Bundle\ShippingBundle\Method\Provider\Integration\ChannelShippingMethodProvider` should be used instead.
+
+UPSBundle
+--------------
+- The `Oro\Bundle\UPSBundle\Method\UPSShippingMethodProvider` was deprecated, the `Oro\Bundle\ShippingBundle\Method\Provider\Integration\ChannelShippingMethodProvider` should be used instead.
