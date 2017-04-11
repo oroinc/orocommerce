@@ -16,6 +16,7 @@ class AuthorizeNetConfig extends AbstractParameterBagPaymentConfig implements Au
     const TEST_MODE_KEY  = 'test_mode';
     const CLIENT_KEY = 'client_key';
     const CREDENTIALS_KEY = 'credentials';
+    const REQUIRE_CVV_ENTRY_KEY = 'require_cvv_entry';
 
     /**
      * {@inheritDoc}
@@ -71,5 +72,13 @@ class AuthorizeNetConfig extends AbstractParameterBagPaymentConfig implements Au
     public function getClientKey()
     {
         return (string)$this->get(self::CLIENT_KEY);
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isRequireCvvEntryEnabled()
+    {
+        return (bool)$this->get(self::REQUIRE_CVV_ENTRY_KEY);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Oro\Bundle\PayPalBundle\Tests\Unit\Form\Type;
+namespace Oro\Bundle\PaymentBundle\Tests\Unit\Form\Type;
 
 use Symfony\Component\Form\FormConfigInterface;
 use Symfony\Component\Form\Test\FormIntegrationTestCase;

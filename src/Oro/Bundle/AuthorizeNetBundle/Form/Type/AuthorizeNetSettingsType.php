@@ -126,10 +126,22 @@ class AuthorizeNetSettingsType extends AbstractType
                 'label' => 'oro.authorize_net.settings.client_key.label',
                 'required' => true,
             ])
-            ->add('testMode', CheckboxType::class, [
-                'label' => 'oro.authorize_net.settings.test_mode.label',
-                'required' => false,
-            ]);
+            ->add(
+                'authNetRequireCVVEntry',
+                CheckboxType::class,
+                [
+                    'label' => 'oro.authorize_net.settings.require_cvv.label',
+                    'required' => false,
+                ]
+            )
+            ->add(
+                'authNetTestMode',
+                CheckboxType::class,
+                [
+                    'label' => 'oro.authorize_net.settings.test_mode.label',
+                    'required' => false,
+                ]
+            );
         $this->transformWithEncodedValue($builder, 'apiLoginId');
         $this->transformWithEncodedValue($builder, 'transactionKey');
         $this->transformWithEncodedValue($builder, 'clientKey');

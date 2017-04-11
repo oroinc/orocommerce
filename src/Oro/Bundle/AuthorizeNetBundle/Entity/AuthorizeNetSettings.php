@@ -26,6 +26,7 @@ class AuthorizeNetSettings extends Transport
     const CREDIT_CARD_SHORT_LABELS_KEY = 'credit_card_short_labels';
     const CREDIT_CARD_PAYMENT_ACTION_KEY = 'credit_card_payment_action';
     const ALLOWED_CREDIT_CARD_TYPES_KEY = 'allowed_credit_card_types';
+    const REQUIRE_CVV_ENTRY_KEY = 'require_cvv_entry';
     const TEST_MODE_KEY = 'test_mode';
 
     /**
@@ -116,6 +117,13 @@ class AuthorizeNetSettings extends Transport
     protected $authNetTestMode = false;
 
     /**
+     * @var boolean
+     *
+     * @ORM\Column(name="au_net_require_cvv_entry", type="boolean", options={"default"=true})
+     */
+    protected $authNetRequireCVVEntry = true;
+
+    /**
      * Constructor
      */
     public function __construct()
@@ -135,7 +143,8 @@ class AuthorizeNetSettings extends Transport
                 self::CREDIT_CARD_SHORT_LABELS_KEY => $this->getCreditCardShortLabels(),
                 self::CREDIT_CARD_PAYMENT_ACTION_KEY => $this->getCreditCardPaymentAction(),
                 self::ALLOWED_CREDIT_CARD_TYPES_KEY => $this->getAllowedCreditCardTypes(),
-                self::TEST_MODE_KEY => $this->getTestMode()
+                self::TEST_MODE_KEY => $this->getAuthNetTestMode(),
+                self::REQUIRE_CVV_ENTRY_KEY => $this->getAuthNetRequireCVVEntry(),
             ]);
         }
 
@@ -177,18 +186,15 @@ class AuthorizeNetSettings extends Transport
     /**
      * @return bool
      */
-    public function getTestMode()
+    public function getAuthNetTestMode()
     {
-        //Note that property name differs from getter name because of problems with doctrine hydration,
-        //when single-table-inherited siblings have properties with same names
-        //(see 'testMode' in Oro\Bundle\PayPalBundle\Entity\PayPalSettings)
         return $this->authNetTestMode;
     }
 
     /**
      * @param bool $testMode
      */
-    public function setTestMode($testMode)
+    public function setAuthNetTestMode($testMode)
     {
         $this->authNetTestMode = $testMode;
     }
@@ -322,5 +328,25 @@ class AuthorizeNetSettings extends Transport
     public function setApiLoginId($apiLoginId)
     {
         $this->apiLoginId = $apiLoginId;
+    }
+
+    /**
+     * @param boolean $requireCVVEntry
+     *
+     * @return AuthorizeNetSettings
+     */
+    public function setAuthNetRequireCVVEntry($requireCVVEntry)
+    {
+        $this->authNetRequireCVVEntry = $requireCVVEntry;
+
+        return $this;
+    }
+
+    /**
+     * @return boolean
+     */
+    public function getAuthNetRequireCVVEntry()
+    {
+        return $this->authNetRequireCVVEntry;
     }
 }

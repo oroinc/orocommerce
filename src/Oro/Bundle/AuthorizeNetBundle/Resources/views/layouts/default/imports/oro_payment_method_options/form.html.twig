@@ -1,3 +1,19 @@
+{% block _oro_authorize_net_credit_card_payment_credit_card_cvv_widget %}
+    {% set attr = layout_attr_defaults(attr, {
+        '~class': ' input input--short',
+        'autocomplete': 'off'
+    }) %}
+
+    {%- set type = type|default('password') -%}
+    <input type="{{ type }}" {{ block('widget_attributes') }} {% if value is not empty %}value="{{ value }}" {% endif %}/>
+    <span class="ttip__wrap">
+        <a href="javascript: void(0);" class="ttip__toggle">{{ 'oro.payment.credit_card.whats_this'|trans }}</a>
+        <span class="ttip">
+            <span class="ttip__content">{{ 'oro.payment.credit_card.tooltip'|trans|nl2br }}</span>
+        </span>
+    </span>
+{% endblock %}
+
 {% block _oro_authorize_net_credit_card_widget %}
     {% set creditCardComponent = options.creditCardComponent|default('oroauthorizenet/js/app/components/credit-card-component') %}
     {% set creditCardComponentOptions = options.creditCardComponentOptions|default({})|merge({paymentMethod: paymentMethod}) %}

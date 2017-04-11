@@ -187,41 +187,45 @@ define(function(require) {
                 eventData.stopped = true;
                 if (this.validate()) {
                     mediator.execute('showLoading');
+                    var cardData = {
+                        cardNumber: this.$form.find(this.options.selectors.cardNumber).val(),
+                        month: this.$form.find(this.options.selectors.month).val(),
+                        year: this.$form.find(this.options.selectors.year).val()
+                    };
+                    var $cvv = this.$form.find(this.options.selectors.cvv);
+                    if ($cvv.length) {
+                        cardData.cardCode = $cvv.val();
+                    }
                     this.acceptJs.dispatchData({
                             authData: {
                                 clientKey: this.options.clientKey,
                                 apiLoginID: this.options.apiLoginID
                             },
-                            cardData: {
-                                cardNumber: this.$form.find(this.options.selectors.cardNumber).val(),
-                                month: this.$form.find(this.options.selectors.month).val(),
-                                year: this.$form.find(this.options.selectors.year).val()
-                            }
+                            cardData: cardData
                         }, function(response) {
                             mediator.execute('hideLoading');
-                            if (response.messages.resultCode === 'Error' ||
-                                !response.opaqueData ||
-                                !response.opaqueData.dataDescriptor ||
-                                !response.opaqueData.dataValue
-                            ) {
-                                mediator.execute(
-                                    'showFlashMessage',
-                                    'error',
-                                    __(self.options.messages.communication_err)
-                                );
-                                console.error(response);
-                            } else {
-                                var $container = eventData.additionalDataContainer;
-                                $container.val(
-                                    response.opaqueData.dataDescriptor + ';' +
-                                    response.opaqueData.dataValue
-                                );
-                                mediator.trigger('checkout:payment:validate:change', true);
-                                eventData.resume();
-                            }
+                            self.acceptJsResponse.call(self, response, eventData);
                         }
                     );
                 }
+            }
+        },
+
+        /**
+         * @param {Object} response
+         * @param {Object} eventData
+         */
+        acceptJsResponse: function (response, eventData) {
+            if (response.messages.resultCode === 'Error' || !response.opaqueData ||
+                !response.opaqueData.dataDescriptor || !response.opaqueData.dataValue
+            ) {
+                mediator.execute('showFlashMessage', 'error', __(this.options.messages.communication_err));
+                console.error(response);
+            } else {
+                var $container = eventData.additionalDataContainer;
+                $container.val(response.opaqueData.dataDescriptor + ';' + response.opaqueData.dataValue);
+                mediator.trigger('checkout:payment:validate:change', true);
+                eventData.resume();
             }
         },
 

@@ -62,7 +62,7 @@ class CreditCardType extends AbstractType
             ]
         );
 
-        if ($options['requireCvvEntryEnabled']) {
+        if (!empty($options['requireCvvEntryEnabled'])) {
             $builder->add(
                 'CVV2',
                 'password',

@@ -44,6 +44,7 @@ class OroAuthorizeNetBundleInstaller implements Installation
         $table->addColumn('au_net_credit_card_action', 'string', ['notnull' => false, 'length' => 255]);
         $table->addColumn('au_net_allowed_card_types', 'array', ['notnull' => false, 'comment' => '(DC2Type:array)']);
         $table->addColumn('au_net_test_mode', 'boolean', ['default' => '0', 'notnull' => false]);
+        $table->addColumn('au_net_require_cvv_entry', 'boolean', ['default' => '1', 'notnull' => false]);
     }
 
     /**

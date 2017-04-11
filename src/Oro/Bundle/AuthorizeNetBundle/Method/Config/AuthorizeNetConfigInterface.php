@@ -35,4 +35,9 @@ interface AuthorizeNetConfigInterface extends PaymentConfigInterface
      * @return string
      */
     public function getPurchaseAction();
+
+    /**
+     * @return bool
+     */
+    public function isRequireCvvEntryEnabled();
 }

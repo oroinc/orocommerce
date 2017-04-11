@@ -21,7 +21,8 @@ class AuthorizeNetSettingsTest extends \PHPUnit_Framework_TestCase
                 ['apiLoginId', 'some string'],
                 ['transactionKey', 'some string'],
                 ['clientKey', 'some string'],
-                ['testMode', false],
+                ['authNetTestMode', false],
+                ['authNetRequireCVVEntry', true],
                 ['creditCardPaymentAction', 'charge'],
                 ['allowedCreditCardTypes', ['visa']],
             ]
@@ -44,7 +45,8 @@ class AuthorizeNetSettingsTest extends \PHPUnit_Framework_TestCase
                 'apiLoginId' => 'some login',
                 'transactionKey' => 'some transaction key',
                 'clientKey' => 'some client key',
-                'testMode' => true,
+                'authNetTestMode' => true,
+                'authNetRequireCVVEntry' => false,
                 'creditCardPaymentAction' => 'charge',
                 'allowedCreditCardTypes' => ['visa', 'mastercard'],
                 'creditCardLabels' => [(new LocalizedFallbackValue())->setString('label')],
@@ -55,10 +57,11 @@ class AuthorizeNetSettingsTest extends \PHPUnit_Framework_TestCase
         /** @var ParameterBag $result */
         $result = $entity->getSettingsBag();
 
-        static::assertEquals('some login', $result->get('api_login'));
+        static::assertEquals('some login', $result->get('api_login_id'));
         static::assertEquals('some transaction key', $result->get('transaction_key'));
         static::assertEquals('some client key', $result->get('client_key'));
         static::assertEquals(true, $result->get('test_mode'));
+        static::assertEquals(false, $result->get('require_cvv_entry'));
 
         static::assertEquals(
             $result->get('allowed_credit_card_types'),

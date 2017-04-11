@@ -11,6 +11,7 @@ oro:
             credit_card_labels.label: 'Label'
             credit_card_short_labels.label: 'Short Label'
             test_mode.label: 'Test Mode'
+            require_cvv.label: 'Require CVV Entry'
             payment_action:
                 label: 'Payment Action'
                 authorize: 'Authorize'

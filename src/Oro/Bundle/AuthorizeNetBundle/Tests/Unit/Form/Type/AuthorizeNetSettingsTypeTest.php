@@ -102,7 +102,8 @@ class AuthorizeNetSettingsTypeTest extends FormIntegrationTestCase
             'apiLoginId' => 'some login',
             'transactionKey' => 'some transaction key',
             'clientKey' => 'some client key',
-            'testMode' => true,
+            'authNetTestMode' => true,
+            'authNetRequireCVVEntry' => false,
         ];
 
         $this->encoder
