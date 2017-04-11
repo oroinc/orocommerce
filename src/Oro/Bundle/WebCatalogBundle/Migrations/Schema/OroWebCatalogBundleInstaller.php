@@ -6,6 +6,9 @@ use Doctrine\DBAL\Schema\Schema;
 
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtension;
 use Oro\Bundle\ActivityBundle\Migration\Extension\ActivityExtensionAwareInterface;
+use Oro\Bundle\EntityExtendBundle\EntityConfig\ExtendScope;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtension;
+use Oro\Bundle\EntityExtendBundle\Migration\Extension\ExtendExtensionAwareInterface;
 use Oro\Bundle\MigrationBundle\Migration\Installation;
 use Oro\Bundle\MigrationBundle\Migration\QueryBag;
 use Oro\Bundle\RedirectBundle\Migration\Extension\SlugExtension;
@@ -21,7 +24,8 @@ class OroWebCatalogBundleInstaller implements
     Installation,
     ActivityExtensionAwareInterface,
     SlugExtensionAwareInterface,
-    ScopeExtensionAwareInterface
+    ScopeExtensionAwareInterface,
+    ExtendExtensionAwareInterface
 {
     use ScopeExtensionAwareTrait;
 
@@ -34,6 +38,11 @@ class OroWebCatalogBundleInstaller implements
      * @var ActivityExtension
      */
     protected $activityExtension;
+
+    /**
+     * @var ExtendExtension
+     */
+    protected $extendExtension;
 
     /**
      * {@inheritdoc}
@@ -54,9 +63,17 @@ class OroWebCatalogBundleInstaller implements
     /**
      * {@inheritdoc}
      */
+    public function setExtendExtension(ExtendExtension $extendExtension)
+    {
+        $this->extendExtension = $extendExtension;
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function getMigrationVersion()
     {
-        return 'v1_0';
+        return 'v1_1';
     }
 
     /**
@@ -90,6 +107,8 @@ class OroWebCatalogBundleInstaller implements
             'oro_web_catalog',
             'name'
         );
+
+        $this->createRelationToSegmentFromContentVariant($schema);
     }
 
     /**
@@ -384,5 +403,37 @@ class OroWebCatalogBundleInstaller implements
             ['id'],
             ['onUpdate' => null, 'onDelete' => 'CASCADE']
         );
+    }
+
+
+    /**
+     * @param Schema $schema
+     */
+    private function createRelationToSegmentFromContentVariant(Schema $schema)
+    {
+        if ($schema->hasTable('oro_web_catalog_variant')) {
+            $table = $schema->getTable('oro_web_catalog_variant');
+
+            $this->extendExtension->addManyToOneRelation(
+                $schema,
+                $table,
+                'productCollectionSegment',
+                'oro_segment',
+                'id',
+                [
+                    'entity' => ['label' => 'oro.segment.entity_label'],
+                    'extend' => [
+                        'is_extend' => true,
+                        'owner' => ExtendScope::OWNER_CUSTOM,
+                        'cascade' => ['persist', 'remove'],
+                        'on_delete' => 'CASCADE',
+                    ],
+                    'datagrid' => ['is_visible' => false],
+                    'form' => ['is_enabled' => false],
+                    'view' => ['is_displayable' => false],
+                    'merge' => ['display' => false],
+                ]
+            );
+        }
     }
 }
