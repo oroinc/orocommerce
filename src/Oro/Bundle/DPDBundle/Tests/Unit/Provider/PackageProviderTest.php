@@ -87,39 +87,10 @@ class PackageProviderTest extends \PHPUnit_Framework_TestCase
             /** @var Product $product */
             $product = $this->getEntity(Product::class, ['id' => $i]);
 
-            $lineItems[] = new ShippingLineItem([
-                ShippingLineItem::FIELD_PRODUCT => $product,
-                ShippingLineItem::FIELD_QUANTITY => 1,
-                ShippingLineItem::FIELD_PRODUCT_UNIT => $this->getEntity(
-                    ProductUnit::class,
-                    ['code' => 'test1']
-                ),
-                ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => 'test1',
-                ShippingLineItem::FIELD_ENTITY_IDENTIFIER => 1,
-                ShippingLineItem::FIELD_DIMENSIONS => Dimensions::create(7, 7, 7, (new LengthUnit())->setCode('inch')),
-                ShippingLineItem::FIELD_WEIGHT => Weight::create($productWeight, $this->getEntity(
-                    WeightUnit::class,
-                    ['code' => 'lbs']
-                )),
-            ]);
+            $lineItems[] = $this->createShippingLineItem($product, $productWeight);
 
             /* @var ProductShippingOptions $productShippingOptions */
-            $allProductsShippingOptions[] = $this->getEntity(
-                ProductShippingOptions::class,
-                [
-                    'id' => 42,
-                    'product' => $product,
-                    'productUnit' => $this->getEntity(
-                        ProductUnit::class,
-                        ['code' => 'test1']
-                    ),
-                    'dimensions' => Dimensions::create(7, 7, 7, (new LengthUnit())->setCode('inch')),
-                    'weight' => Weight::create($productWeight, $this->getEntity(
-                        WeightUnit::class,
-                        ['code' => 'kg']
-                    )),
-                ]
-            );
+            $allProductsShippingOptions[] = $this->createProductShippingOptions($product, $productWeight);
         }
 
         $context = new ShippingContext([
@@ -171,5 +142,56 @@ class PackageProviderTest extends \PHPUnit_Framework_TestCase
                 'expectedPackages' => null,
             ],
         ];
+    }
+
+    /**
+     * @param Product $product
+     * @param float   $productWeight
+     *
+     * @return ShippingLineItem
+     */
+    private function createShippingLineItem(Product $product, $productWeight)
+    {
+        return new ShippingLineItem([
+            ShippingLineItem::FIELD_PRODUCT => $product,
+            ShippingLineItem::FIELD_QUANTITY => 1,
+            ShippingLineItem::FIELD_PRODUCT_UNIT => $this->getEntity(
+                ProductUnit::class,
+                ['code' => 'test1']
+            ),
+            ShippingLineItem::FIELD_PRODUCT_UNIT_CODE => 'test1',
+            ShippingLineItem::FIELD_ENTITY_IDENTIFIER => 1,
+            ShippingLineItem::FIELD_DIMENSIONS => Dimensions::create(7, 7, 7, (new LengthUnit())->setCode('inch')),
+            ShippingLineItem::FIELD_WEIGHT => Weight::create($productWeight, $this->getEntity(
+                WeightUnit::class,
+                ['code' => 'lbs']
+            )),
+        ]);
+    }
+
+    /**
+     * @param Product $product
+     * @param float   $productWeight
+     *
+     * @return object
+     */
+    private function createProductShippingOptions(Product $product, $productWeight)
+    {
+        return $this->getEntity(
+            ProductShippingOptions::class,
+            [
+                'id' => 42,
+                'product' => $product,
+                'productUnit' => $this->getEntity(
+                    ProductUnit::class,
+                    ['code' => 'test1']
+                ),
+                'dimensions' => Dimensions::create(7, 7, 7, (new LengthUnit())->setCode('inch')),
+                'weight' => Weight::create($productWeight, $this->getEntity(
+                    WeightUnit::class,
+                    ['code' => 'kg']
+                )),
+            ]
+        );
     }
 }
