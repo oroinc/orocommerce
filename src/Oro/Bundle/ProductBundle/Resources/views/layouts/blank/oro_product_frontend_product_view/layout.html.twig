@@ -139,8 +139,9 @@
         fade: true,
         arrows: false,
         asNavFor: '.product-gallery__nav',
-        lazyLoad: 'ondemand',
-        infinite: false
+        lazyLoad: 'progressive',
+        infinite: false,
+        relatedComponent: 'zoom'
     } %}
 
     {% set navListOptions = {
@@ -171,7 +172,7 @@
 
                 <div class="product-gallery__image-item">
                     <img class="product-gallery__image"
-                         src="{{ Image.url(null, 'product_large') }}"
+                         src="{{ Image.url(null, 'product_gallery_main') }}"
                          alt="{{ product.names|localized_value }}"
                          width="378"
                          height="378"
@@ -183,15 +184,14 @@
                 {% for productImage in productImages %}
                     <div class="product-gallery__image-item" data-trigger-gallery-open>
                         <img class="product-gallery__image"
-                             data-url-zoom="{{ productImage ? Image.url(productImage.image, 'product_original') : null }}"
-                             alt="{{ product.names|localized_value }}"
                              data-zoom-image="{{ Image.url(productImage.image, 'product_original') }}"
-                             data-page-component-module="oroui/js/app/components/viewport-component"
-                             data-page-component-options="{{ zoomOptions|json_encode }}"
+                             alt="{{ product.names|localized_value }}"
                             {% if loop.first %}
-                                src="{{ productImage ? Image.url(productImage.image, 'product_large') : null }}"
+                                src="{{ productImage ? Image.url(productImage.image, 'product_gallery_main') : null }}"
+                                data-page-component-module="oroui/js/app/components/viewport-component"
+                                data-page-component-options="{{ zoomOptions|json_encode }}"
                             {% else %}
-                                data-lazy="{{ productImage ? Image.url(productImage.image, 'product_large') : null }}"
+                                data-lazy="{{ productImage ? Image.url(productImage.image, 'product_gallery_main') : null }}"
                             {% endif %}
                         />
                     </div>
@@ -199,6 +199,8 @@
 
             {% endif %}
         </div>
+
+        <div id="zoom-container"></div>
 
         {% if productImages|length > 1 %}
 
