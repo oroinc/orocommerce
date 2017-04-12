@@ -1,6 +1,7 @@
 parameters:
     oro_dpd.integration.channel.type: 'dpd'
     oro_dpd.integration.transport.type: 'dpd'
+    oro_dpd.admin_view.method_template: 'OroDPDBundle::DPDMethodWithOptions.html.twig'
 
 services:
     oro_dpd.provider.channel:
@@ -117,8 +118,9 @@ services:
             - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\DPDBundle\Entity\DPDTransport', event: preFlush }
 
     oro_dpd.event_listener.shipping_method_config_data:
-        class: 'Oro\Bundle\DPDBundle\EventListener\ShippingMethodConfigDataListener'
+        parent: oro_shipping.admin_view.method_template.listener
         arguments:
+            - '%oro_dpd.admin_view.method_template%'
             - '@oro_dpd.shipping_method_provider.dpd'
         tags:
             - { name: kernel.event_listener, event: oro_shipping_method.config_data, method: onGetConfigData }

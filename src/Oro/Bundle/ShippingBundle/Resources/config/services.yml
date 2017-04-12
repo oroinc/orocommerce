@@ -507,3 +507,7 @@ services:
         class: 'Oro\Bundle\ShippingBundle\Method\Provider\Type\NonDeletable\ShippingRulesNonDeletableMethodTypeIdentifiersProvider'
         arguments:
             - '@oro_shipping.repository.shipping_method_type_config'
+
+    oro_shipping.admin_view.method_template.listener:
+        class: 'Oro\Bundle\ShippingBundle\EventListener\ShippingRuleViewMethodTemplateListener'
+        abstract: true
