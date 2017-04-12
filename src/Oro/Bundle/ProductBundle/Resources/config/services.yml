@@ -827,3 +827,6 @@ services:
     oro_product.provider.content_variant_segment_provider:
         class: Oro\Bundle\ProductBundle\Provider\ContentVariantSegmentProvider
         public: false
+        arguments:
+            - '@oro_entity.doctrine_helper'
+            - '@=container.hasParameter("oro_web_catalog.entity.content_variant.class") ? parameter("oro_web_catalog.entity.content_variant.class") : null'

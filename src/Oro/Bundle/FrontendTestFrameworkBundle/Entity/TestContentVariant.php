@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 
 use Oro\Bundle\CatalogBundle\Entity\Category;
 use Oro\Bundle\ProductBundle\Entity\Product;
+use Oro\Bundle\SegmentBundle\Entity\Segment;
 
 /**
  * @ORM\Entity()
@@ -37,6 +38,14 @@ class TestContentVariant
      * @ORM\JoinColumn(name="category_page_category", referencedColumnName="id", nullable=true)
      */
     private $category_page_category;
+
+    /**
+     * @var Segment
+     *
+     * @ORM\ManyToOne(targetEntity="Oro\Bundle\SegmentBundle\Entity\Segment")
+     * @ORM\JoinColumn(name="product_collection_segment", referencedColumnName="id", nullable=true)
+     */
+    private $product_collection_segment;
 
     /**
      * @return integer
@@ -76,5 +85,16 @@ class TestContentVariant
     public function setCategoryPageCategory(Category $category_page_category = null)
     {
         $this->category_page_category = $category_page_category;
+    }
+
+    /**
+     * @param Segment|null $segment
+     * @return $this
+     */
+    public function setProductCollectionSegment(Segment $segment = null)
+    {
+        $this->product_collection_segment = $segment;
+
+        return $this;
     }
 }

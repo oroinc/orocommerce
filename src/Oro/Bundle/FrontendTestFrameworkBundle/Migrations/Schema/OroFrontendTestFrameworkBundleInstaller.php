@@ -18,9 +18,11 @@ class OroFrontendTestFrameworkBundleInstaller implements Installation
         $table->addColumn('id', 'integer', ['autoincrement' => true]);
         $table->addColumn('product_page_product', 'integer', ['notnull' => false]);
         $table->addColumn('category_page_category', 'integer', ['notnull' => false]);
+        $table->addColumn('product_collection_segment', 'integer', ['notnull' => false]);
         $table->setPrimaryKey(['id']);
         $table->addForeignKeyConstraint('oro_product', ['product_page_product'], ['id']);
         $table->addForeignKeyConstraint('oro_catalog_category', ['category_page_category'], ['id']);
+        $table->addForeignKeyConstraint('oro_segment', ['product_collection_segment'], ['id']);
     }
 
     /**
