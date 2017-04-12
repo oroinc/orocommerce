@@ -1,0 +1,19 @@
+services:
+
+    oro_apruve.apruve.generator.order_secure_hash:
+        class: 'Oro\Bundle\ApruveBundle\Apruve\Generator\OrderSecureHashGenerator'
+
+    oro_apruve.apruve.provider.supported_currencies:
+        class: Oro\Bundle\ApruveBundle\Apruve\Provider\SupportedCurrenciesProvider
+
+    oro_apruve.apruve.builder.factory.order:
+        class: 'Oro\Bundle\ApruveBundle\Apruve\Builder\Factory\ApruveOrderBuilderFactory'
+        arguments:
+            - '@oro_apruve.apruve.builder.factory.line_item'
+        lazy: true
+
+    oro_apruve.apruve.builder.factory.line_item:
+        class: 'Oro\Bundle\ApruveBundle\Apruve\Builder\Factory\ApruveLineItemBuilderFactory'
+        arguments:
+            - '@router'
+        lazy: true
