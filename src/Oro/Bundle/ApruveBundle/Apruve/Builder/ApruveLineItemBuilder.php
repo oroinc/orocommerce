@@ -27,6 +27,7 @@ class ApruveLineItemBuilder extends AbstractApruveEntityBuilder implements Apruv
     const PRICE_EA_CENTS = 'price_ea_cents';
     const VENDOR = 'vendor';
     const MERCHANT_NOTES = 'merchant_notes';
+    const VARIANT_INFO = 'variant_info';
 
     /**
      * @var PaymentLineItemInterface
@@ -88,6 +89,16 @@ class ApruveLineItemBuilder extends AbstractApruveEntityBuilder implements Apruv
     public function setVendor($vendor)
     {
         $this->data[self::VENDOR] = (string)$vendor;
+
+        return $this;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function setVariantInfo($info)
+    {
+        $this->data[self::VARIANT_INFO] = (string)$info;
 
         return $this;
     }

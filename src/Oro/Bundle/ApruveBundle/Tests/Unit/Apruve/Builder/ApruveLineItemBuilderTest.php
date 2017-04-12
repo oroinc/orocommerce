@@ -29,6 +29,7 @@ class ApruveLineItemBuilderTest extends \PHPUnit_Framework_TestCase
      */
     const MERCHANT_NOTES = 'Sample note';
     const VENDOR = 'Sample vendor name';
+    const VARIANT_INFO = 'Sample variant';
     const AMOUNT_EA = '1.23';
     const AMOUNT_EA_CENTS = 123;
 
@@ -122,6 +123,7 @@ class ApruveLineItemBuilderTest extends \PHPUnit_Framework_TestCase
     {
         $this->builder->setMerchantNotes(self::MERCHANT_NOTES);
         $this->builder->setVendor(self::VENDOR);
+        $this->builder->setVariantInfo(self::VARIANT_INFO);
         $this->builder->setAmountEa(self::AMOUNT_EA);
 
         $actual = $this->builder->getResult();
@@ -140,6 +142,7 @@ class ApruveLineItemBuilderTest extends \PHPUnit_Framework_TestCase
             ApruveLineItemBuilder::MERCHANT_NOTES => self::MERCHANT_NOTES,
             ApruveLineItemBuilder::VENDOR => self::VENDOR,
             ApruveLineItemBuilder::PRICE_EA_CENTS => self::AMOUNT_EA_CENTS,
+            ApruveLineItemBuilder::VARIANT_INFO => self::VARIANT_INFO,
         ];
         static::assertEquals($expected, $actual->getData());
     }
