@@ -3,18 +3,18 @@
 namespace Oro\Bundle\DPDBundle\Form\Type;
 
 use Oro\Bundle\CurrencyBundle\Rounding\RoundingServiceInterface;
+use Oro\Bundle\DPDBundle\Entity\DPDTransport;
 use Oro\Bundle\EntityBundle\ORM\DoctrineHelper;
+use Oro\Bundle\FormBundle\Form\Type\OroEncodedPlaceholderPasswordType;
 use Oro\Bundle\IntegrationBundle\Provider\TransportInterface;
 use Oro\Bundle\LocaleBundle\Form\Type\LocalizedFallbackValueCollectionType;
 use Oro\Bundle\SecurityBundle\Encoder\SymmetricCrypterInterface;
 use Oro\Bundle\ShippingBundle\Form\Type\WeightUnitSelectType;
-use Oro\Bundle\DPDBundle\Entity\DPDTransport;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\CallbackTransformer;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\NumberType;
-use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\Exception\AccessException;
@@ -109,7 +109,7 @@ class DPDTransportSettingsType extends AbstractType
         );
         $builder->add(
             'cloudUserToken',
-            PasswordType::class,
+            OroEncodedPlaceholderPasswordType::class,
             [
                 'label' => 'oro.dpd.transport.cloud_user_token.label',
                 'required' => true,
