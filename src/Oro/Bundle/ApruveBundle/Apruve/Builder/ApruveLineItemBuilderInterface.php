@@ -31,4 +31,11 @@ interface ApruveLineItemBuilderInterface
      * @return self
      */
     public function setAmountEa($amount);
+
+    /**
+     * @param string $info
+     *
+     * @return self
+     */
+    public function setVariantInfo($info);
 }
