@@ -516,3 +516,7 @@ services:
             - ['setLogger', ['@logger']]
         public: false
         lazy: true
+
+    oro_shipping.admin_view.method_template.listener:
+        class: 'Oro\Bundle\ShippingBundle\EventListener\ShippingRuleViewMethodTemplateListener'
+        abstract: true

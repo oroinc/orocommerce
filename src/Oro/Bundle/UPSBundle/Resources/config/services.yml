@@ -1,8 +1,9 @@
 parameters:
     oro_ups.integration.channel.type: 'ups'
     oro_ups.integration.transport.type: 'ups'
-    oro_ups.api.url.production: https://onlinetools.ups.com/rest
-    oro_ups.api.url.test: https://wwwcie.ups.com/rest
+    oro_ups.api.url.production: 'https://onlinetools.ups.com/rest'
+    oro_ups.api.url.test: 'https://wwwcie.ups.com/rest'
+    oro_ups.admin_view.method_template: 'OroUPSBundle::UPSMethodWithOptions.html.twig'
 
 services:
     # Providers
@@ -103,8 +104,9 @@ services:
             - "@doctrine"
 
     oro_ups.event_listener.shipping_method_config_data:
-        class: 'Oro\Bundle\UPSBundle\EventListener\ShippingMethodConfigDataListener'
+        parent: oro_shipping.admin_view.method_template.listener
         arguments:
+            - '%oro_ups.admin_view.method_template%'
             - '@oro_ups.shipping_method_provider.ups'
         tags:
             - { name: kernel.event_listener, event: oro_shipping_method.config_data, method: onGetConfigData }
