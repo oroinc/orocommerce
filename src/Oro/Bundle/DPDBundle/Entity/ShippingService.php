@@ -31,9 +31,9 @@ class ShippingService
     /**
      * @var bool
      *
-     * @ORM\Column(name="is_express", type="boolean")
+     * @ORM\Column(name="is_express", type="boolean", options={"default"=false})
      */
-    protected $expressService;
+    protected $expressService = false;
 
     /**
      * @return string
