@@ -1,4 +1,6 @@
 Oro\Bundle\DPDBundle\Entity\DPDTransport:
+    constraints:
+        - Oro\Bundle\DPDBundle\Validator\Constraints\RemoveUsedShippingServiceConstraint: ~
     properties:
         cloudUserId:
             - NotBlank: ~
@@ -7,7 +9,6 @@ Oro\Bundle\DPDBundle\Entity\DPDTransport:
         applicableShippingServices:
             - NotBlank:
                 message: 'oro.dpd.transport.shipping_service.blank'
-            - Oro\Bundle\DPDBundle\Validator\Constraints\RemoveUsedShippingService: ~
         unitOfWeight:
             - NotBlank: ~
             - Valid: ~
