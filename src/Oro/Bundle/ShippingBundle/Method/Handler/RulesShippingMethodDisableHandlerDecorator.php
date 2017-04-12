@@ -44,7 +44,7 @@ class RulesShippingMethodDisableHandlerDecorator implements ShippingMethodDisabl
     public function handleMethodDisable($methodId)
     {
         $this->handler->handleMethodDisable($methodId);
-        $shippingMethodsConfigsRule = $this->repository->getConfigsWithEnabledRuleAndMethod($methodId);
+        $shippingMethodsConfigsRule = $this->repository->getEnabledRulesByMethod($methodId);
         foreach ($shippingMethodsConfigsRule as $configRule) {
             if (!$this->configHasEnabledMethod($configRule, $methodId)) {
                 $rule = $configRule->getRule();
