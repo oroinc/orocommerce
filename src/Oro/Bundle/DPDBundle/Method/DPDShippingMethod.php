@@ -8,8 +8,6 @@ use Oro\Bundle\ShippingBundle\Method\PricesAwareShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingTrackingAwareInterface;
-use Oro\Bundle\DPDBundle\Entity\DPDTransport as DPDSettings;
-use Oro\Bundle\DPDBundle\Provider\DPDTransport as DPDTransportProvider;
 
 class DPDShippingMethod implements
     ShippingMethodInterface,
@@ -23,48 +21,52 @@ class DPDShippingMethod implements
 
     const HANDLING_FEE_OPTION = 'handling_fee';
 
-    /** @var string */
-    protected $identifier;
+    /**
+     * @var string
+     */
+    private $identifier;
 
-    /** @var string */
-    protected $label;
+    /**
+     * @var string
+     */
+    private $label;
 
-    /** @var ShippingMethodTypeInterface[] */
-    protected $types;
+    /**
+     * @var bool
+     */
+    private $isEnabled;
 
-    /** @var DPDHandlerInterface[] */
-    protected $handlers;
+    /**
+     * @var ShippingMethodTypeInterface[]
+     */
+    private $types;
 
-    /** @var DPDSettings */
-    protected $transport;
-
-    /** @var DPDTransportProvider */
-    protected $transportProvider;
+    /**
+     * @var DPDHandlerInterface[]
+     */
+    private $handlers;
 
     /**
      * Construct.
      *
-     * @param $identifier
-     * @param $label
+     * @param string               $identifier
+     * @param string               $label
+     * @param bool                 $isEnabled
      * @param array                $types
      * @param array                $handlers
-     * @param DPDSettings          $transport
-     * @param DPDTransportProvider $transportProvider
      */
     public function __construct(
         $identifier,
         $label,
+        $isEnabled,
         array $types,
-        array $handlers,
-        DPDSettings $transport,
-        DPDTransportProvider $transportProvider
+        array $handlers
     ) {
         $this->identifier = $identifier;
         $this->label = $label;
+        $this->isEnabled = $isEnabled;
         $this->types = $types;
         $this->handlers = $handlers;
-        $this->transport = $transport;
-        $this->transportProvider = $transportProvider;
     }
 
     /**
@@ -80,8 +82,7 @@ class DPDShippingMethod implements
      */
     public function isEnabled()
     {
-        //TODO: should be $channel->isEnabled()
-        return true;
+        return $this->isEnabled;
     }
 
     /**

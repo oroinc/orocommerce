@@ -53,7 +53,6 @@ services:
         class: 'Oro\Bundle\DPDBundle\Method\Factory\DPDShippingMethodFactory'
         public: false
         arguments:
-            - '@oro_dpd.provider.transport'
             - '@oro_locale.helper.localization'
             - '@oro_dpd.method.identifier_generator.method'
             - '@oro_dpd.method.factory.type'
