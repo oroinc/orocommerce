@@ -125,24 +125,20 @@
 
 @include breakpoint('mobile') {
   .catalog__filter-controls {
-      .action-selectbox_custom_in-pager {
-          display: inline-block;
+    &__item {
+      margin-right: 0;
+    }
 
-          .select2-container {
-              a.select2-choice {
-                  max-width: 60px;
+    .action-selectbox_custom_in-pager {
+      display: inline-block;
 
-                  padding: 8px 4px !important;
-              }
-          }
+      .select2-container {
+        a.select2-choice {
+            max-width: 60px;
+
+            padding: 8px 4px !important;
+        }
       }
     }
-}
-
-@include breakpoint('mobile-landscape') {
-    .catalog__filter-controls {
-        &__item {
-            margin-right: 0;
-        }
-    }
+  }
 }
