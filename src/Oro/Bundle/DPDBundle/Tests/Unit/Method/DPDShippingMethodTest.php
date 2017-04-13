@@ -3,14 +3,11 @@
 namespace Oro\Bundle\DPDBundle\Tests\Unit\Method;
 
 use Oro\Bundle\CurrencyBundle\Entity\Price;
-use Oro\Bundle\DPDBundle\Method\DPDHandlerInterface;
-use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
-use Oro\Bundle\DPDBundle\Entity\ShippingService;
-use Oro\Bundle\DPDBundle\Entity\DPDTransport;
 use Oro\Bundle\DPDBundle\Factory\DPDRequestFactory;
 use Oro\Bundle\DPDBundle\Form\Type\DPDShippingMethodOptionsType;
+use Oro\Bundle\DPDBundle\Method\DPDHandlerInterface;
 use Oro\Bundle\DPDBundle\Method\DPDShippingMethod;
-use Oro\Bundle\DPDBundle\Provider\DPDTransport as DPDTransportProvider;
+use Oro\Bundle\ShippingBundle\Context\ShippingContextInterface;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 use Oro\Component\Testing\Unit\EntityTrait;
 
@@ -38,16 +35,6 @@ class DPDShippingMethodTest extends \PHPUnit_Framework_TestCase
     const TYPE_IDENTIFIER = '59';
 
     /**
-     * @var DPDTransportProvider|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $transportProvider;
-
-    /**
-     * @var DPDTransport|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $transport;
-
-    /**
      * @var DPDRequestFactory|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $dpdRequestFactory;
@@ -59,18 +46,8 @@ class DPDShippingMethodTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->transportProvider = $this->createMock(DPDTransportProvider::class);
-
-        $shippingService = $this->getEntity(
-            ShippingService::class,
-            ['code' => 'dpd_identifier', 'description' => 'dpd_label']
-        );
-
         /* @var DPDRequestFactory | \PHPUnit_Framework_MockObject_MockObject $priceRequestFactory */
         $this->dpdRequestFactory = $this->createMock(DPDRequestFactory::class);
-
-        $this->transport = $this->createMock(DPDTransport::class);
-        $this->transport->expects(self::any())->method('getApplicableShippingServices')->willReturn([$shippingService]);
 
         $type = $this->createMock(ShippingMethodTypeInterface::class);
         $type
@@ -89,10 +66,9 @@ class DPDShippingMethodTest extends \PHPUnit_Framework_TestCase
             new DPDShippingMethod(
                 self::IDENTIFIER,
                 self::LABEL,
+                true,
                 [$type],
-                [$handler],
-                $this->transport,
-                $this->transportProvider
+                [$handler]
             );
     }
 

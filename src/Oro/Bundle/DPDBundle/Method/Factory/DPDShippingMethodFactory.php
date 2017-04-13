@@ -9,15 +9,9 @@ use Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGener
 use Oro\Bundle\DPDBundle\Entity\ShippingService;
 use Oro\Bundle\DPDBundle\Entity\DPDTransport as DPDSettings;
 use Oro\Bundle\DPDBundle\Method\DPDShippingMethod;
-use Oro\Bundle\DPDBundle\Provider\DPDTransport;
 
 class DPDShippingMethodFactory implements IntegrationShippingMethodFactoryInterface
 {
-    /**
-     * @var DPDTransport
-     */
-    private $transport;
-
     /**
      * @var LocalizationHelper
      */
@@ -39,20 +33,17 @@ class DPDShippingMethodFactory implements IntegrationShippingMethodFactoryInterf
     private $handlerFactory;
 
     /**
-     * @param DPDTransport                                  $transport
      * @param LocalizationHelper                            $localizationHelper
      * @param IntegrationMethodIdentifierGeneratorInterface $methodIdentifierGenerator
      * @param DPDShippingMethodTypeFactoryInterface         $methodTypeFactory
      * @param DPDHandlerFactoryInterface                    $handlerFactory
      */
     public function __construct(
-        DPDTransport $transport,
         LocalizationHelper $localizationHelper,
         IntegrationMethodIdentifierGeneratorInterface $methodIdentifierGenerator,
         DPDShippingMethodTypeFactoryInterface $methodTypeFactory,
         DPDHandlerFactoryInterface $handlerFactory
     ) {
-        $this->transport = $transport;
         $this->localizationHelper = $localizationHelper;
         $this->methodIdentifierGenerator = $methodIdentifierGenerator;
         $this->methodTypeFactory = $methodTypeFactory;
@@ -67,10 +58,9 @@ class DPDShippingMethodFactory implements IntegrationShippingMethodFactoryInterf
         return new DPDShippingMethod(
             $this->getIdentifier($channel),
             $this->getLabel($channel),
+            $channel->isEnabled(),
             $this->createTypes($channel),
-            $this->createHandlers($channel),
-            $this->getSettings($channel),
-            $this->transport
+            $this->createHandlers($channel)
         );
     }
 

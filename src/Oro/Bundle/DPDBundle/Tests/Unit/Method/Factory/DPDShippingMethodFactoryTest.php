@@ -13,16 +13,10 @@ use Oro\Bundle\DPDBundle\Entity\DPDTransport as DPDSettings;
 use Oro\Bundle\DPDBundle\Method\Factory\DPDShippingMethodFactory;
 use Oro\Bundle\DPDBundle\Method\Factory\DPDShippingMethodTypeFactoryInterface;
 use Oro\Bundle\DPDBundle\Method\DPDShippingMethod;
-use Oro\Bundle\DPDBundle\Provider\DPDTransport;
 use Oro\Bundle\ShippingBundle\Method\ShippingMethodTypeInterface;
 
 class DPDShippingMethodFactoryTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var DPDTransport|\PHPUnit_Framework_MockObject_MockObject
-     */
-    private $transport;
-
     /**
      * @var LocalizationHelper|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -48,14 +42,12 @@ class DPDShippingMethodFactoryTest extends \PHPUnit_Framework_TestCase
 
     protected function setUp()
     {
-        $this->transport = $this->createMock(DPDTransport::class);
         $this->localizationHelper = $this->createMock(LocalizationHelper::class);
         $this->methodIdentifierGenerator = $this->createMock(IntegrationMethodIdentifierGeneratorInterface::class);
         $this->methodTypeFactory = $this->createMock(DPDShippingMethodTypeFactoryInterface::class);
         $this->handlerFactory = $this->createMock(DPDHandlerFactoryInterface::class);
 
         $this->factory = new DPDShippingMethodFactory(
-            $this->transport,
             $this->localizationHelper,
             $this->methodIdentifierGenerator,
             $this->methodTypeFactory,
@@ -80,6 +72,10 @@ class DPDShippingMethodFactoryTest extends \PHPUnit_Framework_TestCase
         $channel->expects($this->any())
             ->method('getTransport')
             ->willReturn($settings);
+
+        $channel->expects(static::once())
+            ->method('isEnabled')
+            ->willReturn(true);
 
         $type1 = $this->createMock(ShippingMethodTypeInterface::class);
         $type2 = $this->createMock(ShippingMethodTypeInterface::class);
@@ -132,10 +128,9 @@ class DPDShippingMethodFactoryTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(new DPDShippingMethod(
             $identifier,
             'en',
+            true,
             [$type1, $type2],
-            [$handler1, $handler2],
-            $settings,
-            $this->transport
+            [$handler1, $handler2]
         ), $this->factory->create($channel));
     }
 }
