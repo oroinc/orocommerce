@@ -74,6 +74,10 @@ oro:
                     label: 'Shipping method type'
                 order:
                     label: 'Order'
+                billing_address:
+                    label: 'Billing address'
+                shipping_address:
+                    label: 'Shipping address'
             transition:
                 __start__:
                     label: 'Create Order'
@@ -92,8 +96,8 @@ oro:
                             label: 'Save address'
                         ship_to_billing_address:
                             label: 'Ship to this address'
-#                        billing_address:
-#                            label: ''
+                        billing_address:
+                            label: 'Billing address'
                         state_token:
                             label: ''
                 continue_to_shipping_method:
@@ -104,8 +108,8 @@ oro:
                             label: 'Save address'
                         ship_to_billing_address:
                             label: 'Use billing address'
-#                        shipping_address:
-#                            label: ''
+                        shipping_address:
+                            label: 'Shipping address'
                         state_token:
                             label: ''
                 continue_to_payment:
