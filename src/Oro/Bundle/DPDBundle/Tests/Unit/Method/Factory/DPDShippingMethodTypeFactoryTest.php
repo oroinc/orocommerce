@@ -5,13 +5,13 @@ namespace Oro\Bundle\DPDBundle\Tests\Unit\Method\Factory;
 use Oro\Bundle\DPDBundle\Provider\PackageProvider;
 use Oro\Bundle\DPDBundle\Provider\RateProvider;
 use Oro\Bundle\IntegrationBundle\Entity\Channel;
-use Oro\Bundle\ShippingBundle\Method\Identifier\IntegrationMethodIdentifierGeneratorInterface;
 use Oro\Bundle\DPDBundle\Entity\ShippingService;
 use Oro\Bundle\DPDBundle\Entity\DPDTransport as DPDSettings;
 use Oro\Bundle\DPDBundle\Method\Factory\DPDShippingMethodTypeFactory;
 use Oro\Bundle\DPDBundle\Method\Identifier\DPDMethodTypeIdentifierGeneratorInterface;
 use Oro\Bundle\DPDBundle\Method\DPDShippingMethodType;
 use Oro\Bundle\DPDBundle\Provider\DPDTransport;
+use Oro\Bundle\IntegrationBundle\Generator\IntegrationIdentifierGeneratorInterface;
 
 class DPDShippingMethodTypeFactoryTest extends \PHPUnit_Framework_TestCase
 {
@@ -21,7 +21,7 @@ class DPDShippingMethodTypeFactoryTest extends \PHPUnit_Framework_TestCase
     private $typeIdentifierGenerator;
 
     /**
-     * @var IntegrationMethodIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var IntegrationIdentifierGeneratorInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     private $methodIdentifierGenerator;
 
@@ -48,7 +48,7 @@ class DPDShippingMethodTypeFactoryTest extends \PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->typeIdentifierGenerator = $this->createMock(DPDMethodTypeIdentifierGeneratorInterface::class);
-        $this->methodIdentifierGenerator = $this->createMock(IntegrationMethodIdentifierGeneratorInterface::class);
+        $this->methodIdentifierGenerator = $this->createMock(IntegrationIdentifierGeneratorInterface::class);
         $this->transport = $this->createMock(DPDTransport::class);
         $this->packageProvider = $this->createMock(PackageProvider::class);
         $this->rateProvider = $this->createMock(RateProvider::class);

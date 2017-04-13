@@ -1,0 +1,36 @@
+services:
+    oro_dpd.entity_listener.transport:
+        class: 'Oro\Bundle\DPDBundle\EventListener\DPDTransportEntityListener'
+        arguments:
+            - '@oro_dpd.method.identifier_generator.method'
+            - '@oro_dpd.method.identifier_generator.type'
+            - '@oro_shipping.method.event.dispatcher.type_removal'
+        tags:
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\DPDBundle\Entity\DPDTransport', event: postUpdate }
+            - { name: doctrine.orm.entity_listener, entity: 'Oro\Bundle\DPDBundle\Entity\DPDTransport', event: preFlush }
+
+    oro_dpd.event_listener.shipping_method_config_data:
+        parent: oro_shipping.admin_view.method_template.listener
+        arguments:
+            - '%oro_dpd.admin_view.method_template%'
+            - '@oro_dpd.shipping_method_provider.dpd'
+        tags:
+            - { name: kernel.event_listener, event: oro_shipping_method.config_data, method: onGetConfigData }
+
+    oro_dpd.entity_listener.channel:
+        parent: oro_shipping.remove_integration_listener
+        arguments:
+            - '%oro_dpd.integration.channel.type%'
+            - '@oro_dpd.method.identifier_generator.method'
+            - '@oro_shipping.method.event.dispatcher.method_removal'
+        tags:
+            - { name: kernel.event_listener, event: oro_integration.channel_delete, method: onRemove }
+
+    oro_dpd.disable_integration_listener:
+        parent: oro_shipping.disable_integration_listener
+        arguments:
+            - '%oro_dpd.integration.channel.type%'
+            - '@oro_dpd.method.identifier_generator.method'
+            - '@oro_shipping.method_disable_handler.decorator'
+        tags:
+            - { name: kernel.event_listener, event: oro_integration.channel_disable, method: onIntegrationDisable }

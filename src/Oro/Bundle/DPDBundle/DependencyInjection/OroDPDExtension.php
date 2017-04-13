@@ -18,5 +18,6 @@ class OroDPDExtension extends Extension
         $loader->load('services.yml');
         $loader->load('conditions.yml');
         $loader->load('form_types.yml');
+        $loader->load('event_listeners.yml');
     }
 }
