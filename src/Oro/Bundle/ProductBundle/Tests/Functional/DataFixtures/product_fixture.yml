@@ -9,6 +9,9 @@ product1:
     names:
         - { reference: product-1.names.default, string: product-1.names.default }
         - { reference: product-1.names.en_US, string: product-1.names.en_US, fallback: system, localization: en_US }
+    slugPrototypes:
+        - { reference: product-1.slugPrototypes.default, string: product-1.slugPrototypes.default }
+        - { reference: product-1.slugPrototypes.en_US, string: product-1.slugPrototypes.en_US, fallback: system, localization: en_US }
     descriptions:
         - { reference: product-1.descriptions.default, text: product-1.descriptions.default }
         - { reference: product-1.descriptions.en_US, text: product-1.descriptions.en_US, fallback: system, localization: en_US }
@@ -26,6 +29,8 @@ product2:
         precision: 0
     names:
         - { reference: product-2.names.default, string: product-2.names.default }
+    slugPrototypes:
+        - { reference: product-2.slugPrototypes.default, string: product-2.slugPrototypes.default }
     descriptions:
         - { reference: product-2.descriptions.default, text: product-2.descriptions.default }
     shortDescriptions:
@@ -41,6 +46,8 @@ product3:
         precision: 0
     names:
         - { reference: product-3.names.default, string: product-3.names.default }
+    slugPrototypes:
+        - { reference: product-3.slugPrototypes.default, string: product-3.slugPrototypes.default }
     descriptions:
         - { reference: product-3.descriptions.default, text: product-3.descriptions.default }
     shortDescriptions:
@@ -56,6 +63,8 @@ product4:
         precision: 0
     names:
         - { reference: product-4.names.default, string: product-4.names.default }
+    slugPrototypes:
+        - { reference: product-4.slugPrototypes.default, string: product-4.slugPrototypes.default }
     descriptions:
         - { reference: product-4.descriptions.default, text: product-4.descriptions.default }
     shortDescriptions:
@@ -71,6 +80,8 @@ product5:
         precision: 0
     names:
         - { reference: product-5.names.default, string: product-5.names.default }
+    slugPrototypes:
+        - { reference: product-5.slugPrototypes.default, string: product-5.slugPrototypes.default }
     descriptions:
         - { reference: product-5.descriptions.default, text: product-5.descriptions.default }
     shortDescriptions:
@@ -86,6 +97,8 @@ product6:
         precision: 0
     names:
         - { reference: product-6.names.default, string: product-6.names.default }
+    slugPrototypes:
+        - { reference: product-6.slugPrototypes.default, string: product-6.slugPrototypes.default }
     descriptions:
         - { reference: product-6.descriptions.default, text: product-6.descriptions.default }
     shortDescriptions:
@@ -101,6 +114,8 @@ product7:
         precision: 0
     names:
         - { reference: product-7.names.default, string: product-7.names.default }
+    slugPrototypes:
+        - { reference: product-7.slugPrototypes.default, string: product-7.slugPrototypes.default }
     descriptions:
         - { reference: product-7.descriptions.default, text: product-7.descriptions.default }
     shortDescriptions:
@@ -116,6 +131,8 @@ product8:
         precision: 0
     names:
         - { reference: product-8.names.default, string: product-8.names.default }
+    slugPrototypes:
+        - { reference: product-8.slugPrototypes.default, string: product-8.slugPrototypes.default }
     descriptions:
         - { reference: product-8.descriptions.default, text: product-8.descriptions.default }
     shortDescriptions:
