@@ -33,7 +33,10 @@ class RatesCsvFileValidator extends ConstraintValidator
     }
 
     /**
-     * {@inheritdoc}
+     * FIXME: refactor with error messages, see next FIXME
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @SuppressWarnings(PHPMD.NPathComplexity)
+     * {@inheritDoc}
      */
     public function validate($value, Constraint $constraint)
     {
