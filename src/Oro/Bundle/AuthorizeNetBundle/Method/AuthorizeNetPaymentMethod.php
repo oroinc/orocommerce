@@ -122,6 +122,13 @@ class AuthorizeNetPaymentMethod implements PaymentMethodInterface
     protected function capture(PaymentTransaction $paymentTransaction)
     {
         $sourceTransaction = $paymentTransaction->getSourcePaymentTransaction();
+
+        if (!$sourceTransaction) {
+            $paymentTransaction->setSuccessful(false)->setActive(false);
+
+            return ['successful' => false];
+        }
+
         $options = $this->getPaymentOptions($paymentTransaction->getSourcePaymentTransaction());
         $options[Option\OriginalTransaction::ORIGINAL_TRANSACTION] = $sourceTransaction->getReference();
 
@@ -129,7 +136,12 @@ class AuthorizeNetPaymentMethod implements PaymentMethodInterface
             ->setRequest($options)
             ->setAction(self::CAPTURE);
 
-        return $this->executePaymentAction(self::CAPTURE, $paymentTransaction);
+        $result = $this->executePaymentAction(self::CAPTURE, $paymentTransaction);
+
+        $paymentTransaction->setActive(false);
+        $sourceTransaction->setActive(!$paymentTransaction->isSuccessful());
+
+        return $result;
     }
 
     /**

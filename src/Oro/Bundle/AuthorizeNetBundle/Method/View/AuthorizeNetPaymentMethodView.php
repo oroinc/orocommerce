@@ -5,9 +5,7 @@ namespace Oro\Bundle\AuthorizeNetBundle\Method\View;
 use Oro\Bundle\AuthorizeNetBundle\Form\Type\CreditCardType;
 use Oro\Bundle\AuthorizeNetBundle\Method\Config\AuthorizeNetConfigInterface;
 use Oro\Bundle\PaymentBundle\Context\PaymentContextInterface;
-use Oro\Bundle\PaymentBundle\Entity\PaymentTransaction;
 use Oro\Bundle\PaymentBundle\Method\View\PaymentMethodViewInterface;
-use Oro\Bundle\PaymentBundle\Provider\PaymentTransactionProvider;
 use Symfony\Component\Form\FormFactoryInterface;
 
 class AuthorizeNetPaymentMethodView implements PaymentMethodViewInterface
@@ -18,11 +16,6 @@ class AuthorizeNetPaymentMethodView implements PaymentMethodViewInterface
     protected $formFactory;
 
     /**
-     * @var PaymentTransactionProvider
-     */
-    protected $paymentTransactionProvider;
-
-    /**
      * @var AuthorizeNetConfigInterface
      */
     protected $config;
@@ -30,16 +23,13 @@ class AuthorizeNetPaymentMethodView implements PaymentMethodViewInterface
     /**
      * @param FormFactoryInterface            $formFactory
      * @param AuthorizeNetConfigInterface     $config
-     * @param PaymentTransactionProvider      $paymentTransactionProvider
      */
     public function __construct(
         FormFactoryInterface $formFactory,
-        AuthorizeNetConfigInterface $config,
-        PaymentTransactionProvider $paymentTransactionProvider
+        AuthorizeNetConfigInterface $config
     ) {
         $this->formFactory = $formFactory;
         $this->config = $config;
-        $this->paymentTransactionProvider = $paymentTransactionProvider;
     }
 
     /**

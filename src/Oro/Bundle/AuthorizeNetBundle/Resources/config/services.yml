@@ -13,7 +13,6 @@ services:
         class: 'Oro\Bundle\AuthorizeNetBundle\Method\View\Factory\AuthorizeNetPaymentMethodViewFactory'
         arguments:
             - '@form.factory'
-            - '@oro_payment.provider.payment_transaction'
 
     oro_authorize_net.settings.payment_action.provider:
         class: 'Oro\Bundle\AuthorizeNetBundle\Settings\DataProvider\BasicPaymentActionsDataProvider'
