@@ -19,6 +19,8 @@ api:
                             exclude: true
                         totalDiscountsAmount:
                             exclude: true
+                        currency:
+                            exclude: true
 
         Oro\Bundle\OrderBundle\Entity\OrderLineItem:
             fields:
