@@ -107,6 +107,9 @@ datagrids:
         source:
             skip_acl_apply: true
 
+    product-collection-grid:
+        extends: products-select-grid-base
+
     products-grid:
         extends: products-select-grid-base
         options:

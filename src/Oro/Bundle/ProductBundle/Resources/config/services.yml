@@ -830,3 +830,11 @@ services:
         arguments:
             - '@oro_entity.doctrine_helper'
             - '@=container.hasParameter("oro_web_catalog.entity.content_variant.class") ? parameter("oro_web_catalog.entity.content_variant.class") : null'
+
+    oro_product.event_listener.product_collection_datagrid:
+        class: Oro\Bundle\ProductBundle\EventListener\ProductCollectionDatagridListener
+        arguments:
+            - '@request_stack'
+            - '@oro_segment.segment_manager'
+        tags:
+            - { name: kernel.event_listener, event: oro_datagrid.datagrid.build.after.product-collection-grid, method: onBuildAfter }
