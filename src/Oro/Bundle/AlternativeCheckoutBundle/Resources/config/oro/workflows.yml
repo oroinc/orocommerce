@@ -342,6 +342,8 @@ workflows:
                             form_type: hidden
                             options:
                                 data: $internal_state_token
+                message_parameters:
+                    '{{ value }}': $.data.order_approval_threshold
 
             back_to_billing_address:
                 step_to: enter_billing_address

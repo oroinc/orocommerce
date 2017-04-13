@@ -142,7 +142,7 @@ oro:
                             label: ''
                 continue_to_approve_request:
                     label: 'Request Approval'
-                    warning_message: 'You exceeded the allowable amount of $5,000.00. <br/> To proceed please request manager approval. <br/>'
+                    warning_message: 'You exceeded the allowable amount of ${{ value }}. <br/> To proceed please request manager approval. <br/>'
                     attribute:
                         request_approval_notes:
                             label: ''
